@@ -1,0 +1,474 @@
+@import "tailwindcss";
+
+/* ── Resets dans @layer base pour que les utilities Tailwind gagnent ── */
+@layer base {
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f6f8;
+    color: #1d232c;
+  }
+
+  button,
+  select,
+  option,
+  input,
+  textarea {
+    color: #1d232c;
+  }
+
+  button,
+  select,
+  input,
+  textarea {
+    background: transparent;
+  }
+
+  h1 {
+    margin: 0 0 12px;
+    font-size: 1.5rem;
+  }
+
+  h2,
+  h3,
+  h4 {
+    margin: 0 0 8px;
+  }
+}
+
+/* ── Classes utilitaires legacy (autres pages) ── */
+
+#root {
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.top-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.top-nav a {
+  color: #1d4ed8;
+}
+
+.header-tools {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.icon-button {
+  min-height: 34px;
+  border: 1px solid #d5d9df;
+  border-radius: 10px;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.program-list {
+  display: grid;
+  gap: 16px;
+}
+
+.session-group {
+  margin-bottom: 18px;
+}
+
+.session-alert {
+  margin-bottom: 10px;
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.session-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.status-label {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #5b6573;
+}
+
+.estimate-line {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+}
+
+.estimate-line span {
+  color: #7b8593;
+}
+
+.card {
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #d5d9df;
+  background: #fff;
+}
+
+.card p {
+  margin: 6px 0;
+}
+
+.block-label {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.block-title {
+  margin: 0 0 4px;
+}
+
+.summary-line {
+  margin: 0 0 8px;
+  font-size: 0.82rem;
+  color: #5b6573;
+}
+
+.intent {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #5b6573;
+}
+
+.block-cue {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.exercise-list {
+  margin: 8px 0;
+  padding-left: 14px;
+}
+
+.exercise-item {
+  margin-bottom: 10px;
+}
+
+.exercise-name {
+  margin: 0;
+  font-weight: 700;
+}
+
+.pr-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.exercise-id {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: #7b8593;
+}
+
+.exercise-note {
+  margin: 3px 0 0;
+  font-size: 0.85rem;
+  color: #5b6573;
+}
+
+.exercise-suggestion-line {
+  margin: 3px 0 0;
+  font-size: 0.82rem;
+}
+
+.exercise-suggestion-rationale {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: #6b7280;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.coaching-note {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #e5e9ef;
+}
+
+.missing-equipment {
+  color: #9a3412;
+  font-size: 0.9rem;
+}
+
+.warnings {
+  margin: 0 0 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #f1b454;
+  background: #fff5e5;
+}
+
+.primary-link {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #1d4ed8;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.action-row {
+  display: grid;
+  gap: 10px;
+}
+
+.week-selector {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.viewmode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.week-button {
+  border: 1px solid #d5d9df;
+  border-radius: 8px;
+  padding: 8px 0;
+  background: #fff;
+}
+
+.week-button.active {
+  border-color: #1d4ed8;
+  background: #e8efff;
+  color: #123db3;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.field select {
+  padding: 8px;
+  border: 1px solid #d5d9df;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.field-group {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 16px;
+}
+
+.check-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.check-grid label,
+.field-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.helper-text {
+  margin: 4px 0 10px;
+  font-size: 0.9rem;
+  color: #5b6573;
+}
+
+.profile-summary h2 {
+  margin-bottom: 10px;
+}
+
+.week-guidance ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.fatigue-options {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.fatigue-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.compact-warning {
+  margin-top: 10px;
+}
+
+.mark-button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #d5d9df;
+  background: #fff;
+}
+
+.link-button {
+  margin-top: 4px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #1d4ed8;
+  font-size: 0.82rem;
+  text-decoration: underline;
+}
+
+.log-entry {
+  margin-top: 8px;
+}
+
+.log-entry summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.log-grid-block {
+  display: grid;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.log-row {
+  border-top: 1px dashed #d5d9df;
+  padding-top: 8px;
+}
+
+.log-row-title {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.log-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.log-grid label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+.mini-detail {
+  margin: 6px 0;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 20;
+}
+
+.modal-card {
+  width: min(560px, 100%);
+  max-height: 85vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #d5d9df;
+  padding: 14px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.modal-content {
+  display: grid;
+  gap: 6px;
+}
+
+.banner-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recap-card summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.progress-row {
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e9ef;
+}
+
+.log-entry input[type='number'],
+.log-entry input[type='text'] {
+  border: 1px solid #d5d9df;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+textarea {
+  width: 100%;
+  border: 1px solid #d5d9df;
+  border-radius: 8px;
+  padding: 8px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding: 24px;
+  }
+
+  .check-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

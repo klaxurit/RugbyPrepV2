@@ -1,0 +1,3607 @@
+[
+  {
+    "blockId": "BLK_ACT_UPPER_SHOULDER_TYI_01",
+    "name": "Activation épaules (TYI + face pull + scap push-up)",
+    "intent": "activation",
+    "tags": [
+      "upper",
+      "shoulder_health",
+      "activation"
+    ],
+    "equipment": [
+      "band",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "prehab_shoulder__band_tyi",
+        "role": "stability",
+        "notes": "Contrôle, tempo lent"
+      },
+      {
+        "exerciseId": "prehab_shoulder__face_pull__band",
+        "role": "stability",
+        "notes": "Tirer vers le visage, coudes hauts"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 45,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 45,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 60,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc obligatoire pour préparer la coiffe et la scapula avant les blocs force/contrast."
+  },
+  {
+    "blockId": "BLK_ACT_LOWER_HIP_ANKLE_01",
+    "name": "Activation bas du corps (hanches/chevilles)",
+    "intent": "activation",
+    "tags": [
+      "lower",
+      "activation",
+      "hip",
+      "ankle"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "core_anti_extension__dead_bug",
+        "role": "stability",
+        "notes": "Respiration + bassin neutre"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-8/side"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side"
+        },
+        "restSeconds": 30,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side"
+        },
+        "restSeconds": 30,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Bloc simple MVP. Tu pourras enrichir plus tard avec mobilité hanches/chevilles dédiée."
+  },
+  {
+    "blockId": "BLK_PREHAB_COPENHAGEN_01",
+    "name": "Préhab adducteurs (Copenhagen plank)",
+    "intent": "prehab",
+    "tags": [
+      "lower",
+      "groin",
+      "adductors",
+      "prehab"
+    ],
+    "equipment": [
+      "bench"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "groin_adductors__copenhagen_plank__weighted",
+        "role": "stability",
+        "notes": "Levier/charge progressif, contrôle"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 4,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 180,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Essentiel rugby (prévention pubalgies/adducteurs). Intensifier via levier/charge, pas en trichant."
+  },
+  {
+    "blockId": "BLK_PREHAB_ROTATION_ANTI_01",
+    "name": "Préhab tronc (anti-rotation Pallof)",
+    "intent": "prehab",
+    "tags": [
+      "core",
+      "anti_rotation",
+      "prehab"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "core_anti_rotation__pallof_press__band",
+        "role": "stability",
+        "notes": "Bloquer le bassin, respirer"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Transfert rugby évident (contacts, rucks). À garder propre, pas de rotation parasite."
+  },
+  {
+    "blockId": "BLK_NEURAL_PLYO_PUSH_EMOM_01",
+    "name": "Neural upper (pompes pliométriques EMOM)",
+    "intent": "neural",
+    "tags": [
+      "upper",
+      "neural",
+      "plyo"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "wrist_pain",
+      "shoulder_pain",
+      "elbow_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_horizontal__push_up__plyo",
+        "role": "prime",
+        "notes": "Max reps en 8–10s, qualité"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 1,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "seconds",
+            "seconds": "8-10"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 1,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "seconds",
+            "seconds": "8-10"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 1,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "seconds",
+            "seconds": "8-10"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 1,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "seconds",
+            "seconds": "8-10"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc d’amorçage nerveux avant la force. Stop avant perte de vitesse/qualité."
+  },
+  {
+    "blockId": "BLK_NEURAL_DB_SNATCH_EMOM_01",
+    "name": "Neural full (DB snatch EMOM)",
+    "intent": "neural",
+    "tags": [
+      "full",
+      "neural",
+      "power"
+    ],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain",
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "full_power__db_snatch__single_arm",
+        "role": "prime",
+        "notes": "1 rep/côté par minute (ou 2 selon niveau)"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 1,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": "1/side"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 1,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": "1/side"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 1,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "1/side"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 1,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "1/side"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Explosif simple et très transférable. Garder une technique propre, pas de grind."
+  },
+  {
+    "blockId": "BLK_NEURAL_HANG_HIGH_PULL_01",
+    "name": "Neural full (Hang High Pull)",
+    "intent": "neural",
+    "tags": [
+      "full",
+      "neural",
+      "olympic_variant"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "shoulder_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "olympic_variant__hang_high_pull",
+        "role": "prime",
+        "notes": "Vitesse de barre, trajectoire propre"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4"
+        },
+        "restSeconds": 120,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4"
+        },
+        "restSeconds": 120,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3"
+        },
+        "restSeconds": 120,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3"
+        },
+        "restSeconds": 150,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Bloc neural avant lower/total body. Ne jamais sacrifier la vitesse pour la charge."
+  },
+  {
+    "blockId": "BLK_NEURAL_SEATED_BROAD_JUMP_EMOM_01",
+    "name": "Neural lower (Seated Broad Jump EMOM)",
+    "intent": "neural",
+    "tags": [
+      "lower",
+      "neural",
+      "jump"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "lower_jump__broad_jump__seated",
+        "role": "prime",
+        "notes": "3 reps EMOM, qualité max"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 7,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 7,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 7,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 7,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Format neural bas du corps. Toujours frais, pas d’échec. Mesure la distance pour feedback futur."
+  },
+  {
+    "blockId": "BLK_CONTRAST_BENCH_PLYO_TYI_01",
+    "name": "Contrast upper (bench + pompes plio + TYI)",
+    "intent": "contrast",
+    "tags": [
+      "upper",
+      "push",
+      "contrast",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "barbell",
+      "bench",
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_horizontal__bench_press__barbell",
+        "role": "prime",
+        "notes": "Reps lourdes, stop à la vitesse"
+      },
+      {
+        "exerciseId": "push_horizontal__push_up__plyo",
+        "role": "contrast",
+        "notes": "5 reps ou 8–10s max"
+      },
+      {
+        "exerciseId": "prehab_shoulder__band_tyi",
+        "role": "stability",
+        "notes": "6–10 reps strict"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5 / 5 / 6"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5 / 5 / 6"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5 / 5 / 6"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5 / 5 / 6"
+        },
+        "restSeconds": 180,
+        "rer": 0
+      }
+    ],
+    "coachingNotes": "Ton bloc signature rugby : force → explosivité → protection épaules."
+  },
+  {
+    "blockId": "BLK_CONTRAST_BOARD_PRESS_GHDISO_NECK_01",
+    "name": "Contrast contact (board press + GHD iso + cou)",
+    "intent": "contrast",
+    "tags": [
+      "upper",
+      "contact",
+      "neck",
+      "contrast"
+    ],
+    "equipment": [
+      "barbell",
+      "bench",
+      "ghd",
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain",
+      "neck_pain",
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_horizontal__board_press__barbell",
+        "role": "prime",
+        "notes": "5 reps lourdes à chaque série. Priorité à la vitesse. Réduire à 3 reps si la vitesse chute."
+      },
+      {
+        "exerciseId": "core_anti_extension__ghd_iso",
+        "role": "stability",
+        "notes": "10–20s, anti-extension"
+      },
+      {
+        "exerciseId": "neck__flexion",
+        "role": "stability",
+        "notes": "Contrôle, pas de douleur"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-5-5 + 15s + 10"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-5-3 + 15s + 10"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-3-3 + 20s + 10"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-3-3 + 20s + 10"
+        },
+        "restSeconds": 180,
+        "rer": 0
+      }
+    ],
+    "coachingNotes": "Bloc très spécifique contact. À utiliser quand l’athlète tolère bien la nuque et le gainage."
+  },
+  {
+    "blockId": "BLK_CONTRAST_PULLUP_OSC_PUSH_01",
+    "name": "Contrast upper (tractions + pompes oscillations)",
+    "intent": "contrast",
+    "tags": [
+      "upper",
+      "pull",
+      "contrast"
+    ],
+    "equipment": [
+      "pullup_bar",
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "pull_vertical__pull_up__supinated",
+        "role": "prime",
+        "notes": "Lesté si possible, propre"
+      },
+      {
+        "exerciseId": "push_horizontal__push_up__oscillation",
+        "role": "contrast",
+        "notes": "10–15s, vitesse"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5 + 10s"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5 + 12s"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5 + 15s"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6 + 15s"
+        },
+        "restSeconds": 180,
+        "rer": 0
+      }
+    ],
+    "coachingNotes": "Bloc transfert: tirage fort + poussée rapide. Très bon pour haut du corps rugby."
+  },
+  {
+    "blockId": "BLK_CONTRAST_LANDMINE_PRESS_TBAR_ROW_01",
+    "name": "Push/Pull rugby (landmine press + T-bar row)",
+    "intent": "contrast",
+    "tags": [
+      "upper",
+      "push_pull",
+      "anti_rotation"
+    ],
+    "equipment": [
+      "landmine",
+      "tbar_row"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_vertical__landmine_press__kneeling",
+        "role": "prime",
+        "notes": "5 reps/côté, contrôle tronc"
+      },
+      {
+        "exerciseId": "pull_horizontal__tbar_row",
+        "role": "prime",
+        "notes": "7–10 reps, gainage"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side + 10"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side + 8"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side + 7"
+        },
+        "restSeconds": 150,
+        "rer": 1
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side + 7"
+        },
+        "restSeconds": 150,
+        "rer": 0
+      }
+    ],
+    "coachingNotes": "Très rugby: press en diagonale + tirage lourd. Attention lombaires sur T-bar row si fatigue."
+  },
+  {
+    "blockId": "BLK_FORCE_DROP_RDL_ROTATION_01",
+    "name": "Force posterior chain (drop RDL + rotations)",
+    "intent": "force",
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain",
+      "core"
+    ],
+    "equipment": [
+      "barbell",
+      "ghd"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "hinge__drop_rdl",
+        "role": "prime",
+        "notes": "Dynamique contrôlé, dos neutre"
+      },
+      {
+        "exerciseId": "core_rotation__ghd_rotations",
+        "role": "stability",
+        "notes": "10/côté, contrôle"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "7 + 10/side"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "7 + 10/side"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "7 + 10/side"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "7 + 10/side"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Bloc chaîne postérieure + contrôle tronc. Très utile pour sprint/contacts."
+  },
+  {
+    "blockId": "BLK_CONTRAST_BOX_JUMP_STEPUP_COPEN_01",
+    "name": "Contrast lower (box squat jump + jump step-up + Copenhagen)",
+    "intent": "contrast",
+    "tags": [
+      "lower",
+      "plyo",
+      "unilateral",
+      "groin"
+    ],
+    "equipment": [
+      "box",
+      "bench"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "ankle_pain",
+      "groin_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "lower_jump__box_squat_jump",
+        "role": "contrast",
+        "notes": "3 reps, explosif"
+      },
+      {
+        "exerciseId": "unilateral__jump_step_up",
+        "role": "contrast",
+        "notes": "3 reps/côté"
+      },
+      {
+        "exerciseId": "groin_adductors__copenhagen_plank__weighted",
+        "role": "stability",
+        "notes": "20s/côté"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3 + 3/side + 20s/side"
+        },
+        "restSeconds": 180,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3 + 3/side + 20s/side"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3 + 3/side + 20s/side"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3 + 3/side + 20s/side"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Bloc très rugby: plyo + unilatéral + adducteurs. La qualité d’atterrissage est la priorité."
+  },
+  {
+    "blockId": "BLK_FORCE_LOW_STEPUP_HAM_CATCH_01",
+    "name": "Unilatéral + ischios (low step-up + ham catches)",
+    "intent": "force",
+    "tags": [
+      "lower",
+      "unilateral",
+      "hamstrings",
+      "injury_prevention"
+    ],
+    "equipment": [
+      "box",
+      "dumbbell",
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "unilateral__step_up__low",
+        "role": "prime",
+        "notes": "5 reps/côté, contrôle"
+      },
+      {
+        "exerciseId": "hamstrings__ham_catch",
+        "role": "stability",
+        "notes": "7 reps/côté, progressif"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side + 7/side"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side + 7/side"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side + 5/side"
+        },
+        "restSeconds": 150,
+        "rer": 1
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side + 5/side"
+        },
+        "restSeconds": 150,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Bloc prévention (ischios) + force unilatérale. Garder une marge, éviter les crampes."
+  },
+  {
+    "blockId": "BLK_FORCE_RDL_BAR_PLATE_01",
+    "name": "Force hinge (RDL barre)",
+    "intent": "force",
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "hinge__rdl__barbell",
+        "role": "prime",
+        "notes": "Amplitude contrôlée, dos neutre"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "7"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Bloc force basique, facile à assembler. À utiliser si le bloc drop RDL n’est pas adapté."
+  },
+  {
+    "blockId": "BLK_CORE_GHDISO_PALLOF_01",
+    "name": "Core rugby (GHD iso + Pallof)",
+    "intent": "core",
+    "tags": [
+      "core",
+      "anti_extension",
+      "anti_rotation"
+    ],
+    "equipment": [
+      "ghd",
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "core_anti_extension__ghd_iso",
+        "role": "stability",
+        "notes": "10–20s, bassin neutre"
+      },
+      {
+        "exerciseId": "core_anti_rotation__pallof_press__band",
+        "role": "stability",
+        "notes": "10-12/c, contrôle"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15s + 10/side"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15s + 10/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "20s + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "20s + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc tronc très transférable. Si pas de GHD, remplacer par dead bug (plus tard via mapping)."
+  },
+  {
+    "blockId": "BLK_NECK_FLEXION_ISO_01",
+    "name": "Nuque rugby (flexion + iso)",
+    "intent": "neck",
+    "tags": [
+      "neck",
+      "contact",
+      "injury_prevention"
+    ],
+    "equipment": [
+      "band",
+      "none"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "neck__flexion",
+        "role": "stability",
+        "notes": "10 reps contrôlées"
+      },
+      {
+        "exerciseId": "neck__isometric__band",
+        "role": "stability",
+        "notes": "20–30s iso"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 20s"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 20s"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 30s"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 30s"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Nuque progressive. Jamais de douleur. Stop si symptômes. Indispensable pour le contact."
+  },
+  {
+    "blockId": "BLK_CARRY_FARMER_PALLOF_01",
+    "name": "Carry + anti-rotation (farmer walk + Pallof)",
+    "intent": "carry",
+    "tags": [
+      "carry",
+      "core",
+      "grip"
+    ],
+    "equipment": [
+      "dumbbell",
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "wrist_pain",
+      "elbow_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "carry__farmer_walk__dumbbell",
+        "role": "prime",
+        "notes": "30m, posture haute"
+      },
+      {
+        "exerciseId": "core_anti_rotation__pallof_press__band",
+        "role": "stability",
+        "notes": "10-12/côté"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30m + 10/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30m + 10/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30m + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "40m + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Finisher très transférable (grip + tronc). Ajuster la charge sans casser la posture."
+  },
+  {
+    "blockId": "BLK_PULL_BALANCE_INCLINE_ROW_FACEPULL_01",
+    "name": "Équilibre tirage (rowing incliné + face pull)",
+    "intent": "hypertrophy",
+    "tags": [
+      "upper",
+      "pull",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "dumbbell",
+      "bench",
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "pull_horizontal__incline_bench_row__dumbbell",
+        "role": "prime",
+        "notes": "8-12 reps"
+      },
+      {
+        "exerciseId": "prehab_shoulder__face_pull__band",
+        "role": "stability",
+        "notes": "12-15 reps"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 15"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 15"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 12"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 12"
+        },
+        "restSeconds": 90,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Bloc équilibre/scapula. Parfait après des blocs de poussée lourde."
+  },
+  {
+    "blockId": "BLK_ACT_UPPER_SCAP_ROT_01",
+    "name": "Activation haut du corps (scap + rotation externe)",
+    "intent": "activation",
+    "tags": [
+      "upper",
+      "activation",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "prehab_shoulder__scap_pushup__bodyweight",
+        "role": "stability",
+        "notes": "Protraction complète, contrôle."
+      },
+      {
+        "exerciseId": "prehab_shoulder__external_rotation__band",
+        "role": "stability",
+        "notes": "Coude proche du corps."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-12"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 45,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Réveille la scapula et la coiffe pour des appuis stables."
+  },
+  {
+    "blockId": "BLK_ACT_UPPER_Y_WALL_01",
+    "name": "Activation épaules (Y raise + wall slide)",
+    "intent": "activation",
+    "tags": [
+      "upper",
+      "activation",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "band",
+      "dumbbell"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "prehab_shoulder__prone_y_raise__dumbbell",
+        "role": "stability",
+        "notes": "Lent, pas de triche."
+      },
+      {
+        "exerciseId": "prehab_shoulder__wall_slide__band",
+        "role": "stability",
+        "notes": "Dos collé au mur."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 45,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Épaules hautes, contrôle et amplitude propre."
+  },
+  {
+    "blockId": "BLK_NEURAL_UPPER_MEDBALL_01",
+    "name": "Neural haut du corps (med ball pass + pompes pliométriques)",
+    "intent": "neural",
+    "tags": [
+      "upper",
+      "neural",
+      "power",
+      "speed"
+    ],
+    "equipment": [
+      "med_ball"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain",
+      "elbow_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "power__medball_chest_pass__wall",
+        "role": "prime",
+        "notes": "Explosif, récup complète."
+      },
+      {
+        "exerciseId": "push_horizontal__push_up__plyo",
+        "role": "contrast",
+        "notes": "Qualité, stop avant dégradation."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Qualité > fatigue, puissance maximale par rep."
+  },
+  {
+    "blockId": "BLK_NEURAL_UPPER_LANDMINE_01",
+    "name": "Neural haut du corps (landmine press vitesse)",
+    "intent": "neural",
+    "tags": [
+      "upper",
+      "neural",
+      "power",
+      "speed"
+    ],
+    "equipment": [
+      "landmine",
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "power__landmine_press__speed",
+        "role": "prime",
+        "notes": "Bras rapide, trajectoire stable."
+      },
+      {
+        "exerciseId": "pull_horizontal__band_row__elbows_low",
+        "role": "stability",
+        "notes": "Rythme contrôlé, gainage."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Explosif et propre, pas de grind."
+  },
+  {
+    "blockId": "BLK_CONTRAST_UPPER_BENCH_PLYO_ROW_02",
+    "name": "Contrast haut du corps (bench + pompes plio + row)",
+    "intent": "contrast",
+    "tags": [
+      "upper",
+      "contrast",
+      "power"
+    ],
+    "equipment": [
+      "barbell",
+      "bench",
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_horizontal__bench_press__barbell",
+        "role": "prime",
+        "notes": "Barre rapide, contrôle."
+      },
+      {
+        "exerciseId": "push_horizontal__push_up__plyo",
+        "role": "contrast",
+        "notes": "Explosif, stop si vitesse chute."
+      },
+      {
+        "exerciseId": "pull_horizontal__band_row",
+        "role": "stability",
+        "notes": "Scapula active."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-3-8"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-3-8"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-3-8"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3-3-6"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Cherche la vitesse sur chaque rep, récupération complète."
+  },
+  {
+    "blockId": "BLK_CONTRAST_UPPER_LANDMINE_SAFE_01",
+    "name": "Contrast haut du corps (landmine + med ball + rotation externe)",
+    "intent": "contrast",
+    "tags": [
+      "upper",
+      "contrast",
+      "shoulder_health",
+      "power"
+    ],
+    "equipment": [
+      "landmine",
+      "med_ball",
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_vertical__landmine_press__kneeling",
+        "role": "prime",
+        "notes": "Trajectoire contrôlée."
+      },
+      {
+        "exerciseId": "power__medball_chest_pass__wall",
+        "role": "contrast",
+        "notes": "Explosif, relâche."
+      },
+      {
+        "exerciseId": "prehab_shoulder__external_rotation__band",
+        "role": "stability",
+        "notes": "Amplitude propre."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-6-10"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-6-10"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-5-8"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-4-8"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Option épaules sensibles, focus vitesse."
+  },
+  {
+    "blockId": "BLK_CONTRAST_UPPER_PULL_POWER_01",
+    "name": "Contrast tirage (T-bar + med ball + face pull)",
+    "intent": "contrast",
+    "tags": [
+      "upper",
+      "contrast",
+      "posterior_chain",
+      "power"
+    ],
+    "equipment": [
+      "tbar_row",
+      "med_ball",
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "pull_horizontal__tbar_row",
+        "role": "prime",
+        "notes": "Dos gainé, tirage explosif."
+      },
+      {
+        "exerciseId": "power__medball_chest_pass__wall",
+        "role": "contrast",
+        "notes": "Explosif, relâche."
+      },
+      {
+        "exerciseId": "prehab_shoulder__face_pull__band",
+        "role": "stability",
+        "notes": "Coude haut, contrôle."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-5-12"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-5-12"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-4-10"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-4-10"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Tirage explosif et scapula stable."
+  },
+  {
+    "blockId": "BLK_NECK_ISO_MULTI_01",
+    "name": "Cou isométrique multi-direction",
+    "intent": "neck",
+    "tags": [
+      "upper",
+      "neck",
+      "contact",
+      "scrum"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "neck__flexion_iso__band",
+        "role": "stability",
+        "notes": "Tête neutre, résistance progressive."
+      },
+      {
+        "exerciseId": "neck__extension_iso__band",
+        "role": "stability",
+        "notes": "Pas d’hyperextension."
+      },
+      {
+        "exerciseId": "neck__lateral_flexion_iso__band",
+        "role": "stability",
+        "notes": "Contrôle des appuis."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 15
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 25
+        },
+        "restSeconds": 60,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Stabilité du cou pour impacts et mêlée."
+  },
+  {
+    "blockId": "BLK_NECK_ISO_ROT_01",
+    "name": "Cou isométrique (rotation + flexion)",
+    "intent": "neck",
+    "tags": [
+      "upper",
+      "neck",
+      "contact",
+      "scrum"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "neck__rotation_iso__band",
+        "role": "stability",
+        "notes": "Oppose la rotation sans bouger."
+      },
+      {
+        "exerciseId": "neck__flexion",
+        "role": "stability",
+        "notes": "Amplitude contrôlée."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 15
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 25
+        },
+        "restSeconds": 60,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Cou solide = contact plus sûr."
+  },
+  {
+    "blockId": "BLK_CARRY_UPPER_OVERHEAD_01",
+    "name": "Carry overhead (stabilité épaules)",
+    "intent": "carry",
+    "tags": [
+      "upper",
+      "carry",
+      "shoulder_health",
+      "core"
+    ],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "carry__overhead_carry__dumbbell",
+        "role": "prime",
+        "notes": "Coude verrouillé, tronc gainé."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30-40m"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30-40m"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30-40m"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30-40m"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Stabilité overhead et gainage actif."
+  },
+  {
+    "blockId": "BLK_CORE_UPPER_ANTI_ROT_01",
+    "name": "Core anti-rotation (Pallof + side plank)",
+    "intent": "core",
+    "tags": [
+      "upper",
+      "core",
+      "anti_rotation"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "core_anti_rotation__pallof_press__band",
+        "role": "stability",
+        "notes": "Anti-rotation stricte."
+      },
+      {
+        "exerciseId": "core_anti_rotation__side_plank",
+        "role": "stability",
+        "notes": "Bassin stable."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10/side"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Stabilité du tronc pour les contacts."
+  },
+  {
+    "blockId": "BLK_ACT_LOWER_GROIN_01",
+    "name": "Activation bas du corps (adducteurs + gainage)",
+    "intent": "activation",
+    "tags": [
+      "lower",
+      "activation",
+      "groin"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "groin_adductors__ball_squeeze__supine",
+        "role": "stability",
+        "notes": "Compression progressive."
+      },
+      {
+        "exerciseId": "core_anti_extension__dead_bug",
+        "role": "stability",
+        "notes": "Respiration contrôlée."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 45,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 45,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Prépare les adducteurs et le tronc."
+  },
+  {
+    "blockId": "BLK_ACT_LOWER_GLUTE_HAM_01",
+    "name": "Activation bas du corps (ischios + mollets)",
+    "intent": "activation",
+    "tags": [
+      "lower",
+      "activation",
+      "posterior_chain",
+      "ankle"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "hamstring__bridge_iso__single_leg",
+        "role": "stability",
+        "notes": "Bassin stable."
+      },
+      {
+        "exerciseId": "calf__standing_raise__bodyweight",
+        "role": "stability",
+        "notes": "Montée contrôlée."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10/side"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side"
+        },
+        "restSeconds": 45,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10/side"
+        },
+        "restSeconds": 45,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Activation ischios + chevilles."
+  },
+  {
+    "blockId": "BLK_NEURAL_LOWER_JUMP_01",
+    "name": "Neural bas du corps (sauts explosifs)",
+    "intent": "neural",
+    "tags": [
+      "lower",
+      "neural",
+      "power",
+      "speed"
+    ],
+    "equipment": [
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "ankle_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "power__jump__box_jump",
+        "role": "prime",
+        "notes": "Atterrissage propre."
+      },
+      {
+        "exerciseId": "power__jump__broad_jump",
+        "role": "contrast",
+        "notes": "Max distance, contrôle."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": "2-3"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": "2-3"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "2-3"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "2-3"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Explosivité pure, stop si la qualité baisse."
+  },
+  {
+    "blockId": "BLK_NEURAL_LOWER_BOUND_01",
+    "name": "Neural bas du corps (bondissements)",
+    "intent": "neural",
+    "tags": [
+      "lower",
+      "neural",
+      "power",
+      "speed",
+      "unilateral"
+    ],
+    "equipment": [
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "ankle_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "power__bound__single_leg",
+        "role": "prime",
+        "notes": "Stabilité du bassin."
+      },
+      {
+        "exerciseId": "lower_jump__box_squat_jump",
+        "role": "contrast",
+        "notes": "Explosif, amplitude propre."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": "2/side"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": "2/side"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "2/side"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "2/side"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Explosif et propre, priorité à la technique."
+  },
+  {
+    "blockId": "BLK_CONTRAST_LOWER_SPLIT_SQUAT_01",
+    "name": "Contrast bas du corps (split squat + saut + copenhagen)",
+    "intent": "contrast",
+    "tags": [
+      "lower",
+      "contrast",
+      "unilateral",
+      "groin",
+      "power"
+    ],
+    "equipment": [
+      "dumbbell",
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "groin_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "lower_squat__split_squat__dumbbell",
+        "role": "prime",
+        "notes": "Amplitude contrôlée."
+      },
+      {
+        "exerciseId": "power__jump__vertical_jump",
+        "role": "contrast",
+        "notes": "Explosif, atterrissage propre."
+      },
+      {
+        "exerciseId": "groin_adductors__copenhagen_plank__short",
+        "role": "stability",
+        "notes": "Hanche stable."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6/side-3-15s"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6/side-3-15s"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side-3-20s"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4/side-3-20s"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Unilatéral puissant + contrôle adducteurs."
+  },
+  {
+    "blockId": "BLK_CONTRAST_LOWER_HINGE_BROAD_01",
+    "name": "Contrast bas du corps (RDL + broad jump + hollow)",
+    "intent": "contrast",
+    "tags": [
+      "lower",
+      "contrast",
+      "posterior_chain",
+      "power"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "hinge__rdl__barbell",
+        "role": "prime",
+        "notes": "Dos neutre, contrôle."
+      },
+      {
+        "exerciseId": "power__jump__broad_jump",
+        "role": "contrast",
+        "notes": "Explosif, réception propre."
+      },
+      {
+        "exerciseId": "core_anti_extension__hollow_hold",
+        "role": "stability",
+        "notes": "Ribs down."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-3-15s"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-3-15s"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-3-20s"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3-3-20s"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Hinge solide + puissance horizontale."
+  },
+  {
+    "blockId": "BLK_CONTRAST_LOWER_LUNGE_BOX_01",
+    "name": "Contrast bas du corps (reverse lunge + box jump + copenhagen)",
+    "intent": "contrast",
+    "tags": [
+      "lower",
+      "contrast",
+      "unilateral",
+      "groin",
+      "power"
+    ],
+    "equipment": [
+      "dumbbell",
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "groin_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "lower_lunge__reverse_lunge__dumbbell",
+        "role": "prime",
+        "notes": "Genou stable."
+      },
+      {
+        "exerciseId": "power__jump__box_jump",
+        "role": "contrast",
+        "notes": "Explosif, réception douce."
+      },
+      {
+        "exerciseId": "groin_adductors__copenhagen_plank__short",
+        "role": "stability",
+        "notes": "Hanche stable."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6/side-3-15s"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6/side-3-15s"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5/side-3-20s"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4/side-3-20s"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Contraste unilatéral pour changement d’appuis."
+  },
+  {
+    "blockId": "BLK_FORCE_LOWER_FRONT_SQUAT_02",
+    "name": "Force bas du corps (front squat + ab wheel)",
+    "intent": "force",
+    "tags": [
+      "lower",
+      "force",
+      "squat"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "squat__front_squat__barbell",
+        "role": "prime",
+        "notes": "Tronc solide, profondeur contrôlée."
+      },
+      {
+        "exerciseId": "core_anti_extension__ab_wheel__kneeling",
+        "role": "stability",
+        "notes": "Gainage, pas de cambrure."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-8"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-6"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-5"
+        },
+        "restSeconds": 210,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3-5"
+        },
+        "restSeconds": 210,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Force et gainage pour la mêlée et les rucks."
+  },
+  {
+    "blockId": "BLK_FORCE_LOWER_RDL_02",
+    "name": "Force bas du corps (RDL + leg curl)",
+    "intent": "force",
+    "tags": [
+      "lower",
+      "force",
+      "hinge",
+      "posterior_chain"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "hinge__rdl__barbell",
+        "role": "prime",
+        "notes": "Dos neutre, tempo contrôlé."
+      },
+      {
+        "exerciseId": "hamstring__slide_leg_curl__towel",
+        "role": "stability",
+        "notes": "Ischios brûlants, contrôle."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-8"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-6"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-6"
+        },
+        "restSeconds": 210,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3-5"
+        },
+        "restSeconds": 210,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Posterior chain solide pour accélérations."
+  },
+  {
+    "blockId": "BLK_FORCE_LOWER_BULGARIAN_01",
+    "name": "Force unilatérale (bulgarian split squat)",
+    "intent": "force",
+    "tags": [
+      "lower",
+      "force",
+      "unilateral"
+    ],
+    "equipment": [
+      "dumbbell",
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "lower_squat__bulgarian_split_squat__dumbbell",
+        "role": "prime",
+        "notes": "Genou aligné, tronc gainé."
+      },
+      {
+        "exerciseId": "calf__standing_raise__bodyweight",
+        "role": "stability",
+        "notes": "Contrôle et amplitude."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-8/side"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6/side"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-6/side"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-6/side"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Unilatéral pour stabilité et puissance."
+  },
+  {
+    "blockId": "BLK_PREHAB_GROIN_COPEN_01",
+    "name": "Préhab adducteurs (copenhagen + squeeze)",
+    "intent": "prehab",
+    "tags": [
+      "lower",
+      "prehab",
+      "groin"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "groin_adductors__copenhagen_plank__long",
+        "role": "stability",
+        "notes": "Contrôle, pas de douleur."
+      },
+      {
+        "exerciseId": "groin_adductors__ball_squeeze__supine",
+        "role": "stability",
+        "notes": "Compression progressive."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 15
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 25
+        },
+        "restSeconds": 60,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Prévention adducteurs pour changements d’appuis."
+  },
+  {
+    "blockId": "BLK_PREHAB_HAMSTRING_01",
+    "name": "Préhab ischios (nordic assisté + bridge iso)",
+    "intent": "prehab",
+    "tags": [
+      "lower",
+      "prehab",
+      "posterior_chain"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "hamstring__nordic__band_assist",
+        "role": "stability",
+        "notes": "Amplitude contrôlée."
+      },
+      {
+        "exerciseId": "hamstring__bridge_iso__single_leg",
+        "role": "stability",
+        "notes": "Bassin stable."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-6"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-6"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-6"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-5"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Ischios solides pour accélérations."
+  },
+  {
+    "blockId": "BLK_CORE_LOWER_ANTI_EXT_01",
+    "name": "Core anti-extension (front plank + ab wheel)",
+    "intent": "core",
+    "tags": [
+      "lower",
+      "core",
+      "anti_extension"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "core_anti_extension__front_plank",
+        "role": "stability",
+        "notes": "Ribs down, fessiers engagés."
+      },
+      {
+        "exerciseId": "core_anti_extension__ab_wheel__kneeling",
+        "role": "stability",
+        "notes": "Amplitude maîtrisée."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 25
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 25
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 60,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Gainage utile pour la transmission de force."
+  },
+  {
+    "blockId": "BLK_NEURAL_FULL_MEDBALL_01",
+    "name": "Neural full body (slam + saut)",
+    "intent": "neural",
+    "tags": [
+      "full",
+      "neural",
+      "power",
+      "speed"
+    ],
+    "equipment": [
+      "med_ball",
+      "box"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "knee_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "power__medball_slam__overhead",
+        "role": "prime",
+        "notes": "Explosif, gainage."
+      },
+      {
+        "exerciseId": "power__jump__vertical_jump",
+        "role": "contrast",
+        "notes": "Vitesse maximale."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": "3-5"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Explosivité globale, stop si la qualité baisse."
+  },
+  {
+    "blockId": "BLK_FORCE_FULL_HINGE_PRESS_01",
+    "name": "Force full body (RDL + bench)",
+    "intent": "force",
+    "tags": [
+      "full",
+      "force",
+      "hinge",
+      "upper"
+    ],
+    "equipment": [
+      "barbell",
+      "bench"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "hinge__rdl__barbell",
+        "role": "prime",
+        "notes": "Dos neutre."
+      },
+      {
+        "exerciseId": "push_horizontal__bench_press__barbell",
+        "role": "prime",
+        "notes": "Trajectoire stable."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-6"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-5"
+        },
+        "restSeconds": 210,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3-4"
+        },
+        "restSeconds": 210,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Force globale, transfert mêlée/contacts."
+  },
+  {
+    "blockId": "BLK_CARRY_FULL_FARMER_01",
+    "name": "Carry full body (farmer walk)",
+    "intent": "carry",
+    "tags": [
+      "full",
+      "carry",
+      "core"
+    ],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "carry__farmer_walk__dumbbell",
+        "role": "prime",
+        "notes": "Posture haute."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30-40m"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30-40m"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30-40m"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30-40m"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Gainage total et prise."
+  },
+  {
+    "blockId": "BLK_CORE_FULL_ANTI_ROT_01",
+    "name": "Core full body (Pallof + side plank)",
+    "intent": "core",
+    "tags": [
+      "full",
+      "core",
+      "anti_rotation"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "core_anti_rotation__pallof_press__band",
+        "role": "stability",
+        "notes": "Anti-rotation stricte."
+      },
+      {
+        "exerciseId": "core_anti_rotation__side_plank",
+        "role": "stability",
+        "notes": "Bassin stable."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10/side"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      }
+    ],
+    "coachingNotes": "Stabilité pour contacts et sprints."
+  }
+]

@@ -1,0 +1,304 @@
+{
+  "updatedAt": "2026-02-18T17:10:48.289Z",
+  "source": "wikidata",
+  "logos": {
+    "0001A": {
+      "status": "error",
+      "clubName": "RUGBY CLUB DE PIRAE",
+      "ligue": "POLYNESIE FRANCAISE",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:39.570Z"
+    },
+    "0002A": {
+      "status": "error",
+      "clubName": "PUNAAUIA RUGBY CLUB",
+      "ligue": "POLYNESIE FRANCAISE",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:39.735Z"
+    },
+    "0003A": {
+      "status": "error",
+      "clubName": "PAPEETE RUGBY CLUB",
+      "ligue": "POLYNESIE FRANCAISE",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:39.901Z"
+    },
+    "0004A": {
+      "status": "error",
+      "clubName": "RUGBY CLUB TARAVAO",
+      "ligue": "POLYNESIE FRANCAISE",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:40.067Z"
+    },
+    "0005A": {
+      "status": "error",
+      "clubName": "FAAA RUGBY ARO TAHITI",
+      "ligue": "POLYNESIE FRANCAISE",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:40.232Z"
+    },
+    "0006A": {
+      "status": "error",
+      "clubName": "RUGBY MOOREA",
+      "ligue": "POLYNESIE FRANCAISE",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:40.397Z"
+    },
+    "0007A": {
+      "status": "error",
+      "clubName": "AS PAEA",
+      "ligue": "POLYNESIE FRANCAISE",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:40.559Z"
+    },
+    "0008A": {
+      "status": "error",
+      "clubName": "TAPU RUGBY RAIATEA",
+      "ligue": "POLYNESIE FRANCAISE",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:40.724Z"
+    },
+    "4001Z": {
+      "status": "error",
+      "clubName": "F C AIX LES BAINS",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:40.887Z"
+    },
+    "4003B": {
+      "status": "error",
+      "clubName": "U S VINAY",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:41.053Z"
+    },
+    "4005D": {
+      "status": "error",
+      "clubName": "U S ANNECY",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:41.217Z"
+    },
+    "4006E": {
+      "status": "error",
+      "clubName": "R C ANNECY LE VIEUX",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:41.380Z"
+    },
+    "4007F": {
+      "status": "error",
+      "clubName": "RUGBY CLUB ANNEMASSIEN",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:41.543Z"
+    },
+    "4008G": {
+      "status": "error",
+      "clubName": "R C AUBENAS VALS",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:41.707Z"
+    },
+    "4009H": {
+      "status": "error",
+      "clubName": "R C MOTTERAIN",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:41.871Z"
+    },
+    "4012L": {
+      "status": "error",
+      "clubName": "R C BOURGUESAN",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:42.037Z"
+    },
+    "4013M": {
+      "status": "error",
+      "clubName": "RUGBY CLUB DU PAYS BRIANCONNAIS",
+      "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:42.201Z"
+    },
+    "4015P": {
+      "status": "error",
+      "clubName": "RUGBY CLUB CHABEUILLOIS",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:42.366Z"
+    },
+    "4016R": {
+      "status": "error",
+      "clubName": "STADE OLYMPIQUE CHAMBERIEN RUGBY SAVOIE MONT-BLANC",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:42.530Z"
+    },
+    "4022X": {
+      "status": "error",
+      "clubName": "U S DIEULEFIT BOURDEAUX",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "error": "fetch failed",
+      "searchedAt": "2026-02-18T17:09:42.697Z"
+    },
+    "4024Z": {
+      "status": "not_found",
+      "clubName": "AMICALE LAIQUE ECHIROLLES",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Échirolles",
+      "wikidataId": "Q211134",
+      "searchedAt": "2026-02-18T17:10:28.765Z"
+    },
+    "4025A": {
+      "status": "not_found",
+      "clubName": "RUGBY CLUB EYMEUX",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Eymeux",
+      "wikidataId": "Q381872",
+      "searchedAt": "2026-02-18T17:10:29.855Z"
+    },
+    "4026B": {
+      "status": "not_found",
+      "clubName": "A S FONTAINE",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Fontaine des Éléphants",
+      "wikidataId": "Q3076252",
+      "searchedAt": "2026-02-18T17:10:31.024Z"
+    },
+    "4028D": {
+      "status": "not_found",
+      "clubName": "GAP HAUTES ALPES RUGBY",
+      "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+      "wikipediaTitle": "Gap",
+      "wikidataId": "Q175081",
+      "searchedAt": "2026-02-18T17:10:32.007Z"
+    },
+    "4029E": {
+      "status": "not_found",
+      "clubName": "U S PAYS DE GEX RUGBY",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Football Club de Grenoble rugby",
+      "wikidataId": "Q1387142",
+      "searchedAt": "2026-02-18T17:10:33.178Z"
+    },
+    "4031G": {
+      "status": "not_found",
+      "clubName": "A S GRANOISE",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Championnat de France féminin de rugby à XV de 2e division fédérale",
+      "wikidataId": "Q60847120",
+      "searchedAt": "2026-02-18T17:10:34.197Z"
+    },
+    "4033J": {
+      "status": "not_found",
+      "clubName": "BASSIN DE CRUSSOL RUGBY",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Championnat de France de rugby à XV de 3e division fédérale 2025-2026",
+      "wikidataId": "Q136022517",
+      "searchedAt": "2026-02-18T17:10:34.926Z"
+    },
+    "4037N": {
+      "status": "not_found",
+      "clubName": "SAINT MARTIN D HERES RUGBY",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Saint-Martin-d'Hères",
+      "wikidataId": "Q243868",
+      "searchedAt": "2026-02-18T17:10:36.004Z"
+    },
+    "4038P": {
+      "status": "not_found",
+      "clubName": "F C GRENOBLE",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Football Club de Grenoble rugby",
+      "wikidataId": "Q1387142",
+      "searchedAt": "2026-02-18T17:10:37.066Z"
+    },
+    "4039R": {
+      "status": "not_found",
+      "clubName": "GRENOBLE UNIVERSITE CLUB",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Grenoble Université Club",
+      "wikidataId": "Q3116489",
+      "searchedAt": "2026-02-18T17:10:38.047Z"
+    },
+    "4041T": {
+      "status": "not_found",
+      "clubName": "GRENOBLE CATALANS DOMENE RUGBY",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Football Club Auch Gers",
+      "wikidataId": "Q779116",
+      "searchedAt": "2026-02-18T17:10:39.318Z"
+    },
+    "4042U": {
+      "status": "not_found",
+      "clubName": "U S IZEAUX",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Saint-Égrève",
+      "wikidataId": "Q1069745",
+      "searchedAt": "2026-02-18T17:10:40.491Z"
+    },
+    "4043V": {
+      "status": "not_found",
+      "clubName": "U S JARRIE CHAMPS",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Liste de sanctuaires mariaux en France",
+      "wikidataId": "Q3245070",
+      "searchedAt": "2026-02-18T17:10:41.456Z"
+    },
+    "4046Y": {
+      "status": "not_found",
+      "clubName": "LOVALI XV",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Loriol-sur-Drôme",
+      "wikidataId": "Q864107",
+      "searchedAt": "2026-02-18T17:10:42.392Z"
+    },
+    "4048A": {
+      "status": "not_found",
+      "clubName": "LA FRATERNELLE MOIRANS",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Championnat d'Europe de rugby à XV 2023-2024",
+      "wikidataId": "Q120644259",
+      "searchedAt": "2026-02-18T17:10:43.413Z"
+    },
+    "4049B": {
+      "status": "not_found",
+      "clubName": "R C VIF MONESTIER TRIEVES",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Vif (Isère)",
+      "wikidataId": "Q776983",
+      "searchedAt": "2026-02-18T17:10:44.522Z"
+    },
+    "4050C": {
+      "status": "not_found",
+      "clubName": "U S MONTMELIANAISE",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "searchedAt": "2026-02-18T17:10:44.898Z"
+    },
+    "4052E": {
+      "status": "not_found",
+      "clubName": "R C MATHEYSIN",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Nicolas Carmona",
+      "wikidataId": "Q3340175",
+      "searchedAt": "2026-02-18T17:10:45.752Z"
+    },
+    "4053F": {
+      "status": "not_found",
+      "clubName": "U S DEUX PONTS",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Stade toulousain",
+      "wikidataId": "Q431412",
+      "searchedAt": "2026-02-18T17:10:46.712Z"
+    },
+    "4054G": {
+      "status": "not_found",
+      "clubName": "ROYANS SPORTS",
+      "ligue": "AUVERGNE-RHÔNE-ALPES",
+      "wikipediaTitle": "Royan",
+      "wikidataId": "Q81909",
+      "searchedAt": "2026-02-18T17:10:48.128Z"
+    }
+  }
+}

@@ -1,0 +1,8828 @@
+[
+  {
+    "ligue": "POLYNESIE FRANCAISE",
+    "departmentCode": "OM",
+    "code": "0001A",
+    "name": "RUGBY CLUB DE PIRAE"
+  },
+  {
+    "ligue": "POLYNESIE FRANCAISE",
+    "departmentCode": "OM",
+    "code": "0002A",
+    "name": "PUNAAUIA RUGBY CLUB"
+  },
+  {
+    "ligue": "POLYNESIE FRANCAISE",
+    "departmentCode": "OM",
+    "code": "0003A",
+    "name": "PAPEETE RUGBY CLUB"
+  },
+  {
+    "ligue": "POLYNESIE FRANCAISE",
+    "departmentCode": "OM",
+    "code": "0004A",
+    "name": "RUGBY CLUB TARAVAO"
+  },
+  {
+    "ligue": "POLYNESIE FRANCAISE",
+    "departmentCode": "OM",
+    "code": "0005A",
+    "name": "FAAA RUGBY ARO TAHITI"
+  },
+  {
+    "ligue": "POLYNESIE FRANCAISE",
+    "departmentCode": "OM",
+    "code": "0006A",
+    "name": "RUGBY MOOREA"
+  },
+  {
+    "ligue": "POLYNESIE FRANCAISE",
+    "departmentCode": "OM",
+    "code": "0007A",
+    "name": "AS PAEA"
+  },
+  {
+    "ligue": "POLYNESIE FRANCAISE",
+    "departmentCode": "OM",
+    "code": "0008A",
+    "name": "TAPU RUGBY RAIATEA"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "73",
+    "code": "4001Z",
+    "name": "F C AIX LES BAINS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4003B",
+    "name": "U S VINAY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "4005D",
+    "name": "U S ANNECY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "4006E",
+    "name": "R C ANNECY LE VIEUX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "4007F",
+    "name": "RUGBY CLUB ANNEMASSIEN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "4008G",
+    "name": "R C AUBENAS VALS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "73",
+    "code": "4009H",
+    "name": "R C MOTTERAIN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "4012L",
+    "name": "R C BOURGUESAN"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "05",
+    "code": "4013M",
+    "name": "RUGBY CLUB DU PAYS BRIANCONNAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "4015P",
+    "name": "RUGBY CLUB CHABEUILLOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "73",
+    "code": "4016R",
+    "name": "STADE OLYMPIQUE CHAMBERIEN RUGBY SAVOIE MONT-BLANC"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "4022X",
+    "name": "U S DIEULEFIT BOURDEAUX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4024Z",
+    "name": "AMICALE LAIQUE ECHIROLLES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "4025A",
+    "name": "RUGBY CLUB EYMEUX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4026B",
+    "name": "A S FONTAINE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "05",
+    "code": "4028D",
+    "name": "GAP HAUTES ALPES RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "4029E",
+    "name": "U S PAYS DE GEX RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "4031G",
+    "name": "A S GRANOISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "4033J",
+    "name": "BASSIN DE CRUSSOL RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4037N",
+    "name": "SAINT MARTIN D HERES RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4038P",
+    "name": "F C GRENOBLE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4039R",
+    "name": "GRENOBLE UNIVERSITE CLUB"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4041T",
+    "name": "GRENOBLE CATALANS DOMENE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4042U",
+    "name": "U S IZEAUX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4043V",
+    "name": "U S JARRIE CHAMPS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "4046Y",
+    "name": "LOVALI XV"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4048A",
+    "name": "LA FRATERNELLE MOIRANS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4049B",
+    "name": "R C VIF MONESTIER TRIEVES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "73",
+    "code": "4050C",
+    "name": "U S MONTMELIANAISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4052E",
+    "name": "R C MATHEYSIN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4053F",
+    "name": "U S DEUX PONTS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4054G",
+    "name": "ROYANS SPORTS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "4056J",
+    "name": "S C PRIVADOIS RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4057K",
+    "name": "U S RENAGE RIVES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "4059M",
+    "name": "VALENCE ROMANS DROME RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "4060N",
+    "name": "R C ROMANAIS PEAGEOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "4061P",
+    "name": "RUGBY CLUB SAVOIE RUMILLY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "4062R",
+    "name": "R C FAUCIGNY SALLANCHES CLUSES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4064T",
+    "name": "R C SEYSSINOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4065U",
+    "name": "AS BIEVRE ST GEOIRS RUGBY CLUB"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "73",
+    "code": "4068X",
+    "name": "C A MAURIENNAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "4069Y",
+    "name": "S C ROYANNAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "4070Z",
+    "name": "R C ST JULIEN EN GENEVOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "4071A",
+    "name": "ENT CHATEAUNEUF ST MARCEL XV"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4072B",
+    "name": "ST MARCELLIN SPORT"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4073C",
+    "name": "R C CHARTREUSE NERON"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "4078H",
+    "name": "R C THONON CHABLAIS LEMAN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "4080K",
+    "name": "F C TOURNON TAIN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4081L",
+    "name": "R C TOUVET PONTCHARRA"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4082M",
+    "name": "U A TULLINS FURES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "73",
+    "code": "4083N",
+    "name": "S O UGINE ALBERTVILLE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4086S",
+    "name": "ETOILE SPORTIVE VAULNAVEYS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4088U",
+    "name": "U S ALBINOISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4089V",
+    "name": "U S VIZILLOISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "4090W",
+    "name": "STADE OLYMPIQUE VOIRON"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "68",
+    "code": "4092Y",
+    "name": "COLMAR R C"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "57",
+    "code": "4094A",
+    "name": "U S FORBACH RUGBY"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "57",
+    "code": "4096C",
+    "name": "ENT SPORTIVE HAGONDANGE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "67",
+    "code": "4097D",
+    "name": "RUGBY CLUB HAGUENAU"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "57",
+    "code": "4098E",
+    "name": "R U S HAYANGE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "54",
+    "code": "4102J",
+    "name": "U S BASSIN DE LONGWY"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "54",
+    "code": "4103K",
+    "name": "R C LUNEVILLOIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "57",
+    "code": "4104L",
+    "name": "R C METZ MOSELLE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "68",
+    "code": "4107P",
+    "name": "R C MULHOUSE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "54",
+    "code": "4112V",
+    "name": "R C PONT A MOUSSON"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "88",
+    "code": "4121E",
+    "name": "SAINT DIE - RAON L ETAPE - BACCARAT XV"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "52",
+    "code": "4122F",
+    "name": "CLUB OVALIE DE SAINT DIZIER"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "68",
+    "code": "4123G",
+    "name": "R C ST LOUIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "68",
+    "code": "4124H",
+    "name": "RUGBY CLUB THANN"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "55",
+    "code": "4127L",
+    "name": "S A VERDUNOIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "54",
+    "code": "4128M",
+    "name": "NANCY SEICHAMPS RUGBY"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "57",
+    "code": "4130P",
+    "name": "THIONVILLE YUTZ GENERATION R E"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4131R",
+    "name": "U S ADEENNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4132S",
+    "name": "U S ARGELESIENNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4135V",
+    "name": "STADE BAGNERAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4139Z",
+    "name": "U S CAPVERNOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4141B",
+    "name": "MAGNOAC F C"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4144E",
+    "name": "S A CONDOMOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4145F",
+    "name": "U S EAUZE D ARMAGNAC"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4146G",
+    "name": "A S FLEURANTINE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4148J",
+    "name": "ETOILE SPORTIVE GIMONTOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4150L",
+    "name": "U S L ISLOISE RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4152N",
+    "name": "U A LALOUBERIENNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4153P",
+    "name": "CERCLE AMICAL LANNEMEZANAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4154R",
+    "name": "U S LECTOUROISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4155S",
+    "name": "LOMBEZ SAMATAN CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4156T",
+    "name": "F C LOURDES XV HAUTES PYRENEES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4158V",
+    "name": "AVENIR MASSYLVAIN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4159W",
+    "name": "STADE O MAUBOURGUETOIS RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4160X",
+    "name": "R S MAUVEZINOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4165C",
+    "name": "A ATH NOGAROLIENNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4166D",
+    "name": "UNION SPORTIVE DU MARDAING AZEREIX / OSSUN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4168F",
+    "name": "OURSBELILLE BORDERES RUGBY CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4169G",
+    "name": "U S PLAISANTINE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4171J",
+    "name": "JSE SP RISCLOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4172K",
+    "name": "SEMEAC OL"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4173L",
+    "name": "C OL ST LARY SOULAN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4177R",
+    "name": "TOURNAY SPORTS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "4178S",
+    "name": "F C TRIAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4180U",
+    "name": "U A VICOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "4181V",
+    "name": "STADE VILLECOMTAL D ARROS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "49",
+    "code": "4182W",
+    "name": "S C O R C ANGERS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "4183X",
+    "name": "RUGBY CLUB BAULOIS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "4185Z",
+    "name": "S A CASTELBRIANTAIS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "49",
+    "code": "4186A",
+    "name": "R O CHOLETAIS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "85",
+    "code": "4189D",
+    "name": "FONTENAY LUCON RUGBY SUD VENDEE"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "53",
+    "code": "4190E",
+    "name": "R C LAVALLOIS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "4193H",
+    "name": "RUGBY SAINT HERBLAIN"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "4194J",
+    "name": "VELO SPORT NANTAIS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "4196L",
+    "name": "AILES SPORTIVES BOUGUENAIS - REZE RUGBY"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "85",
+    "code": "4197M",
+    "name": "F C Y RUGBY"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "85",
+    "code": "4198N",
+    "name": "R C SABLAIS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "49",
+    "code": "4199P",
+    "name": "SAUMUR RUGBY"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "85",
+    "code": "4200R",
+    "name": "RUGBY CLUB SAINT HILAIRE OCEAN"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "4202T",
+    "name": "R C TRIGNACAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4203U",
+    "name": "S C AIGUEPERSOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4204V",
+    "name": "R C BEAUMONTOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4206X",
+    "name": "BLANZAT ATH CLUB"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4207Y",
+    "name": "A S BORTOISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "43",
+    "code": "4208Z",
+    "name": "S C BRIVADOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4209A",
+    "name": "STADE CHAMALIEROIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4213E",
+    "name": "A S MONTFERRANDAISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4214F",
+    "name": "CLERMONT U C AUBIERE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4216H",
+    "name": "RUGBY CLERMONT LA PLAINE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4217J",
+    "name": "A S A I A LEMPDES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "4220M",
+    "name": "A S FORGERON COMMENTRYENS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "4221N",
+    "name": "S C A CUSSETOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "4222P",
+    "name": "A S DOMPIERROISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "4223R",
+    "name": "A S GANNATOISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4224S",
+    "name": "C A S GERZATOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4225T",
+    "name": "U S ISSOIRIENNE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "4231Z",
+    "name": "F C MOULINOIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "58",
+    "code": "4232A",
+    "name": "U S O N NEVERS RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "43",
+    "code": "4234C",
+    "name": "C O LE PUY RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4235D",
+    "name": "RUGBY CLUB RIOMOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4236E",
+    "name": "A S ROMAGNATOISE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "4237F",
+    "name": "R C YDES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4238G",
+    "name": "OL ST BONNET PRES RIOM"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "43",
+    "code": "4239H",
+    "name": "U S FLORINOISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "4240J",
+    "name": "R C ST FLOUR"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "58",
+    "code": "4242L",
+    "name": "ESPERANCE ST LEGER DES VIGNES RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "4243M",
+    "name": "S C ST POURCAIN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "4245P",
+    "name": "PAYS DE THIERS RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "4246R",
+    "name": "A S VARENNOISE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "58",
+    "code": "4247S",
+    "name": "A S AMICALE VAUZELLES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "4248T",
+    "name": "R C VICHY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4251W",
+    "name": "AVENIR ATURIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4252X",
+    "name": "ENTENTE ARAMITS ASASP"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4255A",
+    "name": "NORD BEARN XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4256B",
+    "name": "E S ARUDYENNE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4258D",
+    "name": "AVENIR BARCUS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4259E",
+    "name": "USEP GER SERON BEDEIL"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4260F",
+    "name": "U S ASPOISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4261G",
+    "name": "BENEJACQ OL EN VAL DU LAGOIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4262H",
+    "name": "R C BILLERE ASPTT LESCAR"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4263J",
+    "name": "AVENIR BIZANOS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4265L",
+    "name": "U S COARRAZE NAY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4267N",
+    "name": "GAN OLYMPIQUE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4273V",
+    "name": "U S B ARTHEZ LAGOR"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4274W",
+    "name": "OL OSSALOIS LARUNS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4276Y",
+    "name": "E S LEMBEYE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4278A",
+    "name": "R C LONSOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4279B",
+    "name": "S A MAULEONAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4281D",
+    "name": "U S MENDITTE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4282E",
+    "name": "ETOILE SPORTIVE MIRAMONTOISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4283F",
+    "name": "S A MONEIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4284G",
+    "name": "U S MORLANAISE RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4287K",
+    "name": "STADE NAVARRAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4289M",
+    "name": "F C OLORON"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4290N",
+    "name": "SECTION PALOISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4294T",
+    "name": "C ATH PONTACQ"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4296V",
+    "name": "A S PONT LONG"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4297W",
+    "name": "E SEVIGNACQ VALLEE DU GABAS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4298X",
+    "name": "U S JOSBAIG (ST GOIN)"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4299Y",
+    "name": "AVANT GARDE DE THEZE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4301A",
+    "name": "A S AUTUNOISE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "89",
+    "code": "4302B",
+    "name": "R C AUXERROIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4304D",
+    "name": "R C AUXONNAIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4305E",
+    "name": "C S BEAUNOIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4306F",
+    "name": "U S BOURBON LANCY"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4308H",
+    "name": "U S BUXYNOISE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4310K",
+    "name": "R C CHAGNOTIN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "42",
+    "code": "4314P",
+    "name": "ENT R CHAUFFAILLES CHARLIEU"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4316S",
+    "name": "CHENOVE RUGBY CLUB"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4317T",
+    "name": "U S CLUNISOISE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4319V",
+    "name": "S C COUCHOIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4320W",
+    "name": "CLUB OL CREUSOT BOURGOGNE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4321X",
+    "name": "F CLUB DIGOIN LA MOTTE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4322Y",
+    "name": "STADE DIJON COTE D OR"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4323Z",
+    "name": "R C DIJONNAIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4326C",
+    "name": "U S GENLIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4327D",
+    "name": "CHAMBERTIN OLYMPIQUE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "89",
+    "code": "4330G",
+    "name": "A S U C MIGENNES"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4331H",
+    "name": "RUGBY CLUB DU LOUHANNAIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4332J",
+    "name": "A S MACONNAISE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4334L",
+    "name": "RUGBY CLUB MONTBARD AUXOIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4335M",
+    "name": "R C MONTCEAU BOURGOGNE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4336N",
+    "name": "STADE MONTCHANINOIS BOURGOGNE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4337P",
+    "name": "C S NUITON"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4338R",
+    "name": "RUGBY CLUB XV CHAROLAIS BRIONNAIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "89",
+    "code": "4340T",
+    "name": "RUGBY CLUB SENONAIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "4342V",
+    "name": "ASC SAINT APOLLINAIRE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "89",
+    "code": "4346Z",
+    "name": "R C ORDON"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4347A",
+    "name": "R C ST MARTIN DU LAC"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "89",
+    "code": "4349C",
+    "name": "RUGBY TOUCY PUISAYE FORTERRE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "4350D",
+    "name": "AVENIR SPORTIF TOURNUS"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "4352F",
+    "name": "PAYS D'AURAY RUGBY CLUB"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "4357L",
+    "name": "GRANDCHAMP R C"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "4359N",
+    "name": "R C LANDIVISIEN"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "4363T",
+    "name": "R C BIGOUDEN PONT L'ABBE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "4364U",
+    "name": "R C QUIMPEROIS"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "4365V",
+    "name": "RENNES ETUDIANTS CLUB"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "4366W",
+    "name": "S C LE RHEU"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "22",
+    "code": "4367X",
+    "name": "R C ST BRIEUC"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "4369Z",
+    "name": "R C VANNETAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4370A",
+    "name": "U S AIGREFEUILLAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "4371B",
+    "name": "SOYAUX ANGOULEME XV CHARENTE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "79",
+    "code": "4374E",
+    "name": "CLUB OVALIE DU BOCAGE 79"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "4375F",
+    "name": "R C CONFOLENTAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "4376G",
+    "name": "U S COGNAC"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "4378J",
+    "name": "CLUB OMNISPORTS COURONNAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4379K",
+    "name": "FOURAS OLYMPIQUE CLUB"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4382N",
+    "name": "AMICALE RUGBY DE MARANS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "79",
+    "code": "4385S",
+    "name": "STADE NIORTAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "79",
+    "code": "4387U",
+    "name": "S A PARTHENAISIEN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "4388V",
+    "name": "STADE POITEVIN RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "4389W",
+    "name": "POITIERS ETUDIANTS CLUB"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4390X",
+    "name": "R OL PONTOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4391Y",
+    "name": "S A ROCHEFORT RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "4392Z",
+    "name": "U A LA ROCHEFOUCAULD"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4393A",
+    "name": "STADE ROCHELAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "4399G",
+    "name": "RUFFEC A C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4401J",
+    "name": "U S SAINTES RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4402K",
+    "name": "ROYAN SAUJON RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4404M",
+    "name": "S C SURGERIEN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4405N",
+    "name": "R A C ANGERIEN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4406P",
+    "name": "OLERON R C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "79",
+    "code": "4407R",
+    "name": "S A ST MAIXENTAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4408S",
+    "name": "SPORTING CLUB RHETAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "79",
+    "code": "4409T",
+    "name": "U S THOUARSAISE RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "4412W",
+    "name": "U S TREMBLADAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4414Y",
+    "name": "ENTENTE AMBARES SAINT LOUBES"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4418C",
+    "name": "U S BAZADAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4419D",
+    "name": "CL AT BORDEAUX BEGLES GIRONDE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4420E",
+    "name": "BISCARROSSE OLYMPIQUE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4423H",
+    "name": "STADE BLAYAIS RUGBY HT GIRONDE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4424J",
+    "name": "STADE BORDELAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4425K",
+    "name": "BORDEAUX E C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4431S",
+    "name": "ENTENTE SP BRUGES BLANQUEFORT"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4432T",
+    "name": "U A CADILLACAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4434V",
+    "name": "U S CASTILLONNAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4435W",
+    "name": "R C LEGE CAP FERRET"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4436X",
+    "name": "S C CAPTIEUX"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4439A",
+    "name": "BIGANOS RUGBY XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4441C",
+    "name": "GABARDAN A S"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4442D",
+    "name": "R C GRADIGNAN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4444F",
+    "name": "U ATH GUJAN MESTRAS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4446H",
+    "name": "JSE SP LABOUHEYRE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4447J",
+    "name": "STADE LANGONNAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4448K",
+    "name": "LEOGNAN RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4450M",
+    "name": "C A LORMONT HAUTS DE GARONNE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4451N",
+    "name": "A S MERIGNAC RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4452P",
+    "name": "U A MIMIZANNAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4455T",
+    "name": "PARENTIS SPORT RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4456U",
+    "name": "PAYS MEDOC RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4457V",
+    "name": "PESSAC RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4458W",
+    "name": "A S CULT PESSAC ALOUETTE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4459X",
+    "name": "STADE REOLAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4461Z",
+    "name": "RUGBY CLUB PAYS DE ROQUEFORT"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4462A",
+    "name": "U S SALLES"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4463B",
+    "name": "SANGUINET A C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4464C",
+    "name": "R C ST EULALIE EN BORN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4465D",
+    "name": "STADE FOYEN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4467F",
+    "name": "ST MEDARD EN JALLES R C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4470J",
+    "name": "RUGBY CLUB BASSIN D ARCACHON"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "4471K",
+    "name": "R C VILLENAVAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4472L",
+    "name": "JSE SP VILLENEUVE DE MARSAN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4473M",
+    "name": "YCHOUX OL"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4474N",
+    "name": "ANGLET OLYMPIQUE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4475P",
+    "name": "EMAK HOR RUGBY ARCANGUES / BASSUSSARRY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4477S",
+    "name": "AVIRON BAYONNAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4478T",
+    "name": "A S BAYONNAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4479U",
+    "name": "BIARRITZ OLYMPIQUE RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4480V",
+    "name": "BOUCAU TARNOS STADE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4481W",
+    "name": "U S CAMBO"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4482X",
+    "name": "CAPBRETON HOSSEGOR RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4484Z",
+    "name": "U S DAX RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4485A",
+    "name": "U S GRENADOISE RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4487C",
+    "name": "S A HAGETMAUTIEN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4488D",
+    "name": "HASPARREN A C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4489E",
+    "name": "STADE HENDAYAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4494K",
+    "name": "ENTENTE LESPERON ONESSE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4497N",
+    "name": "STADE MONTOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4498P",
+    "name": "A S MONTFORTOISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4499R",
+    "name": "U S MOUGUERRE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4500S",
+    "name": "U S MUGRONNAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4501T",
+    "name": "A S ONDRAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4502U",
+    "name": "U S ORTHEZ"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4504W",
+    "name": "PEYREHORADE SPORTS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4510C",
+    "name": "A S SOUSTONS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4511D",
+    "name": "SAINT JEAN DE LUZ OL"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4513F",
+    "name": "U S NAFARROA"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4515H",
+    "name": "U S ST PALAISIENNE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4516J",
+    "name": "ST PAUL SPORTS RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4517K",
+    "name": "ST PEE U C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4518L",
+    "name": "S A ST SEVERIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4519M",
+    "name": "U S TYROSSE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "4520N",
+    "name": "PEDALE STADE TARUSATE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "4521P",
+    "name": "A URRUGNARRAK"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "80",
+    "code": "4522R",
+    "name": "R C AMIENOIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "4523S",
+    "name": "RUGBY CLUB ARRAS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "4524T",
+    "name": "R C BETHUNOIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "4525U",
+    "name": "R C BOULONNAIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "4526V",
+    "name": "AMICALE DU RUGBY CALAISIEN"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4527W",
+    "name": "R OL CAMBRAISIEN"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "02",
+    "code": "4528X",
+    "name": "R C CHAUNOIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "08",
+    "code": "4529Y",
+    "name": "R OL CHARLEVILLE"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4531A",
+    "name": "RUGBY UNION DUNKERQUE LITTORAL"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4535E",
+    "name": "RUGBY CLUB HAZEBROUCK"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "02",
+    "code": "4537G",
+    "name": "R C LAON"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4540K",
+    "name": "LILLE RUGBY CLUB - IRIS 1924"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4541L",
+    "name": "OL MARCQUOIS RUGBY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4542M",
+    "name": "R C SAMBRE MAUBEUGE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "08",
+    "code": "4543N",
+    "name": "RETHEL S RUGBY XV"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4545R",
+    "name": "R C AMANDINOIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "4546S",
+    "name": "R C AUDOMAROIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "02",
+    "code": "4547T",
+    "name": "RACING CL ST QUENTINOIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4548U",
+    "name": "R OL C TOURQUENNOIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4549V",
+    "name": "R C VALENCIENNOIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "4550W",
+    "name": "LILLE METROPOLE RC VILLENEUVOIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "39",
+    "code": "4551X",
+    "name": "U S ARBOISIENNE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "90",
+    "code": "4552Y",
+    "name": "ENTENTE MONTBELIARD BELFORT ASCAP RUGBY"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "25",
+    "code": "4553Z",
+    "name": "OL BESANCON"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "39",
+    "code": "4555B",
+    "name": "CHAMPAGNOLE RUGBY"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "39",
+    "code": "4556C",
+    "name": "GRAND DOLE RUGBY"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "39",
+    "code": "4558E",
+    "name": "U S DOLOISE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "39",
+    "code": "4563K",
+    "name": "R C MOREZ HAUT JURA"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "25",
+    "code": "4564L",
+    "name": "C A PONTARLIER"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4566N",
+    "name": "RUGBY CLUB SEINE & OISE ACHERES"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4567P",
+    "name": "U S ALFORTVILLE RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4568R",
+    "name": "ANTONY METRO 92"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4573W",
+    "name": "ARPAJON RUGBY XV"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4574X",
+    "name": "U S O ATHIS MONS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4575Y",
+    "name": "RUGBY CLUB AUBERGENVILLE ELISABETHVILLE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4576Z",
+    "name": "RUGBY AULNAY CLUB"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "60",
+    "code": "4578B",
+    "name": "BEAUVAIS XV R C"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4580D",
+    "name": "BLANC MESNIL SPORTS RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4581E",
+    "name": "A C BOBIGNY 93 RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4583G",
+    "name": "A C B B BOULOGNE BILLANCOURT"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4586K",
+    "name": "ENTENTE R C C S BRETIGNY"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "51",
+    "code": "4590P",
+    "name": "C OL CHALONNAIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4593T",
+    "name": "RED STAR CLUB CHAMPIGNY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "60",
+    "code": "4594U",
+    "name": "R O C CANTILIEN"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4599Z",
+    "name": "C A CHEVREUSE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4600A",
+    "name": "R C CRETEIL CHOISY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4601B",
+    "name": "CLAMART RUGBY 92"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4605F",
+    "name": "C S CLICHY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "60",
+    "code": "4608J",
+    "name": "R C COMPIEGNOIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4610L",
+    "name": "A S CORBEIL ESSONNE/RC MENNECY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "4612N",
+    "name": "OLYMPIQUE COLUMERIEN ET PAYS FERTOIS RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4613P",
+    "name": "RUGBY CLUB DE COURBEVOIE"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "60",
+    "code": "4615S",
+    "name": "CLERMONT CLUB RUGBY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "60",
+    "code": "4616T",
+    "name": "XV CREPYNOIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4620X",
+    "name": "R C DOURDAN"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4621Y",
+    "name": "RUGBY CLUB DE DRANCY"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "51",
+    "code": "4622Z",
+    "name": "RUGBY EPERNAY CHAMPAGNE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4624B",
+    "name": "ETAMPES R C"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "4627E",
+    "name": "RUGBY SUD 77"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "4631J",
+    "name": "PARISIS RUGBY CLUB"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4632K",
+    "name": "A A S FRESNES"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4633L",
+    "name": "C O GARGENVILLE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4635N",
+    "name": "R O C GIFFOIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "4637R",
+    "name": "PROVINS RUGBY CLUB"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4640U",
+    "name": "R C VAL DE BIEVRE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4641V",
+    "name": "R CONFLANS HERBLAY VAL SEINE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "4644Y",
+    "name": "A S LAGNY RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4646A",
+    "name": "AMICALE LAIQUE DES JEUNES DE LIMAY RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4647B",
+    "name": "R C LIVRY GARGAN"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4650E",
+    "name": "M LAFFITTE ST GERMAIN POISSY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4653H",
+    "name": "ENT AS MARCOUSSIS US LIMOURS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4654J",
+    "name": "RUGBY CLUB MASSY ESSONNE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "4656L",
+    "name": "RUGBY MELUN COMBS SENART 77"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4657M",
+    "name": "ENT R C PLESSIS ROBINSON MEUDO"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4664V",
+    "name": "R C CHILLY MAZARIN"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "4668Z",
+    "name": "RUGBY CLUB DU PAYS DE NEMOURS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4669A",
+    "name": "R C NEUILLY SUR MARNE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4672D",
+    "name": "R C NOISY LE SEC"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "60",
+    "code": "4673E",
+    "name": "R C NOYONNAIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4675G",
+    "name": "C ATH ORSAY RUGBY CLUB"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "4676H",
+    "name": "GRETZ TOURNAN OZOIR RUGBY CENTRE 77"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4677J",
+    "name": "U S PALAISEAU"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4678K",
+    "name": "RUGBY OLYMPIQUE DE PANTIN"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4679L",
+    "name": "RACING CLUB DE FRANCE RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "75",
+    "code": "4680M",
+    "name": "PARIS UNIVERSITE CLUB"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "75",
+    "code": "4684S",
+    "name": "C S MINISTERE FINANCES PARIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "75",
+    "code": "4686U",
+    "name": "S C U F"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "75",
+    "code": "4687V",
+    "name": "STADE FRANCAIS PARIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "75",
+    "code": "4727N",
+    "name": "R C PARIS 15"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4737Z",
+    "name": "PLAISIR RUGBY CLUB"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "4740C",
+    "name": "U M S PONTAULT COMBAULT"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4745H",
+    "name": "RAMBOUILLET SPORTS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "51",
+    "code": "4746J",
+    "name": "STADE REIMS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4747K",
+    "name": "U S RIS ORANGIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "10",
+    "code": "4748L",
+    "name": "ROMILLY RUGBY CLUB"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4749M",
+    "name": "STADE OL ROSNEEN"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4751P",
+    "name": "RUEIL A C"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "4753S",
+    "name": "A AMICALE S SARCELLES"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4754T",
+    "name": "RUGBY VAL D ORGE SAVIGNY LONJUMEAU"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "60",
+    "code": "4755U",
+    "name": "R C SENLIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "02",
+    "code": "4756V",
+    "name": "AMICAL CLUB DE SOISSONS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "4757W",
+    "name": "RUGBY CLUB VALLEE DE MONTMORENCY SOISY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4758X",
+    "name": "ESPERANCE SPORTIVE STAINS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4759Y",
+    "name": "RUGBY CLUB SUCY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4760Z",
+    "name": "RUGBY CLUB DE SURESNES - HAUTS DE SEINE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4765E",
+    "name": "UNION RUGBY CENTRE 78 (URC78)"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4766F",
+    "name": "SAINTE GENEVIEVE SPORTS RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4768H",
+    "name": "ST DENIS U S"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4769J",
+    "name": "VIE AU GRAND AIR DE ST MAUR"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "4771L",
+    "name": "RED STAR OL AUDONIEN ST OUEN"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "4778U",
+    "name": "R C VERSAILLES"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "4780W",
+    "name": "R C PARIS NEUILLY SUR SEINE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4781X",
+    "name": "BONNEUIL VILLENEUVE BREVANNES"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4786C",
+    "name": "R C VINCENNES"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "4789F",
+    "name": "E S VITRY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "4790G",
+    "name": "R O YERROIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4792J",
+    "name": "BASSIN SUD MINERVOIS XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4793K",
+    "name": "CLUB ATHLETIQUE BEDARIEUX GRAND ORB RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4797P",
+    "name": "A S BEZIERS HERAULT"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4799S",
+    "name": "A S CHEMINOTS BITERROIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4808B",
+    "name": "RUGBY CLUB ALARIC"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4809C",
+    "name": "AVENIR BLEU ET BLANC"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4810D",
+    "name": "U S CARCASSONNAISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4812F",
+    "name": "R O CASTELNAUDARY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4814H",
+    "name": "LES RIVES D ORB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4818M",
+    "name": "RUGBY CLUB OLYMPIQUE DU SALAGOU COEUR D HERAULT"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4823T",
+    "name": "ENTENTE FLEURY SALLES COURSAN XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4824U",
+    "name": "ASSOCIATION OUVEILLAN CUXAC"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4825V",
+    "name": "RUGBY CLUB COUIZA ESPERAZA"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4828Y",
+    "name": "THAU RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4829Z",
+    "name": "AVIRON GRUISSANAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4832C",
+    "name": "SPORTING CLUB LEUCATE CORBIERES MEDITERRANEE XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "4837H",
+    "name": "S O MILLAVOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4845S",
+    "name": "R C NARBONNE MEDITERRANEE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4848V",
+    "name": "A S OLONZAC MINERVOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4850X",
+    "name": "RUGBY CLUB PALAVAS LES GENETS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4859G",
+    "name": "US QUILLAN LIMOUX HAUTE VALLEE DE L'AUDE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4866P",
+    "name": "SERVIAN BOUJAN RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "4870U",
+    "name": "U S SEVERAGAISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "4872W",
+    "name": "R C ST AFFRICAIN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4878C",
+    "name": "U S TREBEENNE XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "4879D",
+    "name": "CLUB OLYMPIQUE TAUCH CORBIERES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "4881F",
+    "name": "ENTENTE VENDRES LESPIGNAN SAUVIAN XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4883H",
+    "name": "U S ARGENTACOISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "23",
+    "code": "4884J",
+    "name": "RUGBY CLUB AUBUSSONNAIS 23 SUD"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "4885K",
+    "name": "STADE AURILLACOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4886L",
+    "name": "U S BEAULIEU"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "4887M",
+    "name": "C S BELLACHON"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4888N",
+    "name": "C A BRIVISTE CORREZE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4889P",
+    "name": "E V MALEMORT BRIVE OLYMPIQUE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4890R",
+    "name": "A S P O BRIVE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "4892T",
+    "name": "COMPOUND C A CAPDENACOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "4893U",
+    "name": "STADE MARIVALOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4896X",
+    "name": "A S JEUNES DE DAMPNIAT"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4897Y",
+    "name": "U S EGLETONNAISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "4898Z",
+    "name": "G S FIGEACOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "23",
+    "code": "4899A",
+    "name": "R C GUERETOIS CREUSE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "4905G",
+    "name": "U S A LIMOGES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "4913R",
+    "name": "R C MAURIACOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "4914S",
+    "name": "STADE MAURSOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4916U",
+    "name": "C A MEYMAC"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4917V",
+    "name": "A S MEYSSACOISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "4918W",
+    "name": "U S NANTIAT"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4919X",
+    "name": "NSL RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4920Y",
+    "name": "RUGBY CAUSSE VEZERE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4921Z",
+    "name": "UNION SPORTIVE NEUVICOISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4923B",
+    "name": "C A POMPADOUR"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4924C",
+    "name": "A S SEILHACOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "4925D",
+    "name": "U S SOUILLAGAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4927F",
+    "name": "C A ST AULAIRE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "4928G",
+    "name": "ST CERE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "4929H",
+    "name": "RACING CLUB ST CERNIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "4930J",
+    "name": "R C LES HIRONDELLES ST GERMAIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "4931K",
+    "name": "U S ST LEONARD"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "4932L",
+    "name": "A S ST JUNIEN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4933M",
+    "name": "ST PRIEST DE GIMEL A C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "4935P",
+    "name": "UNION SPORTIVE CUBLAC TERRASSON"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4936R",
+    "name": "SPORTING CLUB TULLE CORREZE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4938T",
+    "name": "U S USSEL"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4939U",
+    "name": "RUGBY CLUB UZERCHOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "4940V",
+    "name": "U S VARETZIENNE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4944Z",
+    "name": "BRIGNOLES PROVENCE XV"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4948D",
+    "name": "RUGBY CLUB HYERES CARQUEIRANNE LA CRAU"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4952H",
+    "name": "RUGBY CLUB DRAGUIGNAN"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "06",
+    "code": "4957N",
+    "name": "R OL GRASSE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "06",
+    "code": "4960S",
+    "name": "R C ANTIBES SOPHIA ANTIPOLIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4962U",
+    "name": "RUGBY CLUB DES PLAGES"
+  },
+  {
+    "ligue": "CORSE",
+    "departmentCode": "20",
+    "code": "4963V",
+    "name": "R C LUCCIANA"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "98",
+    "code": "4965X",
+    "name": "A S MONACO"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4973F",
+    "name": "RUGBY CLUB PIERREFEUCAIN"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4977K",
+    "name": "RUGBY CLUB SIX FOURS - LE BRUSC"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4979M",
+    "name": "U S SEYNOISE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4981P",
+    "name": "R C DE LA VALLEE DU GAPEAU"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "06",
+    "code": "4983S",
+    "name": "STADE LAURENTIN RUGBY"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4984T",
+    "name": "C A ST RAPHAEL FREJUS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4985U",
+    "name": "R C TOULONNAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "4993C",
+    "name": "RUGBY CLUB LA VALETTE LE REVEST LA GARDE LE PRADET"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "4994D",
+    "name": "AMBERIEU BUGEY XV"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "4996F",
+    "name": "A S AMPUIS COTE ROTIE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "4997G",
+    "name": "C S ANNONAY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "4999J",
+    "name": "RUGBY ENTENTE EST LYONNAIS XV"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5000K",
+    "name": "U S BEAUREPAIROISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5002M",
+    "name": "U S BELLEGARDE COUPY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5003N",
+    "name": "R C BELLEVILLOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5004P",
+    "name": "BUGEY OL CLUB BELLEY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5005R",
+    "name": "C S BOURGOIN JALLIEU"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5006S",
+    "name": "U S BRESSANE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5007T",
+    "name": "STADE ATH BOURG EN BRESSE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5008U",
+    "name": "CHASSIEU RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5010W",
+    "name": "R C RHODANIEN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5012Y",
+    "name": "U S COTES D AREY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5013Z",
+    "name": "U A COTOISE (COTE ST ANDRE)"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5014A",
+    "name": "A S COURS LA VILLE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "42",
+    "code": "5018E",
+    "name": "R C FOREZIEN FEURS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5021H",
+    "name": "S O GIVORS RUGBY 2 VALLEES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5023K",
+    "name": "LYON OL U"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5026N",
+    "name": "SAINT PRIEST RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5028R",
+    "name": "RHONE SPORTIF"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5030T",
+    "name": "ENT MUN ET SPORTIVE DE BRON"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5033W",
+    "name": "E M D PLAINE DE L AIN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5034X",
+    "name": "U S MEYZIEU"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5036Z",
+    "name": "U S NANTUA PORT RUG HAUT BUGEY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5039C",
+    "name": "U S OYONNAX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5040D",
+    "name": "RHODIA CL PEAGE ROUS ET SAL"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5041E",
+    "name": "S O PONT CHERUY CHARVIEU CHAVANOZ"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5043G",
+    "name": "R C RILLIEUX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "42",
+    "code": "5044H",
+    "name": "A S ROANNAISE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "39",
+    "code": "5047L",
+    "name": "F C SAN CLAUDIEN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5050P",
+    "name": "RUGBY PAYS SAINT JEANNAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "5054U",
+    "name": "R C RAMBERTOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5055V",
+    "name": "ETOILE DU BUGEY RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5057X",
+    "name": "SAINT SAVIN SPORTIF"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "5058Y",
+    "name": "U S VALLOIRE GALAURE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5059Z",
+    "name": "RUGBY CLUB DU PAYS D OZON"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5060A",
+    "name": "S C TARARE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5062C",
+    "name": "RUGBY CLUB VALLONS DE LA TOUR"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5064E",
+    "name": "U S VENISSIEUX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5067H",
+    "name": "ASS VERPILLIERE NORD ISERE XV"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5068J",
+    "name": "C S VIENNE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5069K",
+    "name": "C S VILLEFRANCHE SUR SAONE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5070L",
+    "name": "R C VILLENEUVOIS V DE MARC"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "5071M",
+    "name": "A S VILLEURBANNAISE E.L."
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "61",
+    "code": "5072N",
+    "name": "R C ALENCON"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "5073P",
+    "name": "C S ANDELYS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "61",
+    "code": "5074R",
+    "name": "R C ARGENTAN"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "5075S",
+    "name": "S C BERNAY"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5076T",
+    "name": "SOC E PH BLANGY BOUTTENCOURT"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "14",
+    "code": "5077U",
+    "name": "STADE CAENNAIS RUGBY CLUB"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "50",
+    "code": "5080X",
+    "name": "R C CHERBOURG HAGUE"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5082Z",
+    "name": "DIEPPE UNIVERSITAIRE CLUB"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5083A",
+    "name": "C OMN REGION ELBEUVIENNE"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5084B",
+    "name": "R C BRESLE (EU)"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "5085C",
+    "name": "EVREUX A C RUGBY"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5086D",
+    "name": "FECAMPOISE R C"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "61",
+    "code": "5087E",
+    "name": "R C FLERS ET PAYS DU BOCAGE"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "50",
+    "code": "5089G",
+    "name": "R C GRANVILLAIS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5090H",
+    "name": "ALL CES LEVILLAIN G. QUEVILLY"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5091J",
+    "name": "C S GRAVENCHON"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5092K",
+    "name": "HAVRE A C"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5093L",
+    "name": "RUGBY CLUB PORT DU HAVRE"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5094M",
+    "name": "HAVRE RUGBY CLUB"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "14",
+    "code": "5095N",
+    "name": "R C HEROUVILLAIS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "14",
+    "code": "5096P",
+    "name": "RUGBY ATHLETIC CLUB HONFLEURAIS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "61",
+    "code": "5097R",
+    "name": "C A AIGLON"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "14",
+    "code": "5098S",
+    "name": "SECTION LEXOVIENNE RUGBY"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "72",
+    "code": "5099T",
+    "name": "C OL PONTLIEUE"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "72",
+    "code": "5100U",
+    "name": "R C MANS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5105Z",
+    "name": "XV COURONNAIS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "5106A",
+    "name": "R C PONT AUDEMER"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "5110E",
+    "name": "RUGBY CLUB MONT SAINT AIGNAN"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "50",
+    "code": "5112G",
+    "name": "R C ST LOIS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "5115K",
+    "name": "STADE PORTE NORMANDE VERNON"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "36",
+    "code": "5117M",
+    "name": "U S ARGENTONNAISE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "5118N",
+    "name": "A C AUBIGNY"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "41",
+    "code": "5120R",
+    "name": "R C BLAISOIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "5121S",
+    "name": "BOURGES XV"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "41",
+    "code": "5123U",
+    "name": "U S BRACIEUX"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "5124V",
+    "name": "R C GIEN BRIARE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "36",
+    "code": "5125W",
+    "name": "BUZANCAIS RUG VAL INDRE BRENNE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "58",
+    "code": "5126X",
+    "name": "A S POUGUES LA CHARITE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "36",
+    "code": "5128Z",
+    "name": "R A C CASTELROUSSIN"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "28",
+    "code": "5129A",
+    "name": "C'CHARTRES RUGBY"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "36",
+    "code": "5130B",
+    "name": "U S LA CHATRE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "5131C",
+    "name": "S C CHINONAIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "36",
+    "code": "5133E",
+    "name": "R C DEOLOIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "28",
+    "code": "5135G",
+    "name": "R C DROUAIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "36",
+    "code": "5136H",
+    "name": "R C ISSOUDUN"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "5137J",
+    "name": "U S JOUE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "41",
+    "code": "5138K",
+    "name": "A S LAMOTTOISE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "5139L",
+    "name": "LOCHES R O C"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "5140M",
+    "name": "U S M MONTARGIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "28",
+    "code": "5141N",
+    "name": "R C P NOGENT LE ROTROU"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "5143R",
+    "name": "R C ORLEANS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "5144S",
+    "name": "R C ORLEANS LA SOURCE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "5146U",
+    "name": "U S PITHIVERIENNE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "41",
+    "code": "5147V",
+    "name": "R C ROMORANTIN SOLOGNE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "41",
+    "code": "5148W",
+    "name": "AS SALBRIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "5149X",
+    "name": "RUGBY SANCERROIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "5150Y",
+    "name": "OVAL CLUB SANCOINNAIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "5151Z",
+    "name": "ENT S C ST AMAND ET R C ORVAL"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "5152A",
+    "name": "U S ST FLORENT SUR CHER"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "41",
+    "code": "5153B",
+    "name": "CLUB ATH ST LAURENT RUGBY"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "5154C",
+    "name": "U S ST PIERRE DES CORPS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "5155D",
+    "name": "U S TOURS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "41",
+    "code": "5157F",
+    "name": "U S VENDOMOISE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "5158G",
+    "name": "S A VIERZONNAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5160J",
+    "name": "S U AGEN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5162L",
+    "name": "STADE BELVESOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5163M",
+    "name": "US BERGERACOISE VALLEE DORDOGNE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5167S",
+    "name": "A S CAPELAINE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5168T",
+    "name": "UNION SPORTIVE CASTELJALOUX"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5169U",
+    "name": "A S CASTELMORON XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5170V",
+    "name": "U S CASTILLONNESIENNE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5171W",
+    "name": "ALLIANCE OVALIENNE CAUDECOSTOISE EN BRULHOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5174Z",
+    "name": "C OL COLAYRACAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5176B",
+    "name": "XV HAUT PERIGORD"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5177C",
+    "name": "AMICALE SPORTIVE EYMETOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "5179E",
+    "name": "GOURDON XV BOURIANE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5180F",
+    "name": "U A ISSIGEACOISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5181G",
+    "name": "U S LALINDE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5182H",
+    "name": "U S VEZERIENNE LE LARDIN ST LAZARE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5183J",
+    "name": "U S ROQUENTIN LAROQUE TIMBAUT"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5185L",
+    "name": "A S LAYRACAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5186M",
+    "name": "UNION SPORTIVE MARMANDAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5187N",
+    "name": "R C MEZINAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5188P",
+    "name": "A S MIRAMONTAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5190S",
+    "name": "U S MONFLANQUINOISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5191T",
+    "name": "ESPERANCE SPORTIVE MONTIGNAC"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5192U",
+    "name": "STADE MONPAZIEROIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5193V",
+    "name": "S A MONTPONNAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5194W",
+    "name": "R C MUSSIDANAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5195X",
+    "name": "U S NERACAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5197Z",
+    "name": "C S NONTRONNAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5198A",
+    "name": "A S LE PASSAGE RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5200C",
+    "name": "A S PENNE ST SYLVESTRE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5201D",
+    "name": "C A PERIGOURDIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5202E",
+    "name": "C OL PERIGUEUX OUEST"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5205H",
+    "name": "C A RIBERACOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5206J",
+    "name": "C A SARLADAIS PERIGORD NOIR"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5207K",
+    "name": "UNION SAINT ASTIER NEUVIC"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5208L",
+    "name": "S C SAINT AUBIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5209M",
+    "name": "RUGBY CLUB BAZEILLAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5210N",
+    "name": "ST CYPRIEN A C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5212R",
+    "name": "STADE SAINT LIVRADAIS XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5215U",
+    "name": "S A TRELISSACOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5216V",
+    "name": "U A VERNOISE VERGT"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5217W",
+    "name": "U S VILLEFRANCHOISE DU PERIGORD"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5219Y",
+    "name": "U S VILLEREALAISE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5220Z",
+    "name": "PROVENCE RUGBY"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5221A",
+    "name": "AIX UNIVERSITE RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "5222B",
+    "name": "RUGBY CLUB CEVENOL"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5224D",
+    "name": "R C ARLESIEN XV"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5225E",
+    "name": "RUGBY CLUB AUBAGNAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "5227G",
+    "name": "R C BAGNOLS MARCOULE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5228H",
+    "name": "AVENIR SPORTIF DE BEDARRIDES CHATEAUNEUF DU PAPE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5230K",
+    "name": "C O BERRE XV"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5232M",
+    "name": "BOLLENE R C"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5233N",
+    "name": "PENNES MIRABEAU CADENEAUX RUG"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5235R",
+    "name": "STADE UNION CAVAILLONNAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5237T",
+    "name": "R C CHATEAURENARD"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "04",
+    "code": "5239V",
+    "name": "R C DIGNOIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5240W",
+    "name": "GARDANNE R C"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5241X",
+    "name": "BOXELAND CLUB L'ISLOIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5246C",
+    "name": "S M U C"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5254L",
+    "name": "R C MIRAMAS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "5255M",
+    "name": "U MONTILIEN S DROME PROVENCAL"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5256N",
+    "name": "ETOILE SP MONTEUX"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "5257P",
+    "name": "RUGBY CLUB NIMOIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5260T",
+    "name": "R C PERTUISIEN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "5261U",
+    "name": "RUGBY CLUB TRICASTIN"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5262V",
+    "name": "R O PLANAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5263W",
+    "name": "MARTIGUES PORT DE BOUC RC"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "5265Y",
+    "name": "A S SALINDROISE RUGBY"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5266Z",
+    "name": "S C SALONAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "04",
+    "code": "5267A",
+    "name": "C OL SISTERONNAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5269C",
+    "name": "RUGBY CLUB SORGUES RHONE OUVEZE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5271E",
+    "name": "ET SP ST SATURNIN LES AVIGNON"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5273G",
+    "name": "R C TARASCON"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5274H",
+    "name": "R C VAISONNAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5275J",
+    "name": "U S VALREASSIENNE RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "5276K",
+    "name": "RUGBY CLUB LES ANGLES GARD RHODANIEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5278M",
+    "name": "U S CANTON D'ALBAN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5279N",
+    "name": "S C ALBI"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5280P",
+    "name": "TOULOUSE LALANDE AUCAMVILLE XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5282S",
+    "name": "S A AUTERIVAIN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5283T",
+    "name": "BALMA OLYMPIQUE RUGBY CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5285V",
+    "name": "ST BEAUMONTOIS LOMAGNE RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5287X",
+    "name": "BLAGNAC SPORTING CLUB RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5288Y",
+    "name": "U S BOULONNAISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5291B",
+    "name": "ASSOCIATION SPORTIVE BRESSOLAISE XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5292C",
+    "name": "CAGNAC BLAYE LES MINES RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "5293D",
+    "name": "CAHORS RUGBY ST CADURCIEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5294E",
+    "name": "HERS LAURAGAIS XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5295F",
+    "name": "JSE SP CARAMANAISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5297H",
+    "name": "U S CARMAUX RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "5298J",
+    "name": "LEVEZOU SEGALA AVEYRON XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5299K",
+    "name": "AVENIR CASTANEEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "5301M",
+    "name": "C O CASTELNAUDAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5302N",
+    "name": "C A CASTELSARRASINOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5303P",
+    "name": "CASTRES OL"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5304R",
+    "name": "AVIRON CASTRAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5306T",
+    "name": "U S CAUSSADAISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5307U",
+    "name": "U S COLOMIERS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5308V",
+    "name": "RACING CLUB DE LA SAUDRUNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5309W",
+    "name": "U S L'ARIZE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "5310X",
+    "name": "SG C DECAZEVILLOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "5312Z",
+    "name": "R C ESPALIONNAIS NORD AVEYRON"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "5314B",
+    "name": "RUGBY FLAGNAC BASSIN AVEYRON"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5315C",
+    "name": "U S FUXEENNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5317E",
+    "name": "S C GRAULHET"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5318F",
+    "name": "GRENADE SPORTS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5319G",
+    "name": "S C GRISOLLAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5320H",
+    "name": "S C L'HONOR DE COS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5321J",
+    "name": "U S L'ISLOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5322K",
+    "name": "AMICALE SPORTIVE LISLOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5323L",
+    "name": "A C LABASTIDE BEAUVOIR"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5324M",
+    "name": "A S BASTIDIENNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5325N",
+    "name": "OLYMPIQUE DES MONTS DE LACAUNE ET DU PLATEAU DES LACS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5326P",
+    "name": "ENTENTE SPORTIVE LAROQUE BELESTA"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5329T",
+    "name": "ASV LAVAUR"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5330U",
+    "name": "STADE LAVELANETIEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5331V",
+    "name": "RUGBY CARBONNE LONGAGES XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "5332W",
+    "name": "U S LUZECHOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5333X",
+    "name": "U S MAS D'AZIL"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5334Y",
+    "name": "S C MAZAMET"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5335Z",
+    "name": "MAZERES CASSAGNE SPORTS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5336A",
+    "name": "R C MIRAPICIEN XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5337B",
+    "name": "AVENIR MOISSAGAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5339D",
+    "name": "U S MONTAUBAN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5340E",
+    "name": "R C MONTALBANAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5342G",
+    "name": "COQUELICOTS MONTECHOIS RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5343H",
+    "name": "AM SP MONTESQUIEU VOLVESTRE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5344J",
+    "name": "U S MONTREJEAU GOURDAN POLIGNAN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5345K",
+    "name": "RUGBY CLUB MURETAIN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5346L",
+    "name": "S C NEGREPELISSIEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5347M",
+    "name": "SPORTING CLUB APPAMEEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5349P",
+    "name": "U S PORTESIENNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5351S",
+    "name": "PUYLAURENS A C"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5352T",
+    "name": "STADE ATH RABASTENS COUFFOULEU"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5353U",
+    "name": "U S RAMONVILLE STE AGNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5354V",
+    "name": "R C REVELOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5356X",
+    "name": "S C RIEUMOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5358Z",
+    "name": "ROQUES OLYMPIQUE CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5360B",
+    "name": "RACING CLUB SALVETAT PLAISANCE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5361C",
+    "name": "U A SAVERDUNOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5362D",
+    "name": "U S HAUT SALAT"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5364F",
+    "name": "U S STE FOY DE PEYROLIERES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5365G",
+    "name": "STADE ST GAUDINOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5366H",
+    "name": "SAINT GIRONS SPORTING CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5367J",
+    "name": "ST JUERY ARTHES OL RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5368K",
+    "name": "U S CANTON ST LYS SECTION RUG"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5370M",
+    "name": "U S ST SULPICIENNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "5371N",
+    "name": "U S TARASCON XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5372P",
+    "name": "STADE TOULOUSAIN RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5373R",
+    "name": "TOULOUSE U C"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5374S",
+    "name": "FOOTBALL CLUB TOAC TOEC RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5386E",
+    "name": "TOULOUSE ATH C/LA FOURGUETTE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5388G",
+    "name": "TOULOUSE ELECTROGAZ CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5399U",
+    "name": "ASSOCIATION SPORTIVE DE L'UNION RUGBY XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5400V",
+    "name": "AVENIR VALENCIEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "82",
+    "code": "5404Z",
+    "name": "U S VERDUNOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5405A",
+    "name": "U S VERFEILLOISE SECT RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5407C",
+    "name": "F C VILLEFRANCHE DE LAURAGAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "5408D",
+    "name": "AVENIR VILLEFRANCHOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5409E",
+    "name": "UNION SPORTIVE VILLEMUR FRONTON"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5410F",
+    "name": "ETOILE SP VILLENOUVELLOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "5411G",
+    "name": "AVENIR OL VIVIEZ"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5415L",
+    "name": "AS BOMPAS XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5420S",
+    "name": "CERET SPORTIF"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5421T",
+    "name": "JEUNESSE SPORTIVE ILLIBERIENNE / LATOUR / THEZA"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5423V",
+    "name": "U S MILLAS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5425X",
+    "name": "U S A PERPIGNAN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5427Z",
+    "name": "F LAIQUE HT VERNET (PERPIGNAN)"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5429B",
+    "name": "RUGBY MOULIN A VENT PERPIGNAN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5430C",
+    "name": "ENTENTE LA TET"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5432E",
+    "name": "UNION CATALANE POLLESTRES BAGES VILLENEUVE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5435H",
+    "name": "JEUNESSE OLYMPIQUE PRADEENNE CONFLENT CANIGOU"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5443S",
+    "name": "U S THUIRINOISE"
+  },
+  {
+    "ligue": "MARTINIQUE",
+    "departmentCode": "97",
+    "code": "5450Z",
+    "name": "S S GOOD LUCK FORT DE FRANCE"
+  },
+  {
+    "ligue": "MARTINIQUE",
+    "departmentCode": "97",
+    "code": "5452B",
+    "name": "U S ROBERT"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "5456F",
+    "name": "OLYMPIQUE DE NOUMEA"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "5471X",
+    "name": "R C ST PIERRE ET DU SUD"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "5473Z",
+    "name": "C LEO LAGRANGE ARMENTIERES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "5476C",
+    "name": "UNION SPORTIVE VEORE XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "5485M",
+    "name": "MONTPELLIER R C"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "5489S",
+    "name": "R C ARPAJON VEINAZES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "5496Z",
+    "name": "RUGBY CANTON PUY L'EVEQUE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5500D",
+    "name": "SOR AGOUT XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5501E",
+    "name": "UNION CAZERES LE FOUSSERET XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5514U",
+    "name": "U S VIELMUROISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5517X",
+    "name": "R C BON ENCONTRE BOE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5519Z",
+    "name": "ENTENTE SP MONTANS PEYROLE CADALEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5523D",
+    "name": "RUGBY CLUB SAINT JORY BRUGUIERES XV"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "5537U",
+    "name": "R OL C BRUZOIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "5538V",
+    "name": "CERCLE JULES FERRY RUGBY FLEURY LES AUBRAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "5539W",
+    "name": "ETOILE SP EYSINAISE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "5541Y",
+    "name": "R O C HOUILLES CARRIERES SEINE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "5547E",
+    "name": "C R ANCIZES COMPS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "70",
+    "code": "5550H",
+    "name": "R C VESOUL"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "5554M",
+    "name": "U S ST MANDRIER"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "5558S",
+    "name": "R C L ISLE ADAM"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "5560U",
+    "name": "JSE SP GRAMATOISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "5561V",
+    "name": "RUGBY CLUB LE MOLE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "43",
+    "code": "5565Z",
+    "name": "R C LANGEADOIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "5568C",
+    "name": "C S M GENNEVILLOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "5572G",
+    "name": "R O LUNELLOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "5578N",
+    "name": "RUGBY CLUB BRETENOUX BIARS VAYRAC"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "41",
+    "code": "5579P",
+    "name": "RUGBY CLUB MONTOIRIEN"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "5580R",
+    "name": "U S ORLEANAISE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "5581S",
+    "name": "FOECY OVALE CLUB"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "5586X",
+    "name": "RUG ENT ESVRES MONTBAZON"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "971",
+    "code": "5589A",
+    "name": "BOISRIPEAUX RUGBY CLUB ABYMES"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "971",
+    "code": "5590B",
+    "name": "BASSE TERRE RUG UN CLUBS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "5592D",
+    "name": "RUGBY CLUB DES LANDES"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "5599L",
+    "name": "R C PERNOIS"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "971",
+    "code": "5600M",
+    "name": "LE GOOD LUCK"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "5603R",
+    "name": "RC CLERMONT COURNON D AUVERGNE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "5605T",
+    "name": "A S NARROSSAISE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "22",
+    "code": "5607V",
+    "name": "DINAN RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "5608W",
+    "name": "A S ELGARREKIN ASCAIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "5617F",
+    "name": "A S LACANAU"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5618G",
+    "name": "U S LANQUAIS VARENNES"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "5623M",
+    "name": "RUGBY CLUB L'AURENCE LIMOGES"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "5625P",
+    "name": "INTHALATZ LARRESSORE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "5626R",
+    "name": "BREST U C"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "5629U",
+    "name": "ETOILE SP VINASSANAISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "5638D",
+    "name": "A L CISTERNES LA FORET"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "5639E",
+    "name": "R C PORNICAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "5643J",
+    "name": "A S ST AUBIN DE MEDOC"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "73",
+    "code": "5647N",
+    "name": "U S LA RAVOIRE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "5648P",
+    "name": "IS ALLIANCE RUGBY"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "5654W",
+    "name": "ENTENTE GISORSIENNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "5662E",
+    "name": "R C VAUVERDOIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "88",
+    "code": "5667K",
+    "name": "R A EPINAL GOLBEY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "5669M",
+    "name": "ENT GOUSSAINVILLE GONESSE XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "5678X",
+    "name": "AMBAZAC R C"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5688H",
+    "name": "RUGBY CLUB QUINT FONSEGRIVES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5693N",
+    "name": "OLYMPIQUE LABRUGUIERE XV"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5694P",
+    "name": "R C CANTON MONTREVEL EN BRESSE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "5695R",
+    "name": "CLUB MUNICIPAL DE FLOIRAC"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "72",
+    "code": "5700W",
+    "name": "VELO SPORT FERTOIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "67",
+    "code": "5704A",
+    "name": "C R ILLKIRCH GRAFFENSTADEN"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "5708E",
+    "name": "R C DE LUNERY"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "68",
+    "code": "5709F",
+    "name": "A S CHALAMPE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "5711H",
+    "name": "OL R C RIOM ES MONTAGNES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5718R",
+    "name": "ENT LA VALLEE DU GIROU"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "5728B",
+    "name": "R C EYRIEUX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "5729C",
+    "name": "R C LAMASTROIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "5730D",
+    "name": "R C ROUBAIX"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "58",
+    "code": "5732F",
+    "name": "A S CLAMECYCOISE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "5735J",
+    "name": "R C ST GILLOIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "5749Z",
+    "name": "RUGBY CLUB SEINE & OISE TRIEL SUR SEINE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5755F",
+    "name": "CLUB OVALIE PONT DU CASSE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "48",
+    "code": "5756G",
+    "name": "R C MENDE LOZERE"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "72",
+    "code": "5758J",
+    "name": "PATRIOTE BONNETABLE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "5760L",
+    "name": "RUGBY OLYMPIQUE AGATHOIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "5762N",
+    "name": "J A ISLE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5765S",
+    "name": "R C VARACIEUX"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "5787R",
+    "name": "UNION SPORTIVE DES COTEAUX POUYASTRUC"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "5790U",
+    "name": "R C CASTELPONTIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "5792W",
+    "name": "RUGBY CLUB TREIGNACOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "5793X",
+    "name": "PANJAS A C"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "5794Y",
+    "name": "ENTENTE BAZET ANDREST"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "5798C",
+    "name": "RUGBY CLUB LOUEY MARQUISAT"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "5804J",
+    "name": "R C MONTAIGUT BESSE"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "02",
+    "code": "5805K",
+    "name": "CHATEAU THIERRY RUGBY OMOIS CL"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "43",
+    "code": "5806L",
+    "name": "OVAL CLUB GEVAUDAN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "5808N",
+    "name": "A S C DE POITIERS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "5809P",
+    "name": "R C OUEST PROVENCE FOS ISTRES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "5815W",
+    "name": "R C CHATILLONNAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "5821C",
+    "name": "R C CESTADAIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "08",
+    "code": "5823E",
+    "name": "U S GIVETOISE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5825G",
+    "name": "VOREPPE R C"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "5826H",
+    "name": "R C LAPALISSOIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "89",
+    "code": "5829L",
+    "name": "AVALLON R C"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "14",
+    "code": "5830M",
+    "name": "R C DU BOCAGE VIROIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "52",
+    "code": "5831N",
+    "name": "R C LANGRES"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "5832P",
+    "name": "RUGBY CELLOIS CHESNAYSIEN"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "5833R",
+    "name": "RUGBY CLUB MONTREUILLOIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "5836U",
+    "name": "R C EPINAY SUR ORGE"
+  },
+  {
+    "ligue": "GUYANE",
+    "departmentCode": "973",
+    "code": "5853M",
+    "name": "STADE CAYENNAIS"
+  },
+  {
+    "ligue": "GUYANE",
+    "departmentCode": "973",
+    "code": "5854N",
+    "name": "RUGBY CLUB KOUROU"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "5868D",
+    "name": "A S TOURNEFEUILLE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "5870F",
+    "name": "R C COMBRONDE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "5872H",
+    "name": "ENTENTE SPORTIVE BARONNIES"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "5874K",
+    "name": "C S MUNICIPAL SULLYLOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "5875L",
+    "name": "R C ST GENES CHAMPANELLE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "5876M",
+    "name": "R C MAUGUIO CARNON PAYS D'OR"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "5878P",
+    "name": "BIDART UNION CLUB"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "5884W",
+    "name": "L OVALE RACING CLUB MARQUETTOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "5885X",
+    "name": "ENT CONQUES VILLEMOUSTAUSSOU"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "5896J",
+    "name": "U S BARDOS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "5898L",
+    "name": "DOUAI RUGBY OLYMPIQUE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "5899M",
+    "name": "RUGBY CLUB SAINT SULPICE LA POINTE XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "5907W",
+    "name": "CHATELLERAULT R A C"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "5909Y",
+    "name": "RUGBY OLYMPIQUE DONZEROIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "5911A",
+    "name": "ENTENTE BAS CONFLENT VINCA"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "5912B",
+    "name": "BEZIERS CERS PORTIRAGNES OCCITAN XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "5913C",
+    "name": "RUGBY CLUB FOLLES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "5915E",
+    "name": "R C UZETIEN"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "5919J",
+    "name": "R C PLABENNEC"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "5921L",
+    "name": "R C CUBZAGUAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "5922M",
+    "name": "R C MONTBRON"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "5923N",
+    "name": "R C QUEYRANNAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5927T",
+    "name": "U S CENACOISE"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "5928U",
+    "name": "ASS ANCIENS ELEVES DE LEFOREST"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "5929V",
+    "name": "R O FOURMISIEN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "5931X",
+    "name": "R C VEYLE SAONE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5932Y",
+    "name": "A S ST MARCEL ISLE D'ABEAU"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "39",
+    "code": "5933Z",
+    "name": "FOYER RURAL DE CENSEAU"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "5938E",
+    "name": "U S VILLENEUVOISE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "75",
+    "code": "5951U",
+    "name": "U S O MASSIF CENTRAL"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "5955Y",
+    "name": "R C VILLENEUVE MAGUELONE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "5958B",
+    "name": "OVALIE BERG COIRON HELVIE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "5959C",
+    "name": "C S GRESIVAUDAN BELLEDONNE"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "5981B",
+    "name": "R C ARCHEPONTAIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "5986G",
+    "name": "R C PRIGONTIN"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "25",
+    "code": "5987H",
+    "name": "R C MORTEAU"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "5992N",
+    "name": "A S CHATEAUGAY RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "5996T",
+    "name": "R C FAVERGES"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "5998V",
+    "name": "R C CHAMEYRACOIS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "6003A",
+    "name": "R C BARENTIN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "6006D",
+    "name": "CLUB ATHLETIQUE ORGNACOIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "28",
+    "code": "6009G",
+    "name": "DAMMARIE R C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "6012K",
+    "name": "R C CADAUJACAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "6017R",
+    "name": "UNION SPORTIVE RHONE XV"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "6025Z",
+    "name": "R C REDONNAIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "6028C",
+    "name": "S C LANGEAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "6031F",
+    "name": "R C PLATS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "43",
+    "code": "6035K",
+    "name": "R C XV BRIVES CHARENSAC"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "6041S",
+    "name": "STADE ST ORENNAIS XV"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "6042T",
+    "name": "R C ST SEBASTIEN BSE GOULAINE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "6047Y",
+    "name": "C O MULTISPORT BAGNEUX RUGBY"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "6064S",
+    "name": "VERDUN R A C"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "67",
+    "code": "6066U",
+    "name": "LAUTERBOURG A S"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "6069X",
+    "name": "R C MONTMEYRANNAIS"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "6074C",
+    "name": "RUGBY CLUB IROISE SAINT RENAN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6077F",
+    "name": "A S SUCCIEU TERRES FROIDES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "6083M",
+    "name": "MEYTHET R C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "6086R",
+    "name": "OVALIE CLUB VILLENEUVOIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "52",
+    "code": "6090V",
+    "name": "ECAC RUGBY CHAUMONT"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "6100F",
+    "name": "C O OTHIS"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "6107N",
+    "name": "PLOUZANE A C"
+  },
+  {
+    "ligue": "CORSE",
+    "departmentCode": "20",
+    "code": "6108P",
+    "name": "A S VENTISERI XV"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "6114W",
+    "name": "XV ERDRE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "6116Y",
+    "name": "RUGBY CLUB MONTESSON CHATOU"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "6120C",
+    "name": "R C ST SIMON"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "6131P",
+    "name": "A S PANAZOL"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "6136V",
+    "name": "RUGBY CLUB LAUNAGUET"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "6140Z",
+    "name": "A S LUYNOISE RUGBY"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "6144D",
+    "name": "R C CARHAIX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "6145E",
+    "name": "U S MARTRES DE VEYRE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "6152M",
+    "name": "ST PRIVAT PLEAUX RUGBY XAINTRIE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "79",
+    "code": "6153N",
+    "name": "A R C CHAURAY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "6154P",
+    "name": "R C SAINT YORRE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6161X",
+    "name": "R C BREZINS"
+  },
+  {
+    "ligue": "CORSE",
+    "departmentCode": "20",
+    "code": "6170G",
+    "name": "CLUB RUGBY AMATEUR DE BALAGNE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "6174L",
+    "name": "S C RIVERAIN DE MANSAC"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "6175M",
+    "name": "R C CRUASSIEN"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "6180T",
+    "name": "R C SAINT PAUL"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "6185Y",
+    "name": "COMITE SPORTIF BOURAILLAIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "6191E",
+    "name": "RUGBY CLUB GARCHES VAUCRESSON"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "46",
+    "code": "6196K",
+    "name": "RUGBY CLUB BAGNACOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "6197L",
+    "name": "R C HAUTE BRESSE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "6200P",
+    "name": "R C LUBERSACOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "6202S",
+    "name": "ENT SP COTEAUX DE L ARRET"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "6219K",
+    "name": "U S CHAUVINOISE RUGBY"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "6220L",
+    "name": "RUGBY CLUB DU VAL D ISSOLE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "6222N",
+    "name": "R C NOISY LE GD MARNE LA VALLEE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "67",
+    "code": "6231Y",
+    "name": "R C SELESTAT GIESSEN"
+  },
+  {
+    "ligue": "GUYANE",
+    "departmentCode": "97",
+    "code": "6233A",
+    "name": "C O MARONI COSMA"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "68",
+    "code": "6236D",
+    "name": "ASS CULTURELLE ET SPORTIVE PEUGEOT CITROEN MULHOUSE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "54",
+    "code": "6239G",
+    "name": "R C DIEULOUARD LIVERDUN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "6240H",
+    "name": "R C SALANQUE XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "6246P",
+    "name": "U S IZONNAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "6247R",
+    "name": "U S GALGONAISE RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "6252W",
+    "name": "AVENIR RUGBYSTIQUE AYTRESIEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "6254Y",
+    "name": "ENTENTE U S MURVIEL THEZAN"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "6259D",
+    "name": "OLYMPIQUE DE GRANDE SYNTHE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "6261F",
+    "name": "R C LABARTHE SUR LEZE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "6264J",
+    "name": "RC NOVES-EYRAGUES"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "6267M",
+    "name": "R F C KASTELLIN"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "6269P",
+    "name": "JEUNESSE ST BENOIT RUGBY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "80",
+    "code": "6272T",
+    "name": "ENT DOULLENS GRILLONS PICARDIE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "6283E",
+    "name": "S C BRIATEXTOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "6297V",
+    "name": "RUGBY OL ST JEAN DE VEDAS MOSSON COULAZOU"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "6301Z",
+    "name": "OVALE REINS AMPLEPUIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "6304C",
+    "name": "R C VIRAZEILLAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "6305D",
+    "name": "OL ST GENIS LAVAL"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "6306E",
+    "name": "RUGBY CLUB PUILBOREAU"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "6309H",
+    "name": "TOULOUSE MONTAUDRAN RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "6311K",
+    "name": "R C ENNEZAT"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "89",
+    "code": "6314N",
+    "name": "A S NUITS SUR ARMANCON"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "6315P",
+    "name": "RUGBY LANESTER LOCUNEL"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "6316R",
+    "name": "BELLEVILLE RUGBY CLUB"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "6318T",
+    "name": "R C VIRIAT"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "6325A",
+    "name": "R C BALLANCOURTOIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "42",
+    "code": "6329E",
+    "name": "R C ROCHE LA MOLIERE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "6337N",
+    "name": "COQ LEGUEVINOIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "25",
+    "code": "6350C",
+    "name": "A S C AUTOS PEUGEOT"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "6353F",
+    "name": "O R C ARGENTEUIL"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "6360N",
+    "name": "R C CONCARNOIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "6372B",
+    "name": "R C CASTELNEUVIEN"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "6377G",
+    "name": "A S MONTIGNY LE BRETONNEUX"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "6397D",
+    "name": "ECOLE RUGBY PIC ST LOUP"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "55",
+    "code": "6404L",
+    "name": "RUGBY CLUB BAR LE DUC"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "6419C",
+    "name": "R C DONATIEN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "6421E",
+    "name": "RUGBY CLUB DAGLANAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "6424H",
+    "name": "RUGBY CLUB DU GOLFE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "6425J",
+    "name": "ENTENTE ST AMOUR COLIGNY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6426K",
+    "name": "JEUNESSE ATH HEYRIEUX RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "6432S",
+    "name": "U S L AYGUETTE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "6435V",
+    "name": "U S JEUNESSE DE MITRY MORY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6438Y",
+    "name": "CHARTREUSE RUGBY CLUB"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "6447H",
+    "name": "R C PALAISIEN"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "6453P",
+    "name": "R C YVETOTAIS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "50",
+    "code": "6457U",
+    "name": "RC ST MARTIN CHAMPS AVRANCHES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "6471J",
+    "name": "R C MIONS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "6472K",
+    "name": "ATHLETIC RUGBY CLUB BAILLARGEOIS DU VALVERT"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "6474M",
+    "name": "RUGBY ATHLETIC CERDAGNE CAPCIR XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "6478S",
+    "name": "U S KERCORB BASTIDE PEYRAT"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "6479T",
+    "name": "R C LE BEAUSSET"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "6481V",
+    "name": "ENT RUGBY CL GIGNAC MARIGNANE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "48",
+    "code": "6485Z",
+    "name": "R C HAUT GEVAUDAN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "6486A",
+    "name": "A S CHASTEAUX ET LISSAC"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "6487B",
+    "name": "XV DIONYSIEN"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "97",
+    "code": "6488C",
+    "name": "BARRACUDAS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "6494J",
+    "name": "A S BAGES RUGBY"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "72",
+    "code": "6496L",
+    "name": "U SPORTS FLECHOIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "57",
+    "code": "6497M",
+    "name": "R C NABORIEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "48",
+    "code": "6504V",
+    "name": "R C MARVEJOLS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "6506X",
+    "name": "BEAUCAIRE R C"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "42",
+    "code": "6515G",
+    "name": "RUGBY PAYS DU GIER PILAT"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "6520M",
+    "name": "VPC ANDORRA RUGBY XV"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "6531Z",
+    "name": "CERCLE JULES FERRY (ST MALO)"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6532A",
+    "name": "RC LA SEVENNE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "6535D",
+    "name": "C S PUY GUILLAUME RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "6538G",
+    "name": "CABESTANY OLYMPIQUE XV"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "60",
+    "code": "6540J",
+    "name": "RUGBY CLUB DE MERU LES SABLONS"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "6541K",
+    "name": "SPORTING CLUB DU CHAUDRON"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "6545P",
+    "name": "RACING NANTERRE RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "6551W",
+    "name": "ASS STADE CALEDONIEN"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "6552X",
+    "name": "XV BAILLEULOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "6558D",
+    "name": "S C MONTASTRUCOIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "6560F",
+    "name": "OVALE GY"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "72",
+    "code": "6561G",
+    "name": "RUGBY CLUB DE SABLE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "6577Z",
+    "name": "RUGBY CLUB JACOU MONTPELLIER NORD"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "6595U",
+    "name": "RUGBY CHARENTON MAISONS ALFORT ST MAURICE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "6597W",
+    "name": "R C ROUGIER"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "6600Z",
+    "name": "RUGBY CLUB MARSEILLAIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "6602B",
+    "name": "CIBOURE R C"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "6603C",
+    "name": "A S PLEUMARTIN R.O"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "88",
+    "code": "6613N",
+    "name": "R C S VITTELLOIS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "60",
+    "code": "6615R",
+    "name": "R I PLESSIS LAGNY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "75",
+    "code": "6621X",
+    "name": "PARIS OLYMPIQUE RUGBY CLUB"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "10",
+    "code": "6623Z",
+    "name": "RUG CHAMPAGNE ST ANDRE VERGERS"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "22",
+    "code": "6627D",
+    "name": "PAIMPOL ARMOR R C"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "22",
+    "code": "6628E",
+    "name": "XV DE L'IC"
+  },
+  {
+    "ligue": "CORSE",
+    "departmentCode": "20",
+    "code": "6631H",
+    "name": "R C AJACCIEN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "6633K",
+    "name": "R C THONES ARAVIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "6637P",
+    "name": "R C ST QUENTINOIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "6638R",
+    "name": "R C OLLIOULAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "6639S",
+    "name": "R C CANTON DE MARSANNE"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "6645Y",
+    "name": "R C MONT DORE"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "6648B",
+    "name": "R C MAMOUDZOU"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "6650D",
+    "name": "R C SECTEUR SUD DE MAYOTTE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "6656K",
+    "name": "R C USTARITZ JATXOU"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "6663T",
+    "name": "U S BOUSCATAISE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "6665V",
+    "name": "U S MOURILLON"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "6669Z",
+    "name": "R C PONTIVYEN"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "6685S",
+    "name": "ETANG SALE RUGBY CLUB"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "6688V",
+    "name": "ASS PLOEMEUR RUGBY CLUB"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "89",
+    "code": "6689W",
+    "name": "A S TONNERROISE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "6692Z",
+    "name": "RUGBY CLUB DU PLATEAU BRIARD"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "6693A",
+    "name": "U S O CHELLES RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "6695C",
+    "name": "U SIGEAN PORT LA NOUVELLE"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "6697E",
+    "name": "ECLAIRS NORD DE MTSANGAMOUJI"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "6698F",
+    "name": "DOUJA M GNAMBA SUD DE SADA"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "6699G",
+    "name": "JUILLAN XV"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "50",
+    "code": "6712W",
+    "name": "RUGBY CLUB VALOGNES"
+  },
+  {
+    "ligue": "CORSE",
+    "departmentCode": "20",
+    "code": "6716A",
+    "name": "BASTIA XV"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "53",
+    "code": "6718C",
+    "name": "R C CASTROGONTERIEN"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "6721F",
+    "name": "R C PAYS D ANCENIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "6723H",
+    "name": "S C OUVEZE PAYRE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "6730R",
+    "name": "OL MONTREDONNAIS XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "6733U",
+    "name": "S C ROQUETTOIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "58",
+    "code": "6737Y",
+    "name": "C S BAZOIS RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6744F",
+    "name": "RUGBY OISANS CLUB"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6745G",
+    "name": "R C GRESIVAUDAN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "6750M",
+    "name": "MARGUERITTES R C"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "6752P",
+    "name": "R C LAS"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "6755T",
+    "name": "RUGBY CLUB BROCELIANDE OUST SERENT"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "6758W",
+    "name": "A S AMPOUNTRA CLUB DE CHICONI"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "6763B",
+    "name": "R C ST FIRMIN ST SERNIN LE BREUIL"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "22",
+    "code": "6767F",
+    "name": "RUGBY KREIZ TREGER"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "14",
+    "code": "6769H",
+    "name": "COTE DE NACRE RUGBY CLUB"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "6770J",
+    "name": "U R LANDERNEAU"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "6772L",
+    "name": "R C GRACE GUENROUET"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6774N",
+    "name": "RUGBY DU CANTON DE LA VALDAINE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "6776R",
+    "name": "R C ORANGEOIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "6782X",
+    "name": "RUGBY CLUB DE CHAMPS - VAL MAUBUEE"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "97",
+    "code": "6786B",
+    "name": "ARCHIBALL WEST INDIES RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "6788D",
+    "name": "RUGBY CLUB VIGANAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6793J",
+    "name": "A S CULIN"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "25",
+    "code": "6821P",
+    "name": "U S BAUMOISE"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "6822R",
+    "name": "R C LE TAMPON"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "50",
+    "code": "6825U",
+    "name": "RUGBY OUEST COTENTIN"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "06",
+    "code": "6830Z",
+    "name": "ECOLE RUGBY WEBB ELLIS"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "25",
+    "code": "6835E",
+    "name": "R C PLATEAU 25"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "57",
+    "code": "6840K",
+    "name": "ESPOIRS SARREGUEMINES RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "6841L",
+    "name": "ETOILE SPORTIVE CATALANE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "6842M",
+    "name": "RUGBY CLUB GUIDEL"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "6844P",
+    "name": "R C ST GILLES"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "6849V",
+    "name": "R C ANDRESIEN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "6852Y",
+    "name": "ARCOL RUGBY"
+  },
+  {
+    "ligue": "GUYANE",
+    "departmentCode": "97",
+    "code": "6860G",
+    "name": "ASS CL ARTISTIQUE TIGRE 3 RSMA"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "6866N",
+    "name": "SEILH AUSSONNE FENOUILLET XV"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "6870T",
+    "name": "XV LA VALLEE VERTE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "57",
+    "code": "6876Z",
+    "name": "AVENIR R C LORQUIN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "6888M",
+    "name": "U S A P XV FEMININ ROUSSILLON"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "50",
+    "code": "6893T",
+    "name": "R C PAYS DE COUTANCES"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "6895V",
+    "name": "R C NIEUIL L ESPOIR"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6898Y",
+    "name": "R C SILLANS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "6906G",
+    "name": "SALANQUE COTE RADIEUSE XV"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "6907H",
+    "name": "LE TOUQUET ETAPLES RUGBY CLUB"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "49",
+    "code": "6909K",
+    "name": "R C DOUESSIN RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "6911M",
+    "name": "UNION BARBEZIEUX JONZAC"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "6921Y",
+    "name": "A S NOZAY"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "49",
+    "code": "6932K",
+    "name": "E S SEGRE HAUT ANJOU"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "6934M",
+    "name": "SEVRES CHAVILLE RUGBY"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "6935N",
+    "name": "AURORE DE VITRE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "6936P",
+    "name": "L'OVALE DE LOIRE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "6941V",
+    "name": "AMICALE LAIQUE DE MELESSE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "6951F",
+    "name": "STADE RENNAIS RUGBY"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "6954J",
+    "name": "J.A.S."
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "6955K",
+    "name": "LE XV SAINT REMOIS"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "6958N",
+    "name": "DESPERADOS RUGBY CLUB"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "6959P",
+    "name": "RUGBY CLUB CORBELIN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "6962T",
+    "name": "HERMANCE REGION RUGBY CLUB"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "54",
+    "code": "6963U",
+    "name": "C O VILLERS LES NANCY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "6965W",
+    "name": "HAUTE VALLEE AVEYRON RUGBY"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "6973E",
+    "name": "UNION SPORTIVE ACIGNOLAISE"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "02",
+    "code": "6978K",
+    "name": "RUGBY CLUB DE THIERACHE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "6979L",
+    "name": "AVANT GARDE LAIQUE DE FOUGERES"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "6982P",
+    "name": "RUGBY CLUB DU PAYS DE MORLAIX"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "6985T",
+    "name": "STADO TARBES PYRENEES RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "6990Y",
+    "name": "RUGBY CLUB DE SAINTRY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "6993B",
+    "name": "R C CANTONAL SALIGNACOIS PAYS DE FENELON"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "6995D",
+    "name": "SKOL RUGBY ER NAV KER"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "6996E",
+    "name": "RUGBY CLUB BAGNOLTAIS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "6998G",
+    "name": "SPORT ATLH CLUB CLISSONNAIS"
+  },
+  {
+    "ligue": "WALLIS ET FUTUNA",
+    "departmentCode": "98",
+    "code": "7006R",
+    "name": "ONELIKI RUGBY CLUB"
+  },
+  {
+    "ligue": "WALLIS ET FUTUNA",
+    "departmentCode": "98",
+    "code": "7007S",
+    "name": "A S MUA"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "7015A",
+    "name": "R O C CARVINOIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "68",
+    "code": "7017C",
+    "name": "RUGBY CLUB ENSISHEIM"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "7028P",
+    "name": "RUGBY CLUB DE LOUDUN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "7030S",
+    "name": "ENT RUGBY MIELAN MIRANDE RABASTENS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7033V",
+    "name": "LA SOULE GRAVESONNAISE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "7034W",
+    "name": "RUGBY CLUB DU PAYS DE MEAUX"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "7037Z",
+    "name": "BAIN DE BRETAGNE RUGBY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "80",
+    "code": "7041D",
+    "name": "MONTDIDIER RUGBY CLUB"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "06",
+    "code": "7042E",
+    "name": "TOURRETTES RUGBY UNIVERSITE CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "7044G",
+    "name": "ES SAINT ANDRE BIZANET"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7046J",
+    "name": "VALLEE DE L HUVEAUNE RUGBY CLUB MARSEILLE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "04",
+    "code": "7052R",
+    "name": "DURANCE LUBERON VERDON XV"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "53",
+    "code": "7054T",
+    "name": "RUGBY OLYMPIQUE MAYENNAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "7056V",
+    "name": "RUGBY CLUB PAYS FAYENCE"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "7059Y",
+    "name": "RUGBY CLUB DU PLATEAU EST"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "7064D",
+    "name": "RABASTENS XV"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "43",
+    "code": "7066F",
+    "name": "R C DES HAUTS PLATEAUX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "42",
+    "code": "7070K",
+    "name": "RUGBY CLUB ANDREZIEUX BOUTHEON"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "7071L",
+    "name": "LA BREDE RUGBY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "80",
+    "code": "7073N",
+    "name": "RUGBY OLYMPIQUE FLESSELLES"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "7074P",
+    "name": "A S DE MARTIGNAS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "7075R",
+    "name": "A S ASASP ARROS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "88",
+    "code": "7078U",
+    "name": "RUGBY CLUB DES DEUX VALLEES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "7085B",
+    "name": "ASSOCIATION SPORTIVE AMBRAISE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "37",
+    "code": "7089F",
+    "name": "RUGBY CLUB DE LA MANSE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "7097P",
+    "name": "SANARY OVALIE"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "14",
+    "code": "7098R",
+    "name": "L OVALIE CAENNAISE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "94",
+    "code": "7099S",
+    "name": "UNION DES BORDS DE MARNE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "05",
+    "code": "7100T",
+    "name": "RUGBY CLUB QUEYRAS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "7103W",
+    "name": "RC DU PAYS SIX FOURNAIS"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "7105Y",
+    "name": "RUGBY CLUB DE L ABER"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "7106Z",
+    "name": "RUGBY CLUB ANZINOIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "7107A",
+    "name": "R C VELIZY VILLACOUBLAY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "7112F",
+    "name": "TERRES DE FRANCE RUGBY"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "70",
+    "code": "7113G",
+    "name": "RUGBY OVALIE LURON"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "42",
+    "code": "7114H",
+    "name": "UNIEUX FIRMINY ONDAINE RUGBY"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "7116K",
+    "name": "RUGBY CLUB VALLEE DE L OUCHE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "7118M",
+    "name": "CHATILLON PROMOTION RUGBY"
+  },
+  {
+    "ligue": "MARTINIQUE",
+    "departmentCode": "97",
+    "code": "7119N",
+    "name": "RUGBY CLUB DU DIAMANT MARTINIQUE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "7120P",
+    "name": "RUGBY CLUB VILLENEUVE XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7121R",
+    "name": "RUGBY CLUB DE L ASPRE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "7122S",
+    "name": "STADE CLERMONTOIS RUGBY"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "7123T",
+    "name": "ASS SPORTIVE FONTENAISIENNE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "7132C",
+    "name": "EPONE RUGBY CLUB"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "7134E",
+    "name": "PUTEAUX RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "7141M",
+    "name": "RACING CLUB DE JARNAC"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "7143Q",
+    "name": "RUGBY OVALIE LORIENT"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "7144R",
+    "name": "ASSOCIATION SPORTIVE APT VALLEE DU CALAVON"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "7149W",
+    "name": "LE PETIT TRAIN SECTION RUGBY"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "7155C",
+    "name": "SAONE SEILLE RUGBY"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "7159G",
+    "name": "AS ROUEN UNIVERSITE CLUB"
+  },
+  {
+    "ligue": "CORSE",
+    "departmentCode": "20",
+    "code": "7160H",
+    "name": "PORTO VECCHIO XV"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "49",
+    "code": "7161J",
+    "name": "R C 3 R DE SEICHES SUR LOIR"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "7163L",
+    "name": "AS VALLEE DE LA SAVE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7170T",
+    "name": "ECOLE DE RUGBY DES ALBERES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7171U",
+    "name": "ECOLE RUGBY ARLES AMELIE PALALDA"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "7173W",
+    "name": "ASSOCIATION NANTAISE RUGBY FEMININ"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "7175Y",
+    "name": "GRAVELINES RUGBY CLUB MARITIME"
+  },
+  {
+    "ligue": "CORSE",
+    "departmentCode": "20",
+    "code": "7179C",
+    "name": "RUGBY CLUB OLYMPIQUE ALTA ROCCA RIZZANESE VALINCO"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "7180D",
+    "name": "RACING CLUB DE PETITE TERRE"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "85",
+    "code": "7181E",
+    "name": "RUGBY CLUB HERBRETAIS"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "28",
+    "code": "7189N",
+    "name": "ENTENTE SPORTIVE NOGENTAISE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "67",
+    "code": "7190P",
+    "name": "MUTZIG OVALIE MOLSHEIM"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "22",
+    "code": "7192R",
+    "name": "RUGBY PASSION PLOUVARA PAYS DU LEFF"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "7199Y",
+    "name": "RUGBY CLUB PAYS MUZILLACAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7201A",
+    "name": "ROQUE OVALIE XV"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "7202B",
+    "name": "RUGBY LOISIR VERNEUIL"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "7203C",
+    "name": "RUGBY CLUB UNION SPORTIVE FORGES LES EAUX"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "43",
+    "code": "7209J",
+    "name": "RUGBY ENTENTE VELAY EST"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "68",
+    "code": "7212M",
+    "name": "PORTE D'ALSACE RUGBY CLUB"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "97",
+    "code": "7213N",
+    "name": "RUGBY CLUB DU LEVANT"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "988",
+    "code": "7214P",
+    "name": "JEUNESSE SPORTS ET LOISIRS DE NORMANDIE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "7216R",
+    "name": "RUGBY CLUB DE L'HERMINE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "7227C",
+    "name": "ARCAY RUGBY CLUB PAYS DE BOURGES"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "22",
+    "code": "7230F",
+    "name": "RACING CLUB MATIGNON"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "7232H",
+    "name": "DEUXIEME UNION ATHLETIQUE GAILLACOISE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "26",
+    "code": "7233J",
+    "name": "UNION SPORTIVE VALLEE DE LA DROME RUGBY (7233J)"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "7235L",
+    "name": "BRENS OLYMPIQUE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7241S",
+    "name": "RIVESALTES BAIXAS ESPIRA AGLY XV"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "85",
+    "code": "7243U",
+    "name": "CHALLANS RUGBY PORTE DE L'OCEAN"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "49",
+    "code": "7244V",
+    "name": "RUGBY OLYMPIQUE CHEMILLE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7245W",
+    "name": "ASSOCIATION SPORTIVE DEL BERCOL"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7246X",
+    "name": "ASSOCIATION DE LOISIRS ET DE PROMOTION POUR LE HAUT DE L ARC"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "975",
+    "code": "7250B",
+    "name": "SAINT PIERRE ET MIQUELON XV"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "08",
+    "code": "7251C",
+    "name": "RUGBY CLUB VOUZIERS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7252D",
+    "name": "RUGBY CLUB SENAS"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "80",
+    "code": "7258K",
+    "name": "XV D ABBEVILLE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "7259L",
+    "name": "DROP DE BETON"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "14",
+    "code": "7261N",
+    "name": "BAYEUX RUGBY CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "7263Q",
+    "name": "RUGBY CLUB LAVERNOSE LACASSE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "7264R",
+    "name": "BESSIERES SPORTING CLUB"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "7267U",
+    "name": "RUGBY CLUB PAREMPUYRE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "7271Y",
+    "name": "RUGBY SAINT MAXIMINOIS XV"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "7276D",
+    "name": "LE STADE NANTAIS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "7278F",
+    "name": "STADE TREILLIERAIN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "15",
+    "code": "7283L",
+    "name": "SAINT MAMET RUGBY"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "7286P",
+    "name": "SAINT PERE RUGBY CLUB"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "7289S",
+    "name": "PAYS DE L'ARBRESLE RUGBY CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "7290T",
+    "name": "RUGBY CLUB BELLEGARDAIS XV"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7297A",
+    "name": "ECOLE DE RUGBY PELI XV"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "27",
+    "code": "7299C",
+    "name": "ASS OMNISPORT DE THUIT SIGNOL RUGBY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "7304H",
+    "name": "ECOLE DE RUGBY DE COUDEKERQUE BRANCHE"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "7307L",
+    "name": "RUGBY CLUB SAINT BERNARD"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "7310P",
+    "name": "RUGBY VAL DE CANCHE MARESQUEL-HESDIN"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "7314T",
+    "name": "CLUB DE RUGBY EDUCATIF ET CITOYEN"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "41",
+    "code": "7316V",
+    "name": "ECOLE DE RUGBY DU CANTON MONTRICHARD"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "67",
+    "code": "7322B",
+    "name": "RUGBY CLUB DE LA LICORNE - SAVERNE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "7324D",
+    "name": "GRIGNY RUGBY A 15"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "7326F",
+    "name": "RUGBY CLUB PAYS D ELVEN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "43",
+    "code": "7329J",
+    "name": "RUGBY CLUB DE L ARZON"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "7330K",
+    "name": "RUGBY CLUB DE BEAUCE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "7334P",
+    "name": "RUGBY CLUB BOURNAZEL"
+  },
+  {
+    "ligue": "REUNION",
+    "departmentCode": "974",
+    "code": "7340V",
+    "name": "ST JO OVALIE"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "76",
+    "code": "7343Y",
+    "name": "ROUEN NORMANDIE RUGBY"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7344Z",
+    "name": "GEMENOS RUGBY EST PROVENCE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "7348D",
+    "name": "RACING CLUB BROCELIANDE RUGBY PAIMPONT"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "7351G",
+    "name": "UNION RUGBY CLUB DE DUMBEA"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "7354K",
+    "name": "RUGBY CLUB VERNEUILLAIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "7356M",
+    "name": "RUGBY CLUB DU PAYS DE SOMMIERES"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7357N",
+    "name": "EYGUIERES XV"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "39",
+    "code": "7358P",
+    "name": "CERCLE SPORTIF LEDONIEN"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "7360R",
+    "name": "RUGBY CENTRE VAR"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "06",
+    "code": "7361S",
+    "name": "LERINS RUGBY CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "7370B",
+    "name": "ECOLE DE RUGBY TERRE DU SOLEIL"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "7371C",
+    "name": "DOUARNENEZ RUGBY ATHLETIC CLUB"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "7372D",
+    "name": "ILE DE GROIX RUGBY CLUB"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "7374F",
+    "name": "RUGBY BRETAGNE ROMANTIQUE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "28",
+    "code": "7383Q",
+    "name": "COMBRAY RUGBY CLUB"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "7393A",
+    "name": "MARSILLY RUGBY CLUB"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "7394B",
+    "name": "RUGBY CLUB DOMES SIOULE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "7395C",
+    "name": "STADE DOMONTOIS RUGBY CLUB"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "7399G",
+    "name": "UNION SPORTIVE BERRICHONNE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "7400H",
+    "name": "RUGBY CLUB VALLEE DE L HERAULT"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "7403L",
+    "name": "LA VOULTE RUGBY CLUB ARDECHE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "17",
+    "code": "7404M",
+    "name": "LES MARCASSINS"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "85",
+    "code": "7407Q",
+    "name": "RUGBY CLUB DES TERRES DE MONTAIGU"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "73",
+    "code": "7414X",
+    "name": "RUGBY CLUB HAUTE TARENTAISE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "7415Y",
+    "name": "ASSOCIATION RUGBY CLUB DU PAYS DE ST YRIEIX"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7417A",
+    "name": "VITROLLES RUGBY CLUB"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "29",
+    "code": "7420D",
+    "name": "LE RELECQ KERHUON RUGBY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "7424H",
+    "name": "MILLAM PACK OVALIE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "10",
+    "code": "7425J",
+    "name": "CLUB RUGBY AUBE CHAMPAGNE OSSEY MARIGNY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "80",
+    "code": "7429N",
+    "name": "ALBERT RUGBY"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "7431Q",
+    "name": "MTSAMBORO RUGBY CLUB"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "67",
+    "code": "7436V",
+    "name": "ASSOCIATION SPORTIVE DES CHEMINOTS DE STRASBOURG RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7445E",
+    "name": "RACING CLUB PONTEILLA"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "77",
+    "code": "7447G",
+    "name": "SAVIGNY RUGBY SENART"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "7450K",
+    "name": "ECOLE DE RUGBY DES GORGES D HERAULT"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "7452M",
+    "name": "RACING CLUB DE L AGGLOMERATION CERGY PONTOISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "7455Q",
+    "name": "SAINT GEORGES CHARANTONNAY RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "7456R",
+    "name": "RACING CLUB COURPIEROIS"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "87",
+    "code": "7457S",
+    "name": "AIXE RUGBY ATHLETIQUE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "7459U",
+    "name": "STADE UCHAUDOIS ASSOCIATIF RUGBY CLUB"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "7462X",
+    "name": "RUGBY DES WEPPES"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "49",
+    "code": "7463Y",
+    "name": "POMJEANNAIS AMICALE RUGBY CLUB"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "7474K",
+    "name": "LES LOULOUS DE DEMBENI"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "05",
+    "code": "7475L",
+    "name": "RUGBY CLUB EMBRUNAIS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "38",
+    "code": "7485W",
+    "name": "RUGBY CLUB CHASSE SUR RHONE"
+  },
+  {
+    "ligue": "MARTINIQUE",
+    "departmentCode": "97",
+    "code": "7486X",
+    "name": "RUGBY CLUB ATLANTIQUE SUD LE FRANCOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "7489A",
+    "name": "TOULOUSE RUGBY CLUB"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "7490B",
+    "name": "O VAL DES MAUVES"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "86",
+    "code": "7493E",
+    "name": "ROMAGNE ITEUIL NOUVELLE OVALIE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "79",
+    "code": "7494F",
+    "name": "RUGBY OLYMPIQUE CLUB MELLOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "7495G",
+    "name": "AVENIR BELBERAUTIN"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7496H",
+    "name": "RUGBY CLUB STADE PHOCEEN"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "06",
+    "code": "7497J",
+    "name": "STADE NICOIS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "51",
+    "code": "7501N",
+    "name": "REIMS UNIVERSITE CLUB RUGBY"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "7502P",
+    "name": "VALLEE DU LUBERON XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "7504R",
+    "name": "SEGALA OVALE"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "7509W",
+    "name": "OVALE DE PHALEMPIN"
+  },
+  {
+    "ligue": "MARTINIQUE",
+    "departmentCode": "97",
+    "code": "7513A",
+    "name": "STADE NORD KARRIBEEN"
+  },
+  {
+    "ligue": "MARTINIQUE",
+    "departmentCode": "97",
+    "code": "7514B",
+    "name": "TROIS ILETS RUGBY CLUB"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "7517E",
+    "name": "PLAUZAT OLYMPIQUE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7525N",
+    "name": "RUGBY FEMININ MIRAMAS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "7527Q",
+    "name": "RUGBY ECOLE DE VENDARGUES"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "97",
+    "code": "7529S",
+    "name": "SAINT MARTIN RUGBY UNION"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "7530T",
+    "name": "RUGBY CLUB SETE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "7537A",
+    "name": "RUGBY ASSOCIATION PAYS ISLE DRONNE 33"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "7540D",
+    "name": "RUGBY CLUB BUGUOIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "7545J",
+    "name": "MONTAGNE NOIRE HAUT LANGUEDOC XV"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "7546K",
+    "name": "RUGBY CLUB DU PAYS DE MAURON"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "7559Y",
+    "name": "UNION RUGBY EN ARDECHE MERIDIONALE"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "28",
+    "code": "7566F",
+    "name": "OVAL UNION RUGBY SUD 28"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "99",
+    "code": "7568H",
+    "name": "SERVETTE RUGBY CLUB DE GENEVE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7574P",
+    "name": "RUGBY CLUB CHATEAUNEUF LES MARTIGUES"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7575Q",
+    "name": "OVALIVE CLUB DES ALPILLES"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "75",
+    "code": "7578T",
+    "name": "PARIS XO RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "7579U",
+    "name": "UNION STADISTE SAUVETERRE RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "7580V",
+    "name": "RUGBY CLUB BEARNAIS PUYOO SALIES SAUVETERRE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "7581W",
+    "name": "ECOLE DE RUGBY SAINT QUENTINAISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "63",
+    "code": "7582X",
+    "name": "RUGBY CLUB LEZOVIEN"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "7586B",
+    "name": "JURANCON XV"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7588D",
+    "name": "RUGBY CIOTAT CEYRESTE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "7589E",
+    "name": "JUVIGNAC RUGBY CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "7594K",
+    "name": "CLUB DE RUGBY VAUNAGEOL"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "97",
+    "code": "7596M",
+    "name": "RUGBY CLUB DE GOYAVE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "7597N",
+    "name": "RUGBY CLUB FOULAYRONNAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "7599Q",
+    "name": "RUGBY CLUB PUGET VILLE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "09",
+    "code": "7603U",
+    "name": "RUGBY CLUB MAZERES XV"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "7605W",
+    "name": "CREVETTES MUSCLEES NORD RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "64",
+    "code": "7606X",
+    "name": "LONS RUGBY FEMININ BEARN PYRENEES"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "31",
+    "code": "7621N",
+    "name": "PAYS SUD TOULOUSAIN FEMINA RUGBY"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "59",
+    "code": "7624R",
+    "name": "RUGBY CLUB FLANDRES LITTORAL NORD"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "97",
+    "code": "7627U",
+    "name": "RUGBY CLUB MOULIEN"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "54",
+    "code": "7633A",
+    "name": "OVALIE CLUB DU BASSIN TOULOIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7636D",
+    "name": "SAINT CHAMAS RUGBY A XV"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "35",
+    "code": "7638F",
+    "name": "RUGBY AGGLOMERATION DE CHATEAUBOURG"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "7643L",
+    "name": "RUGBY TANGO CHALONNAIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "7647Q",
+    "name": "ECOLE DE RUGBY DU VEXIN"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "42",
+    "code": "7653W",
+    "name": "MONTBRISON RUGBY CLUB"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "72",
+    "code": "7655Y",
+    "name": "RACING MARÇON 72"
+  },
+  {
+    "ligue": "CORSE",
+    "departmentCode": "20",
+    "code": "7657A",
+    "name": "ASSOCIATION RUGBY CLUB DU NEBBIU"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "7658B",
+    "name": "CLUB OMNISPORT LYON RUGY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "7659C",
+    "name": "RUGBY CLUB VAL DE SAONE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "7661E",
+    "name": "RUGBY CLUB VAUX"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "67",
+    "code": "7663G",
+    "name": "DRUSUS HARPASTUM RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "7664H",
+    "name": "RUGBY CLUB LIBOURNAIS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7665J",
+    "name": "RUGBY OLYMPIQUE SAINT ANDIOLAIS XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "34",
+    "code": "7666K",
+    "name": "ASSOCIATION SPORTIVE BEAULIEUROISE XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7667L",
+    "name": "ENTENTE RUGBY CANIGOU"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "03",
+    "code": "7668M",
+    "name": "OVALIE CLUB MONTLUCON"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "42",
+    "code": "7669N",
+    "name": "RUGBY CLUB SAINT ETIENNE"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "06",
+    "code": "7671Q",
+    "name": "ETOILE SPORTIVE VILLENEUVE LOUBET RUGBY"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "18",
+    "code": "7674T",
+    "name": "XV COSNOIS VAL DE LOIRE"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "7676V",
+    "name": "RUGBY CLUB DE COMBANI"
+  },
+  {
+    "ligue": "GUYANE",
+    "departmentCode": "97",
+    "code": "7678X",
+    "name": "JAGUAR RUGBY CLUB"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7679Y",
+    "name": "ISTRES SAINT MITRE LES REMPARTS QUINZE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "93",
+    "code": "7681A",
+    "name": "RUGBY CLUB COURNEUVIEN"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "58",
+    "code": "7682B",
+    "name": "ETOILE SPORTIVE DONZIAISE"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "07",
+    "code": "7684D",
+    "name": "LOU PELOU OVALIE"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "7685E",
+    "name": "SAINT NAZAIRE OVALIE"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "49",
+    "code": "7697S",
+    "name": "TOUCHER AUBANCE RUGBY"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "22",
+    "code": "7702X",
+    "name": "RUGBY CLUB COTE DE PENTHIEVRE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "75",
+    "code": "7709E",
+    "name": "ASPTT GRAND PARIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "32",
+    "code": "7710F",
+    "name": "RUGBY CLUB AUCH"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "16",
+    "code": "7713I",
+    "name": "UNION COGNAC / SAINT JEAN D'ANGELY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "7716M",
+    "name": "JEUNESSE SPORTIVE IBOSCEENNE XV"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "7719Q",
+    "name": "RUGBY CLUB DE LA PIMPINE"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7720R",
+    "name": "COLLIOURE SPORTIF XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "65",
+    "code": "7723U",
+    "name": "UNION SPORTIVE VICQUOISE XV"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "7725W",
+    "name": "RUGBY DES MONTS"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "69",
+    "code": "7726X",
+    "name": "RUGBY CLUB UNIVERSITAIRE DU LYONNAIS"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "7731C",
+    "name": "RUGBY CLUB CALEDONIEN"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "7733E",
+    "name": "RUGBY CLUB MILHAUD"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "7736H",
+    "name": "SPORT GENERATION"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "57",
+    "code": "7737I",
+    "name": "STANISLAS SEVENS"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "10",
+    "code": "7738K",
+    "name": "RUD - RUGBY DIENVILLE"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "85",
+    "code": "7741N",
+    "name": "RUGBY CLUB DE L'ILE DE NOIRMOUTIER"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "95",
+    "code": "7743Q",
+    "name": "RUGBY CLUB MERY SUR OISE"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "98",
+    "code": "7749W",
+    "name": "ASSOCIATION SPORTIVE KUNIE"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "33",
+    "code": "7760H",
+    "name": "UNION RUGBY CLUBS XV AMBARES, ST LOUBES, IZON"
+  },
+  {
+    "ligue": "GUADELOUPE",
+    "departmentCode": "971",
+    "code": "7765N",
+    "name": "CLUB SPORTIF ET ARTISTIQUE DE GUADELOUPE"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "7770T",
+    "name": "ASSOCIATION SPORTIVE MANTAISE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "25",
+    "code": "7772V",
+    "name": "RUGBY UNION MORTEAU PLATEAU 25"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "71",
+    "code": "7774X",
+    "name": "ENTENTE RUGBY GIVRY CHEILLY"
+  },
+  {
+    "ligue": "PAYS DE LA LOIRE",
+    "departmentCode": "44",
+    "code": "7776Z",
+    "name": "RUGBY CLUB LE LANDREAU"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7778B",
+    "name": "RUGBY CLUB FEMININ VALLESPIR"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "7783G",
+    "name": "BABY RUGBY COTE D AZUR (BABY RUGBY)"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "67",
+    "code": "7788M",
+    "name": "STRASBOURG ALSACE RUGBY"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "7790P",
+    "name": "RUGBY CLUB DU SUD"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "7792R",
+    "name": "RUGBY CLUB PLOERMEL"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "7794T",
+    "name": "RUGBY CLUB POUILLON LABATUT (RCPL)"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "7795U",
+    "name": "CONFLUENT RUGBY CLUB XV (CRC XV)"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "7796V",
+    "name": "RION MORCENX CLUB RUGBY"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "47",
+    "code": "7798X",
+    "name": "UNION SPORTIVE VALLEE DU LOT 47"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7799Y",
+    "name": "MARTIGUES RUGBY CLUB"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "19",
+    "code": "7805E",
+    "name": "UNION SPORTIVE JUILLAC OBJAT"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "30",
+    "code": "7806F",
+    "name": "RUGBY CLUB ROQUEMAURE XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "12",
+    "code": "7807G",
+    "name": "RODEZ RUGBY"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7808H",
+    "name": "SALANQUE MEDITERRANEE XV"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "81",
+    "code": "7809I",
+    "name": "SIDOBRE MONTAGNE XV"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "56",
+    "code": "7810K",
+    "name": "RHUYS RUGBY CLUB"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "11",
+    "code": "7811L",
+    "name": "ASSOCIATION SPORTIVE CANET"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "24",
+    "code": "7812M",
+    "name": "UNION RUGBY CLUB AUVEZERE"
+  },
+  {
+    "ligue": "BOURGOGNE-FRANCHE-COMTÉ",
+    "departmentCode": "21",
+    "code": "7814P",
+    "name": "UNION SPORTIVE CHEMINOTE VENAREY LES LAUMES"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "51",
+    "code": "7816R",
+    "name": "RUGBY CLUB CHAMPENOIS SEZANNAIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "7817S",
+    "name": "RUGBY CLUB LES MUREAUX"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "91",
+    "code": "7818T",
+    "name": "VIRY CHATILLON RUGBY CLUB"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "22",
+    "code": "7821W",
+    "name": "RUGBY LANNION PERROS"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "61",
+    "code": "7822X",
+    "name": "RUGBY CLUB DU BOCAGE"
+  },
+  {
+    "ligue": "MARTINIQUE",
+    "departmentCode": "0",
+    "code": "7828D",
+    "name": "OVALIE CLUB DUCOSSAIS"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "7830F",
+    "name": "CHATILLON RUGBY CLUB XV"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "92",
+    "code": "7842T",
+    "name": "RACING CLUB ASNIEROIS"
+  },
+  {
+    "ligue": "NOUVELLE-CALEDONIE",
+    "departmentCode": "0",
+    "code": "7843U",
+    "name": "LES HOUPS CLUB DE RUGBY DE POINDIMIE"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "0",
+    "code": "7846X",
+    "name": "OTTMARSHEIM RUGBY CLUB"
+  },
+  {
+    "ligue": "HAUTS DE FRANCE",
+    "departmentCode": "62",
+    "code": "7847Y",
+    "name": "RUGBY CLUB DU PAYS DE LUMBRES"
+  },
+  {
+    "ligue": "GRAND EST",
+    "departmentCode": "0",
+    "code": "7849A",
+    "name": "RUGBY GRIZZLYS ORNE LORRAINE CONFLUENCES"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "01",
+    "code": "7850B",
+    "name": "XV DE LA DOMBES"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "84",
+    "code": "7853E",
+    "name": "AVIGNON LE PONTET RUGBY"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "13",
+    "code": "7859L",
+    "name": "ASSOCIATION RUGBY CASSIS"
+  },
+  {
+    "ligue": "OCCITANIE",
+    "departmentCode": "66",
+    "code": "7860M",
+    "name": "BANYULS RUGBY ALS SENGLARS"
+  },
+  {
+    "ligue": "PROVENCE-ALPES-CÔTE D'AZUR",
+    "departmentCode": "83",
+    "code": "7861N",
+    "name": "RCR RUGBY CLUB DU ROCHER"
+  },
+  {
+    "ligue": "ILE-DE-FRANCE",
+    "departmentCode": "78",
+    "code": "7862P",
+    "name": "SAINT CYR OLYMPIQUE RUGBY"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "73",
+    "code": "7863Q",
+    "name": "STADE MOUSSARD RUGBY CLUB"
+  },
+  {
+    "ligue": "CENTRE - VAL DE LOIRE",
+    "departmentCode": "45",
+    "code": "7864R",
+    "name": "PARC PATAY ATHLETIQUE RUGBY CLUB"
+  },
+  {
+    "ligue": "NOUVELLE-AQUITAINE",
+    "departmentCode": "40",
+    "code": "7865S",
+    "name": "ASSOCIATION COTE LANDES RUGBY (A C L R)"
+  },
+  {
+    "ligue": "AUVERGNE-RHÔNE-ALPES",
+    "departmentCode": "74",
+    "code": "7871Y",
+    "name": "RUGBY CLUB DE FILLIERE"
+  },
+  {
+    "ligue": "MAYOTTE",
+    "departmentCode": "97600",
+    "code": "7884M",
+    "name": "RUGBY CLUB DE KOUNGOU"
+  },
+  {
+    "ligue": "GUYANE",
+    "departmentCode": "0",
+    "code": "7887Q",
+    "name": "RUGBY CLUB AMAZONIE"
+  },
+  {
+    "ligue": "BRETAGNE",
+    "departmentCode": "0",
+    "code": "7891U",
+    "name": "RUGBY AR FOUILHEZ MENEZ ARE"
+  },
+  {
+    "ligue": "NORMANDIE",
+    "departmentCode": "14",
+    "code": "7899C",
+    "name": "RUGBY CLUB DU PAYS DE FALAISE"
+  }
+]

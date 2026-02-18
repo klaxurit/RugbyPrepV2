@@ -1,0 +1,1914 @@
+[
+  {
+    "id": "push_horizontal__bench_press__barbell",
+    "name": "Développé couché barre",
+    "pattern": "push_horizontal",
+    "equipment": [
+      "barbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "level": "beginner",
+    "notes": "Base force/puissance haut du corps. Variantes possibles: prise serrée, pause, board press.",
+    "exerciseId": "push_horizontal__bench_press__barbell",
+    "nameFr": "Développé couché barre",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "push"
+    ],
+    "defaultNotes": "Base force/puissance haut du corps. Variantes possibles: prise serrée, pause, board press."
+  },
+  {
+    "id": "push_horizontal__bench_press__dumbbell",
+    "name": "Développé couché haltères",
+    "pattern": "push_horizontal",
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "level": "beginner",
+    "notes": "Bonne alternative si épaule sensible (amplitude ajustable).",
+    "exerciseId": "push_horizontal__bench_press__dumbbell",
+    "nameFr": "Développé couché haltères",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "push"
+    ],
+    "defaultNotes": "Bonne alternative si épaule sensible (amplitude ajustable)."
+  },
+  {
+    "id": "push_horizontal__board_press__barbell",
+    "name": "Board press barre",
+    "pattern": "push_horizontal",
+    "equipment": [
+      "barbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Réduit l’amplitude, utile pour intensifier sans trop charger l’épaule.",
+    "exerciseId": "push_horizontal__board_press__barbell",
+    "nameFr": "Board press barre",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "push"
+    ],
+    "defaultNotes": "Réduit l’amplitude, utile pour intensifier sans trop charger l’épaule."
+  },
+  {
+    "id": "push_horizontal__push_up__plyo",
+    "name": "Pompes pliométriques",
+    "pattern": "push_horizontal",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "wrist_pain",
+      "shoulder_pain",
+      "elbow_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Travail explosif. Priorité à la qualité, arrêt avant dégradation.",
+    "exerciseId": "push_horizontal__push_up__plyo",
+    "nameFr": "Pompes pliométriques",
+    "metricType": "reps",
+    "tags": [
+      "upper",
+      "push",
+      "power",
+      "neural"
+    ],
+    "defaultNotes": "Travail explosif. Priorité à la qualité, arrêt avant dégradation."
+  },
+  {
+    "id": "push_horizontal__push_up__oscillation",
+    "name": "Pompes oscillations (explosif/rythmé)",
+    "pattern": "push_horizontal",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "wrist_pain",
+      "shoulder_pain",
+      "elbow_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Format temps (10–15s). Chercher vitesse/tonus, pas l’échec.",
+    "exerciseId": "push_horizontal__push_up__oscillation",
+    "nameFr": "Pompes oscillations (explosif/rythmé)",
+    "metricType": "reps",
+    "tags": [
+      "upper",
+      "push"
+    ],
+    "defaultNotes": "Format temps (10–15s). Chercher vitesse/tonus, pas l’échec."
+  },
+  {
+    "id": "push_vertical__ohp__seated",
+    "name": "Développé militaire assis",
+    "pattern": "push_vertical",
+    "equipment": [
+      "barbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain",
+      "low_back_pain"
+    ],
+    "level": "beginner",
+    "notes": "Assis pour limiter la compensation lombaire.",
+    "exerciseId": "push_vertical__ohp__seated",
+    "nameFr": "Développé militaire assis",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "push"
+    ],
+    "defaultNotes": "Assis pour limiter la compensation lombaire."
+  },
+  {
+    "id": "push_vertical__dumbbell_press__seated",
+    "name": "Développé épaules haltères assis",
+    "pattern": "push_vertical",
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain",
+      "low_back_pain"
+    ],
+    "level": "beginner",
+    "notes": "Alternative plus tolérante (trajectoire libre).",
+    "exerciseId": "push_vertical__dumbbell_press__seated",
+    "nameFr": "Développé épaules haltères assis",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "push"
+    ],
+    "defaultNotes": "Alternative plus tolérante (trajectoire libre)."
+  },
+  {
+    "id": "push_vertical__landmine_press__kneeling",
+    "name": "Landmine press à genoux",
+    "pattern": "push_vertical",
+    "equipment": [
+      "landmine"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
+    "level": "beginner",
+    "unilateral": true,
+    "notes": "Très rugby: pousse + anti-rotation + stabilité scapulaire.",
+    "exerciseId": "push_vertical__landmine_press__kneeling",
+    "nameFr": "Landmine press à genoux",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "push"
+    ],
+    "defaultNotes": "Très rugby: pousse + anti-rotation + stabilité scapulaire."
+  },
+  {
+    "id": "pull_vertical__pull_up__neutral",
+    "name": "Tractions prise neutre",
+    "pattern": "pull_vertical",
+    "equipment": [
+      "pullup_bar"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "level": "beginner",
+    "notes": "Prise souvent plus tolérante pour l’épaule.",
+    "exerciseId": "pull_vertical__pull_up__neutral",
+    "nameFr": "Tractions prise neutre",
+    "metricType": "reps",
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Prise souvent plus tolérante pour l’épaule."
+  },
+  {
+    "id": "pull_vertical__pull_up__supinated",
+    "name": "Tractions supination",
+    "pattern": "pull_vertical",
+    "equipment": [
+      "pullup_bar"
+    ],
+    "contraindications": [
+      "elbow_pain",
+      "wrist_pain",
+      "shoulder_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Plus de biceps. Attention coudes si volume élevé.",
+    "exerciseId": "pull_vertical__pull_up__supinated",
+    "nameFr": "Tractions supination",
+    "metricType": "reps",
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Plus de biceps. Attention coudes si volume élevé."
+  },
+  {
+    "id": "pull_vertical__lat_pulldown__machine",
+    "name": "Tirage vertical (poulie)",
+    "pattern": "pull_vertical",
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
+    "level": "beginner",
+    "notes": "Alternative aux tractions pour débutants / fatigue.",
+    "exerciseId": "pull_vertical__lat_pulldown__machine",
+    "nameFr": "Tirage vertical (poulie)",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Alternative aux tractions pour débutants / fatigue."
+  },
+  {
+    "id": "pull_horizontal__tbar_row",
+    "name": "Rowing T-Bar",
+    "pattern": "pull_horizontal",
+    "equipment": [
+      "tbar_row"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Row lourd. Contrôle lombaire indispensable.",
+    "exerciseId": "pull_horizontal__tbar_row",
+    "nameFr": "Rowing T-Bar",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Row lourd. Contrôle lombaire indispensable."
+  },
+  {
+    "id": "pull_horizontal__incline_bench_row__dumbbell",
+    "name": "Tirage haltères sur banc incliné",
+    "pattern": "pull_horizontal",
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "level": "beginner",
+    "notes": "Protège le bas du dos, très bon en assistance.",
+    "exerciseId": "pull_horizontal__incline_bench_row__dumbbell",
+    "nameFr": "Tirage haltères sur banc incliné",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Protège le bas du dos, très bon en assistance."
+  },
+  {
+    "id": "pull_horizontal__one_arm_row__dumbbell",
+    "name": "Rowing unilatéral haltère",
+    "pattern": "pull_horizontal",
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "shoulder_pain"
+    ],
+    "level": "beginner",
+    "unilateral": true,
+    "notes": "Unilatéral = gainage + anti-rotation.",
+    "exerciseId": "pull_horizontal__one_arm_row__dumbbell",
+    "nameFr": "Rowing unilatéral haltère",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Unilatéral = gainage + anti-rotation."
+  },
+  {
+    "id": "pull_horizontal__band_row",
+    "name": "Rowing élastique",
+    "pattern": "pull_horizontal",
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Parfait en fin de séance ou si matériel limité.",
+    "exerciseId": "pull_horizontal__band_row",
+    "nameFr": "Rowing élastique",
+    "metricType": "reps",
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Parfait en fin de séance ou si matériel limité."
+  },
+  {
+    "id": "prehab_shoulder__band_tyi",
+    "name": "Élévations T-Y-I à l’élastique",
+    "pattern": "prehab_shoulder",
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "level": "beginner",
+    "notes": "Stabilité scapulaire. Qualité et contrôle.",
+    "exerciseId": "prehab_shoulder__band_tyi",
+    "nameFr": "Élévations T-Y-I à l’élastique",
+    "metricType": "reps",
+    "tags": [
+      "prehab",
+      "shoulder_health"
+    ],
+    "defaultNotes": "Stabilité scapulaire. Qualité et contrôle."
+  },
+  {
+    "id": "prehab_shoulder__tyi__incline_bench",
+    "name": "Élévations T-Y-I sur banc incliné",
+    "pattern": "prehab_shoulder",
+    "equipment": [
+      "bench",
+      "dumbbell"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "level": "beginner",
+    "notes": "Variante plus stricte, très utilisée en rugby.",
+    "exerciseId": "prehab_shoulder__tyi__incline_bench",
+    "nameFr": "Élévations T-Y-I sur banc incliné",
+    "metricType": "load_reps",
+    "tags": [
+      "prehab",
+      "shoulder_health"
+    ],
+    "defaultNotes": "Variante plus stricte, très utilisée en rugby."
+  },
+  {
+    "id": "prehab_shoulder__face_pull__band",
+    "name": "Face pull élastique",
+    "pattern": "prehab_shoulder",
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "level": "beginner",
+    "notes": "Travail arrière d’épaule / coiffe.",
+    "exerciseId": "prehab_shoulder__face_pull__band",
+    "nameFr": "Face pull élastique",
+    "metricType": "reps",
+    "tags": [
+      "prehab",
+      "shoulder_health"
+    ],
+    "defaultNotes": "Travail arrière d’épaule / coiffe."
+  },
+  {
+    "id": "olympic_variant__hang_high_pull",
+    "name": "Hang High Pull",
+    "pattern": "olympic_variant",
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "shoulder_pain",
+      "wrist_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Bloc neural. Vitesse de barre > charge.",
+    "exerciseId": "olympic_variant__hang_high_pull",
+    "nameFr": "Hang High Pull",
+    "metricType": "load_reps",
+    "tags": [
+      "power",
+      "neural"
+    ],
+    "defaultNotes": "Bloc neural. Vitesse de barre > charge."
+  },
+  {
+    "id": "olympic_variant__clean_high_pull",
+    "name": "Clean High Pull",
+    "pattern": "olympic_variant",
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "shoulder_pain",
+      "wrist_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Variante explosive du clean, sans réception.",
+    "exerciseId": "olympic_variant__clean_high_pull",
+    "nameFr": "Clean High Pull",
+    "metricType": "load_reps",
+    "tags": [
+      "power",
+      "neural"
+    ],
+    "defaultNotes": "Variante explosive du clean, sans réception."
+  },
+  {
+    "id": "olympic_variant__power_clean__hang",
+    "name": "Power clean (hang)",
+    "pattern": "olympic_variant",
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "shoulder_pain",
+      "wrist_pain",
+      "knee_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Technique. Doit rester propre, sinon remplacer par high pull.",
+    "exerciseId": "olympic_variant__power_clean__hang",
+    "nameFr": "Power clean (hang)",
+    "metricType": "load_reps",
+    "tags": [
+      "power",
+      "neural"
+    ],
+    "defaultNotes": "Technique. Doit rester propre, sinon remplacer par high pull."
+  },
+  {
+    "id": "full_power__db_snatch__single_arm",
+    "name": "Snatch haltère 1 bras",
+    "pattern": "olympic_variant",
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain",
+      "low_back_pain"
+    ],
+    "level": "beginner",
+    "unilateral": true,
+    "notes": "Très bon en EMOM: simple, explosif, transférable.",
+    "exerciseId": "full_power__db_snatch__single_arm",
+    "nameFr": "Snatch haltère 1 bras",
+    "metricType": "load_reps",
+    "tags": [
+      "power",
+      "neural"
+    ],
+    "defaultNotes": "Très bon en EMOM: simple, explosif, transférable."
+  },
+  {
+    "id": "lower_jump__broad_jump__seated",
+    "name": "Saut en longueur assis (Seated Broad Jump)",
+    "pattern": "lower_jump",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "level": "beginner",
+    "notes": "Neural bas du corps. EMOM qualité.",
+    "exerciseId": "lower_jump__broad_jump__seated",
+    "nameFr": "Saut en longueur assis (Seated Broad Jump)",
+    "metricType": "reps",
+    "tags": [
+      "lower",
+      "power",
+      "neural"
+    ],
+    "defaultNotes": "Neural bas du corps. EMOM qualité."
+  },
+  {
+    "id": "lower_jump__box_squat_jump",
+    "name": "Box Squat Jump",
+    "pattern": "lower_jump",
+    "equipment": [
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Plyo contrôlée. Atterrissage silencieux.",
+    "exerciseId": "lower_jump__box_squat_jump",
+    "nameFr": "Box Squat Jump",
+    "metricType": "reps",
+    "tags": [
+      "lower",
+      "squat",
+      "power",
+      "neural"
+    ],
+    "defaultNotes": "Plyo contrôlée. Atterrissage silencieux."
+  },
+  {
+    "id": "unilateral__jump_step_up",
+    "name": "Jump step-up (saut sur step) unilatéral",
+    "pattern": "lower_jump",
+    "equipment": [
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "ankle_pain"
+    ],
+    "level": "intermediate",
+    "unilateral": true,
+    "notes": "Explosif unilatéral. Garder la qualité.",
+    "exerciseId": "unilateral__jump_step_up",
+    "nameFr": "Jump step-up (saut sur step) unilatéral",
+    "metricType": "reps",
+    "tags": [
+      "lower",
+      "power",
+      "neural"
+    ],
+    "defaultNotes": "Explosif unilatéral. Garder la qualité."
+  },
+  {
+    "id": "squat__front_squat__barbell",
+    "name": "Front squat barre",
+    "pattern": "squat",
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "wrist_pain",
+      "knee_pain",
+      "low_back_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Très bon transfert rugby (gainage + posture).",
+    "exerciseId": "squat__front_squat__barbell",
+    "nameFr": "Front squat barre",
+    "metricType": "load_reps",
+    "tags": [
+      "lower",
+      "squat"
+    ],
+    "defaultNotes": "Très bon transfert rugby (gainage + posture)."
+  },
+  {
+    "id": "squat__box_squat__barbell",
+    "name": "Box squat barre",
+    "pattern": "squat",
+    "equipment": [
+      "barbell",
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
+    "level": "beginner",
+    "notes": "Contrôle amplitude et posture. Utile pour force.",
+    "exerciseId": "squat__box_squat__barbell",
+    "nameFr": "Box squat barre",
+    "metricType": "load_reps",
+    "tags": [
+      "lower",
+      "squat"
+    ],
+    "defaultNotes": "Contrôle amplitude et posture. Utile pour force."
+  },
+  {
+    "id": "hinge__rdl__barbell",
+    "name": "Soulevé de terre jambes semi-tendues (RDL) barre",
+    "pattern": "hinge",
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "level": "beginner",
+    "notes": "Chaîne postérieure. Dos neutre indispensable.",
+    "exerciseId": "hinge__rdl__barbell",
+    "nameFr": "Soulevé de terre jambes semi-tendues (RDL) barre",
+    "metricType": "load_reps",
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain"
+    ],
+    "defaultNotes": "Chaîne postérieure. Dos neutre indispensable."
+  },
+  {
+    "id": "hinge__drop_rdl",
+    "name": "Drop RDL (RDL dynamique)",
+    "pattern": "hinge",
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Dynamique/élastique. À garder léger et propre.",
+    "exerciseId": "hinge__drop_rdl",
+    "nameFr": "Drop RDL (RDL dynamique)",
+    "metricType": "load_reps",
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain"
+    ],
+    "defaultNotes": "Dynamique/élastique. À garder léger et propre."
+  },
+  {
+    "id": "unilateral__step_up__low",
+    "name": "Step-up bas (unilatéral)",
+    "pattern": "squat",
+    "equipment": [
+      "box",
+      "dumbbell"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "level": "beginner",
+    "unilateral": true,
+    "notes": "Contrôle et force unilatérale, très utile rugby.",
+    "exerciseId": "unilateral__step_up__low",
+    "nameFr": "Step-up bas (unilatéral)",
+    "metricType": "load_reps",
+    "tags": [
+      "squat"
+    ],
+    "defaultNotes": "Contrôle et force unilatérale, très utile rugby."
+  },
+  {
+    "id": "hamstrings__ham_catch",
+    "name": "Ham catches (ischios) unilatéral",
+    "pattern": "hinge",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "level": "intermediate",
+    "unilateral": true,
+    "notes": "Prévention ischios. Progressif, qualité.",
+    "exerciseId": "hamstrings__ham_catch",
+    "nameFr": "Ham catches (ischios) unilatéral",
+    "metricType": "reps",
+    "tags": [
+      "hinge"
+    ],
+    "defaultNotes": "Prévention ischios. Progressif, qualité."
+  },
+  {
+    "id": "groin_adductors__copenhagen_plank__weighted",
+    "name": "Copenhagen plank lesté (ou levier difficile)",
+    "pattern": "groin_adductors",
+    "equipment": [
+      "bench"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "level": "intermediate",
+    "unilateral": true,
+    "notes": "Adducteurs (essentiel rugby). Monter progressivement.",
+    "exerciseId": "groin_adductors__copenhagen_plank__weighted",
+    "nameFr": "Copenhagen plank lesté (ou levier difficile)",
+    "metricType": "seconds",
+    "tags": [
+      "groin",
+      "prehab"
+    ],
+    "defaultNotes": "Adducteurs (essentiel rugby). Monter progressivement."
+  },
+  {
+    "id": "core_anti_extension__ghd_iso",
+    "name": "Gainage anti-extension sur GHD (iso)",
+    "pattern": "core_anti_extension",
+    "equipment": [
+      "ghd"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Format temps (10–20s). Ne pas cambrer.",
+    "exerciseId": "core_anti_extension__ghd_iso",
+    "nameFr": "Gainage anti-extension sur GHD (iso)",
+    "metricType": "load_reps",
+    "tags": [
+      "core"
+    ],
+    "defaultNotes": "Format temps (10–20s). Ne pas cambrer."
+  },
+  {
+    "id": "core_anti_extension__dead_bug",
+    "name": "Dead bug (anti-extension)",
+    "pattern": "core_anti_extension",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "level": "beginner",
+    "notes": "Alternative safe sans matériel.",
+    "exerciseId": "core_anti_extension__dead_bug",
+    "nameFr": "Dead bug (anti-extension)",
+    "metricType": "reps",
+    "tags": [
+      "core"
+    ],
+    "defaultNotes": "Alternative safe sans matériel."
+  },
+  {
+    "id": "core_anti_rotation__pallof_press__band",
+    "name": "Pallof press élastique",
+    "pattern": "core_anti_rotation",
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "level": "beginner",
+    "unilateral": true,
+    "notes": "Anti-rotation essentiel en rugby (contact, rucks).",
+    "exerciseId": "core_anti_rotation__pallof_press__band",
+    "nameFr": "Pallof press élastique",
+    "metricType": "reps",
+    "tags": [
+      "core"
+    ],
+    "defaultNotes": "Anti-rotation essentiel en rugby (contact, rucks)."
+  },
+  {
+    "id": "core_rotation__ghd_rotations",
+    "name": "Rotations sur GHD",
+    "pattern": "core_anti_rotation",
+    "equipment": [
+      "ghd"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "level": "intermediate",
+    "unilateral": true,
+    "notes": "Contrôle du tronc. Éviter si douleur lombaire.",
+    "exerciseId": "core_rotation__ghd_rotations",
+    "nameFr": "Rotations sur GHD",
+    "metricType": "load_reps",
+    "tags": [
+      "core"
+    ],
+    "defaultNotes": "Contrôle du tronc. Éviter si douleur lombaire."
+  },
+  {
+    "id": "neck__flexion",
+    "name": "Flexions avant cou",
+    "pattern": "neck",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "level": "beginner",
+    "notes": "Nuque rugby. Monter progressivement, contrôle.",
+    "exerciseId": "neck__flexion",
+    "nameFr": "Flexions avant cou",
+    "metricType": "reps",
+    "tags": [
+      "neck"
+    ],
+    "defaultNotes": "Nuque rugby. Monter progressivement, contrôle."
+  },
+  {
+    "id": "neck__isometric__band",
+    "name": "Gainage cou isométrique (élastique)",
+    "pattern": "neck",
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "level": "beginner",
+    "notes": "Format temps (20–30s). Stop si douleur.",
+    "exerciseId": "neck__isometric__band",
+    "nameFr": "Gainage cou isométrique (élastique)",
+    "metricType": "seconds",
+    "tags": [
+      "neck"
+    ],
+    "defaultNotes": "Format temps (20–30s). Stop si douleur."
+  },
+  {
+    "id": "carry__farmer_walk__dumbbell",
+    "name": "Farmer walk (marche du fermier)",
+    "pattern": "carry",
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "wrist_pain",
+      "elbow_pain"
+    ],
+    "level": "beginner",
+    "notes": "Grip + gainage + robustesse. Très transférable.",
+    "exerciseId": "carry__farmer_walk__dumbbell",
+    "nameFr": "Farmer walk (marche du fermier)",
+    "metricType": "meters",
+    "tags": [
+      "carry"
+    ],
+    "defaultNotes": "Grip + gainage + robustesse. Très transférable."
+  },
+  {
+    "exerciseId": "neck__flexion_iso__band",
+    "nameFr": "Cou flexion isometrique elastique",
+    "metricType": "seconds",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "neck",
+      "prehab"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "defaultNotes": "Tenir sans douleur, respiration calme.",
+    "id": "neck__flexion_iso__band",
+    "name": "Cou flexion isometrique elastique",
+    "notes": "Tenir sans douleur, respiration calme."
+  },
+  {
+    "exerciseId": "neck__extension_iso__band",
+    "nameFr": "Cou extension isometrique elastique",
+    "metricType": "seconds",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "neck",
+      "prehab"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "defaultNotes": "Tenir sans douleur, nuque longue.",
+    "id": "neck__extension_iso__band",
+    "name": "Cou extension isometrique elastique",
+    "notes": "Tenir sans douleur, nuque longue."
+  },
+  {
+    "exerciseId": "neck__lateral_flexion_iso__band",
+    "nameFr": "Cou flexion laterale isometrique",
+    "metricType": "seconds",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "neck",
+      "prehab"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "defaultNotes": "Stabilite, pas de compensation.",
+    "id": "neck__lateral_flexion_iso__band",
+    "name": "Cou flexion laterale isometrique",
+    "notes": "Stabilite, pas de compensation."
+  },
+  {
+    "exerciseId": "neck__rotation_iso__band",
+    "nameFr": "Cou rotation isometrique",
+    "metricType": "seconds",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "neck",
+      "prehab"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "defaultNotes": "Douceur et controle.",
+    "id": "neck__rotation_iso__band",
+    "name": "Cou rotation isometrique",
+    "notes": "Douceur et controle."
+  },
+  {
+    "exerciseId": "upper_trap__shrug__barbell",
+    "nameFr": "Shrug barre",
+    "metricType": "load_reps",
+    "equipment": [
+      "barbell"
+    ],
+    "tags": [
+      "upper",
+      "pull",
+      "neck",
+      "strength"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "defaultNotes": "Hausser/abaisser controle.",
+    "id": "upper_trap__shrug__barbell",
+    "name": "Shrug barre",
+    "notes": "Hausser/abaisser controle."
+  },
+  {
+    "exerciseId": "upper_trap__shrug__dumbbell",
+    "nameFr": "Shrug halteres",
+    "metricType": "load_reps",
+    "equipment": [
+      "dumbbell"
+    ],
+    "tags": [
+      "upper",
+      "pull",
+      "neck",
+      "strength"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "defaultNotes": "Controle, pas d a-coups.",
+    "id": "upper_trap__shrug__dumbbell",
+    "name": "Shrug halteres",
+    "notes": "Controle, pas d a-coups."
+  },
+  {
+    "exerciseId": "carry__farmer_hold__dumbbell",
+    "nameFr": "Farmer hold halteres",
+    "metricType": "meters",
+    "equipment": [
+      "dumbbell"
+    ],
+    "tags": [
+      "carry",
+      "upper",
+      "core"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Posture haute, gainage.",
+    "id": "carry__farmer_hold__dumbbell",
+    "name": "Farmer hold halteres",
+    "notes": "Posture haute, gainage."
+  },
+  {
+    "exerciseId": "carry__overhead_hold__dumbbell",
+    "nameFr": "Overhead hold haltere",
+    "metricType": "meters",
+    "equipment": [
+      "dumbbell"
+    ],
+    "tags": [
+      "carry",
+      "upper",
+      "core",
+      "shoulder_health"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Verrouillage stable.",
+    "id": "carry__overhead_hold__dumbbell",
+    "name": "Overhead hold haltere",
+    "notes": "Verrouillage stable."
+  },
+  {
+    "exerciseId": "groin_adductors__copenhagen_plank__short",
+    "nameFr": "Copenhagen court",
+    "metricType": "seconds",
+    "equipment": [
+      "bench"
+    ],
+    "tags": [
+      "groin",
+      "prehab",
+      "lower"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "defaultNotes": "Levier court, qualite.",
+    "id": "groin_adductors__copenhagen_plank__short",
+    "name": "Copenhagen court",
+    "notes": "Levier court, qualite."
+  },
+  {
+    "exerciseId": "groin_adductors__copenhagen_plank__long",
+    "nameFr": "Copenhagen long",
+    "metricType": "seconds",
+    "equipment": [
+      "bench"
+    ],
+    "tags": [
+      "groin",
+      "prehab",
+      "lower"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "defaultNotes": "Levier long, controle.",
+    "id": "groin_adductors__copenhagen_plank__long",
+    "name": "Copenhagen long",
+    "notes": "Levier long, controle."
+  },
+  {
+    "exerciseId": "hamstring__nordic__partner",
+    "nameFr": "Nordic hamstring partenaire",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "posterior_chain",
+      "prehab"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Descente controlee.",
+    "id": "hamstring__nordic__partner",
+    "name": "Nordic hamstring partenaire",
+    "notes": "Descente controlee."
+  },
+  {
+    "exerciseId": "hamstring__nordic__band_assist",
+    "nameFr": "Nordic hamstring avec elastique",
+    "metricType": "reps",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "lower",
+      "posterior_chain",
+      "prehab"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Assistance progressive.",
+    "id": "hamstring__nordic__band_assist",
+    "name": "Nordic hamstring avec elastique",
+    "notes": "Assistance progressive."
+  },
+  {
+    "exerciseId": "hamstring__slide_leg_curl__towel",
+    "nameFr": "Leg curl glisse serviette",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "posterior_chain",
+      "prehab"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Hanches hautes.",
+    "id": "hamstring__slide_leg_curl__towel",
+    "name": "Leg curl glisse serviette",
+    "notes": "Hanches hautes."
+  },
+  {
+    "exerciseId": "hamstring__bridge_iso__single_leg",
+    "nameFr": "Bridge isometrique une jambe",
+    "metricType": "seconds",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "posterior_chain",
+      "prehab"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Bassin stable.",
+    "id": "hamstring__bridge_iso__single_leg",
+    "name": "Bridge isometrique une jambe",
+    "notes": "Bassin stable."
+  },
+  {
+    "exerciseId": "groin_adductors__ball_squeeze__supine",
+    "nameFr": "Serrage ballon adducteurs",
+    "metricType": "seconds",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "groin",
+      "prehab",
+      "core"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "defaultNotes": "Pression progressive.",
+    "id": "groin_adductors__ball_squeeze__supine",
+    "name": "Serrage ballon adducteurs",
+    "notes": "Pression progressive."
+  },
+  {
+    "exerciseId": "lower_squat__split_squat__dumbbell",
+    "nameFr": "Split squat halteres",
+    "metricType": "load_reps",
+    "equipment": [
+      "dumbbell"
+    ],
+    "tags": [
+      "lower",
+      "squat",
+      "unilateral"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Genou aligné.",
+    "id": "lower_squat__split_squat__dumbbell",
+    "name": "Split squat halteres",
+    "notes": "Genou aligné."
+  },
+  {
+    "exerciseId": "lower_squat__bulgarian_split_squat__dumbbell",
+    "nameFr": "Bulgarian split squat halteres",
+    "metricType": "load_reps",
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "tags": [
+      "lower",
+      "squat",
+      "unilateral"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Amplitude controlee.",
+    "id": "lower_squat__bulgarian_split_squat__dumbbell",
+    "name": "Bulgarian split squat halteres",
+    "notes": "Amplitude controlee."
+  },
+  {
+    "exerciseId": "lower_lunge__reverse_lunge__barbell",
+    "nameFr": "Fente arriere barre",
+    "metricType": "load_reps",
+    "equipment": [
+      "barbell"
+    ],
+    "tags": [
+      "lower",
+      "unilateral"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Pas stable.",
+    "id": "lower_lunge__reverse_lunge__barbell",
+    "name": "Fente arriere barre",
+    "notes": "Pas stable."
+  },
+  {
+    "exerciseId": "lower_lunge__reverse_lunge__dumbbell",
+    "nameFr": "Fente arriere halteres",
+    "metricType": "load_reps",
+    "equipment": [
+      "dumbbell"
+    ],
+    "tags": [
+      "lower",
+      "unilateral"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Controle du genou.",
+    "id": "lower_lunge__reverse_lunge__dumbbell",
+    "name": "Fente arriere halteres",
+    "notes": "Controle du genou."
+  },
+  {
+    "exerciseId": "lower_lunge__lateral_lunge__dumbbell",
+    "nameFr": "Fente laterale halteres",
+    "metricType": "load_reps",
+    "equipment": [
+      "dumbbell"
+    ],
+    "tags": [
+      "lower",
+      "unilateral",
+      "groin"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "defaultNotes": "Hanches basses.",
+    "id": "lower_lunge__lateral_lunge__dumbbell",
+    "name": "Fente laterale halteres",
+    "notes": "Hanches basses."
+  },
+  {
+    "exerciseId": "lower_lunge__cossack_squat__bodyweight",
+    "nameFr": "Cossack squat",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "unilateral",
+      "groin"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "defaultNotes": "Amplitude progressive.",
+    "id": "lower_lunge__cossack_squat__bodyweight",
+    "name": "Cossack squat",
+    "notes": "Amplitude progressive."
+  },
+  {
+    "exerciseId": "lower_step__step_up__dumbbell",
+    "nameFr": "Montee de banc halteres",
+    "metricType": "load_reps",
+    "equipment": [
+      "dumbbell",
+      "box"
+    ],
+    "tags": [
+      "lower",
+      "unilateral"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Pousser dans le pied.",
+    "id": "lower_step__step_up__dumbbell",
+    "name": "Montee de banc halteres",
+    "notes": "Pousser dans le pied."
+  },
+  {
+    "exerciseId": "lower_jump__step_up__box",
+    "nameFr": "Montee pliometrique sur box",
+    "metricType": "reps",
+    "equipment": [
+      "box"
+    ],
+    "tags": [
+      "lower",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Qualite des receptions.",
+    "id": "lower_jump__step_up__box",
+    "name": "Montee pliometrique sur box",
+    "notes": "Qualite des receptions."
+  },
+  {
+    "exerciseId": "calf__standing_raise__bodyweight",
+    "nameFr": "Mollets debout",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
+    "defaultNotes": "Amplitude complete.",
+    "id": "calf__standing_raise__bodyweight",
+    "name": "Mollets debout",
+    "notes": "Amplitude complete."
+  },
+  {
+    "exerciseId": "tibialis__raise__bodyweight",
+    "nameFr": "Tibialis raise",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "prehab"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
+    "defaultNotes": "Controle du pied.",
+    "id": "tibialis__raise__bodyweight",
+    "name": "Tibialis raise",
+    "notes": "Controle du pied."
+  },
+  {
+    "exerciseId": "lower_squat__pistol_box__bodyweight",
+    "nameFr": "Pistol squat sur box",
+    "metricType": "reps",
+    "equipment": [
+      "box"
+    ],
+    "tags": [
+      "lower",
+      "unilateral"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Controle et amplitude.",
+    "id": "lower_squat__pistol_box__bodyweight",
+    "name": "Pistol squat sur box",
+    "notes": "Controle et amplitude."
+  },
+  {
+    "exerciseId": "power__medball_chest_pass__wall",
+    "nameFr": "Lancer medecine ball poitrine mur",
+    "metricType": "reps",
+    "equipment": [
+      "med_ball"
+    ],
+    "tags": [
+      "upper",
+      "power",
+      "neural"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Explosif, retour rapide.",
+    "id": "power__medball_chest_pass__wall",
+    "name": "Lancer medecine ball poitrine mur",
+    "notes": "Explosif, retour rapide."
+  },
+  {
+    "exerciseId": "power__medball_slam__overhead",
+    "nameFr": "Slam medecine ball",
+    "metricType": "reps",
+    "equipment": [
+      "med_ball"
+    ],
+    "tags": [
+      "full",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Tronc gainé.",
+    "id": "power__medball_slam__overhead",
+    "name": "Slam medecine ball",
+    "notes": "Tronc gainé."
+  },
+  {
+    "exerciseId": "power__medball_rotational_throw__wall",
+    "nameFr": "Lancer rotationnel medball",
+    "metricType": "reps",
+    "equipment": [
+      "med_ball"
+    ],
+    "tags": [
+      "core",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Rotation controlee.",
+    "id": "power__medball_rotational_throw__wall",
+    "name": "Lancer rotationnel medball",
+    "notes": "Rotation controlee."
+  },
+  {
+    "exerciseId": "power__jump__box_jump",
+    "nameFr": "Box jump",
+    "metricType": "reps",
+    "equipment": [
+      "box"
+    ],
+    "tags": [
+      "lower",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Reception silencieuse.",
+    "id": "power__jump__box_jump",
+    "name": "Box jump",
+    "notes": "Reception silencieuse."
+  },
+  {
+    "exerciseId": "power__jump__vertical_jump",
+    "nameFr": "Saut vertical",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Qualite > hauteur.",
+    "id": "power__jump__vertical_jump",
+    "name": "Saut vertical",
+    "notes": "Qualite > hauteur."
+  },
+  {
+    "exerciseId": "power__jump__broad_jump",
+    "nameFr": "Saut en longueur",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Atterrissage stable.",
+    "id": "power__jump__broad_jump",
+    "name": "Saut en longueur",
+    "notes": "Atterrissage stable."
+  },
+  {
+    "exerciseId": "power__bound__single_leg",
+    "nameFr": "Bounds unilateraux",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "power",
+      "neural",
+      "unilateral"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
+    "defaultNotes": "Stabilite au sol.",
+    "id": "power__bound__single_leg",
+    "name": "Bounds unilateraux",
+    "notes": "Stabilite au sol."
+  },
+  {
+    "exerciseId": "power__landmine_press__speed",
+    "nameFr": "Landmine press vitesse",
+    "metricType": "load_reps",
+    "equipment": [
+      "landmine"
+    ],
+    "tags": [
+      "upper",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Vitesse maximale.",
+    "id": "power__landmine_press__speed",
+    "name": "Landmine press vitesse",
+    "notes": "Vitesse maximale."
+  },
+  {
+    "exerciseId": "power__push_press__barbell",
+    "nameFr": "Push press barre",
+    "metricType": "load_reps",
+    "equipment": [
+      "barbell"
+    ],
+    "tags": [
+      "upper",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Leg drive propre.",
+    "id": "power__push_press__barbell",
+    "name": "Push press barre",
+    "notes": "Leg drive propre."
+  },
+  {
+    "exerciseId": "power__hang_clean_pull__barbell",
+    "nameFr": "Hang clean pull",
+    "metricType": "load_reps",
+    "equipment": [
+      "barbell"
+    ],
+    "tags": [
+      "full",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Trajectoire verticale.",
+    "id": "power__hang_clean_pull__barbell",
+    "name": "Hang clean pull",
+    "notes": "Trajectoire verticale."
+  },
+  {
+    "exerciseId": "pull_horizontal__chest_supported_row__dumbbell",
+    "nameFr": "Rowing poitrine sur banc",
+    "metricType": "load_reps",
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Controle scapulaire.",
+    "id": "pull_horizontal__chest_supported_row__dumbbell",
+    "name": "Rowing poitrine sur banc",
+    "notes": "Controle scapulaire."
+  },
+  {
+    "exerciseId": "pull_horizontal__seal_row__barbell",
+    "nameFr": "Seal row barre",
+    "metricType": "load_reps",
+    "equipment": [
+      "barbell",
+      "bench"
+    ],
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Buste fixe.",
+    "id": "pull_horizontal__seal_row__barbell",
+    "name": "Seal row barre",
+    "notes": "Buste fixe."
+  },
+  {
+    "exerciseId": "pull_horizontal__band_row__elbows_low",
+    "nameFr": "Rowing elastique coudes bas",
+    "metricType": "reps",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "upper",
+      "pull",
+      "prehab"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Tirer vers la hanche.",
+    "id": "pull_horizontal__band_row__elbows_low",
+    "name": "Rowing elastique coudes bas",
+    "notes": "Tirer vers la hanche."
+  },
+  {
+    "exerciseId": "prehab_shoulder__external_rotation__band",
+    "nameFr": "Rotation externe elastique",
+    "metricType": "reps",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "upper",
+      "prehab",
+      "shoulder_health"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Coude colle au corps.",
+    "id": "prehab_shoulder__external_rotation__band",
+    "name": "Rotation externe elastique",
+    "notes": "Coude colle au corps."
+  },
+  {
+    "exerciseId": "prehab_shoulder__scap_pushup__bodyweight",
+    "nameFr": "Pompes scapulaires",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "upper",
+      "prehab",
+      "shoulder_health"
+    ],
+    "contraindications": [
+      "wrist_pain"
+    ],
+    "defaultNotes": "Amplitude controlee.",
+    "id": "prehab_shoulder__scap_pushup__bodyweight",
+    "name": "Pompes scapulaires",
+    "notes": "Amplitude controlee."
+  },
+  {
+    "exerciseId": "prehab_shoulder__prone_y_raise__dumbbell",
+    "nameFr": "Y raise prone",
+    "metricType": "reps",
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "tags": [
+      "upper",
+      "prehab",
+      "shoulder_health"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Leve leger, propre.",
+    "id": "prehab_shoulder__prone_y_raise__dumbbell",
+    "name": "Y raise prone",
+    "notes": "Leve leger, propre."
+  },
+  {
+    "exerciseId": "prehab_shoulder__incline_y_raise__dumbbell",
+    "nameFr": "Y raise incline",
+    "metricType": "reps",
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "tags": [
+      "upper",
+      "prehab",
+      "shoulder_health"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Concentre sur la scapula.",
+    "id": "prehab_shoulder__incline_y_raise__dumbbell",
+    "name": "Y raise incline",
+    "notes": "Concentre sur la scapula."
+  },
+  {
+    "exerciseId": "prehab_shoulder__wall_slide__band",
+    "nameFr": "Wall slide elastique",
+    "metricType": "reps",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "upper",
+      "prehab",
+      "shoulder_health"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Dos colle au mur.",
+    "id": "prehab_shoulder__wall_slide__band",
+    "name": "Wall slide elastique",
+    "notes": "Dos colle au mur."
+  },
+  {
+    "exerciseId": "carry__suitcase_walk__dumbbell",
+    "nameFr": "Suitcase walk",
+    "metricType": "meters",
+    "equipment": [
+      "dumbbell"
+    ],
+    "tags": [
+      "carry",
+      "core",
+      "unilateral"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Tronc droit.",
+    "id": "carry__suitcase_walk__dumbbell",
+    "name": "Suitcase walk",
+    "notes": "Tronc droit."
+  },
+  {
+    "exerciseId": "carry__zercher_carry__barbell",
+    "nameFr": "Zercher carry",
+    "metricType": "meters",
+    "equipment": [
+      "barbell"
+    ],
+    "tags": [
+      "carry",
+      "core"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Gainage fort.",
+    "id": "carry__zercher_carry__barbell",
+    "name": "Zercher carry",
+    "notes": "Gainage fort."
+  },
+  {
+    "exerciseId": "carry__overhead_carry__dumbbell",
+    "nameFr": "Overhead carry",
+    "metricType": "meters",
+    "equipment": [
+      "dumbbell"
+    ],
+    "tags": [
+      "carry",
+      "shoulder_health"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Verrouillage solide.",
+    "id": "carry__overhead_carry__dumbbell",
+    "name": "Overhead carry",
+    "notes": "Verrouillage solide."
+  },
+  {
+    "exerciseId": "carry__sled_push__light",
+    "nameFr": "Poussee de traineau leger",
+    "metricType": "meters",
+    "equipment": [
+      "machine"
+    ],
+    "tags": [
+      "carry",
+      "lower",
+      "power"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Pas courts et puissants.",
+    "id": "carry__sled_push__light",
+    "name": "Poussee de traineau leger",
+    "notes": "Pas courts et puissants."
+  },
+  {
+    "exerciseId": "carry__sled_drag__backward",
+    "nameFr": "Tirage traineau arriere",
+    "metricType": "meters",
+    "equipment": [
+      "machine"
+    ],
+    "tags": [
+      "carry",
+      "lower"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "defaultNotes": "Genoux flexibles.",
+    "id": "carry__sled_drag__backward",
+    "name": "Tirage traineau arriere",
+    "notes": "Genoux flexibles."
+  },
+  {
+    "exerciseId": "core_anti_extension__front_plank",
+    "nameFr": "Planche frontale",
+    "metricType": "seconds",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "core",
+      "prehab"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Bassin neutre.",
+    "id": "core_anti_extension__front_plank",
+    "name": "Planche frontale",
+    "notes": "Bassin neutre."
+  },
+  {
+    "exerciseId": "core_anti_rotation__side_plank",
+    "nameFr": "Planche laterale",
+    "metricType": "seconds",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "core",
+      "prehab"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Alignement complet.",
+    "id": "core_anti_rotation__side_plank",
+    "name": "Planche laterale",
+    "notes": "Alignement complet."
+  },
+  {
+    "exerciseId": "core_anti_extension__ab_wheel__kneeling",
+    "nameFr": "Ab wheel a genoux",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "core"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Controle amplitude.",
+    "id": "core_anti_extension__ab_wheel__kneeling",
+    "name": "Ab wheel a genoux",
+    "notes": "Controle amplitude."
+  },
+  {
+    "exerciseId": "core_anti_extension__hollow_hold",
+    "nameFr": "Hollow hold",
+    "metricType": "seconds",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "core",
+      "prehab"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Respiration controlee.",
+    "id": "core_anti_extension__hollow_hold",
+    "name": "Hollow hold",
+    "notes": "Respiration controlee."
+  }
+]
