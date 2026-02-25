@@ -7,6 +7,7 @@ import { ProgressPage } from './pages/ProgressPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { ProgramPage } from './pages/ProgramPage'
 import { WeekPage } from './pages/WeekPage'
+import { SessionDetailPage } from './pages/SessionDetailPage'
 import { LoginPage } from './pages/auth/LoginPage'
 import { SignupPage } from './pages/auth/SignupPage'
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="/week" element={<WeekPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/session" element={<SessionDetailPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

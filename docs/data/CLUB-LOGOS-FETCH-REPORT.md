@@ -1,23 +1,26 @@
 # Club FFR IDs Fetch Report
 
-- Host: `liguenouvelleaquitaine.ffr.fr/`
-- API: `https://api.liguenouvelleaquitaine.ffr.fr//wp-json/ffr/v1/clubssearch`
-- Clubs returned: **373**
-- Added mappings: **340**
+- Host: `comitereunionrugby.ffr.fr`
+- Base URL: `https://comitereunionrugby.ffr.fr`
+- Primary API tried: `https://api.comitereunionrugby.ffr.fr/wp-json/ffr/v1/clubssearch`
+- Source used: **next-listing-pages**
+- Club pages/records discovered: **4**
+- Valid mappings extracted: **4**
+- Added mappings: **4**
 - Updated mappings: **0**
-- Skipped entries: **33**
-- Total mappings now: **549**
+- Skipped entries/pages: **0**
+- Total mappings now: **1537**
 
 ## Sample (first 10)
 
-- 4207Y -> 948
-- 4251W -> 1045
-- 4252X -> 1046
-- 4254Z -> 1048
-- 4255A -> 1049
-- 4256B -> 1050
-- 4258D -> 1052
-- 4259E -> 1053
-- 4260F -> 1054
-- 4261G -> 1055
+- 4001Z -> 476
+- 4003B -> 477
+- 4005D -> 478
+- 4006E -> 479
+- 4007F -> 480
+- 4008G -> 481
+- 4009H -> 482
+- 4012L -> 485
+- 4013M -> 486
+- 4015P -> 487
 

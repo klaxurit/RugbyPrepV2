@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "parse:ffr-clubs": "node scripts/parseFfrClubs.mjs",
     "fetch:club-logos": "node scripts/fetchClubLogos.mjs",
-    "fetch:ffr-ids:ligue": "node scripts/fetchLeagueClubFfrIds.mjs"
+    "fetch:ffr-ids:ligue": "node scripts/fetchLeagueClubFfrIds.mjs",
+    "validate:club-logos:manual": "node scripts/validateClubLogosManual.mjs",
+    "validate:club-logos:manual:remote": "node scripts/validateClubLogosManual.mjs --check-remote"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.97.0",

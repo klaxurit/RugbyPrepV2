@@ -54,7 +54,7 @@ export function ProgramPage() {
   const recap = session ? getSessionRecap(blockLogs, session, 'UPPER', week) : null
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-slate-900 pb-24">
+    <div className="min-h-screen bg-[#faf9f7] font-sans text-[#1f2937] pb-24">
 
       {/* Header */}
       <header className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between sticky top-0 z-50">
@@ -64,9 +64,9 @@ export function ProgramPage() {
           </Link>
           <div>
             <p className="text-xs font-bold tracking-widest text-rose-600 uppercase italic">RugbyPrep</p>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900">
+            <h1 className="text-xl font-extrabold tracking-tight text-[#1f2937]">
               Programme
-              <span className="ml-2 text-sm font-bold text-slate-400">Upper · {week}</span>
+              <span className="ml-2 text-sm font-bold text-[#6b7280]">Upper · {week}</span>
             </h1>
           </div>
         </div>
@@ -74,14 +74,14 @@ export function ProgramPage() {
           <button
             type="button"
             onClick={() => setIsProfileModalOpen(true)}
-            className="p-2 rounded-2xl bg-gray-50 border border-gray-100 text-slate-400 hover:text-rose-600 hover:border-rose-200 transition-colors"
+            className="p-2 rounded-2xl bg-gray-50 border border-gray-100 text-slate-400 hover:text-[#1a5f3f] hover:border-[#1a5f3f]/20 transition-colors"
           >
             <User className="w-4 h-4" />
           </button>
           <button
             type="button"
             onClick={() => setIsObjectiveModalOpen(true)}
-            className="p-2 rounded-2xl bg-gray-50 border border-gray-100 text-slate-400 hover:text-rose-600 hover:border-rose-200 transition-colors"
+            className="p-2 rounded-2xl bg-gray-50 border border-gray-100 text-slate-400 hover:text-[#1a5f3f] hover:border-[#1a5f3f]/20 transition-colors"
           >
             <Target className="w-4 h-4" />
           </button>
@@ -99,14 +99,22 @@ export function ProgramPage() {
               onClick={() => setWeek(opt)}
               className={`flex-shrink-0 px-3.5 py-2 rounded-2xl text-xs font-black transition-all ${
                 opt === week
-                  ? 'bg-rose-600 text-white shadow-sm'
-                  : 'bg-white border border-gray-100 text-slate-500 hover:border-rose-200'
+                  ? 'bg-[#1a5f3f] text-white shadow-sm'
+                  : 'bg-white border border-gray-100 text-slate-500 hover:border-[#1a5f3f]/20'
               }`}
             >
               {opt}
             </button>
           ))}
         </div>
+
+        {/* CTA vers Plan Semaine (flow Accueil → Programme → Semaine → Séance) */}
+        <Link
+          to="/week"
+          className="block w-full py-3 px-4 rounded-2xl bg-[#1a5f3f] text-white text-center text-sm font-bold hover:bg-[#1a5f3f]/90 transition-colors"
+        >
+          Voir le plan de la semaine →
+        </Link>
 
         {/* Phase info */}
         {(phase || cycleWeekNumber) && (
@@ -140,16 +148,16 @@ export function ProgramPage() {
         </div>
 
         {/* Fatigue toggle */}
-        <section className="bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm">
-          <h2 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-3">Niveau de fatigue aujourd'hui</h2>
+        <section className="bg-white border border-gray-100 rounded-[24px] p-5 shadow-sm">
+          <h2 className="text-xs font-black uppercase tracking-wider text-[#6b7280] mb-3">Niveau de fatigue aujourd'hui</h2>
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => setFatigue('OK')}
               className={`py-3 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all ${
                 fatigue === 'OK'
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'bg-gray-50 text-slate-500 border border-gray-100 hover:border-emerald-200'
+                  ? 'bg-[#10b981] text-white shadow-sm'
+                  : 'bg-gray-50 text-slate-500 border border-gray-100 hover:border-[#10b981]/20'
               }`}
             >
               <CheckCircle2 className="w-4 h-4" />
@@ -160,8 +168,8 @@ export function ProgramPage() {
               onClick={() => setFatigue('FATIGUE')}
               className={`py-3 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all ${
                 fatigue === 'FATIGUE'
-                  ? 'bg-orange-500 text-white shadow-sm'
-                  : 'bg-gray-50 text-slate-500 border border-gray-100 hover:border-orange-200'
+                  ? 'bg-[#f59e0b] text-white shadow-sm'
+                  : 'bg-gray-50 text-slate-500 border border-gray-100 hover:border-[#f59e0b]/20'
               }`}
             >
               <AlertTriangle className="w-4 h-4" />
@@ -170,28 +178,28 @@ export function ProgramPage() {
           </div>
 
           {fatigue === 'FATIGUE' && week !== 'DELOAD' && (
-            <div className="mt-3 p-3 bg-orange-50 rounded-2xl border border-orange-100 flex items-center justify-between gap-3">
-              <p className="text-xs text-orange-700 font-medium">Décharge recommandée.</p>
+            <div className="mt-3 p-3 bg-[#f59e0b]/10 rounded-2xl border border-[#f59e0b]/20 flex items-center justify-between gap-3">
+              <p className="text-xs text-[#f59e0b] font-medium">Décharge recommandée.</p>
               <button
                 type="button"
                 onClick={() => setWeek('DELOAD')}
-                className="text-[10px] font-black text-orange-600 uppercase tracking-wide flex-shrink-0"
+                className="text-[10px] font-black text-[#f59e0b] uppercase tracking-wide flex-shrink-0"
               >
                 Basculer →
               </button>
             </div>
           )}
           {(week === 'W4' || week === 'W8') && (
-            <p className="mt-3 text-xs text-slate-400 text-center">Semaine de décharge recommandée la suivante.</p>
+            <p className="mt-3 text-xs text-[#6b7280] text-center">Semaine de décharge recommandée la suivante.</p>
           )}
         </section>
 
         {/* Deload recommendation */}
         {recommendation.recommend && (
-          <div className="p-4 bg-orange-50 border border-orange-100 rounded-2xl flex items-start justify-between gap-3">
+          <div className="p-4 bg-[#f59e0b]/10 border border-[#f59e0b]/20 rounded-2xl flex items-start justify-between gap-3">
             <div className="flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-orange-700">
+              <AlertTriangle className="w-4 h-4 text-[#f59e0b] flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-[#f59e0b]">
                 <strong>Décharge recommandée.</strong> {recommendation.reason}
               </p>
             </div>
@@ -199,7 +207,7 @@ export function ProgramPage() {
               <button
                 type="button"
                 onClick={() => setWeek('DELOAD')}
-                className="text-[10px] font-black text-orange-600 uppercase flex-shrink-0"
+                className="text-[10px] font-black text-[#f59e0b] uppercase flex-shrink-0"
               >
                 Passer →
               </button>
@@ -209,9 +217,9 @@ export function ProgramPage() {
 
         {/* No equipment warning */}
         {!hasEquipment && (
-          <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 text-rose-500 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-rose-700">
+          <div className="p-4 bg-[#ff6b35]/10 border border-[#ff6b35]/20 rounded-2xl flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-[#ff6b35] flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-[#ff6b35]">
               Ajoute au moins un équipement dans ton{' '}
               <Link to="/profile" className="font-bold underline">profil</Link> pour générer la séance.
             </p>
@@ -220,10 +228,10 @@ export function ProgramPage() {
 
         {/* Session warnings */}
         {warnings.length > 0 && (
-          <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+          <div className="p-4 bg-[#f59e0b]/10 border border-[#f59e0b]/20 rounded-2xl">
             <ul className="space-y-1">
               {warnings.map((warning) => (
-                <li key={warning} className="text-xs text-amber-700 flex items-start gap-1.5">
+                <li key={warning} className="text-xs text-[#f59e0b] flex items-start gap-1.5">
                   <span className="mt-0.5">⚠</span> {warning}
                 </li>
               ))}
@@ -233,7 +241,7 @@ export function ProgramPage() {
 
         {/* Recap */}
         {recap && (
-          <div className="bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm">
+          <div className="bg-white border border-gray-100 rounded-[24px] p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <div className="p-1.5 rounded-xl bg-amber-50 text-amber-500">
                 <TrendingUp className="w-4 h-4" />
