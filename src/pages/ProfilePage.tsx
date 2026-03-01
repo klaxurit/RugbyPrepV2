@@ -261,7 +261,7 @@ export function ProfilePage() {
   const selectedClubMonogram = getClubMonogram(profile.clubName)
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-slate-900 pb-24">
+    <div className="min-h-screen bg-[#faf9f7] font-sans text-[#1f2937] pb-24">
 
       {/* Header */}
       <header className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between sticky top-0 z-50">
@@ -271,13 +271,13 @@ export function ProfilePage() {
           </Link>
           <div>
             <p className="text-xs font-bold tracking-widest text-rose-600 uppercase italic">RugbyPrep</p>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900">Mon Profil</h1>
+            <h1 className="text-xl font-extrabold tracking-tight text-[#1f2937]">Mon Profil</h1>
           </div>
         </div>
         <button
           type="button"
           onClick={resetProfile}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-gray-200 bg-white text-xs font-bold text-slate-400 hover:border-rose-200 hover:text-rose-500 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-gray-200 bg-white text-xs font-bold text-slate-400 hover:border-[#1a5f3f]/20 hover:text-[#1a5f3f] transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Réinitialiser
@@ -285,7 +285,7 @@ export function ProfilePage() {
       </header>
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto">
-        <section className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm space-y-4">
+        <section className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm space-y-4">
           <div className="flex items-center gap-4">
             <button
               type="button"
@@ -303,13 +303,13 @@ export function ProfilePage() {
               ) : (
                 <User className="w-8 h-8 text-slate-300" />
               )}
-              <span className="absolute right-1 bottom-1 w-6 h-6 rounded-xl bg-rose-600 text-white flex items-center justify-center">
+              <span className="absolute right-1 bottom-1 w-6 h-6 rounded-xl bg-[#1a5f3f] text-white flex items-center justify-center">
                 <Camera className="w-3.5 h-3.5" />
               </span>
             </button>
             <div>
-              <h2 className="text-sm font-black text-slate-900">Photo de profil</h2>
-              <p className="text-xs text-slate-400">
+              <h2 className="text-sm font-black text-[#1f2937]">Photo de profil</h2>
+              <p className="text-xs text-[#6b7280]">
                 {isAvatarUploading ? 'Upload en cours...' : 'Ajoute ta photo pour personnaliser ton compte.'}
               </p>
             </div>
@@ -322,15 +322,15 @@ export function ProfilePage() {
             onChange={handleAvatarChange}
           />
           {avatarError && (
-            <div className="p-3 bg-rose-50 border border-rose-100 rounded-2xl">
-              <p className="text-xs text-rose-700 font-medium">{avatarError}</p>
+            <div className="p-3 bg-[#ff6b35]/10 border border-[#ff6b35]/20 rounded-2xl">
+              <p className="text-xs text-[#ff6b35] font-medium">{avatarError}</p>
             </div>
           )}
         </section>
 
         {/* Infos de jeu */}
-        <section className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm space-y-5">
-          <h2 className="text-sm font-black uppercase tracking-wider text-slate-400">Infos de jeu</h2>
+        <section className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm space-y-5">
+          <h2 className="text-sm font-black uppercase tracking-wider text-[#6b7280]">Infos de jeu</h2>
 
           {/* Poste */}
           <div className="space-y-2">
@@ -345,8 +345,8 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ rugbyPosition: opt.value })}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                       active
-                        ? 'bg-rose-600 text-white shadow-sm'
-                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-rose-200'
+                        ? 'bg-[#1a5f3f] text-white shadow-sm'
+                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
                     }`}
                   >
                     {opt.label}
@@ -369,8 +369,8 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ trainingLevel: opt.value, level: opt.legacyLevel })}
                     className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                       active
-                        ? 'bg-rose-600 text-white shadow-sm'
-                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-rose-200'
+                        ? 'bg-[#1a5f3f] text-white shadow-sm'
+                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
                     }`}
                   >
                     <span className="text-base flex-shrink-0">{opt.emoji}</span>
@@ -431,8 +431,8 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ weeklySessions: n as 2 | 3 })}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
                       active
-                        ? 'bg-rose-600 text-white shadow-sm'
-                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-rose-200'
+                        ? 'bg-[#1a5f3f] text-white shadow-sm'
+                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
                     }`}
                   >
                     {n} séances
@@ -453,7 +453,7 @@ export function ProfilePage() {
               value={clubQuery}
               onChange={(event) => setClubQuery(event.target.value)}
               placeholder="Recherche nom, code ou ligue"
-              className="w-full h-11 rounded-2xl border border-gray-200 px-3 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-rose-300"
+              className="w-full h-11 rounded-2xl border border-gray-200 px-3 text-sm text-[#1f2937] bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5f3f]/10 focus:border-[#1a5f3f]/30"
             />
 
             {profile.clubName && (
@@ -467,7 +467,7 @@ export function ProfilePage() {
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{profile.clubName}</p>
+                    <p className="text-sm font-bold text-[#1f2937]">{profile.clubName}</p>
                     <p className="text-xs text-slate-500">
                       {profile.clubCode} · {profile.clubLigue} · CD {profile.clubDepartmentCode}
                     </p>
@@ -483,7 +483,7 @@ export function ProfilePage() {
                       clubDepartmentCode: undefined,
                     })
                   }
-                  className="text-[11px] font-bold text-slate-400 hover:text-rose-600 transition-colors"
+                  className="text-[11px] font-bold text-[#6b7280] hover:text-[#1a5f3f] transition-colors"
                 >
                   Retirer
                 </button>
@@ -493,7 +493,7 @@ export function ProfilePage() {
             {clubQuery.trim().length > 0 && (
               <div className="max-h-56 overflow-auto rounded-2xl border border-gray-100 bg-white">
                 {filteredClubs.length === 0 ? (
-                  <p className="px-3 py-2 text-xs text-slate-400">Aucun club trouvé.</p>
+                  <p className="px-3 py-2 text-xs text-[#6b7280]">Aucun club trouvé.</p>
                 ) : (
                   filteredClubs.map((club) => (
                     <button
@@ -512,7 +512,7 @@ export function ProfilePage() {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-slate-800">{club.name}</p>
-                          <p className="text-[11px] text-slate-400">{club.code} · {club.ligue} · CD {club.departmentCode}</p>
+                          <p className="text-[11px] text-[#6b7280]">{club.code} · {club.ligue} · CD {club.departmentCode}</p>
                         </div>
                       </div>
                     </button>
@@ -549,7 +549,7 @@ export function ProfilePage() {
                     className={`py-2 px-3.5 rounded-2xl text-xs font-bold transition-all ${
                       active
                         ? 'bg-slate-900 text-white'
-                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-slate-300'
+                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
                     }`}
                   >
                     {opt}
@@ -634,14 +634,14 @@ export function ProfilePage() {
         </section>
 
         {/* Équipement */}
-        <section className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm space-y-4">
+        <section className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm space-y-4">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-2xl bg-blue-50 text-blue-500">
               <Dumbbell className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-slate-900">Équipement disponible</h2>
-              <p className="text-xs text-slate-400">Sélectionne ce que tu as</p>
+              <h2 className="text-sm font-black text-[#1f2937]">Équipement disponible</h2>
+              <p className="text-xs text-[#6b7280]">Sélectionne ce que tu as</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -655,7 +655,7 @@ export function ProfilePage() {
                   className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all flex items-center gap-2 ${
                     active
                       ? 'bg-blue-500 text-white shadow-sm'
-                      : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-blue-200'
+                      : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
                   }`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-white' : 'bg-gray-300'}`} />
@@ -736,14 +736,14 @@ export function ProfilePage() {
         </section>
 
         {/* Blessures */}
-        <section className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm space-y-4">
+        <section className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm space-y-4">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-2xl bg-orange-50 text-orange-500">
               <Shield className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-slate-900">Douleurs / Blessures</h2>
-              <p className="text-xs text-slate-400">Laisse vide si aucune</p>
+              <h2 className="text-sm font-black text-[#1f2937]">Douleurs / Blessures</h2>
+              <p className="text-xs text-[#6b7280]">Laisse vide si aucune</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -757,7 +757,7 @@ export function ProfilePage() {
                   className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all flex items-center gap-2 ${
                     active
                       ? 'bg-orange-500 text-white shadow-sm'
-                      : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-orange-200'
+                      : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#ff6b35]/20'
                   }`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-white' : 'bg-gray-300'}`} />
@@ -820,10 +820,10 @@ export function ProfilePage() {
 
       {cropImageSrc && (
         <div className="fixed inset-0 z-[70] bg-slate-900/80 backdrop-blur-sm flex items-end sm:items-center justify-center">
-          <section className="w-full sm:max-w-md bg-white rounded-t-[2rem] sm:rounded-[2rem] p-5 space-y-4">
+          <section className="w-full sm:max-w-md bg-white rounded-t-[24px] sm:rounded-[24px] p-5 space-y-4">
             <div>
-              <h3 className="text-sm font-black text-slate-900">Recadrer la photo</h3>
-              <p className="text-xs text-slate-400">Centre ton visage puis ajuste le zoom.</p>
+              <h3 className="text-sm font-black text-[#1f2937]">Recadrer la photo</h3>
+              <p className="text-xs text-[#6b7280]">Centre ton visage puis ajuste le zoom.</p>
             </div>
 
             <div className="relative h-72 bg-slate-100 rounded-2xl overflow-hidden">
@@ -868,7 +868,7 @@ export function ProfilePage() {
                 type="button"
                 onClick={handleCropConfirm}
                 disabled={isAvatarUploading}
-                className="py-3 rounded-2xl bg-rose-600 text-white text-xs font-black uppercase tracking-wide hover:bg-rose-500 transition-colors disabled:opacity-60"
+                className="py-3 rounded-2xl bg-[#1a5f3f] text-white text-xs font-black uppercase tracking-wide hover:bg-[#1a5f3f]/90 transition-colors disabled:opacity-60"
               >
                 {isAvatarUploading ? 'Upload...' : 'Valider'}
               </button>

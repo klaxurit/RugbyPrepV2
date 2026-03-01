@@ -17,8 +17,8 @@ export function BottomNav() {
         const active = match.includes(pathname)
         return (
           <Link key={to} to={to} className="flex flex-col items-center gap-1">
-            <Icon className={`w-6 h-6 transition-colors ${active ? 'text-rose-600' : 'text-slate-300'}`} />
-            <span className={`text-[10px] font-bold ${active ? 'text-rose-600' : 'text-slate-400'}`}>{label}</span>
+            <Icon className={`w-6 h-6 transition-colors ${active ? 'text-[#1a5f3f]' : 'text-slate-300'}`} />
+            <span className={`text-[10px] font-bold ${active ? 'text-[#1a5f3f]' : 'text-slate-400'}`}>{label}</span>
           </Link>
         )
       })}

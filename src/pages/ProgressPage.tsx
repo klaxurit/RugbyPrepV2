@@ -10,16 +10,16 @@ import type { TrainingBlock } from '../types/training'
 const statusConfig = {
   up: {
     icon: <TrendingUp className="w-4 h-4" />,
-    bg: 'bg-emerald-50',
-    text: 'text-emerald-600',
-    badge: 'bg-emerald-100 text-emerald-700',
+    bg: 'bg-[#10b981]/10',
+    text: 'text-[#10b981]',
+    badge: 'bg-[#10b981]/10 text-[#10b981]',
     label: 'Progression',
   },
   down: {
     icon: <TrendingDown className="w-4 h-4" />,
-    bg: 'bg-rose-50',
-    text: 'text-rose-600',
-    badge: 'bg-rose-100 text-rose-700',
+    bg: 'bg-[#ff6b35]/10',
+    text: 'text-[#ff6b35]',
+    badge: 'bg-[#ff6b35]/10 text-[#ff6b35]',
     label: 'Régression',
   },
   same: {
@@ -73,7 +73,7 @@ export function ProgressPage() {
   const regressionCount = progressRows.filter((r) => r.delta.status === 'down').length
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-slate-900 pb-24">
+    <div className="min-h-screen bg-[#faf9f7] font-sans text-[#1f2937] pb-24">
 
       {/* Header */}
       <header className="px-6 py-4 bg-white border-b border-gray-100 flex items-center gap-3 sticky top-0 z-50">
@@ -82,7 +82,7 @@ export function ProgressPage() {
         </Link>
         <div>
           <p className="text-xs font-bold tracking-widest text-rose-600 uppercase italic">RugbyPrep</p>
-          <h1 className="text-xl font-extrabold tracking-tight text-slate-900">Progression</h1>
+          <h1 className="text-xl font-extrabold tracking-tight text-[#1f2937]">Progression</h1>
         </div>
       </header>
 
@@ -91,49 +91,49 @@ export function ProgressPage() {
         {/* Résumé rapide */}
         {progressRows.length > 0 && (
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-white border border-gray-100 p-4 rounded-3xl flex flex-col items-center gap-1.5 shadow-sm">
-              <div className="p-2 rounded-2xl bg-emerald-50 text-emerald-600">
+            <div className="bg-white border border-gray-100 p-4 rounded-[24px] flex flex-col items-center gap-1.5 shadow-sm">
+              <div className="p-2 rounded-2xl bg-[#10b981]/10 text-[#10b981]">
                 <TrendingUp className="w-5 h-5" />
               </div>
-              <div className="text-xl font-black text-emerald-600">{progressCount}</div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter text-center">En hausse</div>
+              <div className="text-xl font-black text-[#10b981]">{progressCount}</div>
+              <div className="text-[10px] font-bold text-[#6b7280] uppercase tracking-tighter text-center">En hausse</div>
             </div>
-            <div className="bg-white border border-gray-100 p-4 rounded-3xl flex flex-col items-center gap-1.5 shadow-sm">
-              <div className="p-2 rounded-2xl bg-rose-50 text-rose-500">
+            <div className="bg-white border border-gray-100 p-4 rounded-[24px] flex flex-col items-center gap-1.5 shadow-sm">
+              <div className="p-2 rounded-2xl bg-[#ff6b35]/10 text-[#ff6b35]">
                 <TrendingDown className="w-5 h-5" />
               </div>
-              <div className="text-xl font-black text-rose-500">{regressionCount}</div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter text-center">En baisse</div>
+              <div className="text-xl font-black text-[#ff6b35]">{regressionCount}</div>
+              <div className="text-[10px] font-bold text-[#6b7280] uppercase tracking-tighter text-center">En baisse</div>
             </div>
-            <div className="bg-white border border-gray-100 p-4 rounded-3xl flex flex-col items-center gap-1.5 shadow-sm">
+            <div className="bg-white border border-gray-100 p-4 rounded-[24px] flex flex-col items-center gap-1.5 shadow-sm">
               <div className="p-2 rounded-2xl bg-slate-50 text-slate-500">
                 <BarChart2 className="w-5 h-5" />
               </div>
-              <div className="text-xl font-black text-slate-700">{progressRows.length}</div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter text-center">Suivis</div>
+              <div className="text-xl font-black text-[#1f2937]">{progressRows.length}</div>
+              <div className="text-[10px] font-bold text-[#6b7280] uppercase tracking-tighter text-center">Suivis</div>
             </div>
           </div>
         )}
 
         {/* Top progrès */}
         <section>
-          <h2 className="text-sm font-black uppercase tracking-wider text-slate-400 mb-3">Top progrès (W1 → W4)</h2>
+          <h2 className="text-sm font-black uppercase tracking-wider text-[#6b7280] mb-3">Top progrès (W1 → W4)</h2>
 
           {progressRows.length === 0 ? (
-            <div className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm flex flex-col items-center gap-3 text-center">
+            <div className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm flex flex-col items-center gap-3 text-center">
               <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300">
                 <BarChart2 className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900">Données insuffisantes</p>
-                <p className="text-xs text-slate-400 mt-0.5">Enregistre des séances en W1 et W4 pour voir ta progression.</p>
+                <p className="text-sm font-bold text-[#1f2937]">Données insuffisantes</p>
+                <p className="text-xs text-[#6b7280] mt-0.5">Enregistre des séances en W1 et W4 pour voir ta progression.</p>
               </div>
-              <Link to="/week" className="text-xs font-black text-rose-600 uppercase tracking-wide">
+              <Link to="/week" className="text-xs font-black text-[#1a5f3f] uppercase tracking-wide">
                 Aller s'entraîner →
               </Link>
             </div>
           ) : (
-            <div className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden shadow-sm divide-y divide-gray-50">
+            <div className="bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-sm divide-y divide-gray-50">
               {progressRows.map((row) => {
                 const cfg = statusConfig[row.delta.status]
                 return (
@@ -143,8 +143,8 @@ export function ProgressPage() {
                         {cfg.icon}
                       </div>
                       <div className="min-w-0">
-                        <div className="text-sm font-bold text-slate-900 truncate">{getExerciseName(row.exerciseId)}</div>
-                        <div className="text-xs text-slate-400 italic">
+                        <div className="text-sm font-bold text-[#1f2937] truncate">{getExerciseName(row.exerciseId)}</div>
+                        <div className="text-xs text-[#6b7280] italic">
                           {row.delta.fromText} → {row.delta.toText}
                         </div>
                       </div>
@@ -162,15 +162,15 @@ export function ProgressPage() {
         {/* À renseigner */}
         {missingRows.length > 0 && (
           <section>
-            <h2 className="text-sm font-black uppercase tracking-wider text-slate-400 mb-3">À renseigner</h2>
-            <div className="bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm space-y-2">
+            <h2 className="text-sm font-black uppercase tracking-wider text-[#6b7280] mb-3">À renseigner</h2>
+            <div className="bg-white border border-gray-100 rounded-[24px] p-5 shadow-sm space-y-2">
               {missingRows.length === 0 ? (
                 <p className="text-sm text-slate-400">Tout est loggé sur les exercices fréquents.</p>
               ) : (
                 missingRows.map(([exerciseId, count]) => (
                   <div key={exerciseId} className="flex items-center justify-between py-1.5 border-b border-gray-50 last:border-0">
-                    <span className="text-sm font-medium text-slate-700">{getExerciseName(exerciseId)}</span>
-                    <span className="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-full">
+                    <span className="text-sm font-medium text-[#1f2937]">{getExerciseName(exerciseId)}</span>
+                    <span className="text-[10px] font-bold text-[#6b7280] bg-slate-50 px-2 py-1 rounded-full">
                       {count} blocs
                     </span>
                   </div>

@@ -17,7 +17,24 @@ LIMIT=200 npm run fetch:club-logos
 ```
 
 ## Add manual logo
-Edit `src/data/clubLogos.manual.json`:
+### Recommended local workflow (stable)
+1. Put the image file in `public/club-logos/`
+2. Use a stable filename, for example:
+   - `good-luck-rugby-971.jpg`
+   - `as-ampountra-club-de-chiconi-976.png`
+3. Map the club code to the local public path in `src/data/clubLogos.manual.json`
+
+Example:
+```json
+{
+  "6758W": "/club-logos/as-ampountra-club-de-chiconi-976.png"
+}
+```
+
+### Remote URL workflow (works, but less stable)
+You can also use a direct image URL if the club logo is hosted elsewhere.
+
+Example:
 ```json
 {
   "7489A": "https://.../logo.png"
@@ -26,6 +43,19 @@ Edit `src/data/clubLogos.manual.json`:
 
 Use uppercase club codes.
 
+Avoid temporary/signed URLs when possible (they expire).
+
+### Validate manual mappings
+Basic validation (codes + local file existence):
+```bash
+npm run validate:club-logos:manual
+```
+
+Validation with remote URL checks (`Content-Type: image/*`):
+```bash
+npm run validate:club-logos:manual:remote
+```
+
 ## Add FFR logo mapping
 Edit `src/data/clubFfrIds.json`:
 ```json
@@ -33,3 +63,8 @@ Edit `src/data/clubFfrIds.json`:
   "5082Z": 1285
 }
 ```
+
+## Files created for manual logos
+- `public/club-logos/` local club logo assets (served by Vite as `/club-logos/...`)
+- `src/data/clubLogos.manual.json` manual overrides
+- `scripts/validateClubLogosManual.mjs` validation script

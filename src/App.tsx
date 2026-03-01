@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { HomePage } from './pages/HomePage'
+import { ProgramPage } from './pages/ProgramPage'
 import { HistoryPage } from './pages/HistoryPage'
 import { ProgressPage } from './pages/ProgressPage'
 import { ProfilePage } from './pages/ProfilePage'
@@ -30,6 +31,7 @@ function App() {
             <Route path="/week" element={<WeekPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/program" element={<ProgramPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
             <Route path="/chat" element={<ChatPage />} />

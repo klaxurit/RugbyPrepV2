@@ -15,15 +15,14 @@ import { getPrehab, CONTRA_LABELS } from '../services/ui/getPrehab'
 import type { SessionType } from '../types/training'
 
 const getSessionType = (recipeId: string): SessionType => {
-  if (recipeId === 'UPPER_V1' || recipeId === 'UPPER_HYPER_V1') return 'UPPER'
-  if (recipeId === 'LOWER_V1' || recipeId === 'LOWER_HYPER_V1') return 'LOWER'
+  if (recipeId === 'UPPER_V1' || recipeId === 'UPPER_HYPER_V1' || recipeId === 'UPPER_BUILDER_V1') return 'UPPER'
+  if (recipeId === 'LOWER_V1' || recipeId === 'LOWER_HYPER_V1' || recipeId === 'LOWER_BUILDER_V1') return 'LOWER'
   return 'FULL'
 }
 
 export function SessionDetailPage() {
   const { sessionIndex } = useParams<{ sessionIndex: string }>()
   const index = Number(sessionIndex ?? '0')
-
   const { profile } = useProfile()
   const { week, lastNonDeloadWeek } = useWeek()
   const { viewMode, setViewMode } = useViewMode()
