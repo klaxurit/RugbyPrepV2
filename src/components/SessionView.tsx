@@ -70,15 +70,20 @@ const estimateSessionMinutes = (session: BuiltSession): number => {
     } else if (version.scheme.kind === 'time') {
       workSeconds = version.sets * version.scheme.seconds
     } else {
-      workSeconds = version.sets * 45
+      // Heavier blocks (long rest = hypertrophy/force) take ~75s per set including transitions.
+      // Lighter blocks (short rest = activation/core) take ~45s per set.
+      const secsPerSet = version.restSeconds >= 90 ? 75 : version.restSeconds >= 60 ? 60 : 45
+      workSeconds = version.sets * secsPerSet
     }
 
-    const restSeconds = version.sets * version.restSeconds
+    // Rest is between sets (sets - 1), not after every set including the last.
+    const restSeconds = Math.max(0, version.sets - 1) * version.restSeconds
     const hasLoadSetup = block.exercises.some(
       (exercise) => getExerciseMetricType({ exerciseId: exercise.exerciseId }) === 'load_reps'
     )
+    // Overhead: introduction + per-exercise setup + plate loading.
     const overheadSeconds =
-      90 + block.exercises.length * 30 + (hasLoadSetup ? 120 : 0)
+      90 + block.exercises.length * 30 + (hasLoadSetup ? 150 : 0)
 
     return sum + workSeconds + restSeconds + overheadSeconds
   }, 0)
@@ -103,7 +108,7 @@ export function SessionView({
   viewMode = 'compact',
   isDeload = false,
   isValid = true,
-  warnings = [],
+  warnings: _warnings = [],
   onMarkComplete,
   statusLabel
 }: SessionViewProps) {
@@ -121,8 +126,7 @@ export function SessionView({
   const [openNotesBlock, setOpenNotesBlock] = useState<string | null>(null)
 
   const estimatedMinutes = estimateSessionMinutes(session)
-  const isIncomplete =
-    !isValid || warnings.some((warning) => warning.includes('Missing required intent'))
+  const isIncomplete = !isValid
 
   const updateEntryDraft = (
     blockId: string,
@@ -445,7 +449,11 @@ export function SessionView({
           const missingEquipment = getMissingEquipment(block, availableEquipment)
           const schemeLabel = formatBlockVolume(version)
           const emomDisplay = getEmomDisplay(block, version)
-          const summaryLabel = emomDisplay ? emomDisplay.label : schemeLabel
+          // For single-exercise EMOM, prefer schemeLabel which includes the work detail (e.g. "EMOM 6' · 1/side reps")
+          // For multi-exercise EMOM, keep emomDisplay.label which has "alterne X exos (N tours)" info
+          const summaryLabel = emomDisplay
+            ? (emomDisplay.exoCount <= 1 ? schemeLabel : emomDisplay.label)
+            : schemeLabel
           const emomDetail = formatEmomDetail(version)
           const summaryLine = emomDisplay
             ? `${toIntentLabel(block.intent)} · ${summaryLabel} · RER ${version.rer ?? '-'}`
@@ -526,16 +534,14 @@ export function SessionView({
                         <p className="text-[10px] text-slate-300 font-mono">{exercise.exerciseId}</p>
                       )}
 
-                      {/* EMOM detail + notes in detail mode */}
-                      {viewMode === 'detail' && (emomDetail || exercise.notes) && (
-                        <div className="space-y-0.5">
-                          {emomDetail && (
-                            <p className="text-[11px] text-slate-400 italic">{emomDetail}</p>
-                          )}
-                          {exercise.notes && (
-                            <p className="text-[11px] text-slate-400 italic">{exercise.notes}</p>
-                          )}
-                        </div>
+                      {/* Exercise notes always visible (key instruction for EMOM, unilateral, etc.) */}
+                      {exercise.notes && (
+                        <p className="text-[11px] text-slate-400 italic">{exercise.notes}</p>
+                      )}
+
+                      {/* EMOM detail in detail mode only (redundant with block summary) */}
+                      {viewMode === 'detail' && emomDetail && (
+                        <p className="text-[11px] text-slate-400 italic">{emomDetail}</p>
                       )}
 
                       {/* Last entry */}

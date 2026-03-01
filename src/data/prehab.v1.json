@@ -1,0 +1,191 @@
+[
+  {
+    "id": "band_pull_apart",
+    "nameFr": "Écartement de bande élastique",
+    "targetContra": ["shoulder_pain"],
+    "equipment": ["band"],
+    "sets": 3,
+    "reps": "15",
+    "notes": "Coudes légèrement fléchis, mouvement lent. Renforce les rotateurs postérieurs de l'épaule."
+  },
+  {
+    "id": "face_pull_band",
+    "nameFr": "Face pull avec élastique",
+    "targetContra": ["shoulder_pain"],
+    "equipment": ["band"],
+    "sets": 3,
+    "reps": "15",
+    "notes": "Tirer vers le visage, coudes hauts. Cible infraépineux et petit rond."
+  },
+  {
+    "id": "external_rotation_band",
+    "nameFr": "Rotation externe avec élastique",
+    "targetContra": ["shoulder_pain"],
+    "equipment": ["band"],
+    "sets": 3,
+    "reps": "12 / côté",
+    "notes": "Coude à 90°, corps stable. Isole les rotateurs externes — zone critique rugbyman."
+  },
+  {
+    "id": "wall_slide",
+    "nameFr": "Wall slide",
+    "targetContra": ["shoulder_pain", "neck_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "10",
+    "notes": "Dos et bras en contact avec le mur. Améliore la mobilité scapulaire et la posture."
+  },
+  {
+    "id": "wrist_circle",
+    "nameFr": "Cercles de poignet",
+    "targetContra": ["wrist_pain", "elbow_pain"],
+    "equipment": [],
+    "sets": 2,
+    "reps": "10 / sens",
+    "notes": "Lent et contrôlé dans toute l'amplitude. Mobilisation articulaire pré-effort."
+  },
+  {
+    "id": "reverse_wrist_curl",
+    "nameFr": "Curl de poignet inversé",
+    "targetContra": ["wrist_pain", "elbow_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "15",
+    "notes": "Très léger, focus extenseurs. Équilibre la charge des fléchisseurs sollicités au rugby."
+  },
+  {
+    "id": "prayer_stretch",
+    "nameFr": "Étirement en prière",
+    "targetContra": ["wrist_pain"],
+    "equipment": [],
+    "sets": 2,
+    "reps": "30 sec",
+    "notes": "Paumes jointes, poussée vers le bas. Étirement des fléchisseurs du poignet."
+  },
+  {
+    "id": "bird_dog",
+    "nameFr": "Bird dog",
+    "targetContra": ["low_back_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "8 / côté",
+    "notes": "Dos plat, mouvement lent et contrôlé. McGill Big 3 — réduit la lombalgie (niveau A)."
+  },
+  {
+    "id": "dead_bug",
+    "nameFr": "Dead bug",
+    "targetContra": ["low_back_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "8 / côté",
+    "notes": "Lombaires au sol en permanence. Activation du transverse et stabilisation profonde."
+  },
+  {
+    "id": "glute_bridge",
+    "nameFr": "Pont fessier",
+    "targetContra": ["low_back_pain", "knee_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "15",
+    "notes": "Poussée talons, squeeze fessiers en haut. Renforce la chaîne postérieure et soulage les lombaires."
+  },
+  {
+    "id": "cat_camel",
+    "nameFr": "Chat-chameau",
+    "targetContra": ["low_back_pain"],
+    "equipment": [],
+    "sets": 2,
+    "reps": "10",
+    "notes": "Mobilisation douce en flexion/extension. Réhydrate les disques intervertébraux."
+  },
+  {
+    "id": "tke_band",
+    "nameFr": "Terminal knee extension (élastique)",
+    "targetContra": ["knee_pain"],
+    "equipment": ["band"],
+    "sets": 3,
+    "reps": "15 / jambe",
+    "notes": "Élastique en arrière du genou, extension complète. Active le VMO et stabilise la rotule."
+  },
+  {
+    "id": "hip_abduction_band",
+    "nameFr": "Abduction de hanche avec élastique",
+    "targetContra": ["knee_pain", "groin_pain"],
+    "equipment": ["band"],
+    "sets": 3,
+    "reps": "15 / côté",
+    "notes": "Contrôle du valgus du genou. Renforce les abducteurs pour protéger le LCA."
+  },
+  {
+    "id": "lateral_band_walk",
+    "nameFr": "Marche latérale avec élastique",
+    "targetContra": ["knee_pain", "groin_pain"],
+    "equipment": ["band"],
+    "sets": 3,
+    "reps": "15 / direction",
+    "notes": "Bande aux chevilles ou genoux, légère flexion. Active le moyen fessier — stabilisateur clé."
+  },
+  {
+    "id": "copenhagen_isometric",
+    "nameFr": "Planche de Copenhague (isométrique)",
+    "targetContra": ["groin_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "20 sec",
+    "notes": "Genou appuyé sur banc/marche, adduction isométrique. Réduit les pubalgies chez le rugbyman."
+  },
+  {
+    "id": "side_lying_hip_abduction",
+    "nameFr": "Abduction de hanche couché sur le côté",
+    "targetContra": ["groin_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "15 / côté",
+    "notes": "Mouvement lent sans balancement. Renforce le moyen fessier, complément aux adducteurs."
+  },
+  {
+    "id": "isometric_neck",
+    "nameFr": "Résistance cervicale isométrique",
+    "targetContra": ["neck_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "10 sec / direction",
+    "notes": "4 directions (ant./post./latéral). Indispensable en rugby pour renforcer la zone de mêlée."
+  },
+  {
+    "id": "chin_tuck",
+    "nameFr": "Chin tuck (rentrée du menton)",
+    "targetContra": ["neck_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "10",
+    "notes": "Rentrer le menton sans fléchir le cou. Corrige l'antéposition de la tête, fréquente chez les avants."
+  },
+  {
+    "id": "ankle_alphabet",
+    "nameFr": "Alphabet cheville",
+    "targetContra": ["ankle_pain"],
+    "equipment": [],
+    "sets": 2,
+    "reps": "A–Z / cheville",
+    "notes": "Tracer l'alphabet avec le pied. Mobilisation complète de la cheville avant la mise en charge."
+  },
+  {
+    "id": "single_leg_balance",
+    "nameFr": "Équilibre unipodal",
+    "targetContra": ["ankle_pain", "knee_pain"],
+    "equipment": [],
+    "sets": 3,
+    "reps": "30 sec / jambe",
+    "notes": "Yeux ouverts puis fermés. Proprioception de la cheville — prévient les entorses récidivantes."
+  },
+  {
+    "id": "ankle_eversion_band",
+    "nameFr": "Éversion de cheville avec élastique",
+    "targetContra": ["ankle_pain"],
+    "equipment": ["band"],
+    "sets": 3,
+    "reps": "15 / côté",
+    "notes": "Renforce les fibulaires (péroniers). Muscle protecteur n°1 contre l'entorse latérale."
+  }
+]

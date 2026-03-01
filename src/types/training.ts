@@ -21,6 +21,8 @@ export type Equipment =
   | 'box'
   | 'pullup_bar'
   | 'machine'
+  | 'sprint_track'
+  | 'ab_wheel'
   | 'none';
 
 export type BlockIntent =
@@ -44,9 +46,13 @@ export type CycleWeek =
   | 'W6'
   | 'W7'
   | 'W8'
+  | 'H1'
+  | 'H2'
+  | 'H3'
+  | 'H4'
   | 'DELOAD';
 
-export type ProgramPhase = 'FORCE' | 'POWER';
+export type ProgramPhase = 'FORCE' | 'POWER' | 'HYPERTROPHY';
 
 export type RugbyPositionGroup =
   | 'FRONT_ROW'
@@ -69,7 +75,10 @@ export type Scheme =
         | { kind: 'seconds'; seconds: string };
     };
 
-export type Role = 'prime' | 'contrast' | 'stability' | 'accessory';
+export type Role = 'prime' | 'contrast' | 'stability' | 'accessory' | 'superset_partner';
+
+export type TrainingLevel = 'starter' | 'builder' | 'performance';
+export type SeasonMode = 'in_season' | 'off_season' | 'pre_season';
 
 export interface BlockExercise {
   exerciseId: string;
@@ -111,6 +120,12 @@ export interface UserProfile {
   clubName?: string;
   clubLigue?: string;
   clubDepartmentCode?: string;
+  heightCm?: number;           // taille en cm (pour IMC)
+  weightKg?: number;           // poids en kg (pour IMC)
+  clubSchedule?: ClubSchedule
+  scSchedule?: SCSchedule
+  trainingLevel?: TrainingLevel
+  seasonMode?: SeasonMode
 }
 
 export type ExerciseMetricType = 'load_reps' | 'reps' | 'seconds' | 'meters';
@@ -141,6 +156,8 @@ export interface SessionLog {
   sessionType: SessionType;
   fatigue: FatigueStatus;
   notes?: string;
+  rpe?: number;        // 1-10 (effort perçu)
+  durationMin?: number; // durée en minutes
 }
 
 export type MetricType = ExerciseMetricType;
@@ -162,4 +179,45 @@ export interface BlockLog {
   blockId: string;
   blockName: string;
   entries: ExerciseLogEntry[];
+}
+
+// ─── Club Schedule ───────────────────────────────────────────
+
+export type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6  // 0=Dim, 1=Lun, …, 6=Sam
+
+export interface ClubTrainingDay {
+  day: DayOfWeek
+  time?: string  // "HH:MM" optionnel
+}
+
+export interface ClubSchedule {
+  clubDays: ClubTrainingDay[]  // Jours d'entraînement club récurrents
+  matchDay?: DayOfWeek          // Jour de match habituel (souvent 6=Samedi)
+}
+
+export interface SCSessionSlot {
+  sessionIndex: 0 | 1 | 2  // Index dans le programme hebdo (0=UPPER/FULL, 1=LOWER, 2=UPPER)
+  day: DayOfWeek
+}
+
+export interface SCSchedule {
+  sessions: SCSessionSlot[]
+  suggestedAt?: string  // ISO date de la dernière suggestion
+}
+
+// ─── Calendar ────────────────────────────────────────────────
+
+export type CalendarEventType = 'match' | 'rest' | 'unavailable'
+export type SeasonPhase = 'off-season' | 'pre-season' | 'in-season' | 'playoffs'
+
+export interface CalendarEvent {
+  id: string
+  date: string           // YYYY-MM-DD
+  type: CalendarEventType
+  kickoff_time?: string  // HH:MM
+  opponent?: string
+  opponent_code?: string // Code club FFR (ex: '4207Y') pour résolution logo
+  is_home?: boolean
+  notes?: string
+  created_at?: string
 }

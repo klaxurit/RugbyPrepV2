@@ -290,13 +290,13 @@
       {
         "exerciseId": "push_horizontal__push_up__plyo",
         "role": "prime",
-        "notes": "Max reps en 8–10s, qualité"
+        "notes": "Max reps en 8–10s, qualité. Stop si les mains ne quittent plus le sol."
       }
     ],
     "versions": [
       {
         "versionId": "W1",
-        "sets": 1,
+        "sets": 6,
         "scheme": {
           "kind": "emom",
           "minutes": 6,
@@ -310,7 +310,7 @@
       },
       {
         "versionId": "W2",
-        "sets": 1,
+        "sets": 6,
         "scheme": {
           "kind": "emom",
           "minutes": 6,
@@ -324,7 +324,7 @@
       },
       {
         "versionId": "W3",
-        "sets": 1,
+        "sets": 8,
         "scheme": {
           "kind": "emom",
           "minutes": 8,
@@ -334,11 +334,11 @@
           }
         },
         "restSeconds": 0,
-        "rer": 3
+        "rer": 2
       },
       {
         "versionId": "W4",
-        "sets": 1,
+        "sets": 8,
         "scheme": {
           "kind": "emom",
           "minutes": 8,
@@ -351,7 +351,7 @@
         "rer": 2
       }
     ],
-    "coachingNotes": "Bloc d’amorçage nerveux avant la force. Stop avant perte de vitesse/qualité."
+    "coachingNotes": "Amorçage neural haut du corps. Volume progresse W1→W3 (6→8 min), intensité progresse via RER. Stop avant que la hauteur des mains au décollage chute."
   },
   {
     "blockId": "BLK_NEURAL_DB_SNATCH_EMOM_01",
@@ -374,19 +374,19 @@
       {
         "exerciseId": "full_power__db_snatch__single_arm",
         "role": "prime",
-        "notes": "1 rep/côté par minute (ou 2 selon niveau)"
+        "notes": "W1-W2 : 3 reps/côté (technique, charge modérée 55-65% 1RM). W3-W4 : 2 reps/côté (charge lourde 65-75% 1RM, neural pur). Stop si perte de vitesse."
       }
     ],
     "versions": [
       {
         "versionId": "W1",
-        "sets": 1,
+        "sets": 6,
         "scheme": {
           "kind": "emom",
           "minutes": 6,
           "work": {
             "kind": "reps",
-            "reps": "1/side"
+            "reps": "3/side"
           }
         },
         "restSeconds": 0,
@@ -394,13 +394,13 @@
       },
       {
         "versionId": "W2",
-        "sets": 1,
+        "sets": 7,
         "scheme": {
           "kind": "emom",
-          "minutes": 6,
+          "minutes": 7,
           "work": {
             "kind": "reps",
-            "reps": "1/side"
+            "reps": "3/side"
           }
         },
         "restSeconds": 0,
@@ -408,13 +408,13 @@
       },
       {
         "versionId": "W3",
-        "sets": 1,
+        "sets": 8,
         "scheme": {
           "kind": "emom",
           "minutes": 8,
           "work": {
             "kind": "reps",
-            "reps": "1/side"
+            "reps": "2/side"
           }
         },
         "restSeconds": 0,
@@ -422,20 +422,20 @@
       },
       {
         "versionId": "W4",
-        "sets": 1,
+        "sets": 8,
         "scheme": {
           "kind": "emom",
           "minutes": 8,
           "work": {
             "kind": "reps",
-            "reps": "1/side"
+            "reps": "2/side"
           }
         },
         "restSeconds": 0,
         "rer": 2
       }
     ],
-    "coachingNotes": "Explosif simple et très transférable. Garder une technique propre, pas de grind."
+    "coachingNotes": "Amorçage neural avant le bloc de force. Charge progressive W1→W4 : commence léger et propre, monte quand la technique est maîtrisée. Arrêt si la barre (ou l'haltère) ralentit — la vitesse prime sur la charge."
   },
   {
     "blockId": "BLK_NEURAL_HANG_HIGH_PULL_01",
@@ -507,7 +507,7 @@
   },
   {
     "blockId": "BLK_NEURAL_SEATED_BROAD_JUMP_EMOM_01",
-    "name": "Neural lower (Seated Broad Jump EMOM)",
+    "name": "Neural lower (Seated Broad Jump)",
     "intent": "neural",
     "tags": [
       "lower",
@@ -524,29 +524,29 @@
       {
         "exerciseId": "lower_jump__broad_jump__seated",
         "role": "prime",
-        "notes": "3 reps EMOM, qualité max"
+        "notes": "3 reps par série, distance max à chaque rep. Mesure et note la distance pour tracker la progression."
       }
     ],
     "versions": [
       {
         "versionId": "W1",
-        "sets": 7,
+        "sets": 5,
         "scheme": {
           "kind": "reps",
           "reps": "3"
         },
-        "restSeconds": 60,
+        "restSeconds": 75,
         "rer": 4
       },
       {
         "versionId": "W2",
-        "sets": 7,
+        "sets": 6,
         "scheme": {
           "kind": "reps",
           "reps": "3"
         },
-        "restSeconds": 60,
-        "rer": 4
+        "restSeconds": 75,
+        "rer": 3
       },
       {
         "versionId": "W3",
@@ -556,7 +556,7 @@
           "reps": "3"
         },
         "restSeconds": 60,
-        "rer": 3
+        "rer": 2
       },
       {
         "versionId": "W4",
@@ -566,10 +566,10 @@
           "reps": "3"
         },
         "restSeconds": 60,
-        "rer": 3
+        "rer": 1
       }
     ],
-    "coachingNotes": "Format neural bas du corps. Toujours frais, pas d’échec. Mesure la distance pour feedback futur."
+    "coachingNotes": "Neural bas du corps sans matériel. Progression par volume (sets 5→6→7) puis intensité (RER 4→1). Toujours frais, jamais à l’échec — la qualité d’atterrissage prime. Mesure la distance à chaque séance."
   },
   {
     "blockId": "BLK_CONTRAST_BENCH_PLYO_TYI_01",
@@ -647,10 +647,10 @@
           "reps": "5 / 5 / 6"
         },
         "restSeconds": 180,
-        "rer": 0
+        "rer": 1
       }
     ],
-    "coachingNotes": "Ton bloc signature rugby : force → explosivité → protection épaules."
+    "coachingNotes": "Ton bloc signature rugby : force → explosivité → protection épaules. RER 1 en W4 : 1 seule rep en réserve, exécution explosive maximale."
   },
   {
     "blockId": "BLK_CONTRAST_BOARD_PRESS_GHDISO_NECK_01",
@@ -731,10 +731,10 @@
           "reps": "5-3-3 + 20s + 10"
         },
         "restSeconds": 180,
-        "rer": 0
+        "rer": 1
       }
     ],
-    "coachingNotes": "Bloc très spécifique contact. À utiliser quand l’athlète tolère bien la nuque et le gainage."
+    "coachingNotes": "Bloc très spécifique contact. À utiliser quand l’athlète tolère bien la nuque et le gainage. RER minimum 1 en W4 — jamais à l’échec sur un bloc avec exercices cervicaux."
   },
   {
     "blockId": "BLK_CONTRAST_PULLUP_OSC_PUSH_01",
@@ -935,26 +935,26 @@
       },
       {
         "versionId": "W3",
-        "sets": 3,
+        "sets": 4,
         "scheme": {
           "kind": "reps",
-          "reps": "7 + 10/side"
+          "reps": "6 + 10/side"
         },
         "restSeconds": 180,
-        "rer": 2
+        "rer": 1
       },
       {
         "versionId": "W4",
-        "sets": 3,
+        "sets": 4,
         "scheme": {
           "kind": "reps",
-          "reps": "7 + 10/side"
+          "reps": "5 + 10/side"
         },
         "restSeconds": 180,
         "rer": 1
       }
     ],
-    "coachingNotes": "Bloc chaîne postérieure + contrôle tronc. Très utile pour sprint/contacts."
+    "coachingNotes": "Chaîne postérieure + contrôle tronc. Progression : volume W1-W2 (3×7), intensité W3-W4 (4 sets, reps descendent sur le hinge = charge plus lourde). Très utile pour sprint/contacts."
   },
   {
     "blockId": "BLK_CONTRAST_BOX_JUMP_STEPUP_COPEN_01",
@@ -1182,6 +1182,7 @@
     "intent": "core",
     "tags": [
       "core",
+      "trunk",
       "anti_extension",
       "anti_rotation"
     ],
@@ -1327,7 +1328,8 @@
     "tags": [
       "carry",
       "core",
-      "grip"
+      "grip",
+      "conditioning"
     ],
     "equipment": [
       "dumbbell",
@@ -1657,7 +1659,7 @@
       },
       {
         "versionId": "W2",
-        "sets": 6,
+        "sets": 7,
         "scheme": {
           "kind": "emom",
           "minutes": 7,
@@ -1695,10 +1697,10 @@
           }
         },
         "restSeconds": 0,
-        "rer": 2
+        "rer": 1
       }
     ],
-    "coachingNotes": "Qualité > fatigue, puissance maximale par rep."
+    "coachingNotes": "Qualité > fatigue, puissance maximale par rep. Volume progresse W1→W3 (6→7→8 min), intensité progresse via RER (3→3→2→1)."
   },
   {
     "blockId": "BLK_NEURAL_UPPER_LANDMINE_01",
@@ -1721,12 +1723,12 @@
       {
         "exerciseId": "power__landmine_press__speed",
         "role": "prime",
-        "notes": "Bras rapide, trajectoire stable."
+        "notes": "Min impairs — 3-5 reps explosifs, bras plein, côté alternant."
       },
       {
         "exerciseId": "pull_horizontal__band_row__elbows_low",
         "role": "stability",
-        "notes": "Rythme contrôlé, gainage."
+        "notes": "Min pairs — 3-5 reps, coudes bas, scapulas serrées."
       }
     ],
     "versions": [
@@ -1746,7 +1748,7 @@
       },
       {
         "versionId": "W2",
-        "sets": 6,
+        "sets": 7,
         "scheme": {
           "kind": "emom",
           "minutes": 7,
@@ -1784,10 +1786,10 @@
           }
         },
         "restSeconds": 0,
-        "rer": 2
+        "rer": 1
       }
     ],
-    "coachingNotes": "Explosif et propre, pas de grind."
+    "coachingNotes": "Explosif et propre, pas de grind. Volume progresse W1→W3 (6→7→8 min), intensité W3→W4 (RER 2→1)."
   },
   {
     "blockId": "BLK_CONTRAST_UPPER_BENCH_PLYO_ROW_02",
@@ -2252,6 +2254,7 @@
     "tags": [
       "upper",
       "core",
+      "trunk",
       "anti_rotation"
     ],
     "equipment": [
@@ -2465,7 +2468,8 @@
       "lower",
       "neural",
       "power",
-      "speed"
+      "speed",
+      "acceleration"
     ],
     "equipment": [
       "box"
@@ -2503,7 +2507,7 @@
       },
       {
         "versionId": "W2",
-        "sets": 6,
+        "sets": 7,
         "scheme": {
           "kind": "emom",
           "minutes": 7,
@@ -2541,10 +2545,10 @@
           }
         },
         "restSeconds": 0,
-        "rer": 2
+        "rer": 1
       }
     ],
-    "coachingNotes": "Explosivité pure, stop si la qualité baisse."
+    "coachingNotes": "Explosivité pure, stop si la qualité baisse. Volume progresse W1→W3 (6→7→8 min), pic d'intensité en W4 (RER 1 — 1 rep en réserve, atterrissage parfait exigé)."
   },
   {
     "blockId": "BLK_NEURAL_LOWER_BOUND_01",
@@ -2555,6 +2559,7 @@
       "neural",
       "power",
       "speed",
+      "acceleration",
       "unilateral"
     ],
     "equipment": [
@@ -2593,7 +2598,7 @@
       },
       {
         "versionId": "W2",
-        "sets": 6,
+        "sets": 7,
         "scheme": {
           "kind": "emom",
           "minutes": 7,
@@ -2631,10 +2636,10 @@
           }
         },
         "restSeconds": 0,
-        "rer": 2
+        "rer": 1
       }
     ],
-    "coachingNotes": "Explosif et propre, priorité à la technique."
+    "coachingNotes": "Bondissements unilatéraux explosifs. Volume progresse W1→W3 (6→7→8 min), pic intensité W4 (RER 1). Priorité à la stabilité du bassin et à la réactivité au sol."
   },
   {
     "blockId": "BLK_CONTRAST_LOWER_SPLIT_SQUAT_01",
@@ -2956,7 +2961,8 @@
       "posterior_chain"
     ],
     "equipment": [
-      "barbell"
+      "barbell",
+      "machine"
     ],
     "contraindications": [
       "low_back_pain"
@@ -2968,9 +2974,9 @@
         "notes": "Dos neutre, tempo contrôlé."
       },
       {
-        "exerciseId": "hamstring__slide_leg_curl__towel",
+        "exerciseId": "hamstring__leg_curl__machine",
         "role": "stability",
-        "notes": "Ischios brûlants, contrôle."
+        "notes": "Amplitude complète, ne laisse pas tomber la charge."
       }
     ],
     "versions": [
@@ -3182,9 +3188,9 @@
         "notes": "Amplitude contrôlée."
       },
       {
-        "exerciseId": "hamstring__bridge_iso__single_leg",
+        "exerciseId": "hamstring__curl__prone_band",
         "role": "stability",
-        "notes": "Bassin stable."
+        "notes": "Bande autour de la cheville, curl lent et contrôlé."
       }
     ],
     "versions": [
@@ -3238,10 +3244,11 @@
     "tags": [
       "lower",
       "core",
+      "trunk",
       "anti_extension"
     ],
     "equipment": [
-      "none"
+      "ab_wheel"
     ],
     "contraindications": [
       "low_back_pain"
@@ -3475,7 +3482,8 @@
     "tags": [
       "full",
       "carry",
-      "core"
+      "core",
+      "conditioning"
     ],
     "equipment": [
       "dumbbell"
@@ -3542,6 +3550,7 @@
     "tags": [
       "full",
       "core",
+      "trunk",
       "anti_rotation"
     ],
     "equipment": [
@@ -3603,5 +3612,2026 @@
       }
     ],
     "coachingNotes": "Stabilité pour contacts et sprints."
+  },
+  {
+    "blockId": "BLK_HYPER_UPPER_HORIZONTAL_01",
+    "name": "Hypertrophie upper — Développé couché + Row incliné (barre)",
+    "intent": "hypertrophy",
+    "tags": [
+      "upper",
+      "hypertrophy",
+      "push",
+      "pull",
+      "horizontal"
+    ],
+    "equipment": [
+      "barbell",
+      "dumbbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_horizontal__bench_press__barbell",
+        "role": "prime",
+        "notes": "Tempo 3-1-1 contrôlé. Stop à RER indiqué."
+      },
+      {
+        "exerciseId": "pull_horizontal__incline_bench_row__dumbbell",
+        "role": "accessory",
+        "notes": "En superset ou 60s après le bench. Coudes serrés."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8"
+        },
+        "restSeconds": 90,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Bloc push/pull horizontal — base de l'hypertrophie upper body. Charge modérée (65-75% 1RM), tension musculaire maximale. Pas de rebond en bas du mouvement."
+  },
+  {
+    "blockId": "BLK_HYPER_UPPER_HORIZONTAL_DB_01",
+    "name": "Hypertrophie upper — Développé couché + Rowing unilatéral (haltères)",
+    "intent": "hypertrophy",
+    "tags": [
+      "upper",
+      "hypertrophy",
+      "push",
+      "pull",
+      "horizontal"
+    ],
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_horizontal__bench_press__dumbbell",
+        "role": "prime",
+        "notes": "Amplitude maximale contrôlée, pause bas optionnelle."
+      },
+      {
+        "exerciseId": "pull_horizontal__one_arm_row__dumbbell",
+        "role": "accessory",
+        "notes": "Unilatéral — gainage + anti-rotation. Dos neutre."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8"
+        },
+        "restSeconds": 90,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Version haltères — amplitude plus libre, bon pour épaule. Le rowing unilatéral entraîne le gainage, transférable directement au rugby."
+  },
+  {
+    "blockId": "BLK_HYPER_UPPER_VERTICAL_01",
+    "name": "Hypertrophie upper — Développé épaules + Tractions",
+    "intent": "hypertrophy",
+    "tags": [
+      "upper",
+      "hypertrophy",
+      "push",
+      "pull",
+      "vertical",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "dumbbell",
+      "pullup_bar",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_vertical__dumbbell_press__seated",
+        "role": "prime",
+        "notes": "Assis, trajectoire légèrement oblique. Contrôle la descente."
+      },
+      {
+        "exerciseId": "pull_vertical__pull_up__neutral",
+        "role": "contrast",
+        "notes": "Prise neutre — tolérante pour l'épaule. Pleine amplitude."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8"
+        },
+        "restSeconds": 90,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Duo vertical push/pull — muscle les deltoïdes et le dos profond. Les tractions en amplitude complète (scapula chargée) sont un must pour la solidité du rugbyman."
+  },
+  {
+    "blockId": "BLK_HYPER_LOWER_SQUAT_01",
+    "name": "Hypertrophie lower — Front squat barre",
+    "intent": "hypertrophy",
+    "tags": [
+      "lower",
+      "hypertrophy",
+      "squat",
+      "posterior_chain"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "squat__front_squat__barbell",
+        "role": "prime",
+        "notes": "Profondeur complète. Gainage haut. Coudes devant."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 120,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 120,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 120,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8"
+        },
+        "restSeconds": 120,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Front squat = squat + gainage vertical. Transfert direct rugby (positionnement mêlée, agilité). Charge plus légère que back squat mais qualité supérieure. Phase hypertrophie : 65-75% 1RM."
+  },
+  {
+    "blockId": "BLK_HYPER_LOWER_HINGE_01",
+    "name": "Hypertrophie lower — RDL barre (chaîne postérieure)",
+    "intent": "hypertrophy",
+    "tags": [
+      "lower",
+      "hypertrophy",
+      "hinge",
+      "posterior_chain"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "hinge__rdl__barbell",
+        "role": "prime",
+        "notes": "Dos neutre, barre près du corps. Tirée par les ischios."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8"
+        },
+        "restSeconds": 90,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Ischios-jambiers et fessiers — muscles de propulsion et de décélération au rugby. Le RDL en hypertrophie (65-75% 1RM, 8-12 reps) est l'un des meilleurs investissements pour le bas du corps."
+  },
+  {
+    "blockId": "BLK_HYPER_LOWER_UNI_01",
+    "name": "Hypertrophie lower — Step-up unilatéral haltères",
+    "intent": "hypertrophy",
+    "tags": [
+      "lower",
+      "hypertrophy",
+      "unilateral",
+      "squat"
+    ],
+    "equipment": [
+      "dumbbell",
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "unilateral__step_up__low",
+        "role": "prime",
+        "notes": "Pousser dans le pied avant. Contrôle la descente. Alternance jambes."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/jambe"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/jambe"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/jambe"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/jambe"
+        },
+        "restSeconds": 90,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Travail unilatéral — corrige les asymétries souvent présentes chez les rugbymen. Excellent pour proprioception et stabilité du genou. Progresser via les haltères."
+  },
+  {
+    "blockId": "BLK_HYPER_LOWER_FULLBODY_01",
+    "name": "Hypertrophie lower — Goblet squat + leg curl machine",
+    "intent": "hypertrophy",
+    "tags": [
+      "lower",
+      "hypertrophy",
+      "squat",
+      "posterior_chain",
+      "full"
+    ],
+    "equipment": [
+      "dumbbell",
+      "machine"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "squat__goblet_squat__dumbbell",
+        "role": "prime",
+        "notes": "Haltère sous le menton, descente lente, genoux dans l'axe."
+      },
+      {
+        "exerciseId": "hamstring__leg_curl__machine",
+        "role": "contrast",
+        "notes": "Amplitude complète, contrôle la descente."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 90,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Paire complémentaire : squat pour les quadriceps, leg curl pour les ischios."
+  },
+
+  {
+    "blockId": "BLK_NEURAL_UPPER_PUSH_PRESS_EMOM_01",
+    "name": "Neural upper (Push Press EMOM)",
+    "intent": "neural",
+    "tags": [
+      "upper",
+      "neural",
+      "power",
+      "contact",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain",
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_vertical__push_press__barbell",
+        "role": "prime",
+        "notes": "Dip léger (genoux fléchis ~10cm), poussée explosive jambes+bras simultanément. Barre reçue en pronation, verrouillage complet en haut. Stop si la barre ralentit visiblement."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": 3
+          }
+        },
+        "restSeconds": 0,
+        "rer": 4,
+        "coachingNotes": "W1 — Charge légère 55-60% 1RM. Priorité : explosivité du dip et transfert jambes→bras. 3 reps/min sur 6 minutes."
+      },
+      {
+        "versionId": "W2",
+        "sets": 7,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": 3
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3,
+        "coachingNotes": "W2 — 60-65% 1RM. Volume monte à 7 min. Maintenir la vitesse d'exécution constante sur toutes les reps."
+      },
+      {
+        "versionId": "W3",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": 2
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2,
+        "coachingNotes": "W3 — 70-75% 1RM. Phase neural pur : 2 reps/min, qualité maximale. Arrêt immédiat si perte de vitesse >20%."
+      },
+      {
+        "versionId": "W4",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": 2
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2,
+        "coachingNotes": "W4 — 70-75% 1RM. Même prescription que W3 : consolidation avant décharge."
+      }
+    ],
+    "coachingNotes": "Amorçage neural haut du corps par transfert de puissance jambes→épaules (PAP). Le Push Press développe la chaîne cinétique complète utilisée dans les contacts et mêlées. Charge cible : 55-75% 1RM selon la semaine. Sources : SVNS World Rugby (2024) ; González-Badillo & Sánchez-Medina, IJSPP 2010."
+  },
+
+  {
+    "blockId": "BLK_NEURAL_UPPER_PENDLAY_ROW_EMOM_01",
+    "name": "Neural upper tirage (Pendlay Row EMOM)",
+    "intent": "neural",
+    "tags": [
+      "upper",
+      "neural",
+      "pull",
+      "contact",
+      "posterior_chain"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "shoulder_pain",
+      "elbow_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "pull_horizontal__pendlay_row__barbell",
+        "role": "prime",
+        "notes": "Barre part du sol à chaque rep (stop mort). Buste horizontal (~15° du sol), tirage explosif vers le bas de l'abdomen. Le dos ne doit pas remonter entre les reps — gainage constant."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": 4
+          }
+        },
+        "restSeconds": 0,
+        "rer": 4,
+        "coachingNotes": "W1 — 60-65% 1RM Barbell Row. Priorité technique : stop mort complet entre chaque rep. 4 reps/min sur 6 min."
+      },
+      {
+        "versionId": "W2",
+        "sets": 7,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": 3
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3,
+        "coachingNotes": "W2 — 65-70% 1RM. Volume monte à 7 min, reps réduites à 3 pour conserver l'explosivité maximale à chaque traction."
+      },
+      {
+        "versionId": "W3",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": 3
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2,
+        "coachingNotes": "W3 — 70-75% 1RM. Pic de volume neural. Chaque rep doit claquer — intention explosive maximale depuis le stop mort."
+      },
+      {
+        "versionId": "W4",
+        "sets": 8,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": 3
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2,
+        "coachingNotes": "W4 — Même charge que W3. Consolidation et préparation à la phase POWER."
+      }
+    ],
+    "coachingNotes": "Traction horizontal explosive depuis stop mort complet — méthode Dynamic Effort appliquée au tirage. Le Pendlay Row développe le RFD (Rate of Force Development) de la chaîne de tirage, directement transférable au plaquage et au maintien en contact. Sources : Decathlon ConseilSport ; González-Badillo & Sánchez-Medina, IJSPP 2010 ; Zatsiorsky & Kraemer — Science and Practice of Strength Training (2006)."
+  },
+
+  {
+    "blockId": "BLK_FORCE_UPPER_OHP_PENDLAY_01",
+    "name": "Force upper — Développé militaire + Pendlay Row",
+    "intent": "force",
+    "tags": [
+      "upper",
+      "force",
+      "contact",
+      "shoulder_health",
+      "pull",
+      "posterior_chain"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_vertical__overhead_press__barbell",
+        "role": "prime",
+        "notes": "Développé militaire strict debout. Gainage abdominal actif tout le mouvement. Barre passe devant le visage (pas derrière la tête). Coudes légèrement en avant au départ."
+      },
+      {
+        "exerciseId": "pull_horizontal__pendlay_row__barbell",
+        "role": "contrast",
+        "notes": "Immédiatement après le développé. Stop mort depuis le sol, tirage explosif. Équilibre push/pull vertical — protection de l'épaule."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-8"
+        },
+        "restSeconds": 90,
+        "rer": 3,
+        "coachingNotes": "W1 — OHP @70% 1RM / Pendlay Row @65% 1RM. Superset enchaîné, repos 90'' après la paire. Familiarisation au volume."
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-6"
+        },
+        "restSeconds": 120,
+        "rer": 2,
+        "coachingNotes": "W2 — OHP @75% / Pendlay @70%. 4 séries. Montée en charge progressive."
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-5"
+        },
+        "restSeconds": 150,
+        "rer": 2,
+        "coachingNotes": "W3 — OHP @80% / Pendlay @75%. Pic d'intensité. Repos 2'30 entre supersets. Qualité > vitesse d'exécution."
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-6"
+        },
+        "restSeconds": 90,
+        "rer": 3,
+        "coachingNotes": "W4 — Retour à W1 en charge (70%/65%). Semaine de transition avant la phase POWER."
+      }
+    ],
+    "coachingNotes": "Superset push/pull vertical — le seul bloc de FORCE upper de la bibliothèque. Le développé militaire développe la poussée verticale (maulage, renvoi de balle) et le Pendlay Row le tirage horizontal explosif (plaquage, maintien contact). L'équilibre push/pull protège l'épaule sur le long terme. Sources : NSCA-SCJ Scrum Strength (2019) ; Mondenx X. — La Prépa Physique Rugby Force (4Trainer) ; Decathlon ConseilSport."
+  },
+
+  {
+    "blockId": "BLK_NEURAL_LOWER_JUMP_STEPUP_EMOM_01",
+    "name": "Neural bas du corps (Jump Step Up EMOM)",
+    "intent": "neural",
+    "tags": [
+      "lower",
+      "neural",
+      "power",
+      "speed",
+      "acceleration",
+      "unilateral"
+    ],
+    "equipment": [
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "ankle_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "unilateral__jump_step_up",
+        "role": "prime",
+        "notes": "Pied entier posé sur la box (40-50cm). L'impulsion vient UNIQUEMENT de la jambe de travail — ne pas pousser sur le pied au sol. En haut : genou opposé monte à hauteur de hanche. Alterner les jambes à chaque minute ou toutes les 2-3 reps selon la prescription."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 5,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 5,
+          "work": {
+            "kind": "reps",
+            "reps": 3,
+            "side": "each"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 4,
+        "coachingNotes": "W1 — Poids de corps uniquement. 3 reps par jambe par minute sur 5 min. Priorité : technique de l'appui unilatéral et montée du genou. Box à 40cm."
+      },
+      {
+        "versionId": "W2",
+        "sets": 6,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": 3,
+            "side": "each"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 3,
+        "coachingNotes": "W2 — Volume monte à 6 min. Option : tenir un haltère léger (5-10kg) pour augmenter l'intensité sans compromettre l'explosivité."
+      },
+      {
+        "versionId": "W3",
+        "sets": 7,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": 2,
+            "side": "each"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2,
+        "coachingNotes": "W3 — 7 min, 2 reps/jambe. Phase neural pur : 2 reps à intensité maximale. Option haltères 10-15kg pour avancés. Box peut monter à 50cm."
+      },
+      {
+        "versionId": "W4",
+        "sets": 7,
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": 2,
+            "side": "each"
+          }
+        },
+        "restSeconds": 0,
+        "rer": 2,
+        "coachingNotes": "W4 — Consolidation W3. Même prescription, charge stabilisée. Dernier bloc avant transition POWER."
+      }
+    ],
+    "coachingNotes": "Jump Step Up EMOM — développe la puissance d'accélération unilatérale, directement transférable aux démarrages explosifs, aux changements d'appui et aux courses en terrain ouvert. Idéal pour arrières et 3e ligne. Exercice validé par NSCA-SCJ (2019) et Rugbystore.co.uk pour les deuxièmes lignes sauteurs. Sources : Rugbystore.co.uk — Rugby Training for Second Rowers ; NSCA-SCJ Scrum Strength (2019) ; World Rugby Passport — Pliométrie."
+  },
+  {
+    "blockId": "BLK_ACT_UPPER_REHAB_SHOULDER_SAFE_01",
+    "name": "Activation upper rehab epaule (serratus + scap retraction)",
+    "intent": "activation",
+    "tags": [
+      "upper",
+      "activation",
+      "shoulder_health",
+      "rehab",
+      "pain_management"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "prehab_shoulder__serratus_reach__supine",
+        "role": "stability",
+        "notes": "Mouvement court, sans haussement d'epaule."
+      },
+      {
+        "exerciseId": "prehab_shoulder__scap_retraction_hold__band",
+        "role": "stability",
+        "notes": "Pause 1-2s en fin de tirage."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10 + 10-12"
+        },
+        "restSeconds": 45,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12"
+        },
+        "restSeconds": 45,
+        "rer": 5
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10 + 10-12"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      }
+    ],
+    "coachingNotes": "Bloc de preparation pour epaule douloureuse: amplitude strictement sans douleur, tempo controle, arret si douleur >3/10."
+  },
+  {
+    "blockId": "BLK_HYPER_UPPER_REHAB_PULL_SCAP_01",
+    "name": "Hypertrophie upper rehab (row coudes bas + rotation externe iso)",
+    "intent": "hypertrophy",
+    "tags": [
+      "upper",
+      "hypertrophy",
+      "pull",
+      "shoulder_health",
+      "rehab"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "pull_horizontal__band_row__elbows_low",
+        "role": "prime",
+        "notes": "2s de controle en excentrique, coude proche du tronc."
+      },
+      {
+        "exerciseId": "prehab_shoulder__external_rotation_iso__band",
+        "role": "stability",
+        "notes": "Coude colle au corps, 1-2s de maintien."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10/side"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 12/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc rehab shoulder pain axe tirage: charge moderee, trajectoire reproductible et zero compensation cervicale/lombaire."
+  },
+  {
+    "blockId": "BLK_HYPER_UPPER_REHAB_ROW_CONTROL_01",
+    "name": "Hypertrophie upper rehab (band row + pull-apart controle)",
+    "intent": "hypertrophy",
+    "tags": [
+      "upper",
+      "hypertrophy",
+      "pull",
+      "shoulder_health",
+      "rehab"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "pull_horizontal__band_row",
+        "role": "prime",
+        "notes": "Tirer vers le bas du sternum, controle continu."
+      },
+      {
+        "exerciseId": "prehab_shoulder__band_pull_apart__palms_up",
+        "role": "accessory",
+        "notes": "Cage stable, amplitude maitrisee."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 15"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 15"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Deuxieme bloc upper rehab pour couvrir les 2 etapes hypertrophie sans mouvement de poussee agressif."
+  },
+  {
+    "blockId": "BLK_FORCE_UPPER_REHAB_BAND_STRENGTH_01",
+    "name": "Force upper rehab (band row tension + pull-apart)",
+    "intent": "force",
+    "tags": [
+      "upper",
+      "force",
+      "pull",
+      "shoulder_health",
+      "rehab"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "pull_horizontal__band_row__elbows_low",
+        "role": "prime",
+        "notes": "Tension d'elastique plus forte, excentrique controle."
+      },
+      {
+        "exerciseId": "prehab_shoulder__band_pull_apart__palms_up",
+        "role": "stability",
+        "notes": "Stabiliser la scapula et garder le cou relache."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 12"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 5,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-8 + 10"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-8 + 10"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      }
+    ],
+    "coachingNotes": "Option force securisee pour profils shoulder pain: progression par tension elastique, pas de poussee overhead/bench."
+  },
+  {
+    "blockId": "BLK_ACT_LOWER_REHAB_SAFE_01",
+    "name": "Activation lower rehab (quad set + ankle pump)",
+    "intent": "activation",
+    "tags": [
+      "lower",
+      "activation",
+      "rehab",
+      "pain_management"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "lower_rehab__quad_set__supine",
+        "role": "stability",
+        "notes": "Contraction de 1-2s, respiration calme."
+      },
+      {
+        "exerciseId": "lower_rehab__ankle_pump__supine",
+        "role": "stability",
+        "notes": "Rythme lent et complet."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 15/side"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side + 20/side"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side + 20/side"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 15/side"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      }
+    ],
+    "coachingNotes": "Activation tres douce pour profils genou/lombaires sensibles. Rester strictement dans une zone sans douleur."
+  },
+  {
+    "blockId": "BLK_HYPER_LOWER_REHAB_POSTERIOR_01",
+    "name": "Hypertrophie lower rehab (ischios iso + abduction hanche)",
+    "intent": "hypertrophy",
+    "tags": [
+      "lower",
+      "hypertrophy",
+      "rehab",
+      "posterior_chain",
+      "unilateral"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "lower_rehab__hamstring_isometric__heel_dig",
+        "role": "prime",
+        "notes": "Contraction progressive, pas de douleur lombaire."
+      },
+      {
+        "exerciseId": "lower_rehab__hip_abduction__side_lying",
+        "role": "accessory",
+        "notes": "Bassin stable, amplitude maitrisee."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15s + 12/side"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "20s + 12/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "20s + 10/side"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "20s + 10/side"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc lower rehab priorisant controle neuromusculaire et endurance locale, sans charge axiale."
+  },
+  {
+    "blockId": "BLK_HYPER_LOWER_REHAB_ANKLE_CALF_01",
+    "name": "Hypertrophie lower rehab (mollets + tibialis)",
+    "intent": "hypertrophy",
+    "tags": [
+      "lower",
+      "hypertrophy",
+      "rehab",
+      "ankle"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "calf__standing_raise__bodyweight",
+        "role": "prime",
+        "notes": "Monter/descendre en controle."
+      },
+      {
+        "exerciseId": "tibialis__raise__bodyweight",
+        "role": "accessory",
+        "notes": "Amplitude reduite si sensibilite tibiale."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15 + 15"
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "18 + 18"
+        },
+        "restSeconds": 45,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "18 + 18"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "20 + 20"
+        },
+        "restSeconds": 60,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Renforcement distal pour soutenir la chaine lower sans contrainte genou/lombaires excessive."
+  },
+  {
+    "blockId": "BLK_CONTRAST_LOWER_REHAB_CONTROL_01",
+    "name": "Contrast lower rehab (TKE + mollets reactifs)",
+    "intent": "contrast",
+    "tags": [
+      "lower",
+      "contrast",
+      "rehab",
+      "knee_health",
+      "ankle"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "lower_rehab__terminal_knee_extension__band",
+        "role": "prime",
+        "notes": "Contraction terminale controlee, sans douleur."
+      },
+      {
+        "exerciseId": "calf__standing_raise__bodyweight",
+        "role": "contrast",
+        "notes": "Montee dynamique, retour lent."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 12"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side + 12"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side + 10"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side + 10"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc contrast version rehab: alternance controle-articulaire et production de force moderee sans impact."
+  },
+  {
+    "blockId": "BLK_FORCE_LOWER_REHAB_STABILITY_01",
+    "name": "Force lower rehab (TKE + ischio iso)",
+    "intent": "force",
+    "tags": [
+      "lower",
+      "force",
+      "rehab",
+      "knee_health",
+      "posterior_chain"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "lower_rehab__terminal_knee_extension__band",
+        "role": "prime",
+        "notes": "Rester strictement dans la zone sans douleur."
+      },
+      {
+        "exerciseId": "lower_rehab__hamstring_isometric__heel_dig",
+        "role": "stability",
+        "notes": "Contraction forte sans compensation lombaire."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side + 15s"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 20s"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 5,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 20s"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side + 15s"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      }
+    ],
+    "coachingNotes": "Option force lower securisee pour profils douloureux: progression par tension elastique et duree d'isometrie."
+  },
+  {
+    "blockId": "BLK_HYPER_LOWER_REHAB_GROIN_CALF_01",
+    "name": "Hypertrophie lower rehab (adducteurs supine + mollets)",
+    "intent": "hypertrophy",
+    "tags": [
+      "lower",
+      "hypertrophy",
+      "rehab",
+      "groin",
+      "ankle"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain",
+      "ankle_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "groin_adductors__ball_squeeze__supine",
+        "role": "prime",
+        "notes": "Compression progressive, respiration reguliere."
+      },
+      {
+        "exerciseId": "calf__standing_raise__bodyweight",
+        "role": "accessory",
+        "notes": "Mouvement controle, sans rebond."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "20s + 15"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "25s + 18"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "25s + 18"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30s + 20"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc lower rehab orienté adducteurs/mollets pour maintenir du travail local sans charge axiale."
+  },
+  {
+    "blockId": "BLK_HYPER_LOWER_REHAB_TKE_TIB_01",
+    "name": "Hypertrophie lower rehab (TKE + tibialis)",
+    "intent": "hypertrophy",
+    "tags": [
+      "lower",
+      "hypertrophy",
+      "rehab",
+      "knee_health",
+      "ankle"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "lower_rehab__terminal_knee_extension__band",
+        "role": "prime",
+        "notes": "Extension terminale propre, sans douleur."
+      },
+      {
+        "exerciseId": "tibialis__raise__bodyweight",
+        "role": "accessory",
+        "notes": "Controle du tempo et de l'amplitude."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 15"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side + 18"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side + 18"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "14/side + 20"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc lower rehab centré genou/cheville, utile pour conserver du volume sans pattern agressif."
+  },
+  {
+    "blockId": "BLK_HYPER_LOWER_REHAB_SUPINE_CONTROL_01",
+    "name": "Hypertrophie lower rehab (supine control)",
+    "intent": "hypertrophy",
+    "tags": [
+      "lower",
+      "hypertrophy",
+      "rehab",
+      "groin",
+      "knee_health"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "groin_adductors__ball_squeeze__supine",
+        "role": "prime",
+        "notes": "Pression progressive 20-30s."
+      },
+      {
+        "exerciseId": "lower_rehab__quad_set__supine",
+        "role": "accessory",
+        "notes": "Contraction propre, sans compensation."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "20s + 10/side"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "25s + 12/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "25s + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "30s + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc supine tres controle pour accumuler du volume lower sans flexion chargee du rachis."
+  },
+  {
+    "blockId": "BLK_CONTRAST_UPPER_REHAB_SCAP_REACT_01",
+    "name": "Contrast upper rehab (row elastique reactif + rotation externe iso)",
+    "intent": "contrast",
+    "tags": [
+      "upper",
+      "contrast",
+      "rehab",
+      "shoulder_health",
+      "pull"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "pull_horizontal__band_row__elbows_low",
+        "role": "prime",
+        "notes": "Concentrique dynamique, retour controle 2s."
+      },
+      {
+        "exerciseId": "prehab_shoulder__external_rotation_iso__band",
+        "role": "contrast",
+        "notes": "Maintien 1-2s en fin d'amplitude, sans douleur."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 10/side"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12/side"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 12/side"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      }
+    ],
+    "coachingNotes": "Bloc contrast upper securise pour profils sensibles epaule/poignet. Priorite: controle, douleur <= 3/10, arret si aggravation."
+  },
+
+  {
+    "blockId": "BLK_STR_ACT_FB_01",
+    "name": "Activation Full Body (débutant)",
+    "intent": "activation",
+    "tags": ["starter", "activation", "upper", "lower"],
+    "equipment": ["none"],
+    "contraindications": [],
+    "exercises": [
+      { "exerciseId": "push_horizontal__push_up__knee", "role": "stability", "notes": "Corps en planche, genoux au sol" },
+      { "exerciseId": "hinge__good_morning__bodyweight", "role": "stability", "notes": "Dos neutre, charnière à la hanche, ischios tendus" },
+      { "exerciseId": "hinge__glute_bridge__bodyweight", "role": "stability", "notes": "Contracter les fessiers 2s en haut" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 2, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 30, "rer": 6 },
+      { "versionId": "W2", "sets": 2, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 30, "rer": 6 },
+      { "versionId": "W3", "sets": 2, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 30, "rer": 5 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 30, "rer": 6 }
+    ],
+    "coachingNotes": "Échauffement léger. Focus qualité du mouvement. Jamais d'essoufflement. Sentir les muscles s'activer progressivement."
+  },
+
+  {
+    "blockId": "BLK_STR_HP_A_01",
+    "name": "Push-Pull Horizontal — Pompe + Traction inversée",
+    "intent": "hypertrophy",
+    "tags": ["starter", "upper", "push", "pull", "hypertrophy"],
+    "equipment": ["none"],
+    "contraindications": ["shoulder_pain"],
+    "exercises": [
+      { "exerciseId": "push_horizontal__push_up__standard", "role": "prime", "notes": "Corps rigide du talon à la tête, poitrine touche le sol" },
+      { "exerciseId": "pull_horizontal__inverted_row__knees_bent", "role": "superset_partner", "notes": "Sous une table solide. Omoplates d'abord, coudes vers les hanches" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 5 }
+    ],
+    "coachingNotes": "Pompes puis traction inversée sans repos entre les 2. Repos 90s après la paire. Progression : 12 pompes parfaites → passer au bloc avec élastique."
+  },
+
+  {
+    "blockId": "BLK_STR_HP_A_02",
+    "name": "Push-Pull Horizontal — Pompe + Rowing Élastique",
+    "intent": "hypertrophy",
+    "tags": ["starter", "upper", "push", "pull", "hypertrophy"],
+    "equipment": ["band"],
+    "contraindications": ["shoulder_pain"],
+    "exercises": [
+      { "exerciseId": "push_horizontal__push_up__standard", "role": "prime", "notes": "Tempo contrôlé 2s descente, corps rigide" },
+      { "exerciseId": "pull_horizontal__band_row__standing", "role": "superset_partner", "notes": "Élastique à hauteur poitrine, omoplates d'abord, coudes vers les hanches" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 5 }
+    ],
+    "coachingNotes": "Pompes puis rowing élastique sans repos. Fixer l'élastique à hauteur de poitrine sur un pilier ou porte. Paire push/pull = récupération active."
+  },
+
+  {
+    "blockId": "BLK_STR_HP_L_01",
+    "name": "Squat-Hinge — Squat + Hip Thrust (poids du corps)",
+    "intent": "hypertrophy",
+    "tags": ["starter", "lower", "squat", "hinge", "posterior_chain", "hypertrophy"],
+    "equipment": ["none"],
+    "contraindications": ["knee_pain"],
+    "exercises": [
+      { "exerciseId": "squat__bodyweight_squat", "role": "prime", "notes": "Descendre sous la parallèle, talons au sol, genoux dans l'axe des orteils" },
+      { "exerciseId": "hinge__hip_thrust__bodyweight", "role": "superset_partner", "notes": "Hanches au plafond, contracter les fessiers 2s" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "12-15" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "15-18" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "15" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 90, "rer": 5 }
+    ],
+    "coachingNotes": "Squats puis hip thrust sans repos. Quad + fessiers en paire agoniste-antagoniste. Progression : goblet squat dès que le squat BW devient facile (RER ≥ 4)."
+  },
+
+  {
+    "blockId": "BLK_STR_HP_L_02",
+    "name": "Squat-Hinge — Goblet Squat + RDL Haltères",
+    "intent": "hypertrophy",
+    "tags": ["starter", "lower", "squat", "hinge", "posterior_chain", "hypertrophy"],
+    "equipment": ["dumbbell"],
+    "contraindications": ["knee_pain", "low_back_pain"],
+    "exercises": [
+      { "exerciseId": "squat__goblet_squat__dumbbell", "role": "prime", "notes": "Haltère vertical au sternum, genoux écartés, descendre entre les genoux" },
+      { "exerciseId": "hinge__rdl__dumbbell", "role": "superset_partner", "notes": "DOS NEUTRE absolu, haltères longent les cuisses, s'arrêter quand ischios tendus" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 4 }
+    ],
+    "coachingNotes": "Goblet squat puis RDL. Charger goblet progressivement. RDL : jamais d'arrondi dans le bas du dos — signal d'arrêt absolu."
+  },
+
+  {
+    "blockId": "BLK_STR_CORE_01",
+    "name": "Core Débutant — Planche + Dead Bug",
+    "intent": "core",
+    "tags": ["starter", "core"],
+    "equipment": ["none"],
+    "contraindications": ["low_back_pain"],
+    "exercises": [
+      { "exerciseId": "core_anti_extension__front_plank", "role": "stability", "notes": "Corps rigide, fessiers serrés, regarder le sol 30cm devant" },
+      { "exerciseId": "core_anti_extension__dead_bug", "role": "stability", "notes": "Dos collé au sol, allonger bras+jambe opposés lentement, expirer à l'extension" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 2, "scheme": { "kind": "time", "seconds": 20 }, "restSeconds": 45, "rer": 5 },
+      { "versionId": "W2", "sets": 2, "scheme": { "kind": "time", "seconds": 30 }, "restSeconds": 45, "rer": 4 },
+      { "versionId": "W3", "sets": 3, "scheme": { "kind": "time", "seconds": 30 }, "restSeconds": 45, "rer": 4 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "time", "seconds": 20 }, "restSeconds": 45, "rer": 5 }
+    ],
+    "coachingNotes": "Planche puis dead bug. Respiration continue. Dead bug : 8-10 répétitions alternées. Arrêter si le bas du dos se creuse ou si le souffle est bloqué."
+  },
+
+  {
+    "blockId": "BLK_STR_CORE_02",
+    "name": "Core Débutant — Planche Latérale + Hollow Hold",
+    "intent": "core",
+    "tags": ["starter", "core"],
+    "equipment": ["none"],
+    "contraindications": ["shoulder_pain", "low_back_pain"],
+    "exercises": [
+      { "exerciseId": "core_anti_rotation__side_plank", "role": "stability", "notes": "Corps en ligne parfaite tête-pied, hanche ne descend pas, chaque côté" },
+      { "exerciseId": "core_anti_extension__hollow_hold", "role": "stability", "notes": "Bas du dos collé au sol, bras et jambes étendus, respiration lente" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 2, "scheme": { "kind": "time", "seconds": 15 }, "restSeconds": 45, "rer": 5 },
+      { "versionId": "W2", "sets": 2, "scheme": { "kind": "time", "seconds": 20 }, "restSeconds": 45, "rer": 4 },
+      { "versionId": "W3", "sets": 3, "scheme": { "kind": "time", "seconds": 20 }, "restSeconds": 45, "rer": 4 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "time", "seconds": 15 }, "restSeconds": 45, "rer": 5 }
+    ],
+    "coachingNotes": "Planche latérale chaque côté puis hollow hold. Variante planche latérale sur genoux si trop difficile. Hollow hold : genoux fléchis à 90° si les jambes tendues sont trop dures."
+  },
+
+  {
+    "blockId": "BLK_BLD_UPPER_SS_HORIZ_01",
+    "name": "Superset Pec / Dos — Développé + Rowing (haltères)",
+    "intent": "hypertrophy",
+    "tags": ["builder", "superset", "upper", "push", "pull", "hypertrophy"],
+    "equipment": ["dumbbell", "bench"],
+    "contraindications": ["shoulder_pain"],
+    "exercises": [
+      { "exerciseId": "push_horizontal__bench_press__dumbbell", "role": "prime", "notes": "Amplitude complète, descente contrôlée 2s, poitrine légèrement bombée" },
+      { "exerciseId": "pull_horizontal__one_arm_row__dumbbell", "role": "superset_partner", "notes": "Coude tiré vers le plafond, dos neutre, 8-10 reps par côté" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 75, "rer": 3 },
+      { "versionId": "W2", "sets": 4, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 75, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 75, "rer": 2 },
+      { "versionId": "W4", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 75, "rer": 4 }
+    ],
+    "coachingNotes": "A1 : Développé haltères. A2 : Rowing haltère (chaque côté = 1 set). Repos 75s entre supersets. Ratio push:pull = 1:1 obligatoire."
+  },
+
+  {
+    "blockId": "BLK_BLD_UPPER_SS_VERT_01",
+    "name": "Superset Épaule / Grand Dorsal — OHP + Traction",
+    "intent": "hypertrophy",
+    "tags": ["builder", "superset", "upper", "push", "pull", "hypertrophy"],
+    "equipment": ["dumbbell", "pullup_bar"],
+    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "exercises": [
+      { "exerciseId": "push_vertical__dumbbell_press__seated", "role": "prime", "notes": "Dos droit, ne pas cambrer la lombaire, bras verrouillés en haut" },
+      { "exerciseId": "pull_vertical__pull_up__neutral", "role": "superset_partner", "notes": "Prise neutre, initier par les omoplates vers le bas, menton au-dessus de la barre" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 75, "rer": 3 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 75, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 75, "rer": 2 },
+      { "versionId": "W4", "sets": 3, "scheme": { "kind": "reps", "reps": "8" }, "restSeconds": 75, "rer": 4 }
+    ],
+    "coachingNotes": "A1 : OHP haltères assis. A2 : Traction prise neutre. Si traction impossible : élastique assisté ou tirage vertical machine. Repos 75s entre supersets."
+  },
+
+  {
+    "blockId": "BLK_BLD_LOWER_SS_01",
+    "name": "Superset Quad / Fessiers — Goblet Squat + Hip Thrust",
+    "intent": "hypertrophy",
+    "tags": ["builder", "superset", "lower", "squat", "hinge", "posterior_chain", "hypertrophy"],
+    "equipment": ["dumbbell"],
+    "contraindications": ["knee_pain", "low_back_pain"],
+    "exercises": [
+      { "exerciseId": "squat__goblet_squat__dumbbell", "role": "prime", "notes": "Charge progressive — torse haut, genoux écartés, descendre entre les genoux" },
+      { "exerciseId": "hinge__hip_thrust__bodyweight", "role": "superset_partner", "notes": "Ajouter un haltère sur les hanches quand BW devient facile (RER ≥ 4)" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W2", "sets": 4, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 90, "rer": 2 },
+      { "versionId": "W4", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 4 }
+    ],
+    "coachingNotes": "A1 : Goblet squat. A2 : Hip thrust. Progresser goblet +2.5kg si RER ≥ 3 deux semaines de suite. Hip thrust : serrer les fessiers 2s au sommet."
+  },
+
+  {
+    "blockId": "BLK_BLD_LOWER_SS_02",
+    "name": "Superset Hinge / Quad Unilatéral — RDL + Fente Arrière (haltères)",
+    "intent": "hypertrophy",
+    "tags": ["builder", "superset", "lower", "hinge", "squat", "posterior_chain", "unilateral", "hypertrophy"],
+    "equipment": ["dumbbell"],
+    "contraindications": ["low_back_pain", "knee_pain"],
+    "exercises": [
+      { "exerciseId": "hinge__rdl__dumbbell", "role": "prime", "notes": "Haltères longent les cuisses, dos neutre absolu, arrêt quand ischios tendus" },
+      { "exerciseId": "lower_lunge__reverse_lunge__dumbbell", "role": "superset_partner", "notes": "Genou arrière au sol, genou avant à 90°, 8-10 reps par côté" }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 2 },
+      { "versionId": "W4", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 4 }
+    ],
+    "coachingNotes": "A1 : RDL haltères. A2 : Fente arrière (les 2 côtés = 1 set). Paire ischio/quad unilatérale. Repos 90s. RDL : arrêt immédiat si le dos arrondit."
   }
 ]

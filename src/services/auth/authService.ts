@@ -110,6 +110,7 @@ export const signUp = async ({ email, displayName, password }: SignUpInput): Pro
       data: {
         display_name: cleanDisplayName || normalizedEmail.split('@')[0] || 'Joueur',
       },
+      emailRedirectTo: `${window.location.origin}/auth/callback`,
     },
   })
 

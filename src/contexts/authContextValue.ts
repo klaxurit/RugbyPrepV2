@@ -15,6 +15,7 @@ interface SignInInput {
 
 export interface AuthContextValue {
   authState: AuthState
+  isInitializing: boolean  // true tant que la session n'a pas encore été vérifiée
   signUp: (input: SignUpInput) => Promise<Result<AuthUser, AuthError>>
   signIn: (input: SignInInput) => Promise<Result<AuthUser, AuthError>>
   signOut: () => Promise<void>

@@ -4,7 +4,7 @@ import type { CycleWeek } from '../types/training'
 const STORAGE_KEY = 'rugbyprep.week.v1'
 const LAST_NON_DELOAD_KEY = 'rugbyprep.week.lastnon.v1'
 const DEFAULT_WEEK: CycleWeek = 'W1'
-const WEEK_VALUES: CycleWeek[] = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
+const WEEK_VALUES: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
 
 const isCycleWeek = (value: unknown): value is CycleWeek =>
   typeof value === 'string' && WEEK_VALUES.includes(value as CycleWeek)

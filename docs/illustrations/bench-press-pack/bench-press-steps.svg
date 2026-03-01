@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Developpe couche - fiche 3 etapes</title>
+  <desc id="desc">Trois poses cles pour illustrer le developpe couche: haut, descente controlee, poussee.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f8fb; }
+      .frame { fill: #ffffff; stroke: #dbe2ec; stroke-width: 2; }
+      .stepTitle { fill: #162439; font: 700 18px ui-sans-serif, system-ui, sans-serif; }
+      .bigTitle { fill: #11213a; font: 700 30px ui-sans-serif, system-ui, sans-serif; }
+      .sub { fill: #647386; font: 500 16px ui-sans-serif, system-ui, sans-serif; }
+      .body { stroke: #2357b2; stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .joint { fill: #2357b2; }
+      .bar { stroke: #121722; stroke-width: 7; stroke-linecap: round; }
+      .plate { fill: #121722; }
+      .bench { fill: #6b7484; }
+      .benchDark { fill: #434a57; }
+      .path { stroke: #de5b34; stroke-width: 4; fill: none; stroke-dasharray: 8 7; }
+      .arrow { fill: #de5b34; }
+      .cap { fill: #213247; font: 600 14px ui-sans-serif, system-ui, sans-serif; }
+      .badge { fill: #eef2f8; stroke: #cfdae8; stroke-width: 1.5; }
+      .badgeText { fill: #1a2a40; font: 700 13px ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.05em; }
+    </style>
+    <marker id="ah2" markerWidth="11" markerHeight="11" refX="8" refY="5.5" orient="auto">
+      <path d="M0,0 L11,5.5 L0,11 z" class="arrow"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1280" height="720"/>
+  <text class="bigTitle" x="48" y="62">Developpe couche (demo) - Fiche 3 etapes</text>
+  <text class="sub" x="48" y="90">Prototype de support de programme: plus lisible qu'une animation 2D continue pour certains exercices</text>
+
+  <!-- cards -->
+  <rect class="frame" x="38" y="120" width="390" height="555" rx="18"/>
+  <rect class="frame" x="445" y="120" width="390" height="555" rx="18"/>
+  <rect class="frame" x="852" y="120" width="390" height="555" rx="18"/>
+
+  <rect class="badge" x="58" y="140" width="88" height="28" rx="14"/><text class="badgeText" x="77" y="159">ETAPE 1</text>
+  <rect class="badge" x="465" y="140" width="88" height="28" rx="14"/><text class="badgeText" x="484" y="159">ETAPE 2</text>
+  <rect class="badge" x="872" y="140" width="88" height="28" rx="14"/><text class="badgeText" x="891" y="159">ETAPE 3</text>
+
+  <text class="stepTitle" x="58" y="194">Position haute (depart)</text>
+  <text class="stepTitle" x="465" y="194">Descente controlee</text>
+  <text class="stepTitle" x="872" y="194">Pousser vers le haut</text>
+
+  <!-- reusable mini scene function manually repeated -->
+  <!-- Step 1 -->
+  <g transform="translate(38 120)">
+    <line x1="48" y1="470" x2="343" y2="470" stroke="#d9e0ea" stroke-width="3"/>
+    <rect class="bench" x="118" y="315" width="135" height="20" rx="9"/>
+    <rect class="benchDark" x="179" y="335" width="10" height="58" rx="5"/>
+    <line x1="184" y1="393" x2="166" y2="470" stroke="#434a57" stroke-width="6" stroke-linecap="round"/>
+    <line x1="184" y1="393" x2="202" y2="470" stroke="#434a57" stroke-width="6" stroke-linecap="round"/>
+    <circle class="joint" cx="116" cy="294" r="14"/>
+    <path class="body" d="M130 300 L175 312 L248 315"/>
+    <path class="body" d="M248 315 L292 330 L315 365"/>
+    <path class="body" d="M292 330 L284 385 L302 442"/>
+    <path class="body" d="M175 312 L205 276 L228 237"/>
+    <path class="body" d="M175 312 L179 275 L187 239"/>
+    <circle class="joint" cx="228" cy="237" r="6"/>
+    <circle class="joint" cx="187" cy="239" r="6"/>
+    <line class="bar" x1="175" y1="227" x2="240" y2="227"/>
+    <circle class="plate" cx="166" cy="227" r="9"/>
+    <circle class="plate" cx="249" cy="227" r="9"/>
+    <text class="cap" x="52" y="518">Bras tendus sans verrouillage agressif</text>
+    <text class="cap" x="52" y="542">Poignets au-dessus des avant-bras</text>
+  </g>
+
+  <!-- Step 2 -->
+  <g transform="translate(445 120)">
+    <line x1="48" y1="470" x2="343" y2="470" stroke="#d9e0ea" stroke-width="3"/>
+    <rect class="bench" x="118" y="315" width="135" height="20" rx="9"/>
+    <rect class="benchDark" x="179" y="335" width="10" height="58" rx="5"/>
+    <line x1="184" y1="393" x2="166" y2="470" stroke="#434a57" stroke-width="6" stroke-linecap="round"/>
+    <line x1="184" y1="393" x2="202" y2="470" stroke="#434a57" stroke-width="6" stroke-linecap="round"/>
+    <circle class="joint" cx="116" cy="294" r="14"/>
+    <path class="body" d="M130 300 L175 312 L248 315"/>
+    <path class="body" d="M248 315 L292 330 L315 365"/>
+    <path class="body" d="M292 330 L284 385 L302 442"/>
+    <path class="body" d="M175 312 L199 291 L219 280"/>
+    <path class="body" d="M175 312 L183 292 L191 281"/>
+    <circle class="joint" cx="219" cy="280" r="6"/>
+    <circle class="joint" cx="191" cy="281" r="6"/>
+    <line class="bar" x1="176" y1="270" x2="235" y2="270"/>
+    <circle class="plate" cx="167" cy="270" r="9"/>
+    <circle class="plate" cx="244" cy="270" r="9"/>
+    <path class="path" d="M205 235 L205 305" marker-end="url(#ah2)"/>
+    <text class="cap" x="52" y="518">Descente controlee vers la poitrine</text>
+    <text class="cap" x="52" y="542">Coudes se flechissent, trajectoire stable</text>
+  </g>
+
+  <!-- Step 3 -->
+  <g transform="translate(852 120)">
+    <line x1="48" y1="470" x2="343" y2="470" stroke="#d9e0ea" stroke-width="3"/>
+    <rect class="bench" x="118" y="315" width="135" height="20" rx="9"/>
+    <rect class="benchDark" x="179" y="335" width="10" height="58" rx="5"/>
+    <line x1="184" y1="393" x2="166" y2="470" stroke="#434a57" stroke-width="6" stroke-linecap="round"/>
+    <line x1="184" y1="393" x2="202" y2="470" stroke="#434a57" stroke-width="6" stroke-linecap="round"/>
+    <circle class="joint" cx="116" cy="294" r="14"/>
+    <path class="body" d="M130 300 L175 312 L248 315"/>
+    <path class="body" d="M248 315 L292 330 L315 365"/>
+    <path class="body" d="M292 330 L284 385 L302 442"/>
+    <path class="body" d="M175 312 L194 300 L214 287"/>
+    <path class="body" d="M175 312 L181 301 L188 289"/>
+    <circle class="joint" cx="214" cy="287" r="6"/>
+    <circle class="joint" cx="188" cy="289" r="6"/>
+    <line class="bar" x1="172" y1="276" x2="238" y2="276"/>
+    <circle class="plate" cx="163" cy="276" r="9"/>
+    <circle class="plate" cx="247" cy="276" r="9"/>
+    <path class="path" d="M225 316 L225 233" marker-end="url(#ah2)"/>
+    <text class="cap" x="52" y="518">Poussee verticale controlee</text>
+    <text class="cap" x="52" y="542">Garde la trajectoire reproductible</text>
+  </g>
+</svg>

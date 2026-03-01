@@ -54,7 +54,7 @@ export function SignupPage() {
       return
     }
 
-    navigate('/week', { replace: true })
+    navigate('/onboarding', { replace: true })
     setIsSubmitting(false)
   }
 

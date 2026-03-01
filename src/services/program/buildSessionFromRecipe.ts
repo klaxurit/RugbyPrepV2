@@ -15,10 +15,14 @@ export interface BuiltSession {
   week: CycleWeek;
   blocks: BuiltSessionBlock[];
   warnings: string[];
+  isSafetyAdapted?: boolean;
+  safetyAdjustments?: string[];
 }
 
 interface BuildSessionOptions {
   priorityIntents?: TrainingBlock['intent'][];
+  /** Blocs déjà utilisés dans d'autres sessions de la semaine (exclusion cross-session) */
+  excludedBlockIds?: Set<string>;
 }
 
 const FALLBACK_INTENTS: Record<
@@ -34,6 +38,23 @@ const FALLBACK_INTENTS: Record<
   core: [],
   neck: ['core'],
   carry: []
+};
+
+// Fallbacks "sécurité" : utilisés uniquement quand un intent requis est introuvable.
+// On privilégie d'abord les intents principaux, puis des options stables (prehab/core).
+const SAFETY_FALLBACK_INTENTS: Record<
+  SessionRecipe['sequence'][number]['intent'],
+  SessionRecipe['sequence'][number]['intent'][]
+> = {
+  activation: ['core', 'prehab'],
+  prehab: ['core'],
+  neural: ['core', 'prehab', 'activation', 'contrast', 'force', 'hypertrophy'],
+  force: ['core', 'prehab', 'activation', 'contrast', 'hypertrophy', 'neural'],
+  contrast: ['core', 'prehab', 'activation', 'force', 'hypertrophy', 'neural'],
+  hypertrophy: ['core', 'prehab', 'activation', 'neural', 'force', 'contrast'],
+  core: [],
+  neck: ['core'],
+  carry: ['core']
 };
 
 const FINISHER_INTENTS: TrainingBlock['intent'][] = ['neck', 'core', 'carry'];
@@ -85,7 +106,9 @@ const canUseBlock = (
   block: TrainingBlock,
   usedExerciseIds: Set<string>
 ): boolean => {
-  if (block.intent === 'activation' || block.intent === 'prehab') {
+  // Activation est toujours accepté (échauffement, overlap volontaire parfois)
+  // Prehab EST vérifié : on ne veut pas répéter un exercice déjà fait en activation
+  if (block.intent === 'activation') {
     return true;
   }
   return !hasExerciseOverlap(block, usedExerciseIds);
@@ -140,18 +163,27 @@ const chooseBlockByIntent = (
   recipeId: SessionRecipe['id'],
   builtBlocks: BuiltSessionBlock[],
   week: CycleWeek,
-  anchorBlockId?: string
+  anchorBlockId?: string,
+  excludedBlockIds?: Set<string>,
+  focusMode: 'auto' | 'force' | 'off' = 'auto'
 ): TrainingBlock | null => {
+  const normalizedFocusTags = focusTagsAny ?? [];
+  const hasFocusTags = normalizedFocusTags.length > 0;
   const shouldApplyFocusFilter =
-    isFocusFilteredIntent(intent) && !!focusTagsAny && focusTagsAny.length > 0;
+    focusMode === 'force'
+      ? hasFocusTags
+      : focusMode === 'off'
+        ? false
+        : isFocusFilteredIntent(intent) && hasFocusTags;
 
   const scoredCandidates = blocks
     .filter(
       (block) =>
         block.intent === intent &&
         !usedBlockIds.has(block.blockId) &&
+        !(excludedBlockIds?.has(block.blockId)) &&
         (!shouldApplyFocusFilter ||
-          block.tags.some((tag) => focusTagsAny.includes(tag)))
+          block.tags.some((tag) => normalizedFocusTags.includes(tag)))
     )
     .sort(
       (a, b) =>
@@ -205,10 +237,13 @@ export const buildSessionFromRecipe = (
   const phase = getPhaseForWeek(week);
   const baseWeek = getBaseWeekVersion(week);
   const priorityIntents = options.priorityIntents ?? [];
+  const excludedBlockIds = options.excludedBlockIds;
   const usedBlockIds = new Set<string>();
   const usedExerciseIds = new Set<string>();
   const builtBlocks: BuiltSessionBlock[] = [];
   const warnings: string[] = [];
+  const safetyAdjustments: string[] = [];
+  let isSafetyAdapted = false;
 
   const anchorKeyBase = (() => {
     if (typeof window === 'undefined') return null;
@@ -240,16 +275,26 @@ export const buildSessionFromRecipe = (
     }
   };
 
-  for (const step of recipe.sequence) {
+  for (let slotIndex = 0; slotIndex < recipe.sequence.length; slotIndex++) {
+    const step = recipe.sequence[slotIndex];
+
+    // Per-slot focus tags override recipe-level focusTagsAny (null = no filter for this slot)
+    const effectiveFocusTags: string[] | undefined =
+      recipe.slotFocusTags != null
+        ? (recipe.slotFocusTags[slotIndex] ?? undefined)
+        : recipe.focusTagsAny;
+
+    const isUpperRecipe = recipe.id === 'UPPER_V1' || recipe.id === 'UPPER_HYPER_V1';
     if (
-      recipe.id === 'UPPER_V1' &&
+      isUpperRecipe &&
       isFinisherIntent(step.intent) &&
       builtBlocks.some((builtBlock) => isFinisherIntent(builtBlock.block.intent))
     ) {
       continue;
     }
+    const isLowerRecipe = recipe.id === 'LOWER_V1' || recipe.id === 'LOWER_HYPER_V1';
     if (
-      recipe.id === 'LOWER_V1' &&
+      isLowerRecipe &&
       step.intent === 'core' &&
       builtBlocks.some((builtBlock) => builtBlock.block.intent === 'prehab')
     ) {
@@ -260,10 +305,11 @@ export const buildSessionFromRecipe = (
     const orderedIntents = [
       ...priorityIntents.filter((intent) => intentsToTry.includes(intent)),
       ...intentsToTry.filter((intent) => !priorityIntents.includes(intent))
-    ];
+    ].filter((intent, index, list) => list.indexOf(intent) === index);
 
     let chosenBlock: TrainingBlock | null = null;
     let chosenIntent = step.intent;
+    let usedSafetyFallback = false;
 
     const anchorIntent =
       step.required && ['activation', 'contrast', 'force'].includes(step.intent)
@@ -277,7 +323,7 @@ export const buildSessionFromRecipe = (
         eligibleBlocks,
         intent,
         step.required,
-        recipe.focusTagsAny,
+        effectiveFocusTags,
         recipe.preferredTags,
         [...positionPreferences.preferTags, ...phasePreferences.preferTags],
         [
@@ -289,10 +335,68 @@ export const buildSessionFromRecipe = (
         recipe.id,
         builtBlocks,
         week,
-        anchorBlockId
+        anchorBlockId,
+        excludedBlockIds,
+        'auto'
       );
       chosenIntent = intent;
       if (chosenBlock) break;
+    }
+
+    if (!chosenBlock && step.required) {
+      const safetyIntents = SAFETY_FALLBACK_INTENTS[step.intent].filter(
+        (intent) => !orderedIntents.includes(intent)
+      );
+
+      for (const intent of safetyIntents) {
+        chosenBlock = chooseBlockByIntent(
+          eligibleBlocks,
+          intent,
+          step.required,
+          effectiveFocusTags,
+          recipe.preferredTags,
+          [...positionPreferences.preferTags, ...phasePreferences.preferTags],
+          [
+            ...(positionPreferences.avoidTags ?? []),
+            ...(phasePreferences.avoidTags ?? [])
+          ],
+          usedBlockIds,
+          usedExerciseIds,
+          recipe.id,
+          builtBlocks,
+          week,
+          undefined,
+          excludedBlockIds,
+          'force'
+        );
+        if (!chosenBlock) {
+          chosenBlock = chooseBlockByIntent(
+            eligibleBlocks,
+            intent,
+            step.required,
+            effectiveFocusTags,
+            recipe.preferredTags,
+            [...positionPreferences.preferTags, ...phasePreferences.preferTags],
+            [
+              ...(positionPreferences.avoidTags ?? []),
+              ...(phasePreferences.avoidTags ?? [])
+            ],
+            usedBlockIds,
+            usedExerciseIds,
+            recipe.id,
+            builtBlocks,
+            week,
+            undefined,
+            excludedBlockIds,
+            'off'
+          );
+        }
+        chosenIntent = intent;
+        if (chosenBlock) {
+          usedSafetyFallback = true;
+          break;
+        }
+      }
     }
 
     if (!chosenBlock) {
@@ -310,7 +414,12 @@ export const buildSessionFromRecipe = (
       continue;
     }
 
-    if (chosenIntent !== step.intent) {
+    if (chosenIntent !== step.intent && usedSafetyFallback) {
+      const message = `Safety fallback: required intent '${step.intent}' replaced with '${chosenIntent}' (${chosenBlock.blockId}).`;
+      warnings.push(message);
+      safetyAdjustments.push(message);
+      isSafetyAdapted = true;
+    } else if (chosenIntent !== step.intent) {
       warnings.push(
         `Fallback: intent '${step.intent}' replaced with '${chosenIntent}' (${chosenBlock.blockId}).`
       );
@@ -332,6 +441,8 @@ export const buildSessionFromRecipe = (
     title: recipe.title,
     week,
     blocks: builtBlocks,
-    warnings
+    warnings,
+    isSafetyAdapted,
+    safetyAdjustments
   };
 };

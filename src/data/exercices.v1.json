@@ -1910,5 +1910,319 @@
     "id": "core_anti_extension__hollow_hold",
     "name": "Hollow hold",
     "notes": "Respiration controlee."
+  },
+  {
+    "exerciseId": "prehab_shoulder__external_rotation_iso__band",
+    "nameFr": "Rotation externe isometrique elastique",
+    "metricType": "reps",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "upper",
+      "prehab",
+      "shoulder_health",
+      "rehab"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Amplitude sans douleur, coude pres du corps.",
+    "id": "prehab_shoulder__external_rotation_iso__band",
+    "name": "Rotation externe isometrique elastique",
+    "notes": "Tenir 1-2s en fin d'amplitude, controle."
+  },
+  {
+    "exerciseId": "prehab_shoulder__scap_retraction_hold__band",
+    "nameFr": "Retraction scapulaire elastique",
+    "metricType": "reps",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "upper",
+      "prehab",
+      "shoulder_health",
+      "rehab"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Poitrine fiere, scapulas vers bas et arriere.",
+    "id": "prehab_shoulder__scap_retraction_hold__band",
+    "name": "Retraction scapulaire elastique",
+    "notes": "Pause de 1-2s en fin de tirage."
+  },
+  {
+    "exerciseId": "prehab_shoulder__serratus_reach__supine",
+    "nameFr": "Serratus reach allonge",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "upper",
+      "prehab",
+      "shoulder_health",
+      "rehab"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Monter l'omoplate sans hausser l'epaule.",
+    "id": "prehab_shoulder__serratus_reach__supine",
+    "name": "Serratus reach supine",
+    "notes": "Mouvement court et controle."
+  },
+  {
+    "exerciseId": "prehab_shoulder__band_pull_apart__palms_up",
+    "nameFr": "Band pull-apart paumes vers le haut",
+    "metricType": "reps",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "upper",
+      "pull",
+      "prehab",
+      "shoulder_health",
+      "rehab"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Coudes souples, cage thoracique stable.",
+    "id": "prehab_shoulder__band_pull_apart__palms_up",
+    "name": "Band pull-apart palms-up",
+    "notes": "Trajectoire lente, sans compensation lombaire."
+  },
+  {
+    "exerciseId": "lower_rehab__quad_set__supine",
+    "nameFr": "Contraction quadriceps allonge",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "prehab",
+      "rehab",
+      "knee_health"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Ecraser l'arriere du genou au sol 1-2s.",
+    "id": "lower_rehab__quad_set__supine",
+    "name": "Quad set supine",
+    "notes": "Contraction volontaire sans douleur."
+  },
+  {
+    "exerciseId": "lower_rehab__ankle_pump__supine",
+    "nameFr": "Pompes de cheville allonge",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "prehab",
+      "rehab",
+      "ankle"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Flexion-extension complete de cheville, rythme controle.",
+    "id": "lower_rehab__ankle_pump__supine",
+    "name": "Ankle pump supine",
+    "notes": "Garder la jambe relachee, mouvement fluide."
+  },
+  {
+    "exerciseId": "lower_rehab__hip_abduction__side_lying",
+    "nameFr": "Abduction de hanche allonge lateral",
+    "metricType": "reps",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "prehab",
+      "rehab",
+      "glute_med",
+      "unilateral"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Pied legerement vers le bas, bassin stable.",
+    "id": "lower_rehab__hip_abduction__side_lying",
+    "name": "Side-lying hip abduction",
+    "notes": "Amplitude moderee, controle continu."
+  },
+  {
+    "exerciseId": "lower_rehab__hamstring_isometric__heel_dig",
+    "nameFr": "Isometrie ischios talon au sol",
+    "metricType": "seconds",
+    "equipment": [
+      "none"
+    ],
+    "tags": [
+      "lower",
+      "prehab",
+      "rehab",
+      "posterior_chain"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Presser les talons sans cambrer le bas du dos.",
+    "id": "lower_rehab__hamstring_isometric__heel_dig",
+    "name": "Hamstring heel-dig isometric",
+    "notes": "Contraction progressive 10-20s."
+  },
+  {
+    "exerciseId": "lower_rehab__terminal_knee_extension__band",
+    "nameFr": "Extension terminale du genou elastique",
+    "metricType": "reps",
+    "equipment": [
+      "band"
+    ],
+    "tags": [
+      "lower",
+      "prehab",
+      "rehab",
+      "knee_health"
+    ],
+    "contraindications": [],
+    "defaultNotes": "Terminer en extension douce, verrouillage controle.",
+    "id": "lower_rehab__terminal_knee_extension__band",
+    "name": "Terminal knee extension band",
+    "notes": "Amplitude sans douleur, controle du genou."
+  },
+
+  {
+    "id": "push_horizontal__push_up__knee",
+    "name": "Pompe sur genoux",
+    "pattern": "push_horizontal",
+    "equipment": ["none"],
+    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "level": "beginner",
+    "notes": "Point d'entrée absolu. Genoux au sol, corps en planche des genoux à la tête. Progression vers pompe standard.",
+    "exerciseId": "push_horizontal__push_up__knee",
+    "nameFr": "Pompe sur genoux",
+    "metricType": "reps",
+    "tags": ["upper", "push", "starter"],
+    "defaultNotes": "Corps en ligne des genoux aux épaules. Poitrine touche le sol. Serrer le ventre et les fesses."
+  },
+  {
+    "id": "push_horizontal__push_up__standard",
+    "name": "Pompe standard",
+    "pattern": "push_horizontal",
+    "equipment": ["none"],
+    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "level": "beginner",
+    "notes": "Base fondamentale. Mains sous les épaules, corps rigide du talon à la tête, poitrine touche le sol.",
+    "exerciseId": "push_horizontal__push_up__standard",
+    "nameFr": "Pompe standard",
+    "metricType": "reps",
+    "tags": ["upper", "push", "starter"],
+    "defaultNotes": "Du talon à la tête en planche. Serrer fesses et ventre. Descendre lentement, pousser loin."
+  },
+  {
+    "id": "hinge__good_morning__bodyweight",
+    "name": "Bon matin poids du corps",
+    "pattern": "hinge",
+    "equipment": ["none"],
+    "contraindications": ["low_back_pain"],
+    "level": "beginner",
+    "notes": "Mains derrière la tête, charnière à la hanche uniquement. Dos neutre. Ischios tendus = bonne profondeur. Stop si dos arrondit.",
+    "exerciseId": "hinge__good_morning__bodyweight",
+    "nameFr": "Bon matin poids du corps",
+    "metricType": "reps",
+    "tags": ["lower", "hinge", "posterior_chain", "starter"],
+    "defaultNotes": "Mains derrière la tête. Fléchir à la hanche (pas à la colonne). Dos neutre obligatoire."
+  },
+  {
+    "id": "hinge__glute_bridge__bodyweight",
+    "name": "Pont fessier (poids du corps)",
+    "pattern": "hinge",
+    "equipment": ["none"],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Couché sur le dos, pieds à plat largeur des hanches. Pousser les hanches vers le plafond. Contracter les fessiers 2s. Pas de creusement lombaire.",
+    "exerciseId": "hinge__glute_bridge__bodyweight",
+    "nameFr": "Pont fessier (poids du corps)",
+    "metricType": "reps",
+    "tags": ["lower", "hinge", "posterior_chain", "starter"],
+    "defaultNotes": "Pieds à plat largeur hanches. Hanches au plafond. Serrer les fessiers 2 secondes en haut."
+  },
+  {
+    "id": "pull_horizontal__inverted_row__knees_bent",
+    "name": "Traction inversée genoux fléchis",
+    "pattern": "pull_horizontal",
+    "equipment": ["none"],
+    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "level": "beginner",
+    "notes": "Sous une table solide (ou barre basse). Genoux fléchis à 90° pour réduire la charge. Tirer la poitrine vers la barre/table. Corps rigide.",
+    "exerciseId": "pull_horizontal__inverted_row__knees_bent",
+    "nameFr": "Traction inversée genoux fléchis",
+    "metricType": "reps",
+    "tags": ["upper", "pull", "starter"],
+    "defaultNotes": "Corps rigide des genoux aux épaules. Initier par les omoplates, puis coudes. Poitrine vers la barre."
+  },
+  {
+    "id": "pull_horizontal__band_row__standing",
+    "name": "Rowing élastique debout",
+    "pattern": "pull_horizontal",
+    "equipment": ["band"],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Élastique fixé à mi-hauteur (hauteur poitrine). Tirer les coudes vers les hanches. Initier par les omoplates. Pas de coup de rein.",
+    "exerciseId": "pull_horizontal__band_row__standing",
+    "nameFr": "Rowing élastique debout",
+    "metricType": "reps",
+    "tags": ["upper", "pull", "starter"],
+    "defaultNotes": "Fixer élastique à hauteur poitrine. Omoplates d'abord, coude ensuite. Contraction dorsale 1s."
+  },
+  {
+    "id": "squat__bodyweight_squat",
+    "name": "Squat poids du corps",
+    "pattern": "squat",
+    "equipment": ["none"],
+    "contraindications": ["knee_pain"],
+    "level": "beginner",
+    "notes": "Pieds largeur épaules, légèrement en V. Descendre sous la parallèle. Talons au sol. Genoux dans l'axe des orteils. Torse haut.",
+    "exerciseId": "squat__bodyweight_squat",
+    "nameFr": "Squat poids du corps",
+    "metricType": "reps",
+    "tags": ["lower", "squat", "starter"],
+    "defaultNotes": "Fesses vers l'arrière et le bas. Poitrine haute. Genou dans l'axe de l'orteil. Talon au sol."
+  },
+  {
+    "id": "squat__goblet_squat__dumbbell",
+    "name": "Goblet squat haltère",
+    "pattern": "squat",
+    "equipment": ["dumbbell"],
+    "contraindications": ["knee_pain", "wrist_pain"],
+    "level": "beginner",
+    "notes": "Haltère vertical contre la poitrine. Auto-correction posturale : le poids force le torse haut. Écarter les genoux activement. Descendre entre les genoux.",
+    "exerciseId": "squat__goblet_squat__dumbbell",
+    "nameFr": "Goblet squat haltère",
+    "metricType": "load_reps",
+    "tags": ["lower", "squat", "starter"],
+    "defaultNotes": "Haltère vertical au sternum. Coudes pointés vers le bas. Genoux écartés vers l'extérieur."
+  },
+  {
+    "id": "hinge__rdl__dumbbell",
+    "name": "RDL haltères (soulevé jambes semi-tendues)",
+    "pattern": "hinge",
+    "equipment": ["dumbbell"],
+    "contraindications": ["low_back_pain"],
+    "level": "beginner",
+    "notes": "Haltères longent les cuisses. Légère flexion de genou. DOS NEUTRE absolu. S'arrêter quand les ischios sont tendus (hauteur des tibias). Précurseur du RDL barre.",
+    "exerciseId": "hinge__rdl__dumbbell",
+    "nameFr": "RDL haltères",
+    "metricType": "load_reps",
+    "tags": ["lower", "hinge", "posterior_chain", "starter"],
+    "defaultNotes": "Haltères devant les cuisses. Reculer les hanches, dos neutre. Ischios tendus = arrêt. Jamais arrondir le dos."
+  },
+  {
+    "id": "hinge__hip_thrust__bodyweight",
+    "name": "Hip thrust poids du corps",
+    "pattern": "hinge",
+    "equipment": ["none"],
+    "contraindications": ["low_back_pain"],
+    "level": "beginner",
+    "notes": "Épaules sur le sol (ou bord de canapé/banc). Pieds à plat. Pousser les hanches vers le plafond. Amplitude maximale. Serrer les fessiers 2s en haut. Menton rentré.",
+    "exerciseId": "hinge__hip_thrust__bodyweight",
+    "nameFr": "Hip thrust poids du corps",
+    "metricType": "reps",
+    "tags": ["lower", "hinge", "posterior_chain", "starter"],
+    "defaultNotes": "Épaules sur le sol. Hanches au plafond. Serrer les fessiers 2s. Ne pas creuser la lombaire."
   }
 ]

@@ -26,7 +26,7 @@ export const POSITION_PREFERENCES: Record<RugbyPosition, PositionPreferences> = 
   },
   HALF_BACKS: {
     preferTags: ['speed', 'unilateral', 'trunk', 'shoulder_health'],
-    avoidTags: ['heavy_scrum']
+    avoidTags: ['scrum']
   },
   CENTERS: {
     preferTags: ['power', 'contact', 'acceleration', 'trunk']

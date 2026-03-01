@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Cursor MCP config (may contain local secrets)
+.cursor/mcp*.json

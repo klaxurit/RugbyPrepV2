@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import { ChevronLeft, User, Target, AlertTriangle, CheckCircle2, TrendingUp, Info } from 'lucide-react'
-import { weekGuidanceV1 } from '../data/weekGuidance.v1'
+import { ChevronLeft, ChevronRight, AlertTriangle, CheckCircle2, TrendingUp, Info, Dumbbell } from 'lucide-react'
 import { useFatigue } from '../hooks/useFatigue'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
@@ -12,40 +10,50 @@ import { buildWeekProgram, validateSession } from '../services/program'
 import { applyDeloadToSessions } from '../services/ui/applyDeload'
 import { shouldRecommendDeload } from '../services/ui/recommendations'
 import { getSessionRecap } from '../services/ui/progression'
-import { getBaseWeekVersion, getCycleWeekNumber, getPhaseForWeek } from '../services/program/programPhases.v1'
-import type { CycleWeek, SessionType } from '../types/training'
-import { SessionView } from '../components/SessionView'
-import { ProfileModal } from '../components/modals/ProfileModal'
-import { WeekObjectiveModal } from '../components/modals/WeekObjectiveModal'
+import { getCycleWeekNumber, getPhaseForWeek } from '../services/program/programPhases.v1'
+import type { CycleWeek, DayOfWeek, SessionType } from '../types/training'
+import { TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
 import { BottomNav } from '../components/BottomNav'
 
-const WEEK_OPTIONS: CycleWeek[] = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
+const WEEK_OPTIONS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
 
 const getSessionType = (recipeId: string): SessionType => {
-  if (recipeId === 'UPPER_V1') return 'UPPER'
-  if (recipeId === 'LOWER_V1') return 'LOWER'
+  if (recipeId === 'UPPER_V1' || recipeId === 'UPPER_HYPER_V1' || recipeId === 'UPPER_BUILDER_V1') return 'UPPER'
+  if (recipeId === 'LOWER_V1' || recipeId === 'LOWER_HYPER_V1' || recipeId === 'LOWER_BUILDER_V1') return 'LOWER'
   return 'FULL'
+}
+
+// Day labels (Sun=0 … Sat=6)
+const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+
+const SESSION_TYPE_STYLES: Record<SessionType, { bg: string; text: string; label: string }> = {
+  UPPER: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'UPPER' },
+  LOWER: { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'LOWER' },
+  FULL:  { bg: 'bg-amber-50',   text: 'text-amber-700',   label: 'FULL'  },
 }
 
 export function WeekPage() {
   const { profile } = useProfile()
   const { week, setWeek, lastNonDeloadWeek } = useWeek()
-  const { viewMode, setViewMode } = useViewMode()
+  const { setViewMode } = useViewMode()
   const { fatigue, setFatigue } = useFatigue()
   const { logs: blockLogs } = useBlockLogs()
-  const { logs, addLog } = useHistory()
-  const [savedSessionId, setSavedSessionId] = useState<string | null>(null)
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
-  const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false)
+  const { logs } = useHistory()
 
   const effectiveWeek = week === 'DELOAD' ? lastNonDeloadWeek : week
-  const baseWeek = getBaseWeekVersion(effectiveWeek)
-  const guidance = week === 'DELOAD' ? weekGuidanceV1.DELOAD : weekGuidanceV1[baseWeek]
   const phase = getPhaseForWeek(effectiveWeek)
   const cycleWeekNumber = getCycleWeekNumber(week)
   const recommendation = shouldRecommendDeload(logs, week)
   const isDeloadWeek = week === 'DELOAD'
   const hasEquipment = profile.equipment.length > 0
+
+  // Training day detection — use scSchedule if available, otherwise defaults
+  const todayDow = new Date().getDay() as DayOfWeek
+  const trainingDays: DayOfWeek[] =
+    profile.scSchedule?.sessions.map((s) => s.day) ??
+    TRAINING_DAYS_DEFAULT[profile.weeklySessions]
+  const todaySessionIndex = trainingDays.indexOf(todayDow)
+  const isTrainingToday = todaySessionIndex !== -1
 
   const builtWeekProgram = hasEquipment ? buildWeekProgram(profile, effectiveWeek) : null
   const weekProgram = builtWeekProgram
@@ -64,12 +72,24 @@ export function WeekPage() {
       recap: getSessionRecap(blockLogs, session, getSessionType(session.recipeId), week),
     })) ?? []
 
+  const seasonMode = profile.seasonMode ?? 'in_season'
+
   const weeklyBannerText =
-    week === 'W4'
-      ? 'Fin de bloc — consulte tes progrès'
-      : week === 'DELOAD'
-        ? 'Semaine de décharge — priorité récupération'
-        : 'Objectif : régularité + qualité d\'exécution'
+    week === 'DELOAD'
+      ? 'Semaine de décharge — priorité récupération'
+      : seasonMode === 'off_season'
+        ? 'Inter-saison : hypertrophie & reconstruction musculaire'
+        : seasonMode === 'pre_season'
+          ? 'Pré-saison : force-puissance & réathlétisation'
+          : week === 'W4'
+            ? 'Fin de bloc — consulte tes progrès'
+            : 'Objectif : régularité + qualité d\'exécution'
+
+  const SEASON_MODE_BADGE: Record<string, { label: string; color: string }> = {
+    off_season: { label: '🌿 Inter-saison', color: 'bg-emerald-50 text-emerald-700 border-emerald-100' },
+    pre_season: { label: '🔥 Pré-saison',   color: 'bg-amber-50 text-amber-700 border-amber-100' },
+    in_season:  { label: '⚡ Saison',        color: 'bg-slate-100 text-slate-600 border-slate-200' },
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-slate-900 pb-24">
@@ -88,25 +108,29 @@ export function WeekPage() {
             </h1>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsProfileModalOpen(true)}
-            className="p-2 rounded-2xl bg-gray-50 border border-gray-100 text-slate-400 hover:text-rose-600 hover:border-rose-200 transition-colors"
-          >
-            <User className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsObjectiveModalOpen(true)}
-            className="p-2 rounded-2xl bg-gray-50 border border-gray-100 text-slate-400 hover:text-rose-600 hover:border-rose-200 transition-colors"
-          >
-            <Target className="w-4 h-4" />
-          </button>
-        </div>
       </header>
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto">
+
+        {/* Séance du jour CTA */}
+        {isTrainingToday && weekProgram && (
+          <Link
+            to={`/session/${todaySessionIndex}`}
+            onClick={() => setViewMode('compact')}
+            className="flex items-center justify-between gap-3 px-5 py-4 bg-rose-600 text-white rounded-[2rem] shadow-lg shadow-rose-900/20 hover:bg-rose-500 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-white/10">
+                <Dumbbell className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Aujourd'hui</p>
+                <p className="text-sm font-black">C'est jour de séance !</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 opacity-60 flex-shrink-0" />
+          </Link>
+        )}
 
         {/* Week selector chips */}
         <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
@@ -126,34 +150,23 @@ export function WeekPage() {
           ))}
         </div>
 
-        {/* Phase info */}
-        {(phase || cycleWeekNumber) && (
-          <div className="flex items-center gap-2 px-3 py-2 bg-slate-900 rounded-2xl">
-            <Info className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-            <p className="text-xs text-slate-300">
-              {phase && <span>Bloc {phase} ({phase === 'FORCE' ? 'S1–4' : 'S5–8'})</span>}
-              {phase && cycleWeekNumber && ' · '}
-              {cycleWeekNumber && <span>Wk {cycleWeekNumber}/8</span>}
-            </p>
-          </div>
-        )}
-
-        {/* View mode toggle */}
-        <div className="flex gap-2">
-          {(['compact', 'detail'] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setViewMode(mode)}
-              className={`flex-1 py-2 rounded-2xl text-xs font-bold transition-all ${
-                viewMode === mode
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-white border border-gray-100 text-slate-500 hover:border-slate-300'
-              }`}
-            >
-              {mode === 'compact' ? 'Compact' : 'Détail'}
-            </button>
-          ))}
+        {/* Phase info + Season mode badge */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {(phase || cycleWeekNumber) && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-slate-900 rounded-2xl">
+              <Info className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+              <p className="text-xs text-slate-300">
+                {phase && <span>Bloc {phase} ({phase === 'FORCE' ? 'S1–4' : phase === 'HYPERTROPHY' ? 'H1–4' : 'S5–8'})</span>}
+                {phase && cycleWeekNumber && ' · '}
+                {cycleWeekNumber && <span>Wk {cycleWeekNumber}/8</span>}
+              </p>
+            </div>
+          )}
+          {SEASON_MODE_BADGE[seasonMode] && (
+            <span className={`px-3 py-2 rounded-2xl text-xs font-black border ${SEASON_MODE_BADGE[seasonMode].color}`}>
+              {SEASON_MODE_BADGE[seasonMode].label}
+            </span>
+          )}
         </div>
 
         {/* Banner */}
@@ -236,6 +249,15 @@ export function WeekPage() {
           </div>
         )}
 
+        {/* Deload info */}
+        {recommendation.recommend && (
+          <div className="px-4 py-3 bg-orange-50 border border-orange-100 rounded-2xl">
+            <p className="text-xs text-orange-700 leading-relaxed">
+              <strong>Protocole décharge :</strong> réduis le volume de 40–60 %, maintiens l'intensité. Priorité sommeil et nutrition. Durée : 1 semaine. (Issurin 2008)
+            </p>
+          </div>
+        )}
+
         {/* No equipment warning */}
         {!hasEquipment && (
           <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-2">
@@ -269,68 +291,56 @@ export function WeekPage() {
           </div>
         )}
 
-        {/* Week warnings */}
-        {weekProgram && weekProgram.warnings.length > 0 && (
-          <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl">
-            <ul className="space-y-1">
-              {weekProgram.warnings.map((warning) => (
-                <li key={warning} className="text-xs text-amber-700 flex items-start gap-1.5">
-                  <span className="mt-0.5">⚠</span> {warning}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
-        {/* Sessions */}
+        {/* Session cards — compact, tap to go to detail */}
         {weekProgram?.sessions.map((session, index) => {
           const validation = validateSession(session)
-          const sessionWarnings = [...session.warnings, ...validation.warnings]
+          const type = getSessionType(session.recipeId)
+          const style = SESSION_TYPE_STYLES[type]
+          const recap = recapRows[index]?.recap
+
           return (
-            <div key={`${session.recipeId}-${index}`} className="bg-white border border-gray-100 rounded-[2rem] overflow-hidden shadow-sm">
-              <SessionView
-                session={session}
-                availableEquipment={profile.equipment}
-                sessionType={getSessionType(session.recipeId)}
-                viewMode={viewMode}
-                isDeload={isDeloadWeek}
-                isValid={validation.isValid}
-                warnings={sessionWarnings}
-                onMarkComplete={() => {
-                  addLog({
-                    dateISO: new Date().toISOString(),
-                    week,
-                    sessionType: getSessionType(session.recipeId),
-                    fatigue,
-                  })
-                  setSavedSessionId(session.recipeId)
-                }}
-                statusLabel={validation.isValid ? 'Valide' : 'À vérifier'}
-              />
-            </div>
+            <Link
+              key={`${session.recipeId}-${index}`}
+              to={`/session/${index}`}
+              onClick={() => setViewMode('compact')}
+              className="flex items-center gap-4 bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm hover:border-rose-200 hover:shadow-md transition-all"
+            >
+              {/* Type badge */}
+              <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex flex-col items-center justify-center gap-0.5 ${style.bg}`}>
+                <span className={`text-[10px] font-black tracking-wide ${style.text}`}>{style.label}</span>
+                {index === todaySessionIndex && isTrainingToday && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-black text-slate-900 text-sm truncate">
+                    {trainingDays[index] !== undefined
+                      ? `${DAY_LABELS[trainingDays[index]]} · ${session.title}`
+                      : session.title}
+                  </h3>
+                  <span className={`flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-full ${
+                    validation.isValid ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'
+                  }`}>
+                    {validation.isValid ? '✓' : '!'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {session.blocks.length} blocs
+                  {recap && ` · ${recap.loggedExercises}/${recap.totalExercises} faits`}
+                  {!!recap?.loadProxy && ` · ${recap.loadProxy}`}
+                </p>
+              </div>
+
+              <ChevronRight className="w-5 h-5 text-slate-300 flex-shrink-0" />
+            </Link>
           )
         })}
 
-        {savedSessionId && (
-          <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-            <p className="text-xs text-emerald-700 font-bold">Séance enregistrée !</p>
-          </div>
-        )}
-
       </main>
-
-      <ProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-        profile={profile}
-      />
-      <WeekObjectiveModal
-        isOpen={isObjectiveModalOpen}
-        onClose={() => setIsObjectiveModalOpen(false)}
-        week={week}
-        guidance={guidance}
-      />
 
       <BottomNav />
     </div>

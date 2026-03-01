@@ -1,10 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Calendar, History, User } from 'lucide-react'
+import { Home, Dumbbell, CalendarDays, User, Bot } from 'lucide-react'
 
 const navItems = [
   { to: '/', icon: Home, label: 'Accueil', match: ['/'] },
-  { to: '/week', icon: Calendar, label: 'Semaine', match: ['/week', '/program'] },
-  { to: '/history', icon: History, label: 'Historique', match: ['/history'] },
+  { to: '/week', icon: Dumbbell, label: 'Séance', match: ['/week'] },
+  { to: '/chat', icon: Bot, label: 'Coach IA', match: ['/chat'] },
+  { to: '/calendar', icon: CalendarDays, label: 'Calendrier', match: ['/calendar'] },
   { to: '/profile', icon: User, label: 'Profil', match: ['/profile'] },
 ]
 

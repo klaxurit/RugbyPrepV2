@@ -21,6 +21,7 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [authState, setAuthState] = useState<AuthState>(initialAuthState)
+  const [isInitializing, setIsInitializing] = useState(true)
 
   useEffect(() => {
     let active = true
@@ -31,10 +32,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!sessionUser) {
         setAuthState({ status: 'anonymous', user: null })
-        return
+      } else {
+        setAuthState({ status: 'authenticated', user: sessionUser })
       }
-
-      setAuthState({ status: 'authenticated', user: sessionUser })
+      setIsInitializing(false)
     }
 
     void restoreSession()
@@ -42,13 +43,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const subscription = onAuthStateChanged((_event, session) => {
       if (!session?.user) {
         setAuthState({ status: 'anonymous', user: null })
-        return
+      } else {
+        setAuthState({
+          status: 'authenticated',
+          user: mapSupabaseUserToAuthUser(session.user),
+        })
       }
-
-      setAuthState({
-        status: 'authenticated',
-        user: mapSupabaseUserToAuthUser(session.user),
-      })
+      setIsInitializing(false)
     })
 
     return () => {
@@ -90,8 +91,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   const value = useMemo<AuthContextValue>(
-    () => ({ authState, signUp, signIn, signOut, updateAvatar }),
-    [authState, signIn, signOut, signUp, updateAvatar],
+    () => ({ authState, isInitializing, signUp, signIn, signOut, updateAvatar }),
+    [authState, isInitializing, signIn, signOut, signUp, updateAvatar],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

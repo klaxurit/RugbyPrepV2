@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Developpe couche - vue profil pedagogique</title>
+  <desc id="desc">Illustration stylisee d'un developpe couche en vue de profil avec trajectoire de barre et annotations.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f6f4ee; }
+      .panel { fill: #fffdfa; stroke: #d9d4c7; stroke-width: 2; }
+      .title { fill: #11213a; font: 700 34px ui-sans-serif, system-ui, sans-serif; }
+      .subtitle { fill: #5a6578; font: 500 18px ui-sans-serif, system-ui, sans-serif; }
+      .body { stroke: #1f4fa3; stroke-width: 12; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .joint { fill: #1f4fa3; }
+      .bench { fill: #40434a; }
+      .bench-pad { fill: #6f7683; }
+      .rack { stroke: #5f6672; stroke-width: 8; }
+      .bar { stroke: #121620; stroke-width: 8; stroke-linecap: round; }
+      .plate { fill: #121620; }
+      .path { stroke: #e05a2b; stroke-width: 5; fill: none; stroke-dasharray: 10 8; }
+      .arrow { fill: #e05a2b; }
+      .anno { stroke: #4d5868; stroke-width: 2.5; fill: none; }
+      .tag { fill: #ffffff; stroke: #cad1db; stroke-width: 1.5; rx: 10; }
+      .tag-text { fill: #1b2430; font: 600 15px ui-sans-serif, system-ui, sans-serif; }
+      .cue { fill: #203247; font: 700 18px ui-sans-serif, system-ui, sans-serif; }
+      .note { fill: #6d788a; font: 500 14px ui-sans-serif, system-ui, sans-serif; }
+      .muted { fill: #738095; font: 500 13px ui-sans-serif, system-ui, sans-serif; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" class="arrow"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1280" height="720"/>
+  <rect class="panel" x="28" y="28" width="1224" height="664" rx="20"/>
+
+  <text class="title" x="60" y="80">Developpe couche (demo) - Vue profil</text>
+  <text class="subtitle" x="60" y="110">Prototype statique pedagogique: trajectoire de barre + posture + reperes</text>
+
+  <!-- left cue block -->
+  <rect x="60" y="145" width="280" height="195" rx="16" fill="#f2efe6" stroke="#ddd5c2" stroke-width="1.5"/>
+  <text class="cue" x="82" y="185">Points a verifier</text>
+  <text class="note" x="82" y="220">1. Poignets au-dessus des avant-bras</text>
+  <text class="note" x="82" y="248">2. Barre descend vers la poitrine</text>
+  <text class="note" x="82" y="276">3. Poussee verticale controlee</text>
+  <text class="note" x="82" y="304">4. Omoplates stables sur le banc</text>
+
+  <!-- floor -->
+  <line x1="380" y1="625" x2="1190" y2="625" stroke="#d6d0c2" stroke-width="3"/>
+
+  <!-- rack -->
+  <line class="rack" x1="475" y1="280" x2="475" y2="625"/>
+  <line class="rack" x1="930" y1="280" x2="930" y2="625"/>
+  <line class="rack" x1="455" y1="280" x2="495" y2="280"/>
+  <line class="rack" x1="910" y1="280" x2="950" y2="280"/>
+
+  <!-- bench -->
+  <rect class="bench-pad" x="540" y="455" width="250" height="28" rx="10"/>
+  <rect class="bench" x="660" y="482" width="14" height="95" rx="7"/>
+  <line class="bench" x1="667" y1="577" x2="630" y2="625" stroke="#40434a" stroke-width="8" stroke-linecap="round"/>
+  <line class="bench" x1="667" y1="577" x2="704" y2="625" stroke="#40434a" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- body (profile, stylized) -->
+  <circle class="joint" cx="545" cy="430" r="22"/>
+  <path class="body" d="M565 440 L635 455 L735 457"/>
+  <path class="body" d="M735 457 L820 475"/>
+  <path class="body" d="M820 475 L870 525"/>
+  <path class="body" d="M870 525 L910 565"/>
+  <path class="body" d="M820 475 L800 550"/>
+  <path class="body" d="M800 550 L830 615"/>
+  <path class="body" d="M635 455 L675 400"/>
+  <path class="body" d="M675 400 L715 350"/>
+  <path class="body" d="M635 455 L640 405"/>
+  <path class="body" d="M640 405 L650 355"/>
+
+  <!-- hands -->
+  <circle class="joint" cx="715" cy="350" r="9"/>
+  <circle class="joint" cx="650" cy="355" r="9"/>
+
+  <!-- bar (profile representation: short segment + plates, axis mostly out-of-plane) -->
+  <line class="bar" x1="630" y1="338" x2="735" y2="338"/>
+  <rect x="675" y="334" width="14" height="8" rx="3" fill="#4f5561"/>
+  <circle class="plate" cx="618" cy="338" r="15"/>
+  <circle class="plate" cx="748" cy="338" r="15"/>
+
+  <!-- path / arrows -->
+  <path class="path" d="M682 335 C682 365, 682 430, 682 490" marker-end="url(#arrowhead)"/>
+  <path class="path" d="M705 490 C705 445, 705 385, 705 340" marker-end="url(#arrowhead)"/>
+
+  <!-- chest target zone -->
+  <ellipse cx="678" cy="490" rx="48" ry="18" fill="none" stroke="#e05a2b" stroke-width="3"/>
+  <text class="muted" x="640" y="520">Zone poitrine (repere)</text>
+
+  <!-- annotations -->
+  <path class="anno" d="M718 351 L810 314"/>
+  <rect class="tag" x="812" y="298" width="205" height="34"/>
+  <text class="tag-text" x="826" y="320">Poignets alignes</text>
+
+  <path class="anno" d="M638 452 L425 420"/>
+  <rect class="tag" x="390" y="401" width="170" height="34"/>
+  <text class="tag-text" x="404" y="423">Omoplates stables</text>
+
+  <path class="anno" d="M676 490 L835 540"/>
+  <rect class="tag" x="838" y="523" width="215" height="34"/>
+  <text class="tag-text" x="852" y="545">Barre controlee vers poitrine</text>
+
+  <path class="anno" d="M785 505 L1030 460"/>
+  <rect class="tag" x="1033" y="443" width="145" height="34"/>
+  <text class="tag-text" x="1047" y="465">Pieds stables</text>
+
+  <!-- small legend -->
+  <rect x="60" y="572" width="280" height="86" rx="14" fill="#fff" stroke="#d5dde9" stroke-width="1.5"/>
+  <line x1="82" y1="602" x2="122" y2="602" class="path"/>
+  <text class="muted" x="134" y="606">Trajectoire de barre</text>
+  <line x1="82" y1="630" x2="122" y2="630" class="anno"/>
+  <text class="muted" x="134" y="634">Annotation / consigne</text>
+  <text class="muted" x="60" y="136">Note: en profil, l'axe de la barre sort du plan (representation simplifiee)</text>
+</svg>

@@ -13,15 +13,27 @@ export const validateSession = (session: BuiltSession): SessionValidationResult 
   const warnings: string[] = [];
   const blockIds = session.blocks.map((sessionBlock) => sessionBlock.block.blockId);
   const intents = session.blocks.map((sessionBlock) => sessionBlock.block.intent);
+  const isSafetyAdapted = session.isSafetyAdapted === true;
 
   const activationCount = intents.filter((intent) => intent === 'activation').length;
-  if (activationCount !== 1) {
+  const prehabCount = intents.filter((intent) => intent === 'prehab').length;
+  const coreCount = intents.filter((intent) => intent === 'core').length;
+
+  if (!isSafetyAdapted && activationCount !== 1) {
     warnings.push(`Session must include exactly 1 activation block (found ${activationCount}).`);
   }
+  if (isSafetyAdapted && activationCount + prehabCount + coreCount === 0) {
+    warnings.push('Safety-adapted session must include at least one prep block (activation/prehab/core).');
+  }
 
-  const hasMainBlock = intents.some((intent) => intent === 'contrast' || intent === 'force');
-  if (!hasMainBlock) {
-    warnings.push('Session must include at least 1 main block (contrast or force).');
+  const hasMainBlock = intents.some(
+    (intent) => intent === 'contrast' || intent === 'force' || intent === 'hypertrophy'
+  );
+  if (!isSafetyAdapted && !hasMainBlock) {
+    warnings.push('Session must include at least 1 main block (contrast, force or hypertrophy).');
+  }
+  if (isSafetyAdapted && session.blocks.length === 0) {
+    warnings.push('Safety-adapted session must include at least one block.');
   }
 
   const duplicateCount = blockIds.length - new Set(blockIds).size;
@@ -52,8 +64,8 @@ export const validateSession = (session: BuiltSession): SessionValidationResult 
   const finisherCount = intents.filter(
     (intent) => intent === 'neck' || intent === 'core' || intent === 'carry'
   ).length;
-  const maxFinishers =
-    session.recipeId === 'FULL_V1' ? MAX_FINISHERS_FULL : MAX_FINISHERS;
+  const fullRecipes = ['FULL_V1', 'FULL_HYPER_V1'];
+  const maxFinishers = fullRecipes.includes(session.recipeId) ? MAX_FINISHERS_FULL : MAX_FINISHERS;
   if (finisherCount > maxFinishers) {
     warnings.push(
       `Session exceeds max finishers (${finisherCount}/${maxFinishers}) in neck/core/carry.`

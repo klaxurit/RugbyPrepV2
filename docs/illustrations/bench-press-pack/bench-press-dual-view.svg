@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="t d">
+  <title id="t">Developpe couche - double vue synchronisee</title>
+  <desc id="d">Vue principale profil et vue secondaire face pour clarifier la trajectoire et l'orientation de la barre.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f3f6fa; }
+      .card { fill: #ffffff; stroke: #d8e0ea; stroke-width: 2; }
+      .h { fill: #13233a; font: 700 30px ui-sans-serif, system-ui, sans-serif; }
+      .s { fill: #637287; font: 500 17px ui-sans-serif, system-ui, sans-serif; }
+      .kicker { fill: #203247; font: 700 16px ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.06em; }
+      .body { stroke: #2357b2; stroke-width: 10; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .joint { fill: #2357b2; }
+      .bar { stroke: #111722; stroke-width: 7; stroke-linecap: round; }
+      .plate { fill: #111722; }
+      .bench { fill: #667081; }
+      .bench-dark { fill: #3f4652; }
+      .path { stroke: #df5a33; stroke-width: 4; fill: none; stroke-dasharray: 9 7; }
+      .arrow { fill: #df5a33; }
+      .labelbox { fill: #fff; stroke: #ced7e2; stroke-width: 1.5; rx: 10; }
+      .label { fill: #182334; font: 600 14px ui-sans-serif, system-ui, sans-serif; }
+      .line { stroke: #4b5b71; stroke-width: 2.2; fill: none; }
+    </style>
+    <marker id="ah" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" class="arrow"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1280" height="720"/>
+  <rect class="card" x="24" y="24" width="1232" height="672" rx="22"/>
+
+  <text class="h" x="56" y="74">Developpe couche - Double vue pedagogique (prototype)</text>
+  <text class="s" x="56" y="104">Vue principale profil pour la trajectoire + inset face pour la geometrie de la barre</text>
+
+  <!-- main panel -->
+  <rect class="card" x="50" y="132" width="830" height="530" rx="18" fill="#fbfdff"/>
+  <text class="kicker" x="72" y="163">VUE PRINCIPALE : PROFIL</text>
+
+  <line x1="92" y1="610" x2="835" y2="610" stroke="#d8e0ea" stroke-width="3"/>
+  <line x1="190" y1="300" x2="190" y2="610" stroke="#7a8494" stroke-width="7"/>
+  <line x1="675" y1="300" x2="675" y2="610" stroke="#7a8494" stroke-width="7"/>
+  <rect class="bench" x="300" y="455" width="220" height="24" rx="10"/>
+  <rect class="bench-dark" x="405" y="478" width="12" height="74" rx="6"/>
+  <line x1="411" y1="552" x2="387" y2="610" stroke="#3f4652" stroke-width="7" stroke-linecap="round"/>
+  <line x1="411" y1="552" x2="435" y2="610" stroke="#3f4652" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- profile figure -->
+  <circle class="joint" cx="305" cy="430" r="18"/>
+  <path class="body" d="M323 437 L390 452 L505 455"/>
+  <path class="body" d="M505 455 L575 475 L630 525"/>
+  <path class="body" d="M575 475 L560 548 L590 605"/>
+  <path class="body" d="M390 452 L435 400 L470 355"/>
+  <path class="body" d="M390 452 L398 404 L410 358"/>
+  <circle class="joint" cx="470" cy="355" r="7"/>
+  <circle class="joint" cx="410" cy="358" r="7"/>
+
+  <line class="bar" x1="392" y1="342" x2="492" y2="342"/>
+  <circle class="plate" cx="380" cy="342" r="12"/>
+  <circle class="plate" cx="505" cy="342" r="12"/>
+
+  <path class="path" d="M446 342 L446 488" marker-end="url(#ah)"/>
+  <rect class="labelbox" x="520" y="331" width="180" height="30"/>
+  <text class="label" x="532" y="351">Barre (axe hors plan)</text>
+  <path class="line" d="M520 346 L492 342"/>
+
+  <rect class="labelbox" x="514" y="476" width="182" height="30"/>
+  <text class="label" x="526" y="496">Descente vers poitrine</text>
+  <path class="line" d="M514 491 L470 488"/>
+
+  <!-- inset panel -->
+  <rect class="card" x="905" y="132" width="300" height="330" rx="18" fill="#fbfdff"/>
+  <text class="kicker" x="925" y="163">INSET : VUE FACE</text>
+  <text class="s" x="925" y="186" style="font-size:13px;">Verifie largeur de prise + barre horizontale</text>
+
+  <rect class="bench" x="1025" y="360" width="60" height="46" rx="10"/>
+  <rect class="bench-dark" x="1050" y="406" width="10" height="35" rx="5"/>
+  <circle class="joint" cx="1055" cy="320" r="16"/>
+  <line class="body" x1="1055" y1="336" x2="1055" y2="390"/>
+  <line class="body" x1="1055" y1="350" x2="1010" y2="390"/>
+  <line class="body" x1="1055" y1="350" x2="1100" y2="390"/>
+  <line class="body" x1="1055" y1="390" x2="1028" y2="435"/>
+  <line class="body" x1="1055" y1="390" x2="1082" y2="435"/>
+
+  <!-- front bar is horizontal -->
+  <line class="bar" x1="962" y1="270" x2="1148" y2="270"/>
+  <circle class="plate" cx="948" cy="270" r="14"/>
+  <circle class="plate" cx="1162" cy="270" r="14"/>
+  <line class="body" x1="1016" y1="390" x2="1000" y2="270"/>
+  <line class="body" x1="1094" y1="390" x2="1110" y2="270"/>
+
+  <rect class="labelbox" x="934" y="214" width="170" height="30"/>
+  <text class="label" x="946" y="234">Barre horizontale (face)</text>
+  <path class="line" d="M1028 244 L1045 270"/>
+
+  <rect class="labelbox" x="933" y="446" width="214" height="30"/>
+  <text class="label" x="945" y="466">Meme phase temporelle que la vue profil</text>
+
+  <!-- right lower checklist -->
+  <rect class="card" x="905" y="482" width="300" height="180" rx="18" fill="#fefefe"/>
+  <text class="kicker" x="925" y="515">POURQUOI CA MARCHE MIEUX</text>
+  <text class="s" x="925" y="545" style="font-size:14px;">• Profil: trajectoire verticale et contact poitrine</text>
+  <text class="s" x="925" y="572" style="font-size:14px;">• Face: orientation de la barre sans ambiguite</text>
+  <text class="s" x="925" y="599" style="font-size:14px;">• Labels differents selon la vue</text>
+  <text class="s" x="925" y="626" style="font-size:14px;">• Plus lisible qu'une seule silhouette 2D</text>
+</svg>
