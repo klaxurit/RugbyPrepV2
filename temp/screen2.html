@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RugbyForge Design System Kit</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ff6b35",
+                        "background-light": "#faf9f7",
+                        "background-dark": "#1a100c",
+                        "rugby-green": "#1a5f3f",
+                        "forge-orange": "#ff6b35",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#23140f",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased min-h-screen flex flex-col items-center overflow-x-hidden">
+<div class="fixed top-0 left-0 w-full z-10 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto w-full">
+<button class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">UI Style Guide</h2>
+<div class="flex size-12 items-center justify-center">
+<button class="text-slate-900 dark:text-white hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col w-full max-w-md px-6 pt-24 pb-12 flex-1 space-y-10">
+<section>
+<h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Typography</h3>
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-[24px] shadow-sm border border-slate-100 dark:border-slate-800 space-y-6">
+<div>
+<p class="text-xs text-slate-500 mb-1">Headline Bold (800)</p>
+<h1 class="text-4xl font-[800] text-slate-900 dark:text-white">RugbyForge</h1>
+</div>
+<div>
+<p class="text-xs text-slate-500 mb-1">Body Regular (400)</p>
+<p class="text-base font-normal text-slate-700 dark:text-slate-300">The quick brown fox jumps over the lazy dog. Designed for readability and athletic impact.</p>
+</div>
+</div>
+</section>
+<section>
+<h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Color Palette</h3>
+<div class="grid grid-cols-4 gap-4">
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-full bg-[#1a5f3f] shadow-md"></div>
+<span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center uppercase">Primary<br/>#1A5F3F</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-full bg-[#ff6b35] shadow-md"></div>
+<span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center uppercase">Secondary<br/>#FF6B35</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-full bg-[#faf9f7] shadow-md border border-slate-200"></div>
+<span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center uppercase">Background<br/>#FAF9F7</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 rounded-full bg-[#ffffff] shadow-md border border-slate-100"></div>
+<span class="text-[10px] font-semibold text-slate-600 dark:text-slate-400 text-center uppercase">Surface<br/>#FFFFFF</span>
+</div>
+</div>
+</section>
+<section>
+<h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Components</h3>
+<div class="bg-surface-light dark:bg-surface-dark p-6 rounded-[24px] shadow-sm border border-slate-100 dark:border-slate-800 mb-6">
+<h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Card Component</h4>
+<p class="text-sm text-slate-600 dark:text-slate-400">24px rounded corners with a subtle shadow and border. Perfect for content blocks.</p>
+</div>
+<div class="space-y-4">
+<button class="w-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold h-14 rounded-[16px] flex items-center justify-center transition-all active:scale-[0.98]">
+                Primary Button
+            </button>
+<button class="w-full bg-transparent text-slate-900 dark:text-white font-bold h-14 rounded-[16px] flex items-center justify-center border-2 border-slate-300 dark:border-slate-700 hover:border-[#ff6b35] dark:hover:border-[#ff6b35] transition-all active:scale-[0.98]">
+                Outlined Button
+            </button>
+</div>
+</section>
+<section>
+<h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Form Elements</h3>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
+<input class="w-full bg-transparent border-2 border-slate-400 dark:border-slate-600 rounded-[16px] px-4 py-4 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-[#ff6b35] focus:ring-0 outline-none transition-colors" placeholder="player@rugbyforge.com" type="email"/>
+</div>
+</section>
+<section>
+<h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Progress Indicators</h3>
+<div class="flex items-center gap-6 bg-surface-light dark:bg-surface-dark p-6 rounded-[24px] shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="size-12 rounded-full bg-[#1a5f3f]/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#1a5f3f] text-2xl">check_circle</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between text-xs font-bold text-slate-500 mb-2 uppercase">
+<span>Intensity</span>
+<span class="text-[#ff6b35]">High</span>
+</div>
+<div class="h-3 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-[#ff6b35] rounded-full w-3/4"></div>
+</div>
+</div>
+</div>
+</section>
+<div class="text-center pt-8">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Variant 1 of 1</span>
+</div>
+</div>
+
+</body></html>

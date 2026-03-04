@@ -26,8 +26,8 @@ export function CallbackPage() {
   }, [authState, isInitializing, navigate])
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans flex flex-col items-center justify-center gap-4">
-      <div className="w-8 h-8 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-[#faf9f7] font-sans flex flex-col items-center justify-center gap-4">
+      <div className="w-8 h-8 border-2 border-[#1a5f3f] border-t-transparent rounded-full animate-spin" />
       <p className="text-sm font-bold text-slate-400">Confirmation en cours…</p>
     </div>
   )

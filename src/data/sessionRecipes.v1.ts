@@ -14,7 +14,19 @@ export type SessionRecipeId =
   // Builder (Niveau 2 — supersets haltères / barre)
   | 'UPPER_BUILDER_V1'
   | 'LOWER_BUILDER_V1'
-  | 'FULL_BUILDER_V1';
+  | 'FULL_BUILDER_V1'
+  // Conditionnement (off/pré-saison — performance 3 sessions)
+  | 'COND_OFF_V1'
+  | 'COND_PRE_V1'
+  // Mobilité & Récupération active
+  | 'RECOVERY_MOBILITY_V1'
+  // Réhab (3 phases × 2 zones)
+  | 'REHAB_UPPER_P1_V1'
+  | 'REHAB_UPPER_P2_V1'
+  | 'REHAB_UPPER_P3_V1'
+  | 'REHAB_LOWER_P1_V1'
+  | 'REHAB_LOWER_P2_V1'
+  | 'REHAB_LOWER_P3_V1';
 
 export interface SessionRecipe {
   id: SessionRecipeId;
@@ -114,7 +126,9 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
       { intent: 'carry', required: false }
     ],
     preferredTags: ['upper', 'lower', 'hypertrophy', 'push', 'pull', 'squat', 'hinge'],
-    focusTagsAny: []
+    focusTagsAny: [],
+    // Garantit 1 upper + 1 lower quelle que soit la préférence de phase (phase FORCE → sinon 2 lower)
+    slotFocusTags: [null, ['upper'], ['lower'], null, null]
   },
 
   // ─── Starter (Niveau 1) ────────────────────────────────────────────────────
@@ -187,6 +201,133 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
       { intent: 'core', required: false }
     ],
     preferredTags: ['builder', 'superset', 'upper', 'lower', 'push', 'pull', 'squat', 'hinge'],
-    focusTagsAny: []
-  }
+    focusTagsAny: [],
+    // Garantit 1 upper + 1 lower quelle que soit la préférence de phase
+    slotFocusTags: [null, ['upper'], ['lower'], null]
+  },
+
+  // ─── Conditionnement (off/pré-saison — performance 3 sessions/sem) ──────────
+
+  COND_OFF_V1: {
+    id: 'COND_OFF_V1',
+    title: 'Conditionnement Hors-saison',
+    sequence: [
+      { intent: 'activation', required: true },
+      { intent: 'conditioning', required: true },
+      { intent: 'conditioning', required: false },
+    ],
+    preferredTags: ['conditioning', 'aerobic', 'vo2max'],
+    focusTagsAny: ['conditioning'],
+    slotFocusTags: [['conditioning'], null, null],
+  },
+
+  COND_PRE_V1: {
+    id: 'COND_PRE_V1',
+    title: 'Conditionnement Pré-saison',
+    sequence: [
+      { intent: 'activation', required: true },
+      { intent: 'conditioning', required: true },
+      { intent: 'conditioning', required: false },
+    ],
+    preferredTags: ['conditioning', 'sprint', 'rsa', 'lactate'],
+    focusTagsAny: ['conditioning'],
+    slotFocusTags: [['conditioning'], null, null],
+  },
+
+  // ─── Mobilité & Récupération active ──────────────────────────────────────
+
+  RECOVERY_MOBILITY_V1: {
+    id: 'RECOVERY_MOBILITY_V1',
+    title: 'Mobilité & Récupération Active',
+    sequence: [
+      { intent: 'mobility', required: true },
+      { intent: 'mobility', required: true },
+    ],
+    preferredTags: ['hip', 'thoracic', 'mobility', 'recovery'],
+    focusTagsAny: ['mobility'],
+  },
+
+  // ─── Réhab Phase 1 — Protection ──────────────────────────────────────────
+
+  REHAB_UPPER_P1_V1: {
+    id: 'REHAB_UPPER_P1_V1',
+    title: 'Réhab Épaule — Phase 1 Protection',
+    sequence: [
+      { intent: 'activation', required: true },
+      { intent: 'prehab', required: true },
+      { intent: 'core', required: false },
+    ],
+    preferredTags: ['rehab', 'upper', 'shoulder_health', 'pain_management'],
+    // slotFocusTags : zone stricte par slot (pas de tag 'rehab' générique qui laisserait
+    // passer des blocs lower). slot2=core : pas de filtre (core est neutre).
+    slotFocusTags: [['upper'], ['upper', 'shoulder_health'], null],
+  },
+
+  REHAB_LOWER_P1_V1: {
+    id: 'REHAB_LOWER_P1_V1',
+    title: 'Réhab Bas du corps — Phase 1 Protection',
+    sequence: [
+      { intent: 'activation', required: true },
+      { intent: 'prehab', required: true },
+      { intent: 'core', required: true },
+    ],
+    preferredTags: ['rehab', 'lower', 'pain_management'],
+    slotFocusTags: [['lower'], ['lower', 'knee_health', 'hip_stability'], null],
+  },
+
+  // ─── Réhab Phase 2 — Renforcement ────────────────────────────────────────
+
+  REHAB_UPPER_P2_V1: {
+    id: 'REHAB_UPPER_P2_V1',
+    title: 'Réhab Épaule — Phase 2 Renforcement',
+    sequence: [
+      { intent: 'activation', required: true },
+      { intent: 'hypertrophy', required: true },
+      { intent: 'prehab', required: false },
+      { intent: 'core', required: false },
+    ],
+    preferredTags: ['rehab', 'upper', 'shoulder_health'],
+    slotFocusTags: [['upper'], ['upper'], ['upper', 'shoulder_health'], null],
+  },
+
+  REHAB_LOWER_P2_V1: {
+    id: 'REHAB_LOWER_P2_V1',
+    title: 'Réhab Bas du corps — Phase 2 Renforcement',
+    sequence: [
+      { intent: 'activation', required: true },
+      { intent: 'hypertrophy', required: true },
+      { intent: 'prehab', required: false },
+      { intent: 'core', required: true },
+    ],
+    preferredTags: ['rehab', 'lower', 'posterior_chain'],
+    slotFocusTags: [['lower'], ['lower'], ['lower', 'knee_health', 'hip_stability'], null],
+  },
+
+  // ─── Réhab Phase 3 — Retour sport ────────────────────────────────────────
+
+  REHAB_UPPER_P3_V1: {
+    id: 'REHAB_UPPER_P3_V1',
+    title: 'Réhab Épaule — Phase 3 Retour sport',
+    sequence: [
+      { intent: 'activation', required: true },
+      { intent: 'hypertrophy', required: true },
+      { intent: 'force', required: true },
+      { intent: 'contrast', required: false },
+    ],
+    preferredTags: ['rehab', 'upper', 'shoulder_health'],
+    slotFocusTags: [['upper'], ['upper'], ['upper'], ['upper']],
+  },
+
+  REHAB_LOWER_P3_V1: {
+    id: 'REHAB_LOWER_P3_V1',
+    title: 'Réhab Bas du corps — Phase 3 Retour sport',
+    sequence: [
+      { intent: 'activation', required: true },
+      { intent: 'hypertrophy', required: true },
+      { intent: 'force', required: true },
+      { intent: 'contrast', required: false },
+    ],
+    preferredTags: ['rehab', 'lower', 'knee_health', 'posterior_chain'],
+    slotFocusTags: [['lower'], ['lower'], ['lower'], ['lower']],
+  },
 };

@@ -12,6 +12,7 @@ import {
   updateAvatar as updateAvatarService,
 } from '../services/auth/authService'
 import { AuthContext } from './authContextValue'
+import { posthog } from '../services/analytics/posthog'
 
 const initialAuthState: AuthState = { status: 'anonymous', user: null }
 
@@ -64,6 +65,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!result.ok) return result
 
     setAuthState({ status: 'authenticated', user: result.value })
+    posthog.identify(result.value.id)
+    posthog.capture('signup_completed')
     return result
   }, [])
 
@@ -73,12 +76,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!result.ok) return result
 
     setAuthState({ status: 'authenticated', user: result.value })
+    posthog.identify(result.value.id)
     return result
   }, [])
 
   const signOut = useCallback<AuthContextValue['signOut']>(async () => {
     await signOutService()
     setAuthState({ status: 'anonymous', user: null })
+    posthog.reset()
   }, [])
 
   const updateAvatar = useCallback<AuthContextValue['updateAvatar']>(async (file) => {

@@ -1,0 +1,5 @@
+.agents/
+.cursor/
+.claude/
+dist/
+node_modules/

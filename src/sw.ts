@@ -22,10 +22,10 @@ self.addEventListener('push', (event: PushEvent) => {
   try {
     data = event.data.json() as PushPayload
   } catch {
-    data = { title: 'RugbyPrep', body: event.data.text() }
+    data = { title: 'RugbyForge', body: event.data.text() }
   }
 
-  const title = data.title ?? 'RugbyPrep'
+  const title = data.title ?? 'RugbyForge'
   const options = {
     body: data.body ?? '',
     icon: '/icons/icon-192.png',

@@ -48,8 +48,9 @@ export type NotificationStatus = 'idle' | 'loading' | 'subscribed' | 'denied' | 
 export const useNotifications = (profile: UserProfile) => {
   const [status, setStatus] = useState<NotificationStatus>('loading')
 
-  // Check current state on mount
+  // Check current state on mount — setState calls are intentional (init from external API)
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (!('Notification' in window) || !('serviceWorker' in navigator)) {
       setStatus('unsupported')
       return
@@ -62,6 +63,7 @@ export const useNotifications = (profile: UserProfile) => {
       setStatus('denied')
       return
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
     // Check if already subscribed
     navigator.serviceWorker.ready.then((reg) => {
       reg.pushManager.getSubscription().then((sub) => {

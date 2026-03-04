@@ -49,7 +49,7 @@
   },
   {
     "id": "push_horizontal__board_press__barbell",
-    "name": "Board press barre",
+    "name": "Développé couché barre (ROM partielle)",
     "pattern": "push_horizontal",
     "equipment": [
       "barbell",
@@ -63,13 +63,13 @@
     "level": "intermediate",
     "notes": "Réduit l’amplitude, utile pour intensifier sans trop charger l’épaule.",
     "exerciseId": "push_horizontal__board_press__barbell",
-    "nameFr": "Board press barre",
+    "nameFr": "Développé couché barre (ROM partielle)",
     "metricType": "load_reps",
     "tags": [
       "upper",
       "push"
     ],
-    "defaultNotes": "Réduit l’amplitude, utile pour intensifier sans trop charger l’épaule."
+    "defaultNotes": "Amplitude réduite, barre arrêtée à mi-chemin (contact rugby). Permet des charges supérieures. Viser la vitesse maximale sur la poussée."
   },
   {
     "id": "push_horizontal__push_up__plyo",
@@ -621,7 +621,7 @@
   },
   {
     "id": "hinge__rdl__barbell",
-    "name": "Soulevé de terre jambes semi-tendues (RDL) barre",
+    "name": "Soulevé de terre jambes tendues barre (RDL)",
     "pattern": "hinge",
     "equipment": [
       "barbell"
@@ -632,7 +632,7 @@
     "level": "beginner",
     "notes": "Chaîne postérieure. Dos neutre indispensable.",
     "exerciseId": "hinge__rdl__barbell",
-    "nameFr": "Soulevé de terre jambes semi-tendues (RDL) barre",
+    "nameFr": "Soulevé de terre jambes tendues barre (RDL)",
     "metricType": "load_reps",
     "tags": [
       "lower",
@@ -874,7 +874,7 @@
   },
   {
     "exerciseId": "neck__flexion_iso__band",
-    "nameFr": "Cou flexion isometrique elastique",
+    "nameFr": "Flexion cou isométrique élastique",
     "metricType": "seconds",
     "equipment": [
       "band"
@@ -888,12 +888,12 @@
     ],
     "defaultNotes": "Tenir sans douleur, respiration calme.",
     "id": "neck__flexion_iso__band",
-    "name": "Cou flexion isometrique elastique",
+    "name": "Flexion cou isométrique élastique",
     "notes": "Tenir sans douleur, respiration calme."
   },
   {
     "exerciseId": "neck__extension_iso__band",
-    "nameFr": "Cou extension isometrique elastique",
+    "nameFr": "Extension cou isométrique élastique",
     "metricType": "seconds",
     "equipment": [
       "band"
@@ -907,12 +907,12 @@
     ],
     "defaultNotes": "Tenir sans douleur, nuque longue.",
     "id": "neck__extension_iso__band",
-    "name": "Cou extension isometrique elastique",
+    "name": "Extension cou isométrique élastique",
     "notes": "Tenir sans douleur, nuque longue."
   },
   {
     "exerciseId": "neck__lateral_flexion_iso__band",
-    "nameFr": "Cou flexion laterale isometrique",
+    "nameFr": "Flexion latérale cou isométrique",
     "metricType": "seconds",
     "equipment": [
       "band"
@@ -926,12 +926,12 @@
     ],
     "defaultNotes": "Stabilite, pas de compensation.",
     "id": "neck__lateral_flexion_iso__band",
-    "name": "Cou flexion laterale isometrique",
+    "name": "Flexion latérale cou isométrique",
     "notes": "Stabilite, pas de compensation."
   },
   {
     "exerciseId": "neck__rotation_iso__band",
-    "nameFr": "Cou rotation isometrique",
+    "nameFr": "Rotation cou isométrique",
     "metricType": "seconds",
     "equipment": [
       "band"
@@ -945,7 +945,7 @@
     ],
     "defaultNotes": "Douceur et controle.",
     "id": "neck__rotation_iso__band",
-    "name": "Cou rotation isometrique",
+    "name": "Rotation cou isométrique",
     "notes": "Douceur et controle."
   },
   {
@@ -971,7 +971,7 @@
   },
   {
     "exerciseId": "upper_trap__shrug__dumbbell",
-    "nameFr": "Shrug halteres",
+    "nameFr": "Shrug haltères",
     "metricType": "load_reps",
     "equipment": [
       "dumbbell"
@@ -987,12 +987,12 @@
     ],
     "defaultNotes": "Controle, pas d a-coups.",
     "id": "upper_trap__shrug__dumbbell",
-    "name": "Shrug halteres",
+    "name": "Shrug haltères",
     "notes": "Controle, pas d a-coups."
   },
   {
     "exerciseId": "carry__farmer_hold__dumbbell",
-    "nameFr": "Farmer hold halteres",
+    "nameFr": "Farmer hold haltères",
     "metricType": "meters",
     "equipment": [
       "dumbbell"
@@ -1005,12 +1005,12 @@
     "contraindications": [],
     "defaultNotes": "Posture haute, gainage.",
     "id": "carry__farmer_hold__dumbbell",
-    "name": "Farmer hold halteres",
+    "name": "Farmer hold haltères",
     "notes": "Posture haute, gainage."
   },
   {
     "exerciseId": "carry__overhead_hold__dumbbell",
-    "nameFr": "Overhead hold haltere",
+    "nameFr": "Overhead hold haltère",
     "metricType": "meters",
     "equipment": [
       "dumbbell"
@@ -1026,7 +1026,7 @@
     ],
     "defaultNotes": "Verrouillage stable.",
     "id": "carry__overhead_hold__dumbbell",
-    "name": "Overhead hold haltere",
+    "name": "Overhead hold haltère",
     "notes": "Verrouillage stable."
   },
   {
@@ -1091,7 +1091,7 @@
   },
   {
     "exerciseId": "hamstring__nordic__band_assist",
-    "nameFr": "Nordic hamstring avec elastique",
+    "nameFr": "Nordic hamstring élastique",
     "metricType": "reps",
     "equipment": [
       "band"
@@ -1106,7 +1106,7 @@
     ],
     "defaultNotes": "Assistance progressive.",
     "id": "hamstring__nordic__band_assist",
-    "name": "Nordic hamstring avec elastique",
+    "name": "Nordic hamstring élastique",
     "notes": "Assistance progressive."
   },
   {
@@ -1131,7 +1131,7 @@
   },
   {
     "exerciseId": "hamstring__bridge_iso__single_leg",
-    "nameFr": "Bridge isometrique une jambe",
+    "nameFr": "Bridge isométrique une jambe",
     "metricType": "seconds",
     "equipment": [
       "none"
@@ -1146,7 +1146,7 @@
     ],
     "defaultNotes": "Bassin stable.",
     "id": "hamstring__bridge_iso__single_leg",
-    "name": "Bridge isometrique une jambe",
+    "name": "Bridge isométrique une jambe",
     "notes": "Bassin stable."
   },
   {
@@ -1171,7 +1171,7 @@
   },
   {
     "exerciseId": "lower_squat__split_squat__dumbbell",
-    "nameFr": "Split squat halteres",
+    "nameFr": "Split squat haltères",
     "metricType": "load_reps",
     "equipment": [
       "dumbbell"
@@ -1186,12 +1186,12 @@
     ],
     "defaultNotes": "Genou aligné.",
     "id": "lower_squat__split_squat__dumbbell",
-    "name": "Split squat halteres",
+    "name": "Split squat haltères",
     "notes": "Genou aligné."
   },
   {
     "exerciseId": "lower_squat__bulgarian_split_squat__dumbbell",
-    "nameFr": "Bulgarian split squat halteres",
+    "nameFr": "Bulgarian split squat haltères",
     "metricType": "load_reps",
     "equipment": [
       "dumbbell",
@@ -1207,12 +1207,12 @@
     ],
     "defaultNotes": "Amplitude controlee.",
     "id": "lower_squat__bulgarian_split_squat__dumbbell",
-    "name": "Bulgarian split squat halteres",
+    "name": "Bulgarian split squat haltères",
     "notes": "Amplitude controlee."
   },
   {
     "exerciseId": "lower_lunge__reverse_lunge__barbell",
-    "nameFr": "Fente arriere barre",
+    "nameFr": "Fente arrière barre",
     "metricType": "load_reps",
     "equipment": [
       "barbell"
@@ -1226,12 +1226,12 @@
     ],
     "defaultNotes": "Pas stable.",
     "id": "lower_lunge__reverse_lunge__barbell",
-    "name": "Fente arriere barre",
+    "name": "Fente arrière barre",
     "notes": "Pas stable."
   },
   {
     "exerciseId": "lower_lunge__reverse_lunge__dumbbell",
-    "nameFr": "Fente arriere halteres",
+    "nameFr": "Fente arrière haltères",
     "metricType": "load_reps",
     "equipment": [
       "dumbbell"
@@ -1245,12 +1245,12 @@
     ],
     "defaultNotes": "Controle du genou.",
     "id": "lower_lunge__reverse_lunge__dumbbell",
-    "name": "Fente arriere halteres",
+    "name": "Fente arrière haltères",
     "notes": "Controle du genou."
   },
   {
     "exerciseId": "lower_lunge__lateral_lunge__dumbbell",
-    "nameFr": "Fente laterale halteres",
+    "nameFr": "Fente latérale haltères",
     "metricType": "load_reps",
     "equipment": [
       "dumbbell"
@@ -1265,7 +1265,7 @@
     ],
     "defaultNotes": "Hanches basses.",
     "id": "lower_lunge__lateral_lunge__dumbbell",
-    "name": "Fente laterale halteres",
+    "name": "Fente latérale haltères",
     "notes": "Hanches basses."
   },
   {
@@ -1290,7 +1290,7 @@
   },
   {
     "exerciseId": "lower_step__step_up__dumbbell",
-    "nameFr": "Montee de banc halteres",
+    "nameFr": "Montée de banc haltères",
     "metricType": "load_reps",
     "equipment": [
       "dumbbell",
@@ -1305,12 +1305,12 @@
     ],
     "defaultNotes": "Pousser dans le pied.",
     "id": "lower_step__step_up__dumbbell",
-    "name": "Montee de banc halteres",
+    "name": "Montée de banc haltères",
     "notes": "Pousser dans le pied."
   },
   {
     "exerciseId": "lower_jump__step_up__box",
-    "nameFr": "Montee pliometrique sur box",
+    "nameFr": "Montée pliométrique sur box",
     "metricType": "reps",
     "equipment": [
       "box"
@@ -1325,7 +1325,7 @@
     ],
     "defaultNotes": "Qualite des receptions.",
     "id": "lower_jump__step_up__box",
-    "name": "Montee pliometrique sur box",
+    "name": "Montée pliométrique sur box",
     "notes": "Qualite des receptions."
   },
   {
@@ -1625,7 +1625,7 @@
   },
   {
     "exerciseId": "pull_horizontal__band_row__elbows_low",
-    "nameFr": "Rowing elastique coudes bas",
+    "nameFr": "Rowing élastique coudes bas",
     "metricType": "reps",
     "equipment": [
       "band"
@@ -1638,12 +1638,12 @@
     "contraindications": [],
     "defaultNotes": "Tirer vers la hanche.",
     "id": "pull_horizontal__band_row__elbows_low",
-    "name": "Rowing elastique coudes bas",
+    "name": "Rowing élastique coudes bas",
     "notes": "Tirer vers la hanche."
   },
   {
     "exerciseId": "prehab_shoulder__external_rotation__band",
-    "nameFr": "Rotation externe elastique",
+    "nameFr": "Rotation externe élastique",
     "metricType": "reps",
     "equipment": [
       "band"
@@ -1658,7 +1658,7 @@
     ],
     "defaultNotes": "Coude colle au corps.",
     "id": "prehab_shoulder__external_rotation__band",
-    "name": "Rotation externe elastique",
+    "name": "Rotation externe élastique",
     "notes": "Coude colle au corps."
   },
   {
@@ -1725,7 +1725,7 @@
   },
   {
     "exerciseId": "prehab_shoulder__wall_slide__band",
-    "nameFr": "Wall slide elastique",
+    "nameFr": "Wall slide élastique",
     "metricType": "reps",
     "equipment": [
       "band"
@@ -1740,7 +1740,7 @@
     ],
     "defaultNotes": "Dos colle au mur.",
     "id": "prehab_shoulder__wall_slide__band",
-    "name": "Wall slide elastique",
+    "name": "Wall slide élastique",
     "notes": "Dos colle au mur."
   },
   {
@@ -1801,7 +1801,7 @@
   },
   {
     "exerciseId": "carry__sled_push__light",
-    "nameFr": "Poussee de traineau leger",
+    "nameFr": "Poussée de traîneau léger",
     "metricType": "meters",
     "equipment": [
       "machine"
@@ -1814,12 +1814,12 @@
     "contraindications": [],
     "defaultNotes": "Pas courts et puissants.",
     "id": "carry__sled_push__light",
-    "name": "Poussee de traineau leger",
+    "name": "Poussée de traîneau léger",
     "notes": "Pas courts et puissants."
   },
   {
     "exerciseId": "carry__sled_drag__backward",
-    "nameFr": "Tirage traineau arriere",
+    "nameFr": "Tirage de traîneau arrière",
     "metricType": "meters",
     "equipment": [
       "machine"
@@ -1833,7 +1833,7 @@
     ],
     "defaultNotes": "Genoux flexibles.",
     "id": "carry__sled_drag__backward",
-    "name": "Tirage traineau arriere",
+    "name": "Tirage de traîneau arrière",
     "notes": "Genoux flexibles."
   },
   {
@@ -1857,7 +1857,7 @@
   },
   {
     "exerciseId": "core_anti_rotation__side_plank",
-    "nameFr": "Planche laterale",
+    "nameFr": "Planche latérale",
     "metricType": "seconds",
     "equipment": [
       "none"
@@ -1871,15 +1871,15 @@
     ],
     "defaultNotes": "Alignement complet.",
     "id": "core_anti_rotation__side_plank",
-    "name": "Planche laterale",
+    "name": "Planche latérale",
     "notes": "Alignement complet."
   },
   {
     "exerciseId": "core_anti_extension__ab_wheel__kneeling",
-    "nameFr": "Ab wheel a genoux",
+    "nameFr": "Roue abdominale à genoux",
     "metricType": "reps",
     "equipment": [
-      "none"
+      "ab_wheel"
     ],
     "tags": [
       "core"
@@ -1889,12 +1889,12 @@
     ],
     "defaultNotes": "Controle amplitude.",
     "id": "core_anti_extension__ab_wheel__kneeling",
-    "name": "Ab wheel a genoux",
+    "name": "Roue abdominale à genoux",
     "notes": "Controle amplitude."
   },
   {
     "exerciseId": "core_anti_extension__hollow_hold",
-    "nameFr": "Hollow hold",
+    "nameFr": "Gainage creux (hollow hold)",
     "metricType": "seconds",
     "equipment": [
       "none"
@@ -1908,12 +1908,12 @@
     ],
     "defaultNotes": "Respiration controlee.",
     "id": "core_anti_extension__hollow_hold",
-    "name": "Hollow hold",
+    "name": "Gainage creux (hollow hold)",
     "notes": "Respiration controlee."
   },
   {
     "exerciseId": "prehab_shoulder__external_rotation_iso__band",
-    "nameFr": "Rotation externe isometrique elastique",
+    "nameFr": "Rotation externe isométrique élastique",
     "metricType": "reps",
     "equipment": [
       "band"
@@ -1927,12 +1927,12 @@
     "contraindications": [],
     "defaultNotes": "Amplitude sans douleur, coude pres du corps.",
     "id": "prehab_shoulder__external_rotation_iso__band",
-    "name": "Rotation externe isometrique elastique",
+    "name": "Rotation externe isométrique élastique",
     "notes": "Tenir 1-2s en fin d'amplitude, controle."
   },
   {
     "exerciseId": "prehab_shoulder__scap_retraction_hold__band",
-    "nameFr": "Retraction scapulaire elastique",
+    "nameFr": "Rétraction scapulaire élastique",
     "metricType": "reps",
     "equipment": [
       "band"
@@ -1946,12 +1946,12 @@
     "contraindications": [],
     "defaultNotes": "Poitrine fiere, scapulas vers bas et arriere.",
     "id": "prehab_shoulder__scap_retraction_hold__band",
-    "name": "Retraction scapulaire elastique",
+    "name": "Rétraction scapulaire élastique",
     "notes": "Pause de 1-2s en fin de tirage."
   },
   {
     "exerciseId": "prehab_shoulder__serratus_reach__supine",
-    "nameFr": "Serratus reach allonge",
+    "nameFr": "Serratus reach allongé",
     "metricType": "reps",
     "equipment": [
       "none"
@@ -1965,7 +1965,7 @@
     "contraindications": [],
     "defaultNotes": "Monter l'omoplate sans hausser l'epaule.",
     "id": "prehab_shoulder__serratus_reach__supine",
-    "name": "Serratus reach supine",
+    "name": "Serratus reach allongé",
     "notes": "Mouvement court et controle."
   },
   {
@@ -1990,7 +1990,7 @@
   },
   {
     "exerciseId": "lower_rehab__quad_set__supine",
-    "nameFr": "Contraction quadriceps allonge",
+    "nameFr": "Contraction quadriceps allongé",
     "metricType": "reps",
     "equipment": [
       "none"
@@ -2004,12 +2004,12 @@
     "contraindications": [],
     "defaultNotes": "Ecraser l'arriere du genou au sol 1-2s.",
     "id": "lower_rehab__quad_set__supine",
-    "name": "Quad set supine",
+    "name": "Contraction quadriceps allongé",
     "notes": "Contraction volontaire sans douleur."
   },
   {
     "exerciseId": "lower_rehab__ankle_pump__supine",
-    "nameFr": "Pompes de cheville allonge",
+    "nameFr": "Pompes de cheville allongé",
     "metricType": "reps",
     "equipment": [
       "none"
@@ -2023,12 +2023,12 @@
     "contraindications": [],
     "defaultNotes": "Flexion-extension complete de cheville, rythme controle.",
     "id": "lower_rehab__ankle_pump__supine",
-    "name": "Ankle pump supine",
+    "name": "Pompes de cheville allongé",
     "notes": "Garder la jambe relachee, mouvement fluide."
   },
   {
     "exerciseId": "lower_rehab__hip_abduction__side_lying",
-    "nameFr": "Abduction de hanche allonge lateral",
+    "nameFr": "Abduction de hanche allongé latéral",
     "metricType": "reps",
     "equipment": [
       "none"
@@ -2043,7 +2043,7 @@
     "contraindications": [],
     "defaultNotes": "Pied legerement vers le bas, bassin stable.",
     "id": "lower_rehab__hip_abduction__side_lying",
-    "name": "Side-lying hip abduction",
+    "name": "Abduction de hanche allongé latéral",
     "notes": "Amplitude moderee, controle continu."
   },
   {
@@ -2067,7 +2067,7 @@
   },
   {
     "exerciseId": "lower_rehab__terminal_knee_extension__band",
-    "nameFr": "Extension terminale du genou elastique",
+    "nameFr": "Extension terminale du genou élastique",
     "metricType": "reps",
     "equipment": [
       "band"
@@ -2081,148 +2081,622 @@
     "contraindications": [],
     "defaultNotes": "Terminer en extension douce, verrouillage controle.",
     "id": "lower_rehab__terminal_knee_extension__band",
-    "name": "Terminal knee extension band",
+    "name": "Extension terminale du genou élastique",
     "notes": "Amplitude sans douleur, controle du genou."
   },
-
   {
     "id": "push_horizontal__push_up__knee",
     "name": "Pompe sur genoux",
     "pattern": "push_horizontal",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
     "level": "beginner",
     "notes": "Point d'entrée absolu. Genoux au sol, corps en planche des genoux à la tête. Progression vers pompe standard.",
     "exerciseId": "push_horizontal__push_up__knee",
     "nameFr": "Pompe sur genoux",
     "metricType": "reps",
-    "tags": ["upper", "push", "starter"],
+    "tags": [
+      "upper",
+      "push",
+      "starter"
+    ],
     "defaultNotes": "Corps en ligne des genoux aux épaules. Poitrine touche le sol. Serrer le ventre et les fesses."
   },
   {
     "id": "push_horizontal__push_up__standard",
     "name": "Pompe standard",
     "pattern": "push_horizontal",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
     "level": "beginner",
     "notes": "Base fondamentale. Mains sous les épaules, corps rigide du talon à la tête, poitrine touche le sol.",
     "exerciseId": "push_horizontal__push_up__standard",
     "nameFr": "Pompe standard",
     "metricType": "reps",
-    "tags": ["upper", "push", "starter"],
+    "tags": [
+      "upper",
+      "push",
+      "starter"
+    ],
     "defaultNotes": "Du talon à la tête en planche. Serrer fesses et ventre. Descendre lentement, pousser loin."
   },
   {
     "id": "hinge__good_morning__bodyweight",
     "name": "Bon matin poids du corps",
     "pattern": "hinge",
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "beginner",
     "notes": "Mains derrière la tête, charnière à la hanche uniquement. Dos neutre. Ischios tendus = bonne profondeur. Stop si dos arrondit.",
     "exerciseId": "hinge__good_morning__bodyweight",
     "nameFr": "Bon matin poids du corps",
     "metricType": "reps",
-    "tags": ["lower", "hinge", "posterior_chain", "starter"],
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain",
+      "starter"
+    ],
     "defaultNotes": "Mains derrière la tête. Fléchir à la hanche (pas à la colonne). Dos neutre obligatoire."
   },
   {
     "id": "hinge__glute_bridge__bodyweight",
     "name": "Pont fessier (poids du corps)",
     "pattern": "hinge",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "notes": "Couché sur le dos, pieds à plat largeur des hanches. Pousser les hanches vers le plafond. Contracter les fessiers 2s. Pas de creusement lombaire.",
     "exerciseId": "hinge__glute_bridge__bodyweight",
     "nameFr": "Pont fessier (poids du corps)",
     "metricType": "reps",
-    "tags": ["lower", "hinge", "posterior_chain", "starter"],
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain",
+      "starter"
+    ],
     "defaultNotes": "Pieds à plat largeur hanches. Hanches au plafond. Serrer les fessiers 2 secondes en haut."
   },
   {
     "id": "pull_horizontal__inverted_row__knees_bent",
     "name": "Traction inversée genoux fléchis",
     "pattern": "pull_horizontal",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
     "level": "beginner",
     "notes": "Sous une table solide (ou barre basse). Genoux fléchis à 90° pour réduire la charge. Tirer la poitrine vers la barre/table. Corps rigide.",
     "exerciseId": "pull_horizontal__inverted_row__knees_bent",
     "nameFr": "Traction inversée genoux fléchis",
     "metricType": "reps",
-    "tags": ["upper", "pull", "starter"],
+    "tags": [
+      "upper",
+      "pull",
+      "starter"
+    ],
     "defaultNotes": "Corps rigide des genoux aux épaules. Initier par les omoplates, puis coudes. Poitrine vers la barre."
   },
   {
     "id": "pull_horizontal__band_row__standing",
     "name": "Rowing élastique debout",
     "pattern": "pull_horizontal",
-    "equipment": ["band"],
+    "equipment": [
+      "band"
+    ],
     "contraindications": [],
     "level": "beginner",
     "notes": "Élastique fixé à mi-hauteur (hauteur poitrine). Tirer les coudes vers les hanches. Initier par les omoplates. Pas de coup de rein.",
     "exerciseId": "pull_horizontal__band_row__standing",
     "nameFr": "Rowing élastique debout",
     "metricType": "reps",
-    "tags": ["upper", "pull", "starter"],
+    "tags": [
+      "upper",
+      "pull",
+      "starter"
+    ],
     "defaultNotes": "Fixer élastique à hauteur poitrine. Omoplates d'abord, coude ensuite. Contraction dorsale 1s."
   },
   {
     "id": "squat__bodyweight_squat",
     "name": "Squat poids du corps",
     "pattern": "squat",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "level": "beginner",
     "notes": "Pieds largeur épaules, légèrement en V. Descendre sous la parallèle. Talons au sol. Genoux dans l'axe des orteils. Torse haut.",
     "exerciseId": "squat__bodyweight_squat",
     "nameFr": "Squat poids du corps",
     "metricType": "reps",
-    "tags": ["lower", "squat", "starter"],
+    "tags": [
+      "lower",
+      "squat",
+      "starter"
+    ],
     "defaultNotes": "Fesses vers l'arrière et le bas. Poitrine haute. Genou dans l'axe de l'orteil. Talon au sol."
   },
   {
     "id": "squat__goblet_squat__dumbbell",
     "name": "Goblet squat haltère",
     "pattern": "squat",
-    "equipment": ["dumbbell"],
-    "contraindications": ["knee_pain", "wrist_pain"],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "wrist_pain"
+    ],
     "level": "beginner",
     "notes": "Haltère vertical contre la poitrine. Auto-correction posturale : le poids force le torse haut. Écarter les genoux activement. Descendre entre les genoux.",
     "exerciseId": "squat__goblet_squat__dumbbell",
     "nameFr": "Goblet squat haltère",
     "metricType": "load_reps",
-    "tags": ["lower", "squat", "starter"],
+    "tags": [
+      "lower",
+      "squat",
+      "starter"
+    ],
     "defaultNotes": "Haltère vertical au sternum. Coudes pointés vers le bas. Genoux écartés vers l'extérieur."
   },
   {
     "id": "hinge__rdl__dumbbell",
-    "name": "RDL haltères (soulevé jambes semi-tendues)",
+    "name": "Soulevé de terre jambes tendues haltères (RDL)",
     "pattern": "hinge",
-    "equipment": ["dumbbell"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "beginner",
     "notes": "Haltères longent les cuisses. Légère flexion de genou. DOS NEUTRE absolu. S'arrêter quand les ischios sont tendus (hauteur des tibias). Précurseur du RDL barre.",
     "exerciseId": "hinge__rdl__dumbbell",
-    "nameFr": "RDL haltères",
+    "nameFr": "Soulevé de terre jambes tendues haltères (RDL)",
     "metricType": "load_reps",
-    "tags": ["lower", "hinge", "posterior_chain", "starter"],
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain",
+      "starter"
+    ],
     "defaultNotes": "Haltères devant les cuisses. Reculer les hanches, dos neutre. Ischios tendus = arrêt. Jamais arrondir le dos."
   },
   {
     "id": "hinge__hip_thrust__bodyweight",
     "name": "Hip thrust poids du corps",
     "pattern": "hinge",
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "beginner",
     "notes": "Épaules sur le sol (ou bord de canapé/banc). Pieds à plat. Pousser les hanches vers le plafond. Amplitude maximale. Serrer les fessiers 2s en haut. Menton rentré.",
     "exerciseId": "hinge__hip_thrust__bodyweight",
     "nameFr": "Hip thrust poids du corps",
     "metricType": "reps",
-    "tags": ["lower", "hinge", "posterior_chain", "starter"],
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain",
+      "starter"
+    ],
     "defaultNotes": "Épaules sur le sol. Hanches au plafond. Serrer les fessiers 2s. Ne pas creuser la lombaire."
+  },
+  {
+    "id": "push_vertical__push_press__barbell",
+    "name": "Push press barre",
+    "nameFr": "Push press barre",
+    "pattern": "push_vertical",
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Légère flexion des genoux, extension explosive des hanches + poussée verticale. Barre en rack devant, prise pronation.",
+    "exerciseId": "push_vertical__push_press__barbell",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "push",
+      "power"
+    ],
+    "defaultNotes": "Dip contrôlé, poussée explosive. Réceptionner la barre en douceur."
+  },
+  {
+    "id": "push_vertical__overhead_press__barbell",
+    "name": "Développé militaire debout barre",
+    "nameFr": "Développé militaire debout barre",
+    "pattern": "push_vertical",
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain",
+      "elbow_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Debout, prise légèrement plus large que les épaules. Pousser vertical, tête légèrement en retrait au passage de la barre. Contracter les fessiers et abdos.",
+    "exerciseId": "push_vertical__overhead_press__barbell",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "push"
+    ],
+    "defaultNotes": "Gainage total pendant la poussée. Coudes légèrement en avant au départ."
+  },
+  {
+    "id": "pull_horizontal__pendlay_row__barbell",
+    "name": "Pendlay row barre",
+    "nameFr": "Pendlay row barre",
+    "pattern": "pull_horizontal",
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "shoulder_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Barre au sol entre chaque rep. Torse à ~90° du sol, dos plat. Tirer explosif vers le nombril. Maîtrise de la descente.",
+    "exerciseId": "pull_horizontal__pendlay_row__barbell",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Réinitialiser la position à chaque répétition. Explosif en tirant, lent en descendant."
+  },
+  {
+    "id": "hamstring__leg_curl__machine",
+    "name": "Leg curl machine",
+    "nameFr": "Leg curl machine",
+    "pattern": "hamstring",
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "level": "beginner",
+    "notes": "Allongé sur la machine. Orteils vers le tibia pendant le curl. Contrôle de la montée et de la descente. Ne pas soulever les fesses.",
+    "exerciseId": "hamstring__leg_curl__machine",
+    "metricType": "load_reps",
+    "tags": [
+      "lower",
+      "hamstring"
+    ],
+    "defaultNotes": "Tempo : 2s montée, 1s pause, 3s descente."
+  },
+  {
+    "id": "hamstring__curl__prone_band",
+    "name": "Curl ischios prone élastique",
+    "nameFr": "Curl ischios prone élastique",
+    "pattern": "hamstring",
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "level": "beginner",
+    "notes": "Allongé sur le ventre. Élastique à la cheville, ancré en face. Amener le talon vers la fesse. Contrôle à la descente.",
+    "exerciseId": "hamstring__curl__prone_band",
+    "metricType": "reps",
+    "tags": [
+      "lower",
+      "hamstring",
+      "rehab"
+    ],
+    "defaultNotes": "Contracter le fessier pour stabiliser le bassin pendant le curl."
+  },
+  {
+    "id": "conditioning__warmup_dynamic",
+    "exerciseId": "conditioning__warmup_dynamic",
+    "name": "Échauffement dynamique course",
+    "nameFr": "Échauffement dynamique course",
+    "pattern": "conditioning",
+    "equipment": [],
+    "contraindications": [],
+    "level": "beginner",
+    "metricType": "seconds",
+    "tags": [
+      "conditioning",
+      "activation",
+      "full"
+    ],
+    "notes": "Trot léger 3-4', puis mobilités dynamiques (leg swing, high knee, carioca). FC cible ≈ 65%.",
+    "defaultNotes": "Footing très léger pour élever la FC progressivement."
+  },
+  {
+    "id": "conditioning__interval_aerobique",
+    "exerciseId": "conditioning__interval_aerobique",
+    "name": "Intervalles aérobies 4 min",
+    "nameFr": "Intervalles aérobies 4 min",
+    "pattern": "conditioning",
+    "equipment": [],
+    "contraindications": [],
+    "level": "beginner",
+    "metricType": "seconds",
+    "tags": [
+      "conditioning",
+      "aerobic",
+      "vo2max",
+      "full"
+    ],
+    "notes": "Course à 90-95% FCmax. Récup trot entre chaque intervalle.",
+    "defaultNotes": "VO2max — effort intense mais continu sur la durée."
+  },
+  {
+    "id": "conditioning__hiit_30_15",
+    "exerciseId": "conditioning__hiit_30_15",
+    "name": "HIIT Intermittent 30/15",
+    "nameFr": "HIIT Intermittent 30/15",
+    "pattern": "conditioning",
+    "equipment": [],
+    "contraindications": [],
+    "level": "beginner",
+    "metricType": "seconds",
+    "tags": [
+      "conditioning",
+      "hiit",
+      "vo2max",
+      "rsa",
+      "full"
+    ],
+    "notes": "30s à 100-110% VAM, 15s trot/marche. Protocole Buchheit.",
+    "defaultNotes": "Développe VO2max et RSA simultanément."
+  },
+  {
+    "id": "conditioning__rsa_sprint_40m",
+    "exerciseId": "conditioning__rsa_sprint_40m",
+    "name": "Sprint RSA 40m",
+    "nameFr": "Sprint RSA 40m",
+    "pattern": "conditioning",
+    "equipment": [],
+    "contraindications": [
+      "ankle_pain",
+      "groin_pain"
+    ],
+    "level": "beginner",
+    "metricType": "seconds",
+    "tags": [
+      "conditioning",
+      "sprint",
+      "rsa",
+      "power",
+      "full"
+    ],
+    "notes": "Sprint 40m à 100% vitesse. 20-30s récup entre sprints, 3-4 min entre séries. Décrement < 5% = bonne RSA.",
+    "defaultNotes": "Qualité maximale sur chaque sprint."
+  },
+  {
+    "id": "conditioning__intervalle_lactique",
+    "exerciseId": "conditioning__intervalle_lactique",
+    "name": "Intervalles lactiques 90s",
+    "nameFr": "Intervalles lactiques 90s",
+    "pattern": "conditioning",
+    "equipment": [],
+    "contraindications": [],
+    "level": "beginner",
+    "metricType": "seconds",
+    "tags": [
+      "conditioning",
+      "lactate",
+      "vo2max",
+      "full"
+    ],
+    "notes": "Effort à 85-90% FCmax pendant 90-120s. Récup active trot = durée effort.",
+    "defaultNotes": "Seuil lactique — effort soutenu, rythme régulier."
+  },
+  {
+    "id": "conditioning__tempo_run",
+    "exerciseId": "conditioning__tempo_run",
+    "name": "Footing tempo",
+    "nameFr": "Footing tempo",
+    "pattern": "conditioning",
+    "equipment": [],
+    "contraindications": [],
+    "level": "beginner",
+    "metricType": "seconds",
+    "tags": [
+      "conditioning",
+      "aerobic",
+      "tempo",
+      "full"
+    ],
+    "notes": "Course continue à 65-75% FCmax. Respiration nasale possible = bonne intensité.",
+    "defaultNotes": "Base aérobie — jamais essoufflé."
+  },
+  {
+    "id": "mobility__hip_90_90",
+    "name": "Etirement hanche 90/90",
+    "pattern": "mobility_hip",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Assis au sol, deux jambes a 90. Maintenez la position, respirez.",
+    "exerciseId": "mobility__hip_90_90",
+    "nameFr": "Etirement hanche 90/90",
+    "metricType": "seconds",
+    "tags": [
+      "mobility",
+      "hip",
+      "recovery"
+    ],
+    "defaultNotes": "Assis au sol, deux jambes a 90. Maintenez la position, respirez."
+  },
+  {
+    "id": "mobility__hip_couch_stretch",
+    "name": "Couch stretch (hip flexor)",
+    "pattern": "mobility_hip",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Genou arriere au sol contre un mur. Etire le flechisseur de hanche.",
+    "exerciseId": "mobility__hip_couch_stretch",
+    "nameFr": "Couch stretch (flechisseur de hanche)",
+    "metricType": "seconds",
+    "tags": [
+      "mobility",
+      "hip",
+      "recovery"
+    ],
+    "defaultNotes": "Genou arriere au sol contre un mur. Etire le flechisseur de hanche."
+  },
+  {
+    "id": "mobility__pigeon_pose",
+    "name": "Pigeon - rotation externe hanche",
+    "pattern": "mobility_hip",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Au sol, jambe avant flechie en rotation externe. Inclinaison vers l'avant douce.",
+    "exerciseId": "mobility__pigeon_pose",
+    "nameFr": "Pigeon - rotation externe hanche",
+    "metricType": "seconds",
+    "tags": [
+      "mobility",
+      "hip",
+      "recovery"
+    ],
+    "defaultNotes": "Au sol, jambe avant flechie en rotation externe. Inclinaison vers l'avant douce."
+  },
+  {
+    "id": "mobility__thoracic_rotation_seated",
+    "name": "Rotation thoracique assis",
+    "pattern": "mobility_thoracic",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Assis les jambes croisees. Rotation du buste en controle, bras tendus.",
+    "exerciseId": "mobility__thoracic_rotation_seated",
+    "nameFr": "Rotation thoracique assis",
+    "metricType": "reps",
+    "tags": [
+      "mobility",
+      "thoracic",
+      "recovery"
+    ],
+    "defaultNotes": "Assis les jambes croisees. Rotation du buste en controle, bras tendus."
+  },
+  {
+    "id": "mobility__cat_camel",
+    "name": "Chat-vache (mobilite colonne)",
+    "pattern": "mobility_spine",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "A quatre pattes. Alternez flexion/extension de la colonne avec la respiration.",
+    "exerciseId": "mobility__cat_camel",
+    "nameFr": "Chat-vache (mobilite colonne)",
+    "metricType": "reps",
+    "tags": [
+      "mobility",
+      "spine",
+      "recovery"
+    ],
+    "defaultNotes": "A quatre pattes. Alternez flexion/extension de la colonne avec la respiration."
+  },
+  {
+    "id": "mobility__worlds_greatest_stretch",
+    "name": "World's greatest stretch",
+    "pattern": "mobility_full",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Fente avant, bras vers le ciel, rotation thoracique. Mobilite totale en un seul mouvement.",
+    "exerciseId": "mobility__worlds_greatest_stretch",
+    "nameFr": "Grand etirement mondial",
+    "metricType": "reps",
+    "tags": [
+      "mobility",
+      "full",
+      "hip",
+      "thoracic",
+      "recovery"
+    ],
+    "defaultNotes": "Fente avant, bras vers le ciel, rotation thoracique. Mobilite totale en un seul mouvement."
+  },
+  {
+    "id": "mobility__ankle_circles",
+    "name": "Cercles cheville",
+    "pattern": "mobility_ankle",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Debout ou assis. Grands cercles lents avec la cheville, sens horaire puis antihoraire.",
+    "exerciseId": "mobility__ankle_circles",
+    "nameFr": "Cercles cheville",
+    "metricType": "reps",
+    "tags": [
+      "mobility",
+      "ankle",
+      "recovery"
+    ],
+    "defaultNotes": "Debout ou assis. Grands cercles lents avec la cheville, sens horaire puis antihoraire."
+  },
+  {
+    "id": "mobility__sleeper_stretch",
+    "name": "Sleeper stretch (rotation interne epaule)",
+    "pattern": "mobility_shoulder",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Allonge sur le cote, bras a 90. Pousser doucement le poignet vers le bas pour etirer la capsule.",
+    "exerciseId": "mobility__sleeper_stretch",
+    "nameFr": "Sleeper stretch (epaule)",
+    "metricType": "seconds",
+    "tags": [
+      "mobility",
+      "shoulder",
+      "recovery"
+    ],
+    "defaultNotes": "Allonge sur le cote, bras a 90. Pousser doucement le poignet vers le bas pour etirer la capsule."
   }
 ]

@@ -4122,7 +4122,6 @@
     ],
     "coachingNotes": "Paire complémentaire : squat pour les quadriceps, leg curl pour les ischios."
   },
-
   {
     "blockId": "BLK_NEURAL_UPPER_PUSH_PRESS_EMOM_01",
     "name": "Neural upper (Push Press EMOM)",
@@ -4214,7 +4213,6 @@
     ],
     "coachingNotes": "Amorçage neural haut du corps par transfert de puissance jambes→épaules (PAP). Le Push Press développe la chaîne cinétique complète utilisée dans les contacts et mêlées. Charge cible : 55-75% 1RM selon la semaine. Sources : SVNS World Rugby (2024) ; González-Badillo & Sánchez-Medina, IJSPP 2010."
   },
-
   {
     "blockId": "BLK_NEURAL_UPPER_PENDLAY_ROW_EMOM_01",
     "name": "Neural upper tirage (Pendlay Row EMOM)",
@@ -4305,7 +4303,6 @@
     ],
     "coachingNotes": "Traction horizontal explosive depuis stop mort complet — méthode Dynamic Effort appliquée au tirage. Le Pendlay Row développe le RFD (Rate of Force Development) de la chaîne de tirage, directement transférable au plaquage et au maintien en contact. Sources : Decathlon ConseilSport ; González-Badillo & Sánchez-Medina, IJSPP 2010 ; Zatsiorsky & Kraemer — Science and Practice of Strength Training (2006)."
   },
-
   {
     "blockId": "BLK_FORCE_UPPER_OHP_PENDLAY_01",
     "name": "Force upper — Développé militaire + Pendlay Row",
@@ -4386,7 +4383,6 @@
     ],
     "coachingNotes": "Superset push/pull vertical — le seul bloc de FORCE upper de la bibliothèque. Le développé militaire développe la poussée verticale (maulage, renvoi de balle) et le Pendlay Row le tirage horizontal explosif (plaquage, maintien contact). L'équilibre push/pull protège l'épaule sur le long terme. Sources : NSCA-SCJ Scrum Strength (2019) ; Mondenx X. — La Prépa Physique Rugby Force (4Trainer) ; Decathlon ConseilSport."
   },
-
   {
     "blockId": "BLK_NEURAL_LOWER_JUMP_STEPUP_EMOM_01",
     "name": "Neural bas du corps (Jump Step Up EMOM)",
@@ -5413,225 +5409,1680 @@
     ],
     "coachingNotes": "Bloc contrast upper securise pour profils sensibles epaule/poignet. Priorite: controle, douleur <= 3/10, arret si aggravation."
   },
-
   {
     "blockId": "BLK_STR_ACT_FB_01",
     "name": "Activation Full Body (débutant)",
     "intent": "activation",
-    "tags": ["starter", "activation", "upper", "lower"],
-    "equipment": ["none"],
+    "tags": [
+      "starter",
+      "activation",
+      "upper",
+      "lower"
+    ],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "exercises": [
-      { "exerciseId": "push_horizontal__push_up__knee", "role": "stability", "notes": "Corps en planche, genoux au sol" },
-      { "exerciseId": "hinge__good_morning__bodyweight", "role": "stability", "notes": "Dos neutre, charnière à la hanche, ischios tendus" },
-      { "exerciseId": "hinge__glute_bridge__bodyweight", "role": "stability", "notes": "Contracter les fessiers 2s en haut" }
+      {
+        "exerciseId": "push_horizontal__push_up__knee",
+        "role": "stability",
+        "notes": "Corps en planche, genoux au sol"
+      },
+      {
+        "exerciseId": "hinge__good_morning__bodyweight",
+        "role": "stability",
+        "notes": "Dos neutre, charnière à la hanche, ischios tendus"
+      },
+      {
+        "exerciseId": "hinge__glute_bridge__bodyweight",
+        "role": "stability",
+        "notes": "Contracter les fessiers 2s en haut"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 2, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 30, "rer": 6 },
-      { "versionId": "W2", "sets": 2, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 30, "rer": 6 },
-      { "versionId": "W3", "sets": 2, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 30, "rer": 5 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 30, "rer": 6 }
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 30,
+        "rer": 6
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 30,
+        "rer": 6
+      },
+      {
+        "versionId": "W3",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 30,
+        "rer": 6
+      }
     ],
     "coachingNotes": "Échauffement léger. Focus qualité du mouvement. Jamais d'essoufflement. Sentir les muscles s'activer progressivement."
   },
-
   {
     "blockId": "BLK_STR_HP_A_01",
     "name": "Push-Pull Horizontal — Pompe + Traction inversée",
     "intent": "hypertrophy",
-    "tags": ["starter", "upper", "push", "pull", "hypertrophy"],
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain"],
+    "tags": [
+      "starter",
+      "upper",
+      "push",
+      "pull",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "exercises": [
-      { "exerciseId": "push_horizontal__push_up__standard", "role": "prime", "notes": "Corps rigide du talon à la tête, poitrine touche le sol" },
-      { "exerciseId": "pull_horizontal__inverted_row__knees_bent", "role": "superset_partner", "notes": "Sous une table solide. Omoplates d'abord, coudes vers les hanches" }
+      {
+        "exerciseId": "push_horizontal__push_up__standard",
+        "role": "prime",
+        "notes": "Corps rigide du talon à la tête, poitrine touche le sol"
+      },
+      {
+        "exerciseId": "pull_horizontal__inverted_row__knees_bent",
+        "role": "superset_partner",
+        "notes": "Sous une table solide. Omoplates d'abord, coudes vers les hanches"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Pompes puis traction inversée sans repos entre les 2. Repos 90s après la paire. Progression : 12 pompes parfaites → passer au bloc avec élastique."
   },
-
   {
     "blockId": "BLK_STR_HP_A_02",
     "name": "Push-Pull Horizontal — Pompe + Rowing Élastique",
     "intent": "hypertrophy",
-    "tags": ["starter", "upper", "push", "pull", "hypertrophy"],
-    "equipment": ["band"],
-    "contraindications": ["shoulder_pain"],
+    "tags": [
+      "starter",
+      "upper",
+      "push",
+      "pull",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "exercises": [
-      { "exerciseId": "push_horizontal__push_up__standard", "role": "prime", "notes": "Tempo contrôlé 2s descente, corps rigide" },
-      { "exerciseId": "pull_horizontal__band_row__standing", "role": "superset_partner", "notes": "Élastique à hauteur poitrine, omoplates d'abord, coudes vers les hanches" }
+      {
+        "exerciseId": "push_horizontal__push_up__standard",
+        "role": "prime",
+        "notes": "Tempo contrôlé 2s descente, corps rigide"
+      },
+      {
+        "exerciseId": "pull_horizontal__band_row__standing",
+        "role": "superset_partner",
+        "notes": "Élastique à hauteur poitrine, omoplates d'abord, coudes vers les hanches"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Pompes puis rowing élastique sans repos. Fixer l'élastique à hauteur de poitrine sur un pilier ou porte. Paire push/pull = récupération active."
   },
-
   {
     "blockId": "BLK_STR_HP_L_01",
     "name": "Squat-Hinge — Squat + Hip Thrust (poids du corps)",
     "intent": "hypertrophy",
-    "tags": ["starter", "lower", "squat", "hinge", "posterior_chain", "hypertrophy"],
-    "equipment": ["none"],
-    "contraindications": ["knee_pain"],
+    "tags": [
+      "starter",
+      "lower",
+      "squat",
+      "hinge",
+      "posterior_chain",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "exercises": [
-      { "exerciseId": "squat__bodyweight_squat", "role": "prime", "notes": "Descendre sous la parallèle, talons au sol, genoux dans l'axe des orteils" },
-      { "exerciseId": "hinge__hip_thrust__bodyweight", "role": "superset_partner", "notes": "Hanches au plafond, contracter les fessiers 2s" }
+      {
+        "exerciseId": "squat__bodyweight_squat",
+        "role": "prime",
+        "notes": "Descendre sous la parallèle, talons au sol, genoux dans l'axe des orteils"
+      },
+      {
+        "exerciseId": "hinge__hip_thrust__bodyweight",
+        "role": "superset_partner",
+        "notes": "Hanches au plafond, contracter les fessiers 2s"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "12-15" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "15-18" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "15" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 90, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12-15"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15-18"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Squats puis hip thrust sans repos. Quad + fessiers en paire agoniste-antagoniste. Progression : goblet squat dès que le squat BW devient facile (RER ≥ 4)."
   },
-
   {
     "blockId": "BLK_STR_HP_L_02",
     "name": "Squat-Hinge — Goblet Squat + RDL Haltères",
     "intent": "hypertrophy",
-    "tags": ["starter", "lower", "squat", "hinge", "posterior_chain", "hypertrophy"],
-    "equipment": ["dumbbell"],
-    "contraindications": ["knee_pain", "low_back_pain"],
+    "tags": [
+      "starter",
+      "lower",
+      "squat",
+      "hinge",
+      "posterior_chain",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
     "exercises": [
-      { "exerciseId": "squat__goblet_squat__dumbbell", "role": "prime", "notes": "Haltère vertical au sternum, genoux écartés, descendre entre les genoux" },
-      { "exerciseId": "hinge__rdl__dumbbell", "role": "superset_partner", "notes": "DOS NEUTRE absolu, haltères longent les cuisses, s'arrêter quand ischios tendus" }
+      {
+        "exerciseId": "squat__goblet_squat__dumbbell",
+        "role": "prime",
+        "notes": "Haltère vertical au sternum, genoux écartés, descendre entre les genoux"
+      },
+      {
+        "exerciseId": "hinge__rdl__dumbbell",
+        "role": "superset_partner",
+        "notes": "DOS NEUTRE absolu, haltères longent les cuisses, s'arrêter quand ischios tendus"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 4 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      }
     ],
     "coachingNotes": "Goblet squat puis RDL. Charger goblet progressivement. RDL : jamais d'arrondi dans le bas du dos — signal d'arrêt absolu."
   },
-
   {
     "blockId": "BLK_STR_CORE_01",
     "name": "Core Débutant — Planche + Dead Bug",
     "intent": "core",
-    "tags": ["starter", "core"],
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain"],
+    "tags": [
+      "starter",
+      "core"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "exercises": [
-      { "exerciseId": "core_anti_extension__front_plank", "role": "stability", "notes": "Corps rigide, fessiers serrés, regarder le sol 30cm devant" },
-      { "exerciseId": "core_anti_extension__dead_bug", "role": "stability", "notes": "Dos collé au sol, allonger bras+jambe opposés lentement, expirer à l'extension" }
+      {
+        "exerciseId": "core_anti_extension__front_plank",
+        "role": "stability",
+        "notes": "Corps rigide, fessiers serrés, regarder le sol 30cm devant"
+      },
+      {
+        "exerciseId": "core_anti_extension__dead_bug",
+        "role": "stability",
+        "notes": "Dos collé au sol, allonger bras+jambe opposés lentement, expirer à l'extension"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 2, "scheme": { "kind": "time", "seconds": 20 }, "restSeconds": 45, "rer": 5 },
-      { "versionId": "W2", "sets": 2, "scheme": { "kind": "time", "seconds": 30 }, "restSeconds": 45, "rer": 4 },
-      { "versionId": "W3", "sets": 3, "scheme": { "kind": "time", "seconds": 30 }, "restSeconds": 45, "rer": 4 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "time", "seconds": 20 }, "restSeconds": 45, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Planche puis dead bug. Respiration continue. Dead bug : 8-10 répétitions alternées. Arrêter si le bas du dos se creuse ou si le souffle est bloqué."
   },
-
   {
     "blockId": "BLK_STR_CORE_02",
     "name": "Core Débutant — Planche Latérale + Hollow Hold",
     "intent": "core",
-    "tags": ["starter", "core"],
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "low_back_pain"],
+    "tags": [
+      "starter",
+      "core"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "low_back_pain"
+    ],
     "exercises": [
-      { "exerciseId": "core_anti_rotation__side_plank", "role": "stability", "notes": "Corps en ligne parfaite tête-pied, hanche ne descend pas, chaque côté" },
-      { "exerciseId": "core_anti_extension__hollow_hold", "role": "stability", "notes": "Bas du dos collé au sol, bras et jambes étendus, respiration lente" }
+      {
+        "exerciseId": "core_anti_rotation__side_plank",
+        "role": "stability",
+        "notes": "Corps en ligne parfaite tête-pied, hanche ne descend pas, chaque côté"
+      },
+      {
+        "exerciseId": "core_anti_extension__hollow_hold",
+        "role": "stability",
+        "notes": "Bas du dos collé au sol, bras et jambes étendus, respiration lente"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 2, "scheme": { "kind": "time", "seconds": 15 }, "restSeconds": 45, "rer": 5 },
-      { "versionId": "W2", "sets": 2, "scheme": { "kind": "time", "seconds": 20 }, "restSeconds": 45, "rer": 4 },
-      { "versionId": "W3", "sets": 3, "scheme": { "kind": "time", "seconds": 20 }, "restSeconds": 45, "rer": 4 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "time", "seconds": 15 }, "restSeconds": 45, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 15
+        },
+        "restSeconds": 45,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 15
+        },
+        "restSeconds": 45,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Planche latérale chaque côté puis hollow hold. Variante planche latérale sur genoux si trop difficile. Hollow hold : genoux fléchis à 90° si les jambes tendues sont trop dures."
   },
-
   {
     "blockId": "BLK_BLD_UPPER_SS_HORIZ_01",
     "name": "Superset Pec / Dos — Développé + Rowing (haltères)",
     "intent": "hypertrophy",
-    "tags": ["builder", "superset", "upper", "push", "pull", "hypertrophy"],
-    "equipment": ["dumbbell", "bench"],
-    "contraindications": ["shoulder_pain"],
+    "tags": [
+      "builder",
+      "superset",
+      "upper",
+      "push",
+      "pull",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "exercises": [
-      { "exerciseId": "push_horizontal__bench_press__dumbbell", "role": "prime", "notes": "Amplitude complète, descente contrôlée 2s, poitrine légèrement bombée" },
-      { "exerciseId": "pull_horizontal__one_arm_row__dumbbell", "role": "superset_partner", "notes": "Coude tiré vers le plafond, dos neutre, 8-10 reps par côté" }
+      {
+        "exerciseId": "push_horizontal__bench_press__dumbbell",
+        "role": "prime",
+        "notes": "Amplitude complète, descente contrôlée 2s, poitrine légèrement bombée"
+      },
+      {
+        "exerciseId": "pull_horizontal__one_arm_row__dumbbell",
+        "role": "superset_partner",
+        "notes": "Coude tiré vers le plafond, dos neutre, 8-10 reps par côté"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 75, "rer": 3 },
-      { "versionId": "W2", "sets": 4, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 75, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 75, "rer": 2 },
-      { "versionId": "W4", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 75, "rer": 4 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      }
     ],
     "coachingNotes": "A1 : Développé haltères. A2 : Rowing haltère (chaque côté = 1 set). Repos 75s entre supersets. Ratio push:pull = 1:1 obligatoire."
   },
-
   {
     "blockId": "BLK_BLD_UPPER_SS_VERT_01",
     "name": "Superset Épaule / Grand Dorsal — OHP + Traction",
     "intent": "hypertrophy",
-    "tags": ["builder", "superset", "upper", "push", "pull", "hypertrophy"],
-    "equipment": ["dumbbell", "pullup_bar"],
-    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "tags": [
+      "builder",
+      "superset",
+      "upper",
+      "push",
+      "pull",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "dumbbell",
+      "pullup_bar"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
     "exercises": [
-      { "exerciseId": "push_vertical__dumbbell_press__seated", "role": "prime", "notes": "Dos droit, ne pas cambrer la lombaire, bras verrouillés en haut" },
-      { "exerciseId": "pull_vertical__pull_up__neutral", "role": "superset_partner", "notes": "Prise neutre, initier par les omoplates vers le bas, menton au-dessus de la barre" }
+      {
+        "exerciseId": "push_vertical__dumbbell_press__seated",
+        "role": "prime",
+        "notes": "Dos droit, ne pas cambrer la lombaire, bras verrouillés en haut"
+      },
+      {
+        "exerciseId": "pull_vertical__pull_up__neutral",
+        "role": "superset_partner",
+        "notes": "Prise neutre, initier par les omoplates vers le bas, menton au-dessus de la barre"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 75, "rer": 3 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 75, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 75, "rer": 2 },
-      { "versionId": "W4", "sets": 3, "scheme": { "kind": "reps", "reps": "8" }, "restSeconds": 75, "rer": 4 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      }
     ],
     "coachingNotes": "A1 : OHP haltères assis. A2 : Traction prise neutre. Si traction impossible : élastique assisté ou tirage vertical machine. Repos 75s entre supersets."
   },
-
   {
     "blockId": "BLK_BLD_LOWER_SS_01",
     "name": "Superset Quad / Fessiers — Goblet Squat + Hip Thrust",
     "intent": "hypertrophy",
-    "tags": ["builder", "superset", "lower", "squat", "hinge", "posterior_chain", "hypertrophy"],
-    "equipment": ["dumbbell"],
-    "contraindications": ["knee_pain", "low_back_pain"],
+    "tags": [
+      "builder",
+      "superset",
+      "lower",
+      "squat",
+      "hinge",
+      "posterior_chain",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
     "exercises": [
-      { "exerciseId": "squat__goblet_squat__dumbbell", "role": "prime", "notes": "Charge progressive — torse haut, genoux écartés, descendre entre les genoux" },
-      { "exerciseId": "hinge__hip_thrust__bodyweight", "role": "superset_partner", "notes": "Ajouter un haltère sur les hanches quand BW devient facile (RER ≥ 4)" }
+      {
+        "exerciseId": "squat__goblet_squat__dumbbell",
+        "role": "prime",
+        "notes": "Charge progressive — torse haut, genoux écartés, descendre entre les genoux"
+      },
+      {
+        "exerciseId": "hinge__hip_thrust__bodyweight",
+        "role": "superset_partner",
+        "notes": "Ajouter un haltère sur les hanches quand BW devient facile (RER ≥ 4)"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W2", "sets": 4, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 90, "rer": 2 },
-      { "versionId": "W4", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 4 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      }
     ],
     "coachingNotes": "A1 : Goblet squat. A2 : Hip thrust. Progresser goblet +2.5kg si RER ≥ 3 deux semaines de suite. Hip thrust : serrer les fessiers 2s au sommet."
   },
-
   {
     "blockId": "BLK_BLD_LOWER_SS_02",
     "name": "Superset Hinge / Quad Unilatéral — RDL + Fente Arrière (haltères)",
     "intent": "hypertrophy",
-    "tags": ["builder", "superset", "lower", "hinge", "squat", "posterior_chain", "unilateral", "hypertrophy"],
-    "equipment": ["dumbbell"],
-    "contraindications": ["low_back_pain", "knee_pain"],
+    "tags": [
+      "builder",
+      "superset",
+      "lower",
+      "hinge",
+      "squat",
+      "posterior_chain",
+      "unilateral",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "knee_pain"
+    ],
     "exercises": [
-      { "exerciseId": "hinge__rdl__dumbbell", "role": "prime", "notes": "Haltères longent les cuisses, dos neutre absolu, arrêt quand ischios tendus" },
-      { "exerciseId": "lower_lunge__reverse_lunge__dumbbell", "role": "superset_partner", "notes": "Genou arrière au sol, genou avant à 90°, 8-10 reps par côté" }
+      {
+        "exerciseId": "hinge__rdl__dumbbell",
+        "role": "prime",
+        "notes": "Haltères longent les cuisses, dos neutre absolu, arrêt quand ischios tendus"
+      },
+      {
+        "exerciseId": "lower_lunge__reverse_lunge__dumbbell",
+        "role": "superset_partner",
+        "notes": "Genou arrière au sol, genou avant à 90°, 8-10 reps par côté"
+      }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 2 },
-      { "versionId": "W4", "sets": 3, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 4 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      }
     ],
     "coachingNotes": "A1 : RDL haltères. A2 : Fente arrière (les 2 côtés = 1 set). Paire ischio/quad unilatérale. Repos 90s. RDL : arrêt immédiat si le dos arrondit."
+  },
+  {
+    "blockId": "BLK_ACT_UPPER_BW_01",
+    "name": "Activation épaules & serratus (poids du corps)",
+    "intent": "activation",
+    "tags": [
+      "upper",
+      "activation",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "prehab_shoulder__scap_pushup__bodyweight",
+        "role": "stability",
+        "notes": "Omoplates s'écartent en haut, se rapprochent en bas. Gainage permanent."
+      },
+      {
+        "exerciseId": "prehab_shoulder__serratus_reach__supine",
+        "role": "stability",
+        "notes": "Allongé sur le dos, bras tendu vers le plafond. Pousser la côte vers le haut."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      }
+    ],
+    "coachingNotes": "Alternative BW aux TYI élastique. Pompages scapulaires + serratus supine. Convient aux profils sans élastique ou en réathlétisation épaule douce."
+  },
+  {
+    "blockId": "BLK_BLD_UPPER_SS_SHOULDER_01",
+    "name": "Superset Épaule / Arrière Épaule — OHP Haltère + Y-Raise",
+    "intent": "hypertrophy",
+    "tags": [
+      "builder",
+      "superset",
+      "upper",
+      "push",
+      "hypertrophy",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "push_vertical__dumbbell_press__seated",
+        "role": "prime",
+        "notes": "Développé épaules assis, prise neutre ou pronation. Coudes légèrement devant le plan frontal."
+      },
+      {
+        "exerciseId": "prehab_shoulder__prone_y_raise__dumbbell",
+        "role": "superset_partner",
+        "notes": "Allongé face banc incliné, haltères légers. Élévation en Y, coudes tendus. Rétraction scapulaire."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
+    ],
+    "coachingNotes": "OHP haltère assis en superset avec Y-raise incliné. Ne partage aucun exercice avec HORIZ (bench press/rowing), donc eligible comme 2e slot upper sans overlap. Idéal builder sans barre de traction."
+  },
+  {
+    "blockId": "BLK_STR_HP_L_REHAB_01",
+    "name": "Hinge–Abduction — Hip Thrust + Abduction (genou protégé)",
+    "intent": "hypertrophy",
+    "tags": [
+      "starter",
+      "lower",
+      "hinge",
+      "posterior_chain",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "hinge__hip_thrust__bodyweight",
+        "role": "prime",
+        "notes": "Hanches au plafond, contracter les fessiers 2s, pas de flexion de genou au-delà de 90°"
+      },
+      {
+        "exerciseId": "lower_rehab__hip_abduction__side_lying",
+        "role": "superset_partner",
+        "notes": "Pied légèrement vers le bas, bassin stable, lever lentement"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12-15"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15-18"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
+    ],
+    "coachingNotes": "Alternative genou-sécure à BLK_STR_HP_L_01 (pas de squat). Hip thrust BW + abduction de hanche allongé. Renforce fessiers et stabilisateurs de hanche sans contrainte axiale sur le genou. Convient aux douleurs antérieures du genou."
+  },
+  {
+    "blockId": "BLK_STR_ACT_SAFE_01",
+    "name": "Activation Hinge–Fessier (épaule protégée)",
+    "intent": "activation",
+    "tags": [
+      "starter",
+      "activation",
+      "lower"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "hinge__good_morning__bodyweight",
+        "role": "stability",
+        "notes": "Dos neutre, charnière à la hanche, ischios tendus, ne pas arrondir"
+      },
+      {
+        "exerciseId": "hinge__glute_bridge__bodyweight",
+        "role": "stability",
+        "notes": "Pieds à plat largeur des hanches, hanches au plafond, contracter les fessiers 2s"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 30,
+        "rer": 6
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 30,
+        "rer": 6
+      },
+      {
+        "versionId": "W3",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 30,
+        "rer": 6
+      }
+    ],
+    "coachingNotes": "Alternative épaule-sécure à BLK_STR_ACT_FB_01 (pas de pompes). Good morning BW + pont fessier. Active les ischio-jambiers et les fessiers sans mise en charge des épaules. Convient aux douleurs d'épaule et aux tendinopathies."
+  },
+  {
+    "blockId": "BLK_STR_CORE_03",
+    "name": "Core Débutant — Hollow Hold + Ab Wheel à genoux",
+    "intent": "core",
+    "tags": [
+      "starter",
+      "core"
+    ],
+    "equipment": [
+      "ab_wheel"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "core_anti_extension__hollow_hold",
+        "role": "stability",
+        "notes": "Bas du dos collé au sol, bras allongés derrière la tête, jambes à 45°, respiration lente"
+      },
+      {
+        "exerciseId": "core_anti_extension__ab_wheel__kneeling",
+        "role": "stability",
+        "notes": "Genoux au sol, rouler lentement en avant, contrôler le retour, ne pas laisser le dos se creuser"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 15
+        },
+        "restSeconds": 45,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 20
+        },
+        "restSeconds": 45,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "time",
+          "seconds": 15
+        },
+        "restSeconds": 45,
+        "rer": 5
+      }
+    ],
+    "coachingNotes": "Alternative à CORE_01 (planche+dead bug) et CORE_02 (planche lat+hollow). Hollow hold : genoux légèrement fléchis si difficile. Ab wheel à genoux : amplitude contrôlée, arrêter si le lombaire se creuse. Convient aux douleurs d'épaule (pas de mise en charge latérale)."
+  },
+  {
+    "blockId": "BLK_ACT_COND_WARMUP_01",
+    "name": "Activation avant conditionnement",
+    "intent": "activation",
+    "tags": [
+      "conditioning",
+      "activation",
+      "full"
+    ],
+    "equipment": [],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "conditioning__warmup_dynamic",
+        "role": "prime",
+        "notes": "Trot léger puis mobilités dynamiques. FC cible ≈ 65%."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 600
+        },
+        "restSeconds": 60
+      },
+      {
+        "versionId": "W2",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 600
+        },
+        "restSeconds": 60
+      },
+      {
+        "versionId": "W3",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 600
+        },
+        "restSeconds": 60
+      },
+      {
+        "versionId": "W4",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 600
+        },
+        "restSeconds": 60
+      }
+    ],
+    "coachingNotes": "10 minutes d'activation cardiovasculaire progressive avant le bloc principal."
+  },
+  {
+    "blockId": "BLK_COND_AERO_INTERVAL_01",
+    "name": "Intervalles aérobies (off-season)",
+    "intent": "conditioning",
+    "tags": [
+      "conditioning",
+      "aerobic",
+      "vo2max",
+      "full"
+    ],
+    "equipment": [],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "conditioning__interval_aerobique",
+        "role": "prime",
+        "notes": "Course à 90-95% FCmax. Récup trot entre chaque intervalle."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 180
+        },
+        "restSeconds": 90
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "time",
+          "seconds": 240
+        },
+        "restSeconds": 120
+      },
+      {
+        "versionId": "W3",
+        "sets": 5,
+        "scheme": {
+          "kind": "time",
+          "seconds": 240
+        },
+        "restSeconds": 90
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "time",
+          "seconds": 180
+        },
+        "restSeconds": 120
+      }
+    ],
+    "coachingNotes": "Protocole Helgerud (2007, MSSE). Développe le VO2max optimal en 4-8 semaines."
+  },
+  {
+    "blockId": "BLK_COND_HIIT_30_15_01",
+    "name": "HIIT 30/15 (off + pré-saison)",
+    "intent": "conditioning",
+    "tags": [
+      "conditioning",
+      "hiit",
+      "vo2max",
+      "rsa",
+      "full"
+    ],
+    "equipment": [],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "conditioning__hiit_30_15",
+        "role": "prime",
+        "notes": "30s à 100-110% VAM, 15s trot/marche."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 12,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W2",
+        "sets": 16,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W3",
+        "sets": 20,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W4",
+        "sets": 10,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 15
+      }
+    ],
+    "coachingNotes": "Buchheit & Laursen (2013). VO2max + RSA simultanés. Arrêter si essoufflement ne permet plus 30s complets."
+  },
+  {
+    "blockId": "BLK_COND_RSA_SPRINT_01",
+    "name": "RSA Sprints 40m (pré-saison)",
+    "intent": "conditioning",
+    "tags": [
+      "conditioning",
+      "sprint",
+      "rsa",
+      "power",
+      "full"
+    ],
+    "equipment": [],
+    "contraindications": [
+      "ankle_pain",
+      "groin_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "conditioning__rsa_sprint_40m",
+        "role": "prime",
+        "notes": "Sprint 40m à 100% vitesse. Pause 3-4 min entre séries de 4-6 sprints."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 12,
+        "scheme": {
+          "kind": "time",
+          "seconds": 6
+        },
+        "restSeconds": 30
+      },
+      {
+        "versionId": "W2",
+        "sets": 15,
+        "scheme": {
+          "kind": "time",
+          "seconds": 6
+        },
+        "restSeconds": 25
+      },
+      {
+        "versionId": "W3",
+        "sets": 18,
+        "scheme": {
+          "kind": "time",
+          "seconds": 6
+        },
+        "restSeconds": 20
+      },
+      {
+        "versionId": "W4",
+        "sets": 10,
+        "scheme": {
+          "kind": "time",
+          "seconds": 6
+        },
+        "restSeconds": 30
+      }
+    ],
+    "coachingNotes": "Spencer et al. (2005). Arrêter si le dernier sprint > 10% plus lent que le 1er."
+  },
+  {
+    "blockId": "BLK_COND_LACTATE_01",
+    "name": "Intervalles lactiques (pré-saison)",
+    "intent": "conditioning",
+    "tags": [
+      "conditioning",
+      "lactate",
+      "vo2max",
+      "full"
+    ],
+    "equipment": [],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "conditioning__intervalle_lactique",
+        "role": "prime",
+        "notes": "Effort à 85-90% FCmax pendant 90-120s. Récup active trot = durée effort."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 5,
+        "scheme": {
+          "kind": "time",
+          "seconds": 90
+        },
+        "restSeconds": 90
+      },
+      {
+        "versionId": "W2",
+        "sets": 6,
+        "scheme": {
+          "kind": "time",
+          "seconds": 90
+        },
+        "restSeconds": 90
+      },
+      {
+        "versionId": "W3",
+        "sets": 6,
+        "scheme": {
+          "kind": "time",
+          "seconds": 120
+        },
+        "restSeconds": 120
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "time",
+          "seconds": 90
+        },
+        "restSeconds": 90
+      }
+    ],
+    "coachingNotes": "Ratio effort/repos 1:1. Tolérance lactique — qualité clé pour les 2e mi-temps."
+  },
+  {
+    "blockId": "BLK_MOB_HIP_01",
+    "name": "Mobilite hanche (90/90 + pigeon + couch stretch)",
+    "intent": "mobility",
+    "tags": [
+      "lower",
+      "mobility",
+      "hip",
+      "recovery"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "mobility__hip_90_90",
+        "role": "prime",
+        "notes": "30s par cote"
+      },
+      {
+        "exerciseId": "mobility__pigeon_pose",
+        "role": "prime",
+        "notes": "Inclinaison douce vers l'avant"
+      },
+      {
+        "exerciseId": "mobility__hip_couch_stretch",
+        "role": "prime",
+        "notes": "Genoux au sol, etirement progressif"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W2",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 35
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W3",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 40
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W4",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 45
+        },
+        "restSeconds": 15
+      }
+    ],
+    "coachingNotes": "Mobilite hanche fondamentale post-match. Ciblez les hanches raides apres 80 min de jeu."
+  },
+  {
+    "blockId": "BLK_MOB_THORACIC_01",
+    "name": "Mobilite thoracique & colonne (chat-vache + rotation + world's greatest)",
+    "intent": "mobility",
+    "tags": [
+      "upper",
+      "mobility",
+      "thoracic",
+      "recovery"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "mobility__cat_camel",
+        "role": "prime",
+        "notes": "Synchroniser avec la respiration"
+      },
+      {
+        "exerciseId": "mobility__thoracic_rotation_seated",
+        "role": "prime",
+        "notes": "Amplitude maximale confortable"
+      },
+      {
+        "exerciseId": "mobility__worlds_greatest_stretch",
+        "role": "prime",
+        "notes": "Mouvement lent et controle"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 1,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8"
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W2",
+        "sets": 1,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W3",
+        "sets": 1,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W4",
+        "sets": 1,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 15
+      }
+    ],
+    "coachingNotes": "Mobilite thoracique critique pour les avants (melee) et les plaqueurs. Reduce les tensions cervicales."
+  },
+  {
+    "blockId": "BLK_MOB_SHOULDER_ANKLE_01",
+    "name": "Mobilite epaule & cheville (sleeper stretch + cercles)",
+    "intent": "mobility",
+    "tags": [
+      "mobility",
+      "shoulder",
+      "ankle",
+      "recovery"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "mobility__sleeper_stretch",
+        "role": "prime",
+        "notes": "Ne jamais forcer - amplitude progressive"
+      },
+      {
+        "exerciseId": "mobility__ankle_circles",
+        "role": "prime",
+        "notes": "10 cercles dans chaque sens par cheville"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W2",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 35
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W3",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 40
+        },
+        "restSeconds": 15
+      },
+      {
+        "versionId": "W4",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 45
+        },
+        "restSeconds": 15
+      }
+    ],
+    "coachingNotes": "Epaule et cheville : zones critiques post-match rugby. 10 min suffisent pour reduire la rigidite."
   }
 ]

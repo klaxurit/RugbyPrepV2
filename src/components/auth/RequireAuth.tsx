@@ -9,8 +9,8 @@ export function RequireAuth() {
   // Pendant la restauration de session, ne pas rediriger trop vite
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#faf9f7] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#1a5f3f] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }

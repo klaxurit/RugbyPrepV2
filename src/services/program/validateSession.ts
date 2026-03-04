@@ -9,6 +9,16 @@ const MAX_BLOCKS = 5;
 const MAX_FINISHERS = 1;
 const MAX_FINISHERS_FULL = 2;
 
+// Recettes qui n'ont pas de bloc principal (contrast/force/hypertrophy) par conception.
+// Les valider avec les critères standard génère des faux positifs.
+const EXEMPT_FROM_MAIN_BLOCK = new Set([
+  'COND_OFF_V1',
+  'COND_PRE_V1',
+  'REHAB_UPPER_P1_V1',
+  'REHAB_LOWER_P1_V1',
+  'RECOVERY_MOBILITY_V1',
+]);
+
 export const validateSession = (session: BuiltSession): SessionValidationResult => {
   const warnings: string[] = [];
   const blockIds = session.blocks.map((sessionBlock) => sessionBlock.block.blockId);
@@ -29,7 +39,7 @@ export const validateSession = (session: BuiltSession): SessionValidationResult 
   const hasMainBlock = intents.some(
     (intent) => intent === 'contrast' || intent === 'force' || intent === 'hypertrophy'
   );
-  if (!isSafetyAdapted && !hasMainBlock) {
+  if (!isSafetyAdapted && !hasMainBlock && !EXEMPT_FROM_MAIN_BLOCK.has(session.recipeId)) {
     warnings.push('Session must include at least 1 main block (contrast, force or hypertrophy).');
   }
   if (isSafetyAdapted && session.blocks.length === 0) {

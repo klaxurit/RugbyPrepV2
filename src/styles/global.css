@@ -1,12 +1,19 @@
 @import "tailwindcss";
 
+/* ── Override Tailwind font-sans → Lexend (v4 theme) ── */
+@theme {
+  --font-family-sans: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
 /* ── Resets dans @layer base pour que les utilities Tailwind gagnent ── */
 @layer base {
   body {
     margin: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #f5f6f8;
-    color: #1d232c;
+    font-family: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #faf9f7;
+    color: #1f2937;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   button,

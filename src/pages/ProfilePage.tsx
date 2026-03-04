@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom'
 import { useMemo, useRef, useState, useEffect } from 'react'
+import { posthog } from '../services/analytics/posthog'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { ChevronLeft, Dumbbell, Shield, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw } from 'lucide-react'
+import { ChevronLeft, Dumbbell, Shield, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, HeartPulse } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
 import type { AuthError } from '../types/auth'
-import type { Contra, Equipment, DayOfWeek, ClubSchedule, TrainingLevel, SeasonMode } from '../types/training'
+import type { Contra, Equipment, DayOfWeek, ClubSchedule, TrainingLevel, SeasonMode, RehabPhase } from '../types/training'
 import ffrClubsData from '../data/ffrClubs.v2021.json'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
@@ -89,6 +90,12 @@ const MATCH_DAY_OPTIONS: { day: DayOfWeek | null; label: string }[] = [
 ]
 
 const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+
+const REHAB_CRITERIA: Record<RehabPhase, string> = {
+  1: 'Passage P2 : absence douleur au repos · mobilité partielle retrouvée · 1-2 semaines',
+  2: 'Passage P3 : force ≥ 70% côté sain · ROM complet sans douleur · 2-4 semaines',
+  3: 'Fin programme : force ≥ 90% · tests fonctionnels OK · course/sauts sans douleur',
+}
 
 interface FfrClub {
   ligue: string
@@ -244,6 +251,7 @@ export function ProfilePage() {
     }
 
     updateProfile({ clubSchedule, scSchedule })
+    posthog.capture('profile_updated', { field: 'schedule' })
     setShowPlanningEditor(false)
   }
 
@@ -261,37 +269,38 @@ export function ProfilePage() {
   const selectedClubMonogram = getClubMonogram(profile.clubName)
 
   return (
-    <div className="min-h-screen bg-[#faf9f7] font-sans text-[#1f2937] pb-24">
+    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* Header */}
-      <header className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between sticky top-0 z-50">
+      <header className="relative px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <Link to="/" className="p-2 -ml-2 rounded-xl hover:bg-gray-50 transition-colors">
-            <ChevronLeft className="w-5 h-5 text-slate-400" />
+          <Link to="/" className="p-2 -ml-2 rounded-xl hover:bg-white/10 transition-colors">
+            <ChevronLeft className="w-5 h-5 text-white/50" />
           </Link>
           <div>
-            <p className="text-xs font-bold tracking-widest text-rose-600 uppercase italic">RugbyPrep</p>
-            <h1 className="text-xl font-extrabold tracking-tight text-[#1f2937]">Mon Profil</h1>
+            <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
+            <h1 className="text-xl font-extrabold tracking-tight text-white">Mon Profil</h1>
           </div>
         </div>
         <button
           type="button"
           onClick={resetProfile}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-gray-200 bg-white text-xs font-bold text-slate-400 hover:border-[#1a5f3f]/20 hover:text-[#1a5f3f] transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/10 bg-white/5 text-xs font-bold text-white/40 hover:border-[#ff6b35]/30 hover:text-[#ff6b35] transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Réinitialiser
         </button>
       </header>
 
-      <main className="px-6 pt-6 space-y-5 max-w-md mx-auto">
-        <section className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm space-y-4">
+      <main className="relative px-6 pt-6 space-y-5 max-w-md mx-auto">
+        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={handleAvatarClick}
               disabled={isAvatarUploading}
-              className="relative w-20 h-20 rounded-3xl border border-gray-100 bg-slate-50 flex items-center justify-center overflow-hidden disabled:opacity-60"
+              className="relative w-20 h-20 rounded-3xl border border-white/10 bg-white/10 flex items-center justify-center overflow-hidden disabled:opacity-60"
               aria-label="Changer la photo de profil"
             >
               {authState.user?.avatarUrl ? (
@@ -301,15 +310,15 @@ export function ProfilePage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User className="w-8 h-8 text-slate-300" />
+                <User className="w-8 h-8 text-white/30" />
               )}
               <span className="absolute right-1 bottom-1 w-6 h-6 rounded-xl bg-[#1a5f3f] text-white flex items-center justify-center">
                 <Camera className="w-3.5 h-3.5" />
               </span>
             </button>
             <div>
-              <h2 className="text-sm font-black text-[#1f2937]">Photo de profil</h2>
-              <p className="text-xs text-[#6b7280]">
+              <h2 className="text-sm font-black text-white">Photo de profil</h2>
+              <p className="text-xs text-white/40">
                 {isAvatarUploading ? 'Upload en cours...' : 'Ajoute ta photo pour personnaliser ton compte.'}
               </p>
             </div>
@@ -329,12 +338,12 @@ export function ProfilePage() {
         </section>
 
         {/* Infos de jeu */}
-        <section className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm space-y-5">
-          <h2 className="text-sm font-black uppercase tracking-wider text-[#6b7280]">Infos de jeu</h2>
+        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-5">
+          <h2 className="text-sm font-black uppercase tracking-wider text-white/40">Infos de jeu</h2>
 
           {/* Poste */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Poste</label>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Poste</label>
             <div className="grid grid-cols-2 gap-2">
               {POSITION_OPTIONS.map((opt) => {
                 const active = (profile.rugbyPosition ?? profile.position) === opt.value
@@ -346,7 +355,7 @@ export function ProfilePage() {
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                       active
                         ? 'bg-[#1a5f3f] text-white shadow-sm'
-                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                     }`}
                   >
                     {opt.label}
@@ -358,7 +367,7 @@ export function ProfilePage() {
 
           {/* Niveau d'entraînement */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Niveau d'entraînement</label>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Niveau d'entraînement</label>
             <div className="flex flex-col gap-2">
               {TRAINING_LEVELS.map((opt) => {
                 const active = (profile.trainingLevel ?? 'performance') === opt.value
@@ -370,13 +379,13 @@ export function ProfilePage() {
                     className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                       active
                         ? 'bg-[#1a5f3f] text-white shadow-sm'
-                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                     }`}
                   >
                     <span className="text-base flex-shrink-0">{opt.emoji}</span>
                     <div>
                       <p className="font-black">{opt.label}</p>
-                      <p className={`text-[10px] font-normal ${active ? 'text-rose-200' : 'text-slate-400'}`}>{opt.sub}</p>
+                      <p className={`text-[10px] font-normal ${active ? 'text-emerald-200' : 'text-white/40'}`}>{opt.sub}</p>
                     </div>
                   </button>
                 )
@@ -386,9 +395,9 @@ export function ProfilePage() {
 
           {/* Mode saison */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Mode saison</label>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Mode saison</label>
             {(profile.trainingLevel ?? 'performance') === 'starter' ? (
-              <p className="text-[11px] text-slate-400 bg-slate-50 rounded-2xl px-3 py-2.5">
+              <p className="text-[11px] text-white/40 bg-white/5 border border-white/10 rounded-2xl px-3 py-2.5">
                 Le mode saison s'active à partir du niveau Intermédiaire. Continue ton programme débutant — le passage à l'Intermédiaire débloquera ce réglage.
               </p>
             ) : (
@@ -402,14 +411,14 @@ export function ProfilePage() {
                       onClick={() => updateProfile({ seasonMode: opt.value })}
                       className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                         active
-                          ? 'bg-rose-600 text-white shadow-sm'
-                          : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-rose-200'
+                          ? 'bg-[#ff6b35] text-white shadow-sm'
+                          : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                       }`}
                     >
                       <span className="text-base flex-shrink-0">{opt.emoji}</span>
                       <div>
                         <p className="font-black">{opt.label}</p>
-                        <p className={`text-[10px] font-normal ${active ? 'text-rose-200' : 'text-slate-400'}`}>{opt.sub}</p>
+                        <p className={`text-[10px] font-normal ${active ? 'text-orange-100' : 'text-white/40'}`}>{opt.sub}</p>
                       </div>
                     </button>
                   )
@@ -420,7 +429,7 @@ export function ProfilePage() {
 
           {/* Séances / semaine */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Séances / semaine</label>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Séances / semaine</label>
             <div className="grid grid-cols-2 gap-2">
               {[2, 3].map((n) => {
                 const active = profile.weeklySessions === n
@@ -432,7 +441,7 @@ export function ProfilePage() {
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
                       active
                         ? 'bg-[#1a5f3f] text-white shadow-sm'
-                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                     }`}
                   >
                     {n} séances
@@ -444,8 +453,8 @@ export function ProfilePage() {
 
           {/* Club */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Club <span className="text-slate-300 font-normal normal-case">(optionnel)</span>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">
+              Club <span className="text-white/20 font-normal normal-case">(optionnel)</span>
             </label>
 
             <input
@@ -453,22 +462,22 @@ export function ProfilePage() {
               value={clubQuery}
               onChange={(event) => setClubQuery(event.target.value)}
               placeholder="Recherche nom, code ou ligue"
-              className="w-full h-11 rounded-2xl border border-gray-200 px-3 text-sm text-[#1f2937] bg-white focus:outline-none focus:ring-2 focus:ring-[#1a5f3f]/10 focus:border-[#1a5f3f]/30"
+              className="w-full h-11 rounded-2xl border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
             />
 
             {profile.clubName && (
-              <div className="p-3 rounded-2xl border border-gray-100 bg-gray-50 flex items-center justify-between gap-3">
+              <div className="p-3 rounded-2xl border border-white/10 bg-white/5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-white border border-gray-100 flex items-center justify-center overflow-hidden">
+                  <div className="w-11 h-11 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center overflow-hidden">
                     {selectedClubLogoUrl ? (
                       <img src={selectedClubLogoUrl} alt={profile.clubName} className="w-full h-full object-contain" />
                     ) : (
-                      <span className="text-xs font-black text-slate-500">{selectedClubMonogram}</span>
+                      <span className="text-xs font-black text-white/50">{selectedClubMonogram}</span>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-[#1f2937]">{profile.clubName}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm font-bold text-white">{profile.clubName}</p>
+                    <p className="text-xs text-white/40">
                       {profile.clubCode} · {profile.clubLigue} · CD {profile.clubDepartmentCode}
                     </p>
                   </div>
@@ -483,7 +492,7 @@ export function ProfilePage() {
                       clubDepartmentCode: undefined,
                     })
                   }
-                  className="text-[11px] font-bold text-[#6b7280] hover:text-[#1a5f3f] transition-colors"
+                  className="text-[11px] font-bold text-white/40 hover:text-[#ff6b35] transition-colors"
                 >
                   Retirer
                 </button>
@@ -491,28 +500,28 @@ export function ProfilePage() {
             )}
 
             {clubQuery.trim().length > 0 && (
-              <div className="max-h-56 overflow-auto rounded-2xl border border-gray-100 bg-white">
+              <div className="max-h-56 overflow-auto rounded-2xl border border-white/10 bg-[#23140f]">
                 {filteredClubs.length === 0 ? (
-                  <p className="px-3 py-2 text-xs text-[#6b7280]">Aucun club trouvé.</p>
+                  <p className="px-3 py-2 text-xs text-white/40">Aucun club trouvé.</p>
                 ) : (
                   filteredClubs.map((club) => (
                     <button
                       key={club.code}
                       type="button"
                       onClick={() => handleSelectClub(club)}
-                      className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-50 last:border-b-0"
+                      className="w-full px-3 py-2 text-left hover:bg-white/10 border-b border-white/10 last:border-b-0 transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
                           {getClubLogoUrl(club.code) ? (
                             <img src={getClubLogoUrl(club.code) ?? ''} alt={club.name} className="w-full h-full object-contain" />
                           ) : (
-                            <span className="text-[10px] font-black text-slate-500">{getClubMonogram(club.name)}</span>
+                            <span className="text-[10px] font-black text-white/50">{getClubMonogram(club.name)}</span>
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-800">{club.name}</p>
-                          <p className="text-[11px] text-[#6b7280]">{club.code} · {club.ligue} · CD {club.departmentCode}</p>
+                          <p className="text-sm font-bold text-white">{club.name}</p>
+                          <p className="text-[11px] text-white/40">{club.code} · {club.ligue} · CD {club.departmentCode}</p>
                         </div>
                       </div>
                     </button>
@@ -524,8 +533,8 @@ export function ProfilePage() {
 
           {/* Niveau championnat */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Championnat <span className="text-slate-300 font-normal normal-case">(optionnel)</span>
+            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">
+              Championnat <span className="text-white/20 font-normal normal-case">(optionnel)</span>
             </label>
             <div className="flex flex-wrap gap-2">
               <button
@@ -533,8 +542,8 @@ export function ProfilePage() {
                 onClick={() => updateProfile({ leagueLevel: undefined })}
                 className={`py-2 px-3.5 rounded-2xl text-xs font-bold transition-all ${
                   !profile.leagueLevel
-                    ? 'bg-slate-900 text-white'
-                    : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-slate-300'
+                    ? 'bg-white/20 text-white'
+                    : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                 }`}
               >
                 Non renseigné
@@ -548,8 +557,8 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ leagueLevel: opt })}
                     className={`py-2 px-3.5 rounded-2xl text-xs font-bold transition-all ${
                       active
-                        ? 'bg-slate-900 text-white'
-                        : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                     }`}
                   >
                     {opt}
@@ -561,20 +570,20 @@ export function ProfilePage() {
         </section>
 
         {/* Morphologie */}
-        <section className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm space-y-5">
+        <section className="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-5">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-violet-50 text-violet-500">
+            <div className="p-2 rounded-2xl bg-violet-900/20 text-violet-400">
               <Ruler className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-slate-900">Morphologie</h2>
-              <p className="text-xs text-slate-400">Taille, poids et IMC</p>
+              <h2 className="text-sm font-black text-white">Morphologie</h2>
+              <p className="text-xs text-white/40">Taille, poids et IMC</p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Taille (cm)</label>
+              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Taille (cm)</label>
               <input
                 type="number"
                 inputMode="numeric"
@@ -587,12 +596,12 @@ export function ProfilePage() {
                   if (!isNaN(v) && v >= 140 && v <= 230) updateProfile({ heightCm: v })
                 }}
                 placeholder="182"
-                className="w-full h-11 rounded-2xl border border-gray-200 px-3 text-sm font-black text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-rose-300"
+                className="w-full h-11 rounded-2xl border border-white/10 bg-white/5 px-3 text-sm font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Poids (kg)</label>
+              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Poids (kg)</label>
               <input
                 type="number"
                 inputMode="decimal"
@@ -606,7 +615,7 @@ export function ProfilePage() {
                   if (!isNaN(v) && v >= 40 && v <= 200) updateProfile({ weightKg: v })
                 }}
                 placeholder="95"
-                className="w-full h-11 rounded-2xl border border-gray-200 px-3 text-sm font-black text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-rose-300"
+                className="w-full h-11 rounded-2xl border border-white/10 bg-white/5 px-3 text-sm font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
               />
             </div>
           </div>
@@ -622,26 +631,26 @@ export function ProfilePage() {
               bmi < 31 ? (isForward ? 'Morphologie optimale pour un avant' : 'Au-dessus de la norme') :
               (isForward ? 'Gabarit de gros avant' : 'Surcharge à surveiller')
             return (
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-violet-50 border border-violet-100">
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-violet-900/20 border border-violet-500/20">
                 <div>
-                  <p className="text-xs font-bold text-violet-500 uppercase tracking-wide">IMC</p>
-                  <p className="text-sm font-bold text-slate-700 mt-0.5">{label}</p>
+                  <p className="text-xs font-bold text-violet-400 uppercase tracking-wide">IMC</p>
+                  <p className="text-sm font-bold text-white/70 mt-0.5">{label}</p>
                 </div>
-                <span className="text-2xl font-black text-violet-600">{bmi.toFixed(1)}</span>
+                <span className="text-2xl font-black text-violet-400">{bmi.toFixed(1)}</span>
               </div>
             )
           })()}
         </section>
 
         {/* Équipement */}
-        <section className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm space-y-4">
+        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-blue-50 text-blue-500">
+            <div className="p-2 rounded-2xl bg-blue-900/20 text-blue-400">
               <Dumbbell className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-[#1f2937]">Équipement disponible</h2>
-              <p className="text-xs text-[#6b7280]">Sélectionne ce que tu as</p>
+              <h2 className="text-sm font-black text-white">Équipement disponible</h2>
+              <p className="text-xs text-white/40">Sélectionne ce que tu as</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -655,10 +664,10 @@ export function ProfilePage() {
                   className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all flex items-center gap-2 ${
                     active
                       ? 'bg-blue-500 text-white shadow-sm'
-                      : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#1a5f3f]/20'
+                      : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-white' : 'bg-gray-300'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-white' : 'bg-white/20'}`} />
                   {label}
                 </button>
               )
@@ -667,21 +676,21 @@ export function ProfilePage() {
         </section>
 
         {/* Planning club */}
-        <section className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm space-y-4">
+        <section className="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-2xl bg-emerald-50 text-emerald-500">
+              <div className="p-2 rounded-2xl bg-emerald-900/20 text-emerald-400">
                 <Calendar className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-sm font-black text-slate-900">Planning club</h2>
-                <p className="text-xs text-slate-400">Entraînements club & séances muscu adaptées</p>
+                <h2 className="text-sm font-black text-white">Planning club</h2>
+                <p className="text-xs text-white/40">Entraînements club & séances muscu adaptées</p>
               </div>
             </div>
             <button
               type="button"
               onClick={openPlanningEditor}
-              className="text-xs font-bold text-rose-600 hover:text-rose-500 transition-colors"
+              className="text-xs font-bold text-[#ff6b35] hover:text-[#e55a2b] transition-colors"
             >
               Modifier
             </button>
@@ -690,31 +699,31 @@ export function ProfilePage() {
           {profile.clubSchedule ? (
             <div className="space-y-2">
               <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-wide mb-1">Entraînements club</p>
+                <p className="text-[10px] font-black text-white/40 uppercase tracking-wide mb-1">Entraînements club</p>
                 <div className="flex flex-wrap gap-1.5">
                   {profile.clubSchedule.clubDays.map((d) => (
-                    <span key={d.day} className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold">
+                    <span key={d.day} className="px-2.5 py-1 rounded-full bg-emerald-900/20 text-emerald-400 text-xs font-bold">
                       {DAY_LABELS[d.day]}{d.time ? ` ${d.time}` : ''}
                     </span>
                   ))}
                 </div>
               </div>
               {profile.clubSchedule.matchDay !== undefined && (
-                <p className="text-xs text-slate-400">
-                  Match habituel : <span className="font-bold text-slate-600">{DAY_LABELS[profile.clubSchedule.matchDay]}</span>
+                <p className="text-xs text-white/40">
+                  Match habituel : <span className="font-bold text-white/60">{DAY_LABELS[profile.clubSchedule.matchDay]}</span>
                 </p>
               )}
               {profile.scSchedule && profile.scSchedule.sessions.length > 0 && (
                 <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-wide mb-1">Séances muscu suggérées</p>
+                  <p className="text-[10px] font-black text-white/40 uppercase tracking-wide mb-1">Séances muscu suggérées</p>
                   <div className="flex flex-wrap gap-1.5">
                     {profile.scSchedule.sessions.map((s) => (
-                      <span key={s.day} className="px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-bold">
+                      <span key={s.day} className="px-2.5 py-1 rounded-full bg-rose-900/20 text-rose-400 text-xs font-bold">
                         {DAY_LABELS[s.day]}
                       </span>
                     ))}
                   </div>
-                  <p className="text-[10px] text-slate-400 mt-1">Calculé automatiquement selon ton planning</p>
+                  <p className="text-[10px] text-white/30 mt-1">Calculé automatiquement selon ton planning</p>
                 </div>
               )}
               <button
@@ -724,26 +733,26 @@ export function ProfilePage() {
                   const sc = computeSCSchedule(profile.clubSchedule, profile.weeklySessions)
                   updateProfile({ scSchedule: sc })
                 }}
-                className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-rose-600 transition-colors mt-1"
+                className="flex items-center gap-1.5 text-xs font-bold text-white/40 hover:text-[#ff6b35] transition-colors mt-1"
               >
                 <RotateCcw className="w-3 h-3" />
                 Recalculer les séances muscu
               </button>
             </div>
           ) : (
-            <p className="text-xs text-slate-400">Non configuré — clique sur "Modifier" pour ajouter ton planning.</p>
+            <p className="text-xs text-white/40">Non configuré — clique sur "Modifier" pour ajouter ton planning.</p>
           )}
         </section>
 
         {/* Blessures */}
-        <section className="bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm space-y-4">
+        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-orange-50 text-orange-500">
+            <div className="p-2 rounded-2xl bg-orange-900/20 text-orange-400">
               <Shield className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-[#1f2937]">Douleurs / Blessures</h2>
-              <p className="text-xs text-[#6b7280]">Laisse vide si aucune</p>
+              <h2 className="text-sm font-black text-white">Douleurs / Blessures</h2>
+              <p className="text-xs text-white/40">Laisse vide si aucune</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -757,32 +766,142 @@ export function ProfilePage() {
                   className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all flex items-center gap-2 ${
                     active
                       ? 'bg-orange-500 text-white shadow-sm'
-                      : 'bg-gray-50 text-slate-600 border border-gray-100 hover:border-[#ff6b35]/20'
+                      : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-white' : 'bg-gray-300'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-white' : 'bg-white/20'}`} />
                   {label}
                 </button>
               )
             })}
           </div>
           {profile.injuries.length > 0 && (
-            <p className="text-xs text-orange-500 font-medium">
+            <p className="text-xs text-orange-400 font-medium">
               {profile.injuries.length} zone{profile.injuries.length > 1 ? 's' : ''} à protéger — les exercices contra-indiqués seront exclus.
             </p>
           )}
         </section>
 
+        {/* ─── Programme Réhab ─────────────────────────────────────────── */}
+        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-2xl bg-rose-900/20 text-rose-400">
+              <HeartPulse className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-white">Programme Réhab</h2>
+              <p className="text-xs text-white/40">Retour progressif après blessure (3 phases)</p>
+            </div>
+          </div>
+
+          {!profile.rehabInjury ? (
+            <div className="space-y-3">
+              <p className="text-xs text-white/40">
+                Aucun programme actif. Sélectionne la zone à réhabiliter :
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const today = new Date().toISOString().split('T')[0]
+                    updateProfile({ rehabInjury: { type: 'shoulder_pain', zone: 'upper', phase: 1, startDate: today, phaseStartDate: today } })
+                  }}
+                  className="py-3 px-3 rounded-2xl text-xs font-bold text-left bg-white/5 text-white/60 border border-white/10 hover:border-rose-500/30 hover:bg-rose-900/10 transition-all flex flex-col gap-1"
+                >
+                  <span className="text-base">🦾</span>
+                  <span className="font-black">Épaule / Cou / Bras</span>
+                  <span className="text-[10px] text-white/30 font-normal">Zone supérieure</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const today = new Date().toISOString().split('T')[0]
+                    updateProfile({ rehabInjury: { type: 'knee_pain', zone: 'lower', phase: 1, startDate: today, phaseStartDate: today } })
+                  }}
+                  className="py-3 px-3 rounded-2xl text-xs font-bold text-left bg-white/5 text-white/60 border border-white/10 hover:border-rose-500/30 hover:bg-rose-900/10 transition-all flex flex-col gap-1"
+                >
+                  <span className="text-base">🦵</span>
+                  <span className="font-black">Genou / Hanche / Cheville</span>
+                  <span className="text-[10px] text-white/30 font-normal">Zone inférieure</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {/* Phase pills */}
+              <div className="flex gap-2">
+                {([1, 2, 3] as RehabPhase[]).map((p) => (
+                  <span
+                    key={p}
+                    className={`px-3 py-1.5 rounded-full text-xs font-black ${
+                      profile.rehabInjury!.phase === p
+                        ? 'bg-rose-600 text-white'
+                        : profile.rehabInjury!.phase > p
+                          ? 'bg-rose-900/30 text-rose-400'
+                          : 'bg-white/5 text-white/40 border border-white/10'
+                    }`}
+                  >
+                    P{p}
+                  </span>
+                ))}
+              </div>
+
+              {/* Zone label */}
+              <p className="text-xs font-bold text-rose-400">
+                {profile.rehabInjury.zone === 'upper' ? '🦾 Épaule / Cou / Bras' : '🦵 Genou / Hanche / Cheville'}
+                {' — '}Phase {profile.rehabInjury.phase}/3
+              </p>
+
+              {/* Criteria */}
+              <div className="p-3 bg-rose-900/20 border border-rose-500/20 rounded-2xl">
+                <p className="text-xs text-rose-300 leading-relaxed">
+                  <strong>Critères phase suivante :</strong>{' '}
+                  {REHAB_CRITERIA[profile.rehabInjury.phase]}
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                {profile.rehabInjury.phase < 3 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const today = new Date().toISOString().split('T')[0]
+                      updateProfile({
+                        rehabInjury: {
+                          ...profile.rehabInjury!,
+                          phase: (profile.rehabInjury!.phase + 1) as RehabPhase,
+                          phaseStartDate: today,
+                        }
+                      })
+                    }}
+                    className="flex-1 py-2.5 rounded-2xl bg-rose-600 text-white text-xs font-black hover:bg-rose-500 transition-colors text-center"
+                  >
+                    Phase suivante →
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => updateProfile({ rehabInjury: undefined })}
+                  className="px-4 py-2.5 rounded-2xl border border-white/10 text-xs font-bold text-white/40 hover:border-rose-500/30 hover:text-rose-400 transition-colors"
+                >
+                  Terminer
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+
         {/* ─── Notifications ───────────────────────────────────────────── */}
-        <section className="bg-white border border-gray-100 rounded-[2rem] p-5 space-y-4">
+        <section className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-xl ${notifStatus === 'subscribed' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+              <div className={`p-2 rounded-xl ${notifStatus === 'subscribed' ? 'bg-emerald-900/20 text-emerald-400' : 'bg-white/10 text-white/40'}`}>
                 {notifStatus === 'subscribed' ? <BellRing className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
               </div>
               <div>
-                <p className="text-sm font-black text-slate-900">Rappels d'entraînement</p>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-sm font-black text-white">Rappels d'entraînement</p>
+                <p className="text-xs text-white/40 mt-0.5">
                   {notifStatus === 'subscribed' && 'Activés — notification chaque jour de séance'}
                   {notifStatus === 'denied' && 'Bloqués — autorise les notifs dans les réglages'}
                   {notifStatus === 'unsupported' && 'Non supporté par ce navigateur'}
@@ -796,7 +915,7 @@ export function ProfilePage() {
               <button
                 type="button"
                 onClick={notifUnsubscribe}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-gray-200 text-xs font-bold text-slate-400 hover:border-rose-200 hover:text-rose-500 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/10 text-xs font-bold text-white/40 hover:border-rose-500/30 hover:text-rose-400 transition-colors"
               >
                 <BellOff className="w-3 h-3" />
                 Désactiver
@@ -805,13 +924,13 @@ export function ProfilePage() {
               <button
                 type="button"
                 onClick={notifSubscribe}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-rose-600 text-white text-xs font-black hover:bg-rose-500 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#ff6b35] text-white text-xs font-black hover:bg-[#e55a2b] transition-colors"
               >
                 <Bell className="w-3 h-3" />
                 Activer
               </button>
             ) : notifStatus === 'loading' ? (
-              <span className="text-xs text-slate-400 animate-pulse">...</span>
+              <span className="text-xs text-white/40 animate-pulse">...</span>
             ) : null}
           </div>
         </section>
@@ -819,14 +938,14 @@ export function ProfilePage() {
       </main>
 
       {cropImageSrc && (
-        <div className="fixed inset-0 z-[70] bg-slate-900/80 backdrop-blur-sm flex items-end sm:items-center justify-center">
-          <section className="w-full sm:max-w-md bg-white rounded-t-[24px] sm:rounded-[24px] p-5 space-y-4">
+        <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center">
+          <section className="w-full sm:max-w-md bg-[#1a100c] border border-white/10 rounded-t-[24px] sm:rounded-[24px] p-5 space-y-4">
             <div>
-              <h3 className="text-sm font-black text-[#1f2937]">Recadrer la photo</h3>
-              <p className="text-xs text-[#6b7280]">Centre ton visage puis ajuste le zoom.</p>
+              <h3 className="text-sm font-black text-white">Recadrer la photo</h3>
+              <p className="text-xs text-white/40">Centre ton visage puis ajuste le zoom.</p>
             </div>
 
-            <div className="relative h-72 bg-slate-100 rounded-2xl overflow-hidden">
+            <div className="relative h-72 bg-white/10 rounded-2xl overflow-hidden">
               <Cropper
                 image={cropImageSrc}
                 crop={crop}
@@ -841,7 +960,7 @@ export function ProfilePage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="avatar-zoom" className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <label htmlFor="avatar-zoom" className="text-xs font-bold text-white/40 uppercase tracking-wider">
                 Zoom
               </label>
               <input
@@ -852,7 +971,7 @@ export function ProfilePage() {
                 step={0.01}
                 value={zoom}
                 onChange={(event) => setZoom(Number(event.target.value))}
-                className="w-full accent-rose-600"
+                className="w-full accent-[#ff6b35]"
               />
             </div>
 
@@ -860,7 +979,7 @@ export function ProfilePage() {
               <button
                 type="button"
                 onClick={handleCropCancel}
-                className="py-3 rounded-2xl border border-gray-200 bg-white text-xs font-bold text-slate-500 hover:border-slate-300 transition-colors"
+                className="py-3 rounded-2xl border border-white/10 bg-white/5 text-xs font-bold text-white/50 hover:border-white/25 transition-colors"
               >
                 Annuler
               </button>
@@ -879,21 +998,21 @@ export function ProfilePage() {
 
       {/* Planning editor modal */}
       {showPlanningEditor && (
-        <div className="fixed inset-0 z-[70] bg-slate-900/80 backdrop-blur-sm flex items-end sm:items-center justify-center">
-          <section className="w-full sm:max-w-md bg-white rounded-t-[2rem] sm:rounded-[2rem] p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center">
+          <section className="w-full sm:max-w-md bg-[#1a100c] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] p-6 space-y-5 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-black text-slate-900">Planning club</h3>
+              <h3 className="text-sm font-black text-white">Planning club</h3>
               <button
                 type="button"
                 onClick={() => setShowPlanningEditor(false)}
-                className="text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors"
+                className="text-xs font-bold text-white/40 hover:text-white transition-colors"
               >
                 Annuler
               </button>
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-black text-slate-500 uppercase tracking-wide">Jours d'entraînement club</p>
+              <p className="text-xs font-black text-white/40 uppercase tracking-wide">Jours d'entraînement club</p>
               <div className="grid grid-cols-4 gap-2">
                 {CLUB_DAYS_OPTIONS.map((opt) => {
                   const selected = editClubDays.has(opt.day)
@@ -904,14 +1023,14 @@ export function ProfilePage() {
                         onClick={() => {
                           setEditClubDays((prev) => {
                             const next = new Set(prev)
-                            next.has(opt.day) ? next.delete(opt.day) : next.add(opt.day)
+                            if (next.has(opt.day)) { next.delete(opt.day) } else { next.add(opt.day) }
                             return next
                           })
                         }}
                         className={`w-full py-3 rounded-2xl border-2 text-xs font-black transition-all ${
                           selected
-                            ? 'border-rose-500 bg-rose-50 text-rose-700'
-                            : 'border-gray-100 bg-white text-slate-500 hover:border-gray-200'
+                            ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-[#ff6b35]'
+                            : 'border-white/10 bg-white/5 text-white/50 hover:border-white/25'
                         }`}
                       >
                         {opt.short}
@@ -922,7 +1041,7 @@ export function ProfilePage() {
                           type="time"
                           value={editClubDayTimes[opt.day] ?? ''}
                           onChange={(e) => setEditClubDayTimes((prev) => ({ ...prev, [opt.day]: e.target.value }))}
-                          className="w-full text-[10px] rounded-xl border border-gray-100 px-1.5 py-1 text-slate-500 bg-white focus:outline-none focus:border-rose-300"
+                          className="w-full text-[10px] rounded-xl border border-white/10 bg-white/5 px-1.5 py-1 text-white/50 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
                         />
                       )}
                     </div>
@@ -932,7 +1051,7 @@ export function ProfilePage() {
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-black text-slate-500 uppercase tracking-wide">Jour de match habituel</p>
+              <p className="text-xs font-black text-white/40 uppercase tracking-wide">Jour de match habituel</p>
               <div className="flex gap-2 flex-wrap">
                 {MATCH_DAY_OPTIONS.map((opt) => (
                   <button
@@ -941,8 +1060,8 @@ export function ProfilePage() {
                     onClick={() => setEditMatchDay(opt.day)}
                     className={`px-4 py-2.5 rounded-2xl text-xs font-black border-2 transition-all ${
                       editMatchDay === opt.day
-                        ? 'border-rose-500 bg-rose-50 text-rose-700'
-                        : 'border-gray-100 bg-white text-slate-500 hover:border-gray-200'
+                        ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-[#ff6b35]'
+                        : 'border-white/10 bg-white/5 text-white/50 hover:border-white/25'
                     }`}
                   >
                     {opt.label}
@@ -952,15 +1071,15 @@ export function ProfilePage() {
             </div>
 
             {/* ─── Séances muscu ─── */}
-            <div className="space-y-3 pt-1 border-t border-gray-100">
+            <div className="space-y-3 pt-1 border-t border-white/10">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-black text-slate-500 uppercase tracking-wide">Séances muscu</p>
-                <div className="flex gap-1 bg-gray-100 rounded-2xl p-0.5">
+                <p className="text-xs font-black text-white/40 uppercase tracking-wide">Séances muscu</p>
+                <div className="flex gap-1 bg-white/5 border border-white/10 rounded-2xl p-0.5">
                   <button
                     type="button"
                     onClick={() => setGymMode('auto')}
                     className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                      gymMode === 'auto' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'
+                      gymMode === 'auto' ? 'bg-white/15 text-white shadow-sm' : 'text-white/40'
                     }`}
                   >
                     Auto
@@ -980,7 +1099,7 @@ export function ProfilePage() {
                       }
                     }}
                     className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                      gymMode === 'manual' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'
+                      gymMode === 'manual' ? 'bg-white/15 text-white shadow-sm' : 'text-white/40'
                     }`}
                   >
                     Manuel
@@ -989,11 +1108,11 @@ export function ProfilePage() {
               </div>
 
               {gymMode === 'auto' && editClubDays.size > 0 && (
-                <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-100">
-                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-wide mb-1">
+                <div className="p-3 rounded-2xl bg-emerald-900/20 border border-emerald-500/20">
+                  <p className="text-[10px] font-black text-emerald-400 uppercase tracking-wide mb-1">
                     Suggestion calculée
                   </p>
-                  <p className="text-sm font-black text-emerald-800">
+                  <p className="text-sm font-black text-emerald-300">
                     {computeSCSchedule(
                       {
                         clubDays: Array.from(editClubDays).map((d) => ({ day: d })),
@@ -1002,14 +1121,14 @@ export function ProfilePage() {
                       profile.weeklySessions
                     ).sessions.map((s) => DAY_LABELS[s.day]).join(' · ')}
                   </p>
-                  <p className="text-[10px] text-emerald-600 mt-1">
+                  <p className="text-[10px] text-emerald-500 mt-1">
                     Basé sur ton planning club et les bonnes pratiques de récupération
                   </p>
                 </div>
               )}
 
               {gymMode === 'auto' && editClubDays.size === 0 && (
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-white/40">
                   Sélectionne tes jours d'entraînement club pour obtenir une suggestion.
                 </p>
               )}
@@ -1031,13 +1150,31 @@ export function ProfilePage() {
               type="button"
               onClick={applyPlanningSchedule}
               disabled={gymMode === 'manual' && editGymDays.size === 0}
-              className="w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 text-white font-black uppercase tracking-wide transition-colors"
+              className="w-full py-4 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-40 text-white font-black uppercase tracking-wide transition-colors shadow-lg shadow-[#ff6b35]/20"
             >
               Appliquer
             </button>
           </section>
         </div>
       )}
+
+      {/* Footer */}
+      <footer className="px-4 py-6 flex flex-col items-center gap-3 text-center relative">
+        <a
+          href="mailto:feedback@rugbyprep.app?subject=Feedback%20RugbyForge"
+          onClick={() => posthog.capture('feedback_clicked')}
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#1a5f3f] text-white text-xs font-black uppercase tracking-wide hover:bg-[#1a5f3f]/90 transition-colors shadow-lg shadow-[#1a5f3f]/20"
+        >
+          Envoyer un feedback
+        </a>
+        <Link
+          to="/legal"
+          className="text-xs text-white/40 hover:text-[#ff6b35] transition-colors"
+        >
+          Mentions légales & Confidentialité
+        </Link>
+        <p className="text-[10px] text-white/20">RugbyForge v1.0 · beta</p>
+      </footer>
 
       <BottomNav />
     </div>

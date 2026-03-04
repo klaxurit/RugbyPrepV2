@@ -12,6 +12,8 @@ import {
   Home,
   MapPin,
   Search,
+  CheckCircle2,
+  Activity,
 } from 'lucide-react'
 import { BottomNav } from '../components/BottomNav'
 import { useCalendar } from '../hooks/useCalendar'
@@ -51,16 +53,16 @@ const MONTH_NAMES_FR = [
 const DAY_NAMES_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 const seasonPhaseConfig: Record<SeasonPhase, { label: string; color: string; bg: string }> = {
-  'off-season': { label: 'Hors-saison', color: 'text-slate-600', bg: 'bg-slate-100' },
-  'pre-season': { label: 'Pré-saison', color: 'text-amber-700', bg: 'bg-amber-50' },
-  'in-season': { label: 'En saison', color: 'text-emerald-700', bg: 'bg-emerald-50' },
-  'playoffs': { label: 'Playoffs', color: 'text-rose-700', bg: 'bg-rose-50' },
+  'off-season': { label: 'Hors-saison', color: 'text-white/60', bg: 'bg-white/10' },
+  'pre-season': { label: 'Pré-saison', color: 'text-amber-400', bg: 'bg-amber-900/20' },
+  'in-season': { label: 'En saison', color: 'text-emerald-400', bg: 'bg-emerald-900/20' },
+  'playoffs': { label: 'Playoffs', color: 'text-rose-400', bg: 'bg-rose-900/20' },
 }
 
 const eventTypeConfig: Record<CalendarEventType, { label: string; icon: React.ElementType; color: string; bg: string }> = {
-  match: { label: 'Match', icon: Trophy, color: 'text-rose-600', bg: 'bg-rose-50' },
-  rest: { label: 'Repos', icon: Bed, color: 'text-blue-600', bg: 'bg-blue-50' },
-  unavailable: { label: 'Indisponible', icon: AlertCircle, color: 'text-orange-600', bg: 'bg-orange-50' },
+  match: { label: 'Match', icon: Trophy, color: 'text-rose-400', bg: 'bg-rose-900/20' },
+  rest: { label: 'Repos', icon: Bed, color: 'text-blue-400', bg: 'bg-blue-900/20' },
+  unavailable: { label: 'Indisponible', icon: AlertCircle, color: 'text-orange-400', bg: 'bg-orange-900/20' },
 }
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -87,7 +89,7 @@ function ClubAvatar({ code, name, size = 'md' }: { code?: string; name?: string;
   const sizeClass = size === 'sm' ? 'w-6 h-6 text-[8px]' : size === 'lg' ? 'w-12 h-12 text-sm' : 'w-8 h-8 text-[10px]'
 
   return (
-    <div className={`${sizeClass} rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0`}>
+    <div className={`${sizeClass} rounded-xl bg-white/10 flex items-center justify-center overflow-hidden flex-shrink-0`}>
       {logoUrl ? (
         <img
           src={logoUrl}
@@ -96,7 +98,7 @@ function ClubAvatar({ code, name, size = 'md' }: { code?: string; name?: string;
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
         />
       ) : (
-        <span className="font-black text-slate-500">{monogram}</span>
+        <span className="font-black text-white/50">{monogram}</span>
       )}
     </div>
   )
@@ -135,12 +137,12 @@ function ClubSearchInput({ value, clubCode, onChange }: ClubSearchInputProps) {
   return (
     <div ref={containerRef} className="relative">
       <div className={`flex items-center gap-3 border rounded-2xl px-4 py-3 transition-all ${
-        focused ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200'
+        focused ? 'border-[#ff6b35] ring-2 ring-[#ff6b35]/20' : 'border-white/10'
       }`}>
         {clubCode ? (
           <ClubAvatar code={clubCode} name={query} size="sm" />
         ) : (
-          <Search className="w-4 h-4 text-slate-300 flex-shrink-0" />
+          <Search className="w-4 h-4 text-white/30 flex-shrink-0" />
         )}
         <input
           type="text"
@@ -149,13 +151,13 @@ function ClubSearchInput({ value, clubCode, onChange }: ClubSearchInputProps) {
           onChange={handleInput}
           onFocus={() => { setFocused(true); if (query.length >= 2) setResults(searchClubs(query)) }}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
-          className="flex-1 text-sm text-slate-900 placeholder-slate-300 bg-transparent focus:outline-none"
+          className="flex-1 text-sm text-white placeholder-white/30 bg-transparent focus:outline-none"
         />
         {query && (
           <button
             type="button"
             onClick={() => { setQuery(''); onChange('', undefined); setResults([]) }}
-            className="text-slate-300 hover:text-slate-500 transition-colors"
+            className="text-white/30 hover:text-white/60 transition-colors"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -169,19 +171,19 @@ function ClubSearchInput({ value, clubCode, onChange }: ClubSearchInputProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.12 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl shadow-slate-100 z-50 overflow-hidden"
+            className="absolute top-full left-0 right-0 mt-2 bg-[#23140f] border border-white/10 rounded-2xl shadow-xl shadow-black/50 z-50 overflow-hidden"
           >
             {results.map((club) => (
               <button
                 key={club.code}
                 type="button"
                 onMouseDown={() => handleSelect(club)}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left border-b border-gray-50 last:border-0"
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left border-b border-white/10 last:border-0"
               >
                 <ClubAvatar code={club.code} name={club.name} size="sm" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-slate-900 truncate">{club.name}</div>
-                  <div className="text-[10px] text-slate-400">{club.ligue} · {club.departmentCode}</div>
+                  <div className="text-sm font-bold text-white truncate">{club.name}</div>
+                  <div className="text-[10px] text-white/40">{club.ligue} · {club.departmentCode}</div>
                 </div>
               </button>
             ))}
@@ -207,7 +209,7 @@ function SeasonBadge({ phase }: { phase: SeasonPhase }) {
 function NextMatchCard({ event }: { event: CalendarEvent }) {
   const days = diffDays(event.date)
   return (
-    <div className="relative overflow-hidden rounded-[2rem] bg-slate-900 shadow-xl shadow-slate-200 p-6 space-y-3">
+    <div className="relative overflow-hidden rounded-[2rem] bg-[#23140f] border border-white/10 shadow-xl shadow-black/50 p-6 space-y-3">
       <div className="absolute top-0 right-0 w-28 h-28 bg-rose-600 opacity-20 blur-3xl -mr-6 -mt-6" />
       <div className="flex items-center justify-between">
         <div className="inline-flex items-center gap-1.5 bg-rose-600 px-3 py-1 rounded-full">
@@ -215,7 +217,7 @@ function NextMatchCard({ event }: { event: CalendarEvent }) {
           <span className="text-[10px] font-black text-white uppercase tracking-widest">Prochain match</span>
         </div>
         {event.is_home !== undefined && (
-          <div className="flex items-center gap-1 text-slate-400">
+          <div className="flex items-center gap-1 text-white/40">
             {event.is_home
               ? <><Home className="w-3 h-3" /><span className="text-[10px] font-bold">Domicile</span></>
               : <><MapPin className="w-3 h-3" /><span className="text-[10px] font-bold">Extérieur</span></>
@@ -228,7 +230,7 @@ function NextMatchCard({ event }: { event: CalendarEvent }) {
         <div className="text-4xl font-black text-white leading-none">
           {days === 0 ? "Aujourd'hui !" : days === 1 ? 'Demain' : `J−${days}`}
         </div>
-        <div className="text-sm text-slate-400 mt-1 capitalize">{formatDateFR(event.date)}</div>
+        <div className="text-sm text-white/40 mt-1 capitalize">{formatDateFR(event.date)}</div>
         {event.kickoff_time && (
           <div className="text-xs text-rose-400 font-bold mt-0.5">Coup d'envoi {event.kickoff_time}</div>
         )}
@@ -244,48 +246,144 @@ function NextMatchCard({ event }: { event: CalendarEvent }) {
   )
 }
 
-function EventRow({ event, onRemove }: { event: CalendarEvent; onRemove: (id: string) => void }) {
+function EventRow({
+  event,
+  onRemove,
+  onUpdateLoad,
+}: {
+  event: CalendarEvent
+  onRemove: (id: string) => void
+  onUpdateLoad?: (eventId: string, rpe: number, durationMin: number) => Promise<void>
+}) {
   const cfg = eventTypeConfig[event.type]
   const Icon = cfg.icon
   const days = diffDays(event.date)
   const isPast = days < 0
+  const showLoadForm = isPast && event.type === 'match'
+
+  const [loadOpen, setLoadOpen] = useState(false)
+  const [rpeInput, setRpeInput] = useState(event.rpe ?? 7)
+  const [durationInput, setDurationInput] = useState(event.duration_min ?? 80)
+  const [saving, setSaving] = useState(false)
+
+  const handleSaveLoad = async () => {
+    if (!onUpdateLoad) return
+    setSaving(true)
+    await onUpdateLoad(event.id, rpeInput, durationInput)
+    setSaving(false)
+    setLoadOpen(false)
+  }
 
   return (
-    <div className={`flex items-center gap-3 p-3 rounded-2xl ${isPast ? 'opacity-50' : ''}`}>
-      {event.type === 'match' && event.opponent_code ? (
-        <ClubAvatar code={event.opponent_code} name={event.opponent} size="md" />
-      ) : (
-        <div className={`w-8 h-8 rounded-2xl flex items-center justify-center flex-shrink-0 ${cfg.bg} ${cfg.color}`}>
-          <Icon className="w-4 h-4" />
-        </div>
-      )}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-slate-900">{cfg.label}</span>
-          {event.opponent && (
-            <span className="text-xs text-slate-500 truncate">vs {event.opponent}</span>
+    <div className={`rounded-2xl ${isPast && !showLoadForm ? 'opacity-50' : ''}`}>
+      <div className="flex items-center gap-3 p-3">
+        {event.type === 'match' && event.opponent_code ? (
+          <ClubAvatar code={event.opponent_code} name={event.opponent} size="md" />
+        ) : (
+          <div className={`w-8 h-8 rounded-2xl flex items-center justify-center flex-shrink-0 ${cfg.bg} ${cfg.color}`}>
+            <Icon className="w-4 h-4" />
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-white">{cfg.label}</span>
+            {event.opponent && (
+              <span className="text-xs text-white/50 truncate">vs {event.opponent}</span>
+            )}
+          </div>
+          <div className="text-xs text-white/40 capitalize">{formatDateFR(event.date)}</div>
+          {event.kickoff_time && (
+            <div className="text-[10px] text-white/40">{event.kickoff_time}</div>
           )}
         </div>
-        <div className="text-xs text-slate-400 capitalize">{formatDateFR(event.date)}</div>
-        {event.kickoff_time && (
-          <div className="text-[10px] text-slate-400">{event.kickoff_time}</div>
-        )}
+        <div className="flex items-center gap-2">
+          {!isPast && days <= 7 && (
+            <span className="text-[10px] font-black text-rose-400 bg-rose-900/20 px-2 py-0.5 rounded-full">
+              {days === 0 ? "Auj." : `J−${days}`}
+            </span>
+          )}
+          {showLoadForm && event.rpe && event.duration_min && (
+            <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-900/20 px-2 py-0.5 rounded-full">
+              <CheckCircle2 className="w-3 h-3" />
+              Charge ✓
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => onRemove(event.id)}
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-white/30 hover:text-rose-400 hover:bg-rose-900/20 transition-colors"
+            aria-label="Supprimer"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
-      <div className="flex items-center gap-2">
-        {!isPast && days <= 7 && (
-          <span className="text-[10px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">
-            {days === 0 ? "Auj." : `J−${days}`}
-          </span>
-        )}
-        <button
-          type="button"
-          onClick={() => onRemove(event.id)}
-          className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-colors"
-          aria-label="Supprimer"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-        </button>
-      </div>
+
+      {/* Charge match — matchs passés uniquement */}
+      {showLoadForm && onUpdateLoad && (
+        <div className="px-3 pb-3">
+          {!loadOpen && !event.rpe ? (
+            <button
+              type="button"
+              onClick={() => setLoadOpen(true)}
+              className="flex items-center gap-1.5 text-[11px] font-bold text-[#ff6b35] bg-[#ff6b35]/10 hover:bg-[#ff6b35]/20 px-3 py-1.5 rounded-xl transition-colors"
+            >
+              <Activity className="w-3 h-3" />
+              Enregistrer la charge match
+            </button>
+          ) : loadOpen ? (
+            <div className="bg-white/5 rounded-2xl p-3 space-y-3">
+              <p className="text-[11px] font-black text-white/50 uppercase tracking-wide">Charge match</p>
+              <div className="space-y-2">
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <label className="text-[10px] font-bold text-white/40 uppercase tracking-wide">RPE perçu</label>
+                    <span className="text-xs font-black text-white/70">{rpeInput}/10</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={10}
+                    value={rpeInput}
+                    onChange={(e) => setRpeInput(Number(e.target.value))}
+                    className="w-full accent-rose-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-wide block mb-1">Durée (min)</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={durationInput}
+                    onChange={(e) => setDurationInput(Number(e.target.value))}
+                    className="w-full px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-sm text-white/80 focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/20 focus:border-[#ff6b35] transition-all [color-scheme:dark]"
+                  />
+                </div>
+                <p className="text-[10px] text-white/40">
+                  Charge ≈ {rpeInput * durationInput} UA · impact ACWR automatique
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleSaveLoad}
+                  disabled={saving}
+                  className="flex-1 py-2 rounded-xl bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-50 text-white text-xs font-black transition-colors"
+                >
+                  {saving ? 'Enregistrement...' : 'Enregistrer'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLoadOpen(false)}
+                  className="px-3 py-2 rounded-xl border border-white/10 text-xs font-bold text-white/50 hover:border-white/25 transition-colors"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      )}
     </div>
   )
 }
@@ -328,27 +426,27 @@ function MiniCalendar({
   })
 
   return (
-    <div className="bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm">
+    <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5">
       {/* Legend */}
       {(clubDays.length > 0 || scDays.length > 0) && (
-        <div className="flex flex-wrap gap-3 mb-3 pb-3 border-b border-gray-50">
+        <div className="flex flex-wrap gap-3 mb-3 pb-3 border-b border-white/10">
           {clubDays.length > 0 && (
             <div className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-[10px] font-bold text-slate-400">Club</span>
+              <span className="text-[10px] font-bold text-white/40">Club</span>
             </div>
           )}
           {scDays.length > 0 && (
             <div className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-rose-400" />
-              <span className="text-[10px] font-bold text-slate-400">Muscu</span>
+              <span className="text-[10px] font-bold text-white/40">Muscu</span>
             </div>
           )}
         </div>
       )}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {DAY_NAMES_FR.map((d, i) => (
-          <div key={i} className="text-center text-[10px] font-black text-slate-400 uppercase">{d}</div>
+          <div key={i} className="text-center text-[10px] font-black text-white/40 uppercase">{d}</div>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1">
@@ -375,10 +473,10 @@ function MiniCalendar({
               type="button"
               onClick={() => onSelectDate(dateStr)}
               className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-bold transition-colors
-                ${isToday ? 'bg-slate-900 text-white' : 'hover:bg-slate-50 text-slate-700'}
-                ${isClubDay && !isToday ? 'bg-emerald-50' : ''}
-                ${isScDay && !isClubDay && !isToday ? 'bg-rose-50' : ''}
-                ${eventType ? 'ring-1 ring-inset ' + (eventType === 'match' ? 'ring-rose-200' : eventType === 'rest' ? 'ring-blue-200' : 'ring-orange-200') : ''}
+                ${isToday ? 'bg-[#ff6b35] text-white' : 'hover:bg-white/10 text-white/70'}
+                ${isClubDay && !isToday ? 'bg-emerald-900/20' : ''}
+                ${isScDay && !isClubDay && !isToday ? 'bg-rose-900/20' : ''}
+                ${eventType ? 'ring-1 ring-inset ' + (eventType === 'match' ? 'ring-rose-500/40' : eventType === 'rest' ? 'ring-blue-500/40' : 'ring-orange-500/40') : ''}
               `}
             >
               {day}
@@ -438,14 +536,14 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: '100%', opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full max-w-md bg-white rounded-[2rem] p-6 space-y-5"
+        className="w-full max-w-md bg-[#1a100c] border border-white/10 rounded-[2rem] p-6 space-y-5"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-black text-slate-900">Ajouter un événement</h3>
+          <h3 className="text-lg font-black text-white">Ajouter un événement</h3>
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-2xl border border-gray-200 flex items-center justify-center text-slate-400 hover:text-slate-700"
+            className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/25"
           >
             <X className="w-4 h-4" />
           </button>
@@ -453,7 +551,7 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
 
         {/* Type */}
         <div>
-          <label className="text-xs font-black text-slate-400 uppercase tracking-wide mb-2 block">Type</label>
+          <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Type</label>
           <div className="grid grid-cols-3 gap-2">
             {(Object.keys(eventTypeConfig) as CalendarEventType[]).map((t) => {
               const cfg = eventTypeConfig[t]
@@ -466,7 +564,7 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
                   className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl border-2 transition-all ${
                     type === t
                       ? `border-current ${cfg.color} ${cfg.bg}`
-                      : 'border-gray-100 text-slate-400 hover:border-gray-200'
+                      : 'border-white/10 text-white/40 hover:border-white/25'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -479,12 +577,12 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
 
         {/* Date */}
         <div>
-          <label className="text-xs font-black text-slate-400 uppercase tracking-wide mb-2 block">Date</label>
+          <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Date</label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
+            className="w-full border border-white/10 bg-white/5 rounded-2xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
           />
         </div>
 
@@ -492,17 +590,17 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
         {type === 'match' && (
           <>
             <div>
-              <label className="text-xs font-black text-slate-400 uppercase tracking-wide mb-2 block">Coup d'envoi</label>
+              <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Coup d'envoi</label>
               <input
                 type="time"
                 value={kickoffTime}
                 onChange={(e) => setKickoffTime(e.target.value)}
-                className="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                className="w-full border border-white/10 bg-white/5 rounded-2xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
               />
             </div>
 
             <div>
-              <label className="text-xs font-black text-slate-400 uppercase tracking-wide mb-2 block">Adversaire (optionnel)</label>
+              <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Adversaire (optionnel)</label>
               <ClubSearchInput
                 value={opponent}
                 clubCode={opponentCode}
@@ -511,7 +609,7 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
             </div>
 
             <div>
-              <label className="text-xs font-black text-slate-400 uppercase tracking-wide mb-2 block">Lieu</label>
+              <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Lieu</label>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { value: true, label: 'Domicile', icon: Home },
@@ -523,8 +621,8 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
                     onClick={() => setIsHome(value)}
                     className={`flex items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all ${
                       isHome === value
-                        ? 'border-slate-900 text-slate-900 bg-slate-50'
-                        : 'border-gray-100 text-slate-400 hover:border-gray-200'
+                        ? 'border-[#ff6b35] text-[#ff6b35] bg-[#ff6b35]/10'
+                        : 'border-white/10 text-white/40 hover:border-white/25'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -552,7 +650,7 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
 // ─── Main Page ───────────────────────────────────────────────
 
 export function CalendarPage() {
-  const { events, nextMatch, seasonPhase, addEvent, removeEvent, loading } = useCalendar()
+  const { events, nextMatch, seasonPhase, addEvent, removeEvent, updateMatchLoad, loading } = useCalendar()
   const { profile } = useProfile()
   const [showModal, setShowModal] = useState(false)
   const [selectedDate, setSelectedDate] = useState<string | undefined>()
@@ -590,42 +688,43 @@ export function CalendarPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-slate-900 pb-24">
+    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* ── Header ── */}
-      <header className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between sticky top-0 z-40">
+      <header className="px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center justify-between sticky top-0 z-40 relative">
         <div>
-          <p className="text-xs font-bold tracking-widest text-rose-600 uppercase italic">RugbyPrep</p>
-          <h1 className="text-xl font-extrabold tracking-tight text-slate-900">Calendrier</h1>
+          <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
+          <h1 className="text-xl font-extrabold tracking-tight text-white">Calendrier</h1>
         </div>
         <SeasonBadge phase={seasonPhase} />
       </header>
 
-      <main className="px-6 pt-6 space-y-6 max-w-md mx-auto">
+      <main className="px-6 pt-6 space-y-6 max-w-md mx-auto relative">
 
         {/* ── Next Match Card ── */}
         {nextMatch && <NextMatchCard event={nextMatch} />}
 
         {!nextMatch && !loading && (
-          <div className="bg-white border border-gray-100 rounded-[2rem] p-6 text-center space-y-2">
-            <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 mx-auto">
+          <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 text-center space-y-2">
+            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white/20 mx-auto">
               <Trophy className="w-6 h-6" />
             </div>
-            <p className="text-sm font-bold text-slate-900">Aucun match planifié</p>
-            <p className="text-xs text-slate-400">Ajoute tes matchs pour activer le mode in-season et adapter ton programme.</p>
+            <p className="text-sm font-bold text-white">Aucun match planifié</p>
+            <p className="text-xs text-white/40">Ajoute tes matchs pour activer le mode in-season et adapter ton programme.</p>
           </div>
         )}
 
         {/* ── Calendar Grid ── */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <button type="button" onClick={prevMonth} className="w-9 h-9 rounded-2xl border border-gray-200 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:border-slate-300 transition-colors">
+            <button type="button" onClick={prevMonth} className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/25 transition-colors">
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <h2 className="text-sm font-black uppercase tracking-wider text-slate-700">
+            <h2 className="text-sm font-black uppercase tracking-wider text-white/70">
               {MONTH_NAMES_FR[calMonth]} {calYear}
             </h2>
-            <button type="button" onClick={nextMonth} className="w-9 h-9 rounded-2xl border border-gray-200 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:border-slate-300 transition-colors">
+            <button type="button" onClick={nextMonth} className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/25 transition-colors">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -642,10 +741,10 @@ export function CalendarPage() {
         {/* ── Upcoming Events ── */}
         {upcomingEvents.length > 0 && (
           <section>
-            <h2 className="text-sm font-black uppercase tracking-wider text-slate-400 mb-3">À venir</h2>
-            <div className="bg-white border border-gray-100 rounded-[2rem] p-3 shadow-sm divide-y divide-gray-50">
+            <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">À venir</h2>
+            <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10">
               {upcomingEvents.map((event) => (
-                <EventRow key={event.id} event={event} onRemove={removeEvent} />
+                <EventRow key={event.id} event={event} onRemove={removeEvent} onUpdateLoad={updateMatchLoad} />
               ))}
             </div>
           </section>
@@ -654,10 +753,10 @@ export function CalendarPage() {
         {/* ── Past Events (collapsed) ── */}
         {pastEvents.length > 0 && (
           <section>
-            <h2 className="text-sm font-black uppercase tracking-wider text-slate-400 mb-3">Passés</h2>
-            <div className="bg-white border border-gray-100 rounded-[2rem] p-3 shadow-sm divide-y divide-gray-50">
+            <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">Passés</h2>
+            <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10">
               {pastEvents.slice(-5).reverse().map((event) => (
-                <EventRow key={event.id} event={event} onRemove={removeEvent} />
+                <EventRow key={event.id} event={event} onRemove={removeEvent} onUpdateLoad={updateMatchLoad} />
               ))}
             </div>
           </section>
@@ -665,18 +764,18 @@ export function CalendarPage() {
 
         {/* ── Season Info ── */}
         <section>
-          <div className="bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm space-y-3">
-            <h3 className="text-sm font-black text-slate-900">Phase de saison</h3>
+          <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-3">
+            <h3 className="text-sm font-black text-white">Phase de saison</h3>
             <div className="flex items-center gap-3">
               <SeasonBadge phase={seasonPhase} />
-              <p className="text-xs text-slate-500 flex-1">
+              <p className="text-xs text-white/50 flex-1">
                 {seasonPhase === 'off-season' && 'Période de récupération et hypertrophie. Charge réduite.'}
                 {seasonPhase === 'pre-season' && 'Reprise progressive. Construire la base de force.'}
                 {seasonPhase === 'in-season' && 'Mode compétition actif. Volume −30%, intensité maintenue.'}
                 {seasonPhase === 'playoffs' && 'Phase finale. Tapering en cours. Volume minimal.'}
               </p>
             </div>
-            <p className="text-[10px] text-slate-400">Détecté automatiquement via ton calendrier de matchs.</p>
+            <p className="text-[10px] text-white/40">Détecté automatiquement via ton calendrier de matchs.</p>
           </div>
         </section>
 
@@ -687,7 +786,7 @@ export function CalendarPage() {
         type="button"
         whileTap={{ scale: 0.95 }}
         onClick={() => { setSelectedDate(undefined); setShowModal(true) }}
-        className="fixed bottom-24 right-6 w-14 h-14 bg-rose-600 rounded-2xl shadow-lg shadow-rose-200 flex items-center justify-center z-40"
+        className="fixed bottom-24 right-6 w-14 h-14 bg-[#ff6b35] rounded-2xl shadow-lg shadow-[#ff6b35]/30 flex items-center justify-center z-40"
         aria-label="Ajouter un événement"
       >
         <Plus className="w-6 h-6 text-white" />

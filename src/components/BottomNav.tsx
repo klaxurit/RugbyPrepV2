@@ -12,13 +12,13 @@ const navItems = [
 export function BottomNav() {
   const { pathname } = useLocation()
   return (
-    <nav className="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-lg border-t border-gray-100 flex items-center justify-around px-4 z-50">
+    <nav className="fixed bottom-0 left-0 right-0 h-20 bg-[#1a100c]/95 backdrop-blur-lg border-t border-white/10 flex items-center justify-around px-4 z-50">
       {navItems.map(({ to, icon: Icon, label, match }) => {
         const active = match.includes(pathname)
         return (
           <Link key={to} to={to} className="flex flex-col items-center gap-1">
-            <Icon className={`w-6 h-6 transition-colors ${active ? 'text-[#1a5f3f]' : 'text-slate-300'}`} />
-            <span className={`text-[10px] font-bold ${active ? 'text-[#1a5f3f]' : 'text-slate-400'}`}>{label}</span>
+            <Icon className={`w-6 h-6 transition-colors ${active ? 'text-[#ff6b35]' : 'text-slate-300'}`} />
+            <span className={`text-[10px] font-bold ${active ? 'text-[#ff6b35]' : 'text-slate-400'}`}>{label}</span>
           </Link>
         )
       })}

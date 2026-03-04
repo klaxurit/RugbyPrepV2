@@ -23,8 +23,10 @@ et adaptées au profil du joueur.
 | `nutrition.md` | Macros, timing, match day, supplémentation, alcool | ~550 | 25 | 1.0.0 |
 | `injury-prevention.md` | ACWR, prehab, commotion, retour au jeu | ~520 | 25 | 1.0.0 |
 | `energy-systems.md` | Filières, VO2max, RSA, HIIT, concurrent | ~420 | 19 | 1.0.0 |
+| `athletic-testing.md` | CMJ, sprint 10m, YYIR1, 1RM estimé, asymétrie, baselines par poste | ~423 | 17 | 1.0.0 |
+| `team-monitoring.md` | ACWR collectif, matrice risque joueurs, push séances, rotation | ~453 | 12 | 1.0.0 |
 
-**Total : ~2 840 lignes de contenu scientifique, ~157 références.**
+**Total : ~3 716 lignes de contenu scientifique, ~186 références.**
 
 ---
 

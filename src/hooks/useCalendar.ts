@@ -72,10 +72,11 @@ export function useCalendar() {
   // Sync from Supabase when authenticated
   useEffect(() => {
     if (!userId) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true)
     supabase
       .from('match_calendar')
-      .select('id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, created_at')
+      .select('id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, rpe, duration_min, created_at')
       .order('date', { ascending: true })
       .then(({ data, error: err }) => {
         setLoading(false)
@@ -95,7 +96,7 @@ export function useCalendar() {
         const { data, error: err } = await supabase
           .from('match_calendar')
           .insert({ ...payload, user_id: userId })
-          .select('id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, created_at')
+          .select('id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, rpe, duration_min, created_at')
           .single()
         if (err) { setError(err.message); return }
         const newEvent = data as CalendarEvent
@@ -137,6 +138,25 @@ export function useCalendar() {
     [userId]
   )
 
+  const updateMatchLoad = useCallback(
+    async (eventId: string, rpe: number, durationMin: number) => {
+      if (userId) {
+        await supabase
+          .from('match_calendar')
+          .update({ rpe, duration_min: durationMin })
+          .eq('id', eventId)
+      }
+      setEvents((prev) => {
+        const next = prev.map((e) =>
+          e.id === eventId ? { ...e, rpe, duration_min: durationMin } : e
+        )
+        saveToStorage(next)
+        return next
+      })
+    },
+    [userId]
+  )
+
   const today = new Date()
   const todayStr = toDateStr(today)
 
@@ -158,6 +178,7 @@ export function useCalendar() {
     seasonPhase,
     addEvent,
     removeEvent,
+    updateMatchLoad,
     loading,
     error,
   }

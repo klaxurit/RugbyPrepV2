@@ -34,7 +34,9 @@ export type BlockIntent =
   | 'hypertrophy'
   | 'core'
   | 'neck'
-  | 'carry';
+  | 'carry'
+  | 'conditioning'
+  | 'mobility';
 
 export type WeekVersion = 'W1' | 'W2' | 'W3' | 'W4';
 export type CycleWeek =
@@ -126,6 +128,7 @@ export interface UserProfile {
   scSchedule?: SCSchedule
   trainingLevel?: TrainingLevel
   seasonMode?: SeasonMode
+  rehabInjury?: RehabInjury
 }
 
 export type ExerciseMetricType = 'load_reps' | 'reps' | 'seconds' | 'meters';
@@ -146,7 +149,18 @@ export interface Exercise {
   defaultNotes?: string;
 }
 
-export type SessionType = 'UPPER' | 'LOWER' | 'FULL';
+export type SessionType = 'UPPER' | 'LOWER' | 'FULL' | 'CONDITIONING' | 'RECOVERY';
+
+export type RehabZone = 'upper' | 'lower'
+export type RehabPhase = 1 | 2 | 3
+
+export interface RehabInjury {
+  type?: Contra
+  zone: RehabZone
+  phase: RehabPhase
+  startDate: string
+  phaseStartDate: string
+}
 export type FatigueStatus = 'OK' | 'FATIGUE';
 
 export interface SessionLog {
@@ -219,5 +233,7 @@ export interface CalendarEvent {
   opponent_code?: string // Code club FFR (ex: '4207Y') pour résolution logo
   is_home?: boolean
   notes?: string
+  rpe?: number           // RPE 1-10 du match (pour ACWR)
+  duration_min?: number  // Durée en minutes (pour ACWR)
   created_at?: string
 }

@@ -1,8 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react'
+import {
+  ChevronLeft, ChevronRight, CheckCircle2,
+  TrendingUp, Bot, Calendar, Check,
+} from 'lucide-react'
+import { RugbyForgeLogo } from '../components/RugbyForgeLogo'
 import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
+import { posthog } from '../services/analytics/posthog'
 import type { UserProfile, Equipment, Contra, DayOfWeek, ClubSchedule, SCSchedule, TrainingLevel, SeasonMode } from '../types/training'
 import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
 import { GymDaySelector } from '../components/GymDaySelector'
@@ -14,15 +19,16 @@ type PositionValue = NonNullable<UserProfile['position']>
 // ─── Constants ────────────────────────────────────────────────
 
 const POSITIONS: { value: PositionValue; label: string; sub: string; emoji: string }[] = [
-  { value: 'FRONT_ROW',   label: 'Première ligne',  sub: 'Pilier, Talonneur',       emoji: '🐂' },
-  { value: 'SECOND_ROW',  label: 'Deuxième ligne',  sub: 'Verrouilleur',             emoji: '🗼' },
-  { value: 'BACK_ROW',    label: 'Troisième ligne', sub: 'Flanker, Numéro 8',        emoji: '⚡' },
-  { value: 'HALF_BACKS',  label: 'Demi',            sub: 'Demi de mêlée / d\'ouv.', emoji: '🎯' },
-  { value: 'CENTERS',     label: 'Centre',          sub: '12 / 13',                  emoji: '🛡️' },
-  { value: 'BACK_THREE',  label: 'Arrière / Ailier',sub: '11, 14, 15',              emoji: '🚀' },
+  { value: 'FRONT_ROW',   label: 'Première ligne',   sub: 'Pilier · Talonneur',      emoji: '🐂' },
+  { value: 'SECOND_ROW',  label: 'Deuxième ligne',   sub: 'Verrouilleur',             emoji: '🗼' },
+  { value: 'BACK_ROW',    label: 'Troisième ligne',  sub: 'Flanker · Numéro 8',      emoji: '⚡' },
+  { value: 'HALF_BACKS',  label: 'Demi',             sub: "Mêlée · Ouverture",       emoji: '🎯' },
+  { value: 'CENTERS',     label: 'Centre',           sub: '12 / 13',                  emoji: '🛡️' },
+  { value: 'BACK_THREE',  label: 'Arrière / Ailier', sub: '11 · 14 · 15',            emoji: '🚀' },
 ]
 
-const EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string; emoji: string }[] = [
+const EQUIPMENT_OPTIONS: { value: Equipment; label: string; emoji: string }[] = [
+  { value: 'none',         label: 'Poids du corps',            emoji: '🤸' },
   { value: 'barbell',      label: 'Barre olympique',           emoji: '🏋️' },
   { value: 'dumbbell',     label: 'Haltères',                  emoji: '💪' },
   { value: 'bench',        label: 'Banc de musculation',       emoji: '🪑' },
@@ -34,22 +40,22 @@ const EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string; emo
   { value: 'machine',      label: 'Machines guidées',          emoji: '⚙️' },
   { value: 'ghd',          label: 'GHD',                       emoji: '🔩' },
   { value: 'tbar_row',     label: 'T-Bar Row',                 emoji: '🔧' },
-  { value: 'sprint_track', label: 'Piste / Gazon synthétique', emoji: '🏃' },
+  { value: 'sprint_track', label: 'Piste / Gazon',             emoji: '🏃' },
   { value: 'ab_wheel',     label: 'Ab Wheel',                  emoji: '⭕' },
 ]
 
-const INJURY_OPTIONS: { value: Contra; label: string; emoji: string }[] = [
-  { value: 'shoulder_pain', label: 'Épaule',       emoji: '🦾' },
-  { value: 'knee_pain',     label: 'Genou',         emoji: '🦵' },
-  { value: 'low_back_pain', label: 'Bas du dos',    emoji: '🔙' },
-  { value: 'neck_pain',     label: 'Nuque',         emoji: '🏈' },
-  { value: 'elbow_pain',    label: 'Coude',         emoji: '💥' },
-  { value: 'wrist_pain',    label: 'Poignet',       emoji: '🤜' },
-  { value: 'groin_pain',    label: 'Aine',          emoji: '⚠️' },
-  { value: 'ankle_pain',    label: 'Cheville',      emoji: '🦶' },
-]
+const ALL_EQUIPMENT_VALUES: Equipment[] = EQUIPMENT_OPTIONS.map((o) => o.value)
 
-// ─── Club Schedule constants ──────────────────────────────────
+const INJURY_OPTIONS: { value: Contra; label: string }[] = [
+  { value: 'shoulder_pain', label: 'Épaule' },
+  { value: 'knee_pain',     label: 'Genou' },
+  { value: 'low_back_pain', label: 'Bas du dos' },
+  { value: 'neck_pain',     label: 'Nuque' },
+  { value: 'elbow_pain',    label: 'Coude' },
+  { value: 'wrist_pain',    label: 'Poignet' },
+  { value: 'groin_pain',    label: 'Aine' },
+  { value: 'ankle_pain',    label: 'Cheville' },
+]
 
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
   { day: 1, label: 'Lundi',    short: 'L' },
@@ -64,17 +70,15 @@ const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
 const MATCH_DAY_OPTIONS: { day: DayOfWeek | null; label: string }[] = [
   { day: 6,    label: 'Samedi' },
   { day: 0,    label: 'Dimanche' },
-  { day: null, label: 'Pas de jour fixe' },
+  { day: null, label: 'Variable' },
 ]
 
 const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 
-// 3 niveaux d'entraînement
 const TRAINING_LEVELS: {
   value: TrainingLevel
   label: string
   sub: string
-  emoji: string
   details: string
   legacyLevel: UserProfile['level']
 }[] = [
@@ -82,7 +86,6 @@ const TRAINING_LEVELS: {
     value: 'starter',
     label: 'Débutant',
     sub: 'Je découvre la musculation',
-    emoji: '🌱',
     details: 'Poids du corps & élastiques — progression simple',
     legacyLevel: 'beginner',
   },
@@ -90,7 +93,6 @@ const TRAINING_LEVELS: {
     value: 'builder',
     label: 'Intermédiaire',
     sub: "J'ai une base, je veux progresser",
-    emoji: '💪',
     details: 'Haltères & supersets — séances optimisées',
     legacyLevel: 'intermediate',
   },
@@ -98,17 +100,15 @@ const TRAINING_LEVELS: {
     value: 'performance',
     label: 'Avancé',
     sub: 'Je cherche la performance maximale',
-    emoji: '🏆',
     details: 'Barre + blocs de contraste — transfert rugby direct',
     legacyLevel: 'intermediate',
   },
 ]
 
-// Modes saison
 const SEASON_MODES: { value: SeasonMode; label: string; sub: string; emoji: string }[] = [
-  { value: 'in_season',  label: 'Saison',        sub: 'Programme Force → Puissance',        emoji: '⚡' },
-  { value: 'off_season', label: 'Inter-saison',   sub: 'Hypertrophie & reconstruction',      emoji: '🌿' },
-  { value: 'pre_season', label: 'Pré-saison',     sub: 'Force-Puissance & réathlétisation', emoji: '🔥' },
+  { value: 'in_season',  label: 'Saison',       sub: 'Force → Puissance',           emoji: '⚡' },
+  { value: 'off_season', label: 'Inter-saison',  sub: 'Hypertrophie',                emoji: '🌿' },
+  { value: 'pre_season', label: 'Pré-saison',    sub: 'Réathlétisation',             emoji: '🔥' },
 ]
 
 // ─── BMI helper ───────────────────────────────────────────────
@@ -119,13 +119,29 @@ function calcBmi(heightCm: number, weightKg: number): number {
 }
 
 function bmiLabel(bmi: number, position: PositionValue | null): string {
-  // Seuils adaptés rugby (IMC élevé normal chez avants)
   const isForward = position === 'FRONT_ROW' || position === 'SECOND_ROW' || position === 'BACK_ROW'
   if (bmi < 20) return 'Sous le poids de forme'
   if (bmi < 24) return isForward ? 'Plutôt léger pour ton poste' : 'Morphologie optimale'
   if (bmi < 27) return isForward ? 'Morphologie adéquate' : 'Légèrement au-dessus'
   if (bmi < 31) return isForward ? 'Morphologie optimale pour un avant' : 'Au-dessus de la norme'
   return isForward ? 'Gabarit de gros avant' : 'Surcharge à surveiller'
+}
+
+// ─── Shared UI atoms ──────────────────────────────────────────
+
+function StepTitle({ title, sub }: { title: string; sub: string }) {
+  return (
+    <div className="space-y-1 pb-1">
+      <h1 className="text-2xl font-black tracking-tight text-white">{title}</h1>
+      <p className="text-sm text-white/50 leading-relaxed">{sub}</p>
+    </div>
+  )
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs font-black text-white/40 uppercase tracking-widest">{children}</p>
+  )
 }
 
 // ─── Component ────────────────────────────────────────────────
@@ -137,6 +153,7 @@ export function OnboardingPage() {
 
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
+  const [showWelcome, setShowWelcome] = useState(true)
   const [step, setStep] = useState(0)
   const [position, setPosition] = useState<PositionValue | null>(null)
   const [trainingLevel, setTrainingLevel] = useState<TrainingLevel | null>(null)
@@ -145,7 +162,7 @@ export function OnboardingPage() {
   const [equipment, setEquipment] = useState<Set<Equipment>>(new Set())
   const [clubDays, setClubDays] = useState<Set<DayOfWeek>>(new Set())
   const [clubDayTimes, setClubDayTimes] = useState<Record<number, string>>({})
-  const [matchDay, setMatchDay] = useState<DayOfWeek | null | undefined>(undefined) // undefined = not set yet
+  const [matchDay, setMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
   const [gymMode, setGymMode] = useState<'auto' | 'manual'>('auto')
   const [manualGymDays, setManualGymDays] = useState<Set<DayOfWeek>>(new Set())
   const [scSchedule, setScSchedule] = useState<SCSchedule | undefined>(undefined)
@@ -159,7 +176,7 @@ export function OnboardingPage() {
   const toggleEquipment = (eq: Equipment) => {
     setEquipment((prev) => {
       const next = new Set(prev)
-      next.has(eq) ? next.delete(eq) : next.add(eq)
+      if (next.has(eq)) { next.delete(eq) } else { next.add(eq) }
       return next
     })
   }
@@ -167,7 +184,7 @@ export function OnboardingPage() {
   const toggleInjury = (inj: Contra) => {
     setInjuries((prev) => {
       const next = new Set(prev)
-      next.has(inj) ? next.delete(inj) : next.add(inj)
+      if (next.has(inj)) { next.delete(inj) } else { next.add(inj) }
       return next
     })
   }
@@ -181,10 +198,7 @@ export function OnboardingPage() {
   const canNext = () => {
     if (step === 0) return position !== null
     if (step === 1) return trainingLevel !== null && sessions !== null
-    if (step === 2) return equipment.size > 0
-    // Step 3 (Planning): always allow — "Passer" button handles skip
-    if (step === 3) return true
-    if (step === 5) return validHeight && validWeight
+    // Équipement et morphologie sont optionnels
     return true
   }
 
@@ -213,8 +227,8 @@ export function OnboardingPage() {
 
   const handleFinish = () => {
     const clubSchedule = buildClubSchedule()
-
     const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
+    const finalEquipment = equipment.size > 0 ? Array.from(equipment) : ['none' as Equipment]
     updateProfile({
       position: position!,
       rugbyPosition: position!,
@@ -222,173 +236,311 @@ export function OnboardingPage() {
       trainingLevel: trainingLevel!,
       seasonMode,
       weeklySessions: sessions!,
-      equipment: Array.from(equipment),
+      equipment: finalEquipment,
       injuries: Array.from(injuries),
       heightCm: validHeight ? parsedHeight : undefined,
       weightKg: validWeight ? parsedWeight : undefined,
       clubSchedule,
       scSchedule,
     })
+    // Semaine initiale selon le mode saison : off_season → H1, sinon W1
+    const initialWeek = seasonMode === 'off_season' ? 'H1' : 'W1'
+    window.localStorage.setItem('rugbyprep.week.v1', initialWeek)
     if (userId) markOnboardingComplete(userId)
+    posthog.capture('onboarding_completed', { position, trainingLevel, seasonMode, sessions })
     navigate('/week', { replace: true })
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 font-sans text-slate-900 flex flex-col">
+  // ─── Écran de bienvenue ───────────────────────────────────────
 
-      {/* Progress bar */}
-      <div className="h-1 bg-gray-100 w-full">
+  if (showWelcome) {
+    return (
+      <div className="min-h-screen bg-[#1a100c] flex flex-col justify-center px-6 relative overflow-hidden">
+        {/* Dot grid déco */}
+        <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+        {/* Orbe déco */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#1a5f3f] opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#ff6b35] opacity-10 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
+
+        <div className="max-w-sm mx-auto w-full space-y-10 py-12 relative">
+
+          {/* Wordmark */}
+          <div className="space-y-4">
+            <RugbyForgeLogo size="hero" />
+            <p className="text-2xl font-black text-white leading-tight tracking-tight">
+              Ton coach physique rugby
+            </p>
+            <p className="text-white/50 text-sm leading-relaxed">
+              Programme personnalisé, suivi de charge, coach IA — tout ce qu'il faut pour performer sur le terrain.
+            </p>
+          </div>
+
+          {/* 3 bénéfices */}
+          <div className="space-y-4">
+            {[
+              {
+                icon: <TrendingUp className="w-5 h-5 text-[#ff6b35]" />,
+                bg: 'bg-white/5 border border-white/10',
+                title: 'Programme adapté à ton poste',
+                desc: 'Pilier, flanker, arrière — chaque position a ses exigences physiques.',
+              },
+              {
+                icon: <Calendar className="w-5 h-5 text-[#ff6b35]" />,
+                bg: 'bg-white/5 border border-white/10',
+                title: 'Synchronisé avec ton club',
+                desc: 'Séances S&C placées intelligemment entre entraînements et matchs.',
+              },
+              {
+                icon: <Bot className="w-5 h-5 text-[#ff6b35]" />,
+                bg: 'bg-white/5 border border-white/10',
+                title: 'Coach IA disponible 24/7',
+                desc: 'Nutrition, récupération, gestion de la fatigue.',
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/8">
+                <div className="w-9 h-9 rounded-xl bg-white/8 flex items-center justify-center flex-shrink-0">
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white leading-snug">{item.title}</p>
+                  <p className="text-xs text-white/45 mt-0.5 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="space-y-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setShowWelcome(false)}
+              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
+            >
+              Créer mon programme
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <p className="text-center text-white/35 text-xs">Prend 2 minutes · Gratuit</p>
+          </div>
+
+        </div>
+      </div>
+    )
+  }
+
+  // ─── Formulaire multi-étapes ──────────────────────────────────
+
+  return (
+    <div className="min-h-screen bg-[#1a100c] font-sans flex flex-col relative overflow-hidden">
+      {/* Dot grid déco */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+
+      {/* Barre de progression */}
+      <div className="h-0.5 bg-white/10 w-full relative">
         <div
-          className="h-full bg-rose-500 transition-all duration-500"
+          className="h-full bg-[#ff6b35] transition-all duration-500 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
 
       {/* Header */}
-      <header className="px-6 py-4 flex items-center gap-3">
-        {step > 0 && (
+      <header className="px-5 py-3 flex items-center gap-2 bg-[#1a100c]/95 backdrop-blur sticky top-0 z-10 relative">
+        {step > 0 ? (
           <button
             type="button"
             onClick={() => setStep((s) => s - 1)}
-            className="p-2 -ml-2 rounded-xl hover:bg-gray-100 transition-colors"
+            className="w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-white/50 hover:bg-white/10 transition-colors"
           >
-            <ChevronLeft className="w-5 h-5 text-slate-400" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
+        ) : (
+          <div className="w-9 h-9" />
         )}
-        <div className="flex-1">
-          <p className="text-xs font-bold tracking-widest text-rose-600 uppercase italic">RugbyPrep</p>
-          <p className="text-xs text-slate-400">{step + 1} / {STEPS.length}</p>
+        <div className="flex-1 text-center">
+          <p className="text-[10px] font-black tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
+        </div>
+        <div className="w-9 text-right">
+          <span className="text-[11px] font-bold text-white/40">{step + 1}/{STEPS.length}</span>
         </div>
       </header>
 
-      {/* Content */}
-      <main className="flex-1 px-6 pt-2 pb-32 max-w-md mx-auto w-full space-y-6">
+      {/* Contenu */}
+      <main className="flex-1 px-5 pt-4 pb-36 max-w-md mx-auto w-full space-y-7 relative">
 
-        {/* ─── Step 0 : Position ─── */}
+        {/* ── Step 0 : Position ── */}
         {step === 0 && (
-          <div className="space-y-5">
-            <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Tu joues où ?</h1>
-              <p className="text-sm text-slate-400 mt-1">Ton programme est adapté à ton poste.</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {POSITIONS.map((pos) => (
-                <button
-                  key={pos.value}
-                  type="button"
-                  onClick={() => setPosition(pos.value)}
-                  className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all ${
-                    position === pos.value
-                      ? 'border-rose-500 bg-rose-50'
-                      : 'border-gray-100 bg-white hover:border-gray-200'
-                  }`}
-                >
-                  <span className="text-2xl">{pos.emoji}</span>
-                  <span className="text-sm font-black text-slate-900 leading-tight">{pos.label}</span>
-                  <span className="text-[10px] text-slate-400 leading-tight">{pos.sub}</span>
-                </button>
-              ))}
+          <div className="space-y-6">
+            <StepTitle title="Tu joues où ?" sub="Ton programme est calibré selon ton poste." />
+            <div className="grid grid-cols-2 gap-2.5">
+              {POSITIONS.map((pos) => {
+                const selected = position === pos.value
+                return (
+                  <button
+                    key={pos.value}
+                    type="button"
+                    onClick={() => setPosition(pos.value)}
+                    className={`relative flex flex-col items-start gap-2 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
+                      selected
+                        ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    {selected && (
+                      <span className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full bg-[#ff6b35] flex items-center justify-center">
+                        <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                      </span>
+                    )}
+                    <span className="text-2xl leading-none">{pos.emoji}</span>
+                    <div>
+                      <p className={`text-sm font-black leading-tight ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                        {pos.label}
+                      </p>
+                      <p className="text-[10px] text-white/40 mt-0.5 leading-tight">{pos.sub}</p>
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </div>
         )}
 
-        {/* ─── Step 1 : Niveau + Séances ─── */}
+        {/* ── Step 1 : Niveau + Séances ── */}
         {step === 1 && (
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Ton profil</h1>
-              <p className="text-sm text-slate-400 mt-1">Pour calibrer les charges et volumes.</p>
-            </div>
+          <div className="space-y-7">
+            <StepTitle title="Ton profil" sub="Pour calibrer les charges et les volumes." />
 
+            {/* Niveau */}
             <div className="space-y-3">
-              <p className="text-xs font-black text-slate-500 uppercase tracking-wide">Niveau en salle</p>
-              <div className="flex flex-col gap-3">
-                {TRAINING_LEVELS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setTrainingLevel(opt.value)}
-                    className={`flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all ${
-                      trainingLevel === opt.value
-                        ? 'border-rose-500 bg-rose-50'
-                        : 'border-gray-100 bg-white hover:border-gray-200'
-                    }`}
-                  >
-                    <span className="text-2xl flex-shrink-0">{opt.emoji}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-black text-slate-900">{opt.label}</p>
-                      <p className="text-[10px] text-slate-400 leading-tight">{opt.sub}</p>
-                      <p className={`text-[10px] mt-0.5 leading-tight ${trainingLevel === opt.value ? 'text-rose-600' : 'text-slate-300'}`}>
-                        {opt.details}
-                      </p>
-                    </div>
-                    {trainingLevel === opt.value && (
-                      <CheckCircle2 className="w-5 h-5 text-rose-500 flex-shrink-0" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {trainingLevel !== 'starter' && (
-              <div className="space-y-3">
-                <p className="text-xs font-black text-slate-500 uppercase tracking-wide">Période de saison</p>
-                <div className="flex gap-2">
-                  {SEASON_MODES.map((opt) => (
+              <SectionLabel>Niveau en salle</SectionLabel>
+              <div className="space-y-2.5">
+                {TRAINING_LEVELS.map((opt) => {
+                  const selected = trainingLevel === opt.value
+                  return (
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => setSeasonMode(opt.value)}
-                      className={`flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 text-center transition-all ${
-                        seasonMode === opt.value
-                          ? 'border-rose-500 bg-rose-50'
-                          : 'border-gray-100 bg-white hover:border-gray-200'
+                      onClick={() => setTrainingLevel(opt.value)}
+                      className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
+                        selected
+                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
                       }`}
                     >
-                      <span className="text-lg">{opt.emoji}</span>
-                      <span className={`text-[9px] font-black leading-tight ${seasonMode === opt.value ? 'text-rose-700' : 'text-slate-500'}`}>
-                        {opt.label}
-                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                          {opt.label}
+                        </p>
+                        <p className="text-xs text-white/40 mt-0.5">{opt.sub}</p>
+                        {selected && (
+                          <p className="text-[10px] text-[#ff6b35]/70 mt-1 font-bold">{opt.details}</p>
+                        )}
+                      </div>
+                      {selected && (
+                        <CheckCircle2 className="w-5 h-5 text-[#ff6b35] flex-shrink-0" />
+                      )}
                     </button>
-                  ))}
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Période de saison — masquée pour les starters */}
+            {trainingLevel !== 'starter' && (
+              <div className="space-y-3">
+                <div>
+                  <SectionLabel>Période de saison</SectionLabel>
+                  <p className="text-[10px] text-white/30 mt-0.5">Impacte le type de programme généré</p>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {SEASON_MODES.map((opt) => {
+                    const selected = seasonMode === opt.value
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setSeasonMode(opt.value)}
+                        className={`flex flex-col items-center gap-1.5 py-3.5 px-2 rounded-2xl border-2 text-center transition-all active:scale-[.97] ${
+                          selected
+                            ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                            : 'border-white/10 bg-white/5 hover:border-white/20'
+                        }`}
+                      >
+                        <span className="text-xl leading-none">{opt.emoji}</span>
+                        <span className={`text-[10px] font-black leading-tight ${selected ? 'text-[#ff6b35]' : 'text-white/60'}`}>
+                          {opt.label}
+                        </span>
+                        <span className={`text-[9px] leading-tight ${selected ? 'text-[#ff6b35]/60' : 'text-white/30'}`}>
+                          {opt.sub}
+                        </span>
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             )}
 
+            {/* Séances par semaine */}
             <div className="space-y-3">
-              <p className="text-xs font-black text-slate-500 uppercase tracking-wide">Séances par semaine</p>
-              <div className="grid grid-cols-2 gap-3">
+              <SectionLabel>Séances par semaine</SectionLabel>
+              <div className="grid grid-cols-2 gap-2.5">
                 {([
                   { value: 2 as const, label: '2 séances', sub: 'Lundi + Jeudi' },
                   { value: 3 as const, label: '3 séances', sub: 'Lun + Mer + Ven' },
-                ] as const).map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setSessions(opt.value)}
-                    className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all ${
-                      sessions === opt.value
-                        ? 'border-rose-500 bg-rose-50'
-                        : 'border-gray-100 bg-white hover:border-gray-200'
-                    }`}
-                  >
-                    <span className="text-sm font-black text-slate-900">{opt.label}</span>
-                    <span className="text-[10px] text-slate-400">{opt.sub}</span>
-                  </button>
-                ))}
+                ] as const).map((opt) => {
+                  const selected = sessions === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setSessions(opt.value)}
+                      className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
+                        selected
+                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                      }`}
+                    >
+                      <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                        {opt.label}
+                      </p>
+                      <p className="text-[10px] text-white/40">{opt.sub}</p>
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
         )}
 
-        {/* ─── Step 2 : Équipement ─── */}
+        {/* ── Step 2 : Équipement ── */}
         {step === 2 && (
           <div className="space-y-5">
-            <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Ton équipement</h1>
-              <p className="text-sm text-slate-400 mt-1">Sélectionne tout ce que tu as accès en salle.</p>
+            <StepTitle
+              title="Ton équipement"
+              sub="Sélectionne ce à quoi tu as accès. Rien = poids du corps."
+            />
+
+            {/* Barre compteur + toggle all */}
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-white/40">
+                {equipment.size === 0
+                  ? 'Aucun sélectionné'
+                  : `${equipment.size} sélectionné${equipment.size > 1 ? 's' : ''}`}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  if (equipment.size === ALL_EQUIPMENT_VALUES.length) {
+                    setEquipment(new Set())
+                  } else {
+                    setEquipment(new Set(ALL_EQUIPMENT_VALUES))
+                  }
+                }}
+                className="text-xs font-black text-[#ff6b35] hover:text-[#ff6b35]/80 transition-colors"
+              >
+                {equipment.size === ALL_EQUIPMENT_VALUES.length ? 'Tout désélectionner' : 'Tout sélectionner'}
+              </button>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+
+            <div className="grid grid-cols-2 gap-2.5">
               {EQUIPMENT_OPTIONS.map((eq) => {
                 const selected = equipment.has(eq.value)
                 return (
@@ -396,86 +548,98 @@ export function OnboardingPage() {
                     key={eq.value}
                     type="button"
                     onClick={() => toggleEquipment(eq.value)}
-                    className={`flex items-center gap-3 p-4 rounded-2xl border-2 text-left transition-all ${
+                    className={`relative flex items-center gap-3 p-3.5 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                       selected
-                        ? 'border-rose-500 bg-rose-50'
-                        : 'border-gray-100 bg-white hover:border-gray-200'
+                        ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                        : 'border-white/10 bg-white/5 hover:border-white/20'
                     }`}
                   >
-                    <span className="text-xl flex-shrink-0">{eq.emoji}</span>
-                    <span className={`text-sm font-bold leading-tight ${selected ? 'text-rose-700' : 'text-slate-700'}`}>
+                    <span className="text-lg flex-shrink-0 leading-none">{eq.emoji}</span>
+                    <span className={`text-sm font-bold leading-tight flex-1 ${selected ? 'text-[#ff6b35]' : 'text-white/80'}`}>
                       {eq.label}
                     </span>
+                    {selected && (
+                      <span className="w-4 h-4 rounded-full bg-[#ff6b35] flex items-center justify-center flex-shrink-0">
+                        <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                      </span>
+                    )}
                   </button>
                 )
               })}
             </div>
-            {equipment.size === 0 && (
-              <p className="text-xs text-amber-600 text-center">Sélectionne au moins un équipement</p>
-            )}
           </div>
         )}
 
-        {/* ─── Step 3 : Planning club ─── */}
+        {/* ── Step 3 : Planning club ── */}
         {step === 3 && (
-          <div className="space-y-5">
-            <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Ton planning club</h1>
-              <p className="text-sm text-slate-400 mt-1">On va adapter tes séances muscu à ton agenda.</p>
-            </div>
+          <div className="space-y-6">
+            <StepTitle
+              title="Ton planning club"
+              sub="On adapte tes séances muscu à ton agenda. Optionnel."
+            />
 
+            {/* Jours club */}
             <div className="space-y-3">
-              <p className="text-xs font-black text-slate-500 uppercase tracking-wide">Jours d'entraînement club</p>
-              <div className="grid grid-cols-4 gap-2">
+              <SectionLabel>Jours d'entraînement club</SectionLabel>
+              <div className="grid grid-cols-7 gap-1.5">
                 {CLUB_DAYS_OPTIONS.map((opt) => {
                   const selected = clubDays.has(opt.day)
                   return (
-                    <div key={opt.day} className="space-y-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setClubDays((prev) => {
-                            const next = new Set(prev)
-                            next.has(opt.day) ? next.delete(opt.day) : next.add(opt.day)
-                            return next
-                          })
-                        }}
-                        className={`w-full py-3 rounded-2xl border-2 text-xs font-black transition-all ${
-                          selected
-                            ? 'border-rose-500 bg-rose-50 text-rose-700'
-                            : 'border-gray-100 bg-white text-slate-500 hover:border-gray-200'
-                        }`}
-                      >
+                    <button
+                      key={opt.day}
+                      type="button"
+                      onClick={() => {
+                        setClubDays((prev) => {
+                          const next = new Set(prev)
+                          if (next.has(opt.day)) { next.delete(opt.day) } else { next.add(opt.day) }
+                          return next
+                        })
+                      }}
+                      className={`aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all text-center active:scale-[.94] ${
+                        selected
+                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                      }`}
+                    >
+                      <span className={`text-[11px] font-black ${selected ? 'text-[#ff6b35]' : 'text-white/60'}`}>
                         {opt.short}
-                        <span className="block text-[9px] font-bold mt-0.5 opacity-70">{opt.label.slice(0, 3)}</span>
-                      </button>
-                      {selected && (
-                        <input
-                          type="time"
-                          value={clubDayTimes[opt.day] ?? ''}
-                          onChange={(e) => setClubDayTimes((prev) => ({ ...prev, [opt.day]: e.target.value }))}
-                          className="w-full text-[10px] rounded-xl border border-gray-100 px-1.5 py-1 text-slate-500 bg-white focus:outline-none focus:border-rose-300"
-                          placeholder="HH:MM"
-                        />
-                      )}
-                    </div>
+                      </span>
+                    </button>
                   )
                 })}
               </div>
+              {/* Horaires sous les jours sélectionnés */}
+              {clubDays.size > 0 && (
+                <div className="grid grid-cols-2 gap-2">
+                  {CLUB_DAYS_OPTIONS.filter((opt) => clubDays.has(opt.day)).map((opt) => (
+                    <div key={opt.day} className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-white/50 w-8 flex-shrink-0">{opt.label.slice(0, 3)}</span>
+                      <input
+                        type="time"
+                        value={clubDayTimes[opt.day] ?? ''}
+                        onChange={(e) => setClubDayTimes((prev) => ({ ...prev, [opt.day]: e.target.value }))}
+                        className="flex-1 text-xs rounded-xl border-2 border-white/10 bg-white/5 px-2 py-1.5 text-white/80 focus:outline-none focus:border-[#ff6b35] transition-colors [color-scheme:dark]"
+                        placeholder="HH:MM"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
+            {/* Jour de match */}
             <div className="space-y-3">
-              <p className="text-xs font-black text-slate-500 uppercase tracking-wide">Jour de match habituel</p>
-              <div className="flex gap-2 flex-wrap">
+              <SectionLabel>Jour de match habituel</SectionLabel>
+              <div className="flex gap-2">
                 {MATCH_DAY_OPTIONS.map((opt) => (
                   <button
                     key={String(opt.day)}
                     type="button"
                     onClick={() => setMatchDay(opt.day)}
-                    className={`px-4 py-2.5 rounded-2xl text-xs font-black border-2 transition-all ${
+                    className={`flex-1 py-2.5 rounded-xl text-xs font-black border-2 transition-all active:scale-[.97] ${
                       matchDay === opt.day
-                        ? 'border-rose-500 bg-rose-50 text-rose-700'
-                        : 'border-gray-100 bg-white text-slate-500 hover:border-gray-200'
+                        ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-[#ff6b35]'
+                        : 'border-white/10 bg-white/5 text-white/60 hover:border-white/20'
                     }`}
                   >
                     {opt.label}
@@ -484,49 +648,43 @@ export function OnboardingPage() {
               </div>
             </div>
 
-            {/* ─── Séances muscu : suggestion + sélecteur manuel ─── */}
+            {/* Séances muscu — si jours club sélectionnés */}
             {clubDays.size > 0 && sessions !== null && (
-              <div className="space-y-3 pt-1 border-t border-gray-100">
+              <div className="space-y-3 pt-4 border-t border-white/10">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-black text-slate-500 uppercase tracking-wide">Séances muscu</p>
-                  <div className="flex gap-1 bg-gray-100 rounded-2xl p-0.5">
-                    <button
-                      type="button"
-                      onClick={() => setGymMode('auto')}
-                      className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                        gymMode === 'auto' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'
-                      }`}
-                    >
-                      Auto
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setGymMode('manual')
-                        if (manualGymDays.size === 0) {
-                          const cs: ClubSchedule = {
-                            clubDays: Array.from(clubDays).map((d) => ({ day: d })),
-                            matchDay: matchDay ?? undefined,
+                  <SectionLabel>Séances muscu</SectionLabel>
+                  <div className="flex gap-1 bg-white/10 rounded-xl p-0.5">
+                    {(['auto', 'manual'] as const).map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => {
+                          if (mode === 'manual' && manualGymDays.size === 0) {
+                            const cs: ClubSchedule = {
+                              clubDays: Array.from(clubDays).map((d) => ({ day: d })),
+                              matchDay: matchDay ?? undefined,
+                            }
+                            const auto = computeSCSchedule(cs, sessions)
+                            setManualGymDays(new Set(auto.sessions.map((s) => s.day)))
                           }
-                          const auto = computeSCSchedule(cs, sessions)
-                          setManualGymDays(new Set(auto.sessions.map((s) => s.day)))
-                        }
-                      }}
-                      className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                        gymMode === 'manual' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'
-                      }`}
-                    >
-                      Manuel
-                    </button>
+                          setGymMode(mode)
+                        }}
+                        className={`px-3 py-1 rounded-[10px] text-[10px] font-black transition-all ${
+                          gymMode === mode ? 'bg-white/20 text-white shadow-sm' : 'text-white/40'
+                        }`}
+                      >
+                        {mode === 'auto' ? 'Auto' : 'Manuel'}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
                 {gymMode === 'auto' && (
-                  <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-100">
-                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-wide mb-1">
+                  <div className="p-3.5 rounded-2xl bg-[#1a5f3f]/15 border border-[#1a5f3f]/30">
+                    <p className="text-[10px] font-black text-[#1a5f3f] uppercase tracking-wide mb-1">
                       Suggestion calculée
                     </p>
-                    <p className="text-sm font-black text-emerald-800">
+                    <p className="text-sm font-black text-white">
                       {(() => {
                         const cs: ClubSchedule = {
                           clubDays: Array.from(clubDays).map((d) => ({ day: d })),
@@ -537,8 +695,8 @@ export function OnboardingPage() {
                           .join(' · ')
                       })()}
                     </p>
-                    <p className="text-[10px] text-emerald-600 mt-1">
-                      Basé sur ton planning et les bonnes pratiques de récupération
+                    <p className="text-[10px] text-white/40 mt-1">
+                      Basé sur tes entraînements club et les règles de récupération
                     </p>
                   </div>
                 )}
@@ -556,27 +714,17 @@ export function OnboardingPage() {
                 )}
               </div>
             )}
-
-            <button
-              type="button"
-              onClick={() => setStep((s) => s + 1)}
-              className="w-full py-3 rounded-2xl border border-gray-200 text-sm font-bold text-slate-400 hover:border-gray-300 transition-colors"
-            >
-              Pas d'entraînement club — passer
-            </button>
           </div>
         )}
 
-        {/* ─── Step 4 : Inconforts ─── */}
+        {/* ── Step 4 : Inconforts ── */}
         {step === 4 && (
-          <div className="space-y-5">
-            <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Zones sensibles ?</h1>
-              <p className="text-sm text-slate-400 mt-1">
-                Optionnel. L'app adapte les exercices et ajoute un prehab ciblé.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-6">
+            <StepTitle
+              title="Zones sensibles ?"
+              sub="Optionnel — l'app adapte les exercices et ajoute un prehab ciblé."
+            />
+            <div className="grid grid-cols-2 gap-2.5">
               {INJURY_OPTIONS.map((inj) => {
                 const selected = injuries.has(inj.value)
                 return (
@@ -584,43 +732,50 @@ export function OnboardingPage() {
                     key={inj.value}
                     type="button"
                     onClick={() => toggleInjury(inj.value)}
-                    className={`flex items-center gap-3 p-4 rounded-2xl border-2 text-left transition-all ${
+                    className={`flex items-center justify-between gap-3 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                       selected
-                        ? 'border-amber-400 bg-amber-50'
-                        : 'border-gray-100 bg-white hover:border-gray-200'
+                        ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                        : 'border-white/10 bg-white/5 hover:border-white/20'
                     }`}
                   >
-                    <span className="text-xl flex-shrink-0">{inj.emoji}</span>
-                    <span className={`text-sm font-bold ${selected ? 'text-amber-700' : 'text-slate-700'}`}>
+                    <span className={`text-sm font-bold ${selected ? 'text-[#ff6b35]' : 'text-white/80'}`}>
                       {inj.label}
                     </span>
+                    {selected && (
+                      <span className="w-4 h-4 rounded-full bg-[#ff6b35] flex items-center justify-center flex-shrink-0">
+                        <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                      </span>
+                    )}
                   </button>
                 )
               })}
             </div>
-            <button
-              type="button"
-              onClick={() => setStep((s) => s + 1)}
-              className="w-full py-3 rounded-2xl border border-gray-200 text-sm font-bold text-slate-400 hover:border-gray-300 transition-colors"
-            >
-              Aucun inconfort — passer
-            </button>
+
+            {injuries.size === 0 && (
+              <button
+                type="button"
+                onClick={() => setStep((s) => s + 1)}
+                className="w-full py-3 rounded-2xl border border-white/20 text-sm font-bold text-white/40 hover:border-white/30 hover:text-white/60 transition-all"
+              >
+                Aucun inconfort — passer
+              </button>
+            )}
           </div>
         )}
 
-        {/* ─── Step 5 : Morphologie ─── */}
+        {/* ── Step 5 : Morphologie ── */}
         {step === 5 && (
           <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Ta morphologie</h1>
-              <p className="text-sm text-slate-400 mt-1">
-                Permet de personnaliser les charges relatives et le suivi de composition.
-              </p>
-            </div>
+            <StepTitle
+              title="Ta morphologie"
+              sub="Optionnel — utilisé pour les baselines 1RM et l'IMC rugby."
+            />
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-500 uppercase tracking-wide">Taille (cm)</label>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-black text-white/40 uppercase tracking-wide">
+                  Taille (cm)
+                </label>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -629,15 +784,17 @@ export function OnboardingPage() {
                   value={heightCm}
                   onChange={(e) => setHeightCm(e.target.value)}
                   placeholder="182"
-                  className="w-full h-14 rounded-2xl border-2 border-gray-100 bg-white px-4 text-lg font-black text-slate-900 focus:outline-none focus:border-rose-400 transition-colors"
+                  className="w-full h-14 rounded-2xl border-2 border-white/10 bg-white/5 px-4 text-xl font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] transition-colors [color-scheme:dark]"
                 />
                 {heightCm && !validHeight && (
-                  <p className="text-[11px] text-rose-500">Entre 140 et 230 cm</p>
+                  <p className="text-[11px] text-rose-400">Entre 140 et 230 cm</p>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-500 uppercase tracking-wide">Poids (kg)</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-black text-white/40 uppercase tracking-wide">
+                  Poids (kg)
+                </label>
                 <input
                   type="number"
                   inputMode="decimal"
@@ -647,48 +804,60 @@ export function OnboardingPage() {
                   value={weightKg}
                   onChange={(e) => setWeightKg(e.target.value)}
                   placeholder="95"
-                  className="w-full h-14 rounded-2xl border-2 border-gray-100 bg-white px-4 text-lg font-black text-slate-900 focus:outline-none focus:border-rose-400 transition-colors"
+                  className="w-full h-14 rounded-2xl border-2 border-white/10 bg-white/5 px-4 text-xl font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] transition-colors [color-scheme:dark]"
                 />
                 {weightKg && !validWeight && (
-                  <p className="text-[11px] text-rose-500">Entre 40 et 200 kg</p>
+                  <p className="text-[11px] text-rose-400">Entre 40 et 200 kg</p>
                 )}
               </div>
             </div>
 
             {bmi && (
-              <div className="p-5 rounded-2xl bg-white border border-gray-100 space-y-1">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-1">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-black text-slate-900">{bmi.toFixed(1)}</span>
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">IMC</span>
+                  <span className="text-3xl font-black text-white leading-none">{bmi.toFixed(1)}</span>
+                  <span className="text-xs font-bold text-white/40 uppercase tracking-wide">IMC</span>
                 </div>
-                <p className="text-sm font-bold text-slate-600">{bmiLabel(bmi, position)}</p>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  L'IMC seul ne reflète pas la masse musculaire — il est utilisé uniquement comme indicateur de gabarit.
+                <p className="text-sm font-bold text-white/70">{bmiLabel(bmi, position)}</p>
+                <p className="text-[11px] text-white/40 mt-1 leading-relaxed">
+                  L'IMC seul ne reflète pas la masse musculaire — indicateur de gabarit uniquement.
                 </p>
               </div>
+            )}
+
+            {(!validHeight || !validWeight) && (
+              <button
+                type="button"
+                onClick={() => setStep((s) => s + 1)}
+                className="w-full py-3 rounded-2xl border border-white/20 text-sm font-bold text-white/40 hover:border-white/30 hover:text-white/60 transition-all"
+              >
+                Passer cette étape
+              </button>
             )}
           </div>
         )}
 
-        {/* ─── Step 6 : Résumé ─── */}
+        {/* ── Step 6 : Résumé ── */}
         {step === 6 && (
           <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">C'est parti !</h1>
-              <p className="text-sm text-slate-400 mt-1">Voici ton profil. Tu pourras le modifier à tout moment.</p>
-            </div>
+            <StepTitle
+              title="C'est parti !"
+              sub="Voici ton profil. Tu pourras le modifier à tout moment dans les réglages."
+            />
 
-            <div className="bg-white border border-gray-100 rounded-[2rem] divide-y divide-gray-50 overflow-hidden">
+            <div className="bg-white/5 border border-white/10 rounded-[1.75rem] overflow-hidden divide-y divide-white/10">
               <SummaryRow label="Poste" value={POSITIONS.find((p) => p.value === position)?.label ?? '–'} />
               <SummaryRow label="Niveau" value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
               <SummaryRow label="Période" value={SEASON_MODES.find((m) => m.value === seasonMode)?.label ?? '–'} />
-              <SummaryRow label="Séances / semaine" value={`${sessions} séances`} />
+              <SummaryRow label="Séances" value={`${sessions} / semaine`} />
               <SummaryRow
                 label="Équipement"
                 value={
-                  Array.from(equipment)
-                    .map((eq) => EQUIPMENT_OPTIONS.find((o) => o.value === eq)?.label ?? eq)
-                    .join(', ')
+                  equipment.size > 0
+                    ? Array.from(equipment)
+                        .map((eq) => EQUIPMENT_OPTIONS.find((o) => o.value === eq)?.label ?? eq)
+                        .join(', ')
+                    : 'Poids du corps'
                 }
               />
               {injuries.size > 0 && (
@@ -709,8 +878,8 @@ export function OnboardingPage() {
               )}
               {scSchedule && scSchedule.sessions.length > 0 && (
                 <SummaryRow
-                  label="Séances muscu"
-                  value={scSchedule.sessions.map((s) => DAY_LABELS[s.day]).join(' · ') + ' — basé sur ton planning'}
+                  label="Muscu"
+                  value={scSchedule.sessions.map((s) => DAY_LABELS[s.day]).join(' · ')}
                 />
               )}
             </div>
@@ -718,7 +887,7 @@ export function OnboardingPage() {
             <button
               type="button"
               onClick={handleFinish}
-              className="w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black uppercase tracking-wide flex items-center justify-center gap-2 transition-colors shadow-lg shadow-rose-900/20"
+              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
             >
               <CheckCircle2 className="w-5 h-5" />
               Voir mon programme
@@ -728,15 +897,15 @@ export function OnboardingPage() {
 
       </main>
 
-      {/* CTA flottant — masqué sur étapes avec leurs propres boutons */}
+      {/* ── CTA flottant principal (steps 0, 1, 2, 5) ── */}
       {step !== 3 && step !== 4 && step !== 6 && (
-        <div className="fixed bottom-0 left-0 right-0 px-6 pb-8 pt-4 bg-gradient-to-t from-gray-50 via-gray-50/90 to-transparent">
-          <div className="max-w-md mx-auto">
+        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-[#1a100c] via-[#1a100c]/95 to-transparent pointer-events-none">
+          <div className="max-w-md mx-auto pointer-events-auto">
             <button
               type="button"
               onClick={() => setStep((s) => s + 1)}
               disabled={!canNext()}
-              className="w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:opacity-30 disabled:cursor-not-allowed text-white font-black uppercase tracking-wide flex items-center justify-center gap-2 transition-all"
+              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
             >
               Suivant
               <ChevronRight className="w-4 h-4" />
@@ -745,14 +914,37 @@ export function OnboardingPage() {
         </div>
       )}
 
-      {/* CTA step 3 : Planning — bouton principal "Suivant" + "Passer" inline */}
+      {/* ── CTA step 3 : Planning ── */}
       {step === 3 && (
-        <div className="fixed bottom-0 left-0 right-0 px-6 pb-8 pt-4 bg-gradient-to-t from-gray-50 via-gray-50/90 to-transparent">
-          <div className="max-w-md mx-auto">
+        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-[#1a100c] via-[#1a100c]/95 to-transparent pointer-events-none">
+          <div className="max-w-md mx-auto space-y-2 pointer-events-auto">
             <button
               type="button"
               onClick={handleClubScheduleNext}
-              className="w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black uppercase tracking-wide flex items-center justify-center gap-2 transition-all"
+              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
+            >
+              Suivant
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setStep((s) => s + 1)}
+              className="w-full py-2.5 rounded-2xl text-sm font-bold text-white/40 hover:text-white/60 transition-colors text-center"
+            >
+              Pas d'entraînement club — passer
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── CTA step 4 : Inconforts ── */}
+      {step === 4 && injuries.size > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-[#1a100c] via-[#1a100c]/95 to-transparent pointer-events-none">
+          <div className="max-w-md mx-auto pointer-events-auto">
+            <button
+              type="button"
+              onClick={() => setStep((s) => s + 1)}
+              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
             >
               Suivant
               <ChevronRight className="w-4 h-4" />
@@ -765,13 +957,15 @@ export function OnboardingPage() {
   )
 }
 
-// ─── Helper ───────────────────────────────────────────────────
+// ─── SummaryRow ───────────────────────────────────────────────
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="px-5 py-4 flex items-start gap-3">
-      <span className="text-xs font-black text-slate-400 uppercase tracking-wide w-28 flex-shrink-0 pt-0.5">{label}</span>
-      <span className="text-sm font-bold text-slate-800 leading-relaxed">{value}</span>
+    <div className="px-5 py-4 flex items-start gap-4">
+      <span className="text-xs font-black text-white/40 uppercase tracking-wide w-24 flex-shrink-0 pt-0.5">
+        {label}
+      </span>
+      <span className="text-sm font-bold text-white/80 leading-relaxed flex-1">{value}</span>
     </div>
   )
 }

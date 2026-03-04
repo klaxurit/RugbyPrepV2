@@ -37,7 +37,9 @@ const FALLBACK_INTENTS: Record<
   hypertrophy: [],
   core: [],
   neck: ['core'],
-  carry: []
+  carry: [],
+  conditioning: [],
+  mobility: []
 };
 
 // Fallbacks "sécurité" : utilisés uniquement quand un intent requis est introuvable.
@@ -54,16 +56,20 @@ const SAFETY_FALLBACK_INTENTS: Record<
   hypertrophy: ['core', 'prehab', 'activation', 'neural', 'force', 'contrast'],
   core: [],
   neck: ['core'],
-  carry: ['core']
+  carry: ['core'],
+  conditioning: [],
+  mobility: []
 };
 
 const FINISHER_INTENTS: TrainingBlock['intent'][] = ['neck', 'core', 'carry'];
 const FOCUS_FILTERED_INTENTS: TrainingBlock['intent'][] = [
   'activation',
+  'prehab',
   'neural',
   'contrast',
   'force',
-  'hypertrophy'
+  'hypertrophy',
+  'conditioning'
 ];
 
 const isFinisherIntent = (intent: TrainingBlock['intent']) =>
@@ -253,7 +259,14 @@ export const buildSessionFromRecipe = (
     const level = profile.level;
     const goal = profile.goal ?? 'none';
     const phaseKey = phase ?? 'DELOAD';
-    return `rugbyprep.anchor.v1:${position}:${level}:${goal}:${equipment}:${injuries}:${phaseKey}:${recipe.id}`;
+    // Hash sensitive data (injuries, equipment, goal) to avoid exposing them in DevTools
+    const sensitive = `${goal}:${equipment}:${injuries}`;
+    let h = 5381;
+    for (let i = 0; i < sensitive.length; i++) {
+      h = ((h << 5) + h) ^ sensitive.charCodeAt(i);
+    }
+    const hash = (h >>> 0).toString(36);
+    return `rugbyprep.anchor.v2:${position}:${level}:${hash}:${phaseKey}:${recipe.id}`;
   })();
 
   const getAnchor = (intent: TrainingBlock['intent']): string | undefined => {

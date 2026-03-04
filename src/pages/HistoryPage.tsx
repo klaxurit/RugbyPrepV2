@@ -10,18 +10,24 @@ const sessionTypeLabel: Record<SessionType, string> = {
   UPPER: 'Haut du Corps',
   LOWER: 'Bas du Corps',
   FULL: 'Corps Complet',
+  CONDITIONING: 'Conditionnement',
+  RECOVERY: 'Récupération',
 }
 
 const sessionTypeBg: Record<SessionType, string> = {
   UPPER: 'bg-[#1a5f3f]/10 text-[#1a5f3f]',
   LOWER: 'bg-[#ff6b35]/10 text-[#ff6b35]',
   FULL: 'bg-[#1a5f3f]/10 text-[#1a5f3f]',
+  CONDITIONING: 'bg-violet-50 text-violet-700',
+  RECOVERY: 'bg-teal-50 text-teal-700',
 }
 
 const sessionTypeIcon: Record<SessionType, React.ReactNode> = {
   UPPER: <Dumbbell className="w-4 h-4" />,
   LOWER: <Activity className="w-4 h-4" />,
   FULL: <Zap className="w-4 h-4" />,
+  CONDITIONING: <Activity className="w-4 h-4" />,
+  RECOVERY: <Activity className="w-4 h-4" />,
 }
 
 const weekLabel = (w: CycleWeek) => (w === 'DELOAD' ? 'Décharge' : `S${w.replace('W', '')}`)
@@ -47,7 +53,7 @@ export function HistoryPage() {
             <ChevronLeft className="w-5 h-5 text-slate-400" />
           </Link>
           <div>
-            <p className="text-xs font-bold tracking-widest text-rose-600 uppercase italic">RugbyPrep</p>
+            <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
             <h1 className="text-xl font-extrabold tracking-tight text-[#1f2937]">Historique</h1>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useMemo, useState } from 'react'
-import RugbyPrepLogo from '../../assets/RugbyPrepLogo.png'
 import { useAuth } from '../../hooks/useAuth'
+import { RugbyForgeLogo } from '../../components/RugbyForgeLogo'
 import type { AuthError } from '../../types/auth'
 
 interface RedirectState {
@@ -15,7 +15,7 @@ const authErrorLabel: Record<AuthError, string> = {
   INVALID_CREDENTIALS: 'Email ou mot de passe invalide.',
   WEAK_PASSWORD: 'Mot de passe trop faible (6 caractères minimum).',
   INVALID_EMAIL: 'Adresse email invalide.',
-  RATE_LIMIT: 'Trop de tentatives. Attends 1 a 2 minutes puis reessaie.',
+  RATE_LIMIT: 'Trop de tentatives. Attends 1 à 2 minutes puis réessaie.',
   INVALID_FILE_TYPE: 'Format de fichier invalide.',
   FILE_TOO_LARGE: 'Fichier trop volumineux.',
   UPLOAD_FAILED: 'Upload impossible.',
@@ -57,64 +57,83 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-slate-900 px-6 py-10">
-      <main className="w-full max-w-md mx-auto min-h-[calc(100vh-5rem)] flex flex-col justify-center">
-        <div className="flex flex-col items-center text-center mb-8">
-          <img src={RugbyPrepLogo} alt="RugbyPrep" className="h-16 w-auto mb-3" />
-          <p className="text-xs font-bold tracking-widest text-rose-600 uppercase italic">RugbyPrep</p>
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">Se connecter</h1>
-          <p className="text-xs text-slate-400 mt-1">Accède à ton plan hebdo en quelques secondes.</p>
+    <div className="min-h-screen bg-[#1a100c] flex flex-col px-6 py-12">
+      {/* Decorative dot grid */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+
+      <main className="relative w-full max-w-md mx-auto flex flex-col flex-1 justify-center gap-10">
+
+        {/* Wordmark */}
+        <div className="flex flex-col items-center text-center gap-3">
+          <RugbyForgeLogo size="hero" />
+          <p className="text-white/40 text-xs font-bold tracking-[0.2em] uppercase">
+            Préparation physique rugby
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="space-y-1">
-            <label htmlFor="email" className="text-xs font-bold text-slate-500 uppercase tracking-wider">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              className="w-full h-11 rounded-2xl border border-gray-200 px-3 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-rose-300"
-              placeholder="toi@club.fr"
-              autoComplete="email"
-              required
-            />
-          </div>
+        {/* Form card */}
+        <div className="space-y-4">
+          <p className="text-white text-xl font-bold text-center">Se connecter</p>
 
-          <div className="space-y-1">
-            <label htmlFor="password" className="text-xs font-bold text-slate-500 uppercase tracking-wider">Mot de passe</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="w-full h-11 rounded-2xl border border-gray-200 px-3 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-rose-100 focus:border-rose-300"
-              placeholder="••••••"
-              autoComplete="current-password"
-              required
-            />
-          </div>
-
-          {error && (
-            <div className="p-3 bg-rose-50 border border-rose-100 rounded-2xl">
-              <p className="text-xs text-rose-700 font-medium">{error}</p>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="text-xs font-bold text-white/50 uppercase tracking-wider">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full h-14 rounded-2xl border-2 border-white/10 bg-white/5 px-5 text-white placeholder:text-white/25 focus:outline-none focus:border-[#ff6b35] text-sm transition-colors"
+                placeholder="toi@club.fr"
+                autoComplete="email"
+                required
+              />
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-3.5 rounded-2xl bg-rose-600 text-white text-sm font-black uppercase tracking-wide hover:bg-rose-500 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? 'Connexion...' : 'Connexion'}
-          </button>
-        </form>
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="text-xs font-bold text-white/50 uppercase tracking-wider">
+                Mot de passe
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-14 rounded-2xl border-2 border-white/10 bg-white/5 px-5 text-white placeholder:text-white/25 focus:outline-none focus:border-[#ff6b35] text-sm transition-colors"
+                placeholder="••••••••"
+                autoComplete="current-password"
+                required
+              />
+            </div>
 
-        <div className="mt-4 text-center">
-          <Link to="/auth/signup" className="text-xs font-bold text-slate-500 hover:text-rose-600 transition-colors">
-            Créer un compte
-          </Link>
+            {error && (
+              <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-2xl">
+                <p className="text-xs text-rose-400 font-medium">{error}</p>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-[#ff6b35]/20 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+            >
+              {isSubmitting ? 'Connexion…' : 'Se connecter'}
+            </button>
+          </form>
+
+          <div className="text-center pt-2">
+            <Link
+              to="/auth/signup"
+              className="text-sm text-white/50 hover:text-white font-medium transition-colors"
+            >
+              Pas encore de compte ?{' '}
+              <span className="text-[#ff6b35] font-bold">Créer un compte</span>
+            </Link>
+          </div>
         </div>
+
       </main>
     </div>
   )

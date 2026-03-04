@@ -49,7 +49,13 @@ export const formatBlockVolume = (version: TrainingBlock['versions'][number]): s
     return `EMOM ${version.scheme.minutes}' · ${work.seconds}s`
   }
   if (version.scheme.kind === 'time') {
-    return `${version.sets}×${version.scheme.seconds}s`
+    const s = version.scheme.seconds
+    const timeLabel = s >= 60
+      ? s % 60 === 0
+        ? `${s / 60}min`
+        : `${Math.floor(s / 60)}min${String(s % 60).padStart(2, '0')}`
+      : `${s}s`
+    return `${version.sets}×${timeLabel}`
   }
 
   const reps = version.scheme.reps

@@ -122,6 +122,49 @@ export const getExerciseDeltaW1W4 = (
   }
 }
 
+export interface ExerciseHistoryEntry {
+  dateISO: string
+  week: CycleWeek
+  text: string
+  loadProxy: number
+}
+
+export const getExerciseRecentHistory = (
+  logs: BlockLog[],
+  exerciseId: string,
+  maxEntries = 5
+): ExerciseHistoryEntry[] => {
+  const entries: ExerciseHistoryEntry[] = []
+
+  const relevantLogs = logs
+    .filter((log) => log.entries.some((e) => e.exerciseId === exerciseId))
+    .sort((a, b) => b.dateISO.localeCompare(a.dateISO))
+    .slice(0, maxEntries)
+
+  for (const log of relevantLogs) {
+    const entry = log.entries.find((e) => e.exerciseId === exerciseId)
+    if (!entry) continue
+    let text = ''
+    let proxy = 0
+    if (entry.loadKg !== undefined && entry.reps !== undefined) {
+      text = `${entry.loadKg}kg×${entry.reps}`
+      proxy = entry.loadKg * entry.reps
+    } else if (entry.reps !== undefined) {
+      text = `${entry.reps} reps`
+      proxy = entry.reps
+    } else if (entry.meters !== undefined) {
+      text = `${entry.meters}m`
+      proxy = entry.meters
+    } else if (entry.seconds !== undefined) {
+      text = `${entry.seconds}s`
+      proxy = (1 / (entry.seconds || 1)) * 1000
+    }
+    if (text) entries.push({ dateISO: log.dateISO, week: log.week as CycleWeek, text, loadProxy: proxy })
+  }
+
+  return entries.reverse()
+}
+
 export const getSessionRecap = (
   logs: BlockLog[],
   session: BuiltSession,

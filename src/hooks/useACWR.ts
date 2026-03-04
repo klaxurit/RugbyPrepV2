@@ -14,7 +14,7 @@
  * Source : Hulin B.T. et al. (2016). BJSM, 50(4), 231-236.
  */
 import { useMemo } from 'react'
-import type { SessionLog } from '../types/training'
+import type { CalendarEvent, SessionLog } from '../types/training'
 
 export type ACWRZone = 'underload' | 'optimal' | 'caution' | 'danger' | 'critical'
 
@@ -81,24 +81,39 @@ function classifyACWR(acwr: number): ACWRZone {
   return 'critical'
 }
 
-export function useACWR(logs: SessionLog[]): ACWRResult {
+export function useACWR(logs: SessionLog[], matchEvents?: CalendarEvent[]): ACWRResult {
   return useMemo(() => {
     const today = startOfDay(new Date())
 
+    // Convertir les matchs avec charge renseignée en SessionLog-like
+    const matchAsLogs: SessionLog[] = (matchEvents ?? [])
+      .filter((e) => e.type === 'match' && e.rpe != null && e.duration_min != null)
+      .map((e) => ({
+        id: `match-${e.id}`,
+        dateISO: e.date + 'T12:00:00',
+        week: 'W1' as SessionLog['week'], // valeur neutre — non utilisée pour le calcul ACWR
+        sessionType: 'FULL' as SessionLog['sessionType'],
+        fatigue: 'OK' as SessionLog['fatigue'],
+        rpe: e.rpe,
+        durationMin: e.duration_min,
+      }))
+
+    const allLogs = [...logs, ...matchAsLogs]
+
     // Charge aiguë = 7 derniers jours
     const acuteFrom = startOfDay(addDays(today, -7))
-    const acuteLoad = loadInWindow(logs, acuteFrom, addDays(today, 1))
+    const acuteLoad = loadInWindow(allLogs, acuteFrom, addDays(today, 1))
 
     // Charge chronique = moyenne sur 4 fenêtres de 7 jours (sem 1 à 4)
     const weekLoads: number[] = []
     for (let i = 0; i < 4; i++) {
       const to = startOfDay(addDays(today, -i * 7))
       const from = startOfDay(addDays(today, -(i + 1) * 7))
-      weekLoads.push(loadInWindow(logs, from, to))
+      weekLoads.push(loadInWindow(allLogs, from, to))
     }
     const chronicLoad = weekLoads.reduce((s, v) => s + v, 0) / 4
 
-    const weeksData = weeksWithData(logs, today)
+    const weeksData = weeksWithData(allLogs, today)
     const hasSufficientData = weeksData >= 2 // au moins 2 semaines pour estimer
 
     if (!hasSufficientData || chronicLoad === 0) {
@@ -122,7 +137,7 @@ export function useACWR(logs: SessionLog[]): ACWRResult {
       hasSufficientData: true,
       weeksOfData: weeksData,
     }
-  }, [logs])
+  }, [logs, matchEvents])
 }
 
 // ─── Config visuelle ──────────────────────────────────────────

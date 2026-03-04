@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { UserProfile, ClubSchedule, SCSchedule, TrainingLevel, SeasonMode } from '../types/training'
+import type { UserProfile, ClubSchedule, SCSchedule, TrainingLevel, SeasonMode, RehabInjury } from '../types/training'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 
@@ -7,6 +7,7 @@ const STORAGE_KEY = 'rugbyprep.profile.v1'
 
 export const DEFAULT_PROFILE: UserProfile = {
   level: 'intermediate',
+  trainingLevel: 'builder',
   weeklySessions: 2,
   equipment: ['dumbbell', 'band', 'bench', 'pullup_bar'],
   injuries: [],
@@ -61,6 +62,7 @@ type ProfileRow = {
   sc_schedule: SCSchedule | null
   training_level: string | null
   season_mode: string | null
+  rehab_injury: unknown | null
 }
 
 const rowToProfile = (row: ProfileRow): UserProfile => ({
@@ -79,8 +81,13 @@ const rowToProfile = (row: ProfileRow): UserProfile => ({
   weightKg: row.weight_kg ?? undefined,
   clubSchedule: row.club_schedule ?? undefined,
   scSchedule: row.sc_schedule ?? undefined,
-  trainingLevel: (row.training_level as TrainingLevel | null) ?? undefined,
+  trainingLevel: (row.training_level as TrainingLevel | null) ?? (
+    row.level === 'beginner' ? 'starter' as TrainingLevel :
+    row.level === 'intermediate' ? 'builder' as TrainingLevel :
+    'starter' as TrainingLevel
+  ),
   seasonMode: (row.season_mode as SeasonMode | null) ?? undefined,
+  rehabInjury: (row.rehab_injury as RehabInjury | null) ?? undefined,
 })
 
 const profileToRow = (profile: UserProfile, userId: string) => ({
@@ -102,6 +109,7 @@ const profileToRow = (profile: UserProfile, userId: string) => ({
   sc_schedule: profile.scSchedule ?? null,
   training_level: profile.trainingLevel ?? null,
   season_mode: profile.seasonMode ?? null,
+  rehab_injury: profile.rehabInjury ?? null,
   updated_at: new Date().toISOString(),
 })
 
@@ -116,6 +124,7 @@ export const useProfile = () => {
   // Quand userId change : reset au DEFAULT puis charge depuis Supabase
   useEffect(() => {
     // Toujours repartir sur du propre (évite les données de l'ancien compte)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProfileState(DEFAULT_PROFILE)
     saveToStorage(DEFAULT_PROFILE)
 
@@ -124,7 +133,7 @@ export const useProfile = () => {
     supabase
       .from('profiles')
       .select(
-        'level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, season_mode'
+        'level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, season_mode, rehab_injury'
       )
       .eq('id', userId)
       .single()
