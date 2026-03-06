@@ -2,13 +2,15 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { posthog } from '../services/analytics/posthog'
-import { User, Target, AlertTriangle, CheckCircle2, TrendingUp, Info, FileText } from 'lucide-react'
+import { User, Target, AlertTriangle, CheckCircle2, TrendingUp, Info, FileText, Activity, ChevronDown, ChevronUp } from 'lucide-react'
 import { weekGuidanceV1 } from '../data/weekGuidance.v1'
 import { useFatigue } from '../hooks/useFatigue'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
+import { useAcwrOverride } from '../hooks/useAcwrOverride'
+import { useAcwrBlockCollapsed } from '../hooks/useAcwrBlockCollapsed'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
 import { buildWeekProgram } from '../services/program/buildWeekProgram'
@@ -56,6 +58,8 @@ export function ProgramPage() {
   const acwrResult = useACWR(logs, events)
   const acwr = acwrResult.acwr
   const acwrZone = acwrResult.zone
+  const { ignoreAcwrOverload, setOverride } = useAcwrOverride()
+  const { collapsed: acwrBlockCollapsed, toggle: toggleAcwrBlock } = useAcwrBlockCollapsed()
   const effectiveWeek = week === 'DELOAD' ? lastNonDeloadWeek : week
   const baseWeek = getBaseWeekVersion(effectiveWeek)
   const guidance = week === 'DELOAD' ? weekGuidanceV1.DELOAD : weekGuidanceV1[baseWeek]
@@ -66,7 +70,9 @@ export function ProgramPage() {
 
   // Use buildWeekProgram to match exactly the routing logic of /week
   const weekResult = buildWeekProgram(profile, effectiveWeek, {
-    fatigueLevel: acwrZone ?? undefined,
+    fatigueLevel: acwrResult.hasSufficientData ? (acwrZone ?? undefined) : undefined,
+    hasSufficientACWRData: acwrResult.hasSufficientData,
+    ignoreAcwrOverload,
   })
   const sessions = weekResult.sessions
 
@@ -112,7 +118,10 @@ export function ProgramPage() {
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
         {/* Week selector chips */}
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+        <div className="relative -mx-1">
+          <div
+            className="flex gap-2 overflow-x-auto pb-1 pt-2 px-4 scrollbar-none [mask-image:linear-gradient(to_right,transparent_0%,black_2rem,black_calc(100%-2rem),transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_2rem,black_calc(100%-2rem),transparent_100%)] [mask-size:100%_100%]"
+          >
           {WEEK_OPTIONS.map((opt) => (
             <button
               key={opt}
@@ -127,7 +136,8 @@ export function ProgramPage() {
               {opt}
             </button>
           ))}
-        </div>
+            </div>
+          </div>
 
         {/* Session tabs (si plusieurs séances) */}
         {sessions.length > 1 && (
@@ -217,27 +227,71 @@ export function ProgramPage() {
           )}
         </section>
 
-        {/* Deload recommendation */}
-        {recommendation.recommend && (
-          <div className="p-4 bg-[#f59e0b]/10 border border-[#f59e0b]/20 rounded-2xl flex items-start justify-between gap-3">
-            <div className="flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 text-[#f59e0b] flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-[#f59e0b]">
-                <strong>Décharge recommandée.</strong> {recommendation.reason}
-              </p>
-            </div>
-            {week !== 'DELOAD' && (
-              <button
-                type="button"
-                onClick={() => setWeek('DELOAD')}
-                className="text-[10px] font-black text-[#f59e0b] uppercase flex-shrink-0"
-              >
-                Passer →
-              </button>
+        {/* Bloc unique ACWR + décharge — repliable (effet tiroir, même logique que WeekPage) */}
+        {!isDeloadWeek && (acwrZone && ['caution', 'danger', 'critical'].includes(acwrZone) || recommendation.recommend) && (
+          <div className={`rounded-3xl border overflow-hidden ${
+            (acwrZone === 'danger' || acwrZone === 'critical')
+              ? 'bg-rose-900/20 border-rose-500/20'
+              : 'bg-amber-900/20 border-amber-500/20'
+          }`}>
+            <button
+              type="button"
+              onClick={toggleAcwrBlock}
+              className="w-full p-3 flex items-center gap-3 text-left hover:bg-white/5 transition-colors"
+              aria-expanded={!acwrBlockCollapsed}
+            >
+              <Activity className={`w-4 h-4 flex-shrink-0 ${
+                (acwrZone === 'danger' || acwrZone === 'critical') ? 'text-rose-400' : 'text-amber-400'
+              }`} />
+              <span className={`flex-1 text-xs font-black ${
+                (acwrZone === 'danger' || acwrZone === 'critical') ? 'text-rose-400' : 'text-amber-400'
+              }`}>
+                {acwrZone === 'danger' || acwrZone === 'critical'
+                  ? `Surcharge (ACWR ${acwr?.toFixed(2)}) — priorité récupération`
+                  : recommendation.recommend && !acwrZone
+                    ? `Décharge recommandée — ${recommendation.reason}`
+                    : acwrZone === 'caution'
+                      ? `Vigilance (ACWR ${acwr?.toFixed(2)}) — réduis l'intensité si fatigue`
+                      : `Décharge recommandée — ${recommendation.reason}`}
+              </span>
+              {acwrBlockCollapsed ? (
+                <ChevronDown className="w-4 h-4 text-white/50 flex-shrink-0" aria-hidden />
+              ) : (
+                <ChevronUp className="w-4 h-4 text-white/50 flex-shrink-0" aria-hidden />
+              )}
+            </button>
+            {!acwrBlockCollapsed && (
+              <div className="px-4 pb-4 pt-0 flex items-start gap-3">
+                <div className="w-4 flex-shrink-0" aria-hidden />
+                <div className="flex-1 space-y-2 min-w-0">
+                  <p className="text-xs text-white/60 leading-snug">
+                    Volume −40 à −60 %, intensité maintenue. Sommeil et nutrition prioritaires. (Issurin 2008)
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {(acwrZone === 'danger' || acwrZone === 'critical' || recommendation.recommend) && (
+                      <button
+                        type="button"
+                        onClick={() => setWeek('DELOAD')}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ff6b35] text-white text-xs font-black uppercase tracking-wide"
+                      >
+                        Passer en mode récup
+                      </button>
+                    )}
+                    {(acwrZone === 'danger' || acwrZone === 'critical') && (
+                      <button
+                        type="button"
+                        onClick={() => setOverride(!ignoreAcwrOverload)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 text-white/80 text-xs font-bold hover:bg-white/10 transition-colors"
+                      >
+                        {ignoreAcwrOverload ? 'Réappliquer la mobilité' : 'Je me sens bien — garder Lower + Upper'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         )}
-
 
         {/* Session warnings */}
         {warnings.length > 0 && (

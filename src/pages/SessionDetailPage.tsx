@@ -9,6 +9,7 @@ import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
+import { useAcwrOverride } from '../hooks/useAcwrOverride'
 import { buildWeekProgram, validateSession } from '../services/program'
 import { applyDeloadToSessions } from '../services/ui/applyDeload'
 import { SessionView } from '../components/SessionView'
@@ -42,10 +43,13 @@ export function SessionDetailPage() {
 
   const isDeloadWeek = week === 'DELOAD'
   const effectiveWeek = isDeloadWeek ? lastNonDeloadWeek : week
-  const { zone: acwrZone } = useACWR(logs, events)
+  const { zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, events)
+  const { ignoreAcwrOverload } = useAcwrOverride()
 
   const builtProgram = buildWeekProgram(profile, effectiveWeek, {
-    fatigueLevel: acwrZone ?? undefined,
+    fatigueLevel: acwrHasData ? (acwrZone ?? undefined) : undefined,
+    hasSufficientACWRData: acwrHasData,
+    ignoreAcwrOverload,
   })
   const rawSessions = builtProgram.sessions
   const sessions = isDeloadWeek ? applyDeloadToSessions(rawSessions) : rawSessions

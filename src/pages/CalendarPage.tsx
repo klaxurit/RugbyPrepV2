@@ -14,6 +14,7 @@ import {
   Search,
   CheckCircle2,
   Activity,
+  Dumbbell,
 } from 'lucide-react'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
@@ -21,7 +22,7 @@ import { useCalendar } from '../hooks/useCalendar'
 import { useProfile } from '../hooks/useProfile'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 import ffrClubs from '../data/ffrClubs.v2021.json'
-import type { CalendarEventType, CalendarEvent, SeasonPhase, DayOfWeek } from '../types/training'
+import type { CalendarEventType, CalendarEvent, SeasonPhase, DayOfWeek, ClubSchedule } from '../types/training'
 import { TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
 
 // ─── Club Search Types ────────────────────────────────────────
@@ -468,28 +469,149 @@ function MiniCalendar({
           else if (eventType === 'rest') dotColor = 'bg-blue-400'
           else if (eventType === 'unavailable') dotColor = 'bg-orange-400'
 
+          const isBothDay = isClubDay && isScDay
           return (
             <button
               key={i}
               type="button"
               onClick={() => onSelectDate(dateStr)}
-              className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-bold transition-colors
+              className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-bold transition-colors overflow-hidden
                 ${isToday ? 'bg-[#ff6b35] text-white' : 'hover:bg-white/10 text-white/70'}
-                ${isClubDay && !isToday ? 'bg-emerald-900/20' : ''}
+                ${isClubDay && !isToday && !isBothDay ? 'bg-emerald-900/20' : ''}
                 ${isScDay && !isClubDay && !isToday ? 'bg-rose-900/20' : ''}
+                ${isBothDay && !isToday ? 'bg-gradient-to-b from-rose-900/20 to-emerald-900/20' : ''}
                 ${eventType ? 'ring-1 ring-inset ' + (eventType === 'match' ? 'ring-rose-500/40' : eventType === 'rest' ? 'ring-blue-500/40' : 'ring-orange-500/40') : ''}
               `}
             >
               {day}
               <div className="absolute bottom-1 flex gap-0.5">
-                {isClubDay && <span className="w-1 h-1 rounded-full bg-emerald-400" />}
-                {isScDay && !isClubDay && <span className="w-1 h-1 rounded-full bg-rose-400" />}
+                {isClubDay && <span className="w-1 h-1 rounded-full bg-emerald-400" aria-hidden />}
+                {isScDay && <span className="w-1 h-1 rounded-full bg-rose-400" aria-hidden />}
                 {dotColor && !isClubDay && !isScDay && <span className={`w-1 h-1 rounded-full ${dotColor}`} />}
               </div>
             </button>
           )
         })}
       </div>
+    </div>
+  )
+}
+
+// ─── Day Detail Modal (journée coupée en deux : S&C + rugby) ───
+
+interface DayDetailModalProps {
+  dateStr: string
+  clubSchedule?: { clubDays: { day: DayOfWeek; time?: string }[] }
+  clubDays: DayOfWeek[]
+  scDays: DayOfWeek[]
+  eventsOnDate: CalendarEvent[]
+  onClose: () => void
+  onAddEvent: () => void
+  onRemoveEvent: (id: string) => void
+  onUpdateMatchLoad: (id: string, rpe: number, durationMin?: number) => void
+}
+
+function DayDetailModal({
+  dateStr,
+  clubSchedule,
+  clubDays,
+  scDays,
+  eventsOnDate,
+  onClose,
+  onAddEvent,
+  onRemoveEvent,
+  onUpdateMatchLoad,
+}: DayDetailModalProps) {
+  const dow = new Date(dateStr + 'T12:00:00').getDay() as DayOfWeek
+  const isScDay = scDays.includes(dow)
+  const isClubDay = clubDays.includes(dow)
+  const clubDayInfo = clubSchedule?.clubDays.find((d) => d.day === dow)
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-end justify-center p-4">
+      <motion.div
+        initial={{ y: '100%', opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: '100%', opacity: 0 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        className="w-full max-w-md bg-[#1a100c] border border-white/10 rounded-[2rem] p-6 space-y-5"
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-black text-white capitalize">{formatDateFR(dateStr)}</h3>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/25"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Programme récurrent — journée coupée en deux */}
+        <div className="space-y-2">
+          <p className="text-[10px] font-black uppercase tracking-wider text-white/40">Programmé</p>
+          <div className="space-y-2">
+            {isScDay && (
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-rose-900/20 border border-rose-500/20">
+                <Dumbbell className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-rose-400">Muscu</p>
+                  <p className="text-[11px] text-white/60 mt-0.5">
+                    {isClubDay
+                      ? 'Matin recommandé · Séance adaptée (−20–30% volume) si rugby en intensité réduite'
+                      : 'Séance S&C prévue'}
+                  </p>
+                </div>
+              </div>
+            )}
+            {isClubDay && (
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-emerald-900/20 border border-emerald-500/20">
+                <Activity className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-emerald-400">Entraînement rugby</p>
+                  {clubDayInfo?.time ? (
+                    <p className="text-[11px] text-white/60 mt-0.5">{clubDayInfo.time}</p>
+                  ) : (
+                    <p className="text-[11px] text-white/60 mt-0.5">Collectif club</p>
+                  )}
+                </div>
+              </div>
+            )}
+            {!isScDay && !isClubDay && (
+              <p className="text-xs text-white/40 py-2">Aucune séance planifiée ce jour.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Événements du jour */}
+        {eventsOnDate.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-[10px] font-black uppercase tracking-wider text-white/40">Événements</p>
+            <div className="space-y-2">
+              {eventsOnDate.map((event) => (
+                <EventRow key={event.id} event={event} onRemove={onRemoveEvent} onUpdateLoad={onUpdateMatchLoad} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={onAddEvent}
+            className="flex-1 py-3 rounded-2xl border-2 border-[#ff6b35] text-[#ff6b35] font-black uppercase tracking-wide hover:bg-[#ff6b35]/10 transition-colors"
+          >
+            Ajouter un événement
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white/70 font-bold hover:bg-white/10 transition-colors"
+          >
+            Fermer
+          </button>
+        </div>
+      </motion.div>
     </div>
   )
 }
@@ -679,9 +801,12 @@ export function CalendarPage() {
     else setCalMonth(m => m + 1)
   }
 
+  const [showDayDetail, setShowDayDetail] = useState(false)
+
   const handleSelectDate = (date: string) => {
     setSelectedDate(date)
-    setShowModal(true)
+    setShowDayDetail(true)
+    setShowModal(false)
   }
 
   const handleAddEvent = async (payload: Omit<CalendarEvent, 'id' | 'created_at'>) => {
@@ -780,14 +905,31 @@ export function CalendarPage() {
       <motion.button
         type="button"
         whileTap={{ scale: 0.95 }}
-        onClick={() => { setSelectedDate(undefined); setShowModal(true) }}
+        onClick={() => { setSelectedDate(undefined); setShowDayDetail(false); setShowModal(true) }}
         className="fixed bottom-24 right-6 w-14 h-14 bg-[#ff6b35] rounded-2xl shadow-lg shadow-[#ff6b35]/30 flex items-center justify-center z-40"
         aria-label="Ajouter un événement"
       >
         <Plus className="w-6 h-6 text-white" />
       </motion.button>
 
-      {/* ── Add Modal ── */}
+      {/* ── Day Detail Modal (S&C + rugby, journée coupée en deux) ── */}
+      <AnimatePresence>
+        {showDayDetail && selectedDate && (
+          <DayDetailModal
+            dateStr={selectedDate}
+            clubSchedule={profile.clubSchedule}
+            clubDays={clubDays}
+            scDays={scDays}
+            eventsOnDate={events.filter((e) => e.date === selectedDate)}
+            onClose={() => setShowDayDetail(false)}
+            onAddEvent={() => { setShowDayDetail(false); setShowModal(true) }}
+            onRemoveEvent={removeEvent}
+            onUpdateMatchLoad={updateMatchLoad}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Add Event Modal ── */}
       <AnimatePresence>
         {showModal && (
           <AddEventModal

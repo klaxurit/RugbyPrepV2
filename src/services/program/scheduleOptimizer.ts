@@ -3,7 +3,7 @@
 import type { ClubSchedule, DayOfWeek, SCSchedule, SCSessionSlot } from '../../types/training'
 
 export const TRAINING_DAYS_DEFAULT: Record<2 | 3, DayOfWeek[]> = {
-  2: [1, 4],
+  2: [2, 4], // Mar + Jeu : jambes mardi (loin du match), upper jeudi
   3: [1, 3, 5],
 }
 

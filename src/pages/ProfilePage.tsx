@@ -6,8 +6,10 @@ import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import { Dumbbell, Shield, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, HeartPulse } from 'lucide-react'
 import { PageHeader } from '../components/PageHeader'
+import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
+import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
 import type { AuthError } from '../types/auth'
@@ -131,6 +133,7 @@ const avatarErrorLabel: Record<AuthError, string> = {
 export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
   const { authState, updateAvatar } = useAuth()
+  const { features, isPremium, planId } = useFeatureAccess()
   const { status: notifStatus, subscribe: notifSubscribe, unsubscribe: notifUnsubscribe } = useNotifications(profile)
   const [avatarError, setAvatarError] = useState<string | null>(null)
   const [isAvatarUploading, setIsAvatarUploading] = useState(false)
@@ -888,6 +891,58 @@ export function ProfilePage() {
         </section>
 
         {/* ─── Notifications ───────────────────────────────────────────── */}
+        <section className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-black text-white">Abonnement & accès</p>
+              <p className="text-xs text-white/40 mt-0.5">
+                La sécurité et le programme de base restent inclus, quel que soit le plan.
+              </p>
+            </div>
+            <span className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-wide ${
+              isPremium
+                ? 'bg-[#ff6b35]/15 text-[#ff6b35]'
+                : 'bg-white/10 text-white/45'
+            }`}>
+              {isPremium ? 'PREMIUM' : 'FREE'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className={`rounded-2xl border p-3 ${features.programBasic ? 'border-emerald-500/20 bg-emerald-900/10 text-emerald-300' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Programme de base
+            </div>
+            <div className={`rounded-2xl border p-3 ${features.notificationsBasic ? 'border-emerald-500/20 bg-emerald-900/10 text-emerald-300' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Rappels standards
+            </div>
+            <div className={`rounded-2xl border p-3 ${features.athleticTestsBasic ? 'border-emerald-500/20 bg-emerald-900/10 text-emerald-300' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Tests basiques
+            </div>
+            <div className={`rounded-2xl border p-3 ${features.calendarBasic ? 'border-emerald-500/20 bg-emerald-900/10 text-emerald-300' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Planning & matchs
+            </div>
+            <div className={`rounded-2xl border p-3 ${features.premiumProgramAdaptations ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Suggestions auto
+            </div>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Analytics détaillées
+            </div>
+          </div>
+
+          {planId && (
+            <p className="text-[11px] text-white/35">
+              Plan serveur actuel: <span className="font-bold text-white/55">{planId}</span>
+            </p>
+          )}
+
+          {!isPremium && (
+            <PremiumUpsellCard
+              title="Débloque les fonctionnalités avancées"
+              body="Le Premium active les analytics détaillées, les suggestions automatiques et les futures notifications avancées, sans retirer les garde-fous sécurité du mode Free."
+            />
+          )}
+        </section>
+
         <section className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

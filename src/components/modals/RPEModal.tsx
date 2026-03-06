@@ -65,24 +65,30 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end justify-center p-4">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={onClose}
+          role="presentation"
+        >
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <motion.div
-            initial={{ y: '100%', opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: '100%', opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="w-full max-w-md bg-white rounded-[2rem] p-6 space-y-6"
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-[#23140f] border border-white/10 rounded-[2rem] p-6 space-y-6 shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-black text-slate-900">Séance terminée 💪</h3>
-                <p className="text-xs text-slate-400 mt-0.5">{sessionLabel} — note ton effort</p>
+                <h3 className="text-lg font-black text-white">Séance terminée 💪</h3>
+                <p className="text-xs text-white/50 mt-0.5">{sessionLabel} — note ton effort</p>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="w-9 h-9 rounded-2xl border border-gray-200 flex items-center justify-center text-slate-400 hover:text-slate-700"
+                className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -91,12 +97,12 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
             {/* RPE */}
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <Zap className="w-4 h-4 text-rose-500" />
-                <label className="text-xs font-black text-slate-400 uppercase tracking-wide">
+                <Zap className="w-4 h-4 text-[#ff6b35]" />
+                <label className="text-xs font-black text-white/50 uppercase tracking-wide">
                   Effort perçu (RPE)
                 </label>
                 {rpe && (
-                  <span className="ml-auto text-xs font-bold text-slate-500">{RPE_LABELS[rpe]}</span>
+                  <span className="ml-auto text-xs font-bold text-white/70">{RPE_LABELS[rpe]}</span>
                 )}
               </div>
               <div className="grid grid-cols-10 gap-1">
@@ -108,7 +114,7 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
                     className={`aspect-square rounded-xl text-sm font-black transition-all ${
                       rpe === n
                         ? `${RPE_COLORS[n]} text-white scale-110 shadow-md`
-                        : 'bg-gray-100 text-slate-500 hover:bg-gray-200'
+                        : 'bg-white/10 text-white/50 hover:bg-white/20 border border-white/10'
                     }`}
                   >
                     {n}
@@ -116,16 +122,16 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
                 ))}
               </div>
               <div className="flex justify-between mt-1 px-0.5">
-                <span className="text-[9px] text-slate-400">Léger</span>
-                <span className="text-[9px] text-slate-400">Max</span>
+                <span className="text-[9px] text-white/40">Léger</span>
+                <span className="text-[9px] text-white/40">Max</span>
               </div>
             </div>
 
             {/* Duration */}
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <Clock className="w-4 h-4 text-blue-500" />
-                <label className="text-xs font-black text-slate-400 uppercase tracking-wide">
+                <Clock className="w-4 h-4 text-[#ff6b35]" />
+                <label className="text-xs font-black text-white/50 uppercase tracking-wide">
                   Durée
                 </label>
               </div>
@@ -137,8 +143,8 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
                     onClick={() => { setDuration(d); setCustomDuration('') }}
                     className={`px-3 py-2 rounded-2xl text-xs font-black transition-all ${
                       duration === d && !customDuration
-                        ? 'bg-slate-900 text-white'
-                        : 'bg-gray-100 text-slate-600 hover:bg-gray-200'
+                        ? 'bg-[#1a5f3f] text-white border border-[#1a5f3f]'
+                        : 'bg-white/10 text-white/70 border border-white/10 hover:border-white/20'
                     }`}
                   >
                     {d} min
@@ -151,20 +157,16 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
                   placeholder="Autre"
                   value={customDuration}
                   onChange={(e) => setCustomDuration(e.target.value)}
-                  className={`w-20 px-3 py-2 rounded-2xl text-xs font-bold border transition-all focus:outline-none ${
-                    customDuration
-                      ? 'border-slate-900 bg-slate-50 text-slate-900'
-                      : 'border-gray-200 text-slate-400'
-                  } focus:ring-2 focus:ring-rose-500`}
+                  className="w-20 px-3 py-2 rounded-2xl text-xs font-bold border border-white/20 bg-white/5 text-white placeholder:text-white/30 focus:outline-none focus:border-[#ff6b35] transition-all [color-scheme:dark]"
                 />
               </div>
             </div>
 
             {/* Charge preview */}
             {load != null && (
-              <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-2xl">
-                <div className="text-xl font-black text-slate-900">{load} UA</div>
-                <div className="text-xs text-slate-400">
+              <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl">
+                <div className="text-xl font-black text-white">{load} UA</div>
+                <div className="text-xs text-white/50">
                   Charge séance<br />
                   <span className="text-[10px]">RPE {rpe} × {effectiveDuration} min</span>
                 </div>
@@ -176,7 +178,7 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
               type="button"
               onClick={handleConfirm}
               disabled={!canConfirm}
-              className="w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black uppercase tracking-wide flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-4 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-40 disabled:cursor-not-allowed text-white font-black uppercase italic tracking-wide flex items-center justify-center gap-2 transition-colors shadow-lg shadow-[#ff6b35]/20"
             >
               <CheckCircle2 className="w-4 h-4" />
               Enregistrer la séance

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import {
   TrendingUp, TrendingDown, Minus, AlertCircle, BarChart2,
-  Plus, X, FlaskConical, Dumbbell, ChevronDown
+  Plus, X, FlaskConical, Dumbbell, ChevronDown, Lock
 } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import blocksData from '../data/blocks.v1.json'
@@ -23,6 +23,8 @@ import {
 import { seedDemoData, clearDemoMode, isDemoModeActive } from '../data/fakeDataForProgress'
 import { PageHeader } from '../components/PageHeader'
 import { BottomNav } from '../components/BottomNav'
+import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
+import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import type { TrainingBlock } from '../types/training'
 import type { PhysicalTestType, PhysicalTest } from '../types/athleticTesting'
 
@@ -109,6 +111,7 @@ export function ProgressPage() {
   const { logs, getLastEntryForExercise } = useBlockLogs()
   const { addTest, getHistoryFor, getBestFor } = useAthleteTests()
   const { profile } = useProfile()
+  const { features, isPremium } = useFeatureAccess()
 
   // ─── Modal state ────────────────────────────────────────────
   const [modal, setModal] = useState<ModalState | null>(null)
@@ -309,6 +312,7 @@ export function ProgressPage() {
           >
             <FlaskConical className="w-3.5 h-3.5" />
             Tests Physiques
+            {!features.premiumAnalytics && <Lock className="w-3 h-3 text-white/30" />}
           </button>
         </div>
 
@@ -383,7 +387,8 @@ export function ProgressPage() {
               )}
             </section>
 
-            {nextTargetRows.length > 0 && (
+            {features.premiumProgramAdaptations ? (
+              nextTargetRows.length > 0 && (
               <section>
                 <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">
                   Objectifs prochaine séance
@@ -399,9 +404,16 @@ export function ProgressPage() {
                   ))}
                 </div>
               </section>
+              )
+            ) : (
+              <PremiumUpsellCard
+                title="Objectifs automatiques de charge"
+                body="Débloque des objectifs personnalisés pour la prochaine séance à partir de tes dernières performances."
+              />
             )}
 
-            {historyRows.length > 0 && (
+            {features.premiumAnalytics ? (
+              historyRows.length > 0 && (
               <section>
                 <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">
                   Progression saison
@@ -432,9 +444,15 @@ export function ProgressPage() {
                   })}
                 </div>
               </section>
+              )
+            ) : (
+              <PremiumUpsellCard
+                title="Courbes de progression détaillées"
+                body="Débloque les tendances de saison, les comparaisons par exercice et les indicateurs avancés de progression."
+              />
             )}
 
-            {missingRows.length > 0 && (
+            {features.premiumAnalytics && missingRows.length > 0 && (
               <section>
                 <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">À renseigner</h2>
                 <div className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-2">
@@ -470,6 +488,13 @@ export function ProgressPage() {
               Mesure tes performances athlétiques et suis leur évolution dans le temps.
             </p>
 
+            {!features.premiumAnalytics && (
+              <PremiumUpsellCard
+                title="Analytics avancées verrouillées"
+                body="Le mode Free garde la saisie de tests. Le Premium débloque les courbes, les baselines poste/niveau et les alertes de régression."
+              />
+            )}
+
             <div className="space-y-4">
               {TEST_CARDS.map((card) => {
                 const history = getHistoryFor(card.type, 8)
@@ -494,6 +519,7 @@ export function ProgressPage() {
 
                 // ⚠️ badge : CMJ/sprint régressent > 10% vs record
                 const isRegressing =
+                  features.premiumAnalytics &&
                   variation !== null &&
                   (card.type === 'cmj' || card.type === 'sprint_10m') &&
                   (card.higherIsBetter ? variation < -0.10 : variation > 0.10)
@@ -554,7 +580,7 @@ export function ProgressPage() {
                             )}
                           </p>
                         </div>
-                        {baselineValue !== null && positionLabel && (
+                        {features.premiumAnalytics && baselineValue !== null && positionLabel && (
                           <div className="text-right flex-shrink-0">
                             <p className="text-[10px] text-white/40">Baseline {positionLabel}</p>
                             <p className="text-xs font-bold text-white/50">
@@ -567,7 +593,7 @@ export function ProgressPage() {
                     ) : (
                       <div className="px-4 pb-3">
                         <p className="text-sm text-white/40 italic">Aucun test enregistré</p>
-                        {baselineValue !== null && positionLabel && (
+                        {features.premiumAnalytics && baselineValue !== null && positionLabel && (
                           <p className="text-[10px] text-white/40 mt-1">
                             Baseline {positionLabel} ({baselineLabel}) : <span className="font-bold">{formatValue(baselineValue, card.type)} {card.unit}</span>
                           </p>
@@ -576,7 +602,7 @@ export function ProgressPage() {
                     )}
 
                     {/* LineChart */}
-                    {chartData.length > 0 && (
+                    {features.premiumAnalytics && chartData.length > 0 && (
                       <div className="px-2 pb-3">
                         <ResponsiveContainer width="100%" height={100}>
                           <LineChart data={chartData}>
@@ -601,7 +627,7 @@ export function ProgressPage() {
 
             {/* Science card */}
             <section>
-              <div className="bg-rose-900/20 border border-rose-500/20 rounded-[24px] p-5 space-y-2">
+              <div className={`${isPremium ? 'bg-rose-900/20 border-rose-500/20' : 'bg-white/5 border-white/10'} border rounded-[24px] p-5 space-y-2`}>
                 <p className="text-xs font-black uppercase tracking-wider text-rose-400">Règle clinique CMJ</p>
                 <p className="text-xs text-white/60 leading-relaxed">
                   ↓ CMJ ≥ 10% vs baseline = fatigue neuromusculaire non résolue → ne pas augmenter la charge cette semaine.

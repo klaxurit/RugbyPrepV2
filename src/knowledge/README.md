@@ -157,6 +157,7 @@ src/knowledge/research/
 
 | Sujet | Priorité | Notes |
 |---|---|---|
+| **Durée flexible des blocs** (3/4/5-6 sem) | Moyenne | KB periodization.md : 3 sem (avancés/compétitif), 4 sem (standard), 5-6 sem (débutants/off-season). Actuellement fixé à 4 sem. Adapter programPhases, buildWeekProgram, profil. |
 | Psychologie de la performance | Haute | Cohésion d'équipe, gestion de la pression, préparation mentale |
 | Gestion des charges en double semaine (match + match) | Haute | Très pertinent fin de saison |
 | Femmes joueuses de rugby | Moyenne | Hormones, cycle menstruel, RED-S spécifique |

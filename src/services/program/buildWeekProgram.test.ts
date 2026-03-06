@@ -82,7 +82,10 @@ describe('buildWeekProgram', () => {
   })
 
   it('replaces the last session with recovery mobility in ACWR danger and keeps it valid', () => {
-    const result = buildWeekProgram(PERFORMANCE_PROFILE, 'W1', { fatigueLevel: 'danger' })
+    const result = buildWeekProgram(PERFORMANCE_PROFILE, 'W1', {
+      fatigueLevel: 'danger',
+      hasSufficientACWRData: true,
+    })
 
     expect(result.sessions.map((session) => session.recipeId)).toEqual([
       'UPPER_V1',
@@ -94,7 +97,10 @@ describe('buildWeekProgram', () => {
   })
 
   it('reduces the week to one session in ACWR critical', () => {
-    const result = buildWeekProgram(PERFORMANCE_PROFILE, 'W1', { fatigueLevel: 'critical' })
+    const result = buildWeekProgram(PERFORMANCE_PROFILE, 'W1', {
+      fatigueLevel: 'critical',
+      hasSufficientACWRData: true,
+    })
 
     expect(result.sessions).toHaveLength(1)
     expect(result.sessions[0]?.recipeId).toBe('UPPER_V1')
@@ -104,6 +110,7 @@ describe('buildWeekProgram', () => {
   it('changes the upper main block after the force block rollover', () => {
     const weekOne = buildWeekProgram(PERFORMANCE_PROFILE, 'W1')
     const weekFive = buildWeekProgram(PERFORMANCE_PROFILE, 'W5')
+    // 2 sessions/week = LOWER + UPPER; 3 = UPPER + LOWER + FULL
     const upperWeekOne = weekOne.sessions.find((session) => session.recipeId === 'UPPER_V1')
     const upperWeekFive = weekFive.sessions.find((session) => session.recipeId === 'UPPER_V1')
 

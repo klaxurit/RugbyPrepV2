@@ -9,31 +9,23 @@ import { validateSession } from './validateSession';
 import { getPhaseForWeek } from './programPhases.v1';
 
 /**
- * Overrides phase based on seasonMode for Performance-level users:
- * - off_season  → HYPERTROPHY (H1-H4 off-season rebuild)
- * - pre_season  → FORCE (force-puissance ramp-up)
- * - in_season   → phase naturelle du cycle (aucun override)
+ * Pour les utilisateurs Performance : le seasonMode n'override plus la phase du cycle.
+ * La phase suit toujours le cycle H1-H4 (hypertrophie) → W1-W4 (force) → W5-W8 (puissance).
+ * Le seasonMode reste informatif (bannières, volume) mais ne force plus la même phase sur toutes les semaines.
  */
-const getEffectivePhase = (
-  rawPhase: ProgramPhase,
-  seasonMode: UserProfile['seasonMode']
-): ProgramPhase => {
-  if (seasonMode === 'off_season') return 'HYPERTROPHY'
-  if (seasonMode === 'pre_season') return 'FORCE'
-  return rawPhase
-}
 
+// Ordre 2 sessions : LOWER en premier (souvent mardi) puis UPPER (jeudi) — jambes loin du match, upper plus proche
 const recipeIdsByPhase: Record<ProgramPhase, Record<UserProfile['weeklySessions'], SessionRecipeId[]>> = {
   FORCE: {
-    2: ['UPPER_V1', 'LOWER_V1'],
+    2: ['LOWER_V1', 'UPPER_V1'],
     3: ['UPPER_V1', 'LOWER_V1', 'FULL_V1']
   },
   POWER: {
-    2: ['UPPER_V1', 'LOWER_V1'],
+    2: ['LOWER_V1', 'UPPER_V1'],
     3: ['UPPER_V1', 'LOWER_V1', 'FULL_V1']
   },
   HYPERTROPHY: {
-    2: ['UPPER_HYPER_V1', 'LOWER_HYPER_V1'],
+    2: ['LOWER_HYPER_V1', 'UPPER_HYPER_V1'],
     3: ['UPPER_HYPER_V1', 'LOWER_HYPER_V1', 'FULL_HYPER_V1']
   }
 };
@@ -41,9 +33,9 @@ const recipeIdsByPhase: Record<ProgramPhase, Record<UserProfile['weeklySessions'
 // Starter : toujours 2 sessions Full Body (la cross-session exclusion assure la variété)
 const STARTER_RECIPE_IDS: SessionRecipeId[] = ['UPPER_STARTER_V1', 'LOWER_STARTER_V1'];
 
-// Builder : Upper/Lower split avec supersets, 2 ou 3 sessions/semaine
+// Builder : LOWER avant UPPER pour 2 sessions (jambes mardi, upper jeudi)
 const BUILDER_RECIPE_IDS: Record<UserProfile['weeklySessions'], SessionRecipeId[]> = {
-  2: ['UPPER_BUILDER_V1', 'LOWER_BUILDER_V1'],
+  2: ['LOWER_BUILDER_V1', 'UPPER_BUILDER_V1'],
   3: ['UPPER_BUILDER_V1', 'LOWER_BUILDER_V1', 'FULL_BUILDER_V1']
 };
 
@@ -80,16 +72,12 @@ const allBlocks = blocksData as TrainingBlock[];
 export const buildWeekProgram = (
   profile: UserProfile,
   week: CycleWeek,
-  options?: { fatigueLevel?: FatigueLevel }
+  options?: { fatigueLevel?: FatigueLevel; hasSufficientACWRData?: boolean; ignoreAcwrOverload?: boolean }
 ): WeekProgramResult => {
   const warnings: string[] = [];
   const trainingLevel = profile.trainingLevel ?? 'starter';
   const rawPhase = getPhaseForWeek(week) ?? 'FORCE';
-  // For performance users, season mode overrides phase selection
-  const phase: ProgramPhase =
-    trainingLevel === 'performance'
-      ? getEffectivePhase(rawPhase, profile.seasonMode)
-      : rawPhase;
+  const phase: ProgramPhase = rawPhase;
 
   // Routing par niveau d'entraînement
   const getPerformanceRecipeIds = (): SessionRecipeId[] => {
@@ -113,13 +101,17 @@ export const buildWeekProgram = (
     : baseRecipeIds;
 
   // ENH-1 — ACWR fatigue budget: adjust session count based on workload zone
+  // Ne s'applique que si on a assez de données ACWR (2+ semaines)
+  // ignoreAcwrOverload : le joueur choisit de garder le programme complet malgré la surcharge détectée
   const fatigueLevel = options?.fatigueLevel;
+  const hasSufficientACWRData = options?.hasSufficientACWRData ?? false;
+  const ignoreAcwrOverload = options?.ignoreAcwrOverload ?? false;
   let recipeIds: SessionRecipeId[];
-  if (fatigueLevel === 'critical' && rehabRecipeIds.length > 1) {
-    // Critical zone (ACWR > 1.5): keep only first session
+  if (!ignoreAcwrOverload && hasSufficientACWRData && fatigueLevel === 'critical' && rehabRecipeIds.length > 1) {
+    // Critical zone (ACWR > 2.0): keep only first session
     recipeIds = rehabRecipeIds.slice(0, 1);
     warnings.push('ACWR critique : programme réduit à 1 séance. Récupération prioritaire.');
-  } else if (fatigueLevel === 'danger' && rehabRecipeIds.length > 1) {
+  } else if (!ignoreAcwrOverload && hasSufficientACWRData && fatigueLevel === 'danger' && rehabRecipeIds.length > 1) {
     // Danger zone (ACWR 1.3–1.5): replace last session with mobility
     recipeIds = [...rehabRecipeIds.slice(0, rehabRecipeIds.length - 1), 'RECOVERY_MOBILITY_V1' as SessionRecipeId];
     warnings.push('ACWR surcharge : dernière séance remplacée par mobilité.');

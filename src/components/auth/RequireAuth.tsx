@@ -1,4 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { WeekProvider } from '../../contexts/WeekContext'
 import { useAuth } from '../../hooks/useAuth'
 import { isOnboardingComplete } from '../../hooks/useProfile'
 
@@ -25,5 +26,9 @@ export function RequireAuth() {
     return <Navigate to="/onboarding" replace />
   }
 
-  return <Outlet />
+  return (
+    <WeekProvider>
+      <Outlet />
+    </WeekProvider>
+  )
 }
