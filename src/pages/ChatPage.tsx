@@ -1,12 +1,15 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { ChevronLeft, Send, Bot, Zap } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
+import { Send, Bot, Zap, Lock } from 'lucide-react'
+import { PageHeader } from '../components/PageHeader'
 import { posthog } from '../services/analytics/posthog'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
 import { useACWR } from '../hooks/useACWR'
+import { useEntitlements } from '../hooks/useEntitlements'
+import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { getPhaseForWeek } from '../services/program/programPhases.v1'
 import { supabase } from '../services/supabase/client'
 import { BottomNav } from '../components/BottomNav'
@@ -51,16 +54,30 @@ export function ChatPage() {
   const { fatigue } = useFatigue()
   const { logs } = useHistory()
   const { acwr, zone: acwrZone, acuteLoad, chronicLoad } = useACWR(logs)
+  const { hasEntitlement, isPremium, refresh: refreshEntitlements } = useEntitlements()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const {
+    loading: checkoutLoading,
+    error: checkoutError,
+    message: checkoutMessage,
+    startCheckout,
+  } = usePremiumCheckout()
 
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [activationSyncing, setActivationSyncing] = useState(false)
+  const [activationSyncTimeout, setActivationSyncTimeout] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   const phase = getPhaseForWeek(week === 'DELOAD' ? week : week)
   const phaseLabel = phase ? PHASE_LABELS[phase] : null
   const isDeload = week === 'DELOAD'
+  const hasPremiumInsights = hasEntitlement('premium_analytics') || hasEntitlement('premium_program_adaptations')
+  const checkoutStatus = searchParams.get('checkout')
+  const checkoutSessionId = searchParams.get('session_id')
+  const isCheckoutSuccess = checkoutStatus === 'success'
 
   // Build coach context from current state
   const context = useMemo(() => ({
@@ -89,15 +106,69 @@ export function ChatPage() {
   // Quick prompts based on context
   const quickPrompts = useMemo(() => {
     const prompts = [...QUICK_PROMPTS_BASE]
-    if (isDeload) prompts.unshift(QUICK_PROMPT_DELOAD)
-    else if (phase && QUICK_PROMPTS_BY_PHASE[phase]) prompts.unshift(QUICK_PROMPTS_BY_PHASE[phase])
+    if (hasPremiumInsights) {
+      if (isDeload) prompts.unshift(QUICK_PROMPT_DELOAD)
+      else if (phase && QUICK_PROMPTS_BY_PHASE[phase]) prompts.unshift(QUICK_PROMPTS_BY_PHASE[phase])
+    }
     return prompts.slice(0, 5)
-  }, [phase, isDeload])
+  }, [hasPremiumInsights, phase, isDeload])
 
   // Auto-scroll to latest message
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
+
+  // Après un retour checkout=success, on synchronise les droits côté serveur
+  // quelques secondes (le webhook Stripe peut arriver après la redirection client).
+  useEffect(() => {
+    if (!isCheckoutSuccess || isPremium) return
+
+    let cancelled = false
+    setActivationSyncing(true)
+    setActivationSyncTimeout(false)
+
+    let attempts = 0
+    const maxAttempts = 12
+    let timer: number | null = null
+
+    const tick = async () => {
+      if (checkoutSessionId) {
+        await supabase.functions.invoke('sync-checkout-session', {
+          body: { sessionId: checkoutSessionId },
+        })
+      }
+      await refreshEntitlements()
+      attempts += 1
+      if (cancelled) return
+      if (attempts >= maxAttempts) {
+        setActivationSyncing(false)
+        setActivationSyncTimeout(true)
+        return
+      }
+      timer = window.setTimeout(() => {
+        void tick()
+      }, 2500)
+    }
+
+    void tick()
+
+    return () => {
+      cancelled = true
+      if (timer !== null) window.clearTimeout(timer)
+    }
+  }, [checkoutSessionId, isCheckoutSuccess, isPremium, refreshEntitlements])
+
+  useEffect(() => {
+    if (!isCheckoutSuccess || !isPremium) return
+
+    setActivationSyncing(false)
+    setActivationSyncTimeout(false)
+
+    const next = new URLSearchParams(searchParams)
+    next.delete('checkout')
+    next.delete('session_id')
+    setSearchParams(next, { replace: true })
+  }, [isCheckoutSuccess, isPremium, searchParams, setSearchParams])
 
   const sendMessage = async (text: string) => {
     const trimmed = text.trim()
@@ -153,27 +224,26 @@ export function ChatPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white flex flex-col relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      {/* Header */}
-      <header className="relative px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center gap-3 sticky top-0 z-50">
-        <Link to="/" className="p-2 -ml-2 rounded-xl hover:bg-white/10 transition-colors">
-          <ChevronLeft className="w-5 h-5 text-white/50" />
-        </Link>
-        <div className="flex items-center gap-3 flex-1">
-          <div className="w-9 h-9 rounded-2xl bg-[#ff6b35] flex items-center justify-center flex-shrink-0">
-            <Bot className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
-            <h1 className="text-base font-extrabold tracking-tight text-white leading-tight">Coach IA</h1>
-          </div>
-        </div>
-        {/* Context badge */}
-        {(phaseLabel || isDeload) && (
-          <span className="px-2.5 py-1 rounded-full bg-white/10 text-[10px] font-black text-white/50 tracking-wide">
-            {isDeload ? 'DÉCHARGE' : phaseLabel?.toUpperCase()}
-          </span>
-        )}
-      </header>
+      <PageHeader
+        title="Coach IA"
+        backTo="/"
+        right={
+          <>
+            {(phaseLabel || isDeload) && (
+              <span className="px-2.5 py-1 rounded-full bg-white/10 text-[10px] font-black text-white/50 tracking-wide">
+                {isDeload ? 'DÉCHARGE' : phaseLabel?.toUpperCase()}
+              </span>
+            )}
+            <span
+              className={`px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide ${
+                isPremium ? 'bg-[#ff6b35]/15 text-[#ff6b35]' : 'bg-white/10 text-white/45'
+              }`}
+            >
+              {isPremium ? 'PREMIUM' : 'FREE'}
+            </span>
+          </>
+        }
+      />
 
       {/* Messages area */}
       <main className="relative flex-1 overflow-y-auto px-4 pt-5 pb-32 space-y-4 max-w-md mx-auto w-full">
@@ -192,6 +262,11 @@ export function ChatPage() {
                 <p className="text-sm text-white/80 leading-relaxed mt-1.5">
                   Pose-moi n'importe quelle question sur l'entraînement, la nutrition, la récupération ou le sommeil. Je connais ton profil et ta semaine en cours.
                 </p>
+                {!hasPremiumInsights && (
+                  <p className="text-xs text-white/45 mt-2 leading-relaxed">
+                    Mode Free: le coach reste disponible, mais les suggestions contextuelles avancées sont réservées au Premium.
+                  </p>
+                )}
                 {context.week && (
                   <p className="text-xs text-white/40 mt-2">
                     Semaine {context.week}{phaseLabel ? ` · Phase ${phaseLabel}` : ''}{context.fatigue ? ` · Fatigue : ${context.fatigue}` : ''}
@@ -217,6 +292,61 @@ export function ChatPage() {
                 ))}
               </div>
             </div>
+
+            {!isPremium && (
+              <div className="pl-11">
+                <div className="rounded-[1.5rem] border border-[#ff6b35]/20 bg-[#ff6b35]/[0.06] p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-2xl bg-[#ff6b35]/15">
+                      <Lock className="h-4 w-4 text-[#ff6b35]" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-black text-white">Passe en Premium</p>
+                      <p className="mt-1 text-xs leading-relaxed text-white/60">
+                        Débloque les suggestions avancées liées à ta phase, à ta charge et à tes adaptations de programme.
+                      </p>
+                      {isCheckoutSuccess && (
+                        <p className="mt-2 text-[11px] leading-relaxed text-[#ffb08f]">
+                          {activationSyncing
+                            ? 'Paiement confirmé. Activation Premium en cours...'
+                            : activationSyncTimeout
+                              ? 'Activation encore en attente. Clique sur vérifier ou consulte les logs webhook Stripe.'
+                              : 'Retour de paiement détecté.'}
+                        </p>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isCheckoutSuccess) {
+                            void refreshEntitlements()
+                            return
+                          }
+                          void startCheckout('premium_monthly')
+                        }}
+                        disabled={checkoutLoading}
+                        className="mt-3 inline-flex items-center justify-center rounded-2xl bg-[#ff6b35] px-4 py-2 text-xs font-black text-white transition-colors hover:bg-[#e55a2b] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {checkoutLoading
+                          ? 'Chargement...'
+                          : isCheckoutSuccess
+                            ? 'Vérifier mon statut Premium'
+                            : 'Activer Premium'}
+                      </button>
+                      {checkoutMessage && (
+                        <p className="mt-2 text-[11px] leading-relaxed text-[#ffb08f]">
+                          {checkoutMessage}
+                        </p>
+                      )}
+                      {checkoutError && (
+                        <p className="mt-2 text-[11px] leading-relaxed text-amber-300">
+                          {checkoutError}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

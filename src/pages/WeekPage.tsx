@@ -1,13 +1,12 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, AlertTriangle, CheckCircle2, TrendingUp, Info, Dumbbell, Activity, Leaf, HeartPulse } from 'lucide-react'
+import { ChevronRight, AlertTriangle, CheckCircle2, TrendingUp, Info, Dumbbell, Activity, Leaf, HeartPulse } from 'lucide-react'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
-import { useViewMode } from '../hooks/useViewMode'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
 import { buildWeekProgram, validateSession } from '../services/program'
@@ -18,6 +17,7 @@ import { getCycleWeekNumber, getPhaseForWeek } from '../services/program/program
 import type { CycleWeek, DayOfWeek, RehabPhase, SessionType } from '../types/training'
 import { TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
 import { BottomNav } from '../components/BottomNav'
+import { PageHeader } from '../components/PageHeader'
 
 const WEEK_OPTIONS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
 
@@ -48,7 +48,6 @@ const REHAB_CRITERIA: Record<RehabPhase, string> = {
 export function WeekPage() {
   const { profile } = useProfile()
   const { week, setWeek, lastNonDeloadWeek } = useWeek()
-  const { setViewMode } = useViewMode()
   const { fatigue, setFatigue } = useFatigue()
   const { logs: blockLogs } = useBlockLogs()
   const { logs } = useHistory()
@@ -122,21 +121,7 @@ export function WeekPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      {/* Header */}
-      <header className="px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center justify-between sticky top-0 z-50 relative">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="p-2 -ml-2 rounded-xl hover:bg-white/10 transition-colors">
-            <ChevronLeft className="w-5 h-5 text-white/50" />
-          </Link>
-          <div>
-            <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
-            <h1 className="text-xl font-extrabold tracking-tight text-white">
-              Plan Semaine
-              <span className="ml-2 text-sm font-bold text-white/40">{week}</span>
-            </h1>
-          </div>
-        </div>
-      </header>
+      <PageHeader title="Plan Semaine" backTo="/" titleSuffix={week} />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
@@ -144,7 +129,6 @@ export function WeekPage() {
         {isTrainingToday && weekProgram && (
           <Link
             to={`/session/${todaySessionIndex}`}
-            onClick={() => setViewMode('compact')}
             className="flex items-center justify-between gap-3 px-5 py-4 bg-[#ff6b35] text-white rounded-[2rem] shadow-lg shadow-[#ff6b35]/20 hover:bg-[#e55a2b] transition-colors"
           >
             <div className="flex items-center gap-3">
@@ -414,7 +398,6 @@ export function WeekPage() {
             <Link
               key={`${session.recipeId}-${index}`}
               to={`/session/${index}`}
-              onClick={() => setViewMode('compact')}
               className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-[2rem] p-5 hover:border-white/30 hover:shadow-md transition-all"
             >
               {/* Type badge */}

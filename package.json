@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "preview": "vite preview",
     "parse:ffr-clubs": "node scripts/parseFfrClubs.mjs",
     "fetch:club-logos": "node scripts/fetchClubLogos.mjs",
@@ -46,6 +48,7 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
     "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.0.18",
     "workbox-precaching": "^7.4.0",
     "workbox-window": "^7.4.0"
   }

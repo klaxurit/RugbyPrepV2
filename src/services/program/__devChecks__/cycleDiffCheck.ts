@@ -3,6 +3,7 @@ import type { UserProfile } from '../../../types/training'
 
 const BASE_PROFILE: UserProfile = {
   level: 'intermediate',
+  trainingLevel: 'performance',
   weeklySessions: 3,
   equipment: ['barbell', 'bench', 'band', 'pullup_bar', 'dumbbell', 'box', 'ghd', 'landmine', 'tbar_row', 'med_ball'],
   injuries: [],

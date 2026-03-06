@@ -73,7 +73,6 @@ export function LoginPage() {
 
         {/* Form card */}
         <div className="space-y-4">
-          <p className="text-white text-xl font-bold text-center">Se connecter</p>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="space-y-1.5">

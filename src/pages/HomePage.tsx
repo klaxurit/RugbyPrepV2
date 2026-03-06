@@ -20,6 +20,7 @@ import {
   Swords,
   Sparkles,
 } from 'lucide-react'
+import { PageHeader } from '../components/PageHeader'
 import { useProfile } from '../hooks/useProfile'
 import { useFatigue } from '../hooks/useFatigue'
 import { useWeek } from '../hooks/useWeek'
@@ -113,8 +114,8 @@ export function HomePage() {
   const sessionsThisWeek = logs.filter((l) => l.week === week).length
   const recentLogs = logs.slice(0, 2)
 
-  const sessionDuration = LEVEL_DURATION[profile.trainingLevel ?? 'performance']
-  const trainingLevelLabel = TRAINING_LEVEL_LABEL[profile.trainingLevel ?? 'performance']
+  const sessionDuration = LEVEL_DURATION[profile.trainingLevel ?? 'builder']
+  const trainingLevelLabel = TRAINING_LEVEL_LABEL[profile.trainingLevel ?? 'builder']
 
   // Auto-suggestion: if calendar phase differs from profile.seasonMode (Performance only)
   const currentSeasonMode = profile.seasonMode ?? 'in_season'
@@ -129,12 +130,10 @@ export function HomePage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* ── Header ── */}
-      <header className="px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center justify-between sticky top-0 z-50 relative">
-        <div>
-          <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
-          <h1 className="text-xl font-extrabold tracking-tight text-white">Accueil</h1>
-        </div>
-        {authState.status === 'authenticated' && authState.user ? (
+      <PageHeader
+        title="Accueil"
+        right={
+        authState.status === 'authenticated' && authState.user ? (
           <div className="flex items-center gap-2">
             <Link to="/profile">
               <div className="relative h-14 w-14 rounded-full bg-white/10 border-2 border-white/10 flex items-center justify-center">
@@ -170,7 +169,7 @@ export function HomePage() {
             Se connecter
           </Link>
         )}
-      </header>
+      />
 
       <main className="px-6 pt-6 space-y-6 max-w-md mx-auto relative">
 

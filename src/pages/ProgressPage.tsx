@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import {
-  ChevronLeft, TrendingUp, TrendingDown, Minus, AlertCircle, BarChart2,
+  TrendingUp, TrendingDown, Minus, AlertCircle, BarChart2,
   Plus, X, FlaskConical, Dumbbell, ChevronDown
 } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
@@ -20,6 +20,8 @@ import {
   getBaselineForLevel,
   getBaselineLevelLabel,
 } from '../services/athleticTesting/getPositionBaseline'
+import { seedDemoData, clearDemoMode, isDemoModeActive } from '../data/fakeDataForProgress'
+import { PageHeader } from '../components/PageHeader'
 import { BottomNav } from '../components/BottomNav'
 import type { TrainingBlock } from '../types/training'
 import type { PhysicalTestType, PhysicalTest } from '../types/athleticTesting'
@@ -239,18 +241,51 @@ export function ProgressPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      {/* Header */}
-      <header className="relative px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center gap-3 sticky top-0 z-50">
-        <Link to="/" className="p-2 -ml-2 rounded-xl hover:bg-white/10 transition-colors">
-          <ChevronLeft className="w-5 h-5 text-white/50" />
-        </Link>
-        <div>
-          <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
-          <h1 className="text-xl font-extrabold tracking-tight text-white">Progression</h1>
-        </div>
-      </header>
+      <PageHeader title="Progression" backTo="/" />
 
       <main className="relative px-6 pt-5 space-y-6 max-w-md mx-auto">
+
+        {/* Mode démo — visible en dev pour tester graphiques */}
+        {import.meta.env.DEV && (
+          <div className="bg-amber-900/20 border border-amber-500/30 rounded-[20px] p-4 space-y-2">
+            <p className="text-xs font-black text-amber-400 uppercase tracking-wider">
+              Mode démo {isDemoModeActive() && '· actif'}
+            </p>
+            {isDemoModeActive() ? (
+              <>
+                <p className="text-sm text-amber-200/90">
+                  Tu visualises des données fictives. Les graphiques et le suivi utilisent ces données.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearDemoMode()
+                    window.location.reload()
+                  }}
+                  className="w-full py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-amber-500/30 text-amber-300 text-xs font-black uppercase tracking-wide transition-colors"
+                >
+                  Quitter le mode démo
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-amber-200/90">
+                  Charge des données fictives pour tester les graphiques et le suivi de performance.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    seedDemoData()
+                    window.location.reload()
+                  }}
+                  className="w-full py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-black uppercase tracking-wide transition-colors"
+                >
+                  Charger les données de démo
+                </button>
+              </>
+            )}
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex gap-2 bg-white/5 border border-white/10 rounded-[18px] p-1">

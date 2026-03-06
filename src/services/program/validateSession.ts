@@ -9,6 +9,10 @@ const MAX_BLOCKS = 5;
 const MAX_FINISHERS = 1;
 const MAX_FINISHERS_FULL = 2;
 
+const EXEMPT_FROM_ACTIVATION = new Set([
+  'RECOVERY_MOBILITY_V1',
+]);
+
 // Recettes qui n'ont pas de bloc principal (contrast/force/hypertrophy) par conception.
 // Les valider avec les critères standard génère des faux positifs.
 const EXEMPT_FROM_MAIN_BLOCK = new Set([
@@ -29,7 +33,7 @@ export const validateSession = (session: BuiltSession): SessionValidationResult 
   const prehabCount = intents.filter((intent) => intent === 'prehab').length;
   const coreCount = intents.filter((intent) => intent === 'core').length;
 
-  if (!isSafetyAdapted && activationCount !== 1) {
+  if (!isSafetyAdapted && activationCount !== 1 && !EXEMPT_FROM_ACTIVATION.has(session.recipeId)) {
     warnings.push(`Session must include exactly 1 activation block (found ${activationCount}).`);
   }
   if (isSafetyAdapted && activationCount + prehabCount + coreCount === 0) {

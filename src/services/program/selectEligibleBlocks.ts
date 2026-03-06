@@ -16,8 +16,11 @@ const hasRequiredEquipment = (
  * - 'builder'     → blocks NOT tagged "starter" (can be "builder" or untagged)
  * - 'performance' → blocks NOT tagged "starter" AND NOT tagged "builder"
  */
-const isLevelEligible = (block: TrainingBlock, trainingLevel: UserProfile['trainingLevel']): boolean => {
-  const level = trainingLevel ?? 'performance';
+const getEffectiveTrainingLevel = (profile: UserProfile): NonNullable<UserProfile['trainingLevel']> =>
+  profile.trainingLevel ?? 'starter';
+
+const isLevelEligible = (block: TrainingBlock, profile: UserProfile): boolean => {
+  const level = getEffectiveTrainingLevel(profile);
   const hasStarterTag = block.tags.includes('starter');
   const hasBuilderTag = block.tags.includes('builder');
   if (level === 'starter') return hasStarterTag;
@@ -39,7 +42,7 @@ export const selectEligibleBlocks = (
       if (!details) return false;
       return details.contraindications.some((contra) => profile.injuries.includes(contra));
     });
-    const levelOk = isLevelEligible(block, profile.trainingLevel);
+    const levelOk = isLevelEligible(block, profile);
 
     return equipmentOk && !contraindicationHit && !exerciseContraindicationHit && levelOk;
   });

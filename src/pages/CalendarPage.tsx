@@ -16,6 +16,7 @@ import {
   Activity,
 } from 'lucide-react'
 import { BottomNav } from '../components/BottomNav'
+import { PageHeader } from '../components/PageHeader'
 import { useCalendar } from '../hooks/useCalendar'
 import { useProfile } from '../hooks/useProfile'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
@@ -692,13 +693,7 @@ export function CalendarPage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* ── Header ── */}
-      <header className="px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center justify-between sticky top-0 z-40 relative">
-        <div>
-          <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
-          <h1 className="text-xl font-extrabold tracking-tight text-white">Calendrier</h1>
-        </div>
-        <SeasonBadge phase={seasonPhase} />
-      </header>
+      <PageHeader title="Calendrier" backTo="/" right={<SeasonBadge phase={seasonPhase} />} />
 
       <main className="px-6 pt-6 space-y-6 max-w-md mx-auto relative">
 

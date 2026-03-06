@@ -1,10 +1,11 @@
 // src/pages/MobilityPage.tsx
 import { Link } from 'react-router-dom'
-import { ChevronLeft, Leaf, Clock } from 'lucide-react'
+import { Leaf, Clock } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 import { buildMobilitySession } from '../services/program/buildMobilitySession'
 import { getExerciseName } from '../data/exercises'
 import { BottomNav } from '../components/BottomNav'
+import { PageHeader } from '../components/PageHeader'
 
 export function MobilityPage() {
   const { profile } = useProfile()
@@ -14,16 +15,7 @@ export function MobilityPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      {/* Header */}
-      <header className="px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center gap-3 sticky top-0 z-50 relative">
-        <Link to="/week" className="p-2 -ml-2 rounded-xl hover:bg-white/10 transition-colors">
-          <ChevronLeft className="w-5 h-5 text-white/50" />
-        </Link>
-        <div>
-          <p className="text-xs font-bold tracking-widest text-teal-400 uppercase italic">RugbyForge</p>
-          <h1 className="text-xl font-extrabold tracking-tight text-white">Récupération Active</h1>
-        </div>
-      </header>
+      <PageHeader title="Récupération Active" backTo="/week" />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 

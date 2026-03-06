@@ -19,11 +19,18 @@ export const getEmomDisplay = (
   if (version.scheme.kind !== 'emom') return null
   const minutes = version.scheme.minutes
   const exoCount = Math.max(1, block.exercises.length)
+  const work = version.scheme.work
+  const workSuffix = work
+    ? work.kind === 'reps'
+      ? ` · ${work.reps} reps`
+      : ` · ${work.seconds}s`
+    : ''
+
   if (exoCount <= 1) {
     return {
       minutes,
       exoCount,
-      label: `EMOM ${minutes}'`
+      label: `EMOM ${minutes}'${workSuffix}`
     }
   }
 
@@ -35,7 +42,7 @@ export const getEmomDisplay = (
     minutes,
     exoCount,
     tours,
-    label: `EMOM ${minutes}' — alterne ${exoCount} exos (${toursLabel})`
+    label: `EMOM ${minutes}' — alterne ${exoCount} exos (${toursLabel})${workSuffix}`
   }
 }
 

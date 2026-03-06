@@ -447,7 +447,7 @@ export function SessionView({
       )}
 
       {/* Blocks */}
-      <div className="divide-y divide-white/10">
+      <div className="space-y-4">
         {session.blocks.map(({ block, version }, index) => {
           const missingEquipment = getMissingEquipment(block, availableEquipment)
           const schemeLabel = formatBlockVolume(version)

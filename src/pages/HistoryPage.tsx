@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
-import { ChevronLeft, Trash2, Calendar, Activity, Dumbbell, Zap, ChevronDown } from 'lucide-react'
+import { Trash2, Calendar, Activity, Dumbbell, Zap, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
 import { BottomNav } from '../components/BottomNav'
+import { PageHeader } from '../components/PageHeader'
 import type { SessionType, CycleWeek } from '../types/training'
 
 const sessionTypeLabel: Record<SessionType, string> = {
@@ -46,28 +47,23 @@ export function HistoryPage() {
   return (
     <div className="min-h-screen bg-[#faf9f7] font-sans text-[#1f2937] pb-24">
 
-      {/* Header */}
-      <header className="px-6 py-4 bg-white border-b border-gray-100 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="p-2 -ml-2 rounded-xl hover:bg-gray-50 transition-colors">
-            <ChevronLeft className="w-5 h-5 text-slate-400" />
-          </Link>
-          <div>
-            <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
-            <h1 className="text-xl font-extrabold tracking-tight text-[#1f2937]">Historique</h1>
-          </div>
-        </div>
-        {logs.length > 0 && (
-          <button
-            type="button"
-            onClick={clearLogs}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-gray-200 bg-white text-xs font-bold text-slate-400 hover:border-[#1a5f3f]/20 hover:text-[#1a5f3f] transition-colors"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            Effacer
-          </button>
-        )}
-      </header>
+      <PageHeader
+        title="Historique"
+        backTo="/"
+        variant="light"
+        right={
+          logs.length > 0 ? (
+            <button
+              type="button"
+              onClick={clearLogs}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-gray-200 bg-white text-xs font-bold text-slate-400 hover:border-[#1a5f3f]/20 hover:text-[#1a5f3f] transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Effacer
+            </button>
+          ) : undefined
+        }
+      />
 
       <main className="px-6 pt-6 space-y-6 max-w-md mx-auto">
 

@@ -684,12 +684,12 @@
       {
         "exerciseId": "core_anti_extension__ghd_iso",
         "role": "stability",
-        "notes": "10–20s, anti-extension"
+        "notes": "15–20s — Tenue anti-extension, pas de cambrure."
       },
       {
         "exerciseId": "neck__flexion",
         "role": "stability",
-        "notes": "Contrôle, pas de douleur"
+        "notes": "10 reps — Contrôle, pas de douleur."
       }
     ],
     "versions": [
@@ -758,12 +758,12 @@
       {
         "exerciseId": "pull_vertical__pull_up__supinated",
         "role": "prime",
-        "notes": "Lesté si possible, propre"
+        "notes": "5-6 reps — Lesté si possible, propre."
       },
       {
         "exerciseId": "push_horizontal__push_up__oscillation",
         "role": "contrast",
-        "notes": "10–15s, vitesse"
+        "notes": "10-15s — Vitesse."
       }
     ],
     "versions": [
@@ -904,12 +904,12 @@
       {
         "exerciseId": "hinge__drop_rdl",
         "role": "prime",
-        "notes": "Dynamique contrôlé, dos neutre"
+        "notes": "5-7 reps — Dynamique contrôlé, dos neutre."
       },
       {
         "exerciseId": "core_rotation__ghd_rotations",
         "role": "stability",
-        "notes": "10/côté, contrôle"
+        "notes": "10 reps/côté — Contrôle."
       }
     ],
     "versions": [
@@ -1551,7 +1551,8 @@
     ],
     "equipment": [
       "band",
-      "dumbbell"
+      "dumbbell",
+      "bench"
     ],
     "contraindications": [
       "shoulder_pain"
@@ -1634,12 +1635,12 @@
       {
         "exerciseId": "power__medball_chest_pass__wall",
         "role": "prime",
-        "notes": "Explosif, récup complète."
+        "notes": "3-5 reps — Explosif, récup complète."
       },
       {
         "exerciseId": "push_horizontal__push_up__plyo",
         "role": "contrast",
-        "notes": "Qualité, stop avant dégradation."
+        "notes": "3-5 reps — Qualité, stop avant dégradation."
       }
     ],
     "versions": [
@@ -2482,12 +2483,12 @@
       {
         "exerciseId": "power__jump__box_jump",
         "role": "prime",
-        "notes": "Atterrissage propre."
+        "notes": "2-3 reps — Atterrissage propre."
       },
       {
         "exerciseId": "power__jump__broad_jump",
         "role": "contrast",
-        "notes": "Max distance, contrôle."
+        "notes": "2-3 reps — Max distance, contrôle."
       }
     ],
     "versions": [
@@ -2573,12 +2574,12 @@
       {
         "exerciseId": "power__bound__single_leg",
         "role": "prime",
-        "notes": "Stabilité du bassin."
+        "notes": "2/side — Stabilité du bassin."
       },
       {
         "exerciseId": "lower_jump__box_squat_jump",
         "role": "contrast",
-        "notes": "Explosif, amplitude propre."
+        "notes": "2 reps — Explosif, amplitude propre."
       }
     ],
     "versions": [
@@ -2654,7 +2655,8 @@
     ],
     "equipment": [
       "dumbbell",
-      "box"
+      "box",
+      "bench"
     ],
     "contraindications": [
       "knee_pain",
@@ -2811,7 +2813,8 @@
     ],
     "equipment": [
       "dumbbell",
-      "box"
+      "box",
+      "bench"
     ],
     "contraindications": [
       "knee_pain",
@@ -2888,7 +2891,8 @@
       "squat"
     ],
     "equipment": [
-      "barbell"
+      "barbell",
+      "ab_wheel"
     ],
     "contraindications": [
       "knee_pain",
@@ -3034,7 +3038,8 @@
     ],
     "equipment": [
       "dumbbell",
-      "box"
+      "box",
+      "bench"
     ],
     "contraindications": [
       "knee_pain"
@@ -3105,7 +3110,7 @@
       "groin"
     ],
     "equipment": [
-      "none"
+      "bench"
     ],
     "contraindications": [
       "groin_pain"
@@ -6009,7 +6014,8 @@
     ],
     "equipment": [
       "dumbbell",
-      "pullup_bar"
+      "pullup_bar",
+      "bench"
     ],
     "contraindications": [
       "shoulder_pain",

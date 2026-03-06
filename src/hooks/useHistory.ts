@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { SessionLog } from '../types/training'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
+import { DEMO_MODE_KEY } from '../data/fakeDataForProgress'
 
 const STORAGE_KEY = 'rugbyprep.history.v1'
 
@@ -72,9 +73,10 @@ export const useHistory = () => {
 
   const [logs, setLogs] = useState<SessionLog[]>(readFromStorage)
 
-  // Sync from Supabase on auth
+  // Sync from Supabase on auth (skip if demo mode — keep localStorage data)
   useEffect(() => {
     if (!userId) return
+    if (typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1') return
     supabase
       .from('session_logs')
       .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min')
@@ -91,8 +93,9 @@ export const useHistory = () => {
     async (log: Omit<SessionLog, 'id'>) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
       const completeLog: SessionLog = { ...log, id }
+      const demoMode = typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1'
 
-      if (userId) {
+      if (userId && !demoMode) {
         const { data, error } = await supabase
           .from('session_logs')
           .insert(logToRow(completeLog, userId))
@@ -121,7 +124,8 @@ export const useHistory = () => {
   )
 
   const clearLogs = useCallback(async () => {
-    if (userId) {
+    const demoMode = typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1'
+    if (userId && !demoMode) {
       await supabase.from('session_logs').delete().eq('user_id', userId)
     }
     setLogs([])

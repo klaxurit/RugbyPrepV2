@@ -78,6 +78,9 @@ const isFinisherIntent = (intent: TrainingBlock['intent']) =>
 const isFocusFilteredIntent = (intent: TrainingBlock['intent']) =>
   FOCUS_FILTERED_INTENTS.includes(intent);
 
+const isFullRecipeId = (recipeId: SessionRecipe['id']) =>
+  recipeId === 'FULL_V1' || recipeId === 'FULL_HYPER_V1' || recipeId === 'FULL_BUILDER_V1';
+
 const pickVersion = (block: TrainingBlock, week: WeekVersion) =>
   block.versions.find((version) => version.versionId === week) ?? null;
 
@@ -297,14 +300,14 @@ export const buildSessionFromRecipe = (
         ? (recipe.slotFocusTags[slotIndex] ?? undefined)
         : recipe.focusTagsAny;
 
-    const isUpperRecipe = recipe.id === 'UPPER_V1' || recipe.id === 'UPPER_HYPER_V1';
-    if (
-      isUpperRecipe &&
-      isFinisherIntent(step.intent) &&
-      builtBlocks.some((builtBlock) => isFinisherIntent(builtBlock.block.intent))
-    ) {
+    const maxFinishers = isFullRecipeId(recipe.id) ? 2 : 1;
+    const finisherCount = builtBlocks.filter((builtBlock) =>
+      isFinisherIntent(builtBlock.block.intent)
+    ).length;
+    if (isFinisherIntent(step.intent) && finisherCount >= maxFinishers) {
       continue;
     }
+
     const isLowerRecipe = recipe.id === 'LOWER_V1' || recipe.id === 'LOWER_HYPER_V1';
     if (
       isLowerRecipe &&

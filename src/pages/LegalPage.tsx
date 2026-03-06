@@ -1,6 +1,4 @@
-import { Link } from 'react-router-dom'
-import { ChevronLeft } from 'lucide-react'
-import { RugbyForgeLogo } from '../components/RugbyForgeLogo'
+import { PageHeader } from '../components/PageHeader'
 
 interface Section {
   title: string
@@ -61,7 +59,7 @@ const PRIVACY_SECTIONS: Section[] = [
     title: 'Vos droits (RGPD)',
     content: [
       `Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de portabilité et d'effacement de vos données.`,
-      `Pour exercer ces droits ou pour toute question, contactez-nous à : contact@rugbyprep.app`,
+      `Pour exercer ces droits ou pour toute question, contactez-nous à : bonjour@rugbyforge.fr`,
     ],
   },
   {
@@ -74,43 +72,36 @@ const PRIVACY_SECTIONS: Section[] = [
 
 export function LegalPage() {
   return (
-    <div className="min-h-screen bg-[#faf9f7] font-sans text-slate-900 pb-16">
-      <header className="sticky top-0 z-10 bg-[#faf9f7]/95 backdrop-blur border-b border-gray-100 px-4 py-3 flex items-center gap-3">
-        <Link to="/profile" className="p-2 rounded-2xl hover:bg-gray-100 transition-colors text-slate-500">
-          <ChevronLeft className="w-5 h-5" />
-        </Link>
-        <div className="flex items-center gap-2">
-          <RugbyForgeLogo size="sm" />
-          <span className="text-xs font-bold tracking-widest text-[#1a5f3f] uppercase italic">RugbyForge</span>
-        </div>
-        <span className="text-sm font-black text-slate-900">Mentions légales</span>
-      </header>
+    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <main className="max-w-lg mx-auto px-4 py-6 space-y-8">
+      <PageHeader title="Mentions légales" backTo="/profile" />
+
+      <main className="max-w-md mx-auto px-6 py-6 space-y-6 relative">
 
         {/* Disclaimer santé */}
-        <section className="bg-amber-50 border border-amber-200 rounded-[24px] p-5 space-y-2">
-          <p className="text-xs font-black text-amber-800 uppercase tracking-wider">Avertissement santé important</p>
-          <p className="text-sm text-amber-900 leading-relaxed">
+        <section className="bg-amber-900/20 border border-amber-500/20 rounded-[24px] p-5 space-y-2">
+          <p className="text-xs font-black text-amber-400 uppercase tracking-wider">Avertissement santé important</p>
+          <p className="text-sm text-amber-200/90 leading-relaxed">
             Les programmes d&apos;entraînement générés par RugbyForge sont fournis à titre indicatif et ne remplacent pas l&apos;avis d&apos;un médecin, kinésithérapeute ou préparateur physique certifié.
           </p>
-          <p className="text-sm text-amber-900 leading-relaxed">
+          <p className="text-sm text-amber-200/90 leading-relaxed">
             Avant de commencer tout programme d&apos;entraînement intensif, consultez un professionnel de santé, en particulier si vous avez des antécédents médicaux, des blessures en cours ou si vous reprenez l&apos;activité après une longue pause.
           </p>
-          <p className="text-sm text-amber-900 leading-relaxed font-bold">
+          <p className="text-sm text-amber-200 font-bold leading-relaxed">
             En cas de douleur, arrêtez immédiatement l&apos;exercice et consultez un médecin.
           </p>
         </section>
 
         {/* CGU */}
         <section className="space-y-4">
-          <h1 className="text-lg font-black text-slate-900">Conditions Générales d&apos;Utilisation</h1>
-          <p className="text-xs text-slate-400">Dernière mise à jour : mars 2026</p>
+          <h1 className="text-lg font-black text-white">Conditions Générales d&apos;Utilisation</h1>
+          <p className="text-xs text-white/40">Dernière mise à jour : mars 2026</p>
           {CGU_SECTIONS.map((s) => (
-            <div key={s.title} className="bg-white border border-gray-100 rounded-[20px] p-5 space-y-2">
-              <h2 className="text-sm font-black text-slate-900">{s.title}</h2>
+            <div key={s.title} className="bg-white/5 border border-white/10 rounded-[20px] p-5 space-y-2">
+              <h2 className="text-sm font-black text-white">{s.title}</h2>
               {s.content.map((p, i) => (
-                <p key={i} className="text-sm text-slate-600 leading-relaxed">{p}</p>
+                <p key={i} className="text-sm text-white/70 leading-relaxed">{p}</p>
               ))}
             </div>
           ))}
@@ -118,29 +109,29 @@ export function LegalPage() {
 
         {/* Confidentialité */}
         <section className="space-y-4">
-          <h1 className="text-lg font-black text-slate-900">Politique de Confidentialité</h1>
-          <p className="text-xs text-slate-400">Conformément au RGPD (UE 2016/679)</p>
+          <h1 className="text-lg font-black text-white">Politique de Confidentialité</h1>
+          <p className="text-xs text-white/40">Conformément au RGPD (UE 2016/679)</p>
           {PRIVACY_SECTIONS.map((s) => (
-            <div key={s.title} className="bg-white border border-gray-100 rounded-[20px] p-5 space-y-2">
-              <h2 className="text-sm font-black text-slate-900">{s.title}</h2>
+            <div key={s.title} className="bg-white/5 border border-white/10 rounded-[20px] p-5 space-y-2">
+              <h2 className="text-sm font-black text-white">{s.title}</h2>
               {s.content.map((p, i) => (
-                <p key={i} className="text-sm text-slate-600 leading-relaxed">{p}</p>
+                <p key={i} className="text-sm text-white/70 leading-relaxed">{p}</p>
               ))}
             </div>
           ))}
         </section>
 
         {/* Contact */}
-        <section className="bg-white border border-gray-100 rounded-[24px] p-5 space-y-2">
-          <h2 className="text-sm font-black text-slate-900">Contact</h2>
-          <p className="text-sm text-slate-600">
+        <section className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-2">
+          <h2 className="text-sm font-black text-white">Contact</h2>
+          <p className="text-sm text-white/70">
             Pour toute question relative aux présentes mentions légales ou à vos données personnelles :
           </p>
           <a
-            href="mailto:contact@rugbyprep.app"
-            className="inline-block text-sm font-bold text-[#1a5f3f] hover:underline"
+            href="mailto:bonjour@rugbyforge.fr"
+            className="inline-block text-sm font-bold text-[#ff6b35] hover:underline"
           >
-            contact@rugbyprep.app
+            bonjour@rugbyforge.fr
           </a>
         </section>
 

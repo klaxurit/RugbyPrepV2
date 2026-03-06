@@ -4,7 +4,8 @@ import { posthog } from '../services/analytics/posthog'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { ChevronLeft, Dumbbell, Shield, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, HeartPulse } from 'lucide-react'
+import { Dumbbell, Shield, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, HeartPulse } from 'lucide-react'
+import { PageHeader } from '../components/PageHeader'
 import { useProfile } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { useNotifications } from '../hooks/useNotifications'
@@ -272,26 +273,20 @@ export function ProfilePage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      {/* Header */}
-      <header className="relative px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="p-2 -ml-2 rounded-xl hover:bg-white/10 transition-colors">
-            <ChevronLeft className="w-5 h-5 text-white/50" />
-          </Link>
-          <div>
-            <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
-            <h1 className="text-xl font-extrabold tracking-tight text-white">Mon Profil</h1>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={resetProfile}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/10 bg-white/5 text-xs font-bold text-white/40 hover:border-[#ff6b35]/30 hover:text-[#ff6b35] transition-colors"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          Réinitialiser
-        </button>
-      </header>
+      <PageHeader
+        title="Mon Profil"
+        backTo="/"
+        right={
+          <button
+            type="button"
+            onClick={resetProfile}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/10 bg-white/5 text-xs font-bold text-white/40 hover:border-[#ff6b35]/30 hover:text-[#ff6b35] transition-colors"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Réinitialiser
+          </button>
+        }
+      />
 
       <main className="relative px-6 pt-6 space-y-5 max-w-md mx-auto">
         <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
@@ -370,7 +365,7 @@ export function ProfilePage() {
             <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Niveau d'entraînement</label>
             <div className="flex flex-col gap-2">
               {TRAINING_LEVELS.map((opt) => {
-                const active = (profile.trainingLevel ?? 'performance') === opt.value
+                const active = (profile.trainingLevel ?? 'builder') === opt.value
                 return (
                   <button
                     key={opt.value}
@@ -396,7 +391,7 @@ export function ProfilePage() {
           {/* Mode saison */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Mode saison</label>
-            {(profile.trainingLevel ?? 'performance') === 'starter' ? (
+            {(profile.trainingLevel ?? 'builder') === 'starter' ? (
               <p className="text-[11px] text-white/40 bg-white/5 border border-white/10 rounded-2xl px-3 py-2.5">
                 Le mode saison s'active à partir du niveau Intermédiaire. Continue ton programme débutant — le passage à l'Intermédiaire débloquera ce réglage.
               </p>

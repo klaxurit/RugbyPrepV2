@@ -2,14 +2,15 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { posthog } from '../services/analytics/posthog'
-import { ChevronLeft, User, Target, AlertTriangle, CheckCircle2, TrendingUp, Info, FileText } from 'lucide-react'
+import { User, Target, AlertTriangle, CheckCircle2, TrendingUp, Info, FileText } from 'lucide-react'
 import { weekGuidanceV1 } from '../data/weekGuidance.v1'
 import { useFatigue } from '../hooks/useFatigue'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
+import { useCalendar } from '../hooks/useCalendar'
+import { useACWR } from '../hooks/useACWR'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
-import { useViewMode } from '../hooks/useViewMode'
 import { buildWeekProgram } from '../services/program/buildWeekProgram'
 import { validateSession } from '../services/program'
 import { applyDeloadToSession } from '../services/ui/applyDeload'
@@ -21,6 +22,7 @@ import { SessionView } from '../components/SessionView'
 import { ProfileModal } from '../components/modals/ProfileModal'
 import { WeekObjectiveModal } from '../components/modals/WeekObjectiveModal'
 import { BottomNav } from '../components/BottomNav'
+import { PageHeader } from '../components/PageHeader'
 
 const WEEK_OPTIONS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
 
@@ -39,10 +41,10 @@ const PHASE_LABEL: Record<string, string> = {
 export function ProgramPage() {
   const { profile } = useProfile()
   const { week, setWeek, lastNonDeloadWeek } = useWeek()
-  const { viewMode, setViewMode } = useViewMode()
   const { fatigue, setFatigue } = useFatigue()
   const { logs: blockLogs } = useBlockLogs()
   const { logs, addLog } = useHistory()
+  const { events } = useCalendar()
   const [sessionIndex, setSessionIndex] = useState(0)
   const [notes, setNotes] = useState('')
   const [saved, setSaved] = useState(false)
@@ -51,16 +53,21 @@ export function ProgramPage() {
 
   useEffect(() => { posthog.capture('program_viewed') }, [])
 
+  const acwrResult = useACWR(logs, events)
+  const acwr = acwrResult.acwr
+  const acwrZone = acwrResult.zone
   const effectiveWeek = week === 'DELOAD' ? lastNonDeloadWeek : week
   const baseWeek = getBaseWeekVersion(effectiveWeek)
   const guidance = week === 'DELOAD' ? weekGuidanceV1.DELOAD : weekGuidanceV1[baseWeek]
   const phase = getPhaseForWeek(effectiveWeek)
   const cycleWeekNumber = getCycleWeekNumber(week)
-  const recommendation = shouldRecommendDeload(logs, week)
+  const recommendation = shouldRecommendDeload(logs, week, acwr)
   const isDeloadWeek = week === 'DELOAD'
 
   // Use buildWeekProgram to match exactly the routing logic of /week
-  const weekResult = buildWeekProgram(profile, effectiveWeek)
+  const weekResult = buildWeekProgram(profile, effectiveWeek, {
+    fatigueLevel: acwrZone ?? undefined,
+  })
   const sessions = weekResult.sessions
 
   // Clamp index when week changes (e.g. 3x → 2x profile)
@@ -76,39 +83,31 @@ export function ProgramPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      {/* Header */}
-      <header className="px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center justify-between sticky top-0 z-50 relative">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="p-2 -ml-2 rounded-xl hover:bg-white/10 transition-colors">
-            <ChevronLeft className="w-5 h-5 text-white/50" />
-          </Link>
-          <div>
-            <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
-            <h1 className="text-xl font-extrabold tracking-tight text-white">
-              Programme
-              <span className="ml-2 text-sm font-bold text-white/40">
-                {session ? session.title : week}
-              </span>
-            </h1>
+      <PageHeader
+        title="Programme"
+        backTo="/"
+        titleSuffix={session ? session.title : week}
+        right={
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsProfileModalOpen(true)}
+              className="p-2 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-[#ff6b35] hover:border-[#ff6b35]/20 transition-colors"
+              aria-label="Profil"
+            >
+              <User className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsObjectiveModalOpen(true)}
+              className="p-2 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-[#ff6b35] hover:border-[#ff6b35]/20 transition-colors"
+              aria-label="Objectif semaine"
+            >
+              <Target className="w-4 h-4" />
+            </button>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsProfileModalOpen(true)}
-            className="p-2 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-[#ff6b35] hover:border-[#ff6b35]/20 transition-colors"
-          >
-            <User className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsObjectiveModalOpen(true)}
-            className="p-2 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-[#ff6b35] hover:border-[#ff6b35]/20 transition-colors"
-          >
-            <Target className="w-4 h-4" />
-          </button>
-        </div>
-      </header>
+        }
+      />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
@@ -170,24 +169,6 @@ export function ProgramPage() {
             </p>
           </div>
         )}
-
-        {/* View mode toggle */}
-        <div className="flex gap-2">
-          {(['compact', 'detail'] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setViewMode(mode)}
-              className={`flex-1 py-2 rounded-2xl text-xs font-bold transition-all ${
-                viewMode === mode
-                  ? 'bg-white/20 text-white'
-                  : 'bg-white/5 border border-white/10 text-white/50 hover:border-white/30'
-              }`}
-            >
-              {mode === 'compact' ? 'Compact' : 'Détail'}
-            </button>
-          ))}
-        </div>
 
         {/* Fatigue toggle */}
         <section className="bg-white/5 border border-white/10 rounded-[24px] p-5">
@@ -299,7 +280,7 @@ export function ProgramPage() {
                 session={session}
                 availableEquipment={profile.equipment}
                 sessionType={sessionType}
-                viewMode={viewMode}
+                viewMode="compact"
                 isDeload={isDeloadWeek}
                 isValid={validation?.isValid}
                 warnings={warnings}

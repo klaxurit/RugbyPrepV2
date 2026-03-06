@@ -7,12 +7,14 @@ import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
-import { useViewMode } from '../hooks/useViewMode'
+import { useCalendar } from '../hooks/useCalendar'
+import { useACWR } from '../hooks/useACWR'
 import { buildWeekProgram, validateSession } from '../services/program'
 import { applyDeloadToSessions } from '../services/ui/applyDeload'
 import { SessionView } from '../components/SessionView'
 import { RPEModal } from '../components/modals/RPEModal'
 import { BottomNav } from '../components/BottomNav'
+import { PageHeader } from '../components/PageHeader'
 import { getPrehab, CONTRA_LABELS } from '../services/ui/getPrehab'
 import type { SessionType } from '../types/training'
 
@@ -28,9 +30,9 @@ export function SessionDetailPage() {
   const index = Number(sessionIndex ?? '0')
   const { profile } = useProfile()
   const { week, lastNonDeloadWeek } = useWeek()
-  const { viewMode, setViewMode } = useViewMode()
   const { fatigue } = useFatigue()
-  const { addLog } = useHistory()
+  const { addLog, logs } = useHistory()
+  const { events } = useCalendar()
   const navigate = useNavigate()
   const [showRPE, setShowRPE] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -40,8 +42,11 @@ export function SessionDetailPage() {
 
   const isDeloadWeek = week === 'DELOAD'
   const effectiveWeek = isDeloadWeek ? lastNonDeloadWeek : week
+  const { zone: acwrZone } = useACWR(logs, events)
 
-  const builtProgram = buildWeekProgram(profile, effectiveWeek)
+  const builtProgram = buildWeekProgram(profile, effectiveWeek, {
+    fatigueLevel: acwrZone ?? undefined,
+  })
   const rawSessions = builtProgram.sessions
   const sessions = isDeloadWeek ? applyDeloadToSessions(rawSessions) : rawSessions
 
@@ -61,37 +66,7 @@ export function SessionDetailPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      {/* Header */}
-      <header className="px-6 py-4 bg-[#1a100c]/95 backdrop-blur border-b border-white/10 flex items-center justify-between sticky top-0 z-50 relative">
-        <div className="flex items-center gap-3">
-          <Link to="/week" className="p-2 -ml-2 rounded-xl hover:bg-white/10 transition-colors">
-            <ChevronLeft className="w-5 h-5 text-white/50" />
-          </Link>
-          <div>
-            <p className="text-xs font-bold tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
-            <h1 className="text-xl font-extrabold tracking-tight text-white">
-              {session?.title ?? 'Séance'}
-              <span className="ml-2 text-sm font-bold text-white/40">{week}</span>
-            </h1>
-          </div>
-        </div>
-        <div className="flex gap-1.5">
-          {(['compact', 'detail'] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setViewMode(mode)}
-              className={`px-3 py-1.5 rounded-2xl text-xs font-bold transition-all ${
-                viewMode === mode
-                  ? 'bg-white/20 text-white'
-                  : 'bg-white/5 border border-white/10 text-white/50 hover:border-white/30'
-              }`}
-            >
-              {mode === 'compact' ? 'Compact' : 'Détail'}
-            </button>
-          ))}
-        </div>
-      </header>
+      <PageHeader title={session?.title ?? 'Séance'} backTo="/week" titleSuffix={week} />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
@@ -165,7 +140,7 @@ export function SessionDetailPage() {
               session={session}
               availableEquipment={profile.equipment}
               sessionType={sessionType}
-              viewMode={viewMode}
+              viewMode="compact"
               isDeload={isDeloadWeek}
               isValid={validation?.isValid}
               onMarkComplete={() => setShowRPE(true)}
