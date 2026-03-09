@@ -29,6 +29,9 @@ const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)))
 }
 
+const uint8ArrayToBase64Url = (value: Uint8Array): string =>
+  btoa(String.fromCharCode(...value)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+
 const uint8ArrayEquals = (left: Uint8Array, right: Uint8Array): boolean => {
   if (left.length !== right.length) return false
   for (let index = 0; index < left.length; index += 1) {
@@ -48,9 +51,25 @@ const hasMatchingApplicationServerKey = (
 
 export type NotificationStatus = 'idle' | 'loading' | 'subscribed' | 'denied' | 'unsupported' | 'no_vapid'
 
+export interface NotificationDiagnostics {
+  backendPublicKeyPreview: string | null
+  backendPublicKeyLength: number
+  frontendPublicKeyPreview: string | null
+  frontendPublicKeyLength: number
+  subscriptionPublicKeyPreview: string | null
+  subscriptionPublicKeyLength: number
+  frontendMatchesBackend: boolean
+  subscriptionMatchesBackend: boolean
+  frontendMatchesSubscription: boolean
+  endpointPreview: string | null
+  origin: string | null
+}
+
 export const useNotifications = (profile: UserProfile) => {
   const [status, setStatus] = useState<NotificationStatus>('loading')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [diagnostics, setDiagnostics] = useState<NotificationDiagnostics | null>(null)
+  const [isDiagnosing, setIsDiagnosing] = useState(false)
   const vapidPublicKeyBytes = VAPID_PUBLIC_KEY ? urlBase64ToUint8Array(VAPID_PUBLIC_KEY) : null
 
   const syncSubscription = useCallback(
@@ -211,5 +230,38 @@ export const useNotifications = (profile: UserProfile) => {
     }
   }, [])
 
-  return { status, errorMessage, subscribe, unsubscribe }
+  const runDiagnostics = useCallback(async () => {
+    if (!('serviceWorker' in navigator)) return
+
+    setIsDiagnosing(true)
+    try {
+      const reg = await navigator.serviceWorker.ready
+      const sub = await reg.pushManager.getSubscription()
+      const subscriptionPublicKey = sub?.options.applicationServerKey
+        ? uint8ArrayToBase64Url(new Uint8Array(sub.options.applicationServerKey))
+        : null
+
+      const { data, error } = await supabase.functions.invoke('debug-push-config', {
+        body: {
+          frontendPublicKey: VAPID_PUBLIC_KEY ?? null,
+          subscriptionPublicKey,
+          endpoint: sub?.endpoint ?? null,
+        },
+      })
+
+      if (error) {
+        throw new Error(error.message ?? 'Push diagnostics failed')
+      }
+
+      setDiagnostics(data as NotificationDiagnostics)
+      setErrorMessage(null)
+    } catch (error) {
+      console.error('[useNotifications] diagnostics error:', error)
+      setErrorMessage(error instanceof Error ? error.message : 'Impossible de diagnostiquer les notifications')
+    } finally {
+      setIsDiagnosing(false)
+    }
+  }, [])
+
+  return { status, errorMessage, diagnostics, isDiagnosing, subscribe, unsubscribe, runDiagnostics }
 }

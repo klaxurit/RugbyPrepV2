@@ -137,8 +137,11 @@ export function ProfilePage() {
   const {
     status: notifStatus,
     errorMessage: notifErrorMessage,
+    diagnostics: notifDiagnostics,
+    isDiagnosing: notifIsDiagnosing,
     subscribe: notifSubscribe,
     unsubscribe: notifUnsubscribe,
+    runDiagnostics: notifRunDiagnostics,
   } = useNotifications(profile)
   const [avatarError, setAvatarError] = useState<string | null>(null)
   const [isAvatarUploading, setIsAvatarUploading] = useState(false)
@@ -968,30 +971,60 @@ export function ProfilePage() {
                     {notifErrorMessage}
                   </p>
                 )}
+                {notifDiagnostics && (
+                  <div className="mt-2 space-y-1 text-[10px] text-white/35">
+                    <p>Origine: <span className="text-white/55">{notifDiagnostics.origin ?? 'n/a'}</span></p>
+                    <p>Front: <span className="text-white/55">{notifDiagnostics.frontendPublicKeyPreview ?? 'n/a'}</span> ({notifDiagnostics.frontendPublicKeyLength})</p>
+                    <p>Subscription: <span className="text-white/55">{notifDiagnostics.subscriptionPublicKeyPreview ?? 'n/a'}</span> ({notifDiagnostics.subscriptionPublicKeyLength})</p>
+                    <p>Backend: <span className="text-white/55">{notifDiagnostics.backendPublicKeyPreview ?? 'n/a'}</span> ({notifDiagnostics.backendPublicKeyLength})</p>
+                    <p>
+                      Matchs: front/back <span className={notifDiagnostics.frontendMatchesBackend ? 'text-emerald-300' : 'text-rose-300'}>
+                        {notifDiagnostics.frontendMatchesBackend ? 'OK' : 'KO'}
+                      </span>{' '}
+                      · sub/back <span className={notifDiagnostics.subscriptionMatchesBackend ? 'text-emerald-300' : 'text-rose-300'}>
+                        {notifDiagnostics.subscriptionMatchesBackend ? 'OK' : 'KO'}
+                      </span>{' '}
+                      · front/sub <span className={notifDiagnostics.frontendMatchesSubscription ? 'text-emerald-300' : 'text-rose-300'}>
+                        {notifDiagnostics.frontendMatchesSubscription ? 'OK' : 'KO'}
+                      </span>
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
-            {notifStatus === 'subscribed' ? (
+            <div className="flex items-center gap-2">
+              {notifStatus === 'subscribed' ? (
+                <button
+                  type="button"
+                  onClick={notifUnsubscribe}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/10 text-xs font-bold text-white/40 hover:border-rose-500/30 hover:text-rose-400 transition-colors"
+                >
+                  <BellOff className="w-3 h-3" />
+                  Désactiver
+                </button>
+              ) : notifStatus === 'idle' ? (
+                <button
+                  type="button"
+                  onClick={notifSubscribe}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#ff6b35] text-white text-xs font-black hover:bg-[#e55a2b] transition-colors"
+                >
+                  <Bell className="w-3 h-3" />
+                  Activer
+                </button>
+              ) : notifStatus === 'loading' ? (
+                <span className="text-xs text-white/40 animate-pulse">...</span>
+              ) : null}
+
               <button
                 type="button"
-                onClick={notifUnsubscribe}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/10 text-xs font-bold text-white/40 hover:border-rose-500/30 hover:text-rose-400 transition-colors"
+                onClick={notifRunDiagnostics}
+                disabled={notifIsDiagnosing || notifStatus === 'loading'}
+                className="px-3 py-2 rounded-2xl border border-white/10 text-xs font-bold text-white/45 hover:border-white/20 hover:text-white/70 transition-colors disabled:opacity-50"
               >
-                <BellOff className="w-3 h-3" />
-                Désactiver
+                {notifIsDiagnosing ? 'Diagnostic...' : 'Diagnostiquer'}
               </button>
-            ) : notifStatus === 'idle' ? (
-              <button
-                type="button"
-                onClick={notifSubscribe}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#ff6b35] text-white text-xs font-black hover:bg-[#e55a2b] transition-colors"
-              >
-                <Bell className="w-3 h-3" />
-                Activer
-              </button>
-            ) : notifStatus === 'loading' ? (
-              <span className="text-xs text-white/40 animate-pulse">...</span>
-            ) : null}
+            </div>
           </div>
         </section>
 
