@@ -73,6 +73,7 @@ Ce dossier est la base de connaissance projet lue en priorité par les workflows
 - **[bench-press-dual-view.svg](./illustrations/bench-press-pack/bench-press-dual-view.svg)** — Vue profil + inset face
 - **[bench-press-steps.svg](./illustrations/bench-press-pack/bench-press-steps.svg)** — Fiche 3 étapes
 
+
 ---
 
 ## Documents secondaires / historiques
