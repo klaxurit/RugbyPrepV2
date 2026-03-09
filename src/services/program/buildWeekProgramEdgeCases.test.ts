@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest'
+import exercisesData from '../../data/exercices.v1.json'
+import type { Exercise } from '../../types/training'
 import { buildWeekProgram } from './buildWeekProgram'
 import { CRITICAL_WEEKS, SIMULATION_PROFILES } from './testHelpers'
 import { validateSession } from './validateSession'
+
+const exercises = exercisesData as Exercise[]
+const exercisesById = new Map<string, Exercise>()
+for (const ex of exercises) {
+  if (ex.exerciseId) exercisesById.set(ex.exerciseId, ex)
+  if (ex.id) exercisesById.set(ex.id, ex)
+}
 
 // ── Known limitations ──────────────────────────────────────────
 // Some profile×week combos produce sessions that validateSession flags:
@@ -203,9 +212,10 @@ describe('injury constraints', () => {
 
       for (const session of result.sessions) {
         for (const builtBlock of session.blocks) {
-          for (const exercise of builtBlock.block.exercises) {
+          for (const blockEx of builtBlock.block.exercises) {
+            const ex = exercisesById.get(blockEx.exerciseId)
             expect(
-              exercise.contraindications ?? [],
+              ex?.contraindications ?? [],
               `${id} — ${builtBlock.block.blockId} contains exercise with shoulder_pain contraindication`
             ).not.toContain('shoulder_pain')
           }
@@ -222,9 +232,10 @@ describe('injury constraints', () => {
 
       for (const session of result.sessions) {
         for (const builtBlock of session.blocks) {
-          for (const exercise of builtBlock.block.exercises) {
+          for (const blockEx of builtBlock.block.exercises) {
+            const ex = exercisesById.get(blockEx.exerciseId)
             expect(
-              exercise.contraindications ?? [],
+              ex?.contraindications ?? [],
               `${id} — ${builtBlock.block.blockId} contains exercise with knee_pain contraindication`
             ).not.toContain('knee_pain')
           }
@@ -241,9 +252,10 @@ describe('injury constraints', () => {
 
       for (const session of result.sessions) {
         for (const builtBlock of session.blocks) {
-          for (const exercise of builtBlock.block.exercises) {
+          for (const blockEx of builtBlock.block.exercises) {
+            const ex = exercisesById.get(blockEx.exerciseId)
             expect(
-              exercise.contraindications ?? [],
+              ex?.contraindications ?? [],
               `${id} — ${builtBlock.block.blockId} contains exercise with low_back_pain contraindication`
             ).not.toContain('low_back_pain')
           }
