@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { WeekProvider } from '../../contexts/WeekContext'
+import { WeekProvider } from '../../contexts/WeekProvider'
 import { useAuth } from '../../hooks/useAuth'
 import { isOnboardingComplete } from '../../hooks/useProfile'
 

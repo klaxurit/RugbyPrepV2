@@ -15,8 +15,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       manifest: {
-        name: 'RugbyPrep',
-        short_name: 'RugbyPrep',
+        name: 'RugbyForge',
+        short_name: 'RugbyForge',
         description: 'Ton programme de préparation physique rugby',
         theme_color: '#e11d48',
         background_color: '#ffffff',

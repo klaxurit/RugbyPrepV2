@@ -22,7 +22,7 @@ import { useCalendar } from '../hooks/useCalendar'
 import { useProfile } from '../hooks/useProfile'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 import ffrClubs from '../data/ffrClubs.v2021.json'
-import type { CalendarEventType, CalendarEvent, SeasonPhase, DayOfWeek, ClubSchedule } from '../types/training'
+import type { CalendarEventType, CalendarEvent, SeasonPhase, DayOfWeek } from '../types/training'
 import { TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
 
 // ─── Club Search Types ────────────────────────────────────────
@@ -508,7 +508,7 @@ interface DayDetailModalProps {
   onClose: () => void
   onAddEvent: () => void
   onRemoveEvent: (id: string) => void
-  onUpdateMatchLoad: (id: string, rpe: number, durationMin?: number) => void
+  onUpdateMatchLoad: (id: string, rpe: number, durationMin: number) => Promise<void>
 }
 
 function DayDetailModal({

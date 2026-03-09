@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { WeekContext } from '../contexts/WeekContext'
+import { WeekContext } from '../contexts/weekContext'
 
 export const useWeek = () => {
   const ctx = useContext(WeekContext)

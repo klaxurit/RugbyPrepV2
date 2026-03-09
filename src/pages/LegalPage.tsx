@@ -56,6 +56,12 @@ const PRIVACY_SECTIONS: Section[] = [
     ],
   },
   {
+    title: 'Paiements et données bancaires',
+    content: [
+      `Les paiements sont sécurisés par Stripe. RugbyForge ne conserve pas vos informations de carte bancaire. Consultez la politique de confidentialité de Stripe (stripe.com/fr/privacy) pour plus de détails sur le traitement des données de paiement.`,
+    ],
+  },
+  {
     title: 'Vos droits (RGPD)',
     content: [
       `Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de portabilité et d'effacement de vos données.`,
