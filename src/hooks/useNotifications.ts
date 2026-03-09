@@ -29,11 +29,29 @@ const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)))
 }
 
+const uint8ArrayEquals = (left: Uint8Array, right: Uint8Array): boolean => {
+  if (left.length !== right.length) return false
+  for (let index = 0; index < left.length; index += 1) {
+    if (left[index] !== right[index]) return false
+  }
+  return true
+}
+
+const hasMatchingApplicationServerKey = (
+  subscription: PushSubscription,
+  expectedKey: Uint8Array,
+): boolean => {
+  const serverKey = subscription.options.applicationServerKey
+  if (!serverKey) return false
+  return uint8ArrayEquals(new Uint8Array(serverKey), expectedKey)
+}
+
 export type NotificationStatus = 'idle' | 'loading' | 'subscribed' | 'denied' | 'unsupported' | 'no_vapid'
 
 export const useNotifications = (profile: UserProfile) => {
   const [status, setStatus] = useState<NotificationStatus>('loading')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const vapidPublicKeyBytes = VAPID_PUBLIC_KEY ? urlBase64ToUint8Array(VAPID_PUBLIC_KEY) : null
 
   const syncSubscription = useCallback(
     async (subscription: PushSubscription) => {
@@ -87,6 +105,15 @@ export const useNotifications = (profile: UserProfile) => {
           return
         }
 
+        if (!vapidPublicKeyBytes || !hasMatchingApplicationServerKey(sub, vapidPublicKeyBytes)) {
+          await sub.unsubscribe().catch(() => undefined)
+          if (!cancelled) {
+            setErrorMessage('Les clés de notification ont changé. Réactive les notifications.')
+            setStatus('idle')
+          }
+          return
+        }
+
         await syncSubscription(sub)
         if (!cancelled) {
           setErrorMessage(null)
@@ -106,7 +133,7 @@ export const useNotifications = (profile: UserProfile) => {
     return () => {
       cancelled = true
     }
-  }, [syncSubscription])
+  }, [syncSubscription, vapidPublicKeyBytes])
 
   const subscribe = useCallback(async () => {
     if (!('Notification' in window) || !('serviceWorker' in navigator)) {
@@ -133,15 +160,22 @@ export const useNotifications = (profile: UserProfile) => {
       // Si déjà subscribed, on resynchronise les préférences serveur.
       const existing = await reg.pushManager.getSubscription()
       if (existing) {
-        await syncSubscription(existing)
-        setStatus('subscribed')
-        return
+        if (!vapidPublicKeyBytes || !hasMatchingApplicationServerKey(existing, vapidPublicKeyBytes)) {
+          await supabase.functions.invoke('unsubscribe-push', {
+            body: { endpoint: existing.endpoint },
+          }).catch(() => undefined)
+          await existing.unsubscribe()
+        } else {
+          await syncSubscription(existing)
+          setStatus('subscribed')
+          return
+        }
       }
 
       const subscription = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as any,
+        applicationServerKey: vapidPublicKeyBytes as any,
       })
 
       await syncSubscription(subscription)
@@ -152,7 +186,7 @@ export const useNotifications = (profile: UserProfile) => {
       setErrorMessage(err instanceof Error ? err.message : 'Impossible d’activer les notifications')
       setStatus('idle')
     }
-  }, [syncSubscription])
+  }, [syncSubscription, vapidPublicKeyBytes])
 
   const unsubscribe = useCallback(async () => {
     setStatus('loading')
