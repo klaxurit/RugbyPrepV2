@@ -15,18 +15,27 @@ et adaptées au profil du joueur.
 
 ## Fichiers Disponibles
 
-| Fichier | Domaine | Lignes | Références | Version |
-|---|---|---|---|---|
-| `periodization.md` | Périodisation, cycles, saison française | ~400 | 24 | 1.0.0 |
-| `recovery.md` | Sommeil, CWI, HRV, nutrition récupération | ~450 | 32 | 1.0.0 |
-| `strength-methods.md` | Force-vitesse, PAP, French Contrast, plyométrie | ~500 | 32 | 1.0.0 |
-| `nutrition.md` | Macros, timing, match day, supplémentation, alcool | ~550 | 25 | 1.0.0 |
-| `injury-prevention.md` | ACWR, prehab, commotion, retour au jeu | ~520 | 25 | 1.0.0 |
-| `energy-systems.md` | Filières, VO2max, RSA, HIIT, concurrent | ~420 | 19 | 1.0.0 |
-| `athletic-testing.md` | CMJ, sprint 10m, YYIR1, 1RM estimé, asymétrie, baselines par poste | ~423 | 17 | 1.0.0 |
-| `team-monitoring.md` | ACWR collectif, matrice risque joueurs, push séances, rotation | ~453 | 12 | 1.0.0 |
+| Fichier | Domaine | Taille approx. | Statut |
+|---|---|---|---|
+| `periodization.md` | Périodisation, cycles, saison française | 534 lignes | Canonique |
+| `strength-methods.md` | Force-vitesse, contraste, PAP, plyométrie | 854 lignes | Canonique |
+| `recovery.md` | Sommeil, CWI, HRV, récupération post-match | 677 lignes | Canonique |
+| `nutrition.md` | Macros, timing, match day, supplémentation | 887 lignes | Canonique |
+| `injury-prevention.md` | ACWR, prehab, prévention, commotion | 804 lignes | Canonique |
+| `energy-systems.md` | Filières, HIIT, concurrent training, RSA | 596 lignes | Canonique |
+| `athletic-testing.md` | CMJ, sprint, YYIR1, 1RM estimé, baselines | 423 lignes | Canonique |
+| `team-monitoring.md` | Monitoring collectif, rotation, alertes charge | 453 lignes | Canonique |
+| `load-budgeting.md` | Budgets de volume et adaptation de charge | 122 lignes | Opérationnel |
+| `return-to-play-criteria.md` | Critères d’entrée/sortie par phase de réhab | 122 lignes | Opérationnel |
+| `medical-red-flags.md` | Drapeaux rouges, stop rules, renvoi médical | 123 lignes | Opérationnel |
+| `double-match-weeks.md` | Gestion d’une double semaine de match | 168 lignes | Opérationnel |
+| `off-season-periodization.md` | Logique off-season et reconstruction | 210 lignes | Opérationnel |
+| `evidence-register.md` | Registre des seuils et sources “dures” | 107 lignes | Opérationnel |
+| `beginner-programming.md` | Principes de programmation starter | 242 lignes | Complémentaire |
+| `beginner-intermediate-training.md` | Progressions starter/builder et supersets | 538 lignes | Complémentaire |
+| `population-specific.md` | Femmes, U18, masters, profils particuliers | 152 lignes | Complémentaire |
 
-**Total : ~3 716 lignes de contenu scientifique, ~186 références.**
+**Total actuel : ~7 000+ lignes de KB.**
 
 ---
 
@@ -159,12 +168,14 @@ src/knowledge/research/
 |---|---|---|
 | **Durée flexible des blocs** (3/4/5-6 sem) | Moyenne | KB periodization.md : 3 sem (avancés/compétitif), 4 sem (standard), 5-6 sem (débutants/off-season). Actuellement fixé à 4 sem. Adapter programPhases, buildWeekProgram, profil. |
 | Psychologie de la performance | Haute | Cohésion d'équipe, gestion de la pression, préparation mentale |
-| Gestion des charges en double semaine (match + match) | Haute | Très pertinent fin de saison |
+| Joueuses de rugby (document dédié) | Haute | Le sujet n’est aujourd’hui couvert qu’en partie via `population-specific.md` |
 | Femmes joueuses de rugby | Moyenne | Hormones, cycle menstruel, RED-S spécifique |
 | Joueur de moins de 18 ans | Moyenne | Spécificités de la croissance, charges adaptées |
 | Retour blessure longue durée (LCA, etc.) | Haute | Protocoles complets de rééducation |
 | Prévention des commotions à long terme | Haute | CTE, recherche émergente 2023-2025 |
 | Thermorégulation (chaleur, humidité) | Basse | Matchs en conditions extrêmes |
+| Voyages / fatigue de déplacement | Moyenne | Déplacements, sommeil, récupération |
+| Index de retrieval par use-case | Haute | Mapper précisément les sections KB aux cas d’usage IA |
 
 ---
 

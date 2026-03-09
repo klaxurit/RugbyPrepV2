@@ -3,13 +3,13 @@
 ## Étapes de sélection (ordre)
 1) **Éligibilité** : matériel + contre‑indications.
 2) **Préférences poste** : tags préférés/évités.
-3) **Préférences phase** : FORCE vs POWER.
+3) **Préférences phase** : HYPERTROPHY vs FORCE vs POWER.
 4) **Tags de recette** : `preferredTags`.
 5) **Tie‑break** : `blockId` ascendant (déterministe).
 
 ## Ancrage des blocs principaux
 - Intents ancrés : `activation`, `contrast`, `force` (si requis par la recette).
-- L’ancre est conservée sur la phase (W1–W4 ou W5–W8).
+- L’ancre est conservée sur la phase (`H1–H4`, `W1–W4` ou `W5–W8`).
 - Si l’ancre devient inéligible, elle est remplacée par le meilleur candidat éligible.
 
 ## Rotation contrôlée

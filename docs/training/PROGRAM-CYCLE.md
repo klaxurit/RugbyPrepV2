@@ -1,15 +1,18 @@
-# Modèle de cycle (8 semaines)
+# Modèle de cycle (source de vérité produit)
 
-Objectif : un cycle simple, compréhensible et cohérent pour un joueur amateur.
+Objectif : un cycle simple, compréhensible et cohérent pour un joueur amateur,
+piloté manuellement par la `CycleWeek`.
 
 ## Structure
-- **Cycle de 8 semaines** :
-  - **W1–W4** : bloc **FORCE**
-  - **W5–W8** : bloc **POWER**
-- **DELOAD recommandé** :
-  - après **W4** (transition FORCE → POWER)
-  - après **W8** (fin de cycle)
-  - à tout moment si fatigue détectée (2 logs FATIGUE consécutifs)
+- **Bloc hypertrophie** : `H1–H4`
+- **Bloc force** : `W1–W4`
+- **Bloc puissance** : `W5–W8`
+- **Semaine `DELOAD`** :
+  - insérable après `H4`, `W4` ou `W8`
+  - recommandée aussi en cas de surcharge / fatigue élevée
+
+En pratique, l'utilisateur avance manuellement dans ce cycle. Le moteur ne
+déduit pas la semaine depuis une date calendrier réelle.
 
 ## Philosophie
 - Même structure d’exercices sur un mésocycle.
@@ -17,7 +20,10 @@ Objectif : un cycle simple, compréhensible et cohérent pour un joueur amateur.
 - La variété est autorisée uniquement sur les blocs **optionnels** (neural + finishers).
 
 ## Principe d’ancres
-- Les blocs principaux (activation + contrast/force requis) restent stables **dans une phase**.
+- Les blocs principaux (activation + contrast/force requis) restent stables **dans une phase** :
+  - `H1–H4`
+  - `W1–W4`
+  - `W5–W8`
 - Si un bloc devient inéligible (matériel/blessures), l’ancre est mise à jour.
 
 ## Deload
@@ -25,3 +31,4 @@ Objectif : un cycle simple, compréhensible et cohérent pour un joueur amateur.
 - RER augmenté, qualité prioritaire.
 - POWER deload : neural/contrast conservés mais allégés.
 - FORCE deload : exposition force maintenue mais plus facile.
+- HYPERTROPHY deload : volume réduit, patterns conservés.
