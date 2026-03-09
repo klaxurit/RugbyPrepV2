@@ -134,7 +134,12 @@ export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
   const { authState, updateAvatar } = useAuth()
   const { features, isPremium, planId } = useFeatureAccess()
-  const { status: notifStatus, subscribe: notifSubscribe, unsubscribe: notifUnsubscribe } = useNotifications(profile)
+  const {
+    status: notifStatus,
+    errorMessage: notifErrorMessage,
+    subscribe: notifSubscribe,
+    unsubscribe: notifUnsubscribe,
+  } = useNotifications(profile)
   const [avatarError, setAvatarError] = useState<string | null>(null)
   const [isAvatarUploading, setIsAvatarUploading] = useState(false)
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null)
@@ -958,6 +963,11 @@ export function ProfilePage() {
                   {notifStatus === 'no_vapid' && 'Configuration manquante (VAPID)'}
                   {(notifStatus === 'idle' || notifStatus === 'loading') && 'Reçois un push chaque jour de séance'}
                 </p>
+                {notifErrorMessage && (
+                  <p className="mt-1 text-[11px] text-rose-300/85">
+                    {notifErrorMessage}
+                  </p>
+                )}
               </div>
             </div>
 

@@ -33,6 +33,7 @@ export type NotificationStatus = 'idle' | 'loading' | 'subscribed' | 'denied' | 
 
 export const useNotifications = (profile: UserProfile) => {
   const [status, setStatus] = useState<NotificationStatus>('loading')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const syncSubscription = useCallback(
     async (subscription: PushSubscription) => {
@@ -43,19 +44,24 @@ export const useNotifications = (profile: UserProfile) => {
           endpoint: subJson.endpoint,
           p256dhKey: subJson.keys?.p256dh,
           authKey: subJson.keys?.auth,
+          deviceId: subJson.endpoint,
           trainingDays,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           userAgent: navigator.userAgent,
         },
       })
 
-      if (error) throw error
+      if (error) {
+        throw new Error(error.message ?? 'Push subscription sync failed')
+      }
     },
     [profile.weeklySessions],
   )
 
   // Check current state on mount — setState calls are intentional (init from external API)
   useEffect(() => {
+    let cancelled = false
+
     if (!('Notification' in window) || !('serviceWorker' in navigator)) {
       setStatus('unsupported')
       return
@@ -68,13 +74,39 @@ export const useNotifications = (profile: UserProfile) => {
       setStatus('denied')
       return
     }
-    // Check if already subscribed
-    navigator.serviceWorker.ready.then((reg) => {
-      reg.pushManager.getSubscription().then((sub) => {
-        setStatus(sub ? 'subscribed' : 'idle')
-      })
-    })
-  }, [])
+    const syncExistingSubscription = async () => {
+      try {
+        const reg = await navigator.serviceWorker.ready
+        const sub = await reg.pushManager.getSubscription()
+
+        if (!sub) {
+          if (!cancelled) {
+            setErrorMessage(null)
+            setStatus('idle')
+          }
+          return
+        }
+
+        await syncSubscription(sub)
+        if (!cancelled) {
+          setErrorMessage(null)
+          setStatus('subscribed')
+        }
+      } catch (error) {
+        console.error('[useNotifications] initial sync error:', error)
+        if (!cancelled) {
+          setErrorMessage(error instanceof Error ? error.message : 'Impossible d’activer les notifications')
+          setStatus('idle')
+        }
+      }
+    }
+
+    void syncExistingSubscription()
+
+    return () => {
+      cancelled = true
+    }
+  }, [syncSubscription])
 
   const subscribe = useCallback(async () => {
     if (!('Notification' in window) || !('serviceWorker' in navigator)) {
@@ -87,6 +119,7 @@ export const useNotifications = (profile: UserProfile) => {
     }
 
     setStatus('loading')
+    setErrorMessage(null)
 
     try {
       const permission = await Notification.requestPermission()
@@ -116,12 +149,14 @@ export const useNotifications = (profile: UserProfile) => {
       setStatus('subscribed')
     } catch (err) {
       console.error('[useNotifications] subscribe error:', err)
+      setErrorMessage(err instanceof Error ? err.message : 'Impossible d’activer les notifications')
       setStatus('idle')
     }
   }, [syncSubscription])
 
   const unsubscribe = useCallback(async () => {
     setStatus('loading')
+    setErrorMessage(null)
     try {
       const reg = await navigator.serviceWorker.ready
       const sub = await reg.pushManager.getSubscription()
@@ -137,9 +172,10 @@ export const useNotifications = (profile: UserProfile) => {
       setStatus('idle')
     } catch (err) {
       console.error('[useNotifications] unsubscribe error:', err)
+      setErrorMessage(err instanceof Error ? err.message : 'Impossible de désactiver les notifications')
       setStatus('subscribed')
     }
   }, [])
 
-  return { status, subscribe, unsubscribe }
+  return { status, errorMessage, subscribe, unsubscribe }
 }

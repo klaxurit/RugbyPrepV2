@@ -22,6 +22,11 @@ type UserEntitlementRow = {
   entitlement_key: string
 }
 
+interface ReminderRequestBody {
+  dispatchAfterQueue?: boolean
+  dispatchLimit?: number
+}
+
 const WEEKDAY_INDEX: Record<string, number> = {
   Sun: 0,
   Mon: 1,
@@ -95,6 +100,7 @@ Deno.serve(async (req: Request) => {
   const { serviceClient } = createClients(req)
 
   try {
+    const body = await req.json().catch(() => ({})) as ReminderRequestBody
     const now = new Date()
     const { data: subscriptionsData, error: subscriptionsError } = await serviceClient
       .from('push_subscriptions')
@@ -225,13 +231,41 @@ Deno.serve(async (req: Request) => {
       if (insertError) return json({ error: insertError.message }, 400)
     }
 
+    const autoDispatch =
+      body.dispatchAfterQueue === true ||
+      Deno.env.get('NOTIFICATION_AUTO_DISPATCH') === 'true'
+
+    let dispatchResult: unknown = null
+    if (autoDispatch && queued > 0) {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+      if (!supabaseUrl) return json({ error: 'SUPABASE_URL not configured' }, 500)
+
+      const dispatchResponse = await fetch(`${supabaseUrl}/functions/v1/dispatch-push-queue`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-cron-secret': cronSecret,
+        },
+        body: JSON.stringify({
+          limit: Number.isInteger(body.dispatchLimit) && (body.dispatchLimit ?? 0) > 0
+            ? body.dispatchLimit
+            : queued,
+        }),
+      })
+
+      dispatchResult = await dispatchResponse.json().catch(() => ({
+        ok: false,
+        error: 'Unable to parse dispatch response',
+      }))
+    }
+
     return json({
       ok: true,
       processed: subscriptions.length,
       queued,
       skipped,
       logsCreated: deliveryRows.length,
-      note: 'This function currently schedules and logs reminders. Wire the push transport after VAPID/server delivery is ready.',
+      dispatch: dispatchResult,
     })
   } catch (error) {
     return json({ error: String(error) }, 500)

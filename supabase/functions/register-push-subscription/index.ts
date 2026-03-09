@@ -5,6 +5,7 @@ interface RegisterPushBody {
   endpoint: string
   p256dhKey: string
   authKey: string
+  deviceId?: string
   trainingDays: number[]
   timezone?: string
   userAgent?: string
@@ -32,6 +33,10 @@ Deno.serve(async (req: Request) => {
       .upsert(
         {
           user_id: user.id,
+          // Legacy compatibility: the first push_subscriptions schema required a
+          // non-null device_id. Keep populating it until every environment has the
+          // cleanup migration applied.
+          device_id: body.deviceId ?? body.endpoint,
           endpoint: body.endpoint,
           p256dh_key: body.p256dhKey,
           auth_key: body.authKey,
@@ -48,7 +53,7 @@ Deno.serve(async (req: Request) => {
 
     if (error) return json({ error: error.message }, 400)
 
-    await serviceClient
+    const { error: preferencesError } = await serviceClient
       .from('notification_preferences')
       .upsert(
         {
@@ -58,6 +63,8 @@ Deno.serve(async (req: Request) => {
         },
         { onConflict: 'user_id' },
       )
+
+    if (preferencesError) return json({ error: preferencesError.message }, 400)
 
     return json({
       ok: true,
