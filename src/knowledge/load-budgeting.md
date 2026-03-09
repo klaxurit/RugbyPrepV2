@@ -22,9 +22,9 @@
 |-------|-----------------|--------------------|-------|
 | HYPERTROPHY (H1-H3) | 100% (baseline) | RPE 7–8 | High volume, moderate load |
 | HYPERTROPHY_DELOAD (H4) | 40–50% | RPE 6 | Active recovery, maintain patterns |
-| FORCE (W1-W8) | 80–90% | RPE 8–9 | Lower volume, higher intensity |
-| POWER | 60–70% | RPE 9 | Explosive quality, not quantity |
-| DELOAD (W4, W8) | 40–50% | RPE 6 | Mandatory recovery week |
+| FORCE (W1-W4) | 80–90% | RPE 8–9 | Lower volume, higher intensity |
+| POWER (W5-W8) | 60–70% | RPE 9 | Explosive quality, not quantity |
+| DELOAD | 40–50% | RPE 6 | Recovery week inserted after H4, W4 or W8 |
 
 ---
 
@@ -68,12 +68,10 @@ ACWR = Acute Load (7-day) / Chronic Load (28-day rolling average)
 ### Implementation in `buildWeekProgram`
 
 ```ts
-// Planned: ENH-1
-// fatigueLevel derived from ACWR in useACWR hook
-// 'low' (ACWR < 0.8) → add volume
-// 'medium' (0.8–1.3) → standard
-// 'high' (1.3–1.5) → reduce volume 25%
-// 'critical' (> 1.5) → deload override
+// Current implementation
+// danger   -> replace last session with RECOVERY_MOBILITY_V1
+// critical -> keep only the first session
+// underload/optimal/caution -> no automatic structural override yet
 ```
 
 ---
@@ -97,8 +95,8 @@ Below these minimums for 3+ weeks → strength loss, elevated injury risk.
 
 A deload is automatically recommended when:
 1. **H4** (every 4th hypertrophy week) — scheduled deload
-2. **W4** (mid-force block) — scheduled deload
-3. **W8** (end-force block) — scheduled deload
+2. **W4** (end of force block) — scheduled deload
+3. **W8** (end of power block) — scheduled deload
 4. **ACWR > 1.5** — emergency deload regardless of phase
 5. **Subjective: Hooper Index ≥ 20** (if monitored) — fatigue, stress, sleep, soreness all elevated
 

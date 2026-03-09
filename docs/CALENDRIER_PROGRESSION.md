@@ -5,16 +5,16 @@
 Avoir une vue calendrier pour :
 - **Savoir où en est l’utilisateur** (semaine du cycle, séances faites / à faire)
 - **Suivre la progression** (quels jours des séances ont été réalisées)
-- **Rendre la position dans le cycle lisible** (optionnel : lier les semaines W1–W8 à des dates réelles)
+- **Rendre la position dans le cycle lisible** (optionnel : lier `H1–H4`, `W1–W8` et `DELOAD` à des dates réelles)
 
 ---
 
 ## Données existantes
 
 - **`useHistory()`** : `SessionLog[]` avec `dateISO`, `week`, `sessionType`, `fatigue`  
-  → On sait **quand** une séance a été faite (date réelle) et **quelle semaine de cycle** (W1–W8).
+  → On sait **quand** une séance a été faite (date réelle) et **quelle semaine de cycle** (`H1–H4`, `W1–W8`, `DELOAD`).
 - **`useWeek()`** : semaine de cycle actuelle (`week`, `lastNonDeloadWeek`)  
-  → Pas de lien avec une date calendrier pour l’instant (choix manuel W1–W8).
+  → Pas de lien avec une date calendrier pour l’instant (choix manuel de la `CycleWeek`).
 - **`useBlockLogs()`** : détail des blocs/exercices enregistrés par séance.
 
 On peut déjà construire un **calendrier des séances réalisées** (vue “passé”) sans rien changer au modèle de données.
@@ -54,9 +54,9 @@ On peut déjà construire un **calendrier des séances réalisées** (vue “pas
 
 ### 2. Calendrier avec “semaine réelle” (où il en est vraiment)
 
-- **Idée** : lier la **semaine de cycle** (W1–W8) à des **dates réelles** (ex. “Semaine 2 = 10–16 fév”).
+- **Idée** : lier la **semaine de cycle** (`H1–H4`, `W1–W8`, `DELOAD`) à des **dates réelles**.
 - **Données à ajouter** : une **date de début de cycle** (ex. stockée en profil ou dans `useWeek`). À partir de là, on dérive :  
-  - “Aujourd’hui” → semaine de cycle courante (W1–W8 ou DELOAD).  
+  - “Aujourd’hui” → semaine de cycle courante.  
   - Chaque jour du calendrier → semaine de cycle + “séances prévues” si on définit des jours types (ex. “3 séances/sem : lun, mer, ven”).
 - **Affichage** :  
   - Jours passés : séances réalisées (comme en 1).  
@@ -64,7 +64,7 @@ On peut déjà construire un **calendrier des séances réalisées** (vue “pas
   - Optionnel : petits indicateurs “prévu” sur les jours à venir (selon jours d’entraînement préférés).
 - **Bonnes pratiques** :  
   - Un seul champ “cycleStartDate” (ou “currentWeekStartDate”) ; tout le reste en dérivé.  
-  - Si l’utilisateur change de semaine manuellement (W1–W8), on peut soit mettre à jour cette date, soit garder la date et seulement ajuster l’affichage “semaine courante” (à trancher selon le produit).
+  - Si l’utilisateur change de semaine manuellement, on peut soit mettre à jour cette date, soit garder la date et seulement ajuster l’affichage “semaine courante” (à trancher selon le produit).
 
 ### 3. Outils / librairies
 
@@ -93,7 +93,7 @@ On peut déjà construire un **calendrier des séances réalisées** (vue “pas
 
 1. **Profil ou réglage** : champ “Date de début du cycle” (date picker ou “Démarrer ce cycle aujourd’hui”). Stockage : même clé que `useWeek` ou nouveau champ dans le profil.
 2. **Dérivation** :  
-   - À partir de cette date, calculer pour chaque jour : “semaine de cycle” (W1… W8, DELOAD) et “numéro de semaine dans le cycle” (1–8).  
+   - À partir de cette date, calculer pour chaque jour : `CycleWeek` et “numéro de semaine dans le cycle”.  
    - Afficher sur la page Semaine ou Accueil : “Semaine 2 (10–16 fév)” au lieu de seulement “W2”.
 3. **Calendrier** :  
    - Garder les marqueurs “séances réalisées” comme en phase 1.  
@@ -104,6 +104,6 @@ On peut déjà construire un **calendrier des séances réalisées** (vue “pas
 ## Résumé
 
 - **Flow** : Accueil → Programme → Semaine → Séance est en place ; le calendrier ne le remplace pas, il le complète en donnant une vue “où j’en suis dans le temps”.
-- **Bonnes pratiques** : une source de vérité (history), UI simple (mois + marqueurs), mobile-first, optionnellement une date de début de cycle pour lier W1–W8 au calendrier.
+- **Bonnes pratiques** : une source de vérité (history), UI simple (mois + marqueurs), mobile-first, optionnellement une date de début de cycle pour lier la `CycleWeek` au calendrier.
 - **Outils recommandés** : `date-fns` + composant maison (grille mois) ou `react-day-picker` pour un calendrier accessible avec peu de dépendances.
 - **Procédure** : Phase 1 = calendrier des séances réalisées (lecture seule sur `useHistory`) ; Phase 2 = date de début de cycle + affichage “semaine réelle” et, si besoin, indicateurs “prévu” sur le calendrier.

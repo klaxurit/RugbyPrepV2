@@ -1,5 +1,8 @@
 # État des lieux RugbyForge V1 — Déploiement App Store / Play Store
 
+> Note: ce document est historique. Pour l’état actuel du projet, utiliser
+> `docs/PROJECT_STATUS.md`.
+
 **Date :** 3 mars 2026  
 **Objectif :** V1 sérieuse, testable, déployable sur les stores
 

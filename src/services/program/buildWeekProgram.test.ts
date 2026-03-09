@@ -1,41 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import type { UserProfile } from '../../types/training'
 import { buildWeekProgram } from './buildWeekProgram'
+import { createProfile } from './testHelpers'
 import { validateSession } from './validateSession'
 
-const PERFORMANCE_PROFILE: UserProfile = {
-  level: 'intermediate',
-  trainingLevel: 'performance',
-  weeklySessions: 3,
-  equipment: [
-    'barbell',
-    'dumbbell',
-    'bench',
-    'band',
-    'landmine',
-    'tbar_row',
-    'ghd',
-    'med_ball',
-    'box',
-    'pullup_bar',
-    'machine',
-    'sprint_track',
-    'ab_wheel',
-  ],
-  injuries: [],
-  rugbyPosition: 'BACK_ROW',
-  seasonMode: 'in_season',
-}
-
 describe('buildWeekProgram', () => {
-  it('falls back to starter recipes and starter blocks for legacy profiles without trainingLevel', () => {
-    const legacyProfile: UserProfile = {
-      level: 'intermediate',
+  it('TID-ENG-001 falls back to starter recipes and starter blocks for legacy profiles without trainingLevel', () => {
+    const legacyProfile = createProfile({
+      trainingLevel: undefined,
       weeklySessions: 2,
       equipment: ['dumbbell', 'band', 'bench', 'pullup_bar'],
-      injuries: [],
-      rugbyPosition: 'BACK_ROW',
-    }
+    })
 
     const result = buildWeekProgram(legacyProfile, 'W1')
 
@@ -52,9 +26,8 @@ describe('buildWeekProgram', () => {
     }
   })
 
-  it('keeps upper rehab phase 1 sessions valid when prehab falls back to core', () => {
-    const rehabProfile: UserProfile = {
-      ...PERFORMANCE_PROFILE,
+  it('TID-ENG-002 keeps upper rehab phase 1 sessions valid when prehab falls back to core', () => {
+    const rehabProfile = createProfile({
       injuries: ['shoulder_pain'],
       rehabInjury: {
         zone: 'upper',
@@ -63,7 +36,7 @@ describe('buildWeekProgram', () => {
         phaseStartDate: '2026-03-01',
         type: 'shoulder_pain',
       },
-    }
+    })
 
     const result = buildWeekProgram(rehabProfile, 'W1')
     const rehabSession = result.sessions.find((session) => session.recipeId === 'REHAB_UPPER_P1_V1')
@@ -81,8 +54,8 @@ describe('buildWeekProgram', () => {
     expect(finisherCount).toBeLessThanOrEqual(1)
   })
 
-  it('replaces the last session with recovery mobility in ACWR danger and keeps it valid', () => {
-    const result = buildWeekProgram(PERFORMANCE_PROFILE, 'W1', {
+  it('TID-ENG-003 replaces the last session with recovery mobility in ACWR danger and keeps it valid', () => {
+    const result = buildWeekProgram(createProfile(), 'W1', {
       fatigueLevel: 'danger',
       hasSufficientACWRData: true,
     })
@@ -96,8 +69,8 @@ describe('buildWeekProgram', () => {
     expect(validateSession(result.sessions[2]!).isValid).toBe(true)
   })
 
-  it('reduces the week to one session in ACWR critical', () => {
-    const result = buildWeekProgram(PERFORMANCE_PROFILE, 'W1', {
+  it('TID-ENG-004 reduces the week to one session in ACWR critical', () => {
+    const result = buildWeekProgram(createProfile(), 'W1', {
       fatigueLevel: 'critical',
       hasSufficientACWRData: true,
     })
@@ -107,9 +80,9 @@ describe('buildWeekProgram', () => {
     expect(result.warnings).toContain('ACWR critique : programme réduit à 1 séance. Récupération prioritaire.')
   })
 
-  it('changes the upper main block after the force block rollover', () => {
-    const weekOne = buildWeekProgram(PERFORMANCE_PROFILE, 'W1')
-    const weekFive = buildWeekProgram(PERFORMANCE_PROFILE, 'W5')
+  it('TID-ENG-005 changes the upper main block after the force block rollover', () => {
+    const weekOne = buildWeekProgram(createProfile(), 'W1')
+    const weekFive = buildWeekProgram(createProfile(), 'W5')
     // 2 sessions/week = LOWER + UPPER; 3 = UPPER + LOWER + FULL
     const upperWeekOne = weekOne.sessions.find((session) => session.recipeId === 'UPPER_V1')
     const upperWeekFive = weekFive.sessions.find((session) => session.recipeId === 'UPPER_V1')
