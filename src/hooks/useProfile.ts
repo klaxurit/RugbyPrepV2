@@ -33,6 +33,79 @@ export function markOnboardingComplete(userId: string) {
     .upsert({ id: userId, onboarding_complete: true }, { onConflict: 'id' })
 }
 
+type OnboardingStatusRow = {
+  onboarding_complete: boolean | null
+  position: string | null
+  rugby_position: string | null
+  training_level: string | null
+}
+
+const inferCompletedOnboarding = (row: OnboardingStatusRow | null): boolean => {
+  if (!row) return false
+  if (row.onboarding_complete) return true
+
+  // Legacy profiles predate server-side onboarding tracking. If the user has
+  // already selected a rugby position and a training level, treat the profile
+  // as onboarded and backfill the server flag.
+  return Boolean((row.position ?? row.rugby_position) && row.training_level)
+}
+
+export async function resolveOnboardingComplete(userId: string): Promise<boolean> {
+  if (isOnboardingComplete(userId)) return true
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('onboarding_complete, position, rugby_position, training_level')
+    .eq('id', userId)
+    .maybeSingle()
+
+  if (error) return false
+
+  const complete = inferCompletedOnboarding((data as OnboardingStatusRow | null) ?? null)
+  if (complete) {
+    localStorage.setItem(onboardingKey(userId), '1')
+
+    if (!(data as OnboardingStatusRow | null)?.onboarding_complete) {
+      void supabase
+        .from('profiles')
+        .upsert({ id: userId, onboarding_complete: true }, { onConflict: 'id' })
+    }
+  }
+
+  return complete
+}
+
+export function useOnboardingStatus(userId: string | null) {
+  const [resolved, setResolved] = useState<{
+    userId: string | null
+    status: 'complete' | 'incomplete'
+  } | null>(null)
+
+  useEffect(() => {
+    if (!userId || isOnboardingComplete(userId)) return
+
+    let cancelled = false
+
+    void resolveOnboardingComplete(userId).then((complete) => {
+      if (!cancelled) {
+        setResolved({
+          userId,
+          status: complete ? 'complete' : 'incomplete',
+        })
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [userId])
+
+  if (!userId) return 'incomplete'
+  if (isOnboardingComplete(userId)) return 'complete'
+  if (!resolved || resolved.userId !== userId) return 'loading'
+  return resolved.status
+}
+
 // ─── LocalStorage helpers ─────────────────────────────────────
 
 const saveToStorage = (profile: UserProfile) => {
@@ -146,7 +219,7 @@ export const useProfile = () => {
         setProfileState(loaded)
         saveToStorage(loaded)
         // Profil Supabase trouvé avec onboarding complet → marquer localement
-        if ((data as ProfileRow).onboarding_complete) {
+        if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {
           localStorage.setItem(onboardingKey(userId), '1')
         }
       })

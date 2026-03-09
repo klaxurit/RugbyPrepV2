@@ -1,11 +1,14 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { WeekProvider } from '../../contexts/WeekProvider'
 import { useAuth } from '../../hooks/useAuth'
-import { isOnboardingComplete } from '../../hooks/useProfile'
+import { useOnboardingStatus } from '../../hooks/useProfile'
 
 export function RequireAuth() {
   const { authState, isInitializing } = useAuth()
   const location = useLocation()
+  const onboardingStatus = useOnboardingStatus(
+    authState.status === 'authenticated' && authState.user ? authState.user.id : null,
+  )
 
   // Pendant la restauration de session, ne pas rediriger trop vite
   if (isInitializing) {
@@ -20,9 +23,15 @@ export function RequireAuth() {
     return <Navigate to="/auth/login" state={{ from: location }} replace />
   }
 
-  const userId = authState.user.id
+  if (onboardingStatus === 'loading') {
+    return (
+      <div className="min-h-screen bg-[#faf9f7] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#1a5f3f] border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
 
-  if (!isOnboardingComplete(userId) && location.pathname !== '/onboarding') {
+  if (onboardingStatus === 'incomplete' && location.pathname !== '/onboarding') {
     return <Navigate to="/onboarding" replace />
   }
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
-import { isOnboardingComplete } from '../../hooks/useProfile'
+import { useOnboardingStatus } from '../../hooks/useProfile'
 
 /**
  * Page de callback après confirmation d'email Supabase.
@@ -11,19 +11,24 @@ import { isOnboardingComplete } from '../../hooks/useProfile'
 export function CallbackPage() {
   const { authState, isInitializing } = useAuth()
   const navigate = useNavigate()
+  const onboardingStatus = useOnboardingStatus(
+    authState.status === 'authenticated' && authState.user ? authState.user.id : null,
+  )
 
   useEffect(() => {
     if (isInitializing) return
 
     if (authState.status === 'authenticated' && authState.user) {
-      const dest = isOnboardingComplete(authState.user.id) ? '/week' : '/onboarding'
+      if (onboardingStatus === 'loading') return
+
+      const dest = onboardingStatus === 'complete' ? '/week' : '/onboarding'
       navigate(dest, { replace: true })
       return
     }
 
     // Pas de session après l'init → confirmation invalide ou expirée
     navigate('/auth/login', { replace: true })
-  }, [authState, isInitializing, navigate])
+  }, [authState, isInitializing, navigate, onboardingStatus])
 
   return (
     <div className="min-h-screen bg-[#faf9f7] font-sans flex flex-col items-center justify-center gap-4">
