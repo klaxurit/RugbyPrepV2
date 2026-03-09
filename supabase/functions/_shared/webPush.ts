@@ -34,6 +34,53 @@ function concat(...arrays: Uint8Array[]): Uint8Array {
   return result
 }
 
+function derToJoseSignature(signature: ArrayBuffer | Uint8Array, partLength = 32): Uint8Array {
+  const bytes = signature instanceof Uint8Array ? signature : new Uint8Array(signature)
+
+  // Some runtimes already return IEEE-P1363 (r||s) for ECDSA. Keep it as-is.
+  if (bytes.length === partLength * 2) {
+    return bytes
+  }
+
+  if (bytes.length < 8 || bytes[0] !== 0x30) {
+    throw new Error('Unsupported ECDSA signature format')
+  }
+
+  let offset = 1
+  const sequenceLength = bytes[offset++]
+  if (sequenceLength & 0x80) {
+    const lengthBytes = sequenceLength & 0x7f
+    offset += lengthBytes
+  }
+
+  const readInteger = (): Uint8Array => {
+    if (bytes[offset++] !== 0x02) {
+      throw new Error('Invalid DER signature integer marker')
+    }
+
+    const length = bytes[offset++]
+    const value = bytes.slice(offset, offset + length)
+    offset += length
+
+    let normalized = value
+    while (normalized.length > 0 && normalized[0] === 0x00) {
+      normalized = normalized.slice(1)
+    }
+
+    if (normalized.length > partLength) {
+      normalized = normalized.slice(normalized.length - partLength)
+    }
+
+    const out = new Uint8Array(partLength)
+    out.set(normalized, partLength - normalized.length)
+    return out
+  }
+
+  const r = readInteger()
+  const s = readInteger()
+  return concat(r, s)
+}
+
 async function hkdf(
   salt: Uint8Array,
   ikm: Uint8Array,
@@ -81,7 +128,7 @@ async function createVapidToken(
     textEncoder.encode(input),
   )
 
-  return `${input}.${b64url(signature)}`
+  return `${input}.${b64url(derToJoseSignature(signature))}`
 }
 
 async function encryptPayload(
@@ -187,6 +234,7 @@ export const sendWebPush = async (
     method: 'POST',
     headers: {
       Authorization: `vapid t=${token},k=${config.publicKey}`,
+      'Crypto-Key': `p256ecdsa=${config.publicKey}`,
       'Content-Encoding': 'aes128gcm',
       'Content-Type': 'application/octet-stream',
       TTL: '86400',
