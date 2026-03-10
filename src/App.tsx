@@ -16,6 +16,7 @@ import { LoginPage } from './pages/auth/LoginPage'
 import { SignupPage } from './pages/auth/SignupPage'
 import { CallbackPage } from './pages/auth/CallbackPage'
 import { LegalPage } from './pages/LegalPage'
+import { LandingPage } from './pages/LandingPage'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/auth/signup" element={<SignupPage />} />
           <Route path="/auth/callback" element={<CallbackPage />} />
           <Route path="/legal" element={<LegalPage />} />
+          <Route path="/landing" element={<LandingPage />} />
 
           <Route element={<RequireAuth />}>
             <Route path="/" element={<HomePage />} />

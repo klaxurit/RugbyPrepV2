@@ -12,7 +12,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../services/supabase/client'
-import type { UserProfile } from '../types/training'
+import type { DayOfWeek, UserProfile } from '../types/training'
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined
 
@@ -21,6 +21,10 @@ const TRAINING_DAYS_MAP: Record<2 | 3, number[]> = {
   2: [1, 4],     // Mon + Thu
   3: [1, 3, 5],  // Mon + Wed + Fri
 }
+
+const resolveTrainingDays = (profile: UserProfile): DayOfWeek[] =>
+  profile.scSchedule?.sessions.map((session) => session.day) ??
+  (TRAINING_DAYS_MAP[profile.weeklySessions] as DayOfWeek[])
 
 const urlBase64ToUint8Array = (base64String: string): Uint8Array => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -75,7 +79,7 @@ export const useNotifications = (profile: UserProfile) => {
   const syncSubscription = useCallback(
     async (subscription: PushSubscription) => {
       const subJson = subscription.toJSON()
-      const trainingDays = TRAINING_DAYS_MAP[profile.weeklySessions]
+      const trainingDays = resolveTrainingDays(profile)
       const { error } = await supabase.functions.invoke('register-push-subscription', {
         body: {
           endpoint: subJson.endpoint,
@@ -92,7 +96,7 @@ export const useNotifications = (profile: UserProfile) => {
         throw new Error(error.message ?? 'Push subscription sync failed')
       }
     },
-    [profile.weeklySessions],
+    [profile],
   )
 
   // Check current state on mount — setState calls are intentional (init from external API)

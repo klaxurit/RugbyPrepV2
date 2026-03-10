@@ -28,12 +28,13 @@ const DEFAULT_LIMIT = 50
 const buildPayload = (templateKey: string, rawPayload: Record<string, unknown>): WebPushPayload | null => {
   const trainingDay = rawPayload.trainingDay
   const reminderHour = rawPayload.reminderHour
+  const url = typeof rawPayload.url === 'string' ? rawPayload.url : '/week'
 
   if (templateKey === 'training_reminder_standard') {
     return {
       title: 'RugbyForge',
       body: 'Ta séance du jour est prête. Ouvre l’app pour voir ton programme.',
-      url: '/week',
+      url,
       tag: 'training-reminder-standard',
     }
   }
@@ -42,7 +43,7 @@ const buildPayload = (templateKey: string, rawPayload: Record<string, unknown>):
     return {
       title: 'RugbyForge Premium',
       body: `Ton rappel premium est prêt${typeof trainingDay === 'number' ? ' pour ton jour de séance' : ''}. Vérifie ton programme avant de commencer${typeof reminderHour === 'number' ? ` (${String(reminderHour).padStart(2, '0')}h)` : ''}.`,
-      url: '/week',
+      url,
       tag: 'training-reminder-advanced',
     }
   }

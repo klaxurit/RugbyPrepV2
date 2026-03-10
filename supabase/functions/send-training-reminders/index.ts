@@ -185,6 +185,7 @@ Deno.serve(async (req: Request) => {
       }
 
       const localClock = getLocalClock(now, timeZone)
+      const sessionIndex = subscription.training_days.indexOf(localClock.weekdayIndex)
 
       if (!subscription.training_days.includes(localClock.weekdayIndex)) {
         skip('not_training_day')
@@ -218,6 +219,8 @@ Deno.serve(async (req: Request) => {
           timezone: timeZone,
           reminderHour: preferences.reminder_hour,
           trainingDay: localClock.weekdayIndex,
+          sessionIndex,
+          url: sessionIndex >= 0 ? `/session/${sessionIndex}` : '/week',
           tier: hasAdvancedNotifications ? 'advanced' : 'basic',
         },
       })
