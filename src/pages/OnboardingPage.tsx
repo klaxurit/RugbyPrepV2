@@ -8,7 +8,19 @@ import { RugbyForgeLogo } from '../components/RugbyForgeLogo'
 import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { posthog } from '../services/analytics/posthog'
-import type { UserProfile, Equipment, Contra, DayOfWeek, ClubSchedule, SCSchedule, TrainingLevel, SeasonMode } from '../types/training'
+import type {
+  UserProfile,
+  Equipment,
+  Contra,
+  DayOfWeek,
+  ClubSchedule,
+  SCSchedule,
+  TrainingLevel,
+  SeasonMode,
+  PopulationSegment,
+  AgeBand,
+  PerformanceFocus,
+} from '../types/training'
 import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
 import { GymDaySelector } from '../components/GymDaySelector'
 
@@ -111,6 +123,24 @@ const SEASON_MODES: { value: SeasonMode; label: string; sub: string; emoji: stri
   { value: 'pre_season', label: 'Pré-saison',    sub: 'Réathlétisation',             emoji: '🔥' },
 ]
 
+const PERFORMANCE_FOCUS_OPTIONS: { value: PerformanceFocus; label: string; sub: string }[] = [
+  { value: 'balanced', label: 'Équilibré', sub: 'Force + puissance + conditionnement' },
+  { value: 'speed', label: 'Vitesse', sub: 'Pré-saison: priorité sprint / accélération' },
+  { value: 'strength', label: 'Force', sub: 'Priorité charges et robustesse contact' },
+]
+
+const AGE_BAND_OPTIONS: { value: AgeBand; label: string; sub: string }[] = [
+  { value: 'adult', label: 'Senior (18+)', sub: 'Autonomie complète' },
+  { value: 'u18', label: 'U18', sub: 'Garde-fous mineurs activés' },
+]
+
+const POPULATION_OPTIONS: { value: PopulationSegment; label: string; sub: string; ageBand: AgeBand }[] = [
+  { value: 'male_senior', label: 'Homme senior', sub: '18+ masculin', ageBand: 'adult' },
+  { value: 'female_senior', label: 'Femme senior', sub: '18+ féminin', ageBand: 'adult' },
+  { value: 'u18_male', label: 'Garçon U18', sub: 'Mineur masculin', ageBand: 'u18' },
+  { value: 'u18_female', label: 'Fille U18', sub: 'Mineure féminine', ageBand: 'u18' },
+]
+
 // ─── BMI helper ───────────────────────────────────────────────
 
 function calcBmi(heightCm: number, weightKg: number): number {
@@ -157,6 +187,10 @@ export function OnboardingPage() {
   const [step, setStep] = useState(0)
   const [position, setPosition] = useState<PositionValue | null>(null)
   const [trainingLevel, setTrainingLevel] = useState<TrainingLevel | null>(null)
+  const [performanceFocus, setPerformanceFocus] = useState<PerformanceFocus>('balanced')
+  const [ageBand, setAgeBand] = useState<AgeBand>('adult')
+  const [populationSegment, setPopulationSegment] = useState<PopulationSegment>('male_senior')
+  const [parentalConsentHealthData, setParentalConsentHealthData] = useState<boolean | null>(null)
   const [seasonMode, setSeasonMode] = useState<SeasonMode>('in_season')
   const [sessions, setSessions] = useState<2 | 3 | null>(null)
   const [equipment, setEquipment] = useState<Set<Equipment>>(new Set())
@@ -197,7 +231,11 @@ export function OnboardingPage() {
 
   const canNext = () => {
     if (step === 0) return position !== null
-    if (step === 1) return trainingLevel !== null && sessions !== null
+    if (step === 1) {
+      if (!trainingLevel || !sessions) return false
+      if (ageBand === 'u18' && parentalConsentHealthData === null) return false
+      return true
+    }
     // Équipement et morphologie sont optionnels
     return true
   }
@@ -235,6 +273,7 @@ export function OnboardingPage() {
       level: levelDef.legacyLevel,
       trainingLevel: trainingLevel!,
       seasonMode,
+      performanceFocus: trainingLevel === 'performance' ? performanceFocus : 'balanced',
       weeklySessions: sessions!,
       equipment: finalEquipment,
       injuries: Array.from(injuries),
@@ -242,12 +281,24 @@ export function OnboardingPage() {
       weightKg: validWeight ? parsedWeight : undefined,
       clubSchedule,
       scSchedule,
-    })
+      ageBand,
+      populationSegment,
+      parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
+    }, { source: 'onboarding' })
     // Semaine initiale selon le mode saison : off_season → H1, sinon W1
     const initialWeek = seasonMode === 'off_season' ? 'H1' : 'W1'
     window.localStorage.setItem('rugbyprep.week.v1', initialWeek)
     if (userId) markOnboardingComplete(userId)
-    posthog.capture('onboarding_completed', { position, trainingLevel, seasonMode, sessions })
+    posthog.capture('onboarding_completed', {
+      position,
+      trainingLevel,
+      seasonMode,
+      performanceFocus: trainingLevel === 'performance' ? performanceFocus : 'balanced',
+      sessions,
+      ageBand,
+      populationSegment,
+      parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
+    })
     navigate('/week', { replace: true })
   }
 
@@ -418,7 +469,14 @@ export function OnboardingPage() {
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => setTrainingLevel(opt.value)}
+                      onClick={() => {
+                        setTrainingLevel(opt.value)
+                        if (opt.value === 'starter') {
+                          setSeasonMode('in_season')
+                          setSessions(2)
+                          setPerformanceFocus('balanced')
+                        }
+                      }}
                       className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
                         selected
                           ? 'border-[#ff6b35] bg-[#ff6b35]/10'
@@ -478,6 +536,42 @@ export function OnboardingPage() {
               </div>
             )}
 
+            {trainingLevel === 'performance' && (
+              <div className="space-y-3">
+                <div>
+                  <SectionLabel>Orientation performance</SectionLabel>
+                  <p className="text-[10px] text-white/30 mt-0.5">
+                    La séance vitesse dédiée est activée en pré-saison avec focus vitesse.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  {PERFORMANCE_FOCUS_OPTIONS.map((opt) => {
+                    const selected = performanceFocus === opt.value
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setPerformanceFocus(opt.value)}
+                        className={`w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
+                          selected
+                            ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                            : 'border-white/10 bg-white/5 hover:border-white/20'
+                        }`}
+                      >
+                        <div>
+                          <p className={`text-xs font-black ${selected ? 'text-[#ff6b35]' : 'text-white/70'}`}>
+                            {opt.label}
+                          </p>
+                          <p className="text-[10px] text-white/35 mt-0.5">{opt.sub}</p>
+                        </div>
+                        {selected && <CheckCircle2 className="w-4 h-4 text-[#ff6b35] flex-shrink-0" />}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Séances par semaine */}
             <div className="space-y-3">
               <SectionLabel>Séances par semaine</SectionLabel>
@@ -487,11 +581,55 @@ export function OnboardingPage() {
                   { value: 3 as const, label: '3 séances', sub: 'Lun + Mer + Ven' },
                 ] as const).map((opt) => {
                   const selected = sessions === opt.value
+                  const isStarter = trainingLevel === 'starter'
+                  const disabled = isStarter && opt.value === 3
                   return (
                     <button
                       key={opt.value}
                       type="button"
+                      disabled={disabled}
                       onClick={() => setSessions(opt.value)}
+                      className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
+                        selected
+                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                          : disabled
+                            ? 'border-white/10 bg-white/5 opacity-50 cursor-not-allowed'
+                            : 'border-white/10 bg-white/5 hover:border-white/20'
+                      }`}
+                    >
+                      <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                        {opt.label}
+                      </p>
+                      <p className="text-[10px] text-white/40">{opt.sub}</p>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <SectionLabel>Catégorie d'âge</SectionLabel>
+              <div className="grid grid-cols-2 gap-2.5">
+                {AGE_BAND_OPTIONS.map((opt) => {
+                  const selected = ageBand === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => {
+                        setAgeBand(opt.value)
+                        if (opt.value === 'u18') {
+                          if (populationSegment !== 'u18_female' && populationSegment !== 'u18_male') {
+                            setPopulationSegment('u18_male')
+                          }
+                          setParentalConsentHealthData(null)
+                        } else {
+                          if (populationSegment !== 'male_senior' && populationSegment !== 'female_senior') {
+                            setPopulationSegment('male_senior')
+                          }
+                          setParentalConsentHealthData(false)
+                        }
+                      }}
                       className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                         selected
                           ? 'border-[#ff6b35] bg-[#ff6b35]/10'
@@ -507,6 +645,75 @@ export function OnboardingPage() {
                 })}
               </div>
             </div>
+
+            <div className="space-y-3">
+              <SectionLabel>Population ciblée</SectionLabel>
+              <div className="grid grid-cols-1 gap-2.5">
+                {POPULATION_OPTIONS.filter((opt) => opt.ageBand === ageBand).map((opt) => {
+                  const selected = populationSegment === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setPopulationSegment(opt.value)}
+                      className={`w-full flex items-center justify-between gap-3 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
+                        selected
+                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                      }`}
+                    >
+                      <div>
+                        <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                          {opt.label}
+                        </p>
+                        <p className="text-[10px] text-white/40 mt-0.5">{opt.sub}</p>
+                      </div>
+                      {selected && <CheckCircle2 className="w-5 h-5 text-[#ff6b35] flex-shrink-0" />}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {ageBand === 'u18' && (
+              <div className="space-y-3">
+                <SectionLabel>Consentement parental données santé</SectionLabel>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => setParentalConsentHealthData(true)}
+                    className={`w-full p-3 rounded-2xl border text-left transition-all ${
+                      parentalConsentHealthData === true
+                        ? 'border-[#1a5f3f] bg-[#1a5f3f]/15'
+                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <p className={`text-xs font-black ${parentalConsentHealthData === true ? 'text-[#1a5f3f]' : 'text-white/70'}`}>
+                      Consentement obtenu
+                    </p>
+                    <p className="text-[10px] text-white/40 mt-0.5">
+                      Active les adaptations santé U18 et le suivi contextualisé.
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setParentalConsentHealthData(false)}
+                    className={`w-full p-3 rounded-2xl border text-left transition-all ${
+                      parentalConsentHealthData === false
+                        ? 'border-amber-500/40 bg-amber-900/20'
+                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <p className={`text-xs font-black ${parentalConsentHealthData === false ? 'text-amber-400' : 'text-white/70'}`}>
+                      Pas de consentement pour le moment
+                    </p>
+                    <p className="text-[10px] text-white/40 mt-0.5">
+                      Le moteur passera en mode sécurité minimal (mobilité/récupération).
+                    </p>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -848,8 +1055,21 @@ export function OnboardingPage() {
             <div className="bg-white/5 border border-white/10 rounded-[1.75rem] overflow-hidden divide-y divide-white/10">
               <SummaryRow label="Poste" value={POSITIONS.find((p) => p.value === position)?.label ?? '–'} />
               <SummaryRow label="Niveau" value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
+              {trainingLevel === 'performance' && (
+                <SummaryRow
+                  label="Orientation"
+                  value={PERFORMANCE_FOCUS_OPTIONS.find((o) => o.value === performanceFocus)?.label ?? 'Équilibré'}
+                />
+              )}
+              <SummaryRow label="Population" value={POPULATION_OPTIONS.find((p) => p.value === populationSegment)?.label ?? '–'} />
               <SummaryRow label="Période" value={SEASON_MODES.find((m) => m.value === seasonMode)?.label ?? '–'} />
               <SummaryRow label="Séances" value={`${sessions} / semaine`} />
+              {ageBand === 'u18' && (
+                <SummaryRow
+                  label="Consentement santé"
+                  value={parentalConsentHealthData ? 'Parental validé' : 'Non validé (mode sécurité)'}
+                />
+              )}
               <SummaryRow
                 label="Équipement"
                 value={

@@ -1,5 +1,12 @@
 import type { SessionRecipe } from '../../data/sessionRecipes.v1';
-import type { CycleWeek, TrainingBlock, UserProfile, WeekVersion } from '../../types/training';
+import type {
+  CycleWeek,
+  SessionIdentity,
+  SessionIntensity,
+  TrainingBlock,
+  UserProfile,
+  WeekVersion
+} from '../../types/training';
 import { getPositionPreferences } from './positionPreferences.v1';
 import { getBaseWeekVersion, getPhaseForWeek, getPhasePreferences, getPhaseWeekIndex } from './programPhases.v1';
 import { selectEligibleBlocks } from './selectEligibleBlocks';
@@ -13,6 +20,8 @@ export interface BuiltSession {
   recipeId: SessionRecipe['id'];
   title: string;
   week: CycleWeek;
+  intensity?: SessionIntensity;
+  identity?: SessionIdentity;
   blocks: BuiltSessionBlock[];
   warnings: string[];
   isSafetyAdapted?: boolean;
@@ -23,12 +32,21 @@ interface BuildSessionOptions {
   priorityIntents?: TrainingBlock['intent'][];
   /** Blocs déjà utilisés dans d'autres sessions de la semaine (exclusion cross-session) */
   excludedBlockIds?: Set<string>;
+  /** Intensity profile for intra-week undulation (P1c) */
+  intensity?: SessionIntensity;
+  /** Extra prefer tags from intensity profile (merged with position/phase tags) */
+  intensityPreferTags?: string[];
+  /** Extra avoid tags from intensity profile */
+  intensityAvoidTags?: string[];
+  /** Override phase preferences for DUP (per-session phase instead of per-week) */
+  phasePreferencesOverride?: import('./programPhases.v1').PhasePreferences;
 }
 
 const FALLBACK_INTENTS: Record<
   SessionRecipe['sequence'][number]['intent'],
   SessionRecipe['sequence'][number]['intent'][]
 > = {
+  warmup: [],
   activation: [],
   prehab: ['core'],
   neural: [],
@@ -39,7 +57,8 @@ const FALLBACK_INTENTS: Record<
   neck: ['core'],
   carry: [],
   conditioning: [],
-  mobility: []
+  mobility: [],
+  cooldown: []
 };
 
 // Fallbacks "sécurité" : utilisés uniquement quand un intent requis est introuvable.
@@ -48,6 +67,7 @@ const SAFETY_FALLBACK_INTENTS: Record<
   SessionRecipe['sequence'][number]['intent'],
   SessionRecipe['sequence'][number]['intent'][]
 > = {
+  warmup: [],
   activation: ['core', 'prehab'],
   prehab: ['core'],
   neural: ['core', 'prehab', 'activation', 'contrast', 'force', 'hypertrophy'],
@@ -58,7 +78,8 @@ const SAFETY_FALLBACK_INTENTS: Record<
   neck: ['core'],
   carry: ['core'],
   conditioning: [],
-  mobility: []
+  mobility: [],
+  cooldown: []
 };
 
 const FINISHER_INTENTS: TrainingBlock['intent'][] = ['neck', 'core', 'carry'];
@@ -87,22 +108,49 @@ const pickVersion = (block: TrainingBlock, week: WeekVersion) =>
 const scoreBlock = (
   block: TrainingBlock,
   preferredTags: SessionRecipe['preferredTags'],
-  preferTags: string[],
-  avoidTags: string[]
+  positionPreferTags: string[],
+  positionAvoidTags: string[],
+  phasePreferTags: string[],
+  phaseAvoidTags: string[],
+  intensityPreferTags: string[] = [],
+  intensityAvoidTags: string[] = []
 ) => {
+  // Recipe-level preferred tags: +1 per match (slot relevance)
   const preferredScore = preferredTags.reduce(
     (score, preferredTag) => score + (block.tags.includes(preferredTag) ? 1 : 0),
     0
   );
-  const preferScore = preferTags.reduce(
-    (score, tag) => score + (block.tags.includes(tag) ? 3 : 0),
+  // H8 (P1, F-B01 fix): Position scoring at +5, separate from phase at +3.
+  // Position must outrank phase to ensure position-specific blocks are selected
+  // (Duthie 2003: position demands differ significantly in rugby).
+  const positionPreferScore = positionPreferTags.reduce(
+    (score, tag) => score + (block.tags.includes(tag) ? 5 : 0),
     0
   );
-  const avoidScore = avoidTags.reduce(
+  const positionAvoidScore = positionAvoidTags.reduce(
     (score, tag) => score + (block.tags.includes(tag) ? -2 : 0),
     0
   );
-  return preferredScore + preferScore + avoidScore;
+  // Phase scoring: +3/-2 (unchanged from original design)
+  const phasePreferScore = phasePreferTags.reduce(
+    (score, tag) => score + (block.tags.includes(tag) ? 3 : 0),
+    0
+  );
+  const phaseAvoidScore = phaseAvoidTags.reduce(
+    (score, tag) => score + (block.tags.includes(tag) ? -2 : 0),
+    0
+  );
+  // H10: Intensity scoring +2/-2 to meaningfully differentiate DUP sessions
+  const intensityPrefer = intensityPreferTags.reduce(
+    (score, tag) => score + (block.tags.includes(tag) ? 2 : 0),
+    0
+  );
+  const intensityAvoid = intensityAvoidTags.reduce(
+    (score, tag) => score + (block.tags.includes(tag) ? -2 : 0),
+    0
+  );
+  return preferredScore + positionPreferScore + positionAvoidScore +
+    phasePreferScore + phaseAvoidScore + intensityPrefer + intensityAvoid;
 };
 
 const getExerciseIds = (block: TrainingBlock): string[] =>
@@ -115,9 +163,8 @@ const canUseBlock = (
   block: TrainingBlock,
   usedExerciseIds: Set<string>
 ): boolean => {
-  // Activation est toujours accepté (échauffement, overlap volontaire parfois)
-  // Prehab EST vérifié : on ne veut pas répéter un exercice déjà fait en activation
-  if (block.intent === 'activation') {
+  // Warmup, activation et cooldown : toujours acceptés (overlap volontaire)
+  if (block.intent === 'activation' || block.intent === 'warmup' || block.intent === 'cooldown') {
     return true;
   }
   return !hasExerciseOverlap(block, usedExerciseIds);
@@ -149,14 +196,45 @@ const selectCandidateWithRotation = <T>(
   return capped[index] ?? capped[0] ?? null;
 };
 
+// KB strength-methods.md §7.1: neural adaptations need 4+ weeks on same movement pattern.
+// KB beginner-intermediate-training.md Q4: change exercises every 4–6 weeks max.
+// Main work intents (force, contrast, neural, hypertrophy) stay FIXED within a cycle —
+// only RER/load progresses via versions (W1→W4).
+// Accessory/finisher intents rotate by week index for variety.
 const shouldRotateIntent = (
   intent: TrainingBlock['intent'],
   required: boolean
 ): boolean => {
   void required;
-  if (intent === 'neural') return true;
   if (intent === 'neck' || intent === 'core' || intent === 'carry') return true;
   return false;
+};
+
+const HIGH_DEMAND_INTENTS: TrainingBlock['intent'][] = ['neural', 'contrast', 'force'];
+
+// HIGH_DEMAND_INTENTS reserved for future shouldIncludeOptionalPrepIntent enhancement
+void HIGH_DEMAND_INTENTS;
+
+// H3: Warmup is mandatory for all sessions except pure mobility and REHAB P1.
+// KB injury-prevention.md §9: warmup reduces injuries 20-50% (Emery 2015, evidence level A).
+const WARMUP_EXEMPT_RECIPES = new Set<string>([
+  'RECOVERY_MOBILITY_V1',
+  'REHAB_UPPER_P1_V1',
+  'REHAB_LOWER_P1_V1',
+]);
+
+const shouldIncludeOptionalPrepIntent = (
+  intent: TrainingBlock['intent'],
+  recipe: SessionRecipe,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _profile: UserProfile,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _sessionIntensity?: SessionIntensity
+): boolean => {
+  if (intent !== 'warmup' && intent !== 'cooldown') return true;
+  // Mobility-only and REHAB P1 sessions are too light for warmup
+  if (WARMUP_EXEMPT_RECIPES.has(recipe.id)) return false;
+  return true;
 };
 
 const chooseBlockByIntent = (
@@ -165,8 +243,10 @@ const chooseBlockByIntent = (
   required: boolean,
   focusTagsAny: SessionRecipe['focusTagsAny'],
   preferredTags: SessionRecipe['preferredTags'],
-  preferTags: string[],
-  avoidTags: string[],
+  positionPreferTags: string[],
+  positionAvoidTags: string[],
+  phasePreferTags: string[],
+  phaseAvoidTags: string[],
   usedBlockIds: Set<string>,
   usedExerciseIds: Set<string>,
   recipeId: SessionRecipe['id'],
@@ -174,7 +254,9 @@ const chooseBlockByIntent = (
   week: CycleWeek,
   anchorBlockId?: string,
   excludedBlockIds?: Set<string>,
-  focusMode: 'auto' | 'force' | 'off' = 'auto'
+  focusMode: 'auto' | 'force' | 'off' = 'auto',
+  intensityPreferTags: string[] = [],
+  intensityAvoidTags: string[] = []
 ): TrainingBlock | null => {
   const normalizedFocusTags = focusTagsAny ?? [];
   const hasFocusTags = normalizedFocusTags.length > 0;
@@ -196,8 +278,8 @@ const chooseBlockByIntent = (
     )
     .sort(
       (a, b) =>
-        scoreBlock(b, preferredTags, preferTags, avoidTags) -
-          scoreBlock(a, preferredTags, preferTags, avoidTags) ||
+        scoreBlock(b, preferredTags, positionPreferTags, positionAvoidTags, phasePreferTags, phaseAvoidTags, intensityPreferTags, intensityAvoidTags) -
+          scoreBlock(a, preferredTags, positionPreferTags, positionAvoidTags, phasePreferTags, phaseAvoidTags, intensityPreferTags, intensityAvoidTags) ||
         a.blockId.localeCompare(b.blockId)
     );
 
@@ -242,11 +324,14 @@ export const buildSessionFromRecipe = (
 ): BuiltSession => {
   const eligibleBlocks = selectEligibleBlocks(profile, blocks);
   const positionPreferences = getPositionPreferences(profile);
-  const phasePreferences = getPhasePreferences(week);
+  const phasePreferences = options.phasePreferencesOverride ?? getPhasePreferences(week);
   const phase = getPhaseForWeek(week);
   const baseWeek = getBaseWeekVersion(week);
   const priorityIntents = options.priorityIntents ?? [];
   const excludedBlockIds = options.excludedBlockIds;
+  const intensityPreferTags = options.intensityPreferTags ?? [];
+  const intensityAvoidTags = options.intensityAvoidTags ?? [];
+  const sessionIntensity = options.intensity;
   const usedBlockIds = new Set<string>();
   const usedExerciseIds = new Set<string>();
   const builtBlocks: BuiltSessionBlock[] = [];
@@ -294,6 +379,14 @@ export const buildSessionFromRecipe = (
   for (let slotIndex = 0; slotIndex < recipe.sequence.length; slotIndex++) {
     const step = recipe.sequence[slotIndex];
 
+    if (
+      (step.intent === 'warmup' || step.intent === 'cooldown') &&
+      !step.required &&
+      !shouldIncludeOptionalPrepIntent(step.intent, recipe, profile, sessionIntensity)
+    ) {
+      continue;
+    }
+
     // Per-slot focus tags override recipe-level focusTagsAny (null = no filter for this slot)
     const effectiveFocusTags: string[] | undefined =
       recipe.slotFocusTags != null
@@ -317,11 +410,13 @@ export const buildSessionFromRecipe = (
       continue;
     }
 
-    const intentsToTry = [step.intent, ...FALLBACK_INTENTS[step.intent]];
-    const orderedIntents = [
-      ...priorityIntents.filter((intent) => intentsToTry.includes(intent)),
-      ...intentsToTry.filter((intent) => !priorityIntents.includes(intent))
+    const fallbackIntents = FALLBACK_INTENTS[step.intent];
+    // Primary intent always first; priorityIntents only reorder the fallback chain
+    const orderedFallbacks = [
+      ...priorityIntents.filter((intent) => fallbackIntents.includes(intent)),
+      ...fallbackIntents.filter((intent) => !priorityIntents.includes(intent))
     ].filter((intent, index, list) => list.indexOf(intent) === index);
+    const orderedIntents = [step.intent, ...orderedFallbacks.filter((intent) => intent !== step.intent)];
 
     let chosenBlock: TrainingBlock | null = null;
     let chosenIntent = step.intent;
@@ -341,11 +436,10 @@ export const buildSessionFromRecipe = (
         step.required,
         effectiveFocusTags,
         recipe.preferredTags,
-        [...positionPreferences.preferTags, ...phasePreferences.preferTags],
-        [
-          ...(positionPreferences.avoidTags ?? []),
-          ...(phasePreferences.avoidTags ?? [])
-        ],
+        positionPreferences.preferTags,
+        positionPreferences.avoidTags ?? [],
+        phasePreferences.preferTags,
+        phasePreferences.avoidTags ?? [],
         usedBlockIds,
         usedExerciseIds,
         recipe.id,
@@ -353,7 +447,9 @@ export const buildSessionFromRecipe = (
         week,
         anchorBlockId,
         excludedBlockIds,
-        'auto'
+        'auto',
+        intensityPreferTags,
+        intensityAvoidTags
       );
       chosenIntent = intent;
       if (chosenBlock) break;
@@ -371,11 +467,10 @@ export const buildSessionFromRecipe = (
           step.required,
           effectiveFocusTags,
           recipe.preferredTags,
-          [...positionPreferences.preferTags, ...phasePreferences.preferTags],
-          [
-            ...(positionPreferences.avoidTags ?? []),
-            ...(phasePreferences.avoidTags ?? [])
-          ],
+          positionPreferences.preferTags,
+          positionPreferences.avoidTags ?? [],
+          phasePreferences.preferTags,
+          phasePreferences.avoidTags ?? [],
           usedBlockIds,
           usedExerciseIds,
           recipe.id,
@@ -383,7 +478,9 @@ export const buildSessionFromRecipe = (
           week,
           undefined,
           excludedBlockIds,
-          'force'
+          'force',
+          intensityPreferTags,
+          intensityAvoidTags
         );
         if (!chosenBlock) {
           chosenBlock = chooseBlockByIntent(
@@ -392,11 +489,10 @@ export const buildSessionFromRecipe = (
             step.required,
             effectiveFocusTags,
             recipe.preferredTags,
-            [...positionPreferences.preferTags, ...phasePreferences.preferTags],
-            [
-              ...(positionPreferences.avoidTags ?? []),
-              ...(phasePreferences.avoidTags ?? [])
-            ],
+            positionPreferences.preferTags,
+            positionPreferences.avoidTags ?? [],
+            phasePreferences.preferTags,
+            phasePreferences.avoidTags ?? [],
             usedBlockIds,
             usedExerciseIds,
             recipe.id,
@@ -404,7 +500,9 @@ export const buildSessionFromRecipe = (
             week,
             undefined,
             excludedBlockIds,
-            'off'
+            'off',
+            intensityPreferTags,
+            intensityAvoidTags
           );
         }
         chosenIntent = intent;
@@ -456,6 +554,7 @@ export const buildSessionFromRecipe = (
     recipeId: recipe.id,
     title: recipe.title,
     week,
+    intensity: sessionIntensity,
     blocks: builtBlocks,
     warnings,
     isSafetyAdapted,

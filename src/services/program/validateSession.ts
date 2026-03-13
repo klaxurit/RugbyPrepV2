@@ -5,9 +5,11 @@ export interface SessionValidationResult {
   warnings: string[];
 }
 
-const MAX_BLOCKS = 5;
+const MAX_BLOCKS = 7; // warmup + activation + 2-3 main + 1-2 finisher + cooldown
 const MAX_FINISHERS = 1;
 const MAX_FINISHERS_FULL = 2;
+const MAJOR_FULL_INTENTS = new Set(['neural', 'force', 'contrast', 'hypertrophy']);
+const FULL_RECIPES = new Set(['FULL_V1', 'FULL_HYPER_V1', 'FULL_BUILDER_V1']);
 
 const EXEMPT_FROM_ACTIVATION = new Set([
   'RECOVERY_MOBILITY_V1',
@@ -18,10 +20,42 @@ const EXEMPT_FROM_ACTIVATION = new Set([
 const EXEMPT_FROM_MAIN_BLOCK = new Set([
   'COND_OFF_V1',
   'COND_PRE_V1',
+  'SPEED_FIELD_PRE_V1',
   'REHAB_UPPER_P1_V1',
   'REHAB_LOWER_P1_V1',
   'RECOVERY_MOBILITY_V1',
 ]);
+
+const hasUpperTag = (tags: string[]): boolean =>
+  tags.includes('upper') || tags.includes('full');
+
+const hasLowerTag = (tags: string[]): boolean =>
+  tags.includes('lower') || tags.includes('full');
+
+const evaluateFullBodyBalance = (session: BuiltSession): {
+  hasUpperMajor: boolean;
+  hasLowerMajor: boolean;
+  hasUpperCarryOnly: boolean;
+} => {
+  const majorBlocks = session.blocks.filter((sessionBlock) =>
+    MAJOR_FULL_INTENTS.has(sessionBlock.block.intent)
+  );
+  const hasUpperMajor = majorBlocks.some((sessionBlock) => hasUpperTag(sessionBlock.block.tags));
+  const hasLowerMajor = majorBlocks.some((sessionBlock) => hasLowerTag(sessionBlock.block.tags));
+  const hasUpperCarryOnly = session.blocks.some(
+    (sessionBlock) =>
+      sessionBlock.block.intent === 'carry' &&
+      sessionBlock.block.tags.includes('upper') &&
+      !sessionBlock.block.tags.includes('lower') &&
+      !sessionBlock.block.tags.includes('full')
+  );
+
+  return {
+    hasUpperMajor,
+    hasLowerMajor,
+    hasUpperCarryOnly,
+  };
+};
 
 export const validateSession = (session: BuiltSession): SessionValidationResult => {
   const warnings: string[] = [];
@@ -78,12 +112,26 @@ export const validateSession = (session: BuiltSession): SessionValidationResult 
   const finisherCount = intents.filter(
     (intent) => intent === 'neck' || intent === 'core' || intent === 'carry'
   ).length;
-  const fullRecipes = ['FULL_V1', 'FULL_HYPER_V1'];
-  const maxFinishers = fullRecipes.includes(session.recipeId) ? MAX_FINISHERS_FULL : MAX_FINISHERS;
+  const isFullRecipe = FULL_RECIPES.has(session.recipeId);
+  const maxFinishers = isFullRecipe ? MAX_FINISHERS_FULL : MAX_FINISHERS;
   if (finisherCount > maxFinishers) {
     warnings.push(
       `Session exceeds max finishers (${finisherCount}/${maxFinishers}) in neck/core/carry.`
     );
+  }
+
+  if (isFullRecipe) {
+    const { hasUpperMajor, hasLowerMajor, hasUpperCarryOnly } = evaluateFullBodyBalance(session);
+    if (!hasUpperMajor || !hasLowerMajor) {
+      warnings.push(
+        'Full-body session imbalance: at least one upper and one lower major block are required.'
+      );
+    }
+    if (hasUpperCarryOnly && hasUpperMajor && !hasLowerMajor) {
+      warnings.push(
+        'Full-body redundancy: upper-only carry cannot replace a missing lower major stimulus.'
+      );
+    }
   }
 
   return {

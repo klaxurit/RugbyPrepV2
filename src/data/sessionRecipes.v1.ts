@@ -18,6 +18,8 @@ export type SessionRecipeId =
   // Conditionnement (off/pré-saison — performance 3 sessions)
   | 'COND_OFF_V1'
   | 'COND_PRE_V1'
+  // Vitesse terrain dédiée (pré-saison, focus speed)
+  | 'SPEED_FIELD_PRE_V1'
   // Mobilité & Récupération active
   | 'RECOVERY_MOBILITY_V1'
   // Réhab (3 phases × 2 zones)
@@ -44,91 +46,117 @@ export interface SessionRecipe {
 }
 
 export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
+  // ─── Performance — Force / Puissance ────────────────────────────────────
+
   UPPER_V1: {
     id: 'UPPER_V1',
     title: 'Upper (rugby)',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'neural', required: false },
       { intent: 'contrast', required: true }, // ou force en fallback
       // Finisher group (engine keeps at most one for UPPER).
       { intent: 'neck', required: false },
       { intent: 'core', required: false },
-      { intent: 'carry', required: false }
+      { intent: 'carry', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['upper', 'push', 'pull', 'shoulder_health', 'contact'],
-    focusTagsAny: ['upper']
+    focusTagsAny: ['upper'],
+    // warmup=null, activation upper prep, neural orienté tirage, contrast orienté poussée (équilibre push/pull), neck/core/carry=null, cooldown=null
+    slotFocusTags: [null, ['upper'], ['pull', 'posterior_chain'], ['push', 'push_pull'], null, null, null, null]
   },
   LOWER_V1: {
     id: 'LOWER_V1',
     title: 'Lower (rugby)',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'neural', required: false },
       { intent: 'contrast', required: true }, // bloc plyo/unilat + groin
       { intent: 'force', required: false },
       { intent: 'prehab', required: false }, // copenhagen/pallof etc
-      { intent: 'core', required: false }
+      { intent: 'core', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['lower', 'hinge', 'squat', 'groin', 'posterior_chain'],
-    focusTagsAny: ['lower']
+    focusTagsAny: ['lower'],
+    // warmup=null, activation lower prep, neural lower/full, contrast orienté unilatéral/plyo, force lower squat/hinge, prehab/core/cooldown=null
+    slotFocusTags: [null, ['lower'], ['lower', 'full', 'unilateral', 'acceleration'], ['unilateral', 'groin', 'plyo'], ['lower', 'squat', 'hinge', 'full'], null, null, null]
   },
   FULL_V1: {
     id: 'FULL_V1',
     title: 'Full Body (rugby)',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
-      { intent: 'neural', required: true },
-      { intent: 'force', required: true },
+      { intent: 'neural', required: true }, // lower-dominant neural stimulus
+      { intent: 'force', required: true }, // upper-dominant force stimulus
       { intent: 'core', required: false },
-      { intent: 'carry', required: false }
+      { intent: 'carry', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['full', 'power', 'posterior_chain'],
-    focusTagsAny: []
+    focusTagsAny: [],
+    // warmup=null, activation full body, neural lower/full, force upper/full, core=null, carry full/lower/core, cooldown=null
+    slotFocusTags: [null, ['upper', 'lower'], ['lower', 'full'], ['upper', 'full'], null, ['full', 'lower', 'core'], null]
   },
+
+  // ─── Performance — Hypertrophie ──────────────────────────────────────────
 
   UPPER_HYPER_V1: {
     id: 'UPPER_HYPER_V1',
     title: 'Upper Hypertrophie',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true }, // push/pull horizontal
       { intent: 'hypertrophy', required: true }, // push/pull vertical
       { intent: 'neck', required: false },
-      { intent: 'core', required: false }
+      { intent: 'core', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['upper', 'push', 'pull', 'hypertrophy', 'shoulder_health'],
-    focusTagsAny: ['upper']
+    focusTagsAny: ['upper'],
+    // warmup=null, activation upper, upper push bias, upper pull bias, neck/core/cooldown=null
+    slotFocusTags: [null, ['upper'], ['upper', 'push', 'horizontal'], ['upper', 'pull', 'vertical', 'horizontal'], null, null, null]
   },
 
   LOWER_HYPER_V1: {
     id: 'LOWER_HYPER_V1',
     title: 'Lower Hypertrophie',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true }, // squat ou hinge
       { intent: 'hypertrophy', required: true }, // hinge ou unilateral
       { intent: 'core', required: false },
-      { intent: 'prehab', required: false }
+      { intent: 'prehab', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['lower', 'squat', 'hinge', 'hypertrophy', 'posterior_chain', 'unilateral'],
-    focusTagsAny: ['lower']
+    focusTagsAny: ['lower'],
+    // warmup=null, activation lower, lower squat bias, lower hinge/unilateral bias, core/prehab/cooldown=null
+    slotFocusTags: [null, ['lower'], ['lower', 'squat'], ['lower', 'hinge', 'unilateral'], null, null, null]
   },
 
   FULL_HYPER_V1: {
     id: 'FULL_HYPER_V1',
     title: 'Full Body Hypertrophie',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true }, // upper compound
       { intent: 'hypertrophy', required: true }, // lower compound
       { intent: 'core', required: false },
-      { intent: 'carry', required: false }
+      { intent: 'carry', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['upper', 'lower', 'hypertrophy', 'push', 'pull', 'squat', 'hinge'],
     focusTagsAny: [],
-    // Garantit 1 upper + 1 lower quelle que soit la préférence de phase (phase FORCE → sinon 2 lower)
-    slotFocusTags: [null, ['upper'], ['lower'], null, null]
+    // warmup=null, activation full body, upper hyper, lower hyper, core=null, carry=null, cooldown=null
+    slotFocusTags: [null, ['upper', 'lower'], ['upper'], ['lower'], null, null, null]
   },
 
   // ─── Starter (Niveau 1) ────────────────────────────────────────────────────
@@ -137,30 +165,34 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     id: 'UPPER_STARTER_V1',
     title: 'Full Body A — Débutant',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true }, // push-pull haut du corps
       { intent: 'hypertrophy', required: true }, // squat-hinge bas du corps
-      { intent: 'core', required: false }
+      { intent: 'core', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['starter', 'upper', 'push', 'pull', 'lower', 'squat', 'hinge'],
     focusTagsAny: [],
-    // Slot 0=activation (no filter), slot 1=upper focus, slot 2=lower focus, slot 3=core (no filter)
-    slotFocusTags: [null, ['upper'], ['lower'], null]
+    // warmup=null, activation upper (dominante haut), upper focus, lower focus, core=null, cooldown=null
+    slotFocusTags: [null, ['upper'], ['upper'], ['lower'], null, null]
   },
 
   LOWER_STARTER_V1: {
     id: 'LOWER_STARTER_V1',
     title: 'Full Body B — Débutant',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true }, // squat-hinge bas du corps
       { intent: 'hypertrophy', required: true }, // push-pull haut du corps
-      { intent: 'core', required: false }
+      { intent: 'core', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['starter', 'lower', 'squat', 'hinge', 'posterior_chain', 'upper', 'push', 'pull'],
     focusTagsAny: [],
-    // Slot 0=activation (no filter), slot 1=lower focus, slot 2=upper focus, slot 3=core (no filter)
-    slotFocusTags: [null, ['lower'], ['upper'], null]
+    // warmup=null, activation lower (dominante bas), lower focus, upper focus, core=null, cooldown=null
+    slotFocusTags: [null, ['lower'], ['lower'], ['upper'], null, null]
   },
 
   // ─── Builder (Niveau 2 — Supersets) ──────────────────────────────────────
@@ -169,41 +201,51 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     id: 'UPPER_BUILDER_V1',
     title: 'Upper — Supersets',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true }, // superset push/pull horizontal
       { intent: 'hypertrophy', required: true }, // superset push/pull vertical ou accessoire
-      { intent: 'core', required: false }
+      { intent: 'core', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['builder', 'superset', 'upper', 'push', 'pull', 'hypertrophy'],
-    focusTagsAny: ['upper']
+    focusTagsAny: ['upper'],
+    // warmup=null, activation upper, upper push bias, upper pull bias, core/cooldown=null
+    slotFocusTags: [null, ['upper'], ['upper', 'push', 'horizontal'], ['upper', 'pull', 'vertical', 'horizontal'], null, null]
   },
 
   LOWER_BUILDER_V1: {
     id: 'LOWER_BUILDER_V1',
     title: 'Lower — Supersets',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true }, // superset squat / hinge
       { intent: 'hypertrophy', required: true }, // superset unilateral / posterior chain
-      { intent: 'prehab', required: false }
+      { intent: 'prehab', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['builder', 'superset', 'lower', 'squat', 'hinge', 'posterior_chain', 'unilateral'],
-    focusTagsAny: ['lower']
+    focusTagsAny: ['lower'],
+    // warmup=null, activation lower, lower squat bias, lower hinge/unilateral bias, prehab/cooldown=null
+    slotFocusTags: [null, ['lower'], ['lower', 'squat'], ['lower', 'hinge', 'unilateral'], null, null]
   },
 
   FULL_BUILDER_V1: {
     id: 'FULL_BUILDER_V1',
     title: 'Full Body — Supersets',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true }, // superset upper push/pull
       { intent: 'hypertrophy', required: true }, // superset lower squat/hinge
-      { intent: 'core', required: false }
+      { intent: 'core', required: false },
+      { intent: 'cooldown', required: false }
     ],
     preferredTags: ['builder', 'superset', 'upper', 'lower', 'push', 'pull', 'squat', 'hinge'],
     focusTagsAny: [],
-    // Garantit 1 upper + 1 lower quelle que soit la préférence de phase
-    slotFocusTags: [null, ['upper'], ['lower'], null]
+    // warmup=null, activation full body, upper, lower, core=null, cooldown=null
+    slotFocusTags: [null, ['upper', 'lower'], ['upper'], ['lower'], null, null]
   },
 
   // ─── Conditionnement (off/pré-saison — performance 3 sessions/sem) ──────────
@@ -212,29 +254,49 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     id: 'COND_OFF_V1',
     title: 'Conditionnement Hors-saison',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'conditioning', required: true },
       { intent: 'conditioning', required: false },
+      { intent: 'cooldown', required: false },
     ],
     preferredTags: ['conditioning', 'aerobic', 'vo2max'],
     focusTagsAny: ['conditioning'],
-    slotFocusTags: [['conditioning'], null, null],
+    slotFocusTags: [null, ['conditioning'], null, null, null],
   },
 
   COND_PRE_V1: {
     id: 'COND_PRE_V1',
     title: 'Conditionnement Pré-saison',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'conditioning', required: true },
       { intent: 'conditioning', required: false },
+      { intent: 'cooldown', required: false },
     ],
     preferredTags: ['conditioning', 'sprint', 'rsa', 'lactate'],
     focusTagsAny: ['conditioning'],
-    slotFocusTags: [['conditioning'], null, null],
+    slotFocusTags: [null, ['conditioning'], null, null, null],
   },
 
-  // ─── Mobilité & Récupération active ──────────────────────────────────────
+  SPEED_FIELD_PRE_V1: {
+    id: 'SPEED_FIELD_PRE_V1',
+    title: 'Vitesse terrain Pré-saison',
+    sequence: [
+      { intent: 'warmup', required: false },
+      { intent: 'activation', required: true },
+      { intent: 'neural', required: true },
+      { intent: 'conditioning', required: true },
+      { intent: 'cooldown', required: false },
+    ],
+    preferredTags: ['speed', 'acceleration', 'rsa', 'conditioning', 'power'],
+    focusTagsAny: ['speed', 'conditioning'],
+    // warmup=null, activation speed prep, neural speed/lower/full, conditioning speed/rsa/full, cooldown=null
+    slotFocusTags: [null, ['speed', 'conditioning'], ['speed', 'lower', 'full'], ['speed', 'rsa', 'conditioning', 'full'], null],
+  },
+
+  // ─── Mobilité & Récupération active (pas de warmup/cooldown — session 100% mobilité)
 
   RECOVERY_MOBILITY_V1: {
     id: 'RECOVERY_MOBILITY_V1',
@@ -247,7 +309,7 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     focusTagsAny: ['mobility'],
   },
 
-  // ─── Réhab Phase 1 — Protection ──────────────────────────────────────────
+  // ─── Réhab Phase 1 — Protection (pas de warmup — séance très légère)
 
   REHAB_UPPER_P1_V1: {
     id: 'REHAB_UPPER_P1_V1',
@@ -258,8 +320,6 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
       { intent: 'core', required: false },
     ],
     preferredTags: ['rehab', 'upper', 'shoulder_health', 'pain_management'],
-    // slotFocusTags : zone stricte par slot (pas de tag 'rehab' générique qui laisserait
-    // passer des blocs lower). slot2=core : pas de filtre (core est neutre).
     slotFocusTags: [['upper'], ['upper', 'shoulder_health'], null],
   },
 
@@ -275,59 +335,67 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     slotFocusTags: [['lower'], ['lower', 'knee_health', 'hip_stability'], null],
   },
 
-  // ─── Réhab Phase 2 — Renforcement ────────────────────────────────────────
+  // ─── Réhab Phase 2 — Renforcement (warmup + cooldown ajoutés)
 
   REHAB_UPPER_P2_V1: {
     id: 'REHAB_UPPER_P2_V1',
     title: 'Réhab Épaule — Phase 2 Renforcement',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true },
       { intent: 'prehab', required: false },
       { intent: 'core', required: false },
+      { intent: 'cooldown', required: false },
     ],
     preferredTags: ['rehab', 'upper', 'shoulder_health'],
-    slotFocusTags: [['upper'], ['upper'], ['upper', 'shoulder_health'], null],
+    slotFocusTags: [null, ['upper'], ['upper'], ['upper', 'shoulder_health'], null, null],
   },
 
   REHAB_LOWER_P2_V1: {
     id: 'REHAB_LOWER_P2_V1',
     title: 'Réhab Bas du corps — Phase 2 Renforcement',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true },
       { intent: 'prehab', required: false },
       { intent: 'core', required: true },
+      { intent: 'cooldown', required: false },
     ],
     preferredTags: ['rehab', 'lower', 'posterior_chain'],
-    slotFocusTags: [['lower'], ['lower'], ['lower', 'knee_health', 'hip_stability'], null],
+    slotFocusTags: [null, ['lower'], ['lower'], ['lower', 'knee_health', 'hip_stability'], null, null],
   },
 
-  // ─── Réhab Phase 3 — Retour sport ────────────────────────────────────────
+  // ─── Réhab Phase 3 — Retour sport (warmup + cooldown ajoutés)
 
   REHAB_UPPER_P3_V1: {
     id: 'REHAB_UPPER_P3_V1',
     title: 'Réhab Épaule — Phase 3 Retour sport',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true },
       { intent: 'force', required: true },
       { intent: 'contrast', required: false },
+      { intent: 'cooldown', required: false },
     ],
     preferredTags: ['rehab', 'upper', 'shoulder_health'],
-    slotFocusTags: [['upper'], ['upper'], ['upper'], ['upper']],
+    slotFocusTags: [null, ['upper'], ['upper'], ['upper'], ['upper'], null],
   },
 
   REHAB_LOWER_P3_V1: {
     id: 'REHAB_LOWER_P3_V1',
     title: 'Réhab Bas du corps — Phase 3 Retour sport',
     sequence: [
+      { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
       { intent: 'hypertrophy', required: true },
       { intent: 'force', required: true },
       { intent: 'contrast', required: false },
+      { intent: 'cooldown', required: false },
     ],
     preferredTags: ['rehab', 'lower', 'knee_health', 'posterior_chain'],
-    slotFocusTags: [['lower'], ['lower'], ['lower'], ['lower']],
+    slotFocusTags: [null, ['lower'], ['lower'], ['lower'], ['lower'], null],
   },
 };

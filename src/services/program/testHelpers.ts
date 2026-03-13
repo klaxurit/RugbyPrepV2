@@ -32,6 +32,7 @@ const DEFAULTS: UserProfile = {
   injuries: [],
   rugbyPosition: 'BACK_ROW',
   seasonMode: 'in_season',
+  performanceFocus: 'balanced',
 }
 
 export function createProfile(overrides?: Partial<UserProfile>): UserProfile {
@@ -50,12 +51,31 @@ export const SIMULATION_PROFILES: Record<string, UserProfile> = {
   S4: createProfile({ trainingLevel: 'starter', weeklySessions: 2, equipment: LIMITED_GYM, injuries: ['low_back_pain'] }),
   S5: createProfile({ trainingLevel: 'starter', weeklySessions: 2, equipment: BW_ONLY, injuries: ['shoulder_pain'] }),
 
+  // ── U18 (RG-03 : vérification VC-01 et cap version) ──
+  U18_FILLE: createProfile({
+    trainingLevel: 'starter',
+    weeklySessions: 2,
+    equipment: ['band'],
+    populationSegment: 'u18_female',
+    ageBand: 'u18',
+  }),
+  U18_GARCON: createProfile({
+    trainingLevel: 'starter',
+    weeklySessions: 2,
+    equipment: ['band'],
+    populationSegment: 'u18_male',
+    ageBand: 'u18',
+  }),
+
   // ── Builder ──
   B1: createProfile({ trainingLevel: 'builder', weeklySessions: 2, equipment: LIMITED_GYM }),
   B2: createProfile({ trainingLevel: 'builder', weeklySessions: 3, equipment: FULL_GYM }),
   B3: createProfile({ trainingLevel: 'builder', weeklySessions: 3, equipment: FULL_GYM, injuries: ['shoulder_pain'] }),
   B4: createProfile({ trainingLevel: 'builder', weeklySessions: 2, equipment: LIMITED_GYM, injuries: ['knee_pain'] }),
   B5: createProfile({ trainingLevel: 'builder', weeklySessions: 3, equipment: LIMITED_GYM }),
+
+  // ── Female senior (F-FINAL-H02: ACL prehab + volume cap regression guard) ──
+  F_SENIOR: createProfile({ weeklySessions: 3, equipment: FULL_GYM, populationSegment: 'female_senior' }),
 
   // ── Performance ──
   P1: createProfile({ weeklySessions: 3, equipment: FULL_GYM }),

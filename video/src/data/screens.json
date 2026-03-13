@@ -1,0 +1,103 @@
+{
+  "videoConfig": {
+    "id": "PromoVertical",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "transitionFrames": 18
+  },
+  "brand": {
+    "name": "RugbyForge",
+    "eyebrow": "Preparation physique rugby",
+    "tagline": "Ta prepa physique, scientifiquement optimisee",
+    "subline": "Programmes periodises, charge ACWR, prevention blessures et coach IA.",
+    "cta": "Commencer gratuitement"
+  },
+  "intro": {
+    "duration": 84,
+    "logoPath": "assets/branding/rugbyprep-logo.png",
+    "stats": [
+      {
+        "value": "186+",
+        "label": "references"
+      },
+      {
+        "value": "88",
+        "label": "blocs"
+      },
+      {
+        "value": "12",
+        "label": "semaines"
+      }
+    ]
+  },
+  "screens": [
+    {
+      "id": "week",
+      "eyebrow": "Programme intelligent",
+      "title": "Ta semaine est deja structuree",
+      "description": "Seances, fatigue et acces rapides dans un seul ecran pour avancer sans improviser.",
+      "imagePath": "assets/screens/app-week.png",
+      "duration": 112,
+      "accent": "#ff6b35",
+      "secondary": "#1a5f3f",
+      "chips": ["Cycle adapte", "Fatigue suivie", "Saison active"],
+      "kicker": "Tout commence par un plan clair."
+    },
+    {
+      "id": "acwr",
+      "eyebrow": "Charge maitrisee",
+      "title": "Repere la zone de risque avant la blessure",
+      "description": "Le suivi ACWR t'aide a ajuster le volume quand la charge grimpe trop vite.",
+      "imagePath": "assets/screens/acwr-monitoring.png",
+      "duration": 112,
+      "accent": "#ff6b35",
+      "secondary": "#d92d20",
+      "chips": ["ACWR en direct", "Alerte surcharge", "Decision simple"],
+      "kicker": "Moins de doute. Plus de controle."
+    },
+    {
+      "id": "progress",
+      "eyebrow": "Progression visible",
+      "title": "Transforme chaque seance en donnees utiles",
+      "description": "Suis tes PR, tes tests et ta progression saison apres saison dans la meme app.",
+      "imagePath": "assets/screens/tests-progression.png",
+      "duration": 112,
+      "accent": "#16a34a",
+      "secondary": "#0f766e",
+      "chips": ["PR suivis", "Tests physiques", "Objectifs lisibles"],
+      "kicker": "La progression devient concrete."
+    },
+    {
+      "id": "calendar",
+      "eyebrow": "Semaine reelle",
+      "title": "Le calendrier club pilote ta preparation",
+      "description": "Matchs, entrainements et phase de saison influencent directement tes priorites.",
+      "imagePath": "assets/screens/calendar.png",
+      "duration": 112,
+      "accent": "#ff6b35",
+      "secondary": "#1a5f3f",
+      "chips": ["Match a venir", "Charge contextualisee", "Semaine adaptee"],
+      "kicker": "Ton programme vit avec ta saison."
+    },
+    {
+      "id": "coach",
+      "eyebrow": "Coach IA",
+      "title": "Pose une question. Obtiens une reponse exploitable",
+      "description": "Nutrition, recuperation, sommeil ou prevention: l'IA garde le contexte de ton profil.",
+      "imagePath": "assets/screens/ai-chat.png",
+      "duration": 112,
+      "accent": "#f97316",
+      "secondary": "#7c3aed",
+      "chips": ["Questions du quotidien", "Contexte de la semaine", "Upsell premium"],
+      "kicker": "Un assistant qui parle rugby."
+    }
+  ],
+  "outro": {
+    "duration": 90,
+    "headline": "Passe au niveau superieur",
+    "subline": "Programme intelligent, charge maitrisee, progression visible.",
+    "cta": "Commencer gratuitement"
+  }
+}
+

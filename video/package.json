@@ -1,0 +1,22 @@
+{
+  "name": "rugbyprep-video",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "remotion studio",
+    "bundle": "remotion bundle",
+    "render": "remotion render PromoVertical out/rugbyforge-promo-v1.mp4",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.435",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "^4.0.435",
+    "typescript": "^5.9.3"
+  }
+}

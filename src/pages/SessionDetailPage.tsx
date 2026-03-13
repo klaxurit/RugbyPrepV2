@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { posthog } from '../services/analytics/posthog'
-import { ChevronLeft, ShieldCheck, ChevronDown } from 'lucide-react'
+import { ChevronLeft, ShieldCheck, ChevronDown, AlertTriangle } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
 import { useFatigue } from '../hooks/useFatigue'
@@ -10,8 +10,10 @@ import { useHistory } from '../hooks/useHistory'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
 import { useAcwrOverride } from '../hooks/useAcwrOverride'
+import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { buildWeekProgram, validateSession } from '../services/program'
 import { applyDeloadToSessions } from '../services/ui/applyDeload'
+import { getProgramSafetyMessages } from '../services/ui/safetyMessaging'
 import { SessionView } from '../components/SessionView'
 import { RPEModal } from '../components/modals/RPEModal'
 import { BottomNav } from '../components/BottomNav'
@@ -22,7 +24,7 @@ import type { SessionType } from '../types/training'
 const getSessionType = (recipeId: string): SessionType => {
   if (recipeId === 'UPPER_V1' || recipeId === 'UPPER_HYPER_V1' || recipeId === 'UPPER_BUILDER_V1') return 'UPPER'
   if (recipeId === 'LOWER_V1' || recipeId === 'LOWER_HYPER_V1' || recipeId === 'LOWER_BUILDER_V1') return 'LOWER'
-  if (recipeId === 'COND_OFF_V1' || recipeId === 'COND_PRE_V1') return 'CONDITIONING'
+  if (recipeId === 'COND_OFF_V1' || recipeId === 'COND_PRE_V1' || recipeId === 'SPEED_FIELD_PRE_V1') return 'CONDITIONING'
   return 'FULL'
 }
 
@@ -45,11 +47,13 @@ export function SessionDetailPage() {
   const effectiveWeek = isDeloadWeek ? lastNonDeloadWeek : week
   const { zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, events)
   const { ignoreAcwrOverload } = useAcwrOverride()
+  const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
   const builtProgram = buildWeekProgram(profile, effectiveWeek, {
     fatigueLevel: acwrHasData ? (acwrZone ?? undefined) : undefined,
     hasSufficientACWRData: acwrHasData,
     ignoreAcwrOverload,
+    featureFlags: programFeatureFlags,
   })
   const rawSessions = builtProgram.sessions
   const sessions = isDeloadWeek ? applyDeloadToSessions(rawSessions) : rawSessions
@@ -57,6 +61,17 @@ export function SessionDetailPage() {
   const session = sessions[index] ?? null
   const validation = session ? validateSession(session) : null
   const sessionType = session ? getSessionType(session.recipeId) : 'UPPER'
+  const weekSafetyMessages = getProgramSafetyMessages(
+    builtProgram.warnings,
+    builtProgram.hardConstraintEvents
+  )
+  const sessionWarnings = Array.from(
+    new Set(
+      session
+        ? [...weekSafetyMessages, ...session.warnings, ...(validation?.warnings ?? [])]
+        : weekSafetyMessages
+    )
+  )
 
   const sessionLabel =
     sessionType === 'UPPER' ? 'Haut du corps'
@@ -80,6 +95,38 @@ export function SessionDetailPage() {
           <div className="p-4 bg-emerald-900/20 border border-emerald-500/20 rounded-2xl flex items-center justify-between gap-3">
             <p className="text-xs text-emerald-400 font-bold">Séance enregistrée ✓</p>
             <span className="text-[10px] text-emerald-400/70">Retour dans 2s…</span>
+          </div>
+        )}
+
+        {sessionWarnings.length > 0 && (
+          <div className="p-4 bg-amber-900/20 border border-amber-500/20 rounded-2xl">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-300 flex-shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="text-[10px] font-black uppercase tracking-wide text-amber-300">
+                  Adaptations moteur
+                </p>
+                {sessionWarnings.map((warning) => (
+                  <p key={warning} className="text-xs text-amber-200 leading-snug">
+                    {warning}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {session?.identity && (
+          <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-1.5">
+            <p className="text-[10px] font-black uppercase tracking-wider text-white/40">
+              Identité de séance
+            </p>
+            <p className="text-sm font-bold text-white">
+              {session.identity.objectiveLabel}
+            </p>
+            <p className="text-xs text-white/45 leading-snug">
+              {session.identity.whyTodayLabel}
+            </p>
           </div>
         )}
 
@@ -147,6 +194,7 @@ export function SessionDetailPage() {
               viewMode="compact"
               isDeload={isDeloadWeek}
               isValid={validation?.isValid}
+              warnings={sessionWarnings}
               onMarkComplete={() => setShowRPE(true)}
               statusLabel={validation?.isValid ? 'Valide' : 'À vérifier'}
             />

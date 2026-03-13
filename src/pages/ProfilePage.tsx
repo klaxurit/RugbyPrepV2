@@ -13,7 +13,18 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
 import type { AuthError } from '../types/auth'
-import type { Contra, Equipment, DayOfWeek, ClubSchedule, TrainingLevel, SeasonMode, RehabPhase } from '../types/training'
+import type {
+  Contra,
+  Equipment,
+  DayOfWeek,
+  ClubSchedule,
+  TrainingLevel,
+  SeasonMode,
+  RehabPhase,
+  AgeBand,
+  PopulationSegment,
+  PerformanceFocus,
+} from '../types/training'
 import ffrClubsData from '../data/ffrClubs.v2021.json'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
@@ -76,6 +87,12 @@ const SEASON_MODES: { value: SeasonMode; label: string; sub: string; emoji: stri
   { value: 'pre_season', label: 'Pré-saison',       sub: 'Force-Puissance & réathlétisation',  emoji: '🔥' },
 ]
 
+const PERFORMANCE_FOCUS_OPTIONS: { value: PerformanceFocus; label: string; sub: string }[] = [
+  { value: 'balanced', label: 'Équilibré', sub: 'Développement global' },
+  { value: 'speed', label: 'Vitesse', sub: 'Priorité sprint / accélération (pré-saison)' },
+  { value: 'strength', label: 'Force', sub: 'Priorité robustesse / charges' },
+]
+
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
   { day: 1, label: 'Lundi',    short: 'L' },
   { day: 2, label: 'Mardi',    short: 'M' },
@@ -93,6 +110,18 @@ const MATCH_DAY_OPTIONS: { day: DayOfWeek | null; label: string }[] = [
 ]
 
 const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+
+const AGE_BAND_OPTIONS: { value: AgeBand; label: string }[] = [
+  { value: 'adult', label: 'Senior (18+)' },
+  { value: 'u18', label: 'U18' },
+]
+
+const POPULATION_OPTIONS: { value: PopulationSegment; label: string; ageBand: AgeBand }[] = [
+  { value: 'male_senior', label: 'Homme senior', ageBand: 'adult' },
+  { value: 'female_senior', label: 'Femme senior', ageBand: 'adult' },
+  { value: 'u18_male', label: 'Garçon U18', ageBand: 'u18' },
+  { value: 'u18_female', label: 'Fille U18', ageBand: 'u18' },
+]
 
 const REHAB_CRITERIA: Record<RehabPhase, string> = {
   1: 'Passage P2 : absence douleur au repos · mobilité partielle retrouvée · 1-2 semaines',
@@ -279,6 +308,10 @@ export function ProfilePage() {
 
   const selectedClubLogoUrl = getClubLogoUrl(profile.clubCode)
   const selectedClubMonogram = getClubMonogram(profile.clubName)
+  const selectedAgeBand: AgeBand = profile.ageBand ?? 'adult'
+  const selectedPopulation: PopulationSegment =
+    profile.populationSegment ??
+    (selectedAgeBand === 'u18' ? 'u18_male' : 'male_senior')
 
   return (
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
@@ -381,7 +414,15 @@ export function ProfilePage() {
                   <button
                     key={opt.value}
                     type="button"
-                    onClick={() => updateProfile({ trainingLevel: opt.value, level: opt.legacyLevel })}
+                    onClick={() =>
+                      updateProfile({
+                        trainingLevel: opt.value,
+                        level: opt.legacyLevel,
+                        weeklySessions: opt.value === 'starter' ? 2 : profile.weeklySessions,
+                        seasonMode: opt.value === 'starter' ? 'in_season' : profile.seasonMode,
+                        performanceFocus: opt.value === 'starter' ? 'balanced' : profile.performanceFocus,
+                      })
+                    }
                     className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                       active
                         ? 'bg-[#1a5f3f] text-white shadow-sm'
@@ -433,21 +474,60 @@ export function ProfilePage() {
             )}
           </div>
 
+          {/* Orientation performance */}
+          {(profile.trainingLevel ?? 'builder') === 'performance' && (
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Orientation performance</label>
+              <p className="text-[10px] text-white/30">
+                En pré-saison, le focus vitesse active une séance vitesse terrain dédiée.
+              </p>
+              <div className="flex flex-col gap-2">
+                {PERFORMANCE_FOCUS_OPTIONS.map((opt) => {
+                  const active = (profile.performanceFocus ?? 'balanced') === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => updateProfile({ performanceFocus: opt.value })}
+                      className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
+                        active
+                          ? 'bg-cyan-700/30 text-cyan-200 border border-cyan-500/30'
+                          : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                      }`}
+                    >
+                      <div>
+                        <p className="font-black">{opt.label}</p>
+                        <p className={`text-[10px] font-normal ${active ? 'text-cyan-100/80' : 'text-white/40'}`}>
+                          {opt.sub}
+                        </p>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Séances / semaine */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Séances / semaine</label>
             <div className="grid grid-cols-2 gap-2">
               {[2, 3].map((n) => {
                 const active = profile.weeklySessions === n
+                const isStarter = (profile.trainingLevel ?? 'builder') === 'starter'
+                const disabled = isStarter && n === 3
                 return (
                   <button
                     key={n}
                     type="button"
+                    disabled={disabled}
                     onClick={() => updateProfile({ weeklySessions: n as 2 | 3 })}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
                       active
                         ? 'bg-[#1a5f3f] text-white shadow-sm'
-                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                        : disabled
+                          ? 'bg-white/5 text-white/25 border border-white/10 cursor-not-allowed opacity-50'
+                          : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                     }`}
                   >
                     {n} séances
@@ -747,6 +827,129 @@ export function ProfilePage() {
             </div>
           ) : (
             <p className="text-xs text-white/40">Non configuré — clique sur "Modifier" pour ajouter ton planning.</p>
+          )}
+        </section>
+
+        {/* Population & consentement santé */}
+        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-2xl bg-cyan-900/20 text-cyan-400">
+              <Shield className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-white">Population & conformité</h2>
+              <p className="text-xs text-white/40">Mineurs: consentement parental et minimisation des données santé</p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Catégorie d'âge</label>
+            <div className="grid grid-cols-2 gap-2">
+              {AGE_BAND_OPTIONS.map((opt) => {
+                const active = selectedAgeBand === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => {
+                      const patch: Partial<typeof profile> = { ageBand: opt.value }
+                      if (opt.value === 'u18') {
+                        patch.populationSegment =
+                          selectedPopulation === 'u18_female' || selectedPopulation === 'u18_male'
+                            ? selectedPopulation
+                            : 'u18_male'
+                        if (profile.parentalConsentHealthData === undefined) {
+                          patch.parentalConsentHealthData = false
+                        }
+                      } else {
+                        patch.populationSegment =
+                          selectedPopulation === 'male_senior' || selectedPopulation === 'female_senior'
+                            ? selectedPopulation
+                            : 'male_senior'
+                        patch.parentalConsentHealthData = false
+                      }
+                      updateProfile(patch, { source: 'profile' })
+                    }}
+                    className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
+                      active
+                        ? 'bg-cyan-700/30 text-cyan-200 border border-cyan-500/30'
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Segment population</label>
+            <div className="grid grid-cols-1 gap-2">
+              {POPULATION_OPTIONS.filter((opt) => opt.ageBand === selectedAgeBand).map((opt) => {
+                const active = selectedPopulation === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => updateProfile({ populationSegment: opt.value }, { source: 'profile' })}
+                    className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
+                      active
+                        ? 'bg-cyan-700/30 text-cyan-200 border border-cyan-500/30'
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {selectedAgeBand === 'u18' && (
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">
+                Consentement parental données santé
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => updateProfile({ parentalConsentHealthData: true }, { source: 'profile' })}
+                  className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
+                    profile.parentalConsentHealthData
+                      ? 'bg-emerald-700/30 text-emerald-200 border border-emerald-500/30'
+                      : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                  }`}
+                >
+                  Accord parental
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateProfile({ parentalConsentHealthData: false }, { source: 'profile' })}
+                  className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
+                    profile.parentalConsentHealthData === false
+                      ? 'bg-amber-900/30 text-amber-300 border border-amber-500/30'
+                      : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                  }`}
+                >
+                  Retirer / absent
+                </button>
+              </div>
+              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+                <p className="text-[11px] text-white/55">
+                  Statut: <span className="font-bold text-white/75">{profile.healthConsentStatus ?? 'unknown'}</span>
+                </p>
+                {profile.healthConsentGrantedAt && (
+                  <p className="text-[10px] text-white/35">Accord enregistré: {new Date(profile.healthConsentGrantedAt).toLocaleString()}</p>
+                )}
+                {profile.healthConsentRevokedAt && (
+                  <p className="text-[10px] text-white/35">Retrait enregistré: {new Date(profile.healthConsentRevokedAt).toLocaleString()}</p>
+                )}
+                {profile.healthDataRetentionState && (
+                  <p className="text-[10px] text-white/35">Rétention données santé: {profile.healthDataRetentionState}</p>
+                )}
+              </div>
+            </div>
           )}
         </section>
 

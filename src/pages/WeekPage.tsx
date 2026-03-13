@@ -11,22 +11,25 @@ import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
 import { useAcwrOverride } from '../hooks/useAcwrOverride'
 import { useAcwrBlockCollapsed } from '../hooks/useAcwrBlockCollapsed'
+import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { buildWeekProgram, validateSession } from '../services/program'
 import { applyDeloadToSessions } from '../services/ui/applyDeload'
 import { shouldRecommendDeload } from '../services/ui/recommendations'
 import { getSessionRecap } from '../services/ui/progression'
+import { getProgramSafetyMessages } from '../services/ui/safetyMessaging'
 import { getCycleWeekNumber, getPhaseForWeek } from '../services/program/programPhases.v1'
 import type { CycleWeek, DayOfWeek, RehabPhase, SessionType } from '../types/training'
 import { TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 
-const WEEK_OPTIONS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
+const ALL_WEEK_OPTIONS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
+const IN_SEASON_3_1_HIDDEN: CycleWeek[] = ['W4', 'W8', 'H4']
 
 const getSessionType = (recipeId: string): SessionType => {
   if (recipeId === 'UPPER_V1' || recipeId === 'UPPER_HYPER_V1' || recipeId === 'UPPER_BUILDER_V1') return 'UPPER'
   if (recipeId === 'LOWER_V1' || recipeId === 'LOWER_HYPER_V1' || recipeId === 'LOWER_BUILDER_V1') return 'LOWER'
-  if (recipeId === 'COND_OFF_V1' || recipeId === 'COND_PRE_V1') return 'CONDITIONING'
+  if (recipeId === 'COND_OFF_V1' || recipeId === 'COND_PRE_V1' || recipeId === 'SPEED_FIELD_PRE_V1') return 'CONDITIONING'
   return 'FULL'
 }
 
@@ -55,6 +58,12 @@ export function WeekPage() {
   const { logs } = useHistory()
   const { events } = useCalendar()
 
+  const isInSeason3_1 = (profile?.trainingLevel ?? 'starter') === 'performance' &&
+    (profile?.seasonMode ?? 'in_season') === 'in_season'
+  const weekOptions = isInSeason3_1
+    ? ALL_WEEK_OPTIONS.filter((w) => !IN_SEASON_3_1_HIDDEN.includes(w))
+    : ALL_WEEK_OPTIONS
+
   // Match non chargé hier → bannière rappel + suggestion mobilité
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
@@ -69,6 +78,7 @@ export function WeekPage() {
   const acwrZone = acwrResult.zone
   const { ignoreAcwrOverload, setOverride } = useAcwrOverride()
   const { collapsed: acwrBlockCollapsed, toggle: toggleAcwrBlock } = useAcwrBlockCollapsed()
+  const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
   useEffect(() => { posthog.capture('week_viewed') }, [])
 
@@ -90,6 +100,7 @@ export function WeekPage() {
     fatigueLevel: acwrResult.hasSufficientData ? (acwrZone ?? undefined) : undefined,
     hasSufficientACWRData: acwrResult.hasSufficientData,
     ignoreAcwrOverload,
+    featureFlags: programFeatureFlags,
   })
   const weekProgram = {
     ...builtWeekProgram,
@@ -98,6 +109,9 @@ export function WeekPage() {
       ? applyDeloadToSessions(builtWeekProgram.sessions)
       : builtWeekProgram.sessions,
   }
+  const weekSafetyMessages = Array.from(
+    new Set(getProgramSafetyMessages(weekProgram.warnings, weekProgram.hardConstraintEvents))
+  )
 
   const recapRows = weekProgram.sessions.map((session) => ({
     type: getSessionType(session.recipeId),
@@ -281,7 +295,7 @@ export function WeekPage() {
             <div
               className="flex gap-2 overflow-x-auto pb-1 pt-2 px-4 scrollbar-none [mask-image:linear-gradient(to_right,transparent_0%,black_2rem,black_calc(100%-2rem),transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_2rem,black_calc(100%-2rem),transparent_100%)] [mask-size:100%_100%]"
             >
-              {WEEK_OPTIONS.map((opt) => {
+              {weekOptions.map((opt) => {
                 const isSelected = opt === week
                 return (
                   <button
@@ -332,6 +346,37 @@ export function WeekPage() {
             Progrès →
           </Link>
         </div>
+
+        {(weekProgram.selectedArchetypeId !== 'LEGACY_V1' || weekProgram.qualityScorecard) && (
+          <div className="p-3 bg-white/5 border border-white/10 rounded-2xl space-y-1">
+            <p className="text-[10px] font-black uppercase tracking-wide text-white/40">
+              Microcycle
+            </p>
+            <p className="text-xs text-white/70">
+              Archetype: {weekProgram.selectedArchetypeId}
+            </p>
+            {weekProgram.qualityScorecard && (
+              <p className="text-xs text-white/50">
+                Score qualité: {weekProgram.qualityScorecard.overall}/100
+              </p>
+            )}
+          </div>
+        )}
+
+        {weekSafetyMessages.length > 0 && (
+          <div className="p-4 bg-amber-900/20 border border-amber-500/20 rounded-2xl">
+            <p className="text-[10px] font-black uppercase tracking-wide text-amber-300 mb-2">
+              Adaptations sécurité semaine
+            </p>
+            <ul className="space-y-1">
+              {weekSafetyMessages.map((message) => (
+                <li key={message} className="text-xs text-amber-300 leading-snug">
+                  • {message}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Fatigue toggle */}
         <section className="bg-white/5 border border-white/10 rounded-[24px] p-5">
@@ -432,6 +477,20 @@ export function WeekPage() {
                       ? `${DAY_LABELS[trainingDays[index]]} · ${session.title}`
                       : session.title}
                   </h3>
+                  {session.isSafetyAdapted && (
+                    <span className="flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-900/30 text-amber-300">
+                      ADAPTÉE
+                    </span>
+                  )}
+                  {session.intensity && (
+                    <span className={`flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-full ${
+                      session.intensity === 'heavy' ? 'bg-red-900/30 text-red-400' :
+                      session.intensity === 'medium' ? 'bg-amber-900/30 text-amber-400' :
+                      'bg-emerald-900/30 text-emerald-400'
+                    }`}>
+                      {session.intensity === 'heavy' ? 'INTENSE' : session.intensity === 'medium' ? 'MODÉRÉ' : 'LÉGER'}
+                    </span>
+                  )}
                   <span className={`flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-full ${
                     validation.isValid ? 'bg-emerald-900/20 text-emerald-400' : 'bg-rose-900/20 text-rose-400'
                   }`}>
@@ -443,6 +502,16 @@ export function WeekPage() {
                   {recap && ` · ${recap.loggedExercises}/${recap.totalExercises} faits`}
                   {!!recap?.loadProxy && ` · ${recap.loadProxy}`}
                 </p>
+                {session.identity && (
+                  <div className="mt-1.5 space-y-0.5">
+                    <p className="text-[11px] text-white/60">
+                      {session.identity.objectiveLabel}
+                    </p>
+                    <p className="text-[10px] text-white/35">
+                      {session.identity.whyTodayLabel}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <ChevronRight className="w-5 h-5 text-white/30 flex-shrink-0" />

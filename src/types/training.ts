@@ -26,6 +26,7 @@ export type Equipment =
   | 'none';
 
 export type BlockIntent =
+  | 'warmup'
   | 'activation'
   | 'prehab'
   | 'neural'
@@ -36,7 +37,8 @@ export type BlockIntent =
   | 'neck'
   | 'carry'
   | 'conditioning'
-  | 'mobility';
+  | 'mobility'
+  | 'cooldown';
 
 export type WeekVersion = 'W1' | 'W2' | 'W3' | 'W4';
 export type CycleWeek =
@@ -55,6 +57,53 @@ export type CycleWeek =
   | 'DELOAD';
 
 export type ProgramPhase = 'FORCE' | 'POWER' | 'HYPERTROPHY';
+
+export type SessionIntensity = 'heavy' | 'medium' | 'light';
+export type MatchDayOffset =
+  | 'MD'
+  | 'MD-1'
+  | 'MD-2'
+  | 'MD-3'
+  | 'MD-4'
+  | 'MD-5'
+  | 'MD-6'
+  | 'UNKNOWN';
+
+export type MicrocycleArchetypeId =
+  | 'LEGACY_V1'
+  | 'IN_SEASON_2X_STD'
+  | 'IN_SEASON_3X_STD'
+  | 'DELOAD_RECOVERY'
+  | 'REHAB_UPPER'
+  | 'REHAB_LOWER';
+
+export type SessionRole =
+  | 'lower_strength'
+  | 'upper_strength'
+  | 'full_neural'
+  | 'conditioning'
+  | 'speed_field'
+  | 'rehab'
+  | 'recovery';
+
+export interface SessionIdentity {
+  archetypeId: MicrocycleArchetypeId;
+  sessionRole: SessionRole;
+  sessionIntensity: SessionIntensity | 'recovery';
+  matchDayOffset: MatchDayOffset;
+  objectiveLabel: string;
+  whyTodayLabel: string;
+}
+
+export interface QualityScorecard {
+  safety: number;
+  microcycle: number;
+  matchProximity: number;
+  structure: number;
+  identity: number;
+  population: number;
+  overall: number;
+}
 
 export type RugbyPositionGroup =
   | 'FRONT_ROW'
@@ -81,6 +130,25 @@ export type Role = 'prime' | 'contrast' | 'stability' | 'accessory' | 'superset_
 
 export type TrainingLevel = 'starter' | 'builder' | 'performance';
 export type SeasonMode = 'in_season' | 'off_season' | 'pre_season';
+export type PerformanceFocus = 'balanced' | 'speed' | 'strength';
+export type PopulationSegment =
+  | 'male_senior'
+  | 'female_senior'
+  | 'u18_female'
+  | 'u18_male'
+  | 'unknown';
+export type AgeBand = 'u18' | 'adult';
+export type HealthConsentStatus = 'unknown' | 'granted' | 'revoked' | 'not_required';
+export type HealthConsentSource = 'onboarding' | 'profile' | 'support' | 'system';
+export type HealthDataRetentionState = 'active' | 'pending_purge' | 'purged';
+
+export interface HealthConsentAuditEvent {
+  at: string
+  action: 'granted' | 'revoked' | 'not_required' | 'unknown'
+  source: HealthConsentSource
+  actor: 'user' | 'system'
+  note?: string
+}
 
 export interface BlockExercise {
   exerciseId: string;
@@ -128,7 +196,35 @@ export interface UserProfile {
   scSchedule?: SCSchedule
   trainingLevel?: TrainingLevel
   seasonMode?: SeasonMode
+  performanceFocus?: PerformanceFocus
   rehabInjury?: RehabInjury
+  populationSegment?: PopulationSegment
+  ageBand?: AgeBand
+  parentalConsentHealthData?: boolean
+  adultPlayEligibilityApproved?: boolean
+  maturityStatus?: 'pre_phv' | 'circa_phv' | 'post_phv' | 'unknown'
+  cycleTrackingOptIn?: boolean
+  cycleSymptomScoreToday?: 0 | 1 | 2 | 3
+  preventionSessionsWeek?: number
+  weeklyLoadContext?: WeeklyLoadContext
+  healthConsentStatus?: HealthConsentStatus
+  healthConsentGrantedAt?: string
+  healthConsentRevokedAt?: string
+  healthConsentSource?: HealthConsentSource
+  healthConsentAuditTrail?: HealthConsentAuditEvent[]
+  healthDataRetentionState?: HealthDataRetentionState
+}
+
+export interface WeeklyLoadContext {
+  playedMatchMinutesWeek?: number
+  scheduledMatchMinutes?: number
+  contactHighMinutesWeek?: number
+  contactMediumMinutesWeek?: number
+  matchesPlayedSeason?: number
+  lastMatchAt?: string
+  nextMatchAt?: string
+  upcomingMatchDates?: string[]
+  externalSessionsLoad?: number
 }
 
 export type ExerciseMetricType = 'load_reps' | 'reps' | 'seconds' | 'meters';

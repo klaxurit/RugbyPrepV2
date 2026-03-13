@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import blocksData from '../../data/blocks.v1.json'
 import exercisesData from '../../data/exercices.v1.json'
 import { sessionRecipesV1 } from '../../data/sessionRecipes.v1'
-import type { BlockIntent, Equipment, Exercise, TrainingBlock } from '../../types/training'
+import type { BlockIntent, Contra, Equipment, Exercise, TrainingBlock } from '../../types/training'
 
 const blocks = blocksData as TrainingBlock[]
 const exercises = exercisesData as Exercise[]
@@ -105,5 +105,35 @@ describe('program data integrity', () => {
     }
 
     expect(duplicates).toEqual([])
+  })
+
+  it('TID-DAT-006 every exercise contraindication is propagated to its parent block', () => {
+    const exercisesById = new Map<string, Exercise>()
+    for (const exercise of exercises) {
+      if (exercise.exerciseId) exercisesById.set(exercise.exerciseId, exercise)
+      if (exercise.id) exercisesById.set(exercise.id, exercise)
+    }
+
+    const leaks: Array<{ blockId: string; missing: Contra[] }> = []
+
+    for (const block of blocks) {
+      const declared = new Set(block.contraindications)
+      const required = new Set<Contra>()
+
+      for (const blockExercise of block.exercises) {
+        const exercise = exercisesById.get(blockExercise.exerciseId)
+        if (!exercise) continue
+        for (const contra of exercise.contraindications) {
+          required.add(contra)
+        }
+      }
+
+      const missing = [...required].filter((contra) => !declared.has(contra))
+      if (missing.length > 0) {
+        leaks.push({ blockId: block.blockId, missing })
+      }
+    }
+
+    expect(leaks).toEqual([])
   })
 })

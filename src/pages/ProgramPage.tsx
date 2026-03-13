@@ -13,11 +13,13 @@ import { useAcwrOverride } from '../hooks/useAcwrOverride'
 import { useAcwrBlockCollapsed } from '../hooks/useAcwrBlockCollapsed'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
+import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { buildWeekProgram } from '../services/program/buildWeekProgram'
 import { validateSession } from '../services/program'
 import { applyDeloadToSession } from '../services/ui/applyDeload'
 import { shouldRecommendDeload } from '../services/ui/recommendations'
 import { getSessionRecap } from '../services/ui/progression'
+import { getProgramSafetyMessages } from '../services/ui/safetyMessaging'
 import { getBaseWeekVersion, getCycleWeekNumber, getPhaseForWeek } from '../services/program/programPhases.v1'
 import type { CycleWeek, SessionType } from '../types/training'
 import { SessionView } from '../components/SessionView'
@@ -26,12 +28,15 @@ import { WeekObjectiveModal } from '../components/modals/WeekObjectiveModal'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 
-const WEEK_OPTIONS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
+const ALL_WEEK_OPTIONS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
+// H9 (F-B02 fix): In-season 3:1 skips W4/W8/H4 (deload is at W3/W7/H3 instead)
+const IN_SEASON_3_1_HIDDEN: CycleWeek[] = ['W4', 'W8', 'H4']
 
 const SESSION_TYPE_MAP: Record<string, SessionType> = {
   UPPER_V1: 'UPPER', UPPER_HYPER_V1: 'UPPER', UPPER_BUILDER_V1: 'UPPER', UPPER_STARTER_V1: 'UPPER',
   LOWER_V1: 'LOWER', LOWER_HYPER_V1: 'LOWER', LOWER_BUILDER_V1: 'LOWER', LOWER_STARTER_V1: 'LOWER',
   FULL_V1: 'FULL', FULL_HYPER_V1: 'FULL', FULL_BUILDER_V1: 'FULL',
+  SPEED_FIELD_PRE_V1: 'CONDITIONING',
 }
 
 const PHASE_LABEL: Record<string, string> = {
@@ -53,6 +58,12 @@ export function ProgramPage() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false)
 
+  const isInSeason3_1 = (profile?.trainingLevel ?? 'starter') === 'performance' &&
+    (profile?.seasonMode ?? 'in_season') === 'in_season'
+  const weekOptions = isInSeason3_1
+    ? ALL_WEEK_OPTIONS.filter((w) => !IN_SEASON_3_1_HIDDEN.includes(w))
+    : ALL_WEEK_OPTIONS
+
   useEffect(() => { posthog.capture('program_viewed') }, [])
 
   const acwrResult = useACWR(logs, events)
@@ -60,6 +71,7 @@ export function ProgramPage() {
   const acwrZone = acwrResult.zone
   const { ignoreAcwrOverload, setOverride } = useAcwrOverride()
   const { collapsed: acwrBlockCollapsed, toggle: toggleAcwrBlock } = useAcwrBlockCollapsed()
+  const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
   const effectiveWeek = week === 'DELOAD' ? lastNonDeloadWeek : week
   const baseWeek = getBaseWeekVersion(effectiveWeek)
   const guidance = week === 'DELOAD' ? weekGuidanceV1.DELOAD : weekGuidanceV1[baseWeek]
@@ -73,15 +85,25 @@ export function ProgramPage() {
     fatigueLevel: acwrResult.hasSufficientData ? (acwrZone ?? undefined) : undefined,
     hasSufficientACWRData: acwrResult.hasSufficientData,
     ignoreAcwrOverload,
+    featureFlags: programFeatureFlags,
   })
   const sessions = weekResult.sessions
+  const weekSafetyMessages = Array.from(
+    new Set(getProgramSafetyMessages(weekResult.warnings, weekResult.hardConstraintEvents))
+  )
 
   // Clamp index when week changes (e.g. 3x → 2x profile)
   const safeIndex = Math.min(sessionIndex, Math.max(0, sessions.length - 1))
   const builtSession = sessions[safeIndex] ?? null
   const session = builtSession ? (isDeloadWeek ? applyDeloadToSession(builtSession) : builtSession) : null
   const validation = session ? validateSession(session) : null
-  const warnings = session ? [...session.warnings, ...(validation?.warnings ?? [])] : []
+  const warnings = Array.from(
+    new Set(
+      session
+        ? [...weekSafetyMessages, ...session.warnings, ...(validation?.warnings ?? [])]
+        : weekSafetyMessages
+    )
+  )
   const sessionType: SessionType = session ? (SESSION_TYPE_MAP[session.recipeId] ?? 'FULL') : 'FULL'
   const recap = session ? getSessionRecap(blockLogs, session, sessionType, week) : null
 
@@ -122,7 +144,7 @@ export function ProgramPage() {
           <div
             className="flex gap-2 overflow-x-auto pb-1 pt-2 px-4 scrollbar-none [mask-image:linear-gradient(to_right,transparent_0%,black_2rem,black_calc(100%-2rem),transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_2rem,black_calc(100%-2rem),transparent_100%)] [mask-size:100%_100%]"
           >
-          {WEEK_OPTIONS.map((opt) => (
+          {weekOptions.map((opt) => (
             <button
               key={opt}
               type="button"
@@ -147,13 +169,18 @@ export function ProgramPage() {
                 key={s.recipeId}
                 type="button"
                 onClick={() => setSessionIndex(i)}
-                className={`flex-1 py-2 px-3 rounded-2xl text-xs font-bold transition-all truncate ${
+                className={`flex-1 py-2 px-3 rounded-2xl text-xs font-bold transition-all truncate flex items-center justify-center gap-1 ${
                   i === safeIndex
                     ? 'bg-white/20 text-white'
                     : 'bg-white/5 border border-white/10 text-white/60 hover:border-white/30'
                 }`}
               >
-                {s.title}
+                <span className="truncate">{s.title}</span>
+                {s.isSafetyAdapted && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-amber-900/30 text-amber-400 text-[9px] font-black">
+                    ADAPT
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -296,6 +323,9 @@ export function ProgramPage() {
         {/* Session warnings */}
         {warnings.length > 0 && (
           <div className="p-4 bg-[#f59e0b]/10 border border-[#f59e0b]/20 rounded-2xl">
+            <p className="text-[10px] font-black uppercase tracking-wide text-[#f59e0b] mb-2">
+              Adaptations moteur
+            </p>
             <ul className="space-y-1">
               {warnings.map((warning) => (
                 <li key={warning} className="text-xs text-[#f59e0b] flex items-start gap-1.5">
@@ -303,6 +333,20 @@ export function ProgramPage() {
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {session?.identity && (
+          <div className="p-4 bg-white/5 border border-white/10 rounded-2xl space-y-1.5">
+            <p className="text-[10px] font-black uppercase tracking-wide text-white/40">
+              Identité de séance
+            </p>
+            <p className="text-sm font-bold text-white">
+              {session.identity.objectiveLabel}
+            </p>
+            <p className="text-xs text-white/45 leading-snug">
+              {session.identity.whyTodayLabel}
+            </p>
           </div>
         )}
 

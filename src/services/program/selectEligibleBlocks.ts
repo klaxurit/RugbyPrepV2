@@ -19,7 +19,13 @@ const hasRequiredEquipment = (
 const getEffectiveTrainingLevel = (profile: UserProfile): NonNullable<UserProfile['trainingLevel']> =>
   profile.trainingLevel ?? 'starter';
 
+// Health/safety intents are universal — not level-gated.
+// prehab = injury prevention and rehab exercises (medical, not training-level specific).
+// warmup, cooldown, mobility = structural/prep roles universal to all levels.
+const LEVEL_EXEMPT_INTENTS = new Set<TrainingBlock['intent']>(['warmup', 'cooldown', 'mobility', 'prehab']);
+
 const isLevelEligible = (block: TrainingBlock, profile: UserProfile): boolean => {
+  if (LEVEL_EXEMPT_INTENTS.has(block.intent)) return true;
   const level = getEffectiveTrainingLevel(profile);
   const hasStarterTag = block.tags.includes('starter');
   const hasBuilderTag = block.tags.includes('builder');
@@ -33,14 +39,16 @@ export const selectEligibleBlocks = (
   blocks: TrainingBlock[]
 ): TrainingBlock[] =>
   blocks.filter((block) => {
-    const equipmentOk = hasRequiredEquipment(block.equipment, profile.equipment);
+    const injuries = Array.isArray(profile.injuries) ? profile.injuries : [];
+    const equipment = Array.isArray(profile.equipment) ? profile.equipment : [];
+    const equipmentOk = hasRequiredEquipment(block.equipment, equipment);
     const contraindicationHit = block.contraindications.some((contra) =>
-      profile.injuries.includes(contra)
+      injuries.includes(contra)
     );
     const exerciseContraindicationHit = block.exercises.some((exercise) => {
       const details = getExerciseById(exercise.exerciseId);
       if (!details) return false;
-      return details.contraindications.some((contra) => profile.injuries.includes(contra));
+      return details.contraindications.some((contra) => injuries.includes(contra));
     });
     const levelOk = isLevelEligible(block, profile);
 

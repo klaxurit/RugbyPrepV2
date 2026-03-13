@@ -58,6 +58,8 @@ const DEFAULT_DRAFT: EntryDraft = {
 const getBlockLabel = (index: number) => String.fromCharCode(65 + index)
 const toIntentLabel = (intent: TrainingBlock['intent']) =>
   intent.charAt(0).toUpperCase() + intent.slice(1)
+const isPrepOrRecoveryIntent = (intent: TrainingBlock['intent']) =>
+  intent === 'warmup' || intent === 'cooldown'
 const restClock = (seconds: number) => {
   const minutes = Math.floor(seconds / 60)
   const leftSeconds = seconds % 60
@@ -126,9 +128,12 @@ export function SessionView({
   const [savedBlockId, setSavedBlockId] = useState<string | null>(null)
   const [openLogBlock, setOpenLogBlock] = useState<string | null>(null)
   const [openNotesBlock, setOpenNotesBlock] = useState<string | null>(null)
+  const [isPrepSectionOpen, setIsPrepSectionOpen] = useState(false)
 
   const estimatedMinutes = estimateSessionMinutes(session)
   const isIncomplete = !isValid
+  const prepBlocks = session.blocks.filter(({ block }) => isPrepOrRecoveryIntent(block.intent))
+  const mainBlocks = session.blocks.filter(({ block }) => !isPrepOrRecoveryIntent(block.intent))
 
   const updateEntryDraft = (
     blockId: string,
@@ -446,9 +451,60 @@ export function SessionView({
         </div>
       )}
 
+      {(session.isSafetyAdapted || (session.safetyAdjustments?.length ?? 0) > 0) && (
+        <div className="p-3 bg-amber-900/20 rounded-2xl border border-amber-500/20 space-y-1.5">
+          <p className="text-xs font-black text-amber-400 uppercase tracking-wide">
+            Adaptation sécurité appliquée
+          </p>
+          {(session.safetyAdjustments ?? []).map((adjustment) => (
+            <p key={adjustment} className="text-xs text-amber-300 leading-snug">
+              {adjustment}
+            </p>
+          ))}
+        </div>
+      )}
+
+      {prepBlocks.length > 0 && (
+        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setIsPrepSectionOpen((open) => !open)}
+            className="w-full px-4 py-3.5 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
+          >
+            <div>
+              <p className="text-xs font-black text-white/70 uppercase tracking-wide">
+                Préparation & retour au calme
+              </p>
+              <p className="text-[11px] text-white/40">
+                {prepBlocks.length} bloc{prepBlocks.length > 1 ? 's' : ''} masqué{prepBlocks.length > 1 ? 's' : ''} pour alléger la séance
+              </p>
+            </div>
+            <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${isPrepSectionOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {isPrepSectionOpen && (
+            <div className="px-4 pt-3 pb-5 border-t border-white/10 space-y-3">
+              {prepBlocks.map(({ block, version }) => (
+                <div key={block.blockId} className="bg-white/5 border border-white/10 rounded-2xl px-3.5 py-3 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs font-black text-white leading-snug">{block.name}</p>
+                    <span className="text-[10px] font-bold text-white/50 uppercase">
+                      {toIntentLabel(block.intent)}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-white/50 mt-1.5">{formatBlockVolume(version)}</p>
+                  <p className="text-[11px] text-white/40 mt-2 leading-snug">
+                    {block.exercises.map((exercise) => getExerciseName(exercise.exerciseId)).join(' · ')}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Blocks */}
       <div className="space-y-4">
-        {session.blocks.map(({ block, version }, index) => {
+        {mainBlocks.map(({ block, version }, index) => {
           const missingEquipment = getMissingEquipment(block, availableEquipment)
           const schemeLabel = formatBlockVolume(version)
           const emomDisplay = getEmomDisplay(block, version)

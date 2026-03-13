@@ -15,6 +15,7 @@
  */
 import { useMemo } from 'react'
 import type { CalendarEvent, SessionLog } from '../types/training'
+import { RULE_CONSTANTS_V1 } from '../services/program/policies/ruleConstants.v1'
 
 export type ACWRZone = 'underload' | 'optimal' | 'caution' | 'danger' | 'critical'
 
@@ -73,12 +74,13 @@ function weeksWithData(logs: SessionLog[], today: Date): number {
   return count
 }
 
-function classifyACWR(acwr: number): ACWRZone {
+export function classifyACWR(acwr: number): ACWRZone {
+  const { cautionThreshold, dangerThreshold, criticalThreshold } = RULE_CONSTANTS_V1.acwr
   if (acwr < 0.8) return 'underload'
-  if (acwr <= 1.3) return 'optimal'
-  if (acwr <= 1.5) return 'caution'
-  if (acwr <= 2.0) return 'danger'
-  return 'critical'
+  if (acwr <= cautionThreshold) return 'optimal'  // ≤1.3 = optimal (sweet spot ceiling)
+  if (acwr < dangerThreshold) return 'caution'     // 1.3 < x < 1.5 = caution
+  if (acwr < criticalThreshold) return 'danger'    // 1.5 ≤ x < 2.0 = danger (Hulin 2016: ×2.12 risk)
+  return 'critical'                                 // ≥2.0 = critical
 }
 
 export function useACWR(logs: SessionLog[], matchEvents?: CalendarEvent[]): ACWRResult {
