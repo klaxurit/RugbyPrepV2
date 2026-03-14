@@ -2,8 +2,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { posthog } from '../services/analytics/posthog'
-import { User, Target, AlertTriangle, CheckCircle2, TrendingUp, Info, FileText, Activity, ChevronDown, ChevronUp } from 'lucide-react'
-import { weekGuidanceV1 } from '../data/weekGuidance.v1'
+import { User, AlertTriangle, CheckCircle2, TrendingUp, Info, FileText, Activity, ChevronDown, ChevronUp } from 'lucide-react'
 import { useFatigue } from '../hooks/useFatigue'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
@@ -14,17 +13,16 @@ import { useAcwrBlockCollapsed } from '../hooks/useAcwrBlockCollapsed'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
+import { useAuth } from '../hooks/useAuth'
 import { buildWeekProgram } from '../services/program/buildWeekProgram'
 import { validateSession } from '../services/program'
 import { applyDeloadToSession } from '../services/ui/applyDeload'
 import { shouldRecommendDeload } from '../services/ui/recommendations'
 import { getSessionRecap } from '../services/ui/progression'
 import { getProgramSafetyMessages } from '../services/ui/safetyMessaging'
-import { getBaseWeekVersion, getCycleWeekNumber, getPhaseForWeek } from '../services/program/programPhases.v1'
+import { getCycleWeekNumber, getPhaseForWeek } from '../services/program/programPhases.v1'
 import type { CycleWeek, SessionType } from '../types/training'
 import { SessionView } from '../components/SessionView'
-import { ProfileModal } from '../components/modals/ProfileModal'
-import { WeekObjectiveModal } from '../components/modals/WeekObjectiveModal'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { checkBetaEligibility, BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
@@ -47,6 +45,7 @@ const PHASE_LABEL: Record<string, string> = {
 }
 
 export function ProgramPage() {
+  const { authState } = useAuth()
   const { profile } = useProfile()
   const { week, setWeek, lastNonDeloadWeek } = useWeek()
   const { fatigue, setFatigue } = useFatigue()
@@ -56,8 +55,6 @@ export function ProgramPage() {
   const [sessionIndex, setSessionIndex] = useState(0)
   const [notes, setNotes] = useState('')
   const [saved, setSaved] = useState(false)
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
-  const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false)
 
   const isInSeason3_1 = (profile?.trainingLevel ?? 'starter') === 'performance' &&
     (profile?.seasonMode ?? 'in_season') === 'in_season'
@@ -74,8 +71,6 @@ export function ProgramPage() {
   const { collapsed: acwrBlockCollapsed, toggle: toggleAcwrBlock } = useAcwrBlockCollapsed()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
   const effectiveWeek = week === 'DELOAD' ? lastNonDeloadWeek : week
-  const baseWeek = getBaseWeekVersion(effectiveWeek)
-  const guidance = week === 'DELOAD' ? weekGuidanceV1.DELOAD : weekGuidanceV1[baseWeek]
   const phase = getPhaseForWeek(effectiveWeek)
   const cycleWeekNumber = getCycleWeekNumber(week)
   const recommendation = shouldRecommendDeload(logs, week, acwr)
@@ -164,24 +159,25 @@ export function ProgramPage() {
         backTo="/"
         titleSuffix={session ? session.title : week}
         right={
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setIsProfileModalOpen(true)}
-              className="p-2 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-[#ff6b35] hover:border-[#ff6b35]/20 transition-colors"
-              aria-label="Profil"
+          authState.status === 'authenticated' && authState.user ? (
+            <Link
+              to="/profile"
+              aria-label="Voir mon profil"
+              className="block rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b35] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a100c]"
             >
-              <User className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsObjectiveModalOpen(true)}
-              className="p-2 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-[#ff6b35] hover:border-[#ff6b35]/20 transition-colors"
-              aria-label="Objectif semaine"
-            >
-              <Target className="w-4 h-4" />
-            </button>
-          </div>
+              <div className="h-11 w-11 rounded-full bg-white/10 border border-white/10 overflow-hidden flex items-center justify-center">
+                {authState.user.avatarUrl ? (
+                  <img
+                    src={authState.user.avatarUrl}
+                    alt="Avatar"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <User className="w-5 h-5 text-white/30" />
+                )}
+              </div>
+            </Link>
+          ) : undefined
         }
       />
 
@@ -485,19 +481,6 @@ export function ProgramPage() {
         )}
 
       </main>
-
-      <ProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-        profile={profile}
-      />
-      <WeekObjectiveModal
-        isOpen={isObjectiveModalOpen}
-        onClose={() => setIsObjectiveModalOpen(false)}
-        week={week}
-        guidance={guidance}
-      />
-
       <BottomNav />
     </div>
   )
