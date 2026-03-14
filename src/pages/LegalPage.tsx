@@ -17,7 +17,7 @@ const CGU_SECTIONS: Section[] = [
     title: '2. Accès et inscription',
     content: [
       `L'utilisation de RugbyForge nécessite la création d'un compte. Vous êtes responsable de la confidentialité de vos identifiants et de toutes les actions réalisées depuis votre compte.`,
-      `RugbyForge est destiné aux personnes majeures (18 ans ou plus). Les mineurs doivent obtenir l'accord d'un parent ou tuteur légal.`,
+      `RugbyForge est destiné aux personnes majeures (18 ans ou plus). Les mineurs de moins de 18 ans peuvent créer un compte et un profil, mais l'accès au programme d'entraînement nécessite le consentement explicite d'un parent ou tuteur légal. Ce consentement est recueilli dans le profil utilisateur. Sans consentement validé, le programme d'entraînement n'est pas accessible.`,
     ],
   },
   {
@@ -45,8 +45,9 @@ const PRIVACY_SECTIONS: Section[] = [
   {
     title: 'Données collectées',
     content: [
-      `Nous collectons : adresse email, prénom (optionnel), données de profil sportif (poste, niveau, équipement, zones douloureuses), historique des séances, données de tests physiques.`,
-      `Ces données sont nécessaires au fonctionnement du service et ne sont pas vendues à des tiers.`,
+      `Nous collectons : adresse email, prénom (optionnel), données de profil sportif (poste, niveau, équipement), historique des séances, données de tests physiques.`,
+      `Nous collectons également des données de santé sensibles : zones douloureuses déclarées (épaule, genou, dos, etc.), programme de réhabilitation en cours (zone, phase, dates), et tranche d'âge (adulte ou moins de 18 ans). Ces données sont utilisées exclusivement pour personnaliser votre programme d'entraînement et appliquer les contre-indications de sécurité appropriées.`,
+      `Ces données sont nécessaires au fonctionnement du service et ne sont pas vendues ni partagées à des tiers. Les données analytiques collectées via PostHog (hébergé en UE) sont agrégées et ne contiennent pas de données de santé individuelles.`,
     ],
   },
   {
@@ -62,6 +63,14 @@ const PRIVACY_SECTIONS: Section[] = [
     ],
   },
   {
+    title: 'Mineurs et consentement parental',
+    content: [
+      `Les utilisateurs de moins de 18 ans doivent obtenir le consentement explicite d'un parent ou tuteur légal pour accéder au programme d'entraînement. Ce consentement couvre spécifiquement le traitement des données de santé (zones douloureuses, programme de réhabilitation, morphologie).`,
+      `Sans consentement parental validé dans le profil, l'accès au programme d'entraînement est bloqué. L'utilisateur mineur peut créer un compte et renseigner son profil, mais ne peut pas générer ni consulter de programme tant que le consentement n'est pas activé.`,
+      `Les programmes générés pour les mineurs respectent des contraintes de sécurité renforcées (charges maximales réduites, exercices adaptés).`,
+    ],
+  },
+  {
     title: 'Vos droits (RGPD)',
     content: [
       `Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de portabilité et d'effacement de vos données.`,
@@ -69,9 +78,10 @@ const PRIVACY_SECTIONS: Section[] = [
     ],
   },
   {
-    title: 'Conservation des données',
+    title: 'Suppression de compte et droit à l\'effacement',
     content: [
-      `Vos données sont conservées le temps de votre utilisation du service et supprimées dans un délai de 30 jours après la clôture de votre compte.`,
+      `Vous pouvez demander la suppression de votre compte à tout moment en nous contactant à bonjour@rugbyforge.fr. La suppression entraîne l'effacement de toutes vos données personnelles : profil, historique de séances, tests physiques, calendrier, et données de santé (blessures, réhabilitation).`,
+      `La suppression est effective dans un délai de 30 jours suivant la demande. Les données analytiques agrégées et anonymisées peuvent être conservées à des fins statistiques.`,
     ],
   },
 ]

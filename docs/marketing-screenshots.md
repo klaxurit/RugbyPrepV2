@@ -1,12 +1,38 @@
 # App screenshots propres
 
 Le script `screenshots:app` prend des captures propres avec `playwright-core` et le Chrome local.
+Si `--base-url` n'est pas fourni, il essaie automatiquement les ports Vite courants comme `4173` et `5173`.
+
+## Demarrer l'app
+
+Avant la capture, il faut que l'application tourne localement:
+
+```bash
+npm run dev -- --host 127.0.0.1 --port 5173
+```
+
+ou en mode preview:
+
+```bash
+npm run preview -- --host 127.0.0.1 --port 4173
+```
 
 ## Cas simple
 
 ```bash
 npm run screenshots:app -- --route /landing --output-dir video/public/assets/screens
 ```
+
+## Prendre toute la page
+
+Pour capturer toute la hauteur sans utiliser le mode `fullPage` stitché:
+
+```bash
+npm run screenshots:app -- --route /landing --fit-height --output-dir video/public/assets/screens
+```
+
+Le script agrandit alors le viewport a la hauteur du contenu avant la capture.
+C'est generalement le meilleur choix quand la page contient des elements `fixed` ou `sticky`.
 
 ## Capturer une route avec le viewport exact du telephone
 
@@ -20,7 +46,7 @@ Cela evite le bug des full-page screenshots ou un footer fixe se retrouve au mil
 ## Capturer seulement le contenu principal
 
 ```bash
-npm run screenshots:app -- --route /week --selector main
+npm run screenshots:app -- --route /week --selector main --fit-height
 ```
 
 Pratique si tu veux exclure le `BottomNav` ou les elements fixes.

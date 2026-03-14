@@ -1,25 +1,29 @@
 // @vitest-environment jsdom
 
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { screen } from '@testing-library/react'
 import { WeekPage } from '../WeekPage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 
 const buildWeekProgramMock = vi.fn()
+const useProfileMock = vi.fn()
+
+const ELIGIBLE_PROFILE = {
+  weeklySessions: 3,
+  seasonMode: 'in_season' as const,
+  scSchedule: undefined,
+  rehabInjury: undefined,
+  ageBand: 'adult' as const,   // requis pour passer le guard beta self-serve
+  injuries: [] as string[],
+  equipment: [] as string[],
+}
 
 vi.mock('../../services/analytics/posthog', () => ({
   posthog: { capture: vi.fn() },
 }))
 
 vi.mock('../../hooks/useProfile', () => ({
-  useProfile: () => ({
-    profile: {
-      weeklySessions: 3,
-      seasonMode: 'in_season',
-      scSchedule: undefined,
-      rehabInjury: undefined,
-    },
-  }),
+  useProfile: (...args: unknown[]) => useProfileMock(...args),
 }))
 
 vi.mock('../../hooks/useWeek', () => ({
@@ -117,6 +121,11 @@ vi.mock('../../services/ui/safetyMessaging', () => ({
 }))
 
 describe('WeekPage integration', () => {
+  beforeEach(() => {
+    buildWeekProgramMock.mockClear()
+    useProfileMock.mockReturnValue({ profile: ELIGIBLE_PROFILE })
+  })
+
   it('renders microcycle scorecard and passes canary flags to buildWeekProgram', () => {
     buildWeekProgramMock.mockReturnValue({
       week: 'W1',
@@ -184,5 +193,20 @@ describe('WeekPage integration', () => {
         qualityScorecardV2: true,
       },
     })
+  })
+
+  it('shows beta eligibility guard and does NOT call buildWeekProgram for ineligible profile', () => {
+    useProfileMock.mockReturnValueOnce({
+      profile: {
+        ...ELIGIBLE_PROFILE,
+        seasonMode: 'off_season', // déclenche OFF_SEASON_NOT_SUPPORTED
+      },
+    })
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.getByText(/Profil non encore supporté en bêta self-serve/i)).toBeInTheDocument()
+    expect(screen.getByText(/Mode saison non supporté ou non renseigné/i)).toBeInTheDocument()
+    expect(buildWeekProgramMock).not.toHaveBeenCalled()
   })
 })

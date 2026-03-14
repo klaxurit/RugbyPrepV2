@@ -22,6 +22,7 @@ export const DEFAULT_PROFILE: UserProfile = {
   weeklySessions: 2,
   equipment: ['dumbbell', 'band', 'bench', 'pullup_bar'],
   injuries: [],
+  seasonMode: 'in_season',
   position: 'BACK_ROW',
   rugbyPosition: 'BACK_ROW',
   populationSegment: 'unknown',

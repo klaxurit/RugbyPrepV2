@@ -7131,14 +7131,20 @@
     ],
     "coachingNotes": "Epaule et cheville : zones critiques post-match rugby. 10 min suffisent pour reduire la rigidite."
   },
-
   {
     "blockId": "BLK_WARMUP_GENERAL_01",
     "name": "Échauffement général — Jog + dynamique full body",
     "intent": "warmup",
-    "tags": ["warmup", "full"],
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain"],
+    "tags": [
+      "warmup",
+      "full"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "warmup__jog_light",
@@ -7160,25 +7166,37 @@
       {
         "versionId": "W1",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W2",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W3",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W4",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       }
     ],
@@ -7188,9 +7206,17 @@
     "blockId": "BLK_WARMUP_LOWER_01",
     "name": "Échauffement lower — Fentes dynamiques + pas chassés",
     "intent": "warmup",
-    "tags": ["warmup", "lower"],
-    "equipment": ["none"],
-    "contraindications": ["knee_pain", "ankle_pain"],
+    "tags": [
+      "warmup",
+      "lower"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "ankle_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "warmup__jog_light",
@@ -7212,25 +7238,37 @@
       {
         "versionId": "W1",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W2",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W3",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W4",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       }
     ],
@@ -7240,8 +7278,13 @@
     "blockId": "BLK_WARMUP_UPPER_01",
     "name": "Échauffement upper — Bras dynamiques + inchworm",
     "intent": "warmup",
-    "tags": ["warmup", "upper"],
-    "equipment": ["none"],
+    "tags": [
+      "warmup",
+      "upper"
+    ],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "exercises": [
       {
@@ -7264,38 +7307,57 @@
       {
         "versionId": "W1",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W2",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W3",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W4",
         "sets": 1,
-        "scheme": { "kind": "reps", "reps": "circuit" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "circuit"
+        },
         "restSeconds": 0
       }
     ],
     "coachingNotes": "Échauffement ciblé haut du corps. Prépare épaules et thorax au travail de poussée/traction."
   },
-
   {
     "blockId": "BLK_COOLDOWN_STRETCH_01",
     "name": "Retour au calme — Étirements statiques lower",
     "intent": "cooldown",
-    "tags": ["cooldown", "lower", "stretch"],
-    "equipment": ["none"],
-    "contraindications": ["knee_pain"],
+    "tags": [
+      "cooldown",
+      "lower",
+      "stretch"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "cooldown__static_quad_stretch",
@@ -7317,25 +7379,37 @@
       {
         "versionId": "W1",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W2",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W3",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W4",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       }
     ],
@@ -7345,9 +7419,17 @@
     "blockId": "BLK_COOLDOWN_UPPER_01",
     "name": "Retour au calme — Étirements statiques upper + respiration",
     "intent": "cooldown",
-    "tags": ["cooldown", "upper", "stretch"],
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain"],
+    "tags": [
+      "cooldown",
+      "upper",
+      "stretch"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "cooldown__chest_doorway_stretch",
@@ -7369,25 +7451,37 @@
       {
         "versionId": "W1",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W2",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W3",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W4",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       }
     ],
@@ -7397,9 +7491,17 @@
     "blockId": "BLK_COOLDOWN_FULL_01",
     "name": "Retour au calme — Étirements full body + rotation + respiration",
     "intent": "cooldown",
-    "tags": ["cooldown", "full", "stretch"],
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain"],
+    "tags": [
+      "cooldown",
+      "full",
+      "stretch"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "cooldown__static_hamstring_stretch",
@@ -7421,25 +7523,37 @@
       {
         "versionId": "W1",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W2",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W3",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       },
       {
         "versionId": "W4",
         "sets": 1,
-        "scheme": { "kind": "time", "seconds": 30 },
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
         "restSeconds": 0
       }
     ],
@@ -7478,41 +7592,59 @@
       {
         "versionId": "W1",
         "sets": 2,
-        "scheme": { "kind": "reps", "reps": "8-10" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
         "restSeconds": 45,
         "rer": 4
       },
       {
         "versionId": "W2",
         "sets": 2,
-        "scheme": { "kind": "reps", "reps": "10-12" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
         "restSeconds": 45,
         "rer": 3
       },
       {
         "versionId": "W3",
         "sets": 3,
-        "scheme": { "kind": "reps", "reps": "10-12" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
         "restSeconds": 45,
         "rer": 3
       },
       {
         "versionId": "W4",
         "sets": 3,
-        "scheme": { "kind": "reps", "reps": "8-10" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "8-10"
+        },
         "restSeconds": 45,
         "rer": 3
       }
     ],
     "coachingNotes": "Prévention ACL — Hewett 2005 : risque 2-3x plus élevé chez les femmes. Focus contrôle genou valgus, stabilité hanche."
   },
-
   {
     "blockId": "BLK_STR_ACT_LOWER_BW_01",
     "name": "Activation bas du corps (bird dog + pont fessier)",
     "intent": "activation",
-    "tags": ["starter", "activation", "lower", "hip"],
-    "equipment": ["none"],
+    "tags": [
+      "starter",
+      "activation",
+      "lower",
+      "hip"
+    ],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "exercises": [
       {
@@ -7527,10 +7659,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 2, "scheme": { "kind": "reps", "reps": "8/side + 12" }, "restSeconds": 30, "rer": 5 },
-      { "versionId": "W2", "sets": 2, "scheme": { "kind": "reps", "reps": "10/side + 15" }, "restSeconds": 30, "rer": 5 },
-      { "versionId": "W3", "sets": 3, "scheme": { "kind": "reps", "reps": "10/side + 15" }, "restSeconds": 30, "rer": 4 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8/side + 12" }, "restSeconds": 30, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side + 12"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 15"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 15"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side + 12"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Activation débutant sans matériel. Bird dog = contrôle anti-extension/rotation. Pont fessier = activation fessiers avant travail lower."
   },
@@ -7538,8 +7706,15 @@
     "blockId": "BLK_STR_ACT_LOWER_BAND_01",
     "name": "Activation bas du corps (clam shell band + pont fessier)",
     "intent": "activation",
-    "tags": ["starter", "activation", "lower", "hip"],
-    "equipment": ["band"],
+    "tags": [
+      "starter",
+      "activation",
+      "lower",
+      "hip"
+    ],
+    "equipment": [
+      "band"
+    ],
     "contraindications": [],
     "exercises": [
       {
@@ -7554,10 +7729,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 2, "scheme": { "kind": "reps", "reps": "12/side + 12" }, "restSeconds": 30, "rer": 5 },
-      { "versionId": "W2", "sets": 2, "scheme": { "kind": "reps", "reps": "15/side + 15" }, "restSeconds": 30, "rer": 5 },
-      { "versionId": "W3", "sets": 3, "scheme": { "kind": "reps", "reps": "15/side + 15" }, "restSeconds": 30, "rer": 4 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "12/side + 12" }, "restSeconds": 30, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side + 12"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15/side + 15"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15/side + 15"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12/side + 12"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Activation débutant avec élastique. Clam shell ciblé moyen fessier (prévention genou valgus), enchaîné avec pont fessier."
   },
@@ -7565,9 +7776,19 @@
     "blockId": "BLK_STR_ACT_UPPER_BW_02",
     "name": "Activation épaules (pompes inclinées + bird dog)",
     "intent": "activation",
-    "tags": ["starter", "activation", "upper", "shoulder_health"],
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "tags": [
+      "starter",
+      "activation",
+      "upper",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "push_horizontal__push_up__incline",
@@ -7581,10 +7802,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 2, "scheme": { "kind": "reps", "reps": "8 + 8/side" }, "restSeconds": 30, "rer": 5 },
-      { "versionId": "W2", "sets": 2, "scheme": { "kind": "reps", "reps": "10 + 8/side" }, "restSeconds": 30, "rer": 5 },
-      { "versionId": "W3", "sets": 3, "scheme": { "kind": "reps", "reps": "10 + 10/side" }, "restSeconds": 30, "rer": 4 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8 + 8/side" }, "restSeconds": 30, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 8/side"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 8/side"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 10/side"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 8/side"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Activation upper BW alternative. Pompes inclinées = version plus facile que pompes au sol, bon pour débutant. Bird dog = stabilité tronc."
   },
@@ -7592,9 +7849,18 @@
     "blockId": "BLK_STR_ACT_UPPER_BAND_01",
     "name": "Activation épaules (band pull-apart + face pull band)",
     "intent": "activation",
-    "tags": ["starter", "activation", "upper", "shoulder_health"],
-    "equipment": ["band"],
-    "contraindications": ["shoulder_pain"],
+    "tags": [
+      "starter",
+      "activation",
+      "upper",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "activation__band_pull_apart__overhead",
@@ -7608,10 +7874,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 2, "scheme": { "kind": "reps", "reps": "12 + 10" }, "restSeconds": 30, "rer": 5 },
-      { "versionId": "W2", "sets": 2, "scheme": { "kind": "reps", "reps": "15 + 12" }, "restSeconds": 30, "rer": 5 },
-      { "versionId": "W3", "sets": 3, "scheme": { "kind": "reps", "reps": "15 + 12" }, "restSeconds": 30, "rer": 4 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "12 + 10" }, "restSeconds": 30, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W2",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15 + 12"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      },
+      {
+        "versionId": "W3",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15 + 12"
+        },
+        "restSeconds": 30,
+        "rer": 4
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10"
+        },
+        "restSeconds": 30,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Activation upper avec élastique. Pull-apart overhead + face pull = coiffe des rotateurs et trapèze moyen/bas. Préparation scapulaire."
   },
@@ -7619,9 +7921,19 @@
     "blockId": "BLK_STR_HP_L_03",
     "name": "Fente–Pont — Fente arrière + Pont fessier",
     "intent": "hypertrophy",
-    "tags": ["starter", "lower", "squat", "unilateral", "hypertrophy"],
-    "equipment": ["none"],
-    "contraindications": ["knee_pain"],
+    "tags": [
+      "starter",
+      "lower",
+      "squat",
+      "unilateral",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "lower_lunge__reverse_lunge__bodyweight",
@@ -7635,10 +7947,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8/side + 12" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10/side + 15" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10/side + 15" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8/side + 12" }, "restSeconds": 90, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side + 12"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 15"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 15"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side + 12"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Variante lower starter avec fentes arrière (unilatéral) + pont fessier. Plus fonctionnel que squat bilatéral. Transfert rugby : poussée, appuis."
   },
@@ -7646,9 +7994,21 @@
     "blockId": "BLK_STR_HP_L_04",
     "name": "Fente latérale–Wall Sit — Mobilité + Force isométrique",
     "intent": "hypertrophy",
-    "tags": ["starter", "lower", "squat", "unilateral", "groin", "hypertrophy"],
-    "equipment": ["none"],
-    "contraindications": ["groin_pain", "knee_pain"],
+    "tags": [
+      "starter",
+      "lower",
+      "squat",
+      "unilateral",
+      "groin",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain",
+      "knee_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "lower_lunge__lateral_lunge__bodyweight",
@@ -7662,10 +8022,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8/side + 30s" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10/side + 35s" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10/side + 40s" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8/side + 30s" }, "restSeconds": 90, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side + 30s"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 35s"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10/side + 40s"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8/side + 30s"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Variante lower starter : fente latérale (adducteurs + transfert changement de direction) + wall sit (isométrique quadriceps). Aucun matériel."
   },
@@ -7673,9 +8069,20 @@
     "blockId": "BLK_STR_HP_A_03",
     "name": "Push-Pull — Pompe inclinée + Rowing élastique debout",
     "intent": "hypertrophy",
-    "tags": ["starter", "upper", "push", "pull", "hypertrophy"],
-    "equipment": ["band"],
-    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "tags": [
+      "starter",
+      "upper",
+      "push",
+      "pull",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "push_horizontal__push_up__incline",
@@ -7689,10 +8096,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10 + 10" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "12 + 12" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "12 + 12" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "10 + 10" }, "restSeconds": 90, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 10"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 12"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 12"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 10"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Variante upper starter avec pompe inclinée (plus facile que standard) + rowing band. Pour débutants qui ne maîtrisent pas encore les pompes au sol."
   },
@@ -7700,9 +8143,20 @@
     "blockId": "BLK_STR_HP_A_04",
     "name": "Push-Pull — Pompe genoux + Face pull élastique",
     "intent": "hypertrophy",
-    "tags": ["starter", "upper", "push", "pull", "hypertrophy"],
-    "equipment": ["band"],
-    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "tags": [
+      "starter",
+      "upper",
+      "push",
+      "pull",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "push_horizontal__push_up__knee",
@@ -7716,21 +8170,68 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10 + 12" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "12 + 12" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "12 + 10" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "10 + 12" }, "restSeconds": 90, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 12"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Variante upper starter pour débutants : pompes sur genoux (plus simple que inclinées) + face pull band (santé scapulaire). Bon équilibre push/pull."
   },
-
   {
     "blockId": "BLK_STR_HP_A_05",
     "name": "Push-Pull BW — Pompe genoux + Traction inversée",
     "intent": "hypertrophy",
-    "tags": ["starter", "upper", "push", "pull", "hypertrophy"],
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "wrist_pain", "elbow_pain"],
+    "tags": [
+      "starter",
+      "upper",
+      "push",
+      "pull",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain",
+      "elbow_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "push_horizontal__push_up__knee",
@@ -7744,21 +8245,65 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10 + 8" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "12 + 10" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "12 + 10" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "10 + 8" }, "restSeconds": 90, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 8"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10"
+        },
+        "restSeconds": 90,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10"
+        },
+        "restSeconds": 90,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 8"
+        },
+        "restSeconds": 90,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Variante BW upper starter : pompes genoux (plus facile que standard) + traction inversée. Pour débutants sans matériel qui ne maîtrisent pas les pompes complètes."
   },
-
   {
     "blockId": "BLK_FORCE_LOWER_BACK_SQUAT_01",
     "name": "Force bas du corps (back squat + core anti-extension)",
     "intent": "force",
-    "tags": ["lower", "force", "squat"],
-    "equipment": ["barbell"],
-    "contraindications": ["knee_pain", "low_back_pain"],
+    "tags": [
+      "lower",
+      "force",
+      "squat"
+    ],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "squat__back_squat__barbell",
@@ -7772,10 +8317,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5-8" }, "restSeconds": 180, "rer": 3 },
-      { "versionId": "W2", "sets": 4, "scheme": { "kind": "reps", "reps": "5-6" }, "restSeconds": 180, "rer": 2 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "4-5" }, "restSeconds": 210, "rer": 2 },
-      { "versionId": "W4", "sets": 4, "scheme": { "kind": "reps", "reps": "3-5" }, "restSeconds": 210, "rer": 1 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-8"
+        },
+        "restSeconds": 180,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-6"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-5"
+        },
+        "restSeconds": 210,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3-5"
+        },
+        "restSeconds": 210,
+        "rer": 1
+      }
     ],
     "coachingNotes": "Back squat = base de la force lower rugby. Transfert mêlée, ruck, démarrage. Dead bug entre les séries pour le gainage."
   },
@@ -7783,9 +8364,19 @@
     "blockId": "BLK_FORCE_LOWER_GOBLET_SQUAT_01",
     "name": "Force bas du corps (goblet squat + fente arrière haltère)",
     "intent": "force",
-    "tags": ["lower", "force", "squat", "unilateral"],
-    "equipment": ["dumbbell"],
-    "contraindications": ["knee_pain", "wrist_pain"],
+    "tags": [
+      "lower",
+      "force",
+      "squat",
+      "unilateral"
+    ],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "wrist_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "squat__goblet_squat__dumbbell",
@@ -7799,10 +8390,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8 + 8/side" }, "restSeconds": 150, "rer": 3 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "8 + 8/side" }, "restSeconds": 150, "rer": 2 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "6 + 6/side" }, "restSeconds": 180, "rer": 2 },
-      { "versionId": "W4", "sets": 4, "scheme": { "kind": "reps", "reps": "6 + 6/side" }, "restSeconds": 180, "rer": 1 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 8/side"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "8 + 8/side"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6 + 6/side"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6 + 6/side"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
     ],
     "coachingNotes": "Alternative squat sans barre : goblet squat (auto-correction posture) + fente arrière (unilatéral). Accessible gym limitée."
   },
@@ -7810,9 +8437,22 @@
     "blockId": "BLK_CONTRAST_LOWER_SQUAT_JUMP_01",
     "name": "Contrast bas du corps (goblet squat + squat jump + fente sautée)",
     "intent": "contrast",
-    "tags": ["lower", "contrast", "squat", "power", "unilateral"],
-    "equipment": ["dumbbell"],
-    "contraindications": ["knee_pain", "low_back_pain", "wrist_pain", "ankle_pain"],
+    "tags": [
+      "lower",
+      "contrast",
+      "squat",
+      "power",
+      "unilateral"
+    ],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain",
+      "wrist_pain",
+      "ankle_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "squat__goblet_squat__dumbbell",
@@ -7831,20 +8471,63 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "6-3-4/side" }, "restSeconds": 150, "rer": 3 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "6-3-4/side" }, "restSeconds": 150, "rer": 2 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5-3-3/side" }, "restSeconds": 180, "rer": 2 },
-      { "versionId": "W4", "sets": 4, "scheme": { "kind": "reps", "reps": "4-3-3/side" }, "restSeconds": 180, "rer": 1 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-3-4/side"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "6-3-4/side"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-3-3/side"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-3-3/side"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
     ],
     "coachingNotes": "Contrast squat-dominant sans box : goblet squat lourd → squat jump explosif → fente sautée. Transfert rugby : démarrage, plaquage, poussée en mêlée."
   },
-
   {
     "blockId": "BLK_STR_HP_A_SAFE_01",
     "name": "Pull-Scap — Rowing band + Rétraction scapulaire (épaule safe)",
     "intent": "hypertrophy",
-    "tags": ["starter", "upper", "pull", "shoulder_health", "hypertrophy"],
-    "equipment": ["band"],
+    "tags": [
+      "starter",
+      "upper",
+      "pull",
+      "shoulder_health",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "band"
+    ],
     "contraindications": [],
     "exercises": [
       {
@@ -7859,10 +8542,46 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "12 + 10" }, "restSeconds": 75, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "12 + 12" }, "restSeconds": 75, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10 + 12" }, "restSeconds": 75, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "12 + 10" }, "restSeconds": 75, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 12"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10"
+        },
+        "restSeconds": 75,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Bloc upper starter safe shoulder_pain : uniquement du tirage + travail scapulaire. Zéro poussée. Rowing band + rétraction scapulaire iso. Réhabilitation active."
   },
@@ -7870,8 +8589,16 @@
     "blockId": "BLK_STR_HP_A_SAFE_02",
     "name": "Pull-Pull — Rowing coudes bas + Face pull (épaule safe)",
     "intent": "hypertrophy",
-    "tags": ["starter", "upper", "pull", "shoulder_health", "hypertrophy"],
-    "equipment": ["band"],
+    "tags": [
+      "starter",
+      "upper",
+      "pull",
+      "shoulder_health",
+      "hypertrophy"
+    ],
+    "equipment": [
+      "band"
+    ],
     "contraindications": [],
     "exercises": [
       {
@@ -7886,21 +8613,68 @@
       }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "12 + 10" }, "restSeconds": 75, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "12 + 12" }, "restSeconds": 75, "rer": 4 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10 + 12" }, "restSeconds": 75, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "12 + 10" }, "restSeconds": 75, "rer": 5 }
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 12"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10 + 12"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W4",
+        "sets": 2,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12 + 10"
+        },
+        "restSeconds": 75,
+        "rer": 5
+      }
     ],
     "coachingNotes": "Bloc upper starter safe shoulder_pain v2 : 2 tirages différents (coudes bas + face pull haut). Zéro poussée. Renforcement coiffe + dorsaux sans compression gléno-humérale."
   },
-
   {
     "blockId": "BLK_NEURAL_UPPER_ROW_SAFE_01",
     "name": "Neural tirage (T-bar Row EMOM — épaule safe)",
     "intent": "neural",
-    "tags": ["upper", "neural", "pull", "posterior_chain", "contact", "shoulder_health"],
-    "equipment": ["tbar_row", "band"],
-    "contraindications": ["low_back_pain"],
+    "tags": [
+      "upper",
+      "neural",
+      "pull",
+      "posterior_chain",
+      "contact",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "tbar_row",
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "pull_horizontal__tbar_row",
@@ -7917,42 +8691,80 @@
       {
         "versionId": "W1",
         "sets": 6,
-        "scheme": { "kind": "emom", "minutes": 6, "work": { "kind": "reps", "reps": 3 } },
+        "scheme": {
+          "kind": "emom",
+          "minutes": 6,
+          "work": {
+            "kind": "reps",
+            "reps": 3
+          }
+        },
         "restSeconds": 0,
         "rer": 3
       },
       {
         "versionId": "W2",
         "sets": 7,
-        "scheme": { "kind": "emom", "minutes": 7, "work": { "kind": "reps", "reps": 3 } },
+        "scheme": {
+          "kind": "emom",
+          "minutes": 7,
+          "work": {
+            "kind": "reps",
+            "reps": 3
+          }
+        },
         "restSeconds": 0,
         "rer": 3
       },
       {
         "versionId": "W3",
         "sets": 8,
-        "scheme": { "kind": "emom", "minutes": 8, "work": { "kind": "reps", "reps": 2 } },
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": 2
+          }
+        },
         "restSeconds": 0,
         "rer": 2
       },
       {
         "versionId": "W4",
         "sets": 8,
-        "scheme": { "kind": "emom", "minutes": 8, "work": { "kind": "reps", "reps": 2 } },
+        "scheme": {
+          "kind": "emom",
+          "minutes": 8,
+          "work": {
+            "kind": "reps",
+            "reps": 2
+          }
+        },
         "restSeconds": 0,
         "rer": 1
       }
     ],
     "coachingNotes": "Neural tirage pur sans push. T-bar row : le mouvement horizontal explosif active les rhomboïdes, dorsaux et trapèzes — même chaîne que le placage / contact rugby. Sécurisé pour épaule douloureuse (aucune poussée, pas de charge en overhead). Accompagner de face pull en stabilisation."
   },
-
   {
     "blockId": "BLK_CONTRAST_UPPER_ROW_SAFE_01",
     "name": "Contrast tirage (T-bar lourd + band row — épaule safe)",
     "intent": "contrast",
-    "tags": ["upper", "contrast", "pull", "posterior_chain", "shoulder_health"],
-    "equipment": ["tbar_row", "band"],
-    "contraindications": ["low_back_pain"],
+    "tags": [
+      "upper",
+      "contrast",
+      "pull",
+      "posterior_chain",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "tbar_row",
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "exercises": [
       {
         "exerciseId": "pull_horizontal__tbar_row",
@@ -7969,32 +8781,483 @@
       {
         "versionId": "W1",
         "sets": 3,
-        "scheme": { "kind": "reps", "reps": "5 + 8" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "5 + 8"
+        },
         "restSeconds": 150,
         "rer": 3
       },
       {
         "versionId": "W2",
         "sets": 3,
-        "scheme": { "kind": "reps", "reps": "5 + 8" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "5 + 8"
+        },
         "restSeconds": 150,
         "rer": 2
       },
       {
         "versionId": "W3",
         "sets": 4,
-        "scheme": { "kind": "reps", "reps": "4 + 6" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "4 + 6"
+        },
         "restSeconds": 180,
         "rer": 2
       },
       {
         "versionId": "W4",
         "sets": 4,
-        "scheme": { "kind": "reps", "reps": "3 + 6" },
+        "scheme": {
+          "kind": "reps",
+          "reps": "3 + 6"
+        },
         "restSeconds": 180,
         "rer": 1
       }
     ],
     "coachingNotes": "Contrast tirage : T-bar lourd (PAP) suivi immédiatement (<30s) d'un rowing élastique explosif — enchaîner les 2 exercices SANS pause entre eux, repos complet (restSeconds) entre chaque paire. La fenêtre PAP tirage est de 10-30s pour maximiser le transfert neural (Lorenz 2011, NSCA). Reproduit la chaîne de pulling du contact rugby sans aucune contrainte pour l'épaule. Zéro push."
+  },
+  {
+    "blockId": "BLK_BLD_UPPER_SS_PULL_BACK_01",
+    "name": "Superset Tirage Dos — T-Bar Row + Rowing elastique (epaule safe)",
+    "intent": "hypertrophy",
+    "tags": [
+      "builder",
+      "superset",
+      "upper",
+      "pull",
+      "hypertrophy",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "tbar_row",
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "pull_horizontal__tbar_row",
+        "role": "prime",
+        "notes": "Dos neutre, coudes pres du corps. Tirer vers le nombril. 10-12 reps."
+      },
+      {
+        "exerciseId": "pull_horizontal__band_row__elbows_low",
+        "role": "superset_partner",
+        "notes": "Coudes bas, omoplate serree en fin de mouvement. 12-15 reps."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10-12"
+        },
+        "restSeconds": 75,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 75,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "10"
+        },
+        "restSeconds": 75,
+        "rer": 4
+      }
+    ],
+    "coachingNotes": "A1 : T-Bar Row charge moderee. A2 : Rowing elastique coudes bas. Repos 75s entre supersets. Pull-only safe epaule — idéal pour joueur avec douleur epaule."
+  },
+  {
+    "blockId": "BLK_BLD_UPPER_SS_PULL_BAND_01",
+    "name": "Superset Tirage Elastique — Row debout + Face pull (epaule safe)",
+    "intent": "hypertrophy",
+    "tags": [
+      "builder",
+      "superset",
+      "upper",
+      "pull",
+      "hypertrophy",
+      "shoulder_health"
+    ],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "pull_horizontal__band_row__standing",
+        "role": "prime",
+        "notes": "Debout, ancre l'elastique a hauteur poitrine. 12-15 reps, controle excentrique."
+      },
+      {
+        "exerciseId": "pull_horizontal__band_row__face_pull_height",
+        "role": "superset_partner",
+        "notes": "Elastique a hauteur visage. Tirer vers le visage, coudes hauts. 15 reps."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12-15"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12-15"
+        },
+        "restSeconds": 60,
+        "rer": 3
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "15"
+        },
+        "restSeconds": 60,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "12"
+        },
+        "restSeconds": 60,
+        "rer": 4
+      }
+    ],
+    "coachingNotes": "A1 : Rowing elastique debout. A2 : Face pull elastique. Pas de matériel lourd requis — sécurisé toutes épaules. Idéal deload ou blessure épaule."
+  },
+  {
+    "blockId": "BLK_CONTRAST_LOWER_SAFE_KNEE_01",
+    "name": "Contrast bas du corps safe genou (Hip Thrust barre + Glute Bridge reactif)",
+    "intent": "contrast",
+    "tags": [
+      "lower",
+      "contrast",
+      "posterior_chain",
+      "power",
+      "knee_health",
+      "plyo"
+    ],
+    "equipment": [
+      "barbell",
+      "bench"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "exercises": [
+      {
+        "exerciseId": "hinge__hip_thrust__barbell",
+        "role": "prime",
+        "notes": "Charge lourde : 80-85% 1RM. 3-5 reps explosives. Epaules sur banc, barre avec pad."
+      },
+      {
+        "exerciseId": "hinge__glute_bridge__bodyweight",
+        "role": "contrast",
+        "notes": "Enchainer immediatement apres la serie lourde. 6-8 repetitions rapides et reactives. Potentialisation neuromusculaire."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "5-8"
+        },
+        "restSeconds": 150,
+        "rer": 3
+      },
+      {
+        "versionId": "W2",
+        "sets": 3,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-8"
+        },
+        "restSeconds": 150,
+        "rer": 2
+      },
+      {
+        "versionId": "W3",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "4-6"
+        },
+        "restSeconds": 180,
+        "rer": 2
+      },
+      {
+        "versionId": "W4",
+        "sets": 4,
+        "scheme": {
+          "kind": "reps",
+          "reps": "3-6"
+        },
+        "restSeconds": 180,
+        "rer": 1
+      }
+    ],
+    "coachingNotes": "Contrast hip extension : hip thrust lourd → glute bridge BW reactif. Aucun stress genou (hinge pur, pas de flexion/extension genou sous charge). Cible : transfert puissance fessiers → accélération/sprint rugby."
+  },
+  {
+    "blockId": "BLK_MOB_ANKLE_HIP_FLOW_01",
+    "name": "Mobilite cheville & flechisseur hanche (cercles + mollet + couch stretch)",
+    "intent": "mobility",
+    "tags": [
+      "lower",
+      "mobility",
+      "ankle",
+      "hip",
+      "recovery"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "mobility__ankle_circles",
+        "role": "prime",
+        "notes": "10 cercles par cheville dans chaque sens. Amplitude maximale."
+      },
+      {
+        "exerciseId": "mobility__calf_stretch_wall",
+        "role": "prime",
+        "notes": "Mains au mur. 30s par cote. Pied arriere plat au sol, genou tendu."
+      },
+      {
+        "exerciseId": "mobility__hip_couch_stretch",
+        "role": "prime",
+        "notes": "Genou au sol, hanches poussees en avant. Maintenir 30s par cote."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 10
+      },
+      {
+        "versionId": "W2",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 35
+        },
+        "restSeconds": 10
+      },
+      {
+        "versionId": "W3",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 40
+        },
+        "restSeconds": 10
+      },
+      {
+        "versionId": "W4",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 45
+        },
+        "restSeconds": 10
+      }
+    ],
+    "coachingNotes": "Mobilite cheville-hanche pour joueur de rugby. Cible les restrictions post-match (cheville bloquee, flechisseur raccourci). Recommande apres 80min de match."
+  },
+  {
+    "blockId": "BLK_MOB_FULL_BODY_FLOW_01",
+    "name": "Flow mobilite corps entier (pigeon + 90/90 + cheville)",
+    "intent": "mobility",
+    "tags": [
+      "mobility",
+      "full_body",
+      "hip",
+      "ankle",
+      "recovery"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "mobility__hip_90_90",
+        "role": "prime",
+        "notes": "Assis au sol, deux jambes a 90. Respiration profonde. 30s par position."
+      },
+      {
+        "exerciseId": "mobility__pigeon_pose",
+        "role": "prime",
+        "notes": "Rotation externe hanche profonde. Maintenir 30-45s par cote."
+      },
+      {
+        "exerciseId": "mobility__ankle_circles",
+        "role": "prime",
+        "notes": "10 cercles par cheville dans chaque sens. Amplitude maximale."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 10
+      },
+      {
+        "versionId": "W2",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 35
+        },
+        "restSeconds": 10
+      },
+      {
+        "versionId": "W3",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 40
+        },
+        "restSeconds": 10
+      },
+      {
+        "versionId": "W4",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 45
+        },
+        "restSeconds": 10
+      }
+    ],
+    "coachingNotes": "Flow mobilite corps entier : hanche (90/90), rotation externe hanche (pigeon), mobilite cheville. Combine les 3 articulations cles du joueur de rugby."
+  },
+  {
+    "blockId": "BLK_MOB_THORACIC_SHOULDER_01",
+    "name": "Mobilite epaule & chaine posterieure (sleeper + couch stretch + cheville)",
+    "intent": "mobility",
+    "tags": [
+      "mobility",
+      "upper",
+      "shoulder",
+      "ankle",
+      "hip",
+      "recovery"
+    ],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "exercises": [
+      {
+        "exerciseId": "mobility__sleeper_stretch",
+        "role": "prime",
+        "notes": "Sur le cote, bras a 90. Rotation interne douce. Maintenir 30s par epaule."
+      },
+      {
+        "exerciseId": "mobility__hip_couch_stretch",
+        "role": "prime",
+        "notes": "Genou au sol, hanches poussees en avant. Etirement du psoas. 30s par cote."
+      },
+      {
+        "exerciseId": "mobility__ankle_circles",
+        "role": "prime",
+        "notes": "Mobilite cheville de fin de seance. 10 cercles par sens par cheville."
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "W1",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 30
+        },
+        "restSeconds": 10
+      },
+      {
+        "versionId": "W2",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 35
+        },
+        "restSeconds": 10
+      },
+      {
+        "versionId": "W3",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 40
+        },
+        "restSeconds": 10
+      },
+      {
+        "versionId": "W4",
+        "sets": 1,
+        "scheme": {
+          "kind": "time",
+          "seconds": 45
+        },
+        "restSeconds": 10
+      }
+    ],
+    "coachingNotes": "Epaule (sleeper stretch — crucial pour les ailiers/talonneurs), psoas/flechisseur hanche (couch stretch), cheville. Zones de restriction frequente chez le rugbyman."
   }
 ]

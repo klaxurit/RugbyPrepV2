@@ -2699,18 +2699,42 @@
     ],
     "defaultNotes": "Allonge sur le cote, bras a 90. Pousser doucement le poignet vers le bas pour etirer la capsule."
   },
-
+  {
+    "id": "mobility__calf_stretch_wall",
+    "name": "Etirement mollet au mur",
+    "pattern": "mobility_ankle",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Mains au mur, jambe arriere tendue, pied plat. Pencher le corps en avant. 30s par cote.",
+    "exerciseId": "mobility__calf_stretch_wall",
+    "nameFr": "Etirement mollet au mur",
+    "metricType": "seconds",
+    "tags": [
+      "mobility",
+      "ankle",
+      "recovery"
+    ],
+    "defaultNotes": "Mains au mur, jambe arriere tendue, pied plat. Pencher le corps en avant. 30s par cote."
+  },
   {
     "id": "warmup__jog_light",
     "exerciseId": "warmup__jog_light",
     "name": "Jogging léger",
     "nameFr": "Jogging léger",
     "pattern": "warmup",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["warmup", "cardio"],
+    "tags": [
+      "warmup",
+      "cardio"
+    ],
     "notes": "5 min de course légère pour élever la température corporelle.",
     "defaultNotes": "5 min de course légère pour élever la température corporelle."
   },
@@ -2720,11 +2744,19 @@
     "name": "Fentes marchées dynamiques",
     "nameFr": "Fentes marchées dynamiques",
     "pattern": "warmup",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["warmup", "lower", "mobility"],
+    "tags": [
+      "warmup",
+      "lower",
+      "mobility"
+    ],
     "notes": "Grands pas, genou arrière frôle le sol, bras au-dessus de la tête en alternant.",
     "defaultNotes": "Grands pas, genou arrière frôle le sol, bras au-dessus de la tête en alternant."
   },
@@ -2734,11 +2766,17 @@
     "name": "Montées de genoux",
     "nameFr": "Montées de genoux",
     "pattern": "warmup",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["warmup", "cardio", "lower"],
+    "tags": [
+      "warmup",
+      "cardio",
+      "lower"
+    ],
     "notes": "Sur place ou en avançant, genoux à hauteur de hanche, bras actifs.",
     "defaultNotes": "Sur place ou en avançant, genoux à hauteur de hanche, bras actifs."
   },
@@ -2748,11 +2786,17 @@
     "name": "Cercles de bras dynamiques",
     "nameFr": "Cercles de bras dynamiques",
     "pattern": "warmup",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["warmup", "upper", "shoulder"],
+    "tags": [
+      "warmup",
+      "upper",
+      "shoulder"
+    ],
     "notes": "Petits cercles → grands cercles, avant et arrière, 10 chaque direction.",
     "defaultNotes": "Petits cercles → grands cercles, avant et arrière, 10 chaque direction."
   },
@@ -2762,11 +2806,19 @@
     "name": "Inchworm",
     "nameFr": "Inchworm (marche chenille)",
     "pattern": "warmup",
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["warmup", "full", "core"],
+    "tags": [
+      "warmup",
+      "full",
+      "core"
+    ],
     "notes": "Debout → mains au sol → marcher en avant en planche → revenir debout. Active toute la chaîne postérieure.",
     "defaultNotes": "Debout → mains au sol → marcher en avant en planche → revenir debout."
   },
@@ -2776,26 +2828,41 @@
     "name": "Pas chassés latéraux",
     "nameFr": "Pas chassés latéraux",
     "pattern": "warmup",
-    "equipment": ["none"],
-    "contraindications": ["ankle_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["warmup", "lower", "agility"],
+    "tags": [
+      "warmup",
+      "lower",
+      "agility"
+    ],
     "notes": "Position athlétique basse, 10m aller-retour, toucher le sol à chaque changement.",
     "defaultNotes": "Position athlétique basse, 10m aller-retour, toucher le sol à chaque changement."
   },
-
   {
     "id": "cooldown__static_quad_stretch",
     "exerciseId": "cooldown__static_quad_stretch",
     "name": "Étirement statique quadriceps",
     "nameFr": "Étirement statique quadriceps",
     "pattern": "cooldown",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["cooldown", "lower", "stretch"],
+    "tags": [
+      "cooldown",
+      "lower",
+      "stretch"
+    ],
     "notes": "Debout, attraper la cheville, genou vers le sol, 30s par côté.",
     "defaultNotes": "Debout, attraper la cheville, genou vers le sol, 30s par côté."
   },
@@ -2805,11 +2872,17 @@
     "name": "Étirement statique ischio-jambiers",
     "nameFr": "Étirement statique ischio-jambiers",
     "pattern": "cooldown",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["cooldown", "lower", "stretch"],
+    "tags": [
+      "cooldown",
+      "lower",
+      "stretch"
+    ],
     "notes": "Jambe tendue sur un support bas, pencher le buste droit vers l'avant. 30s par côté.",
     "defaultNotes": "Jambe tendue sur un support bas, pencher le buste droit vers l'avant. 30s par côté."
   },
@@ -2819,11 +2892,19 @@
     "name": "Étirement pectoraux (cadre de porte)",
     "nameFr": "Étirement pectoraux (cadre de porte)",
     "pattern": "cooldown",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["cooldown", "upper", "stretch"],
+    "tags": [
+      "cooldown",
+      "upper",
+      "stretch"
+    ],
     "notes": "Avant-bras sur le cadre, pas en avant, ouvrir la poitrine. 30s.",
     "defaultNotes": "Avant-bras sur le cadre, pas en avant, ouvrir la poitrine. 30s."
   },
@@ -2833,11 +2914,17 @@
     "name": "Posture de l'enfant (Child's Pose)",
     "nameFr": "Posture de l'enfant",
     "pattern": "cooldown",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["cooldown", "stretch", "recovery"],
+    "tags": [
+      "cooldown",
+      "stretch",
+      "recovery"
+    ],
     "notes": "Genoux écartés, bras allongés devant, front au sol. Respiration lente 45-60s.",
     "defaultNotes": "Genoux écartés, bras allongés devant, front au sol. Respiration lente 45-60s."
   },
@@ -2847,11 +2934,20 @@
     "name": "Rotation colonne allongé",
     "nameFr": "Rotation colonne allongé",
     "pattern": "cooldown",
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["cooldown", "stretch", "thoracic", "recovery"],
+    "tags": [
+      "cooldown",
+      "stretch",
+      "thoracic",
+      "recovery"
+    ],
     "notes": "Allongé sur le dos, genoux groupés d'un côté, bras en T. 30s par côté.",
     "defaultNotes": "Allongé sur le dos, genoux groupés d'un côté, bras en T. 30s par côté."
   },
@@ -2861,11 +2957,17 @@
     "name": "Respiration diaphragmatique",
     "nameFr": "Respiration diaphragmatique",
     "pattern": "cooldown",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["cooldown", "recovery", "breathing"],
+    "tags": [
+      "cooldown",
+      "recovery",
+      "breathing"
+    ],
     "notes": "Allongé, mains sur le ventre. Inspirer 4s par le nez (ventre gonfle), expirer 6s par la bouche. 2 min.",
     "defaultNotes": "Allongé, mains sur le ventre. Inspirer 4s nez, expirer 6s bouche. 2 min."
   },
@@ -2875,11 +2977,20 @@
     "name": "Back squat barre",
     "nameFr": "Back squat barre",
     "pattern": "squat",
-    "equipment": ["barbell"],
-    "contraindications": ["knee_pain", "low_back_pain"],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "metricType": "load_reps",
-    "tags": ["lower", "squat", "force"],
+    "tags": [
+      "lower",
+      "squat",
+      "force"
+    ],
     "notes": "Barre sur les trapèzes. Pieds largeur épaules. Descendre hanches sous les genoux. Dos neutre. Le mouvement roi du rugby S&C.",
     "defaultNotes": "Barre haute sur les trapèzes. Descendre sous la parallèle. Genoux dans l'axe. Poitrine haute."
   },
@@ -2889,11 +3000,20 @@
     "name": "Fente arrière poids du corps",
     "nameFr": "Fente arrière poids du corps",
     "pattern": "lunge",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["lower", "unilateral", "squat", "starter"],
+    "tags": [
+      "lower",
+      "unilateral",
+      "squat",
+      "starter"
+    ],
     "notes": "Reculer un pied, descendre le genou arrière vers le sol. Torse droit. Pousser dans le talon avant pour remonter.",
     "defaultNotes": "Pas en arrière contrôlé. Genou arrière frôle le sol. Remonter par le talon avant."
   },
@@ -2903,11 +3023,21 @@
     "name": "Fente latérale poids du corps",
     "nameFr": "Fente latérale poids du corps",
     "pattern": "lunge",
-    "equipment": ["none"],
-    "contraindications": ["groin_pain", "knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain",
+      "knee_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["lower", "unilateral", "groin", "starter"],
+    "tags": [
+      "lower",
+      "unilateral",
+      "groin",
+      "starter"
+    ],
     "notes": "Grand pas latéral, descendre la hanche vers le talon. Jambe opposée tendue. Torse haut. Transfert rugby : changements de direction.",
     "defaultNotes": "Grand pas latéral. Hanche vers le talon. Jambe opposée tendue. Poitrine haute."
   },
@@ -2917,11 +3047,20 @@
     "name": "Pompes inclinées (mains surélevées)",
     "nameFr": "Pompes inclinées (mains surélevées)",
     "pattern": "push_horizontal",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["upper", "push", "starter"],
+    "tags": [
+      "upper",
+      "push",
+      "starter"
+    ],
     "notes": "Mains sur un banc ou une marche. Même gainage que les pompes au sol mais charge réduite. Progression vers les pompes standard.",
     "defaultNotes": "Mains sur surface surélevée. Corps rigide. Descendre la poitrine vers les mains. Progression vers pompes au sol."
   },
@@ -2931,11 +3070,19 @@
     "name": "Band pull-apart au-dessus de la tête",
     "nameFr": "Band pull-apart au-dessus de la tête",
     "pattern": "activation",
-    "equipment": ["band"],
-    "contraindications": ["shoulder_pain"],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["upper", "activation", "shoulder_health"],
+    "tags": [
+      "upper",
+      "activation",
+      "shoulder_health"
+    ],
     "notes": "Élastique tenu au-dessus de la tête, écarter les mains en contrôlant. Active les rotateurs externes et le trapèze moyen/bas.",
     "defaultNotes": "Bras tendus au-dessus de la tête. Écarter l'élastique. Contrôle en retour."
   },
@@ -2945,11 +3092,18 @@
     "name": "Bird dog (4 pattes bras/jambe opposés)",
     "nameFr": "Bird dog",
     "pattern": "activation",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["lower", "core", "activation", "starter"],
+    "tags": [
+      "lower",
+      "core",
+      "activation",
+      "starter"
+    ],
     "notes": "À quatre pattes, tendre bras et jambe opposés simultanément. Bassin stable. Maintenir 2s. Anti-extension + anti-rotation.",
     "defaultNotes": "4 pattes, bras + jambe opposés tendus. Bassin stable 2s. Retour contrôlé."
   },
@@ -2959,11 +3113,18 @@
     "name": "Clam shell avec élastique",
     "nameFr": "Clam shell élastique",
     "pattern": "activation",
-    "equipment": ["band"],
+    "equipment": [
+      "band"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["lower", "activation", "hip", "starter"],
+    "tags": [
+      "lower",
+      "activation",
+      "hip",
+      "starter"
+    ],
     "notes": "Couché sur le côté, élastique au-dessus des genoux. Ouvrir le genou supérieur sans bouger le bassin. Activer le moyen fessier.",
     "defaultNotes": "Allongé sur le côté, élastique aux genoux. Ouvrir le genou sans tourner le bassin. 2s en haut."
   },
@@ -2973,11 +3134,18 @@
     "name": "Wall sit (chaise au mur)",
     "nameFr": "Chaise au mur",
     "pattern": "squat",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["lower", "squat", "isometric", "starter"],
+    "tags": [
+      "lower",
+      "squat",
+      "isometric",
+      "starter"
+    ],
     "notes": "Dos au mur, cuisses parallèles au sol. Maintenir la position. Excellent pour la force isométrique des quadriceps sans stress articulaire.",
     "defaultNotes": "Dos plaqué au mur. Cuisses parallèles au sol. Maintenir sans bouger."
   },
@@ -2987,11 +3155,20 @@
     "name": "Squat jump (poids du corps)",
     "nameFr": "Squat jump",
     "pattern": "squat",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain", "low_back_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["lower", "power", "squat"],
+    "tags": [
+      "lower",
+      "power",
+      "squat"
+    ],
     "notes": "Descendre en squat puis sauter le plus haut possible. Réception souple genoux fléchis. Transfert rugby : départ en sprint, plaquage.",
     "defaultNotes": "Squat complet → saut max. Réception souple. Qualité > vitesse."
   },
@@ -3001,11 +3178,20 @@
     "name": "Split jump (fente sautée)",
     "nameFr": "Fente sautée",
     "pattern": "lunge",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain", "ankle_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "ankle_pain"
+    ],
     "level": "intermediate",
     "metricType": "reps",
-    "tags": ["lower", "power", "unilateral"],
+    "tags": [
+      "lower",
+      "power",
+      "unilateral"
+    ],
     "notes": "Position de fente, sauter et alterner les jambes en l'air. Réception souple. Excellent pour la puissance unilatérale rugby.",
     "defaultNotes": "Fente → saut → alterner jambes. Réception souple. Qualité des réceptions."
   },
@@ -3015,12 +3201,42 @@
     "name": "Face pull élastique debout",
     "nameFr": "Face pull élastique debout",
     "pattern": "pull_horizontal",
-    "equipment": ["band"],
+    "equipment": [
+      "band"
+    ],
     "contraindications": [],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["upper", "pull", "shoulder_health", "prehab"],
+    "tags": [
+      "upper",
+      "pull",
+      "shoulder_health",
+      "prehab"
+    ],
     "notes": "Élastique fixé à hauteur du visage. Tirer vers le visage en écartant les mains. Rotation externe en fin de mouvement. Excellent pour la coiffe.",
     "defaultNotes": "Tirer vers le visage, écarter en fin de mouvement. Rétraction scapulaire. Contrôle."
+  },
+  {
+    "id": "hinge__hip_thrust__barbell",
+    "name": "Hip thrust barre",
+    "pattern": "hinge",
+    "equipment": [
+      "barbell",
+      "bench"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "level": "intermediate",
+    "notes": "Epaules sur banc. Barre sur les hanches (pad de protection). Pousser les hanches vers le plafond. Serrer les fessiers 1s en haut. Dos neutre, pas de creuse lombaire.",
+    "exerciseId": "hinge__hip_thrust__barbell",
+    "nameFr": "Hip thrust barre",
+    "metricType": "load_reps",
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain"
+    ],
+    "defaultNotes": "Barre sur les hanches (pad). Epaules sur banc. Hanches au plafond. Serrer les fessiers 1s. Dos neutre."
   }
 ]

@@ -22,6 +22,7 @@ import type { CycleWeek, DayOfWeek, RehabPhase, SessionType } from '../types/tra
 import { TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
+import { checkBetaEligibility, BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 
 const ALL_WEEK_OPTIONS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
 const IN_SEASON_3_1_HIDDEN: CycleWeek[] = ['W4', 'W8', 'H4']
@@ -95,6 +96,56 @@ export function WeekPage() {
     TRAINING_DAYS_DEFAULT[profile.weeklySessions]
   const todaySessionIndex = trainingDays.indexOf(todayDow)
   const isTrainingToday = todaySessionIndex !== -1
+
+  // ── Guard beta self-serve ─────────────────────────────────────────────────────
+  // Doit être après tous les hooks React (useEffect L84 = dernier hook).
+  // buildWeekProgram n'est pas appelé pour les profils hors périmètre beta.
+  const betaEligibility = checkBetaEligibility(profile)
+
+  // Analytics : fire une seule fois par affichage du guard (pas à chaque re-render)
+  useEffect(() => {
+    if (!betaEligibility.isEligible) {
+      posthog.capture('beta_eligibility_blocked', {
+        surface: 'week_page',
+        primaryReason: betaEligibility.primaryReason,
+        reasons: betaEligibility.reasons,
+      })
+    }
+  }, [betaEligibility.isEligible, betaEligibility.primaryReason]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!betaEligibility.isEligible) {
+    return (
+      <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24">
+        <PageHeader title="Mon espace" backTo="/" />
+        <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
+          <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
+            <p className="font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
+            <ul className="space-y-2">
+              {betaEligibility.reasons.map((r) => (
+                <li key={r} className="text-sm text-amber-300/80">
+                  <span className="font-semibold">{BETA_ELIGIBILITY_MESSAGES[r].reason}</span>
+                  <br />{BETA_ELIGIBILITY_MESSAGES[r].detail}
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs text-white/40">
+              Ton compte et ton profil sont conservés. Modifie ton profil pour revenir dans le périmètre supporté, ou contacte-nous.
+            </p>
+            <Link to="/profile" className="inline-block text-sm font-bold text-[#ff6b35] hover:text-[#e55a2b]">
+              Modifier mon profil →
+            </Link>
+            <a
+              href="mailto:feedback@rugbyforge.fr?subject=Feedback%20bêta%20RugbyForge"
+              className="inline-block text-xs text-white/40 hover:text-white/60 mt-1"
+            >
+              Un souci ? Contacte-nous →
+            </a>
+          </div>
+        </main>
+        <BottomNav />
+      </div>
+    )
+  }
 
   const builtWeekProgram = buildWeekProgram(profile, effectiveWeek, {
     fatigueLevel: acwrResult.hasSufficientData ? (acwrZone ?? undefined) : undefined,

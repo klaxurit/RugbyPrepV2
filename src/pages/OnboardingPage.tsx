@@ -8,6 +8,7 @@ import { RugbyForgeLogo } from '../components/RugbyForgeLogo'
 import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { posthog } from '../services/analytics/posthog'
+import { supabase } from '../services/supabase/client'
 import type {
   UserProfile,
   Equipment,
@@ -23,6 +24,7 @@ import type {
 } from '../types/training'
 import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
 import { GymDaySelector } from '../components/GymDaySelector'
+import { checkBetaEligibility, BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -203,6 +205,7 @@ export function OnboardingPage() {
   const [injuries, setInjuries] = useState<Set<Contra>>(new Set())
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
+  const [betaCapReached, setBetaCapReached] = useState(false)
 
   const STEPS = ['Position', 'Profil', 'Équipement', 'Planning', 'Inconforts', 'Morphologie', 'Résumé']
   const progress = (step / (STEPS.length - 1)) * 100
@@ -263,11 +266,11 @@ export function OnboardingPage() {
     setStep((s) => s + 1)
   }
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     const clubSchedule = buildClubSchedule()
     const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
     const finalEquipment = equipment.size > 0 ? Array.from(equipment) : ['none' as Equipment]
-    updateProfile({
+    const profilePayload = {
       position: position!,
       rugbyPosition: position!,
       level: levelDef.legacyLevel,
@@ -284,23 +287,72 @@ export function OnboardingPage() {
       ageBand,
       populationSegment,
       parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
-    }, { source: 'onboarding' })
+    }
+    updateProfile(profilePayload, { source: 'onboarding' })
+
     // Semaine initiale selon le mode saison : off_season → H1, sinon W1
     const initialWeek = seasonMode === 'off_season' ? 'H1' : 'W1'
     window.localStorage.setItem('rugbyprep.week.v1', initialWeek)
+
+    // ── Profil inéligible : on sauve le profil mais on ne consomme PAS de slot beta ──
+    // L'utilisateur peut accéder à son espace mais le guard bloquera l'accès programme.
+    if (!onboardingEligibility.isEligible) {
+      posthog.capture('onboarding_completed', {
+        position, trainingLevel, seasonMode, ageBand, populationSegment,
+        performanceFocus: trainingLevel === 'performance' ? performanceFocus : 'balanced',
+        sessions, eligible: false,
+        parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
+      })
+      navigate('/week', { replace: true })
+      return
+    }
+
+    // ── Cap technique beta : vérifier qu'il reste des places ──────────────
+    const BETA_CAP = 100
+    try {
+      const { count } = await supabase
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .eq('onboarding_complete', true)
+      if (count != null && count >= BETA_CAP) {
+        setBetaCapReached(true)
+        posthog.capture('beta_cap_reached', { count })
+        return
+      }
+    } catch {
+      // Fail-open : en cas d'erreur réseau, on laisse passer. Le PO surveille le dashboard.
+    }
+
     if (userId) markOnboardingComplete(userId)
     posthog.capture('onboarding_completed', {
-      position,
-      trainingLevel,
-      seasonMode,
+      position, trainingLevel, seasonMode, ageBand, populationSegment,
       performanceFocus: trainingLevel === 'performance' ? performanceFocus : 'balanced',
-      sessions,
-      ageBand,
-      populationSegment,
+      sessions, eligible: true,
       parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
     })
     navigate('/week', { replace: true })
   }
+
+  // ─── Éligibilité beta self-serve (calculée dans le corps du composant) ───────
+  // ⚠️ Ces const DOIVENT être ici (corps composant), jamais dans une expression JSX {}.
+  // Résultat utilisé uniquement au step 6 — calcul cheap, pas besoin de useMemo.
+  const onboardingProfileSnap: UserProfile = {
+    // `level` n'est pas utilisé par checkBetaEligibility — valeur arbitraire pour satisfaire le type.
+    level: 'beginner',
+    weeklySessions: sessions ?? 2,
+    equipment: equipment.size > 0 ? Array.from(equipment) : ['none' as Equipment],
+    injuries: Array.from(injuries),
+    // seasonMode du snap onboarding. Règle conservative : seul 'in_season' passe le guard.
+    // En onboarding, ageBand defaults à 'adult' et seasonMode defaults à 'in_season' (L192/L193).
+    // seasonMode absent dans le snap = 'off_season' traitée comme hors périmètre par checkBetaEligibility.
+    seasonMode,
+    ageBand,
+    // parentalConsentHealthData null (défaut) → false via `=== true`. Consentement non donné = non-consentant.
+    parentalConsentHealthData: parentalConsentHealthData === true,
+    // `rehabInjury` intentionnellement absent : l'onboarding n'a pas de step rehab.
+    // REHAB_ACTIVE ne peut pas se déclencher ici. Si un step rehab est ajouté, mettre à jour ce snap.
+  }
+  const onboardingEligibility = checkBetaEligibility(onboardingProfileSnap)
 
   // ─── Écran de bienvenue ───────────────────────────────────────
 
@@ -1104,13 +1156,43 @@ export function OnboardingPage() {
               )}
             </div>
 
+            {!onboardingEligibility.isEligible && (
+              <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-4 space-y-2">
+                <p className="text-sm font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
+                <ul className="space-y-1">
+                  {onboardingEligibility.reasons.map((r) => (
+                    <li key={r} className="text-xs text-amber-300/80">
+                      · {BETA_ELIGIBILITY_MESSAGES[r].reason} — {BETA_ELIGIBILITY_MESSAGES[r].detail}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-white/40">Tu peux quand même créer ton compte. Le programme sera disponible quand le support sera en place.</p>
+              </div>
+            )}
+
+            {betaCapReached && (
+              <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-4 space-y-2">
+                <p className="text-sm font-bold text-amber-400">Places bêta complètes</p>
+                <p className="text-xs text-amber-300/80">
+                  Les 100 places de la bêta sont actuellement prises. Ton profil est enregistré — reviens bientôt ou contacte-nous pour être prévenu quand de nouvelles places seront disponibles.
+                </p>
+                <a
+                  href="mailto:feedback@rugbyforge.fr?subject=Liste%20d'attente%20bêta"
+                  className="inline-block text-sm font-bold text-[#ff6b35] hover:text-[#e55a2b]"
+                >
+                  Nous contacter →
+                </a>
+              </div>
+            )}
+
             <button
               type="button"
               onClick={handleFinish}
-              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
+              disabled={betaCapReached}
+              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
             >
               <CheckCircle2 className="w-5 h-5" />
-              Voir mon programme
+              {betaCapReached ? 'Places complètes' : onboardingEligibility.isEligible ? 'Voir mon programme' : 'Terminer et accéder à mon espace'}
             </button>
           </div>
         )}

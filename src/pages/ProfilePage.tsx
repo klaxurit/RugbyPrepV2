@@ -30,6 +30,7 @@ import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
 import { GymDaySelector } from '../components/GymDaySelector'
+import { checkBetaEligibility, BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 
 const EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string }[] = [
   { value: 'barbell',      label: 'Barre' },
@@ -161,6 +162,7 @@ const avatarErrorLabel: Record<AuthError, string> = {
 
 export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
+  const betaEligibility = checkBetaEligibility(profile)
   const { authState, updateAvatar } = useAuth()
   const { features, isPremium, planId } = useFeatureAccess()
   const {
@@ -333,6 +335,20 @@ export function ProfilePage() {
       />
 
       <main className="relative px-6 pt-6 space-y-5 max-w-md mx-auto">
+        {/* ── Banner inéligibilité beta self-serve ── */}
+        {!betaEligibility.isEligible && (
+          <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-4 space-y-2">
+            <p className="text-sm font-bold text-amber-400">Profil hors périmètre bêta self-serve</p>
+            <ul className="space-y-1">
+              {betaEligibility.reasons.map((r) => (
+                <li key={r} className="text-xs text-amber-300/80">
+                  · {BETA_ELIGIBILITY_MESSAGES[r].reason} — {BETA_ELIGIBILITY_MESSAGES[r].detail}
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs text-white/40">Le programme ne sera pas généré tant que ce profil est hors périmètre. Modifie les champs ci-dessous pour revenir en zone supportée.</p>
+          </div>
+        )}
         <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-4">
             <button
@@ -1457,7 +1473,7 @@ export function ProfilePage() {
       {/* Footer */}
       <footer className="px-4 py-6 flex flex-col items-center gap-3 text-center relative">
         <a
-          href="mailto:feedback@rugbyprep.app?subject=Feedback%20RugbyForge"
+          href="mailto:feedback@rugbyforge.fr?subject=Feedback%20bêta%20RugbyForge"
           onClick={() => posthog.capture('feedback_clicked')}
           className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#1a5f3f] text-white text-xs font-black uppercase tracking-wide hover:bg-[#1a5f3f]/90 transition-colors shadow-lg shadow-[#1a5f3f]/20"
         >
