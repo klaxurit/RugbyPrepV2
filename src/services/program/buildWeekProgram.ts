@@ -443,7 +443,14 @@ export const buildWeekProgram = (
   //
   // KNOWN LIMIT: If future prehab blocks accumulate large sets (>4-5 sets), the quality gate
   // will not detect that overload. Keep prehab block sets ≤3 to maintain clinical safety.
-  const VOLUME_COUNTED_INTENTS = new Set(['force', 'contrast', 'neural', 'hypertrophy', 'core', 'activation']);
+  //
+  // Contrast excluded from main volume count: explosive/neural work (3-5 reps per exercise),
+  // not volume-accumulating like hypertrophy. However, contrast sets still produce joint stress
+  // (plyometric landings). A separate local guard below caps contrast at MAX_CONTRAST_SETS.
+  // KNOWN LIMIT: if future contrast blocks exceed 4 sets at starter/builder, increase this cap
+  // or re-include contrast in VOLUME_COUNTED_INTENTS.
+  const VOLUME_COUNTED_INTENTS = new Set(['force', 'neural', 'hypertrophy', 'core', 'activation']);
+  const MAX_CONTRAST_SETS = 4; // safety cap: starter/builder contrast blocks should stay ≤4 sets
   const volumeMaxSets = RULE_CONSTANTS_V1.volume.maxSetsPerSession[trainingLevel];
   const volumeTolerance = RULE_CONSTANTS_V1.volume.toleranceSets;
   sessions.forEach((session, index) => {
@@ -454,6 +461,13 @@ export const buildWeekProgram = (
     if (totalSets > volumeMaxSets + volumeTolerance) {
       qualityGateEvents.push(`quality:volume-exceeded:${session.recipeId}:${index}:${totalSets}/${volumeMaxSets}`);
       warnings.push(`${session.recipeId}: volume ${totalSets} sets dépasse le cap ${volumeMaxSets} (${trainingLevel}).`);
+    }
+    // Local guard: cap contrast sets independently to catch future bloat
+    const contrastSets = session.blocks
+      .filter((b) => b.block.intent === 'contrast')
+      .reduce((sum, b) => sum + (b.version.sets ?? 0), 0);
+    if (contrastSets > MAX_CONTRAST_SETS) {
+      warnings.push(`${session.recipeId}: contrast volume ${contrastSets} sets dépasse le cap ${MAX_CONTRAST_SETS}.`);
     }
   });
 

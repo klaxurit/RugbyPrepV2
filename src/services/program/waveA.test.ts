@@ -15,7 +15,7 @@ import type { SessionRecipeId } from '../../data/sessionRecipes.v1'
 
 // FP1-01: prehab excluded from volume count — these are medical prevention blocks, not training load.
 // Keep this list in sync with VOLUME_COUNTED_INTENTS in buildWeekProgram.ts.
-const VOLUME_INTENTS = new Set(['force', 'contrast', 'neural', 'hypertrophy', 'core', 'activation'])
+const VOLUME_INTENTS = new Set(['force', 'neural', 'hypertrophy', 'core', 'activation'])
 
 const allBlocks = blocksData as unknown as TrainingBlock[]
 

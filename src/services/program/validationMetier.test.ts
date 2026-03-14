@@ -141,6 +141,52 @@ const profiles: Record<string, UserProfile> = {
     trainingLevel: 'performance',
     seasonMode: 'in_season',
   },
+  // --- Lot 1 couverture contenu: starter gym + contrast sets ---
+  'starter_bw_only': {
+    equipment: [],
+    injuries: [],
+    weeklySessions: 2,
+    level: 'beginner',
+    rugbyPosition: 'BACK_ROW',
+    trainingLevel: 'starter',
+    seasonMode: 'in_season',
+  },
+  'starter_gym_front_row': {
+    equipment: ['dumbbell', 'bench', 'barbell', 'band', 'med_ball'],
+    injuries: [],
+    weeklySessions: 2,
+    level: 'beginner',
+    rugbyPosition: 'FRONT_ROW',
+    trainingLevel: 'starter',
+    seasonMode: 'in_season',
+  },
+  'starter_gym_back_three': {
+    equipment: ['dumbbell', 'bench', 'band', 'med_ball'],
+    injuries: [],
+    weeklySessions: 2,
+    level: 'beginner',
+    rugbyPosition: 'BACK_THREE',
+    trainingLevel: 'starter',
+    seasonMode: 'in_season',
+  },
+  'starter_bw_knee_pain': {
+    equipment: [],
+    injuries: ['knee_pain'],
+    weeklySessions: 2,
+    level: 'beginner',
+    rugbyPosition: 'CENTERS',
+    trainingLevel: 'starter',
+    seasonMode: 'in_season',
+  },
+  'builder_full_equipment': {
+    equipment: ['dumbbell', 'bench', 'barbell', 'band', 'med_ball'],
+    injuries: [],
+    weeklySessions: 3,
+    level: 'intermediate',
+    rugbyPosition: 'SECOND_ROW',
+    trainingLevel: 'builder',
+    seasonMode: 'in_season',
+  },
 };
 
 const weeks: CycleWeek[] = ['W1', 'W3', 'W4', 'W5', 'W7', 'DELOAD'];
@@ -182,6 +228,81 @@ const formatSession = (result: WeekProgramResult, profileName: string): string =
   }
   return lines.join('\n');
 };
+
+// ── Lot 1 contrast volume guard ──────────────────────────────────────────────
+describe('Contrast volume guard — F1/F6', () => {
+  const starterBW: UserProfile = {
+    equipment: [],
+    injuries: [],
+    weeklySessions: 2,
+    level: 'beginner',
+    rugbyPosition: 'BACK_ROW',
+    trainingLevel: 'starter',
+    seasonMode: 'in_season',
+  };
+  const starterMedBall: UserProfile = {
+    equipment: ['med_ball'],
+    injuries: [],
+    weeklySessions: 2,
+    level: 'beginner',
+    rugbyPosition: 'FRONT_ROW',
+    trainingLevel: 'starter',
+    seasonMode: 'in_season',
+  };
+  const perfInSeason: UserProfile = {
+    equipment: ['barbell', 'dumbbell', 'bench', 'band', 'pullup_bar', 'box', 'med_ball'],
+    injuries: [],
+    weeklySessions: 3,
+    level: 'intermediate',
+    rugbyPosition: 'SECOND_ROW',
+    trainingLevel: 'performance',
+    seasonMode: 'in_season',
+  };
+
+  it('F1-guard: starter contrast blocks never exceed 4 sets', () => {
+    for (const week of ['W1', 'W3'] as CycleWeek[]) {
+      const result = buildWeekProgram(starterBW, week);
+      for (const session of result.sessions) {
+        const contrastBlocks = session.blocks.filter((b) => b.block.intent === 'contrast');
+        for (const cb of contrastBlocks) {
+          expect(cb.version.sets, `${cb.block.blockId} @ ${week}`).toBeLessThanOrEqual(4);
+        }
+      }
+    }
+  });
+
+  it('F1-guard: no contrast-volume-cap warning on starter sessions', () => {
+    for (const week of ['W1', 'W3', 'W4'] as CycleWeek[]) {
+      const result = buildWeekProgram(starterMedBall, week);
+      expect(
+        result.warnings.some((w) => w.includes('contrast volume')),
+        `starter_med_ball @ ${week}: ${result.warnings.join('; ')}`
+      ).toBe(false);
+    }
+  });
+
+  it('F6: performance in-season has no volume-exceeded warning (contrast excluded from count)', () => {
+    for (const week of ['W1', 'W3', 'W5'] as CycleWeek[]) {
+      const result = buildWeekProgram(perfInSeason, week);
+      expect(
+        result.warnings.some((w) => w.includes('dépasse le cap')),
+        `perf_in_season @ ${week}: ${result.warnings.join('; ')}`
+      ).toBe(false);
+    }
+  });
+
+  it('F6: performance contrast blocks stay ≤ 4 sets (guard cap)', () => {
+    for (const week of ['W1', 'W3', 'W5'] as CycleWeek[]) {
+      const result = buildWeekProgram(perfInSeason, week);
+      for (const session of result.sessions) {
+        const contrastBlocks = session.blocks.filter((b) => b.block.intent === 'contrast');
+        for (const cb of contrastBlocks) {
+          expect(cb.version.sets, `${cb.block.blockId} @ ${week}`).toBeLessThanOrEqual(4);
+        }
+      }
+    }
+  });
+});
 
 describe('Validation Métier — Corpus Vague C', () => {
   const allOutputs: string[] = [];

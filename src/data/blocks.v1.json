@@ -9259,5 +9259,222 @@
       }
     ],
     "coachingNotes": "Epaule (sleeper stretch — crucial pour les ailiers/talonneurs), psoas/flechisseur hanche (couch stretch), cheville. Zones de restriction frequente chez le rugbyman."
+  },
+
+  {
+    "blockId": "BLK_STR_HP_A_GYM_01",
+    "name": "Push-Pull Horizontal — Développé couché + Rowing haltère",
+    "intent": "hypertrophy",
+    "tags": ["starter", "upper", "push", "pull", "hypertrophy", "contact", "horizontal"],
+    "equipment": ["dumbbell", "bench"],
+    "contraindications": ["shoulder_pain", "elbow_pain", "wrist_pain", "low_back_pain"],
+    "exercises": [
+      { "exerciseId": "push_horizontal__bench_press__dumbbell", "role": "prime", "notes": "Haltères au-dessus des pectoraux, coudes à 45°, descente 2s contrôlée." },
+      { "exerciseId": "pull_horizontal__one_arm_row__dumbbell", "role": "superset_partner", "notes": "Alterner bras droit/gauche. Omoplate d'abord, coude vers la hanche." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 90, "rer": 5 }
+    ],
+    "coachingNotes": "Développé couché haltères puis rowing unilatéral sans repos. Repos 90s après la paire. Les haltères permettent une amplitude plus naturelle que la barre. Chaque bras travaille indépendamment = correction des asymétries."
+  },
+  {
+    "blockId": "BLK_STR_HP_A_GYM_02",
+    "name": "Push-Pull Horizontal — Bench Press + Pendlay Row",
+    "intent": "hypertrophy",
+    "tags": ["starter", "upper", "push", "pull", "hypertrophy", "contact", "force"],
+    "equipment": ["barbell", "bench"],
+    "contraindications": ["shoulder_pain", "elbow_pain", "wrist_pain", "low_back_pain"],
+    "exercises": [
+      { "exerciseId": "push_horizontal__bench_press__barbell", "role": "prime", "notes": "Prise légèrement plus large que les épaules. Pause 1s sur la poitrine." },
+      { "exerciseId": "pull_horizontal__pendlay_row__barbell", "role": "superset_partner", "notes": "Buste à ~45°, tirer vers le nombril. Dos neutre absolument." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "8" }, "restSeconds": 120, "rer": 2 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8" }, "restSeconds": 120, "rer": 5 }
+    ],
+    "coachingNotes": "Bloc barre : développé couché + Pendlay row. Charge plus lourde que les haltères = transfert force contact. Supervision recommandée pour le bench press à la barre."
+  },
+  {
+    "blockId": "BLK_STR_HP_L_GYM_01",
+    "name": "Squat-Hinge — Goblet Squat + RDL Haltères",
+    "intent": "hypertrophy",
+    "tags": ["starter", "lower", "squat", "hinge", "posterior_chain", "hypertrophy", "carry"],
+    "equipment": ["dumbbell"],
+    "contraindications": ["knee_pain", "low_back_pain", "wrist_pain"],
+    "exercises": [
+      { "exerciseId": "squat__goblet_squat__dumbbell", "role": "prime", "notes": "Haltère au sternum. Descendre entre les genoux. Auto-correction posturale." },
+      { "exerciseId": "hinge__rdl__dumbbell", "role": "superset_partner", "notes": "Haltères longent les cuisses. Dos neutre. S'arrêter quand les ischios sont tendus." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10-12" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "10" }, "restSeconds": 90, "rer": 5 }
+    ],
+    "coachingNotes": "Goblet squat = le meilleur mouvement d'apprentissage squat. Le poids devant force le torse haut. RDL haltères = charnière de hanche sous charge."
+  },
+  {
+    "blockId": "BLK_STR_HP_L_GYM_02",
+    "name": "Squat-Hinge — Back Squat + RDL Barre",
+    "intent": "hypertrophy",
+    "tags": ["starter", "lower", "squat", "hinge", "posterior_chain", "hypertrophy", "force", "contact"],
+    "equipment": ["barbell"],
+    "contraindications": ["knee_pain", "low_back_pain"],
+    "exercises": [
+      { "exerciseId": "squat__back_squat__barbell", "role": "prime", "notes": "Barre haute sur les trapèzes. Descendre sous la parallèle. Le roi du rugby S&C." },
+      { "exerciseId": "hinge__rdl__barbell", "role": "superset_partner", "notes": "Barre devant les cuisses. Reculer les hanches. Dos neutre absolument." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "8" }, "restSeconds": 120, "rer": 2 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8" }, "restSeconds": 120, "rer": 5 }
+    ],
+    "coachingNotes": "Back squat + RDL barre : fondamentaux du bas du corps pour le rugby. Supervision recommandée."
+  },
+  {
+    "blockId": "BLK_STR_CORE_GYM_01",
+    "name": "Core contact — Pallof Press + Farmer Walk",
+    "intent": "core",
+    "tags": ["starter", "core", "trunk", "carry", "anti_rotation", "contact"],
+    "equipment": ["band", "dumbbell"],
+    "contraindications": ["low_back_pain", "wrist_pain", "elbow_pain"],
+    "exercises": [
+      { "exerciseId": "core_anti_rotation__pallof_press__band", "role": "prime", "notes": "Bras tendus devant le sternum. Résister à la rotation. 3s hold en extension." },
+      { "exerciseId": "carry__farmer_walk__dumbbell", "role": "superset_partner", "notes": "Haltères lourds, bras le long du corps. Marcher droit 30m. Épaules basses, tronc verrouillé." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "10/side + 30m" }, "restSeconds": 60, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "12/side + 30m" }, "restSeconds": 60, "rer": 3 },
+      { "versionId": "W3", "sets": 3, "scheme": { "kind": "reps", "reps": "12/side + 40m" }, "restSeconds": 60, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "10/side + 30m" }, "restSeconds": 60, "rer": 5 }
+    ],
+    "coachingNotes": "Anti-rotation + carry = les deux qualités core les plus utiles au rugby."
+  },
+
+  {
+    "blockId": "BLK_CONTRAST_LOWER_STARTER_01",
+    "name": "Contrast lower débutant — Squat + Squat Jump + Broad Jump",
+    "intent": "contrast",
+    "tags": ["starter", "lower", "contrast", "squat", "power", "acceleration"],
+    "equipment": ["none"],
+    "contraindications": ["knee_pain", "low_back_pain"],
+    "exercises": [
+      { "exerciseId": "squat__bodyweight_squat", "role": "prime", "notes": "5 squats contrôlés, descente 2s, remontée puissante — on prépare le système nerveux." },
+      { "exerciseId": "power__squat_jump__bodyweight", "role": "contrast", "notes": "3 sauts maximum. Enchaîner immédiatement après les squats. Qualité > quantité." },
+      { "exerciseId": "power__jump__broad_jump", "role": "contrast", "notes": "3 sauts en longueur. Réception souple, genoux fléchis. Penser 'sprint rugby : démarrer vite'." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 3" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 3" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 3 + 3" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 3 + 3" }, "restSeconds": 120, "rer": 5 }
+    ],
+    "coachingNotes": "Contrast squat pour débutant : squat contrôlé → squat jump explosif → broad jump. Le cerveau apprend à transformer la force en vitesse — accélération et poussée en mêlée. Repos 2min. Si les sauts perdent en hauteur/distance, arrêter la série."
+  },
+  {
+    "blockId": "BLK_CONTRAST_UPPER_STARTER_01",
+    "name": "Contrast upper débutant — Push-up + Med Ball Chest Pass",
+    "intent": "contrast",
+    "tags": ["starter", "upper", "contrast", "push", "power", "contact"],
+    "equipment": ["med_ball"],
+    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "exercises": [
+      { "exerciseId": "push_horizontal__push_up__standard", "role": "prime", "notes": "5 pompes contrôlées, tempo 2-0-1. On pousse le sol, pas soi-même." },
+      { "exerciseId": "power__medball_chest_pass__wall", "role": "contrast", "notes": "5 lancers explosifs contre le mur. Attraper et relancer immédiatement. Penser 'repousser un adversaire au ruck'." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 6" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 6" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 90, "rer": 5 }
+    ],
+    "coachingNotes": "Contrast push pour débutant : pompes contrôlées → med ball chest pass explosif. La pompe active les muscles, le lancer les exprime en vitesse — même logique qu'un fend-off ou un clear-out au ruck. Repos 90s."
+  },
+  {
+    "blockId": "BLK_CONTRAST_FULL_STARTER_01",
+    "name": "Contrast full body débutant — Glute Bridge + Broad Jump + Med Ball Slam",
+    "intent": "contrast",
+    "tags": ["starter", "full", "contrast", "hinge", "power", "posterior_chain"],
+    "equipment": ["med_ball"],
+    "contraindications": ["low_back_pain", "knee_pain"],
+    "exercises": [
+      { "exerciseId": "hinge__glute_bridge__bodyweight", "role": "prime", "notes": "8 reps, serrer les fessiers en haut 2s. Activer la chaîne postérieure." },
+      { "exerciseId": "power__jump__broad_jump", "role": "contrast", "notes": "3 sauts en longueur, réception souple. Penser 'sprint de 3 mètres'." },
+      { "exerciseId": "power__medball_slam__overhead", "role": "contrast", "notes": "5 slams, lever haut et écraser au sol. Tronc gainé. Penser 'plaquage'." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8 + 3 + 5" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "8 + 3 + 5" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "8 + 3 + 5" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8 + 3 + 5" }, "restSeconds": 90, "rer": 5 }
+    ],
+    "coachingNotes": "Contrast full body : glute bridge (activation postérieure) → broad jump (détente horizontale) → med ball slam (puissance verticale + bracing). Trois qualités rugby en un seul bloc. Repos 90s."
+  },
+
+  {
+    "blockId": "BLK_CONTRAST_LOWER_BUILDER_01",
+    "name": "Contrast lower builder — Goblet Squat + Squat Jump + Split Jump",
+    "intent": "contrast",
+    "tags": ["builder", "lower", "contrast", "squat", "power", "acceleration", "unilateral"],
+    "equipment": ["dumbbell"],
+    "contraindications": ["knee_pain", "low_back_pain", "wrist_pain", "ankle_pain"],
+    "exercises": [
+      { "exerciseId": "squat__goblet_squat__dumbbell", "role": "prime", "notes": "5 reps avec charge conséquente (RER 3). Descente contrôlée, remontée puissante." },
+      { "exerciseId": "power__squat_jump__bodyweight", "role": "contrast", "notes": "3 squat jumps explosifs. Enchaîner dans les 15s après le goblet. Exploiter la PAP." },
+      { "exerciseId": "power__split_jump__bodyweight", "role": "contrast", "notes": "3 reps/côté. Fente sautée : changement d'appui aérien. Transfert sidestep rugby." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 3/side" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 3/side" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 3 + 3/side" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 3 + 3/side" }, "restSeconds": 120, "rer": 5 }
+    ],
+    "coachingNotes": "Complex training simple : goblet squat chargé → squat jump BW → fente sautée. Le goblet active les quadriceps et fessiers (PAP), les sauts exploitent ce potentiel. Repos 2min entre clusters."
+  },
+  {
+    "blockId": "BLK_CONTRAST_UPPER_BUILDER_01",
+    "name": "Contrast upper builder — DB Bench + Med Ball Chest Pass + Slam",
+    "intent": "contrast",
+    "tags": ["builder", "upper", "contrast", "push", "power", "contact"],
+    "equipment": ["dumbbell", "bench", "med_ball"],
+    "contraindications": ["shoulder_pain", "elbow_pain", "wrist_pain", "low_back_pain"],
+    "exercises": [
+      { "exerciseId": "push_horizontal__bench_press__dumbbell", "role": "prime", "notes": "5 reps charge lourde (RER 3). Descente 2s, remontée explosive." },
+      { "exerciseId": "power__medball_chest_pass__wall", "role": "contrast", "notes": "5 lancers explosifs. Enchaîner < 20s après le bench. Puissance maximale." },
+      { "exerciseId": "power__medball_slam__overhead", "role": "contrast", "notes": "5 slams. Full body explosive, tronc gainé. Transfert plaquage." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 5 + 5" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 5 + 5" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 5 + 5" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 5 + 5" }, "restSeconds": 120, "rer": 5 }
+    ],
+    "coachingNotes": "Complex training upper : bench press chargé (PAP) → chest pass explosif → slam. Le bench active les pectoraux/triceps, le chest pass les exprime en puissance horizontale (ruck), le slam ajoute la composante full body (plaquage). Repos 2min."
+  },
+  {
+    "blockId": "BLK_CONTRAST_LOWER_BUILDER_02",
+    "name": "Contrast hinge builder — RDL DB + Broad Jump + Lancer Rotationnel",
+    "intent": "contrast",
+    "tags": ["builder", "lower", "contrast", "hinge", "posterior_chain", "power", "trunk"],
+    "equipment": ["dumbbell", "med_ball"],
+    "contraindications": ["low_back_pain", "knee_pain"],
+    "exercises": [
+      { "exerciseId": "hinge__rdl__dumbbell", "role": "prime", "notes": "5 reps charge conséquente. Chaîne postérieure sous tension. Dos neutre." },
+      { "exerciseId": "power__jump__broad_jump", "role": "contrast", "notes": "3 sauts en longueur. Extension complète hanches. Réception souple." },
+      { "exerciseId": "power__medball_rotational_throw__wall", "role": "contrast", "notes": "4 lancers/côté. Rotation explosive depuis les hanches. Tronc stable." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 4/side" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 4/side" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 3 + 4/side" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 3 + 4/side" }, "restSeconds": 120, "rer": 5 }
+    ],
+    "coachingNotes": "Contrast hinge : RDL chargé (activation postérieure) → broad jump (triple extension horizontale) → lancer rotationnel (puissance tronc/hanches). Couvre sprint, plaquage et off-loading. Repos 2min."
   }
 ]

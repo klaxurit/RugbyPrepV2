@@ -5,7 +5,7 @@ export interface SessionValidationResult {
   warnings: string[];
 }
 
-const MAX_BLOCKS = 7; // warmup + activation + 2-3 main + 1-2 finisher + cooldown
+const MAX_BLOCKS = 8; // warmup + activation + contrast? + 2-3 main + 1-2 finisher + cooldown
 const MAX_FINISHERS = 1;
 const MAX_FINISHERS_FULL = 2;
 const MAJOR_FULL_INTENTS = new Set(['neural', 'force', 'contrast', 'hypertrophy']);

@@ -167,15 +167,16 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     sequence: [
       { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
-      { intent: 'hypertrophy', required: true }, // push-pull haut du corps
-      { intent: 'hypertrophy', required: true }, // squat-hinge bas du corps
+      { intent: 'contrast', required: false },    // explosif quand SNC frais (squat→jump, push→throw)
+      { intent: 'hypertrophy', required: true },   // push-pull haut du corps
+      { intent: 'hypertrophy', required: true },   // squat-hinge bas du corps
       { intent: 'core', required: false },
       { intent: 'cooldown', required: false }
     ],
     preferredTags: ['starter', 'upper', 'push', 'pull', 'lower', 'squat', 'hinge'],
     focusTagsAny: [],
-    // warmup=null, activation upper (dominante haut), upper focus, lower focus, core=null, cooldown=null
-    slotFocusTags: [null, ['upper'], ['upper'], ['lower'], null, null]
+    // warmup=null, activation upper, contrast lower/upper/power, upper hyper, lower hyper, core=null, cooldown=null
+    slotFocusTags: [null, ['upper'], ['lower', 'upper', 'power'], ['upper'], ['lower'], null, null]
   },
 
   LOWER_STARTER_V1: {
@@ -184,15 +185,16 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     sequence: [
       { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
-      { intent: 'hypertrophy', required: true }, // squat-hinge bas du corps
-      { intent: 'hypertrophy', required: true }, // push-pull haut du corps
+      { intent: 'contrast', required: false },    // explosif quand SNC frais (hinge→jump, push→throw)
+      { intent: 'hypertrophy', required: true },   // squat-hinge bas du corps
+      { intent: 'hypertrophy', required: true },   // push-pull haut du corps
       { intent: 'core', required: false },
       { intent: 'cooldown', required: false }
     ],
     preferredTags: ['starter', 'lower', 'squat', 'hinge', 'posterior_chain', 'upper', 'push', 'pull'],
     focusTagsAny: [],
-    // warmup=null, activation lower (dominante bas), lower focus, upper focus, core=null, cooldown=null
-    slotFocusTags: [null, ['lower'], ['lower'], ['upper'], null, null]
+    // warmup=null, activation lower, contrast lower/upper/power, lower hyper, upper hyper, core=null, cooldown=null
+    slotFocusTags: [null, ['lower'], ['lower', 'upper', 'power'], ['lower'], ['upper'], null, null]
   },
 
   // ─── Builder (Niveau 2 — Supersets) ──────────────────────────────────────
@@ -203,15 +205,16 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     sequence: [
       { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
-      { intent: 'hypertrophy', required: true }, // superset push/pull horizontal
-      { intent: 'hypertrophy', required: true }, // superset push/pull vertical ou accessoire
+      { intent: 'contrast', required: false },    // explosif upper quand SNC frais (push→throw)
+      { intent: 'hypertrophy', required: true },   // superset push/pull horizontal
+      { intent: 'hypertrophy', required: true },   // superset push/pull vertical ou accessoire
       { intent: 'core', required: false },
       { intent: 'cooldown', required: false }
     ],
     preferredTags: ['builder', 'superset', 'upper', 'push', 'pull', 'hypertrophy'],
     focusTagsAny: ['upper'],
-    // warmup=null, activation upper, upper push bias, upper pull bias, core/cooldown=null
-    slotFocusTags: [null, ['upper'], ['upper', 'push', 'horizontal'], ['upper', 'pull', 'vertical', 'horizontal'], null, null]
+    // warmup=null, activation upper, contrast upper/power, upper push bias, upper pull bias, core/cooldown=null
+    slotFocusTags: [null, ['upper'], ['upper', 'power'], ['upper', 'push', 'horizontal'], ['upper', 'pull', 'vertical', 'horizontal'], null, null]
   },
 
   LOWER_BUILDER_V1: {
@@ -220,15 +223,16 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     sequence: [
       { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
-      { intent: 'hypertrophy', required: true }, // superset squat / hinge
-      { intent: 'hypertrophy', required: true }, // superset unilateral / posterior chain
+      { intent: 'contrast', required: false },    // explosif lower quand SNC frais (squat→jump)
+      { intent: 'hypertrophy', required: true },   // superset squat / hinge
+      { intent: 'hypertrophy', required: true },   // superset unilateral / posterior chain
       { intent: 'prehab', required: false },
       { intent: 'cooldown', required: false }
     ],
     preferredTags: ['builder', 'superset', 'lower', 'squat', 'hinge', 'posterior_chain', 'unilateral'],
     focusTagsAny: ['lower'],
-    // warmup=null, activation lower, lower squat bias, lower hinge/unilateral bias, prehab/cooldown=null
-    slotFocusTags: [null, ['lower'], ['lower', 'squat'], ['lower', 'hinge', 'unilateral'], null, null]
+    // warmup=null, activation lower, contrast lower/power, lower squat bias, lower hinge/unilateral bias, prehab/cooldown=null
+    slotFocusTags: [null, ['lower'], ['lower', 'power'], ['lower', 'squat'], ['lower', 'hinge', 'unilateral'], null, null]
   },
 
   FULL_BUILDER_V1: {
@@ -237,15 +241,16 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     sequence: [
       { intent: 'warmup', required: false },
       { intent: 'activation', required: true },
-      { intent: 'hypertrophy', required: true }, // superset upper push/pull
-      { intent: 'hypertrophy', required: true }, // superset lower squat/hinge
+      { intent: 'contrast', required: false },    // explosif quand SNC frais (lower ou full body)
+      { intent: 'hypertrophy', required: true },   // superset upper push/pull
+      { intent: 'hypertrophy', required: true },   // superset lower squat/hinge
       { intent: 'core', required: false },
       { intent: 'cooldown', required: false }
     ],
     preferredTags: ['builder', 'superset', 'upper', 'lower', 'push', 'pull', 'squat', 'hinge'],
     focusTagsAny: [],
-    // warmup=null, activation full body, upper, lower, core=null, cooldown=null
-    slotFocusTags: [null, ['upper', 'lower'], ['upper'], ['lower'], null, null]
+    // warmup=null, activation full body, contrast lower/power, upper, lower, core=null, cooldown=null
+    slotFocusTags: [null, ['upper', 'lower'], ['lower', 'power'], ['upper'], ['lower'], null, null]
   },
 
   // ─── Conditionnement (off/pré-saison — performance 3 sessions/sem) ──────────
