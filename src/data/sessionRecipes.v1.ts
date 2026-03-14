@@ -175,8 +175,9 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     ],
     preferredTags: ['starter', 'upper', 'push', 'pull', 'lower', 'squat', 'hinge'],
     focusTagsAny: [],
-    // warmup=null, activation upper, contrast lower/upper/power, upper hyper, lower hyper, core=null, cooldown=null
-    slotFocusTags: [null, ['upper'], ['lower', 'upper', 'power'], ['upper'], ['lower'], null, null]
+    // warmup=null, activation upper, contrast upper/power, upper push bias, lower squat bias, core=null, cooldown=null
+    // Session A : push-dominant upper, squat-dominant lower → différencie de Session B
+    slotFocusTags: [null, ['upper'], ['upper', 'power'], ['upper', 'push'], ['lower', 'squat'], null, null]
   },
 
   LOWER_STARTER_V1: {
@@ -193,8 +194,9 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     ],
     preferredTags: ['starter', 'lower', 'squat', 'hinge', 'posterior_chain', 'upper', 'push', 'pull'],
     focusTagsAny: [],
-    // warmup=null, activation lower, contrast lower/upper/power, lower hyper, upper hyper, core=null, cooldown=null
-    slotFocusTags: [null, ['lower'], ['lower', 'upper', 'power'], ['lower'], ['upper'], null, null]
+    // warmup=null, activation lower, contrast lower/power, lower hinge/unilateral bias, upper pull bias, core=null, cooldown=null
+    // Session B : hinge/unilateral-dominant lower, pull-dominant upper → différencie de Session A
+    slotFocusTags: [null, ['lower'], ['lower', 'power'], ['lower', 'hinge', 'unilateral'], ['upper', 'pull'], null, null]
   },
 
   // ─── Builder (Niveau 2 — Supersets) ──────────────────────────────────────
@@ -249,8 +251,8 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
     ],
     preferredTags: ['builder', 'superset', 'upper', 'lower', 'push', 'pull', 'squat', 'hinge'],
     focusTagsAny: [],
-    // warmup=null, activation full body, contrast lower/power, upper, lower, core=null, cooldown=null
-    slotFocusTags: [null, ['upper', 'lower'], ['lower', 'power'], ['upper'], ['lower'], null, null]
+    // warmup=null, activation full body, contrast lower/full/power, upper, lower, core=null, cooldown=null
+    slotFocusTags: [null, ['upper', 'lower'], ['lower', 'full', 'power'], ['upper'], ['lower'], null, null]
   },
 
   // ─── Conditionnement (off/pré-saison — performance 3 sessions/sem) ──────────

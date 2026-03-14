@@ -9320,22 +9320,22 @@
   },
   {
     "blockId": "BLK_STR_HP_L_GYM_02",
-    "name": "Squat-Hinge — Back Squat + RDL Barre",
+    "name": "Lunge-Hinge — Fente arrière + Hip Thrust",
     "intent": "hypertrophy",
-    "tags": ["starter", "lower", "squat", "hinge", "posterior_chain", "hypertrophy", "force", "contact"],
-    "equipment": ["barbell"],
+    "tags": ["starter", "lower", "lunge", "hinge", "unilateral", "posterior_chain", "hypertrophy", "acceleration"],
+    "equipment": ["dumbbell"],
     "contraindications": ["knee_pain", "low_back_pain"],
     "exercises": [
-      { "exerciseId": "squat__back_squat__barbell", "role": "prime", "notes": "Barre haute sur les trapèzes. Descendre sous la parallèle. Le roi du rugby S&C." },
-      { "exerciseId": "hinge__rdl__barbell", "role": "superset_partner", "notes": "Barre devant les cuisses. Reculer les hanches. Dos neutre absolument." }
+      { "exerciseId": "lower_lunge__reverse_lunge__dumbbell", "role": "prime", "notes": "Haltères le long du corps. Grand pas arrière, genou frôle le sol. Pousser avec le talon avant." },
+      { "exerciseId": "hinge__hip_thrust__bodyweight", "role": "superset_partner", "notes": "Épaules sur banc ou sol. Hanches au plafond, serrer fessiers 2s. Le moteur du sprint." }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 120, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "8-10" }, "restSeconds": 120, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "8" }, "restSeconds": 120, "rer": 2 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8" }, "restSeconds": 120, "rer": 5 }
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8/side + 12" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "10/side + 12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "10/side + 12" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8/side + 10" }, "restSeconds": 90, "rer": 5 }
     ],
-    "coachingNotes": "Back squat + RDL barre : fondamentaux du bas du corps pour le rugby. Supervision recommandée."
+    "coachingNotes": "Fente arrière haltères + hip thrust : unilatéral + extension de hanche. La fente corrige les asymétries et reproduit le changement d'appui rugby. Le hip thrust développe la puissance des fessiers pour le sprint et le plaquage."
   },
   {
     "blockId": "BLK_STR_CORE_GYM_01",
@@ -9398,83 +9398,98 @@
   },
   {
     "blockId": "BLK_CONTRAST_FULL_STARTER_01",
-    "name": "Contrast full body débutant — Glute Bridge + Broad Jump + Med Ball Slam",
+    "name": "Contrast full body débutant — Glute Bridge + Broad Jump",
     "intent": "contrast",
     "tags": ["starter", "full", "contrast", "hinge", "power", "posterior_chain"],
-    "equipment": ["med_ball"],
+    "equipment": ["none"],
     "contraindications": ["low_back_pain", "knee_pain"],
     "exercises": [
       { "exerciseId": "hinge__glute_bridge__bodyweight", "role": "prime", "notes": "8 reps, serrer les fessiers en haut 2s. Activer la chaîne postérieure." },
-      { "exerciseId": "power__jump__broad_jump", "role": "contrast", "notes": "3 sauts en longueur, réception souple. Penser 'sprint de 3 mètres'." },
-      { "exerciseId": "power__medball_slam__overhead", "role": "contrast", "notes": "5 slams, lever haut et écraser au sol. Tronc gainé. Penser 'plaquage'." }
+      { "exerciseId": "power__jump__broad_jump", "role": "contrast", "notes": "3 sauts en longueur. Réception souple. Penser 'sprint de 3 mètres'." }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8 + 3 + 5" }, "restSeconds": 90, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "8 + 3 + 5" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "8 + 3 + 5" }, "restSeconds": 90, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8 + 3 + 5" }, "restSeconds": 90, "rer": 5 }
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "8 + 3" }, "restSeconds": 90, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "8 + 3" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "8 + 3" }, "restSeconds": 90, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "8 + 3" }, "restSeconds": 90, "rer": 5 }
     ],
-    "coachingNotes": "Contrast full body : glute bridge (activation postérieure) → broad jump (détente horizontale) → med ball slam (puissance verticale + bracing). Trois qualités rugby en un seul bloc. Repos 90s."
+    "coachingNotes": "Contrast lisible : glute bridge (activation postérieure) → broad jump (détente horizontale explosive). Un seul transfert clair : chaîne postérieure → accélération sprint. Repos 90s."
   },
 
   {
     "blockId": "BLK_CONTRAST_LOWER_BUILDER_01",
-    "name": "Contrast lower builder — Goblet Squat + Squat Jump + Split Jump",
+    "name": "Contrast lower builder — Goblet Squat + Squat Jump",
     "intent": "contrast",
-    "tags": ["builder", "lower", "contrast", "squat", "power", "acceleration", "unilateral"],
+    "tags": ["builder", "lower", "contrast", "squat", "power", "acceleration"],
     "equipment": ["dumbbell"],
-    "contraindications": ["knee_pain", "low_back_pain", "wrist_pain", "ankle_pain"],
+    "contraindications": ["knee_pain", "low_back_pain", "wrist_pain"],
     "exercises": [
       { "exerciseId": "squat__goblet_squat__dumbbell", "role": "prime", "notes": "5 reps avec charge conséquente (RER 3). Descente contrôlée, remontée puissante." },
-      { "exerciseId": "power__squat_jump__bodyweight", "role": "contrast", "notes": "3 squat jumps explosifs. Enchaîner dans les 15s après le goblet. Exploiter la PAP." },
-      { "exerciseId": "power__split_jump__bodyweight", "role": "contrast", "notes": "3 reps/côté. Fente sautée : changement d'appui aérien. Transfert sidestep rugby." }
+      { "exerciseId": "power__squat_jump__bodyweight", "role": "contrast", "notes": "3 squat jumps explosifs. Enchaîner dans les 15s après le goblet. Exploiter la PAP." }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 3/side" }, "restSeconds": 120, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 3/side" }, "restSeconds": 120, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 3 + 3/side" }, "restSeconds": 120, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 3 + 3/side" }, "restSeconds": 120, "rer": 5 }
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 3" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 3" }, "restSeconds": 120, "rer": 5 }
     ],
-    "coachingNotes": "Complex training simple : goblet squat chargé → squat jump BW → fente sautée. Le goblet active les quadriceps et fessiers (PAP), les sauts exploitent ce potentiel. Repos 2min entre clusters."
+    "coachingNotes": "Contrast lisible : goblet squat chargé (PAP) → squat jump BW explosif. Un seul transfert : force squat → accélération. Repos 2min."
   },
   {
     "blockId": "BLK_CONTRAST_UPPER_BUILDER_01",
-    "name": "Contrast upper builder — DB Bench + Med Ball Chest Pass + Slam",
+    "name": "Contrast upper builder — DB Bench + Med Ball Chest Pass",
     "intent": "contrast",
     "tags": ["builder", "upper", "contrast", "push", "power", "contact"],
     "equipment": ["dumbbell", "bench", "med_ball"],
-    "contraindications": ["shoulder_pain", "elbow_pain", "wrist_pain", "low_back_pain"],
+    "contraindications": ["shoulder_pain", "elbow_pain", "wrist_pain"],
     "exercises": [
       { "exerciseId": "push_horizontal__bench_press__dumbbell", "role": "prime", "notes": "5 reps charge lourde (RER 3). Descente 2s, remontée explosive." },
-      { "exerciseId": "power__medball_chest_pass__wall", "role": "contrast", "notes": "5 lancers explosifs. Enchaîner < 20s après le bench. Puissance maximale." },
-      { "exerciseId": "power__medball_slam__overhead", "role": "contrast", "notes": "5 slams. Full body explosive, tronc gainé. Transfert plaquage." }
+      { "exerciseId": "power__medball_chest_pass__wall", "role": "contrast", "notes": "5 lancers explosifs contre le mur. Enchaîner < 20s après le bench. Penser 'repousser au ruck'." }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 5 + 5" }, "restSeconds": 120, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 5 + 5" }, "restSeconds": 120, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 5 + 5" }, "restSeconds": 120, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 5 + 5" }, "restSeconds": 120, "rer": 5 }
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 120, "rer": 5 }
     ],
-    "coachingNotes": "Complex training upper : bench press chargé (PAP) → chest pass explosif → slam. Le bench active les pectoraux/triceps, le chest pass les exprime en puissance horizontale (ruck), le slam ajoute la composante full body (plaquage). Repos 2min."
+    "coachingNotes": "Contrast lisible : bench press chargé (PAP) → chest pass explosif. Un seul transfert : force push → puissance ruck/fend-off. Repos 2min."
   },
   {
     "blockId": "BLK_CONTRAST_LOWER_BUILDER_02",
-    "name": "Contrast hinge builder — RDL DB + Broad Jump + Lancer Rotationnel",
+    "name": "Contrast hinge builder — RDL DB + Broad Jump",
     "intent": "contrast",
-    "tags": ["builder", "lower", "contrast", "hinge", "posterior_chain", "power", "trunk"],
-    "equipment": ["dumbbell", "med_ball"],
+    "tags": ["builder", "lower", "contrast", "hinge", "posterior_chain", "power"],
+    "equipment": ["dumbbell"],
     "contraindications": ["low_back_pain", "knee_pain"],
     "exercises": [
       { "exerciseId": "hinge__rdl__dumbbell", "role": "prime", "notes": "5 reps charge conséquente. Chaîne postérieure sous tension. Dos neutre." },
-      { "exerciseId": "power__jump__broad_jump", "role": "contrast", "notes": "3 sauts en longueur. Extension complète hanches. Réception souple." },
-      { "exerciseId": "power__medball_rotational_throw__wall", "role": "contrast", "notes": "4 lancers/côté. Rotation explosive depuis les hanches. Tronc stable." }
+      { "exerciseId": "power__jump__broad_jump", "role": "contrast", "notes": "3 sauts en longueur. Extension complète hanches. Réception souple." }
     ],
     "versions": [
-      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 4/side" }, "restSeconds": 120, "rer": 4 },
-      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3 + 4/side" }, "restSeconds": 120, "rer": 3 },
-      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 3 + 4/side" }, "restSeconds": 120, "rer": 3 },
-      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 3 + 4/side" }, "restSeconds": 120, "rer": 5 }
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 3" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 3" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 3" }, "restSeconds": 120, "rer": 5 }
     ],
-    "coachingNotes": "Contrast hinge : RDL chargé (activation postérieure) → broad jump (triple extension horizontale) → lancer rotationnel (puissance tronc/hanches). Couvre sprint, plaquage et off-loading. Repos 2min."
+    "coachingNotes": "Contrast lisible : RDL chargé (chaîne postérieure) → broad jump explosif. Un seul transfert : force hinge → détente horizontale sprint. Repos 2min."
+  },
+  {
+    "blockId": "BLK_CONTRAST_FULL_BUILDER_01",
+    "name": "Contrast full body builder — Goblet Squat + Med Ball Slam",
+    "intent": "contrast",
+    "tags": ["builder", "full", "contrast", "squat", "power", "trunk", "contact"],
+    "equipment": ["dumbbell", "med_ball"],
+    "contraindications": ["knee_pain", "low_back_pain", "wrist_pain"],
+    "exercises": [
+      { "exerciseId": "squat__goblet_squat__dumbbell", "role": "prime", "notes": "5 reps charge lourde (RER 3). Goblet = triple extension contrôlée sous charge." },
+      { "exerciseId": "power__medball_slam__overhead", "role": "contrast", "notes": "5 slams explosifs. Lever haut, écraser au sol. Tronc gainé. Penser 'plaquage dominant'." }
+    ],
+    "versions": [
+      { "versionId": "W1", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 120, "rer": 4 },
+      { "versionId": "W2", "sets": 3, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W3", "sets": 4, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 120, "rer": 3 },
+      { "versionId": "W4", "sets": 2, "scheme": { "kind": "reps", "reps": "5 + 5" }, "restSeconds": 120, "rer": 5 }
+    ],
+    "coachingNotes": "Contrast full body : goblet squat chargé (force squat) → med ball slam explosif (puissance verticale + bracing). Squat = poussée mêlée/accélération. Slam = plaquage/ruck. Repos 2min."
   }
 ]
