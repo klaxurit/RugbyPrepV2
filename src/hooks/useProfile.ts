@@ -5,6 +5,8 @@ import type {
   SCSchedule,
   TrainingLevel,
   SeasonMode,
+  AgeBand,
+  PopulationSegment,
   RehabInjury,
   HealthConsentSource,
   PerformanceFocus,
@@ -135,11 +137,40 @@ const saveToStorage = (profile: UserProfile) => {
   } catch { /* ignore */ }
 }
 
+const inferNormalizedAgeBand = (
+  ageBand: AgeBand | null | undefined,
+  populationSegment: PopulationSegment | null | undefined
+): AgeBand => {
+  if (ageBand === 'adult' || ageBand === 'u18') return ageBand
+  if (populationSegment === 'u18_female' || populationSegment === 'u18_male') return 'u18'
+  if (populationSegment === 'female_senior' || populationSegment === 'male_senior') return 'adult'
+  // Legacy profiles predate age segmentation. Default to the historic adult path
+  // so existing senior users are not falsely blocked by the beta guard.
+  return 'adult'
+}
+
+export const normalizeLegacyProfile = (profile: UserProfile): UserProfile => {
+  const ageBand = inferNormalizedAgeBand(profile.ageBand, profile.populationSegment)
+
+  return {
+    ...profile,
+    seasonMode:
+      profile.seasonMode === 'in_season' ||
+      profile.seasonMode === 'off_season' ||
+      profile.seasonMode === 'pre_season'
+        ? profile.seasonMode
+        : 'in_season',
+    ageBand,
+    parentalConsentHealthData:
+      profile.parentalConsentHealthData ?? (ageBand === 'adult' ? false : undefined),
+  }
+}
+
 const loadFromStorage = (): UserProfile | null => {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
-    return JSON.parse(raw) as UserProfile
+    return normalizeLegacyProfile(JSON.parse(raw) as UserProfile)
   } catch {
     return null
   }
@@ -185,46 +216,48 @@ type ProfileRow = {
   health_data_retention_state: UserProfile['healthDataRetentionState'] | null
 }
 
-const rowToProfile = (row: ProfileRow): UserProfile => ({
-  level: (row.level === 'beginner' ? 'beginner' : 'intermediate') as UserProfile['level'],
-  weeklySessions: (row.weekly_sessions === 2 ? 2 : 3) as UserProfile['weeklySessions'],
-  equipment: row.equipment as UserProfile['equipment'],
-  injuries: row.injuries as UserProfile['injuries'],
-  position: (row.position ?? undefined) as UserProfile['position'],
-  rugbyPosition: (row.rugby_position ?? undefined) as UserProfile['rugbyPosition'],
-  leagueLevel: row.league_level ?? undefined,
-  clubCode: row.club_code ?? undefined,
-  clubName: row.club_name ?? undefined,
-  clubLigue: row.club_ligue ?? undefined,
-  clubDepartmentCode: row.club_department_code ?? undefined,
-  heightCm: row.height_cm ?? undefined,
-  weightKg: row.weight_kg ?? undefined,
-  clubSchedule: row.club_schedule ?? undefined,
-  scSchedule: row.sc_schedule ?? undefined,
-  trainingLevel: (row.training_level as TrainingLevel | null) ?? (
-    row.level === 'beginner' ? 'starter' as TrainingLevel :
-    row.level === 'intermediate' ? 'builder' as TrainingLevel :
-    'starter' as TrainingLevel
-  ),
-  seasonMode: (row.season_mode as SeasonMode | null) ?? undefined,
-  performanceFocus: (row.performance_focus as PerformanceFocus | null) ?? undefined,
-  rehabInjury: (row.rehab_injury as RehabInjury | null) ?? undefined,
-  populationSegment: row.population_segment ?? undefined,
-  ageBand: row.age_band ?? undefined,
-  parentalConsentHealthData: row.parental_consent_health_data ?? undefined,
-  adultPlayEligibilityApproved: row.adult_play_eligibility_approved ?? undefined,
-  maturityStatus: row.maturity_status ?? undefined,
-  cycleTrackingOptIn: row.cycle_tracking_opt_in ?? undefined,
-  cycleSymptomScoreToday: row.cycle_symptom_score_today ?? undefined,
-  preventionSessionsWeek: row.prevention_sessions_week ?? undefined,
-  weeklyLoadContext: row.weekly_load_context ?? undefined,
-  healthConsentStatus: row.health_consent_status ?? undefined,
-  healthConsentGrantedAt: row.health_consent_granted_at ?? undefined,
-  healthConsentRevokedAt: row.health_consent_revoked_at ?? undefined,
-  healthConsentSource: row.health_consent_source ?? undefined,
-  healthConsentAuditTrail: row.health_consent_audit_trail ?? undefined,
-  healthDataRetentionState: row.health_data_retention_state ?? undefined,
-})
+export const rowToProfile = (row: ProfileRow): UserProfile => {
+  return normalizeLegacyProfile({
+    level: (row.level === 'beginner' ? 'beginner' : 'intermediate') as UserProfile['level'],
+    weeklySessions: (row.weekly_sessions === 2 ? 2 : 3) as UserProfile['weeklySessions'],
+    equipment: row.equipment as UserProfile['equipment'],
+    injuries: row.injuries as UserProfile['injuries'],
+    position: (row.position ?? undefined) as UserProfile['position'],
+    rugbyPosition: (row.rugby_position ?? undefined) as UserProfile['rugbyPosition'],
+    leagueLevel: row.league_level ?? undefined,
+    clubCode: row.club_code ?? undefined,
+    clubName: row.club_name ?? undefined,
+    clubLigue: row.club_ligue ?? undefined,
+    clubDepartmentCode: row.club_department_code ?? undefined,
+    heightCm: row.height_cm ?? undefined,
+    weightKg: row.weight_kg ?? undefined,
+    clubSchedule: row.club_schedule ?? undefined,
+    scSchedule: row.sc_schedule ?? undefined,
+    trainingLevel: (row.training_level as TrainingLevel | null) ?? (
+      row.level === 'beginner' ? 'starter' as TrainingLevel :
+      row.level === 'intermediate' ? 'builder' as TrainingLevel :
+      'starter' as TrainingLevel
+    ),
+    seasonMode: (row.season_mode as SeasonMode | null) ?? undefined,
+    performanceFocus: (row.performance_focus as PerformanceFocus | null) ?? undefined,
+    rehabInjury: (row.rehab_injury as RehabInjury | null) ?? undefined,
+    populationSegment: (row.population_segment as PopulationSegment | null) ?? undefined,
+    ageBand: row.age_band ?? undefined,
+    parentalConsentHealthData: row.parental_consent_health_data ?? undefined,
+    adultPlayEligibilityApproved: row.adult_play_eligibility_approved ?? undefined,
+    maturityStatus: row.maturity_status ?? undefined,
+    cycleTrackingOptIn: row.cycle_tracking_opt_in ?? undefined,
+    cycleSymptomScoreToday: row.cycle_symptom_score_today ?? undefined,
+    preventionSessionsWeek: row.prevention_sessions_week ?? undefined,
+    weeklyLoadContext: row.weekly_load_context ?? undefined,
+    healthConsentStatus: row.health_consent_status ?? undefined,
+    healthConsentGrantedAt: row.health_consent_granted_at ?? undefined,
+    healthConsentRevokedAt: row.health_consent_revoked_at ?? undefined,
+    healthConsentSource: row.health_consent_source ?? undefined,
+    healthConsentAuditTrail: row.health_consent_audit_trail ?? undefined,
+    healthDataRetentionState: row.health_data_retention_state ?? undefined,
+  })
+}
 
 const profileToRow = (profile: UserProfile, userId: string) => ({
   id: userId,
