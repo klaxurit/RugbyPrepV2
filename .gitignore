@@ -11,6 +11,32 @@ node_modules
 dist
 dist-ssr
 *.local
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Test and quality outputs
+coverage
+playwright-report
+test-results
+.eslintcache
+
+# Tooling caches
+.cache
+.turbo
+.next
+.vercel
+.wrangler
+.parcel-cache
+.swift-cache
+dev-dist
+
+# Video / Remotion artifacts
+video/build
+video/out
 
 # Editor directories and files
 .vscode/*
