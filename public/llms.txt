@@ -1,0 +1,22 @@
+# RugbyForge
+> Application web francaise de preparation physique rugby pour joueurs, coachs et staffs.
+
+## A propos
+RugbyForge aide a structurer la preparation physique des rugbymen avec des programmes personnalises,
+un suivi de charge simple a lire, des tests physiques et des reperes pratiques pour mieux gerer la progression.
+
+## Pages publiques
+- [Accueil](https://rugbyforge.fr/): presentation du produit, positionnement et appel a l'inscription
+- [Ressources RugbyForge](https://rugbyforge.fr/blog/): contenus publics sur la preparation physique rugby
+- [Guide preparation physique rugby](https://rugbyforge.fr/preparation-physique-rugby/): page pedagogique sur la structuration d'un programme
+- [Mentions legales](https://rugbyforge.fr/legal): CGU, confidentialite et contact
+
+## Faits utiles
+- Langue principale : francais
+- Type de produit : application web de preparation physique rugby
+- Fonctionnalites : suivi ACWR, tests physiques, prevention blessures, planification, coaching IA
+- Public cible : joueurs, entraineurs, clubs et staffs rugby
+
+## Contact
+- Site : https://rugbyforge.fr/
+- Email : bonjour@rugbyforge.fr

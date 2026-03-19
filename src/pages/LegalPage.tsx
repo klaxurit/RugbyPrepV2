@@ -91,7 +91,7 @@ export function LegalPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <PageHeader title="Mentions légales" backTo="/profile" />
+      <PageHeader title="Mentions légales" backTo="/" />
 
       <main className="max-w-md mx-auto px-6 py-6 space-y-6 relative">
 

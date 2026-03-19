@@ -23,14 +23,17 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/auth/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/signup" element={<SignupPage />} />
+          <Route path="/signup" element={<SignupPage />} />
           <Route path="/auth/callback" element={<CallbackPage />} />
           <Route path="/legal" element={<LegalPage />} />
-          <Route path="/landing" element={<LandingPage />} />
 
           <Route element={<RequireAuth />}>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/week" element={<WeekPage />} />

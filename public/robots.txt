@@ -1,0 +1,121 @@
+User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /login
+Disallow: /signup
+Disallow: /home
+Disallow: /onboarding
+Disallow: /profile
+Disallow: /week
+Disallow: /history
+Disallow: /progress
+Disallow: /program
+Disallow: /calendar
+Disallow: /session/
+Disallow: /mobility
+Disallow: /chat
+
+User-agent: GPTBot
+Allow: /
+Disallow: /auth/
+Disallow: /login
+Disallow: /signup
+Disallow: /home
+Disallow: /onboarding
+Disallow: /profile
+Disallow: /week
+Disallow: /history
+Disallow: /progress
+Disallow: /program
+Disallow: /calendar
+Disallow: /session/
+Disallow: /mobility
+Disallow: /chat
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /auth/
+Disallow: /login
+Disallow: /signup
+Disallow: /home
+Disallow: /onboarding
+Disallow: /profile
+Disallow: /week
+Disallow: /history
+Disallow: /progress
+Disallow: /program
+Disallow: /calendar
+Disallow: /session/
+Disallow: /mobility
+Disallow: /chat
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /auth/
+Disallow: /login
+Disallow: /signup
+Disallow: /home
+Disallow: /onboarding
+Disallow: /profile
+Disallow: /week
+Disallow: /history
+Disallow: /progress
+Disallow: /program
+Disallow: /calendar
+Disallow: /session/
+Disallow: /mobility
+Disallow: /chat
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /auth/
+Disallow: /login
+Disallow: /signup
+Disallow: /home
+Disallow: /onboarding
+Disallow: /profile
+Disallow: /week
+Disallow: /history
+Disallow: /progress
+Disallow: /program
+Disallow: /calendar
+Disallow: /session/
+Disallow: /mobility
+Disallow: /chat
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /auth/
+Disallow: /login
+Disallow: /signup
+Disallow: /home
+Disallow: /onboarding
+Disallow: /profile
+Disallow: /week
+Disallow: /history
+Disallow: /progress
+Disallow: /program
+Disallow: /calendar
+Disallow: /session/
+Disallow: /mobility
+Disallow: /chat
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+Sitemap: https://rugbyforge.fr/sitemap.xml

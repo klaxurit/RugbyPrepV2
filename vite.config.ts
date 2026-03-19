@@ -17,13 +17,15 @@ export default defineConfig({
       manifest: {
         name: 'RugbyForge',
         short_name: 'RugbyForge',
-        description: 'Ton programme de préparation physique rugby',
+        description: 'Application de preparation physique rugby avec programmes personnalises, suivi ACWR et prevention blessures.',
+        lang: 'fr',
         theme_color: '#e11d48',
         background_color: '#ffffff',
         display: 'standalone',
         scope: '/',
         start_url: '/',
         orientation: 'portrait',
+        categories: ['sports', 'health', 'productivity'],
         icons: [
           {
             src: '/icons/icon-192.png',

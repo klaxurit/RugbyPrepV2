@@ -1,0 +1,5 @@
+Contact: mailto:bonjour@rugbyforge.fr
+Canonical: https://rugbyforge.fr/.well-known/security.txt
+Expires: 2027-03-18T00:00:00.000Z
+Preferred-Languages: fr, en
+Policy: https://rugbyforge.fr/legal

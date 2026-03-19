@@ -45,34 +45,36 @@ function LandingNavbar() {
   }, [mobileOpen])
 
   const navLinks = [
-    { label: 'Fonctionnalités', target: 'features' },
-    { label: 'La Science', target: 'science' },
-    { label: 'Tarifs', target: 'pricing' },
+    { label: 'Fonctionnalités', href: '#features' },
+    { label: 'La Science', href: '#science' },
+    { label: 'Tarifs', href: '#pricing' },
   ]
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-  }
 
   return (
     <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-[#1a100c]/80 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/landing">
+          <Link to="/">
             <RugbyForgeLogo size="sm" />
           </Link>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <button
-                key={link.target}
-                onClick={() => scrollTo(link.target)}
+              <a
+                key={link.href}
+                href={link.href}
                 className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
               >
                 {link.label}
-              </button>
+              </a>
             ))}
+            <Link
+              to="/auth/login"
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+            >
+              Connexion
+            </Link>
             <Link
               to="/auth/signup"
               className="bg-[#ff6b35] hover:bg-[#e55a2b] text-white text-sm font-semibold px-5 py-2 rounded-xl transition-colors"
@@ -100,14 +102,22 @@ function LandingNavbar() {
           className="md:hidden bg-[#1a100c]/95 backdrop-blur-xl border-b border-white/10 px-4 pb-4"
         >
           {navLinks.map((link) => (
-            <button
-              key={link.target}
-              onClick={() => { scrollTo(link.target); setMobileOpen(false) }}
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileOpen(false)}
               className="block w-full text-left py-3 text-sm font-medium text-slate-300 hover:text-white transition-colors"
             >
               {link.label}
-            </button>
+            </a>
           ))}
+          <Link
+            to="/auth/login"
+            onClick={() => setMobileOpen(false)}
+            className="block py-3 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+          >
+            Connexion
+          </Link>
           <Link
             to="/auth/signup"
             onClick={() => setMobileOpen(false)}
@@ -249,12 +259,12 @@ export function LandingPage() {
                   Commencer gratuitement
                   <ArrowRight className="w-5 h-5" />
                 </Link>
-                <Link
-                  to="/auth/signup"
+                <a
+                  href="#features"
                   className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
                 >
                   Découvrir RugbyForge
-                </Link>
+                </a>
               </div>
             </motion.div>
 
@@ -272,6 +282,9 @@ export function LandingPage() {
                   <img
                     src="/images/landing/app-week.png"
                     alt="RugbyForge — programme de la semaine"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full"
                     onError={(e) => { e.currentTarget.style.display = 'none' }}
                   />
@@ -396,6 +409,8 @@ export function LandingPage() {
                   <img
                     src="/images/landing/tests-progression.png"
                     alt="Tests physiques et progression"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full"
                     onError={(e) => { e.currentTarget.style.display = 'none' }}
                   />
@@ -418,6 +433,8 @@ export function LandingPage() {
                   <img
                     src="/images/landing/acwr-monitoring.png"
                     alt="Monitoring ACWR"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full"
                     onError={(e) => { e.currentTarget.style.display = 'none' }}
                   />
@@ -598,22 +615,22 @@ export function LandingPage() {
               et progresser chaque semaine.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link
-                to="/auth/signup"
-                className="inline-flex items-center gap-2 bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
-              >
-                Commencer gratuitement
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                to="/auth/signup"
-                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
-              >
-                <MessageCircle className="w-5 h-5" />
-                Parler à un expert
-              </Link>
-            </div>
-          </motion.div>
+                <Link
+                  to="/auth/signup"
+                  className="inline-flex items-center gap-2 bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                >
+                  Commencer gratuitement
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link
+                  to="/auth/login"
+                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Se connecter
+                </Link>
+              </div>
+            </motion.div>
         </div>
       </section>
 
@@ -633,19 +650,29 @@ export function LandingPage() {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <a href="#features" className="text-sm text-slate-500 hover:text-white transition-colors">
                     Fonctionnalités
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <a href="#pricing" className="text-sm text-slate-500 hover:text-white transition-colors">
                     Tarifs
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => document.getElementById('science')?.scrollIntoView({ behavior: 'smooth' })} className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <a href="#science" className="text-sm text-slate-500 hover:text-white transition-colors">
                     La Science
-                  </button>
+                  </a>
+                </li>
+                <li>
+                  <a href="/blog/" className="text-sm text-slate-500 hover:text-white transition-colors">
+                    Ressources
+                  </a>
+                </li>
+                <li>
+                  <a href="/preparation-physique-rugby/" className="text-sm text-slate-500 hover:text-white transition-colors">
+                    Guide preparation rugby
+                  </a>
                 </li>
               </ul>
             </div>
@@ -677,8 +704,8 @@ export function LandingPage() {
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="mailto:contact@rugbyforge.com" className="text-sm text-slate-500 hover:text-white transition-colors">
-                    contact@rugbyforge.com
+                  <a href="mailto:bonjour@rugbyforge.fr" className="text-sm text-slate-500 hover:text-white transition-colors">
+                    bonjour@rugbyforge.fr
                   </a>
                 </li>
               </ul>

@@ -1,0 +1,35 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#130C09"/>
+  <circle cx="974" cy="111" r="214" fill="#FF6B35" fill-opacity="0.14"/>
+  <circle cx="148" cy="560" r="198" fill="#1A5F3F" fill-opacity="0.22"/>
+  <rect x="58" y="58" width="1084" height="514" rx="36" fill="url(#paint0_linear)" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="120" y="190" fill="#1A5F3F" font-size="92" font-family="Lexend, Arial, sans-serif" font-weight="900">RUGBY</text>
+  <text x="482" y="190" fill="#FF6B35" font-size="92" font-family="Lexend, Arial, sans-serif" font-weight="900">FORGE</text>
+  <text x="120" y="272" fill="#F8F2EA" font-size="46" font-family="Lexend, Arial, sans-serif" font-weight="700">
+    Preparation physique rugby personnalisee
+  </text>
+  <text x="120" y="338" fill="#CFC7C0" font-size="28" font-family="Lexend, Arial, sans-serif" font-weight="500">
+    Programmes adaptes au poste, suivi ACWR, tests physiques
+  </text>
+  <text x="120" y="380" fill="#CFC7C0" font-size="28" font-family="Lexend, Arial, sans-serif" font-weight="500">
+    prevention blessures et outils concrets pour joueurs et staffs
+  </text>
+  <rect x="120" y="440" width="222" height="66" rx="18" fill="#FF6B35"/>
+  <text x="156" y="483" fill="#FFF7F0" font-size="27" font-family="Lexend, Arial, sans-serif" font-weight="700">
+    rugbyforge.fr
+  </text>
+  <g opacity="0.92">
+    <rect x="760" y="162" width="280" height="314" rx="34" fill="#201510" stroke="#FFFFFF" stroke-opacity="0.08"/>
+    <rect x="788" y="194" width="224" height="18" rx="9" fill="#2B1D16"/>
+    <rect x="788" y="230" width="171" height="48" rx="18" fill="#1A5F3F"/>
+    <rect x="788" y="300" width="224" height="70" rx="24" fill="#16110D"/>
+    <rect x="788" y="388" width="106" height="52" rx="18" fill="#FF6B35"/>
+    <rect x="906" y="388" width="106" height="52" rx="18" fill="#2A201A"/>
+  </g>
+  <defs>
+    <linearGradient id="paint0_linear" x1="58" y1="58" x2="1130" y2="572" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1D130E"/>
+      <stop offset="1" stop-color="#120C09"/>
+    </linearGradient>
+  </defs>
+</svg>
