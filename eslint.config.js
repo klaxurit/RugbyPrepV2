@@ -7,7 +7,15 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'node_modules/**', '.agents/**', '.cursor/**', '.claude/**']),
+  globalIgnores([
+    'dist',
+    'node_modules/**',
+    '.agents/**',
+    '.cursor/**',
+    '.claude/**',
+    'video/build/**',
+    'video/out/**',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
