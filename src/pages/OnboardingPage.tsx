@@ -57,8 +57,6 @@ const EQUIPMENT_OPTIONS: { value: Equipment; label: string; emoji: string }[] = 
   { value: 'ab_wheel',     label: 'Ab Wheel',                  emoji: '⭕' },
 ]
 
-const ALL_EQUIPMENT_VALUES: Equipment[] = EQUIPMENT_OPTIONS.map((o) => o.value)
-
 const INJURY_OPTIONS: { value: Contra; label: string }[] = [
   { value: 'shoulder_pain', label: 'Épaule' },
   { value: 'knee_pain',     label: 'Genou' },

@@ -179,7 +179,7 @@ describe('buildAthletePlanningInputs', () => {
       today: TODAY,
       fatigue: 'OK',
     })
-    expect(r.inputs.planningAnchors).toEqual({ onboardingCycleHint: 'off_season' })
+    expect(r.inputs.planningAnchors).toEqual({ manualCycleOverride: 'off_season' })
   })
 
   it('logs présents + pas de match + seasonMode → hint injecté (seasonMode durable)', () => {
@@ -215,7 +215,7 @@ describe('buildAthletePlanningInputs', () => {
     expect(r.inputs.planningAnchors).toEqual({ onboardingCycleHint: 'pre_season' })
   })
 
-  it('match présent + pas de logs → pas de hint', () => {
+  it('match présent + in_season → manual override pour respecter le réglage profil', () => {
     const r = buildAthletePlanningInputs({
       profile: baseProfile({ seasonMode: 'in_season' }),
       events: [{ date: '2025-04-05', type: 'match' }] as CalendarEvent[],
@@ -223,6 +223,17 @@ describe('buildAthletePlanningInputs', () => {
       today: TODAY,
       fatigue: 'OK',
     })
-    expect(r.inputs.planningAnchors).toBeUndefined()
+    expect(r.inputs.planningAnchors).toEqual({ manualCycleOverride: 'in_season' })
+  })
+
+  it('match présent + pre_season → manual override pour permettre le basculement depuis le profil', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({ seasonMode: 'pre_season' }),
+      events: [{ date: '2025-04-05', type: 'match' }] as CalendarEvent[],
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.planningAnchors).toEqual({ manualCycleOverride: 'pre_season' })
   })
 })

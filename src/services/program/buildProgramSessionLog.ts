@@ -29,15 +29,6 @@ export function mapMotherSessionType(msType: MotherSessionType): SessionType {
   return MOTHER_SESSION_TYPE_MAP[msType] ?? 'FULL'
 }
 
-// ── Legacy recipe → SessionType (reprise du mapping ProgramPage existant) ────
-
-const RECIPE_SESSION_TYPE_MAP: Record<string, SessionType> = {
-  UPPER_V1: 'UPPER', UPPER_HYPER_V1: 'UPPER', UPPER_BUILDER_V1: 'UPPER', UPPER_STARTER_V1: 'UPPER',
-  LOWER_V1: 'LOWER', LOWER_HYPER_V1: 'LOWER', LOWER_BUILDER_V1: 'LOWER', LOWER_STARTER_V1: 'LOWER',
-  FULL_V1: 'FULL', FULL_HYPER_V1: 'FULL', FULL_BUILDER_V1: 'FULL',
-  SPEED_FIELD_PRE_V1: 'CONDITIONING',
-}
-
 // ── Builder legacy ───────────────────────────────────────────────────────────
 
 export function buildLegacyProgramSessionLog(params: {

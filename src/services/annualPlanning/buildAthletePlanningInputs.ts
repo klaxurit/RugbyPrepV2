@@ -34,6 +34,8 @@ export interface BuildAthletePlanningInputsResult {
   }
 }
 
+type PlanningAnchorsResult = AthletePlanningInputs['planningAnchors']
+
 const FRONT_ROW_GROUPS: RugbyPositionGroup[] = ['FRONT_ROW', 'SECOND_ROW', 'BACK_ROW']
 const BACK_THREE_GROUPS: RugbyPositionGroup[] = ['HALF_BACKS', 'CENTERS', 'BACK_THREE']
 
@@ -167,6 +169,29 @@ function buildIdentity(
   }
 }
 
+function resolvePlanningAnchors(
+  profile: UserProfile,
+  hasMatchInCalendar: boolean
+): PlanningAnchorsResult {
+  const seasonMode = profile.seasonMode
+  if (!seasonMode) return undefined
+
+  // Le réglage "Mode saison" du profil est un choix explicite du joueur.
+  // On l'applique comme override fort quand le calendrier fournit assez
+  // d'information pour résoudre proprement la phase choisie.
+  if (seasonMode === 'off_season') {
+    return { manualCycleOverride: 'off_season' }
+  }
+
+  if (hasMatchInCalendar) {
+    return { manualCycleOverride: seasonMode }
+  }
+
+  // Sans match réel, on conserve un fallback déterministe en semaine 1
+  // plutôt que d'échouer pour pre/in-season.
+  return { onboardingCycleHint: seasonMode }
+}
+
 /**
  * Transforme profil + calendrier + historique en entrées du resolver annuel.
  */
@@ -194,14 +219,8 @@ export function buildAthletePlanningInputs(
 
   const identity = buildIdentity(profile, athleteIdentity)
 
-  // seasonMode = base durable tant qu'aucun match réel ne contredit.
-  // Injecté comme hint rank 2 (onboarding_hint) — priorité inférieure au calendrier
-  // et aux ancres explicites, mais supérieure au backfill synthétique.
-  // Les événements non-match (rest, unavailable) ne comptent pas comme contradiction.
   const hasMatchInCalendar = events.some((e) => e.type === 'match')
-  const shouldInjectSeasonHint =
-    !hasMatchInCalendar &&
-    profile.seasonMode != null
+  const planningAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar)
 
   const inputs: AthletePlanningInputs = {
     events: events.map((e) => ({ date: e.date, type: e.type })),
@@ -211,9 +230,7 @@ export function buildAthletePlanningInputs(
     fatigueLevel,
     identity,
     monitoringSnapshot,
-    planningAnchors: shouldInjectSeasonHint
-      ? { onboardingCycleHint: profile.seasonMode }
-      : undefined,
+    planningAnchors,
   }
 
   return {

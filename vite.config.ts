@@ -12,6 +12,12 @@ export default defineConfig({
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'sw.ts',
+      injectManifest: {
+        // The current production bundle is slightly above Workbox's default 2 MiB
+        // precache limit. Raise the threshold so deployment doesn't fail while we
+        // keep chunking work as a separate optimization task.
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+      },
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       manifest: {

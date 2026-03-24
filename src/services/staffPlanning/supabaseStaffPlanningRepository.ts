@@ -137,7 +137,7 @@ export function createSupabaseStaffPlanningRepository(client: SupabaseClient): S
       }
 
       const profileById = new Map<string, ProfileRow>()
-      for (const row of (profileRows ?? []) as ProfileRow[]) {
+      for (const row of (profileRows ?? []) as unknown as ProfileRow[]) {
         profileById.set(row.id, row)
       }
 

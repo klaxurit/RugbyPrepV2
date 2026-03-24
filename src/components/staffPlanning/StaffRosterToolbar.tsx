@@ -8,8 +8,6 @@ import type {
   StaffRosterFilters,
 } from './staffRosterModel'
 
-const ORANGE = '#ff6b35'
-const SURFACE_HIGH = '#1c2028'
 const BG = '#0b0e14'
 
 export interface StaffRosterToolbarProps {

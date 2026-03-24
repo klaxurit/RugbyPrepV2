@@ -388,7 +388,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     }
   }
 
-  if (anchors.manualCycleOverride && anchors.manualCycleOverride !== 'playoffs') {
+  if (anchors.manualCycleOverride) {
     acc.bump('manual_override')
     acc.rule(`rule:manual_cycle=${anchors.manualCycleOverride}`)
     return resolveManualCycle(

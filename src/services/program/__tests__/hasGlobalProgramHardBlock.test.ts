@@ -73,7 +73,7 @@ describe('getGlobalProgramHardBlock', () => {
   it('multi-injuries → pas de hard-block', () => {
     const result = getGlobalProgramHardBlock({
       ...BASE_PROFILE,
-      injuries: ['knee_pain', 'lower_back_pain'],
+      injuries: ['knee_pain', 'low_back_pain'],
     })
     expect(result.hasHardBlock).toBe(false)
   })

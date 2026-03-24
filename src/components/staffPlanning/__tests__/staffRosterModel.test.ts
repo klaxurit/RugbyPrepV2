@@ -14,8 +14,19 @@ function mockAthlete(p: Partial<AthleteStaffWeeklyView>): AthleteStaffWeeklyView
       cycle: 'in_season',
       weekLabel: 'S1',
       positionGroup: 'front_row',
+      isDeloadWeek: false,
       isMatchWeek: false,
+      firstMatchDate: null,
+      lastMatchDate: null,
+      offSeasonStartAt: null,
       daysUntilNextMatch: null,
+      fatigueLevel: 'normal',
+      weeklyFrequency: 3,
+      planningTrace: {
+        resolutionMode: 'backfilled',
+        rulesApplied: [],
+        warnings: [],
+      },
     },
     motherSessions: {
       status: 'resolved',
@@ -39,8 +50,8 @@ function mockAthlete(p: Partial<AthleteStaffWeeklyView>): AthleteStaffWeeklyView
 describe('staffRosterModel', () => {
   it('filtre par fatigue', () => {
     const rows: StaffRosterRowView[] = [
-      { displayName: 'A', athlete: mockAthlete({ load: { fatigueLevel: 'high' } }) },
-      { displayName: 'B', athlete: mockAthlete({ load: { fatigueLevel: 'normal' } }) },
+      { displayName: 'A', athlete: mockAthlete({ load: { fatigueLevel: 'high', latestRpeLoad: null, painFlags: [] } }) },
+      { displayName: 'B', athlete: mockAthlete({ load: { fatigueLevel: 'normal', latestRpeLoad: null, painFlags: [] } }) },
     ]
     const out = filterStaffRosterRows(rows, {
       search: '',

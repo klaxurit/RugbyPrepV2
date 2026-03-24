@@ -17,7 +17,7 @@ type MotherSessionWarmUpProps = {
 function formatWarmUpExerciseName(name: string): string {
   return name.replace(
     /(^|[\s-/])([A-Za-zÀ-ÖØ-öø-ÿ])/g,
-    (match, prefix: string, letter: string) => `${prefix}${letter.toUpperCase()}`
+    (_unused, prefix: string, letter: string) => `${prefix}${letter.toUpperCase()}`
   )
 }
 
