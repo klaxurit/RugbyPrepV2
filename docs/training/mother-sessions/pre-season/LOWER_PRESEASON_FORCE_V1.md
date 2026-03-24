@@ -1,6 +1,6 @@
 # LOWER_PRESEASON_FORCE_V1
 
-- `status`: draft
+- `status`: validated
 - `version`: V1
 - `cycle`: pre_season
 - `session_type`: lower

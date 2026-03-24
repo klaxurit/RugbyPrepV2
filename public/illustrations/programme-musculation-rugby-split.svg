@@ -1,0 +1,40 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="36" fill="#17100D"/>
+  <rect x="32" y="32" width="1136" height="656" rx="28" fill="url(#paint0_linear)"/>
+  <text x="80" y="128" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="54" font-weight="800">Programme musculation rugby</text>
+  <text x="80" y="176" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="24">Priorites a garder en tete selon le profil du joueur</text>
+
+  <rect x="80" y="236" width="320" height="328" rx="28" fill="#304B3E"/>
+  <text x="116" y="290" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="28" font-weight="700">Avants</text>
+  <text x="116" y="334" fill="#DDF0E6" font-family="Lexend, Arial, sans-serif" font-size="20">Force max</text>
+  <text x="116" y="366" fill="#DDF0E6" font-family="Lexend, Arial, sans-serif" font-size="20">Robustesse au contact</text>
+  <text x="116" y="398" fill="#DDF0E6" font-family="Lexend, Arial, sans-serif" font-size="20">Isometries et tronc</text>
+  <text x="116" y="454" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="700">Competition</text>
+  <text x="116" y="484" fill="#DDF0E6" font-family="Lexend, Arial, sans-serif" font-size="18">2 seances: mardi principal, jeudi rappel</text>
+
+  <rect x="440" y="236" width="320" height="328" rx="28" fill="#744526"/>
+  <text x="476" y="290" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="28" font-weight="700">Troisiemes lignes</text>
+  <text x="476" y="334" fill="#FFE0CF" font-family="Lexend, Arial, sans-serif" font-size="20">Puissance</text>
+  <text x="476" y="366" fill="#FFE0CF" font-family="Lexend, Arial, sans-serif" font-size="20">Vitesse utile</text>
+  <text x="476" y="398" fill="#FFE0CF" font-family="Lexend, Arial, sans-serif" font-size="20">Repetition d'efforts</text>
+  <text x="476" y="454" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="700">Pre-saison</text>
+  <text x="476" y="484" fill="#FFE0CF" font-family="Lexend, Arial, sans-serif" font-size="18">3 seances: force, puissance, full body</text>
+
+  <rect x="800" y="236" width="320" height="328" rx="28" fill="#8A2A20"/>
+  <text x="836" y="290" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="28" font-weight="700">Demis / trois-quarts</text>
+  <text x="836" y="334" fill="#FFD6D1" font-family="Lexend, Arial, sans-serif" font-size="20">Acceleration</text>
+  <text x="836" y="366" fill="#FFD6D1" font-family="Lexend, Arial, sans-serif" font-size="20">Appuis et fraicheur</text>
+  <text x="836" y="398" fill="#FFD6D1" font-family="Lexend, Arial, sans-serif" font-size="20">Puissance sans lourdeur</text>
+  <text x="836" y="454" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="700">Point de vigilance</text>
+  <text x="836" y="484" fill="#FFD6D1" font-family="Lexend, Arial, sans-serif" font-size="18">Eviter la fatigue residuelle sur jambes</text>
+
+  <rect x="80" y="600" width="1040" height="64" rx="20" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)"/>
+  <text x="120" y="641" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="20">Un bon programme depend du poste, de la saison et de la charge deja absorbee sur le terrain.</text>
+
+  <defs>
+    <linearGradient id="paint0_linear" x1="70" y1="40" x2="1120" y2="680" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#241813"/>
+      <stop offset="1" stop-color="#150F0C"/>
+    </linearGradient>
+  </defs>
+</svg>

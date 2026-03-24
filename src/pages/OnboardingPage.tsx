@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   ChevronLeft, ChevronRight, CheckCircle2,
   TrendingUp, Bot, Calendar, Check,
@@ -8,7 +8,7 @@ import { RugbyForgeLogo } from '../components/RugbyForgeLogo'
 import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { posthog } from '../services/analytics/posthog'
-import { supabase } from '../services/supabase/client'
+import { resolvePostOnboardingDestination } from '../services/navigation/resolveAppEntryDestination'
 import type {
   UserProfile,
   Equipment,
@@ -20,11 +20,10 @@ import type {
   SeasonMode,
   PopulationSegment,
   AgeBand,
-  PerformanceFocus,
 } from '../types/training'
 import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
 import { GymDaySelector } from '../components/GymDaySelector'
-import { checkBetaEligibility, BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
+import { checkBetaEligibility } from '../services/betaEligibility'
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -125,22 +124,22 @@ const SEASON_MODES: { value: SeasonMode; label: string; sub: string; emoji: stri
   { value: 'pre_season', label: 'Pré-saison',    sub: 'Réathlétisation',             emoji: '🔥' },
 ]
 
-const PERFORMANCE_FOCUS_OPTIONS: { value: PerformanceFocus; label: string; sub: string }[] = [
-  { value: 'balanced', label: 'Équilibré', sub: 'Force + puissance + conditionnement' },
-  { value: 'speed', label: 'Vitesse', sub: 'Pré-saison: priorité sprint / accélération' },
-  { value: 'strength', label: 'Force', sub: 'Priorité charges et robustesse contact' },
-]
-
 const AGE_BAND_OPTIONS: { value: AgeBand; label: string; sub: string }[] = [
   { value: 'adult', label: 'Senior (18+)', sub: 'Autonomie complète' },
   { value: 'u18', label: 'U18', sub: 'Garde-fous mineurs activés' },
 ]
 
-const POPULATION_OPTIONS: { value: PopulationSegment; label: string; sub: string; ageBand: AgeBand }[] = [
-  { value: 'male_senior', label: 'Homme senior', sub: '18+ masculin', ageBand: 'adult' },
-  { value: 'female_senior', label: 'Femme senior', sub: '18+ féminin', ageBand: 'adult' },
-  { value: 'u18_male', label: 'Garçon U18', sub: 'Mineur masculin', ageBand: 'u18' },
-  { value: 'u18_female', label: 'Fille U18', sub: 'Mineure féminine', ageBand: 'u18' },
+const GYM_PRESET: Equipment[] = ['barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box']
+
+const HOME_EQUIPMENT_OPTIONS: { value: Equipment; label: string; emoji: string }[] = [
+  { value: 'dumbbell',     label: 'Haltères',          emoji: '💪' },
+  { value: 'bench',        label: 'Banc',              emoji: '🪑' },
+  { value: 'pullup_bar',   label: 'Barre de traction', emoji: '🔝' },
+  { value: 'band',         label: 'Élastiques',        emoji: '🔴' },
+  { value: 'box',          label: 'Box pliométrique',   emoji: '📦' },
+  { value: 'med_ball',     label: 'Médecine Ball',     emoji: '🔵' },
+  { value: 'ab_wheel',     label: 'Ab Wheel',          emoji: '⭕' },
+  { value: 'sprint_track', label: 'Piste / Gazon',     emoji: '🏃' },
 ]
 
 // ─── BMI helper ───────────────────────────────────────────────
@@ -182,6 +181,8 @@ export function OnboardingPage() {
   const { updateProfile } = useProfile()
   const { authState } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const intendedPath = (location.state as { intendedPath?: string } | null)?.intendedPath ?? null
 
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
@@ -189,9 +190,9 @@ export function OnboardingPage() {
   const [step, setStep] = useState(0)
   const [position, setPosition] = useState<PositionValue | null>(null)
   const [trainingLevel, setTrainingLevel] = useState<TrainingLevel | null>(null)
-  const [performanceFocus, setPerformanceFocus] = useState<PerformanceFocus>('balanced')
   const [ageBand, setAgeBand] = useState<AgeBand>('adult')
-  const [populationSegment, setPopulationSegment] = useState<PopulationSegment>('male_senior')
+  const [gender, setGender] = useState<'male' | 'female'>('male')
+  const [hasGymAccess, setHasGymAccess] = useState<boolean | null>(null)
   const [parentalConsentHealthData, setParentalConsentHealthData] = useState<boolean | null>(null)
   const [seasonMode, setSeasonMode] = useState<SeasonMode>('in_season')
   const [sessions, setSessions] = useState<2 | 3 | null>(null)
@@ -205,7 +206,7 @@ export function OnboardingPage() {
   const [injuries, setInjuries] = useState<Set<Contra>>(new Set())
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
-  const [betaCapReached, setBetaCapReached] = useState(false)
+  // betaCapReached removed — the annual engine supports all profiles now
 
   const STEPS = ['Position', 'Profil', 'Équipement', 'Planning', 'Inconforts', 'Morphologie', 'Résumé']
   const progress = (step / (STEPS.length - 1)) * 100
@@ -239,7 +240,8 @@ export function OnboardingPage() {
       if (ageBand === 'u18' && parentalConsentHealthData === null) return false
       return true
     }
-    // Équipement et morphologie sont optionnels
+    if (step === 2) return hasGymAccess !== null
+    // Morphologie optionnelle
     return true
   }
 
@@ -270,13 +272,17 @@ export function OnboardingPage() {
     const clubSchedule = buildClubSchedule()
     const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
     const finalEquipment = equipment.size > 0 ? Array.from(equipment) : ['none' as Equipment]
+    const derivedPopulationSegment: PopulationSegment =
+      ageBand === 'u18'
+        ? (gender === 'female' ? 'u18_female' : 'u18_male')
+        : (gender === 'female' ? 'female_senior' : 'male_senior')
     const profilePayload = {
       position: position!,
       rugbyPosition: position!,
       level: levelDef.legacyLevel,
       trainingLevel: trainingLevel!,
       seasonMode,
-      performanceFocus: trainingLevel === 'performance' ? performanceFocus : 'balanced',
+      performanceFocus: 'balanced' as const,
       weeklySessions: sessions!,
       equipment: finalEquipment,
       injuries: Array.from(injuries),
@@ -285,7 +291,7 @@ export function OnboardingPage() {
       clubSchedule,
       scSchedule,
       ageBand,
-      populationSegment,
+      populationSegment: derivedPopulationSegment,
       parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
     }
     updateProfile(profilePayload, { source: 'onboarding' })
@@ -294,43 +300,19 @@ export function OnboardingPage() {
     const initialWeek = seasonMode === 'off_season' ? 'H1' : 'W1'
     window.localStorage.setItem('rugbyprep.week.v1', initialWeek)
 
-    // ── Profil inéligible : on sauve le profil mais on ne consomme PAS de slot beta ──
-    // L'utilisateur peut accéder à son espace mais le guard bloquera l'accès programme.
-    if (!onboardingEligibility.isEligible) {
-      posthog.capture('onboarding_completed', {
-        position, trainingLevel, seasonMode, ageBand, populationSegment,
-        performanceFocus: trainingLevel === 'performance' ? performanceFocus : 'balanced',
-        sessions, eligible: false,
-        parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
-      })
-      navigate('/week', { replace: true })
-      return
-    }
-
-    // ── Cap technique beta : vérifier qu'il reste des places ──────────────
-    const BETA_CAP = 100
-    try {
-      const { count } = await supabase
-        .from('profiles')
-        .select('id', { count: 'exact', head: true })
-        .eq('onboarding_complete', true)
-      if (count != null && count >= BETA_CAP) {
-        setBetaCapReached(true)
-        posthog.capture('beta_cap_reached', { count })
-        return
-      }
-    } catch {
-      // Fail-open : en cas d'erreur réseau, on laisse passer. Le PO surveille le dashboard.
-    }
-
+    // ── Tous les profils passent maintenant — le moteur annuel gère tout ──
     if (userId) markOnboardingComplete(userId)
     posthog.capture('onboarding_completed', {
-      position, trainingLevel, seasonMode, ageBand, populationSegment,
-      performanceFocus: trainingLevel === 'performance' ? performanceFocus : 'balanced',
-      sessions, eligible: true,
+      position, trainingLevel, seasonMode, ageBand, gender,
+      populationSegment: derivedPopulationSegment,
+      performanceFocus: 'balanced',
+      sessions,
+      eligible: onboardingEligibility.isEligible,
       parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
     })
-    navigate('/week', { replace: true })
+
+    const destination = resolvePostOnboardingDestination(intendedPath)
+    navigate(destination, { replace: true })
   }
 
   // ─── Éligibilité beta self-serve (calculée dans le corps du composant) ───────
@@ -526,7 +508,6 @@ export function OnboardingPage() {
                         if (opt.value === 'starter') {
                           setSeasonMode('in_season')
                           setSessions(2)
-                          setPerformanceFocus('balanced')
                         }
                       }}
                       className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
@@ -588,42 +569,6 @@ export function OnboardingPage() {
               </div>
             )}
 
-            {trainingLevel === 'performance' && (
-              <div className="space-y-3">
-                <div>
-                  <SectionLabel>Orientation performance</SectionLabel>
-                  <p className="text-[10px] text-white/30 mt-0.5">
-                    La séance vitesse dédiée est activée en pré-saison avec focus vitesse.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  {PERFORMANCE_FOCUS_OPTIONS.map((opt) => {
-                    const selected = performanceFocus === opt.value
-                    return (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => setPerformanceFocus(opt.value)}
-                        className={`w-full flex items-center justify-between gap-3 p-3.5 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
-                          selected
-                            ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                            : 'border-white/10 bg-white/5 hover:border-white/20'
-                        }`}
-                      >
-                        <div>
-                          <p className={`text-xs font-black ${selected ? 'text-[#ff6b35]' : 'text-white/70'}`}>
-                            {opt.label}
-                          </p>
-                          <p className="text-[10px] text-white/35 mt-0.5">{opt.sub}</p>
-                        </div>
-                        {selected && <CheckCircle2 className="w-4 h-4 text-[#ff6b35] flex-shrink-0" />}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-
             {/* Séances par semaine */}
             <div className="space-y-3">
               <SectionLabel>Séances par semaine</SectionLabel>
@@ -671,14 +616,8 @@ export function OnboardingPage() {
                       onClick={() => {
                         setAgeBand(opt.value)
                         if (opt.value === 'u18') {
-                          if (populationSegment !== 'u18_female' && populationSegment !== 'u18_male') {
-                            setPopulationSegment('u18_male')
-                          }
                           setParentalConsentHealthData(null)
                         } else {
-                          if (populationSegment !== 'male_senior' && populationSegment !== 'female_senior') {
-                            setPopulationSegment('male_senior')
-                          }
                           setParentalConsentHealthData(false)
                         }
                       }}
@@ -699,28 +638,27 @@ export function OnboardingPage() {
             </div>
 
             <div className="space-y-3">
-              <SectionLabel>Population ciblée</SectionLabel>
-              <div className="grid grid-cols-1 gap-2.5">
-                {POPULATION_OPTIONS.filter((opt) => opt.ageBand === ageBand).map((opt) => {
-                  const selected = populationSegment === opt.value
+              <SectionLabel>Profil</SectionLabel>
+              <div className="grid grid-cols-2 gap-2.5">
+                {([
+                  { value: 'male' as const, label: 'Joueur' },
+                  { value: 'female' as const, label: 'Joueuse' },
+                ]).map((opt) => {
+                  const selected = gender === opt.value
                   return (
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => setPopulationSegment(opt.value)}
-                      className={`w-full flex items-center justify-between gap-3 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
+                      onClick={() => setGender(opt.value)}
+                      className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                         selected
                           ? 'border-[#ff6b35] bg-[#ff6b35]/10'
                           : 'border-white/10 bg-white/5 hover:border-white/20'
                       }`}
                     >
-                      <div>
-                        <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
-                          {opt.label}
-                        </p>
-                        <p className="text-[10px] text-white/40 mt-0.5">{opt.sub}</p>
-                      </div>
-                      {selected && <CheckCircle2 className="w-5 h-5 text-[#ff6b35] flex-shrink-0" />}
+                      <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                        {opt.label}
+                      </p>
                     </button>
                   )
                 })}
@@ -774,58 +712,98 @@ export function OnboardingPage() {
           <div className="space-y-5">
             <StepTitle
               title="Ton équipement"
-              sub="Sélectionne ce à quoi tu as accès. Rien = poids du corps."
+              sub="On adapte ton programme à ce que tu as."
             />
 
-            {/* Barre compteur + toggle all */}
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-white/40">
-                {equipment.size === 0
-                  ? 'Aucun sélectionné'
-                  : `${equipment.size} sélectionné${equipment.size > 1 ? 's' : ''}`}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  if (equipment.size === ALL_EQUIPMENT_VALUES.length) {
-                    setEquipment(new Set())
-                  } else {
-                    setEquipment(new Set(ALL_EQUIPMENT_VALUES))
-                  }
-                }}
-                className="text-xs font-black text-[#ff6b35] hover:text-[#ff6b35]/80 transition-colors"
-              >
-                {equipment.size === ALL_EQUIPMENT_VALUES.length ? 'Tout désélectionner' : 'Tout sélectionner'}
-              </button>
+            {/* Question binaire salle */}
+            <div className="space-y-3">
+              <SectionLabel>As-tu accès à une salle de sport ?</SectionLabel>
+              <div className="grid grid-cols-2 gap-2.5">
+                {([
+                  { value: true, label: 'Oui' },
+                  { value: false, label: 'Non' },
+                ] as const).map((opt) => {
+                  const selected = hasGymAccess === opt.value
+                  return (
+                    <button
+                      key={String(opt.value)}
+                      type="button"
+                      onClick={() => {
+                        setHasGymAccess(opt.value)
+                        if (opt.value) {
+                          setEquipment(new Set(GYM_PRESET))
+                        } else {
+                          setEquipment(new Set())
+                        }
+                      }}
+                      className={`flex flex-col items-center gap-1 py-4 rounded-2xl border-2 text-center transition-all active:scale-[.97] ${
+                        selected
+                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                      }`}
+                    >
+                      <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                        {opt.label}
+                      </p>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5">
-              {EQUIPMENT_OPTIONS.map((eq) => {
-                const selected = equipment.has(eq.value)
-                return (
-                  <button
-                    key={eq.value}
-                    type="button"
-                    onClick={() => toggleEquipment(eq.value)}
-                    className={`relative flex items-center gap-3 p-3.5 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
-                      selected
-                        ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
-                    }`}
-                  >
-                    <span className="text-lg flex-shrink-0 leading-none">{eq.emoji}</span>
-                    <span className={`text-sm font-bold leading-tight flex-1 ${selected ? 'text-[#ff6b35]' : 'text-white/80'}`}>
-                      {eq.label}
-                    </span>
-                    {selected && (
-                      <span className="w-4 h-4 rounded-full bg-[#ff6b35] flex items-center justify-center flex-shrink-0">
-                        <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
-                      </span>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
+            {/* Salle : confirmation preset */}
+            {hasGymAccess === true && (
+              <div className="p-4 rounded-2xl bg-[#1a5f3f]/15 border border-[#1a5f3f]/30 space-y-1">
+                <p className="text-xs font-black text-[#1a5f3f]">Salle standard sélectionnée</p>
+                <p className="text-[10px] text-white/50 leading-relaxed">
+                  Barre, haltères, banc, traction, élastiques, box. Tu pourras affiner dans ton profil.
+                </p>
+              </div>
+            )}
+
+            {/* Pas de salle : checklist maison */}
+            {hasGymAccess === false && (
+              <div className="space-y-3">
+                <SectionLabel>Matériel disponible</SectionLabel>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {HOME_EQUIPMENT_OPTIONS.map((eq) => {
+                    const selected = equipment.has(eq.value)
+                    return (
+                      <button
+                        key={eq.value}
+                        type="button"
+                        onClick={() => toggleEquipment(eq.value)}
+                        className={`relative flex items-center gap-3 p-3.5 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
+                          selected
+                            ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                            : 'border-white/10 bg-white/5 hover:border-white/20'
+                        }`}
+                      >
+                        <span className="text-lg flex-shrink-0 leading-none">{eq.emoji}</span>
+                        <span className={`text-sm font-bold leading-tight flex-1 ${selected ? 'text-[#ff6b35]' : 'text-white/80'}`}>
+                          {eq.label}
+                        </span>
+                        {selected && (
+                          <span className="w-4 h-4 rounded-full bg-[#ff6b35] flex items-center justify-center flex-shrink-0">
+                            <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEquipment(new Set())
+                    setStep((s) => s + 1)
+                  }}
+                  className="w-full py-3 rounded-2xl border border-white/20 text-sm font-bold text-white/40 hover:border-white/30 hover:text-white/60 transition-all"
+                >
+                  Aucun — poids du corps
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -1107,13 +1085,6 @@ export function OnboardingPage() {
             <div className="bg-white/5 border border-white/10 rounded-[1.75rem] overflow-hidden divide-y divide-white/10">
               <SummaryRow label="Poste" value={POSITIONS.find((p) => p.value === position)?.label ?? '–'} />
               <SummaryRow label="Niveau" value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
-              {trainingLevel === 'performance' && (
-                <SummaryRow
-                  label="Orientation"
-                  value={PERFORMANCE_FOCUS_OPTIONS.find((o) => o.value === performanceFocus)?.label ?? 'Équilibré'}
-                />
-              )}
-              <SummaryRow label="Population" value={POPULATION_OPTIONS.find((p) => p.value === populationSegment)?.label ?? '–'} />
               <SummaryRow label="Période" value={SEASON_MODES.find((m) => m.value === seasonMode)?.label ?? '–'} />
               <SummaryRow label="Séances" value={`${sessions} / semaine`} />
               {ageBand === 'u18' && (
@@ -1125,11 +1096,13 @@ export function OnboardingPage() {
               <SummaryRow
                 label="Équipement"
                 value={
-                  equipment.size > 0
-                    ? Array.from(equipment)
-                        .map((eq) => EQUIPMENT_OPTIONS.find((o) => o.value === eq)?.label ?? eq)
-                        .join(', ')
-                    : 'Poids du corps'
+                  hasGymAccess === true
+                    ? 'Salle standard'
+                    : equipment.size > 0
+                      ? Array.from(equipment)
+                          .map((eq) => [...HOME_EQUIPMENT_OPTIONS, ...EQUIPMENT_OPTIONS].find((o) => o.value === eq)?.label ?? eq)
+                          .join(', ')
+                      : 'Poids du corps'
                 }
               />
               {injuries.size > 0 && (
@@ -1142,57 +1115,39 @@ export function OnboardingPage() {
                   }
                 />
               )}
-              {validHeight && validWeight && bmi && (
-                <SummaryRow
-                  label="Morphologie"
-                  value={`${parsedHeight} cm · ${parsedWeight} kg · IMC ${bmi.toFixed(1)}`}
-                />
-              )}
               {scSchedule && scSchedule.sessions.length > 0 && (
                 <SummaryRow
                   label="Muscu"
                   value={scSchedule.sessions.map((s) => DAY_LABELS[s.day]).join(' · ')}
                 />
               )}
+              {validHeight && validWeight && bmi && (
+                <div className="px-5 py-4 flex items-start gap-4">
+                  <span className="text-xs font-black text-white/40 uppercase tracking-wide w-24 flex-shrink-0 pt-0.5">
+                    Morpho
+                  </span>
+                  <span className="text-sm font-bold text-white/40 leading-relaxed flex-1">
+                    {parsedHeight} cm · {parsedWeight} kg · IMC {bmi.toFixed(1)}
+                  </span>
+                </div>
+              )}
             </div>
 
             {!onboardingEligibility.isEligible && (
-              <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-4 space-y-2">
-                <p className="text-sm font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
-                <ul className="space-y-1">
-                  {onboardingEligibility.reasons.map((r) => (
-                    <li key={r} className="text-xs text-amber-300/80">
-                      · {BETA_ELIGIBILITY_MESSAGES[r].reason} — {BETA_ELIGIBILITY_MESSAGES[r].detail}
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-xs text-white/40">Tu peux quand même créer ton compte. Le programme sera disponible quand le support sera en place.</p>
-              </div>
-            )}
-
-            {betaCapReached && (
-              <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-4 space-y-2">
-                <p className="text-sm font-bold text-amber-400">Places bêta complètes</p>
-                <p className="text-xs text-amber-300/80">
-                  Les 100 places de la bêta sont actuellement prises. Ton profil est enregistré — reviens bientôt ou contacte-nous pour être prévenu quand de nouvelles places seront disponibles.
-                </p>
-                <a
-                  href="mailto:feedback@rugbyforge.fr?subject=Liste%20d'attente%20bêta"
-                  className="inline-block text-sm font-bold text-[#ff6b35] hover:text-[#e55a2b]"
-                >
-                  Nous contacter →
-                </a>
+              <div className="bg-sky-900/20 border border-sky-500/20 rounded-2xl p-4 space-y-2" data-testid="onboarding-non-eligible-info">
+                <p className="text-sm font-bold text-sky-400">Programme adapté à ta période</p>
+                <p className="text-xs text-white/50">Le planificateur annuel te propose un programme adapté à ta période et ton poste.</p>
               </div>
             )}
 
             <button
               type="button"
               onClick={handleFinish}
-              disabled={betaCapReached}
-              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
+              data-testid="onboarding-finish-btn"
+              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
             >
               <CheckCircle2 className="w-5 h-5" />
-              {betaCapReached ? 'Places complètes' : onboardingEligibility.isEligible ? 'Voir mon programme' : 'Terminer et accéder à mon espace'}
+              Voir mon programme
             </button>
           </div>
         )}

@@ -1,6 +1,6 @@
 # FULL_PRESEASON_FORCE_V1
 
-- `status`: draft
+- `status`: validated
 - `version`: V1
 - `cycle`: pre_season
 - `session_type`: full
@@ -106,7 +106,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Rehab finisher:
   - `band external rotation`
   - `serratus reach`
-  - `scapular control drill`
+  - `scap push-up`
 
 ### Knee pain
 - Remove:

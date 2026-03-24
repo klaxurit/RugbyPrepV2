@@ -23,6 +23,11 @@ export type Equipment =
   | 'machine'
   | 'sprint_track'
   | 'ab_wheel'
+  | 'cable'
+  | 'ez_bar'
+  | 'kettlebell'
+  | 'trap_bar'
+  | 'sled'
   | 'none';
 
 export type BlockIntent =
@@ -129,6 +134,19 @@ export type Scheme =
 export type Role = 'prime' | 'contrast' | 'stability' | 'accessory' | 'superset_partner';
 
 export type TrainingLevel = 'starter' | 'builder' | 'performance';
+export type LevelAxisState = TrainingLevel;
+export type LevelPrimaryAxis =
+  | 'exercise_complexity'
+  | 'volume_tolerance'
+  | 'explosive_readiness';
+export type LevelDerivedAxis =
+  | 'intensity_tolerance'
+  | 'optional_block_tolerance';
+export type LevelAxisName = LevelPrimaryAxis | LevelDerivedAxis;
+export type LevelSafetyCapCode =
+  | 'pain_caps_explosive'
+  | 'true_beginner_caps_complexity'
+  | 'inconsistent_recovery_caps_volume';
 export type SeasonMode = 'in_season' | 'off_season' | 'pre_season';
 export type PerformanceFocus = 'balanced' | 'speed' | 'strength';
 export type PopulationSegment =
@@ -148,6 +166,43 @@ export interface HealthConsentAuditEvent {
   source: HealthConsentSource
   actor: 'user' | 'system'
   note?: string
+}
+
+export interface LevelOnboardingAnswersV1 {
+  trainingAge: 1 | 2 | 3
+  patternConfidence: 1 | 2 | 3
+  recentConsistency: 1 | 2 | 3
+  recoveryCapacity: 1 | 2 | 3
+  explosiveExposure: 1 | 2 | 3
+  currentPain: 1 | 2 | 3
+}
+
+export interface LevelAxisScore {
+  average: 1 | 1.5 | 2 | 2.5 | 3
+  state: LevelAxisState
+  source: 'onboarding' | 'derived' | 'usage_refined'
+}
+
+export interface LevelSafetyCap {
+  code: LevelSafetyCapCode
+  appliedTo: LevelAxisName[]
+  note: string
+}
+
+export interface LevelModifierProfileV1 {
+  schemaVersion: 'v1'
+  visibleLabel: TrainingLevel
+  axes: {
+    exerciseComplexity: LevelAxisScore
+    volumeTolerance: LevelAxisScore
+    explosiveReadiness: LevelAxisScore
+    intensityTolerance: LevelAxisScore
+    optionalBlockTolerance: LevelAxisScore
+  }
+  safetyCaps: LevelSafetyCap[]
+  source: 'onboarding_only' | 'onboarding_plus_usage'
+  scoredAt: string
+  lastRefinedAt?: string
 }
 
 export interface BlockExercise {
@@ -195,8 +250,10 @@ export interface UserProfile {
   clubSchedule?: ClubSchedule
   scSchedule?: SCSchedule
   trainingLevel?: TrainingLevel
+  levelModifierProfile?: LevelModifierProfileV1
   seasonMode?: SeasonMode
   performanceFocus?: PerformanceFocus
+  preferredLanguage?: 'fr' | 'en'
   rehabInjury?: RehabInjury
   populationSegment?: PopulationSegment
   ageBand?: AgeBand
@@ -259,6 +316,25 @@ export interface RehabInjury {
 }
 export type FatigueStatus = 'OK' | 'FATIGUE';
 
+export type ProgramSource = 'legacy' | 'mother_session'
+
+export interface SessionLogProgramContext {
+  cycle?: 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
+  weekLabel?: string
+  variant?: 'normal' | 'light'
+  maxBlocks?: number
+  /** Numéro de semaine dans le cycle annuel (ex: 2 pour la 2e semaine off-season). */
+  annualWeekNumber?: number
+  /**
+   * Code stable et lisible de la semaine annuelle — source de vérité pour les mother sessions.
+   * Format : OFF_S01, OFF_S06, PRE_S12, IN_W03, PO_W01.
+   * Pour les mother sessions, cette valeur prime sur `SessionLog.week` (compat legacy).
+   */
+  annualWeekCode?: string
+  offSeasonPhase?: 1 | 2 | 3 | 4
+  preSeasonPhase?: 1 | 2 | 3
+}
+
 export interface SessionLog {
   id: string;
   dateISO: string;
@@ -268,6 +344,13 @@ export interface SessionLog {
   notes?: string;
   rpe?: number;        // 1-10 (effort perçu)
   durationMin?: number; // durée en minutes
+
+  // ── Convergence legacy / mother-session ────────────────────
+  programSource?: ProgramSource;
+  legacyRecipeId?: string;
+  motherSessionId?: string;
+  sessionLabel?: string;
+  programContext?: SessionLogProgramContext;
 }
 
 export type MetricType = ExerciseMetricType;
@@ -279,6 +362,8 @@ export interface ExerciseLogEntry {
   seconds?: number;
   meters?: number;
   note?: string;
+  setsCompleted?: number;  // nombre de séries faites (vs prescrites)
+  rir?: number;            // 0-5, reps in reserve estimé
 }
 
 export interface BlockLog {
@@ -289,6 +374,8 @@ export interface BlockLog {
   blockId: string;
   blockName: string;
   entries: ExerciseLogEntry[];
+  motherSessionId?: string;
+  programSource?: 'legacy' | 'mother_session';
 }
 
 // ─── Club Schedule ───────────────────────────────────────────

@@ -32,7 +32,8 @@ export function RequireAuth() {
   }
 
   if (onboardingStatus === 'incomplete' && location.pathname !== '/onboarding') {
-    return <Navigate to="/onboarding" replace />
+    // Preserve the user's original intent so onboarding can redirect to it after completion
+    return <Navigate to="/onboarding" state={{ intendedPath: location.pathname + location.search }} replace />
   }
 
   return (

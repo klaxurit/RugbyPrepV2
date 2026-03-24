@@ -1,0 +1,39 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="36" fill="#17100D"/>
+  <rect x="32" y="32" width="1136" height="656" rx="28" fill="url(#paint0_linear)"/>
+  <text x="80" y="128" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="54" font-weight="800">ACWR rugby</text>
+  <text x="80" y="176" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="24">Lire rapidement le ratio charge aigue / charge chronique en semaine de match</text>
+
+  <rect x="80" y="252" width="250" height="128" rx="24" fill="#3F4750"/>
+  <text x="110" y="304" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="30" font-weight="700">&lt; 0.8</text>
+  <text x="110" y="344" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="22">Sous-charge</text>
+  <text x="110" y="374" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="18">Remonter sans pic brutal</text>
+
+  <rect x="350" y="252" width="250" height="128" rx="24" fill="#1A5F3F"/>
+  <text x="380" y="304" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="30" font-weight="700">0.8 - 1.3</text>
+  <text x="380" y="344" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="22">Zone optimale</text>
+  <text x="380" y="374" fill="#DDF0E6" font-family="Lexend, Arial, sans-serif" font-size="18">Maintenir le plan</text>
+
+  <rect x="620" y="252" width="250" height="128" rx="24" fill="#9A5524"/>
+  <text x="650" y="304" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="30" font-weight="700">1.3 - 1.5</text>
+  <text x="650" y="344" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="22">Vigilance</text>
+  <text x="650" y="374" fill="#FFE0CF" font-family="Lexend, Arial, sans-serif" font-size="18">Limiter le volume gratuit</text>
+
+  <rect x="890" y="252" width="230" height="128" rx="24" fill="#8A2A20"/>
+  <text x="920" y="304" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="30" font-weight="700">&gt; 1.5</text>
+  <text x="920" y="344" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="22">Danger</text>
+  <text x="920" y="374" fill="#FFD6D1" font-family="Lexend, Arial, sans-serif" font-size="18">Deload ou activation</text>
+
+  <rect x="80" y="448" width="1040" height="168" rx="28" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)"/>
+  <text x="120" y="504" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="26" font-weight="700">Mode d'emploi rapide</text>
+  <text x="120" y="548" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="22">1. Additionner la charge de la semaine: session-RPE x duree</text>
+  <text x="120" y="584" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="22">2. Comparer a la moyenne des quatre semaines precedentes</text>
+  <text x="120" y="620" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="22">3. Lire la zone avant d'ajouter une seance lourde ou du volume accessoire</text>
+
+  <defs>
+    <linearGradient id="paint0_linear" x1="70" y1="40" x2="1120" y2="680" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#241813"/>
+      <stop offset="1" stop-color="#150F0C"/>
+    </linearGradient>
+  </defs>
+</svg>

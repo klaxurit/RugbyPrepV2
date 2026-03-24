@@ -54,15 +54,17 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Coaching notes:
   - Hip thrust stays powerful and clean, with a hard lockout and no lumbar overextension.
   - The unilateral pattern supports sprint mechanics, force application, and change-of-direction robustness.
+  - In a `2x/week` format, the trap bar contrast remains the primary hinge exposure of the week, so keep Block 1 sharp before chasing more support volume here.
   - This block should feel athletic and useful, not like a heavy bodybuilding lower day.
 
 ### Block 3 - Back Three Finisher
 - Format: `EMOM 8'`
 - Exercise A: minute 1 `Light Sled Push` `15-20m`
-- Exercise B: minute 2 `Pallof Press Hold` or `Side Plank` `15-20s/side`
+- Exercise B: minute 2 `Copenhagen Hold` `15-20s/side`
 - Coaching notes:
   - Sled load stays light enough to preserve speed and posture.
-  - The trunk drill should reinforce stiffness and control, not become a fatigue contest.
+  - Copenhagen should reinforce adductors, trunk control, and change-of-direction robustness without becoming a fatigue contest.
+  - If adductor load is already high that week, replace with `Pallof Hold` or `Side Plank`.
   - If no sled is available, replace with `Suitcase Carry` `20m/side`.
 
 ## Progression Rules
@@ -100,7 +102,6 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Replace with:
   - `Hip Thrust`
   - reduced-range split squat or box-supported variation if tolerated
-  - reduced-range split squat or box-supported variation if tolerated
 - Rehab finisher:
   - light knee-control work if needed
 
@@ -110,7 +111,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - `Hip Thrust`
   - heavy sled if posture cannot stay clean
 - Replace with:
-  - hip thrust
+  - `Glute Bridge`
   - supported unilateral pattern
   - lighter anti-rotation/trunk option
 - Rehab finisher:

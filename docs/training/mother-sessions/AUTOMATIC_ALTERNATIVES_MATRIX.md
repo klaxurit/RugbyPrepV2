@@ -70,6 +70,27 @@ Priority order for substitutions:
 - Shoulder pain alternative:
   - remove explosive push and use a scap/trunk support option
 
+### Push Press
+- Primary use:
+  - pre-season upper/full power
+  - terrain ballistic fallback
+- Automatic alternative if unavailable:
+  - `Explosive Landmine Press`
+- Standard fallback:
+  - `Strict Standing Overhead Press`
+- Shoulder pain alternative:
+  - `Landmine Press`
+
+### Strict Standing Overhead Press
+- Primary use:
+  - pre-season upper force / force-power support
+- Automatic alternative if unavailable:
+  - `Neutral-Grip DB Press`
+- Standard fallback:
+  - `Push Press`
+- Shoulder pain alternative:
+  - `Landmine Press`
+
 ---
 
 ## 2. Upper Pull
@@ -111,6 +132,27 @@ Priority order for substitutions:
 - Low back pain alternative:
   - `Chest-Supported Row`
 
+### T-Bar Row
+- Primary use:
+  - pre-season upper support strength
+- Automatic alternative if unavailable:
+  - `Chest-Supported Row`
+- Standard fallback:
+  - `Single-Arm DB Row`
+- Low back pain alternative:
+  - `Chest-Supported Row`
+
+### Neutral-Grip Pull-Up
+- Primary use:
+  - pre-season main pull
+  - upper power support
+- Automatic alternative if unavailable:
+  - `Lat Pulldown`
+- Standard fallback:
+  - `Chest-Supported Row`
+- Shoulder pain alternative:
+  - neutral-grip pulldown or row
+
 ---
 
 ## 3. Lower Main Lift
@@ -142,8 +184,30 @@ Priority order for substitutions:
 ### Front Squat
 - Primary use:
   - front-row full body opening
+  - back-three full-body power opening
 - Automatic alternative if unavailable:
   - `Box Squat`
+- Standard fallback:
+  - `Goblet Squat`
+- Knee pain alternative:
+  - `Hip Thrust`
+
+### Pin Back Squat
+- Primary use:
+  - pre-season lower force / force-power opening
+- Automatic alternative if unavailable:
+  - `Back Squat`
+- Standard fallback:
+  - `Front Squat`
+- Knee pain alternative:
+  - `Hip Thrust`
+
+### Back Squat
+- Primary use:
+  - pre-season lower force fallback
+  - lower-body main lift support
+- Automatic alternative if unavailable:
+  - `Front Squat`
 - Standard fallback:
   - `Goblet Squat`
 - Knee pain alternative:
@@ -204,6 +268,36 @@ Priority order for substitutions:
 - Low back pain alternative:
   - remove and keep the rest of the primer intact
 
+### Kettlebell Swing
+- Primary use:
+  - ballistic hinge fallback
+- Automatic alternative if unavailable:
+  - `Banded KB Swing`
+- Standard fallback:
+  - `Broad Jump`
+- Low back pain alternative:
+  - remove
+
+### Single-Leg Romanian Deadlift
+- Primary use:
+  - back-three lower unilateral posterior-chain support
+- Automatic alternative if unavailable:
+  - `DB Romanian Deadlift`
+- Standard fallback:
+  - `Barbell Romanian Deadlift`
+- Low back pain alternative:
+  - `Hip Thrust`
+
+### Nordic Curl
+- Primary use:
+  - hamstring micro-dose / sprint resilience
+- Automatic alternative if unavailable:
+  - assisted Nordic regression
+- Standard fallback:
+  - sliding leg curl
+- Low back pain note:
+  - usually keep if hamstrings tolerate it; remove only if cramping or compensation is excessive
+
 ---
 
 ## 5. Jump / Power / Ballistic
@@ -245,6 +339,88 @@ Priority order for substitutions:
   - `Countermovement Jump`
 - Knee pain alternative:
   - remove
+
+### Box Jump
+- Primary use:
+  - jump fallback when landing stress needs to drop
+- Automatic alternative if unavailable:
+  - `Countermovement Jump`
+- Standard fallback:
+  - `Squat Jump`
+- Knee pain alternative:
+  - remove
+
+### Squat Jump
+- Primary use:
+  - hard-surface jump fallback
+- Automatic alternative if unavailable:
+  - `Countermovement Jump`
+- Standard fallback:
+  - `Vertical Jump to Stick`
+- Knee pain alternative:
+  - remove
+
+### Lateral Bound
+- Primary use:
+  - terrain frontal-plane plyometric exposure
+- Automatic alternative if unavailable:
+  - `Lateral Shuffle`
+- Standard fallback:
+  - low-amplitude skater hop
+- Knee pain alternative:
+  - remove
+
+### Split Jump
+- Primary use:
+  - unilateral plyometric fallback
+- Automatic alternative if unavailable:
+  - `Band-Assisted Split Jump`
+- Standard fallback:
+  - `Lateral Bound`
+- Knee pain alternative:
+  - remove
+
+### Band-Assisted Split Jump
+- Primary use:
+  - back-three lower power cluster
+- Automatic alternative if unavailable:
+  - `Split Jump`
+- Standard fallback:
+  - `Single-Leg Bound`
+- Knee pain alternative:
+  - remove
+
+### Single-Leg Bound
+- Primary use:
+  - unilateral projection fallback
+- Automatic alternative if unavailable:
+  - `Split Jump`
+- Standard fallback:
+  - `Lateral Bound`
+- Knee pain alternative:
+  - remove
+
+### Med Ball Chest Pass
+- Primary use:
+  - upper ballistic pair
+  - terrain upper ballistic block
+- Automatic alternative if unavailable:
+  - `Supine Med Ball Throw`
+- Standard fallback:
+  - `Plyo Push-Up`
+- Shoulder pain alternative:
+  - remove or use pain-free cable press derivative
+
+### Med Ball Rotational Throw
+- Primary use:
+  - pre-season rotation power
+  - terrain trunk ballistic work
+- Automatic alternative if unavailable:
+  - `Cable Rotation`
+- Standard fallback:
+  - `Cable Chop`
+- Shoulder pain alternative:
+  - reduce range or remove
 
 ### Supine Med Ball Throw
 - Primary use:
@@ -324,6 +500,28 @@ Priority order for substitutions:
 - Standard fallback:
   - `Suitcase Carry`
 
+### Cable Chop
+- Primary use:
+  - trunk support
+  - rotation fallback when med ball is unavailable
+- Automatic alternative if unavailable:
+  - `Cable Rotation`
+- Standard fallback:
+  - `Pallof Hold`
+- Low back pain alternative:
+  - lighter anti-rotation pattern
+
+### Cable Rotation
+- Primary use:
+  - rotational power fallback
+  - terrain med-ball substitute
+- Automatic alternative if unavailable:
+  - `Cable Chop`
+- Standard fallback:
+  - `Pallof Hold`
+- Low back pain alternative:
+  - `Pallof Hold`
+
 ### Landmine Rotation
 - Primary use:
   - trunk / rotation support
@@ -354,9 +552,127 @@ Priority order for substitutions:
 - Automatic alternative if unavailable:
   - `Neck Isometric`
 
+### Tibialis Raise
+- Primary use:
+  - lower-leg support
+- Automatic alternative if unavailable:
+  - `Wall Tibialis Raise`
+- Standard fallback:
+  - dorsiflexion band raise
+
+### Wall Tibialis Raise
+- Primary use:
+  - terrain or minimal-equipment tibialis work
+- Automatic alternative if unavailable:
+  - `Tibialis Raise`
+- Standard fallback:
+  - dorsiflexion band raise
+
+### Seated Calf Raise
+- Primary use:
+  - lower-leg support in gym
+- Automatic alternative if unavailable:
+  - `Single-Leg Calf Raise`
+- Standard fallback:
+  - standing calf raise
+
+### Single-Leg Calf Raise
+- Primary use:
+  - field or minimal-equipment calf support
+- Automatic alternative if unavailable:
+  - `Seated Calf Raise`
+- Standard fallback:
+  - standing double-leg calf raise
+
 ---
 
-## 7. Reward / Pump
+## 7. Field Speed / COD
+
+### Short Acceleration Sprint / Free Acceleration Sprint
+- Primary use:
+  - terrain speed-power session
+- Automatic alternative if unavailable:
+  - `Falling Start Sprint`
+- Standard fallback:
+  - explosive `5-8m` start
+- Knee pain alternative:
+  - reduced-distance technical acceleration drill
+
+### Resisted Acceleration
+- Primary use:
+  - terrain contrast sprint
+- Automatic alternative if unavailable:
+  - `Falling Start Sprint`
+- Standard fallback:
+  - `Split Stance Start Sprint`
+- Low back pain alternative:
+  - free short acceleration drill
+
+### 5-10-5 Shuttle
+- Primary use:
+  - simple COD base drill
+- Automatic alternative if unavailable:
+  - short `T-Drill`
+- Standard fallback:
+  - `Reactive Start Drill`
+- Knee pain alternative:
+  - reduced-distance change-of-direction drill
+
+### Reactive Start to 45-Degree Cut
+- Primary use:
+  - terrain reactive COD
+- Automatic alternative if unavailable:
+  - `Reactive Start Drill`
+- Standard fallback:
+  - pre-planned `45-degree cut`
+- Knee pain alternative:
+  - straight-line acceleration only
+
+### Reactive Start Drill
+- Primary use:
+  - reduced-space reactive acceleration
+- Automatic alternative if unavailable:
+  - explosive `5m` sprint start
+- Standard fallback:
+  - `Wall Drill March`
+
+### A-Skip
+- Primary use:
+  - speed-session warm-up / reduced-space fallback
+- Automatic alternative if unavailable:
+  - `Wall Drill March`
+- Standard fallback:
+  - ankling drill
+
+### Wall Drill March
+- Primary use:
+  - acceleration mechanics warm-up / reduced-space fallback
+- Automatic alternative if unavailable:
+  - `A-Skip`
+- Standard fallback:
+  - marching start drill
+
+### Sprint Sprawl
+- Primary use:
+  - no-med-ball full-body explosive fallback
+- Automatic alternative if unavailable:
+  - `Explosive Reverse Lunge`
+- Standard fallback:
+  - `Plyo Push-Up`
+
+### Explosive Reverse Lunge
+- Primary use:
+  - no-med-ball lower/trunk explosive fallback
+- Automatic alternative if unavailable:
+  - `Sprint Sprawl`
+- Standard fallback:
+  - bodyweight reverse lunge
+- Knee pain alternative:
+  - remove
+
+---
+
+## 8. Reward / Pump
 
 ### Hammer Curl
 - Primary use:
@@ -394,7 +710,7 @@ Priority order for substitutions:
 
 ---
 
-## 8. Implementation Notes
+## 9. Implementation Notes
 
 Recommended mapping logic in the app, later:
 1. Try exact mother-session exercise.

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { SessionLog } from '../types/training'
+import type { SessionLog, SessionLogProgramContext } from '../types/training'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { DEMO_MODE_KEY } from '../data/fakeDataForProgress'
@@ -40,6 +40,11 @@ type SessionLogRow = {
   notes: string | null
   rpe: number | null
   duration_min: number | null
+  program_source: string | null
+  legacy_recipe_id: string | null
+  mother_session_id: string | null
+  session_label: string | null
+  program_context: Record<string, unknown> | null
 }
 
 const rowToLog = (row: SessionLogRow): SessionLog => ({
@@ -51,6 +56,13 @@ const rowToLog = (row: SessionLogRow): SessionLog => ({
   notes: row.notes ?? undefined,
   rpe: row.rpe ?? undefined,
   durationMin: row.duration_min ?? undefined,
+  programSource: (row.program_source as SessionLog['programSource']) ?? undefined,
+  legacyRecipeId: row.legacy_recipe_id ?? undefined,
+  motherSessionId: row.mother_session_id ?? undefined,
+  sessionLabel: row.session_label ?? undefined,
+  programContext: row.program_context
+    ? (row.program_context as SessionLogProgramContext)
+    : undefined,
 })
 
 const logToRow = (log: SessionLog, userId: string) => ({
@@ -63,6 +75,11 @@ const logToRow = (log: SessionLog, userId: string) => ({
   notes: log.notes ?? null,
   rpe: log.rpe ?? null,
   duration_min: log.durationMin ?? null,
+  program_source: log.programSource ?? null,
+  legacy_recipe_id: log.legacyRecipeId ?? null,
+  mother_session_id: log.motherSessionId ?? null,
+  session_label: log.sessionLabel ?? null,
+  program_context: log.programContext ?? {},
 })
 
 // ─── Hook ────────────────────────────────────────────────────
@@ -79,7 +96,7 @@ export const useHistory = () => {
     if (typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1') return
     supabase
       .from('session_logs')
-      .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min')
+      .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context')
       .order('date_iso', { ascending: false })
       .then(({ data, error }) => {
         if (error || !data) return
@@ -99,7 +116,7 @@ export const useHistory = () => {
         const { data, error } = await supabase
           .from('session_logs')
           .insert(logToRow(completeLog, userId))
-          .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min')
+          .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context')
           .single()
         if (!error && data) {
           // Use the server-returned row (same data, server-assigned id if needed)

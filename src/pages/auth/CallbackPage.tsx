@@ -21,7 +21,7 @@ export function CallbackPage() {
     if (authState.status === 'authenticated' && authState.user) {
       if (onboardingStatus === 'loading') return
 
-      const dest = onboardingStatus === 'complete' ? '/week' : '/onboarding'
+      const dest = onboardingStatus === 'complete' ? '/program' : '/onboarding'
       navigate(dest, { replace: true })
       return
     }

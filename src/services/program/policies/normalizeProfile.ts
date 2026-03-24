@@ -20,7 +20,11 @@ const isPerformanceFocus = (value: unknown): value is PerformanceFocus =>
   typeof value === 'string' && PERFORMANCE_FOCUSES.includes(value as PerformanceFocus)
 
 export const normalizeProfileInput = (profileInput: UserProfileInput): UserProfile => {
-  const trainingLevel: TrainingLevel = isTrainingLevel(profileInput.trainingLevel)
+  const levelModifierVisibleLabel = profileInput.levelModifierProfile?.visibleLabel
+
+  const trainingLevel: TrainingLevel = isTrainingLevel(levelModifierVisibleLabel)
+    ? levelModifierVisibleLabel
+    : isTrainingLevel(profileInput.trainingLevel)
     ? profileInput.trainingLevel
     : 'starter'
 

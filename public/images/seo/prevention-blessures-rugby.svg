@@ -1,0 +1,42 @@
+<svg width="800" height="360" viewBox="0 0 800 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="360" rx="32" fill="#120C09"/>
+  <rect x="24" y="24" width="752" height="312" rx="24" fill="#1B130F" stroke="rgba(255,255,255,0.14)"/>
+  <text x="48" y="64" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="28" font-weight="800">
+    Prévention blessures rugby
+  </text>
+  <text x="48" y="94" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="14">
+    Les 4 leviers les plus utiles pour garder le joueur disponible
+  </text>
+
+  <rect x="48" y="122" width="330" height="88" rx="20" fill="#221915" stroke="#FF6B35" stroke-opacity="0.45"/>
+  <circle cx="84" cy="166" r="18" fill="#FF6B35" fill-opacity="0.18"/>
+  <text x="76" y="172" fill="#FF6B35" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="800">1</text>
+  <text x="114" y="156" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="700">Charge progressive</text>
+  <text x="114" y="182" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="13">
+    ACWR, volume, fatigue et densité de semaine
+  </text>
+
+  <rect x="422" y="122" width="330" height="88" rx="20" fill="#161F1A" stroke="#1A5F3F" stroke-opacity="0.65"/>
+  <circle cx="458" cy="166" r="18" fill="#1A5F3F" fill-opacity="0.22"/>
+  <text x="450" y="172" fill="#66C18C" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="800">2</text>
+  <text x="488" y="156" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="700">Prehab ciblé</text>
+  <text x="488" y="182" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="13">
+    Épaule, cou, ischios, hanche, genou, cheville
+  </text>
+
+  <rect x="48" y="228" width="330" height="88" rx="20" fill="#181716" stroke="rgba(255,255,255,0.18)"/>
+  <circle cx="84" cy="272" r="18" fill="#F8F2EA" fill-opacity="0.12"/>
+  <text x="76" y="278" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="800">3</text>
+  <text x="114" y="262" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="700">Repères terrain</text>
+  <text x="114" y="288" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="13">
+    CMJ, sprint, douleurs, asymétries et contrôle unilatéral
+  </text>
+
+  <rect x="422" y="228" width="330" height="88" rx="20" fill="#231915" stroke="#FF6B35" stroke-opacity="0.3"/>
+  <circle cx="458" cy="272" r="18" fill="#FF6B35" fill-opacity="0.18"/>
+  <text x="450" y="278" fill="#FF6B35" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="800">4</text>
+  <text x="488" y="262" fill="#F8F2EA" font-family="Lexend, Arial, sans-serif" font-size="18" font-weight="700">Retour progressif</text>
+  <text x="488" y="288" fill="#D2C9BF" font-family="Lexend, Arial, sans-serif" font-size="13">
+    Réexposition graduelle au contact, à la vitesse et au volume
+  </text>
+</svg>

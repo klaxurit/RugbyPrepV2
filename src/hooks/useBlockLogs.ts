@@ -38,6 +38,8 @@ type BlockLogRow = {
   block_id: string
   block_name: string
   entries: ExerciseLogEntry[]
+  mother_session_id?: string | null
+  program_source?: string | null
 }
 
 const rowToLog = (row: BlockLogRow): BlockLog => ({
@@ -48,6 +50,8 @@ const rowToLog = (row: BlockLogRow): BlockLog => ({
   blockId: row.block_id,
   blockName: row.block_name,
   entries: row.entries,
+  motherSessionId: row.mother_session_id ?? undefined,
+  programSource: (row.program_source as BlockLog['programSource']) ?? undefined,
 })
 
 const logToRow = (log: BlockLog, userId: string) => ({
@@ -59,6 +63,8 @@ const logToRow = (log: BlockLog, userId: string) => ({
   block_id: log.blockId,
   block_name: log.blockName,
   entries: log.entries,
+  mother_session_id: log.motherSessionId ?? null,
+  program_source: log.programSource ?? 'legacy',
 })
 
 // ─── Hook ────────────────────────────────────────────────────
@@ -75,7 +81,8 @@ export const useBlockLogs = () => {
     if (typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1') return
     supabase
       .from('block_logs')
-      .select('id, date_iso, week, session_type, block_id, block_name, entries')
+      .select('id, date_iso, week, session_type, block_id, block_name, entries, mother_session_id, program_source')
+      .eq('user_id', userId)
       .order('date_iso', { ascending: false })
       .then(({ data, error }) => {
         if (error || !data) return
@@ -88,14 +95,19 @@ export const useBlockLogs = () => {
   const addBlockLog = useCallback(
     async (log: Omit<BlockLog, 'id'>) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-      const next: BlockLog = { ...log, id }
+      // Guard: only DB-valid session types — anything else remaps to FULL
+      const DB_VALID_SESSION_TYPES = new Set(['UPPER', 'LOWER', 'FULL', 'CONDITIONING'])
+      const safeSessionType = DB_VALID_SESSION_TYPES.has(log.sessionType)
+        ? log.sessionType
+        : 'FULL' as BlockLog['sessionType']
+      const next: BlockLog = { ...log, sessionType: safeSessionType, id }
       const demoMode = typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1'
 
       if (userId && !demoMode) {
         const { data, error } = await supabase
           .from('block_logs')
           .insert(logToRow(next, userId))
-          .select('id, date_iso, week, session_type, block_id, block_name, entries')
+          .select('id, date_iso, week, session_type, block_id, block_name, entries, mother_session_id, program_source')
           .single()
         if (!error && data) {
           const saved = rowToLog(data as BlockLogRow)

@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, User } from 'lucide-react'
 import { RugbyForgeLogo } from './RugbyForgeLogo'
 import type { ReactNode } from 'react'
+import { useAuth } from '../hooks/useAuth'
+import { useProfile } from '../hooks/useProfile'
+import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 
 interface PageHeaderProps {
   /** Titre de la page affiché sous le logo */
@@ -22,13 +25,20 @@ interface PageHeaderProps {
  */
 export function PageHeader({ title, backTo, titleSuffix, right, variant = 'dark' }: PageHeaderProps) {
   const isDark = variant === 'dark'
+  const { authState } = useAuth()
+  const { profile } = useProfile()
+  const currentUser = authState.status === 'authenticated' ? authState.user : null
+  const clubLogoUrl = getClubLogoUrl(profile.clubCode)
+  const clubMonogram = getClubMonogram(profile.clubName)
+  const showProfileAvatar = currentUser != null
+  const rightOffsetRing = isDark ? 'focus-visible:ring-offset-[#1a100c]' : 'focus-visible:ring-offset-white'
   return (
     <header
       className={`px-6 py-4 backdrop-blur flex items-center justify-between sticky top-0 z-50 relative ${
         isDark ? 'bg-[#1a100c]/95 border-b border-white/10' : 'bg-white/95 border-b border-gray-100'
       }`}
-    >
-      <div className="flex items-center gap-3 min-w-0 flex-1">
+      >
+        <div className="flex items-center gap-3 min-w-0 flex-1">
         {backTo && (
           <Link
             to={backTo}
@@ -58,7 +68,43 @@ export function PageHeader({ title, backTo, titleSuffix, right, variant = 'dark'
           </h1>
         </div>
       </div>
-      {right && <div className="flex items-center gap-2 flex-shrink-0">{right}</div>}
+      {(right || showProfileAvatar) && (
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {right}
+              {showProfileAvatar ? (
+          <Link
+            to="/profile"
+            aria-label="Voir mon profil"
+            className={`block rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b35] focus-visible:ring-offset-2 ${rightOffsetRing}`}
+          >
+            <div className="relative h-11 w-11">
+              <div className="h-11 w-11 rounded-full bg-white/10 border border-white/10 overflow-hidden flex items-center justify-center">
+                {currentUser?.avatarUrl ? (
+                  <img
+                    src={currentUser.avatarUrl}
+                    alt="Avatar"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <User className="w-5 h-5 text-white/30" />
+                )}
+              </div>
+              <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-[#1a100c] border border-white/10 flex items-center justify-center overflow-hidden">
+                {clubLogoUrl ? (
+                  <img
+                    src={clubLogoUrl}
+                    alt={profile.clubName ?? 'Club'}
+                    className="h-full w-full object-contain"
+                  />
+                ) : (
+                  <span className="text-[8px] font-black text-white/50">{clubMonogram}</span>
+                )}
+              </div>
+            </div>
+          </Link>
+          ) : null}
+        </div>
+      )}
     </header>
   )
 }

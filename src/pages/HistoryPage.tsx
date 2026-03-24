@@ -1,19 +1,20 @@
 import { Link } from 'react-router-dom'
 import { Trash2, Calendar, Activity, Dumbbell, Zap, ChevronDown } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
+import { getProgramHistorySummary } from '../services/program/programHistoryAnalytics'
+import {
+  getSessionLogDisplayTitle,
+  getSessionLogPrimaryWeekLabel,
+  getSessionLogSourceLabel,
+  getSessionLogSourceTone,
+  getSessionLogCycleLabel,
+  SOURCE_BADGE_STYLES,
+} from '../services/program/sessionLogPresentation'
 import type { SessionType, CycleWeek } from '../types/training'
-
-const sessionTypeLabel: Record<SessionType, string> = {
-  UPPER: 'Haut du Corps',
-  LOWER: 'Bas du Corps',
-  FULL: 'Corps Complet',
-  CONDITIONING: 'Conditionnement',
-  RECOVERY: 'Récupération',
-}
 
 const sessionTypeStyles: Record<SessionType, string> = {
   UPPER: 'bg-blue-900/20 text-blue-400',
@@ -44,6 +45,9 @@ export function HistoryPage() {
   const { logs: blockLogs } = useBlockLogs()
   const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null)
 
+  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+  const summary = useMemo(() => getProgramHistorySummary(logs, today), [logs, today])
+
   return (
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
@@ -69,14 +73,26 @@ export function HistoryPage() {
 
         {/* Stats rapides */}
         {logs.length > 0 && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3" data-testid="history-stats">
             <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
-              <div className="text-2xl font-black text-white">{logs.length}</div>
+              <div className="text-2xl font-black text-white" data-testid="stat-total">{summary.totalSessions}</div>
               <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">Séances totales</div>
             </div>
             <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
-              <div className="text-2xl font-black text-white">{blockLogs.length}</div>
-              <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">Blocs enregistrés</div>
+              <div className="text-2xl font-black text-white" data-testid="stat-7d">{summary.sessionsLast7d}</div>
+              <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">7 derniers jours</div>
+            </div>
+            <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
+              <div className="text-2xl font-black text-white" data-testid="stat-28d">{summary.sessionsLast28d}</div>
+              <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">28 derniers jours</div>
+            </div>
+            <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
+              <div className="text-xs font-black text-white/70 flex items-center gap-2">
+                <span className="text-emerald-400" data-testid="stat-mother">{summary.motherSessions}</span>
+                <span className="text-white/20">/</span>
+                <span className="text-blue-400" data-testid="stat-legacy">{summary.legacySessions}</span>
+              </div>
+              <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">Annuel / Legacy</div>
             </div>
           </div>
         )}
@@ -100,29 +116,44 @@ export function HistoryPage() {
             </div>
           ) : (
             <div className="bg-white/5 border border-white/10 rounded-[24px] overflow-hidden divide-y divide-white/5">
-              {logs.map((log) => (
-                <div key={log.id} className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 ${sessionTypeStyles[log.sessionType]}`}>
-                      {sessionTypeIcon[log.sessionType]}
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-white">{sessionTypeLabel[log.sessionType]}</div>
-                      <div className="text-xs text-white/40 italic">
-                        {weekLabel(log.week)} · {formatDate(log.dateISO)}
+              {logs.map((log) => {
+                const title = getSessionLogDisplayTitle(log)
+                const weekPart = getSessionLogPrimaryWeekLabel(log)
+                const cyclePart = getSessionLogCycleLabel(log)
+                const sourceLabel = getSessionLogSourceLabel(log)
+                const sourceTone = getSessionLogSourceTone(log)
+
+                return (
+                  <div key={log.id} className="p-4 flex items-start justify-between gap-2" data-testid="history-log-entry">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 mt-0.5 ${sessionTypeStyles[log.sessionType]}`}>
+                        {sessionTypeIcon[log.sessionType]}
                       </div>
-                      {log.notes && (
-                        <div className="text-xs text-white/40 mt-0.5 italic">&quot;{log.notes}&quot;</div>
-                      )}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-sm font-bold text-white truncate" data-testid="log-title">{title}</span>
+                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${SOURCE_BADGE_STYLES[sourceTone]}`} data-testid="log-source-badge">
+                            {sourceLabel}
+                          </span>
+                        </div>
+                        <div className="text-xs text-white/40 italic mt-0.5">
+                          <span data-testid="log-week-label">{weekPart}</span>
+                          {cyclePart && <> · <span data-testid="log-cycle-label">{cyclePart}</span></>}
+                          {' · '}{formatDate(log.dateISO)}
+                        </div>
+                        {log.notes && (
+                          <div className="text-xs text-white/40 mt-0.5 italic">&quot;{log.notes}&quot;</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className={`text-[10px] font-black px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5 ${
+                      log.fatigue === 'OK' ? 'bg-[#10b981]/20 text-[#10b981]' : 'bg-[#f59e0b]/20 text-[#f59e0b]'
+                    }`}>
+                      {log.fatigue === 'OK' ? 'OK' : 'Fatigue'}
                     </div>
                   </div>
-                  <div className={`text-[10px] font-black px-2.5 py-1 rounded-full flex-shrink-0 ${
-                    log.fatigue === 'OK' ? 'bg-[#10b981]/20 text-[#10b981]' : 'bg-[#f59e0b]/20 text-[#f59e0b]'
-                  }`}>
-                    {log.fatigue === 'OK' ? 'OK' : 'Fatigue'}
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </section>

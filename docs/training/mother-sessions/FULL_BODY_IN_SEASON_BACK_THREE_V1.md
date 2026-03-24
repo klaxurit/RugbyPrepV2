@@ -1,6 +1,6 @@
 # FULL_BODY_IN_SEASON_BACK_THREE_V1
 
-- `status`: draft
+- `status`: validated
 - `version`: V1
 - `cycle`: in_season
 - `session_type`: full
@@ -38,13 +38,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Power Pair
 - Format: `3 rounds`, full rest `3 min`
-- Exercise A: `Box Squat` `3x2-3`
+- Exercise A: `Back Squat` `3x2-3 @ 75-80%`
 - Exercise B: `Countermovement Jump` `3 reps`
 - Coaching notes:
   - The loaded lower movement stays sharp and technically clean.
+  - Bar speed matters more than load here.
   - The jump stays crisp and explosive.
   - This block opens the session with force and elastic output, without excessive volume.
   - Fallback options:
+    - A: `Front Squat`
     - B: `Drop Jump`
 
 ### Block 2 - Upper Push/Pull Strength
@@ -119,7 +121,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Knee pain
 - Remove:
   - jump if painful
-  - box squat if painful
+  - back squat if painful
 - Replace with:
   - hip-dominant alternative
   - reduced-range unilateral pattern if tolerated

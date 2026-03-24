@@ -1,8 +1,8 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav } from '../components/BottomNav'
 import { motion } from 'framer-motion'
 import {
-  User,
   LogOut,
   Play,
   Clock,
@@ -28,7 +28,10 @@ import { useHistory } from '../hooks/useHistory'
 import { useAuth } from '../hooks/useAuth'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR, ACWR_ZONE_CONFIG } from '../hooks/useACWR'
-import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
+import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
+import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
+import { getTodaySessionIndex } from '../services/ui/getTodaySessionIndex'
+import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import type { CycleWeek, SessionType, SeasonPhase, SeasonMode } from '../types/training'
 
 // ─── Helpers ────────────────────────────────────────────────
@@ -108,8 +111,41 @@ export function HomePage() {
   const { events, nextMatch, seasonPhase, isMatchDay } = useCalendar()
   const acwr = useACWR(logs, events)
 
-  const clubLogoUrl = getClubLogoUrl(profile.clubCode)
-  const clubMonogram = getClubMonogram(profile.clubName)
+  const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
+
+  // ── Surface pour déterminer la séance du jour ─────────────────────────────
+  const today = useMemo(() => {
+    const d = new Date()
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }, [])
+  const surfaceParams = useMemo(() => ({
+    profile,
+    events,
+    logs,
+    today,
+    fatigue,
+    acwrZone: acwr.hasSufficientData ? acwr.zone : null,
+    week,
+    lastNonDeloadWeek: week,
+    ignoreAcwrOverload: false,
+    hasSufficientACWRData: acwr.hasSufficientData,
+    featureFlags: programFeatureFlags,
+  }), [profile, events, logs, today, fatigue, acwr.hasSufficientData, acwr.zone, week, programFeatureFlags])
+  const { surface } = useWeeklyProgramSurface(surfaceParams)
+
+  const msSessions = surface?.motherSession?.sessions ?? []
+  const todaySessionIndex = useMemo(
+    () => getTodaySessionIndex(msSessions, profile.scSchedule, profile.clubSchedule),
+    [msSessions, profile.scSchedule, profile.clubSchedule],
+  )
+  const todaySession = todaySessionIndex != null ? msSessions[todaySessionIndex] : null
+  const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
+  const todaySessionTitle = todaySession
+    ? formatTitleFromMotherSessionId(todaySession.session.metadata.id, lang)
+    : null
 
   const sessionsThisWeek = logs.filter((l) => l.week === week).length
   const recentLogs = logs.slice(0, 2)
@@ -135,22 +171,6 @@ export function HomePage() {
         right={
         authState.status === 'authenticated' && authState.user ? (
           <div className="flex items-center gap-2">
-            <Link to="/profile">
-              <div className="relative h-14 w-14 rounded-full bg-white/10 border-2 border-white/10 flex items-center justify-center">
-                {authState.user.avatarUrl ? (
-                  <img src={authState.user.avatarUrl} alt="Avatar" className="h-full w-full rounded-full object-cover" />
-                ) : (
-                  <User className="w-6 h-6 text-white/30" />
-                )}
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#1a100c] border border-white/10 flex items-center justify-center overflow-hidden">
-                  {clubLogoUrl ? (
-                    <img src={clubLogoUrl} alt={profile.clubName ?? 'Club'} className="w-full h-full object-contain" />
-                  ) : (
-                    <span className="text-[9px] font-black text-white/50">{clubMonogram}</span>
-                  )}
-                </div>
-              </div>
-            </Link>
             <button
               type="button"
               onClick={signOut}
@@ -203,7 +223,12 @@ export function HomePage() {
               </div>
 
               <div className="space-y-1">
-                <h3 className="text-3xl font-black text-white leading-tight">Prêt à<br />t'entraîner ?</h3>
+                <h3 className="text-3xl font-black text-white leading-tight">
+                  {todaySession ? 'Séance\ndu jour' : 'Prêt à\nt\'entraîner ?'}
+                </h3>
+                {todaySessionTitle && (
+                  <p className="text-sm font-bold text-white/80">{todaySessionTitle}</p>
+                )}
                 <div className="flex items-center gap-4 text-white/90">
                   <div className="flex items-center gap-1.5 text-sm font-medium">
                     <Clock className="w-4 h-4 text-rose-500" />
@@ -216,12 +241,17 @@ export function HomePage() {
                 </div>
               </div>
 
-              <Link to="/program">
+              <Link
+                to={todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week'}
+                data-testid="home-cta-primary"
+              >
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   className="w-full py-4 rounded-2xl flex items-center justify-center gap-3 bg-white hover:bg-white/95 shadow-lg shadow-black/10 transition-all mt-2"
                 >
-                  <span className="font-black text-[#1a5f3f] tracking-wide uppercase italic">Commencer</span>
+                  <span className="font-black text-[#1a5f3f] tracking-wide uppercase italic">
+                    {todaySession ? 'Commencer la séance' : 'Voir ma semaine'}
+                  </span>
                   <div className="bg-[#1a5f3f]/10 p-1 rounded-full">
                     <Play className="w-4 h-4 text-[#1a5f3f] fill-current" />
                   </div>
@@ -511,7 +541,7 @@ export function HomePage() {
                 <p className="text-sm font-bold text-white">Aucune séance enregistrée</p>
                 <p className="text-xs text-white/40 mt-0.5">Lance ta première séance pour commencer à tracker ta progression.</p>
               </div>
-              <Link to="/program">
+              <Link to="/week">
                 <span className="text-xs font-black text-[#ff6b35] uppercase tracking-wide">Commencer maintenant →</span>
               </Link>
             </div>

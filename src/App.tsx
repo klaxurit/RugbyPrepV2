@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { RequireAuth } from './components/auth/RequireAuth'
@@ -17,8 +18,56 @@ import { SignupPage } from './pages/auth/SignupPage'
 import { CallbackPage } from './pages/auth/CallbackPage'
 import { LegalPage } from './pages/LegalPage'
 import { LandingPage } from './pages/LandingPage'
+import { StaffPlanningSandboxPage } from './pages/StaffPlanningSandboxPage'
+
+const DEV_STATIC_PAGES = new Set([
+  '/blog',
+  '/preparation-physique-rugby',
+  '/programme-musculation-rugby',
+  '/acwr-rugby',
+  '/periodisation-rugby',
+  '/tests-physiques-rugby',
+  '/prevention-blessures-rugby',
+])
+
+function getDevStaticTarget(pathname: string) {
+  if (!import.meta.env.DEV || pathname === '/') return null
+
+  const normalizedPath = pathname.endsWith('/') && pathname.length > 1
+    ? pathname.slice(0, -1)
+    : pathname
+
+  if (!DEV_STATIC_PAGES.has(normalizedPath)) return null
+
+  return `${normalizedPath}/index.html`
+}
+
+function StaticPageDevRedirect({ target }: { target: string }) {
+  useEffect(() => {
+    const suffix = `${window.location.search}${window.location.hash}`
+    window.location.replace(`${target}${suffix}`)
+  }, [target])
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '2rem', textAlign: 'center' }}>
+      <div>
+        <p>Ouverture de la page statique locale…</p>
+        <p>
+          Si la redirection ne se fait pas automatiquement,&nbsp;
+          <a href={target}>ouvre la page ici</a>.
+        </p>
+      </div>
+    </div>
+  )
+}
 
 function App() {
+  const devStaticTarget = getDevStaticTarget(window.location.pathname)
+
+  if (devStaticTarget) {
+    return <StaticPageDevRedirect target={devStaticTarget} />
+  }
+
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -44,7 +93,7 @@ function App() {
             <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
             <Route path="/mobility" element={<MobilityPage />} />
             <Route path="/chat" element={<ChatPage />} />
-          </Route>
+            <Route path="/staff-sandbox" element={<StaffPlanningSandboxPage />} />          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

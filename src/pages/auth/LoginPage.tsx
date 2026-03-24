@@ -2,11 +2,13 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import { RugbyForgeLogo } from '../../components/RugbyForgeLogo'
+import { sanitizeRequestedAppPath } from '../../services/navigation/resolveAppEntryDestination'
 import type { AuthError } from '../../types/auth'
 
 interface RedirectState {
   from?: {
     pathname?: string
+    search?: string
   }
 }
 
@@ -33,7 +35,12 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const redirectPath = useMemo(() => state?.from?.pathname || '/week', [state])
+  const redirectPath = useMemo(() => {
+    const raw = state?.from?.pathname
+      ? state.from.pathname + (state.from.search ?? '')
+      : null
+    return sanitizeRequestedAppPath(raw) ?? '/program'
+  }, [state])
 
   if (authState.status === 'authenticated' && authState.user) {
     return <Navigate to={redirectPath} replace />

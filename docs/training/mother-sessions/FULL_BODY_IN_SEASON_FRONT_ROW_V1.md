@@ -1,6 +1,6 @@
 # FULL_BODY_IN_SEASON_FRONT_ROW_V1
 
-- `status`: draft
+- `status`: validated
 - `version`: V1
 - `cycle`: in_season
 - `session_type`: full
@@ -102,6 +102,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Progress load only if speed and execution stay high.
 - Keep total volume stable before adding work.
 - If fatigue rises, remove optional Block 5 first, then reduce Block 4, then reduce one round from Block 3.
+- On dense rugby weeks, keep the session near the low end of the duration target:
+  - skip Block 5 by default
+  - keep Block 4 at `2 rounds`
 
 ## Position Accent
 - Common full-body skeleton can be shared across positions.

@@ -1,0 +1,13 @@
+[
+  {
+    "staffUserId": "00000000-0000-4000-8000-000000000001",
+    "clubId": "RCV-001",
+    "squadId": "seniors",
+    "role": "strength_coach"
+  },
+  {
+    "staffUserId": "00000000-0000-4000-8000-000000000002",
+    "clubId": "RCV-001",
+    "role": "head_coach"
+  }
+]

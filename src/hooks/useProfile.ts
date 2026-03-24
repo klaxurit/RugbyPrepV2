@@ -10,6 +10,7 @@ import type {
   RehabInjury,
   HealthConsentSource,
   PerformanceFocus,
+  LevelModifierProfileV1,
 } from '../types/training'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
@@ -21,6 +22,7 @@ export const DEFAULT_PROFILE: UserProfile = {
   level: 'intermediate',
   trainingLevel: 'builder',
   performanceFocus: 'balanced',
+  preferredLanguage: 'fr',
   weeklySessions: 2,
   equipment: ['dumbbell', 'band', 'bench', 'pullup_bar'],
   injuries: [],
@@ -61,6 +63,7 @@ type OnboardingStatusRow = {
   position: string | null
   rugby_position: string | null
   training_level: string | null
+  level_modifier_profile?: Pick<LevelModifierProfileV1, 'visibleLabel'> | null
 }
 
 const inferCompletedOnboarding = (row: OnboardingStatusRow | null): boolean => {
@@ -70,7 +73,10 @@ const inferCompletedOnboarding = (row: OnboardingStatusRow | null): boolean => {
   // Legacy profiles predate server-side onboarding tracking. If the user has
   // already selected a rugby position and a training level, treat the profile
   // as onboarded and backfill the server flag.
-  return Boolean((row.position ?? row.rugby_position) && row.training_level)
+  return Boolean(
+    (row.position ?? row.rugby_position) &&
+    (row.training_level ?? row.level_modifier_profile?.visibleLabel)
+  )
 }
 
 export async function resolveOnboardingComplete(userId: string): Promise<boolean> {
@@ -78,7 +84,7 @@ export async function resolveOnboardingComplete(userId: string): Promise<boolean
 
   const { data, error } = await supabase
     .from('profiles')
-    .select('onboarding_complete, position, rugby_position, training_level')
+    .select('onboarding_complete, position, rugby_position, training_level, level_modifier_profile')
     .eq('id', userId)
     .maybeSingle()
 
@@ -151,9 +157,11 @@ const inferNormalizedAgeBand = (
 
 export const normalizeLegacyProfile = (profile: UserProfile): UserProfile => {
   const ageBand = inferNormalizedAgeBand(profile.ageBand, profile.populationSegment)
+  const trainingLevel = profile.levelModifierProfile?.visibleLabel ?? profile.trainingLevel
 
   return {
     ...profile,
+    trainingLevel,
     seasonMode:
       profile.seasonMode === 'in_season' ||
       profile.seasonMode === 'off_season' ||
@@ -196,8 +204,10 @@ type ProfileRow = {
   club_schedule: ClubSchedule | null
   sc_schedule: SCSchedule | null
   training_level: string | null
+  level_modifier_profile: LevelModifierProfileV1 | null
   season_mode: string | null
   performance_focus: UserProfile['performanceFocus'] | null
+  preferred_language: string | null
   rehab_injury: unknown | null
   population_segment: UserProfile['populationSegment'] | null
   age_band: UserProfile['ageBand'] | null
@@ -217,6 +227,20 @@ type ProfileRow = {
 }
 
 export const rowToProfile = (row: ProfileRow): UserProfile => {
+  const levelModifierProfile = row.level_modifier_profile ?? undefined
+  const modifierVisibleLabel = levelModifierProfile?.visibleLabel
+  const normalizedTrainingLevel = (
+    modifierVisibleLabel === 'starter' ||
+    modifierVisibleLabel === 'builder' ||
+    modifierVisibleLabel === 'performance'
+  )
+    ? modifierVisibleLabel
+    : (row.training_level as TrainingLevel | null) ?? (
+      row.level === 'beginner' ? 'starter' as TrainingLevel :
+      row.level === 'intermediate' ? 'builder' as TrainingLevel :
+      'starter' as TrainingLevel
+    )
+
   return normalizeLegacyProfile({
     level: (row.level === 'beginner' ? 'beginner' : 'intermediate') as UserProfile['level'],
     weeklySessions: (row.weekly_sessions === 2 ? 2 : 3) as UserProfile['weeklySessions'],
@@ -233,13 +257,11 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     weightKg: row.weight_kg ?? undefined,
     clubSchedule: row.club_schedule ?? undefined,
     scSchedule: row.sc_schedule ?? undefined,
-    trainingLevel: (row.training_level as TrainingLevel | null) ?? (
-      row.level === 'beginner' ? 'starter' as TrainingLevel :
-      row.level === 'intermediate' ? 'builder' as TrainingLevel :
-      'starter' as TrainingLevel
-    ),
+    trainingLevel: normalizedTrainingLevel,
+    levelModifierProfile,
     seasonMode: (row.season_mode as SeasonMode | null) ?? undefined,
     performanceFocus: (row.performance_focus as PerformanceFocus | null) ?? undefined,
+    preferredLanguage: (row.preferred_language as 'fr' | 'en' | null) ?? 'fr',
     rehabInjury: (row.rehab_injury as RehabInjury | null) ?? undefined,
     populationSegment: (row.population_segment as PopulationSegment | null) ?? undefined,
     ageBand: row.age_band ?? undefined,
@@ -276,9 +298,11 @@ const profileToRow = (profile: UserProfile, userId: string) => ({
   weight_kg: profile.weightKg ?? null,
   club_schedule: profile.clubSchedule ?? null,
   sc_schedule: profile.scSchedule ?? null,
-  training_level: profile.trainingLevel ?? null,
+  training_level: profile.levelModifierProfile?.visibleLabel ?? profile.trainingLevel ?? null,
+  level_modifier_profile: profile.levelModifierProfile ?? null,
   season_mode: profile.seasonMode ?? null,
   performance_focus: profile.performanceFocus ?? null,
+  preferred_language: profile.preferredLanguage ?? 'fr',
   rehab_injury: profile.rehabInjury ?? null,
   population_segment: profile.populationSegment ?? null,
   age_band: profile.ageBand ?? null,
@@ -325,7 +349,7 @@ export const useProfile = () => {
     supabase
       .from('profiles')
       .select(
-        'level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, season_mode, performance_focus, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state'
+        'level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, performance_focus, preferred_language, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state'
       )
       .eq('id', userId)
       .single()

@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#e11d48" />
     <meta
       name="description"
-      content="Application francaise de preparation physique rugby: programmes personnalises, suivi ACWR, tests physiques, prevention blessures et coaching IA."
+      content="Application française de préparation physique rugby: programmes personnalisés, suivi ACWR, tests physiques, prévention blessures et coaching IA."
     />
     <meta name="application-name" content="RugbyForge" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -22,24 +22,24 @@
     <meta property="og:site_name" content="RugbyForge" />
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:url" content="https://rugbyforge.fr/" />
-    <meta property="og:title" content="RugbyForge | Preparation physique rugby personnalisee" />
+    <meta property="og:title" content="RugbyForge | Préparation physique rugby personnalisée" />
     <meta
       property="og:description"
-      content="Programmes personnalises, suivi de charge, tests physiques, prevention blessures et coaching IA pour les joueurs de rugby."
+      content="Programmes personnalisés, suivi de charge, tests physiques, prévention blessures et coaching IA pour les joueurs de rugby."
     />
     <meta property="og:image" content="https://rugbyforge.fr/og-rugbyforge.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="RugbyForge, application de preparation physique rugby personnalisee" />
+    <meta property="og:image:alt" content="RugbyForge, application de préparation physique rugby personnalisée" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="RugbyForge | Preparation physique rugby personnalisee" />
+    <meta name="twitter:title" content="RugbyForge | Préparation physique rugby personnalisée" />
     <meta
       name="twitter:description"
-      content="Programmes personnalises, suivi ACWR, tests physiques et prevention blessures pour le rugby."
+      content="Programmes personnalisés, suivi ACWR, tests physiques et prévention blessures pour le rugby."
     />
     <meta name="twitter:image" content="https://rugbyforge.fr/og-rugbyforge.png" />
-    <meta name="twitter:image:alt" content="RugbyForge, application de preparation physique rugby personnalisee" />
-    <title>RugbyForge | Preparation physique rugby personnalisee</title>
+    <meta name="twitter:image:alt" content="RugbyForge, application de préparation physique rugby personnalisée" />
+    <title>RugbyForge | Préparation physique rugby personnalisée</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -52,17 +52,41 @@
             "@id": "https://rugbyforge.fr/#organization",
             "name": "RugbyForge",
             "url": "https://rugbyforge.fr/",
-            "logo": "https://rugbyforge.fr/icons/icon-512.png",
-            "description": "Application francaise de preparation physique personnalisee pour le rugby."
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://rugbyforge.fr/icons/icon-512.png",
+              "width": 512,
+              "height": 512
+            },
+            "description": "Application française de préparation physique personnalisée pour le rugby."
           },
           {
             "@type": "WebSite",
             "@id": "https://rugbyforge.fr/#website",
             "url": "https://rugbyforge.fr/",
             "name": "RugbyForge",
+            "description": "Préparation physique rugby personnalisée: programmes, suivi de charge, tests physiques et coaching IA.",
             "inLanguage": "fr",
             "publisher": {
               "@id": "https://rugbyforge.fr/#organization"
+            }
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://rugbyforge.fr/#webpage",
+            "url": "https://rugbyforge.fr/",
+            "name": "RugbyForge | Préparation physique rugby personnalisée",
+            "description": "Application française de préparation physique rugby: programmes personnalisés, suivi ACWR, tests physiques, prévention blessures et coaching IA.",
+            "inLanguage": "fr",
+            "isPartOf": {
+              "@id": "https://rugbyforge.fr/#website"
+            },
+            "about": {
+              "@id": "https://rugbyforge.fr/#software"
+            },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "https://rugbyforge.fr/images/landing/app-week.png"
             }
           },
           {
@@ -73,7 +97,9 @@
             "applicationCategory": "HealthApplication",
             "operatingSystem": "Web",
             "inLanguage": "fr",
-            "description": "Application web de preparation physique rugby avec programmes personnalises, suivi ACWR, tests physiques et prevention blessures.",
+            "description": "Application web progressive de préparation physique rugby avec programmes personnalisés par poste et niveau, suivi ACWR, tests physiques et prévention blessures.",
+            "screenshot": "https://rugbyforge.fr/images/landing/app-week.png",
+            "featureList": "Programmes personnalisés par poste, Périodisation DUP en saison, Suivi de charge ACWR, Tests physiques (CMJ sprint 1RM), Prévention blessures, Coaching IA",
             "offers": {
               "@type": "Offer",
               "price": "0",
@@ -83,6 +109,56 @@
             "publisher": {
               "@id": "https://rugbyforge.fr/#organization"
             }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://rugbyforge.fr/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "À qui s'adresse RugbyForge ?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "RugbyForge s'adresse aux joueurs, coachs et staffs qui veulent structurer la préparation physique rugby avec des repères plus lisibles: charge, tests physiques, périodisation et prévention blessures."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Faut-il une salle complète pour utiliser RugbyForge ?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Non. L'application adapte les cycles à ton matériel disponible et au contexte réel de ta semaine, en club amateur comme dans un cadre plus suivi."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Que suit RugbyForge pendant la saison ?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "RugbyForge suit la charge d'entraînement, le ratio ACWR, les tests physiques utiles comme le CMJ, le sprint 10 mètres et l'estimation du 1RM, ainsi que les priorités par poste et par phase de saison."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Où trouver les ressources publiques RugbyForge ?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Le site publie un blog avec des guides dédiés à la préparation physique rugby, à l'ACWR, à la périodisation, aux tests physiques et au programme de musculation rugby."
+                }
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://rugbyforge.fr/#breadcrumbs",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Accueil",
+                "item": "https://rugbyforge.fr/"
+              }
+            ]
           }
         ]
       }
@@ -92,22 +168,103 @@
     <div id="root"></div>
     <noscript>
       <main style="font-family: Lexend, system-ui, sans-serif; max-width: 72rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; color: #111827;">
-        <h1 style="font-size: 2rem; line-height: 1.1; margin-bottom: 1rem;">RugbyForge, application de preparation physique rugby</h1>
-        <p style="font-size: 1rem; line-height: 1.7; margin-bottom: 1rem;">
-          RugbyForge aide les joueurs et staffs rugby a structurer la preparation physique avec des programmes personnalises,
-          un suivi de charge, des tests physiques et des reperes simples pour prevenir la surcharge.
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.85rem; border-radius: 999px; background: #fff1eb; color: #c2410c; font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem;">
+          Préparation physique rugby
+        </div>
+        <h1 style="font-size: 2.4rem; line-height: 1.05; margin: 0 0 1rem;">Préparation physique rugby : programmes personnalisés, charge et progression avec RugbyForge</h1>
+        <p style="font-size: 1.06rem; line-height: 1.8; margin-bottom: 1rem;">
+          RugbyForge est une application française de préparation physique rugby pensée pour les joueurs, les coachs et les staffs qui veulent sortir des programmes génériques. L'objectif est simple : organiser une semaine utile autour du poste, de la phase de saison, de la charge terrain et du niveau du joueur. L'application aide à structurer la musculation, lire l'ACWR, suivre les tests physiques et protéger la fraîcheur avant le match.
         </p>
-        <p style="font-size: 1rem; line-height: 1.7; margin-bottom: 1rem;">
-          Le site principal fonctionne avec JavaScript, mais vous pouvez deja consulter la presentation du produit,
-          nos ressources publiques et les mentions legales via les liens ci-dessous.
+        <p style="font-size: 1.06rem; line-height: 1.8; margin-bottom: 1.5rem;">
+          Même sans JavaScript, cette page présente les fondamentaux du produit et donne accès aux guides publics RugbyForge. Tu peux déjà explorer notre approche de la périodisation, de la gestion de charge, des tests physiques et de la construction d'un programme musculation rugby cohérent pour un club amateur ou une structure plus encadrée.
         </p>
-        <ul style="padding-left: 1.25rem; line-height: 1.8;">
-          <li><a href="https://rugbyforge.fr/" style="color: #c2410c;">Accueil RugbyForge</a></li>
-          <li><a href="https://rugbyforge.fr/blog/" style="color: #c2410c;">Ressources RugbyForge</a></li>
-          <li><a href="https://rugbyforge.fr/preparation-physique-rugby/" style="color: #c2410c;">Guide preparation physique rugby</a></li>
-          <li><a href="https://rugbyforge.fr/legal" style="color: #c2410c;">Mentions legales</a></li>
-          <li><a href="https://rugbyforge.fr/auth/signup" style="color: #c2410c;">Creer un compte</a></li>
-        </ul>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin: 0 0 2rem;">
+          <section style="border: 1px solid #e5e7eb; border-radius: 20px; padding: 1.25rem;">
+            <h2 style="margin: 0 0 0.75rem; font-size: 1.2rem;">Comment ça marche</h2>
+            <p style="margin: 0 0 0.75rem; line-height: 1.75;">
+              RugbyForge part de ton contexte réel : poste, matériel disponible, calendrier club et niveau d'expérience. À partir de là, l'application construit des cycles de préparation physique rugby plus lisibles, puis les ajuste selon la charge de la semaine.
+            </p>
+            <ol style="padding-left: 1.25rem; line-height: 1.8; margin: 0;">
+              <li>Tu renseignes ton profil, ton poste et ta semaine.</li>
+              <li>RugbyForge propose un programme musculation rugby adapté à la saison.</li>
+              <li>Tu suis la charge, les tests physiques et les ajustements utiles avant match.</li>
+            </ol>
+          </section>
+          <section style="border: 1px solid #e5e7eb; border-radius: 20px; padding: 1.25rem;">
+            <h2 style="margin: 0 0 0.75rem; font-size: 1.2rem;">Ce que suit RugbyForge</h2>
+            <ul style="padding-left: 1.25rem; line-height: 1.8; margin: 0;">
+              <li>Programmes périodisés par poste et par phase de saison</li>
+              <li>Suivi de charge et ratio ACWR pour limiter les pics brutaux</li>
+              <li>Tests physiques utiles : CMJ, sprint 10 m, YYIR1 et estimation du 1RM</li>
+              <li>Prévention blessures, préhab et logique de récupération</li>
+              <li>Base interne de 186+ références en sciences du sport</li>
+            </ul>
+          </section>
+        </div>
+
+        <section style="margin-bottom: 2rem;">
+          <h2 style="margin: 0 0 0.8rem; font-size: 1.35rem;">Pourquoi RugbyForge</h2>
+          <p style="line-height: 1.8; margin-bottom: 1rem;">
+            Un joueur de rugby n'a pas seulement besoin d'un plan de salle. Il a besoin d'un cadre qui relie la musculation, le terrain, la récupération et la disponibilité du week-end. RugbyForge met ensemble les éléments qui comptent le plus dans la vraie vie d'un joueur : la périodisation, la lecture de la charge, les priorités par poste, les repères de tests et la prévention des hausses de volume mal absorbées. Cela aide à prendre de meilleures décisions semaine après semaine, sans devoir copier un modèle professionnel impossible à tenir en club.
+          </p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+            <figure style="margin: 0; border: 1px solid #e5e7eb; border-radius: 20px; overflow: hidden;">
+              <img src="https://rugbyforge.fr/images/landing/app-week.png" alt="Capture RugbyForge du programme de la semaine" style="display: block; width: 100%; height: auto;" />
+              <figcaption style="padding: 0.9rem 1rem; color: #4b5563; line-height: 1.6;">Vue hebdomadaire du programme de préparation physique rugby dans l'application.</figcaption>
+            </figure>
+            <figure style="margin: 0; border: 1px solid #e5e7eb; border-radius: 20px; overflow: hidden;">
+              <img src="https://rugbyforge.fr/images/landing/acwr-monitoring.png" alt="Capture RugbyForge du suivi ACWR et du monitoring de charge" style="display: block; width: 100%; height: auto;" />
+              <figcaption style="padding: 0.9rem 1rem; color: #4b5563; line-height: 1.6;">Monitoring de charge et ratio charge aiguë / charge chronique pour mieux lire la fatigue.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section style="margin-bottom: 2rem;">
+          <h2 style="margin: 0 0 0.8rem; font-size: 1.35rem;">Ressources publiques RugbyForge</h2>
+          <p style="line-height: 1.8; margin-bottom: 1rem;">
+            Le site publie aussi des guides éducatifs pour rendre la préparation physique rugby plus concrète. Ils complètent l'application avec des formats plus longs sur la charge, la saison, les tests et la construction d'un programme utile.
+          </p>
+          <ul style="padding-left: 1.25rem; line-height: 1.9; margin: 0;">
+            <li><a href="https://rugbyforge.fr/blog/" style="color: #c2410c;">Blog RugbyForge</a> : hub des guides publics sur l'entraînement rugby.</li>
+            <li><a href="https://rugbyforge.fr/preparation-physique-rugby/" style="color: #c2410c;">Guide préparation physique rugby</a> : le cadre global pour la charge, la saison et les priorités par poste.</li>
+            <li><a href="https://rugbyforge.fr/programme-musculation-rugby/" style="color: #c2410c;">Programme musculation rugby</a> : organisation des séances par poste et par saison.</li>
+            <li><a href="https://rugbyforge.fr/acwr-rugby/" style="color: #c2410c;">Guide ACWR rugby</a> : lecture simple du ratio charge aiguë / charge chronique.</li>
+            <li><a href="https://rugbyforge.fr/periodisation-rugby/" style="color: #c2410c;">Guide périodisation rugby</a> : blocs, DUP et logique de saison.</li>
+            <li><a href="https://rugbyforge.fr/tests-physiques-rugby/" style="color: #c2410c;">Guide tests physiques rugby</a> : CMJ, sprint 10 mètres, YYIR1 et estimation du 1RM.</li>
+          </ul>
+        </section>
+
+        <section style="margin-bottom: 2rem;">
+          <h2 style="margin: 0 0 0.8rem; font-size: 1.35rem;">FAQ RugbyForge</h2>
+          <div style="display: grid; gap: 1rem;">
+            <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 1rem 1.1rem;">
+              <h3 style="margin: 0 0 0.5rem; font-size: 1.05rem;">À qui s'adresse RugbyForge ?</h3>
+              <p style="margin: 0; line-height: 1.75;">RugbyForge s'adresse aux joueurs, coachs et staffs qui veulent structurer la préparation physique rugby avec des repères plus lisibles sur la charge, les tests, la musculation et la récupération.</p>
+            </div>
+            <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 1rem 1.1rem;">
+              <h3 style="margin: 0 0 0.5rem; font-size: 1.05rem;">Faut-il une salle complète pour utiliser l'application ?</h3>
+              <p style="margin: 0; line-height: 1.75;">Non. L'application adapte les cycles à ton matériel, à ta semaine de club et à la proximité du match. Le but est de proposer une préparation physique rugby réaliste, pas un programme impossible à suivre.</p>
+            </div>
+            <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 1rem 1.1rem;">
+              <h3 style="margin: 0 0 0.5rem; font-size: 1.05rem;">Que peut-on suivre pendant la saison ?</h3>
+              <p style="margin: 0; line-height: 1.75;">RugbyForge aide à suivre la charge, l'ACWR, les tests physiques utiles et les priorités par poste. Cela permet de mieux piloter la semaine, la fraîcheur et la progression sur la durée.</p>
+            </div>
+            <div style="border: 1px solid #e5e7eb; border-radius: 18px; padding: 1rem 1.1rem;">
+              <h3 style="margin: 0 0 0.5rem; font-size: 1.05rem;">Où commencer si je découvre RugbyForge ?</h3>
+              <p style="margin: 0; line-height: 1.75;">Le meilleur point d'entrée est le guide principal sur la préparation physique rugby, puis le blog selon ton besoin du moment : charge, périodisation, tests ou programme musculation rugby.</p>
+            </div>
+          </div>
+        </section>
+
+        <section style="border-top: 1px solid #e5e7eb; padding-top: 1.5rem;">
+          <p style="font-size: 1rem; line-height: 1.8; margin-bottom: 0.75rem;">
+            Tu peux créer un compte sur <a href="https://rugbyforge.fr/auth/signup" style="color: #c2410c;">RugbyForge</a> ou écrire à <a href="mailto:bonjour@rugbyforge.fr" style="color: #c2410c;">bonjour@rugbyforge.fr</a> pour une question produit.
+          </p>
+          <p style="font-size: 0.95rem; line-height: 1.7; color: #4b5563; margin: 0;">
+            Ressource éducative. Les contenus RugbyForge ne remplacent pas un avis médical ni le suivi d'un professionnel de santé ou d'un préparateur physique de terrain.
+          </p>
+        </section>
       </main>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>

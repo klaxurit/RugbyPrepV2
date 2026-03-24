@@ -55,6 +55,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Landmine stays clean, fast, and trunk-controlled.
   - Row stays strong without turning into a lower-back fight.
   - Compared with the front-row version, this block should feel a little more fluid and a little less brute.
+  - If this is the only upper session of the week, consider replacing `Single-Arm Landmine Press` with `Neutral-Grip Pull-Up 3x4-5` to preserve one true vertical-pull exposure.
 
 ### Block 3 - Back Three Finisher
 - Format: `EMOM 8'`
@@ -95,7 +96,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - arms only if needed after safer rugby-relevant options are covered
 - Rehab finisher:
   - `band external rotation`
-  - `scapular control drill`
+  - `scap push-up`
   - `serratus reach`
 
 ### Knee pain

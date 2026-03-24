@@ -1,4 +1,4 @@
-import { EXERCISE_METRIC_OVERRIDES } from '../../data/exerciseMetricOverrides.v1'
+import { EXERCISE_METRIC_OVERRIDES, type ProgressionFamily } from '../../data/exerciseMetricOverrides.v1'
 import { getExerciseMetricType } from './exerciseMetrics'
 import type { CycleWeek, FatigueStatus } from '../../types/training'
 
@@ -19,10 +19,15 @@ interface SuggestionParams {
   fatigue: FatigueStatus
   targetRer?: number
   schemeLabel?: string
-  lastEntry?: { loadKg?: number; reps?: number; seconds?: number; meters?: number }
+  lastEntry?: { loadKg?: number; reps?: number; seconds?: number; meters?: number; rir?: number; setsCompleted?: number }
 }
 
 const LOAD_INCREMENT_KG = 2.5
+
+/** Returns the explicit progressionFamily, or 'assistance' as fallback. */
+export function getProgressionFamily(exerciseId: string): ProgressionFamily {
+  return EXERCISE_METRIC_OVERRIDES[exerciseId]?.progressionFamily ?? 'assistance'
+}
 
 export const roundToIncrement = (valueKg: number, increment = LOAD_INCREMENT_KG) =>
   Math.max(0, Math.round(valueKg / increment) * increment)
@@ -57,6 +62,103 @@ const getKind = (
   if (metricType === 'seconds') return 'seconds'
   if (schemeLabel?.includes('EMOM') || schemeLabel?.toLowerCase().includes('temps')) return 'seconds'
   return 'none'
+}
+
+function computeFamilySuggestion(
+  family: ProgressionFamily,
+  lastEntry: NonNullable<SuggestionParams['lastEntry']>,
+  override: typeof EXERCISE_METRIC_OVERRIDES[string] | undefined,
+  lastText: string | undefined,
+): Suggestion {
+  const rir = lastEntry.rir ?? 2 // conservative default — computeFamilySuggestion only called when rir is defined, but guard against future misuse
+  const baseLoad = lastEntry.loadKg ?? 0
+  const baseReps = lastEntry.reps
+
+  if (family === 'ballistic_iso') {
+    // No load increment. Progress quality/distance/duration/reps if RIR >= 2
+    const suggestedReps = rir >= 2 && baseReps ? baseReps + 1 : baseReps
+    return {
+      kind: 'load_reps',
+      suggestionText: override?.suggestionTemplate ?? `${baseLoad} kg × ${suggestedReps ?? '?'}`,
+      rationale: rir >= 2
+        ? 'Qualité bonne, légère hausse de volume.'
+        : 'RIR bas: garde le même volume, qualité.',
+      suggestedLoadKg: baseLoad !== undefined ? baseLoad : undefined,
+      suggestedReps,
+      lastText
+    }
+  }
+
+  if (rir <= 1) {
+    return {
+      kind: 'load_reps',
+      suggestionText: override?.suggestionTemplate ?? `${baseLoad} kg × ${baseReps ?? '?'}`,
+      rationale: 'RIR ≤ 1: garde la charge, priorité exécution.',
+      suggestedLoadKg: baseLoad !== undefined ? baseLoad : undefined,
+      suggestedReps: baseReps,
+      lastText
+    }
+  }
+
+  if (family === 'upper_compound') {
+    // +1.25 to +2.5 kg when RIR >= 2
+    const increment = rir >= 3 ? 2.5 : 1.25
+    const suggestedLoadKg = roundToIncrement(baseLoad + increment, 1.25)
+    return {
+      kind: 'load_reps',
+      suggestionText: override?.suggestionTemplate ?? `${suggestedLoadKg} kg × ${baseReps ?? '?'}`,
+      rationale: rir >= 3
+        ? 'RIR 3+: marge suffisante, monte de +2.5 kg.'
+        : 'RIR 2: progression prudente +1.25 kg.',
+      suggestedLoadKg,
+      suggestedReps: baseReps,
+      lastText
+    }
+  }
+
+  if (family === 'lower_compound') {
+    // +2.5 to +5 kg when RIR >= 2
+    const increment = rir >= 3 ? 5 : 2.5
+    const suggestedLoadKg = roundToIncrement(baseLoad + increment)
+    return {
+      kind: 'load_reps',
+      suggestionText: override?.suggestionTemplate ?? `${suggestedLoadKg} kg × ${baseReps ?? '?'}`,
+      rationale: rir >= 3
+        ? 'RIR 3+: marge suffisante, monte de +5 kg.'
+        : 'RIR 2: progression prudente +2.5 kg.',
+      suggestedLoadKg,
+      suggestedReps: baseReps,
+      lastText
+    }
+  }
+
+  // family === 'assistance' — reps first, then load
+  if (baseReps && baseReps >= 12 && rir >= 2) {
+    // Top of rep range → increase load, reset reps
+    const suggestedLoadKg = roundToIncrement(baseLoad + 1.25, 1.25)
+    const suggestedReps = 8
+    return {
+      kind: 'load_reps',
+      suggestionText: override?.suggestionTemplate ?? `${suggestedLoadKg} kg × ${suggestedReps}`,
+      rationale: 'Haut de fourchette + RIR suffisant: monte la charge, reps au bas.',
+      suggestedLoadKg,
+      suggestedReps,
+      lastText
+    }
+  }
+
+  // Reps-first progression
+  const suggestedReps = rir >= 2 && baseReps ? baseReps + 1 : baseReps
+  return {
+    kind: 'load_reps',
+    suggestionText: override?.suggestionTemplate ?? `${baseLoad} kg × ${suggestedReps ?? '?'}`,
+    rationale: rir >= 2
+      ? 'Ajoute 1 rep, garde la charge stable.'
+      : 'RIR bas: garde les mêmes reps.',
+    suggestedLoadKg: baseLoad || undefined,
+    suggestedReps,
+    lastText
+  }
 }
 
 export const getExerciseSuggestion = ({
@@ -214,6 +316,14 @@ export const getExerciseSuggestion = ({
         lastText
       }
     }
+
+    // ── Family-based progression (V1) — only when rir is defined ──
+    if (lastEntry.rir !== undefined) {
+      const family = getProgressionFamily(exerciseId)
+      return computeFamilySuggestion(family, lastEntry, override, lastText)
+    }
+
+    // ── Backward compat: RER-based (pre-V1 logs without rir) ──
     const baseLoad = lastEntry.loadKg ?? 0
     let targetLoad = baseLoad
     if (rer >= 3) {

@@ -1,6 +1,6 @@
 # UPPER_PRESEASON_FORCE_V1
 
-- `status`: draft
+- `status`: validated
 - `version`: V1
 - `cycle`: pre_season
 - `session_type`: upper
@@ -101,11 +101,11 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Replace with:
   - `Neutral-Grip DB Bench Press`
   - `Single-Arm Landmine Press`
-  - shorter carry distance or `Pallof Press Hold`
+  - shorter carry distance or `Pallof Hold`
 - Rehab finisher:
   - `band external rotation`
   - `serratus reach`
-  - `scapular control drill`
+  - `scap push-up`
 
 ### Knee pain
 - Remove:
@@ -122,7 +122,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - heavy `Front Rack Carry`
 - Replace with:
   - `Chest-Supported Row`
-  - lighter carry or `Pallof Press Hold`
+  - lighter carry or `Pallof Hold`
 - Rehab finisher:
   - breathing and trunk stiffness work
 

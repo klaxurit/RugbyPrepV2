@@ -1,16 +1,19 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import {
   TrendingUp, TrendingDown, Minus, AlertCircle, BarChart2,
-  Plus, X, FlaskConical, Dumbbell, ChevronDown, Lock
+  Plus, X, FlaskConical, Dumbbell, ChevronDown, Lock, Activity
 } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import blocksData from '../data/blocks.v1.json'
 import { getExerciseName } from '../data/exercises'
 import { useBlockLogs } from '../hooks/useBlockLogs'
+import { useHistory } from '../hooks/useHistory'
 import { useAthleteTests } from '../hooks/useAthleteTests'
 import { useProfile } from '../hooks/useProfile'
+import { getProgramHistorySummary, getRecentProgramSessions } from '../services/program/programHistoryAnalytics'
+import { getSessionLogDisplayTitle, getSessionLogPrimaryWeekLabel, getSessionLogSourceLabel, getSessionLogSourceTone, getSessionLogCycleLabel, SOURCE_BADGE_STYLES } from '../services/program/sessionLogPresentation'
 import { getExerciseDeltaW1W4, getExerciseRecentHistory } from '../services/ui/progression'
 import { getExerciseSuggestion } from '../services/ui/suggestions'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
@@ -109,9 +112,15 @@ function formatVariation(delta: number, higherIsBetter: boolean): { text: string
 export function ProgressPage() {
   const [tab, setTab] = useState<'sessions' | 'tests'>('sessions')
   const { logs, getLastEntryForExercise } = useBlockLogs()
+  const { logs: sessionLogs } = useHistory()
   const { addTest, getHistoryFor, getBestFor } = useAthleteTests()
   const { profile } = useProfile()
   const { features, isPremium } = useFeatureAccess()
+
+  // ─── Program adherence data ───────────────────────────────────
+  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+  const adherenceSummary = useMemo(() => getProgramHistorySummary(sessionLogs, today), [sessionLogs, today])
+  const recentSessions = useMemo(() => getRecentProgramSessions(sessionLogs, 5), [sessionLogs])
 
   // ─── Modal state ────────────────────────────────────────────
   const [modal, setModal] = useState<ModalState | null>(null)
@@ -319,6 +328,71 @@ export function ProgressPage() {
         {/* ─── SESSIONS TAB ─────────────────────────────────────── */}
         {tab === 'sessions' && (
           <>
+            {/* Adhérence programme */}
+            {sessionLogs.length > 0 && (
+              <section data-testid="adherence-section">
+                <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">Adhérence programme</h2>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
+                    <div className="text-2xl font-black text-white" data-testid="adherence-7d">{adherenceSummary.sessionsLast7d}</div>
+                    <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">Séances 7j</div>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
+                    <div className="text-2xl font-black text-white" data-testid="adherence-28d">{adherenceSummary.sessionsLast28d}</div>
+                    <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">Séances 28j</div>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
+                    <div className="text-2xl font-black text-emerald-400" data-testid="adherence-mother">{adherenceSummary.motherSessions}</div>
+                    <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">Moteur annuel</div>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
+                    <div className="text-2xl font-black text-blue-400" data-testid="adherence-legacy">{adherenceSummary.legacySessions}</div>
+                    <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">Legacy</div>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Activité récente programme */}
+            {recentSessions.length > 0 && (
+              <section data-testid="recent-activity-section">
+                <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">Activité récente</h2>
+                <div className="bg-white/5 border border-white/10 rounded-[24px] overflow-hidden divide-y divide-white/5">
+                  {recentSessions.map((log) => {
+                    const title = getSessionLogDisplayTitle(log)
+                    const weekPart = getSessionLogPrimaryWeekLabel(log)
+                    const cyclePart = getSessionLogCycleLabel(log)
+                    const sourceLabel = getSessionLogSourceLabel(log)
+                    const sourceTone = getSessionLogSourceTone(log)
+                    const datePart = new Date(log.dateISO).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+
+                    return (
+                      <div key={log.id} className="px-4 py-3 flex items-center justify-between gap-2" data-testid="recent-session-entry">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0 text-white/30">
+                            <Activity className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-xs font-bold text-white truncate" data-testid="recent-title">{title}</span>
+                              <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-full ${SOURCE_BADGE_STYLES[sourceTone]}`} data-testid="recent-source-badge">
+                                {sourceLabel}
+                              </span>
+                            </div>
+                            <div className="text-[10px] text-white/40">
+                              <span data-testid="recent-week-label">{weekPart}</span>
+                              {cyclePart && <> · {cyclePart}</>}
+                              {' · '}{datePart}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </section>
+            )}
+
             {progressRows.length > 0 && (
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col items-center gap-1.5">

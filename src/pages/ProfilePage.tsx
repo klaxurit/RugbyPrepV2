@@ -23,14 +23,12 @@ import type {
   RehabPhase,
   AgeBand,
   PopulationSegment,
-  PerformanceFocus,
 } from '../types/training'
 import ffrClubsData from '../data/ffrClubs.v2021.json'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
 import { GymDaySelector } from '../components/GymDaySelector'
-import { checkBetaEligibility, BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 
 const EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string }[] = [
   { value: 'barbell',      label: 'Barre' },
@@ -86,12 +84,6 @@ const SEASON_MODES: { value: SeasonMode; label: string; sub: string; emoji: stri
   { value: 'in_season',  label: 'Saison',          sub: 'Programme Force → Puissance',         emoji: '⚡' },
   { value: 'off_season', label: 'Inter-saison',     sub: 'Hypertrophie & reconstruction',       emoji: '🌿' },
   { value: 'pre_season', label: 'Pré-saison',       sub: 'Force-Puissance & réathlétisation',  emoji: '🔥' },
-]
-
-const PERFORMANCE_FOCUS_OPTIONS: { value: PerformanceFocus; label: string; sub: string }[] = [
-  { value: 'balanced', label: 'Équilibré', sub: 'Développement global' },
-  { value: 'speed', label: 'Vitesse', sub: 'Priorité sprint / accélération (pré-saison)' },
-  { value: 'strength', label: 'Force', sub: 'Priorité robustesse / charges' },
 ]
 
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
@@ -162,17 +154,13 @@ const avatarErrorLabel: Record<AuthError, string> = {
 
 export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
-  const betaEligibility = checkBetaEligibility(profile)
   const { authState, updateAvatar } = useAuth()
   const { features, isPremium, planId } = useFeatureAccess()
   const {
     status: notifStatus,
     errorMessage: notifErrorMessage,
-    diagnostics: notifDiagnostics,
-    isDiagnosing: notifIsDiagnosing,
     subscribe: notifSubscribe,
     unsubscribe: notifUnsubscribe,
-    runDiagnostics: notifRunDiagnostics,
   } = useNotifications(profile)
   const [avatarError, setAvatarError] = useState<string | null>(null)
   const [isAvatarUploading, setIsAvatarUploading] = useState(false)
@@ -335,20 +323,6 @@ export function ProfilePage() {
       />
 
       <main className="relative px-6 pt-6 space-y-5 max-w-md mx-auto">
-        {/* ── Banner inéligibilité beta self-serve ── */}
-        {!betaEligibility.isEligible && (
-          <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-4 space-y-2">
-            <p className="text-sm font-bold text-amber-400">Profil hors périmètre bêta self-serve</p>
-            <ul className="space-y-1">
-              {betaEligibility.reasons.map((r) => (
-                <li key={r} className="text-xs text-amber-300/80">
-                  · {BETA_ELIGIBILITY_MESSAGES[r].reason} — {BETA_ELIGIBILITY_MESSAGES[r].detail}
-                </li>
-              ))}
-            </ul>
-            <p className="text-xs text-white/40">Le programme ne sera pas généré tant que ce profil est hors périmètre. Modifie les champs ci-dessous pour revenir en zone supportée.</p>
-          </div>
-        )}
         <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-4">
             <button
@@ -490,39 +464,7 @@ export function ProfilePage() {
             )}
           </div>
 
-          {/* Orientation performance */}
-          {(profile.trainingLevel ?? 'builder') === 'performance' && (
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Orientation performance</label>
-              <p className="text-[10px] text-white/30">
-                En pré-saison, le focus vitesse active une séance vitesse terrain dédiée.
-              </p>
-              <div className="flex flex-col gap-2">
-                {PERFORMANCE_FOCUS_OPTIONS.map((opt) => {
-                  const active = (profile.performanceFocus ?? 'balanced') === opt.value
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => updateProfile({ performanceFocus: opt.value })}
-                      className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
-                        active
-                          ? 'bg-cyan-700/30 text-cyan-200 border border-cyan-500/30'
-                          : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
-                      }`}
-                    >
-                      <div>
-                        <p className="font-black">{opt.label}</p>
-                        <p className={`text-[10px] font-normal ${active ? 'text-cyan-100/80' : 'text-white/40'}`}>
-                          {opt.sub}
-                        </p>
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+          {/* Langue — masqué tant que l'EN n'est pas réellement complet */}
 
           {/* Séances / semaine */}
           <div className="space-y-2">
@@ -1190,25 +1132,6 @@ export function ProfilePage() {
                     {notifErrorMessage}
                   </p>
                 )}
-                {notifDiagnostics && (
-                  <div className="mt-2 space-y-1 text-[10px] text-white/35">
-                    <p>Origine: <span className="text-white/55">{notifDiagnostics.origin ?? 'n/a'}</span></p>
-                    <p>Front: <span className="text-white/55">{notifDiagnostics.frontendPublicKeyPreview ?? 'n/a'}</span> ({notifDiagnostics.frontendPublicKeyLength})</p>
-                    <p>Subscription: <span className="text-white/55">{notifDiagnostics.subscriptionPublicKeyPreview ?? 'n/a'}</span> ({notifDiagnostics.subscriptionPublicKeyLength})</p>
-                    <p>Backend: <span className="text-white/55">{notifDiagnostics.backendPublicKeyPreview ?? 'n/a'}</span> ({notifDiagnostics.backendPublicKeyLength})</p>
-                    <p>
-                      Matchs: front/back <span className={notifDiagnostics.frontendMatchesBackend ? 'text-emerald-300' : 'text-rose-300'}>
-                        {notifDiagnostics.frontendMatchesBackend ? 'OK' : 'KO'}
-                      </span>{' '}
-                      · sub/back <span className={notifDiagnostics.subscriptionMatchesBackend ? 'text-emerald-300' : 'text-rose-300'}>
-                        {notifDiagnostics.subscriptionMatchesBackend ? 'OK' : 'KO'}
-                      </span>{' '}
-                      · front/sub <span className={notifDiagnostics.frontendMatchesSubscription ? 'text-emerald-300' : 'text-rose-300'}>
-                        {notifDiagnostics.frontendMatchesSubscription ? 'OK' : 'KO'}
-                      </span>
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -1234,15 +1157,6 @@ export function ProfilePage() {
               ) : notifStatus === 'loading' ? (
                 <span className="text-xs text-white/40 animate-pulse">...</span>
               ) : null}
-
-              <button
-                type="button"
-                onClick={notifRunDiagnostics}
-                disabled={notifIsDiagnosing || notifStatus === 'loading'}
-                className="px-3 py-2 rounded-2xl border border-white/10 text-xs font-bold text-white/45 hover:border-white/20 hover:text-white/70 transition-colors disabled:opacity-50"
-              >
-                {notifIsDiagnosing ? 'Diagnostic...' : 'Diagnostiquer'}
-              </button>
             </div>
           </div>
         </section>

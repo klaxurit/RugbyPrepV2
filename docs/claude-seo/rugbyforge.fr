@@ -1,0 +1,172 @@
+/seo-page:
+
+⏺ SEO Audit — rugbyforge.fr                      
+                                     
+  Page Score Card                                                                      
+                                                                                       
+  Overall Score:   72/100                                                              
+                                                                                       
+  On-Page SEO:     85/100  █████████░                                                  
+  Content Quality: 72/100  ███████░░░
+  Technical:       68/100  ███████░░░                                                  
+  Schema:          80/100  ████████░░                                                  
+  Images:          20/100  ██░░░░░░░░                                                  
+  E-E-A-T:         61/100  ██████░░░░                                                  
+                                                            
+  ---                                                                                  
+  CRITICAL — Fix Immediately                                
+                                                                                       
+  1. /acwr-rugby/ et /periodisation-rugby/ non déployés — Les fichiers existent
+  localement mais ne sont pas commités. En prod, Cloudflare sert le SPA shell avec le  
+  canonical de la homepage → Google voit du contenu dupliqué.
+  git add public/acwr-rugby/ public/periodisation-rugby/ public/sitemap.xml            
+  2. Zéro image sur toutes les pages statiques — Aucun <img> dans les 4 pages HTML.    
+  Google évalue la présence de "helpful media" pour le contenu instructif fitness.     
+  Impact majeur sur Image Search et engagement.                                        
+  3. Accents manquants dans tout le HTML statique — "preparation" au lieu de           
+  "préparation", "recuperation" au lieu de "récupération", etc. Impacte le NLP         
+  français, la confiance utilisateur, et le matching de citations.
+                                                                                       
+  ---                                                       
+  HIGH
+      
+  4. Schema logo Organization = string au lieu d'ImageObject (ligne 55 de index.html)
+  5. Schema Article sans image sur les 3 pages articles → bloque l'éligibilité aux rich
+   results                                                                             
+  6. Pas de Content-Security-Policy dans _headers                                      
+  7. LCP dépend du JS — Landing page rendue côté client, pas de preload font/hero      
+  8. Pas de code-splitting — React.lazy() absent pour les routes authentifiées         
+  9. ACWR (-190 mots) et Périodisation (-288 mots) en dessous du seuil 1 500 mots      
+  10. Pas d'auteur nommé — Tout est attribué à "RugbyForge" org. Google favorise les   
+  Person avec credentials pour le contenu fitness/santé                                
+                                                                                       
+  ---                                                                                  
+  MEDIUM                                                    
+        
+  11. Ajouter FAQPage schema sur /acwr-rugby/ (FAQ HTML déjà présente mais pas de
+  markup)                                                                              
+  12. Ajouter twitter:site sur toutes les pages
+  13. Ajouter 3-5 liens sortants vers PubMed/BJSM par article (signal E-E-A-T)         
+  14. Ajouter variations sémantiques : "programme musculation rugby", "entraînement    
+  physique rugby", "séance musculation rugby"                                          
+  15. Implémenter IndexNow pour Bing                                                   
+  16. Bloquer /landing et /staff-sandbox dans robots.txt                               
+  17. Blog CollectionPage : utiliser @id references + ajouter hasPart                  
+  18. Sidebar H2 → H3 pour ne pas diluer le heading outline                            
+                                                                                       
+  ---                                                                                  
+  LOW                                                                                  
+                                                            
+  19. Subsetter Google Fonts Lexend (7 weights → seulement ceux utilisés)
+  20. OG images uniques par article                                                    
+  21. Ajouter noindex sur /legal ou l'inclure dans le sitemap
+  22. Ajouter speakable schema pour voice search                                       
+  23. Bumper dateModified après chaque mise à jour substantive                         
+                                                                                       
+  ---                                                                                  
+  Schema JSON-LD — Corrections Prêtes                       
+                                                                                       
+  L'agent schema a généré du JSON-LD complet de remplacement pour :
+  - Homepage : Organization (logo→ImageObject) + WebSite (+ SearchAction) + WebPage +  
+  SoftwareApplication (+ screenshot/featureList) + BreadcrumbList                      
+  - Blog : CollectionPage avec @id references + hasPart + BreadcrumbList               
+  - Articles : ajout de la propriété image manquante                                   
+                                                                                       
+  Veux-tu que j'applique ces corrections directement dans les fichiers ? 
+
+  /seo-content:
+
+  ⏺ Content Quality & E-E-A-T Analysis — rugbyforge.fr
+                    
+  Score Card                                                                           
+                      
+  Overall Content Quality:  62/100  ██████░░░░                                         
+  AI Citation Readiness:    58/100  ██████░░░░              
+                                                                                       
+  E-E-A-T Breakdown:                                                                   
+    Experience:        13/25  █████░░░░░  Données internes mais zéro étude de cas      
+  terrain                                                                              
+    Expertise:         16/25  ██████░░░░  Références scientifiques solides, pas de lien
+   DOI                                                                                 
+    Authoritativeness:  8/25  ███░░░░░░░  Aucun backlink, pas d'auteur nommé, pas de   
+  réseaux sociaux                                                                      
+    Trustworthiness:   14/25  ██████░░░░  Disclaimer santé partiel, pas d'adresse      
+  physique                                                                             
+                                                                                       
+  ---                                                                                  
+  CRITICAL                                                  
+          
+  1. Zéro image sur les 5 pages statiques — Google évalue la présence de "helpful
+  media" pour le contenu fitness. Pas de diagramme ACWR, pas de timeline périodisation,
+   pas de photos exercice. Impact estimé : +15-20 pts visibilité image search.
+  2. Accents manquants dans tout le HTML — "preparation" au lieu de "préparation",     
+  "recuperation" au lieu de "récupération" partout. Impacte le NLP français, la        
+  confiance utilisateur et le matching exact des requêtes.
+  3. 3 articles sous le seuil 1 500 mots :                                             
+    - ACWR : 1 142 mots (-358)                                                         
+    - Périodisation : 1 044 mots (-456)
+    - Tests physiques : 1 237 mots (-263)                                              
+                                                                                       
+  ---
+  HIGH                                                                                 
+                                                            
+  4. Zéro lien sortant vers des sources — 12+ chercheurs nommés (Gabbett, Hulin, Bompa,
+   Rhea...) mais aucun lien PubMed/BJSM/DOI. Pour du contenu YMYL fitness, c'est un gap
+   E-E-A-T majeur. Ajouter 3-5 DOI par article.
+  5. Pas d'auteur humain nommé — Tout attribué à "RugbyForge" (Organization). Google   
+  favorise les Person avec credentials pour le contenu santé/fitness. Créer un profil  
+  auteur avec nom + qualifications + schema Person.
+  6. FAQPage schema manquant sur 3 pages — ACWR, périodisation et tests-physiques ont  
+  des FAQ en HTML mais pas de structured data correspondante (seule la page pilier     
+  l'a).
+  7. Homepage : 76 mots statiques — Le noscript fallback est très en dessous du seuil  
+  500 mots. Le contenu marketing dépend entièrement du rendu JS.                       
+  
+  ---                                                                                  
+  MEDIUM                                                    
+        
+  8. Variantes sémantiques absentes — "musculation rugby", "programme musculation
+  rugby", "entraînement physique rugby" = 0 occurrences sur toutes les pages.          
+  9. Sidebar H2 diluent la hiérarchie — "À retenir", "Continuer la lecture",
+  "Méthodologie" en H2 au lieu de H3.                                                  
+  10. Disclaimer santé manquant sur périodisation et tests-physiques (présent sur les 2
+   autres articles).                                                                   
+  11. sameAs vide dans Organization schema — Aucun profil social lié.
+  12. Toutes les pages ont le même datePublished — Signal de batch launch. Différencier
+   les dateModified au fil des mises à jour.                                           
+                                                                                       
+  ---                                                                                  
+  AI Content Assessment                                     
+                       
+  Le contenu est factuellement solide et montre une vraie expertise de domaine, mais
+  présente des marqueurs d'uniformité :                                                
+  - Structure identique (2 paragraphes par H2, systématiquement)
+  - Zéro voix première personne ("nous avons observé", "dans notre expérience")        
+  - Zéro anecdote de terrain, échecs, études de cas réels                      
+                                                                                       
+  Verdict : Contenu acceptable sous les critères QRG Sept 2025, mais gagnerait         
+  fortement en crédibilité avec des marqueurs d'expérience de première main.           
+                                                                                       
+  ---                                                                                  
+  Top 5 Actions par Impact                                  
+                                                                                       
+  ┌─────┬───────────────────────────────────────────────────┬──────────────────────┐
+  │  #  │                      Action                       │    Impact estimé     │   
+  ├─────┼───────────────────────────────────────────────────┼──────────────────────┤
+  │ 1   │ Ajouter 2-3 images/diagrammes par article (zones  │ Score 62→72+         │
+  │     │ ACWR, timeline périodisation, radar postes)       │                      │
+  ├─────┼───────────────────────────────────────────────────┼──────────────────────┤   
+  │ 2   │ Corriger les accents français sur toutes les      │ NLP + trust + CTR    │
+  │     │ pages                                             │                      │   
+  ├─────┼───────────────────────────────────────────────────┼──────────────────────┤   
+  │ 3   │ Ajouter 3-5 liens PubMed/DOI par article          │ E-E-A-T expertise    │
+  │     │                                                   │ +5-8 pts             │   
+  ├─────┼───────────────────────────────────────────────────┼──────────────────────┤   
+  │ 4   │ Étoffer les 3 articles courts à 1 500+ mots +     │ Couverture topique   │   
+  │     │ ajouter FAQ schema                                │                      │   
+  ├─────┼───────────────────────────────────────────────────┼──────────────────────┤   
+  │ 5   │ Créer un auteur nommé avec credentials + schema   │ E-E-A-T              │   
+  │     │ Person + page /about/                             │ authoritativeness    │
+  └─────┴───────────────────────────────────────────────────┴──────────────────────┘   
+                                                            
+  Veux-tu que j'attaque une de ces actions ?

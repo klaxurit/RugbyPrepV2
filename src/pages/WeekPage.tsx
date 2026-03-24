@@ -1,49 +1,22 @@
-import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { ChevronRight, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, TrendingUp, Info, Dumbbell, Activity, Leaf, HeartPulse } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Activity, Leaf, HeartPulse } from 'lucide-react'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
-import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
-import { useAcwrOverride } from '../hooks/useAcwrOverride'
-import { useAcwrBlockCollapsed } from '../hooks/useAcwrBlockCollapsed'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
-import { buildWeekProgram, validateSession } from '../services/program'
-import { applyDeloadToSessions } from '../services/ui/applyDeload'
-import { shouldRecommendDeload } from '../services/ui/recommendations'
-import { getSessionRecap } from '../services/ui/progression'
-import { getProgramSafetyMessages } from '../services/ui/safetyMessaging'
-import { getCycleWeekNumber, getPhaseForWeek } from '../services/program/programPhases.v1'
-import type { CycleWeek, DayOfWeek, RehabPhase, SessionType } from '../types/training'
-import { TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
+import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
+import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
+import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
+import type { RehabPhase } from '../types/training'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
-import { checkBetaEligibility, BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
-
-const ALL_WEEK_OPTIONS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
-const IN_SEASON_3_1_HIDDEN: CycleWeek[] = ['W4', 'W8', 'H4']
-
-const getSessionType = (recipeId: string): SessionType => {
-  if (recipeId === 'UPPER_V1' || recipeId === 'UPPER_HYPER_V1' || recipeId === 'UPPER_BUILDER_V1') return 'UPPER'
-  if (recipeId === 'LOWER_V1' || recipeId === 'LOWER_HYPER_V1' || recipeId === 'LOWER_BUILDER_V1') return 'LOWER'
-  if (recipeId === 'COND_OFF_V1' || recipeId === 'COND_PRE_V1' || recipeId === 'SPEED_FIELD_PRE_V1') return 'CONDITIONING'
-  return 'FULL'
-}
-
-// Day labels (Sun=0 … Sat=6)
-const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
-
-const SESSION_TYPE_STYLES: Record<SessionType, { bg: string; text: string; label: string }> = {
-  UPPER:        { bg: 'bg-blue-900/20',   text: 'text-blue-400',   label: 'UPPER' },
-  LOWER:        { bg: 'bg-emerald-900/20', text: 'text-emerald-400', label: 'LOWER' },
-  FULL:         { bg: 'bg-amber-900/20',   text: 'text-amber-400',   label: 'FULL'  },
-  CONDITIONING: { bg: 'bg-violet-900/20',  text: 'text-violet-400',  label: 'COND'  },
-  RECOVERY:     { bg: 'bg-teal-900/20',    text: 'text-teal-400',    label: 'RECOV' },
-}
+import { AnnualPlanningSummaryCard } from '../components/motherSession/AnnualPlanningSummaryCard'
+import { MotherSessionWeekPanel } from '../components/motherSession/MotherSessionWeekPanel'
 
 const REHAB_CRITERIA: Record<RehabPhase, string> = {
   1: 'P2 : absence douleur au repos · mobilité partielle retrouvée · 1-2 semaines',
@@ -51,19 +24,26 @@ const REHAB_CRITERIA: Record<RehabPhase, string> = {
   3: 'Fin : force ≥ 90% · tests fonctionnels OK · course/sauts sans douleur',
 }
 
+function localDateISO(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 export function WeekPage() {
   const { profile } = useProfile()
-  const { week, setWeek, lastNonDeloadWeek } = useWeek()
+  const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
+  const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue, setFatigue } = useFatigue()
-  const { logs: blockLogs } = useBlockLogs()
   const { logs } = useHistory()
   const { events } = useCalendar()
+  const navigate = useNavigate()
 
-  const isInSeason3_1 = (profile?.trainingLevel ?? 'starter') === 'performance' &&
-    (profile?.seasonMode ?? 'in_season') === 'in_season'
-  const weekOptions = isInSeason3_1
-    ? ALL_WEEK_OPTIONS.filter((w) => !IN_SEASON_3_1_HIDDEN.includes(w))
-    : ALL_WEEK_OPTIONS
+  const acwrResult = useACWR(logs, events)
+  const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
+
+  useEffect(() => { posthog.capture('week_viewed') }, [])
 
   // Match non chargé hier → bannière rappel + suggestion mobilité
   const yesterday = new Date()
@@ -74,54 +54,45 @@ export function WeekPage() {
   ) ?? null
   const isRecoveryDay = events.some((e) => e.type === 'match' && e.date === yesterdayStr)
 
-  const acwrResult = useACWR(logs, events)
-  const acwr = acwrResult.acwr
-  const acwrZone = acwrResult.zone
-  const { ignoreAcwrOverload, setOverride } = useAcwrOverride()
-  const { collapsed: acwrBlockCollapsed, toggle: toggleAcwrBlock } = useAcwrBlockCollapsed()
-  const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
+  // ── Surface unifiée ────────────────────────────────────────────────────────
+  const today = useMemo(() => localDateISO(new Date()), [])
+  const surfaceParams = useMemo(() => ({
+    profile,
+    events,
+    logs,
+    today,
+    fatigue,
+    acwrZone: acwrResult.hasSufficientData ? acwrResult.zone : null,
+    week,
+    lastNonDeloadWeek,
+    ignoreAcwrOverload: false,
+    hasSufficientACWRData: acwrResult.hasSufficientData,
+    featureFlags: programFeatureFlags,
+  }), [profile, events, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags])
+  const { surface } = useWeeklyProgramSurface(surfaceParams)
 
-  useEffect(() => { posthog.capture('week_viewed') }, [])
+  // ── Hard-block global ──────────────────────────────────────────────────────
+  const { hasHardBlock, hardBlockReasons } = getGlobalProgramHardBlock(profile)
 
-  const effectiveWeek = week === 'DELOAD' ? lastNonDeloadWeek : week
-  const phase = getPhaseForWeek(effectiveWeek)
-  const cycleWeekNumber = getCycleWeekNumber(week)
-  const recommendation = shouldRecommendDeload(logs, week, acwr)
-  const isDeloadWeek = week === 'DELOAD'
-
-  // Training day detection — use scSchedule if available, otherwise defaults
-  const todayDow = new Date().getDay() as DayOfWeek
-  const trainingDays: DayOfWeek[] =
-    profile.scSchedule?.sessions.map((s) => s.day) ??
-    TRAINING_DAYS_DEFAULT[profile.weeklySessions]
-  const todaySessionIndex = trainingDays.indexOf(todayDow)
-  const isTrainingToday = todaySessionIndex !== -1
-
-  // ── Guard beta self-serve ─────────────────────────────────────────────────────
-  // Doit être après tous les hooks React (useEffect L84 = dernier hook).
-  // buildWeekProgram n'est pas appelé pour les profils hors périmètre beta.
-  const betaEligibility = checkBetaEligibility(profile)
-
-  // Analytics : fire une seule fois par affichage du guard (pas à chaque re-render)
   useEffect(() => {
-    if (!betaEligibility.isEligible) {
+    if (hasHardBlock) {
       posthog.capture('beta_eligibility_blocked', {
         surface: 'week_page',
-        primaryReason: betaEligibility.primaryReason,
-        reasons: betaEligibility.reasons,
+        primaryReason: hardBlockReasons[0] ?? null,
+        reasons: hardBlockReasons,
       })
     }
-  }, [betaEligibility.isEligible, betaEligibility.primaryReason]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [hasHardBlock, hardBlockReasons])
 
-  if (!betaEligibility.isEligible) {
+  if (hasHardBlock) {
     return (
       <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24">
-        <PageHeader title="Mon espace" backTo="/" />
+        <PageHeader title="Ma Semaine" backTo="/home" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
             <p className="font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
             <ul className="space-y-2">
-              {betaEligibility.reasons.map((r) => (
+              {hardBlockReasons.map((r) => (
                 <li key={r} className="text-sm text-amber-300/80">
                   <span className="font-semibold">{BETA_ELIGIBILITY_MESSAGES[r].reason}</span>
                   <br />{BETA_ELIGIBILITY_MESSAGES[r].detail}
@@ -134,12 +105,6 @@ export function WeekPage() {
             <Link to="/profile" className="inline-block text-sm font-bold text-[#ff6b35] hover:text-[#e55a2b]">
               Modifier mon profil →
             </Link>
-            <a
-              href="mailto:feedback@rugbyforge.fr?subject=Feedback%20bêta%20RugbyForge"
-              className="inline-block text-xs text-white/40 hover:text-white/60 mt-1"
-            >
-              Un souci ? Contacte-nous →
-            </a>
           </div>
         </main>
         <BottomNav />
@@ -147,429 +112,135 @@ export function WeekPage() {
     )
   }
 
-  const builtWeekProgram = buildWeekProgram(profile, effectiveWeek, {
-    fatigueLevel: acwrResult.hasSufficientData ? (acwrZone ?? undefined) : undefined,
-    hasSufficientACWRData: acwrResult.hasSufficientData,
-    ignoreAcwrOverload,
-    featureFlags: programFeatureFlags,
-  })
-  const weekProgram = {
-    ...builtWeekProgram,
-    week,
-    sessions: isDeloadWeek
-      ? applyDeloadToSessions(builtWeekProgram.sessions)
-      : builtWeekProgram.sessions,
-  }
-  const weekSafetyMessages = Array.from(
-    new Set(getProgramSafetyMessages(weekProgram.warnings, weekProgram.hardConstraintEvents))
-  )
-
-  const recapRows = weekProgram.sessions.map((session) => ({
-    type: getSessionType(session.recipeId),
-    recap: getSessionRecap(blockLogs, session, getSessionType(session.recipeId), week),
-  }))
-
-  const seasonMode = profile.seasonMode ?? 'in_season'
-
-  const weeklyBannerText =
-    week === 'DELOAD'
-      ? 'Semaine de décharge — priorité récupération'
-      : seasonMode === 'off_season'
-        ? 'Inter-saison : hypertrophie & reconstruction musculaire'
-        : seasonMode === 'pre_season'
-          ? 'Pré-saison : force-puissance & réathlétisation'
-          : week === 'W4'
-            ? 'Fin de bloc — consulte tes progrès'
-            : 'Objectif : régularité + qualité d\'exécution'
-
-  const SEASON_MODE_BADGE: Record<string, { label: string; color: string }> = {
-    off_season: { label: '🌿 Inter-saison', color: 'bg-emerald-900/20 text-emerald-400 border-emerald-500/20' },
-    pre_season: { label: '🔥 Pré-saison',   color: 'bg-amber-900/20 text-amber-400 border-amber-500/20' },
-    in_season:  { label: '⚡ Saison',        color: 'bg-white/10 text-white/60 border-white/20' },
-  }
+  // ── Décision moteur ────────────────────────────────────────────────────────
+  const primarySource = surface?.primarySource ?? 'mother_session'
+  const isUnavailable = primarySource === 'unavailable'
+  const msResolution = surface?.motherSession ?? null
 
   return (
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <PageHeader title="Plan Semaine" backTo="/" titleSuffix={week} />
+      <PageHeader
+        title="Ma Semaine"
+        backTo="/home"
+        titleSuffix={surface?.planningContext.weekLabel ?? week}
+      />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
-        {/* Séance du jour CTA */}
-        {isTrainingToday && weekProgram && (
-          <Link
-            to={`/session/${todaySessionIndex}`}
-            className="flex items-center justify-between gap-3 px-5 py-4 bg-[#ff6b35] text-white rounded-[2rem] shadow-lg shadow-[#ff6b35]/20 hover:bg-[#e55a2b] transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-white/10">
-                <Dumbbell className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Aujourd'hui</p>
-                <p className="text-sm font-black">C'est jour de séance !</p>
-              </div>
-            </div>
-            <ChevronRight className="w-5 h-5 opacity-60 flex-shrink-0" />
-          </Link>
+        {isUnavailable && (
+          <section className="rounded-[24px] border border-amber-500/25 bg-amber-900/10 p-5 space-y-3">
+            <p className="text-sm font-bold text-amber-300">Programme en préparation</p>
+            <p className="text-xs text-white/50">
+              Le plan annuel n'a pas pu être résolu pour cette semaine. Vérifie ton profil ou réessaie après une mise à jour.
+            </p>
+          </section>
         )}
 
-        {/* Bannière match hier sans charge */}
-        {unmatchedYesterdayMatch && (
-          <Link
-            to="/calendar"
-            className="flex items-center gap-3 px-4 py-3 bg-amber-900/20 border border-amber-500/20 rounded-2xl hover:bg-amber-900/30 transition-colors"
+        {msResolution && surface && (
+          <section
+            className="space-y-5"
+            data-testid="annual-plan-section"
+            aria-label="Programme de la semaine"
           >
-            <div className="p-1.5 rounded-xl bg-amber-900/20 text-amber-400 flex-shrink-0">
-              <Activity className="w-4 h-4" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-black text-amber-300">
-                🏉 Match hier{unmatchedYesterdayMatch.opponent ? ` vs ${unmatchedYesterdayMatch.opponent}` : ''} — enregistre ta charge
-              </p>
-              <p className="text-[10px] text-amber-400 mt-0.5">Mise à jour ACWR → Calendrier</p>
-            </div>
-            <ChevronRight className="w-4 h-4 text-amber-400 flex-shrink-0" />
-          </Link>
-        )}
+            {/* Bannière match hier sans charge */}
+            {unmatchedYesterdayMatch && (
+              <Link
+                to="/calendar"
+                className="flex items-center gap-3 px-4 py-3 bg-amber-900/20 border border-amber-500/20 rounded-2xl hover:bg-amber-900/30 transition-colors"
+              >
+                <div className="p-1.5 rounded-xl bg-amber-900/20 text-amber-400 flex-shrink-0">
+                  <Activity className="w-4 h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-black text-amber-300">
+                    Match hier{unmatchedYesterdayMatch.opponent ? ` vs ${unmatchedYesterdayMatch.opponent}` : ''} — enregistre ta charge
+                  </p>
+                  <p className="text-[10px] text-amber-400 mt-0.5">Mise à jour ACWR → Calendrier</p>
+                </div>
+              </Link>
+            )}
 
-        {/* Bannière mobilité (lendemain de match) */}
-        {isRecoveryDay && !isDeloadWeek && (
-          <Link
-            to="/mobility"
-            className="flex items-center gap-3 px-4 py-3 bg-teal-900/20 border border-teal-500/20 rounded-2xl hover:bg-teal-900/30 transition-colors"
-          >
-            <div className="p-1.5 rounded-xl bg-teal-900/20 text-teal-400 flex-shrink-0">
-              <Leaf className="w-4 h-4" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-black text-teal-300">Session mobilité suggérée</p>
-              <p className="text-[10px] text-teal-400 mt-0.5">Récupération active · 10-15 min</p>
-            </div>
-            <ChevronRight className="w-4 h-4 text-teal-400 flex-shrink-0" />
-          </Link>
-        )}
+            {/* Bannière mobilité (lendemain de match) */}
+            {isRecoveryDay && (
+              <Link
+                to="/mobility"
+                className="flex items-center gap-3 px-4 py-3 bg-teal-900/20 border border-teal-500/20 rounded-2xl hover:bg-teal-900/30 transition-colors"
+              >
+                <div className="p-1.5 rounded-xl bg-teal-900/20 text-teal-400 flex-shrink-0">
+                  <Leaf className="w-4 h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-black text-teal-300">Session mobilité suggérée</p>
+                  <p className="text-[10px] text-teal-400 mt-0.5">Récupération active · 10-15 min</p>
+                </div>
+              </Link>
+            )}
 
-        {/* Bannière rehab active */}
-        {profile.rehabInjury && (
-          <div className="p-4 bg-rose-900/20 border border-rose-500/20 rounded-3xl space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <HeartPulse className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                <p className="text-xs font-black text-rose-400">
-                  Mode Réhab — Phase {profile.rehabInjury.phase}/3
+            {/* Bannière rehab active */}
+            {profile.rehabInjury && (
+              <div className="p-4 bg-rose-900/20 border border-rose-500/20 rounded-3xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <HeartPulse className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                    <p className="text-xs font-black text-rose-400">
+                      Mode Réhab — Phase {profile.rehabInjury.phase}/3
+                    </p>
+                  </div>
+                  <span className="text-[10px] text-rose-400">
+                    {profile.rehabInjury.zone === 'upper' ? 'Épaule/Bras/Cou' : 'Genou/Hanche/Cheville'}
+                  </span>
+                </div>
+                <p className="text-xs text-rose-400 leading-snug">
+                  {REHAB_CRITERIA[profile.rehabInjury.phase]}
                 </p>
               </div>
-              <span className="text-[10px] text-rose-400">
-                {profile.rehabInjury.zone === 'upper' ? 'Épaule/Bras/Cou' : 'Genou/Hanche/Cheville'}
-              </span>
-            </div>
-            <p className="text-xs text-rose-400 leading-snug">
-              {REHAB_CRITERIA[profile.rehabInjury.phase]}
-            </p>
-          </div>
-        )}
-
-        {/* Bloc unique ACWR + décharge — repliable (effet tiroir) */}
-        {!isDeloadWeek && (acwrZone && ['caution', 'danger', 'critical'].includes(acwrZone) || recommendation.recommend) && (
-          <div className={`rounded-3xl border overflow-hidden ${
-            (acwrZone === 'danger' || acwrZone === 'critical')
-              ? 'bg-rose-900/20 border-rose-500/20'
-              : 'bg-amber-900/20 border-amber-500/20'
-          }`}>
-            <button
-              type="button"
-              onClick={toggleAcwrBlock}
-              className="w-full p-3 flex items-center gap-3 text-left hover:bg-white/5 transition-colors"
-              aria-expanded={!acwrBlockCollapsed}
-            >
-              <Activity className={`w-4 h-4 flex-shrink-0 ${
-                (acwrZone === 'danger' || acwrZone === 'critical') ? 'text-rose-400' : 'text-amber-400'
-              }`} />
-              <span className={`flex-1 text-xs font-black ${
-                (acwrZone === 'danger' || acwrZone === 'critical') ? 'text-rose-400' : 'text-amber-400'
-              }`}>
-                {acwrZone === 'danger' || acwrZone === 'critical'
-                  ? `Surcharge (ACWR ${acwr?.toFixed(2)}) — priorité récupération`
-                  : recommendation.recommend && !acwrZone
-                    ? `Décharge recommandée — ${recommendation.reason}`
-                    : acwrZone === 'caution'
-                      ? `Vigilance (ACWR ${acwr?.toFixed(2)}) — réduis l'intensité si fatigue`
-                      : `Décharge recommandée — ${recommendation.reason}`}
-              </span>
-              {acwrBlockCollapsed ? (
-                <ChevronDown className="w-4 h-4 text-white/50 flex-shrink-0" aria-hidden />
-              ) : (
-                <ChevronUp className="w-4 h-4 text-white/50 flex-shrink-0" aria-hidden />
-              )}
-            </button>
-            {!acwrBlockCollapsed && (
-              <div className="px-4 pb-4 pt-0 flex items-start gap-3">
-                <div className="w-4 flex-shrink-0" aria-hidden />
-                <div className="flex-1 space-y-2 min-w-0">
-                  <p className="text-xs text-white/60 leading-snug">
-                    Volume −40 à −60 %, intensité maintenue. Sommeil et nutrition prioritaires. (Issurin 2008)
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {(acwrZone === 'danger' || acwrZone === 'critical' || recommendation.recommend) && (
-                      <button
-                        type="button"
-                        onClick={() => setWeek('DELOAD')}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ff6b35] text-white text-xs font-black uppercase tracking-wide"
-                      >
-                        Passer en mode récup
-                      </button>
-                    )}
-                    {(acwrZone === 'danger' || acwrZone === 'critical') && (
-                      <button
-                        type="button"
-                        onClick={() => setOverride(!ignoreAcwrOverload)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 text-white/80 text-xs font-bold hover:bg-white/10 transition-colors"
-                      >
-                        {ignoreAcwrOverload ? 'Réappliquer la mobilité' : 'Je me sens bien — garder Lower + Upper'}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
             )}
-          </div>
-        )}
 
-        {/* Week selector — semaine actuelle mise en évidence */}
-        <div className="space-y-2">
-          <p className="text-[10px] font-black uppercase tracking-wider text-white/40 px-1">
-            Semaine d&apos;entraînement
-          </p>
-          <div className="relative -mx-1">
-            <div
-              className="flex gap-2 overflow-x-auto pb-1 pt-2 px-4 scrollbar-none [mask-image:linear-gradient(to_right,transparent_0%,black_2rem,black_calc(100%-2rem),transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_2rem,black_calc(100%-2rem),transparent_100%)] [mask-size:100%_100%]"
-            >
-              {weekOptions.map((opt) => {
-                const isSelected = opt === week
-                return (
+            {/* Fatigue check-in discret */}
+            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5">
+              <span className="text-[11px] font-bold text-white/50">Forme</span>
+              <div className="flex gap-1.5 bg-white/10 rounded-xl p-0.5">
+                {(['OK', 'FATIGUE'] as const).map((f) => (
                   <button
-                    key={opt}
+                    key={f}
                     type="button"
-                    onClick={() => setWeek(opt)}
-                    className={`flex-shrink-0 px-3.5 py-2 rounded-2xl text-xs font-black transition-all duration-200 ${
-                      isSelected
-                        ? 'bg-[#1a5f3f] text-white shadow-lg shadow-[#1a5f3f]/30 ring-2 ring-[#2d8f5f] ring-offset-2 ring-offset-[#1a100c]'
-                        : 'bg-white/5 border border-white/10 text-white/60 hover:border-[#1a5f3f]/30 hover:text-white/80'
+                    onClick={() => setFatigue(f)}
+                    className={`px-3 py-1 rounded-[10px] text-[10px] font-black transition-all ${
+                      fatigue === f ? 'bg-white/20 text-white shadow-sm' : 'text-white/40'
                     }`}
                   >
-                    {opt}
+                    {f === 'OK' ? 'En forme' : 'Fatigué'}
                   </button>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Phase info + Season mode badge */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {(phase || cycleWeekNumber) && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-white/10 rounded-2xl">
-              <Info className="w-3.5 h-3.5 text-white/40 flex-shrink-0" />
-              <p className="text-xs text-white/60">
-                {phase && <span>Bloc {phase} ({phase === 'FORCE' ? 'S1–4' : phase === 'HYPERTROPHY' ? 'H1–4' : 'S5–8'})</span>}
-                {phase && cycleWeekNumber && ' · '}
-                {cycleWeekNumber && <span>Wk {cycleWeekNumber}/8</span>}
-              </p>
-            </div>
-          )}
-          {SEASON_MODE_BADGE[seasonMode] && (
-            <span className={`px-3 py-2 rounded-2xl text-xs font-black border ${SEASON_MODE_BADGE[seasonMode].color}`}>
-              {SEASON_MODE_BADGE[seasonMode].label}
-            </span>
-          )}
-        </div>
-
-        {/* Banner */}
-        <div className={`flex items-center justify-between gap-3 px-4 py-3 rounded-2xl ${
-          isDeloadWeek ? 'bg-[#1a5f3f]/10 border border-[#1a5f3f]/20' : 'bg-[#ff6b35]/10 border border-[#ff6b35]/20'
-        } shadow-sm`}>
-          <p className={`text-xs font-bold ${isDeloadWeek ? 'text-[#1a5f3f]' : 'text-[#ff6b35]'}`}>
-            {weeklyBannerText}
-          </p>
-          <Link to="/progress" className="text-[10px] font-black text-[#1a5f3f] uppercase tracking-wide flex-shrink-0">
-            Progrès →
-          </Link>
-        </div>
-
-        {(weekProgram.selectedArchetypeId !== 'LEGACY_V1' || weekProgram.qualityScorecard) && (
-          <div className="p-3 bg-white/5 border border-white/10 rounded-2xl space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-wide text-white/40">
-              Microcycle
-            </p>
-            <p className="text-xs text-white/70">
-              Archetype: {weekProgram.selectedArchetypeId}
-            </p>
-            {weekProgram.qualityScorecard && (
-              <p className="text-xs text-white/50">
-                Score qualité: {weekProgram.qualityScorecard.overall}/100
-              </p>
-            )}
-          </div>
-        )}
-
-        {weekSafetyMessages.length > 0 && (
-          <div className="p-4 bg-amber-900/20 border border-amber-500/20 rounded-2xl">
-            <p className="text-[10px] font-black uppercase tracking-wide text-amber-300 mb-2">
-              Adaptations sécurité semaine
-            </p>
-            <ul className="space-y-1">
-              {weekSafetyMessages.map((message) => (
-                <li key={message} className="text-xs text-amber-300 leading-snug">
-                  • {message}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Fatigue toggle */}
-        <section className="bg-white/5 border border-white/10 rounded-[24px] p-5">
-          <h2 className="text-xs font-black uppercase tracking-wider text-white/40 mb-3">Niveau de fatigue aujourd'hui</h2>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => setFatigue('OK')}
-              className={`py-3 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all ${
-                fatigue === 'OK'
-                  ? 'bg-[#10b981] text-white shadow-sm'
-                  : 'bg-white/5 text-white/50 border border-white/10 hover:border-[#10b981]/20'
-              }`}
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              Je suis frais
-            </button>
-            <button
-              type="button"
-              onClick={() => setFatigue('FATIGUE')}
-              className={`py-3 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all ${
-                fatigue === 'FATIGUE'
-                  ? 'bg-[#f59e0b] text-white shadow-sm'
-                  : 'bg-white/5 text-white/50 border border-white/10 hover:border-[#f59e0b]/20'
-              }`}
-            >
-              <AlertTriangle className="w-4 h-4" />
-              Je suis fatigué
-            </button>
-          </div>
-
-          {fatigue === 'FATIGUE' && week !== 'DELOAD' && !(acwrZone && ['caution', 'danger', 'critical'].includes(acwrZone)) && !recommendation.recommend && (
-            <div className="mt-3 p-3 bg-[#f59e0b]/10 rounded-2xl border border-[#f59e0b]/20 flex items-center justify-between gap-3">
-              <p className="text-xs text-[#f59e0b] font-medium">Décharge recommandée.</p>
-              <button
-                type="button"
-                onClick={() => setWeek('DELOAD')}
-                className="text-[10px] font-black text-[#f59e0b] uppercase tracking-wide flex-shrink-0"
-              >
-                Basculer →
-              </button>
-            </div>
-          )}
-          {(week === 'W4' || week === 'W8') && (
-            <p className="mt-3 text-xs text-white/40 text-center">Semaine de décharge recommandée la suivante.</p>
-          )}
-        </section>
-
-        {/* Recap */}
-        {recapRows.length > 0 && (
-          <div className="bg-white/5 border border-white/10 rounded-[24px] p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="p-1.5 rounded-xl bg-[#ff6b35]/10 text-[#ff6b35]">
-                <TrendingUp className="w-4 h-4" />
+                ))}
               </div>
-              <h3 className="text-xs font-black uppercase tracking-wider text-white/40">Récap semaine</h3>
             </div>
-            <div className="space-y-1.5">
-              {recapRows.map((row) => (
-                <div key={row.type} className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-white">{row.type}</span>
-                  <span className="text-white/40">
-                    {row.recap.loggedExercises}/{row.recap.totalExercises} exercices · charge {row.recap.loadProxy}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+
+            <AnnualPlanningSummaryCard
+              planningContext={surface.planningContext}
+              planningInputsWarnings={surface.planningInputWarnings}
+              resolutionWarnings={msResolution.warnings}
+              companionRecommendations={msResolution.companionRecommendations}
+              fatigueLevel={surface.planningContext.fatigueLevel}
+              lang={lang}
+            />
+
+            {/* Séances de la semaine — navigation vers /session/:id */}
+            {/* Warnings/companions déjà montrés dans AnnualPlanningSummaryCard ci-dessus */}
+            <MotherSessionWeekPanel
+              sessions={msResolution.sessions}
+              warnings={[]}
+              companionRecommendations={[]}
+              status={msResolution.status}
+              missingMessage={msResolution.message}
+              scSchedule={profile.scSchedule}
+              clubSchedule={profile.clubSchedule}
+              lang={lang}
+              onSessionSelect={(index) => navigate(`/session/${index}`)}
+            />
+          </section>
         )}
-
-
-        {/* Session cards — compact, tap to go to detail */}
-        {weekProgram?.sessions.map((session, index) => {
-          const validation = validateSession(session)
-          const type = getSessionType(session.recipeId)
-          const style = SESSION_TYPE_STYLES[type]
-          const recap = recapRows[index]?.recap
-
-          return (
-            <Link
-              key={`${week}-${session.recipeId}-${index}`}
-              to={`/session/${index}`}
-              className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-[2rem] p-5 hover:border-white/30 hover:shadow-md transition-all"
-            >
-              {/* Type badge */}
-              <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex flex-col items-center justify-center gap-0.5 ${style.bg}`}>
-                <span className={`text-[10px] font-black tracking-wide ${style.text}`}>{style.label}</span>
-                {index === todaySessionIndex && isTrainingToday && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#ff6b35]" />
-                )}
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-black text-white text-sm truncate">
-                    {trainingDays[index] !== undefined
-                      ? `${DAY_LABELS[trainingDays[index]]} · ${session.title}`
-                      : session.title}
-                  </h3>
-                  {session.isSafetyAdapted && (
-                    <span className="flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-900/30 text-amber-300">
-                      ADAPTÉE
-                    </span>
-                  )}
-                  {session.intensity && (
-                    <span className={`flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-full ${
-                      session.intensity === 'heavy' ? 'bg-red-900/30 text-red-400' :
-                      session.intensity === 'medium' ? 'bg-amber-900/30 text-amber-400' :
-                      'bg-emerald-900/30 text-emerald-400'
-                    }`}>
-                      {session.intensity === 'heavy' ? 'INTENSE' : session.intensity === 'medium' ? 'MODÉRÉ' : 'LÉGER'}
-                    </span>
-                  )}
-                  <span className={`flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-full ${
-                    validation.isValid ? 'bg-emerald-900/20 text-emerald-400' : 'bg-rose-900/20 text-rose-400'
-                  }`}>
-                    {validation.isValid ? '✓' : '!'}
-                  </span>
-                </div>
-                <p className="text-xs text-white/40 mt-0.5">
-                  {session.blocks.length} blocs
-                  {recap && ` · ${recap.loggedExercises}/${recap.totalExercises} faits`}
-                  {!!recap?.loadProxy && ` · ${recap.loadProxy}`}
-                </p>
-                {session.identity && (
-                  <div className="mt-1.5 space-y-0.5">
-                    <p className="text-[11px] text-white/60">
-                      {session.identity.objectiveLabel}
-                    </p>
-                    <p className="text-[10px] text-white/35">
-                      {session.identity.whyTodayLabel}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <ChevronRight className="w-5 h-5 text-white/30 flex-shrink-0" />
-            </Link>
-          )
-        })}
-
       </main>
 
       <BottomNav />

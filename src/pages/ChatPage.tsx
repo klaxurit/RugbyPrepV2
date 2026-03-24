@@ -113,10 +113,12 @@ export function ChatPage() {
     return prompts.slice(0, 5)
   }, [hasPremiumInsights, phase, isDeload])
 
-  // Auto-scroll to latest message
+  // Auto-scroll uniquement quand une conversation est réellement en cours.
+  // Sinon, au premier rendu, on arrive artificiellement en bas de page.
   useEffect(() => {
+    if (messages.length === 0 && !loading) return
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, loading])
+  }, [messages.length, loading])
 
   // Après un retour checkout=success, on synchronise les droits côté serveur
   // quelques secondes (le webhook Stripe peut arriver après la redirection client).

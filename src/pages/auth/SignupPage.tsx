@@ -28,7 +28,7 @@ export function SignupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (authState.status === 'authenticated' && authState.user) {
-    return <Navigate to="/week" replace />
+    return <Navigate to="/program" replace />
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

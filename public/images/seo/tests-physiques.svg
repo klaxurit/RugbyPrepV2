@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" role="img" width="100%">
+  <title>Tests physiques clés au rugby : CMJ, Sprint 10m, YYIR1, 1RM estimé</title>
+  <defs>
+    <linearGradient id="bgtp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f9fafb"/>
+      <stop offset="100%" stop-color="#f3f4f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="300" rx="12" fill="url(#bgtp)"/>
+  <text x="400" y="36" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="18" font-weight="600" fill="#111827">Tests physiques clés au rugby</text>
+  <!-- Card 1: CMJ -->
+  <rect x="30" y="60" width="172" height="200" rx="12" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="30" y="60" width="172" height="4" rx="2" fill="#16a34a"/>
+  <!-- Icon: upward arrow -->
+  <circle cx="116" cy="100" r="22" fill="#dcfce7"/>
+  <path d="M116 88 L108 100 L112 100 L112 112 L120 112 L120 100 L124 100 Z" fill="#16a34a"/>
+  <text x="116" y="140" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="16" font-weight="700" fill="#111827">CMJ</text>
+  <text x="116" y="158" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="11" fill="#16a34a" font-weight="500">Fraîcheur neuromusculaire</text>
+  <line x1="56" y1="170" x2="176" y2="170" stroke="#f3f4f6" stroke-width="1"/>
+  <text x="116" y="188" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">Baisse ≥ 10% = fatigue</text>
+  <text x="116" y="202" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">à respecter</text>
+  <text x="116" y="224" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Lundi, deload, J+2 match</text>
+  <text x="116" y="248" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#16a34a" font-weight="500">Explosivité</text>
+  <!-- Card 2: Sprint 10m -->
+  <rect x="218" y="60" width="172" height="200" rx="12" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="218" y="60" width="172" height="4" rx="2" fill="#ea580c"/>
+  <!-- Icon: lightning bolt -->
+  <circle cx="304" cy="100" r="22" fill="#ffedd5"/>
+  <path d="M310 82 L298 102 L306 102 L300 118 L314 96 L306 96 Z" fill="#ea580c"/>
+  <text x="304" y="140" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="16" font-weight="700" fill="#111827">Sprint 10m</text>
+  <text x="304" y="158" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="11" fill="#ea580c" font-weight="500">Accélération</text>
+  <line x1="244" y1="170" x2="364" y2="170" stroke="#f3f4f6" stroke-width="1"/>
+  <text x="304" y="188" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">Gain de 0.05s =</text>
+  <text x="304" y="202" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">amélioration mesurable</text>
+  <text x="304" y="224" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Fin bloc force / puissance</text>
+  <text x="304" y="248" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#ea580c" font-weight="500">Vitesse de démarrage</text>
+  <!-- Card 3: YYIR1 -->
+  <rect x="406" y="60" width="172" height="200" rx="12" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="406" y="60" width="172" height="4" rx="2" fill="#3b82f6"/>
+  <!-- Icon: loop/cycle arrows -->
+  <circle cx="492" cy="100" r="22" fill="#dbeafe"/>
+  <path d="M484 94 A10 10 0 1 1 500 94" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M500 94 L497 89 L503 89 Z" fill="#3b82f6"/>
+  <path d="M500 106 A10 10 0 1 1 484 106" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M484 106 L487 111 L481 111 Z" fill="#3b82f6"/>
+  <text x="492" y="140" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="16" font-weight="700" fill="#111827">YYIR1</text>
+  <text x="492" y="158" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="11" fill="#3b82f6" font-weight="500">Répétition d'efforts</text>
+  <line x1="432" y1="170" x2="552" y2="170" stroke="#f3f4f6" stroke-width="1"/>
+  <text x="492" y="188" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">Niveau varie fortement</text>
+  <text x="492" y="202" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">selon le poste</text>
+  <text x="492" y="224" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Début saison, mi-saison, bilan</text>
+  <text x="492" y="248" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#3b82f6" font-weight="500">Capacité de récupération</text>
+  <!-- Card 4: 1RM estimé -->
+  <rect x="594" y="60" width="172" height="200" rx="12" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="594" y="60" width="172" height="4" rx="2" fill="#111827"/>
+  <!-- Icon: barbell/weight -->
+  <circle cx="680" cy="100" r="22" fill="#f3f4f6"/>
+  <rect x="664" y="96" width="32" height="8" rx="2" fill="#374151"/>
+  <rect x="658" y="90" width="8" height="20" rx="2" fill="#374151"/>
+  <rect x="690" y="90" width="8" height="20" rx="2" fill="#374151"/>
+  <rect x="654" y="93" width="6" height="14" rx="1" fill="#111827"/>
+  <rect x="696" y="93" width="6" height="14" rx="1" fill="#111827"/>
+  <text x="680" y="140" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="16" font-weight="700" fill="#111827">1RM estimé</text>
+  <text x="680" y="158" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="11" fill="#374151" font-weight="500">Force relative</text>
+  <line x1="620" y1="170" x2="740" y2="170" stroke="#f3f4f6" stroke-width="1"/>
+  <text x="680" y="188" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">Brzycki pour 3-6 reps</text>
+  <text x="680" y="202" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">Epley pour 8-12 reps</text>
+  <text x="680" y="224" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Fin bloc force, toutes 4-6 sem.</text>
+  <text x="680" y="248" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151" font-weight="500">Squat ≈ 1.8× poids corps</text>
+  <!-- Footer -->
+  <text x="400" y="288" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">RugbyForge — Baselines par poste et niveau dans la knowledge base interne</text>
+</svg>

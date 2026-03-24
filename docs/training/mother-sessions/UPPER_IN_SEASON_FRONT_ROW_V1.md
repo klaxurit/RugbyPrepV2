@@ -1,6 +1,6 @@
 # UPPER_IN_SEASON_FRONT_ROW_V1
 
-- `status`: draft
+- `status`: validated
 - `version`: V1
 - `cycle`: in_season
 - `session_type`: upper
@@ -56,6 +56,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Pendlay starts from a dead stop each rep.
   - Keep the row explosive but technically strict.
   - This block replaces a more hypertrophy-style drop format to stay aligned with in-season needs.
+  - If this is the only upper session of the week, consider replacing `Single-Arm Landmine Press` with `Neutral-Grip Pull-Up 3x4-5` to preserve one true vertical-pull exposure.
 
 ### Block 3 - Front Row Finisher
 - Format: `EMOM 8'`
@@ -65,6 +66,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Carry choice depends on setup and player comfort.
   - Rotate neck directions across rounds: flexion, extension, left lateral, right lateral.
   - This block should feel specific and robust, not exhausting.
+
+### Optional Block 4 - Shoulder Prehab Micro-Block
+- Format: `1 round`, `20-30s` rest between drills
+- Exercise A: `Band External Rotation` `10-12 reps`
+- Exercise B: `Serratus Reach` `8-10 reps`
+- Exercise C: `Scap Push-Up` `8 reps`
+- Coaching notes:
+  - Optional, but recommended when pushing volume is high or the player has a shoulder history.
+  - This should take around `2 min`, not become a separate accessory block.
 
 ## Progression Rules
 - Prioritize bar speed and execution quality over loading jumps.
@@ -96,7 +106,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - arms only if needed to preserve session density after safer rugby-relevant options are exhausted
 - Rehab finisher:
   - `band external rotation`
-  - `scapular control drill`
+  - `scap push-up`
   - `serratus reach`
 
 ### Knee pain

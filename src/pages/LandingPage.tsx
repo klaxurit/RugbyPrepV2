@@ -215,6 +215,53 @@ function PricingCard({ title, price, period, features, highlighted, cta, ctaLink
 // ─── Main Landing Page ───────────────────────────────────────
 
 export function LandingPage() {
+  const resources = [
+    {
+      title: 'Préparation physique rugby',
+      description:
+        "Le guide pilier pour comprendre la charge, les priorités par poste, la pré-saison et la semaine type.",
+      href: '/preparation-physique-rugby/',
+      cta: 'Lire le guide pilier',
+    },
+    {
+      title: 'Programme musculation rugby',
+      description:
+        "Une base concrète pour répartir les séances selon le poste, la phase de saison et la proximité du match.",
+      href: '/programme-musculation-rugby/',
+      cta: 'Voir le programme',
+    },
+    {
+      title: 'ACWR, périodisation et tests',
+      description:
+        "Des ressources publiques pour mieux lire la charge, suivre la fatigue et objectiver la progression.",
+      href: '/blog/',
+      cta: 'Explorer les ressources',
+    },
+  ]
+
+  const faqs = [
+    {
+      question: "À qui s'adresse RugbyForge ?",
+      answer:
+        "RugbyForge s'adresse aux joueurs, coachs et staffs qui veulent structurer la préparation physique rugby avec des repères plus lisibles sur la charge, la musculation, les tests physiques et la récupération.",
+    },
+    {
+      question: "Faut-il une salle complète pour utiliser l'application ?",
+      answer:
+        "Non. L'application adapte les cycles à ton matériel disponible, à ta semaine de club et au niveau de pratique pour garder un programme réaliste à tenir.",
+    },
+    {
+      question: 'Que suit RugbyForge pendant la saison ?',
+      answer:
+        "L'application suit notamment la charge, l'ACWR, les tests physiques utiles comme le CMJ, le sprint 10 m et l'estimation du 1RM, ainsi que les priorités par poste et par phase de saison.",
+    },
+    {
+      question: 'Par où commencer si je découvre RugbyForge ?',
+      answer:
+        "Commence par la page d'accueil, puis par le guide principal sur la préparation physique rugby. Ensuite, le blog te permet d'approfondir l'ACWR, la périodisation, les tests physiques et le programme musculation rugby.",
+    },
+  ]
+
   return (
     <div className="min-h-screen bg-[#1a100c] text-white overflow-x-hidden">
       <LandingNavbar />
@@ -595,6 +642,88 @@ export function LandingPage() {
               cta="Passer en Premium Annuel"
               ctaLink="/auth/signup?plan=premium&billing=annual"
             />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Ressources ───────────────────────────────────── */}
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
+              Des ressources publiques pour aller plus loin
+            </h2>
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              Le blog RugbyForge transforme notre base de connaissances en guides concrets sur la préparation physique rugby,
+              l&apos;ACWR, la périodisation, les tests physiques et le programme de musculation rugby.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {resources.map((resource, index) => (
+              <motion.div
+                key={resource.href}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+                className="bg-white/5 border border-white/10 rounded-[24px] p-6 hover:bg-white/[0.08] transition-colors"
+              >
+                <div className="w-12 h-12 bg-[#ff6b35]/15 rounded-2xl flex items-center justify-center mb-4">
+                  <BookOpen className="w-6 h-6 text-[#ff6b35]" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{resource.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed mb-6">{resource.description}</p>
+                <a
+                  href={resource.href}
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#ff6b35] hover:text-[#ff8a5f] transition-colors"
+                >
+                  {resource.cta}
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ─────────────────────────────────────────── */}
+      <section className="py-20 px-4 bg-white/[0.02]">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
+              Questions fréquentes
+            </h2>
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              Des réponses rapides pour comprendre à qui s&apos;adresse RugbyForge et comment l&apos;application
+              s&apos;intègre dans une vraie semaine de rugby.
+            </p>
+          </motion.div>
+
+          <div className="grid gap-4">
+            {faqs.map((item, index) => (
+              <motion.div
+                key={item.question}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.06 }}
+                className="bg-white/5 border border-white/10 rounded-[24px] p-6"
+              >
+                <h3 className="text-lg font-bold text-white mb-2">{item.question}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.answer}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

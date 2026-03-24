@@ -1,6 +1,6 @@
 # FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1
 
-- `status`: draft
+- `status`: validated
 - `version`: V1
 - `cycle`: in_season
 - `session_type`: full_light_primer
@@ -38,15 +38,16 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Neural Pair
 - Format: `3 rounds`, full rest `2-3 min`
-- Exercise A: `Box Squat` `3x3`
-- Exercise B: `Depth Jump` `3x3`
+- Exercise A: `Trap Bar Deadlift` `3x2-3 @ ~70-75%`
+- Exercise B: `Countermovement Jump` `3 reps`
 - Coaching notes:
   - This block is about intent and fast force production, not fatigue.
   - Rest must be long enough to keep each rep sharp.
-  - If the reactive jump quality drops, stop before finishing the planned volume.
+  - The trap bar should move fast and clean, with no grinding reps.
+  - The jump should stay crisp and elastic without creating excessive eccentric stress before match day.
   - Fallback options:
-    - A: `Banded Anderson Box Squat`
-    - B: `Weighted Box Jump`
+    - A: `Back Squat` `3x3 @ ~70-75%`
+    - B: `Drop to Stick`
 
 ### Block 2 - Upper Push Primer
 - Format: `3 rounds`, full rest `2-3 min`
@@ -114,7 +115,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Knee pain
 - Remove:
   - jump variation if painful
-  - sled if knee angle/load aggravates symptoms
+  - trap-bar setup only if it clearly aggravates symptoms
 - Replace with:
   - hip-dominant explosive option
   - reduced-range projection work
@@ -135,6 +136,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Primer quality drops fast if the player is already fatigued.
 - Do not let any loaded movement become a grind.
 - Do not turn the session into a conditioning challenge.
+- Do not use high-drop reactive plyometrics here just to make the session feel more "advanced".
 - The optional pump block must stay psychologically useful and physiologically cheap.
 - The athlete should leave the session feeling more switched on than tired.
 

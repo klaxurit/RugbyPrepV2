@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 260" role="img" width="100%">
+  <title>Semaine type en compétition rugby : récupération, séances, match</title>
+  <defs>
+    <linearGradient id="bgst" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f9fafb"/>
+      <stop offset="100%" stop-color="#f3f4f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="260" rx="12" fill="url(#bgst)"/>
+  <text x="400" y="34" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="18" font-weight="600" fill="#111827">Semaine type en compétition — Match samedi</text>
+  <!-- Day strips -->
+  <!-- Lundi: Récupération -->
+  <rect x="24" y="56" width="100" height="120" rx="10" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1"/>
+  <text x="74" y="80" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="13" font-weight="600" fill="#374151">Lundi</text>
+  <rect x="38" y="92" width="72" height="24" rx="6" fill="#e5e7eb"/>
+  <text x="74" y="109" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="10" font-weight="500" fill="#6b7280">Récupération</text>
+  <text x="74" y="135" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Mobilité</text>
+  <text x="74" y="148" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Flush</text>
+  <text x="74" y="161" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Soins</text>
+  <!-- Charge indicator -->
+  <rect x="54" y="168" width="40" height="4" rx="2" fill="#d1d5db"/>
+  <!-- Mardi: Séance principale -->
+  <rect x="132" y="56" width="100" height="120" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="182" y="80" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="13" font-weight="600" fill="#166534">Mardi</text>
+  <rect x="140" y="92" width="84" height="24" rx="6" fill="#16a34a"/>
+  <text x="182" y="109" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="10" font-weight="500" fill="#fff">Séance principale</text>
+  <text x="182" y="135" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">Force ou</text>
+  <text x="182" y="148" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">puissance</text>
+  <text x="182" y="161" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">selon la phase</text>
+  <rect x="150" y="168" width="64" height="4" rx="2" fill="#16a34a"/>
+  <!-- Mercredi: Collectif -->
+  <rect x="240" y="56" width="100" height="120" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="290" y="80" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="13" font-weight="600" fill="#1e40af">Mercredi</text>
+  <rect x="248" y="92" width="84" height="24" rx="6" fill="#3b82f6"/>
+  <text x="290" y="109" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="10" font-weight="500" fill="#fff">Collectif terrain</text>
+  <text x="290" y="135" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">Entraînement</text>
+  <text x="290" y="148" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">club</text>
+  <text x="290" y="161" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">Charge variable</text>
+  <rect x="254" y="168" width="72" height="4" rx="2" fill="#3b82f6" opacity="0.6"/>
+  <!-- Jeudi: Séance secondaire -->
+  <rect x="348" y="56" width="100" height="120" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="398" y="80" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="13" font-weight="600" fill="#166534">Jeudi</text>
+  <rect x="352" y="92" width="92" height="24" rx="6" fill="#86efac"/>
+  <text x="398" y="109" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="10" font-weight="500" fill="#166534">Séance secondaire</text>
+  <text x="398" y="135" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">Rappel technique</text>
+  <text x="398" y="148" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">60-80% volume</text>
+  <text x="398" y="161" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">Prehab, upper</text>
+  <rect x="362" y="168" width="48" height="4" rx="2" fill="#86efac"/>
+  <!-- Vendredi: Activation -->
+  <rect x="456" y="56" width="100" height="120" rx="10" fill="#f0fdf4" stroke="#d1d5db" stroke-width="1"/>
+  <text x="506" y="80" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="13" font-weight="600" fill="#374151">Vendredi</text>
+  <rect x="466" y="92" width="80" height="24" rx="6" fill="#f0fdf4" stroke="#d1d5db" stroke-width="1"/>
+  <text x="506" y="109" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="10" font-weight="500" fill="#6b7280">Activation</text>
+  <text x="506" y="135" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">Mobilité</text>
+  <text x="506" y="148" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">Fraîcheur</text>
+  <text x="506" y="161" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#6b7280">Très léger</text>
+  <rect x="482" y="168" width="24" height="4" rx="2" fill="#d1d5db"/>
+  <!-- Samedi: MATCH -->
+  <rect x="564" y="56" width="100" height="120" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text x="614" y="80" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="13" font-weight="600" fill="#9a3412">Samedi</text>
+  <rect x="574" y="92" width="80" height="28" rx="6" fill="#ea580c"/>
+  <text x="614" y="112" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="14" font-weight="700" fill="#fff">MATCH</text>
+  <text x="614" y="140" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">Compétition</text>
+  <text x="614" y="153" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#374151">Charge maximale</text>
+  <rect x="574" y="168" width="80" height="4" rx="2" fill="#ea580c"/>
+  <!-- Dimanche: Repos -->
+  <rect x="672" y="56" width="100" height="120" rx="10" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1"/>
+  <text x="722" y="80" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="13" font-weight="600" fill="#374151">Dimanche</text>
+  <rect x="686" y="92" width="72" height="24" rx="6" fill="#e5e7eb"/>
+  <text x="722" y="109" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="10" font-weight="500" fill="#6b7280">Repos</text>
+  <text x="722" y="135" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Sommeil</text>
+  <text x="722" y="148" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Nutrition</text>
+  <text x="722" y="161" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">Récupération</text>
+  <rect x="698" y="168" width="24" height="4" rx="2" fill="#d1d5db"/>
+  <!-- Charge curve label -->
+  <text x="24" y="200" font-family="Lexend, system-ui, sans-serif" font-size="10" fill="#6b7280" font-weight="500">Charge →</text>
+  <!-- Charge profile curve -->
+  <polyline points="74,224 182,198 290,210 398,216 506,230 614,192 722,236" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+  <circle cx="614" cy="192" r="4" fill="#ea580c"/>
+  <!-- Footer -->
+  <text x="400" y="254" text-anchor="middle" font-family="Lexend, system-ui, sans-serif" font-size="9" fill="#9ca3af">RugbyForge — Les barres indiquent le niveau de charge relative de chaque jour</text>
+</svg>

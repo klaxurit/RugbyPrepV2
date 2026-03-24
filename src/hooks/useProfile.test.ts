@@ -21,6 +21,7 @@ const makeRow = (overrides: Partial<ProfileRow> = {}): ProfileRow => ({
   club_schedule: null,
   sc_schedule: null,
   training_level: 'builder',
+  level_modifier_profile: null,
   season_mode: null,
   performance_focus: null,
   rehab_injury: null,
@@ -86,6 +87,29 @@ describe('rowToProfile legacy normalization', () => {
 
     expect(profile.seasonMode).toBe('off_season')
     expect(profile.ageBand).toBe('adult')
+  })
+
+  it('prefers the visible label from levelModifierProfile when present', () => {
+    const profile = rowToProfile(makeRow({
+      training_level: 'starter',
+      level_modifier_profile: {
+        schemaVersion: 'v1',
+        visibleLabel: 'performance',
+        axes: {
+          exerciseComplexity: { average: 2.5, state: 'performance', source: 'onboarding' },
+          volumeTolerance: { average: 2.5, state: 'performance', source: 'onboarding' },
+          explosiveReadiness: { average: 2.5, state: 'performance', source: 'onboarding' },
+          intensityTolerance: { average: 2.5, state: 'performance', source: 'derived' },
+          optionalBlockTolerance: { average: 2.5, state: 'performance', source: 'derived' },
+        },
+        safetyCaps: [],
+        source: 'onboarding_only',
+        scoredAt: '2026-03-21T09:00:00.000Z',
+      },
+    }))
+
+    expect(profile.trainingLevel).toBe('performance')
+    expect(profile.levelModifierProfile?.visibleLabel).toBe('performance')
   })
 })
 

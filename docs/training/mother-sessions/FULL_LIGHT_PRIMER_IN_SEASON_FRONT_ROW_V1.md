@@ -1,6 +1,6 @@
 # FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1
 
-- `status`: draft
+- `status`: validated
 - `version`: V1
 - `cycle`: in_season
 - `session_type`: full_light_primer
@@ -38,23 +38,25 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Neural Pair
 - Format: `3 rounds`, full rest `2-3 min`
-- Exercise A: `Banded Anderson Box Squat` `3x3`
+- Exercise A: `Banded Anderson Box Squat` `3x3 @ ~75-80% + band tension`
 - Exercise B: `Banded KB Swing` `3x5`
 - Coaching notes:
   - This block is about intent and fast force production, not fatigue.
   - Each rep should feel aggressive and crisp from a stable position.
+  - Load should allow maximal concentric speed on every rep.
   - Fallback options:
     - A: `Box Squat`
     - B: `Broad Jump`
 
 ### Block 2 - Upper Push Primer
 - Format: `3 rounds`, full rest `2-3 min`
-- Exercise A: `Football Bar Bench Press` `3x5`
+- Exercise A: `Football Bar Bench Press` `3x5 @ ~70-75%`
 - Exercise B: `Supine Med Ball Throw` `3x3`
 - Coaching notes:
   - The press stays sharp and technically clean.
   - The throw stays ballistic and low-volume.
   - This is a true game-week push primer, not a heavy bench block.
+  - Use a load that allows maximal bar speed on every rep.
   - `Football Bar Bench Press` = neutral-grip football bar / Swiss bar bench press.
   - Automatic alternative if the bar is not available: `Neutral-Grip DB Bench Press`.
   - Fallback options:
