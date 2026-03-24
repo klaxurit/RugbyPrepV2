@@ -20,6 +20,7 @@ import { MotherSessionView } from '../components/motherSession/MotherSessionView
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { getPrehab, CONTRA_LABELS } from '../services/ui/getPrehab'
+import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import type { SessionType } from '../types/training'
 import type { MotherSessionType } from '../types/motherSession'
 
@@ -49,13 +50,14 @@ export function SessionDetailPage() {
   const { events } = useCalendar()
   const navigate = useNavigate()
   const { addBlockLog, getLastEntryForExercise } = useBlockLogs()
+  const { isPremium } = useFeatureAccess()
   const [prehabbOpen, setPrehabbOpen] = useState(true)
   const [msNotes, setMsNotes] = useState('')
   const [msSaved, setMsSaved] = useState(false)
 
   useEffect(() => { posthog.capture('session_viewed', { index }) }, [index])
 
-  const { zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, events)
+  const { acwr, zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, events)
   const { ignoreAcwrOverload } = useAcwrOverride()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
@@ -193,6 +195,9 @@ export function SessionDetailPage() {
                     fatigue={fatigue}
                     onSaveBlock={handleSaveBlock}
                     getLastEntryForExercise={getLastEntryForExercise}
+                    isPremium={isPremium}
+                    acwr={acwrHasData ? acwr : null}
+                    isRehabActive={!!profile.rehabInjury}
                   />
                 </div>
 

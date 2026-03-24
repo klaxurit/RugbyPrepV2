@@ -19,9 +19,13 @@ type MotherSessionViewProps = {
   fatigue?: FatigueStatus
   onSaveBlock?: (log: Omit<BlockLog, 'id'>) => void
   getLastEntryForExercise?: (exerciseId: string) => ExerciseLogEntry | undefined
+  // Premium load suggestion
+  isPremium?: boolean
+  acwr?: number | null
+  isRehabActive?: boolean
 }
 
-export function MotherSessionView({ session, lang = 'fr', injuries, sessionType, week, fatigue, onSaveBlock, getLastEntryForExercise }: MotherSessionViewProps) {
+export function MotherSessionView({ session, lang = 'fr', injuries, sessionType, week, fatigue, onSaveBlock, getLastEntryForExercise, isPremium, acwr, isRehabActive }: MotherSessionViewProps) {
   const frContent = lang === 'fr' ? getSessionFr(session.metadata.id) : undefined
 
   const hasProgressionRules = (frContent?.progressionRules ?? session.progressionRules).length > 0
@@ -54,6 +58,9 @@ export function MotherSessionView({ session, lang = 'fr', injuries, sessionType,
             fatigue={fatigue}
             onSaveBlock={onSaveBlock}
             getLastEntryForExercise={getLastEntryForExercise}
+            isPremium={isPremium}
+            acwr={acwr}
+            isRehabActive={isRehabActive}
           />
         ))}
       </section>

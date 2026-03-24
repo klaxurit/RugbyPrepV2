@@ -10,6 +10,7 @@ import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
+import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
 import type { AuthError } from '../types/auth'
@@ -156,6 +157,8 @@ export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
   const { authState, updateAvatar } = useAuth()
   const { features, isPremium, planId } = useFeatureAccess()
+  const { canShowUpsell } = useUpsellTiming()
+  const [profileUpsellDismissed, setProfileUpsellDismissed] = useState(() => isDismissed('profile_premium'))
   const {
     status: notifStatus,
     errorMessage: notifErrorMessage,
@@ -1104,10 +1107,14 @@ export function ProfilePage() {
             </p>
           )}
 
-          {!isPremium && (
+          {!isPremium && canShowUpsell && !profileUpsellDismissed && (
             <PremiumUpsellCard
               title="Débloque les fonctionnalités avancées"
               body="Le Premium active les analytics détaillées, les suggestions automatiques et les futures notifications avancées, sans retirer les garde-fous sécurité du mode Free."
+              onDismiss={() => {
+                dismissUpsell('profile_premium')
+                setProfileUpsellDismissed(true)
+              }}
             />
           )}
         </section>

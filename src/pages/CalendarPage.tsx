@@ -20,6 +20,7 @@ import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { useCalendar } from '../hooks/useCalendar'
 import { useProfile } from '../hooks/useProfile'
+import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 import ffrClubs from '../data/ffrClubs.v2021.json'
 import type { CalendarEventType, CalendarEvent, SeasonPhase, DayOfWeek } from '../types/training'
@@ -252,10 +253,12 @@ function EventRow({
   event,
   onRemove,
   onUpdateLoad,
+  isPremium,
 }: {
   event: CalendarEvent
   onRemove: (id: string) => void
   onUpdateLoad?: (eventId: string, rpe: number, durationMin: number) => Promise<void>
+  isPremium?: boolean
 }) {
   const cfg = eventTypeConfig[event.type]
   const Icon = cfg.icon
@@ -384,6 +387,34 @@ function EventRow({
               </div>
             </div>
           ) : null}
+
+          {/* Premium: Recovery timeline (T2.4) */}
+          {isPremium && event.rpe && event.duration_min && (() => {
+            const isHigh = event.rpe >= 7 && event.duration_min >= 60
+            const recoveryRange = isHigh ? '72-96h' : '48-72h'
+            const recoveryHours = isHigh ? 84 : 60
+            const matchDate = new Date(event.date + 'T00:00:00')
+            const hoursElapsed = Math.max(0, (Date.now() - matchDate.getTime()) / (1000 * 60 * 60))
+            const pct = Math.min(100, (hoursElapsed / recoveryHours) * 100)
+            const isRecovered = hoursElapsed >= recoveryHours
+
+            return (
+              <div className="mt-2 bg-white/5 rounded-xl p-2.5 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-bold text-white/50 uppercase tracking-wide">Récupération</p>
+                  <p className={`text-[10px] font-black ${isRecovered ? 'text-emerald-400' : 'text-amber-400'}`}>
+                    {isRecovered ? 'Récupéré' : recoveryRange}
+                  </p>
+                </div>
+                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${isRecovered ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </div>
+            )
+          })()}
         </div>
       )}
     </div>
@@ -509,6 +540,7 @@ interface DayDetailModalProps {
   onAddEvent: () => void
   onRemoveEvent: (id: string) => void
   onUpdateMatchLoad: (id: string, rpe: number, durationMin: number) => Promise<void>
+  isPremium?: boolean
 }
 
 function DayDetailModal({
@@ -521,6 +553,7 @@ function DayDetailModal({
   onAddEvent,
   onRemoveEvent,
   onUpdateMatchLoad,
+  isPremium: modalIsPremium,
 }: DayDetailModalProps) {
   const dow = new Date(dateStr + 'T12:00:00').getDay() as DayOfWeek
   const isScDay = scDays.includes(dow)
@@ -589,7 +622,7 @@ function DayDetailModal({
             <p className="text-[10px] font-black uppercase tracking-wider text-white/40">Événements</p>
             <div className="space-y-2">
               {eventsOnDate.map((event) => (
-                <EventRow key={event.id} event={event} onRemove={onRemoveEvent} onUpdateLoad={onUpdateMatchLoad} />
+                <EventRow key={event.id} event={event} onRemove={onRemoveEvent} onUpdateLoad={onUpdateMatchLoad} isPremium={modalIsPremium} />
               ))}
             </div>
           </div>
@@ -775,6 +808,7 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
 export function CalendarPage() {
   const { events, nextMatch, seasonPhase, addEvent, removeEvent, updateMatchLoad, loading } = useCalendar()
   const { profile } = useProfile()
+  const { isPremium: calendarIsPremium } = useFeatureAccess()
   const [showModal, setShowModal] = useState(false)
   const [selectedDate, setSelectedDate] = useState<string | undefined>()
 
@@ -864,7 +898,7 @@ export function CalendarPage() {
             <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">À venir</h2>
             <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10">
               {upcomingEvents.map((event) => (
-                <EventRow key={event.id} event={event} onRemove={removeEvent} onUpdateLoad={updateMatchLoad} />
+                <EventRow key={event.id} event={event} onRemove={removeEvent} onUpdateLoad={updateMatchLoad} isPremium={calendarIsPremium} />
               ))}
             </div>
           </section>
@@ -876,7 +910,7 @@ export function CalendarPage() {
             <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">Passés</h2>
             <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10">
               {pastEvents.slice(-5).reverse().map((event) => (
-                <EventRow key={event.id} event={event} onRemove={removeEvent} onUpdateLoad={updateMatchLoad} />
+                <EventRow key={event.id} event={event} onRemove={removeEvent} onUpdateLoad={updateMatchLoad} isPremium={calendarIsPremium} />
               ))}
             </div>
           </section>
@@ -925,6 +959,7 @@ export function CalendarPage() {
             onAddEvent={() => { setShowDayDetail(false); setShowModal(true) }}
             onRemoveEvent={removeEvent}
             onUpdateMatchLoad={updateMatchLoad}
+            isPremium={calendarIsPremium}
           />
         )}
       </AnimatePresence>

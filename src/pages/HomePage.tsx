@@ -30,6 +30,8 @@ import { useCalendar } from '../hooks/useCalendar'
 import { useACWR, ACWR_ZONE_CONFIG } from '../hooks/useACWR'
 import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
+import { useFeatureAccess } from '../hooks/useFeatureAccess'
+import { useAthleteTests } from '../hooks/useAthleteTests'
 import { getTodaySessionIndex } from '../services/ui/getTodaySessionIndex'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import type { CycleWeek, SessionType, SeasonPhase, SeasonMode } from '../types/training'
@@ -110,6 +112,8 @@ export function HomePage() {
   const { logs } = useHistory()
   const { events, nextMatch, seasonPhase, isMatchDay } = useCalendar()
   const acwr = useACWR(logs, events)
+  const { isPremium } = useFeatureAccess()
+  const { getHistoryFor } = useAthleteTests()
 
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
@@ -408,6 +412,94 @@ export function HomePage() {
             </div>
           )}
         </section>
+
+        {/* ── Premium: Qualitative charge label (T2.2) ── */}
+        {isPremium && acwr.hasSufficientData && acwr.acwr != null && (() => {
+          const val = acwr.acwr
+          const label = val > 1.5 ? 'Danger — deload fortement recommandé'
+            : val > 1.3 ? 'Charge élevée — envisage un allègement'
+            : val > 1.1 ? 'Semaine chargée — reste attentif'
+            : val >= 0.8 ? 'Charge maîtrisée — continue'
+            : 'Semaine légère — tu peux pousser'
+          const color = val > 1.5 ? 'text-red-400 bg-red-900/20 border-red-500/20'
+            : val > 1.3 ? 'text-orange-400 bg-orange-900/20 border-orange-500/20'
+            : val > 1.1 ? 'text-amber-400 bg-amber-900/20 border-amber-500/20'
+            : val >= 0.8 ? 'text-emerald-400 bg-emerald-900/20 border-emerald-500/20'
+            : 'text-blue-400 bg-blue-900/20 border-blue-500/20'
+          return (
+            <section>
+              <div className={`rounded-2xl border px-4 py-3 ${color}`}>
+                <p className="text-xs font-bold">{label}</p>
+              </div>
+            </section>
+          )
+        })()}
+
+        {/* ── Premium: Weekly summary (T2.1) ── */}
+        {isPremium && msSessions.length > 0 && (
+          <section>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-1">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#ff6b35]">Ta semaine</p>
+              <p className="text-sm text-white/80">
+                {msSessions.length} séance{msSessions.length > 1 ? 's' : ''} prévue{msSessions.length > 1 ? 's' : ''}
+                {week !== 'DELOAD' ? `, cycle ${week}` : ', semaine de décharge'}
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* ── Premium: Injury risk alert (T2.3) ── */}
+        {isPremium && (() => {
+          // Conditions: ACWR > 1.3 AND CMJ regression > 10% vs baseline AND not in rehab AND >= 3 CMJ measures
+          if (!acwr.hasSufficientData || acwr.acwr == null || acwr.acwr <= 1.3) return null
+          if (profile.rehabInjury) return null
+
+          const cmjHistory = getHistoryFor('cmj', 8)
+          if (cmjHistory.length < 3) return null
+
+          const baseline = Math.max(...cmjHistory.map(t => t.value))
+          const lastCmj = cmjHistory[0]?.value
+          if (!lastCmj || !baseline) return null
+
+          const pctDrop = ((baseline - lastCmj) / baseline) * 100
+          if (pctDrop <= 10) return null
+
+          // Check dismiss
+          const dismissKey = 'rugbyforge_injury_alert_dismissed'
+          try {
+            const raw = localStorage.getItem(dismissKey)
+            if (raw) {
+              const ts = parseInt(raw, 10)
+              const cooldownMs = 48 * 60 * 60 * 1000
+              if (!isNaN(ts) && Date.now() - ts < cooldownMs && acwr.acwr <= 1.5) return null
+            }
+          } catch { /* ignore */ }
+
+          return (
+            <section>
+              <div className="rounded-2xl border border-red-500/30 bg-red-900/20 p-4 space-y-2">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-red-400" />
+                    <p className="text-xs font-black text-red-400 uppercase tracking-wide">Risque blessure</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      try { localStorage.setItem(dismissKey, String(Date.now())) } catch { /* ignore */ }
+                    }}
+                    className="text-[10px] text-white/30 hover:text-white/50"
+                  >
+                    Masquer 48h
+                  </button>
+                </div>
+                <p className="text-xs text-red-300/80 leading-relaxed">
+                  Ton ratio de charge (ACWR {acwr.acwr.toFixed(2)}) et ta fraîcheur neuromusculaire (CMJ {pctDrop.toFixed(0)}% sous ta baseline) indiquent un risque élevé. Deload recommandé cette semaine.
+                </p>
+              </div>
+            </section>
+          )
+        })()}
 
         {/* ── Season + Next Match ── */}
         <section>

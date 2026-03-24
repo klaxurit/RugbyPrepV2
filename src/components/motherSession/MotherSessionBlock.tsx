@@ -10,6 +10,8 @@ import { MotherSessionExerciseLogger, type EntryDraft } from './MotherSessionExe
 import { resolveExerciseId, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
 import { getExerciseMetricType } from '../../services/ui/exerciseMetrics'
 import { getExerciseSuggestion } from '../../services/ui/suggestions'
+import { getLoadSuggestion } from '../../services/loadSuggestion'
+import type { LoadSuggestionContext } from '../../services/loadSuggestion'
 
 export type MotherSessionBlockProps = {
   block: Block
@@ -22,6 +24,10 @@ export type MotherSessionBlockProps = {
   fatigue?: FatigueStatus
   onSaveBlock?: (log: Omit<BlockLog, 'id'>) => void
   getLastEntryForExercise?: (exerciseId: string) => ExerciseLogEntry | undefined
+  // Premium load suggestion
+  isPremium?: boolean
+  acwr?: number | null
+  isRehabActive?: boolean
 }
 
 function ExerciseRow({ exercise, frName }: { exercise: Block['exercises'][0]; frName?: string }) {
@@ -61,6 +67,9 @@ export function MotherSessionBlock({
   fatigue,
   onSaveBlock,
   getLastEntryForExercise,
+  isPremium,
+  acwr,
+  isRehabActive,
 }: MotherSessionBlockProps) {
   const blockName = frBlock?.name ?? block.name
   const blockFormat = frBlock?.format ?? block.format
@@ -243,6 +252,18 @@ export function MotherSessionBlock({
                   ? getExerciseSuggestion({ exerciseId, week, fatigue, lastEntry })
                   : undefined
 
+                // Premium load suggestion
+                const premiumSuggestion = isPremium && week
+                  ? getLoadSuggestion({
+                      exerciseId,
+                      lastEntry,
+                      week,
+                      acwr: acwr ?? null,
+                      isRehabActive: isRehabActive ?? false,
+                      fatigueLevel: fatigue === 'FATIGUE' ? 'high' : 'normal',
+                    } satisfies LoadSuggestionContext)
+                  : undefined
+
                 return (
                   <MotherSessionExerciseLogger
                     key={exerciseId}
@@ -251,6 +272,8 @@ export function MotherSessionBlock({
                     metricType={metricType}
                     lastEntry={lastEntry}
                     suggestion={suggestion}
+                    premiumSuggestion={premiumSuggestion}
+                    showProgressionIndicator={isPremium}
                     draft={drafts[exerciseId] ?? {}}
                     onDraftChange={(patch) => handleDraftChange(exerciseId, patch)}
                   />

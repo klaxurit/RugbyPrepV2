@@ -212,6 +212,64 @@ function PricingCard({ title, price, period, features, highlighted, cta, ctaLink
   )
 }
 
+interface PhoneMockupProps {
+  src: string
+  alt: string
+  loading?: 'eager' | 'lazy'
+  fetchPriority?: 'high' | 'low' | 'auto'
+}
+
+function PhoneMockup({
+  src,
+  alt,
+  loading = 'lazy',
+  fetchPriority,
+}: PhoneMockupProps) {
+  return (
+    <div className="relative w-[280px] sm:w-[320px] bg-[#1a100c] border-4 border-white/20 rounded-[40px] p-3 shadow-2xl">
+      <div className="relative max-h-[480px] overflow-y-auto rounded-[28px] scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+        <img
+          src={src}
+          alt={alt}
+          loading={loading}
+          fetchPriority={fetchPriority}
+          decoding="async"
+          className="w-full"
+          onError={(e) => { e.currentTarget.style.display = 'none' }}
+        />
+      </div>
+      <div className="absolute bottom-3 left-3 right-3 h-24 bg-gradient-to-t from-[#1a100c] to-transparent pointer-events-none rounded-b-[28px]" />
+    </div>
+  )
+}
+
+const PREMIUM_MONTHLY_PRICE = '5,99€'
+const PREMIUM_YEARLY_PRICE = '47,99€'
+
+const FREE_PLAN_FEATURES = [
+  'Programme périodisé complet',
+  "Séances et logs d'entraînement",
+  'Calendrier club + ACWR basique',
+  'Préhab, mobilité et réhab',
+  'Chat IA de base',
+]
+
+const PREMIUM_MONTHLY_FEATURES = [
+  'Tout le plan Free',
+  'Suggestions de charge dans les séances',
+  'Coach IA enrichi et plus contextuel',
+  'Lecture intelligente de la semaine et de la charge',
+  'Timeline récupération post-match',
+  'Projection de progression sur les mouvements clés',
+]
+
+const PREMIUM_YEARLY_FEATURES = [
+  'Tout le plan Premium',
+  "33% d'économie vs mensuel",
+  'Même coaching Premium sur toute la saison',
+  'Tarif le plus rentable pour suivre ton année rugby',
+]
+
 // ─── Main Landing Page ───────────────────────────────────────
 
 export function LandingPage() {
@@ -256,6 +314,11 @@ export function LandingPage() {
         "L'application suit notamment la charge, l'ACWR, les tests physiques utiles comme le CMJ, le sprint 10 m et l'estimation du 1RM, ainsi que les priorités par poste et par phase de saison.",
     },
     {
+      question: 'Quelle différence entre Free et Premium ?',
+      answer:
+        "Le Free donne déjà accès au programme complet, aux séances, au calendrier, aux logs et à une première lecture de la charge. Le Premium ajoute surtout l'aide à la décision : charges suggérées, coach IA plus contextuel, lecture intelligente de la semaine et projection de progression.",
+    },
+    {
       question: 'Par où commencer si je découvre RugbyForge ?',
       answer:
         "Commence par la page d'accueil, puis par le guide principal sur la préparation physique rugby. Ensuite, le blog te permet d'approfondir l'ACWR, la périodisation, les tests physiques et le programme musculation rugby.",
@@ -295,8 +358,9 @@ export function LandingPage() {
                 optimisée
               </h1>
               <p className="text-lg text-slate-400 max-w-xl mb-8">
-                Programmes de musculation périodisés, suivi de charge ACWR, prévention blessures et
-                coaching IA — tout ce qu'il faut pour performer sur le terrain.
+                Le Free te donne déjà un vrai programme de rugby. Le Premium t'aide ensuite à ne
+                plus deviner quoi charger, comment lire ta semaine et comment interpréter ta
+                progression.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -324,20 +388,12 @@ export function LandingPage() {
             >
               <div className="absolute w-72 h-72 bg-[#ff6b35]/20 rounded-full blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
               <div className="absolute w-48 h-48 bg-[#1a5f3f]/30 rounded-full blur-2xl top-0 right-0" />
-              <div className="relative w-[280px] sm:w-[320px] bg-[#1a100c] border-4 border-white/20 rounded-[40px] p-3 shadow-2xl">
-                <div className="relative max-h-[480px] overflow-y-auto rounded-[28px] scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-                  <img
-                    src="/images/landing/app-week.png"
-                    alt="RugbyForge — programme de la semaine"
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
-                    className="w-full"
-                    onError={(e) => { e.currentTarget.style.display = 'none' }}
-                  />
-                </div>
-                <div className="absolute bottom-3 left-3 right-3 h-24 bg-gradient-to-t from-[#1a100c] to-transparent pointer-events-none rounded-b-[28px]" />
-              </div>
+              <PhoneMockup
+                src="/images/landing/app-week.png"
+                alt="RugbyForge — programme de la semaine"
+                loading="eager"
+                fetchPriority="high"
+              />
             </motion.div>
           </div>
         </div>
@@ -380,8 +436,8 @@ export function LandingPage() {
               Tout pour ta prépa physique
             </h2>
             <p className="text-slate-400 max-w-2xl mx-auto">
-              RugbyForge combine science du sport, périodisation avancée et intelligence artificielle
-              pour te proposer le programme le plus adapté à ton profil.
+              RugbyForge combine science du sport, périodisation et coaching contextuel pour te
+              donner un cadre clair en Free, puis une couche d'aide à la décision en Premium.
             </p>
           </motion.div>
 
@@ -394,32 +450,32 @@ export function LandingPage() {
             />
             <FeatureCard
               icon={<Activity className="w-6 h-6 text-[#ff6b35]" />}
-              title="Monitoring ACWR"
-              description="Suivi du ratio charge aiguë/chronique en temps réel. Alerte automatique si tu approches la zone de danger."
+              title="Lecture de la charge"
+              description="Lis l'ACWR, la récupération et les semaines à risque sans tableau compliqué. En Premium, la lecture devient plus contextuelle."
               delay={0.1}
             />
             <FeatureCard
               icon={<Shield className="w-6 h-6 text-[#ff6b35]" />}
-              title="Prévention blessures"
-              description="Prehab automatique ciblé sur tes points faibles. Protocoles de retour blessure progressifs."
+              title="Préhab & vigilance"
+              description="Préhab automatique, mobilité utile et signaux de vigilance quand la fatigue et la charge deviennent moins bien absorbées."
               delay={0.2}
             />
             <FeatureCard
               icon={<Brain className="w-6 h-6 text-[#ff6b35]" />}
               title="Coach IA"
-              description="Pose tes questions nutrition, récupération, sommeil. L'IA répond avec des recommandations basées sur la science."
+              description="Pose tes questions nutrition, récupération ou semaine de match. Le Premium débloque un coach plus contextuel et plus actionnable."
               delay={0.3}
             />
             <FeatureCard
               icon={<Calendar className="w-6 h-6 text-[#ff6b35]" />}
               title="Calendrier club"
-              description="Intègre tes matchs et entraînements club. Le programme s'adapte automatiquement à ta semaine."
+              description="Intègre tes matchs et entraînements club. En Premium, tu obtiens aussi une lecture plus claire de la récupération post-match."
               delay={0.4}
             />
             <FeatureCard
               icon={<TrendingUp className="w-6 h-6 text-[#ff6b35]" />}
               title="Tests & progression"
-              description="Suis tes 1RM estimés, CMJ, sprint 10m et YYIR1. Visualise ta progression sur toute la saison."
+              description="Suis tes 1RM estimés, le CMJ et les autres repères utiles. En Premium, la progression devient plus lisible et interprétable."
               delay={0.5}
             />
           </div>
@@ -449,22 +505,13 @@ export function LandingPage() {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-white/5 border border-white/10 rounded-[24px] p-4 overflow-hidden"
+              className="flex flex-col items-center"
             >
-              <div className="relative">
-                <div className="max-h-[360px] overflow-y-auto rounded-2xl" style={{ scrollbarWidth: 'none' }}>
-                  <img
-                    src="/images/landing/tests-progression.png"
-                    alt="Tests physiques et progression"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full"
-                    onError={(e) => { e.currentTarget.style.display = 'none' }}
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#1a100c] to-transparent pointer-events-none rounded-b-2xl" />
-              </div>
-              <p className="text-sm text-slate-400 text-center mt-3">
+              <PhoneMockup
+                src="/images/landing/tests-progression.png"
+                alt="Tests physiques et progression"
+              />
+              <p className="text-sm text-slate-400 text-center mt-5">
                 Suivi des tests physiques — CMJ, sprint, 1RM estimé
               </p>
             </motion.div>
@@ -473,22 +520,13 @@ export function LandingPage() {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-white/5 border border-white/10 rounded-[24px] p-4 overflow-hidden"
+              className="flex flex-col items-center"
             >
-              <div className="relative">
-                <div className="max-h-[360px] overflow-y-auto rounded-2xl" style={{ scrollbarWidth: 'none' }}>
-                  <img
-                    src="/images/landing/acwr-monitoring.png"
-                    alt="Monitoring ACWR"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full"
-                    onError={(e) => { e.currentTarget.style.display = 'none' }}
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#1a100c] to-transparent pointer-events-none rounded-b-2xl" />
-              </div>
-              <p className="text-sm text-slate-400 text-center mt-3">
+              <PhoneMockup
+                src="/images/landing/acwr-monitoring.png"
+                alt="Monitoring ACWR"
+              />
+              <p className="text-sm text-slate-400 text-center mt-5">
                 Ratio charge aiguë/chronique — prévention du surentraînement
               </p>
             </motion.div>
@@ -594,8 +632,9 @@ export function LandingPage() {
               Des tarifs simples et transparents
             </h2>
             <p className="text-slate-400 max-w-xl mx-auto">
-              Commence gratuitement. Passe en Premium quand tu veux débloquer le coaching IA et les
-              analyses avancées.
+              Commence gratuitement avec tout le socle d'entraînement. Passe en Premium quand tu
+              veux débloquer les charges suggérées, le coach IA enrichi et les lectures
+              intelligentes de ta semaine.
             </p>
           </motion.div>
 
@@ -604,41 +643,23 @@ export function LandingPage() {
               title="Free"
               price="0€"
               period="pour toujours"
-              features={[
-                'Programme périodisé complet',
-                'Suivi des séances',
-                'Historique d\'entraînement',
-                'Prehab automatique',
-                'Calendrier club',
-              ]}
+              features={FREE_PLAN_FEATURES}
               cta="Créer mon compte Free"
             />
             <PricingCard
               title="Premium Mensuel"
-              price="5,99€"
+              price={PREMIUM_MONTHLY_PRICE}
               period="/mois"
-              features={[
-                'Tout le plan Free',
-                'Coach IA illimité',
-                'Tests physiques & graphes',
-                'Monitoring ACWR avancé',
-                'Protocoles retour blessure',
-                'Support prioritaire',
-              ]}
+              features={PREMIUM_MONTHLY_FEATURES}
               highlighted
               cta="Passer en Premium Mensuel"
               ctaLink="/auth/signup?plan=premium&billing=monthly"
             />
             <PricingCard
               title="Premium Annuel"
-              price="47,99€"
+              price={PREMIUM_YEARLY_PRICE}
               period="/an"
-              features={[
-                'Tout le plan Premium',
-                '33% d\'économie vs mensuel',
-                'Accès anticipé nouvelles fonctionnalités',
-                'Badge Founding Member',
-              ]}
+              features={PREMIUM_YEARLY_FEATURES}
               cta="Passer en Premium Annuel"
               ctaLink="/auth/signup?plan=premium&billing=annual"
             />

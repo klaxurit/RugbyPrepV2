@@ -8,10 +8,12 @@ import { useWeek } from '../hooks/useWeek'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
 import { useACWR } from '../hooks/useACWR'
+import { useCalendar } from '../hooks/useCalendar'
 import { useEntitlements } from '../hooks/useEntitlements'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { getPhaseForWeek } from '../services/program/programPhases.v1'
 import { supabase } from '../services/supabase/client'
+import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { BottomNav } from '../components/BottomNav'
 
 // ─── Types ────────────────────────────────────────────────────
@@ -45,6 +47,7 @@ const QUICK_PROMPTS_BY_PHASE: Record<string, string> = {
 }
 
 const QUICK_PROMPT_DELOAD = 'Que faire concrètement en semaine de décharge ?'
+const QUICK_PROMPT_PREMATCH = 'Prépare mon match : plan 48h nutrition, récup, activation'
 
 // ─── Component ───────────────────────────────────────────────
 
@@ -53,7 +56,8 @@ export function ChatPage() {
   const { week } = useWeek()
   const { fatigue } = useFatigue()
   const { logs } = useHistory()
-  const { acwr, zone: acwrZone, acuteLoad, chronicLoad } = useACWR(logs)
+  const { events: chatEvents, nextMatch: chatNextMatch } = useCalendar()
+  const { acwr, zone: acwrZone, acuteLoad, chronicLoad } = useACWR(logs, chatEvents)
   const { hasEntitlement, isPremium, refresh: refreshEntitlements } = useEntitlements()
   const [searchParams, setSearchParams] = useSearchParams()
   const {
@@ -66,6 +70,8 @@ export function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [rateLimited, setRateLimited] = useState(false)
+  const [remaining, setRemaining] = useState<number | null>(null)
   const [activationSyncing, setActivationSyncing] = useState(false)
   const [activationSyncTimeout, setActivationSyncTimeout] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -104,14 +110,24 @@ export function ChatPage() {
   }), [week, phase, acwr, acwrZone, acuteLoad, chronicLoad, fatigue, logs, profile])
 
   // Quick prompts based on context
+  // Check if match is within 48h for pre-match prompt
+  const hasMatchSoon = useMemo(() => {
+    if (!chatNextMatch) return false
+    const matchDate = new Date(chatNextMatch.date + 'T00:00:00')
+    const now = new Date()
+    const diffMs = matchDate.getTime() - now.getTime()
+    return diffMs >= 0 && diffMs <= 48 * 60 * 60 * 1000
+  }, [chatNextMatch])
+
   const quickPrompts = useMemo(() => {
     const prompts = [...QUICK_PROMPTS_BASE]
     if (hasPremiumInsights) {
+      if (hasMatchSoon) prompts.unshift(QUICK_PROMPT_PREMATCH)
       if (isDeload) prompts.unshift(QUICK_PROMPT_DELOAD)
       else if (phase && QUICK_PROMPTS_BY_PHASE[phase]) prompts.unshift(QUICK_PROMPTS_BY_PHASE[phase])
     }
     return prompts.slice(0, 5)
-  }, [hasPremiumInsights, phase, isDeload])
+  }, [hasPremiumInsights, phase, isDeload, hasMatchSoon])
 
   // Auto-scroll uniquement quand une conversation est réellement en cours.
   // Sinon, au premier rendu, on arrive artificiellement en bas de page.
@@ -196,6 +212,20 @@ export function ChatPage() {
       })
 
       if (error) throw error
+
+      // Handle rate limiting
+      if (data?.error === 'rate_limited' || data?.limited === true) {
+        setRateLimited(true)
+        setRemaining(0)
+        // Remove the user message we just added (it didn't go through)
+        setMessages((prev) => prev.filter((m) => m.id !== userMsg.id))
+        return
+      }
+
+      // Update remaining count
+      if (typeof data?.remaining === 'number') {
+        setRemaining(data.remaining)
+      }
 
       const responseText: string = data?.error
         ? `Erreur : ${data.error}`
@@ -393,6 +423,27 @@ export function ChatPage() {
           </div>
         )}
 
+        {/* Rate limited upsell — non-dismissable */}
+        {rateLimited && !isPremium && (
+          <div className="pl-11">
+            <PremiumUpsellCard
+              title="Tu as utilisé tes 5 messages du jour"
+              body="Le coach Premium te connaît — il sait ton poste, ta charge, tes blessures, et adapte chaque réponse. Messages illimités."
+              ctaLabel="Passer en Premium"
+              dismissable={false}
+            />
+          </div>
+        )}
+
+        {/* Remaining messages indicator */}
+        {!isPremium && !rateLimited && remaining !== null && remaining <= 2 && remaining > 0 && (
+          <div className="pl-11">
+            <p className="text-[11px] text-amber-400/70 bg-amber-900/10 border border-amber-500/10 rounded-2xl px-4 py-2">
+              {remaining === 1 ? 'Dernier message gratuit du jour.' : `${remaining} messages restants aujourd'hui.`}
+            </p>
+          </div>
+        )}
+
         <div ref={bottomRef} />
       </main>
 
@@ -408,12 +459,12 @@ export function ChatPage() {
             rows={1}
             className="flex-1 resize-none bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35]/20 max-h-28 leading-relaxed"
             style={{ overflow: 'auto' }}
-            disabled={loading}
+            disabled={loading || rateLimited}
           />
           <button
             type="button"
             onClick={() => sendMessage(input)}
-            disabled={!input.trim() || loading}
+            disabled={!input.trim() || loading || rateLimited}
             className="w-10 h-10 rounded-2xl bg-[#ff6b35] flex items-center justify-center flex-shrink-0 hover:bg-[#e55a2b] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Send className="w-4 h-4 text-white" />

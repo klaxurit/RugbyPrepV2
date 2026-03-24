@@ -10,6 +10,9 @@ import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
+import { markWeekViewed, useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
+import { useFeatureAccess } from '../hooks/useFeatureAccess'
+import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import type { RehabPhase } from '../types/training'
@@ -41,9 +44,14 @@ export function WeekPage() {
   const navigate = useNavigate()
 
   const acwrResult = useACWR(logs, events)
+  const { isPremium: weekIsPremium } = useFeatureAccess()
+  const { canShowUpsell: weekCanShowUpsell } = useUpsellTiming()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
-  useEffect(() => { posthog.capture('week_viewed') }, [])
+  useEffect(() => {
+    posthog.capture('week_viewed')
+    markWeekViewed()
+  }, [])
 
   // Match non chargé hier → bannière rappel + suggestion mobilité
   const yesterday = new Date()
@@ -241,6 +249,27 @@ export function WeekPage() {
             />
           </section>
         )}
+
+        {/* T2.5: Upsell contextuel — match dans les 3 jours */}
+        {!weekIsPremium && weekCanShowUpsell && !isDismissed('week_match') && (() => {
+          const now = new Date()
+          now.setHours(0, 0, 0, 0)
+          const in3days = new Date(now)
+          in3days.setDate(in3days.getDate() + 3)
+          const hasMatchSoon = events.some(e =>
+            e.type === 'match' &&
+            new Date(e.date + 'T00:00:00') >= now &&
+            new Date(e.date + 'T00:00:00') <= in3days
+          )
+          if (!hasMatchSoon) return null
+          return (
+            <PremiumUpsellCard
+              title="Match dans les prochains jours"
+              body="Adapte ta semaine automatiquement en fonction du match — Premium."
+              onDismiss={() => dismissUpsell('week_match')}
+            />
+          )
+        })()}
       </main>
 
       <BottomNav />

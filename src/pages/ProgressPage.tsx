@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import {
@@ -28,6 +28,7 @@ import { PageHeader } from '../components/PageHeader'
 import { BottomNav } from '../components/BottomNav'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
+import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import type { TrainingBlock } from '../types/training'
 import type { PhysicalTestType, PhysicalTest } from '../types/athleticTesting'
 
@@ -116,6 +117,25 @@ export function ProgressPage() {
   const { addTest, getHistoryFor, getBestFor } = useAthleteTests()
   const { profile } = useProfile()
   const { features, isPremium } = useFeatureAccess()
+  const { canShowUpsell } = useUpsellTiming()
+  const [dismissedCards, setDismissedCards] = useState<Set<string>>(() => {
+    const set = new Set<string>()
+    if (isDismissed('progress_objectives')) set.add('progress_objectives')
+    if (isDismissed('progress_curves')) set.add('progress_curves')
+    if (isDismissed('progress_tests')) set.add('progress_tests')
+    return set
+  })
+  const handleDismiss = useCallback((cardId: string) => {
+    dismissUpsell(cardId)
+    setDismissedCards((prev) => new Set(prev).add(cardId))
+  }, [])
+  // Max 1 upsell visible per page
+  const shownUpsellCount = { current: 0 }
+  const canShowCard = (cardId: string) => {
+    if (isPremium || !canShowUpsell || dismissedCards.has(cardId) || shownUpsellCount.current >= 1) return false
+    shownUpsellCount.current += 1
+    return true
+  }
 
   // ─── Program adherence data ───────────────────────────────────
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
@@ -479,12 +499,13 @@ export function ProgressPage() {
                 </div>
               </section>
               )
-            ) : (
+            ) : canShowCard('progress_objectives') ? (
               <PremiumUpsellCard
                 title="Objectifs automatiques de charge"
                 body="Débloque des objectifs personnalisés pour la prochaine séance à partir de tes dernières performances."
+                onDismiss={() => handleDismiss('progress_objectives')}
               />
-            )}
+            ) : null}
 
             {features.premiumAnalytics ? (
               historyRows.length > 0 && (
@@ -519,12 +540,13 @@ export function ProgressPage() {
                 </div>
               </section>
               )
-            ) : (
+            ) : canShowCard('progress_curves') ? (
               <PremiumUpsellCard
                 title="Courbes de progression détaillées"
                 body="Débloque les tendances de saison, les comparaisons par exercice et les indicateurs avancés de progression."
+                onDismiss={() => handleDismiss('progress_curves')}
               />
-            )}
+            ) : null}
 
             {features.premiumAnalytics && missingRows.length > 0 && (
               <section>
@@ -562,10 +584,11 @@ export function ProgressPage() {
               Mesure tes performances athlétiques et suis leur évolution dans le temps.
             </p>
 
-            {!features.premiumAnalytics && (
+            {!features.premiumAnalytics && canShowCard('progress_tests') && (
               <PremiumUpsellCard
                 title="Analytics avancées verrouillées"
                 body="Le mode Free garde la saisie de tests. Le Premium débloque les courbes, les baselines poste/niveau et les alertes de régression."
+                onDismiss={() => handleDismiss('progress_tests')}
               />
             )}
 
@@ -694,6 +717,37 @@ export function ProgressPage() {
                         </ResponsiveContainer>
                       </div>
                     )}
+
+                    {/* T3.3: 1RM trend projection (Premium, ≥3 data points, 1RM type) */}
+                    {features.premiumAnalytics && card.is1RM && chartData.length >= 3 && (() => {
+                      // Simple linear regression
+                      const n = chartData.length
+                      const xs = chartData.map((_, i) => i)
+                      const ys = chartData.map(d => d.v)
+                      const sumX = xs.reduce((a, b) => a + b, 0)
+                      const sumY = ys.reduce((a, b) => a + b, 0)
+                      const sumXY = xs.reduce((a, x, i) => a + x * ys[i], 0)
+                      const sumX2 = xs.reduce((a, x) => a + x * x, 0)
+                      const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
+                      if (slope <= 0) return null // no projection if declining
+
+                      const intercept = (sumY - slope * sumX) / n
+                      const currentEstimate = slope * (n - 1) + intercept
+                      const targets = [100, 120, 140, 160, 180, 200]
+                      const nextTarget = targets.find(t => t > currentEstimate)
+                      if (!nextTarget) return null
+
+                      const weeksToTarget = Math.ceil((nextTarget - currentEstimate) / slope)
+                      if (weeksToTarget <= 0 || weeksToTarget > 52) return null
+
+                      return (
+                        <div className="px-4 pb-3">
+                          <p className="text-[10px] text-[#ff6b35]/70">
+                            A ce rythme, {nextTarget} kg dans ~{weeksToTarget} semaine{weeksToTarget > 1 ? 's' : ''}
+                          </p>
+                        </div>
+                      )
+                    })()}
                   </div>
                 )
               })}
@@ -717,145 +771,207 @@ export function ProgressPage() {
 
       {/* ─── Modal saisie ─────────────────────────────────────────── */}
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center">
+        <div className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-4 pb-32 sm:items-center sm:p-6">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/50 backdrop-blur-md"
             onClick={closeModal}
           />
 
-          {/* Drawer */}
-          <div className="relative w-full max-w-md bg-[#1a100c] border-t border-white/10 rounded-t-[32px] px-6 pt-5 pb-8 shadow-xl">
-            {/* Handle */}
-            <div className="w-10 h-1 bg-white/10 rounded-full mx-auto mb-5" />
-
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <h3 className="text-base font-extrabold text-white">Nouveau test</h3>
-                <p className="text-xs text-white/40">{modal.label}</p>
+          {/* Modal */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="progress-test-modal-title"
+            className="relative z-10 flex max-h-[calc(100vh-11rem)] w-full max-w-[22rem] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-[#23140f] shadow-2xl shadow-black/60 sm:max-h-[min(620px,calc(100vh-3rem))] sm:max-w-md"
+          >
+            <div className="border-b border-white/10 px-4 pt-4 pb-3 sm:px-5 sm:pt-5 sm:pb-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-[#ff6b35]/12 text-[#ff6b35] sm:h-10 sm:w-10">
+                    {modal.is1RM ? <Dumbbell className="h-4.5 w-4.5" /> : <FlaskConical className="h-4.5 w-4.5" />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#ffb08f]">
+                      Nouveau test
+                    </p>
+                    <h3 id="progress-test-modal-title" className="mt-1 text-base font-black tracking-tight text-white sm:text-lg">
+                      {modal.label}
+                    </h3>
+                    <p className="mt-1 text-[11px] text-white/45 sm:text-xs">
+                      Enregistre une mesure propre pour suivre ta progression semaine après semaine.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={closeModal}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-2 text-white/50 transition-colors hover:border-white/20 hover:text-white"
+                  aria-label="Fermer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <button onClick={closeModal} className="p-2 rounded-xl hover:bg-white/10">
-                <X className="w-4 h-4 text-white/40" />
-              </button>
             </div>
 
-            {/* 1RM toggle */}
-            {modal.is1RM && (
-              <div className="flex gap-2 mb-4 bg-white/5 border border-white/10 rounded-[14px] p-1">
-                <button
-                  onClick={() => setInputMode('direct')}
-                  className={`flex-1 py-1.5 rounded-[10px] text-xs font-bold transition-all ${
-                    inputMode === 'direct' ? 'bg-white/15 shadow-sm text-white' : 'text-white/40'
-                  }`}
-                >
-                  Direct (kg)
-                </button>
-                <button
-                  onClick={() => setInputMode('oneRM')}
-                  className={`flex-1 py-1.5 rounded-[10px] text-xs font-bold transition-all ${
-                    inputMode === 'oneRM' ? 'bg-white/15 shadow-sm text-white' : 'text-white/40'
-                  }`}
-                >
-                  Estimation reps
-                </button>
-              </div>
-            )}
+            <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
+              <div className="space-y-3.5 sm:space-y-4">
+                {modal.is1RM && (
+                  <div className="rounded-[20px] border border-white/10 bg-white/[0.03] p-1.5">
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => setInputMode('direct')}
+                        className={`rounded-[16px] px-3 py-2 text-sm font-black transition-all ${
+                          inputMode === 'direct'
+                            ? 'bg-[#ff6b35] text-white shadow-lg shadow-[#ff6b35]/20'
+                            : 'bg-white/5 text-white/45 hover:text-white'
+                        }`}
+                      >
+                        Direct
+                        <span className="block text-[10px] font-bold uppercase tracking-wider opacity-80">Valeur testée</span>
+                      </button>
+                      <button
+                        onClick={() => setInputMode('oneRM')}
+                        className={`rounded-[16px] px-3 py-2 text-sm font-black transition-all ${
+                          inputMode === 'oneRM'
+                            ? 'bg-[#ff6b35] text-white shadow-lg shadow-[#ff6b35]/20'
+                            : 'bg-white/5 text-white/45 hover:text-white'
+                        }`}
+                      >
+                        Estimation
+                        <span className="block text-[10px] font-bold uppercase tracking-wider opacity-80">Charge + reps</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-            {/* Direct input */}
-            {(!modal.is1RM || inputMode === 'direct') && (
-              <div className="mb-4">
-                <label className="text-xs font-bold text-white/40 mb-1 block uppercase tracking-wide">
-                  Valeur ({modal.unit})
-                </label>
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={modal.unit === 's' ? '1.75' : modal.unit === 'cm' ? '42' : '1200'}
-                  className="w-full px-4 py-3 border border-white/10 bg-white/5 rounded-[14px] text-lg font-bold text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
-                />
-              </div>
-            )}
-
-            {/* 1RM estimation inputs */}
-            {modal.is1RM && inputMode === 'oneRM' && (
-              <div className="space-y-3 mb-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-xs font-bold text-white/40 mb-1 block uppercase tracking-wide">
-                      Poids (kg)
-                    </label>
+                {(!modal.is1RM || inputMode === 'direct') && (
+                  <section className="space-y-2.5 rounded-[20px] border border-white/10 bg-white/[0.03] p-3.5 sm:space-y-3 sm:p-4">
+                    <div>
+                      <label className="text-[11px] font-black uppercase tracking-[0.18em] text-white/45">
+                        Valeur ({modal.unit})
+                      </label>
+                      <p className="mt-1 text-xs text-white/35">
+                        Entre ta mesure directement si tu as déjà le résultat.
+                      </p>
+                    </div>
                     <input
                       type="number"
                       inputMode="decimal"
-                      value={inputLoad}
-                      onChange={(e) => setInputLoad(e.target.value)}
-                      placeholder="100"
-                      className="w-full px-3 py-2.5 border border-white/10 bg-white/5 rounded-[14px] text-base font-bold text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      placeholder={modal.unit === 's' ? '1.75' : modal.unit === 'cm' ? '42' : '1200'}
+                      className="w-full rounded-[16px] border border-white/10 bg-[#1a100c] px-4 py-3 text-lg font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-[#ff6b35]/15 [color-scheme:dark] sm:text-xl"
                     />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-white/40 mb-1 block uppercase tracking-wide">
-                      Reps
-                    </label>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      value={inputReps}
-                      onChange={(e) => setInputReps(e.target.value)}
-                      placeholder="5"
-                      className="w-full px-3 py-2.5 border border-white/10 bg-white/5 rounded-[14px] text-base font-bold text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
-                    />
-                  </div>
-                </div>
-                {/* Formula selector */}
-                <div className="relative">
-                  <label className="text-xs font-bold text-white/40 mb-1 block uppercase tracking-wide">
-                    Formule
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={inputFormula}
-                      onChange={(e) => setInputFormula(e.target.value as OneRMFormula)}
-                      className="w-full appearance-none px-3 py-2.5 border border-white/10 bg-white/5 rounded-[14px] text-sm font-bold text-white focus:outline-none focus:border-[#ff6b35] [color-scheme:dark] pr-8"
-                    >
-                      <option value="brzycki">Brzycki (recommandé 3–6 reps)</option>
-                      <option value="epley">Epley (8–12 reps)</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
-                  </div>
-                </div>
-                {/* Live estimation */}
-                {estimatedLive !== null && (
-                  <div className="bg-[#1a5f3f]/10 border border-[#1a5f3f]/20 rounded-[14px] px-4 py-3 flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#10b981]">1RM estimé</span>
-                    <span className="text-xl font-black text-[#10b981]">{estimatedLive} kg</span>
-                  </div>
+                  </section>
                 )}
-              </div>
-            )}
 
-            {/* Notes */}
-            <div className="mb-5">
-              <label className="text-xs font-bold text-white/40 mb-1 block uppercase tracking-wide">
-                Notes (optionnel)
-              </label>
-              <input
-                type="text"
-                value={inputNotes}
-                onChange={(e) => setInputNotes(e.target.value)}
-                placeholder="Ex: après entraînement, sol synthétique..."
-                className="w-full px-4 py-2.5 border border-white/10 bg-white/5 rounded-[14px] text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
-              />
+                {modal.is1RM && inputMode === 'oneRM' && (
+                  <section className="space-y-3.5 rounded-[20px] border border-white/10 bg-white/[0.03] p-3.5 sm:space-y-4 sm:p-4">
+                    <div>
+                      <label className="text-[11px] font-black uppercase tracking-[0.18em] text-white/45">
+                        Estimation du 1RM
+                      </label>
+                      <p className="mt-1 text-[11px] text-white/35 sm:text-xs">
+                        Charge + reps pour estimer ton niveau du moment.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-black uppercase tracking-[0.18em] text-white/45">
+                          Poids (kg)
+                        </label>
+                        <input
+                          type="number"
+                          inputMode="decimal"
+                          value={inputLoad}
+                          onChange={(e) => setInputLoad(e.target.value)}
+                          placeholder="100"
+                          className="w-full rounded-[16px] border border-white/10 bg-[#1a100c] px-3.5 py-2.5 text-base font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-[#ff6b35]/15 [color-scheme:dark]"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-black uppercase tracking-[0.18em] text-white/45">
+                          Reps
+                        </label>
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          value={inputReps}
+                          onChange={(e) => setInputReps(e.target.value)}
+                          placeholder="5"
+                          className="w-full rounded-[16px] border border-white/10 bg-[#1a100c] px-3.5 py-2.5 text-base font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-[#ff6b35]/15 [color-scheme:dark]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black uppercase tracking-[0.18em] text-white/45">
+                        Formule
+                      </label>
+                      <div className="relative">
+                        <select
+                          value={inputFormula}
+                          onChange={(e) => setInputFormula(e.target.value as OneRMFormula)}
+                          className="w-full appearance-none rounded-[16px] border border-white/10 bg-[#1a100c] px-3.5 py-2.5 pr-10 text-sm font-bold text-white focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-[#ff6b35]/15 [color-scheme:dark]"
+                        >
+                          <option value="brzycki">Brzycki — recommandé pour 3 à 6 reps</option>
+                          <option value="epley">Epley — utile sur des reps plus hautes</option>
+                        </select>
+                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 pointer-events-none" />
+                      </div>
+                    </div>
+
+                    {estimatedLive !== null && (
+                      <div className="rounded-[18px] border border-emerald-500/20 bg-emerald-500/10 px-4 py-3">
+                        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-300/75">
+                          Estimation instantanée
+                        </p>
+                        <div className="mt-2 flex items-end justify-between gap-3">
+                          <span className="text-xs text-emerald-100/80">1RM estimé avec {inputFormula}</span>
+                          <span className="text-xl font-black text-emerald-300 sm:text-2xl">{estimatedLive} kg</span>
+                        </div>
+                      </div>
+                    )}
+                  </section>
+                )}
+
+                <section className="space-y-2.5 rounded-[20px] border border-white/10 bg-white/[0.03] p-3.5 sm:space-y-3 sm:p-4">
+                  <div>
+                    <label className="text-[11px] font-black uppercase tracking-[0.18em] text-white/45">
+                      Notes
+                    </label>
+                    <p className="mt-1 text-xs text-white/35">
+                      Optionnel. Exemple : fatigue, surface, contexte match, sensation.
+                    </p>
+                  </div>
+                  <input
+                    type="text"
+                    value={inputNotes}
+                    onChange={(e) => setInputNotes(e.target.value)}
+                    placeholder="Ex : après entraînement, jambes lourdes, terrain humide..."
+                    className="w-full rounded-[16px] border border-white/10 bg-[#1a100c] px-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-[#ff6b35]/15 [color-scheme:dark]"
+                  />
+                </section>
+              </div>
             </div>
 
-            <button
-              onClick={handleSave}
-              className="w-full py-3.5 bg-[#ff6b35] text-white font-extrabold text-sm uppercase tracking-wider rounded-[16px] hover:bg-[#e55a2b] active:scale-[0.98] transition-all shadow-lg shadow-[#ff6b35]/20"
-            >
-              Enregistrer
-            </button>
+            <div className="border-t border-white/10 bg-[#1f120d]/90 px-4 py-3 sm:px-5 sm:py-4">
+              <div className="flex gap-3">
+                <button
+                  onClick={closeModal}
+                  className="flex-1 rounded-[16px] border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-black text-white/65 transition-colors hover:border-white/20 hover:text-white"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="flex-1 rounded-[16px] bg-[#ff6b35] px-4 py-2.5 text-sm font-black uppercase tracking-wider text-white transition-all hover:bg-[#e55a2b] active:scale-[0.98] shadow-lg shadow-[#ff6b35]/20"
+                >
+                  Enregistrer
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

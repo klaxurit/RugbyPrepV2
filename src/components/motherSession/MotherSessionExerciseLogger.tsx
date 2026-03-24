@@ -1,6 +1,57 @@
 import type { ExerciseLogEntry } from '../../types/training'
 import type { ExerciseMetricType } from '../../services/ui/exerciseMetrics'
 import type { Suggestion } from '../../services/ui/suggestions'
+import type { LoadSuggestion } from '../../services/loadSuggestion'
+
+// ─── Progression indicator ──────────────────────────────────
+
+type ProgressionIndicator = {
+  icon: string
+  color: string
+  label: string
+}
+
+export function getProgressionIndicator(
+  currentEntry: ExerciseLogEntry | undefined,
+  lastEntry: ExerciseLogEntry | undefined,
+): ProgressionIndicator | null {
+  if (!currentEntry || !lastEntry) return null
+
+  const currentLoad = currentEntry.loadKg
+  const lastLoad = lastEntry.loadKg
+  const currentReps = currentEntry.reps
+  const lastReps = lastEntry.reps
+  const currentRir = currentEntry.rir
+  const lastRir = lastEntry.rir
+
+  // Bodyweight: compare reps
+  if (currentLoad === undefined && lastLoad === undefined && currentReps !== undefined && lastReps !== undefined) {
+    if (currentReps > lastReps) {
+      // Check RPE cost: if RIR dropped by more than 2, it's costly progression
+      if (currentRir !== undefined && lastRir !== undefined && (lastRir - currentRir) > 2) {
+        return { icon: '⚠', color: 'text-amber-400', label: 'Progression couteuse' }
+      }
+      return { icon: '↑', color: 'text-emerald-400', label: 'Progression' }
+    }
+    if (currentReps < lastReps) return { icon: '↓', color: 'text-red-400', label: 'Regression' }
+    return { icon: '→', color: 'text-white/40', label: 'Stable' }
+  }
+
+  // Weighted: compare load
+  if (currentLoad !== undefined && lastLoad !== undefined) {
+    if (currentLoad > lastLoad) {
+      // Check RPE cost
+      if (currentRir !== undefined && lastRir !== undefined && (lastRir - currentRir) > 2) {
+        return { icon: '⚠', color: 'text-amber-400', label: 'Progression couteuse' }
+      }
+      return { icon: '↑', color: 'text-emerald-400', label: 'Progression' }
+    }
+    if (currentLoad < lastLoad) return { icon: '↓', color: 'text-red-400', label: 'Regression' }
+    return { icon: '→', color: 'text-white/40', label: 'Stable' }
+  }
+
+  return { icon: '○', color: 'text-white/20', label: 'Pas de comparaison' }
+}
 
 export type EntryDraft = {
   loadKg?: number
@@ -18,6 +69,8 @@ type Props = {
   metricType: ExerciseMetricType
   lastEntry?: ExerciseLogEntry
   suggestion?: Suggestion
+  premiumSuggestion?: LoadSuggestion
+  showProgressionIndicator?: boolean
   draft: EntryDraft
   onDraftChange: (patch: Partial<EntryDraft>) => void
 }
@@ -62,14 +115,32 @@ function NumberInput({
   )
 }
 
+const DECISION_STYLES: Record<string, { icon: string; color: string }> = {
+  increase: { icon: '↑', color: 'text-emerald-400' },
+  decrease: { icon: '↓', color: 'text-red-400' },
+  maintain: { icon: '→', color: 'text-white/50' },
+  no_data: { icon: '○', color: 'text-white/30' },
+  bodyweight: { icon: '●', color: 'text-blue-400' },
+  no_suggestion: { icon: '', color: '' },
+}
+
 export function MotherSessionExerciseLogger({
   exerciseName,
   metricType,
   lastEntry,
   suggestion,
+  premiumSuggestion,
+  showProgressionIndicator,
   draft,
   onDraftChange,
 }: Props) {
+  // Progression indicator: compute from current draft vs lastEntry
+  const progressionIndicator = showProgressionIndicator && lastEntry
+    ? getProgressionIndicator(
+        { exerciseId: '', loadKg: draft.loadKg, reps: draft.reps, rir: draft.rir },
+        lastEntry,
+      )
+    : null
   const showLoad = metricType === 'load_reps'
   const showReps = metricType === 'load_reps' || metricType === 'reps'
   const showSeconds = metricType === 'seconds'
@@ -77,13 +148,48 @@ export function MotherSessionExerciseLogger({
 
   return (
     <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
-      <p className="text-xs font-semibold text-white/80">{exerciseName}</p>
+      <div className="flex items-center gap-2">
+        <p className="text-xs font-semibold text-white/80">{exerciseName}</p>
+        {progressionIndicator && (draft.loadKg !== undefined || draft.reps !== undefined) && (
+          <span className={`text-sm font-bold ${progressionIndicator.color}`} title={progressionIndicator.label}>
+            {progressionIndicator.icon}
+          </span>
+        )}
+      </div>
 
-      {suggestion?.lastText && (
+      {/* Premium suggestion badge */}
+      {premiumSuggestion && premiumSuggestion.decision !== 'no_suggestion' && (
+        <div className="flex items-start gap-2 rounded-lg bg-[#ff6b35]/8 border border-[#ff6b35]/15 px-2.5 py-1.5">
+          {DECISION_STYLES[premiumSuggestion.decision] && (
+            <span className={`text-sm font-bold ${DECISION_STYLES[premiumSuggestion.decision].color}`}>
+              {DECISION_STYLES[premiumSuggestion.decision].icon}
+            </span>
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-bold text-white/80">
+              {premiumSuggestion.suggestedWeight !== null
+                ? `${premiumSuggestion.suggestedWeight} kg`
+                : premiumSuggestion.suggestedReps !== null
+                  ? `${premiumSuggestion.suggestedReps} reps`
+                  : ''}
+              {premiumSuggestion.suggestedWeight !== null && premiumSuggestion.suggestedReps !== null
+                ? ` × ${premiumSuggestion.suggestedReps}`
+                : ''}
+            </p>
+            <p className="text-[10px] text-white/50">{premiumSuggestion.justification}</p>
+            {premiumSuggestion.nextTarget && (
+              <p className="text-[10px] text-[#ff6b35]/60 mt-0.5">{premiumSuggestion.nextTarget}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Existing suggestion (shown when no premium suggestion) */}
+      {!premiumSuggestion && suggestion?.lastText && (
         <p className="text-[10px] text-white/30">{suggestion.lastText}</p>
       )}
 
-      {suggestion?.rationale && (
+      {!premiumSuggestion && suggestion?.rationale && (
         <p className="text-[10px] text-[#ff6b35]/70">{suggestion.rationale}</p>
       )}
 
