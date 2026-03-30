@@ -28,6 +28,7 @@ export function PageHeader({ title, backTo, titleSuffix, right, variant = 'dark'
   const { authState } = useAuth()
   const { profile } = useProfile()
   const currentUser = authState.status === 'authenticated' ? authState.user : null
+  const resolvedAvatarUrl = currentUser?.avatarUrl ?? profile.avatarUrl
   const clubLogoUrl = getClubLogoUrl(profile.clubCode)
   const clubMonogram = getClubMonogram(profile.clubName)
   const showProfileAvatar = currentUser != null
@@ -79,9 +80,9 @@ export function PageHeader({ title, backTo, titleSuffix, right, variant = 'dark'
           >
             <div className="relative h-11 w-11">
               <div className="h-11 w-11 rounded-full bg-white/10 border border-white/10 overflow-hidden flex items-center justify-center">
-                {currentUser?.avatarUrl ? (
+                {resolvedAvatarUrl ? (
                   <img
-                    src={currentUser.avatarUrl}
+                    src={resolvedAvatarUrl}
                     alt="Avatar"
                     className="h-full w-full object-cover"
                   />

@@ -6,18 +6,28 @@ import {
   msLabel,
 } from '../../services/motherSession/motherSessionLabels'
 
-function humanizeTrace(trace: AnnualPlanningContext['planningTrace']): string {
+function humanizeTrace(trace: AnnualPlanningContext['planningTrace'], lang: AppLang): string {
   switch (trace.resolutionMode) {
     case 'onboarding_hint':
-      return 'Aucun match n\'est encore renseigné. Le plan démarre avec la période choisie à l\'inscription.'
+      return lang === 'fr'
+        ? 'Aucun match n\'est encore renseigné. Le plan démarre avec la période choisie à l\'inscription.'
+        : 'No match is recorded yet. The plan starts from the season period selected during onboarding.'
     case 'backfilled':
-      return 'Aucun calendrier disponible. Un plan de reprise générique est proposé en attendant tes premières données.'
+      return lang === 'fr'
+        ? 'Aucun calendrier disponible. Un plan de reprise générique est proposé en attendant tes premières données.'
+        : 'No calendar is available yet. A generic return-to-training plan is proposed until your first data comes in.'
     case 'calendar_inferred':
-      return 'Le plan s\'aligne automatiquement sur les matchs détectés dans ton calendrier.'
+      return lang === 'fr'
+        ? 'Le plan s\'aligne automatiquement sur les matchs détectés dans ton calendrier.'
+        : 'The plan automatically aligns with the matches detected in your calendar.'
     case 'explicit_anchors':
-      return 'Le plan suit les dates clés renseignées (début de saison, fin de saison).'
+      return lang === 'fr'
+        ? 'Le plan suit les dates clés renseignées (début de saison, fin de saison).'
+        : 'The plan follows the key dates that were entered (season start, season end).'
     case 'manual_override':
-      return 'Le plan a été ajusté manuellement par un encadrant ou via les réglages avancés.'
+      return lang === 'fr'
+        ? 'Le plan a été ajusté manuellement par un encadrant ou via les réglages avancés.'
+        : 'The plan was manually adjusted by a coach or through advanced settings.'
   }
 }
 
@@ -87,16 +97,18 @@ export function AnnualPlanningSummaryCard({
         </div>
       ) : fatigueLevel !== 'normal' ? (
         <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-900/15 px-2.5 py-1 text-[10px] font-bold text-amber-300">
-          {fatigueLevel === 'very_high' ? 'Fatigue très élevée' : 'Fatigue élevée'}
+          {lang === 'fr'
+            ? (fatigueLevel === 'very_high' ? 'Fatigue très élevée' : 'Fatigue élevée')
+            : (fatigueLevel === 'very_high' ? 'Very high fatigue' : 'High fatigue')}
         </span>
       ) : null}
 
       <details className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2.5">
         <summary className="text-[10px] font-black uppercase tracking-wide text-white/40 cursor-pointer select-none">
-          Pourquoi ce plan ?
+          {lang === 'fr' ? 'Pourquoi ce plan ?' : 'Why this plan?'}
         </summary>
         <p className="mt-2 text-xs text-white/55 leading-relaxed">
-          {humanizeTrace(trace)}
+          {humanizeTrace(trace, lang)}
         </p>
       </details>
 
@@ -117,7 +129,7 @@ export function AnnualPlanningSummaryCard({
         <div className="rounded-2xl border border-amber-500/25 bg-amber-900/10 px-3 py-2.5">
           <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide text-amber-400 mb-1.5">
             <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
-            Avertissements
+            {lang === 'fr' ? 'Avertissements' : 'Warnings'}
           </p>
           <ul className="space-y-1.5 text-xs text-amber-200/90">
             {mergedWarnings.map((w) => (

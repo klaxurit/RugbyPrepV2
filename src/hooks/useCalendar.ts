@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
+import { syncCalendar } from '../services/calendar/ffrSyncService'
 import type { CalendarEvent, SeasonPhase } from '../types/training'
 
 const STORAGE_KEY = 'rugbyprep.calendar.v1'
+const CALENDAR_SELECT = 'id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, venue, user_hidden, user_override, synced_at'
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -13,6 +15,22 @@ const addDays = (d: Date, days: number): Date => {
   const result = new Date(d)
   result.setDate(result.getDate() + days)
   return result
+}
+
+function normalizeKickoffTime(raw: string | undefined): string | undefined {
+  if (!raw) return undefined
+  const value = raw.trim()
+  if (/^\d{2}:\d{2}$/.test(value)) return value
+  if (/^\d{2}:\d{2}:\d{2}/.test(value)) return value.slice(0, 5)
+  return value
+}
+
+function normalizeCalendarEvent(event: CalendarEvent): CalendarEvent {
+  return {
+    ...event,
+    kickoff_time: normalizeKickoffTime(event.kickoff_time),
+    source: event.source ?? 'manual',
+  }
 }
 
 function detectSeasonPhase(events: CalendarEvent[], today: Date): SeasonPhase {
@@ -46,7 +64,9 @@ function readFromStorage(): CalendarEvent[] {
     const raw = window.localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const parsed = JSON.parse(raw) as unknown
-    return Array.isArray(parsed) ? (parsed as CalendarEvent[]) : []
+    return Array.isArray(parsed)
+      ? (parsed as CalendarEvent[]).map(normalizeCalendarEvent)
+      : []
   } catch {
     return []
   }
@@ -76,7 +96,7 @@ export function useCalendar() {
     setLoading(true)
     supabase
       .from('match_calendar')
-      .select('id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, rpe, duration_min, created_at')
+      .select(CALENDAR_SELECT)
       .order('date', { ascending: true })
       .then(({ data, error: err }) => {
         setLoading(false)
@@ -84,7 +104,7 @@ export function useCalendar() {
           setError(err.message)
           return
         }
-        const loaded = (data ?? []) as CalendarEvent[]
+        const loaded = ((data ?? []) as CalendarEvent[]).map(normalizeCalendarEvent)
         setEvents(loaded)
         saveToStorage(loaded)
       })
@@ -95,11 +115,11 @@ export function useCalendar() {
       if (userId) {
         const { data, error: err } = await supabase
           .from('match_calendar')
-          .insert({ ...payload, user_id: userId })
-          .select('id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, rpe, duration_min, created_at')
+          .insert({ ...payload, source: payload.source ?? 'manual', user_id: userId })
+          .select(CALENDAR_SELECT)
           .single()
         if (err) { setError(err.message); return }
-        const newEvent = data as CalendarEvent
+        const newEvent = normalizeCalendarEvent(data as CalendarEvent)
         setEvents((prev) => {
           const next = [...prev, newEvent].sort((a, b) => a.date.localeCompare(b.date))
           saveToStorage(next)
@@ -108,6 +128,8 @@ export function useCalendar() {
       } else {
         const newEvent: CalendarEvent = {
           ...payload,
+          source: payload.source ?? 'manual',
+          kickoff_time: normalizeKickoffTime(payload.kickoff_time),
           id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           created_at: new Date().toISOString(),
         }
@@ -157,6 +179,99 @@ export function useCalendar() {
     [userId]
   )
 
+  const hideImportedEvent = useCallback(
+    async (id: string) => {
+      if (userId) {
+        await supabase
+          .from('match_calendar')
+          .update({ user_hidden: true })
+          .eq('id', id)
+      }
+      setEvents((prev) => {
+        const next = prev.map((e) => (e.id === id ? { ...e, user_hidden: true } : e))
+        saveToStorage(next)
+        return next
+      })
+    },
+    [userId]
+  )
+
+  const unhideImportedEvent = useCallback(
+    async (id: string) => {
+      if (userId) {
+        await supabase
+          .from('match_calendar')
+          .update({ user_hidden: false })
+          .eq('id', id)
+      }
+      setEvents((prev) => {
+        const next = prev.map((e) => (e.id === id ? { ...e, user_hidden: false } : e))
+        saveToStorage(next)
+        return next
+      })
+    },
+    [userId]
+  )
+
+  const overrideImportedEvent = useCallback(
+    async (id: string, override: { date?: string; kickoff_time?: string; notes?: string }) => {
+      if (userId) {
+        await supabase
+          .from('match_calendar')
+          .update({
+            user_override: override,
+            ...(override.date ? { date: override.date } : {}),
+            ...(override.kickoff_time ? { kickoff_time: override.kickoff_time } : {}),
+            ...(override.notes !== undefined ? { notes: override.notes } : {}),
+          })
+          .eq('id', id)
+      }
+      setEvents((prev) => {
+        const next = prev.map((e) =>
+          e.id === id
+            ? {
+                ...e,
+                user_override: override,
+                ...(override.date ? { date: override.date } : {}),
+                ...(override.kickoff_time ? { kickoff_time: override.kickoff_time } : {}),
+              }
+            : e
+        )
+        saveToStorage(next)
+        return next
+      })
+    },
+    [userId]
+  )
+
+  const refreshFromFFR = useCallback(
+    async (competitionId: string, clubCode: string) => {
+      setLoading(true)
+      setError(null)
+      const result = await syncCalendar(competitionId, clubCode)
+      if (result.error) {
+        setError(result.error)
+        setLoading(false)
+        return result
+      }
+      // Reload events from Supabase
+      if (userId) {
+        const { data, error: err } = await supabase
+          .from('match_calendar')
+          .select(CALENDAR_SELECT)
+          .order('date', { ascending: true })
+        if (!err && data) {
+          const loaded = (data as CalendarEvent[]).map(normalizeCalendarEvent)
+          setEvents(loaded)
+          saveToStorage(loaded)
+        }
+      }
+      setLoading(false)
+      return result
+    },
+    [userId]
+  )
+
   const today = new Date()
   const todayStr = toDateStr(today)
 
@@ -165,13 +280,21 @@ export function useCalendar() {
   const weekStart = toDateStr(addDays(today, -dayOfWeek))
   const weekEnd = toDateStr(addDays(today, 6 - dayOfWeek))
 
-  const nextMatch = events.find((e) => e.type === 'match' && e.date >= todayStr) ?? null
-  const isMatchDay = events.some((e) => e.type === 'match' && e.date === todayStr)
-  const thisWeekEvents = events.filter((e) => e.date >= weekStart && e.date <= weekEnd)
+  // Filter out hidden events for display
+  const visibleEvents = events.filter((e) => !e.user_hidden)
+
+  const nextMatch = visibleEvents.find((e) => e.type === 'match' && e.date >= todayStr) ?? null
+  const isMatchDay = visibleEvents.some((e) => e.type === 'match' && e.date === todayStr)
+  const thisWeekEvents = visibleEvents.filter((e) => e.date >= weekStart && e.date <= weekEnd)
   const seasonPhase = detectSeasonPhase(events, today)
+
+  const hiddenCount = events.filter((e) => e.user_hidden).length
+  const ffrCount = visibleEvents.filter((e) => e.source === 'ffr_import').length
+  const manualCount = visibleEvents.filter((e) => e.source === 'manual').length
 
   return {
     events,
+    visibleEvents,
     nextMatch,
     isMatchDay,
     thisWeekEvents,
@@ -179,6 +302,13 @@ export function useCalendar() {
     addEvent,
     removeEvent,
     updateMatchLoad,
+    hideImportedEvent,
+    unhideImportedEvent,
+    overrideImportedEvent,
+    refreshFromFFR,
+    hiddenCount,
+    ffrCount,
+    manualCount,
     loading,
     error,
   }

@@ -3,9 +3,7 @@ import type { MotherSessionMetadata } from '../../types/motherSession'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import {
   msCycleLabel,
-  msSessionTypeLabel,
   msTargetLevelLabel,
-  msPositionGroupLabel,
 } from '../../services/motherSession/motherSessionLabels'
 import { formatTitleFromMotherSessionId } from './formatMotherSessionTitle'
 
@@ -30,11 +28,7 @@ export function MotherSessionHeader({ metadata, lang = 'fr' }: MotherSessionHead
       <h1 className="text-xl font-bold leading-tight text-white sm:text-2xl">{title}</h1>
       <div className="mt-4 flex flex-wrap gap-2">
         <Badge>{msCycleLabel(metadata.cycle, lang)}</Badge>
-        <Badge>{msSessionTypeLabel(metadata.sessionType, lang)}</Badge>
         {metadata.targetDuration ? <Badge>{metadata.targetDuration}</Badge> : null}
-        {metadata.targetPositionGroup ? (
-          <Badge>{msPositionGroupLabel(metadata.targetPositionGroup, lang)}</Badge>
-        ) : null}
         <Badge>{msTargetLevelLabel(metadata.targetLevel, lang)}</Badge>
       </div>
     </header>

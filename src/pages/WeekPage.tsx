@@ -37,6 +37,7 @@ function localDateISO(d: Date): string {
 export function WeekPage() {
   const { profile } = useProfile()
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
+  const weekPageTitle = lang === 'fr' ? 'Ma Semaine' : 'My Week'
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue, setFatigue } = useFatigue()
   const { logs } = useHistory()
@@ -95,7 +96,7 @@ export function WeekPage() {
   if (hasHardBlock) {
     return (
       <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24">
-        <PageHeader title="Ma Semaine" backTo="/home" />
+        <PageHeader title={weekPageTitle} backTo="/home" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
             <p className="font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
@@ -130,7 +131,7 @@ export function WeekPage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
-        title="Ma Semaine"
+        title={weekPageTitle}
         backTo="/home"
         titleSuffix={surface?.planningContext.weekLabel ?? week}
       />

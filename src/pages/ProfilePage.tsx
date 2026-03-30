@@ -24,7 +24,10 @@ import type {
   RehabPhase,
   AgeBand,
   PopulationSegment,
+  FfrCompetition,
 } from '../types/training'
+import { fetchCompetitions, syncCalendar } from '../services/calendar/ffrSyncService'
+import { supabase } from '../services/supabase/client'
 import ffrClubsData from '../data/ffrClubs.v2021.json'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
@@ -67,8 +70,6 @@ const POSITION_OPTIONS = [
   { value: 'BACK_THREE', label: 'Ailier / Arrière' },
 ] as const
 
-const LEAGUE_OPTIONS = ['R1', 'R2', 'F3', 'F2', 'F1', 'N1'] as const
-
 const TRAINING_LEVELS: {
   value: TrainingLevel
   label: string
@@ -76,10 +77,19 @@ const TRAINING_LEVELS: {
   emoji: string
   legacyLevel: 'beginner' | 'intermediate'
 }[] = [
-  { value: 'starter',     label: 'Débutant',      sub: 'Poids du corps & élastiques',      emoji: '🌱', legacyLevel: 'beginner' },
-  { value: 'builder',     label: 'Intermédiaire',  sub: 'Haltères & supersets',             emoji: '💪', legacyLevel: 'intermediate' },
+  { value: 'starter',     label: 'Fondations',    sub: 'Machines guidées & bases techniques', emoji: '🌱', legacyLevel: 'beginner' },
   { value: 'performance', label: 'Avancé',         sub: 'Barre + blocs de contraste',       emoji: '🏆', legacyLevel: 'intermediate' },
 ]
+
+const LANGUAGE_OPTIONS = [
+  { value: 'fr' as const, label: 'Français', sub: 'Programme affiché en français' },
+  { value: 'en' as const, label: 'English', sub: 'Program and exercises in English' },
+]
+
+function getVisibleTrainingLevel(level: TrainingLevel | undefined): Exclude<TrainingLevel, 'builder'> {
+  if (level === 'starter') return 'starter'
+  return 'performance'
+}
 
 const SEASON_MODES: { value: SeasonMode; label: string; sub: string; emoji: string }[] = [
   { value: 'in_season',  label: 'Saison',          sub: 'Programme Force → Puissance',         emoji: '⚡' },
@@ -181,12 +191,41 @@ export function ProfilePage() {
   const [editMatchDay, setEditMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
   const [gymMode, setGymMode] = useState<'auto' | 'manual'>('auto')
   const [editGymDays, setEditGymDays] = useState<Set<DayOfWeek>>(new Set())
+  const [ffrCompetitions, setFfrCompetitions] = useState<FfrCompetition[]>([])
+  const [ffrCompLoading, setFfrCompLoading] = useState(false)
+  const [ffrSyncLoading, setFfrSyncLoading] = useState(false)
+  const [ffrSyncMessage, setFfrSyncMessage] = useState<string | null>(null)
 
   // Sync inputs quand le profil charge depuis Supabase
   useEffect(() => {
     setHeightInput(profile.heightCm?.toString() ?? '')
     setWeightInput(profile.weightKg?.toString() ?? '')
   }, [profile.heightCm, profile.weightKg])
+
+  // Load competitions when club is set (only on initial profile load, not on manual selection)
+  const isAuthenticated = authState.status === 'authenticated'
+  const [clubCompsFetched, setClubCompsFetched] = useState<string | null>(null)
+  useEffect(() => {
+    if (!isAuthenticated) return
+    if (!profile.clubCode) return
+    if (profile.ffrCompetitionId) return
+    // Skip if already fetched for this club (handleSelectClub handles its own fetch)
+    if (clubCompsFetched === profile.clubCode) return
+    setClubCompsFetched(profile.clubCode)
+    setFfrCompLoading(true)
+    setFfrSyncMessage(null)
+    fetchCompetitions(profile.clubCode).then((result) => {
+      setFfrCompLoading(false)
+      if (result.error) {
+        if (result.error !== 'club_not_mapped') {
+          setFfrSyncMessage(`Erreur FFR : ${result.error}`)
+        }
+        return
+      }
+      setFfrCompetitions(result.competitions)
+    })
+  }, [isAuthenticated, profile.clubCode, profile.ffrCompetitionId, clubCompsFetched])
+
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const filteredClubs = useMemo(() => {
@@ -289,18 +328,99 @@ export function ProfilePage() {
     setShowPlanningEditor(false)
   }
 
-  const handleSelectClub = (club: FfrClub) => {
-    updateProfile({
-      clubCode: club.code,
-      clubName: club.name,
-      clubLigue: club.ligue,
-      clubDepartmentCode: club.departmentCode,
-    })
+  const handleSelectClub = async (club: FfrClub) => {
+    // If changing club, clear previous competition and delete old FFR matches
+    if (profile.clubCode && profile.clubCode !== club.code) {
+      await supabase
+        .from('match_calendar')
+        .delete()
+        .eq('source', 'ffr_import')
+      updateProfile({
+        clubCode: club.code,
+        clubName: club.name,
+        clubLigue: club.ligue,
+        clubDepartmentCode: club.departmentCode,
+        ffrCompetitionId: undefined,
+        ffrCompetitionName: undefined,
+      })
+    } else {
+      updateProfile({
+        clubCode: club.code,
+        clubName: club.name,
+        clubLigue: club.ligue,
+        clubDepartmentCode: club.departmentCode,
+      })
+    }
     setClubQuery('')
+
+    // Fetch competitions for the new club (mark as fetched to prevent useEffect double-call)
+    setClubCompsFetched(club.code)
+    setFfrCompLoading(true)
+    setFfrCompetitions([])
+    setFfrSyncMessage(null)
+    const result = await fetchCompetitions(club.code)
+    setFfrCompLoading(false)
+
+    if (result.error) {
+      setFfrCompetitions([])
+      if (result.error === 'club_not_mapped') {
+        setFfrSyncMessage(null) // pas de message, juste "non disponible"
+      } else {
+        setFfrSyncMessage(`Erreur FFR : ${result.error}`)
+      }
+      return
+    }
+
+    setFfrCompetitions(result.competitions)
+
+    if (result.competitions.length === 0) {
+      setFfrSyncMessage(null) // aucune compétition senior trouvée
+      return
+    }
+
+    // Auto-select if only 1 competition
+    if (result.competitions.length === 1) {
+      await handleSelectCompetition(result.competitions[0])
+    }
+  }
+
+  const handleSelectCompetition = async (comp: FfrCompetition) => {
+    updateProfile({
+      ffrCompetitionId: comp.id,
+      ffrCompetitionName: comp.name,
+    })
+
+    // Trigger initial sync
+    setFfrSyncLoading(true)
+    setFfrSyncMessage(null)
+    const result = await syncCalendar(comp.id, profile.clubCode!)
+    setFfrSyncLoading(false)
+
+    if (result.error) {
+      setFfrSyncMessage(`Erreur sync : ${result.error}`)
+    } else {
+      setFfrSyncMessage(`${result.imported} match${result.imported > 1 ? 's' : ''} importé${result.imported > 1 ? 's' : ''}`)
+      updateProfile({ ffrLastSyncAt: new Date().toISOString() })
+    }
+  }
+
+  const handleManualSync = async () => {
+    if (!profile.ffrCompetitionId || !profile.clubCode) return
+    setFfrSyncLoading(true)
+    setFfrSyncMessage(null)
+    const result = await syncCalendar(profile.ffrCompetitionId, profile.clubCode)
+    setFfrSyncLoading(false)
+    if (result.error) {
+      setFfrSyncMessage(`Erreur sync : ${result.error}`)
+    } else {
+      setFfrSyncMessage(`${result.imported} match${result.imported > 1 ? 's' : ''} importé${result.imported > 1 ? 's' : ''}`)
+      updateProfile({ ffrLastSyncAt: new Date().toISOString() })
+    }
   }
 
   const selectedClubLogoUrl = getClubLogoUrl(profile.clubCode)
   const selectedClubMonogram = getClubMonogram(profile.clubName)
+  const resolvedAvatarUrl = authState.user?.avatarUrl ?? profile.avatarUrl
   const selectedAgeBand: AgeBand = profile.ageBand ?? 'adult'
   const selectedPopulation: PopulationSegment =
     profile.populationSegment ??
@@ -335,9 +455,9 @@ export function ProfilePage() {
               className="relative w-20 h-20 rounded-3xl border border-white/10 bg-white/10 flex items-center justify-center overflow-hidden disabled:opacity-60"
               aria-label="Changer la photo de profil"
             >
-              {authState.user?.avatarUrl ? (
+              {resolvedAvatarUrl ? (
                 <img
-                  src={authState.user.avatarUrl}
+                  src={resolvedAvatarUrl}
                   alt="Avatar"
                   className="w-full h-full object-cover"
                 />
@@ -402,7 +522,7 @@ export function ProfilePage() {
             <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Niveau d'entraînement</label>
             <div className="flex flex-col gap-2">
               {TRAINING_LEVELS.map((opt) => {
-                const active = (profile.trainingLevel ?? 'builder') === opt.value
+                const active = getVisibleTrainingLevel(profile.trainingLevel) === opt.value
                 return (
                   <button
                     key={opt.value}
@@ -411,9 +531,6 @@ export function ProfilePage() {
                       updateProfile({
                         trainingLevel: opt.value,
                         level: opt.legacyLevel,
-                        weeklySessions: opt.value === 'starter' ? 2 : profile.weeklySessions,
-                        seasonMode: opt.value === 'starter' ? 'in_season' : profile.seasonMode,
-                        performanceFocus: opt.value === 'starter' ? 'balanced' : profile.performanceFocus,
                       })
                     }
                     className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
@@ -436,38 +553,54 @@ export function ProfilePage() {
           {/* Mode saison */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Mode saison</label>
-            {(profile.trainingLevel ?? 'builder') === 'starter' ? (
-              <p className="text-[11px] text-white/40 bg-white/5 border border-white/10 rounded-2xl px-3 py-2.5">
-                Le mode saison s'active à partir du niveau Intermédiaire. Continue ton programme débutant — le passage à l'Intermédiaire débloquera ce réglage.
-              </p>
-            ) : (
-              <div className="flex flex-col gap-2">
-                {SEASON_MODES.map((opt) => {
-                  const active = (profile.seasonMode ?? 'in_season') === opt.value
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => updateProfile({ seasonMode: opt.value })}
-                      className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
-                        active
-                          ? 'bg-[#ff6b35] text-white shadow-sm'
-                          : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
-                      }`}
-                    >
-                      <span className="text-base flex-shrink-0">{opt.emoji}</span>
-                      <div>
-                        <p className="font-black">{opt.label}</p>
-                        <p className={`text-[10px] font-normal ${active ? 'text-orange-100' : 'text-white/40'}`}>{opt.sub}</p>
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            )}
+            <div className="flex flex-col gap-2">
+              {SEASON_MODES.map((opt) => {
+                const active = (profile.seasonMode ?? 'in_season') === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => updateProfile({ seasonMode: opt.value })}
+                    className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
+                      active
+                        ? 'bg-[#ff6b35] text-white shadow-sm'
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                    }`}
+                  >
+                    <span className="text-base flex-shrink-0">{opt.emoji}</span>
+                    <div>
+                      <p className="font-black">{opt.label}</p>
+                      <p className={`text-[10px] font-normal ${active ? 'text-orange-100' : 'text-white/40'}`}>{opt.sub}</p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
-          {/* Langue — masqué tant que l'EN n'est pas réellement complet */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Langue du programme</label>
+            <div className="grid grid-cols-2 gap-2">
+              {LANGUAGE_OPTIONS.map((opt) => {
+                const active = (profile.preferredLanguage ?? 'fr') === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => updateProfile({ preferredLanguage: opt.value })}
+                    className={`py-2.5 px-3 rounded-2xl text-left transition-all ${
+                      active
+                        ? 'bg-[#1a5f3f] text-white shadow-sm'
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                    }`}
+                  >
+                    <p className="text-xs font-black">{opt.label}</p>
+                    <p className={`mt-0.5 text-[10px] ${active ? 'text-emerald-200' : 'text-white/40'}`}>{opt.sub}</p>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
 
           {/* Séances / semaine */}
           <div className="space-y-2">
@@ -475,20 +608,15 @@ export function ProfilePage() {
             <div className="grid grid-cols-2 gap-2">
               {[2, 3].map((n) => {
                 const active = profile.weeklySessions === n
-                const isStarter = (profile.trainingLevel ?? 'builder') === 'starter'
-                const disabled = isStarter && n === 3
                 return (
                   <button
                     key={n}
                     type="button"
-                    disabled={disabled}
                     onClick={() => updateProfile({ weeklySessions: n as 2 | 3 })}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
                       active
                         ? 'bg-[#1a5f3f] text-white shadow-sm'
-                        : disabled
-                          ? 'bg-white/5 text-white/25 border border-white/10 cursor-not-allowed opacity-50'
-                          : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                     }`}
                   >
                     {n} séances
@@ -578,42 +706,107 @@ export function ProfilePage() {
             )}
           </div>
 
-          {/* Niveau championnat */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">
-              Championnat <span className="text-white/20 font-normal normal-case">(optionnel)</span>
-            </label>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => updateProfile({ leagueLevel: undefined })}
-                className={`py-2 px-3.5 rounded-2xl text-xs font-bold transition-all ${
-                  !profile.leagueLevel
-                    ? 'bg-white/20 text-white'
-                    : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
-                }`}
-              >
-                Non renseigné
-              </button>
-              {LEAGUE_OPTIONS.map((opt) => {
-                const active = profile.leagueLevel === opt
-                return (
+          {/* Compétition FFR (calendrier auto) */}
+          {profile.clubCode && (
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">
+                Compétition <span className="text-white/20 font-normal normal-case">(calendrier auto)</span>
+              </label>
+
+              {ffrCompLoading && (
+                <div className="h-11 rounded-2xl border border-white/10 bg-white/5 flex items-center justify-center">
+                  <RefreshCw className="w-4 h-4 text-white/30 animate-spin" />
+                </div>
+              )}
+
+              {!ffrCompLoading && ffrCompetitions.length === 0 && !profile.ffrCompetitionId && !ffrSyncMessage && (
+                <p className="text-xs text-white/30 italic">Import auto non disponible pour ce club</p>
+              )}
+
+              {!ffrCompLoading && ffrSyncMessage && !profile.ffrCompetitionId && (
+                <p className={`text-xs italic ${ffrSyncMessage.startsWith('Erreur') ? 'text-red-400' : 'text-white/30'}`}>
+                  {ffrSyncMessage}
+                </p>
+              )}
+
+              {!ffrCompLoading && ffrCompetitions.length > 1 && !profile.ffrCompetitionId && (
+                <div className="space-y-1">
+                  {ffrCompetitions
+                    .slice()
+                    .sort((a, b) => {
+                      // Pre-select: match leagueLevel to competition level
+                      const ll = (profile.leagueLevel ?? '').toLowerCase()
+                      const aMatch = (a.level ?? '').toLowerCase().includes(ll) && ll.length > 0 ? 1 : 0
+                      const bMatch = (b.level ?? '').toLowerCase().includes(ll) && ll.length > 0 ? 1 : 0
+                      return bMatch - aMatch
+                    })
+                    .map((comp, idx) => {
+                      const ll = (profile.leagueLevel ?? '').toLowerCase()
+                      const isRecommended = ll.length > 0 && (comp.level ?? '').toLowerCase().includes(ll)
+                      return (
+                        <button
+                          key={comp.id}
+                          type="button"
+                          onClick={() => handleSelectCompetition(comp)}
+                          className={`w-full px-3 py-2.5 text-left rounded-2xl border transition-colors ${
+                            isRecommended && idx === 0
+                              ? 'border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20'
+                              : 'border-white/10 bg-white/5 hover:bg-white/10'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-bold text-white">{comp.name}</p>
+                            {isRecommended && idx === 0 && (
+                              <span className="text-[9px] font-black text-blue-400 bg-blue-900/20 px-1.5 py-0.5 rounded-full">Recommandé</span>
+                            )}
+                          </div>
+                          <p className="text-xs text-white/40">{comp.level}{comp.pool ? ` · ${comp.pool}` : ''} · {comp.season}</p>
+                        </button>
+                      )
+                    })}
+                </div>
+              )}
+
+              {profile.ffrCompetitionName && (
+                <div className="p-3 rounded-2xl border border-blue-500/20 bg-blue-500/5 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-white">{profile.ffrCompetitionName}</p>
+                      <p className="text-xs text-white/40">
+                        {profile.ffrLastSyncAt
+                          ? `Dernière sync : ${new Date(profile.ffrLastSyncAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`
+                          : 'Jamais synchronisé'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleManualSync}
+                      disabled={ffrSyncLoading}
+                      className="px-3 py-1.5 rounded-xl bg-blue-500/20 text-blue-400 text-xs font-bold hover:bg-blue-500/30 transition-colors disabled:opacity-50"
+                    >
+                      {ffrSyncLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : 'Sync'}
+                    </button>
+                  </div>
+                  {ffrSyncMessage && (
+                    <p className={`text-xs ${ffrSyncMessage.startsWith('Erreur') ? 'text-red-400' : 'text-green-400'}`}>
+                      {ffrSyncMessage}
+                    </p>
+                  )}
                   <button
-                    key={opt}
                     type="button"
-                    onClick={() => updateProfile({ leagueLevel: opt })}
-                    className={`py-2 px-3.5 rounded-2xl text-xs font-bold transition-all ${
-                      active
-                        ? 'bg-white/20 text-white'
-                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
-                    }`}
+                    onClick={() => {
+                      updateProfile({ ffrCompetitionId: undefined, ffrCompetitionName: undefined })
+                      setFfrSyncMessage(null)
+                    }}
+                    className="text-[11px] font-bold text-white/30 hover:text-white/50 transition-colors"
                   >
-                    {opt}
+                    Changer de compétition
                   </button>
-                )
-              })}
+                </div>
+              )}
             </div>
-          </div>
+          )}
+
         </section>
 
         {/* Morphologie */}

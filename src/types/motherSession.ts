@@ -34,6 +34,8 @@ export interface MotherSessionMetadata {
 
 export interface Exercise {
   name: string
+  /** Résolu dynamiquement quand une adaptation de niveau remplace l'exercice source. */
+  exerciseId?: string
   prescription: string
   role?: 'prime' | 'contrast' | 'support'
   /** Ex. minute 1, minute 2 (EMOM) */

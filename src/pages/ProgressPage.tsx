@@ -116,6 +116,7 @@ export function ProgressPage() {
   const { logs: sessionLogs } = useHistory()
   const { addTest, getHistoryFor, getBestFor } = useAthleteTests()
   const { profile } = useProfile()
+  const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
   const { features, isPremium } = useFeatureAccess()
   const { canShowUpsell } = useUpsellTiming()
   const [dismissedCards, setDismissedCards] = useState<Set<string>>(() => {
@@ -273,7 +274,7 @@ export function ProgressPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <PageHeader title="Progression" backTo="/" />
+      <PageHeader title={lang === 'fr' ? 'Progression' : 'Progress'} backTo="/" />
 
       <main className="relative px-6 pt-5 space-y-6 max-w-md mx-auto">
 
@@ -465,7 +466,7 @@ export function ProgressPage() {
                             {cfg.icon}
                           </div>
                           <div className="min-w-0">
-                            <div className="text-sm font-bold text-white truncate">{getExerciseName(row.exerciseId)}</div>
+                            <div className="text-sm font-bold text-white truncate">{getExerciseName(row.exerciseId, lang)}</div>
                             <div className="text-xs text-white/40 italic">
                               {row.delta.fromText} → {row.delta.toText}
                             </div>
@@ -490,7 +491,7 @@ export function ProgressPage() {
                 <div className="bg-white/5 border border-white/10 rounded-[24px] overflow-hidden divide-y divide-white/10">
                   {nextTargetRows.map((row) => (
                     <div key={row.exerciseId} className="p-4 flex items-center justify-between gap-3">
-                      <span className="text-sm font-bold text-white truncate">{getExerciseName(row.exerciseId)}</span>
+                      <span className="text-sm font-bold text-white truncate">{getExerciseName(row.exerciseId, lang)}</span>
                       <span className="text-xs font-black text-[#10b981] bg-[#10b981]/10 px-2.5 py-1 rounded-full flex-shrink-0">
                         ↑ {row.target}
                       </span>
@@ -518,7 +519,7 @@ export function ProgressPage() {
                     const maxProxy = Math.max(...history.map((h) => h.loadProxy), 1)
                     return (
                       <div key={exerciseId} className="bg-white/5 border border-white/10 rounded-[24px] p-4">
-                        <p className="text-sm font-bold text-white mb-3">{getExerciseName(exerciseId)}</p>
+                        <p className="text-sm font-bold text-white mb-3">{getExerciseName(exerciseId, lang)}</p>
                         <div className="flex items-end gap-1 h-10">
                           {history.map((h, i) => (
                             <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
@@ -554,7 +555,7 @@ export function ProgressPage() {
                 <div className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-2">
                   {missingRows.map(([exerciseId, count]) => (
                     <div key={exerciseId} className="flex items-center justify-between py-1.5 border-b border-white/10 last:border-0">
-                      <span className="text-sm font-medium text-white">{getExerciseName(exerciseId)}</span>
+                      <span className="text-sm font-medium text-white">{getExerciseName(exerciseId, lang)}</span>
                       <span className="text-[10px] font-bold text-white/40 bg-white/10 px-2 py-1 rounded-full">
                         {count} blocs
                       </span>

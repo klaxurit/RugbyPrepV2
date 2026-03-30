@@ -261,6 +261,29 @@
     "defaultNotes": "Alternative aux tractions pour débutants / fatigue."
   },
   {
+    "id": "pull_vertical__pull_up__neutral__assisted",
+    "name": "Assisted Neutral-Grip Pull-Up",
+    "pattern": "pull_vertical",
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
+    "level": "beginner",
+    "notes": "Traction assistée prise neutre. Garde le pattern vertical en simplifiant la difficulté.",
+    "exerciseId": "pull_vertical__pull_up__neutral__assisted",
+    "nameFr": "Tractions assistées prise neutre",
+    "metricType": "reps",
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Réduire progressivement l'assistance à mesure que les reps deviennent propres."
+  },
+  {
     "id": "pull_horizontal__tbar_row",
     "name": "Rowing T-Bar",
     "pattern": "pull_horizontal",
@@ -865,7 +888,7 @@
     "level": "beginner",
     "notes": "Grip + gainage + robustesse. Très transférable.",
     "exerciseId": "carry__farmer_walk__dumbbell",
-    "nameFr": "Farmer walk (marche du fermier)",
+    "nameFr": "Marche du fermier",
     "metricType": "meters",
     "tags": [
       "carry"
@@ -1348,7 +1371,7 @@
   },
   {
     "exerciseId": "tibialis__raise__bodyweight",
-    "nameFr": "Tibialis raise",
+    "nameFr": "Relevé tibial",
     "metricType": "reps",
     "equipment": [
       "none"
@@ -1441,6 +1464,46 @@
     "id": "power__medball_rotational_throw__wall",
     "name": "Lancer rotationnel medball",
     "notes": "Rotation controlee."
+  },
+  {
+    "exerciseId": "power__cable_press__explosive",
+    "nameFr": "Cable Press explosif unilatéral",
+    "metricType": "load_reps",
+    "equipment": [
+      "cable"
+    ],
+    "tags": [
+      "upper",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "defaultNotes": "Concentrique maximale, retour contrôlé, travail unilatéral.",
+    "id": "power__cable_press__explosive",
+    "name": "Cable Press explosif unilatéral",
+    "notes": "Concentrique maximale, retour contrôlé, travail unilatéral."
+  },
+  {
+    "exerciseId": "power__cable_slam__high_to_low",
+    "nameFr": "Cable Slam haut vers bas",
+    "metricType": "load_reps",
+    "equipment": [
+      "cable"
+    ],
+    "tags": [
+      "full",
+      "power",
+      "neural"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
+    "defaultNotes": "Trajectoire explosive, tronc gainé.",
+    "id": "power__cable_slam__high_to_low",
+    "name": "Cable Slam haut vers bas",
+    "notes": "Trajectoire explosive, tronc gainé."
   },
   {
     "exerciseId": "power__jump__box_jump",
@@ -2355,6 +2418,29 @@
     "defaultNotes": "Gainage total pendant la poussée. Coudes légèrement en avant au départ."
   },
   {
+    "id": "push_vertical__shoulder_press__machine",
+    "name": "Machine Shoulder Press",
+    "nameFr": "Développé épaules machine",
+    "pattern": "push_vertical",
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain",
+      "elbow_pain"
+    ],
+    "level": "beginner",
+    "notes": "Poussée verticale guidée. Plus simple à stabiliser qu'un push press.",
+    "exerciseId": "push_vertical__shoulder_press__machine",
+    "metricType": "load_reps",
+    "tags": [
+      "upper",
+      "push"
+    ],
+    "defaultNotes": "Appuis stables, trajectoire propre, sans aide des jambes."
+  },
+  {
     "id": "pull_horizontal__pendlay_row__barbell",
     "name": "Pendlay row barre",
     "nameFr": "Pendlay row barre",
@@ -2379,7 +2465,7 @@
   {
     "id": "hamstring__leg_curl__machine",
     "name": "Leg curl machine",
-    "nameFr": "Leg curl machine",
+    "nameFr": "Curl ischios machine",
     "pattern": "hamstring",
     "equipment": [
       "machine"
@@ -3310,6 +3396,20 @@
     "defaultNotes": "Tronc gainé, rotation contrôlée."
   },
   {
+    "id": "core_rotation__cable_rotation__explosive",
+    "name": "Cable Rotation explosif",
+    "pattern": "core_rotation",
+    "equipment": ["cable"],
+    "contraindications": ["low_back_pain"],
+    "level": "intermediate",
+    "notes": "Rotation explosive au câble avec tronc verrouillé.",
+    "exerciseId": "core_rotation__cable_rotation__explosive",
+    "nameFr": "Cable Rotation explosif",
+    "metricType": "load_reps",
+    "tags": ["core", "rotation", "power"],
+    "defaultNotes": "Intention maximale, rotation propre."
+  },
+  {
     "id": "pull_horizontal__landmine_row",
     "name": "Landmine Row",
     "pattern": "pull_horizontal",
@@ -3336,6 +3436,34 @@
     "metricType": "load_reps",
     "tags": ["upper", "pull"],
     "defaultNotes": "Tronc gainé, tirage contrôlé."
+  },
+  {
+    "id": "pull_horizontal__cable_row__seated",
+    "name": "Seated Cable Row",
+    "nameFr": "Rowing poulie assis",
+    "pattern": "pull_horizontal",
+    "equipment": ["cable"],
+    "contraindications": ["shoulder_pain"],
+    "level": "beginner",
+    "notes": "Tirage horizontal guidé à la poulie. Très lisible pour un niveau Fondations.",
+    "exerciseId": "pull_horizontal__cable_row__seated",
+    "metricType": "load_reps",
+    "tags": ["upper", "pull"],
+    "defaultNotes": "Poitrine sortie, tirage vers le bas des côtes, pas d'élan."
+  },
+  {
+    "id": "pull_horizontal__chest_supported_row__machine",
+    "name": "Chest-Supported Machine Row",
+    "nameFr": "Rowing machine poitrine appuyée",
+    "pattern": "pull_horizontal",
+    "equipment": ["machine"],
+    "contraindications": ["shoulder_pain"],
+    "level": "beginner",
+    "notes": "Tirage poitrine appuyée sur machine. Très stable pour un niveau Fondations.",
+    "exerciseId": "pull_horizontal__chest_supported_row__machine",
+    "metricType": "load_reps",
+    "tags": ["upper", "pull"],
+    "defaultNotes": "Buste collé au support, tirage strict, contrôle scapulaire."
   },
   {
     "id": "arm_curl__hammer_curl__dumbbell",
@@ -3477,6 +3605,20 @@
     "metricType": "load_reps",
     "tags": ["lower", "quad"],
     "defaultNotes": "Pieds largeur épaules, descente 90°."
+  },
+  {
+    "id": "squat__hack_squat__machine",
+    "name": "Hack Squat",
+    "nameFr": "Hack squat machine",
+    "pattern": "squat",
+    "equipment": ["machine"],
+    "contraindications": ["knee_pain", "low_back_pain"],
+    "level": "beginner",
+    "notes": "Squat guidé sur machine. Plus simple à mettre en place qu'un pin squat.",
+    "exerciseId": "squat__hack_squat__machine",
+    "metricType": "load_reps",
+    "tags": ["lower", "quad", "force"],
+    "defaultNotes": "Dos calé, amplitude contrôlée, pousser fort sans perdre la ligne."
   },
   {
     "id": "calf__seated_raise__machine",

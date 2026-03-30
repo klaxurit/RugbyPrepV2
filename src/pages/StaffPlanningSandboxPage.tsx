@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -171,22 +171,18 @@ export function StaffPlanningSandboxPage() {
     return sortStaffRosterRows(filtered, sortKey, sortDir)
   }, [rosterBaseRows, staffFilters, sortKey, sortDir])
 
+  const effectiveSelectedAthleteId = selectedAthleteId && rosterRowsFilteredSorted.some(
+    (r) => r.athlete.identity.athleteId === selectedAthleteId
+  ) ? selectedAthleteId : null
+
   const selectedAthlete = useMemo(() => {
-    if (!selectedAthleteId || !overview) return null
-    return overview.athletes.find((a) => a.identity.athleteId === selectedAthleteId) ?? null
-  }, [selectedAthleteId, overview])
+    if (!effectiveSelectedAthleteId || !overview) return null
+    return overview.athletes.find((a) => a.identity.athleteId === effectiveSelectedAthleteId) ?? null
+  }, [effectiveSelectedAthleteId, overview])
 
-  const selectedDisplayName = selectedAthleteId
-    ? (nameById.get(selectedAthleteId) ?? selectedAthleteId)
+  const selectedDisplayName = effectiveSelectedAthleteId
+    ? (nameById.get(effectiveSelectedAthleteId) ?? effectiveSelectedAthleteId)
     : undefined
-
-  useEffect(() => {
-    if (!selectedAthleteId) return
-    const stillVisible = rosterRowsFilteredSorted.some(
-      (r) => r.athlete.identity.athleteId === selectedAthleteId
-    )
-    if (!stillVisible) setSelectedAthleteId(null)
-  }, [rosterRowsFilteredSorted, selectedAthleteId])
 
   const toggleSortDir = () => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
 
@@ -477,7 +473,7 @@ export function StaffPlanningSandboxPage() {
                     />
                     <StaffRosterTable
                       rows={rosterRowsFilteredSorted}
-                      selectedAthleteId={selectedAthleteId}
+                      selectedAthleteId={effectiveSelectedAthleteId}
                       onSelectRow={setSelectedAthleteId}
                       loading={false}
                     />

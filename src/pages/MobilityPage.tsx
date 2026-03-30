@@ -12,6 +12,8 @@ import { checkBetaEligibility, BETA_ELIGIBILITY_MESSAGES } from '../services/bet
 
 export function MobilityPage() {
   const { profile } = useProfile()
+  const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
+  const mobilityPageTitle = lang === 'fr' ? 'Récupération Active' : 'Active Recovery'
 
   // ── Guard beta self-serve (même logique centralisée que WeekPage) ──────────
   const betaEligibility = checkBetaEligibility(profile)
@@ -29,7 +31,7 @@ export function MobilityPage() {
   if (!betaEligibility.isEligible) {
     return (
       <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24">
-        <PageHeader title="Récupération Active" backTo="/week" />
+        <PageHeader title={mobilityPageTitle} backTo="/week" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
             <p className="font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
@@ -66,7 +68,7 @@ export function MobilityPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <PageHeader title="Récupération Active" backTo="/week" />
+      <PageHeader title={mobilityPageTitle} backTo="/week" />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
@@ -117,7 +119,7 @@ export function MobilityPage() {
                 <div key={ex.exerciseId} className="flex items-start gap-3 p-3 bg-teal-900/10 rounded-2xl">
                   <div className="w-1.5 h-1.5 rounded-full bg-teal-400 flex-shrink-0 mt-1.5" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-white/80">{getExerciseName(ex.exerciseId)}</p>
+                    <p className="text-xs font-bold text-white/80">{getExerciseName(ex.exerciseId, lang)}</p>
                     {ex.notes && (
                       <p className="text-[10px] text-white/40 mt-0.5 leading-relaxed">{ex.notes}</p>
                     )}

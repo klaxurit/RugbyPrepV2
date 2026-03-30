@@ -97,9 +97,13 @@ const SEASON_MODE_LABEL: Record<SeasonMode, string> = {
 }
 
 const TRAINING_LEVEL_LABEL: Record<string, string> = {
-  starter:     '🌱 Débutant',
-  builder:     '💪 Intermédiaire',
+  starter:     '🌱 Fondations',
+  builder:     '🏆 Avancé',
   performance: '🏆 Avancé',
+}
+
+function getVisibleTrainingLevel(level: string | undefined): 'starter' | 'performance' {
+  return level === 'starter' ? 'starter' : 'performance'
 }
 
 // ─── Main ────────────────────────────────────────────────────
@@ -140,7 +144,10 @@ export function HomePage() {
   }), [profile, events, logs, today, fatigue, acwr.hasSufficientData, acwr.zone, week, programFeatureFlags])
   const { surface } = useWeeklyProgramSurface(surfaceParams)
 
-  const msSessions = surface?.motherSession?.sessions ?? []
+  const msSessions = useMemo(
+    () => surface?.motherSession?.sessions ?? [],
+    [surface],
+  )
   const todaySessionIndex = useMemo(
     () => getTodaySessionIndex(msSessions, profile.scSchedule, profile.clubSchedule),
     [msSessions, profile.scSchedule, profile.clubSchedule],
@@ -153,15 +160,20 @@ export function HomePage() {
 
   const sessionsThisWeek = logs.filter((l) => l.week === week).length
   const recentLogs = logs.slice(0, 2)
+  const injuryAlertNow = useMemo(
+    () => new Date(`${today}T12:00:00`).getTime(),
+    [today],
+  )
 
+  const visibleTrainingLevel = getVisibleTrainingLevel(profile.trainingLevel)
   const sessionDuration = LEVEL_DURATION[profile.trainingLevel ?? 'builder']
-  const trainingLevelLabel = TRAINING_LEVEL_LABEL[profile.trainingLevel ?? 'builder']
+  const trainingLevelLabel = TRAINING_LEVEL_LABEL[visibleTrainingLevel]
 
   // Auto-suggestion: if calendar phase differs from profile.seasonMode (Performance only)
   const currentSeasonMode = profile.seasonMode ?? 'in_season'
   const suggestedSeasonMode = seasonPhase ? CALENDAR_TO_SEASON_MODE[seasonPhase] : null
   const showSeasonSuggestion =
-    profile.trainingLevel === 'performance' &&
+    visibleTrainingLevel === 'performance' &&
     suggestedSeasonMode !== null &&
     suggestedSeasonMode !== currentSeasonMode
 
@@ -171,7 +183,7 @@ export function HomePage() {
 
       {/* ── Header ── */}
       <PageHeader
-        title="Accueil"
+        title={lang === 'fr' ? 'Accueil' : 'Home'}
         right={
         authState.status === 'authenticated' && authState.user ? (
           <div className="flex items-center gap-2">
@@ -471,7 +483,7 @@ export function HomePage() {
             if (raw) {
               const ts = parseInt(raw, 10)
               const cooldownMs = 48 * 60 * 60 * 1000
-              if (!isNaN(ts) && Date.now() - ts < cooldownMs && acwr.acwr <= 1.5) return null
+              if (!isNaN(ts) && injuryAlertNow - ts < cooldownMs && acwr.acwr <= 1.5) return null
             }
           } catch { /* ignore */ }
 

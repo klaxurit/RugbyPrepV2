@@ -51,3 +51,12 @@ video/out
 
 # Cursor MCP config (may contain local secrets)
 .cursor/mcp*.json
+
+# Dev tooling & planning (not needed for app runtime)
+_bmad/
+_bmad-output/
+.agents/
+.cursor/
+.claude/
+docs/*
+!docs/testing/

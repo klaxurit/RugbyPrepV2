@@ -4,8 +4,14 @@
  * Si une session est ajoutée ou modifiée, vérifier que le contenu FR correspond toujours.
  *
  * Couverture V1 : 10 sessions in-season + recovery.
- * Les sessions non traduites restent en EN (dégradation gracieuse, pas de mix FR/EN).
+ * Les sessions non traduites utilisent maintenant un fallback FR généré à partir du contenu source
+ * pour éviter les écrans mixtes FR/EN dans l'app.
  */
+
+import { getExerciseName } from '../../data/exercises'
+import { MOTHER_SESSIONS_BY_ID } from '../../data/motherSessions.generated'
+import type { MotherSession } from '../../types/motherSession'
+import { resolveExerciseId } from './motherSessionExerciseMap'
 
 export interface SessionContentFr {
   goals: string[]
@@ -1155,10 +1161,318 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
   },
 }
 
+const BLOCK_NAME_FR: Record<string, string> = {
+  'Main Lower Force': 'Force principale bas du corps',
+  'Main Upper Force': 'Force principale haut du corps',
+  'Main Upper Pull': 'Tirage principal haut du corps',
+  'Main Full-Body Force': 'Force principale corps complet',
+  'Main Full-Body Hinge': 'Hinge principal corps complet',
+  'Main Full-Body Hinge Hypertrophy': 'Hypertrophie hinge principal corps complet',
+  'Main Hinge / Unilateral Pair': 'Hinge principal / unilatéral',
+  'Main Press / Pull Base Pair': 'Base poussée / tirage',
+  'Main Upper Pull / Secondary Push Pair': 'Tirage principal / poussée secondaire',
+  'Main Squat Hypertrophy': 'Hypertrophie squat principal',
+  'Main Upper Push Hypertrophy': 'Hypertrophie poussée principale haut du corps',
+  'Hinge + Unilateral Strength Pair': 'Charnière de hanche + force unilatérale',
+  'Posterior Chain / Lower Leg Support': 'Chaîne postérieure / support bas de jambe',
+  'Posterior Chain / Groin Support': 'Chaîne postérieure / support adducteurs',
+  'Posterior Chain / Rotation Support': 'Chaîne postérieure / support rotation',
+  'Posterior Chain / Trunk Support': 'Chaîne postérieure / support tronc',
+  'Posterior Chain Force Maintenance': 'Maintien de force chaîne postérieure',
+  'Position Support Finisher': 'Finisher support poste',
+  'Lower Strength Pair': 'Force bas du corps',
+  'Lower Power Pair': 'Puissance bas du corps',
+  'Lower Neural Pair': 'Neural bas du corps',
+  'Lower Support / Trunk Pair': 'Support bas du corps / tronc',
+  'Lower-Leg / Groin / Trunk Support': 'Support bas de jambe / adducteurs / tronc',
+  'Lower-Leg / Groin Continuity': 'Continuité bas de jambe / adducteurs',
+  'Lower-Leg / Optional Reward': 'Bas de jambe / récompense optionnelle',
+  'Groin / Lower-Leg Continuity': 'Continuité adducteurs / bas de jambe',
+  'Groin / Trunk / Lower-Leg Support': 'Adducteurs / tronc / support bas de jambe',
+  'Upper Push/Pull Strength': 'Force poussée / tirage haut du corps',
+  'Upper Push/Pull Strength Pair': 'Force poussée / tirage haut du corps',
+  'Upper Push/Pull Support Pair': 'Support poussée / tirage haut du corps',
+  'Upper Support Strength Pair': 'Support de force haut du corps',
+  'Upper Push / Pull Support': 'Support poussée / tirage haut du corps',
+  'Upper Power Pair': 'Puissance haut du corps',
+  'Upper Ballistic Pair': 'Balistique haut du corps',
+  'Upper Ballistic / Explosive Trunk': 'Balistique haut du corps / tronc explosif',
+  'Upper Push Primer': 'Primer poussée haut du corps',
+  'Pull / Rotation Primer': 'Primer tirage / rotation',
+  'Pull / Trunk Primer': 'Primer tirage / tronc',
+  'Pull / Posterior Support': 'Tirage / support postérieur',
+  'Pull Support Pair': 'Support tirage',
+  'Secondary Pull Support': 'Support tirage secondaire',
+  'Vertical Support Pair': 'Support vertical',
+  'Shoulder / Trunk Support': 'Support épaule / tronc',
+  'Arms / Shoulder Support': 'Support bras / épaule',
+  'Shoulder Prehab Micro-Block': 'Micro-bloc préhab épaule',
+  'Mandatory Shoulder Prehab Micro-Block': 'Micro-bloc préhab épaule obligatoire',
+  'Push / Pull Re-Entry': 'Reprise poussée / tirage',
+  'Push / Pull Reset': 'Reset poussée / tirage',
+  'Squat / Hinge Base Pair': 'Base squat / hinge',
+  'Squat / Hinge Re-Entry': 'Reprise squat / hinge',
+  'Trunk / Mobility / Tissue Reset': 'Tronc / mobilité / reset tissulaire',
+  'Unilateral / Locomotion Reset': 'Unilatéral / locomotion',
+  'Contrast Lower Force-Power': 'Contraste force-puissance bas du corps',
+  'Contrast Lower Force-Projection': 'Contraste force-projection bas du corps',
+  'Contrast Lower Speed-Projection': 'Contraste vitesse-projection bas du corps',
+  'Contrast Upper Force-Speed': 'Contraste force-vitesse haut du corps',
+  'Contrast Upper Push': 'Contraste poussée haut du corps',
+  'Contrast Upper Speed-Power': 'Contraste vitesse-puissance haut du corps',
+  'Back Three Power Cluster': 'Cluster puissance ligne arrière',
+  'Front Row Power Cluster': 'Cluster puissance avants',
+  'Front Row Upper Power Cluster': 'Cluster puissance haut du corps avants',
+  'Back Three Upper Power Cluster': 'Cluster puissance haut du corps ligne arrière',
+  'Full-Body Force-Projection Pair': 'Force / projection corps complet',
+  'Front Row Support': 'Support avants',
+  'Front Row Finisher': 'Finisher avants',
+  'Back Three Finisher': 'Finisher ligne arrière',
+  'Contact Confidence / Pump': 'Confiance contact / pump',
+  'Arm Pump / Confidence Block': 'Pump bras / confiance',
+  'Arm Pump / Reward Block': 'Pump bras / récompense',
+  'Reward Block': 'Bloc récompense',
+  'Athletic Finisher': 'Finisher athlétique',
+  'Athletic COD Work': 'Travail athlétique de COD',
+  'COD / Athletic Change of Direction': 'COD / changements d’appuis athlétiques',
+  'Sprint / Acceleration': 'Sprint / accélération',
+  'Jumps / Plyometrics': 'Sauts / pliométrie',
+  'Structured Plyometric Cluster': 'Cluster pliométrique structuré',
+  'Optional Lower-Leg Support': 'Support bas de jambe optionnel',
+}
+
+const FORMAT_FR: Record<string, string> = {
+  '`1 round`, `20-30s` rest between drills': '`1 tour`, `20-30s` de repos entre les drills',
+  '`1-2 rounds`, `20-30s` rest between drills': '`1-2 tours`, `20-30s` de repos entre les drills',
+  '`1-2 rounds`, `30-45s` rest': '`1-2 tours`, `30-45s` de repos',
+  '`2 drills`, `3-4 reps` each, full rest `60-90s`': '`2 drills`, `3-4 reps` chacune, repos complet `60-90s`',
+  '`2 drills`, `3-4 reps` each, full rest `60-90s` between reps': '`2 drills`, `3-4 reps` chacune, repos complet `60-90s` entre les reps',
+  '`2 rounds`, `45-60s` rest': '`2 tours`, `45-60s` de repos',
+  '`2 rounds`, `60-75s` rest': '`2 tours`, `60-75s` de repos',
+  '`2 rounds`, minimal rest': '`2 tours`, repos minimal',
+  '`2 rounds`, move continuously with minimal rest': '`2 tours`, enchaîner en continu avec repos minimal',
+  '`2 work sets`, `90-120s` rest between sets': '`2 séries de travail`, `90-120s` de repos entre les séries',
+  '`2-3 rounds`, `45-60s` rest': '`2-3 tours`, `45-60s` de repos',
+  '`2-3 rounds`, `60-75s` rest after the pair': '`2-3 tours`, `60-75s` de repos après la paire',
+  '`2-3 rounds`, `60-90s` rest': '`2-3 tours`, `60-90s` de repos',
+  '`2-3 rounds`, `60-90s` rest after the pair': '`2-3 tours`, `60-90s` de repos après la paire',
+  '`3 rounds`, `60-75s` rest after the pair': '`3 tours`, `60-75s` de repos après la paire',
+  '`3 rounds`, `60-90s` rest after the pair': '`3 tours`, `60-90s` de repos après la paire',
+  '`3 rounds`, `75-90s` rest': '`3 tours`, `75-90s` de repos',
+  '`3 rounds`, `75-90s` rest after the pair': '`3 tours`, `75-90s` de repos après la paire',
+  '`3 rounds`, `90-120s` rest': '`3 tours`, `90-120s` de repos',
+  '`3 rounds`, `90-120s` rest after the pair': '`3 tours`, `90-120s` de repos après la paire',
+  '`3 rounds`, full rest `2-3 min`': '`3 tours`, repos complet `2-3 min`',
+  '`3 rounds`, full rest `3 min`': '`3 tours`, repos complet `3 min`',
+  '`3 rounds`, full rest `3 min` after each round': '`3 tours`, repos complet `3 min` après chaque tour',
+  '`3 rounds`, full rest `90-120s`': '`3 tours`, repos complet `90-120s`',
+  '`3 work sets`, `2 min` rest between sets': '`3 séries de travail`, `2 min` de repos entre les séries',
+  '`3 work sets`, `2-3 min` rest between sets': '`3 séries de travail`, `2-3 min` de repos entre les séries',
+  '`4 rounds`, `10-15s` between exercises, full rest `3-4 min` after each round': '`4 tours`, `10-15s` entre les exercices, repos complet `3-4 min` après chaque tour',
+  '`4 rounds`, `90-120s` rest after the pair': '`4 tours`, `90-120s` de repos après la paire',
+  '`4 rounds`, full rest `2 min 30 to 3 min` after each round': '`4 tours`, repos complet `2 min 30 à 3 min` après chaque tour',
+  '`4 rounds`, full rest `3 min` after each round': '`4 tours`, repos complet `3 min` après chaque tour',
+  '`4 work sets`, `2 min` rest between sets': '`4 séries de travail`, `2 min` de repos entre les séries',
+  '`4 work sets`, `2-3 min` rest between sets': '`4 séries de travail`, `2-3 min` de repos entre les séries',
+  '`6-8 reps`, walk-back recovery and full rest between reps': '`6-8 reps`, récupération en marchant et repos complet entre les reps',
+  "`EMOM 6'`": "`EMOM 6'`",
+  "`EMOM 8'`": "`EMOM 8'`",
+  "`EMOM 9'`": "`EMOM 9'`",
+  '`W5-W6 = 4 rounds`, `W7 = 5 rounds`, `W8 = 4 rounds`, full rest `90-120s` between reps and `2-3 min` between rounds':
+    '`W5-W6 = 4 tours`, `W7 = 5 tours`, `W8 = 4 tours`, repos complet `90-120s` entre les reps et `2-3 min` entre les tours',
+}
+
+const TEXT_EXACT_FR: Record<string, string> = {
+  'The player can keep their own lower-body warm-up if it prepares ankles, hips, adductors, and trunk.':
+    'Le joueur peut garder son propre échauffement bas du corps s’il prépare les chevilles, les hanches, les adducteurs et le tronc.',
+  'The player can keep their own upper-body warm-up if it prepares shoulders, trunk, scapular control, and pressing rhythm.':
+    'Le joueur peut garder son propre échauffement haut du corps s’il prépare les épaules, le tronc, le contrôle scapulaire et le rythme de poussée.',
+  'The player can keep their own full-body warm-up if it prepares hips, trunk, shoulders, and the first main pattern.':
+    'Le joueur peut garder son propre échauffement full-body s’il prépare les hanches, le tronc, les épaules et le premier pattern principal.',
+  'Keep this short and useful.': 'Garder ça court et utile.',
+  'The goal is readiness for force production, not early fatigue.':
+    'L’objectif est d’être prêt à produire de la force, pas de créer de la fatigue trop tôt.',
+  'This block is the anchor of the session.': 'Ce bloc est l’ancrage de la séance.',
+  'Reps must stay technically clean with `RIR 1-2`.':
+    'Les répétitions doivent rester techniquement propres avec `RIR 1-2`.',
+  'No grinding, no collapse at the bottom, no rushed descent.':
+    'Pas de grind, pas d’effondrement en bas, pas de descente précipitée.',
+  'Pins should reinforce a strong concentric start and a stable bottom position.':
+    'Les pins doivent renforcer un départ concentrique fort et une position basse stable.',
+  'The goal is force construction, not testing.':
+    'L’objectif est de construire la force, pas de tester.',
+  'RDL stays strict and posterior-chain dominant.':
+    'Le RDL reste strict et dominant chaîne postérieure.',
+  'The unilateral lift should support hip and groin control, not become a conditioning block.':
+    'Le travail unilatéral doit soutenir le contrôle de hanche et des adducteurs, pas devenir un bloc de conditionnement.',
+  'This pair should feel strong and constructive, not draining.':
+    'Cette paire doit sembler forte et constructive, pas vidante.',
+  'Keep the intent supportive, not maximal.':
+    'Garder une intention de support, pas de maximal.',
+}
+
+const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
+  [/\blower-body\b/gi, 'bas du corps'],
+  [/\bupper-body\b/gi, 'haut du corps'],
+  [/\bfull-body\b/gi, 'corps complet'],
+  [/\bfront row\b/gi, 'avants'],
+  [/\bback three\b/gi, 'ligne arrière'],
+  [/\bpre-season\b/gi, 'pré-saison'],
+  [/\boff-season\b/gi, 'hors-saison'],
+  [/\bin-season\b/gi, 'en saison'],
+  [/\bwarm-up\b/gi, 'échauffement'],
+  [/\bsession\b/gi, 'séance'],
+  [/\bblock\b/gi, 'bloc'],
+  [/\bplayer\b/gi, 'joueur'],
+  [/\brounds\b/gi, 'tours'],
+  [/\bround\b/gi, 'tour'],
+  [/\bwork sets\b/gi, 'séries de travail'],
+  [/\bbetween sets\b/gi, 'entre les séries'],
+  [/\bbetween reps\b/gi, 'entre les reps'],
+  [/\bbetween rounds\b/gi, 'entre les tours'],
+  [/\bbetween drills\b/gi, 'entre les drills'],
+  [/\bafter each round\b/gi, 'après chaque tour'],
+  [/\bafter the pair\b/gi, 'après la paire'],
+  [/\bfull rest\b/gi, 'repos complet'],
+  [/\bminimal rest\b/gi, 'repos minimal'],
+  [/\brest\b/gi, 'repos'],
+  [/\bpair\b/gi, 'paire'],
+  [/\bkeep\b/gi, 'Garder'],
+  [/\breduce\b/gi, 'Réduire'],
+  [/\badd\b/gi, 'Ajouter'],
+  [/\bonly if\b/gi, 'seulement si'],
+  [/\bif\b/gi, 'si'],
+  [/\bthis week\b/gi, 'cette semaine'],
+  [/\bthis pair\b/gi, 'cette paire'],
+  [/\bthis session\b/gi, 'cette séance'],
+  [/\bthis block\b/gi, 'ce bloc'],
+  [/\bthe goal\b/gi, 'l’objectif'],
+  [/\bthe player\b/gi, 'le joueur'],
+  [/\bslightly\b/gi, 'légèrement'],
+  [/\bheavier\b/gi, 'plus lourd'],
+  [/\blighter\b/gi, 'plus léger'],
+  [/\bcleaner\b/gi, 'plus propre'],
+  [/\bathletic\b/gi, 'athlétique'],
+  [/\bfatigue\b/gi, 'fatigue'],
+  [/\brecovery\b/gi, 'récupération'],
+  [/\bconstruction\b/gi, 'construction'],
+  [/\btesting\b/gi, 'test'],
+  [/\bforce production\b/gi, 'production de force'],
+  [/\bforce construction\b/gi, 'construction de force'],
+  [/\bcommon base\b/gi, 'base commune'],
+  [/\bcommon terrain base\b/gi, 'base terrain commune'],
+  [/\bwith light accents\b/gi, 'avec accents légers'],
+  [/\bwith marked accents\b/gi, 'avec accents marqués'],
+  [/\bphase 1\b/gi, 'phase 1'],
+  [/\bphase 2\b/gi, 'phase 2'],
+  [/\b\/side\b/gi, '/côté'],
+]
+
+function translateExerciseNameToFr(name: string): string {
+  const trimmed = name.trim()
+  if (!trimmed) return trimmed
+
+  if (trimmed.includes(' or ')) {
+    return trimmed
+      .split(/\s+or\s+/i)
+      .map((part) => translateExerciseNameToFr(part))
+      .join(' ou ')
+  }
+
+  const exerciseId = resolveExerciseId(trimmed)
+  if (exerciseId) return getExerciseName(exerciseId, 'fr')
+
+  return trimmed
+    .replace(/Rear-Foot Elevated Split Squat/gi, 'Split squat pied arrière surélevé')
+    .replace(/Farmer Carry/gi, 'Marche du fermier')
+    .replace(/Zercher Carry/gi, 'Carry Zercher')
+    .replace(/Front Rack Carry/gi, 'Carry front rack')
+    .replace(/Tibialis Raise/gi, 'Relevé tibial')
+    .replace(/Leg curl machine/gi, 'Curl ischios machine')
+    .replace(/Copenhagen Hold/gi, 'Copenhagen hold')
+}
+
+function translatePrescriptionToFr(value: string): string {
+  return value
+    .replace(/\/side\b/gi, '/côté')
+    .replace(/\bto\b/g, 'à')
+}
+
+function translateInlineTextToFr(value: string): string {
+  let next = value
+  for (const [source, target] of Object.entries(TEXT_EXACT_FR)) {
+    next = next.split(source).join(target)
+  }
+  for (const [pattern, target] of TEXT_FRAGMENT_FR) {
+    next = next.replace(pattern, target)
+  }
+  return next
+}
+
+function translateBacktickedSegmentToFr(value: string): string {
+  if (/^(W\d|RIR|EMOM|\+?\d)/.test(value) || /\d/.test(value) && /kg|min|s|m|%/.test(value)) {
+    return translatePrescriptionToFr(value)
+  }
+
+  const translatedExercise = translateExerciseNameToFr(value)
+  return translatedExercise === value ? translateInlineTextToFr(value) : translatedExercise
+}
+
+function translateTextToFr(value: string): string {
+  const withBackticks = value.replace(/`([^`]+)`/g, (_match, inner: string) => {
+    return `\`${translateBacktickedSegmentToFr(inner)}\``
+  })
+
+  return translateInlineTextToFr(withBackticks)
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function translateBlockNameToFr(name: string): string {
+  return BLOCK_NAME_FR[name] ?? translateTextToFr(name)
+}
+
+function translateFormatToFr(format: string): string {
+  if (!format) return format
+  return FORMAT_FR[format] ?? translateTextToFr(format)
+}
+
+function buildGeneratedFrContent(session: MotherSession): SessionContentFr {
+  return {
+    goals: session.goal.map(translateTextToFr),
+    sessionIdentity: session.sessionIdentity.map(translateTextToFr),
+    warmUpExercises: session.warmUp.exercises.map((exercise) => ({
+      name: translateExerciseNameToFr(exercise.name),
+      prescription: translatePrescriptionToFr(exercise.prescription),
+    })),
+    warmUpNotes: session.warmUp.notes.map(translateTextToFr),
+    blocks: session.blocks.map((block) => ({
+      name: translateBlockNameToFr(block.name),
+      format: translateFormatToFr(block.format),
+      exercises: block.exercises.map((exercise) => ({
+        name: translateExerciseNameToFr(exercise.name),
+        prescription: translatePrescriptionToFr(exercise.prescription ?? ''),
+      })),
+      coachingNotes: block.coachingNotes.map(translateTextToFr),
+      fallbackOptions: block.fallbackOptions?.map(translateTextToFr),
+    })),
+    progressionRules: session.progressionRules.map(translateTextToFr),
+    positionAccent: session.positionAccent.map(translateTextToFr),
+    coachingWarnings: session.coachingWarnings.map(translateTextToFr),
+  }
+}
+
 /**
  * Returns FR content for a session **only if the session is fully translated**
  * (all blocks present and matching). Returns undefined otherwise -> the UI stays in EN.
  */
 export function getSessionFr(sessionId: string): SessionContentFr | undefined {
   return SESSION_CONTENT_FR[sessionId]
+}
+
+export function getSessionFrOrFallback(session: MotherSession): SessionContentFr | undefined {
+  const manual = getSessionFr(session.metadata.id)
+  if (manual) return manual
+  if (!MOTHER_SESSIONS_BY_ID[session.metadata.id]) return undefined
+  return buildGeneratedFrContent(session)
 }
