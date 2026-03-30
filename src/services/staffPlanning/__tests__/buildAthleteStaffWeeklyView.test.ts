@@ -18,7 +18,7 @@ function baseProfile(p: Partial<UserProfile>): UserProfile {
 }
 
 describe('buildAthleteStaffWeeklyView', () => {
-  it('front_row en pré-saison : annualPlanning + mother sessions, pas de crash', () => {
+  it('front_row en saison : annualPlanning + mother sessions, pas de crash', () => {
     const v = buildAthleteStaffWeeklyView({
       athleteId: 'a1',
       today: '2024-12-16',
@@ -28,7 +28,7 @@ describe('buildAthleteStaffWeeklyView', () => {
       fatigue: 'OK',
     })
     expect(v.identity.athleteId).toBe('a1')
-    expect(v.annualPlanning.cycle).toBe('pre_season')
+    expect(v.annualPlanning.cycle).toBe('in_season')
     expect(v.motherSessions.status).not.toBe('missing_session')
     expect(v.motherSessions.sessionIds.length).toBeGreaterThan(0)
     expect(v.motherSessions.sessionTitles.length).toBe(v.motherSessions.sessionIds.length)

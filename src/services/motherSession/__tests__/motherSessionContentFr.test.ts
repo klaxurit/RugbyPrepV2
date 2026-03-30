@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { getSessionFr } from '../motherSessionContentFr'
+import { getSessionFr, getSessionFrOrFallback } from '../motherSessionContentFr'
 import { MOTHER_SESSIONS_BY_ID } from '../../../data/motherSessions.generated'
+import { msPositionGroupLabel } from '../motherSessionLabels'
 
 const TRANSLATED_SESSION_IDS = [
   'FULL_OFFSEASON_RECOVERY_A_V1',
@@ -42,5 +43,21 @@ describe('motherSessionContentFr', () => {
 
   it('getSessionFr returns undefined for untranslated session', () => {
     expect(getSessionFr('NONEXISTENT_SESSION_V1')).toBeUndefined()
+  })
+
+  it('generates a FR fallback for untranslated sessions', () => {
+    const session = MOTHER_SESSIONS_BY_ID.LOWER_PRESEASON_FORCE_V1
+    const fr = getSessionFrOrFallback(session)
+
+    expect(fr).toBeDefined()
+    expect(fr!.blocks[0].name).toBe('Force principale bas du corps')
+    expect(fr!.blocks[1].name).toBe('Charnière de hanche + force unilatérale')
+    expect(fr!.blocks[2].format).toBe('`2-3 tours`, `60-90s` de repos')
+  })
+
+  it('humanizes free-text position group labels in FR', () => {
+    expect(msPositionGroupLabel('front_row + back_three (phase 1 common base)', 'fr')).toBe(
+      'Avants + Ligne arrière (base commune phase 1)',
+    )
   })
 })

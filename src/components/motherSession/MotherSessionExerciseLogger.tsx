@@ -11,7 +11,7 @@ type ProgressionIndicator = {
   label: string
 }
 
-export function getProgressionIndicator(
+function getProgressionIndicator(
   currentEntry: ExerciseLogEntry | undefined,
   lastEntry: ExerciseLogEntry | undefined,
 ): ProgressionIndicator | null {

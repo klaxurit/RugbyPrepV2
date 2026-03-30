@@ -152,11 +152,11 @@ export function getPositionBaseline(
 
 /**
  * Retourne le label du niveau pour l'affichage dans les cartes.
- * Mapping : starter→Débutant, builder→Avancé, performance→Pro
+ * Mapping : starter→Fondations, builder→Avancé, performance→Pro
  */
 export function getBaselineLevelLabel(level: TrainingLevel | undefined): string {
   switch (level) {
-    case 'starter':     return 'débutant'
+    case 'starter':     return 'fondations'
     case 'builder':     return 'avancé'
     case 'performance': return 'pro'
     default:            return 'avancé'

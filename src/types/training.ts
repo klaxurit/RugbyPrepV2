@@ -234,6 +234,8 @@ export interface TrainingBlock {
 
 export interface UserProfile {
   goal?: 'strength' | 'hypertrophy';
+  avatarUrl?: string;
+  avatarPath?: string;
   equipment: Equipment[];      // ce que l'utilisateur a
   injuries: Contra[];          // on mappe les blessures vers Contra
   weeklySessions: 2 | 3;
@@ -270,6 +272,9 @@ export interface UserProfile {
   healthConsentSource?: HealthConsentSource
   healthConsentAuditTrail?: HealthConsentAuditEvent[]
   healthDataRetentionState?: HealthDataRetentionState
+  ffrCompetitionId?: string
+  ffrCompetitionName?: string
+  ffrLastSyncAt?: string
 }
 
 export interface WeeklyLoadContext {
@@ -419,4 +424,25 @@ export interface CalendarEvent {
   rpe?: number           // RPE 1-10 du match (pour ACWR)
   duration_min?: number  // Durée en minutes (pour ACWR)
   created_at?: string
+  source?: 'manual' | 'ffr_import'
+  external_id?: string
+  competition_id?: string
+  competition_name?: string
+  match_day?: number
+  venue?: string
+  user_hidden?: boolean
+  user_override?: {
+    date?: string
+    kickoff_time?: string
+    notes?: string
+  } | null
+  synced_at?: string
+}
+
+export interface FfrCompetition {
+  id: string
+  name: string
+  season: string
+  level?: string
+  pool?: string
 }

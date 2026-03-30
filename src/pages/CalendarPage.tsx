@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Plus,
@@ -15,6 +15,8 @@ import {
   CheckCircle2,
   Activity,
   Dumbbell,
+  RefreshCw,
+  Eye,
 } from 'lucide-react'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
@@ -251,12 +253,16 @@ function NextMatchCard({ event }: { event: CalendarEvent }) {
 
 function EventRow({
   event,
+  now,
   onRemove,
+  onHide,
   onUpdateLoad,
   isPremium,
 }: {
   event: CalendarEvent
+  now: number
   onRemove: (id: string) => void
+  onHide?: (id: string) => void
   onUpdateLoad?: (eventId: string, rpe: number, durationMin: number) => Promise<void>
   isPremium?: boolean
 }) {
@@ -279,6 +285,8 @@ function EventRow({
     setLoadOpen(false)
   }
 
+  const isFFR = event.source === 'ffr_import'
+  const hasOverride = !!event.user_override
   return (
     <div className={`rounded-2xl ${isPast && !showLoadForm ? 'opacity-50' : ''}`}>
       <div className="flex items-center gap-3 p-3">
@@ -295,10 +303,24 @@ function EventRow({
             {event.opponent && (
               <span className="text-xs text-white/50 truncate">vs {event.opponent}</span>
             )}
+            {isFFR && (
+              <span className="text-[9px] font-black text-blue-400 bg-blue-900/20 px-1.5 py-0.5 rounded-full">FFR</span>
+            )}
           </div>
-          <div className="text-xs text-white/40 capitalize">{formatDateFR(event.date)}</div>
+          <div className="text-xs text-white/40 capitalize">
+            {formatDateFR(event.date)}
+            {hasOverride && <span className="text-amber-400 ml-1">(modifié)</span>}
+          </div>
           {event.kickoff_time && (
             <div className="text-[10px] text-white/40">{event.kickoff_time}</div>
+          )}
+          {isFFR && event.match_day && event.competition_name && (
+            <div className="text-[10px] text-blue-400/60">J{event.match_day} · {event.competition_name}</div>
+          )}
+          {event.venue && (
+            <div className="text-[10px] text-white/30 flex items-center gap-1">
+              <MapPin className="w-2.5 h-2.5" />{event.venue}
+            </div>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -313,14 +335,26 @@ function EventRow({
               Charge ✓
             </span>
           )}
-          <button
-            type="button"
-            onClick={() => onRemove(event.id)}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-white/30 hover:text-rose-400 hover:bg-rose-900/20 transition-colors"
-            aria-label="Supprimer"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
+          {isFFR && onHide ? (
+            <button
+              type="button"
+              onClick={() => onHide(event.id)}
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-white/30 hover:text-amber-400 hover:bg-amber-900/20 transition-colors"
+              aria-label="Masquer"
+              title="Masquer ce match"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => onRemove(event.id)}
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-white/30 hover:text-rose-400 hover:bg-rose-900/20 transition-colors"
+              aria-label="Supprimer"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -394,7 +428,7 @@ function EventRow({
             const recoveryRange = isHigh ? '72-96h' : '48-72h'
             const recoveryHours = isHigh ? 84 : 60
             const matchDate = new Date(event.date + 'T00:00:00')
-            const hoursElapsed = Math.max(0, (Date.now() - matchDate.getTime()) / (1000 * 60 * 60))
+            const hoursElapsed = Math.max(0, (now - matchDate.getTime()) / (1000 * 60 * 60))
             const pct = Math.min(100, (hoursElapsed / recoveryHours) * 100)
             const isRecovered = hoursElapsed >= recoveryHours
 
@@ -532,6 +566,7 @@ function MiniCalendar({
 
 interface DayDetailModalProps {
   dateStr: string
+  now: number
   clubSchedule?: { clubDays: { day: DayOfWeek; time?: string }[] }
   clubDays: DayOfWeek[]
   scDays: DayOfWeek[]
@@ -545,6 +580,7 @@ interface DayDetailModalProps {
 
 function DayDetailModal({
   dateStr,
+  now: modalNow,
   clubSchedule,
   clubDays,
   scDays,
@@ -622,7 +658,7 @@ function DayDetailModal({
             <p className="text-[10px] font-black uppercase tracking-wider text-white/40">Événements</p>
             <div className="space-y-2">
               {eventsOnDate.map((event) => (
-                <EventRow key={event.id} event={event} onRemove={onRemoveEvent} onUpdateLoad={onUpdateMatchLoad} isPremium={modalIsPremium} />
+                <EventRow key={event.id} event={event} now={modalNow} onRemove={onRemoveEvent} onUpdateLoad={onUpdateMatchLoad} isPremium={modalIsPremium} />
               ))}
             </div>
           </div>
@@ -653,11 +689,12 @@ function DayDetailModal({
 
 interface AddEventModalProps {
   initialDate?: string
+  existingEvents?: CalendarEvent[]
   onClose: () => void
   onSave: (payload: Omit<CalendarEvent, 'id' | 'created_at'>) => Promise<void>
 }
 
-function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
+function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEventModalProps) {
   const [type, setType] = useState<CalendarEventType>('match')
   const [date, setDate] = useState(initialDate ?? toDateStr(new Date()))
   const [kickoffTime, setKickoffTime] = useState('15:00')
@@ -665,13 +702,30 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
   const [opponentCode, setOpponentCode] = useState<string | undefined>()
   const [isHome, setIsHome] = useState<boolean | undefined>(undefined)
   const [saving, setSaving] = useState(false)
+  const [confirmDuplicate, setConfirmDuplicate] = useState(false)
 
   const handleOpponentChange = (name: string, code?: string) => {
     setOpponent(name)
     setOpponentCode(code)
   }
 
+  // Check for duplicate FFR match
+  const duplicateFFR = useMemo(() => {
+    if (type !== 'match' || !existingEvents) return null
+    return existingEvents.find(e =>
+      e.source === 'ffr_import' &&
+      e.type === 'match' &&
+      Math.abs(diffDays(e.date) - diffDays(date)) <= 1 &&
+      opponentCode && e.opponent_code === opponentCode
+    ) ?? null
+  }, [type, date, opponentCode, existingEvents])
+
   const handleSave = async () => {
+    // Show warning if duplicate exists and not yet confirmed
+    if (duplicateFFR && !confirmDuplicate) {
+      setConfirmDuplicate(true)
+      return
+    }
     setSaving(true)
     await onSave({
       type,
@@ -790,13 +844,22 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
           </>
         )}
 
+        {confirmDuplicate && duplicateFFR && (
+          <div className="p-3 rounded-2xl border border-amber-500/30 bg-amber-900/10 space-y-2">
+            <p className="text-xs text-amber-400 font-bold">Un match similaire existe déjà (import FFR)</p>
+            <p className="text-[11px] text-white/50">
+              vs {duplicateFFR.opponent} — {formatDateFR(duplicateFFR.date)}
+            </p>
+          </div>
+        )}
+
         <button
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-black uppercase tracking-wide transition-colors"
+          className={`w-full py-4 rounded-2xl ${confirmDuplicate ? 'bg-amber-600 hover:bg-amber-500' : 'bg-rose-600 hover:bg-rose-500'} disabled:opacity-50 text-white font-black uppercase tracking-wide transition-colors`}
         >
-          {saving ? 'Enregistrement...' : 'Ajouter'}
+          {saving ? 'Enregistrement...' : confirmDuplicate ? 'Ajouter quand même' : 'Ajouter'}
         </button>
       </motion.div>
     </div>
@@ -806,11 +869,17 @@ function AddEventModal({ initialDate, onClose, onSave }: AddEventModalProps) {
 // ─── Main Page ───────────────────────────────────────────────
 
 export function CalendarPage() {
-  const { events, nextMatch, seasonPhase, addEvent, removeEvent, updateMatchLoad, loading } = useCalendar()
+  const {
+    visibleEvents, events, nextMatch, seasonPhase, addEvent, removeEvent, updateMatchLoad,
+    hideImportedEvent, unhideImportedEvent, refreshFromFFR, hiddenCount, ffrCount, manualCount, loading,
+  } = useCalendar()
   const { profile } = useProfile()
   const { isPremium: calendarIsPremium } = useFeatureAccess()
   const [showModal, setShowModal] = useState(false)
   const [selectedDate, setSelectedDate] = useState<string | undefined>()
+  const [showHidden, setShowHidden] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+  const [refreshMsg, setRefreshMsg] = useState<string | null>(null)
 
   // Recurring club and S&C days from profile
   const clubDays: DayOfWeek[] = profile.clubSchedule?.clubDays.map((d) => d.day) ?? []
@@ -819,11 +888,27 @@ export function CalendarPage() {
     TRAINING_DAYS_DEFAULT[profile.weeklySessions]
 
   const today = new Date()
+  const [nowMs] = useState(() => Date.now())
   const [calYear, setCalYear] = useState(today.getFullYear())
   const [calMonth, setCalMonth] = useState(today.getMonth())
 
-  const upcomingEvents = events.filter((e) => e.date >= toDateStr(today))
-  const pastEvents = events.filter((e) => e.date < toDateStr(today))
+  const upcomingEvents = visibleEvents.filter((e) => e.date >= toDateStr(today))
+  const pastEvents = visibleEvents.filter((e) => e.date < toDateStr(today))
+  const hiddenEvents = events.filter((e) => e.user_hidden)
+
+  const handleRefreshFFR = async () => {
+    if (!profile.ffrCompetitionId || !profile.clubCode) return
+    setRefreshing(true)
+    setRefreshMsg(null)
+    const result = await refreshFromFFR(profile.ffrCompetitionId, profile.clubCode)
+    setRefreshing(false)
+    if (result.error) {
+      setRefreshMsg(`Erreur : ${result.error}`)
+    } else {
+      setRefreshMsg(`${result.imported} match${result.imported > 1 ? 's' : ''} mis à jour`)
+      setTimeout(() => setRefreshMsg(null), 3000)
+    }
+  }
 
   const prevMonth = () => {
     if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1) }
@@ -885,12 +970,38 @@ export function CalendarPage() {
           <MiniCalendar
             year={calYear}
             month={calMonth}
-            events={events}
+            events={visibleEvents}
             clubDays={clubDays}
             scDays={scDays}
             onSelectDate={handleSelectDate}
           />
         </section>
+
+        {/* ── FFR Sync Bar ── */}
+        {(ffrCount > 0 || profile.ffrCompetitionId) && (
+          <section className="flex items-center justify-between bg-blue-500/5 border border-blue-500/10 rounded-2xl px-4 py-2.5">
+            <div className="text-xs text-white/50">
+              {ffrCount > 0 && <span className="text-blue-400 font-bold">{ffrCount} FFR</span>}
+              {ffrCount > 0 && manualCount > 0 && <span> · </span>}
+              {manualCount > 0 && <span>{manualCount} manuel{manualCount > 1 ? 's' : ''}</span>}
+            </div>
+            <button
+              type="button"
+              onClick={handleRefreshFFR}
+              disabled={refreshing || !profile.ffrCompetitionId}
+              className="flex items-center gap-1.5 text-[11px] font-bold text-blue-400 hover:text-blue-300 disabled:opacity-50 transition-colors"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              Actualiser FFR
+            </button>
+          </section>
+        )}
+
+        {refreshMsg && (
+          <div className={`text-xs text-center py-1.5 rounded-xl ${refreshMsg.startsWith('Erreur') ? 'bg-red-900/20 text-red-400' : 'bg-green-900/20 text-green-400'}`}>
+            {refreshMsg}
+          </div>
+        )}
 
         {/* ── Upcoming Events ── */}
         {upcomingEvents.length > 0 && (
@@ -898,7 +1009,7 @@ export function CalendarPage() {
             <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">À venir</h2>
             <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10">
               {upcomingEvents.map((event) => (
-                <EventRow key={event.id} event={event} onRemove={removeEvent} onUpdateLoad={updateMatchLoad} isPremium={calendarIsPremium} />
+                <EventRow key={event.id} event={event} now={nowMs} onRemove={removeEvent} onHide={hideImportedEvent} onUpdateLoad={updateMatchLoad} isPremium={calendarIsPremium} />
               ))}
             </div>
           </section>
@@ -910,9 +1021,42 @@ export function CalendarPage() {
             <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">Passés</h2>
             <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10">
               {pastEvents.slice(-5).reverse().map((event) => (
-                <EventRow key={event.id} event={event} onRemove={removeEvent} onUpdateLoad={updateMatchLoad} isPremium={calendarIsPremium} />
+                <EventRow key={event.id} event={event} now={nowMs} onRemove={removeEvent} onHide={hideImportedEvent} onUpdateLoad={updateMatchLoad} isPremium={calendarIsPremium} />
               ))}
             </div>
+          </section>
+        )}
+
+        {/* ── Hidden Events ── */}
+        {hiddenCount > 0 && (
+          <section>
+            <button
+              type="button"
+              onClick={() => setShowHidden(!showHidden)}
+              className="flex items-center gap-2 text-xs font-bold text-white/30 hover:text-white/50 transition-colors mb-2"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              {showHidden ? 'Masquer' : `Voir ${hiddenCount} match${hiddenCount > 1 ? 's' : ''} masqué${hiddenCount > 1 ? 's' : ''}`}
+            </button>
+            {showHidden && (
+              <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10 opacity-60">
+                {hiddenEvents.map((event) => (
+                  <div key={event.id} className="flex items-center justify-between p-3">
+                    <div>
+                      <span className="text-sm font-bold text-white/60">{event.opponent ?? 'Match'}</span>
+                      <span className="text-xs text-white/30 ml-2">{formatDateFR(event.date)}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => unhideImportedEvent(event.id)}
+                      className="text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors"
+                    >
+                      Réafficher
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         )}
 
@@ -951,6 +1095,7 @@ export function CalendarPage() {
         {showDayDetail && selectedDate && (
           <DayDetailModal
             dateStr={selectedDate}
+            now={nowMs}
             clubSchedule={profile.clubSchedule}
             clubDays={clubDays}
             scDays={scDays}
@@ -969,6 +1114,7 @@ export function CalendarPage() {
         {showModal && (
           <AddEventModal
             initialDate={selectedDate}
+            existingEvents={visibleEvents}
             onClose={() => setShowModal(false)}
             onSave={handleAddEvent}
           />

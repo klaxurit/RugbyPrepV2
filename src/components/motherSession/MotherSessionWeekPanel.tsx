@@ -13,6 +13,18 @@ const ROLE_FR: Record<ResolvedMotherSessionSlot['role'], string> = {
   optional: 'Optionnelle',
 }
 
+const SESSION_BADGE_LABELS: Record<string, Record<AppLang, string>> = {
+  upper: { fr: 'HAUT', en: 'UPPER' },
+  lower: { fr: 'BAS', en: 'LOWER' },
+  full: { fr: 'COMPLET', en: 'FULL' },
+  full_light_primer: { fr: 'PRIMER', en: 'PRIMER' },
+  speed_power: { fr: 'VITESSE', en: 'SPEED' },
+}
+
+function getSessionBadgeLabel(type: string, lang: AppLang): string {
+  return SESSION_BADGE_LABELS[type]?.[lang] ?? (lang === 'fr' ? 'SÉANCE' : 'SESSION')
+}
+
 type MotherSessionWeekPanelProps = {
   sessions: ResolvedMotherSessionSlot[]
   warnings: string[]
@@ -106,6 +118,7 @@ export function MotherSessionWeekPanel({
                 : slot.dayPreference === 'late_week'
                   ? msLabel('session_late_week', lang)
                   : ROLE_FR[slot.role])
+            const badgeLabel = getSessionBadgeLabel(slot.session.metadata.sessionType, lang)
 
             return (
               <button
@@ -120,7 +133,7 @@ export function MotherSessionWeekPanel({
                     {dayLabel}
                   </span>
                   <span className="text-[8px] font-bold text-[#ff6b35]/60 uppercase">
-                    {slot.session.metadata.sessionType}
+                    {badgeLabel}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">

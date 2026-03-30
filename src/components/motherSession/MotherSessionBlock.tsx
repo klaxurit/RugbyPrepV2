@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from 'react'
-import { ClipboardCheck } from 'lucide-react'
+import { ClipboardCheck, Eye } from 'lucide-react'
 import type { Block } from '../../types/motherSession'
 import type { BlockLog, ExerciseLogEntry, SessionType, CycleWeek, FatigueStatus } from '../../types/training'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
@@ -12,6 +12,8 @@ import { getExerciseMetricType } from '../../services/ui/exerciseMetrics'
 import { getExerciseSuggestion } from '../../services/ui/suggestions'
 import { getLoadSuggestion } from '../../services/loadSuggestion'
 import type { LoadSuggestionContext } from '../../services/loadSuggestion'
+import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
+import { ExerciseDemoSheet } from './ExerciseDemoSheet'
 
 export type MotherSessionBlockProps = {
   block: Block
@@ -30,7 +32,21 @@ export type MotherSessionBlockProps = {
   isRehabActive?: boolean
 }
 
-function ExerciseRow({ exercise, frName }: { exercise: Block['exercises'][0]; frName?: string }) {
+function ExerciseRow({
+  exercise,
+  frName,
+  lang,
+  onOpenDemo,
+}: {
+  exercise: Block['exercises'][0]
+  frName?: string
+  lang: AppLang
+  onOpenDemo?: (exerciseId: string) => void
+}) {
+  const displayExerciseId = exercise.exerciseId ?? resolveExerciseId(exercise.name)
+  const displayName = displayExerciseId ? getExerciseName(displayExerciseId, lang) : (frName ?? exercise.name)
+  const canShowDemo = Boolean(displayExerciseId && hasExerciseDemo(displayExerciseId))
+
   return (
     <li className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
       {exercise.slotLabel ? (
@@ -40,17 +56,30 @@ function ExerciseRow({ exercise, frName }: { exercise: Block['exercises'][0]; fr
           </span>
         </div>
       ) : null}
-      <div className="flex flex-col gap-0.5">
-        <span className="text-sm font-medium text-white">
-          {exercise.role ? (
-            <span className="mr-1.5 text-xs font-normal uppercase text-[#ff6b35]/90">
-              ({exercise.role})
-            </span>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1 flex flex-col gap-0.5">
+          <span className="text-sm font-medium text-white">
+            {exercise.role ? (
+              <span className="mr-1.5 text-xs font-normal uppercase text-[#ff6b35]/90">
+                ({exercise.role})
+              </span>
+            ) : null}
+            {displayName}
+          </span>
+          {exercise.prescription ? (
+            <span className="text-sm text-white/70">{stripBackticks(exercise.prescription)}</span>
           ) : null}
-          {frName ?? exercise.name}
-        </span>
-        {exercise.prescription ? (
-          <span className="text-sm text-white/70">{stripBackticks(exercise.prescription)}</span>
+        </div>
+
+        {canShowDemo && displayExerciseId ? (
+          <button
+            type="button"
+            onClick={() => onOpenDemo?.(displayExerciseId)}
+            aria-label={lang === 'fr' ? `Voir l'exécution de ${displayName}` : `View execution for ${displayName}`}
+            className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/55 transition-colors hover:border-[#ff6b35]/30 hover:text-[#ff6b35]"
+          >
+            <Eye className="h-4 w-4" />
+          </button>
         ) : null}
       </div>
     </li>
@@ -74,13 +103,18 @@ export function MotherSessionBlock({
   const blockName = frBlock?.name ?? block.name
   const blockFormat = frBlock?.format ?? block.format
   const coachingNotes = frBlock?.coachingNotes ?? block.coachingNotes
+  const fallbackOptions = frBlock?.fallbackOptions ?? block.fallbackOptions
+  const getDisplayExerciseName = useCallback(
+    (exerciseId: string) => getExerciseName(exerciseId, lang),
+    [lang],
+  )
 
   // Resolve which exercises are loggable
   const loggableExercises = useMemo(() => {
     return block.exercises
       .map((ex, idx) => {
         if (isDirectiveText(ex.name)) return null
-        const exerciseId = resolveExerciseId(ex.name)
+        const exerciseId = ex.exerciseId ?? resolveExerciseId(ex.name)
         if (!exerciseId) return null
         return { exercise: ex, exerciseId, idx }
       })
@@ -95,6 +129,7 @@ export function MotherSessionBlock({
   const [drafts, setDrafts] = useState<Record<string, EntryDraft>>({})
   const [saved, setSaved] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [demoExerciseId, setDemoExerciseId] = useState<string | null>(null)
 
   // Pre-fill drafts from lastEntry on first open
   const openLogger = useCallback(() => {
@@ -197,6 +232,8 @@ export function MotherSessionBlock({
               key={`${block.number}-${i}`}
               exercise={ex}
               frName={frBlock?.exercises[i]?.name}
+              lang={lang}
+              onOpenDemo={setDemoExerciseId}
             />
           ))}
         </ul>
@@ -216,11 +253,11 @@ export function MotherSessionBlock({
         </div>
       ) : null}
 
-      {block.fallbackOptions && block.fallbackOptions.length > 0 ? (
+      {fallbackOptions && fallbackOptions.length > 0 ? (
         <div className="mt-4">
           <MotherSessionCollapsible title={msLabel('alternatives', lang)} defaultOpen={false} variant="nested">
             <ul className="list-disc space-y-1.5 pl-4">
-              {block.fallbackOptions.map((opt, i) => (
+              {fallbackOptions.map((opt, i) => (
                 <li key={i} className="text-sm text-white/70">
                   {stripBackticks(opt)}
                 </li>
@@ -245,7 +282,7 @@ export function MotherSessionBlock({
 
           {loggerOpen && (
             <div className="mt-3 space-y-2">
-              {loggableExercises.map(({ exercise, exerciseId }) => {
+              {loggableExercises.map(({ exerciseId }) => {
                 const metricType = getExerciseMetricType({ exerciseId })
                 const lastEntry = getLastEntryForExercise?.(exerciseId)
                 const suggestion = week && fatigue
@@ -268,7 +305,7 @@ export function MotherSessionBlock({
                   <MotherSessionExerciseLogger
                     key={exerciseId}
                     exerciseId={exerciseId}
-                    exerciseName={exercise.name}
+                    exerciseName={getDisplayExerciseName(exerciseId)}
                     metricType={metricType}
                     lastEntry={lastEntry}
                     suggestion={suggestion}
@@ -303,6 +340,12 @@ export function MotherSessionBlock({
           )}
         </div>
       )}
+
+      <ExerciseDemoSheet
+        exerciseId={demoExerciseId}
+        lang={lang}
+        onClose={() => setDemoExerciseId(null)}
+      />
     </article>
   )
 }

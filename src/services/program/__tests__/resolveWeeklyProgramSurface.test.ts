@@ -56,6 +56,7 @@ function makeMsResult(ctx: AnnualPlanningContext, resolved = true): ResolveMothe
     planningContext: ctx,
     sessions: [{
       sessionId: 'FULL_OFFSEASON_RECOVERY_A_V1',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       session: {} as any,
       role: 'primary',
       dayPreference: 'early_week',

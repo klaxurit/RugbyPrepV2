@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, FileText } from 'lucide-react'
@@ -39,11 +39,20 @@ function localDateISO(d: Date): string {
   return `${y}-${m}-${day}`
 }
 
+function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
+  if (lang !== 'fr') return label
+  return label
+    .replace(/\boff_season\b/gi, 'Hors-saison')
+    .replace(/\bpre_season\b/gi, 'Pré-saison')
+    .replace(/\bin_season\b/gi, 'En saison')
+}
+
 export function SessionDetailPage() {
   const { sessionIndex } = useParams<{ sessionIndex: string }>()
   const index = Number(sessionIndex ?? '0')
   const { profile } = useProfile()
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
+  const sessionPageTitle = lang === 'fr' ? 'Séance' : 'Session'
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue } = useFatigue()
   const { addLog, logs } = useHistory()
@@ -54,6 +63,7 @@ export function SessionDetailPage() {
   const [prehabbOpen, setPrehabbOpen] = useState(true)
   const [msNotes, setMsNotes] = useState('')
   const [msSaved, setMsSaved] = useState(false)
+  const handleSaveBlock = (log: Parameters<typeof addBlockLog>[0]) => { addBlockLog(log) }
 
   useEffect(() => { posthog.capture('session_viewed', { index }) }, [index])
 
@@ -94,7 +104,7 @@ export function SessionDetailPage() {
   if (hasHardBlock) {
     return (
       <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24">
-        <PageHeader title="Séance" backTo="/week" />
+        <PageHeader title={sessionPageTitle} backTo="/week" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
             <p className="font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
@@ -138,18 +148,13 @@ export function SessionDetailPage() {
     ? MS_TYPE_TO_SESSION_TYPE[activeSlot.session.metadata.sessionType]
     : undefined
 
-  const handleSaveBlock = useCallback(
-    (log: Parameters<typeof addBlockLog>[0]) => { addBlockLog(log) },
-    [addBlockLog]
-  )
-
   const prehabs = getPrehab(profile.injuries)
 
   // ── Title ────────────────────────────────────────────────────────────────
   const pageTitle = activeSlot
     ? formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang)
-    : 'Séance'
-  const pageSuffix = surface?.planningContext.weekLabel ?? week
+    : sessionPageTitle
+  const pageSuffix = localizeWeekLabel(surface?.planningContext.weekLabel ?? week, lang)
 
   return (
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
@@ -190,6 +195,8 @@ export function SessionDetailPage() {
                     session={activeSlot.session}
                     lang={lang}
                     injuries={profile.injuries}
+                    trainingLevel={profile.trainingLevel}
+                    equipment={profile.equipment}
                     sessionType={msSessionType}
                     week={week}
                     fatigue={fatigue}

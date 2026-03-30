@@ -69,8 +69,8 @@ function navigateToSummary(options?: { seasonMode?: string }) {
   fireEvent.click(screen.getByText('Première ligne'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
-  // Step 1: Profil → select Builder (label: "Intermédiaire") + 2 séances
-  fireEvent.click(screen.getByText('Intermédiaire'))
+  // Step 1: Profil → select Advanced path + 2 séances
+  fireEvent.click(screen.getByText('Avancé'))
   fireEvent.click(screen.getByText('2 séances'))
   if (options?.seasonMode === 'off_season') {
     fireEvent.click(screen.getByText('Inter-saison'))
@@ -162,7 +162,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    fireEvent.click(screen.getByText('Intermédiaire'))
+    fireEvent.click(screen.getByText('Avancé'))
     fireEvent.click(screen.getByText('2 séances'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
@@ -178,7 +178,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    fireEvent.click(screen.getByText('Intermédiaire'))
+    fireEvent.click(screen.getByText('Avancé'))
     fireEvent.click(screen.getByText('2 séances'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
@@ -205,7 +205,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    fireEvent.click(screen.getByText('Intermédiaire'))
+    fireEvent.click(screen.getByText('Avancé'))
     fireEvent.click(screen.getByText('2 séances'))
 
     // Select "Joueuse"
@@ -235,7 +235,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    fireEvent.click(screen.getByText('Intermédiaire'))
+    fireEvent.click(screen.getByText('Avancé'))
     fireEvent.click(screen.getByText('2 séances'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 

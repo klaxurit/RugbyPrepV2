@@ -306,6 +306,40 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.queryByTestId('mother-session-detail')).toBeNull()
   })
 
+  it('n’affiche pas le type technique FULL_LIGHT_PRIMER sous le jour de séance', () => {
+    const session = MOTHER_SESSIONS_BY_ID['FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1']
+    if (!session) throw new Error('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 absente du dataset de test')
+
+    const planningContext = makePlanningContext('in_season')
+    useWeeklyProgramSurfaceMock.mockReturnValue({
+      isReady: true,
+      surface: {
+        primarySource: 'mother_session',
+        planningContext,
+        planningInputWarnings: [],
+        warnings: [],
+        decisionReason: 'Programme annuel — En saison',
+        motherSession: {
+          status: 'resolved',
+          planningContext,
+          sessions: [{
+            sessionId: 'FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1',
+            session,
+            role: 'primary',
+            dayPreference: 'pre_match',
+          }],
+          warnings: [],
+          companionRecommendations: [],
+        },
+      },
+    })
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.queryByText(/FULL_LIGHT_PRIMER/i)).toBeNull()
+    expect(screen.getByText('PRIMER')).toBeInTheDocument()
+  })
+
   it('hard-block U18_NO_CONSENT : écran de blocage complet', () => {
     useProfileMock.mockReturnValue({
       profile: {

@@ -4,6 +4,8 @@ import { normalizeLegacyProfile, rowToProfile } from './useProfile'
 type ProfileRow = Parameters<typeof rowToProfile>[0]
 
 const makeRow = (overrides: Partial<ProfileRow> = {}): ProfileRow => ({
+  avatar_url: null,
+  avatar_path: null,
   level: 'intermediate',
   weekly_sessions: 2,
   equipment: ['band'],
@@ -41,6 +43,9 @@ const makeRow = (overrides: Partial<ProfileRow> = {}): ProfileRow => ({
   health_consent_source: null,
   health_consent_audit_trail: null,
   health_data_retention_state: null,
+  ffr_competition_id: null,
+  ffr_competition_name: null,
+  ffr_last_sync_at: null,
   ...overrides,
 })
 

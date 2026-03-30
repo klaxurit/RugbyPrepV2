@@ -95,17 +95,10 @@ const TRAINING_LEVELS: {
 }[] = [
   {
     value: 'starter',
-    label: 'Débutant',
-    sub: 'Je découvre la musculation',
-    details: 'Poids du corps & élastiques — progression simple',
+    label: 'Fondations',
+    sub: 'Je construis mes bases',
+    details: 'Machines guidées, bases solides — progression simple',
     legacyLevel: 'beginner',
-  },
-  {
-    value: 'builder',
-    label: 'Intermédiaire',
-    sub: "J'ai une base, je veux progresser",
-    details: 'Haltères & supersets — séances optimisées',
-    legacyLevel: 'intermediate',
   },
   {
     value: 'performance',
@@ -501,13 +494,7 @@ export function OnboardingPage() {
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => {
-                        setTrainingLevel(opt.value)
-                        if (opt.value === 'starter') {
-                          setSeasonMode('in_season')
-                          setSessions(2)
-                        }
-                      }}
+                      onClick={() => setTrainingLevel(opt.value)}
                       className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
                         selected
                           ? 'border-[#ff6b35] bg-[#ff6b35]/10'
@@ -532,40 +519,37 @@ export function OnboardingPage() {
               </div>
             </div>
 
-            {/* Période de saison — masquée pour les starters */}
-            {trainingLevel !== 'starter' && (
-              <div className="space-y-3">
-                <div>
-                  <SectionLabel>Période de saison</SectionLabel>
-                  <p className="text-[10px] text-white/30 mt-0.5">Impacte le type de programme généré</p>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {SEASON_MODES.map((opt) => {
-                    const selected = seasonMode === opt.value
-                    return (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => setSeasonMode(opt.value)}
-                        className={`flex flex-col items-center gap-1.5 py-3.5 px-2 rounded-2xl border-2 text-center transition-all active:scale-[.97] ${
-                          selected
-                            ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                            : 'border-white/10 bg-white/5 hover:border-white/20'
-                        }`}
-                      >
-                        <span className="text-xl leading-none">{opt.emoji}</span>
-                        <span className={`text-[10px] font-black leading-tight ${selected ? 'text-[#ff6b35]' : 'text-white/60'}`}>
-                          {opt.label}
-                        </span>
-                        <span className={`text-[9px] leading-tight ${selected ? 'text-[#ff6b35]/60' : 'text-white/30'}`}>
-                          {opt.sub}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
+            <div className="space-y-3">
+              <div>
+                <SectionLabel>Période de saison</SectionLabel>
+                <p className="text-[10px] text-white/30 mt-0.5">Impacte le type de programme généré</p>
               </div>
-            )}
+              <div className="grid grid-cols-3 gap-2">
+                {SEASON_MODES.map((opt) => {
+                  const selected = seasonMode === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setSeasonMode(opt.value)}
+                      className={`flex flex-col items-center gap-1.5 py-3.5 px-2 rounded-2xl border-2 text-center transition-all active:scale-[.97] ${
+                        selected
+                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                      }`}
+                    >
+                      <span className="text-xl leading-none">{opt.emoji}</span>
+                      <span className={`text-[10px] font-black leading-tight ${selected ? 'text-[#ff6b35]' : 'text-white/60'}`}>
+                        {opt.label}
+                      </span>
+                      <span className={`text-[9px] leading-tight ${selected ? 'text-[#ff6b35]/60' : 'text-white/30'}`}>
+                        {opt.sub}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
 
             {/* Séances par semaine */}
             <div className="space-y-3">
@@ -576,20 +560,15 @@ export function OnboardingPage() {
                   { value: 3 as const, label: '3 séances', sub: 'Lun + Mer + Ven' },
                 ] as const).map((opt) => {
                   const selected = sessions === opt.value
-                  const isStarter = trainingLevel === 'starter'
-                  const disabled = isStarter && opt.value === 3
                   return (
                     <button
                       key={opt.value}
                       type="button"
-                      disabled={disabled}
                       onClick={() => setSessions(opt.value)}
                       className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                         selected
                           ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                          : disabled
-                            ? 'border-white/10 bg-white/5 opacity-50 cursor-not-allowed'
-                            : 'border-white/10 bg-white/5 hover:border-white/20'
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
                       }`}
                     >
                       <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>

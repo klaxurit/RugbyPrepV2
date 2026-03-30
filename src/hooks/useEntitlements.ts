@@ -79,13 +79,26 @@ export function useEntitlements() {
   useEffect(() => {
     let active = true
     void (async () => {
-      await refresh()
-      if (!active) return
+      if (!userId) {
+        if (active) {
+          setKeys([])
+          setPlanId(null)
+          setError(null)
+          setLoading(false)
+        }
+        return
+      }
+      try {
+        await refresh()
+      } catch {
+        // Swallow — component may have unmounted
+      }
     })()
     return () => {
       active = false
     }
-  }, [refresh])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
 
   const hasEntitlement = useCallback(
     (key: string) => keys.includes(key),

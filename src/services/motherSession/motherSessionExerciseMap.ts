@@ -29,6 +29,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'pin back squat': 'squat__pin_squat__barbell',
   'push press': 'power__push_press__barbell',
   'strict standing overhead press': 'push_vertical__overhead_press__barbell',
+  'machine shoulder press': 'push_vertical__shoulder_press__machine',
+  'shoulder press machine': 'push_vertical__shoulder_press__machine',
 
   // ── Dumbbell / Incline ──────────────────────────────────────
   'db bench press': 'push_horizontal__bench_press__dumbbell',
@@ -45,7 +47,12 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'inverted row': 'pull_horizontal__inverted_row__knees_bent',
   'single-arm db row': 'pull_horizontal__one_arm_row__dumbbell',
   'half-kneeling cable row': 'pull_horizontal__cable_row__half_kneeling',
+  'seated cable row': 'pull_horizontal__cable_row__seated',
+  'chest-supported machine row': 'pull_horizontal__chest_supported_row__machine',
   'neutral-grip pull-up': 'pull_vertical__pull_up__neutral',
+  'assisted neutral-grip pull-up': 'pull_vertical__pull_up__neutral__assisted',
+  'assisted neutral grip pull-up': 'pull_vertical__pull_up__neutral__assisted',
+  'assisted pull-up machine': 'pull_vertical__pull_up__neutral__assisted',
   'neutral-grip lat pulldown': 'pull_vertical__lat_pulldown__machine',
   'face pull': 'prehab_shoulder__face_pull__band',
 
@@ -58,6 +65,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'single-leg romanian deadlift': 'hinge__rdl__single_leg__dumbbell',
   'nordic curl': 'hamstring__nordic__partner',
   'lying leg curl': 'hamstring__leg_curl__machine',
+  'leg curl machine': 'hamstring__leg_curl__machine',
   'glute bridge': 'hinge__glute_bridge__bodyweight',
   'single-leg glute bridge': 'hamstring__bridge_iso__single_leg',
 
@@ -68,6 +76,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'bodyweight squat': 'squat__bodyweight_squat',
   'bodyweight split squat': 'lower_squat__split_squat__dumbbell',
   'leg extension': 'knee_extension__leg_extension__machine',
+  'hack squat': 'squat__hack_squat__machine',
+  'machine hack squat': 'squat__hack_squat__machine',
   'leg press calf press': 'calf__leg_press_calf__machine',
   'banded anderson box squat': 'squat__anderson_box_squat__banded',
 
@@ -83,10 +93,15 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'half-kneeling landmine press': 'push_vertical__landmine_press__kneeling',
   'single-arm landmine press': 'power__landmine_press__speed',
   'explosive landmine press': 'power__landmine_press__speed',
+  'cable press explosif': 'power__cable_press__explosive',
+  'explosive cable press': 'power__cable_press__explosive',
 
   // ── Core ────────────────────────────────────────────────────
   'landmine rotation': 'core_rotation__landmine_rotation',
   'cable chop': 'core_rotation__cable_chop',
+  'cable rotation explosif': 'core_rotation__cable_rotation__explosive',
+  'explosive cable rotation': 'core_rotation__cable_rotation__explosive',
+  'cable chop explosif': 'core_rotation__cable_rotation__explosive',
   'dead bug': 'core_anti_extension__dead_bug',
   'side plank': 'core_anti_rotation__side_plank',
   'pallof press hold': 'core_anti_rotation__pallof_press__band',
@@ -113,6 +128,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'med ball rotational throw': 'power__medball_rotational_throw__wall',
   'med ball throw': 'power__medball_slam__overhead',
   'supine med ball throw': 'power__medball_throw__supine',
+  'cable slam haut vers bas': 'power__cable_slam__high_to_low',
+  'high-to-low cable slam': 'power__cable_slam__high_to_low',
   'band-assisted split jump': 'power__split_jump__band_assisted',
   'banded kb swing': 'hinge__kb_swing__banded',
   'banded kettlebell swing': 'hinge__kb_swing__banded',

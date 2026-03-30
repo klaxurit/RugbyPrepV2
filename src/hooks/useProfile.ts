@@ -19,6 +19,8 @@ import { applyHealthConsentLifecycle } from '../services/privacy/healthConsentLi
 const STORAGE_KEY = 'rugbyprep.profile.v1'
 
 export const DEFAULT_PROFILE: UserProfile = {
+  avatarUrl: undefined,
+  avatarPath: undefined,
   level: 'intermediate',
   trainingLevel: 'builder',
   performanceFocus: 'balanced',
@@ -187,6 +189,8 @@ const loadFromStorage = (): UserProfile | null => {
 // ─── Row ↔ UserProfile mapping ────────────────────────────────
 
 type ProfileRow = {
+  avatar_url: string | null
+  avatar_path: string | null
   level: string
   weekly_sessions: number
   equipment: string[]
@@ -224,6 +228,9 @@ type ProfileRow = {
   health_consent_source: UserProfile['healthConsentSource'] | null
   health_consent_audit_trail: UserProfile['healthConsentAuditTrail'] | null
   health_data_retention_state: UserProfile['healthDataRetentionState'] | null
+  ffr_competition_id: string | null
+  ffr_competition_name: string | null
+  ffr_last_sync_at: string | null
 }
 
 export const rowToProfile = (row: ProfileRow): UserProfile => {
@@ -242,6 +249,8 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     )
 
   return normalizeLegacyProfile({
+    avatarUrl: row.avatar_url ?? undefined,
+    avatarPath: row.avatar_path ?? undefined,
     level: (row.level === 'beginner' ? 'beginner' : 'intermediate') as UserProfile['level'],
     weeklySessions: (row.weekly_sessions === 2 ? 2 : 3) as UserProfile['weeklySessions'],
     equipment: row.equipment as UserProfile['equipment'],
@@ -278,11 +287,16 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     healthConsentSource: row.health_consent_source ?? undefined,
     healthConsentAuditTrail: row.health_consent_audit_trail ?? undefined,
     healthDataRetentionState: row.health_data_retention_state ?? undefined,
+    ffrCompetitionId: row.ffr_competition_id ?? undefined,
+    ffrCompetitionName: row.ffr_competition_name ?? undefined,
+    ffrLastSyncAt: row.ffr_last_sync_at ?? undefined,
   })
 }
 
 const profileToRow = (profile: UserProfile, userId: string) => ({
   id: userId,
+  avatar_url: profile.avatarUrl ?? null,
+  avatar_path: profile.avatarPath ?? null,
   level: profile.level,
   weekly_sessions: profile.weeklySessions,
   equipment: profile.equipment,
@@ -319,6 +333,9 @@ const profileToRow = (profile: UserProfile, userId: string) => ({
   health_consent_source: profile.healthConsentSource ?? null,
   health_consent_audit_trail: profile.healthConsentAuditTrail ?? null,
   health_data_retention_state: profile.healthDataRetentionState ?? null,
+  ffr_competition_id: profile.ffrCompetitionId ?? null,
+  ffr_competition_name: profile.ffrCompetitionName ?? null,
+  ffr_last_sync_at: profile.ffrLastSyncAt ?? null,
   updated_at: new Date().toISOString(),
 })
 
@@ -349,7 +366,7 @@ export const useProfile = () => {
     supabase
       .from('profiles')
       .select(
-        'level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, performance_focus, preferred_language, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state'
+        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, performance_focus, preferred_language, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at'
       )
       .eq('id', userId)
       .single()

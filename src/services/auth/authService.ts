@@ -77,11 +77,14 @@ const mapSignInError = (error: SupabaseAuthError | null): AuthError => {
 }
 
 export const getSessionUser = async (): Promise<AuthUser | null> => {
-  const { data, error } = await supabase.auth.getSession()
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
 
-  if (error || !data.session?.user) return null
+  if (error || !user) return null
 
-  return mapSupabaseUserToAuthUser(data.session.user)
+  return mapSupabaseUserToAuthUser(user)
 }
 
 export const onAuthStateChanged = (
@@ -195,6 +198,21 @@ export const updateAvatar = async (file: File): Promise<Result<AuthUser, AuthErr
 
   if (updateError || !updatedUserData.user) {
     return { ok: false, error: 'UPLOAD_FAILED' }
+  }
+
+  const { error: profileMirrorError } = await supabase
+    .from('profiles')
+    .upsert(
+      {
+        id: user.id,
+        avatar_path: filePath,
+        avatar_url: avatarUrl,
+      },
+      { onConflict: 'id' },
+    )
+
+  if (profileMirrorError) {
+    console.warn('[authService] Failed to mirror avatar into profiles:', profileMirrorError.message)
   }
 
   return { ok: true, value: mapSupabaseUserToAuthUser(updatedUserData.user) }

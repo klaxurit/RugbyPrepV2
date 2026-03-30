@@ -69,8 +69,8 @@ export function msSessionTypeLabel(type: string, lang: AppLang): string {
 }
 
 const TARGET_LEVEL_LABELS: Record<string, Record<AppLang, string>> = {
-  starter:     { fr: 'Débutant',       en: 'Starter' },
-  builder:     { fr: 'Intermédiaire',  en: 'Builder' },
+  starter:     { fr: 'Fondations',     en: 'Foundations' },
+  builder:     { fr: 'Avancé',         en: 'Advanced' },
   performance: { fr: 'Avancé',         en: 'Performance' },
 }
 
@@ -84,7 +84,24 @@ const POSITION_GROUP_LABELS: Record<string, Record<AppLang, string>> = {
 }
 
 export function msPositionGroupLabel(group: string, lang: AppLang): string {
-  return POSITION_GROUP_LABELS[group]?.[lang] ?? group.replace(/_/g, ' ')
+  const exact = POSITION_GROUP_LABELS[group]?.[lang]
+  if (exact) return exact
+
+  const humanized = group
+    .replace(/front_row/gi, lang === 'fr' ? 'Avants' : 'Front row')
+    .replace(/front row/gi, lang === 'fr' ? 'Avants' : 'Front row')
+    .replace(/back_three/gi, lang === 'fr' ? 'Ligne arrière' : 'Back three')
+    .replace(/back three/gi, lang === 'fr' ? 'Back three' : 'Back three')
+    .replace(/\(common base with light accents\)/gi, lang === 'fr' ? '(base commune avec accents légers)' : '(common base with light accents)')
+    .replace(/\(common base\)/gi, lang === 'fr' ? '(base commune)' : '(common base)')
+    .replace(/\(phase 1 common base\)/gi, lang === 'fr' ? '(base commune phase 1)' : '(phase 1 common base)')
+    .replace(/\(phase 1 common terrain base\)/gi, lang === 'fr' ? '(base terrain commune phase 1)' : '(phase 1 common terrain base)')
+    .replace(/\(phase 2 common base with marked accents\)/gi, lang === 'fr' ? '(base commune phase 2 avec accents marqués)' : '(phase 2 common base with marked accents)')
+    .replace(/\(phase 2 common terrain base with marked accents\)/gi, lang === 'fr' ? '(base terrain commune phase 2 avec accents marqués)' : '(phase 2 common terrain base with marked accents)')
+    .replace(/\s+\+\s+/g, ' + ')
+    .replace(/_/g, ' ')
+
+  return humanized
 }
 
 const EQUIPMENT_LABELS: Record<string, Record<AppLang, string>> = {
@@ -98,6 +115,18 @@ export function msEquipmentLabel(eq: string, lang: AppLang): string {
 
 // ─── Text cleanup ────────────────────────────────────────────
 
+function collapseApproximationRanges(s: string): string {
+  return s
+    .replace(/\b\d+\s*min\s*\d+\s*to\s*(\d+)\s*min\b/gi, '$1 min')
+    .replace(/(?<!\d-)(\+?\d+(?:\.\d+)?)\s+to\s+(\+?\d+(?:\.\d+)?)(?=\s*(?:kg|kgs|reps?|rounds?|tours?|sets?|m\b))/gi, '$2')
+    .replace(/(?<!\d-)\b(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)(?=\s*x)/g, '$2')
+    .replace(/(?<=x)(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)(?!-\d)/g, '$2')
+    .replace(
+      /(?<!\d-)\b(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)(?!-\d)(?=\s*(?:reps?|rounds?|tours?|tour|sets?|drills?|progressive|ramp-up|rehearsal|easy|very light|light|work|min\b|kg\b|m\b|\/side|\/côté))/gi,
+      '$2',
+    )
+}
+
 export function stripBackticks(s: string): string {
-  return s.replace(/`/g, '')
+  return collapseApproximationRanges(s.replace(/`/g, ''))
 }

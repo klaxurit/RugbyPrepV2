@@ -50,16 +50,17 @@ function makePlanningContext(cycle: AnnualPlanningContext['cycle']): AnnualPlann
 function makeMotherSessionSurface(
   cycle: AnnualPlanningContext['cycle'],
   overrides?: Partial<Pick<WeeklyProgramSurfaceResult, 'warnings' | 'decisionReason'>>,
+  sessionId = 'FULL_OFFSEASON_RECOVERY_A_V1',
 ): WeeklyProgramSurfaceResult {
-  const session = MOTHER_SESSIONS_BY_ID['FULL_OFFSEASON_RECOVERY_A_V1']
-  if (!session) throw new Error('FULL_OFFSEASON_RECOVERY_A_V1 absente du dataset de test')
+  const session = MOTHER_SESSIONS_BY_ID[sessionId]
+  if (!session) throw new Error(`${sessionId} absente du dataset de test`)
 
   const planningContext = makePlanningContext(cycle)
   const msResult: ResolveMotherSessionsForWeekResult = {
     status: 'resolved',
     planningContext,
     sessions: [{
-      sessionId: 'FULL_OFFSEASON_RECOVERY_A_V1',
+      sessionId,
       session,
       role: 'primary',
       dayPreference: 'early_week',
@@ -330,5 +331,27 @@ describe('SessionDetailPage · annual-first', () => {
 
     expect(screen.getByText(/Profil non encore supporté/i)).toBeInTheDocument()
     expect(screen.queryByTestId('mother-session-detail')).toBeNull()
+  })
+
+  it('starter full gym : affiche les variantes Fondations guidées sur la séance', () => {
+    useProfileMock.mockReturnValue({
+      profile: {
+        ...BASE_PROFILE,
+        trainingLevel: 'starter',
+        equipment: ['machine', 'cable', 'bench', 'barbell', 'dumbbell'],
+      },
+    })
+    useWeeklyProgramSurfaceMock.mockReturnValue({
+      isReady: true,
+      surface: makeMotherSessionSurface('pre_season', undefined, 'LOWER_PRESEASON_FORCE_V1'),
+    })
+
+    renderSessionDetail(0)
+
+    expect(screen.getByText('Presse à cuisses')).toBeInTheDocument()
+    expect(screen.getByText('Curl ischios machine')).toBeInTheDocument()
+    expect(screen.queryByText('Pin Back Squat')).toBeNull()
+    expect(screen.queryByText('Nordic Curl')).toBeNull()
+    expect(screen.getByText('Fondations')).toBeInTheDocument()
   })
 })

@@ -1,6 +1,6 @@
 import type { WarmUp } from '../../types/motherSession'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
-import { msLabel } from '../../services/motherSession/motherSessionLabels'
+import { msLabel, stripBackticks } from '../../services/motherSession/motherSessionLabels'
 import { MotherSessionCollapsible } from './MotherSessionCollapsible'
 
 type FrWarmUp = {
@@ -34,10 +34,12 @@ export function MotherSessionWarmUp({ warmUp, lang = 'fr', frWarmUp }: MotherSes
           {warmUp.exercises.map((ex, i) => (
             <li key={`${ex.name}-${i}`} className="flex flex-col gap-0.5 border-b border-white/5 pb-2 last:border-0 last:pb-0">
               <span className="font-medium text-white">
-                {formatWarmUpExerciseName(frWarmUp?.exercises[i]?.name ?? ex.name)}
+                {formatWarmUpExerciseName(stripBackticks(frWarmUp?.exercises[i]?.name ?? ex.name))}
               </span>
               {(frWarmUp?.exercises[i]?.prescription ?? ex.prescription) ? (
-                <span className="text-white/70">{frWarmUp?.exercises[i]?.prescription ?? ex.prescription}</span>
+                <span className="text-white/70">
+                  {stripBackticks(frWarmUp?.exercises[i]?.prescription ?? ex.prescription)}
+                </span>
               ) : null}
             </li>
           ))}
@@ -49,7 +51,7 @@ export function MotherSessionWarmUp({ warmUp, lang = 'fr', frWarmUp }: MotherSes
           <ul className="mt-2 space-y-1.5">
             {notes.map((note, i) => (
               <li key={i} className="text-sm text-white/40">
-                {note}
+                {stripBackticks(note)}
               </li>
             ))}
           </ul>

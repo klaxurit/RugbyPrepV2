@@ -1,8 +1,13 @@
 import type { MotherSession } from '../../types/motherSession'
-import type { BlockLog, ExerciseLogEntry, SessionType, CycleWeek, FatigueStatus } from '../../types/training'
+import type { BlockLog, ExerciseLogEntry, SessionType, CycleWeek, FatigueStatus, Equipment, TrainingLevel } from '../../types/training'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import { msLabel, stripBackticks } from '../../services/motherSession/motherSessionLabels'
-import { getSessionFr } from '../../services/motherSession/motherSessionContentFr'
+import { getSessionFrOrFallback } from '../../services/motherSession/motherSessionContentFr'
+import { adaptMotherSessionForFoundations, adaptSessionContentFrForFoundations, isFoundationsLevel } from '../../services/motherSession/foundationsSessionAdaptations'
+import {
+  adaptMotherSessionForEquipmentAlternatives,
+  adaptSessionContentFrForEquipmentAlternatives,
+} from '../../services/motherSession/equipmentAlternativeAdaptations'
 import { MotherSessionBlock } from './MotherSessionBlock'
 import { MotherSessionCollapsible } from './MotherSessionCollapsible'
 import { MotherSessionHeader } from './MotherSessionHeader'
@@ -23,13 +28,40 @@ type MotherSessionViewProps = {
   isPremium?: boolean
   acwr?: number | null
   isRehabActive?: boolean
+  trainingLevel?: TrainingLevel
+  equipment?: Equipment[]
 }
 
-export function MotherSessionView({ session, lang = 'fr', injuries, sessionType, week, fatigue, onSaveBlock, getLastEntryForExercise, isPremium, acwr, isRehabActive }: MotherSessionViewProps) {
-  const frContent = lang === 'fr' ? getSessionFr(session.metadata.id) : undefined
+export function MotherSessionView({
+  session,
+  lang = 'fr',
+  injuries,
+  sessionType,
+  week,
+  fatigue,
+  onSaveBlock,
+  getLastEntryForExercise,
+  isPremium,
+  acwr,
+  isRehabActive,
+  trainingLevel,
+  equipment,
+}: MotherSessionViewProps) {
+  const isFoundations = isFoundationsLevel(trainingLevel)
+  const foundationsSession = isFoundations ? adaptMotherSessionForFoundations(session, equipment) : session
+  const adaptedSession = adaptMotherSessionForEquipmentAlternatives(foundationsSession, equipment)
+  const rawFrContent = lang === 'fr' ? getSessionFrOrFallback(session) : undefined
+  const foundationsFrContent =
+    lang === 'fr' && isFoundations
+      ? adaptSessionContentFrForFoundations(session, rawFrContent, equipment)
+      : rawFrContent
+  const frContent =
+    lang === 'fr'
+      ? adaptSessionContentFrForEquipmentAlternatives(foundationsSession, foundationsFrContent, equipment)
+      : undefined
 
-  const hasProgressionRules = (frContent?.progressionRules ?? session.progressionRules).length > 0
-  const hasPositionAccent = (frContent?.positionAccent ?? session.positionAccent).length > 0
+  const hasProgressionRules = (frContent?.progressionRules ?? adaptedSession.progressionRules).length > 0
+  const hasPositionAccent = (frContent?.positionAccent ?? adaptedSession.positionAccent).length > 0
   const showUnderstand = hasProgressionRules || hasPositionAccent
 
   // Injury subs: only render if player has declared injuries
@@ -37,16 +69,16 @@ export function MotherSessionView({ session, lang = 'fr', injuries, sessionType,
 
   return (
     <div className="min-w-0 max-w-[min(100%,28rem)] space-y-4 p-3 text-white sm:p-4">
-      <MotherSessionHeader metadata={session.metadata} lang={lang} />
+      <MotherSessionHeader metadata={adaptedSession.metadata} lang={lang} />
 
       <MotherSessionWarmUp
-        warmUp={session.warmUp}
+        warmUp={adaptedSession.warmUp}
         lang={lang}
         frWarmUp={frContent ? { exercises: frContent.warmUpExercises, notes: frContent.warmUpNotes } : undefined}
       />
 
       <section className="space-y-3" aria-label="Training blocks">
-        {session.blocks.map((block, i) => (
+        {adaptedSession.blocks.map((block, i) => (
           <MotherSessionBlock
             key={block.number}
             block={block}
@@ -74,7 +106,7 @@ export function MotherSessionView({ session, lang = 'fr', injuries, sessionType,
                 {msLabel('progression_rules', lang)}
               </p>
               <ul className="space-y-2 mb-4">
-                {(frContent?.progressionRules ?? session.progressionRules).map((rule, i) => (
+                {(frContent?.progressionRules ?? adaptedSession.progressionRules).map((rule, i) => (
                   <li key={i} className="text-sm text-white/70">
                     {stripBackticks(rule)}
                   </li>
@@ -88,7 +120,7 @@ export function MotherSessionView({ session, lang = 'fr', injuries, sessionType,
                 {msLabel('position_accent', lang)}
               </p>
               <ul className="space-y-2">
-                {(frContent?.positionAccent ?? session.positionAccent).map((line, i) => (
+                {(frContent?.positionAccent ?? adaptedSession.positionAccent).map((line, i) => (
                   <li key={i} className="text-sm text-white/70">
                     {stripBackticks(line)}
                   </li>
@@ -100,13 +132,13 @@ export function MotherSessionView({ session, lang = 'fr', injuries, sessionType,
       )}
 
       {showInjurySubs && (
-        <MotherSessionInjurySubs injurySubstitutions={session.injurySubstitutions} lang={lang} />
+        <MotherSessionInjurySubs injurySubstitutions={adaptedSession.injurySubstitutions} lang={lang} />
       )}
 
-      {(frContent?.coachingWarnings ?? session.coachingWarnings).length > 0 ? (
+      {(frContent?.coachingWarnings ?? adaptedSession.coachingWarnings).length > 0 ? (
         <MotherSessionCollapsible title={msLabel('coaching_warnings', lang)} defaultOpen={false}>
           <ul className="space-y-2">
-            {(frContent?.coachingWarnings ?? session.coachingWarnings).map((w, i) => (
+            {(frContent?.coachingWarnings ?? adaptedSession.coachingWarnings).map((w, i) => (
               <li key={i} className="text-sm text-white/70">
                 {stripBackticks(w)}
               </li>
