@@ -11,6 +11,18 @@ const sortNewestFirst = (logs: SessionLog[]): SessionLog[] =>
     (a, b) => new Date(b.dateISO).getTime() - new Date(a.dateISO).getTime()
   )
 
+export const mergeLogsById = (...logGroups: SessionLog[][]): SessionLog[] => {
+  const merged = new Map<string, SessionLog>()
+
+  for (const group of logGroups) {
+    for (const log of group) {
+      merged.set(log.id, log)
+    }
+  }
+
+  return sortNewestFirst([...merged.values()])
+}
+
 const readFromStorage = (): SessionLog[] => {
   if (typeof window === 'undefined') return []
   try {
@@ -100,9 +112,10 @@ export const useHistory = () => {
       .order('date_iso', { ascending: false })
       .then(({ data, error }) => {
         if (error || !data) return
-        const loaded = sortNewestFirst((data as SessionLogRow[]).map(rowToLog))
-        setLogs(loaded)
-        saveToStorage(loaded)
+        const loaded = (data as SessionLogRow[]).map(rowToLog)
+        const merged = mergeLogsById(readFromStorage(), loaded)
+        setLogs(merged)
+        saveToStorage(merged)
       })
   }, [userId])
 
@@ -122,7 +135,7 @@ export const useHistory = () => {
           // Use the server-returned row (same data, server-assigned id if needed)
           const saved = rowToLog(data as SessionLogRow)
           setLogs((current) => {
-            const next = sortNewestFirst([saved, ...current])
+            const next = mergeLogsById([saved], current)
             saveToStorage(next)
             return next
           })
@@ -132,7 +145,7 @@ export const useHistory = () => {
 
       // Offline fallback
       setLogs((current) => {
-        const next = sortNewestFirst([completeLog, ...current])
+        const next = mergeLogsById([completeLog], current)
         saveToStorage(next)
         return next
       })

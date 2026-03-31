@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, CheckCircle2, Clock, Zap } from 'lucide-react'
+import type { FatigueStatus } from '../../types/training'
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -8,7 +9,9 @@ interface RPEModalProps {
   isOpen: boolean
   sessionLabel: string   // ex: "Haut du corps"
   onClose: () => void
-  onConfirm: (rpe: number, durationMin: number) => void
+  onConfirm: (payload: { fatigue: FatigueStatus; rpe: number; durationMin: number }) => void | Promise<void>
+  initialFatigue?: FatigueStatus
+  isSubmitting?: boolean
 }
 
 // ─── Constants ───────────────────────────────────────────────
@@ -43,21 +46,33 @@ const RPE_LABELS: Record<number, string> = {
 
 // ─── Component ───────────────────────────────────────────────
 
-export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalProps) {
+export function RPEModal({
+  isOpen,
+  sessionLabel,
+  onClose,
+  onConfirm,
+  initialFatigue = 'OK',
+  isSubmitting = false,
+}: RPEModalProps) {
   const [rpe, setRpe] = useState<number | null>(null)
   const [duration, setDuration] = useState<number>(60)
   const [customDuration, setCustomDuration] = useState('')
+  const [sessionFatigue, setSessionFatigue] = useState<FatigueStatus>(initialFatigue)
+
+  useEffect(() => {
+    if (!isOpen) return
+    setRpe(null)
+    setDuration(60)
+    setCustomDuration('')
+    setSessionFatigue(initialFatigue)
+  }, [initialFatigue, isOpen])
 
   const effectiveDuration = customDuration ? Number(customDuration) : duration
   const canConfirm = rpe !== null && effectiveDuration > 0
 
   const handleConfirm = () => {
     if (!canConfirm) return
-    onConfirm(rpe!, effectiveDuration)
-    // reset
-    setRpe(null)
-    setDuration(60)
-    setCustomDuration('')
+    onConfirm({ fatigue: sessionFatigue, rpe: rpe!, durationMin: effectiveDuration })
   }
 
   const load = rpe != null ? rpe * effectiveDuration : null
@@ -96,6 +111,33 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
 
             {/* RPE */}
             <div>
+              <label className="text-xs font-black text-white/50 uppercase tracking-wide block mb-3">
+                État de fatigue
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {([
+                  { value: 'OK', label: 'En forme' },
+                  { value: 'FATIGUE', label: 'Fatigué' },
+                ] as const).map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setSessionFatigue(option.value)}
+                    data-testid={`completion-fatigue-${option.value.toLowerCase()}`}
+                    className={`px-3 py-3 rounded-2xl text-sm font-black border transition-all ${
+                      sessionFatigue === option.value
+                        ? 'bg-[#1a5f3f] text-white border-[#1a5f3f]'
+                        : 'bg-white/10 text-white/70 border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* RPE */}
+            <div>
               <div className="flex items-center gap-2 mb-3">
                 <Zap className="w-4 h-4 text-[#ff6b35]" />
                 <label className="text-xs font-black text-white/50 uppercase tracking-wide">
@@ -111,6 +153,7 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
                     key={n}
                     type="button"
                     onClick={() => setRpe(n)}
+                    data-testid={`completion-rpe-${n}`}
                     className={`aspect-square rounded-xl text-sm font-black transition-all ${
                       rpe === n
                         ? `${RPE_COLORS[n]} text-white scale-110 shadow-md`
@@ -141,6 +184,7 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
                     key={d}
                     type="button"
                     onClick={() => { setDuration(d); setCustomDuration('') }}
+                    data-testid={`completion-duration-${d}`}
                     className={`px-3 py-2 rounded-2xl text-xs font-black transition-all ${
                       duration === d && !customDuration
                         ? 'bg-[#1a5f3f] text-white border border-[#1a5f3f]'
@@ -177,11 +221,12 @@ export function RPEModal({ isOpen, sessionLabel, onClose, onConfirm }: RPEModalP
             <button
               type="button"
               onClick={handleConfirm}
-              disabled={!canConfirm}
+              disabled={!canConfirm || isSubmitting}
+              data-testid="completion-confirm-btn"
               className="w-full py-4 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-40 disabled:cursor-not-allowed text-white font-black uppercase italic tracking-wide flex items-center justify-center gap-2 transition-colors shadow-lg shadow-[#ff6b35]/20"
             >
               <CheckCircle2 className="w-4 h-4" />
-              Enregistrer la séance
+              {isSubmitting ? 'Enregistrement...' : 'Enregistrer la séance'}
             </button>
           </motion.div>
         </div>

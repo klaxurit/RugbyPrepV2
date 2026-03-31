@@ -17,6 +17,7 @@ import { buildMotherSessionProgramSessionLog } from '../services/program/buildPr
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { MotherSessionView } from '../components/motherSession/MotherSessionView'
+import { RPEModal } from '../components/modals/RPEModal'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { getPrehab, CONTRA_LABELS } from '../services/ui/getPrehab'
@@ -54,7 +55,7 @@ export function SessionDetailPage() {
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
   const sessionPageTitle = lang === 'fr' ? 'Séance' : 'Session'
   const { week, lastNonDeloadWeek } = useWeek()
-  const { fatigue } = useFatigue()
+  const { fatigue, setFatigue } = useFatigue()
   const { addLog, logs } = useHistory()
   const { events } = useCalendar()
   const navigate = useNavigate()
@@ -63,6 +64,9 @@ export function SessionDetailPage() {
   const [prehabbOpen, setPrehabbOpen] = useState(true)
   const [msNotes, setMsNotes] = useState('')
   const [msSaved, setMsSaved] = useState(false)
+  const [completionOpen, setCompletionOpen] = useState(false)
+  const [msSaveError, setMsSaveError] = useState<string | null>(null)
+  const [isSavingSession, setIsSavingSession] = useState(false)
   const handleSaveBlock = (log: Parameters<typeof addBlockLog>[0]) => { addBlockLog(log) }
 
   useEffect(() => { posthog.capture('session_viewed', { index }) }, [index])
@@ -155,6 +159,41 @@ export function SessionDetailPage() {
     ? formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang)
     : sessionPageTitle
   const pageSuffix = localizeWeekLabel(surface?.planningContext.weekLabel ?? week, lang)
+
+  const handleConfirmMotherSession = async (payload: {
+    fatigue: 'OK' | 'FATIGUE'
+    rpe: number
+    durationMin: number
+  }) => {
+    if (!surface || !activeSlot) return
+
+    setIsSavingSession(true)
+    setMsSaveError(null)
+
+    try {
+      setFatigue(payload.fatigue)
+      const log = buildMotherSessionProgramSessionLog({
+        dateISO: new Date().toISOString(),
+        fatigue: payload.fatigue,
+        notes: msNotes.trim() || undefined,
+        rpe: payload.rpe,
+        durationMin: payload.durationMin,
+        slot: activeSlot,
+        planningContext: surface.planningContext,
+      })
+
+      await addLog(log)
+      setCompletionOpen(false)
+      setMsNotes('')
+      setMsSaved(true)
+      window.setTimeout(() => navigate('/week'), 1200)
+    } catch (error) {
+      console.error('session_detail_complete_failed', error)
+      setMsSaveError("La séance n'a pas pu être enregistrée. Réessaie dans quelques instants.")
+    } finally {
+      setIsSavingSession(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
@@ -294,24 +333,21 @@ export function SessionDetailPage() {
                     type="button"
                     data-testid="ms-complete-btn"
                     onClick={() => {
-                      if (!surface) return
-                      const log = buildMotherSessionProgramSessionLog({
-                        dateISO: new Date().toISOString(),
-                        fatigue,
-                        notes: msNotes.trim() || undefined,
-                        slot: activeSlot,
-                        planningContext: surface.planningContext,
-                      })
-                      addLog(log)
-                      setMsNotes('')
-                      setMsSaved(true)
-                      setTimeout(() => navigate('/week'), 2000)
+                      setMsSaved(false)
+                      setMsSaveError(null)
+                      setCompletionOpen(true)
                     }}
                     className="w-full py-4 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-black uppercase italic tracking-wide transition-all shadow-lg shadow-[#ff6b35]/20 flex items-center justify-center gap-2"
                   >
                     <CheckCircle2 className="w-5 h-5" />
                     Marquer comme faite
                   </button>
+
+                  {msSaveError && (
+                    <div className="px-4 py-3 bg-rose-900/20 border border-rose-500/20 rounded-2xl">
+                      <p className="text-xs text-rose-300 font-bold">{msSaveError}</p>
+                    </div>
+                  )}
 
                   {msSaved && (
                     <div className="flex items-center gap-2 px-4 py-3 bg-emerald-900/20 border border-emerald-500/20 rounded-2xl">
@@ -337,6 +373,17 @@ export function SessionDetailPage() {
         )}
 
       </main>
+      <RPEModal
+        isOpen={completionOpen}
+        sessionLabel={pageTitle}
+        initialFatigue={fatigue}
+        isSubmitting={isSavingSession}
+        onClose={() => {
+          if (isSavingSession) return
+          setCompletionOpen(false)
+        }}
+        onConfirm={handleConfirmMotherSession}
+      />
       <BottomNav />
     </div>
   )

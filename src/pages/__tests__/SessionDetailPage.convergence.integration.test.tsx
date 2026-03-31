@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
-import { cleanup, screen, fireEvent, render } from '@testing-library/react'
+import { cleanup, screen, fireEvent, render, waitFor } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { MOTHER_SESSIONS_BY_ID } from '../../data/motherSessions.generated'
 import type { ResolveMotherSessionsForWeekResult } from '../../services/motherSession/resolveMotherSessionsForWeek'
@@ -23,6 +23,7 @@ function renderSessionDetail(sessionIndex: number) {
 const useProfileMock = vi.fn()
 const useWeeklyProgramSurfaceMock = vi.fn()
 const addLogMock = vi.fn()
+const setFatigueMock = vi.fn()
 
 function makePlanningContext(cycle: AnnualPlanningContext['cycle']): AnnualPlanningContext {
   return {
@@ -148,6 +149,7 @@ vi.mock('../../hooks/useWeek', () => ({
 vi.mock('../../hooks/useFatigue', () => ({
   useFatigue: () => ({
     fatigue: 'OK',
+    setFatigue: setFatigueMock,
   }),
 }))
 
@@ -238,7 +240,7 @@ describe('SessionDetailPage · annual-first', () => {
     expect(screen.getByTestId('ms-completion-section')).toBeInTheDocument()
   })
 
-  it('complétion mother-session → addLog appelé avec programSource mother_session', () => {
+  it('complétion mother-session → ouvre le modal puis enregistre le log enrichi', async () => {
     useProfileMock.mockReturnValue({
       profile: { ...BASE_PROFILE, seasonMode: 'off_season' },
     })
@@ -252,12 +254,25 @@ describe('SessionDetailPage · annual-first', () => {
     const completeBtn = screen.getByTestId('ms-complete-btn')
     fireEvent.click(completeBtn)
 
-    expect(addLogMock).toHaveBeenCalledTimes(1)
+    expect(screen.getByTestId('completion-confirm-btn')).toBeInTheDocument()
+    expect(addLogMock).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByTestId('completion-fatigue-fatigue'))
+    fireEvent.click(screen.getByTestId('completion-rpe-7'))
+    fireEvent.click(screen.getByTestId('completion-duration-45'))
+    fireEvent.click(screen.getByTestId('completion-confirm-btn'))
+
+    await waitFor(() => expect(addLogMock).toHaveBeenCalledTimes(1))
+
     const log = addLogMock.mock.calls[0][0]
     expect(log.programSource).toBe('mother_session')
     expect(log.motherSessionId).toBe('FULL_OFFSEASON_RECOVERY_A_V1')
     expect(log.programContext).toBeDefined()
     expect(log.programContext.annualWeekCode).toBeDefined()
+    expect(log.fatigue).toBe('FATIGUE')
+    expect(log.rpe).toBe(7)
+    expect(log.durationMin).toBe(45)
+    expect(setFatigueMock).toHaveBeenCalledWith('FATIGUE')
   })
 
   it('index invalide en mother-session → état vide propre', () => {
