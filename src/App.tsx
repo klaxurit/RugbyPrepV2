@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { HomePage } from './pages/HomePage'
@@ -19,6 +19,18 @@ import { CallbackPage } from './pages/auth/CallbackPage'
 import { LegalPage } from './pages/LegalPage'
 import { LandingPage } from './pages/LandingPage'
 import { StaffPlanningSandboxPage } from './pages/StaffPlanningSandboxPage'
+
+const isStandaloneMode =
+  window.matchMedia('(display-mode: standalone)').matches ||
+  (navigator as unknown as { standalone?: boolean }).standalone === true
+
+function RootRoute() {
+  if (!isStandaloneMode) return <LandingPage />
+
+  // TWA / installed PWA: skip the landing page, go straight to /home
+  // RequireAuth on /home will redirect to /login if not authenticated
+  return <Navigate to="/home" replace />
+}
 
 const DEV_STATIC_PAGES = new Set([
   '/blog',
@@ -72,7 +84,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<RootRoute />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/login" element={<LoginPage />} />
