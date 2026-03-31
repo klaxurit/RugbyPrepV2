@@ -22,6 +22,7 @@ import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { useCalendar } from '../hooks/useCalendar'
 import { useProfile } from '../hooks/useProfile'
+import { useAdaptiveSchedule } from '../hooks/useAdaptiveSchedule'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 import ffrClubs from '../data/ffrClubs.v2021.json'
@@ -874,6 +875,7 @@ export function CalendarPage() {
     hideImportedEvent, unhideImportedEvent, refreshFromFFR, hiddenCount, ffrCount, manualCount, loading,
   } = useCalendar()
   const { profile } = useProfile()
+  const adaptiveSchedule = useAdaptiveSchedule(profile, events)
   const { isPremium: calendarIsPremium } = useFeatureAccess()
   const [showModal, setShowModal] = useState(false)
   const [selectedDate, setSelectedDate] = useState<string | undefined>()
@@ -884,7 +886,7 @@ export function CalendarPage() {
   // Recurring club and S&C days from profile
   const clubDays: DayOfWeek[] = profile.clubSchedule?.clubDays.map((d) => d.day) ?? []
   const scDays: DayOfWeek[] =
-    profile.scSchedule?.sessions.map((s) => s.day) ??
+    adaptiveSchedule?.sessions.map((s) => s.day) ??
     TRAINING_DAYS_DEFAULT[profile.weeklySessions]
 
   const today = new Date()

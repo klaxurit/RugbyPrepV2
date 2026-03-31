@@ -64,101 +64,19 @@ describe('checkBetaEligibility', () => {
     expect(checkBetaEligibility(profile).isEligible).toBe(true)
   })
 
-  // ── shoulder_pain ─────────────────────────────────────────────────────────────
+  // ── Zones sensibles ne bloquent plus l'accès ──────────────────────────────
 
-  it('SHOULDER_PAIN si shoulder_pain + barbell disponible', () => {
-    const profile = createProfile({ injuries: ['shoulder_pain'], equipment: FULL_GYM, ageBand: 'adult' })
-    const result = checkBetaEligibility(profile)
-    expect(result.isEligible).toBe(false)
-    expect(result.primaryReason).toBe('SHOULDER_PAIN')
-    expect(result.reasons).toEqual(['SHOULDER_PAIN'])
-  })
-
-  it('SHOULDER_PAIN_LIMITED_GYM si shoulder_pain + LIMITED_GYM (sans barbell)', () => {
-    const profile = createProfile({ injuries: ['shoulder_pain'], equipment: LIMITED_GYM, ageBand: 'adult' })
-    const result = checkBetaEligibility(profile)
-    expect(result.isEligible).toBe(false)
-    expect(result.primaryReason).toBe('SHOULDER_PAIN_LIMITED_GYM')
-    expect(result.reasons).not.toContain('SHOULDER_PAIN')
-  })
-
-  it('SHOULDER_PAIN_LIMITED_GYM si shoulder_pain + BW_ONLY (equipment vide)', () => {
-    const profile = createProfile({ injuries: ['shoulder_pain'], equipment: BW_ONLY, ageBand: 'adult' })
-    const result = checkBetaEligibility(profile)
-    expect(result.isEligible).toBe(false)
-    expect(result.primaryReason).toBe('SHOULDER_PAIN_LIMITED_GYM')
-    expect(result.reasons).not.toContain('SHOULDER_PAIN')
-  })
-
-  // ── REHAB_ACTIVE ──────────────────────────────────────────────────────────────
-
-  it('REHAB_ACTIVE si rehabInjury défini (upper)', () => {
-    const profile = createProfile({
-      injuries: [],
-      equipment: FULL_GYM,
-      rehabInjury: REHAB_UPPER,
-      ageBand: 'adult',
-    })
-    const result = checkBetaEligibility(profile)
-    expect(result.isEligible).toBe(false)
-    expect(result.primaryReason).toBe('REHAB_ACTIVE')
-    expect(result.reasons).toContain('REHAB_ACTIVE')
-  })
-
-  it('REHAB_ACTIVE si rehabInjury défini (lower)', () => {
-    const profile = createProfile({
-      injuries: ['knee_pain'],
-      equipment: FULL_GYM,
-      rehabInjury: REHAB_LOWER,
-      ageBand: 'adult',
-    })
-    const result = checkBetaEligibility(profile)
-    expect(result.reasons).toContain('REHAB_ACTIVE')
-  })
-
-  // ── MULTI_INJURIES ────────────────────────────────────────────────────────────
-
-  it('MULTI_INJURIES si 2 blessures non-shoulder', () => {
-    const profile = createProfile({
-      injuries: ['knee_pain', 'low_back_pain'],
-      equipment: FULL_GYM,
-      ageBand: 'adult',
-    })
-    const result = checkBetaEligibility(profile)
-    expect(result.isEligible).toBe(false)
-    expect(result.primaryReason).toBe('MULTI_INJURIES')
-    expect(result.reasons).toContain('MULTI_INJURIES')
-  })
-
-  it('MULTI_INJURIES si 3 blessures dont shoulder_pain + 2 autres', () => {
+  it('injuries do not block eligibility — exercises adapted instead', () => {
     const profile = createProfile({
       injuries: ['shoulder_pain', 'knee_pain', 'low_back_pain'],
       equipment: FULL_GYM,
       ageBand: 'adult',
     })
     const result = checkBetaEligibility(profile)
-    // shoulder_pain capturé comme SHOULDER_PAIN, + 2 non-shoulder → MULTI aussi
-    expect(result.reasons).toContain('MULTI_INJURIES')
-    expect(result.reasons).toContain('SHOULDER_PAIN')
-  })
-
-  it('pas MULTI_INJURIES si shoulder_pain + 1 seule autre blessure', () => {
-    const profile = createProfile({
-      injuries: ['shoulder_pain', 'knee_pain'],
-      equipment: FULL_GYM,
-      ageBand: 'adult',
-    })
-    const result = checkBetaEligibility(profile)
-    // knee_pain seul (hors shoulder) = 1 < 2 → pas MULTI
+    expect(result.isEligible).toBe(true)
+    expect(result.reasons).not.toContain('SHOULDER_PAIN')
+    expect(result.reasons).not.toContain('SHOULDER_PAIN_LIMITED_GYM')
     expect(result.reasons).not.toContain('MULTI_INJURIES')
-    expect(result.reasons).toContain('SHOULDER_PAIN')
-  })
-
-  it('pas MULTI_INJURIES si 1 blessure seule', () => {
-    const profile = createProfile({ injuries: ['knee_pain'], equipment: FULL_GYM, ageBand: 'adult' })
-    const result = checkBetaEligibility(profile)
-    expect(result.reasons).not.toContain('MULTI_INJURIES')
-    expect(result.isEligible).toBe(true) // knee seul = éligible (surveillé mais pas exclu)
   })
 
   // ── OFF_SEASON ────────────────────────────────────────────────────────────────
@@ -270,30 +188,9 @@ describe('checkBetaEligibility', () => {
 
   // ── Combinaisons ─────────────────────────────────────────────────────────────
 
-  it('multiple reasons si rehab + off_season : primaryReason = REHAB_ACTIVE', () => {
-    const profile = createProfile({
-      seasonMode: 'off_season',
-      rehabInjury: REHAB_LOWER,
-      injuries: [],
-      equipment: FULL_GYM,
-      ageBand: 'adult',
-    })
-    const result = checkBetaEligibility(profile)
-    expect(result.reasons).toContain('REHAB_ACTIVE')
-    expect(result.reasons).toContain('OFF_SEASON_NOT_SUPPORTED')
-    expect(result.primaryReason).toBe('REHAB_ACTIVE') // REHAB avant OFF_SEASON dans l'ordre
-  })
+  // rehab + off_season combo test removed — rehab feature disabled (V2)
 
-  it('SHOULDER_PAIN_LIMITED_GYM prioritaire sur SHOULDER_PAIN', () => {
-    const profile = createProfile({
-      injuries: ['shoulder_pain'],
-      equipment: LIMITED_GYM, // pas de barbell
-      ageBand: 'adult',
-    })
-    const result = checkBetaEligibility(profile)
-    expect(result.primaryReason).toBe('SHOULDER_PAIN_LIMITED_GYM')
-    expect(result.reasons).not.toContain('SHOULDER_PAIN')
-  })
+  // SHOULDER_PAIN_LIMITED_GYM priority test removed — injury blocks disabled
 
   // ── BETA_PAUSED (kill switch) ───────────────────────────────────────────────
 

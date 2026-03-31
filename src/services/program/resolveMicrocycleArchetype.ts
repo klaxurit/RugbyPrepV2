@@ -71,8 +71,6 @@ const resolveArchetypeId = (
   recipeIds: SessionRecipeId[]
 ): MicrocycleArchetypeId => {
   if (week === 'DELOAD') return 'DELOAD_RECOVERY';
-  if (profile.rehabInjury?.zone === 'upper') return 'REHAB_UPPER';
-  if (profile.rehabInjury?.zone === 'lower') return 'REHAB_LOWER';
   if (
     profile.trainingLevel === 'performance' &&
     profile.seasonMode === 'in_season'

@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import { supabase } from '../services/supabase/client'
+import { isPlayBillingAvailable, usePlayBilling } from './usePlayBilling'
 
 type CheckoutResponse = {
   ok: boolean
@@ -32,9 +33,30 @@ export function usePremiumCheckout() {
     message: null,
   })
 
-  const startCheckout = useCallback(async (planId = 'premium_monthly') => {
+  const playBilling = usePlayBilling()
+
+  const startCheckout = useCallback(async (planId: 'premium_monthly' | 'premium_yearly' = 'premium_monthly') => {
     setState({ loading: true, error: null, message: null })
 
+    // Route to Google Play Billing when inside the TWA
+    if (isPlayBillingAvailable()) {
+      try {
+        const result = await playBilling.purchase(planId)
+        if (result) {
+          setState({ loading: false, error: null, message: null })
+          return { ok: true, ready: true } as CheckoutResponse
+        }
+        // User cancelled
+        setState({ loading: false, error: null, message: null })
+        return null
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err)
+        setState({ loading: false, error: message, message: null })
+        return null
+      }
+    }
+
+    // Fallback to Stripe checkout for web
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
@@ -67,7 +89,7 @@ export function usePremiumCheckout() {
       })
       return null
     }
-  }, [])
+  }, [playBilling])
 
   const reset = useCallback(() => {
     setState({ loading: false, error: null, message: null })
@@ -77,5 +99,7 @@ export function usePremiumCheckout() {
     ...state,
     startCheckout,
     reset,
+    isPlayStore: isPlayBillingAvailable(),
+    playProducts: playBilling.products,
   }
 }

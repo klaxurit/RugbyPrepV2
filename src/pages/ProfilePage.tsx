@@ -4,7 +4,7 @@ import { posthog } from '../services/analytics/posthog'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { Dumbbell, Shield, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, HeartPulse } from 'lucide-react'
+import { Dumbbell, Shield, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw } from 'lucide-react'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
@@ -21,7 +21,6 @@ import type {
   ClubSchedule,
   TrainingLevel,
   SeasonMode,
-  RehabPhase,
   AgeBand,
   PopulationSegment,
   FfrCompetition,
@@ -34,23 +33,16 @@ import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
 import { GymDaySelector } from '../components/GymDaySelector'
 
-const EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string }[] = [
-  { value: 'barbell',      label: 'Barre' },
-  { value: 'dumbbell',     label: 'Haltères' },
-  { value: 'bench',        label: 'Banc' },
-  { value: 'band',         label: 'Élastique' },
-  { value: 'box',          label: 'Box' },
-  { value: 'pullup_bar',   label: 'Barre traction' },
-  { value: 'med_ball',     label: 'Médecine Ball' },
-  { value: 'landmine',     label: 'Landmine' },
-  { value: 'tbar_row',     label: 'T-Bar Row' },
-  { value: 'ghd',          label: 'GHD' },
-  { value: 'machine',      label: 'Machine' },
-  { value: 'sprint_track', label: 'Piste / Gazon synthétique' },
-  { value: 'ab_wheel',     label: 'Ab Wheel' },
+/** Équipements qui déclenchent des substitutions en mode Fondation. */
+const FOUNDATIONS_EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string; hint: string }[] = [
+  { value: 'dumbbell',  label: 'Haltères / Kettlebell', hint: 'Goblet squat, DB RDL, DB press' },
+  { value: 'machine',   label: 'Machines guidées',      hint: 'Leg press, leg curl, shoulder press' },
+  { value: 'cable',     label: 'Poulie / Câble',        hint: 'Cable row, cable chop' },
+  { value: 'bench',     label: 'Banc',                  hint: 'Chest supported row' },
+  { value: 'landmine',  label: 'Landmine',              hint: 'Landmine press' },
 ]
 
-const INJURY_OPTIONS: { value: Contra; label: string }[] = [
+const SENSITIVE_ZONE_OPTIONS: { value: Contra; label: string }[] = [
   { value: 'shoulder_pain', label: 'Épaule' },
   { value: 'elbow_pain', label: 'Coude' },
   { value: 'wrist_pain', label: 'Poignet' },
@@ -127,11 +119,6 @@ const POPULATION_OPTIONS: { value: PopulationSegment; label: string; ageBand: Ag
   { value: 'u18_female', label: 'Fille U18', ageBand: 'u18' },
 ]
 
-const REHAB_CRITERIA: Record<RehabPhase, string> = {
-  1: 'Passage P2 : absence douleur au repos · mobilité partielle retrouvée · 1-2 semaines',
-  2: 'Passage P3 : force ≥ 70% côté sain · ROM complet sans douleur · 2-4 semaines',
-  3: 'Fin programme : force ≥ 90% · tests fonctionnels OK · course/sauts sans douleur',
-}
 
 interface FfrClub {
   ligue: string
@@ -882,38 +869,46 @@ export function ProfilePage() {
           })()}
         </section>
 
-        {/* Équipement */}
+        {/* Équipement — visible uniquement en Fondation */}
+        {profile.trainingLevel === 'starter' && (
         <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-2xl bg-blue-900/20 text-blue-400">
               <Dumbbell className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-white">Équipement disponible</h2>
-              <p className="text-xs text-white/40">Sélectionne ce que tu as</p>
+              <h2 className="text-sm font-black text-white">Matériel à disposition</h2>
+              <p className="text-xs text-white/40">On adapte tes exercices selon ce que tu as en salle</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            {EQUIPMENT_OPTIONS.map(({ value, label }) => {
+          <p className="text-xs text-white/50 leading-relaxed">
+            Si tu ne coches rien, tu garderas les exercices par défaut (barre, poids de corps). Coche ce que tu as pour débloquer des variantes plus guidées.
+          </p>
+          <div className="space-y-2">
+            {FOUNDATIONS_EQUIPMENT_OPTIONS.map(({ value, label, hint }) => {
               const active = profile.equipment.includes(value)
               return (
                 <button
                   key={value}
                   type="button"
                   onClick={() => updateProfile({ equipment: toggleValue(profile.equipment, value) })}
-                  className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all flex items-center gap-2 ${
+                  className={`w-full py-3 px-4 rounded-2xl text-left transition-all flex items-center gap-3 ${
                     active
-                      ? 'bg-blue-500 text-white shadow-sm'
+                      ? 'bg-blue-500/15 border border-blue-500/40 text-white'
                       : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-white' : 'bg-white/20'}`} />
-                  {label}
+                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${active ? 'bg-blue-400' : 'bg-white/20'}`} />
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold">{label}</span>
+                    <span className="block text-[10px] text-white/40 mt-0.5">{hint}</span>
+                  </div>
                 </button>
               )
             })}
           </div>
         </section>
+        )}
 
         {/* Planning club */}
         <section className="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
@@ -1107,19 +1102,19 @@ export function ProfilePage() {
           )}
         </section>
 
-        {/* Blessures */}
+        {/* Zones sensibles */}
         <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-2xl bg-orange-900/20 text-orange-400">
               <Shield className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-white">Douleurs / Blessures</h2>
-              <p className="text-xs text-white/40">Laisse vide si aucune</p>
+              <h2 className="text-sm font-black text-white">Zones sensibles</h2>
+              <p className="text-xs text-white/40">On adapte les exercices pour éviter ces zones</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {INJURY_OPTIONS.map(({ value, label }) => {
+            {SENSITIVE_ZONE_OPTIONS.map(({ value, label }) => {
               const active = profile.injuries.includes(value)
               return (
                 <button
@@ -1140,120 +1135,12 @@ export function ProfilePage() {
           </div>
           {profile.injuries.length > 0 && (
             <p className="text-xs text-orange-400 font-medium">
-              {profile.injuries.length} zone{profile.injuries.length > 1 ? 's' : ''} à protéger — les exercices contra-indiqués seront exclus.
+              {profile.injuries.length} zone{profile.injuries.length > 1 ? 's' : ''} — les exercices sollicitant ces zones seront remplacés par des alternatives.
             </p>
           )}
         </section>
 
-        {/* ─── Programme Réhab ─────────────────────────────────────────── */}
-        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-rose-900/20 text-rose-400">
-              <HeartPulse className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-sm font-black text-white">Programme Réhab</h2>
-              <p className="text-xs text-white/40">Retour progressif après blessure (3 phases)</p>
-            </div>
-          </div>
-
-          {!profile.rehabInjury ? (
-            <div className="space-y-3">
-              <p className="text-xs text-white/40">
-                Aucun programme actif. Sélectionne la zone à réhabiliter :
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const today = new Date().toISOString().split('T')[0]
-                    updateProfile({ rehabInjury: { type: 'shoulder_pain', zone: 'upper', phase: 1, startDate: today, phaseStartDate: today } })
-                  }}
-                  className="py-3 px-3 rounded-2xl text-xs font-bold text-left bg-white/5 text-white/60 border border-white/10 hover:border-rose-500/30 hover:bg-rose-900/10 transition-all flex flex-col gap-1"
-                >
-                  <span className="text-base">🦾</span>
-                  <span className="font-black">Épaule / Cou / Bras</span>
-                  <span className="text-[10px] text-white/30 font-normal">Zone supérieure</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const today = new Date().toISOString().split('T')[0]
-                    updateProfile({ rehabInjury: { type: 'knee_pain', zone: 'lower', phase: 1, startDate: today, phaseStartDate: today } })
-                  }}
-                  className="py-3 px-3 rounded-2xl text-xs font-bold text-left bg-white/5 text-white/60 border border-white/10 hover:border-rose-500/30 hover:bg-rose-900/10 transition-all flex flex-col gap-1"
-                >
-                  <span className="text-base">🦵</span>
-                  <span className="font-black">Genou / Hanche / Cheville</span>
-                  <span className="text-[10px] text-white/30 font-normal">Zone inférieure</span>
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {/* Phase pills */}
-              <div className="flex gap-2">
-                {([1, 2, 3] as RehabPhase[]).map((p) => (
-                  <span
-                    key={p}
-                    className={`px-3 py-1.5 rounded-full text-xs font-black ${
-                      profile.rehabInjury!.phase === p
-                        ? 'bg-rose-600 text-white'
-                        : profile.rehabInjury!.phase > p
-                          ? 'bg-rose-900/30 text-rose-400'
-                          : 'bg-white/5 text-white/40 border border-white/10'
-                    }`}
-                  >
-                    P{p}
-                  </span>
-                ))}
-              </div>
-
-              {/* Zone label */}
-              <p className="text-xs font-bold text-rose-400">
-                {profile.rehabInjury.zone === 'upper' ? '🦾 Épaule / Cou / Bras' : '🦵 Genou / Hanche / Cheville'}
-                {' — '}Phase {profile.rehabInjury.phase}/3
-              </p>
-
-              {/* Criteria */}
-              <div className="p-3 bg-rose-900/20 border border-rose-500/20 rounded-2xl">
-                <p className="text-xs text-rose-300 leading-relaxed">
-                  <strong>Critères phase suivante :</strong>{' '}
-                  {REHAB_CRITERIA[profile.rehabInjury.phase]}
-                </p>
-              </div>
-
-              {/* Actions */}
-              <div className="flex gap-2">
-                {profile.rehabInjury.phase < 3 && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const today = new Date().toISOString().split('T')[0]
-                      updateProfile({
-                        rehabInjury: {
-                          ...profile.rehabInjury!,
-                          phase: (profile.rehabInjury!.phase + 1) as RehabPhase,
-                          phaseStartDate: today,
-                        }
-                      })
-                    }}
-                    className="flex-1 py-2.5 rounded-2xl bg-rose-600 text-white text-xs font-black hover:bg-rose-500 transition-colors text-center"
-                  >
-                    Phase suivante →
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => updateProfile({ rehabInjury: undefined })}
-                  className="px-4 py-2.5 rounded-2xl border border-white/10 text-xs font-bold text-white/40 hover:border-rose-500/30 hover:text-rose-400 transition-colors"
-                >
-                  Terminer
-                </button>
-              </div>
-            </div>
-          )}
-        </section>
+        {/* Programme Réhab supprimé — hors périmètre prépa physique (V2 avec partenariat kiné) */}
 
         {/* ─── Notifications ───────────────────────────────────────────── */}
         <section className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-4">

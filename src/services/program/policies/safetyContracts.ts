@@ -135,9 +135,10 @@ export const applySafetyContracts = ({
 
   let recipeIds = initialRecipeIds
 
-  if (featureFlags.safetyContractsV1 && profile.rehabInjury) {
-    recipeIds = applyRehabRouting(recipeIds, profile.rehabInjury)
-  }
+  // Rehab routing désactivé — hors périmètre prépa physique (V2 avec partenariat kiné)
+  // if (featureFlags.safetyContractsV1 && profile.rehabInjury) {
+  //   recipeIds = applyRehabRouting(recipeIds, profile.rehabInjury)
+  // }
 
   if (
     featureFlags.populationProfileV1 &&

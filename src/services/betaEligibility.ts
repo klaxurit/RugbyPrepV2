@@ -88,33 +88,8 @@ export function checkBetaEligibility(profile: UserProfile): BetaEligibilityResul
   // ─────────────────────────────────────────────────────────────────────────
 
   const reasons: BetaEligibilityReason[] = []
-  const injuries = profile.injuries ?? []
-  const equipment = profile.equipment ?? []
-  // isLimitedGym = pas de barbell. Vrai aussi pour BW_ONLY (equipment: []).
-  // Un profil BW_ONLY + shoulder_pain déclenche SHOULDER_PAIN_LIMITED_GYM (pas SHOULDER_PAIN).
-  const isLimitedGym = !equipment.includes('barbell')
 
-  // 1. shoulder_pain + limited gym (most specific — captures worst-case degradation)
-  if (injuries.includes('shoulder_pain') && isLimitedGym) {
-    reasons.push('SHOULDER_PAIN_LIMITED_GYM')
-  }
-
-  // 2. rehab actif (indépendant)
-  if (profile.rehabInjury != null) {
-    reasons.push('REHAB_ACTIVE')
-  }
-
-  // 3. multi-blessures : exclure shoulder_pain du comptage pour éviter le double messaging
-  //    shoulder_pain est déjà capturé comme raison si présent → ne pas l'ajouter en "multi"
-  const injuriesWithoutShoulder = injuries.filter((i) => i !== 'shoulder_pain')
-  if (injuriesWithoutShoulder.length >= 2) {
-    reasons.push('MULTI_INJURIES')
-  }
-
-  // 4. shoulder_pain seul avec barbell
-  if (injuries.includes('shoulder_pain') && !isLimitedGym) {
-    reasons.push('SHOULDER_PAIN')
-  }
+  // Injury-based blocks removed — zones sensibles adapt exercises instead of blocking.
 
   // 5. Règle conservative : seul 'in_season' explicite est dans le périmètre beta.
   //    off_season, pre_season, ET seasonMode absent (undefined) = hors périmètre.

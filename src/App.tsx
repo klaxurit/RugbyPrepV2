@@ -21,8 +21,10 @@ import { LandingPage } from './pages/LandingPage'
 import { StaffPlanningSandboxPage } from './pages/StaffPlanningSandboxPage'
 
 const isStandaloneMode =
-  window.matchMedia('(display-mode: standalone)').matches ||
-  (navigator as unknown as { standalone?: boolean }).standalone === true
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  (window.matchMedia('(display-mode: standalone)').matches ||
+   (navigator as unknown as { standalone?: boolean }).standalone === true)
 
 function RootRoute() {
   if (!isStandaloneMode) return <LandingPage />

@@ -27,6 +27,7 @@ import { useWeek } from '../hooks/useWeek'
 import { useHistory } from '../hooks/useHistory'
 import { useAuth } from '../hooks/useAuth'
 import { useCalendar } from '../hooks/useCalendar'
+import { useAdaptiveSchedule } from '../hooks/useAdaptiveSchedule'
 import { useACWR, ACWR_ZONE_CONFIG } from '../hooks/useACWR'
 import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
@@ -115,6 +116,7 @@ export function HomePage() {
   const { week } = useWeek()
   const { logs } = useHistory()
   const { events, nextMatch, seasonPhase, isMatchDay } = useCalendar()
+  const adaptiveSchedule = useAdaptiveSchedule(profile, events)
   const acwr = useACWR(logs, events)
   const { isPremium } = useFeatureAccess()
   const { getHistoryFor } = useAthleteTests()
@@ -149,8 +151,8 @@ export function HomePage() {
     [surface],
   )
   const todaySessionIndex = useMemo(
-    () => getTodaySessionIndex(msSessions, profile.scSchedule, profile.clubSchedule),
-    [msSessions, profile.scSchedule, profile.clubSchedule],
+    () => getTodaySessionIndex(msSessions, adaptiveSchedule, profile.clubSchedule),
+    [msSessions, adaptiveSchedule, profile.clubSchedule],
   )
   const todaySession = todaySessionIndex != null ? msSessions[todaySessionIndex] : null
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
@@ -462,9 +464,8 @@ export function HomePage() {
 
         {/* ── Premium: Injury risk alert (T2.3) ── */}
         {isPremium && (() => {
-          // Conditions: ACWR > 1.3 AND CMJ regression > 10% vs baseline AND not in rehab AND >= 3 CMJ measures
+          // Conditions: ACWR > 1.3 AND CMJ regression > 10% vs baseline AND >= 3 CMJ measures
           if (!acwr.hasSufficientData || acwr.acwr == null || acwr.acwr <= 1.3) return null
-          if (profile.rehabInjury) return null
 
           const cmjHistory = getHistoryFor('cmj', 8)
           if (cmjHistory.length < 3) return null

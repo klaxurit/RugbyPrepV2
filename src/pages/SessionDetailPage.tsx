@@ -243,7 +243,7 @@ export function SessionDetailPage() {
                     getLastEntryForExercise={getLastEntryForExercise}
                     isPremium={isPremium}
                     acwr={acwrHasData ? acwr : null}
-                    isRehabActive={!!profile.rehabInjury}
+                    isRehabActive={false}
                   />
                 </div>
 

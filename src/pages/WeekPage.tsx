@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Activity, Leaf, HeartPulse } from 'lucide-react'
+import { Activity, Leaf } from 'lucide-react'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
@@ -15,17 +15,12 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
-import type { RehabPhase } from '../types/training'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { AnnualPlanningSummaryCard } from '../components/motherSession/AnnualPlanningSummaryCard'
 import { MotherSessionWeekPanel } from '../components/motherSession/MotherSessionWeekPanel'
+import { useAdaptiveSchedule } from '../hooks/useAdaptiveSchedule'
 
-const REHAB_CRITERIA: Record<RehabPhase, string> = {
-  1: 'P2 : absence douleur au repos · mobilité partielle retrouvée · 1-2 semaines',
-  2: 'P3 : force ≥ 70% côté sain · ROM complet sans douleur · 2-4 semaines',
-  3: 'Fin : force ≥ 90% · tests fonctionnels OK · course/sauts sans douleur',
-}
 
 function localDateISO(d: Date): string {
   const y = d.getFullYear()
@@ -44,6 +39,7 @@ export function WeekPage() {
   const { events } = useCalendar()
   const navigate = useNavigate()
 
+  const adaptiveSchedule = useAdaptiveSchedule(profile, events)
   const acwrResult = useACWR(logs, events)
   const { isPremium: weekIsPremium } = useFeatureAccess()
   const { canShowUpsell: weekCanShowUpsell } = useUpsellTiming()
@@ -187,25 +183,6 @@ export function WeekPage() {
               </Link>
             )}
 
-            {/* Bannière rehab active */}
-            {profile.rehabInjury && (
-              <div className="p-4 bg-rose-900/20 border border-rose-500/20 rounded-3xl space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <HeartPulse className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                    <p className="text-xs font-black text-rose-400">
-                      Mode Réhab — Phase {profile.rehabInjury.phase}/3
-                    </p>
-                  </div>
-                  <span className="text-[10px] text-rose-400">
-                    {profile.rehabInjury.zone === 'upper' ? 'Épaule/Bras/Cou' : 'Genou/Hanche/Cheville'}
-                  </span>
-                </div>
-                <p className="text-xs text-rose-400 leading-snug">
-                  {REHAB_CRITERIA[profile.rehabInjury.phase]}
-                </p>
-              </div>
-            )}
 
             {/* Fatigue check-in discret */}
             <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5">
@@ -243,7 +220,7 @@ export function WeekPage() {
               companionRecommendations={[]}
               status={msResolution.status}
               missingMessage={msResolution.message}
-              scSchedule={profile.scSchedule}
+              scSchedule={adaptiveSchedule}
               clubSchedule={profile.clubSchedule}
               lang={lang}
               onSessionSelect={(index) => navigate(`/session/${index}`)}

@@ -29,33 +29,7 @@ describe('buildWeekProgram', () => {
     }
   })
 
-  it('TID-ENG-002 keeps upper rehab phase 1 sessions valid when prehab falls back to core', () => {
-    const rehabProfile = createProfile({
-      injuries: ['shoulder_pain'],
-      rehabInjury: {
-        zone: 'upper',
-        phase: 1,
-        startDate: '2026-03-01',
-        phaseStartDate: '2026-03-01',
-        type: 'shoulder_pain',
-      },
-    })
-
-    const result = buildWeekProgram(rehabProfile, 'W1')
-    const rehabSession = result.sessions.find((session) => session.recipeId === 'REHAB_UPPER_P1_V1')
-
-    expect(rehabSession).toBeTruthy()
-    expect(validateSession(rehabSession!).isValid).toBe(true)
-
-    const finisherCount = rehabSession!.blocks.filter(
-      (builtBlock) =>
-        builtBlock.block.intent === 'neck' ||
-        builtBlock.block.intent === 'core' ||
-        builtBlock.block.intent === 'carry'
-    ).length
-
-    expect(finisherCount).toBeLessThanOrEqual(1)
-  })
+  // TID-ENG-002 rehab test removed — rehab routing disabled (V2)
 
   it('TID-ENG-003 replaces the last session with recovery mobility in ACWR danger and keeps it valid', () => {
     const result = buildWeekProgram(createProfile(), 'W1', {
