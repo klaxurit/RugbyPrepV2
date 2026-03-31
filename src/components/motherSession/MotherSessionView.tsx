@@ -24,6 +24,10 @@ type MotherSessionViewProps = {
   fatigue?: FatigueStatus
   onSaveBlock?: (log: Omit<BlockLog, 'id'>) => void
   getLastEntryForExercise?: (exerciseId: string) => ExerciseLogEntry | undefined
+  getBestForExercise?: (exerciseId: string) => {
+    bestLoadKg?: number; bestReps?: number; bestMeters?: number; bestSeconds?: number
+    bestLabel?: string; bestLoadRepsScore?: number
+  }
   // Premium load suggestion
   isPremium?: boolean
   acwr?: number | null
@@ -41,6 +45,7 @@ export function MotherSessionView({
   fatigue,
   onSaveBlock,
   getLastEntryForExercise,
+  getBestForExercise,
   isPremium,
   acwr,
   isRehabActive,
@@ -90,6 +95,7 @@ export function MotherSessionView({
             fatigue={fatigue}
             onSaveBlock={onSaveBlock}
             getLastEntryForExercise={getLastEntryForExercise}
+            getBestForExercise={getBestForExercise}
             isPremium={isPremium}
             acwr={acwr}
             isRehabActive={isRehabActive}

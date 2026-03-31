@@ -59,7 +59,7 @@ export function SessionDetailPage() {
   const { addLog, logs } = useHistory()
   const { events } = useCalendar()
   const navigate = useNavigate()
-  const { addBlockLog, getLastEntryForExercise } = useBlockLogs()
+  const { addBlockLog, getLastEntryForExercise, getBestForExercise } = useBlockLogs()
   const { isPremium } = useFeatureAccess()
   const [prehabbOpen, setPrehabbOpen] = useState(true)
   const [msNotes, setMsNotes] = useState('')
@@ -241,6 +241,7 @@ export function SessionDetailPage() {
                     fatigue={fatigue}
                     onSaveBlock={handleSaveBlock}
                     getLastEntryForExercise={getLastEntryForExercise}
+                    getBestForExercise={getBestForExercise}
                     isPremium={isPremium}
                     acwr={acwrHasData ? acwr : null}
                     isRehabActive={false}

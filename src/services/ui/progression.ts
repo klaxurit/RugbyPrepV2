@@ -86,11 +86,14 @@ export const getExerciseDeltaW1W4 = (
   }
 
   const deltaValue = to.score - from.score
-  const status = deltaValue > 0 ? 'up' : deltaValue < 0 ? 'down' : 'same'
 
   if (from.kind === 'load_reps') {
     const loadDelta = (to.entry.loadKg ?? 0) - (from.entry.loadKg ?? 0)
     const repsRef = to.entry.reps ?? from.entry.reps ?? 0
+    // Use load as primary progression indicator — in strength phases,
+    // load goes up while reps may drop. Volume (load×reps) would show
+    // a false regression (e.g. 55kg×6 → 70kg×4 = +15kg but score -50).
+    const status = loadDelta > 0 ? 'up' : loadDelta < 0 ? 'down' : (deltaValue > 0 ? 'up' : deltaValue < 0 ? 'down' : 'same')
     return {
       status,
       deltaText:
@@ -102,6 +105,8 @@ export const getExerciseDeltaW1W4 = (
       deltaValue
     }
   }
+
+  const status = deltaValue > 0 ? 'up' : deltaValue < 0 ? 'down' : 'same'
 
   if (from.kind === 'distance') {
     return {

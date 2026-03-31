@@ -249,25 +249,25 @@ const PREMIUM_YEARLY_PRICE = '47,99€'
 const FREE_PLAN_FEATURES = [
   'Programme périodisé complet',
   "Séances et logs d'entraînement",
-  'Calendrier club + ACWR basique',
-  'Préhab, mobilité et réhab',
-  'Chat IA de base',
+  'Calendrier club + suivi ACWR',
+  'Préhab et mobilité intégrées',
+  'Chat IA (5 messages/jour)',
 ]
 
 const PREMIUM_MONTHLY_FEATURES = [
   'Tout le plan Free',
-  'Suggestions de charge dans les séances',
-  'Coach IA enrichi et plus contextuel',
-  'Lecture intelligente de la semaine et de la charge',
-  'Timeline récupération post-match',
-  'Projection de progression sur les mouvements clés',
+  'Score de forme quotidien',
+  'Bilan de semaine automatique',
+  'Records personnels et courbes de progression',
+  'Suggestions de charge personnalisées',
+  'Chat IA illimité',
 ]
 
 const PREMIUM_YEARLY_FEATURES = [
   'Tout le plan Premium',
   "33% d'économie vs mensuel",
-  'Même coaching Premium sur toute la saison',
-  'Tarif le plus rentable pour suivre ton année rugby',
+  'Suivi de progression sur toute la saison',
+  'Tarif le plus rentable pour ton année rugby',
 ]
 
 // ─── Main Landing Page ───────────────────────────────────────
@@ -316,7 +316,7 @@ export function LandingPage() {
     {
       question: 'Quelle différence entre Free et Premium ?',
       answer:
-        "Le Free donne déjà accès au programme complet, aux séances, au calendrier, aux logs et à une première lecture de la charge. Le Premium ajoute surtout l'aide à la décision : charges suggérées, coach IA plus contextuel, lecture intelligente de la semaine et projection de progression.",
+        "Le Free donne déjà accès au programme complet, aux séances, au calendrier, aux logs et au suivi ACWR. Le Premium ajoute l'aide à la décision : suggestions de charge personnalisées, analytics détaillées, projection de progression et chat IA illimité.",
     },
     {
       question: 'Par où commencer si je découvre RugbyForge ?',
@@ -358,9 +358,8 @@ export function LandingPage() {
                 optimisée
               </h1>
               <p className="text-lg text-slate-400 max-w-xl mb-8">
-                Le Free te donne déjà un vrai programme de rugby. Le Premium t'aide ensuite à ne
-                plus deviner quoi charger, comment lire ta semaine et comment interpréter ta
-                progression.
+                Le Free te donne déjà un vrai programme de rugby. Le Premium ajoute les suggestions
+                de charge, les analytics détaillées et la projection de ta progression.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -437,7 +436,7 @@ export function LandingPage() {
             </h2>
             <p className="text-slate-400 max-w-2xl mx-auto">
               RugbyForge combine science du sport, périodisation et coaching contextuel pour te
-              donner un cadre clair en Free, puis une couche d'aide à la décision en Premium.
+              donner un cadre clair en Free, puis des outils d'aide à la décision en Premium.
             </p>
           </motion.div>
 
@@ -451,7 +450,7 @@ export function LandingPage() {
             <FeatureCard
               icon={<Activity className="w-6 h-6 text-[#ff6b35]" />}
               title="Lecture de la charge"
-              description="Lis l'ACWR, la récupération et les semaines à risque sans tableau compliqué. En Premium, la lecture devient plus contextuelle."
+              description="Lis l'ACWR, la récupération et les semaines à risque sans tableau compliqué. Le Premium ajoute des analytics détaillées."
               delay={0.1}
             />
             <FeatureCard
@@ -463,19 +462,19 @@ export function LandingPage() {
             <FeatureCard
               icon={<Brain className="w-6 h-6 text-[#ff6b35]" />}
               title="Coach IA"
-              description="Pose tes questions nutrition, récupération ou semaine de match. Le Premium débloque un coach plus contextuel et plus actionnable."
+              description="Pose tes questions nutrition, récupération ou semaine de match. Le Premium débloque le chat illimité (5 messages/jour en Free)."
               delay={0.3}
             />
             <FeatureCard
               icon={<Calendar className="w-6 h-6 text-[#ff6b35]" />}
               title="Calendrier club"
-              description="Intègre tes matchs et entraînements club. En Premium, tu obtiens aussi une lecture plus claire de la récupération post-match."
+              description="Intègre tes matchs et entraînements club via la FFR. Le programme s'adapte automatiquement à ton planning."
               delay={0.4}
             />
             <FeatureCard
               icon={<TrendingUp className="w-6 h-6 text-[#ff6b35]" />}
               title="Tests & progression"
-              description="Suis tes 1RM estimés, le CMJ et les autres repères utiles. En Premium, la progression devient plus lisible et interprétable."
+              description="Suis tes 1RM estimés, le CMJ et les autres repères utiles. Le Premium ajoute les projections et l'historique complet."
               delay={0.5}
             />
           </div>

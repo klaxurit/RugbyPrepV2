@@ -21,8 +21,6 @@ import type {
   ClubSchedule,
   TrainingLevel,
   SeasonMode,
-  AgeBand,
-  PopulationSegment,
   FfrCompetition,
 } from '../types/training'
 import { fetchCompetitions, syncCalendar } from '../services/calendar/ffrSyncService'
@@ -107,17 +105,6 @@ const MATCH_DAY_OPTIONS: { day: DayOfWeek | null; label: string }[] = [
 
 const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 
-const AGE_BAND_OPTIONS: { value: AgeBand; label: string }[] = [
-  { value: 'adult', label: 'Senior (18+)' },
-  { value: 'u18', label: 'U18' },
-]
-
-const POPULATION_OPTIONS: { value: PopulationSegment; label: string; ageBand: AgeBand }[] = [
-  { value: 'male_senior', label: 'Homme senior', ageBand: 'adult' },
-  { value: 'female_senior', label: 'Femme senior', ageBand: 'adult' },
-  { value: 'u18_male', label: 'Garçon U18', ageBand: 'u18' },
-  { value: 'u18_female', label: 'Fille U18', ageBand: 'u18' },
-]
 
 
 interface FfrClub {
@@ -408,10 +395,6 @@ export function ProfilePage() {
   const selectedClubLogoUrl = getClubLogoUrl(profile.clubCode)
   const selectedClubMonogram = getClubMonogram(profile.clubName)
   const resolvedAvatarUrl = authState.user?.avatarUrl ?? profile.avatarUrl
-  const selectedAgeBand: AgeBand = profile.ageBand ?? 'adult'
-  const selectedPopulation: PopulationSegment =
-    profile.populationSegment ??
-    (selectedAgeBand === 'u18' ? 'u18_male' : 'male_senior')
 
   return (
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
@@ -979,128 +962,7 @@ export function ProfilePage() {
           )}
         </section>
 
-        {/* Population & consentement santé */}
-        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-cyan-900/20 text-cyan-400">
-              <Shield className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-sm font-black text-white">Population & conformité</h2>
-              <p className="text-xs text-white/40">Mineurs: consentement parental et minimisation des données santé</p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Catégorie d'âge</label>
-            <div className="grid grid-cols-2 gap-2">
-              {AGE_BAND_OPTIONS.map((opt) => {
-                const active = selectedAgeBand === opt.value
-                return (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => {
-                      const patch: Partial<typeof profile> = { ageBand: opt.value }
-                      if (opt.value === 'u18') {
-                        patch.populationSegment =
-                          selectedPopulation === 'u18_female' || selectedPopulation === 'u18_male'
-                            ? selectedPopulation
-                            : 'u18_male'
-                        if (profile.parentalConsentHealthData === undefined) {
-                          patch.parentalConsentHealthData = false
-                        }
-                      } else {
-                        patch.populationSegment =
-                          selectedPopulation === 'male_senior' || selectedPopulation === 'female_senior'
-                            ? selectedPopulation
-                            : 'male_senior'
-                        patch.parentalConsentHealthData = false
-                      }
-                      updateProfile(patch, { source: 'profile' })
-                    }}
-                    className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
-                      active
-                        ? 'bg-cyan-700/30 text-cyan-200 border border-cyan-500/30'
-                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Segment population</label>
-            <div className="grid grid-cols-1 gap-2">
-              {POPULATION_OPTIONS.filter((opt) => opt.ageBand === selectedAgeBand).map((opt) => {
-                const active = selectedPopulation === opt.value
-                return (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => updateProfile({ populationSegment: opt.value }, { source: 'profile' })}
-                    className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
-                      active
-                        ? 'bg-cyan-700/30 text-cyan-200 border border-cyan-500/30'
-                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {selectedAgeBand === 'u18' && (
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">
-                Consentement parental données santé
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => updateProfile({ parentalConsentHealthData: true }, { source: 'profile' })}
-                  className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
-                    profile.parentalConsentHealthData
-                      ? 'bg-emerald-700/30 text-emerald-200 border border-emerald-500/30'
-                      : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
-                  }`}
-                >
-                  Accord parental
-                </button>
-                <button
-                  type="button"
-                  onClick={() => updateProfile({ parentalConsentHealthData: false }, { source: 'profile' })}
-                  className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
-                    profile.parentalConsentHealthData === false
-                      ? 'bg-amber-900/30 text-amber-300 border border-amber-500/30'
-                      : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
-                  }`}
-                >
-                  Retirer / absent
-                </button>
-              </div>
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1">
-                <p className="text-[11px] text-white/55">
-                  Statut: <span className="font-bold text-white/75">{profile.healthConsentStatus ?? 'unknown'}</span>
-                </p>
-                {profile.healthConsentGrantedAt && (
-                  <p className="text-[10px] text-white/35">Accord enregistré: {new Date(profile.healthConsentGrantedAt).toLocaleString()}</p>
-                )}
-                {profile.healthConsentRevokedAt && (
-                  <p className="text-[10px] text-white/35">Retrait enregistré: {new Date(profile.healthConsentRevokedAt).toLocaleString()}</p>
-                )}
-                {profile.healthDataRetentionState && (
-                  <p className="text-[10px] text-white/35">Rétention données santé: {profile.healthDataRetentionState}</p>
-                )}
-              </div>
-            </div>
-          )}
-        </section>
+        {/* Population & conformité supprimés — app réservée aux adultes (V2 pour U18) */}
 
         {/* Zones sensibles */}
         <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
@@ -1174,10 +1036,22 @@ export function ProfilePage() {
               Planning & matchs
             </div>
             <div className={`rounded-2xl border p-3 ${features.premiumProgramAdaptations ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
-              Suggestions auto
+              Suggestions de charge
             </div>
             <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
               Analytics détaillées
+            </div>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Score de forme
+            </div>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Bilan de semaine
+            </div>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Records personnels
+            </div>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+              Chat IA illimité
             </div>
           </div>
 
@@ -1190,7 +1064,7 @@ export function ProfilePage() {
           {!isPremium && canShowUpsell && !profileUpsellDismissed && (
             <PremiumUpsellCard
               title="Débloque les fonctionnalités avancées"
-              body="Le Premium active les analytics détaillées, les suggestions automatiques et les futures notifications avancées, sans retirer les garde-fous sécurité du mode Free."
+              body="Score de forme, bilan de semaine, records personnels, suggestions de charge, analytics détaillées et chat IA illimité."
               onDismiss={() => {
                 dismissUpsell('profile_premium')
                 setProfileUpsellDismissed(true)

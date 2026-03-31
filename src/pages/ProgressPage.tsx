@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import {
   TrendingUp, TrendingDown, Minus, AlertCircle, BarChart2,
-  Plus, X, FlaskConical, Dumbbell, ChevronDown, Lock, Activity
+  Plus, X, FlaskConical, Dumbbell, ChevronDown, Lock, Activity, Trophy
 } from 'lucide-react'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import blocksData from '../data/blocks.v1.json'
 import { getExerciseName } from '../data/exercises'
 import { useBlockLogs } from '../hooks/useBlockLogs'
@@ -26,7 +26,9 @@ import {
 import { seedDemoData, clearDemoMode, isDemoModeActive } from '../data/fakeDataForProgress'
 import { PageHeader } from '../components/PageHeader'
 import { BottomNav } from '../components/BottomNav'
-import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
+import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
+import { ProgressCurveSkeleton } from '../components/SkeletonCard'
+import { PRBoard } from '../components/pr/PRBoard'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import type { TrainingBlock } from '../types/training'
@@ -77,10 +79,11 @@ type TestCardConfig = {
 }
 
 const TEST_CARDS: TestCardConfig[] = [
-  { type: 'cmj',          label: 'Counter-Movement Jump', unit: 'cm',  higherIsBetter: true,  color: '#e11d48' },
-  { type: 'sprint_10m',   label: 'Sprint 10m',            unit: 's',   higherIsBetter: false, color: '#f97316' },
-  { type: 'one_rm_squat', label: '1RM Squat',             unit: 'kg',  higherIsBetter: true,  color: '#6366f1', is1RM: true },
-  { type: 'yyir1',        label: 'Yo-Yo IR1',             unit: 'm',   higherIsBetter: true,  color: '#0ea5e9' },
+  { type: 'cmj',              label: 'Counter-Movement Jump', unit: 'cm',  higherIsBetter: true,  color: '#e11d48' },
+  { type: 'sprint_10m',       label: 'Sprint 10m',            unit: 's',   higherIsBetter: false, color: '#f97316' },
+  { type: 'one_rm_squat',     label: '1RM Squat',             unit: 'kg',  higherIsBetter: true,  color: '#6366f1', is1RM: true },
+  { type: 'one_rm_deadlift',  label: '1RM Soulevé de terre',  unit: 'kg',  higherIsBetter: true,  color: '#8b5cf6', is1RM: true },
+  { type: 'yyir1',            label: 'Yo-Yo IR1',             unit: 'm',   higherIsBetter: true,  color: '#0ea5e9' },
 ]
 
 type TestTypeGroup = 'direct' | 'oneRM'
@@ -111,13 +114,14 @@ function formatVariation(delta: number, higherIsBetter: boolean): { text: string
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function ProgressPage() {
-  const [tab, setTab] = useState<'sessions' | 'tests'>('sessions')
-  const { logs, getLastEntryForExercise } = useBlockLogs()
+  const [tab, setTab] = useState<'sessions' | 'tests' | 'records'>('sessions')
+  const { logs, getLastEntryForExercise, allPRsWithDates } = useBlockLogs()
   const { logs: sessionLogs } = useHistory()
   const { addTest, getHistoryFor, getBestFor } = useAthleteTests()
   const { profile } = useProfile()
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
-  const { features, isPremium } = useFeatureAccess()
+  const { features, isPremium, loading: entitlementsLoading } = useFeatureAccess()
+  const premiumResolved = !entitlementsLoading
   const { canShowUpsell } = useUpsellTiming()
   const [dismissedCards, setDismissedCards] = useState<Set<string>>(() => {
     const set = new Set<string>()
@@ -341,8 +345,19 @@ export function ProgressPage() {
             }`}
           >
             <FlaskConical className="w-3.5 h-3.5" />
-            Tests Physiques
+            Tests
             {!features.premiumAnalytics && <Lock className="w-3 h-3 text-white/30" />}
+          </button>
+          <button
+            onClick={() => setTab('records')}
+            className={`flex-1 py-2 rounded-[14px] text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
+              tab === 'records'
+                ? 'bg-[#1a5f3f] text-white shadow-sm'
+                : 'text-white/40 hover:text-white'
+            }`}
+          >
+            <Trophy className="w-3.5 h-3.5" />
+            Records
           </button>
         </div>
 
@@ -482,72 +497,77 @@ export function ProgressPage() {
               )}
             </section>
 
-            {features.premiumProgramAdaptations ? (
-              nextTargetRows.length > 0 && (
-              <section>
-                <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">
-                  Objectifs prochaine séance
-                </h2>
-                <div className="bg-white/5 border border-white/10 rounded-[24px] overflow-hidden divide-y divide-white/10">
-                  {nextTargetRows.map((row) => (
-                    <div key={row.exerciseId} className="p-4 flex items-center justify-between gap-3">
-                      <span className="text-sm font-bold text-white truncate">{getExerciseName(row.exerciseId, lang)}</span>
-                      <span className="text-xs font-black text-[#10b981] bg-[#10b981]/10 px-2.5 py-1 rounded-full flex-shrink-0">
-                        ↑ {row.target}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-              )
-            ) : canShowCard('progress_objectives') ? (
-              <PremiumUpsellCard
-                title="Objectifs automatiques de charge"
-                body="Débloque des objectifs personnalisés pour la prochaine séance à partir de tes dernières performances."
-                onDismiss={() => handleDismiss('progress_objectives')}
-              />
-            ) : null}
+            {/* Objectifs prochaine séance retirés — les suggestions de charge sont déjà dans le logger de chaque bloc */}
 
-            {features.premiumAnalytics ? (
-              historyRows.length > 0 && (
-              <section>
-                <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">
-                  Progression saison
-                </h2>
-                <div className="space-y-4">
-                  {historyRows.slice(0, 6).map(({ exerciseId, history }) => {
-                    const maxProxy = Math.max(...history.map((h) => h.loadProxy), 1)
-                    return (
-                      <div key={exerciseId} className="bg-white/5 border border-white/10 rounded-[24px] p-4">
-                        <p className="text-sm font-bold text-white mb-3">{getExerciseName(exerciseId, lang)}</p>
-                        <div className="flex items-end gap-1 h-10">
-                          {history.map((h, i) => (
-                            <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                              <div
-                                className="w-full rounded-sm bg-[#1a5f3f]/20 hover:bg-[#1a5f3f]/40 transition-colors"
-                                style={{ height: `${Math.max(20, (h.loadProxy / maxProxy) * 40)}px` }}
-                                title={`${h.week}: ${h.text}`}
-                              />
-                              <span className="text-[8px] text-white/30 font-mono">{h.week}</span>
-                            </div>
-                          ))}
-                        </div>
-                        <p className="text-[10px] text-white/40 mt-2 font-mono">
-                          {history[0].text} → {history[history.length - 1].text}
-                        </p>
-                      </div>
-                    )
-                  })}
-                </div>
-              </section>
+            {(() => {
+              const FAKE_HISTORY = [
+                { week: 'W1', loadProxy: 60, text: '60kg × 8' },
+                { week: 'W2', loadProxy: 65, text: '65kg × 8' },
+                { week: 'W3', loadProxy: 67.5, text: '67.5kg × 7' },
+                { week: 'W4', loadProxy: 70, text: '70kg × 6' },
+              ]
+              const rows = features.premiumAnalytics ? historyRows : (
+                historyRows.length > 0 ? historyRows : [
+                  { exerciseId: 'ph_squat', history: FAKE_HISTORY },
+                  { exerciseId: 'ph_bench', history: FAKE_HISTORY.map(h => ({ ...h, loadProxy: h.loadProxy * 0.7, text: h.text.replace(/\d+kg/, `${Math.round(h.loadProxy * 0.7)}kg`) })) },
+                ]
               )
-            ) : canShowCard('progress_curves') ? (
-              <PremiumUpsellCard
-                title="Courbes de progression détaillées"
-                body="Débloque les tendances de saison, les comparaisons par exercice et les indicateurs avancés de progression."
-                onDismiss={() => handleDismiss('progress_curves')}
-              />
-            ) : null}
+
+              const curvesContent = rows.length > 0 && (
+                <section>
+                  <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">
+                    Progression saison
+                  </h2>
+                  <div className="space-y-4">
+                    {rows.slice(0, 6).map(({ exerciseId, history }) => {
+                      const chartData = history.map((h) => ({ w: h.week, v: h.loadProxy }))
+                      return (
+                        <div key={exerciseId} className="bg-white/5 border border-white/10 rounded-[24px] p-4">
+                          <p className="text-sm font-bold text-white mb-2">
+                            {exerciseId.startsWith('ph_') ? (exerciseId === 'ph_squat' ? 'Back Squat' : 'Bench Press') : getExerciseName(exerciseId, lang)}
+                          </p>
+                          <ResponsiveContainer width="100%" height={80}>
+                            <AreaChart data={chartData}>
+                              <defs>
+                                <linearGradient id={`grad-${exerciseId}`} x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stopColor="#1a5f3f" stopOpacity={0.4} />
+                                  <stop offset="100%" stopColor="#1a5f3f" stopOpacity={0.05} />
+                                </linearGradient>
+                              </defs>
+                              <Area
+                                type="monotone"
+                                dataKey="v"
+                                stroke="#1a5f3f"
+                                strokeWidth={2}
+                                fill={`url(#grad-${exerciseId})`}
+                                dot={{ r: 3, fill: '#1a5f3f', strokeWidth: 0 }}
+                              />
+                              <XAxis dataKey="w" tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.3)' }} axisLine={false} tickLine={false} />
+                              <YAxis domain={['auto', 'auto']} tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.3)' }} width={30} axisLine={false} tickLine={false} />
+                              <Tooltip
+                                contentStyle={{ backgroundColor: '#1a100c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, fontSize: 11, color: '#fff' }}
+                                formatter={(value: number) => [`${value} kg`, 'Charge']}
+                              />
+                            </AreaChart>
+                          </ResponsiveContainer>
+                          <p className="text-[10px] text-white/40 mt-1 font-mono">
+                            {history[0].text} → {history[history.length - 1].text}
+                          </p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </section>
+              )
+
+              if (features.premiumAnalytics) return curvesContent
+              if (!premiumResolved) return <ProgressCurveSkeleton />
+              return curvesContent ? (
+                <PremiumBlurredPreview label="Courbes de progression">
+                  {curvesContent}
+                </PremiumBlurredPreview>
+              ) : null
+            })()}
 
             {features.premiumAnalytics && missingRows.length > 0 && (
               <section>
@@ -585,13 +605,7 @@ export function ProgressPage() {
               Mesure tes performances athlétiques et suis leur évolution dans le temps.
             </p>
 
-            {!features.premiumAnalytics && canShowCard('progress_tests') && (
-              <PremiumUpsellCard
-                title="Analytics avancées verrouillées"
-                body="Le mode Free garde la saisie de tests. Le Premium débloque les courbes, les baselines poste/niveau et les alertes de régression."
-                onDismiss={() => handleDismiss('progress_tests')}
-              />
-            )}
+            {/* Les charts et baselines sont maintenant visibles en version floutée pour les free users */}
 
             <div className="space-y-4">
               {TEST_CARDS.map((card) => {
@@ -678,14 +692,23 @@ export function ProgressPage() {
                             )}
                           </p>
                         </div>
-                        {features.premiumAnalytics && baselineValue !== null && positionLabel && (
-                          <div className="text-right flex-shrink-0">
-                            <p className="text-[10px] text-white/40">Baseline {positionLabel}</p>
-                            <p className="text-xs font-bold text-white/50">
-                              {formatValue(baselineValue, card.type)} {card.unit}
-                              <span className="text-[9px] text-white/30 ml-1">({baselineLabel})</span>
-                            </p>
-                          </div>
+                        {baselineValue !== null && positionLabel && (
+                          features.premiumAnalytics ? (
+                            <div className="text-right flex-shrink-0">
+                              <p className="text-[10px] text-white/40">Baseline {positionLabel}</p>
+                              <p className="text-xs font-bold text-white/50">
+                                {formatValue(baselineValue, card.type)} {card.unit}
+                                <span className="text-[9px] text-white/30 ml-1">({baselineLabel})</span>
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="text-right flex-shrink-0 blur-[4px] opacity-50" aria-hidden>
+                              <p className="text-[10px] text-white/40">Baseline {positionLabel}</p>
+                              <p className="text-xs font-bold text-white/50">
+                                {formatValue(baselineValue, card.type)} {card.unit}
+                              </p>
+                            </div>
+                          )
                         )}
                       </div>
                     ) : (
@@ -700,8 +723,8 @@ export function ProgressPage() {
                     )}
 
                     {/* LineChart */}
-                    {features.premiumAnalytics && chartData.length > 0 && (
-                      <div className="px-2 pb-3">
+                    {chartData.length > 0 && (
+                      <div className={`px-2 pb-3 ${!features.premiumAnalytics ? 'blur-[5px] opacity-50 pointer-events-none' : ''}`}>
                         <ResponsiveContainer width="100%" height={100}>
                           <LineChart data={chartData}>
                             <Line
@@ -713,14 +736,14 @@ export function ProgressPage() {
                             />
                             <XAxis dataKey="d" tick={{ fontSize: 9 }} />
                             <YAxis domain={['auto', 'auto']} tick={{ fontSize: 9 }} width={28} />
-                            <Tooltip contentStyle={{ fontSize: 11 }} />
+                            {features.premiumAnalytics && <Tooltip contentStyle={{ fontSize: 11 }} />}
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
                     )}
 
-                    {/* T3.3: 1RM trend projection (Premium, ≥3 data points, 1RM type) */}
-                    {features.premiumAnalytics && card.is1RM && chartData.length >= 3 && (() => {
+                    {/* T3.3: 1RM trend projection (≥3 data points, 1RM type) */}
+                    {card.is1RM && chartData.length >= 3 && (() => {
                       // Simple linear regression
                       const n = chartData.length
                       const xs = chartData.map((_, i) => i)
@@ -742,7 +765,7 @@ export function ProgressPage() {
                       if (weeksToTarget <= 0 || weeksToTarget > 52) return null
 
                       return (
-                        <div className="px-4 pb-3">
+                        <div className={`px-4 pb-3 ${!features.premiumAnalytics ? 'blur-[4px] opacity-50' : ''}`}>
                           <p className="text-[10px] text-[#ff6b35]/70">
                             A ce rythme, {nextTarget} kg dans ~{weeksToTarget} semaine{weeksToTarget > 1 ? 's' : ''}
                           </p>
@@ -766,6 +789,15 @@ export function ProgressPage() {
               </div>
             </section>
           </>
+        )}
+
+        {/* ─── RECORDS TAB ─────────────────────────────────────────── */}
+        {tab === 'records' && (
+          <PRBoard
+            prs={allPRsWithDates}
+            isPremium={isPremium}
+            lang={lang}
+          />
         )}
 
       </main>

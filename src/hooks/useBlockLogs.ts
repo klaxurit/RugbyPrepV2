@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { BlockLog, ExerciseLogEntry } from '../types/training'
 import type { ExerciseMetricType } from '../types/training'
+import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { DEMO_MODE_KEY } from '../data/fakeDataForProgress'
@@ -55,7 +56,7 @@ const rowToLog = (row: BlockLogRow): BlockLog => ({
 })
 
 const logToRow = (log: BlockLog, userId: string) => ({
-  id: log.id,
+  // id omitted — let Supabase generate the UUID
   user_id: userId,
   date_iso: log.dateISO,
   week: log.week,
@@ -256,12 +257,70 @@ export const useBlockLogs = () => {
     [logs]
   )
 
+  /** All-time best per exercise with the date the PR was set, sorted most recent first. */
+  const allPRsWithDates = useMemo(() => {
+    const bests = new Map<string, { value: number; label: string; dateISO: string; metricType: ExerciseMetricType }>()
+
+    // Iterate oldest → newest so the last update wins as the PR date
+    const chronological = [...logs].reverse()
+    for (const log of chronological) {
+      for (const entry of log.entries) {
+        const { exerciseId } = entry
+        const metricType = getExerciseMetricType({ exerciseId })
+        let value: number | undefined
+        let label: string | undefined
+
+        // Detect best metric from actual data
+        let actualMetric: ExerciseMetricType = metricType
+        if (entry.loadKg != null && entry.reps != null) {
+          value = entry.loadKg * entry.reps
+          label = `${entry.loadKg}kg x ${entry.reps}`
+          actualMetric = 'load_reps'
+        } else if (entry.meters != null) {
+          value = entry.meters
+          label = `${entry.meters}m`
+          actualMetric = 'meters'
+        } else if (entry.seconds != null) {
+          value = -entry.seconds
+          label = `${entry.seconds}s`
+          actualMetric = 'seconds'
+        } else if (entry.reps != null) {
+          value = entry.reps
+          label = `${entry.reps} reps`
+          actualMetric = 'reps'
+        }
+
+        if (value == null || label == null) continue
+
+        const existing = bests.get(exerciseId)
+        if (!existing || value > existing.value) {
+          bests.set(exerciseId, { value, label, dateISO: log.dateISO.slice(0, 10), metricType: actualMetric })
+        }
+      }
+    }
+
+    const now = Date.now()
+    const fourteenDays = 14 * 86_400_000
+
+    return Array.from(bests.entries())
+      .map(([exerciseId, data]) => ({
+        exerciseId,
+        metricType: data.metricType,
+        bestValue: data.metricType === 'seconds' ? -data.value : data.value,
+        bestLabel: data.label,
+        dateISO: data.dateISO,
+        isRecent: now - new Date(data.dateISO).getTime() < fourteenDays,
+      }))
+      .sort((a, b) => b.dateISO.localeCompare(a.dateISO))
+  }, [logs])
+
   return {
     logs,
     addBlockLog,
     getLastLogForBlock,
     getLastEntryForExercise,
     getBestForExercise,
-    getBestForExerciseByMetric
+    getBestForExerciseByMetric,
+    allPRsWithDates,
   }
 }

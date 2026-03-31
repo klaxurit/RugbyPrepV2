@@ -14,6 +14,8 @@ import { getLoadSuggestion } from '../../services/loadSuggestion'
 import type { LoadSuggestionContext } from '../../services/loadSuggestion'
 import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import { ExerciseDemoSheet } from './ExerciseDemoSheet'
+import { detectPRs, type DetectedPR } from '../../services/pr/detectPRs'
+import { PRCelebrationOverlay } from '../pr/PRCelebrationOverlay'
 
 export type MotherSessionBlockProps = {
   block: Block
@@ -26,6 +28,10 @@ export type MotherSessionBlockProps = {
   fatigue?: FatigueStatus
   onSaveBlock?: (log: Omit<BlockLog, 'id'>) => void
   getLastEntryForExercise?: (exerciseId: string) => ExerciseLogEntry | undefined
+  getBestForExercise?: (exerciseId: string) => {
+    bestLoadKg?: number; bestReps?: number; bestMeters?: number; bestSeconds?: number
+    bestLabel?: string; bestLoadRepsScore?: number
+  }
   // Premium load suggestion
   isPremium?: boolean
   acwr?: number | null
@@ -96,6 +102,7 @@ export function MotherSessionBlock({
   fatigue,
   onSaveBlock,
   getLastEntryForExercise,
+  getBestForExercise,
   isPremium,
   acwr,
   isRehabActive,
@@ -130,6 +137,7 @@ export function MotherSessionBlock({
   const [saved, setSaved] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [demoExerciseId, setDemoExerciseId] = useState<string | null>(null)
+  const [celebratePRs, setCelebratePRs] = useState<DetectedPR[]>([])
 
   // Pre-fill drafts from lastEntry on first open
   const openLogger = useCallback(() => {
@@ -185,6 +193,18 @@ export function MotherSessionBlock({
       .filter((e): e is ExerciseLogEntry => e !== null)
 
     if (entries.length === 0) return
+
+    // Detect PRs BEFORE saving (so getBestForExercise still reflects old bests)
+    if (getBestForExercise) {
+      const prInputs = entries.map((entry) => ({
+        exerciseId: entry.exerciseId,
+        metricType: getExerciseMetricType({ exerciseId: entry.exerciseId }),
+        draft: { loadKg: entry.loadKg, reps: entry.reps, seconds: entry.seconds, meters: entry.meters },
+        previousBest: getBestForExercise(entry.exerciseId),
+      }))
+      const prs = detectPRs(prInputs)
+      if (prs.length > 0) setCelebratePRs(prs)
+    }
 
     setIsSaving(true)
     const blockId = `${motherSessionId}_B${block.number}`
@@ -345,6 +365,12 @@ export function MotherSessionBlock({
         exerciseId={demoExerciseId}
         lang={lang}
         onClose={() => setDemoExerciseId(null)}
+      />
+
+      <PRCelebrationOverlay
+        prs={celebratePRs}
+        lang={lang}
+        onDone={() => setCelebratePRs([])}
       />
     </article>
   )

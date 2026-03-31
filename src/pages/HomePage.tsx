@@ -33,6 +33,13 @@ import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useAthleteTests } from '../hooks/useAthleteTests'
+import { useBlockLogs } from '../hooks/useBlockLogs'
+import { useReadinessScore } from '../hooks/useReadinessScore'
+import { useWeeklySummary } from '../hooks/useWeeklySummary'
+import { ReadinessScoreCard } from '../components/ReadinessScoreCard'
+import { WeeklySummaryCard } from '../components/WeeklySummaryCard'
+import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
+import { ReadinessScoreSkeleton, WeeklySummarySkeleton } from '../components/SkeletonCard'
 import { getTodaySessionIndex } from '../services/ui/getTodaySessionIndex'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import type { CycleWeek, SessionType, SeasonPhase, SeasonMode } from '../types/training'
@@ -118,7 +125,10 @@ export function HomePage() {
   const { events, nextMatch, seasonPhase, isMatchDay } = useCalendar()
   const adaptiveSchedule = useAdaptiveSchedule(profile, events)
   const acwr = useACWR(logs, events)
-  const { isPremium } = useFeatureAccess()
+  const { isPremium, loading: entitlementsLoading } = useFeatureAccess()
+  // Don't show premium-gated sections until entitlements are resolved
+  // This prevents a flash of blurred content for premium users
+  const premiumResolved = !entitlementsLoading
   const { getHistoryFor } = useAthleteTests()
 
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
@@ -156,6 +166,22 @@ export function HomePage() {
   )
   const todaySession = todaySessionIndex != null ? msSessions[todaySessionIndex] : null
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
+
+  // ── Premium features: readiness score + weekly summary ──────────────────
+  const { logs: blockLogs } = useBlockLogs()
+  const readinessResult = useReadinessScore({
+    acwrZone: acwr.hasSufficientData ? acwr.zone : null,
+    fatigue,
+    logs,
+    nextMatchDate: nextMatch?.date ?? null,
+    today,
+  })
+  const weeklySummary = useWeeklySummary({
+    logs,
+    blockLogs,
+    plannedSessionCount: msSessions.length,
+    today,
+  })
   const todaySessionTitle = todaySession
     ? formatTitleFromMotherSessionId(todaySession.session.metadata.id, lang)
     : null
@@ -213,70 +239,75 @@ export function HomePage() {
 
         {/* ── Hero Session Card ── */}
         <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-black uppercase tracking-wider text-white/40">Séance du Jour</h2>
-            <span className="text-xs font-bold text-white/40 flex items-center gap-1">
-              <Activity className="w-3 h-3" />
-              {SEASON_MODE_LABEL[currentSeasonMode]}
-            </span>
-          </div>
-
-          <motion.div whileHover={{ y: -4 }} className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[#1a5f3f] to-[#ff6b35] shadow-2xl shadow-[#1a5f3f]/20">
-            {/* Formes géométriques subtiles en arrière-plan */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-2xl -ml-10 -mb-10" />
-
-            <div className="relative p-7 space-y-5">
-              {/* Level + Season badges */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full">
-                  <span className="text-[10px] font-black tracking-wide text-white/80 uppercase">{trainingLevelLabel}</span>
-                </div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#ff6b35] rounded-full">
-                  <Zap className="w-3 h-3 text-white fill-current" />
-                  <span className="text-[10px] font-black tracking-widest text-white uppercase">
-                    {weekLabel(week)}
-                  </span>
-                </div>
+          <div className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-4">
+            {/* Header: badges */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#ff6b35]/15 text-[#ff6b35]">
+                  {weekLabel(week)}
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/10 text-white/50">
+                  {trainingLevelLabel}
+                </span>
               </div>
-
-              <div className="space-y-1">
-                <h3 className="text-3xl font-black text-white leading-tight">
-                  {todaySession ? 'Séance\ndu jour' : 'Prêt à\nt\'entraîner ?'}
-                </h3>
-                {todaySessionTitle && (
-                  <p className="text-sm font-bold text-white/80">{todaySessionTitle}</p>
-                )}
-                <div className="flex items-center gap-4 text-white/90">
-                  <div className="flex items-center gap-1.5 text-sm font-medium">
-                    <Clock className="w-4 h-4 text-rose-500" />
-                    {sessionDuration}
-                  </div>
-                  <div className="flex items-center gap-1.5 text-sm font-medium">
-                    <Activity className="w-4 h-4 text-blue-400" />
-                    {profile.weeklySessions} séance{profile.weeklySessions > 1 ? 's' : ''}/sem.
-                  </div>
-                </div>
-              </div>
-
-              <Link
-                to={todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week'}
-                data-testid="home-cta-primary"
-              >
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
-                  className="w-full py-4 rounded-2xl flex items-center justify-center gap-3 bg-white hover:bg-white/95 shadow-lg shadow-black/10 transition-all mt-2"
-                >
-                  <span className="font-black text-[#1a5f3f] tracking-wide uppercase italic">
-                    {todaySession ? 'Commencer la séance' : 'Voir ma semaine'}
-                  </span>
-                  <div className="bg-[#1a5f3f]/10 p-1 rounded-full">
-                    <Play className="w-4 h-4 text-[#1a5f3f] fill-current" />
-                  </div>
-                </motion.button>
-              </Link>
+              <span className="text-[10px] font-bold text-white/30 flex items-center gap-1">
+                <Activity className="w-3 h-3" />
+                {SEASON_MODE_LABEL[currentSeasonMode]}
+              </span>
             </div>
-          </motion.div>
+
+            {/* Session info */}
+            <div className="space-y-1">
+              {todaySessionTitle ? (
+                <>
+                  <p className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Séance du jour</p>
+                  <h3 className="text-xl font-black text-white">{todaySessionTitle}</h3>
+                </>
+              ) : (
+                <h3 className="text-xl font-black text-white">Pas de séance aujourd'hui</h3>
+              )}
+              <div className="flex items-center gap-4 mt-1">
+                <span className="flex items-center gap-1.5 text-xs font-medium text-white/50">
+                  <Clock className="w-3.5 h-3.5 text-white/30" />
+                  {sessionDuration}
+                </span>
+                <span className="flex items-center gap-1.5 text-xs font-medium text-white/50">
+                  <Activity className="w-3.5 h-3.5 text-white/30" />
+                  {profile.weeklySessions}x/sem.
+                </span>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <Link
+              to={todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week'}
+              data-testid="home-cta-primary"
+              className="block"
+            >
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                className="w-full py-3.5 rounded-2xl flex items-center justify-center gap-2.5 bg-[#ff6b35] hover:bg-[#e55a2b] transition-colors"
+              >
+                <Play className="w-4 h-4 text-white fill-current" />
+                <span className="font-black text-white text-sm tracking-wide">
+                  {todaySession ? 'Commencer la séance' : 'Voir ma semaine'}
+                </span>
+              </motion.button>
+            </Link>
+          </div>
+        </section>
+
+        {/* ── Readiness Score ── */}
+        <section>
+          {!premiumResolved ? (
+            <ReadinessScoreSkeleton />
+          ) : isPremium ? (
+            <ReadinessScoreCard result={readinessResult} />
+          ) : (
+            <PremiumBlurredPreview label="Score de forme">
+              <ReadinessScoreCard result={readinessResult} />
+            </PremiumBlurredPreview>
+          )}
         </section>
 
         {/* ── Stats Row ── */}
@@ -449,18 +480,18 @@ export function HomePage() {
           )
         })()}
 
-        {/* ── Premium: Weekly summary (T2.1) ── */}
-        {isPremium && msSessions.length > 0 && (
-          <section>
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-1">
-              <p className="text-[10px] font-black uppercase tracking-wider text-[#ff6b35]">Ta semaine</p>
-              <p className="text-sm text-white/80">
-                {msSessions.length} séance{msSessions.length > 1 ? 's' : ''} prévue{msSessions.length > 1 ? 's' : ''}
-                {week !== 'DELOAD' ? `, cycle ${week}` : ', semaine de décharge'}
-              </p>
-            </div>
-          </section>
-        )}
+        {/* ── Weekly Summary ── */}
+        <section>
+          {!premiumResolved ? (
+            <WeeklySummarySkeleton />
+          ) : isPremium ? (
+            <WeeklySummaryCard result={weeklySummary} />
+          ) : (
+            <PremiumBlurredPreview label="Bilan de semaine">
+              <WeeklySummaryCard result={weeklySummary} />
+            </PremiumBlurredPreview>
+          )}
+        </section>
 
         {/* ── Premium: Injury risk alert (T2.3) ── */}
         {isPremium && (() => {
