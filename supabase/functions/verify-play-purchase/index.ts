@@ -1,5 +1,5 @@
 import { corsHeaders, json } from '../_shared/http.ts'
-import { requireUser, createClients } from '../_shared/supabase.ts'
+import { requireUser } from '../_shared/supabase.ts'
 import { verifyPlayPurchase, getPlanIdForPlayProduct } from '../_shared/playBilling.ts'
 
 const PACKAGE_NAME = 'fr.rugbyforge.app'

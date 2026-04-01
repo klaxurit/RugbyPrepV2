@@ -1,9 +1,9 @@
 /**
  * Logique de hard-block global partagée par ProgramPage, WeekPage, SessionDetailPage.
  *
- * Seuls BETA_PAUSED et U18_NO_CONSENT bloquent TOUT affichage programme.
- * Les autres raisons beta (rehab, shoulder, off_season…) sont gérées par
- * l'orchestrateur qui peut proposer un fallback mother-session.
+ * Seul BETA_PAUSED bloque TOUT affichage programme (kill switch opérationnel).
+ * App réservée aux adultes — pas de guard U18.
+ * Le moteur annuel gère tous les cycles — pas de guard off_season.
  */
 import type { UserProfile } from '../../types/training'
 import {
@@ -13,7 +13,6 @@ import {
 
 const HARD_BLOCK_REASONS: ReadonlySet<BetaEligibilityReason> = new Set([
   'BETA_PAUSED',
-  'U18_NO_CONSENT',
 ])
 
 export interface GlobalProgramHardBlockResult {

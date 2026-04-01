@@ -8,7 +8,7 @@
  * N'écrit PAS dans le profil — retourne un scSchedule éphémère pour la semaine.
  */
 import { useMemo } from 'react'
-import type { CalendarEvent, ClubSchedule, DayOfWeek, SCSchedule, UserProfile } from '../types/training'
+import type { CalendarEvent, DayOfWeek, SCSchedule, UserProfile } from '../types/training'
 import { computeSCSchedule } from '../services/program/scheduleOptimizer'
 
 export function useAdaptiveSchedule(

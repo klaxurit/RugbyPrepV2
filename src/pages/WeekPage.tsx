@@ -20,14 +20,7 @@ import { PageHeader } from '../components/PageHeader'
 import { AnnualPlanningSummaryCard } from '../components/motherSession/AnnualPlanningSummaryCard'
 import { MotherSessionWeekPanel } from '../components/motherSession/MotherSessionWeekPanel'
 import { useAdaptiveSchedule } from '../hooks/useAdaptiveSchedule'
-
-
-function localDateISO(d: Date): string {
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
-}
+import { getToday } from '../services/ui/debugDateOverride'
 
 export function WeekPage() {
   const { profile } = useProfile()
@@ -60,7 +53,7 @@ export function WeekPage() {
   const isRecoveryDay = events.some((e) => e.type === 'match' && e.date === yesterdayStr)
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
-  const today = useMemo(() => localDateISO(new Date()), [])
+  const today = useMemo(() => getToday(), [])
   const surfaceParams = useMemo(() => ({
     profile,
     events,
@@ -95,7 +88,7 @@ export function WeekPage() {
         <PageHeader title={weekPageTitle} backTo="/home" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
-            <p className="font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
+            <p className="font-bold text-amber-400">Programme temporairement indisponible</p>
             <ul className="space-y-2">
               {hardBlockReasons.map((r) => (
                 <li key={r} className="text-sm text-amber-300/80">
@@ -105,11 +98,8 @@ export function WeekPage() {
               ))}
             </ul>
             <p className="text-xs text-white/40">
-              Ton compte et ton profil sont conservés. Modifie ton profil pour revenir dans le périmètre supporté, ou contacte-nous.
+              Ton compte et ton profil sont conservés. Réessaie dans quelques instants.
             </p>
-            <Link to="/profile" className="inline-block text-sm font-bold text-[#ff6b35] hover:text-[#e55a2b]">
-              Modifier mon profil →
-            </Link>
           </div>
         </main>
         <BottomNav />

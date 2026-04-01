@@ -24,6 +24,17 @@ const MODE_RANK: Record<TraceMode, number> = {
   backfilled: 1,
 }
 
+/** In-season 3:1 mesocycle: 3 weeks loading + 1 week deload. */
+function computeInSeasonMesocycle(weekNumber: number) {
+  const mesocycleBlock = Math.ceil(weekNumber / 4)
+  const mesocycleWeek = (((weekNumber - 1) % 4) + 1) as 1 | 2 | 3 | 4
+  return {
+    mesocycleWeek,
+    mesocycleBlock,
+    isDeloadWeek: mesocycleWeek === 4,
+  }
+}
+
 class TraceAcc {
   /** 0 = aucune résolution encore ; le premier `bump` définit le mode. */
   private rank = 0
@@ -201,6 +212,7 @@ function baseContextFields(
   | 'firstMatchDate'
   | 'lastMatchDate'
   | 'daysUntilNextMatch'
+  | 'daysSinceLastMatch'
   | 'isMatchWeek'
   | 'planningTrace'
 > {
@@ -215,6 +227,15 @@ function baseContextFields(
     daysUntilNextMatch = wholeDaysBetween(todayDate, nextD)
   }
 
+  // Compute days since last match (last match strictly before today)
+  let daysSinceLastMatch: number | null = null
+  const pastMatches = matchDates.filter((d) => d < todayIso)
+  if (pastMatches.length > 0) {
+    const lastPast = pastMatches[pastMatches.length - 1]
+    const lastPastD = parseLocalDateOnly(lastPast)!
+    daysSinceLastMatch = wholeDaysBetween(lastPastD, todayDate)
+  }
+
   return {
     fatigueLevel: inputs.fatigueLevel ?? 'normal',
     weeklyFrequency: inputs.weeklyFrequency,
@@ -224,6 +245,7 @@ function baseContextFields(
     firstMatchDate,
     lastMatchDate: lastMatchDateOverall(matchDates),
     daysUntilNextMatch,
+    daysSinceLastMatch,
     isMatchWeek,
     planningTrace: trace,
   }
@@ -332,11 +354,15 @@ function resolveManualCycle(
       -OFF_SEASON_BACKFILL_WEEKS * DAYS_PER_WEEK
     )
   )
+  const meso = computeInSeasonMesocycle(wIn)
+  if (meso.isDeloadWeek) acc.rule('rule:in_season_deload_3_1')
   return {
     cycle: 'in_season',
     weekNumber: wIn,
-    weekLabel: `In-season - W${wIn}`,
-    isDeloadWeek: false,
+    weekLabel: `In-season - W${wIn} (${meso.mesocycleWeek}/4)`,
+    isDeloadWeek: meso.isDeloadWeek,
+    mesocycleWeek: meso.mesocycleWeek,
+    mesocycleBlock: meso.mesocycleBlock,
     offSeasonStartAt: offSeasonStartIso,
     ...base(acc.freeze()),
   }
@@ -411,12 +437,15 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     const hintCycle = anchors.onboardingCycleHint
 
     if (hintCycle === 'in_season') {
+      const mesoHint = computeInSeasonMesocycle(1)
       const trace = acc.freeze()
       return {
         cycle: 'in_season',
         weekNumber: 1,
-        weekLabel: 'En saison - S1',
-        isDeloadWeek: false,
+        weekLabel: 'En saison - S1 (1/4)',
+        isDeloadWeek: mesoHint.isDeloadWeek,
+        mesocycleWeek: mesoHint.mesocycleWeek,
+        mesocycleBlock: mesoHint.mesocycleBlock,
         offSeasonStartAt: null,
         ...baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace),
       }
@@ -573,12 +602,16 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   const wIn = Math.max(1, inSeasonWeekNumber)
   acc.bump('calendar_inferred')
   acc.rule('rule:in_season_from_calendar')
+  const mesoCal = computeInSeasonMesocycle(wIn)
+  if (mesoCal.isDeloadWeek) acc.rule('rule:in_season_deload_3_1')
   const trace = acc.freeze()
   return {
     cycle: 'in_season',
     weekNumber: wIn,
-    weekLabel: `In-season - W${wIn}`,
-    isDeloadWeek: false,
+    weekLabel: `In-season - W${wIn} (${mesoCal.mesocycleWeek}/4)`,
+    isDeloadWeek: mesoCal.isDeloadWeek,
+    mesocycleWeek: mesoCal.mesocycleWeek,
+    mesocycleBlock: mesoCal.mesocycleBlock,
     offSeasonStartAt: offSeasonStartIso,
     ...baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace),
   }

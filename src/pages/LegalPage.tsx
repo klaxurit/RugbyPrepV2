@@ -9,7 +9,7 @@ const CGU_SECTIONS: Section[] = [
   {
     title: '1. Objet',
     content: [
-      `RugbyForge est une application mobile de préparation physique destinée aux joueurs de rugby de tous niveaux. Elle génère des programmes d'entraînement personnalisés basés sur votre profil et votre historique.`,
+      `RugbyForge est une application de préparation physique destinée aux joueurs et joueuses de rugby adultes (18 ans et plus). Elle génère des programmes d'entraînement personnalisés basés sur votre profil et votre historique.`,
       `En accédant à l'application, vous acceptez sans réserve les présentes Conditions Générales d'Utilisation (CGU).`,
     ],
   },
@@ -17,7 +17,7 @@ const CGU_SECTIONS: Section[] = [
     title: '2. Accès et inscription',
     content: [
       `L'utilisation de RugbyForge nécessite la création d'un compte. Vous êtes responsable de la confidentialité de vos identifiants et de toutes les actions réalisées depuis votre compte.`,
-      `RugbyForge est destiné aux personnes majeures (18 ans ou plus). Les mineurs de moins de 18 ans peuvent créer un compte et un profil, mais l'accès au programme d'entraînement nécessite le consentement explicite d'un parent ou tuteur légal. Ce consentement est recueilli dans le profil utilisateur. Sans consentement validé, le programme d'entraînement n'est pas accessible.`,
+      `RugbyForge est réservé aux personnes majeures (18 ans ou plus). En créant un compte, vous confirmez avoir au moins 18 ans.`,
     ],
   },
   {
@@ -46,28 +46,22 @@ const PRIVACY_SECTIONS: Section[] = [
     title: 'Données collectées',
     content: [
       `Nous collectons : adresse email, prénom (optionnel), données de profil sportif (poste, niveau, équipement), historique des séances, données de tests physiques.`,
-      `Nous collectons également des données de santé sensibles : zones douloureuses déclarées (épaule, genou, dos, etc.), programme de réhabilitation en cours (zone, phase, dates), et tranche d'âge (adulte ou moins de 18 ans). Ces données sont utilisées exclusivement pour personnaliser votre programme d'entraînement et appliquer les contre-indications de sécurité appropriées.`,
-      `Ces données sont nécessaires au fonctionnement du service et ne sont pas vendues ni partagées à des tiers. Les données analytiques collectées via PostHog (hébergé en UE) sont agrégées et ne contiennent pas de données de santé individuelles.`,
+      `Nous collectons également des données liées à la personnalisation de votre programme : zones sensibles déclarées (épaule, genou, dos, etc.) et morphologie (taille, poids). Ces données sont utilisées exclusivement pour adapter les exercices et les charges de votre programme d'entraînement.`,
+      `Ces données sont nécessaires au fonctionnement du service et ne sont pas vendues.`,
+      `Lorsque vous utilisez la fonctionnalité Coach IA, les données nécessaires à la génération de conseils (profil sportif, zones sensibles déclarées, historique récent) sont transmises à un fournisseur externe de traitement par intelligence artificielle (Anthropic). Ces données sont envoyées uniquement pour produire la réponse demandée. Leur conservation éventuelle par le fournisseur est régie par sa politique de conservation des données API en vigueur. Le Coach IA fournit des conseils de préparation physique et ne réalise aucun diagnostic médical.`,
+      `Les données analytiques collectées via PostHog (hébergé en UE) sont agrégées et ne contiennent pas de données personnelles individuelles.`,
     ],
   },
   {
     title: 'Hébergement et sous-traitants',
     content: [
-      `Vos données sont hébergées sur Supabase (infrastructure PostgreSQL sécurisée, EU). Des outils d'analyse anonymisés (PostHog) peuvent collecter des données d'usage agrégées pour améliorer l'application.`,
+      `Vos données sont hébergées sur Supabase (infrastructure PostgreSQL sécurisée, EU). Le traitement IA du Coach est assuré par Anthropic (API Claude). Des outils d'analyse anonymisés (PostHog) peuvent collecter des données d'usage agrégées pour améliorer l'application. Les paiements sont traités par Stripe.`,
     ],
   },
   {
     title: 'Paiements et données bancaires',
     content: [
       `Les paiements sont sécurisés par Stripe. RugbyForge ne conserve pas vos informations de carte bancaire. Consultez la politique de confidentialité de Stripe (stripe.com/fr/privacy) pour plus de détails sur le traitement des données de paiement.`,
-    ],
-  },
-  {
-    title: 'Mineurs et consentement parental',
-    content: [
-      `Les utilisateurs de moins de 18 ans doivent obtenir le consentement explicite d'un parent ou tuteur légal pour accéder au programme d'entraînement. Ce consentement couvre spécifiquement le traitement des données de santé (zones douloureuses, programme de réhabilitation, morphologie).`,
-      `Sans consentement parental validé dans le profil, l'accès au programme d'entraînement est bloqué. L'utilisateur mineur peut créer un compte et renseigner son profil, mais ne peut pas générer ni consulter de programme tant que le consentement n'est pas activé.`,
-      `Les programmes générés pour les mineurs respectent des contraintes de sécurité renforcées (charges maximales réduites, exercices adaptés).`,
     ],
   },
   {
@@ -80,7 +74,7 @@ const PRIVACY_SECTIONS: Section[] = [
   {
     title: 'Suppression de compte et droit à l\'effacement',
     content: [
-      `Vous pouvez demander la suppression de votre compte à tout moment en nous contactant à bonjour@rugbyforge.fr. La suppression entraîne l'effacement de toutes vos données personnelles : profil, historique de séances, tests physiques, calendrier, et données de santé (blessures, réhabilitation).`,
+      `Vous pouvez demander la suppression de votre compte à tout moment en nous contactant à bonjour@rugbyforge.fr. La suppression entraîne l'effacement de toutes vos données personnelles : profil, historique de séances, tests physiques et calendrier.`,
       `La suppression est effective dans un délai de 30 jours suivant la demande. Les données analytiques agrégées et anonymisées peuvent être conservées à des fins statistiques.`,
     ],
   },
@@ -97,7 +91,7 @@ export function LegalPage() {
 
         {/* Disclaimer santé */}
         <section className="bg-amber-900/20 border border-amber-500/20 rounded-[24px] p-5 space-y-2">
-          <p className="text-xs font-black text-amber-400 uppercase tracking-wider">Avertissement santé important</p>
+          <p className="text-xs font-black text-amber-400 uppercase tracking-wider">Avertissement important</p>
           <p className="text-sm text-amber-200/90 leading-relaxed">
             Les programmes d&apos;entraînement générés par RugbyForge sont fournis à titre indicatif et ne remplacent pas l&apos;avis d&apos;un médecin, kinésithérapeute ou préparateur physique certifié.
           </p>
@@ -112,7 +106,7 @@ export function LegalPage() {
         {/* CGU */}
         <section className="space-y-4">
           <h1 className="text-lg font-black text-white">Conditions Générales d&apos;Utilisation</h1>
-          <p className="text-xs text-white/40">Dernière mise à jour : mars 2026</p>
+          <p className="text-xs text-white/40">Dernière mise à jour : avril 2026</p>
           {CGU_SECTIONS.map((s) => (
             <div key={s.title} className="bg-white/5 border border-white/10 rounded-[20px] p-5 space-y-2">
               <h2 className="text-sm font-black text-white">{s.title}</h2>

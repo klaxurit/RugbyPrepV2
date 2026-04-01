@@ -939,7 +939,7 @@ export function CalendarPage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* ── Header ── */}
-      <PageHeader title="Calendrier" backTo="/" right={<SeasonBadge phase={seasonPhase} />} />
+      <PageHeader title="Calendrier" backTo="/home" right={<SeasonBadge phase={seasonPhase} />} />
 
       <main className="px-6 pt-6 space-y-6 max-w-md mx-auto relative">
 

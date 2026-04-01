@@ -24,6 +24,7 @@ function makePlanningContext(cycle: AnnualPlanningContext['cycle']): AnnualPlann
     lastMatchDate: null,
     offSeasonStartAt: cycle === 'off_season' ? '2026-06-08' : null,
     daysUntilNextMatch: cycle === 'in_season' ? 4 : null,
+    daysSinceLastMatch: null,
     fatigueLevel: 'normal',
     weeklyFrequency: 2,
     positionGroup: 'front_row',
@@ -340,23 +341,5 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.getByText('PRIMER')).toBeInTheDocument()
   })
 
-  it('hard-block U18_NO_CONSENT : écran de blocage complet', () => {
-    useProfileMock.mockReturnValue({
-      profile: {
-        ...BASE_PROFILE,
-        seasonMode: 'in_season',
-        ageBand: 'u18',
-        parentalConsentHealthData: false,
-      },
-    })
-    useWeeklyProgramSurfaceMock.mockReturnValue({
-      isReady: true,
-      surface: makeMotherSessionSurface('in_season'),
-    })
-
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
-
-    expect(screen.getByText(/Profil non encore supporté/i)).toBeInTheDocument()
-    expect(screen.queryByTestId('annual-plan-section')).toBeNull()
-  })
+  // U18 hard-block supprimé — app réservée aux adultes, pas de blocage U18
 })

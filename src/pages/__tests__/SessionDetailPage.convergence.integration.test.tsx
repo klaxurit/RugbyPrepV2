@@ -37,6 +37,7 @@ function makePlanningContext(cycle: AnnualPlanningContext['cycle']): AnnualPlann
     lastMatchDate: null,
     offSeasonStartAt: cycle === 'off_season' ? '2026-06-08' : null,
     daysUntilNextMatch: cycle === 'in_season' ? 4 : null,
+    daysSinceLastMatch: null,
     fatigueLevel: 'normal',
     weeklyFrequency: 2,
     positionGroup: 'front_row',
@@ -216,19 +217,19 @@ describe('SessionDetailPage · annual-first', () => {
     expect(screen.queryByTestId('mother-session-detail')).toBeNull()
   })
 
-  it('in_season + rehab + sessionIndex=0 : détail mother-session visible', () => {
+  it('in_season + injury adaptation + sessionIndex=0 : détail mother-session visible', () => {
     useProfileMock.mockReturnValue({
       profile: {
         ...BASE_PROFILE,
         seasonMode: 'in_season',
-        rehabInjury: { zone: 'lower', phase: 1, startDate: '2025-01-01', phaseStartDate: '2025-01-01' },
+        injuries: ['knee_pain'],
       },
     })
     useWeeklyProgramSurfaceMock.mockReturnValue({
       isReady: true,
       surface: makeMotherSessionSurface('in_season', {
-        warnings: ['Le moteur historique n\'est pas disponible pour ce profil.'],
-        decisionReason: 'In-season mais profil non éligible bêta (REHAB_ACTIVE) — fallback mother-session.',
+        warnings: [],
+        decisionReason: 'In-season mother-session resolution.',
       }),
     })
 
@@ -328,25 +329,7 @@ describe('SessionDetailPage · annual-first', () => {
     expect(toggles.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('hard-block U18_NO_CONSENT : blocage complet', () => {
-    useProfileMock.mockReturnValue({
-      profile: {
-        ...BASE_PROFILE,
-        seasonMode: 'in_season',
-        ageBand: 'u18',
-        parentalConsentHealthData: false,
-      },
-    })
-    useWeeklyProgramSurfaceMock.mockReturnValue({
-      isReady: true,
-      surface: makeMotherSessionSurface('in_season'),
-    })
-
-    renderSessionDetail(0)
-
-    expect(screen.getByText(/Profil non encore supporté/i)).toBeInTheDocument()
-    expect(screen.queryByTestId('mother-session-detail')).toBeNull()
-  })
+  // U18 hard-block supprimé — app réservée aux adultes, pas de blocage U18
 
   it('starter full gym : affiche les variantes Fondations guidées sur la séance', () => {
     useProfileMock.mockReturnValue({

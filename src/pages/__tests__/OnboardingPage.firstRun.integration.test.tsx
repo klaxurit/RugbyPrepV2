@@ -41,14 +41,7 @@ vi.mock('../../services/program/scheduleOptimizer', () => ({
   buildManualSCSchedule: () => ({ sessions: [] }),
 }))
 
-vi.mock('../../services/betaEligibility', () => ({
-  checkBetaEligibility: (profile: Record<string, unknown>) => {
-    if (profile.seasonMode === 'off_season') {
-      return { isEligible: false, primaryReason: 'OFF_SEASON_NOT_SUPPORTED', reasons: ['OFF_SEASON_NOT_SUPPORTED'] }
-    }
-    return { isEligible: true, primaryReason: null, reasons: [] }
-  },
-}))
+// betaEligibility mock removed — no longer imported by OnboardingPage (all profiles eligible)
 
 function renderOnboarding(state?: Record<string, unknown>) {
   return render(
@@ -124,18 +117,17 @@ describe('OnboardingPage · first run flow', () => {
     expect(navigateMock).toHaveBeenCalledWith('/progress', { replace: true })
   })
 
-  it('profil non legacy-eligible → onboarding termine, pas de /week', () => {
+  it('off_season → onboarding termine normalement (moteur annuel gère tous les cycles)', () => {
     renderOnboarding()
     navigateToSummary({ seasonMode: 'off_season' })
 
-    expect(screen.getByTestId('onboarding-non-eligible-info')).toBeInTheDocument()
-    expect(screen.getByText(/Programme adapté à ta période/)).toBeInTheDocument()
+    // Plus de bannière "non-eligible" — tous les profils passent
+    expect(screen.queryByTestId('onboarding-non-eligible-info')).toBeNull()
 
     const finishBtn = screen.getByTestId('onboarding-finish-btn')
     expect(finishBtn).not.toBeDisabled()
     fireEvent.click(finishBtn)
 
-    expect(navigateMock).not.toHaveBeenCalledWith('/week', expect.anything())
     expect(navigateMock).toHaveBeenCalledWith('/program', { replace: true })
     expect(markOnboardingCompleteMock).toHaveBeenCalledWith('u1')
   })
@@ -249,13 +241,12 @@ describe('OnboardingPage · first run flow', () => {
     expect(suivantBtn).not.toBeDisabled()
   })
 
-  it('BETA_CAP ne bloque plus le CTA final', () => {
+  it('CTA final toujours accessible (pas de guard eligibility)', () => {
     renderOnboarding()
     navigateToSummary()
 
     const finishBtn = screen.getByTestId('onboarding-finish-btn')
     expect(finishBtn).toHaveTextContent('Voir mon programme')
     expect(finishBtn).not.toBeDisabled()
-    expect(screen.queryByText(/Places bêta complètes/)).toBeNull()
   })
 })

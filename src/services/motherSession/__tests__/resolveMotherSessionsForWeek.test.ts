@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import { MOTHER_SESSIONS_BY_ID } from '../../../data/motherSessions.generated'
-import type { MotherSession } from '../../../types/motherSession'
 import type { CalendarEvent } from '../../../types/training'
 import { resolveMotherSessionsForWeek } from '../resolveMotherSessionsForWeek'
 
@@ -13,30 +12,7 @@ function match(date: string): Input {
   return { date, type: 'match' }
 }
 
-function minimalMotherSession(id: string, sessionType: MotherSession['metadata']['sessionType']): MotherSession {
-  return {
-    metadata: {
-      id,
-      status: 'ready_for_mapping',
-      version: 'V1',
-      cycle: 'off_season',
-      sessionType,
-      targetLevel: 'builder',
-      targetPositionGroup: 'common',
-      equipment: 'full_gym',
-      targetDuration: '50 min',
-    },
-    goal: [],
-    sessionIdentity: [],
-    warmUp: { exercises: [], notes: [] },
-    blocks: [],
-    progressionRules: [],
-    positionAccent: [],
-    injurySubstitutions: [],
-    coachingWarnings: [],
-    sourceReferences: [],
-  }
-}
+
 
 describe('resolveMotherSessionsForWeek', () => {
   it('pré-saison phase 1, fréquence 3, front_row → 3 sessions résolues + planningContext', () => {

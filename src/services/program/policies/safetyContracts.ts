@@ -24,42 +24,10 @@ export interface ApplySafetyContractsOutput {
   versionW1OverrideIndexes: number[]
 }
 
-const UPPER_RECIPE_IDS: SessionRecipeId[] = [
-  'UPPER_V1',
-  'UPPER_HYPER_V1',
-  'UPPER_BUILDER_V1',
-  'UPPER_STARTER_V1',
-]
-
-const LOWER_RECIPE_IDS: SessionRecipeId[] = [
-  'LOWER_V1',
-  'LOWER_HYPER_V1',
-  'LOWER_BUILDER_V1',
-  'LOWER_STARTER_V1',
-]
-
-const FULL_OR_COND_RECIPE_IDS = new Set<SessionRecipeId>([
-  'FULL_V1',
-  'FULL_HYPER_V1',
-  'FULL_BUILDER_V1',
-  'COND_OFF_V1',
-  'COND_PRE_V1',
-])
 
 const asRehabRecipeId = (rehab: RehabInjury): SessionRecipeId =>
   `REHAB_${rehab.zone.toUpperCase()}_P${rehab.phase}_V1` as SessionRecipeId
 
-const applyRehabRouting = (
-  recipeIds: SessionRecipeId[],
-  rehabInjury?: RehabInjury
-): SessionRecipeId[] => {
-  if (!rehabInjury) return recipeIds
-  const rehabId = asRehabRecipeId(rehabInjury)
-  const zoneTargets = rehabInjury.zone === 'upper' ? UPPER_RECIPE_IDS : LOWER_RECIPE_IDS
-  return recipeIds.map((id) =>
-    zoneTargets.includes(id) || FULL_OR_COND_RECIPE_IDS.has(id) ? rehabId : id
-  )
-}
 
 const hoursBetween = (a?: string, b?: string): number | null => {
   if (!a || !b) return null

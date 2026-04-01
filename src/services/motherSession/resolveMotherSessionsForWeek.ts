@@ -45,10 +45,6 @@ export interface ResolveMotherSessionsForWeekResult {
   message?: string
 }
 
-const PRIMER_IDS: Record<'front_row' | 'back_three', string> = {
-  front_row: 'FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1',
-  back_three: 'FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1',
-}
 
 function mergeWarnings(
   planningContext: AnnualPlanningContext,
@@ -70,22 +66,6 @@ function finalizeStatus(
   return 'resolved'
 }
 
-function applyPlayoffsPrimerLight(
-  slots: WeeklySessionSlot[],
-  positionGroup: 'front_row' | 'back_three'
-): WeeklySessionSlot[] {
-  const primerId = PRIMER_IDS[positionGroup]
-  return slots.map((s) =>
-    s.sessionId === primerId
-      ? {
-          ...s,
-          variant: 'light' as const,
-          maxBlocks: 2,
-          dayPreference: 'pre_match' as const,
-        }
-      : s
-  )
-}
 
 function hydrateSlots(
   slots: WeeklySessionSlot[],

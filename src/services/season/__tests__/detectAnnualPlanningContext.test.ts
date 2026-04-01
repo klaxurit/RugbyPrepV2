@@ -64,7 +64,7 @@ describe('detectAnnualPlanningContext', () => {
     })
     expect(r.cycle).toBe('in_season')
     expect(r.isMatchWeek).toBe(true)
-    expect(r.weekLabel).toMatch(/^In-season - W\d+$/)
+    expect(r.weekLabel).toMatch(/^In-season - W\d+/)
     expect(r.planningTrace.rulesApplied).toContain('rule:in_season_from_calendar')
   })
 

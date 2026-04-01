@@ -171,25 +171,38 @@ function buildIdentity(
 
 function resolvePlanningAnchors(
   profile: UserProfile,
-  hasMatchInCalendar: boolean
+  hasMatchInCalendar: boolean,
+  hasFutureMatch: boolean,
 ): PlanningAnchorsResult {
   const seasonMode = profile.seasonMode
-  if (!seasonMode) return undefined
+  const pa = profile.planningAnchors
 
-  // Le réglage "Mode saison" du profil est un choix explicite du joueur.
-  // On l'applique comme override fort quand le calendrier fournit assez
-  // d'information pour résoudre proprement la phase choisie.
+  // Start with profile-level anchors (seasonEndedAt, manualPlayoffs, etc.)
+  const base: NonNullable<PlanningAnchorsResult> = {}
+  if (pa?.manualPlayoffs) base.manualPlayoffs = true
+  if (pa?.returnToTeamTrainingAt) base.returnToTeamTrainingAt = pa.returnToTeamTrainingAt
+
+  // seasonEndedAt: only apply if no future matches exist (stale anchor guard)
+  if (pa?.seasonEndedAt && !hasFutureMatch) {
+    base.seasonEndedAt = pa.seasonEndedAt
+  }
+  if (pa?.offSeasonStartAt && !hasFutureMatch) {
+    base.offSeasonStartAt = pa.offSeasonStartAt
+  }
+
+  if (!seasonMode) {
+    return Object.keys(base).length > 0 ? base : undefined
+  }
+
   if (seasonMode === 'off_season') {
-    return { manualCycleOverride: 'off_season' }
+    return { ...base, manualCycleOverride: 'off_season' }
   }
 
   if (hasMatchInCalendar) {
-    return { manualCycleOverride: seasonMode }
+    return { ...base, manualCycleOverride: seasonMode }
   }
 
-  // Sans match réel, on conserve un fallback déterministe en semaine 1
-  // plutôt que d'échouer pour pre/in-season.
-  return { onboardingCycleHint: seasonMode }
+  return { ...base, onboardingCycleHint: seasonMode }
 }
 
 /**
@@ -220,7 +233,8 @@ export function buildAthletePlanningInputs(
   const identity = buildIdentity(profile, athleteIdentity)
 
   const hasMatchInCalendar = events.some((e) => e.type === 'match')
-  const planningAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar)
+  const hasFutureMatch = events.some((e) => e.type === 'match' && e.date >= today)
+  const planningAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar, hasFutureMatch)
 
   const inputs: AthletePlanningInputs = {
     events: events.map((e) => ({ date: e.date, type: e.type })),

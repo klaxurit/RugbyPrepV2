@@ -39,8 +39,11 @@ import { useWeeklySummary } from '../hooks/useWeeklySummary'
 import { ReadinessScoreCard } from '../components/ReadinessScoreCard'
 import { WeeklySummaryCard } from '../components/WeeklySummaryCard'
 import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
+import { SeasonTransitionBanner } from '../components/SeasonTransitionBanner'
+import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import { ReadinessScoreSkeleton, WeeklySummarySkeleton } from '../components/SkeletonCard'
 import { getTodaySessionIndex } from '../services/ui/getTodaySessionIndex'
+import { getToday } from '../services/ui/debugDateOverride'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import type { CycleWeek, SessionType, SeasonPhase, SeasonMode } from '../types/training'
 
@@ -135,11 +138,7 @@ export function HomePage() {
 
   // ── Surface pour déterminer la séance du jour ─────────────────────────────
   const today = useMemo(() => {
-    const d = new Date()
-    const y = d.getFullYear()
-    const m = String(d.getMonth() + 1).padStart(2, '0')
-    const day = String(d.getDate()).padStart(2, '0')
-    return `${y}-${m}-${day}`
+    return getToday()
   }, [])
   const surfaceParams = useMemo(() => ({
     profile,
@@ -182,6 +181,11 @@ export function HomePage() {
     plannedSessionCount: msSessions.length,
     today,
   })
+  const { transition, dismiss: dismissTransition } = useSeasonTransitions({
+    planningContext: surface?.planningContext ?? null,
+    today,
+  })
+
   const todaySessionTitle = todaySession
     ? formatTitleFromMotherSessionId(todaySession.session.metadata.id, lang)
     : null
@@ -296,6 +300,33 @@ export function HomePage() {
             </Link>
           </div>
         </section>
+
+        {/* ── Season Transition Banner ── */}
+        {transition && (
+          <SeasonTransitionBanner
+            transition={transition}
+            onAction={() => {
+              if (transition.type === 'season_ended') {
+                updateProfile({
+                  seasonMode: 'off_season',
+                  planningAnchors: {
+                    ...profile.planningAnchors,
+                    seasonEndedAt: transition.lastMatchDate,
+                  },
+                })
+              } else if (transition.type === 'playoffs_suggested') {
+                updateProfile({
+                  planningAnchors: {
+                    ...profile.planningAnchors,
+                    manualPlayoffs: true,
+                  },
+                })
+              }
+              dismissTransition(transition.type)
+            }}
+            onDismiss={() => dismissTransition(transition.type)}
+          />
+        )}
 
         {/* ── Readiness Score ── */}
         <section>

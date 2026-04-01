@@ -19,11 +19,10 @@ import type {
   TrainingLevel,
   SeasonMode,
   PopulationSegment,
-  AgeBand,
 } from '../types/training'
 import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
 import { GymDaySelector } from '../components/GymDaySelector'
-import { checkBetaEligibility } from '../services/betaEligibility'
+// betaEligibility import removed — all profiles eligible since V2 launch
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -112,13 +111,10 @@ const TRAINING_LEVELS: {
 const SEASON_MODES: { value: SeasonMode; label: string; sub: string; emoji: string }[] = [
   { value: 'in_season',  label: 'Saison',       sub: 'Force → Puissance',           emoji: '⚡' },
   { value: 'off_season', label: 'Inter-saison',  sub: 'Hypertrophie',                emoji: '🌿' },
-  { value: 'pre_season', label: 'Pré-saison',    sub: 'Réathlétisation',             emoji: '🔥' },
+  { value: 'pre_season', label: 'Pré-saison',    sub: 'Prépa avant reprise',          emoji: '🔥' },
 ]
 
-const AGE_BAND_OPTIONS: { value: AgeBand; label: string; sub: string }[] = [
-  { value: 'adult', label: 'Senior (18+)', sub: 'Autonomie complète' },
-  { value: 'u18', label: 'U18', sub: 'Garde-fous mineurs activés' },
-]
+// App réservée aux adultes — ageBand hardcodé à 'adult', pas de sélecteur U18.
 
 const GYM_PRESET: Equipment[] = ['barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box']
 
@@ -181,10 +177,9 @@ export function OnboardingPage() {
   const [step, setStep] = useState(0)
   const [position, setPosition] = useState<PositionValue | null>(null)
   const [trainingLevel, setTrainingLevel] = useState<TrainingLevel | null>(null)
-  const [ageBand, setAgeBand] = useState<AgeBand>('adult')
+  const ageBand = 'adult' as const
   const [gender, setGender] = useState<'male' | 'female'>('male')
   const [hasGymAccess, setHasGymAccess] = useState<boolean | null>(null)
-  const [parentalConsentHealthData, setParentalConsentHealthData] = useState<boolean | null>(null)
   const [seasonMode, setSeasonMode] = useState<SeasonMode>('in_season')
   const [sessions, setSessions] = useState<2 | 3 | null>(null)
   const [equipment, setEquipment] = useState<Set<Equipment>>(new Set())
@@ -228,7 +223,6 @@ export function OnboardingPage() {
     if (step === 0) return position !== null
     if (step === 1) {
       if (!trainingLevel || !sessions) return false
-      if (ageBand === 'u18' && parentalConsentHealthData === null) return false
       return true
     }
     if (step === 2) return hasGymAccess !== null
@@ -264,9 +258,7 @@ export function OnboardingPage() {
     const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
     const finalEquipment = equipment.size > 0 ? Array.from(equipment) : ['none' as Equipment]
     const derivedPopulationSegment: PopulationSegment =
-      ageBand === 'u18'
-        ? (gender === 'female' ? 'u18_female' : 'u18_male')
-        : (gender === 'female' ? 'female_senior' : 'male_senior')
+      gender === 'female' ? 'female_senior' : 'male_senior'
     const profilePayload = {
       position: position!,
       rugbyPosition: position!,
@@ -283,7 +275,6 @@ export function OnboardingPage() {
       scSchedule,
       ageBand,
       populationSegment: derivedPopulationSegment,
-      parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
     }
     updateProfile(profilePayload, { source: 'onboarding' })
 
@@ -298,34 +289,14 @@ export function OnboardingPage() {
       populationSegment: derivedPopulationSegment,
       performanceFocus: 'balanced',
       sessions,
-      eligible: onboardingEligibility.isEligible,
-      parentalConsentHealthData: ageBand === 'u18' ? parentalConsentHealthData === true : false,
+      eligible: true,
     })
 
     const destination = resolvePostOnboardingDestination(intendedPath)
     navigate(destination, { replace: true })
   }
 
-  // ─── Éligibilité beta self-serve (calculée dans le corps du composant) ───────
-  // ⚠️ Ces const DOIVENT être ici (corps composant), jamais dans une expression JSX {}.
-  // Résultat utilisé uniquement au step 6 — calcul cheap, pas besoin de useMemo.
-  const onboardingProfileSnap: UserProfile = {
-    // `level` n'est pas utilisé par checkBetaEligibility — valeur arbitraire pour satisfaire le type.
-    level: 'beginner',
-    weeklySessions: sessions ?? 2,
-    equipment: equipment.size > 0 ? Array.from(equipment) : ['none' as Equipment],
-    injuries: Array.from(injuries),
-    // seasonMode du snap onboarding. Règle conservative : seul 'in_season' passe le guard.
-    // En onboarding, ageBand defaults à 'adult' et seasonMode defaults à 'in_season' (L192/L193).
-    // seasonMode absent dans le snap = 'off_season' traitée comme hors périmètre par checkBetaEligibility.
-    seasonMode,
-    ageBand,
-    // parentalConsentHealthData null (défaut) → false via `=== true`. Consentement non donné = non-consentant.
-    parentalConsentHealthData: parentalConsentHealthData === true,
-    // `rehabInjury` intentionnellement absent : l'onboarding n'a pas de step rehab.
-    // REHAB_ACTIVE ne peut pas se déclencher ici. Si un step rehab est ajouté, mettre à jour ce snap.
-  }
-  const onboardingEligibility = checkBetaEligibility(onboardingProfileSnap)
+  // Moteur annuel gère tous les profils — pas de guard beta/eligibility
 
   // ─── Écran de bienvenue ───────────────────────────────────────
 
@@ -581,38 +552,7 @@ export function OnboardingPage() {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <SectionLabel>Catégorie d'âge</SectionLabel>
-              <div className="grid grid-cols-2 gap-2.5">
-                {AGE_BAND_OPTIONS.map((opt) => {
-                  const selected = ageBand === opt.value
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => {
-                        setAgeBand(opt.value)
-                        if (opt.value === 'u18') {
-                          setParentalConsentHealthData(null)
-                        } else {
-                          setParentalConsentHealthData(false)
-                        }
-                      }}
-                      className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
-                        selected
-                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                          : 'border-white/10 bg-white/5 hover:border-white/20'
-                      }`}
-                    >
-                      <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
-                        {opt.label}
-                      </p>
-                      <p className="text-[10px] text-white/40">{opt.sub}</p>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
+            {/* App réservée aux adultes — pas de sélecteur d'âge */}
 
             <div className="space-y-3">
               <SectionLabel>Profil</SectionLabel>
@@ -642,45 +582,7 @@ export function OnboardingPage() {
               </div>
             </div>
 
-            {ageBand === 'u18' && (
-              <div className="space-y-3">
-                <SectionLabel>Consentement parental données santé</SectionLabel>
-                <div className="space-y-2">
-                  <button
-                    type="button"
-                    onClick={() => setParentalConsentHealthData(true)}
-                    className={`w-full p-3 rounded-2xl border text-left transition-all ${
-                      parentalConsentHealthData === true
-                        ? 'border-[#1a5f3f] bg-[#1a5f3f]/15'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
-                    }`}
-                  >
-                    <p className={`text-xs font-black ${parentalConsentHealthData === true ? 'text-[#1a5f3f]' : 'text-white/70'}`}>
-                      Consentement obtenu
-                    </p>
-                    <p className="text-[10px] text-white/40 mt-0.5">
-                      Active les adaptations santé U18 et le suivi contextualisé.
-                    </p>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setParentalConsentHealthData(false)}
-                    className={`w-full p-3 rounded-2xl border text-left transition-all ${
-                      parentalConsentHealthData === false
-                        ? 'border-amber-500/40 bg-amber-900/20'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
-                    }`}
-                  >
-                    <p className={`text-xs font-black ${parentalConsentHealthData === false ? 'text-amber-400' : 'text-white/70'}`}>
-                      Pas de consentement pour le moment
-                    </p>
-                    <p className="text-[10px] text-white/40 mt-0.5">
-                      Le moteur passera en mode sécurité minimal (mobilité/récupération).
-                    </p>
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Consentement parental supprimé — app réservée aux adultes */}
           </div>
         )}
 
@@ -936,7 +838,7 @@ export function OnboardingPage() {
           <div className="space-y-6">
             <StepTitle
               title="Zones sensibles ?"
-              sub="Optionnel — l'app adapte les exercices et ajoute un prehab ciblé."
+              sub="Optionnel — l'app adapte les exercices et ajoute un échauffement ciblé."
             />
             <div className="grid grid-cols-2 gap-2.5">
               {INJURY_OPTIONS.map((inj) => {
@@ -1064,12 +966,7 @@ export function OnboardingPage() {
               <SummaryRow label="Niveau" value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
               <SummaryRow label="Période" value={SEASON_MODES.find((m) => m.value === seasonMode)?.label ?? '–'} />
               <SummaryRow label="Séances" value={`${sessions} / semaine`} />
-              {ageBand === 'u18' && (
-                <SummaryRow
-                  label="Consentement santé"
-                  value={parentalConsentHealthData ? 'Parental validé' : 'Non validé (mode sécurité)'}
-                />
-              )}
+              {/* Consentement U18 supprimé — app réservée aux adultes */}
               <SummaryRow
                 label="Équipement"
                 value={
@@ -1109,13 +1006,6 @@ export function OnboardingPage() {
                 </div>
               )}
             </div>
-
-            {!onboardingEligibility.isEligible && (
-              <div className="bg-sky-900/20 border border-sky-500/20 rounded-2xl p-4 space-y-2" data-testid="onboarding-non-eligible-info">
-                <p className="text-sm font-bold text-sky-400">Programme adapté à ta période</p>
-                <p className="text-xs text-white/50">Le planificateur annuel te propose un programme adapté à ta période et ton poste.</p>
-              </div>
-            )}
 
             <button
               type="button"

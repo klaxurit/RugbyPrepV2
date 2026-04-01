@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { computeWeeklySummary, type WeeklySummaryInput } from './computeWeeklySummary'
+import { computeWeeklySummary } from './computeWeeklySummary'
 import type { BlockLog, SessionLog } from '../../types/training'
 
 const makeLog = (dateISO: string, rpe?: number, durationMin?: number): SessionLog => ({

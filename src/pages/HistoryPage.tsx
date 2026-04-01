@@ -54,7 +54,7 @@ export function HistoryPage() {
 
       <PageHeader
         title="Historique"
-        backTo="/"
+        backTo="/home"
         right={
           logs.length > 0 ? (
             <button

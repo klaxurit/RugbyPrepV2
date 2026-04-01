@@ -8,49 +8,44 @@ import { buildMobilitySession } from '../services/program/buildMobilitySession'
 import { getExerciseName } from '../data/exercises'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
-import { checkBetaEligibility, BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
+import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
+import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 
 export function MobilityPage() {
   const { profile } = useProfile()
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
   const mobilityPageTitle = lang === 'fr' ? 'Récupération Active' : 'Active Recovery'
 
-  // ── Guard beta self-serve (même logique centralisée que WeekPage) ──────────
-  const betaEligibility = checkBetaEligibility(profile)
+  // ── Guard : seul BETA_PAUSED bloque (cohérent avec WeekPage/SessionDetailPage) ─
+  const { hasHardBlock, hardBlockReasons } = getGlobalProgramHardBlock(profile)
 
   useEffect(() => {
-    if (!betaEligibility.isEligible) {
+    if (hasHardBlock) {
       posthog.capture('beta_eligibility_blocked', {
         surface: 'mobility_page',
-        primaryReason: betaEligibility.primaryReason,
-        reasons: betaEligibility.reasons,
+        primaryReason: hardBlockReasons[0] ?? null,
+        reasons: hardBlockReasons,
       })
     }
-  }, [betaEligibility.isEligible, betaEligibility.primaryReason]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [hasHardBlock, hardBlockReasons])
 
-  if (!betaEligibility.isEligible) {
+  if (hasHardBlock) {
     return (
       <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24">
         <PageHeader title={mobilityPageTitle} backTo="/week" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
-            <p className="font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
+            <p className="font-bold text-amber-400">Programme temporairement indisponible</p>
             <ul className="space-y-2">
-              {betaEligibility.reasons.map((r) => (
+              {hardBlockReasons.map((r) => (
                 <li key={r} className="text-sm text-amber-300/80">
                   <span className="font-semibold">{BETA_ELIGIBILITY_MESSAGES[r].reason}</span>
                   <br />{BETA_ELIGIBILITY_MESSAGES[r].detail}
                 </li>
               ))}
             </ul>
-            <p className="text-xs text-white/40">
-              Ton compte et ton profil sont conservés. Modifie ton profil pour revenir dans le périmètre supporté.
-            </p>
-            <Link to="/profile" className="inline-block text-sm font-bold text-[#ff6b35] hover:text-[#e55a2b]">
-              Modifier mon profil →
-            </Link>
             <a
-              href="mailto:feedback@rugbyforge.fr?subject=Feedback%20bêta%20RugbyForge"
+              href="mailto:bonjour@rugbyforge.fr?subject=Support%20RugbyForge"
               className="inline-block text-xs text-white/40 hover:text-white/60 mt-1"
             >
               Un souci ? Contacte-nous →

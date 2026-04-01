@@ -250,7 +250,7 @@ const FREE_PLAN_FEATURES = [
   'Programme périodisé complet',
   "Séances et logs d'entraînement",
   'Calendrier club + suivi ACWR',
-  'Préhab et mobilité intégrées',
+  'Prévention et mobilité intégrées',
   'Chat IA (5 messages/jour)',
 ]
 
@@ -455,8 +455,8 @@ export function LandingPage() {
             />
             <FeatureCard
               icon={<Shield className="w-6 h-6 text-[#ff6b35]" />}
-              title="Préhab & vigilance"
-              description="Préhab automatique, mobilité utile et signaux de vigilance quand la fatigue et la charge deviennent moins bien absorbées."
+              title="Prévention & vigilance"
+              description="Échauffement adapté, mobilité utile et signaux de vigilance quand la fatigue et la charge deviennent moins bien absorbées."
               delay={0.2}
             />
             <FeatureCard
@@ -863,7 +863,7 @@ export function LandingPage() {
 
           <div className="border-t border-white/10 pt-8 text-center">
             <p className="text-[10px] text-slate-500">
-              © 2026 RugbyForge. v1.0 - beta
+              © 2026 RugbyForge. v1.0
             </p>
           </div>
         </div>

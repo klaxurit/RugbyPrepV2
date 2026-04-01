@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import {
@@ -30,7 +30,7 @@ import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
 import { ProgressCurveSkeleton } from '../components/SkeletonCard'
 import { PRBoard } from '../components/pr/PRBoard'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
-import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
+import { useUpsellTiming, isDismissed } from '../hooks/useUpsellTiming'
 import type { TrainingBlock } from '../types/training'
 import type { PhysicalTestType, PhysicalTest } from '../types/athleticTesting'
 
@@ -123,24 +123,15 @@ export function ProgressPage() {
   const { features, isPremium, loading: entitlementsLoading } = useFeatureAccess()
   const premiumResolved = !entitlementsLoading
   const { canShowUpsell } = useUpsellTiming()
-  const [dismissedCards, setDismissedCards] = useState<Set<string>>(() => {
+  const [dismissedCards] = useState<Set<string>>(() => {
     const set = new Set<string>()
     if (isDismissed('progress_objectives')) set.add('progress_objectives')
     if (isDismissed('progress_curves')) set.add('progress_curves')
     if (isDismissed('progress_tests')) set.add('progress_tests')
     return set
   })
-  const handleDismiss = useCallback((cardId: string) => {
-    dismissUpsell(cardId)
-    setDismissedCards((prev) => new Set(prev).add(cardId))
-  }, [])
-  // Max 1 upsell visible per page
-  const shownUpsellCount = { current: 0 }
-  const canShowCard = (cardId: string) => {
-    if (isPremium || !canShowUpsell || dismissedCards.has(cardId) || shownUpsellCount.current >= 1) return false
-    shownUpsellCount.current += 1
-    return true
-  }
+  // Upsell card helpers — prepared for future premium upsells on this page
+  void dismissedCards; void canShowUpsell
 
   // ─── Program adherence data ───────────────────────────────────
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
@@ -207,6 +198,7 @@ export function ProgressPage() {
     })
     .filter((row): row is { exerciseId: string; target: string } => row !== null)
     .slice(0, 8)
+  void nextTargetRows // prepared for future use
 
   const historyRows = exerciseIds
     .map((exerciseId) => ({
@@ -278,7 +270,7 @@ export function ProgressPage() {
     <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <PageHeader title={lang === 'fr' ? 'Progression' : 'Progress'} backTo="/" />
+      <PageHeader title={lang === 'fr' ? 'Progression' : 'Progress'} backTo="/home" />
 
       <main className="relative px-6 pt-5 space-y-6 max-w-md mx-auto">
 
@@ -546,7 +538,7 @@ export function ProgressPage() {
                               <YAxis domain={['auto', 'auto']} tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.3)' }} width={30} axisLine={false} tickLine={false} />
                               <Tooltip
                                 contentStyle={{ backgroundColor: '#1a100c', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, fontSize: 11, color: '#fff' }}
-                                formatter={(value: number) => [`${value} kg`, 'Charge']}
+                                formatter={(value) => [`${value} kg`, 'Charge']}
                               />
                             </AreaChart>
                           </ResponsiveContainer>

@@ -220,7 +220,7 @@ export function MotherSessionBlock({
     })
     setSaved(true)
     setTimeout(() => { setSaved(false); setIsSaving(false) }, 3000)
-  }, [onSaveBlock, motherSessionId, sessionType, week, loggableExercises, drafts, block.number, block.name])
+  }, [onSaveBlock, motherSessionId, sessionType, week, loggableExercises, drafts, block.number, block.name, getBestForExercise])
 
   return (
     <article className="rounded-2xl border border-white/10 bg-white/5 p-4">

@@ -46,6 +46,7 @@ const makeRow = (overrides: Partial<ProfileRow> = {}): ProfileRow => ({
   ffr_competition_id: null,
   ffr_competition_name: null,
   ffr_last_sync_at: null,
+  planning_anchors: null,
   ...overrides,
 })
 

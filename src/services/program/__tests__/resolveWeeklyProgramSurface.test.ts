@@ -30,6 +30,7 @@ function makePlanningContext(overrides: Partial<AnnualPlanningContext> = {}): An
     lastMatchDate: null,
     offSeasonStartAt: null,
     daysUntilNextMatch: 3,
+    daysSinceLastMatch: null,
     fatigueLevel: 'normal',
     weeklyFrequency: 3,
     positionGroup: 'back_three',

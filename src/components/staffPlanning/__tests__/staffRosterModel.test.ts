@@ -20,6 +20,7 @@ function mockAthlete(p: Partial<AthleteStaffWeeklyView>): AthleteStaffWeeklyView
       lastMatchDate: null,
       offSeasonStartAt: null,
       daysUntilNextMatch: null,
+      daysSinceLastMatch: null,
       fatigueLevel: 'normal',
       weeklyFrequency: 3,
       planningTrace: {

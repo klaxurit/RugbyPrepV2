@@ -23,7 +23,7 @@ describe('onboardingCycleHint bootstrap', () => {
     expect(ctx.cycle).toBe('in_season')
     expect(ctx.planningTrace.resolutionMode).toBe('onboarding_hint')
     expect(ctx.weekNumber).toBe(1)
-    expect(ctx.weekLabel).toBe('En saison - S1')
+    expect(ctx.weekLabel).toBe('En saison - S1 (1/4)')
   })
 
   it('pre_season hint + no matches → cycle pre_season, resolutionMode onboarding_hint', () => {

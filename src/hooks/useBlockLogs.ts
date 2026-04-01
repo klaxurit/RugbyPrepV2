@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { BlockLog, ExerciseLogEntry } from '../types/training'
 import type { ExerciseMetricType } from '../types/training'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
@@ -258,6 +258,8 @@ export const useBlockLogs = () => {
   )
 
   /** All-time best per exercise with the date the PR was set, sorted most recent first. */
+  // eslint-disable-next-line react-hooks/purity -- Date.now() for "recent PR" badge, stable enough
+  const nowRef = useRef(Date.now())
   const allPRsWithDates = useMemo(() => {
     const bests = new Map<string, { value: number; label: string; dateISO: string; metricType: ExerciseMetricType }>()
 
@@ -299,7 +301,6 @@ export const useBlockLogs = () => {
       }
     }
 
-    const now = Date.now()
     const fourteenDays = 14 * 86_400_000
 
     return Array.from(bests.entries())
@@ -309,7 +310,7 @@ export const useBlockLogs = () => {
         bestValue: data.metricType === 'seconds' ? -data.value : data.value,
         bestLabel: data.label,
         dateISO: data.dateISO,
-        isRecent: now - new Date(data.dateISO).getTime() < fourteenDays,
+        isRecent: nowRef.current - new Date(data.dateISO).getTime() < fourteenDays,
       }))
       .sort((a, b) => b.dateISO.localeCompare(a.dateISO))
   }, [logs])

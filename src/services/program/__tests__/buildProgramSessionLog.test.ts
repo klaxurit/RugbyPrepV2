@@ -73,6 +73,7 @@ function makePlanningContext(cycle: AnnualPlanningContext['cycle'] = 'off_season
     lastMatchDate: null,
     offSeasonStartAt: '2026-06-01',
     daysUntilNextMatch: null,
+    daysSinceLastMatch: null,
     fatigueLevel: 'normal',
     weeklyFrequency: 3,
     positionGroup: 'back_three',

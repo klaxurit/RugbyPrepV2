@@ -275,6 +275,12 @@ export interface UserProfile {
   ffrCompetitionId?: string
   ffrCompetitionName?: string
   ffrLastSyncAt?: string
+  planningAnchors?: {
+    seasonEndedAt?: string
+    offSeasonStartAt?: string
+    returnToTeamTrainingAt?: string
+    manualPlayoffs?: boolean
+  }
 }
 
 export interface WeeklyLoadContext {

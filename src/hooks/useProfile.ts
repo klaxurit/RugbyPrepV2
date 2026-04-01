@@ -231,6 +231,7 @@ type ProfileRow = {
   ffr_competition_id: string | null
   ffr_competition_name: string | null
   ffr_last_sync_at: string | null
+  planning_anchors: unknown | null
 }
 
 export const rowToProfile = (row: ProfileRow): UserProfile => {
@@ -290,6 +291,7 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     ffrCompetitionId: row.ffr_competition_id ?? undefined,
     ffrCompetitionName: row.ffr_competition_name ?? undefined,
     ffrLastSyncAt: row.ffr_last_sync_at ?? undefined,
+    planningAnchors: (row.planning_anchors as UserProfile['planningAnchors']) ?? undefined,
   })
 }
 
@@ -336,6 +338,7 @@ const profileToRow = (profile: UserProfile, userId: string) => ({
   ffr_competition_id: profile.ffrCompetitionId ?? null,
   ffr_competition_name: profile.ffrCompetitionName ?? null,
   ffr_last_sync_at: profile.ffrLastSyncAt ?? null,
+  planning_anchors: profile.planningAnchors ?? null,
   updated_at: new Date().toISOString(),
 })
 
@@ -366,7 +369,7 @@ export const useProfile = () => {
     supabase
       .from('profiles')
       .select(
-        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, performance_focus, preferred_language, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at'
+        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, performance_focus, preferred_language, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors'
       )
       .eq('id', userId)
       .single()

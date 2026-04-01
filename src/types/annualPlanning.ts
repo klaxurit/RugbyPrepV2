@@ -60,6 +60,8 @@ export interface AnnualPlanningContext {
   weekLabel: string
 
   isDeloadWeek: boolean
+  mesocycleWeek?: 1 | 2 | 3 | 4
+  mesocycleBlock?: number
   isMatchWeek: boolean
 
   firstMatchDate: string | null
@@ -67,6 +69,7 @@ export interface AnnualPlanningContext {
   offSeasonStartAt: string | null
 
   daysUntilNextMatch: number | null
+  daysSinceLastMatch: number | null
 
   fatigueLevel: 'normal' | 'high' | 'very_high'
   /** Set par le resolver MS quand in_season + very_high fatigue → séances recovery. */

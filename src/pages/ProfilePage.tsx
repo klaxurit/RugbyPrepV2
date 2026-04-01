@@ -140,7 +140,7 @@ const avatarErrorLabel: Record<AuthError, string> = {
 export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
   const { authState, updateAvatar } = useAuth()
-  const { features, isPremium, planId } = useFeatureAccess()
+  const { features, isPremium } = useFeatureAccess()
   const { canShowUpsell } = useUpsellTiming()
   const [profileUpsellDismissed, setProfileUpsellDismissed] = useState(() => isDismissed('profile_premium'))
   const {
@@ -402,7 +402,7 @@ export function ProfilePage() {
 
       <PageHeader
         title="Mon Profil"
-        backTo="/"
+        backTo="/home"
         right={
           <button
             type="button"
@@ -1055,11 +1055,6 @@ export function ProfilePage() {
             </div>
           </div>
 
-          {planId && (
-            <p className="text-[11px] text-white/35">
-              Plan serveur actuel: <span className="font-bold text-white/55">{planId}</span>
-            </p>
-          )}
 
           {!isPremium && canShowUpsell && !profileUpsellDismissed && (
             <PremiumUpsellCard
@@ -1348,7 +1343,7 @@ export function ProfilePage() {
       {/* Footer */}
       <footer className="px-4 py-6 flex flex-col items-center gap-3 text-center relative">
         <a
-          href="mailto:feedback@rugbyforge.fr?subject=Feedback%20bêta%20RugbyForge"
+          href="mailto:feedback@rugbyforge.fr?subject=Feedback%20RugbyForge"
           onClick={() => posthog.capture('feedback_clicked')}
           className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#1a5f3f] text-white text-xs font-black uppercase tracking-wide hover:bg-[#1a5f3f]/90 transition-colors shadow-lg shadow-[#1a5f3f]/20"
         >
@@ -1360,7 +1355,7 @@ export function ProfilePage() {
         >
           Mentions légales & Confidentialité
         </Link>
-        <p className="text-[10px] text-white/20">RugbyForge v1.0 · beta</p>
+        <p className="text-[10px] text-white/20">RugbyForge v1.0</p>
       </footer>
 
       <BottomNav />

@@ -33,12 +33,7 @@ const MS_TYPE_TO_SESSION_TYPE: Record<MotherSessionType, SessionType> = {
   speed_power: 'CONDITIONING',
 }
 
-function localDateISO(d: Date): string {
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
-}
+import { getToday } from '../services/ui/debugDateOverride'
 
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
   if (lang !== 'fr') return label
@@ -76,7 +71,7 @@ export function SessionDetailPage() {
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
-  const today = useMemo(() => localDateISO(new Date()), [])
+  const today = useMemo(() => getToday(), [])
   const surfaceParams = useMemo(() => ({
     profile,
     events,
@@ -111,7 +106,7 @@ export function SessionDetailPage() {
         <PageHeader title={sessionPageTitle} backTo="/week" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
-            <p className="font-bold text-amber-400">Profil non encore supporté en bêta self-serve</p>
+            <p className="font-bold text-amber-400">Programme temporairement indisponible</p>
             <ul className="space-y-2">
               {hardBlockReasons.map((r) => (
                 <li key={r} className="text-sm text-amber-300/80">
@@ -121,17 +116,8 @@ export function SessionDetailPage() {
               ))}
             </ul>
             <p className="text-xs text-white/40">
-              Ton compte et ton profil sont conservés. Modifie ton profil pour revenir dans le périmètre supporté.
+              Ton compte et ton profil sont conservés. Réessaie dans quelques instants.
             </p>
-            <Link to="/profile" className="inline-block text-sm font-bold text-[#ff6b35] hover:text-[#e55a2b]">
-              Modifier mon profil →
-            </Link>
-            <a
-              href="mailto:feedback@rugbyforge.fr?subject=Feedback%20bêta%20RugbyForge"
-              className="inline-block text-xs text-white/40 hover:text-white/60 mt-1"
-            >
-              Un souci ? Contacte-nous →
-            </a>
           </div>
         </main>
         <BottomNav />
@@ -261,7 +247,7 @@ export function SessionDetailPage() {
                           <ShieldCheck className="w-4 h-4" />
                         </div>
                         <div className="text-left">
-                          <p className="text-sm font-black text-white">Prehab — Prévention</p>
+                          <p className="text-sm font-black text-white">Échauffement ciblé</p>
                           <p className="text-xs text-white/40 mt-0.5">
                             {prehabs.length} exercices · {profile.injuries.map(i => CONTRA_LABELS[i]).join(', ')}
                           </p>
@@ -274,8 +260,8 @@ export function SessionDetailPage() {
                       <div className="border-t border-white/10">
                         <div className="px-5 py-3 bg-emerald-900/20 border-b border-emerald-500/20">
                           <p className="text-[11px] text-emerald-400 leading-relaxed">
-                            À faire <strong>avant</strong> la séance principale (~10 min). Ces exercices sont adaptés à tes inconforts déclarés.
-                            <span className="opacity-70"> Pas un avis médical — consulte un professionnel si la douleur persiste.</span>
+                            À faire <strong>avant</strong> la séance principale (~10 min). Ces exercices sont adaptés à tes zones sensibles.
+                            <span className="opacity-70"> En cas de douleur persistante, consulte un professionnel.</span>
                           </p>
                         </div>
                         <div className="divide-y divide-white/5">
