@@ -167,35 +167,28 @@ describe('resolveMotherSessionsForWeek', () => {
     ])
   })
 
-  it('off-season Force-Bridge 3x → fallback 2x + warnings (stubs dataset Lower/Upper)', () => {
-    const lowerId = 'LOWER_OFFSEASON_FORCE_BRIDGE_V1'
-    const upperId = 'UPPER_OFFSEASON_FORCE_BRIDGE_V1'
-    const byId = {
-      ...MOTHER_SESSIONS_BY_ID,
-      [lowerId]: minimalMotherSession(lowerId, 'lower'),
-      [upperId]: minimalMotherSession(upperId, 'upper'),
-    }
-    const r = resolveMotherSessionsForWeek(
-      {
-        events: [match(FIRST_MATCH)],
-        today: '2025-01-06',
-        weeklyFrequency: 3,
-        positionGroup: 'front_row',
-        planningAnchors: {
-          manualCycleOverride: 'off_season',
-          manualOffSeasonWeekOverride: 10,
-          offSeasonStartAt: '2024-12-30',
-        },
+  it('off-season Force-Bridge 3x → 3 sessions resolved (Lower + Upper + Full)', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH)],
+      today: '2025-01-06',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      planningAnchors: {
+        manualCycleOverride: 'off_season',
+        manualOffSeasonWeekOverride: 10,
+        offSeasonStartAt: '2024-12-30',
       },
-      { sessionsById: byId }
-    )
+    })
     expect(r.planningContext.offSeasonPhase).toBe(4)
-    expect(r.sessions).toHaveLength(2)
-    expect(r.warnings.some((w) => /Force-Bridge|dataset|3x/i.test(w))).toBe(true)
-    expect(r.status).toBe('resolved_with_warnings')
+    expect(r.sessions).toHaveLength(3)
+    expect(r.sessions.map((s) => s.sessionId)).toEqual([
+      'LOWER_OFFSEASON_FORCE_BRIDGE_V1',
+      'UPPER_OFFSEASON_FORCE_BRIDGE_V1',
+      'FULL_OFFSEASON_FORCE_BRIDGE_V1',
+    ])
   })
 
-  it('playoffs 2x → structure in-season 2x + warnings taper', () => {
+  it('playoffs 2x → 2 sessions light + maxBlocks 2 + taper warning', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH)],
       today: '2025-06-01',
@@ -205,18 +198,16 @@ describe('resolveMotherSessionsForWeek', () => {
     })
     expect(r.planningContext.cycle).toBe('playoffs')
     expect(r.status).toBe('resolved_with_warnings')
-    expect(r.warnings.some((w) => /Playoffs V1 resolved through in-season taper logic/i.test(w))).toBe(
-      true
-    )
-    expect(r.warnings.some((w) => /2x|structure 2x|minimale/i.test(w))).toBe(true)
-    expect(r.sessions.map((s) => s.sessionId)).toEqual([
-      'LOWER_IN_SEASON_FRONT_ROW_V1',
-      'UPPER_IN_SEASON_FRONT_ROW_V1',
-    ])
+    expect(r.warnings.some((w) => /taper|playoffs/i.test(w))).toBe(true)
+    expect(r.sessions).toHaveLength(2)
+    for (const s of r.sessions) {
+      expect(s.variant).toBe('light')
+      expect(s.maxBlocks).toBe(2)
+    }
     expect(r.templateContext?.playoffsTaper).toBe(true)
   })
 
-  it('playoffs 3x → taper in-season + primer light + maxBlocks 2 + warning Playoffs V1', () => {
+  it('playoffs 3x → capped at 2 sessions light + maxBlocks 2', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH)],
       today: '2025-06-01',
@@ -225,16 +216,13 @@ describe('resolveMotherSessionsForWeek', () => {
       planningAnchors: { manualPlayoffs: true },
     })
     expect(r.planningContext.cycle).toBe('playoffs')
-    expect(r.status).toBe('resolved_with_warnings')
-    expect(r.warnings.some((w) => /Playoffs V1 resolved through in-season taper logic/i.test(w))).toBe(
-      true
-    )
+    expect(r.sessions).toHaveLength(2) // capped from 3 to 2
+    for (const s of r.sessions) {
+      expect(s.variant).toBe('light')
+      expect(s.maxBlocks).toBe(2)
+    }
     expect(r.templateContext?.playoffsTaper).toBe(true)
-    expect(r.templateContext?.matchContext).toBe('match_week')
-    const primer = r.sessions.find((s) => s.sessionId.includes('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW'))
-    expect(primer?.variant).toBe('light')
-    expect(primer?.maxBlocks).toBe(2)
-    expect(r.sessions).toHaveLength(3)
+    expect(r.templateContext?.effectiveFrequency).toBe(2)
   })
 
   it('sessionId absente du dataset → missing_session + planningContext + warnings conservés', () => {

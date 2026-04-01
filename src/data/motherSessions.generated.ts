@@ -1,7 +1,15 @@
 /**
  * AUTO-GÉNÉRÉ — ne pas modifier à la main.
- * Source : docs/training/mother-sessions/
- * Régénérer : node scripts/generateMotherSessionsDataset.mjs
+ *
+ * Sources :
+ *   - Off-season : docs/training/mother-sessions/off-season/ (markdown)
+ *   - Autres cycles : contenu inline (migration MD à venir)
+ *
+ * Régénération off-season :
+ *   node scripts/mergeOffSeasonIntoDataset.mjs
+ *
+ * ⚠  NE PAS lancer generateMotherSessionsDataset.mjs tant que
+ *    les sessions pré-saison et in-season n'ont pas de source MD.
  */
 
 import type { MotherSession } from '../types/motherSession'
@@ -6957,6 +6965,1817 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "[upper-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/upper-4.jpg)",
       "[upper-2.jpeg](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/upper-2.jpeg)",
       "[pre-season-12week.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/pre-season-12week.png)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "FULL_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "full",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "55-65 min"
+    },
+    "title": "FULL_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1",
+    "goal": [
+      "Full-body force-bridge with back-three bias: horizontal projection, rotational power, reactive patterns.",
+      "Maintain bilateral anchors (trap bar + bench) while shifting contrasts toward sprint and open-field demands.",
+      "Third weekly session for 3x frequency in Force-Bridge phase."
+    ],
+    "sessionIdentity": [
+      "This is a back-three full-body force-bridge session.",
+      "One lower contrast pair (horizontal projection) + one upper contrast pair (rotation) + reactive support.",
+      "Bilateral anchors stay. Contrast and support are position-specific."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets on main lift",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Full-body activation. Ramp-up on trap bar before B1."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Lower Force + Horizontal Projection",
+        "format": "`4 rounds`, `3-4 min` rest",
+        "exercises": [
+          {
+            "name": "trap bar deadlift",
+            "prescription": "4x3-4 @ 85%",
+            "role": "prime"
+          },
+          {
+            "name": "broad jump",
+            "prescription": "4x3, max distance",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Bilateral anchor + horizontal projection — sprint power transfer.",
+          "This replaces the box jump contrast of the front-row version."
+        ],
+        "fallbackOptions": [
+          "A: `Back Squat` + `Vertical Jump`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Upper Force + Rotational Power",
+        "format": "`4 rounds`, `90-120s` rest",
+        "exercises": [
+          {
+            "name": "bench press",
+            "prescription": "4x4-5"
+          },
+          {
+            "name": "med ball rotational throw",
+            "prescription": "4x3/side",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy bench into rotational throw — trunk transfer power.",
+          "This replaces the plyo push-up contrast of the front-row version."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Reactive Support / Anti-Rotation",
+        "format": "`3 rounds`, `75-90s` rest",
+        "exercises": [
+          {
+            "name": "band-assisted split jump",
+            "prescription": "3x4/side"
+          },
+          {
+            "name": "pallof press hold",
+            "prescription": "3x15-20s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Reactive split jump for single-leg power.",
+          "Pallof for anti-rotation endurance.",
+          "This replaces the reverse lunge + pallof of the front-row version."
+        ],
+        "fallbackOptions": [
+          "A: `Reverse Lunge` + `Pallof`"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Lower-Leg / Reactive Stiffness",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "copenhagen hold",
+            "prescription": "2x20-30s/side"
+          },
+          {
+            "name": "single-leg calf raise",
+            "prescription": "2x8/side"
+          },
+          {
+            "name": "low pogo hops",
+            "prescription": "2x8"
+          }
+        ],
+        "coachingNotes": [
+          "Lower-leg stiffness and reactive quality.",
+          "Pogo hops: bouncy and quick."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`FB1`: establish both contrast pairs at 85%.",
+      "`FB2`: increase to 88-90% if broad jump and throw quality hold.",
+      "Reduce B4 first, B3 second. NEVER reduce B1-B2."
+    ],
+    "positionAccent": [
+      "Back-three: horizontal projection in B1, rotational power in B2, reactive split jump in B3, stiffness prep in B4."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`"
+        ],
+        "replaceWith": [
+          "`Neutral-Grip DB Bench Press`"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "`Broad Jump`",
+          "`Band-Assisted Split Jump`"
+        ],
+        "replaceWith": [
+          "`Box Jump` reduced",
+          "`Reverse Lunge`"
+        ],
+        "rehabFinisher": [
+          "controlled pattern"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Trap Bar Deadlift`"
+        ],
+        "replaceWith": [
+          "`Hip Thrust` heavy"
+        ],
+        "rehabFinisher": [
+          "breathing work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Two contrast pairs + reactive block = high CNS load. Keep under 65 min.",
+      "Bilateral anchors stay. Do not add accessory work.",
+      "Stop reactive movements if quality drops."
+    ],
+    "sourceReferences": [
+      "[off-season-periodization.md] — Phase 4",
+      "[strength-methods.md] — Complex Training, PAP",
+      "[periodization.md] — Position demands §3.2"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "FULL_OFFSEASON_FORCE_BRIDGE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "full",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row + back_three (common base)",
+      "equipment": "full_gym",
+      "targetDuration": "55-65 min"
+    },
+    "title": "FULL_OFFSEASON_FORCE_BRIDGE_V1",
+    "goal": [
+      "Full-body force-bridge session combining one lower and one upper contrast pair.",
+      "Develop total-body power output through complex training.",
+      "Third weekly session for 3x frequency in Force-Bridge phase."
+    ],
+    "sessionIdentity": [
+      "This is a full-body force-bridge session for the 3x/week template.",
+      "One lower contrast pair + one upper contrast pair + structural support.",
+      "NOT a hypertrophy full-body — intensity and speed over volume.",
+      "This session should leave the athlete feeling powerful, not depleted."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets on main lift",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Full-body warm-up: cover hip, ankle, and shoulder mobility.",
+        "Ramp-up on first heavy lift before starting Block 1."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Lower Force + Explosive Contrast",
+        "format": "`4 rounds`, `3-4 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "trap bar deadlift",
+            "prescription": "4x4-5 @ 85-90%",
+            "role": "prime"
+          },
+          {
+            "name": "box jump",
+            "prescription": "4x3-4, max intention",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Trap bar deadlift: powerful hip extension, controlled descent.",
+          "Box jump within 15-20s: stick the landing, full extension.",
+          "This is the lower-body power developer of the session."
+        ],
+        "fallbackOptions": [
+          "A: `Back Squat` heavy (4x4-5)",
+          "B: `Vertical Jump` if no box"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Upper Force + Explosive Contrast",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "bench press",
+            "prescription": "4x4-5 @ 85-90%"
+          },
+          {
+            "name": "plyo push-up",
+            "prescription": "4x4-5, max height",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy bench into explosive plyo push-up — classic upper-body PAP pair.",
+          "Plyo push-up: hands should leave the ground. Focus on speed of push.",
+          "If plyo quality drops, reduce bench load before cutting push-ups."
+        ],
+        "fallbackOptions": [
+          "A: `Med Ball Chest Pass` if plyo push-ups too demanding"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Unilateral / Trunk Support",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "reverse lunge",
+            "prescription": "3x5-6/side"
+          },
+          {
+            "name": "pallof press hold",
+            "prescription": "3x15-20s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Lunge: force-grade reps (5-6), stable and controlled.",
+          "Pallof: anti-rotation endurance to support trunk stability for contrast work.",
+          "This block maintains single-leg balance and trunk integrity."
+        ],
+        "fallbackOptions": [
+          "A: `Split Squat` DB",
+          "B: `Dead Bug` if no band"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Lower-Leg / Groin Prevention",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "copenhagen hold",
+            "prescription": "2x20-30s/side"
+          },
+          {
+            "name": "single-leg calf raise",
+            "prescription": "2x10/side"
+          },
+          {
+            "name": "wall tibialis raise",
+            "prescription": "2x12"
+          }
+        ],
+        "coachingNotes": [
+          "Consistent prevention work across all off-season phases.",
+          "Keep this efficient — do not extend into extra volume."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`FB1`: establish both contrast pairs at 85%; confirm jump and push-up quality.",
+      "`FB2`: increase intensity to 88-90% on both main lifts if explosive quality holds.",
+      "Reduce Block 4 first if fatigue rises.",
+      "Reduce Block 3 to 2 rounds second.",
+      "NEVER reduce Blocks 1-2 — the contrast pairs are the session priority."
+    ],
+    "positionAccent": [
+      "Session is common for both groups.",
+      "`Front_row`: slightly more patience on trap bar setup; heavier bench tolerated.",
+      "`Back_three`: slightly more emphasis on jump height and push-up speed."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Plyo Push-Up`"
+        ],
+        "replaceWith": [
+          "`Neutral-Grip DB Bench Press`",
+          "`Med Ball Chest Pass`"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "`Box Jump` if landing painful",
+          "`Reverse Lunge`"
+        ],
+        "replaceWith": [
+          "`Countermovement Jump` reduced range",
+          "`Hip Thrust` 3x5"
+        ],
+        "rehabFinisher": [
+          "controlled knee-friendly pattern"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Trap Bar Deadlift` if bracing fails"
+        ],
+        "replaceWith": [
+          "`Hip Thrust` heavy (4x5)"
+        ],
+        "rehabFinisher": [
+          "breathing and trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Full-body force-bridge is demanding on the CNS. Respect rest periods.",
+      "Two contrast pairs in one session = high neural load. Keep total session under 65 min.",
+      "If either contrast pair loses explosive quality, end the block early.",
+      "Do not add accessory work — the 4-block structure is the complete session."
+    ],
+    "sourceReferences": [
+      "[off-season-periodization.md] — Phase 4 Force-Power conversion",
+      "[strength-methods.md] — Complex Training, PAP (Tillin & Bishop 2009)",
+      "[periodization.md] — Effect residual exploitation (Issurin 2008)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "FULL_OFFSEASON_HYPERTROPHY_BACK_THREE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "full",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "60-75 min"
+    },
+    "title": "FULL_OFFSEASON_HYPERTROPHY_BACK_THREE_V1",
+    "goal": [
+      "Full-body hypertrophy with back-three bias: rotational patterns, unilateral support, and lower-leg tissue quality.",
+      "Maintain trap bar as the bilateral hinge anchor.",
+      "Prepare trunk transfer and multi-directional capacity for pre-season."
+    ],
+    "sessionIdentity": [
+      "This is a back-three full-body hypertrophy session.",
+      "Trap bar anchor stays. Accent shifts to rotational pressing, unilateral support, and lower-leg quality."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets on trap bar",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Full-body warm-up covering hip, ankle, shoulder."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Main Full-Body Hinge",
+        "format": "`4 work sets`, `2 min` rest",
+        "exercises": [
+          {
+            "name": "trap bar deadlift",
+            "prescription": "4x6"
+          }
+        ],
+        "coachingNotes": [
+          "Bilateral anchor. RPE 6-8, powerful but controlled."
+        ],
+        "fallbackOptions": [
+          "A: `Barbell Romanian Deadlift`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Rotational Press / Unilateral Pull",
+        "format": "`4 rounds`, `90-120s` rest after pair",
+        "exercises": [
+          {
+            "name": "half-kneeling landmine press",
+            "prescription": "4x8/side"
+          },
+          {
+            "name": "single-arm db row",
+            "prescription": "4x8/side"
+          }
+        ],
+        "coachingNotes": [
+          "Rotational pressing + unilateral pulling: trunk transfer emphasis.",
+          "Both exercises challenge anti-rotation through the trunk."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Unilateral Lower / Rotation",
+        "format": "`3 rounds`, `75-90s` rest after pair",
+        "exercises": [
+          {
+            "name": "reverse lunge",
+            "prescription": "3x8/side"
+          },
+          {
+            "name": "med ball rotational throw",
+            "prescription": "3x4/side"
+          }
+        ],
+        "coachingNotes": [
+          "Lunge for single-leg structural work.",
+          "Rotational throw at moderate volume — building pattern, not peak power."
+        ],
+        "fallbackOptions": [
+          "A: `Split Squat`",
+          "B: `Pallof Press Hold`"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Lower-Leg / Groin",
+        "format": "`2 rounds`, minimal rest",
+        "exercises": [
+          {
+            "name": "copenhagen hold",
+            "prescription": "2x20-30s/side"
+          },
+          {
+            "name": "single-leg calf raise",
+            "prescription": "2x10/side"
+          },
+          {
+            "name": "wall tibialis raise",
+            "prescription": "2x12"
+          }
+        ],
+        "coachingNotes": [
+          "Lower-leg quality emphasis for acceleration prep."
+        ]
+      },
+      {
+        "number": 5,
+        "name": "Reward Block",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "hammer curl",
+            "prescription": "2x10-12"
+          },
+          {
+            "name": "rope pressdown",
+            "prescription": "2x10-12"
+          }
+        ],
+        "coachingNotes": [
+          "Optional. Same as front-row version."
+        ],
+        "isOptional": true
+      }
+    ],
+    "progressionRules": [
+      "`H1`: establish form on landmine and rotational throws.",
+      "`H2`: increase loads; keep throws at 4/side.",
+      "`H3`: peak volume. RPE 7-8.",
+      "`H4`: reduce -25-30%. Drop B5 first, reduce B3 throws second."
+    ],
+    "positionAccent": [
+      "Back-three session: rotational pressing in B2, rotational throwing in B3, lower-leg in B4."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Half-Kneeling Landmine Press`"
+        ],
+        "replaceWith": [
+          "`Seated DB Overhead Press`"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "`Reverse Lunge`"
+        ],
+        "replaceWith": [
+          "`Hip Thrust` 3x8"
+        ],
+        "rehabFinisher": [
+          "controlled pattern"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Trap Bar Deadlift`"
+        ],
+        "replaceWith": [
+          "`Hip Thrust` heavy"
+        ],
+        "rehabFinisher": [
+          "breathing work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Keep rotational throws controlled in hypertrophy phase.",
+      "Do not add sets beyond the prescription.",
+      "Bilateral anchor (trap bar) stays non-negotiable."
+    ],
+    "sourceReferences": [
+      "[off-season-periodization.md]",
+      "[periodization.md] — Position demands §3.2"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "lower",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "50-60 min"
+    },
+    "title": "LOWER_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1",
+    "goal": [
+      "Convert lower-body hypertrophy into explosive power with a back-three bias: horizontal projection, unilateral reactivity.",
+      "Maintain a bilateral force anchor (trap bar) while shifting contrast work toward sprint-specific patterns.",
+      "Bridge toward pre-season acceleration and change-of-direction demands."
+    ],
+    "sessionIdentity": [
+      "This is a back-three force-bridge lower session.",
+      "More pronounced differentiation than hypertrophy phase.",
+      "Bilateral anchor stays. Contrast and support shift to unilateral reactive patterns."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets on trap bar",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Activation before heavy loading. Player should feel sharp."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Hinge Force + Horizontal Projection",
+        "format": "`4 rounds`, `3-4 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "trap bar deadlift",
+            "prescription": "4x3-4 @ 85-90%",
+            "role": "prime"
+          },
+          {
+            "name": "broad jump",
+            "prescription": "4x3, max distance",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Bilateral anchor maintained. Heavy trap bar into horizontal projection.",
+          "Broad jump: full hip extension, stick landing. Horizontal power expression for sprinting.",
+          "This replaces the pin squat + squat jump of the front-row version."
+        ],
+        "fallbackOptions": [
+          "A: `Back Squat` heavy + `Box Jump`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Unilateral Force + Reactive Contrast",
+        "format": "`4 rounds`, `90-120s` rest after pair",
+        "exercises": [
+          {
+            "name": "single-leg romanian deadlift",
+            "prescription": "4x4/side"
+          },
+          {
+            "name": "band-assisted split jump",
+            "prescription": "4x3/side",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Unilateral hinge force paired with reactive single-leg jump.",
+          "This is the main positional accent: sprint-specific unilateral power.",
+          "Band assist allows explosive intent without excessive eccentric stress."
+        ],
+        "fallbackOptions": [
+          "A: `Reverse Lunge` heavy + `Countermovement Jump`"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Posterior Chain Support",
+        "format": "`3 rounds`, `75-90s` rest",
+        "exercises": [
+          {
+            "name": "nordic curl",
+            "prescription": "3x4-5"
+          },
+          {
+            "name": "copenhagen hold",
+            "prescription": "2x20-30s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Sprint-resilience: eccentric hamstring + groin robustness.",
+          "Same structure as front-row version."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Lower-Leg / Reactive Stiffness",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "single-leg calf raise",
+            "prescription": "2x8/side"
+          },
+          {
+            "name": "wall tibialis raise",
+            "prescription": "2x12"
+          },
+          {
+            "name": "low pogo hops",
+            "prescription": "2x8"
+          }
+        ],
+        "coachingNotes": [
+          "Lower-leg stiffness and reactive quality for acceleration.",
+          "Pogo hops: bouncy and quick, not forceful."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`FB1`: establish contrast pairs at 85%.",
+      "`FB2`: increase to 88-90% if broad jump distance is maintained.",
+      "Reduce B4 first, B3 second. NEVER reduce B1-B2."
+    ],
+    "positionAccent": [
+      "Back-three: horizontal projection in B1, unilateral reactive in B2, stiffness prep in B4."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [],
+        "replaceWith": [],
+        "rehabFinisher": []
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "`Broad Jump`",
+          "`Band-Assisted Split Jump`"
+        ],
+        "replaceWith": [
+          "`Box Jump` reduced height",
+          "`Countermovement Jump` reduced range"
+        ],
+        "rehabFinisher": [
+          "controlled pattern"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Trap Bar Deadlift`"
+        ],
+        "replaceWith": [
+          "`Hip Thrust` heavy"
+        ],
+        "rehabFinisher": [
+          "breathing work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "This session should feel fast and reactive.",
+      "Broad jump and split jump degrade quickly with fatigue — stop if quality drops.",
+      "Bilateral anchor (trap bar) stays."
+    ],
+    "sourceReferences": [
+      "[off-season-periodization.md] — Phase 4",
+      "[strength-methods.md] — Complex Training",
+      "[periodization.md] — Position demands §3.2"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_OFFSEASON_FORCE_BRIDGE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "lower",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row + back_three (common base)",
+      "equipment": "full_gym",
+      "targetDuration": "50-60 min"
+    },
+    "title": "LOWER_OFFSEASON_FORCE_BRIDGE_V1",
+    "goal": [
+      "Convert off-season hypertrophy gains into maximal lower-body force and explosive power.",
+      "Introduce complex training (heavy + ballistic contrast) to exploit post-activation potentiation.",
+      "Prepare the neuromuscular system for pre-season power development."
+    ],
+    "sessionIdentity": [
+      "This is a force-bridge session: heavy loads paired with explosive movements.",
+      "NOT a hypertrophy day — volume is reduced, intensity and speed are the priority.",
+      "NOT a pre-season power session — still building toward that threshold.",
+      "Complex training structure: every heavy set is followed by an explosive contrast."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets on pin squat",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Ramp-up is critical before heavy loading — take 2-3 sets to reach working weight.",
+        "Player should feel activated and sharp, not fatigued."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Squat Force + Explosive Contrast",
+        "format": "`4 rounds`, `3-4 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "pin back squat",
+            "prescription": "4x4-5 @ 85-90%",
+            "role": "prime"
+          },
+          {
+            "name": "squat jump",
+            "prescription": "4x3-4, max intention",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy squat first: dead-stop from pins, no bounce. RIR 1-2.",
+          "Jump within 15-20s of unracking — exploit the PAP window.",
+          "Jump height should feel noticeably better after the heavy set.",
+          "If jump quality drops, reduce squat load before cutting jumps."
+        ],
+        "fallbackOptions": [
+          "A: `Front Squat` if pin setup not available",
+          "B: `Box Squat` as dead-stop alternative"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Hinge Force + Dynamic Contrast",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "trap bar deadlift",
+            "prescription": "4x4-5 @ 80-85%"
+          },
+          {
+            "name": "broad jump",
+            "prescription": "4x3, max distance",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Trap bar allows a more upright pull with less low-back stress than conventional.",
+          "Broad jump: full hip extension, stick the landing.",
+          "This block bridges posterior chain strength to horizontal power expression."
+        ],
+        "fallbackOptions": [
+          "A: `Barbell Romanian Deadlift` heavy (4x5) if no trap bar"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Unilateral Strength + Posterior Support",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "rear-foot elevated split squat",
+            "prescription": "3x5-6/side"
+          },
+          {
+            "name": "nordic curl",
+            "prescription": "3x4-5"
+          }
+        ],
+        "coachingNotes": [
+          "Unilateral work at force-grade reps (5-6), not hypertrophy (8+).",
+          "Nordic curl: controlled eccentric, assist concentric if needed.",
+          "These maintain structural balance without adding excessive fatigue."
+        ],
+        "fallbackOptions": [
+          "A: `Reverse Lunge` barbell",
+          "B: `Lying Leg Curl` 3x6-8"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Lower-Leg / Groin Prevention",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "copenhagen hold",
+            "prescription": "2x20-30s/side"
+          },
+          {
+            "name": "seated calf raise",
+            "prescription": "2x10-12"
+          },
+          {
+            "name": "wall tibialis raise",
+            "prescription": "2x12"
+          }
+        ],
+        "coachingNotes": [
+          "Prevention work stays consistent across all off-season phases.",
+          "Keep this efficient — don't turn it into extra training volume."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`FB1` (week 9): establish tolerance to contrast pairs; keep main lifts at 85%.",
+      "`FB2` (week 10): increase intensity to 88-90% if jump explosiveness is maintained.",
+      "Reduce Block 4 first if fatigue accumulates.",
+      "Reduce Block 3 volume second (drop to 2 rounds).",
+      "NEVER reduce Blocks 1-2 — the contrast pairs ARE the session."
+    ],
+    "positionAccent": [
+      "Session is common for both groups.",
+      "`Front_row`: slightly more bracing intent on squat and trap bar; patient setup.",
+      "`Back_three`: slightly more emphasis on jump height/distance quality."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "bar position only if `Pin Squat` setup aggravates"
+        ],
+        "replaceWith": [
+          "`Front Squat`"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "`Pin Back Squat` if painful",
+          "`Squat Jump`"
+        ],
+        "replaceWith": [
+          "`Box Squat` to pain-free depth",
+          "`Countermovement Jump` reduced range"
+        ],
+        "rehabFinisher": [
+          "controlled knee-friendly pattern"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Trap Bar Deadlift` if bracing fails"
+        ],
+        "replaceWith": [
+          "`Hip Thrust` heavy (4x5)"
+        ],
+        "rehabFinisher": [
+          "breathing and trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "This session should feel FAST and SHARP, not grinding.",
+      "Total volume is intentionally lower than hypertrophy — do not add sets.",
+      "Ballistic movements degrade with fatigue. Stop if explosiveness drops >20%.",
+      "The contrast pairs are the entire driver. Protect them."
+    ],
+    "sourceReferences": [
+      "[off-season-periodization.md] — Phase 4 Force-Power conversion (§6)",
+      "[strength-methods.md] — Complex Training, ME/DE methods",
+      "[periodization.md] — Effect residual, Force→Power transition"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "lower",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "55-70 min"
+    },
+    "title": "LOWER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1",
+    "goal": [
+      "Rebuild lower-body muscle mass with a back-three bias: unilateral patterns, sprint-resilience, and lower-leg stiffness.",
+      "Maintain a bilateral squat anchor for absolute force while shifting accessory work toward single-leg and reactive qualities.",
+      "Prepare posterior chain and ankle complex for pre-season acceleration demands."
+    ],
+    "sessionIdentity": [
+      "This is a back-three off-season hypertrophy lower session.",
+      "Bilateral squat anchor stays — but the accent shifts to unilateral hinge, single-leg stability, and lower-leg tissue quality.",
+      "Do not remove the squat; do not turn this into a rehab session. It is hypertrophy with a positional lens."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight split squat",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Same warm-up structure as front-row version.",
+        "Player should feel ready for volume, not already fatigued."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Main Squat Hypertrophy",
+        "format": "`4 work sets`, `2 min` rest between sets",
+        "exercises": [
+          {
+            "name": "back squat",
+            "prescription": "4x8"
+          }
+        ],
+        "coachingNotes": [
+          "Bilateral anchor preserved. RPE 6-8.",
+          "Depth and control matter more than load."
+        ],
+        "fallbackOptions": [
+          "A: `Front Squat`",
+          "B: `Hack Squat`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Unilateral Hinge / Quad Pair",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "single-leg romanian deadlift",
+            "prescription": "4x8/side"
+          },
+          {
+            "name": "reverse lunge",
+            "prescription": "3-4x8/side"
+          }
+        ],
+        "coachingNotes": [
+          "This is the main positional accent block.",
+          "Single-leg RDL builds unilateral posterior chain — key for sprint acceleration.",
+          "Reverse lunge develops single-leg quad strength with deceleration control.",
+          "Keep both exercises full-range and stable."
+        ],
+        "fallbackOptions": [
+          "A: `DB Romanian Deadlift` bilateral if balance is an issue",
+          "B: `Split Squat`"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Posterior Chain / Groin Support",
+        "format": "`3 rounds`, `60-75s` rest after the pair",
+        "exercises": [
+          {
+            "name": "nordic curl",
+            "prescription": "3x4-5"
+          },
+          {
+            "name": "copenhagen hold",
+            "prescription": "2-3x20-30s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Nordic curl for sprint-resilience: eccentric hamstring strength protects against high-speed running injuries.",
+          "Copenhagen for groin robustness.",
+          "This block replaces the lying leg curl of the front-row version."
+        ],
+        "fallbackOptions": [
+          "A: `Lying Leg Curl` 3x8 if nordic too demanding"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Lower-Leg / Stiffness Prep",
+        "format": "`2 rounds`, minimal rest",
+        "exercises": [
+          {
+            "name": "single-leg calf raise",
+            "prescription": "2-3x10/side"
+          },
+          {
+            "name": "wall tibialis raise",
+            "prescription": "2-3x12"
+          },
+          {
+            "name": "low pogo hops",
+            "prescription": "2x8"
+          }
+        ],
+        "coachingNotes": [
+          "Single-leg calf for ankle stiffness and unilateral balance.",
+          "Low pogo hops introduce very low-level reactive stiffness — preparation for pre-season plyometrics.",
+          "Keep pogo hops light and bouncy, not forceful."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`H1`: establish clean volume tolerance on all exercises.",
+      "`H2`: increase load if recovery is good; keep nordic at 4-5 reps.",
+      "`H3`: highest volume week; allow RPE 7-8 on main lifts.",
+      "`H4`: reduce volume -25-30% while keeping load. Reduce Block 4 first, Block 3 second."
+    ],
+    "positionAccent": [
+      "Back-three session: unilateral emphasis in Block 2, sprint-resilience in Block 3, stiffness prep in Block 4.",
+      "The squat anchor remains bilateral and identical to front-row."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "bar position only if `Back Squat` setup aggravates"
+        ],
+        "replaceWith": [
+          "`Front Squat`"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "`Back Squat`",
+          "`Reverse Lunge`"
+        ],
+        "replaceWith": [
+          "`Box Squat` light-moderate",
+          "`Hip Thrust` 3x8"
+        ],
+        "rehabFinisher": [
+          "controlled knee-friendly pattern"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Single-Leg Romanian Deadlift` if bracing fails"
+        ],
+        "replaceWith": [
+          "`DB Romanian Deadlift` bilateral"
+        ],
+        "rehabFinisher": [
+          "breathing and trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not remove the bilateral squat — it is the force anchor.",
+      "Unilateral work should feel stable and full-range, not rushed.",
+      "Nordic curl is demanding; assist the concentric if needed."
+    ],
+    "sourceReferences": [
+      "[off-season-periodization.md]",
+      "[periodization.md] — Position demands §3.2",
+      "[injury-prevention.md]"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "50-60 min"
+    },
+    "title": "UPPER_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1",
+    "goal": [
+      "Convert upper-body strength into rotational and projection power for back-three demands.",
+      "Maintain bench as bilateral pressing anchor.",
+      "Develop trunk transfer speed and multi-directional upper-body power."
+    ],
+    "sessionIdentity": [
+      "This is a back-three force-bridge upper session.",
+      "Bench anchor stays. Contrast and support shift toward rotation and projection.",
+      "More pronounced differentiation than hypertrophy phase."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "band pull-apart",
+          "prescription": "1x12"
+        },
+        {
+          "name": "push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets on bench",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Shoulder activation before heavy pressing."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Press Force + Speed Contrast",
+        "format": "`4 rounds`, `3-4 min` rest",
+        "exercises": [
+          {
+            "name": "bench press",
+            "prescription": "4x4-5 @ 85%",
+            "role": "prime"
+          },
+          {
+            "name": "plyo push-up",
+            "prescription": "4x4-5, max height",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy bench into explosive push-up — speed/projection emphasis.",
+          "Plyo push-up: hands must leave ground. Speed of push matters.",
+          "This replaces the med ball chest pass of the front-row version."
+        ],
+        "fallbackOptions": [
+          "A: `Med Ball Chest Pass` if plyo push-ups too demanding"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Force + Rotational Power",
+        "format": "`4 rounds`, `90-120s` rest",
+        "exercises": [
+          {
+            "name": "neutral-grip pull-up",
+            "prescription": "4x4-5"
+          },
+          {
+            "name": "med ball rotational throw",
+            "prescription": "4x3/side",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Pull-up for vertical pulling force.",
+          "Rotational throw for trunk transfer power — key for open-field passing and fending.",
+          "This replaces the sagittal med ball slam of the front-row version."
+        ],
+        "fallbackOptions": [
+          "A: `Chest-Supported Row` heavy",
+          "B: `Cable Rotation Explosive`"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Unilateral Rotational Strength",
+        "format": "`3 rounds`, `75-90s` rest",
+        "exercises": [
+          {
+            "name": "half-kneeling landmine press",
+            "prescription": "3x4-5/side"
+          },
+          {
+            "name": "half-kneeling cable row",
+            "prescription": "3x5-6/side"
+          }
+        ],
+        "coachingNotes": [
+          "Both exercises in half-kneeling: trunk stability under unilateral load.",
+          "This replaces the push press + t-bar row of the front-row version.",
+          "Force-grade reps (4-6), not hypertrophy."
+        ],
+        "fallbackOptions": [
+          "A: `Push Press` + `T-Bar Row`"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Trunk / Shoulder Prevention",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "cable chop",
+            "prescription": "2x6-8/side"
+          },
+          {
+            "name": "face pull",
+            "prescription": "2x10-12"
+          }
+        ],
+        "coachingNotes": [
+          "Same structure as front-row. Cable chop at force-grade reps."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`FB1`: establish contrast pairs at 85%; confirm plyo push-up and throw quality.",
+      "`FB2`: increase bench to 88-90% if push-up height holds.",
+      "Reduce B4 first, B3 second. NEVER reduce B1-B2."
+    ],
+    "positionAccent": [
+      "Back-three: speed contrast in B1, rotational power in B2, unilateral rotational strength in B3."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Plyo Push-Up`",
+          "`Half-Kneeling Landmine Press`"
+        ],
+        "replaceWith": [
+          "`Neutral-Grip DB Bench Press`",
+          "`Med Ball Chest Pass`",
+          "`Seated DB Overhead Press`"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [],
+        "replaceWith": [],
+        "rehabFinisher": []
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Half-Kneeling Landmine Press`",
+          "`Half-Kneeling Cable Row`"
+        ],
+        "replaceWith": [
+          "`Seated DB Overhead Press`",
+          "`Chest-Supported Row`"
+        ],
+        "rehabFinisher": [
+          "breathing work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Speed and rotation are the priorities, not grinding.",
+      "Plyo push-ups and rotational throws degrade quickly — stop if quality drops.",
+      "Bench anchor stays non-negotiable."
+    ],
+    "sourceReferences": [
+      "[off-season-periodization.md] — Phase 4",
+      "[strength-methods.md] — Complex Training",
+      "[periodization.md] — Position demands §3.2"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_OFFSEASON_FORCE_BRIDGE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row + back_three (common base)",
+      "equipment": "full_gym",
+      "targetDuration": "50-60 min"
+    },
+    "title": "UPPER_OFFSEASON_FORCE_BRIDGE_V1",
+    "goal": [
+      "Convert off-season upper-body hypertrophy into maximal pressing/pulling force and explosive power.",
+      "Use complex training to bridge heavy strength and ballistic output.",
+      "Prepare shoulders, back, and trunk for pre-season demands."
+    ],
+    "sessionIdentity": [
+      "This is a force-bridge upper session: heavy presses and pulls paired with ballistic contrasts.",
+      "NOT hypertrophy — fewer reps, heavier loads, explosive follow-ups.",
+      "The med ball and plyo work must feel faster after the heavy lift."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "band pull-apart",
+          "prescription": "1x12"
+        },
+        {
+          "name": "push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "band pull-apart",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets on bench press",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Shoulder and thoracic activation before heavy pressing.",
+        "Ramp-up sets are essential — reach working weight over 2-3 sets."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Press Force + Explosive Contrast",
+        "format": "`4 rounds`, `3-4 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "bench press",
+            "prescription": "4x4-5 @ 85-90%",
+            "role": "prime"
+          },
+          {
+            "name": "med ball chest pass",
+            "prescription": "4x4-5, max intention",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy bench: controlled eccentric, explosive concentric. RIR 1-2.",
+          "Med ball pass within 15-20s of bench set — exploit PAP.",
+          "Pass should feel noticeably faster/harder after the heavy set.",
+          "If pass quality drops, reduce bench load first."
+        ],
+        "fallbackOptions": [
+          "A: `DB Bench Press` heavy",
+          "B: `Plyo Push-Up` if no med ball"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Force + Power Contrast",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "neutral-grip pull-up",
+            "prescription": "4x4-5 (add load if needed)"
+          },
+          {
+            "name": "med ball slam",
+            "prescription": "4x4, explosive",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Pull-up: full range, dead hang to chin over bar. Add weight belt if bodyweight is too easy.",
+          "Slam: full hip extension into powerful overhead throw. Speed matters.",
+          "This block develops pulling power and trunk transfer."
+        ],
+        "fallbackOptions": [
+          "A: `Chest-Supported Row` heavy (4x5)",
+          "B: `Cable Slam` if no med ball"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Vertical Press/Row Strength",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "push press",
+            "prescription": "3x4-5"
+          },
+          {
+            "name": "t-bar row",
+            "prescription": "3x5-6"
+          }
+        ],
+        "coachingNotes": [
+          "Push press: use leg drive to move heavier loads overhead — this IS a power exercise.",
+          "T-bar row: strict form, force-grade reps, no body english.",
+          "This block maintains force balance across pressing and pulling patterns."
+        ],
+        "fallbackOptions": [
+          "A: `Strict Overhead Press` 3x5-6",
+          "B: `Chest-Supported Row` 3x5-6"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Trunk / Shoulder Prevention",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "cable chop",
+            "prescription": "2x6-8/side"
+          },
+          {
+            "name": "face pull",
+            "prescription": "2x10-12"
+          }
+        ],
+        "coachingNotes": [
+          "Cable chop at force-grade reps — controlled, powerful rotation.",
+          "Face pull: light, high-rep, shoulder health priority.",
+          "Keep this block short and efficient."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`FB1`: establish contrast pairs at 85%; confirm med ball/slam quality.",
+      "`FB2`: increase main lifts to 88-90% if explosive quality is maintained.",
+      "Reduce Block 4 first if fatigue accumulates.",
+      "Reduce Block 3 to 2 rounds second.",
+      "NEVER reduce Blocks 1-2 — the contrast pairs ARE the session."
+    ],
+    "positionAccent": [
+      "Session is common for both groups.",
+      "`Front_row`: slightly heavier bench loads tolerated; more bracing emphasis.",
+      "`Back_three`: slightly more emphasis on med ball velocity and trunk transfer speed."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press` if impingement",
+          "`Push Press` if overhead painful"
+        ],
+        "replaceWith": [
+          "`Neutral-Grip DB Bench Press`",
+          "`Landmine Press`"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`",
+          "`serratus reach`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [],
+        "replaceWith": [],
+        "rehabFinisher": []
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Push Press` if bracing fails",
+          "`T-Bar Row` if position breaks"
+        ],
+        "replaceWith": [
+          "`Seated DB Overhead Press`",
+          "`Chest-Supported Row`"
+        ],
+        "rehabFinisher": [
+          "breathing and trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "This session should feel powerful and sharp, not exhausting.",
+      "Heavy pressing + ballistic contrasts demand full CNS recovery between rounds.",
+      "Do not rush the rest periods — quality of explosive movement depends on it.",
+      "Med ball work degrades fast with fatigue. Stop if throw distance/speed drops."
+    ],
+    "sourceReferences": [
+      "[off-season-periodization.md] — Phase 4 Force-Power conversion",
+      "[strength-methods.md] — Complex Training, PAP exploitation",
+      "[periodization.md] — Effect residual, Force→Power transition"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "55-70 min"
+    },
+    "title": "UPPER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1",
+    "goal": [
+      "Build upper-body mass with a back-three bias: unilateral pulling, rotational pressing, and trunk transfer.",
+      "Maintain bilateral bench as the pressing anchor.",
+      "Prepare shoulder girdle and trunk for pre-season rotational and open-field demands."
+    ],
+    "sessionIdentity": [
+      "This is a back-three off-season hypertrophy upper session.",
+      "Bench anchor stays. Accent shifts to unilateral row, rotational press, anti-rotation trunk, and med ball preparation.",
+      "Do not remove the bench; do not add excessive isolation work."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "band pull-apart",
+          "prescription": "1x12"
+        },
+        {
+          "name": "push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets on bench",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Shoulder and thoracic activation before pressing."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Main Upper Press",
+        "format": "`4 work sets`, `2 min` rest",
+        "exercises": [
+          {
+            "name": "bench press",
+            "prescription": "4x8"
+          }
+        ],
+        "coachingNotes": [
+          "Bilateral anchor. RPE 6-8, controlled and repeatable."
+        ],
+        "fallbackOptions": [
+          "A: `Neutral-Grip DB Bench Press`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Unilateral Pull / Rotational Press",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "single-arm db row",
+            "prescription": "4x8/side"
+          },
+          {
+            "name": "half-kneeling landmine press",
+            "prescription": "3-4x8/side"
+          }
+        ],
+        "coachingNotes": [
+          "This is the main positional accent block.",
+          "Single-arm row develops unilateral pulling strength and anti-rotation demand.",
+          "Landmine press introduces rotational pressing pattern — key for open-field ball handling.",
+          "Both exercises challenge trunk stability unilaterally."
+        ],
+        "fallbackOptions": [
+          "A: `Chest-Supported Row` bilateral",
+          "B: `Seated DB Overhead Press`"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Anti-Rotation / Vertical Pull",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "pallof press hold",
+            "prescription": "3x15-20s/side"
+          },
+          {
+            "name": "neutral-grip pull-up",
+            "prescription": "3x6-8"
+          }
+        ],
+        "coachingNotes": [
+          "Pallof builds anti-rotation endurance for direction changes.",
+          "Pull-up: full range, dead hang to chin over."
+        ],
+        "fallbackOptions": [
+          "A: `Lat Pulldown`"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Arms / Rotational Prep",
+        "format": "`2-3 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "hammer curl",
+            "prescription": "3x10-12"
+          },
+          {
+            "name": "rope pressdown",
+            "prescription": "3x10-12"
+          },
+          {
+            "name": "face pull",
+            "prescription": "2x12-15"
+          },
+          {
+            "name": "med ball rotational throw",
+            "prescription": "2x4/side"
+          }
+        ],
+        "coachingNotes": [
+          "Arms stay common. Face pull for shoulder health.",
+          "Med ball rotational throw at low volume introduces rotational power pattern.",
+          "Keep throws controlled — this is prep, not peak power."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`H1`: establish form on landmine press and single-arm row.",
+      "`H2`: increase loads if form is clean.",
+      "`H3`: highest volume; RPE 7-8 allowed.",
+      "`H4`: reduce -25-30%. Drop med ball throws and face pull first."
+    ],
+    "positionAccent": [
+      "Back-three session: unilateral row + rotational press in Block 2, anti-rotation in Block 3, med ball prep in Block 4."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Half-Kneeling Landmine Press`"
+        ],
+        "replaceWith": [
+          "`Neutral-Grip DB Bench Press`",
+          "`Seated DB Overhead Press`"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`",
+          "`serratus reach`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [],
+        "replaceWith": [],
+        "rehabFinisher": []
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Half-Kneeling Landmine Press` if bracing fails"
+        ],
+        "replaceWith": [
+          "`Seated DB Overhead Press`"
+        ],
+        "rehabFinisher": [
+          "breathing work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not remove the bench anchor.",
+      "Rotational throws are low-volume prep, not a power block.",
+      "Unilateral row and landmine press demand trunk control — do not rush."
+    ],
+    "sourceReferences": [
+      "[off-season-periodization.md]",
+      "[periodization.md] — Position demands §3.2"
     ]
   }
 ]

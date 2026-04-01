@@ -28,6 +28,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'box squat': 'squat__box_squat__barbell',
   'pin back squat': 'squat__pin_squat__barbell',
   'push press': 'power__push_press__barbell',
+  'push-up': 'push_horizontal__push_up__incline',
   'strict standing overhead press': 'push_vertical__overhead_press__barbell',
   'machine shoulder press': 'push_vertical__shoulder_press__machine',
   'shoulder press machine': 'push_vertical__shoulder_press__machine',
@@ -121,10 +122,13 @@ const MS_EXERCISE_MAP: Record<string, string> = {
 
   // ── Power / Plyo ────────────────────────────────────────────
   'broad jump': 'power__jump__broad_jump',
+  'box jump': 'power__jump__box_jump',
+  'squat jump': 'power__squat_jump__bodyweight',
   'countermovement jump': 'power__countermovement_jump',
   'lateral bound': 'power__lateral_bound',
   'plyo push-up': 'push_horizontal__push_up__plyo',
   'med ball chest pass': 'power__medball_chest_pass__wall',
+  'med ball slam': 'power__medball_slam__overhead',
   'med ball rotational throw': 'power__medball_rotational_throw__wall',
   'med ball throw': 'power__medball_slam__overhead',
   'supine med ball throw': 'power__medball_throw__supine',

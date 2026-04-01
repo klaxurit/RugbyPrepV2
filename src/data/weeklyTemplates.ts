@@ -73,6 +73,15 @@ export const OFF_SEASON_SESSION_IDS_IN_DATASET_V1 = new Set<string>([
   'LOWER_OFFSEASON_HYPERTROPHY_V1',
   'UPPER_OFFSEASON_HYPERTROPHY_V1',
   'FULL_OFFSEASON_HYPERTROPHY_V1',
+  'LOWER_OFFSEASON_FORCE_BRIDGE_V1',
+  'UPPER_OFFSEASON_FORCE_BRIDGE_V1',
+  'FULL_OFFSEASON_FORCE_BRIDGE_V1',
+  'LOWER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1',
+  'UPPER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1',
+  'FULL_OFFSEASON_HYPERTROPHY_BACK_THREE_V1',
+  'LOWER_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1',
+  'UPPER_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1',
+  'FULL_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1',
 ])
 
 export const OFF_SEASON_FULL_FORCE_BRIDGE_SESSION_ID = 'FULL_OFFSEASON_FORCE_BRIDGE_V1'
@@ -406,9 +415,10 @@ function makeRecoveryOffSeasonSlots(): WeeklySessionSlot[] {
 export function resolveOffSeasonWeeklyTemplate(params: {
   offSeasonPhase: OffSeasonPhase
   frequency: Frequency
+  positionGroup?: PositionGroup
   fatigueLevel?: FatigueLevel
 }): WeeklyTemplateResolution {
-  const { offSeasonPhase, frequency: requestedFrequency } = params
+  const { offSeasonPhase, frequency: requestedFrequency, positionGroup } = params
   const fatigueLevel = params.fatigueLevel ?? 'normal'
   const isHigh = fatigueLevel === 'high' || fatigueLevel === 'very_high'
   const warnings: string[] = []
@@ -476,21 +486,25 @@ export function resolveOffSeasonWeeklyTemplate(params: {
     companionRecommendations.push(
       '1–2 exposures aérobies / tempo ; éviter de saturer avec le volume bas du corps'
     )
+    const b3 = positionGroup === 'back_three'
+    const hypoLower = b3 ? 'LOWER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1' : 'LOWER_OFFSEASON_HYPERTROPHY_V1'
+    const hypoUpper = b3 ? 'UPPER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1' : 'UPPER_OFFSEASON_HYPERTROPHY_V1'
+    const hypoFull = b3 ? 'FULL_OFFSEASON_HYPERTROPHY_BACK_THREE_V1' : 'FULL_OFFSEASON_HYPERTROPHY_V1'
     if (effectiveFrequency >= 3) {
-      sessions = makeSlots([
-        'LOWER_OFFSEASON_HYPERTROPHY_V1',
-        'UPPER_OFFSEASON_HYPERTROPHY_V1',
-        'FULL_OFFSEASON_HYPERTROPHY_V1',
-      ])
+      sessions = makeSlots([hypoLower, hypoUpper, hypoFull])
     } else {
-      sessions = makeSlots(['LOWER_OFFSEASON_HYPERTROPHY_V1', 'UPPER_OFFSEASON_HYPERTROPHY_V1'])
+      sessions = makeSlots([hypoLower, hypoUpper])
     }
   } else {
     // Phase 4 Force-Bridge
     companionRecommendations.push(
       '1–2 exposures maintenance aérobie ; optionnel court travail accélération technique si récup OK'
     )
-    const fullReady = OFF_SEASON_SESSION_IDS_IN_DATASET_V1.has(OFF_SEASON_FULL_FORCE_BRIDGE_SESSION_ID)
+    const b3 = positionGroup === 'back_three'
+    const fbLower = b3 ? 'LOWER_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1' : LOWER_OFFSEASON_FORCE_BRIDGE
+    const fbUpper = b3 ? 'UPPER_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1' : UPPER_OFFSEASON_FORCE_BRIDGE
+    const fbFullId = b3 ? 'FULL_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1' : OFF_SEASON_FULL_FORCE_BRIDGE_SESSION_ID
+    const fullReady = OFF_SEASON_SESSION_IDS_IN_DATASET_V1.has(fbFullId)
     if (effectiveFrequency >= 3 && !fullReady) {
       effectiveFrequency = 2
       warnings.push(
@@ -498,13 +512,9 @@ export function resolveOffSeasonWeeklyTemplate(params: {
       )
     }
     if (effectiveFrequency >= 3 && fullReady) {
-      sessions = makeSlots([
-        LOWER_OFFSEASON_FORCE_BRIDGE,
-        UPPER_OFFSEASON_FORCE_BRIDGE,
-        OFF_SEASON_FULL_FORCE_BRIDGE_SESSION_ID,
-      ])
+      sessions = makeSlots([fbLower, fbUpper, fbFullId])
     } else {
-      sessions = makeSlots([LOWER_OFFSEASON_FORCE_BRIDGE, UPPER_OFFSEASON_FORCE_BRIDGE])
+      sessions = makeSlots([fbLower, fbUpper])
     }
   }
 
@@ -581,6 +591,7 @@ export function getWeeklyTemplate(params: GetWeeklyTemplateParams): WeeklyTempla
     return resolveOffSeasonWeeklyTemplate({
       offSeasonPhase,
       frequency,
+      positionGroup,
       fatigueLevel,
     })
   }

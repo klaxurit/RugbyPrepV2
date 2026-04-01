@@ -249,19 +249,20 @@ describe('getWeeklyTemplate', () => {
     expect(r.companionRecommendations?.join(' ')).toMatch(/aérobie|tempo/i)
   })
 
-  it('off-season Force-Bridge 3x -> fallback 2x + warning (FULL pas dataset-ready V1)', () => {
+  it('off-season Force-Bridge 3x → 3 sessions (Lower + Upper + Full)', () => {
     const r = getWeeklyTemplate({
       cycle: 'off_season',
       offSeasonPhase: 4,
       frequency: 3,
       positionGroup: 'front_row',
     })
-    expect(r.sessions).toHaveLength(2)
+    expect(r.sessions).toHaveLength(3)
     expect(r.sessions.map((s) => s.sessionId)).toEqual([
       'LOWER_OFFSEASON_FORCE_BRIDGE_V1',
       'UPPER_OFFSEASON_FORCE_BRIDGE_V1',
+      'FULL_OFFSEASON_FORCE_BRIDGE_V1',
     ])
-    expect(r.warnings.some((w) => /Force-Bridge|dataset|3x/i.test(w))).toBe(true)
+    expect(r.effectiveFrequency).toBe(3)
   })
 
   it('lève si offSeasonPhase manquante en off-season', () => {

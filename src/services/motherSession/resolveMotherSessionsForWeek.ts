@@ -156,61 +156,34 @@ export function resolveMotherSessionsForWeek(
   const resolverWarnings: string[] = []
 
   // ── Playoffs V1 : variante in-season « match week » + primer light forcé en 3x
+  // ── Playoffs tapering : fréquence plafonnée à 2, volume -50% (Mujika & Padilla 2003)
   if (planningContext.cycle === 'playoffs') {
-    resolverWarnings.push('Playoffs V1 resolved through in-season taper logic')
-
-    if (weeklyFrequency === 3) {
-      const tpl = getWeeklyTemplate({
-        cycle: 'in_season',
-        frequency: 3,
-        positionGroup,
-        matchContext: 'match_week',
-        fatigueLevel,
-      })
-      const slots = applyPlayoffsPrimerLight(tpl.sessions, positionGroup)
-      const templateContext: ResolvedWeeklyTemplateContext = {
-        cycle: 'in_season',
-        requestedFrequency: tpl.requestedFrequency,
-        effectiveFrequency: tpl.effectiveFrequency,
-        positionGroup,
-        matchContext: 'match_week',
-        fatigueLevel,
-        playoffsTaper: true,
-      }
-      return hydrateSlots(
-        slots,
-        planningContext,
-        templateContext,
-        tpl.warnings,
-        tpl.companionRecommendations,
-        resolverWarnings,
-        sessionsById
-      )
-    }
-
-    resolverWarnings.push(
-      'Playoffs V1 : structure 2x / semaine (charge minimale in-season) ; prioriser récupération.'
-    )
+    resolverWarnings.push('Playoffs taper : fréquence plafonnée à 2, volume -50%, intensité maintenue.')
     const tpl = getWeeklyTemplate({
       cycle: 'in_season',
       frequency: 2,
       positionGroup,
       fatigueLevel,
     })
+    const taperSlots = tpl.sessions.map((s) => ({
+      ...s,
+      variant: 'light' as const,
+      maxBlocks: 2,
+    }))
     const templateContext: ResolvedWeeklyTemplateContext = {
       cycle: 'in_season',
-      requestedFrequency: tpl.requestedFrequency,
-      effectiveFrequency: tpl.effectiveFrequency,
+      requestedFrequency: weeklyFrequency,
+      effectiveFrequency: 2,
       positionGroup,
       fatigueLevel,
       playoffsTaper: true,
     }
     return hydrateSlots(
-      tpl.sessions,
+      taperSlots,
       planningContext,
       templateContext,
       tpl.warnings,
-      tpl.companionRecommendations,
+      ['Maintenir mobilité et activation neuromusculaire. Récupération prioritaire.'],
       resolverWarnings,
       sessionsById
     )
@@ -307,6 +280,94 @@ export function resolveMotherSessionsForWeek(
     )
   }
 
+  // ── In-season deload week (3:1 mesocycle) — volume réduit, intensité maintenue
+  if (planningContext.isDeloadWeek) {
+    resolverWarnings.push('Semaine de décharge (3:1) — volume réduit, intensité maintenue.')
+    const deloadTpl = getWeeklyTemplate({
+      cycle: 'in_season',
+      frequency: 2,
+      positionGroup,
+      fatigueLevel,
+    })
+    const deloadSlots = deloadTpl.sessions.map((s) => ({
+      ...s,
+      variant: 'light' as const,
+      maxBlocks: 2,
+    }))
+    const deloadContext: ResolvedWeeklyTemplateContext = {
+      cycle: 'in_season',
+      requestedFrequency: weeklyFrequency,
+      effectiveFrequency: 2,
+      positionGroup,
+      fatigueLevel,
+    }
+    return hydrateSlots(
+      deloadSlots,
+      { ...planningContext, loadManagementOverride: 'recovery' },
+      deloadContext,
+      deloadTpl.warnings,
+      ['1-2x zone 2 (20-30 min) — maintien cardiovasculaire'],
+      resolverWarnings,
+      sessionsById
+    )
+  }
+
+  // ── In-season trêve adaptation (gap > 3 weeks between matches)
+  const dun = planningContext.daysUntilNextMatch
+  const dsl = planningContext.daysSinceLastMatch
+
+  if (dun != null && dun > 21) {
+    if (dun <= 7) {
+      // Last week before match return: deload + activation (ramp-down)
+      resolverWarnings.push('Reprise J-' + dun + ' — programme allégé pour la ré-acclimation.')
+      const rampTpl = getWeeklyTemplate({ cycle: 'in_season', frequency: 2, positionGroup, fatigueLevel })
+      const rampSlots = rampTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
+      return hydrateSlots(
+        rampSlots,
+        { ...planningContext, loadManagementOverride: 'recovery' },
+        { cycle: 'in_season', requestedFrequency: weeklyFrequency, effectiveFrequency: 2, positionGroup, fatigueLevel },
+        rampTpl.warnings,
+        ['Activation neuromusculaire + mobilité avant la reprise des matchs'],
+        resolverWarnings,
+        sessionsById
+      )
+    }
+    // Deep in trêve: use no_match_week templates (full body available) — opportunity for force block
+    resolverWarnings.push(`Trêve détectée — prochain match dans ${Math.floor(dun / 7)} semaines. Bloc force opportuniste.`)
+    const treveTpl = getWeeklyTemplate({
+      cycle: 'in_season',
+      frequency: weeklyFrequency,
+      positionGroup,
+      matchContext: weeklyFrequency === 3 ? 'no_match_week' : undefined,
+      fatigueLevel,
+    })
+    return hydrateSlots(
+      treveTpl.sessions,
+      planningContext,
+      { cycle: 'in_season', requestedFrequency: treveTpl.requestedFrequency, effectiveFrequency: treveTpl.effectiveFrequency, positionGroup, matchContext: 'no_match_week', fatigueLevel },
+      treveTpl.warnings,
+      ['Profite de la trêve : volume légèrement supérieur possible (pas de charge de match)'],
+      resolverWarnings,
+      sessionsById
+    )
+  }
+
+  // ── In-season ramp-up after 2+ week gap, match approaching in 5-14 days
+  if (dun != null && dun >= 5 && dun <= 14 && dsl != null && dsl >= 14) {
+    resolverWarnings.push('Reprise après pause — programme allégé cette semaine.')
+    const rampTpl = getWeeklyTemplate({ cycle: 'in_season', frequency: 2, positionGroup, fatigueLevel })
+    const rampSlots = rampTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
+    return hydrateSlots(
+      rampSlots,
+      { ...planningContext, loadManagementOverride: 'recovery' },
+      { cycle: 'in_season', requestedFrequency: weeklyFrequency, effectiveFrequency: 2, positionGroup, fatigueLevel },
+      rampTpl.warnings,
+      ['Reprise progressive — ne pas charger trop vite après une pause'],
+      resolverWarnings,
+      sessionsById
+    )
+  }
+
   // ── In-season normal
   const matchContext = planningContext.isMatchWeek ? 'match_week' : 'no_match_week'
   const tpl = getWeeklyTemplate({
@@ -316,6 +377,22 @@ export function resolveMotherSessionsForWeek(
     matchContext: weeklyFrequency === 3 ? matchContext : undefined,
     fatigueLevel,
   })
+
+  // Stimulus variation: alternate session emphasis by mesocycle block
+  // Odd blocks (1,3,5): LOWER early_week (force emphasis)
+  // Even blocks (2,4,6): UPPER early_week (power/speed emphasis)
+  let sessions = [...tpl.sessions]
+  const mesocycleBlock = planningContext.mesocycleBlock ?? 1
+  const isForceEmphasis = mesocycleBlock % 2 === 1
+  if (!isForceEmphasis && sessions.length >= 2) {
+    const [first, second, ...rest] = sessions
+    sessions = [
+      { ...second, dayPreference: 'early_week' as const },
+      { ...first, dayPreference: 'mid_week' as const },
+      ...rest,
+    ]
+  }
+
   const templateContext: ResolvedWeeklyTemplateContext = {
     cycle: 'in_season',
     requestedFrequency: tpl.requestedFrequency,
@@ -325,7 +402,7 @@ export function resolveMotherSessionsForWeek(
     fatigueLevel,
   }
   return hydrateSlots(
-    tpl.sessions,
+    sessions,
     planningContext,
     templateContext,
     tpl.warnings,
