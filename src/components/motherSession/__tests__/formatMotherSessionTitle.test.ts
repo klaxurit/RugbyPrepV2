@@ -14,9 +14,9 @@ describe('formatTitleFromMotherSessionId', () => {
       expect(result).not.toContain('_V1')
     })
 
-    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Préparation légère · Avants', () => {
+    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Power-up · Avants', () => {
       expect(formatTitleFromMotherSessionId('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1', 'fr'))
-        .toBe('Préparation légère · Avants')
+        .toBe('Power-up · Avants')
     })
 
     it('override: FULL_BODY_IN_SEASON_BACK_THREE_V1 → Corps complet · Ligne arrière', () => {

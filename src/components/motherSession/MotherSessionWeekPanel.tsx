@@ -1,10 +1,11 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Layers, AlertTriangle } from 'lucide-react'
+import type { DayOfWeek } from '../../types/training'
 import type { ResolvedMotherSessionSlot } from '../../services/motherSession/resolveMotherSessionsForWeek'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import { msLabel } from '../../services/motherSession/motherSessionLabels'
 import type { SCSchedule, ClubSchedule } from '../../types/training'
-import { mapSlotsToScheduleDays } from '../../services/ui/mapSlotsToScheduleDays'
+import { mapSlotsToScheduleDays, type SlotDayMapping } from '../../services/ui/mapSlotsToScheduleDays'
 import { formatTitleFromMotherSessionId } from './formatMotherSessionTitle'
 
 const ROLE_FR: Record<ResolvedMotherSessionSlot['role'], string> = {
@@ -36,6 +37,18 @@ type MotherSessionWeekPanelProps = {
   lang?: AppLang
   /** Called when a session card is tapped; receives the slot index. */
   onSessionSelect?: (index: number) => void
+  /** Called when user taps "Passer" on a session. */
+  onSkipSession?: (sessionId: string) => void
+  /** Set of session IDs that have been skipped. */
+  skippedSessionIds?: Set<string>
+  /** Called when user reschedules a session to a specific day. */
+  onRescheduleSession?: (sessionId: string, toDay: DayOfWeek) => void
+  /** Days that are unavailable for rescheduling (match, club, correction-blocked). */
+  unavailableDays?: DayOfWeek[]
+  /** Called when user marks a day unavailable. */
+  onMarkDayUnavailable?: (day: DayOfWeek) => void
+  /** Corrected day placements from snapshot.presentation. Overrides mapSlotsToScheduleDays. */
+  dayOverrides?: SlotDayMapping[]
 }
 
 export function MotherSessionWeekPanel({
@@ -48,10 +61,17 @@ export function MotherSessionWeekPanel({
   clubSchedule,
   lang = 'fr',
   onSessionSelect,
+  onSkipSession,
+  onRescheduleSession,
+  unavailableDays,
+  onMarkDayUnavailable,
+  skippedSessionIds,
+  dayOverrides,
 }: MotherSessionWeekPanelProps) {
+  const [rescheduleOpenFor, setRescheduleOpenFor] = useState<string | null>(null)
   const dayMappings = useMemo(
-    () => mapSlotsToScheduleDays(sessions, scSchedule, clubSchedule?.matchDay),
-    [sessions, scSchedule, clubSchedule],
+    () => dayOverrides ?? mapSlotsToScheduleDays(sessions, scSchedule, clubSchedule?.matchDay),
+    [sessions, scSchedule, clubSchedule, dayOverrides],
   )
 
   if (status === 'missing_session') {
@@ -119,35 +139,109 @@ export function MotherSessionWeekPanel({
                   ? msLabel('session_late_week', lang)
                   : ROLE_FR[slot.role])
             const badgeLabel = getSessionBadgeLabel(slot.session.metadata.sessionType, lang)
+            const isSkipped = skippedSessionIds?.has(slot.sessionId) ?? false
 
             return (
-              <button
+              <div
                 key={`${slot.sessionId}-${i}`}
-                type="button"
                 data-testid={`week-session-card-${i}`}
-                onClick={() => onSessionSelect?.(i)}
-                className="w-full flex items-center gap-4 bg-white/5 border border-white/10 rounded-[2rem] p-4 hover:border-white/20 hover:bg-white/[0.07] transition-all text-left"
+                className={`w-full flex items-center gap-4 border rounded-[2rem] p-4 transition-all text-left ${
+                  isSkipped
+                    ? 'bg-white/[0.02] border-white/5 opacity-50'
+                    : 'bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/[0.07]'
+                }`}
               >
-                <div className="flex-shrink-0 w-12 h-12 rounded-2xl flex flex-col items-center justify-center bg-[#ff6b35]/10">
-                  <span className="text-[10px] font-black tracking-wide text-[#ff6b35]">
+                <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex flex-col items-center justify-center ${isSkipped ? 'bg-white/5' : 'bg-[#ff6b35]/10'}`}>
+                  <span className={`text-[10px] font-black tracking-wide ${isSkipped ? 'text-white/30' : 'text-[#ff6b35]'}`}>
                     {dayLabel}
                   </span>
-                  <span className="text-[8px] font-bold text-[#ff6b35]/60 uppercase">
+                  <span className={`text-[8px] font-bold uppercase ${isSkipped ? 'text-white/20' : 'text-[#ff6b35]/60'}`}>
                     {badgeLabel}
                   </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-black text-white text-sm truncate">{title}</h4>
+                <button
+                  type="button"
+                  onClick={() => !isSkipped && onSessionSelect?.(i)}
+                  disabled={isSkipped}
+                  className="flex-1 min-w-0 text-left"
+                >
+                  <h4 className={`font-black text-sm truncate ${isSkipped ? 'text-white/30 line-through' : 'text-white'}`}>{title}</h4>
                   <p className="text-xs text-white/40 mt-0.5">
-                    {slot.session.blocks.length} blocs
-                    {slot.variant === 'light' ? ' · léger' : ''}
-                    {slot.maxBlocks != null ? ` · max ${slot.maxBlocks}` : ''}
+                    {isSkipped
+                      ? (lang === 'fr' ? 'Passée' : 'Skipped')
+                      : <>
+                          {slot.session.blocks.length} blocs
+                          {slot.variant === 'light' ? ' · léger' : ''}
+                          {slot.maxBlocks != null ? ` · max ${slot.maxBlocks}` : ''}
+                        </>
+                    }
                   </p>
-                </div>
-                <svg className="w-5 h-5 text-white/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+                </button>
+                {isSkipped ? null : (
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {onRescheduleSession && (
+                      <button
+                        type="button"
+                        data-testid={`week-reschedule-${i}`}
+                        onClick={() => setRescheduleOpenFor(rescheduleOpenFor === slot.sessionId ? null : slot.sessionId)}
+                        className="px-2 py-1 rounded-xl text-[9px] font-bold text-white/30 hover:text-white/60 hover:bg-white/10 transition-colors"
+                      >
+                        {lang === 'fr' ? 'Reporter' : 'Move'}
+                      </button>
+                    )}
+                    {onSkipSession && (
+                      <button
+                        type="button"
+                        data-testid={`week-skip-${i}`}
+                        onClick={() => onSkipSession(slot.sessionId)}
+                        className="px-2 py-1 rounded-xl text-[9px] font-bold text-white/30 hover:text-white/60 hover:bg-white/10 transition-colors"
+                      >
+                        {lang === 'fr' ? 'Passer' : 'Skip'}
+                      </button>
+                    )}
+                    {onMarkDayUnavailable && dayMappings[i] && (
+                      <button
+                        type="button"
+                        data-testid={`week-unavailable-${i}`}
+                        onClick={() => onMarkDayUnavailable(dayMappings[i].dayNumber as DayOfWeek)}
+                        className="px-2 py-1 rounded-xl text-[9px] font-bold text-white/30 hover:text-white/60 hover:bg-white/10 transition-colors"
+                        title={lang === 'fr' ? 'Rendre ce jour indisponible' : 'Mark day unavailable'}
+                      >
+                        {lang === 'fr' ? 'Indispo.' : 'N/A'}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => onSessionSelect?.(i)}
+                      className="p-1"
+                    >
+                      <svg className="w-5 h-5 text-white/30 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+                {/* Inline day picker for reschedule */}
+                {rescheduleOpenFor === slot.sessionId && onRescheduleSession && (
+                  <div className="w-full flex gap-1 pt-2 flex-wrap" data-testid={`week-reschedule-picker-${i}`}>
+                    {([1, 2, 3, 4, 5] as DayOfWeek[])
+                      .filter((d) => !(unavailableDays ?? []).includes(d) && d !== (dayMappings[i]?.dayNumber))
+                      .map((d) => (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => {
+                            onRescheduleSession(slot.sessionId, d)
+                            setRescheduleOpenFor(null)
+                          }}
+                          className="px-2.5 py-1 rounded-xl text-[9px] font-bold bg-white/10 text-white/60 hover:bg-[#ff6b35]/20 hover:text-[#ff6b35] transition-colors"
+                        >
+                          {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'][d]}
+                        </button>
+                      ))}
+                  </div>
+                )}
+              </div>
             )
           })}
         </div>

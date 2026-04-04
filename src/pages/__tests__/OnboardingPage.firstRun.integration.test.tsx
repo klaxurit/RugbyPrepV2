@@ -20,9 +20,11 @@ vi.mock('../../hooks/useAuth', () => ({
   }),
 }))
 
+let mockProfile: any = null
+
 vi.mock('../../hooks/useProfile', () => ({
   useProfile: () => ({
-    profile: null,
+    profile: mockProfile,
     updateProfile: updateProfileMock,
   }),
   markOnboardingComplete: (...args: unknown[]) => markOnboardingCompleteMock(...args),
@@ -89,6 +91,7 @@ function navigateToSummary(options?: { seasonMode?: string }) {
 describe('OnboardingPage · first run flow', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockProfile = null
   })
 
   afterEach(() => {
@@ -248,5 +251,73 @@ describe('OnboardingPage · first run flow', () => {
     const finishBtn = screen.getByTestId('onboarding-finish-btn')
     expect(finishBtn).toHaveTextContent('Voir mon programme')
     expect(finishBtn).not.toBeDisabled()
+  })
+
+  // ── S3 Slice 4: onboarding cycle hint ──
+
+  it('cycle hint step shows factual wording', () => {
+    renderOnboarding()
+    fireEvent.click(screen.getByText('Créer mon programme'))
+    fireEvent.click(screen.getByText('Première ligne'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+
+    // Step 1: should show cycle hint question
+    expect(screen.getByText('Où en es-tu ?')).toBeInTheDocument()
+    expect(screen.getByText('En saison')).toBeInTheDocument()
+    expect(screen.getByText('Inter-saison')).toBeInTheDocument()
+    // Must NOT show mode selector wording
+    expect(screen.queryByText(/mode calendrier/i)).toBeNull()
+    expect(screen.queryByText(/mode bloc/i)).toBeNull()
+  })
+
+  it('selecting "En saison" writes onboardingCycleHint: in_season + seasonMode compat', () => {
+    renderOnboarding()
+    navigateToSummary() // defaults to in_season
+
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
+
+    const call = updateProfileMock.mock.calls[0][0]
+    expect(call.planningAnchors?.onboardingCycleHint).toBe('in_season')
+    expect(call.seasonMode).toBe('in_season')
+  })
+
+  it('selecting "Inter-saison" writes onboardingCycleHint: off_season + seasonMode compat', () => {
+    renderOnboarding()
+    navigateToSummary({ seasonMode: 'off_season' })
+
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
+
+    const call = updateProfileMock.mock.calls[0][0]
+    expect(call.planningAnchors?.onboardingCycleHint).toBe('off_season')
+    expect(call.seasonMode).toBe('off_season')
+  })
+
+  it('onboarding submit preserves existing planningAnchors', () => {
+    mockProfile = {
+      planningAnchors: { seasonEndedAt: '2026-03-01', returnToTeamTrainingAt: '2026-08-01' },
+    }
+
+    renderOnboarding()
+    navigateToSummary()
+
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
+
+    const call = updateProfileMock.mock.calls[0][0]
+    expect(call.planningAnchors.onboardingCycleHint).toBe('in_season')
+    // Existing anchors preserved
+    expect(call.planningAnchors.seasonEndedAt).toBe('2026-03-01')
+    expect(call.planningAnchors.returnToTeamTrainingAt).toBe('2026-08-01')
+  })
+
+  it('first-run with null profile does not crash on submit', () => {
+    mockProfile = null
+
+    renderOnboarding()
+    navigateToSummary()
+
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
+
+    const call = updateProfileMock.mock.calls[0][0]
+    expect(call.planningAnchors.onboardingCycleHint).toBe('in_season')
   })
 })

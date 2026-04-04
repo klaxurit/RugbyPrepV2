@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { syncCalendar } from '../services/calendar/ffrSyncService'
-import type { CalendarEvent, SeasonPhase } from '../types/training'
+import type { CalendarEvent } from '../types/training'
 
 const STORAGE_KEY = 'rugbyprep.calendar.v1'
 const CALENDAR_SELECT = 'id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, venue, user_hidden, user_override, synced_at'
@@ -33,31 +33,8 @@ function normalizeCalendarEvent(event: CalendarEvent): CalendarEvent {
   }
 }
 
-function detectSeasonPhase(events: CalendarEvent[], today: Date): SeasonPhase {
-  const month = today.getMonth() + 1 // 1-12
-  const todayStr = toDateStr(today)
-  const fourWeeksLaterStr = toDateStr(addDays(today, 28))
-  const twoWeeksAgoStr = toDateStr(addDays(today, -14))
-
-  const hasUpcomingMatch = events.some(
-    (e) => e.type === 'match' && e.date >= todayStr && e.date <= fourWeeksLaterStr
-  )
-  const hasRecentMatch = events.some(
-    (e) => e.type === 'match' && e.date >= twoWeeksAgoStr && e.date < todayStr
-  )
-
-  // If user has entered match data in the activity window, trust it
-  if (hasUpcomingMatch || hasRecentMatch) {
-    if (month >= 4 && month <= 5) return 'playoffs'
-    return 'in-season'
-  }
-
-  // Fallback: month-based (French FFR season)
-  if (month >= 6 && month <= 7) return 'off-season'
-  if (month === 8) return 'pre-season'
-  if (month >= 4 && month <= 5) return 'playoffs'
-  return 'in-season' // Sept–March
-}
+// detectSeasonPhase removed — season phase is now derived from
+// detectAnnualPlanningContext (single source of truth) at the page level.
 
 function readFromStorage(): CalendarEvent[] {
   try {
@@ -111,20 +88,21 @@ export function useCalendar() {
   }, [userId])
 
   const addEvent = useCallback(
-    async (payload: Omit<CalendarEvent, 'id' | 'created_at'>) => {
+    async (payload: Omit<CalendarEvent, 'id' | 'created_at'>): Promise<CalendarEvent | undefined> => {
       if (userId) {
         const { data, error: err } = await supabase
           .from('match_calendar')
           .insert({ ...payload, source: payload.source ?? 'manual', user_id: userId })
           .select(CALENDAR_SELECT)
           .single()
-        if (err) { setError(err.message); return }
+        if (err) { setError(err.message); return undefined }
         const newEvent = normalizeCalendarEvent(data as CalendarEvent)
         setEvents((prev) => {
           const next = [...prev, newEvent].sort((a, b) => a.date.localeCompare(b.date))
           saveToStorage(next)
           return next
         })
+        return newEvent
       } else {
         const newEvent: CalendarEvent = {
           ...payload,
@@ -138,6 +116,7 @@ export function useCalendar() {
           saveToStorage(next)
           return next
         })
+        return newEvent
       }
     },
     [userId]
@@ -286,8 +265,6 @@ export function useCalendar() {
   const nextMatch = visibleEvents.find((e) => e.type === 'match' && e.date >= todayStr) ?? null
   const isMatchDay = visibleEvents.some((e) => e.type === 'match' && e.date === todayStr)
   const thisWeekEvents = visibleEvents.filter((e) => e.date >= weekStart && e.date <= weekEnd)
-  const seasonPhase = detectSeasonPhase(events, today)
-
   const hiddenCount = events.filter((e) => e.user_hidden).length
   const ffrCount = visibleEvents.filter((e) => e.source === 'ffr_import').length
   const manualCount = visibleEvents.filter((e) => e.source === 'manual').length
@@ -298,7 +275,6 @@ export function useCalendar() {
     nextMatch,
     isMatchDay,
     thisWeekEvents,
-    seasonPhase,
     addEvent,
     removeEvent,
     updateMatchLoad,

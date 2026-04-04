@@ -51,7 +51,7 @@ function LandingNavbar() {
   ]
 
   return (
-    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-[#1a100c]/80 backdrop-blur-xl border-b border-white/10">
+    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-app/80 backdrop-blur-xl border-b border-border-app">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/">
@@ -64,20 +64,20 @@ function LandingNavbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-fg-soft hover:text-fg transition-colors"
               >
                 {link.label}
               </a>
             ))}
             <Link
               to="/auth/login"
-              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+              className="text-sm font-medium text-fg-soft hover:text-fg transition-colors"
             >
               Connexion
             </Link>
             <Link
               to="/auth/signup"
-              className="bg-[#ff6b35] hover:bg-[#e55a2b] text-white text-sm font-semibold px-5 py-2 rounded-xl transition-colors"
+              className="bg-brand hover:bg-brand-hover text-on-brand text-sm font-semibold px-5 py-2 rounded-xl transition-colors"
             >
               Commencer gratuitement
             </Link>
@@ -85,7 +85,8 @@ function LandingNavbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden text-white p-2"
+            type="button"
+            className="md:hidden text-fg p-2"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
           >
@@ -99,14 +100,14 @@ function LandingNavbar() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-[#1a100c]/95 backdrop-blur-xl border-b border-white/10 px-4 pb-4"
+          className="md:hidden bg-app/95 backdrop-blur-xl border-b border-border-app px-4 pb-4"
         >
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="block w-full text-left py-3 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+              className="block w-full text-left py-3 text-sm font-medium text-fg-soft hover:text-fg transition-colors"
             >
               {link.label}
             </a>
@@ -114,14 +115,14 @@ function LandingNavbar() {
           <Link
             to="/auth/login"
             onClick={() => setMobileOpen(false)}
-            className="block py-3 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+            className="block py-3 text-sm font-medium text-fg-soft hover:text-fg transition-colors"
           >
             Connexion
           </Link>
           <Link
             to="/auth/signup"
             onClick={() => setMobileOpen(false)}
-            className="block mt-2 bg-[#ff6b35] hover:bg-[#e55a2b] text-white text-sm font-semibold px-5 py-3 rounded-xl text-center transition-colors"
+            className="block mt-2 bg-brand hover:bg-brand-hover text-on-brand text-sm font-semibold px-5 py-3 rounded-xl text-center transition-colors"
           >
             Commencer gratuitement
           </Link>
@@ -146,13 +147,13 @@ function FeatureCard({ icon, title, description, delay }: FeatureCardProps) {
       viewport={{ once: true }}
       transition={{ delay, duration: 0.5 }}
       whileHover={{ y: -4 }}
-      className="bg-white/5 border border-white/10 rounded-[24px] p-6 hover:bg-white/[0.08] transition-colors"
+      className="bg-layer-5 border border-border-app rounded-[24px] p-6 hover:bg-layer-7 transition-colors"
     >
-      <div className="w-12 h-12 bg-[#ff6b35]/20 rounded-2xl flex items-center justify-center mb-4">
+      <div className="w-12 h-12 bg-brand-soft rounded-2xl flex items-center justify-center mb-4">
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-      <p className="text-sm text-slate-400 leading-relaxed">{description}</p>
+      <h3 className="text-lg font-bold text-fg mb-2">{title}</h3>
+      <p className="text-sm text-fg-muted leading-relaxed">{description}</p>
     </motion.div>
   )
 }
@@ -176,24 +177,24 @@ function PricingCard({ title, price, period, features, highlighted, cta, ctaLink
       whileHover={{ y: -4 }}
       className={`relative rounded-[24px] p-8 border transition-colors ${
         highlighted
-          ? 'bg-[#ff6b35]/10 border-[#ff6b35]/40 scale-105'
-          : 'bg-white/5 border-white/10 hover:bg-white/[0.08]'
+          ? 'bg-brand-soft border-brand-border-strong scale-105'
+          : 'bg-layer-5 border-border-app hover:bg-layer-7'
       }`}
     >
       {highlighted && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#ff6b35] text-white text-xs font-bold uppercase tracking-wider px-4 py-1 rounded-full">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand text-on-brand text-xs font-bold uppercase tracking-wider px-4 py-1 rounded-full">
           Recommandé
         </div>
       )}
-      <h3 className="text-lg font-bold text-white mb-1">{title}</h3>
+      <h3 className="text-lg font-bold text-fg mb-1">{title}</h3>
       <div className="mb-4">
-        <span className="text-4xl font-black text-white">{price}</span>
-        <span className="text-sm text-slate-400 ml-1">{period}</span>
+        <span className="text-4xl font-black text-fg">{price}</span>
+        <span className="text-sm text-fg-muted ml-1">{period}</span>
       </div>
       <ul className="space-y-3 mb-8">
         {features.map((f) => (
-          <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
-            <Check className="w-4 h-4 text-[#ff6b35] mt-0.5 shrink-0" />
+          <li key={f} className="flex items-start gap-2 text-sm text-fg-secondary">
+            <Check className="w-4 h-4 text-brand mt-0.5 shrink-0" />
             {f}
           </li>
         ))}
@@ -202,8 +203,8 @@ function PricingCard({ title, price, period, features, highlighted, cta, ctaLink
         to={ctaLink}
         className={`block text-center py-3 rounded-xl font-semibold text-sm transition-colors ${
           highlighted
-            ? 'bg-[#ff6b35] hover:bg-[#e55a2b] text-white'
-            : 'bg-white/10 hover:bg-white/20 text-white'
+            ? 'bg-brand hover:bg-brand-hover text-on-brand'
+            : 'bg-layer-10 hover:bg-layer-15 text-fg'
         }`}
       >
         {cta}
@@ -226,7 +227,7 @@ function PhoneMockup({
   fetchPriority,
 }: PhoneMockupProps) {
   return (
-    <div className="relative w-[280px] sm:w-[320px] bg-[#1a100c] border-4 border-white/20 rounded-[40px] p-3 shadow-2xl">
+    <div className="relative w-[280px] sm:w-[320px] bg-app border-4 border-fg-muted/25 rounded-[40px] p-3 shadow-elevated">
       <div className="relative max-h-[480px] overflow-y-auto rounded-[28px] scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
         <img
           src={src}
@@ -238,7 +239,7 @@ function PhoneMockup({
           onError={(e) => { e.currentTarget.style.display = 'none' }}
         />
       </div>
-      <div className="absolute bottom-3 left-3 right-3 h-24 bg-gradient-to-t from-[#1a100c] to-transparent pointer-events-none rounded-b-[28px]" />
+      <div className="absolute bottom-3 left-3 right-3 h-24 bg-gradient-to-t from-app to-transparent pointer-events-none rounded-b-[28px]" />
     </div>
   )
 }
@@ -326,18 +327,14 @@ export function LandingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#1a100c] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-app text-fg overflow-x-hidden">
       <LandingNavbar />
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative pt-32 pb-20 px-4">
         {/* Decorative grid */}
         <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: 'radial-gradient(#ff6b35 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
+          className="absolute inset-0 opacity-20 bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:40px_40px]"
         />
         <div className="relative max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -346,32 +343,32 @@ export function LandingPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7 }}
             >
-              <div className="inline-flex items-center gap-2 bg-[#ff6b35]/20 border border-[#ff6b35]/30 rounded-full px-4 py-1.5 mb-6">
-                <Zap className="w-4 h-4 text-[#ff6b35]" />
-                <span className="text-sm font-medium text-[#ff6b35]">
+              <div className="inline-flex items-center gap-2 bg-brand-soft border border-brand-border-strong rounded-full px-4 py-1.5 mb-6">
+                <Zap className="w-4 h-4 text-brand" />
+                <span className="text-sm font-medium text-brand">
                   Préparation physique rugby
                 </span>
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.1] mb-6">
                 Ta prépa physique,{' '}
-                <span className="text-[#ff6b35]">scientifiquement</span>{' '}
+                <span className="text-brand">scientifiquement</span>{' '}
                 optimisée
               </h1>
-              <p className="text-lg text-slate-400 max-w-xl mb-8">
+              <p className="text-lg text-fg-muted max-w-xl mb-8">
                 Le Free te donne déjà un vrai programme de rugby. Le Premium ajoute les suggestions
                 de charge, les analytics détaillées et la projection de ta progression.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/auth/signup"
-                  className="inline-flex items-center gap-2 bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
                 >
                   Commencer gratuitement
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <a
                   href="#features"
-                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-layer-10 hover:bg-layer-15 text-fg font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
                 >
                   Découvrir RugbyForge
                 </a>
@@ -385,8 +382,8 @@ export function LandingPage() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative flex justify-center"
             >
-              <div className="absolute w-72 h-72 bg-[#ff6b35]/20 rounded-full blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-              <div className="absolute w-48 h-48 bg-[#1a5f3f]/30 rounded-full blur-2xl top-0 right-0" />
+              <div className="absolute w-72 h-72 bg-brand-medium/50 rounded-full blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              <div className="absolute w-48 h-48 bg-success-app/30 rounded-full blur-2xl top-0 right-0" />
               <PhoneMockup
                 src="/images/landing/app-week.png"
                 alt="RugbyForge — programme de la semaine"
@@ -399,7 +396,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Stats ────────────────────────────────────────── */}
-      <section className="py-12 border-y border-white/10">
+      <section className="py-12 border-y border-border-app">
         <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
             { value: '186+', label: 'Références scientifiques' },
@@ -413,8 +410,8 @@ export function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <div className="text-3xl font-black text-[#ff6b35]">{stat.value}</div>
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mt-1">
+              <div className="text-3xl font-black text-brand">{stat.value}</div>
+              <div className="text-xs font-bold uppercase tracking-wider text-fg-muted mt-1">
                 {stat.label}
               </div>
             </motion.div>
@@ -434,7 +431,7 @@ export function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
               Tout pour ta prépa physique
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">
+            <p className="text-fg-muted max-w-2xl mx-auto">
               RugbyForge combine science du sport, périodisation et coaching contextuel pour te
               donner un cadre clair en Free, puis des outils d'aide à la décision en Premium.
             </p>
@@ -442,37 +439,37 @@ export function LandingPage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard
-              icon={<Dumbbell className="w-6 h-6 text-[#ff6b35]" />}
+              icon={<Dumbbell className="w-6 h-6 text-brand" />}
               title="Programmes périodisés"
               description="Cycles Hypertrophie → Force → Puissance adaptés à ta saison, ton niveau et ton matériel disponible."
               delay={0}
             />
             <FeatureCard
-              icon={<Activity className="w-6 h-6 text-[#ff6b35]" />}
+              icon={<Activity className="w-6 h-6 text-brand" />}
               title="Lecture de la charge"
               description="Lis l'ACWR, la récupération et les semaines à risque sans tableau compliqué. Le Premium ajoute des analytics détaillées."
               delay={0.1}
             />
             <FeatureCard
-              icon={<Shield className="w-6 h-6 text-[#ff6b35]" />}
+              icon={<Shield className="w-6 h-6 text-brand" />}
               title="Prévention & vigilance"
               description="Échauffement adapté, mobilité utile et signaux de vigilance quand la fatigue et la charge deviennent moins bien absorbées."
               delay={0.2}
             />
             <FeatureCard
-              icon={<Brain className="w-6 h-6 text-[#ff6b35]" />}
+              icon={<Brain className="w-6 h-6 text-brand" />}
               title="Coach IA"
               description="Pose tes questions nutrition, récupération ou semaine de match. Le Premium débloque le chat illimité (5 messages/jour en Free)."
               delay={0.3}
             />
             <FeatureCard
-              icon={<Calendar className="w-6 h-6 text-[#ff6b35]" />}
+              icon={<Calendar className="w-6 h-6 text-brand" />}
               title="Calendrier club"
               description="Intègre tes matchs et entraînements club via la FFR. Le programme s'adapte automatiquement à ton planning."
               delay={0.4}
             />
             <FeatureCard
-              icon={<TrendingUp className="w-6 h-6 text-[#ff6b35]" />}
+              icon={<TrendingUp className="w-6 h-6 text-brand" />}
               title="Tests & progression"
               description="Suis tes 1RM estimés, le CMJ et les autres repères utiles. Le Premium ajoute les projections et l'historique complet."
               delay={0.5}
@@ -482,7 +479,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Progression ──────────────────────────────────── */}
-      <section className="py-20 px-4 bg-white/[0.02]">
+      <section className="py-20 px-4 bg-layer-2">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -493,7 +490,7 @@ export function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
               Suis ta progression en temps réel
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">
+            <p className="text-fg-muted max-w-2xl mx-auto">
               Des tableaux de bord clairs pour suivre tes performances, ta charge d'entraînement et
               tes tests physiques.
             </p>
@@ -510,7 +507,7 @@ export function LandingPage() {
                 src="/images/landing/tests-progression.png"
                 alt="Tests physiques et progression"
               />
-              <p className="text-sm text-slate-400 text-center mt-5">
+              <p className="text-sm text-fg-muted text-center mt-5">
                 Suivi des tests physiques — CMJ, sprint, 1RM estimé
               </p>
             </motion.div>
@@ -525,7 +522,7 @@ export function LandingPage() {
                 src="/images/landing/acwr-monitoring.png"
                 alt="Monitoring ACWR"
               />
-              <p className="text-sm text-slate-400 text-center mt-5">
+              <p className="text-sm text-fg-muted text-center mt-5">
                 Ratio charge aiguë/chronique — prévention du surentraînement
               </p>
             </motion.div>
@@ -545,7 +542,7 @@ export function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
               Fondé sur la science du sport
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">
+            <p className="text-fg-muted max-w-2xl mx-auto">
               Chaque décision de programmation s'appuie sur des recherches publiées en préparation
               physique et sciences du sport.
             </p>
@@ -557,13 +554,13 @@ export function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0 }}
-              className="bg-white/5 border border-white/10 rounded-[24px] p-6"
+              className="bg-layer-5 border border-border-app rounded-[24px] p-6"
             >
-              <div className="w-12 h-12 bg-[#1a5f3f]/30 rounded-2xl flex items-center justify-center mb-4">
-                <BookOpen className="w-6 h-6 text-[#1a5f3f]" />
+              <div className="w-12 h-12 bg-success-app/25 rounded-2xl flex items-center justify-center mb-4">
+                <BookOpen className="w-6 h-6 text-success-app" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">Périodisation par blocs</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h3 className="text-lg font-bold text-fg mb-2">Périodisation par blocs</h3>
+              <p className="text-sm text-fg-muted leading-relaxed">
                 Cycles Hypertrophie → Force → Puissance basés sur les travaux de Bompa, Issurin et
                 les recommandations NSCA.
               </p>
@@ -574,13 +571,13 @@ export function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="bg-white/5 border border-white/10 rounded-[24px] p-6"
+              className="bg-layer-5 border border-border-app rounded-[24px] p-6"
             >
-              <div className="w-12 h-12 bg-[#1a5f3f]/30 rounded-2xl flex items-center justify-center mb-4">
-                <Target className="w-6 h-6 text-[#1a5f3f]" />
+              <div className="w-12 h-12 bg-success-app/25 rounded-2xl flex items-center justify-center mb-4">
+                <Target className="w-6 h-6 text-success-app" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">Seuils ACWR validés</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h3 className="text-lg font-bold text-fg mb-2">Seuils ACWR validés</h3>
+              <p className="text-sm text-fg-muted leading-relaxed">
                 Ratios 0.8–1.3 (sweet spot) et alertes {">"} 1.5 basés sur Gabbett (2016) et Blanch
                 & Gabbett (2016).
               </p>
@@ -591,13 +588,13 @@ export function LandingPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="bg-white/5 border border-white/10 rounded-[24px] p-6"
+              className="bg-layer-5 border border-border-app rounded-[24px] p-6"
             >
-              <div className="w-12 h-12 bg-[#1a5f3f]/30 rounded-2xl flex items-center justify-center mb-4">
-                <Star className="w-6 h-6 text-[#1a5f3f]" />
+              <div className="w-12 h-12 bg-success-app/25 rounded-2xl flex items-center justify-center mb-4">
+                <Star className="w-6 h-6 text-success-app" />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">1RM & testing</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h3 className="text-lg font-bold text-fg mb-2">1RM & testing</h3>
+              <p className="text-sm text-fg-muted leading-relaxed">
                 Estimations Brzycki/Epley, baselines CMJ par poste, protocoles YYIR1 et sprint 10m
                 standards.
               </p>
@@ -610,7 +607,7 @@ export function LandingPage() {
             viewport={{ once: true }}
             className="mt-12 text-center"
           >
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-fg-ghost">
               Base de connaissances : 186+ références scientifiques réelles — périodisation,
               récupération, prévention, nutrition, energy systems
             </p>
@@ -619,7 +616,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-20 px-4 bg-white/[0.02]">
+      <section id="pricing" className="py-20 px-4 bg-layer-2">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -630,7 +627,7 @@ export function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
               Des tarifs simples et transparents
             </h2>
-            <p className="text-slate-400 max-w-xl mx-auto">
+            <p className="text-fg-muted max-w-xl mx-auto">
               Commence gratuitement avec tout le socle d'entraînement. Passe en Premium quand tu
               veux débloquer les charges suggérées, le coach IA enrichi et les lectures
               intelligentes de ta semaine.
@@ -678,7 +675,7 @@ export function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
               Des ressources publiques pour aller plus loin
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">
+            <p className="text-fg-muted max-w-2xl mx-auto">
               Le blog RugbyForge transforme notre base de connaissances en guides concrets sur la préparation physique rugby,
               l&apos;ACWR, la périodisation, les tests physiques et le programme de musculation rugby.
             </p>
@@ -692,16 +689,16 @@ export function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
-                className="bg-white/5 border border-white/10 rounded-[24px] p-6 hover:bg-white/[0.08] transition-colors"
+                className="bg-layer-5 border border-border-app rounded-[24px] p-6 hover:bg-layer-7 transition-colors"
               >
-                <div className="w-12 h-12 bg-[#ff6b35]/15 rounded-2xl flex items-center justify-center mb-4">
-                  <BookOpen className="w-6 h-6 text-[#ff6b35]" />
+                <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
+                  <BookOpen className="w-6 h-6 text-brand" />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">{resource.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed mb-6">{resource.description}</p>
+                <h3 className="text-lg font-bold text-fg mb-2">{resource.title}</h3>
+                <p className="text-sm text-fg-muted leading-relaxed mb-6">{resource.description}</p>
                 <a
                   href={resource.href}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-[#ff6b35] hover:text-[#ff8a5f] transition-colors"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-tint transition-colors"
                 >
                   {resource.cta}
                   <ArrowRight className="w-4 h-4" />
@@ -713,7 +710,7 @@ export function LandingPage() {
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────── */}
-      <section className="py-20 px-4 bg-white/[0.02]">
+      <section className="py-20 px-4 bg-layer-2">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -724,7 +721,7 @@ export function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
               Questions fréquentes
             </h2>
-            <p className="text-slate-400 max-w-2xl mx-auto">
+            <p className="text-fg-muted max-w-2xl mx-auto">
               Des réponses rapides pour comprendre à qui s&apos;adresse RugbyForge et comment l&apos;application
               s&apos;intègre dans une vraie semaine de rugby.
             </p>
@@ -738,10 +735,10 @@ export function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.06 }}
-                className="bg-white/5 border border-white/10 rounded-[24px] p-6"
+                className="bg-layer-5 border border-border-app rounded-[24px] p-6"
               >
-                <h3 className="text-lg font-bold text-white mb-2">{item.question}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{item.answer}</p>
+                <h3 className="text-lg font-bold text-fg mb-2">{item.question}</h3>
+                <p className="text-sm text-fg-muted leading-relaxed">{item.answer}</p>
               </motion.div>
             ))}
           </div>
@@ -759,21 +756,21 @@ export function LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
               Prêt à passer au niveau supérieur ?
             </h2>
-            <p className="text-slate-400 max-w-xl mx-auto mb-8">
+            <p className="text-fg-muted max-w-xl mx-auto mb-8">
               Rejoins les joueurs qui utilisent RugbyForge pour structurer leur préparation physique
               et progresser chaque semaine.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
                 <Link
                   to="/auth/signup"
-                  className="inline-flex items-center gap-2 bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
                 >
                   Commencer gratuitement
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
                   to="/auth/login"
-                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-layer-10 hover:bg-layer-15 text-fg font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Se connecter
@@ -784,76 +781,76 @@ export function LandingPage() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="border-t border-white/10 py-12 px-4">
+      <footer className="border-t border-border-app py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
             <div>
               <RugbyForgeLogo size="sm" />
-              <p className="text-sm text-slate-500 mt-3">
+              <p className="text-sm text-fg-ghost mt-3">
                 Préparation physique rugby, fondée sur la science du sport.
               </p>
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted mb-3">
                 Produit
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#features" className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <a href="#features" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     Fonctionnalités
                   </a>
                 </li>
                 <li>
-                  <a href="#pricing" className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <a href="#pricing" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     Tarifs
                   </a>
                 </li>
                 <li>
-                  <a href="#science" className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <a href="#science" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     La Science
                   </a>
                 </li>
                 <li>
-                  <a href="/blog/" className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <a href="/blog/" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     Ressources
                   </a>
                 </li>
                 <li>
-                  <a href="/preparation-physique-rugby/" className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <a href="/preparation-physique-rugby/" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     Guide preparation rugby
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted mb-3">
                 Légal
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/legal" className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <Link to="/legal" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     Mentions Légales
                   </Link>
                 </li>
                 <li>
-                  <Link to="/legal" className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <Link to="/legal" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     Confidentialité
                   </Link>
                 </li>
                 <li>
-                  <Link to="/legal" className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <Link to="/legal" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     CGU / CGV
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted mb-3">
                 Contact
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="mailto:bonjour@rugbyforge.fr" className="text-sm text-slate-500 hover:text-white transition-colors">
+                  <a href="mailto:bonjour@rugbyforge.fr" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     bonjour@rugbyforge.fr
                   </a>
                 </li>
@@ -861,8 +858,8 @@ export function LandingPage() {
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-8 text-center">
-            <p className="text-[10px] text-slate-500">
+          <div className="border-t border-border-app pt-8 text-center">
+            <p className="text-[10px] text-fg-ghost">
               © 2026 RugbyForge. v1.0
             </p>
           </div>

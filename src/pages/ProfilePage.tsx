@@ -13,6 +13,10 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
+import { useCalendar } from '../hooks/useCalendar'
+import { getToday } from '../services/ui/debugDateOverride'
+import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
+import type { AnnualCycle } from '../types/annualPlanning'
 import type { AuthError } from '../types/auth'
 import type {
   Contra,
@@ -20,7 +24,6 @@ import type {
   DayOfWeek,
   ClubSchedule,
   TrainingLevel,
-  SeasonMode,
   FfrCompetition,
 } from '../types/training'
 import { fetchCompetitions, syncCalendar } from '../services/calendar/ffrSyncService'
@@ -81,12 +84,6 @@ function getVisibleTrainingLevel(level: TrainingLevel | undefined): Exclude<Trai
   return 'performance'
 }
 
-const SEASON_MODES: { value: SeasonMode; label: string; sub: string; emoji: string }[] = [
-  { value: 'in_season',  label: 'Saison',          sub: 'Programme Force → Puissance',         emoji: '⚡' },
-  { value: 'off_season', label: 'Inter-saison',     sub: 'Hypertrophie & reconstruction',       emoji: '🌿' },
-  { value: 'pre_season', label: 'Pré-saison',       sub: 'Force-Puissance & réathlétisation',  emoji: '🔥' },
-]
-
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
   { day: 1, label: 'Lundi',    short: 'L' },
   { day: 2, label: 'Mardi',    short: 'M' },
@@ -141,6 +138,7 @@ export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
   const { authState, updateAvatar } = useAuth()
   const { features, isPremium } = useFeatureAccess()
+  const { events } = useCalendar()
   const { canShowUpsell } = useUpsellTiming()
   const [profileUpsellDismissed, setProfileUpsellDismissed] = useState(() => isDismissed('profile_premium'))
   const {
@@ -175,6 +173,59 @@ export function ProfilePage() {
     setHeightInput(profile.heightCm?.toString() ?? '')
     setWeightInput(profile.weightKg?.toString() ?? '')
   }, [profile.heightCm, profile.weightKg])
+
+  // ── "Ma situation" derived data ──────────────────────────────────────
+  const today = useMemo(() => getToday(), [])
+  const situationData = useMemo(() => {
+    const CYCLE_LABELS: Record<AnnualCycle, string> = {
+      in_season: 'En saison',
+      off_season: 'Inter-saison',
+      pre_season: 'Pré-saison',
+      playoffs: 'Phase finale',
+    }
+
+    // Derive cycle from real annual context detection (lightweight call)
+    let detectedCycle: AnnualCycle = profile.seasonMode ?? 'in_season'
+    try {
+      const ctx = detectAnnualPlanningContext({
+        events: events.map((e) => ({ date: e.date, type: e.type })),
+        today,
+        weeklyFrequency: (profile.weeklySessions ?? 3) as 2 | 3 | 4,
+        positionGroup: 'back_three',
+        planningAnchors: profile.planningAnchors,
+      })
+      detectedCycle = ctx.cycle
+    } catch {
+      // Fallback to profile.seasonMode if detection fails
+    }
+    const cycleLabel = CYCLE_LABELS[detectedCycle] ?? 'En saison'
+
+    // Next match
+    const futureMatches = events
+      .filter((e) => e.type === 'match' && e.date >= today && e.user_hidden !== true)
+      .sort((a, b) => a.date.localeCompare(b.date))
+    const nextMatch = futureMatches.length > 0 ? futureMatches[0] : null
+    const nextMatchLabel = nextMatch
+      ? new Date(nextMatch.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+      : 'Aucun match prévu'
+
+    // Calendar source
+    const ffrCount = events.filter((e) => e.source === 'ffr_import').length
+    const manualCount = events.filter((e) => e.source === 'manual').length
+    const calendarSource = ffrCount > 0
+      ? `FFR (${ffrCount} matchs)`
+      : manualCount > 0
+        ? 'Manuel'
+        : 'Aucun calendrier'
+
+    // Last known match date (for "La saison est finie")
+    const pastMatches = events
+      .filter((e) => e.type === 'match' && e.date < today && e.user_hidden !== true)
+      .sort((a, b) => b.date.localeCompare(a.date))
+    const lastMatchDate = pastMatches.length > 0 ? pastMatches[0].date : null
+
+    return { cycleLabel, nextMatchLabel, calendarSource, lastMatchDate, nextMatch }
+  }, [profile.seasonMode, events, today])
 
   // Load competitions when club is set (only on initial profile load, not on manual selection)
   const isAuthenticated = authState.status === 'authenticated'
@@ -397,8 +448,8 @@ export function ProfilePage() {
   const resolvedAvatarUrl = authState.user?.avatarUrl ?? profile.avatarUrl
 
   return (
-    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
         title="Mon Profil"
@@ -407,7 +458,7 @@ export function ProfilePage() {
           <button
             type="button"
             onClick={resetProfile}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/10 bg-white/5 text-xs font-bold text-white/40 hover:border-[#ff6b35]/30 hover:text-[#ff6b35] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-border-app bg-layer-5 text-xs font-bold text-fg-muted hover:border-brand-border-strong hover:text-brand transition-colors rf-focus-ring"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Réinitialiser
@@ -416,13 +467,13 @@ export function ProfilePage() {
       />
 
       <main className="relative px-6 pt-6 space-y-5 max-w-md mx-auto">
-        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
+        <section className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={handleAvatarClick}
               disabled={isAvatarUploading}
-              className="relative w-20 h-20 rounded-3xl border border-white/10 bg-white/10 flex items-center justify-center overflow-hidden disabled:opacity-60"
+              className="relative w-20 h-20 rounded-3xl border border-border-app bg-layer-10 flex items-center justify-center overflow-hidden disabled:opacity-60"
               aria-label="Changer la photo de profil"
             >
               {resolvedAvatarUrl ? (
@@ -432,15 +483,15 @@ export function ProfilePage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <User className="w-8 h-8 text-white/30" />
+                <User className="w-8 h-8 text-fg-faint" />
               )}
-              <span className="absolute right-1 bottom-1 w-6 h-6 rounded-xl bg-[#1a5f3f] text-white flex items-center justify-center">
+              <span className="absolute right-1 bottom-1 w-6 h-6 rounded-xl bg-success-app text-on-success flex items-center justify-center">
                 <Camera className="w-3.5 h-3.5" />
               </span>
             </button>
             <div>
-              <h2 className="text-sm font-black text-white">Photo de profil</h2>
-              <p className="text-xs text-white/40">
+              <h2 className="text-sm font-black text-fg">Photo de profil</h2>
+              <p className="text-xs text-fg-muted">
                 {isAvatarUploading ? 'Upload en cours...' : 'Ajoute ta photo pour personnaliser ton compte.'}
               </p>
             </div>
@@ -453,19 +504,19 @@ export function ProfilePage() {
             onChange={handleAvatarChange}
           />
           {avatarError && (
-            <div className="p-3 bg-[#ff6b35]/10 border border-[#ff6b35]/20 rounded-2xl">
-              <p className="text-xs text-[#ff6b35] font-medium">{avatarError}</p>
+            <div className="p-3 bg-danger-bg border border-danger-bd rounded-2xl">
+              <p className="text-xs text-danger font-medium">{avatarError}</p>
             </div>
           )}
         </section>
 
         {/* Infos de jeu */}
-        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-5">
-          <h2 className="text-sm font-black uppercase tracking-wider text-white/40">Infos de jeu</h2>
+        <section className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-5">
+          <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted">Infos de jeu</h2>
 
           {/* Poste */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Poste</label>
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Poste</label>
             <div className="grid grid-cols-2 gap-2">
               {POSITION_OPTIONS.map((opt) => {
                 const active = (profile.rugbyPosition ?? profile.position) === opt.value
@@ -476,8 +527,8 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ rugbyPosition: opt.value })}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                       active
-                        ? 'bg-[#1a5f3f] text-white shadow-sm'
-                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                        ? 'bg-success-app text-on-success shadow-sm'
+                        : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                     }`}
                   >
                     {opt.label}
@@ -489,7 +540,7 @@ export function ProfilePage() {
 
           {/* Niveau d'entraînement */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Niveau d'entraînement</label>
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Niveau d'entraînement</label>
             <div className="flex flex-col gap-2">
               {TRAINING_LEVELS.map((opt) => {
                 const active = getVisibleTrainingLevel(profile.trainingLevel) === opt.value
@@ -505,14 +556,14 @@ export function ProfilePage() {
                     }
                     className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                       active
-                        ? 'bg-[#1a5f3f] text-white shadow-sm'
-                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                        ? 'bg-success-app text-on-success shadow-sm'
+                        : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                     }`}
                   >
                     <span className="text-base flex-shrink-0">{opt.emoji}</span>
                     <div>
                       <p className="font-black">{opt.label}</p>
-                      <p className={`text-[10px] font-normal ${active ? 'text-emerald-200' : 'text-white/40'}`}>{opt.sub}</p>
+                      <p className={`text-[10px] font-normal ${active ? 'text-ok' : 'text-fg-muted'}`}>{opt.sub}</p>
                     </div>
                   </button>
                 )
@@ -520,36 +571,67 @@ export function ProfilePage() {
             </div>
           </div>
 
-          {/* Mode saison */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Mode saison</label>
+          {/* Ma situation */}
+          <div className="space-y-3" data-testid="ma-situation">
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Ma situation</label>
+
+            <div className="rounded-2xl border border-border-app bg-layer-5 p-4 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-fg-muted">Saison détectée</span>
+                <span className="text-xs font-black text-fg" data-testid="situation-cycle">{situationData.cycleLabel}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-fg-muted">Prochain match</span>
+                <span className="text-xs font-bold text-fg-emphasis" data-testid="situation-next-match">{situationData.nextMatchLabel}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-fg-muted">Calendrier</span>
+                <span className="text-xs font-bold text-fg-emphasis" data-testid="situation-calendar">{situationData.calendarSource}</span>
+              </div>
+            </div>
+
+            <p className="text-[10px] text-fg-faint">Quelque chose a changé ?</p>
             <div className="flex flex-col gap-2">
-              {SEASON_MODES.map((opt) => {
-                const active = (profile.seasonMode ?? 'in_season') === opt.value
-                return (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => updateProfile({ seasonMode: opt.value })}
-                    className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
-                      active
-                        ? 'bg-[#ff6b35] text-white shadow-sm'
-                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
-                    }`}
-                  >
-                    <span className="text-base flex-shrink-0">{opt.emoji}</span>
-                    <div>
-                      <p className="font-black">{opt.label}</p>
-                      <p className={`text-[10px] font-normal ${active ? 'text-orange-100' : 'text-white/40'}`}>{opt.sub}</p>
-                    </div>
-                  </button>
-                )
-              })}
+              <button
+                type="button"
+                data-testid="situation-season-ended"
+                onClick={() => {
+                  const anchor = situationData.lastMatchDate ?? today
+                  const cleanAnchors = { ...profile.planningAnchors }
+                  delete cleanAnchors.manualPlayoffs
+                  updateProfile({
+                    // Primary: factual anchor
+                    planningAnchors: { ...cleanAnchors, seasonEndedAt: anchor },
+                    // Transitional compatibility
+                    seasonMode: 'off_season',
+                  })
+                }}
+                className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
+              >
+                La saison est finie
+              </button>
+              <button
+                type="button"
+                data-testid="situation-no-match"
+                onClick={() => {
+                  const cleanAnchors = { ...profile.planningAnchors }
+                  delete cleanAnchors.manualPlayoffs
+                  updateProfile({
+                    // Primary: factual anchor
+                    planningAnchors: { ...cleanAnchors, seasonEndedAt: today },
+                    // Transitional compatibility
+                    seasonMode: 'off_season',
+                  })
+                }}
+                className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
+              >
+                Je n'ai plus de match pour l'instant
+              </button>
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Langue du programme</label>
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Langue du programme</label>
             <div className="grid grid-cols-2 gap-2">
               {LANGUAGE_OPTIONS.map((opt) => {
                 const active = (profile.preferredLanguage ?? 'fr') === opt.value
@@ -560,12 +642,12 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ preferredLanguage: opt.value })}
                     className={`py-2.5 px-3 rounded-2xl text-left transition-all ${
                       active
-                        ? 'bg-[#1a5f3f] text-white shadow-sm'
-                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                        ? 'bg-success-app text-on-success shadow-sm'
+                        : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                     }`}
                   >
                     <p className="text-xs font-black">{opt.label}</p>
-                    <p className={`mt-0.5 text-[10px] ${active ? 'text-emerald-200' : 'text-white/40'}`}>{opt.sub}</p>
+                    <p className={`mt-0.5 text-[10px] ${active ? 'text-ok' : 'text-fg-muted'}`}>{opt.sub}</p>
                   </button>
                 )
               })}
@@ -574,7 +656,7 @@ export function ProfilePage() {
 
           {/* Séances / semaine */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Séances / semaine</label>
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Séances / semaine</label>
             <div className="grid grid-cols-2 gap-2">
               {[2, 3].map((n) => {
                 const active = profile.weeklySessions === n
@@ -585,8 +667,8 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ weeklySessions: n as 2 | 3 })}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
                       active
-                        ? 'bg-[#1a5f3f] text-white shadow-sm'
-                        : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                        ? 'bg-success-app text-on-success shadow-sm'
+                        : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                     }`}
                   >
                     {n} séances
@@ -598,8 +680,8 @@ export function ProfilePage() {
 
           {/* Club */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-white/40 uppercase tracking-wider">
-              Club <span className="text-white/20 font-normal normal-case">(optionnel)</span>
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">
+              Club <span className="text-fg-ghost font-normal normal-case">(optionnel)</span>
             </label>
 
             <input
@@ -607,22 +689,22 @@ export function ProfilePage() {
               value={clubQuery}
               onChange={(event) => setClubQuery(event.target.value)}
               placeholder="Recherche nom, code ou ligue"
-              className="w-full h-11 rounded-2xl border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
+              className="w-full h-11 rounded-2xl border border-border-app bg-layer-5 px-3 text-sm text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand rf-focus-ring"
             />
 
             {profile.clubName && (
-              <div className="p-3 rounded-2xl border border-white/10 bg-white/5 flex items-center justify-between gap-3">
+              <div className="p-3 rounded-2xl border border-border-app bg-layer-5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center overflow-hidden">
+                  <div className="w-11 h-11 rounded-2xl bg-layer-10 border border-border-app flex items-center justify-center overflow-hidden">
                     {selectedClubLogoUrl ? (
                       <img src={selectedClubLogoUrl} alt={profile.clubName} className="w-full h-full object-contain" />
                     ) : (
-                      <span className="text-xs font-black text-white/50">{selectedClubMonogram}</span>
+                      <span className="text-xs font-black text-fg-soft">{selectedClubMonogram}</span>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-white">{profile.clubName}</p>
-                    <p className="text-xs text-white/40">
+                    <p className="text-sm font-bold text-fg">{profile.clubName}</p>
+                    <p className="text-xs text-fg-muted">
                       {profile.clubCode} · {profile.clubLigue} · CD {profile.clubDepartmentCode}
                     </p>
                   </div>
@@ -637,7 +719,7 @@ export function ProfilePage() {
                       clubDepartmentCode: undefined,
                     })
                   }
-                  className="text-[11px] font-bold text-white/40 hover:text-[#ff6b35] transition-colors"
+                  className="text-[11px] font-bold text-fg-muted hover:text-brand transition-colors"
                 >
                   Retirer
                 </button>
@@ -645,28 +727,28 @@ export function ProfilePage() {
             )}
 
             {clubQuery.trim().length > 0 && (
-              <div className="max-h-56 overflow-auto rounded-2xl border border-white/10 bg-[#23140f]">
+              <div className="max-h-56 overflow-auto rounded-2xl border border-border-app bg-panel">
                 {filteredClubs.length === 0 ? (
-                  <p className="px-3 py-2 text-xs text-white/40">Aucun club trouvé.</p>
+                  <p className="px-3 py-2 text-xs text-fg-muted">Aucun club trouvé.</p>
                 ) : (
                   filteredClubs.map((club) => (
                     <button
                       key={club.code}
                       type="button"
                       onClick={() => handleSelectClub(club)}
-                      className="w-full px-3 py-2 text-left hover:bg-white/10 border-b border-white/10 last:border-b-0 transition-colors"
+                      className="w-full px-3 py-2 text-left hover:bg-layer-10 border-b border-border-app last:border-b-0 transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <div className="w-8 h-8 rounded-xl bg-layer-10 border border-border-app flex items-center justify-center overflow-hidden flex-shrink-0">
                           {getClubLogoUrl(club.code) ? (
                             <img src={getClubLogoUrl(club.code) ?? ''} alt={club.name} className="w-full h-full object-contain" />
                           ) : (
-                            <span className="text-[10px] font-black text-white/50">{getClubMonogram(club.name)}</span>
+                            <span className="text-[10px] font-black text-fg-soft">{getClubMonogram(club.name)}</span>
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-white">{club.name}</p>
-                          <p className="text-[11px] text-white/40">{club.code} · {club.ligue} · CD {club.departmentCode}</p>
+                          <p className="text-sm font-bold text-fg">{club.name}</p>
+                          <p className="text-[11px] text-fg-muted">{club.code} · {club.ligue} · CD {club.departmentCode}</p>
                         </div>
                       </div>
                     </button>
@@ -679,22 +761,22 @@ export function ProfilePage() {
           {/* Compétition FFR (calendrier auto) */}
           {profile.clubCode && (
             <div className="space-y-2">
-              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">
-                Compétition <span className="text-white/20 font-normal normal-case">(calendrier auto)</span>
+              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">
+                Compétition <span className="text-fg-ghost font-normal normal-case">(calendrier auto)</span>
               </label>
 
               {ffrCompLoading && (
-                <div className="h-11 rounded-2xl border border-white/10 bg-white/5 flex items-center justify-center">
-                  <RefreshCw className="w-4 h-4 text-white/30 animate-spin" />
+                <div className="h-11 rounded-2xl border border-border-app bg-layer-5 flex items-center justify-center">
+                  <RefreshCw className="w-4 h-4 text-fg-faint animate-spin" />
                 </div>
               )}
 
               {!ffrCompLoading && ffrCompetitions.length === 0 && !profile.ffrCompetitionId && !ffrSyncMessage && (
-                <p className="text-xs text-white/30 italic">Import auto non disponible pour ce club</p>
+                <p className="text-xs text-fg-faint italic">Import auto non disponible pour ce club</p>
               )}
 
               {!ffrCompLoading && ffrSyncMessage && !profile.ffrCompetitionId && (
-                <p className={`text-xs italic ${ffrSyncMessage.startsWith('Erreur') ? 'text-red-400' : 'text-white/30'}`}>
+                <p className={`text-xs italic ${ffrSyncMessage.startsWith('Erreur') ? 'text-danger' : 'text-fg-faint'}`}>
                   {ffrSyncMessage}
                 </p>
               )}
@@ -720,17 +802,17 @@ export function ProfilePage() {
                           onClick={() => handleSelectCompetition(comp)}
                           className={`w-full px-3 py-2.5 text-left rounded-2xl border transition-colors ${
                             isRecommended && idx === 0
-                              ? 'border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20'
-                              : 'border-white/10 bg-white/5 hover:bg-white/10'
+                              ? 'border-info-bd bg-info-bg hover:bg-info-bg/80'
+                              : 'border-border-app bg-layer-5 hover:bg-layer-10'
                           }`}
                         >
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold text-white">{comp.name}</p>
+                            <p className="text-sm font-bold text-fg">{comp.name}</p>
                             {isRecommended && idx === 0 && (
-                              <span className="text-[9px] font-black text-blue-400 bg-blue-900/20 px-1.5 py-0.5 rounded-full">Recommandé</span>
+                              <span className="text-[9px] font-black text-info bg-info-bg px-1.5 py-0.5 rounded-full border border-info-bd">Recommandé</span>
                             )}
                           </div>
-                          <p className="text-xs text-white/40">{comp.level}{comp.pool ? ` · ${comp.pool}` : ''} · {comp.season}</p>
+                          <p className="text-xs text-fg-muted">{comp.level}{comp.pool ? ` · ${comp.pool}` : ''} · {comp.season}</p>
                         </button>
                       )
                     })}
@@ -738,11 +820,11 @@ export function ProfilePage() {
               )}
 
               {profile.ffrCompetitionName && (
-                <div className="p-3 rounded-2xl border border-blue-500/20 bg-blue-500/5 space-y-2">
+                <div className="p-3 rounded-2xl border border-info-bd bg-info-bg space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-bold text-white">{profile.ffrCompetitionName}</p>
-                      <p className="text-xs text-white/40">
+                      <p className="text-sm font-bold text-fg">{profile.ffrCompetitionName}</p>
+                      <p className="text-xs text-fg-muted">
                         {profile.ffrLastSyncAt
                           ? `Dernière sync : ${new Date(profile.ffrLastSyncAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`
                           : 'Jamais synchronisé'}
@@ -752,13 +834,13 @@ export function ProfilePage() {
                       type="button"
                       onClick={handleManualSync}
                       disabled={ffrSyncLoading}
-                      className="px-3 py-1.5 rounded-xl bg-blue-500/20 text-blue-400 text-xs font-bold hover:bg-blue-500/30 transition-colors disabled:opacity-50"
+                      className="px-3 py-1.5 rounded-xl bg-info-bg text-info text-xs font-bold hover:bg-info-bd/30 border border-info-bd transition-colors disabled:opacity-50 rf-focus-ring"
                     >
                       {ffrSyncLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : 'Sync'}
                     </button>
                   </div>
                   {ffrSyncMessage && (
-                    <p className={`text-xs ${ffrSyncMessage.startsWith('Erreur') ? 'text-red-400' : 'text-green-400'}`}>
+                    <p className={`text-xs ${ffrSyncMessage.startsWith('Erreur') ? 'text-danger' : 'text-ok-strong'}`}>
                       {ffrSyncMessage}
                     </p>
                   )}
@@ -768,7 +850,7 @@ export function ProfilePage() {
                       updateProfile({ ffrCompetitionId: undefined, ffrCompetitionName: undefined })
                       setFfrSyncMessage(null)
                     }}
-                    className="text-[11px] font-bold text-white/30 hover:text-white/50 transition-colors"
+                    className="text-[11px] font-bold text-fg-faint hover:text-fg-soft transition-colors"
                   >
                     Changer de compétition
                   </button>
@@ -780,20 +862,20 @@ export function ProfilePage() {
         </section>
 
         {/* Morphologie */}
-        <section className="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-5">
+        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-5">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-2xl bg-violet-900/20 text-violet-400">
               <Ruler className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-white">Morphologie</h2>
-              <p className="text-xs text-white/40">Taille, poids et IMC</p>
+              <h2 className="text-sm font-black text-fg">Morphologie</h2>
+              <p className="text-xs text-fg-muted">Taille, poids et IMC</p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Taille (cm)</label>
+              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Taille (cm)</label>
               <input
                 type="number"
                 inputMode="numeric"
@@ -806,12 +888,12 @@ export function ProfilePage() {
                   if (!isNaN(v) && v >= 140 && v <= 230) updateProfile({ heightCm: v })
                 }}
                 placeholder="182"
-                className="w-full h-11 rounded-2xl border border-white/10 bg-white/5 px-3 text-sm font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
+                className="w-full h-11 rounded-2xl border border-border-app bg-layer-5 px-3 text-sm font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand rf-focus-ring"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-white/40 uppercase tracking-wider">Poids (kg)</label>
+              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Poids (kg)</label>
               <input
                 type="number"
                 inputMode="decimal"
@@ -825,7 +907,7 @@ export function ProfilePage() {
                   if (!isNaN(v) && v >= 40 && v <= 200) updateProfile({ weightKg: v })
                 }}
                 placeholder="95"
-                className="w-full h-11 rounded-2xl border border-white/10 bg-white/5 px-3 text-sm font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
+                className="w-full h-11 rounded-2xl border border-border-app bg-layer-5 px-3 text-sm font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand rf-focus-ring"
               />
             </div>
           </div>
@@ -844,7 +926,7 @@ export function ProfilePage() {
               <div className="flex items-center justify-between p-4 rounded-2xl bg-violet-900/20 border border-violet-500/20">
                 <div>
                   <p className="text-xs font-bold text-violet-400 uppercase tracking-wide">IMC</p>
-                  <p className="text-sm font-bold text-white/70 mt-0.5">{label}</p>
+                  <p className="text-sm font-bold text-fg-emphasis mt-0.5">{label}</p>
                 </div>
                 <span className="text-2xl font-black text-violet-400">{bmi.toFixed(1)}</span>
               </div>
@@ -854,17 +936,17 @@ export function ProfilePage() {
 
         {/* Équipement — visible uniquement en Fondation */}
         {profile.trainingLevel === 'starter' && (
-        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
+        <section className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-blue-900/20 text-blue-400">
+            <div className="p-2 rounded-2xl bg-info-bg text-info border border-info-bd">
               <Dumbbell className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-white">Matériel à disposition</h2>
-              <p className="text-xs text-white/40">On adapte tes exercices selon ce que tu as en salle</p>
+              <h2 className="text-sm font-black text-fg">Matériel à disposition</h2>
+              <p className="text-xs text-fg-muted">On adapte tes exercices selon ce que tu as en salle</p>
             </div>
           </div>
-          <p className="text-xs text-white/50 leading-relaxed">
+          <p className="text-xs text-fg-soft leading-relaxed">
             Si tu ne coches rien, tu garderas les exercices par défaut (barre, poids de corps). Coche ce que tu as pour débloquer des variantes plus guidées.
           </p>
           <div className="space-y-2">
@@ -877,14 +959,14 @@ export function ProfilePage() {
                   onClick={() => updateProfile({ equipment: toggleValue(profile.equipment, value) })}
                   className={`w-full py-3 px-4 rounded-2xl text-left transition-all flex items-center gap-3 ${
                     active
-                      ? 'bg-blue-500/15 border border-blue-500/40 text-white'
-                      : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                      ? 'bg-info-bg border border-info-bd text-fg'
+                      : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${active ? 'bg-blue-400' : 'bg-white/20'}`} />
+                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${active ? 'bg-info' : 'bg-layer-20'}`} />
                   <div className="min-w-0">
                     <span className="text-xs font-bold">{label}</span>
-                    <span className="block text-[10px] text-white/40 mt-0.5">{hint}</span>
+                    <span className="block text-[10px] text-fg-muted mt-0.5">{hint}</span>
                   </div>
                 </button>
               )
@@ -894,21 +976,21 @@ export function ProfilePage() {
         )}
 
         {/* Planning club */}
-        <section className="bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-4">
+        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-2xl bg-emerald-900/20 text-emerald-400">
+              <div className="p-2 rounded-2xl bg-ok-bg-muted text-ok border border-ok-bd">
                 <Calendar className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-sm font-black text-white">Planning club</h2>
-                <p className="text-xs text-white/40">Entraînements club & séances muscu adaptées</p>
+                <h2 className="text-sm font-black text-fg">Planning club</h2>
+                <p className="text-xs text-fg-muted">Entraînements club & séances muscu adaptées</p>
               </div>
             </div>
             <button
               type="button"
               onClick={openPlanningEditor}
-              className="text-xs font-bold text-[#ff6b35] hover:text-[#e55a2b] transition-colors"
+              className="text-xs font-bold text-brand hover:text-brand-hover transition-colors"
             >
               Modifier
             </button>
@@ -917,31 +999,31 @@ export function ProfilePage() {
           {profile.clubSchedule ? (
             <div className="space-y-2">
               <div>
-                <p className="text-[10px] font-black text-white/40 uppercase tracking-wide mb-1">Entraînements club</p>
+                <p className="text-[10px] font-black text-fg-muted uppercase tracking-wide mb-1">Entraînements club</p>
                 <div className="flex flex-wrap gap-1.5">
                   {profile.clubSchedule.clubDays.map((d) => (
-                    <span key={d.day} className="px-2.5 py-1 rounded-full bg-emerald-900/20 text-emerald-400 text-xs font-bold">
+                    <span key={d.day} className="px-2.5 py-1 rounded-full bg-ok-bg-muted text-ok text-xs font-bold border border-ok-bd">
                       {DAY_LABELS[d.day]}{d.time ? ` ${d.time}` : ''}
                     </span>
                   ))}
                 </div>
               </div>
               {profile.clubSchedule.matchDay !== undefined && (
-                <p className="text-xs text-white/40">
-                  Match habituel : <span className="font-bold text-white/60">{DAY_LABELS[profile.clubSchedule.matchDay]}</span>
+                <p className="text-xs text-fg-muted">
+                  Match habituel : <span className="font-bold text-fg-soft">{DAY_LABELS[profile.clubSchedule.matchDay]}</span>
                 </p>
               )}
               {profile.scSchedule && profile.scSchedule.sessions.length > 0 && (
                 <div>
-                  <p className="text-[10px] font-black text-white/40 uppercase tracking-wide mb-1">Séances muscu suggérées</p>
+                  <p className="text-[10px] font-black text-fg-muted uppercase tracking-wide mb-1">Séances muscu suggérées</p>
                   <div className="flex flex-wrap gap-1.5">
                     {profile.scSchedule.sessions.map((s) => (
-                      <span key={s.day} className="px-2.5 py-1 rounded-full bg-rose-900/20 text-rose-400 text-xs font-bold">
+                      <span key={s.day} className="px-2.5 py-1 rounded-full bg-danger-bg text-danger text-xs font-bold border border-danger-bd">
                         {DAY_LABELS[s.day]}
                       </span>
                     ))}
                   </div>
-                  <p className="text-[10px] text-white/30 mt-1">Calculé automatiquement selon ton planning</p>
+                  <p className="text-[10px] text-fg-faint mt-1">Calculé automatiquement selon ton planning</p>
                 </div>
               )}
               <button
@@ -951,28 +1033,28 @@ export function ProfilePage() {
                   const sc = computeSCSchedule(profile.clubSchedule, profile.weeklySessions)
                   updateProfile({ scSchedule: sc })
                 }}
-                className="flex items-center gap-1.5 text-xs font-bold text-white/40 hover:text-[#ff6b35] transition-colors mt-1"
+                className="flex items-center gap-1.5 text-xs font-bold text-fg-muted hover:text-brand transition-colors mt-1"
               >
                 <RotateCcw className="w-3 h-3" />
                 Recalculer les séances muscu
               </button>
             </div>
           ) : (
-            <p className="text-xs text-white/40">Non configuré — clique sur "Modifier" pour ajouter ton planning.</p>
+            <p className="text-xs text-fg-muted">Non configuré — clique sur "Modifier" pour ajouter ton planning.</p>
           )}
         </section>
 
         {/* Population & conformité supprimés — app réservée aux adultes (V2 pour U18) */}
 
         {/* Zones sensibles */}
-        <section className="bg-white/5 border border-white/10 rounded-[24px] p-6 space-y-4">
+        <section className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-orange-900/20 text-orange-400">
+            <div className="p-2 rounded-2xl bg-warn-bg-muted text-warn border border-warn-bd">
               <Shield className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-white">Zones sensibles</h2>
-              <p className="text-xs text-white/40">On adapte les exercices pour éviter ces zones</p>
+              <h2 className="text-sm font-black text-fg">Zones sensibles</h2>
+              <p className="text-xs text-fg-muted">On adapte les exercices pour éviter ces zones</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -985,18 +1067,18 @@ export function ProfilePage() {
                   onClick={() => updateProfile({ injuries: toggleValue(profile.injuries, value) })}
                   className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all flex items-center gap-2 ${
                     active
-                      ? 'bg-orange-500 text-white shadow-sm'
-                      : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/25'
+                      ? 'bg-warn-button text-fg shadow-sm hover:bg-warn-button-hover'
+                      : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-white' : 'bg-white/20'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-fg' : 'bg-layer-20'}`} />
                   {label}
                 </button>
               )
             })}
           </div>
           {profile.injuries.length > 0 && (
-            <p className="text-xs text-orange-400 font-medium">
+            <p className="text-xs text-warn font-medium">
               {profile.injuries.length} zone{profile.injuries.length > 1 ? 's' : ''} — les exercices sollicitant ces zones seront remplacés par des alternatives.
             </p>
           )}
@@ -1005,52 +1087,52 @@ export function ProfilePage() {
         {/* Programme Réhab supprimé — hors périmètre prépa physique (V2 avec partenariat kiné) */}
 
         {/* ─── Notifications ───────────────────────────────────────────── */}
-        <section className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-4">
+        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-black text-white">Abonnement & accès</p>
-              <p className="text-xs text-white/40 mt-0.5">
+              <p className="text-sm font-black text-fg">Abonnement & accès</p>
+              <p className="text-xs text-fg-muted mt-0.5">
                 La sécurité et le programme de base restent inclus, quel que soit le plan.
               </p>
             </div>
             <span className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-wide ${
               isPremium
-                ? 'bg-[#ff6b35]/15 text-[#ff6b35]'
-                : 'bg-white/10 text-white/45'
+                ? 'bg-brand-medium text-brand'
+                : 'bg-layer-10 text-fg-soft'
             }`}>
               {isPremium ? 'PREMIUM' : 'FREE'}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className={`rounded-2xl border p-3 ${features.programBasic ? 'border-emerald-500/20 bg-emerald-900/10 text-emerald-300' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.programBasic ? 'border-ok-bd bg-ok-bg-muted text-ok' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Programme de base
             </div>
-            <div className={`rounded-2xl border p-3 ${features.notificationsBasic ? 'border-emerald-500/20 bg-emerald-900/10 text-emerald-300' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.notificationsBasic ? 'border-ok-bd bg-ok-bg-muted text-ok' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Rappels standards
             </div>
-            <div className={`rounded-2xl border p-3 ${features.athleticTestsBasic ? 'border-emerald-500/20 bg-emerald-900/10 text-emerald-300' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.athleticTestsBasic ? 'border-ok-bd bg-ok-bg-muted text-ok' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Tests basiques
             </div>
-            <div className={`rounded-2xl border p-3 ${features.calendarBasic ? 'border-emerald-500/20 bg-emerald-900/10 text-emerald-300' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.calendarBasic ? 'border-ok-bd bg-ok-bg-muted text-ok' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Planning & matchs
             </div>
-            <div className={`rounded-2xl border p-3 ${features.premiumProgramAdaptations ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.premiumProgramAdaptations ? 'border-brand-border bg-brand-soft text-brand-tint' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Suggestions de charge
             </div>
-            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-brand-border bg-brand-soft text-brand-tint' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Analytics détaillées
             </div>
-            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-brand-border bg-brand-soft text-brand-tint' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Score de forme
             </div>
-            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-brand-border bg-brand-soft text-brand-tint' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Bilan de semaine
             </div>
-            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-brand-border bg-brand-soft text-brand-tint' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Records personnels
             </div>
-            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-[#ff6b35]/20 bg-[#ff6b35]/10 text-[#ffb08f]' : 'border-white/10 bg-white/5 text-white/40'}`}>
+            <div className={`rounded-2xl border p-3 ${features.premiumAnalytics ? 'border-brand-border bg-brand-soft text-brand-tint' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
               Chat IA illimité
             </div>
           </div>
@@ -1068,15 +1150,15 @@ export function ProfilePage() {
           )}
         </section>
 
-        <section className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-4">
+        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-xl ${notifStatus === 'subscribed' ? 'bg-emerald-900/20 text-emerald-400' : 'bg-white/10 text-white/40'}`}>
+              <div className={`p-2 rounded-xl ${notifStatus === 'subscribed' ? 'bg-ok-bg-muted text-ok border border-ok-bd' : 'bg-layer-10 text-fg-muted'}`}>
                 {notifStatus === 'subscribed' ? <BellRing className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
               </div>
               <div>
-                <p className="text-sm font-black text-white">Rappels d'entraînement</p>
-                <p className="text-xs text-white/40 mt-0.5">
+                <p className="text-sm font-black text-fg">Rappels d'entraînement</p>
+                <p className="text-xs text-fg-muted mt-0.5">
                   {notifStatus === 'subscribed' && 'Activés — notification chaque jour de séance'}
                   {notifStatus === 'denied' && 'Bloqués — autorise les notifs dans les réglages'}
                   {notifStatus === 'unsupported' && 'Non supporté par ce navigateur'}
@@ -1084,7 +1166,7 @@ export function ProfilePage() {
                   {(notifStatus === 'idle' || notifStatus === 'loading') && 'Reçois un push chaque jour de séance'}
                 </p>
                 {notifErrorMessage && (
-                  <p className="mt-1 text-[11px] text-rose-300/85">
+                  <p className="mt-1 text-[11px] text-danger-soft">
                     {notifErrorMessage}
                   </p>
                 )}
@@ -1096,7 +1178,7 @@ export function ProfilePage() {
                 <button
                   type="button"
                   onClick={notifUnsubscribe}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/10 text-xs font-bold text-white/40 hover:border-rose-500/30 hover:text-rose-400 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-border-app text-xs font-bold text-fg-muted hover:border-danger-bd hover:text-danger transition-colors rf-focus-ring"
                 >
                   <BellOff className="w-3 h-3" />
                   Désactiver
@@ -1105,13 +1187,13 @@ export function ProfilePage() {
                 <button
                   type="button"
                   onClick={notifSubscribe}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#ff6b35] text-white text-xs font-black hover:bg-[#e55a2b] transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-brand text-on-brand text-xs font-black hover:bg-brand-hover transition-colors shadow-brand-float rf-focus-ring"
                 >
                   <Bell className="w-3 h-3" />
                   Activer
                 </button>
               ) : notifStatus === 'loading' ? (
-                <span className="text-xs text-white/40 animate-pulse">...</span>
+                <span className="text-xs text-fg-muted animate-pulse">...</span>
               ) : null}
             </div>
           </div>
@@ -1121,13 +1203,13 @@ export function ProfilePage() {
 
       {cropImageSrc && (
         <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center">
-          <section className="w-full sm:max-w-md bg-[#1a100c] border border-white/10 rounded-t-[24px] sm:rounded-[24px] p-5 space-y-4">
+          <section className="w-full sm:max-w-md bg-app border border-border-app rounded-t-[24px] sm:rounded-[24px] p-5 space-y-4">
             <div>
-              <h3 className="text-sm font-black text-white">Recadrer la photo</h3>
-              <p className="text-xs text-white/40">Centre ton visage puis ajuste le zoom.</p>
+              <h3 className="text-sm font-black text-fg">Recadrer la photo</h3>
+              <p className="text-xs text-fg-muted">Centre ton visage puis ajuste le zoom.</p>
             </div>
 
-            <div className="relative h-72 bg-white/10 rounded-2xl overflow-hidden">
+            <div className="relative h-72 bg-layer-10 rounded-2xl overflow-hidden">
               <Cropper
                 image={cropImageSrc}
                 crop={crop}
@@ -1142,7 +1224,7 @@ export function ProfilePage() {
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="avatar-zoom" className="text-xs font-bold text-white/40 uppercase tracking-wider">
+              <label htmlFor="avatar-zoom" className="text-xs font-bold text-fg-muted uppercase tracking-wider">
                 Zoom
               </label>
               <input
@@ -1153,7 +1235,7 @@ export function ProfilePage() {
                 step={0.01}
                 value={zoom}
                 onChange={(event) => setZoom(Number(event.target.value))}
-                className="w-full accent-[#ff6b35]"
+                className="w-full accent-brand"
               />
             </div>
 
@@ -1161,7 +1243,7 @@ export function ProfilePage() {
               <button
                 type="button"
                 onClick={handleCropCancel}
-                className="py-3 rounded-2xl border border-white/10 bg-white/5 text-xs font-bold text-white/50 hover:border-white/25 transition-colors"
+                className="py-3 rounded-2xl border border-border-app bg-layer-5 text-xs font-bold text-fg-soft hover:border-layer-20 transition-colors"
               >
                 Annuler
               </button>
@@ -1169,7 +1251,7 @@ export function ProfilePage() {
                 type="button"
                 onClick={handleCropConfirm}
                 disabled={isAvatarUploading}
-                className="py-3 rounded-2xl bg-[#1a5f3f] text-white text-xs font-black uppercase tracking-wide hover:bg-[#1a5f3f]/90 transition-colors disabled:opacity-60"
+                className="py-3 rounded-2xl bg-success-app text-on-success text-xs font-black uppercase tracking-wide opacity-95 hover:opacity-100 transition-opacity disabled:opacity-60 rf-focus-ring"
               >
                 {isAvatarUploading ? 'Upload...' : 'Valider'}
               </button>
@@ -1181,20 +1263,20 @@ export function ProfilePage() {
       {/* Planning editor modal */}
       {showPlanningEditor && (
         <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center">
-          <section className="w-full sm:max-w-md bg-[#1a100c] border border-white/10 rounded-t-[2rem] sm:rounded-[2rem] p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+          <section className="w-full sm:max-w-md bg-app border border-border-app rounded-t-[2rem] sm:rounded-[2rem] p-6 space-y-5 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-black text-white">Planning club</h3>
+              <h3 className="text-sm font-black text-fg">Planning club</h3>
               <button
                 type="button"
                 onClick={() => setShowPlanningEditor(false)}
-                className="text-xs font-bold text-white/40 hover:text-white transition-colors"
+                className="text-xs font-bold text-fg-muted hover:text-fg transition-colors rf-focus-ring"
               >
                 Annuler
               </button>
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-black text-white/40 uppercase tracking-wide">Jours d'entraînement club</p>
+              <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Jours d'entraînement club</p>
               <div className="grid grid-cols-4 gap-2">
                 {CLUB_DAYS_OPTIONS.map((opt) => {
                   const selected = editClubDays.has(opt.day)
@@ -1211,8 +1293,8 @@ export function ProfilePage() {
                         }}
                         className={`w-full py-3 rounded-2xl border-2 text-xs font-black transition-all ${
                           selected
-                            ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-[#ff6b35]'
-                            : 'border-white/10 bg-white/5 text-white/50 hover:border-white/25'
+                            ? 'border-brand bg-brand-soft text-brand'
+                            : 'border-border-app bg-layer-5 text-fg-soft hover:border-layer-20'
                         }`}
                       >
                         {opt.short}
@@ -1223,7 +1305,7 @@ export function ProfilePage() {
                           type="time"
                           value={editClubDayTimes[opt.day] ?? ''}
                           onChange={(e) => setEditClubDayTimes((prev) => ({ ...prev, [opt.day]: e.target.value }))}
-                          className="w-full text-[10px] rounded-xl border border-white/10 bg-white/5 px-1.5 py-1 text-white/50 focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
+                          className="w-full text-[10px] rounded-xl border border-border-app bg-layer-5 px-1.5 py-1 text-fg-soft focus:outline-none focus:border-brand rf-focus-ring"
                         />
                       )}
                     </div>
@@ -1233,7 +1315,7 @@ export function ProfilePage() {
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-black text-white/40 uppercase tracking-wide">Jour de match habituel</p>
+              <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Jour de match habituel</p>
               <div className="flex gap-2 flex-wrap">
                 {MATCH_DAY_OPTIONS.map((opt) => (
                   <button
@@ -1242,8 +1324,8 @@ export function ProfilePage() {
                     onClick={() => setEditMatchDay(opt.day)}
                     className={`px-4 py-2.5 rounded-2xl text-xs font-black border-2 transition-all ${
                       editMatchDay === opt.day
-                        ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-[#ff6b35]'
-                        : 'border-white/10 bg-white/5 text-white/50 hover:border-white/25'
+                        ? 'border-brand bg-brand-soft text-brand'
+                        : 'border-border-app bg-layer-5 text-fg-soft hover:border-layer-20'
                     }`}
                   >
                     {opt.label}
@@ -1253,15 +1335,15 @@ export function ProfilePage() {
             </div>
 
             {/* ─── Séances muscu ─── */}
-            <div className="space-y-3 pt-1 border-t border-white/10">
+            <div className="space-y-3 pt-1 border-t border-border-app">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-black text-white/40 uppercase tracking-wide">Séances muscu</p>
-                <div className="flex gap-1 bg-white/5 border border-white/10 rounded-2xl p-0.5">
+                <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Séances muscu</p>
+                <div className="flex gap-1 bg-layer-5 border border-border-app rounded-2xl p-0.5">
                   <button
                     type="button"
                     onClick={() => setGymMode('auto')}
                     className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                      gymMode === 'auto' ? 'bg-white/15 text-white shadow-sm' : 'text-white/40'
+                      gymMode === 'auto' ? 'bg-layer-15 text-fg shadow-sm' : 'text-fg-muted'
                     }`}
                   >
                     Auto
@@ -1281,7 +1363,7 @@ export function ProfilePage() {
                       }
                     }}
                     className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                      gymMode === 'manual' ? 'bg-white/15 text-white shadow-sm' : 'text-white/40'
+                      gymMode === 'manual' ? 'bg-layer-15 text-fg shadow-sm' : 'text-fg-muted'
                     }`}
                   >
                     Manuel
@@ -1290,11 +1372,11 @@ export function ProfilePage() {
               </div>
 
               {gymMode === 'auto' && editClubDays.size > 0 && (
-                <div className="p-3 rounded-2xl bg-emerald-900/20 border border-emerald-500/20">
-                  <p className="text-[10px] font-black text-emerald-400 uppercase tracking-wide mb-1">
+                <div className="p-3 rounded-2xl bg-ok-bg-muted border border-ok-bd">
+                  <p className="text-[10px] font-black text-ok uppercase tracking-wide mb-1">
                     Suggestion calculée
                   </p>
-                  <p className="text-sm font-black text-emerald-300">
+                  <p className="text-sm font-black text-ok-strong">
                     {computeSCSchedule(
                       {
                         clubDays: Array.from(editClubDays).map((d) => ({ day: d })),
@@ -1303,14 +1385,14 @@ export function ProfilePage() {
                       profile.weeklySessions
                     ).sessions.map((s) => DAY_LABELS[s.day]).join(' · ')}
                   </p>
-                  <p className="text-[10px] text-emerald-500 mt-1">
+                  <p className="text-[10px] text-ok opacity-90 mt-1">
                     Basé sur ton planning club et les bonnes pratiques de récupération
                   </p>
                 </div>
               )}
 
               {gymMode === 'auto' && editClubDays.size === 0 && (
-                <p className="text-xs text-white/40">
+                <p className="text-xs text-fg-muted">
                   Sélectionne tes jours d'entraînement club pour obtenir une suggestion.
                 </p>
               )}
@@ -1332,7 +1414,7 @@ export function ProfilePage() {
               type="button"
               onClick={applyPlanningSchedule}
               disabled={gymMode === 'manual' && editGymDays.size === 0}
-              className="w-full py-4 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-40 text-white font-black uppercase tracking-wide transition-colors shadow-lg shadow-[#ff6b35]/20"
+              className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover disabled:opacity-40 text-on-brand font-black uppercase tracking-wide transition-colors shadow-brand-float rf-focus-ring"
             >
               Appliquer
             </button>
@@ -1345,17 +1427,17 @@ export function ProfilePage() {
         <a
           href="mailto:feedback@rugbyforge.fr?subject=Feedback%20RugbyForge"
           onClick={() => posthog.capture('feedback_clicked')}
-          className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#1a5f3f] text-white text-xs font-black uppercase tracking-wide hover:bg-[#1a5f3f]/90 transition-colors shadow-lg shadow-[#1a5f3f]/20"
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-success-app text-on-success text-xs font-black uppercase tracking-wide opacity-95 hover:opacity-100 transition-opacity shadow-elevated rf-focus-ring"
         >
           Envoyer un feedback
         </a>
         <Link
           to="/legal"
-          className="text-xs text-white/40 hover:text-[#ff6b35] transition-colors"
+          className="text-xs text-fg-muted hover:text-brand transition-colors"
         >
           Mentions légales & Confidentialité
         </Link>
-        <p className="text-[10px] text-white/20">RugbyForge v1.0</p>
+        <p className="text-[10px] text-fg-ghost">RugbyForge v1.0</p>
       </footer>
 
       <BottomNav />

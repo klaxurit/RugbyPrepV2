@@ -3,7 +3,7 @@ import { DEFAULT_PROFILE } from '../../../hooks/useProfile'
 import type { CalendarEvent, UserProfile } from '../../../types/training'
 import { buildSquadWeeklyOverview } from '../buildSquadWeeklyOverview'
 
-const FIRST_MATCH = '2025-03-15'
+const FIRST_MATCH = '2025-04-12'
 
 function match(date: string): CalendarEvent {
   return { id: `m-${date}`, date, type: 'match' }
@@ -15,7 +15,7 @@ function baseProfile(p: Partial<UserProfile>): UserProfile {
 
 describe('buildSquadWeeklyOverview', () => {
   it('agrège plusieurs joueurs, byCycle, fatigue, match week, missing sessions, ordre stable', () => {
-    const d = new Date(2025, 2, 18, 12, 0, 0)
+    const d = new Date(2025, 3, 14, 12, 0, 0) // April — within playoffs window
     const overview = buildSquadWeeklyOverview({
       today: d,
       clubId: 'CLUB1',
@@ -24,7 +24,7 @@ describe('buildSquadWeeklyOverview', () => {
         {
           athleteId: 'x1',
           profile: baseProfile({ rugbyPosition: 'FRONT_ROW', weeklySessions: 3 }),
-          events: [match(FIRST_MATCH), match('2025-03-22')],
+          events: [match(FIRST_MATCH), match('2025-04-19')],
           logs: [],
           fatigue: 'OK',
           acwrZone: 'caution',
@@ -56,7 +56,7 @@ describe('buildSquadWeeklyOverview', () => {
       ],
     })
 
-    expect(overview.generatedForDate).toBe('2025-03-18')
+    expect(overview.generatedForDate).toBe('2025-04-14')
     expect(overview.clubId).toBe('CLUB1')
     expect(overview.squadId).toBe('SQ1')
     expect(overview.athletes.map((a) => a.identity.athleteId)).toEqual(['x1', 'x2', 'x3', 'x4'])

@@ -36,8 +36,8 @@ const TOKEN_FR: Record<string, string> = {
 }
 
 const TITLE_OVERRIDES: Record<string, Record<AppLang, string>> = {
-  FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1:  { fr: 'Préparation légère · Avants',        en: 'Light Primer · Front Row' },
-  FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1: { fr: 'Préparation légère · Ligne arrière',  en: 'Light Primer · Back Three' },
+  FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1:  { fr: 'Power-up · Avants',                  en: 'Light Primer · Front Row' },
+  FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1: { fr: 'Power-up · Ligne arrière',           en: 'Light Primer · Back Three' },
   FULL_BODY_IN_SEASON_FRONT_ROW_V1:          { fr: 'Corps complet · Avants',              en: 'Full Body · Front Row' },
   FULL_BODY_IN_SEASON_BACK_THREE_V1:         { fr: 'Corps complet · Ligne arrière',       en: 'Full Body · Back Three' },
   // Recovery sessions — titre correct pour off-season ET recovery override in-season.
@@ -91,7 +91,7 @@ export function formatTitleFromMotherSessionId(id: string, lang: AppLang = 'en')
     const restMeaningful = rest.filter(
       (t) => !/^\d+$/.test(t) && !POSITION_CYCLE_SKIP.has(t.toUpperCase())
     )
-    const primer = lang === 'fr' ? 'Préparation légère' : 'Full - Light Primer'
+    const primer = lang === 'fr' ? 'Power-up' : 'Full - Light Primer'
     if (restMeaningful.length === 0) return primer
     const labels = restMeaningful.map((t) => tokenToLabel(t, lang)).filter(Boolean)
     if (labels.length === 0) return primer

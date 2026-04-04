@@ -9,7 +9,7 @@ import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
 import { useACWR } from '../hooks/useACWR'
 import { useCalendar } from '../hooks/useCalendar'
-import { useEntitlements } from '../hooks/useEntitlements'
+import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { getPhaseForWeek } from '../services/program/programPhases.v1'
 import { supabase } from '../services/supabase/client'
@@ -58,7 +58,8 @@ export function ChatPage() {
   const { logs } = useHistory()
   const { events: chatEvents, nextMatch: chatNextMatch } = useCalendar()
   const { acwr, zone: acwrZone, acuteLoad, chronicLoad } = useACWR(logs, chatEvents)
-  const { hasEntitlement, isPremium, refresh: refreshEntitlements } = useEntitlements()
+  const { hasEntitlement, isPremium, loading: entitlementsLoading, refresh: refreshEntitlements } = useFeatureAccess()
+  const premiumResolved = !entitlementsLoading
   const [searchParams, setSearchParams] = useSearchParams()
   const {
     loading: checkoutLoading,
@@ -253,8 +254,8 @@ export function ChatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a100c] font-sans text-white flex flex-col relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+    <div className="min-h-screen bg-app font-sans text-fg flex flex-col relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
         title="Coach IA"
@@ -262,13 +263,13 @@ export function ChatPage() {
         right={
           <>
             {(phaseLabel || isDeload) && (
-              <span className="px-2.5 py-1 rounded-full bg-white/10 text-[10px] font-black text-white/50 tracking-wide">
+              <span className="px-2.5 py-1 rounded-full bg-layer-10 text-[10px] font-black text-fg-soft tracking-wide">
                 {isDeload ? 'DÉCHARGE' : phaseLabel?.toUpperCase()}
               </span>
             )}
             <span
               className={`px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide ${
-                isPremium ? 'bg-[#ff6b35]/15 text-[#ff6b35]' : 'bg-white/10 text-white/45'
+                isPremium ? 'bg-brand-medium text-brand' : 'bg-layer-10 text-fg-soft'
               }`}
             >
               {isPremium ? 'PREMIUM' : 'FREE'}
@@ -284,23 +285,23 @@ export function ChatPage() {
         {messages.length === 0 && (
           <div className="space-y-5">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-2xl bg-[#ff6b35] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Bot className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-2xl bg-brand flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Bot className="w-4 h-4 text-on-brand" />
               </div>
-              <div className="bg-white/5 border border-white/10 rounded-[1.5rem] rounded-tl-md px-4 py-3 max-w-[85%]">
-                <p className="text-sm text-white/80 leading-relaxed">
+              <div className="bg-layer-5 border border-border-app rounded-[1.5rem] rounded-tl-md px-4 py-3 max-w-[85%]">
+                <p className="text-sm text-fg-secondary leading-relaxed">
                   Salut ! Je suis ton coach IA RugbyForge 🏉
                 </p>
-                <p className="text-sm text-white/80 leading-relaxed mt-1.5">
+                <p className="text-sm text-fg-secondary leading-relaxed mt-1.5">
                   Pose-moi n'importe quelle question sur l'entraînement, la nutrition, la récupération ou le sommeil. Je connais ton profil et ta semaine en cours.
                 </p>
-                {!hasPremiumInsights && (
-                  <p className="text-xs text-white/45 mt-2 leading-relaxed">
+                {premiumResolved && !hasPremiumInsights && (
+                  <p className="text-xs text-fg-soft mt-2 leading-relaxed">
                     Mode Free: le coach reste disponible, mais les suggestions contextuelles avancées sont réservées au Premium.
                   </p>
                 )}
                 {context.week && (
-                  <p className="text-xs text-white/40 mt-2">
+                  <p className="text-xs text-fg-muted mt-2">
                     Semaine {context.week}{phaseLabel ? ` · Phase ${phaseLabel}` : ''}{context.fatigue ? ` · Fatigue : ${context.fatigue}` : ''}
                   </p>
                 )}
@@ -309,36 +310,36 @@ export function ChatPage() {
 
             {/* Quick prompts */}
             <div className="space-y-2 pl-11">
-              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">Suggestions</p>
+              <p className="text-[10px] font-black text-fg-muted uppercase tracking-widest">Suggestions</p>
               <div className="flex flex-col gap-2">
                 {quickPrompts.map((prompt) => (
                   <button
                     key={prompt}
                     type="button"
                     onClick={() => sendMessage(prompt)}
-                    className="flex items-center gap-2.5 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-left hover:border-[#ff6b35]/30 hover:bg-[#ff6b35]/5 transition-colors group"
+                    className="flex items-center gap-2.5 px-4 py-3 bg-layer-5 border border-border-app rounded-2xl text-left hover:border-brand-border-strong hover:bg-brand-soft transition-colors group rf-focus-ring"
                   >
-                    <Zap className="w-3.5 h-3.5 text-[#ff6b35] flex-shrink-0" />
-                    <span className="text-sm font-medium text-white/70 group-hover:text-white">{prompt}</span>
+                    <Zap className="w-3.5 h-3.5 text-brand flex-shrink-0" />
+                    <span className="text-sm font-medium text-fg-emphasis group-hover:text-fg">{prompt}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {!isPremium && (
+            {premiumResolved && !isPremium && (
               <div className="pl-11">
-                <div className="rounded-[1.5rem] border border-[#ff6b35]/20 bg-[#ff6b35]/[0.06] p-4">
+                <div className="rounded-[1.5rem] border border-brand-border bg-brand-soft/80 p-4">
                   <div className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-2xl bg-[#ff6b35]/15">
-                      <Lock className="h-4 w-4 text-[#ff6b35]" />
+                    <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-2xl bg-brand-medium">
+                      <Lock className="h-4 w-4 text-brand" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-black text-white">Passe en Premium</p>
-                      <p className="mt-1 text-xs leading-relaxed text-white/60">
+                      <p className="text-sm font-black text-fg">Passe en Premium</p>
+                      <p className="mt-1 text-xs leading-relaxed text-fg-emphasis">
                         Débloque les suggestions avancées liées à ta phase, à ta charge et à tes adaptations de programme.
                       </p>
                       {isCheckoutSuccess && (
-                        <p className="mt-2 text-[11px] leading-relaxed text-[#ffb08f]">
+                        <p className="mt-2 text-[11px] leading-relaxed text-brand-tint">
                           {activationSyncing
                             ? 'Paiement confirmé. Activation Premium en cours...'
                             : activationSyncTimeout
@@ -356,7 +357,7 @@ export function ChatPage() {
                           void startCheckout('premium_monthly')
                         }}
                         disabled={checkoutLoading}
-                        className="mt-3 inline-flex items-center justify-center rounded-2xl bg-[#ff6b35] px-4 py-2 text-xs font-black text-white transition-colors hover:bg-[#e55a2b] disabled:cursor-not-allowed disabled:opacity-50"
+                        className="mt-3 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
                       >
                         {checkoutLoading
                           ? 'Chargement...'
@@ -365,12 +366,12 @@ export function ChatPage() {
                             : 'Activer Premium'}
                       </button>
                       {checkoutMessage && (
-                        <p className="mt-2 text-[11px] leading-relaxed text-[#ffb08f]">
+                        <p className="mt-2 text-[11px] leading-relaxed text-brand-tint">
                           {checkoutMessage}
                         </p>
                       )}
                       {checkoutError && (
-                        <p className="mt-2 text-[11px] leading-relaxed text-amber-300">
+                        <p className="mt-2 text-[11px] leading-relaxed text-warn-body">
                           {checkoutError}
                         </p>
                       )}
@@ -389,17 +390,17 @@ export function ChatPage() {
             className={`flex items-end gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             {msg.role === 'assistant' && (
-              <div className="w-7 h-7 rounded-xl bg-[#ff6b35] flex items-center justify-center flex-shrink-0 mb-0.5">
-                <Bot className="w-3.5 h-3.5 text-white" />
+              <div className="w-7 h-7 rounded-xl bg-brand flex items-center justify-center flex-shrink-0 mb-0.5">
+                <Bot className="w-3.5 h-3.5 text-on-brand" />
               </div>
             )}
             <div
-              className={`max-w-[82%] px-4 py-3 rounded-[1.5rem] ${
+               className={`max-w-[82%] px-4 py-3 rounded-[1.5rem] ${
                 msg.role === 'user'
-                  ? 'bg-[#ff6b35] text-white rounded-br-md'
+                  ? 'bg-brand text-on-brand rounded-br-md'
                   : msg.error
-                    ? 'bg-amber-900/20 border border-amber-500/20 text-amber-300 rounded-tl-md'
-                    : 'bg-white/5 border border-white/10 text-white/80 rounded-tl-md'
+                    ? 'bg-warn-bg-muted border border-warn-bd text-warn-body rounded-tl-md'
+                    : 'bg-layer-5 border border-border-app text-fg-secondary rounded-tl-md'
               }`}
             >
               <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -410,14 +411,14 @@ export function ChatPage() {
         {/* Typing indicator */}
         {loading && (
           <div className="flex items-end gap-2.5 justify-start">
-            <div className="w-7 h-7 rounded-xl bg-[#ff6b35] flex items-center justify-center flex-shrink-0">
-              <Bot className="w-3.5 h-3.5 text-white" />
+            <div className="w-7 h-7 rounded-xl bg-brand flex items-center justify-center flex-shrink-0">
+              <Bot className="w-3.5 h-3.5 text-on-brand" />
             </div>
-            <div className="bg-white/5 border border-white/10 rounded-[1.5rem] rounded-tl-md px-4 py-3">
+            <div className="bg-layer-5 border border-border-app rounded-[1.5rem] rounded-tl-md px-4 py-3">
               <div className="flex gap-1.5 items-center h-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce [animation-delay:0ms]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce [animation-delay:150ms]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce [animation-delay:300ms]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-fg-muted/40 animate-bounce [animation-delay:0ms]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-fg-muted/40 animate-bounce [animation-delay:150ms]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-fg-muted/40 animate-bounce [animation-delay:300ms]" />
               </div>
             </div>
           </div>
@@ -438,7 +439,7 @@ export function ChatPage() {
         {/* Remaining messages indicator */}
         {!isPremium && !rateLimited && remaining !== null && remaining <= 2 && remaining > 0 && (
           <div className="pl-11">
-            <p className="text-[11px] text-amber-400/70 bg-amber-900/10 border border-amber-500/10 rounded-2xl px-4 py-2">
+            <p className="text-[11px] text-warn bg-warn-bg-muted border border-warn-bd rounded-2xl px-4 py-2">
               {remaining === 1 ? 'Dernier message gratuit du jour.' : `${remaining} messages restants aujourd'hui.`}
             </p>
           </div>
@@ -448,7 +449,7 @@ export function ChatPage() {
       </main>
 
       {/* Input area — sits just above BottomNav */}
-      <div className="sticky bottom-20 bg-[#1a100c]/95 backdrop-blur border-t border-white/10 px-4 py-3">
+      <div className="sticky bottom-20 bg-app/95 backdrop-blur border-t border-border-app px-4 py-3">
         <div className="max-w-md mx-auto flex items-end gap-2">
           <textarea
             ref={inputRef}
@@ -457,7 +458,7 @@ export function ChatPage() {
             onKeyDown={handleKeyDown}
             placeholder="Pose ta question..."
             rows={1}
-            className="flex-1 resize-none bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#ff6b35] focus:ring-1 focus:ring-[#ff6b35]/20 max-h-28 leading-relaxed"
+            className="flex-1 resize-none bg-layer-5 border border-border-app rounded-2xl px-4 py-2.5 text-sm text-fg placeholder:text-fg-faint focus:outline-none focus:border-brand rf-focus-ring max-h-28 leading-relaxed"
             style={{ overflow: 'auto' }}
             disabled={loading || rateLimited}
           />
@@ -465,12 +466,12 @@ export function ChatPage() {
             type="button"
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || loading || rateLimited}
-            className="w-10 h-10 rounded-2xl bg-[#ff6b35] flex items-center justify-center flex-shrink-0 hover:bg-[#e55a2b] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-10 h-10 rounded-2xl bg-brand flex items-center justify-center flex-shrink-0 hover:bg-brand-hover transition-colors disabled:opacity-40 disabled:cursor-not-allowed rf-focus-ring"
           >
-            <Send className="w-4 h-4 text-white" />
+            <Send className="w-4 h-4 text-on-brand" />
           </button>
         </div>
-        <p className="text-center text-[10px] text-white/25 mt-2">
+        <p className="text-center text-[10px] text-fg-ghost mt-2">
           Conseils sportifs uniquement — pas un avis médical
         </p>
       </div>

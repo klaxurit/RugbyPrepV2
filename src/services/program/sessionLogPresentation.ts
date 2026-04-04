@@ -13,6 +13,7 @@ const SESSION_TYPE_LABELS: Record<SessionType, string> = {
   FULL: 'Corps Complet',
   CONDITIONING: 'Conditionnement',
   RECOVERY: 'Récupération',
+  ACTIVE_RECOVERY: 'Récupération active',
 }
 
 /**

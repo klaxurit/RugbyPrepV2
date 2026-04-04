@@ -1,8 +1,8 @@
-import type { AnnualPlanningContext } from '../../types/annualPlanning'
+import type { AnnualPlanningContext, InSeasonSubMode } from '../../types/annualPlanning'
 
 export type SeasonTransition =
   | { type: 'season_ended'; lastMatchDate: string; daysSinceLastMatch: number }
-  | { type: 'treve_detected'; nextMatchDate: string; gapWeeks: number }
+  | { type: 'treve_detected'; nextMatchDate: string; gapWeeks: number; subMode?: InSeasonSubMode }
   | { type: 'playoffs_suggested' }
 
 const SEASON_END_THRESHOLD_DAYS = 7
@@ -46,17 +46,26 @@ export function detectSeasonTransitions(params: {
     }
   }
 
-  // UC2: Treve — in_season, next match > 3 weeks away
+  // UC2: Treve — in_season, any trêve subMode active OR next match > 3 weeks away
   if (
     ctx.cycle === 'in_season' &&
-    ctx.daysUntilNextMatch != null &&
-    ctx.daysUntilNextMatch > TREVE_THRESHOLD_DAYS
+    (ctx.inSeasonSubMode === 'treve_deep' ||
+     ctx.inSeasonSubMode === 'treve_return' ||
+     ctx.inSeasonSubMode === 'treve_rampup' ||
+     (ctx.daysUntilNextMatch != null && ctx.daysUntilNextMatch > TREVE_THRESHOLD_DAYS))
   ) {
-    const nextMatch = ctx.firstMatchDate // approximate — the actual next match date
+    // Compute the real next match date from today + daysUntilNextMatch
+    let nextMatchDate = ''
+    if (ctx.daysUntilNextMatch != null) {
+      const d = new Date(`${today}T12:00:00`)
+      d.setDate(d.getDate() + ctx.daysUntilNextMatch)
+      nextMatchDate = d.toISOString().slice(0, 10)
+    }
     return {
       type: 'treve_detected',
-      nextMatchDate: nextMatch ?? '',
-      gapWeeks: Math.floor(ctx.daysUntilNextMatch / 7),
+      nextMatchDate,
+      gapWeeks: Math.floor((ctx.daysUntilNextMatch ?? 0) / 7),
+      subMode: ctx.inSeasonSubMode,
     }
   }
 

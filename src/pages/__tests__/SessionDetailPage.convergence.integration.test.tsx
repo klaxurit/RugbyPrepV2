@@ -78,6 +78,13 @@ function makeMotherSessionSurface(
     warnings: overrides?.warnings ?? [],
     decisionReason: overrides?.decisionReason ?? `Cycle ${cycle} — moteur mother-session primaire.`,
     motherSession: msResult,
+    schedulingMode: 'calendar',
+    schedulingModeResult: {
+      mode: 'calendar',
+      confidence: 'high',
+      reason: 'test_fixture',
+      calendarSignalStrength: 1,
+    },
   }
 }
 
@@ -90,6 +97,13 @@ function makeUnavailableSurface(): WeeklyProgramSurfaceResult {
     warnings: [],
     decisionReason: 'Plan annuel non résolu.',
     motherSession: null as unknown as ResolveMotherSessionsForWeekResult,
+    schedulingMode: 'sequential',
+    schedulingModeResult: {
+      mode: 'sequential',
+      confidence: 'low',
+      reason: 'test_fixture_unavailable',
+      calendarSignalStrength: 0,
+    },
   }
 }
 
@@ -185,6 +199,61 @@ vi.mock('../../hooks/useProgramFeatureFlags', () => ({
 
 vi.mock('../../hooks/useWeeklyProgramSurface', () => ({
   useWeeklyProgramSurface: (params: unknown) => useWeeklyProgramSurfaceMock(params),
+}))
+
+// F2: SessionDetailPage now uses useWeekSnapshot — mock it to delegate to
+// the existing useWeeklyProgramSurfaceMock and wrap sessions in a snapshot shape
+vi.mock('../../hooks/useWeekSnapshot', () => ({
+  useWeekSnapshot: (params: unknown) => {
+    const upstream = useWeeklyProgramSurfaceMock(params)
+    const surface = upstream?.surface ?? null
+    const sessions = surface?.motherSession?.sessions ?? []
+    const presentation = sessions.length > 0
+      ? {
+          sessions: sessions.map((slot: any, i: number) => ({
+            kind: 'sequential' as const,
+            sessionSlot: slot,
+            sequenceIndex: i + 1,
+            totalInWeek: sessions.length,
+            completionStatus: 'pending' as const,
+          })),
+          matchEvents: [],
+          unavailableDays: [],
+          corrections: [],
+          mode: 'sequential' as const,
+        }
+      : null
+    const snapshot = surface
+      ? {
+          weekId: 'W2026-15',
+          resolvedAt: new Date().toISOString(),
+          eventsFingerprint: '0',
+          globalEventsHash: '0',
+          surface,
+          presentation,
+          corrections: [],
+          pendingUpdates: [],
+          confirmationRequired: [],
+        }
+      : null
+    return {
+      snapshot,
+      isReady: upstream?.isReady ?? false,
+      hasPendingUpdates: false,
+      hasConfirmationRequired: false,
+      surface,
+      blockProgression: undefined,
+      toastMessage: null,
+      clearToast: () => {},
+      rescheduleSession: () => {},
+      skipSession: () => {},
+      markDayUnavailable: () => {},
+      undoCorrection: () => {},
+      setFatigue: () => {},
+      addMatch: () => {},
+      confirmPendingUpdate: () => {},
+    }
+  },
 }))
 
 vi.mock('../../services/ui/getPrehab', () => ({

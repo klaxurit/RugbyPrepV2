@@ -179,7 +179,9 @@ describe('buildAthletePlanningInputs', () => {
       today: TODAY,
       fatigue: 'OK',
     })
-    expect(r.inputs.planningAnchors).toEqual({ manualCycleOverride: 'off_season' })
+    // Without seasonEndedAt anchor, off_season goes through hint path, not manual override
+    expect(r.inputs.planningAnchors?.onboardingCycleHint).toBe('off_season')
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
   })
 
   it('logs présents + pas de match + seasonMode → hint injecté (seasonMode durable)', () => {
@@ -215,7 +217,7 @@ describe('buildAthletePlanningInputs', () => {
     expect(r.inputs.planningAnchors).toEqual({ onboardingCycleHint: 'pre_season' })
   })
 
-  it('match présent + in_season → manual override pour respecter le réglage profil', () => {
+  it('V2: match présent + in_season → pas de manualCycleOverride (auto-detection)', () => {
     const r = buildAthletePlanningInputs({
       profile: baseProfile({ seasonMode: 'in_season' }),
       events: [{ date: '2025-04-05', type: 'match' }] as CalendarEvent[],
@@ -223,10 +225,11 @@ describe('buildAthletePlanningInputs', () => {
       today: TODAY,
       fatigue: 'OK',
     })
-    expect(r.inputs.planningAnchors).toEqual({ manualCycleOverride: 'in_season' })
+    // V2: in_season with matches lets V2 auto-detect (no manual override)
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
   })
 
-  it('match présent + pre_season → manual override pour permettre le basculement depuis le profil', () => {
+  it('V2: match présent + pre_season → pas de manualCycleOverride (auto-detection)', () => {
     const r = buildAthletePlanningInputs({
       profile: baseProfile({ seasonMode: 'pre_season' }),
       events: [{ date: '2025-04-05', type: 'match' }] as CalendarEvent[],
@@ -234,6 +237,128 @@ describe('buildAthletePlanningInputs', () => {
       today: TODAY,
       fatigue: 'OK',
     })
-    expect(r.inputs.planningAnchors).toEqual({ manualCycleOverride: 'pre_season' })
+    // V2: pre_season with matches lets V2 auto-detect (no manual override)
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
+  })
+
+  // ── S3 Slice 4: onboardingCycleHint source of truth ──
+
+  it('prefers planningAnchors.onboardingCycleHint over seasonMode for bootstrap', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'in_season',
+        planningAnchors: { onboardingCycleHint: 'off_season' },
+      }),
+      events: emptyEvents,
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    // onboardingCycleHint wins over seasonMode
+    expect(r.inputs.planningAnchors?.onboardingCycleHint).toBe('off_season')
+    // No manual override (no seasonEndedAt anchor)
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
+  })
+
+  it('falls back to seasonMode when onboardingCycleHint is absent', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'pre_season',
+        planningAnchors: {},
+      }),
+      events: emptyEvents,
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.planningAnchors?.onboardingCycleHint).toBe('pre_season')
+  })
+
+  it('off_season hint without seasonEndedAt does NOT force manualCycleOverride', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'in_season',
+        planningAnchors: { onboardingCycleHint: 'off_season' },
+      }),
+      events: emptyEvents,
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
+    expect(r.inputs.planningAnchors?.onboardingCycleHint).toBe('off_season')
+  })
+
+  // ── Match-in-current-week vs seasonEndedAt contradiction ──
+
+  it('match earlier in the same week invalidates seasonEndedAt anchor', () => {
+    // Today is Friday 2025-03-14 — match was Wednesday 2025-03-12 (same ISO week)
+    const today = '2025-03-14'
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'off_season',
+        planningAnchors: { seasonEndedAt: '2025-02-28' },
+      }),
+      events: [{ id: 'm1', date: '2025-03-12', type: 'match' }] as CalendarEvent[],
+      logs: [],
+      today,
+      fatigue: 'OK',
+    })
+    // seasonEndedAt must be dropped — match is visible in the week timeline
+    expect(r.inputs.planningAnchors?.seasonEndedAt).toBeUndefined()
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
+  })
+
+  it('match earlier in the same week prevents off_season manualCycleOverride', () => {
+    // Today is Thursday 2025-03-13 — match was Monday 2025-03-10 (same ISO week)
+    const today = '2025-03-13'
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'off_season',
+        planningAnchors: {
+          seasonEndedAt: '2025-02-20',
+          onboardingCycleHint: 'off_season',
+        },
+      }),
+      events: [{ id: 'm1', date: '2025-03-10', type: 'match' }] as CalendarEvent[],
+      logs: [],
+      today,
+      fatigue: 'OK',
+    })
+    // Must NOT produce manualCycleOverride off_season with a match visible this week
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
+  })
+
+  it('seasonEndedAt is preserved when no match exists this week or in the future', () => {
+    // Today is 2025-03-14 — last match was 2025-02-28 (different week, in the past)
+    const today = '2025-03-14'
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'off_season',
+        planningAnchors: { seasonEndedAt: '2025-02-28' },
+      }),
+      events: [{ id: 'm1', date: '2025-02-22', type: 'match' }] as CalendarEvent[],
+      logs: [],
+      today,
+      fatigue: 'OK',
+    })
+    // No match this week and no future match → seasonEndedAt is valid
+    expect(r.inputs.planningAnchors?.seasonEndedAt).toBe('2025-02-28')
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBe('off_season')
+  })
+
+  it('future match (>= today) still invalidates seasonEndedAt (existing behavior)', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'off_season',
+        planningAnchors: { seasonEndedAt: '2025-02-28' },
+      }),
+      events: [{ id: 'm1', date: TODAY, type: 'match' }] as CalendarEvent[],
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.planningAnchors?.seasonEndedAt).toBeUndefined()
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
   })
 })

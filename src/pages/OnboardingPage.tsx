@@ -108,11 +108,13 @@ const TRAINING_LEVELS: {
   },
 ]
 
-const SEASON_MODES: { value: SeasonMode; label: string; sub: string; emoji: string }[] = [
-  { value: 'in_season',  label: 'Saison',       sub: 'Force → Puissance',           emoji: '⚡' },
-  { value: 'off_season', label: 'Inter-saison',  sub: 'Hypertrophie',                emoji: '🌿' },
-  { value: 'pre_season', label: 'Pré-saison',    sub: 'Prépa avant reprise',          emoji: '🔥' },
+const CYCLE_HINTS: { value: SeasonMode; label: string; sub: string; emoji: string }[] = [
+  { value: 'in_season',  label: 'En saison',      sub: 'J\'ai des matchs à venir',     emoji: '⚡' },
+  { value: 'off_season', label: 'Inter-saison',    sub: 'Pas de match pour l\'instant',  emoji: '🌿' },
+  { value: 'pre_season', label: 'Pré-saison',      sub: 'Je prépare ma reprise',        emoji: '🔥' },
 ]
+// This seeds the initial cycle for program bootstrap. Once matches are added,
+// the annual context detector auto-detects the real cycle from the calendar.
 
 // App réservée aux adultes — ageBand hardcodé à 'adult', pas de sélecteur U18.
 
@@ -150,22 +152,22 @@ function bmiLabel(bmi: number, position: PositionValue | null): string {
 function StepTitle({ title, sub }: { title: string; sub: string }) {
   return (
     <div className="space-y-1 pb-1">
-      <h1 className="text-2xl font-black tracking-tight text-white">{title}</h1>
-      <p className="text-sm text-white/50 leading-relaxed">{sub}</p>
+      <h1 className="text-2xl font-black tracking-tight text-fg">{title}</h1>
+      <p className="text-sm text-fg-soft leading-relaxed">{sub}</p>
     </div>
   )
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-xs font-black text-white/40 uppercase tracking-widest">{children}</p>
+    <p className="text-xs font-black text-fg-muted uppercase tracking-widest">{children}</p>
   )
 }
 
 // ─── Component ────────────────────────────────────────────────
 
 export function OnboardingPage() {
-  const { updateProfile } = useProfile()
+  const { profile: existingProfile, updateProfile } = useProfile()
   const { authState } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -264,7 +266,9 @@ export function OnboardingPage() {
       rugbyPosition: position!,
       level: levelDef.legacyLevel,
       trainingLevel: trainingLevel!,
+      // Dual-write: seasonMode (compatibility) + onboardingCycleHint (source of truth)
       seasonMode,
+      planningAnchors: { ...(existingProfile?.planningAnchors ?? {}), onboardingCycleHint: seasonMode },
       performanceFocus: 'balanced' as const,
       weeklySessions: sessions!,
       equipment: finalEquipment,
@@ -302,22 +306,22 @@ export function OnboardingPage() {
 
   if (showWelcome) {
     return (
-      <div className="min-h-screen bg-[#1a100c] flex flex-col justify-center px-6 relative overflow-hidden">
+      <div className="min-h-screen bg-app flex flex-col justify-center px-6 relative overflow-hidden">
         {/* Dot grid déco */}
-        <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+        <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
         {/* Orbe déco */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#1a5f3f] opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#ff6b35] opacity-10 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-success-app opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-brand opacity-10 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
 
         <div className="max-w-sm mx-auto w-full space-y-10 py-12 relative">
 
           {/* Wordmark */}
           <div className="space-y-4">
             <RugbyForgeLogo size="hero" />
-            <p className="text-2xl font-black text-white leading-tight tracking-tight">
+            <p className="text-2xl font-black text-fg leading-tight tracking-tight">
               Ton coach physique rugby
             </p>
-            <p className="text-white/50 text-sm leading-relaxed">
+            <p className="text-fg-soft text-sm leading-relaxed">
               Programme personnalisé, suivi de charge, coach IA — tout ce qu'il faut pour performer sur le terrain.
             </p>
           </div>
@@ -326,31 +330,31 @@ export function OnboardingPage() {
           <div className="space-y-4">
             {[
               {
-                icon: <TrendingUp className="w-5 h-5 text-[#ff6b35]" />,
-                bg: 'bg-white/5 border border-white/10',
+                icon: <TrendingUp className="w-5 h-5 text-brand" />,
+                bg: 'bg-layer-5 border border-border-app',
                 title: 'Programme adapté à ton poste',
                 desc: 'Pilier, flanker, arrière — chaque position a ses exigences physiques.',
               },
               {
-                icon: <Calendar className="w-5 h-5 text-[#ff6b35]" />,
-                bg: 'bg-white/5 border border-white/10',
+                icon: <Calendar className="w-5 h-5 text-brand" />,
+                bg: 'bg-layer-5 border border-border-app',
                 title: 'Synchronisé avec ton club',
                 desc: 'Séances S&C placées intelligemment entre entraînements et matchs.',
               },
               {
-                icon: <Bot className="w-5 h-5 text-[#ff6b35]" />,
-                bg: 'bg-white/5 border border-white/10',
+                icon: <Bot className="w-5 h-5 text-brand" />,
+                bg: 'bg-layer-5 border border-border-app',
                 title: 'Coach IA disponible 24/7',
                 desc: 'Nutrition, récupération, gestion de la fatigue.',
               },
             ].map((item, i) => (
-              <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/8">
-                <div className="w-9 h-9 rounded-xl bg-white/8 flex items-center justify-center flex-shrink-0">
+              <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-layer-5 border border-bd-muted">
+                <div className="w-9 h-9 rounded-xl bg-layer-7 flex items-center justify-center flex-shrink-0">
                   {item.icon}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white leading-snug">{item.title}</p>
-                  <p className="text-xs text-white/45 mt-0.5 leading-relaxed">{item.desc}</p>
+                  <p className="text-sm font-bold text-fg leading-snug">{item.title}</p>
+                  <p className="text-xs text-fg-soft mt-0.5 leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -361,12 +365,12 @@ export function OnboardingPage() {
             <button
               type="button"
               onClick={() => setShowWelcome(false)}
-              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
+              className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
             >
               Créer mon programme
               <ChevronRight className="w-4 h-4" />
             </button>
-            <p className="text-center text-white/35 text-xs">Prend 2 minutes · Gratuit</p>
+            <p className="text-center text-fg-faint text-xs">Prend 2 minutes · Gratuit</p>
           </div>
 
         </div>
@@ -377,25 +381,25 @@ export function OnboardingPage() {
   // ─── Formulaire multi-étapes ──────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-[#1a100c] font-sans flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans flex flex-col relative overflow-hidden">
       {/* Dot grid déco */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* Barre de progression */}
-      <div className="h-0.5 bg-white/10 w-full relative">
+      <div className="h-0.5 bg-layer-10 w-full relative">
         <div
-          className="h-full bg-[#ff6b35] transition-all duration-500 ease-out"
+          className="h-full bg-brand transition-all duration-500 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
 
       {/* Header */}
-      <header className="px-5 py-3 flex items-center gap-2 bg-[#1a100c]/95 backdrop-blur sticky top-0 z-10 relative">
+      <header className="px-5 py-3 flex items-center gap-2 bg-app/95 backdrop-blur sticky top-0 z-10 relative">
         {step > 0 ? (
           <button
             type="button"
             onClick={() => setStep((s) => s - 1)}
-            className="w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-white/50 hover:bg-white/10 transition-colors"
+            className="w-9 h-9 -ml-1 rounded-xl flex items-center justify-center text-fg-soft hover:bg-layer-10 transition-colors rf-focus-ring"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -403,10 +407,10 @@ export function OnboardingPage() {
           <div className="w-9 h-9" />
         )}
         <div className="flex-1 text-center">
-          <p className="text-[10px] font-black tracking-widest text-[#ff6b35] uppercase italic">RugbyForge</p>
+          <p className="text-[10px] font-black tracking-widest text-brand uppercase italic">RugbyForge</p>
         </div>
         <div className="w-9 text-right">
-          <span className="text-[11px] font-bold text-white/40">{step + 1}/{STEPS.length}</span>
+          <span className="text-[11px] font-bold text-fg-muted">{step + 1}/{STEPS.length}</span>
         </div>
       </header>
 
@@ -427,21 +431,21 @@ export function OnboardingPage() {
                     onClick={() => setPosition(pos.value)}
                     className={`relative flex flex-col items-start gap-2 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                       selected
-                        ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                        ? 'border-brand bg-brand-soft'
+                        : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                     }`}
                   >
                     {selected && (
-                      <span className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full bg-[#ff6b35] flex items-center justify-center">
-                        <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                      <span className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full bg-brand flex items-center justify-center">
+                        <Check className="w-2.5 h-2.5 text-on-brand" strokeWidth={3} />
                       </span>
                     )}
                     <span className="text-2xl leading-none">{pos.emoji}</span>
                     <div>
-                      <p className={`text-sm font-black leading-tight ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                      <p className={`text-sm font-black leading-tight ${selected ? 'text-brand' : 'text-fg'}`}>
                         {pos.label}
                       </p>
-                      <p className="text-[10px] text-white/40 mt-0.5 leading-tight">{pos.sub}</p>
+                      <p className="text-[10px] text-fg-muted mt-0.5 leading-tight">{pos.sub}</p>
                     </div>
                   </button>
                 )
@@ -468,21 +472,21 @@ export function OnboardingPage() {
                       onClick={() => setTrainingLevel(opt.value)}
                       className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
                         selected
-                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                        <p className={`text-sm font-black ${selected ? 'text-brand' : 'text-fg'}`}>
                           {opt.label}
                         </p>
-                        <p className="text-xs text-white/40 mt-0.5">{opt.sub}</p>
+                        <p className="text-xs text-fg-muted mt-0.5">{opt.sub}</p>
                         {selected && (
-                          <p className="text-[10px] text-[#ff6b35]/70 mt-1 font-bold">{opt.details}</p>
+                          <p className="text-[10px] text-brand-muted mt-1 font-bold">{opt.details}</p>
                         )}
                       </div>
                       {selected && (
-                        <CheckCircle2 className="w-5 h-5 text-[#ff6b35] flex-shrink-0" />
+                        <CheckCircle2 className="w-5 h-5 text-brand flex-shrink-0" />
                       )}
                     </button>
                   )
@@ -492,11 +496,11 @@ export function OnboardingPage() {
 
             <div className="space-y-3">
               <div>
-                <SectionLabel>Période de saison</SectionLabel>
-                <p className="text-[10px] text-white/30 mt-0.5">Impacte le type de programme généré</p>
+                <SectionLabel>Où en es-tu ?</SectionLabel>
+                <p className="text-[10px] text-fg-faint mt-0.5">Ton programme s'adaptera ensuite automatiquement à ton calendrier</p>
               </div>
               <div className="grid grid-cols-3 gap-2">
-                {SEASON_MODES.map((opt) => {
+                {CYCLE_HINTS.map((opt) => {
                   const selected = seasonMode === opt.value
                   return (
                     <button
@@ -505,15 +509,15 @@ export function OnboardingPage() {
                       onClick={() => setSeasonMode(opt.value)}
                       className={`flex flex-col items-center gap-1.5 py-3.5 px-2 rounded-2xl border-2 text-center transition-all active:scale-[.97] ${
                         selected
-                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
                       <span className="text-xl leading-none">{opt.emoji}</span>
-                      <span className={`text-[10px] font-black leading-tight ${selected ? 'text-[#ff6b35]' : 'text-white/60'}`}>
+                      <span className={`text-[10px] font-black leading-tight ${selected ? 'text-brand' : 'text-fg-soft'}`}>
                         {opt.label}
                       </span>
-                      <span className={`text-[9px] leading-tight ${selected ? 'text-[#ff6b35]/60' : 'text-white/30'}`}>
+                      <span className={`text-[9px] leading-tight ${selected ? 'text-brand-muted' : 'text-fg-faint'}`}>
                         {opt.sub}
                       </span>
                     </button>
@@ -538,14 +542,14 @@ export function OnboardingPage() {
                       onClick={() => setSessions(opt.value)}
                       className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                         selected
-                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                      <p className={`text-sm font-black ${selected ? 'text-brand' : 'text-fg'}`}>
                         {opt.label}
                       </p>
-                      <p className="text-[10px] text-white/40">{opt.sub}</p>
+                      <p className="text-[10px] text-fg-muted">{opt.sub}</p>
                     </button>
                   )
                 })}
@@ -569,11 +573,11 @@ export function OnboardingPage() {
                       onClick={() => setGender(opt.value)}
                       className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                         selected
-                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                      <p className={`text-sm font-black ${selected ? 'text-brand' : 'text-fg'}`}>
                         {opt.label}
                       </p>
                     </button>
@@ -617,11 +621,11 @@ export function OnboardingPage() {
                       }}
                       className={`flex flex-col items-center gap-1 py-4 rounded-2xl border-2 text-center transition-all active:scale-[.97] ${
                         selected
-                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <p className={`text-sm font-black ${selected ? 'text-[#ff6b35]' : 'text-white'}`}>
+                      <p className={`text-sm font-black ${selected ? 'text-brand' : 'text-fg'}`}>
                         {opt.label}
                       </p>
                     </button>
@@ -632,9 +636,9 @@ export function OnboardingPage() {
 
             {/* Salle : confirmation preset */}
             {hasGymAccess === true && (
-              <div className="p-4 rounded-2xl bg-[#1a5f3f]/15 border border-[#1a5f3f]/30 space-y-1">
-                <p className="text-xs font-black text-[#1a5f3f]">Salle standard sélectionnée</p>
-                <p className="text-[10px] text-white/50 leading-relaxed">
+              <div className="p-4 rounded-2xl bg-ok-bg-muted border border-ok-bd space-y-1">
+                <p className="text-xs font-black text-ok-strong">Salle standard sélectionnée</p>
+                <p className="text-[10px] text-fg-soft leading-relaxed">
                   Barre, haltères, banc, traction, élastiques, box. Tu pourras affiner dans ton profil.
                 </p>
               </div>
@@ -654,17 +658,17 @@ export function OnboardingPage() {
                         onClick={() => toggleEquipment(eq.value)}
                         className={`relative flex items-center gap-3 p-3.5 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                           selected
-                            ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                            : 'border-white/10 bg-white/5 hover:border-white/20'
+                            ? 'border-brand bg-brand-soft'
+                            : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                         }`}
                       >
                         <span className="text-lg flex-shrink-0 leading-none">{eq.emoji}</span>
-                        <span className={`text-sm font-bold leading-tight flex-1 ${selected ? 'text-[#ff6b35]' : 'text-white/80'}`}>
+                        <span className={`text-sm font-bold leading-tight flex-1 ${selected ? 'text-brand' : 'text-fg-secondary'}`}>
                           {eq.label}
                         </span>
                         {selected && (
-                          <span className="w-4 h-4 rounded-full bg-[#ff6b35] flex items-center justify-center flex-shrink-0">
-                            <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                          <span className="w-4 h-4 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
+                            <Check className="w-2.5 h-2.5 text-on-brand" strokeWidth={3} />
                           </span>
                         )}
                       </button>
@@ -677,7 +681,7 @@ export function OnboardingPage() {
                     setEquipment(new Set())
                     setStep((s) => s + 1)
                   }}
-                  className="w-full py-3 rounded-2xl border border-white/20 text-sm font-bold text-white/40 hover:border-white/30 hover:text-white/60 transition-all"
+                  className="w-full py-3 rounded-2xl border border-border-dashed-app text-sm font-bold text-fg-muted hover:border-layer-20 hover:text-fg-soft transition-all"
                 >
                   Aucun — poids du corps
                 </button>
@@ -713,11 +717,11 @@ export function OnboardingPage() {
                       }}
                       className={`aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all text-center active:scale-[.94] ${
                         selected
-                          ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <span className={`text-[11px] font-black ${selected ? 'text-[#ff6b35]' : 'text-white/60'}`}>
+                      <span className={`text-[11px] font-black ${selected ? 'text-brand' : 'text-fg-soft'}`}>
                         {opt.short}
                       </span>
                     </button>
@@ -729,12 +733,12 @@ export function OnboardingPage() {
                 <div className="grid grid-cols-2 gap-2">
                   {CLUB_DAYS_OPTIONS.filter((opt) => clubDays.has(opt.day)).map((opt) => (
                     <div key={opt.day} className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-white/50 w-8 flex-shrink-0">{opt.label.slice(0, 3)}</span>
+                      <span className="text-xs font-bold text-fg-soft w-8 flex-shrink-0">{opt.label.slice(0, 3)}</span>
                       <input
                         type="time"
                         value={clubDayTimes[opt.day] ?? ''}
                         onChange={(e) => setClubDayTimes((prev) => ({ ...prev, [opt.day]: e.target.value }))}
-                        className="flex-1 text-xs rounded-xl border-2 border-white/10 bg-white/5 px-2 py-1.5 text-white/80 focus:outline-none focus:border-[#ff6b35] transition-colors [color-scheme:dark]"
+                        className="flex-1 text-xs rounded-xl border-2 border-border-app bg-layer-5 px-2 py-1.5 text-fg-secondary focus:outline-none focus:border-brand transition-colors rf-focus-ring"
                         placeholder="HH:MM"
                       />
                     </div>
@@ -754,8 +758,8 @@ export function OnboardingPage() {
                     onClick={() => setMatchDay(opt.day)}
                     className={`flex-1 py-2.5 rounded-xl text-xs font-black border-2 transition-all active:scale-[.97] ${
                       matchDay === opt.day
-                        ? 'border-[#ff6b35] bg-[#ff6b35]/10 text-[#ff6b35]'
-                        : 'border-white/10 bg-white/5 text-white/60 hover:border-white/20'
+                        ? 'border-brand bg-brand-soft text-brand'
+                        : 'border-border-app bg-layer-5 text-fg-soft hover:border-border-dashed-app'
                     }`}
                   >
                     {opt.label}
@@ -766,10 +770,10 @@ export function OnboardingPage() {
 
             {/* Séances muscu — si jours club sélectionnés */}
             {clubDays.size > 0 && sessions !== null && (
-              <div className="space-y-3 pt-4 border-t border-white/10">
+              <div className="space-y-3 pt-4 border-t border-border-app">
                 <div className="flex items-center justify-between">
                   <SectionLabel>Séances muscu</SectionLabel>
-                  <div className="flex gap-1 bg-white/10 rounded-xl p-0.5">
+                  <div className="flex gap-1 bg-layer-10 rounded-xl p-0.5">
                     {(['auto', 'manual'] as const).map((mode) => (
                       <button
                         key={mode}
@@ -786,7 +790,7 @@ export function OnboardingPage() {
                           setGymMode(mode)
                         }}
                         className={`px-3 py-1 rounded-[10px] text-[10px] font-black transition-all ${
-                          gymMode === mode ? 'bg-white/20 text-white shadow-sm' : 'text-white/40'
+                          gymMode === mode ? 'bg-layer-20 text-fg shadow-sm' : 'text-fg-muted'
                         }`}
                       >
                         {mode === 'auto' ? 'Auto' : 'Manuel'}
@@ -796,11 +800,11 @@ export function OnboardingPage() {
                 </div>
 
                 {gymMode === 'auto' && (
-                  <div className="p-3.5 rounded-2xl bg-[#1a5f3f]/15 border border-[#1a5f3f]/30">
-                    <p className="text-[10px] font-black text-[#1a5f3f] uppercase tracking-wide mb-1">
+                  <div className="p-3.5 rounded-2xl bg-ok-bg-muted border border-ok-bd">
+                    <p className="text-[10px] font-black text-ok-strong uppercase tracking-wide mb-1">
                       Suggestion calculée
                     </p>
-                    <p className="text-sm font-black text-white">
+                    <p className="text-sm font-black text-fg">
                       {(() => {
                         const cs: ClubSchedule = {
                           clubDays: Array.from(clubDays).map((d) => ({ day: d })),
@@ -811,7 +815,7 @@ export function OnboardingPage() {
                           .join(' · ')
                       })()}
                     </p>
-                    <p className="text-[10px] text-white/40 mt-1">
+                    <p className="text-[10px] text-fg-muted mt-1">
                       Basé sur tes entraînements club et les règles de récupération
                     </p>
                   </div>
@@ -850,16 +854,16 @@ export function OnboardingPage() {
                     onClick={() => toggleInjury(inj.value)}
                     className={`flex items-center justify-between gap-3 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
                       selected
-                        ? 'border-[#ff6b35] bg-[#ff6b35]/10'
-                        : 'border-white/10 bg-white/5 hover:border-white/20'
+                        ? 'border-brand bg-brand-soft'
+                        : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                     }`}
                   >
-                    <span className={`text-sm font-bold ${selected ? 'text-[#ff6b35]' : 'text-white/80'}`}>
+                    <span className={`text-sm font-bold ${selected ? 'text-brand' : 'text-fg-secondary'}`}>
                       {inj.label}
                     </span>
                     {selected && (
-                      <span className="w-4 h-4 rounded-full bg-[#ff6b35] flex items-center justify-center flex-shrink-0">
-                        <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                      <span className="w-4 h-4 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
+                        <Check className="w-2.5 h-2.5 text-on-brand" strokeWidth={3} />
                       </span>
                     )}
                   </button>
@@ -871,7 +875,7 @@ export function OnboardingPage() {
               <button
                 type="button"
                 onClick={() => setStep((s) => s + 1)}
-                className="w-full py-3 rounded-2xl border border-white/20 text-sm font-bold text-white/40 hover:border-white/30 hover:text-white/60 transition-all"
+                className="w-full py-3 rounded-2xl border border-border-dashed-app text-sm font-bold text-fg-muted hover:border-layer-20 hover:text-fg-soft transition-all"
               >
                 Aucun inconfort — passer
               </button>
@@ -889,7 +893,7 @@ export function OnboardingPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-black text-white/40 uppercase tracking-wide">
+                <label className="text-xs font-black text-fg-muted uppercase tracking-wide">
                   Taille (cm)
                 </label>
                 <input
@@ -900,15 +904,15 @@ export function OnboardingPage() {
                   value={heightCm}
                   onChange={(e) => setHeightCm(e.target.value)}
                   placeholder="182"
-                  className="w-full h-14 rounded-2xl border-2 border-white/10 bg-white/5 px-4 text-xl font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] transition-colors [color-scheme:dark]"
+                  className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-4 text-xl font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand transition-colors rf-focus-ring"
                 />
                 {heightCm && !validHeight && (
-                  <p className="text-[11px] text-rose-400">Entre 140 et 230 cm</p>
+                  <p className="text-[11px] text-danger">Entre 140 et 230 cm</p>
                 )}
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-black text-white/40 uppercase tracking-wide">
+                <label className="text-xs font-black text-fg-muted uppercase tracking-wide">
                   Poids (kg)
                 </label>
                 <input
@@ -920,22 +924,22 @@ export function OnboardingPage() {
                   value={weightKg}
                   onChange={(e) => setWeightKg(e.target.value)}
                   placeholder="95"
-                  className="w-full h-14 rounded-2xl border-2 border-white/10 bg-white/5 px-4 text-xl font-black text-white placeholder:text-white/20 focus:outline-none focus:border-[#ff6b35] transition-colors [color-scheme:dark]"
+                  className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-4 text-xl font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand transition-colors rf-focus-ring"
                 />
                 {weightKg && !validWeight && (
-                  <p className="text-[11px] text-rose-400">Entre 40 et 200 kg</p>
+                  <p className="text-[11px] text-danger">Entre 40 et 200 kg</p>
                 )}
               </div>
             </div>
 
             {bmi && (
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-1">
+              <div className="bg-layer-5 border border-border-app rounded-2xl p-5 space-y-1">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-black text-white leading-none">{bmi.toFixed(1)}</span>
-                  <span className="text-xs font-bold text-white/40 uppercase tracking-wide">IMC</span>
+                  <span className="text-3xl font-black text-fg leading-none">{bmi.toFixed(1)}</span>
+                  <span className="text-xs font-bold text-fg-muted uppercase tracking-wide">IMC</span>
                 </div>
-                <p className="text-sm font-bold text-white/70">{bmiLabel(bmi, position)}</p>
-                <p className="text-[11px] text-white/40 mt-1 leading-relaxed">
+                <p className="text-sm font-bold text-fg-emphasis">{bmiLabel(bmi, position)}</p>
+                <p className="text-[11px] text-fg-muted mt-1 leading-relaxed">
                   L'IMC seul ne reflète pas la masse musculaire — indicateur de gabarit uniquement.
                 </p>
               </div>
@@ -945,7 +949,7 @@ export function OnboardingPage() {
               <button
                 type="button"
                 onClick={() => setStep((s) => s + 1)}
-                className="w-full py-3 rounded-2xl border border-white/20 text-sm font-bold text-white/40 hover:border-white/30 hover:text-white/60 transition-all"
+                className="w-full py-3 rounded-2xl border border-border-dashed-app text-sm font-bold text-fg-muted hover:border-layer-20 hover:text-fg-soft transition-all"
               >
                 Passer cette étape
               </button>
@@ -961,10 +965,10 @@ export function OnboardingPage() {
               sub="Voici ton profil. Tu pourras le modifier à tout moment dans les réglages."
             />
 
-            <div className="bg-white/5 border border-white/10 rounded-[1.75rem] overflow-hidden divide-y divide-white/10">
+            <div className="bg-layer-5 border border-border-app rounded-[1.75rem] overflow-hidden divide-y divide-border-app">
               <SummaryRow label="Poste" value={POSITIONS.find((p) => p.value === position)?.label ?? '–'} />
               <SummaryRow label="Niveau" value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
-              <SummaryRow label="Période" value={SEASON_MODES.find((m) => m.value === seasonMode)?.label ?? '–'} />
+              <SummaryRow label="Période" value={CYCLE_HINTS.find((m) => m.value === seasonMode)?.label ?? '–'} />
               <SummaryRow label="Séances" value={`${sessions} / semaine`} />
               {/* Consentement U18 supprimé — app réservée aux adultes */}
               <SummaryRow
@@ -997,10 +1001,10 @@ export function OnboardingPage() {
               )}
               {validHeight && validWeight && bmi && (
                 <div className="px-5 py-4 flex items-start gap-4">
-                  <span className="text-xs font-black text-white/40 uppercase tracking-wide w-24 flex-shrink-0 pt-0.5">
+                  <span className="text-xs font-black text-fg-muted uppercase tracking-wide w-24 flex-shrink-0 pt-0.5">
                     Morpho
                   </span>
-                  <span className="text-sm font-bold text-white/40 leading-relaxed flex-1">
+                  <span className="text-sm font-bold text-fg-muted leading-relaxed flex-1">
                     {parsedHeight} cm · {parsedWeight} kg · IMC {bmi.toFixed(1)}
                   </span>
                 </div>
@@ -1011,7 +1015,7 @@ export function OnboardingPage() {
               type="button"
               onClick={handleFinish}
               data-testid="onboarding-finish-btn"
-              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
+              className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
             >
               <CheckCircle2 className="w-5 h-5" />
               Voir mon programme
@@ -1023,13 +1027,13 @@ export function OnboardingPage() {
 
       {/* ── CTA flottant principal (steps 0, 1, 2, 5) ── */}
       {step !== 3 && step !== 4 && step !== 6 && (
-        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-[#1a100c] via-[#1a100c]/95 to-transparent pointer-events-none">
+        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto pointer-events-auto">
             <button
               type="button"
               onClick={() => setStep((s) => s + 1)}
               disabled={!canNext()}
-              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
+              className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover disabled:opacity-30 disabled:cursor-not-allowed text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
             >
               Suivant
               <ChevronRight className="w-4 h-4" />
@@ -1040,12 +1044,12 @@ export function OnboardingPage() {
 
       {/* ── CTA step 3 : Planning ── */}
       {step === 3 && (
-        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-[#1a100c] via-[#1a100c]/95 to-transparent pointer-events-none">
+        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto space-y-2 pointer-events-auto">
             <button
               type="button"
               onClick={handleClubScheduleNext}
-              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
+              className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
             >
               Suivant
               <ChevronRight className="w-4 h-4" />
@@ -1053,7 +1057,7 @@ export function OnboardingPage() {
             <button
               type="button"
               onClick={() => setStep((s) => s + 1)}
-              className="w-full py-2.5 rounded-2xl text-sm font-bold text-white/40 hover:text-white/60 transition-colors text-center"
+              className="w-full py-2.5 rounded-2xl text-sm font-bold text-fg-muted hover:text-fg-soft transition-colors text-center"
             >
               Pas d'entraînement club — passer
             </button>
@@ -1063,12 +1067,12 @@ export function OnboardingPage() {
 
       {/* ── CTA step 4 : Inconforts ── */}
       {step === 4 && injuries.size > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-[#1a100c] via-[#1a100c]/95 to-transparent pointer-events-none">
+        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto pointer-events-auto">
             <button
               type="button"
               onClick={() => setStep((s) => s + 1)}
-              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#ff6b35]/20 active:scale-[.98]"
+              className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
             >
               Suivant
               <ChevronRight className="w-4 h-4" />
@@ -1086,10 +1090,10 @@ export function OnboardingPage() {
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="px-5 py-4 flex items-start gap-4">
-      <span className="text-xs font-black text-white/40 uppercase tracking-wide w-24 flex-shrink-0 pt-0.5">
+      <span className="text-xs font-black text-fg-muted uppercase tracking-wide w-24 flex-shrink-0 pt-0.5">
         {label}
       </span>
-      <span className="text-sm font-bold text-white/80 leading-relaxed flex-1">{value}</span>
+      <span className="text-sm font-bold text-fg-secondary leading-relaxed flex-1">{value}</span>
     </div>
   )
 }

@@ -13,6 +13,7 @@ import {
 } from '../services/auth/authService'
 import { AuthContext } from './authContextValue'
 import { posthog } from '../services/analytics/posthog'
+import { clearUserStorage } from '../services/storage/clearUserStorage'
 
 const initialAuthState: AuthState = { status: 'anonymous', user: null }
 
@@ -82,6 +83,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signOut = useCallback<AuthContextValue['signOut']>(async () => {
     await signOutService()
+    clearUserStorage()
     setAuthState({ status: 'anonymous', user: null })
     posthog.reset()
   }, [])

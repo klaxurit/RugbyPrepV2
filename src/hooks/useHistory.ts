@@ -121,7 +121,7 @@ export const useHistory = () => {
 
   const addLog = useCallback(
     async (log: Omit<SessionLog, 'id'>) => {
-      const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      const id = crypto.randomUUID()
       const completeLog: SessionLog = { ...log, id }
       const demoMode = typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1'
 

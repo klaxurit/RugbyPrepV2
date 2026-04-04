@@ -28,6 +28,9 @@ import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 import ffrClubs from '../data/ffrClubs.v2021.json'
 import type { CalendarEventType, CalendarEvent, SeasonPhase, DayOfWeek } from '../types/training'
 import { TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
+import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
+import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
+import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 
 // ─── Club Search Types ────────────────────────────────────────
 
@@ -59,7 +62,7 @@ const MONTH_NAMES_FR = [
 const DAY_NAMES_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 const seasonPhaseConfig: Record<SeasonPhase, { label: string; color: string; bg: string }> = {
-  'off-season': { label: 'Hors-saison', color: 'text-white/60', bg: 'bg-white/10' },
+  'off-season': { label: 'Hors-saison', color: 'text-fg-muted', bg: 'bg-layer-10' },
   'pre-season': { label: 'Pré-saison', color: 'text-amber-400', bg: 'bg-amber-900/20' },
   'in-season': { label: 'En saison', color: 'text-emerald-400', bg: 'bg-emerald-900/20' },
   'playoffs': { label: 'Playoffs', color: 'text-rose-400', bg: 'bg-rose-900/20' },
@@ -67,7 +70,7 @@ const seasonPhaseConfig: Record<SeasonPhase, { label: string; color: string; bg:
 
 const eventTypeConfig: Record<CalendarEventType, { label: string; icon: React.ElementType; color: string; bg: string }> = {
   match: { label: 'Match', icon: Trophy, color: 'text-rose-400', bg: 'bg-rose-900/20' },
-  rest: { label: 'Repos', icon: Bed, color: 'text-blue-400', bg: 'bg-blue-900/20' },
+  rest: { label: 'Repos', icon: Bed, color: 'text-info', bg: 'bg-info-bg' },
   unavailable: { label: 'Indisponible', icon: AlertCircle, color: 'text-orange-400', bg: 'bg-orange-900/20' },
 }
 
@@ -95,7 +98,7 @@ function ClubAvatar({ code, name, size = 'md' }: { code?: string; name?: string;
   const sizeClass = size === 'sm' ? 'w-6 h-6 text-[8px]' : size === 'lg' ? 'w-12 h-12 text-sm' : 'w-8 h-8 text-[10px]'
 
   return (
-    <div className={`${sizeClass} rounded-xl bg-white/10 flex items-center justify-center overflow-hidden flex-shrink-0`}>
+    <div className={`${sizeClass} rounded-xl bg-layer-10 flex items-center justify-center overflow-hidden flex-shrink-0`}>
       {logoUrl ? (
         <img
           src={logoUrl}
@@ -104,7 +107,7 @@ function ClubAvatar({ code, name, size = 'md' }: { code?: string; name?: string;
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
         />
       ) : (
-        <span className="font-black text-white/50">{monogram}</span>
+        <span className="font-black text-fg-soft">{monogram}</span>
       )}
     </div>
   )
@@ -143,12 +146,12 @@ function ClubSearchInput({ value, clubCode, onChange }: ClubSearchInputProps) {
   return (
     <div ref={containerRef} className="relative">
       <div className={`flex items-center gap-3 border rounded-2xl px-4 py-3 transition-all ${
-        focused ? 'border-[#ff6b35] ring-2 ring-[#ff6b35]/20' : 'border-white/10'
+        focused ? 'border-brand ring-2 ring-brand-glow/30' : 'border-border-app'
       }`}>
         {clubCode ? (
           <ClubAvatar code={clubCode} name={query} size="sm" />
         ) : (
-          <Search className="w-4 h-4 text-white/30 flex-shrink-0" />
+          <Search className="w-4 h-4 text-fg-faint flex-shrink-0" />
         )}
         <input
           type="text"
@@ -157,13 +160,13 @@ function ClubSearchInput({ value, clubCode, onChange }: ClubSearchInputProps) {
           onChange={handleInput}
           onFocus={() => { setFocused(true); if (query.length >= 2) setResults(searchClubs(query)) }}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
-          className="flex-1 text-sm text-white placeholder-white/30 bg-transparent focus:outline-none"
+          className="flex-1 text-sm text-fg placeholder:text-fg-faint bg-transparent focus:outline-none"
         />
         {query && (
           <button
             type="button"
             onClick={() => { setQuery(''); onChange('', undefined); setResults([]) }}
-            className="text-white/30 hover:text-white/60 transition-colors"
+            className="text-fg-faint hover:text-fg-muted transition-colors"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -177,19 +180,19 @@ function ClubSearchInput({ value, clubCode, onChange }: ClubSearchInputProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.12 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-[#23140f] border border-white/10 rounded-2xl shadow-xl shadow-black/50 z-50 overflow-hidden"
+            className="absolute top-full left-0 right-0 mt-2 bg-panel border border-border-app rounded-2xl shadow-elevated z-50 overflow-hidden"
           >
             {results.map((club) => (
               <button
                 key={club.code}
                 type="button"
                 onMouseDown={() => handleSelect(club)}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left border-b border-white/10 last:border-0"
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-layer-5 transition-colors text-left border-b border-border-app last:border-0"
               >
                 <ClubAvatar code={club.code} name={club.name} size="sm" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-white truncate">{club.name}</div>
-                  <div className="text-[10px] text-white/40">{club.ligue} · {club.departmentCode}</div>
+                  <div className="text-sm font-bold text-fg truncate">{club.name}</div>
+                  <div className="text-[10px] text-fg-muted">{club.ligue} · {club.departmentCode}</div>
                 </div>
               </button>
             ))}
@@ -215,15 +218,15 @@ function SeasonBadge({ phase }: { phase: SeasonPhase }) {
 function NextMatchCard({ event }: { event: CalendarEvent }) {
   const days = diffDays(event.date)
   return (
-    <div className="relative overflow-hidden rounded-[2rem] bg-[#23140f] border border-white/10 shadow-xl shadow-black/50 p-6 space-y-3">
+    <div className="relative overflow-hidden rounded-[2rem] bg-panel border border-border-app shadow-elevated p-6 space-y-3">
       <div className="absolute top-0 right-0 w-28 h-28 bg-rose-600 opacity-20 blur-3xl -mr-6 -mt-6" />
       <div className="flex items-center justify-between">
         <div className="inline-flex items-center gap-1.5 bg-rose-600 px-3 py-1 rounded-full">
-          <Trophy className="w-3 h-3 text-white fill-current" />
-          <span className="text-[10px] font-black text-white uppercase tracking-widest">Prochain match</span>
+          <Trophy className="w-3 h-3 text-paper fill-current" />
+          <span className="text-[10px] font-black text-paper uppercase tracking-widest">Prochain match</span>
         </div>
         {event.is_home !== undefined && (
-          <div className="flex items-center gap-1 text-white/40">
+          <div className="flex items-center gap-1 text-fg-muted">
             {event.is_home
               ? <><Home className="w-3 h-3" /><span className="text-[10px] font-bold">Domicile</span></>
               : <><MapPin className="w-3 h-3" /><span className="text-[10px] font-bold">Extérieur</span></>
@@ -233,17 +236,17 @@ function NextMatchCard({ event }: { event: CalendarEvent }) {
       </div>
 
       <div>
-        <div className="text-4xl font-black text-white leading-none">
+        <div className="text-4xl font-black text-fg leading-none">
           {days === 0 ? "Aujourd'hui !" : days === 1 ? 'Demain' : `J−${days}`}
         </div>
-        <div className="text-sm text-white/40 mt-1 capitalize">{formatDateFR(event.date)}</div>
+        <div className="text-sm text-fg-muted mt-1 capitalize">{formatDateFR(event.date)}</div>
         {event.kickoff_time && (
           <div className="text-xs text-rose-400 font-bold mt-0.5">Coup d'envoi {event.kickoff_time}</div>
         )}
       </div>
 
       {event.opponent && (
-        <div className="flex items-center gap-2 text-white">
+        <div className="flex items-center gap-2 text-fg">
           <ClubAvatar code={event.opponent_code} name={event.opponent} size="md" />
           <span className="font-bold">vs {event.opponent}</span>
         </div>
@@ -300,26 +303,26 @@ function EventRow({
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-white">{cfg.label}</span>
+            <span className="text-sm font-bold text-fg">{cfg.label}</span>
             {event.opponent && (
-              <span className="text-xs text-white/50 truncate">vs {event.opponent}</span>
+              <span className="text-xs text-fg-soft truncate">vs {event.opponent}</span>
             )}
             {isFFR && (
-              <span className="text-[9px] font-black text-blue-400 bg-blue-900/20 px-1.5 py-0.5 rounded-full">FFR</span>
+              <span className="text-[9px] font-black text-info bg-info-bg px-1.5 py-0.5 rounded-full">FFR</span>
             )}
           </div>
-          <div className="text-xs text-white/40 capitalize">
+          <div className="text-xs text-fg-muted capitalize">
             {formatDateFR(event.date)}
             {hasOverride && <span className="text-amber-400 ml-1">(modifié)</span>}
           </div>
           {event.kickoff_time && (
-            <div className="text-[10px] text-white/40">{event.kickoff_time}</div>
+            <div className="text-[10px] text-fg-muted">{event.kickoff_time}</div>
           )}
           {isFFR && event.match_day && event.competition_name && (
-            <div className="text-[10px] text-blue-400/60">J{event.match_day} · {event.competition_name}</div>
+            <div className="text-[10px] text-info/70">J{event.match_day} · {event.competition_name}</div>
           )}
           {event.venue && (
-            <div className="text-[10px] text-white/30 flex items-center gap-1">
+            <div className="text-[10px] text-fg-faint flex items-center gap-1">
               <MapPin className="w-2.5 h-2.5" />{event.venue}
             </div>
           )}
@@ -340,7 +343,7 @@ function EventRow({
             <button
               type="button"
               onClick={() => onHide(event.id)}
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-white/30 hover:text-amber-400 hover:bg-amber-900/20 transition-colors"
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-fg-faint hover:text-warn-strong hover:bg-warn-bg-muted transition-colors"
               aria-label="Masquer"
               title="Masquer ce match"
             >
@@ -350,7 +353,7 @@ function EventRow({
             <button
               type="button"
               onClick={() => onRemove(event.id)}
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-white/30 hover:text-rose-400 hover:bg-rose-900/20 transition-colors"
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-fg-faint hover:text-danger hover:bg-danger-bg transition-colors"
               aria-label="Supprimer"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -366,19 +369,19 @@ function EventRow({
             <button
               type="button"
               onClick={() => setLoadOpen(true)}
-              className="flex items-center gap-1.5 text-[11px] font-bold text-[#ff6b35] bg-[#ff6b35]/10 hover:bg-[#ff6b35]/20 px-3 py-1.5 rounded-xl transition-colors"
+              className="flex items-center gap-1.5 text-[11px] font-bold text-brand bg-brand-soft hover:bg-brand-medium px-3 py-1.5 rounded-xl transition-colors rf-focus-ring"
             >
               <Activity className="w-3 h-3" />
               Enregistrer la charge match
             </button>
           ) : loadOpen ? (
-            <div className="bg-white/5 rounded-2xl p-3 space-y-3">
-              <p className="text-[11px] font-black text-white/50 uppercase tracking-wide">Charge match</p>
+            <div className="bg-layer-5 rounded-2xl p-3 space-y-3">
+              <p className="text-[11px] font-black text-fg-soft uppercase tracking-wide">Charge match</p>
               <div className="space-y-2">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <label className="text-[10px] font-bold text-white/40 uppercase tracking-wide">RPE perçu</label>
-                    <span className="text-xs font-black text-white/70">{rpeInput}/10</span>
+                    <label className="text-[10px] font-bold text-fg-muted uppercase tracking-wide">RPE perçu</label>
+                    <span className="text-xs font-black text-fg-emphasis">{rpeInput}/10</span>
                   </div>
                   <input
                     type="range"
@@ -386,20 +389,20 @@ function EventRow({
                     max={10}
                     value={rpeInput}
                     onChange={(e) => setRpeInput(Number(e.target.value))}
-                    className="w-full accent-rose-500"
+                    className="w-full accent-brand"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-wide block mb-1">Durée (min)</label>
+                  <label className="text-[10px] font-bold text-fg-muted uppercase tracking-wide block mb-1">Durée (min)</label>
                   <input
                     type="number"
                     min={1}
                     value={durationInput}
                     onChange={(e) => setDurationInput(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-sm text-white/80 focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/20 focus:border-[#ff6b35] transition-all [color-scheme:dark]"
+                    className="w-full px-3 py-2 rounded-xl border border-border-app bg-layer-5 text-sm text-fg-secondary focus:outline-none focus:border-brand rf-focus-ring transition-all"
                   />
                 </div>
-                <p className="text-[10px] text-white/40">
+                <p className="text-[10px] text-fg-muted">
                   Charge ≈ {rpeInput * durationInput} UA · impact ACWR automatique
                 </p>
               </div>
@@ -408,14 +411,14 @@ function EventRow({
                   type="button"
                   onClick={handleSaveLoad}
                   disabled={saving}
-                  className="flex-1 py-2 rounded-xl bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-50 text-white text-xs font-black transition-colors"
+                  className="flex-1 py-2 rounded-xl bg-brand hover:bg-brand-hover disabled:opacity-50 text-on-brand text-xs font-black transition-colors rf-focus-ring"
                 >
                   {saving ? 'Enregistrement...' : 'Enregistrer'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setLoadOpen(false)}
-                  className="px-3 py-2 rounded-xl border border-white/10 text-xs font-bold text-white/50 hover:border-white/25 transition-colors"
+                  className="px-3 py-2 rounded-xl border border-border-app text-xs font-bold text-fg-soft hover:border-layer-15 transition-colors rf-focus-ring"
                 >
                   Annuler
                 </button>
@@ -434,14 +437,14 @@ function EventRow({
             const isRecovered = hoursElapsed >= recoveryHours
 
             return (
-              <div className="mt-2 bg-white/5 rounded-xl p-2.5 space-y-1.5">
+              <div className="mt-2 bg-layer-5 rounded-xl p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <p className="text-[10px] font-bold text-white/50 uppercase tracking-wide">Récupération</p>
+                  <p className="text-[10px] font-bold text-fg-soft uppercase tracking-wide">Récupération</p>
                   <p className={`text-[10px] font-black ${isRecovered ? 'text-emerald-400' : 'text-amber-400'}`}>
                     {isRecovered ? 'Récupéré' : recoveryRange}
                   </p>
                 </div>
-                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-layer-10 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all ${isRecovered ? 'bg-emerald-500' : 'bg-amber-500'}`}
                     style={{ width: `${pct}%` }}
@@ -494,27 +497,27 @@ function MiniCalendar({
   })
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5">
+    <div className="bg-layer-5 border border-border-app rounded-[2rem] p-5">
       {/* Legend */}
       {(clubDays.length > 0 || scDays.length > 0) && (
-        <div className="flex flex-wrap gap-3 mb-3 pb-3 border-b border-white/10">
+        <div className="flex flex-wrap gap-3 mb-3 pb-3 border-b border-border-app">
           {clubDays.length > 0 && (
             <div className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-[10px] font-bold text-white/40">Club</span>
+              <span className="text-[10px] font-bold text-fg-muted">Club</span>
             </div>
           )}
           {scDays.length > 0 && (
             <div className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-rose-400" />
-              <span className="text-[10px] font-bold text-white/40">Muscu</span>
+              <span className="text-[10px] font-bold text-fg-muted">Muscu</span>
             </div>
           )}
         </div>
       )}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {DAY_NAMES_FR.map((d, i) => (
-          <div key={i} className="text-center text-[10px] font-black text-white/40 uppercase">{d}</div>
+          <div key={i} className="text-center text-[10px] font-black text-fg-muted uppercase">{d}</div>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1">
@@ -532,7 +535,7 @@ function MiniCalendar({
 
           let dotColor = ''
           if (eventType === 'match') dotColor = 'bg-rose-500'
-          else if (eventType === 'rest') dotColor = 'bg-blue-400'
+          else if (eventType === 'rest') dotColor = 'bg-info'
           else if (eventType === 'unavailable') dotColor = 'bg-orange-400'
 
           const isBothDay = isClubDay && isScDay
@@ -542,11 +545,11 @@ function MiniCalendar({
               type="button"
               onClick={() => onSelectDate(dateStr)}
               className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-bold transition-colors overflow-hidden
-                ${isToday ? 'bg-[#ff6b35] text-white' : 'hover:bg-white/10 text-white/70'}
+                ${isToday ? 'bg-brand text-on-brand' : 'hover:bg-layer-10 text-fg-emphasis'}
                 ${isClubDay && !isToday && !isBothDay ? 'bg-emerald-900/20' : ''}
                 ${isScDay && !isClubDay && !isToday ? 'bg-rose-900/20' : ''}
                 ${isBothDay && !isToday ? 'bg-gradient-to-b from-rose-900/20 to-emerald-900/20' : ''}
-                ${eventType ? 'ring-1 ring-inset ' + (eventType === 'match' ? 'ring-rose-500/40' : eventType === 'rest' ? 'ring-blue-500/40' : 'ring-orange-500/40') : ''}
+                ${eventType ? 'ring-1 ring-inset ' + (eventType === 'match' ? 'ring-danger-bd' : eventType === 'rest' ? 'ring-info-bd' : 'ring-tone-orange-bd') : ''}
               `}
             >
               {day}
@@ -604,14 +607,14 @@ function DayDetailModal({
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: '100%', opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full max-w-md bg-[#1a100c] border border-white/10 rounded-[2rem] p-6 space-y-5"
+        className="w-full max-w-md bg-app border border-border-app rounded-[2rem] p-6 space-y-5"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-black text-white capitalize">{formatDateFR(dateStr)}</h3>
+          <h3 className="text-lg font-black text-fg capitalize">{formatDateFR(dateStr)}</h3>
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/25"
+            className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 rf-focus-ring"
           >
             <X className="w-4 h-4" />
           </button>
@@ -619,14 +622,14 @@ function DayDetailModal({
 
         {/* Programme récurrent — journée coupée en deux */}
         <div className="space-y-2">
-          <p className="text-[10px] font-black uppercase tracking-wider text-white/40">Programmé</p>
+          <p className="text-[10px] font-black uppercase tracking-wider text-fg-muted">Programmé</p>
           <div className="space-y-2">
             {isScDay && (
               <div className="flex items-start gap-3 p-3 rounded-2xl bg-rose-900/20 border border-rose-500/20">
                 <Dumbbell className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-bold text-rose-400">Muscu</p>
-                  <p className="text-[11px] text-white/60 mt-0.5">
+                  <p className="text-[11px] text-fg-emphasis mt-0.5">
                     {isClubDay
                       ? 'Matin recommandé · Séance adaptée (−20–30% volume) si rugby en intensité réduite'
                       : 'Séance S&C prévue'}
@@ -640,15 +643,15 @@ function DayDetailModal({
                 <div>
                   <p className="text-xs font-bold text-emerald-400">Entraînement rugby</p>
                   {clubDayInfo?.time ? (
-                    <p className="text-[11px] text-white/60 mt-0.5">{clubDayInfo.time}</p>
+                    <p className="text-[11px] text-fg-emphasis mt-0.5">{clubDayInfo.time}</p>
                   ) : (
-                    <p className="text-[11px] text-white/60 mt-0.5">Collectif club</p>
+                    <p className="text-[11px] text-fg-emphasis mt-0.5">Collectif club</p>
                   )}
                 </div>
               </div>
             )}
             {!isScDay && !isClubDay && (
-              <p className="text-xs text-white/40 py-2">Aucune séance planifiée ce jour.</p>
+              <p className="text-xs text-fg-muted py-2">Aucune séance planifiée ce jour.</p>
             )}
           </div>
         </div>
@@ -656,7 +659,7 @@ function DayDetailModal({
         {/* Événements du jour */}
         {eventsOnDate.length > 0 && (
           <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-wider text-white/40">Événements</p>
+            <p className="text-[10px] font-black uppercase tracking-wider text-fg-muted">Événements</p>
             <div className="space-y-2">
               {eventsOnDate.map((event) => (
                 <EventRow key={event.id} event={event} now={modalNow} onRemove={onRemoveEvent} onUpdateLoad={onUpdateMatchLoad} isPremium={modalIsPremium} />
@@ -669,14 +672,14 @@ function DayDetailModal({
           <button
             type="button"
             onClick={onAddEvent}
-            className="flex-1 py-3 rounded-2xl border-2 border-[#ff6b35] text-[#ff6b35] font-black uppercase tracking-wide hover:bg-[#ff6b35]/10 transition-colors"
+            className="flex-1 py-3 rounded-2xl border-2 border-brand text-brand font-black uppercase tracking-wide hover:bg-brand-soft transition-colors rf-focus-ring"
           >
             Ajouter un événement
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white/70 font-bold hover:bg-white/10 transition-colors"
+            className="px-4 py-3 rounded-2xl bg-layer-5 border border-border-app text-fg-emphasis font-bold hover:bg-layer-10 transition-colors rf-focus-ring"
           >
             Fermer
           </button>
@@ -747,14 +750,14 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: '100%', opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full max-w-md bg-[#1a100c] border border-white/10 rounded-[2rem] p-6 space-y-5"
+        className="w-full max-w-md bg-app border border-border-app rounded-[2rem] p-6 space-y-5"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-black text-white">Ajouter un événement</h3>
+          <h3 className="text-lg font-black text-fg">Ajouter un événement</h3>
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/25"
+            className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 rf-focus-ring"
           >
             <X className="w-4 h-4" />
           </button>
@@ -762,7 +765,7 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
 
         {/* Type */}
         <div>
-          <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Type</label>
+          <label className="text-xs font-black text-fg-muted uppercase tracking-wide mb-2 block">Type</label>
           <div className="grid grid-cols-3 gap-2">
             {(Object.keys(eventTypeConfig) as CalendarEventType[]).map((t) => {
               const cfg = eventTypeConfig[t]
@@ -772,10 +775,10 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
                   key={t}
                   type="button"
                   onClick={() => setType(t)}
-                  className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl border-2 transition-all ${
+                  className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl border-2 transition-all rf-focus-ring ${
                     type === t
                       ? `border-current ${cfg.color} ${cfg.bg}`
-                      : 'border-white/10 text-white/40 hover:border-white/25'
+                      : 'border-border-app text-fg-muted hover:border-layer-15'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -788,12 +791,12 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
 
         {/* Date */}
         <div>
-          <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Date</label>
+          <label className="text-xs font-black text-fg-muted uppercase tracking-wide mb-2 block">Date</label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full border border-white/10 bg-white/5 rounded-2xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
+            className="w-full border border-border-app bg-layer-5 rounded-2xl px-4 py-3 text-sm font-bold text-fg focus:outline-none focus:border-brand rf-focus-ring"
           />
         </div>
 
@@ -801,17 +804,17 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
         {type === 'match' && (
           <>
             <div>
-              <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Coup d'envoi</label>
+              <label className="text-xs font-black text-fg-muted uppercase tracking-wide mb-2 block">Coup d'envoi</label>
               <input
                 type="time"
                 value={kickoffTime}
                 onChange={(e) => setKickoffTime(e.target.value)}
-                className="w-full border border-white/10 bg-white/5 rounded-2xl px-4 py-3 text-sm font-bold text-white focus:outline-none focus:border-[#ff6b35] [color-scheme:dark]"
+                className="w-full border border-border-app bg-layer-5 rounded-2xl px-4 py-3 text-sm font-bold text-fg focus:outline-none focus:border-brand rf-focus-ring"
               />
             </div>
 
             <div>
-              <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Adversaire (optionnel)</label>
+              <label className="text-xs font-black text-fg-muted uppercase tracking-wide mb-2 block">Adversaire (optionnel)</label>
               <ClubSearchInput
                 value={opponent}
                 clubCode={opponentCode}
@@ -820,7 +823,7 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
             </div>
 
             <div>
-              <label className="text-xs font-black text-white/40 uppercase tracking-wide mb-2 block">Lieu</label>
+              <label className="text-xs font-black text-fg-muted uppercase tracking-wide mb-2 block">Lieu</label>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { value: true, label: 'Domicile', icon: Home },
@@ -832,8 +835,8 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
                     onClick={() => setIsHome(value)}
                     className={`flex items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all ${
                       isHome === value
-                        ? 'border-[#ff6b35] text-[#ff6b35] bg-[#ff6b35]/10'
-                        : 'border-white/10 text-white/40 hover:border-white/25'
+                        ? 'border-brand text-brand bg-brand-soft'
+                        : 'border-border-app text-fg-muted hover:border-layer-15'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -846,9 +849,9 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
         )}
 
         {confirmDuplicate && duplicateFFR && (
-          <div className="p-3 rounded-2xl border border-amber-500/30 bg-amber-900/10 space-y-2">
-            <p className="text-xs text-amber-400 font-bold">Un match similaire existe déjà (import FFR)</p>
-            <p className="text-[11px] text-white/50">
+          <div className="p-3 rounded-2xl border border-warn-bd-strong bg-warn-bg-muted space-y-2">
+            <p className="text-xs text-warn-strong font-bold">Un match similaire existe déjà (import FFR)</p>
+            <p className="text-[11px] text-fg-soft">
               vs {duplicateFFR.opponent} — {formatDateFR(duplicateFFR.date)}
             </p>
           </div>
@@ -858,7 +861,7 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className={`w-full py-4 rounded-2xl ${confirmDuplicate ? 'bg-amber-600 hover:bg-amber-500' : 'bg-rose-600 hover:bg-rose-500'} disabled:opacity-50 text-white font-black uppercase tracking-wide transition-colors`}
+          className={`w-full py-4 rounded-2xl disabled:opacity-50 text-on-brand font-black uppercase tracking-wide transition-colors rf-focus-ring ${confirmDuplicate ? 'bg-warn-button hover:bg-warn-button-hover' : 'bg-critical-strong hover:bg-critical'}`}
         >
           {saving ? 'Enregistrement...' : confirmDuplicate ? 'Ajouter quand même' : 'Ajouter'}
         </button>
@@ -871,10 +874,10 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
 
 export function CalendarPage() {
   const {
-    visibleEvents, events, nextMatch, seasonPhase, addEvent, removeEvent, updateMatchLoad,
+    visibleEvents, events, nextMatch, addEvent, removeEvent, updateMatchLoad,
     hideImportedEvent, unhideImportedEvent, refreshFromFFR, hiddenCount, ffrCount, manualCount, loading,
   } = useCalendar()
-  const { profile } = useProfile()
+  const { profile, updateProfile } = useProfile()
   const adaptiveSchedule = useAdaptiveSchedule(profile, events)
   const { isPremium: calendarIsPremium } = useFeatureAccess()
   const [showModal, setShowModal] = useState(false)
@@ -882,6 +885,17 @@ export function CalendarPage() {
   const [showHidden, setShowHidden] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [refreshMsg, setRefreshMsg] = useState<string | null>(null)
+  const [showPlayoffExitModal, setShowPlayoffExitModal] = useState(false)
+
+  // Season phase from the single source of truth (planning context)
+  const seasonPhase = useMemo(() => {
+    const todayIso = toDateStr(new Date())
+    const { inputs } = buildAthletePlanningInputs({
+      profile, events, logs: [], today: todayIso, fatigue: 'OK',
+    })
+    const ctx = detectAnnualPlanningContext(inputs)
+    return cycleToSeasonPhase(ctx.cycle)
+  }, [profile, events])
 
   // Recurring club and S&C days from profile
   const clubDays: DayOfWeek[] = profile.clubSchedule?.clubDays.map((d) => d.day) ?? []
@@ -935,8 +949,8 @@ export function CalendarPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* ── Header ── */}
       <PageHeader title="Calendrier" backTo="/home" right={<SeasonBadge phase={seasonPhase} />} />
@@ -947,25 +961,25 @@ export function CalendarPage() {
         {nextMatch && <NextMatchCard event={nextMatch} />}
 
         {!nextMatch && !loading && (
-          <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 text-center space-y-2">
-            <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white/20 mx-auto">
+          <div className="bg-layer-5 border border-border-app rounded-[2rem] p-6 text-center space-y-2">
+            <div className="w-12 h-12 bg-layer-5 rounded-2xl flex items-center justify-center text-fg-ghost mx-auto">
               <Trophy className="w-6 h-6" />
             </div>
-            <p className="text-sm font-bold text-white">Aucun match planifié</p>
-            <p className="text-xs text-white/40">Ajoute tes matchs pour activer le mode in-season et adapter ton programme.</p>
+            <p className="text-sm font-bold text-fg">Aucun match planifié</p>
+            <p className="text-xs text-fg-muted">Ajoute tes matchs pour activer le mode in-season et adapter ton programme.</p>
           </div>
         )}
 
         {/* ── Calendar Grid ── */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <button type="button" onClick={prevMonth} className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/25 transition-colors">
+            <button type="button" onClick={prevMonth} className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 transition-colors rf-focus-ring">
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <h2 className="text-sm font-black uppercase tracking-wider text-white/70">
+            <h2 className="text-sm font-black uppercase tracking-wider text-fg-emphasis">
               {MONTH_NAMES_FR[calMonth]} {calYear}
             </h2>
-            <button type="button" onClick={nextMonth} className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/25 transition-colors">
+            <button type="button" onClick={nextMonth} className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 transition-colors rf-focus-ring">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -981,9 +995,9 @@ export function CalendarPage() {
 
         {/* ── FFR Sync Bar ── */}
         {(ffrCount > 0 || profile.ffrCompetitionId) && (
-          <section className="flex items-center justify-between bg-blue-500/5 border border-blue-500/10 rounded-2xl px-4 py-2.5">
-            <div className="text-xs text-white/50">
-              {ffrCount > 0 && <span className="text-blue-400 font-bold">{ffrCount} FFR</span>}
+          <section className="flex items-center justify-between bg-info-bg/80 border border-info-bd rounded-2xl px-4 py-2.5">
+            <div className="text-xs text-fg-soft">
+              {ffrCount > 0 && <span className="text-info font-bold">{ffrCount} FFR</span>}
               {ffrCount > 0 && manualCount > 0 && <span> · </span>}
               {manualCount > 0 && <span>{manualCount} manuel{manualCount > 1 ? 's' : ''}</span>}
             </div>
@@ -991,7 +1005,7 @@ export function CalendarPage() {
               type="button"
               onClick={handleRefreshFFR}
               disabled={refreshing || !profile.ffrCompetitionId}
-              className="flex items-center gap-1.5 text-[11px] font-bold text-blue-400 hover:text-blue-300 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 text-[11px] font-bold text-info hover:text-info/80 disabled:opacity-50 transition-colors rf-focus-ring"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               Actualiser FFR
@@ -1000,7 +1014,7 @@ export function CalendarPage() {
         )}
 
         {refreshMsg && (
-          <div className={`text-xs text-center py-1.5 rounded-xl ${refreshMsg.startsWith('Erreur') ? 'bg-red-900/20 text-red-400' : 'bg-green-900/20 text-green-400'}`}>
+          <div className={`text-xs text-center py-1.5 rounded-xl ${refreshMsg.startsWith('Erreur') ? 'bg-danger-bg text-danger' : 'bg-ok-bg text-ok-strong'}`}>
             {refreshMsg}
           </div>
         )}
@@ -1008,8 +1022,8 @@ export function CalendarPage() {
         {/* ── Upcoming Events ── */}
         {upcomingEvents.length > 0 && (
           <section>
-            <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">À venir</h2>
-            <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10">
+            <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">À venir</h2>
+            <div className="bg-layer-5 border border-border-app rounded-[2rem] p-3 divide-y divide-border-app">
               {upcomingEvents.map((event) => (
                 <EventRow key={event.id} event={event} now={nowMs} onRemove={removeEvent} onHide={hideImportedEvent} onUpdateLoad={updateMatchLoad} isPremium={calendarIsPremium} />
               ))}
@@ -1020,8 +1034,8 @@ export function CalendarPage() {
         {/* ── Past Events (collapsed) ── */}
         {pastEvents.length > 0 && (
           <section>
-            <h2 className="text-sm font-black uppercase tracking-wider text-white/40 mb-3">Passés</h2>
-            <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10">
+            <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Passés</h2>
+            <div className="bg-layer-5 border border-border-app rounded-[2rem] p-3 divide-y divide-border-app">
               {pastEvents.slice(-5).reverse().map((event) => (
                 <EventRow key={event.id} event={event} now={nowMs} onRemove={removeEvent} onHide={hideImportedEvent} onUpdateLoad={updateMatchLoad} isPremium={calendarIsPremium} />
               ))}
@@ -1035,23 +1049,23 @@ export function CalendarPage() {
             <button
               type="button"
               onClick={() => setShowHidden(!showHidden)}
-              className="flex items-center gap-2 text-xs font-bold text-white/30 hover:text-white/50 transition-colors mb-2"
+              className="flex items-center gap-2 text-xs font-bold text-fg-faint hover:text-fg-soft transition-colors mb-2 rf-focus-ring"
             >
               <Eye className="w-3.5 h-3.5" />
               {showHidden ? 'Masquer' : `Voir ${hiddenCount} match${hiddenCount > 1 ? 's' : ''} masqué${hiddenCount > 1 ? 's' : ''}`}
             </button>
             {showHidden && (
-              <div className="bg-white/5 border border-white/10 rounded-[2rem] p-3 divide-y divide-white/10 opacity-60">
+              <div className="bg-layer-5 border border-border-app rounded-[2rem] p-3 divide-y divide-border-app opacity-60">
                 {hiddenEvents.map((event) => (
                   <div key={event.id} className="flex items-center justify-between p-3">
                     <div>
-                      <span className="text-sm font-bold text-white/60">{event.opponent ?? 'Match'}</span>
-                      <span className="text-xs text-white/30 ml-2">{formatDateFR(event.date)}</span>
+                      <span className="text-sm font-bold text-fg-emphasis">{event.opponent ?? 'Match'}</span>
+                      <span className="text-xs text-fg-faint ml-2">{formatDateFR(event.date)}</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => unhideImportedEvent(event.id)}
-                      className="text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors"
+                      className="text-[11px] font-bold text-info hover:text-info/80 transition-colors rf-focus-ring"
                     >
                       Réafficher
                     </button>
@@ -1064,18 +1078,27 @@ export function CalendarPage() {
 
         {/* ── Season Info ── */}
         <section>
-          <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-3">
-            <h3 className="text-sm font-black text-white">Phase de saison</h3>
+          <div className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-3">
+            <h3 className="text-sm font-black text-fg">Phase de saison</h3>
             <div className="flex items-center gap-3">
               <SeasonBadge phase={seasonPhase} />
-              <p className="text-xs text-white/50 flex-1">
+              <p className="text-xs text-fg-soft flex-1">
                 {seasonPhase === 'off-season' && 'Période de récupération et hypertrophie. Charge réduite.'}
                 {seasonPhase === 'pre-season' && 'Reprise progressive. Construire la base de force.'}
                 {seasonPhase === 'in-season' && 'Mode compétition actif. Volume −30%, intensité maintenue.'}
                 {seasonPhase === 'playoffs' && 'Phase finale. Tapering en cours. Volume minimal.'}
               </p>
             </div>
-            <p className="text-[10px] text-white/40">Détecté automatiquement via ton calendrier de matchs.</p>
+            <p className="text-[10px] text-fg-muted">Détecté automatiquement via ton calendrier de matchs.</p>
+            {profile.planningAnchors?.manualPlayoffs && (
+              <button
+                type="button"
+                onClick={() => setShowPlayoffExitModal(true)}
+                className="mt-1 text-xs text-rose-400 hover:text-rose-300 underline underline-offset-2"
+              >
+                Désactiver le mode Playoffs
+              </button>
+            )}
           </div>
         </section>
 
@@ -1086,10 +1109,10 @@ export function CalendarPage() {
         type="button"
         whileTap={{ scale: 0.95 }}
         onClick={() => { setSelectedDate(undefined); setShowDayDetail(false); setShowModal(true) }}
-        className="fixed bottom-24 right-6 w-14 h-14 bg-[#ff6b35] rounded-2xl shadow-lg shadow-[#ff6b35]/30 flex items-center justify-center z-40"
+        className="fixed bottom-24 right-6 w-14 h-14 bg-brand rounded-2xl shadow-brand-float flex items-center justify-center z-40 rf-focus-ring"
         aria-label="Ajouter un événement"
       >
-        <Plus className="w-6 h-6 text-white" />
+        <Plus className="w-6 h-6 text-on-brand" />
       </motion.button>
 
       {/* ── Day Detail Modal (S&C + rugby, journée coupée en deux) ── */}
@@ -1120,6 +1143,74 @@ export function CalendarPage() {
             onClose={() => setShowModal(false)}
             onSave={handleAddEvent}
           />
+        )}
+      </AnimatePresence>
+
+      {/* ── Playoff Exit Modal ── */}
+      <AnimatePresence>
+        {showPlayoffExitModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6"
+            onClick={() => setShowPlayoffExitModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm bg-panel border border-border-app rounded-[2rem] p-6 space-y-5"
+            >
+              <h3 className="text-base font-black text-fg">Désactiver les Playoffs</h3>
+              <p className="text-sm text-fg-emphasis leading-relaxed">
+                Pourquoi souhaites-tu quitter le mode Playoffs ?
+              </p>
+
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const anchors = { ...profile.planningAnchors }
+                    delete anchors.manualPlayoffs
+                    updateProfile({ planningAnchors: anchors })
+                    setShowPlayoffExitModal(false)
+                  }}
+                  className="w-full text-left px-4 py-3.5 bg-ok-bg-muted border border-ok-bd rounded-2xl hover:border-ok-strong/50 transition-colors rf-focus-ring"
+                >
+                  <p className="text-sm font-bold text-ok-strong">La compétition continue</p>
+                  <p className="text-xs text-fg-soft mt-0.5">Retour au programme en saison (3 séances, volume normal)</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const anchors2 = { ...profile.planningAnchors }
+                    delete anchors2.manualPlayoffs
+                    const todayIso = toDateStr(new Date())
+                    updateProfile({
+                      seasonMode: 'off_season',
+                      planningAnchors: { ...anchors2, seasonEndedAt: todayIso },
+                    })
+                    setShowPlayoffExitModal(false)
+                  }}
+                  className="w-full text-left px-4 py-3.5 bg-info-bg border border-info-bd rounded-2xl hover:border-info/60 transition-colors rf-focus-ring"
+                >
+                  <p className="text-sm font-bold text-info">Ma saison est terminée</p>
+                  <p className="text-xs text-fg-soft mt-0.5">Passage en hors-saison (récupération puis hypertrophie)</p>
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowPlayoffExitModal(false)}
+                className="w-full text-center text-xs text-fg-muted hover:text-fg-emphasis pt-1 rf-focus-ring"
+              >
+                Annuler
+              </button>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 

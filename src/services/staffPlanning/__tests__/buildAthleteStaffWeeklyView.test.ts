@@ -19,11 +19,12 @@ function baseProfile(p: Partial<UserProfile>): UserProfile {
 
 describe('buildAthleteStaffWeeklyView', () => {
   it('front_row en saison : annualPlanning + mother sessions, pas de crash', () => {
+    // V2: today in-season (after first match) so auto-detection picks in_season
     const v = buildAthleteStaffWeeklyView({
       athleteId: 'a1',
-      today: '2024-12-16',
+      today: '2025-03-18',
       profile: baseProfile({ rugbyPosition: 'FRONT_ROW', weeklySessions: 3 }),
-      events: [match(FIRST_MATCH)],
+      events: [match(FIRST_MATCH), match('2025-03-22')],
       logs: [],
       fatigue: 'OK',
     })
@@ -173,7 +174,7 @@ describe('buildAthleteStaffWeeklyView', () => {
   it('playoffs : alerte playoffs_taper', () => {
     const v = buildAthleteStaffWeeklyView({
       athleteId: 'a12',
-      today: '2025-06-01',
+      today: '2025-05-01', // May — within playoffs window
       profile: baseProfile({ rugbyPosition: 'FRONT_ROW', weeklySessions: 3 }),
       events: [match(FIRST_MATCH)],
       logs: [],

@@ -11,7 +11,10 @@ import { useACWR } from '../hooks/useACWR'
 import { useAcwrOverride } from '../hooks/useAcwrOverride'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
+import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
+import { useAuth } from '../hooks/useAuth'
 import { useBlockLogs } from '../hooks/useBlockLogs'
+import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
 import { buildMotherSessionProgramSessionLog } from '../services/program/buildProgramSessionLog'
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
@@ -47,6 +50,8 @@ export function SessionDetailPage() {
   const { sessionIndex } = useParams<{ sessionIndex: string }>()
   const index = Number(sessionIndex ?? '0')
   const { profile } = useProfile()
+  const { authState } = useAuth()
+  const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
   const sessionPageTitle = lang === 'fr' ? 'Séance' : 'Session'
   const { week, lastNonDeloadWeek } = useWeek()
@@ -72,6 +77,17 @@ export function SessionDetailPage() {
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
+  const nextMatchDate = useMemo(() => {
+    const fm = events.filter((e) => e.type === 'match' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
+    return fm.length > 0 ? fm[0].date : null
+  }, [events, today])
+  const readinessResult = useReadinessScore({
+    acwrZone: acwrHasData ? acwrZone : null,
+    fatigue,
+    logs,
+    nextMatchDate,
+    today,
+  })
   const surfaceParams = useMemo(() => ({
     profile,
     events,
@@ -84,8 +100,13 @@ export function SessionDetailPage() {
     ignoreAcwrOverload,
     hasSufficientACWRData: acwrHasData,
     featureFlags: programFeatureFlags,
-  }), [profile, events, logs, today, fatigue, acwrHasData, acwrZone, week, lastNonDeloadWeek, ignoreAcwrOverload, programFeatureFlags])
-  const { surface } = useWeeklyProgramSurface(surfaceParams)
+    readinessScore: readinessResult.score,
+    userId,
+  }), [profile, events, logs, today, fatigue, acwrHasData, acwrZone, week, lastNonDeloadWeek, ignoreAcwrOverload, programFeatureFlags, readinessResult.score, userId])
+  const { surface: rawSurface } = useWeeklyProgramSurface(surfaceParams)
+  // F2: Use snapshot-owned sessions so corrections (fatigue, skip, reschedule) are respected
+  const { surface: snapshotSurface, snapshot } = useWeekSnapshot(surfaceParams)
+  const surface = snapshotSurface ?? rawSurface
 
   // ── Hard-block global ──────────────────────────────────────────────────────
   const { hasHardBlock, hardBlockReasons } = getGlobalProgramHardBlock(profile)
@@ -102,20 +123,20 @@ export function SessionDetailPage() {
 
   if (hasHardBlock) {
     return (
-      <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24">
+      <div className="min-h-screen bg-app font-sans text-fg pb-24">
         <PageHeader title={sessionPageTitle} backTo="/week" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
-          <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
-            <p className="font-bold text-amber-400">Programme temporairement indisponible</p>
+          <div className="bg-warn-bg border border-warn-bd-strong rounded-2xl p-5 space-y-3">
+            <p className="font-bold text-warn-strong">Programme temporairement indisponible</p>
             <ul className="space-y-2">
               {hardBlockReasons.map((r) => (
-                <li key={r} className="text-sm text-amber-300/80">
+                <li key={r} className="text-sm text-warn-body">
                   <span className="font-semibold">{BETA_ELIGIBILITY_MESSAGES[r].reason}</span>
                   <br />{BETA_ELIGIBILITY_MESSAGES[r].detail}
                 </li>
               ))}
             </ul>
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-fg-muted">
               Ton compte et ton profil sont conservés. Réessaie dans quelques instants.
             </p>
           </div>
@@ -129,10 +150,18 @@ export function SessionDetailPage() {
   const primarySource = surface?.primarySource ?? 'mother_session'
   const isUnavailable = primarySource === 'unavailable'
 
-  // ── Mother-session path ──────────────────────────────────────────────────
+  // ── Mother-session path (F2: prefer snapshot-owned sessions) ─────────
   const msResolution = surface?.motherSession ?? null
-  const msSessions = msResolution?.sessions ?? []
-  const activeSlot = msSessions[index] ?? null
+  // Use snapshot presentation to get the slot — this respects corrections
+  const activeSlot = useMemo(() => {
+    const presentationSessions = snapshot?.presentation?.sessions
+    if (presentationSessions && index < presentationSessions.length) {
+      return presentationSessions[index].sessionSlot
+    }
+    // Fallback to raw surface sessions if snapshot isn't ready yet
+    const rawSessions = msResolution?.sessions ?? []
+    return rawSessions[index] ?? null
+  }, [snapshot, msResolution, index])
 
   const msSessionType = activeSlot?.session.metadata.sessionType
     ? MS_TYPE_TO_SESSION_TYPE[activeSlot.session.metadata.sessionType]
@@ -182,8 +211,8 @@ export function SessionDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title={pageTitle} backTo="/week" titleSuffix={pageSuffix} />
 
@@ -193,14 +222,14 @@ export function SessionDetailPage() {
             UNAVAILABLE — plan annuel non résolu
            ═══════════════════════════════════════════════════════════════════ */}
         {isUnavailable && (
-          <section className="rounded-[24px] border border-amber-500/25 bg-amber-900/10 p-5 space-y-3">
-            <p className="text-sm font-bold text-amber-300">Séance introuvable</p>
-            <p className="text-xs text-white/50">
+          <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
+            <p className="text-sm font-bold text-warn">Séance introuvable</p>
+            <p className="text-xs text-fg-soft">
               Le plan annuel n'a pas pu être résolu pour cette semaine. Vérifie ton profil ou réessaie après une mise à jour.
             </p>
             <Link
               to="/week"
-              className="inline-flex items-center gap-1.5 text-sm font-bold text-[#ff6b35]"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-brand"
             >
               <ChevronLeft className="w-4 h-4" />
               Retour à ma semaine
@@ -236,46 +265,46 @@ export function SessionDetailPage() {
 
                 {/* Prehab */}
                 {prehabs.length > 0 && (
-                  <div className="bg-white/5 border border-white/10 rounded-[2rem] overflow-hidden">
+                  <div className="bg-layer-5 border border-border-app rounded-[2rem] overflow-hidden">
                     <button
                       type="button"
                       onClick={() => setPrehabbOpen((o) => !o)}
                       className="w-full flex items-center justify-between px-5 py-4"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-xl bg-emerald-900/20 text-emerald-400">
+                        <div className="p-2 rounded-xl bg-ok-bg-muted text-ok">
                           <ShieldCheck className="w-4 h-4" />
                         </div>
                         <div className="text-left">
-                          <p className="text-sm font-black text-white">Échauffement ciblé</p>
-                          <p className="text-xs text-white/40 mt-0.5">
+                          <p className="text-sm font-black text-fg">Échauffement ciblé</p>
+                          <p className="text-xs text-fg-muted mt-0.5">
                             {prehabs.length} exercices · {profile.injuries.map(i => CONTRA_LABELS[i]).join(', ')}
                           </p>
                         </div>
                       </div>
-                      <ChevronDown className={`w-5 h-5 text-white/30 transition-transform flex-shrink-0 ${prehabbOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-5 h-5 text-fg-faint transition-transform flex-shrink-0 ${prehabbOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {prehabbOpen && (
-                      <div className="border-t border-white/10">
-                        <div className="px-5 py-3 bg-emerald-900/20 border-b border-emerald-500/20">
-                          <p className="text-[11px] text-emerald-400 leading-relaxed">
+                      <div className="border-t border-border-app">
+                        <div className="px-5 py-3 bg-ok-bg-muted border-b border-ok-bd">
+                          <p className="text-[11px] text-ok leading-relaxed">
                             À faire <strong>avant</strong> la séance principale (~10 min). Ces exercices sont adaptés à tes zones sensibles.
                             <span className="opacity-70"> En cas de douleur persistante, consulte un professionnel.</span>
                           </p>
                         </div>
-                        <div className="divide-y divide-white/5">
+                        <div className="divide-y divide-edge-hairline">
                           {prehabs.map((ex) => (
                             <div key={ex.id} className="px-5 py-4 space-y-1">
                               <div className="flex items-start justify-between gap-3">
-                                <p className="text-sm font-bold text-white leading-snug">{ex.nameFr}</p>
-                                <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-white/10 text-[10px] font-black text-white/50">
+                                <p className="text-sm font-bold text-fg leading-snug">{ex.nameFr}</p>
+                                <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-layer-10 text-[10px] font-black text-fg-soft">
                                   {ex.sets}×{ex.reps}
                                 </span>
                               </div>
-                              <p className="text-xs text-white/40 leading-snug">{ex.notes}</p>
+                              <p className="text-xs text-fg-muted leading-snug">{ex.notes}</p>
                               {ex.equipment.length > 0 && (
-                                <p className="text-[10px] text-white/25 font-medium">
+                                <p className="text-[10px] text-fg-faint font-medium">
                                   Matériel : {ex.equipment.join(', ')}
                                 </p>
                               )}
@@ -289,22 +318,22 @@ export function SessionDetailPage() {
 
                 {/* Complétion mother-session */}
                 <section
-                  className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-4"
+                  className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4"
                   data-testid="ms-completion-section"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-xl bg-[#ff6b35]/20 text-[#ff6b35]">
+                    <div className="p-1.5 rounded-xl bg-brand-soft text-brand">
                       <FileText className="w-4 h-4" />
                     </div>
-                    <h2 className="text-sm font-black text-white">Séance terminée ?</h2>
+                    <h2 className="text-sm font-black text-fg">Séance terminée ?</h2>
                   </div>
 
-                  <p className="text-xs text-white/50">
+                  <p className="text-xs text-fg-soft">
                     {formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang)}
                   </p>
 
                   <div>
-                    <label className="text-xs font-bold text-white/40 uppercase tracking-wider block mb-2">
+                    <label className="text-xs font-bold text-fg-muted uppercase tracking-wider block mb-2">
                       Notes (optionnel)
                     </label>
                     <textarea
@@ -312,7 +341,7 @@ export function SessionDetailPage() {
                       onChange={(e) => setMsNotes(e.target.value)}
                       rows={2}
                       placeholder="Comment s'est passée la séance ?"
-                      className="w-full px-4 py-3 rounded-2xl border border-white/10 bg-white/5 text-sm text-white/80 placeholder:text-white/20 resize-none focus:outline-none focus:border-[#ff6b35] transition-all [color-scheme:dark]"
+                      className="w-full px-4 py-3 rounded-2xl border border-border-app bg-layer-5 text-sm text-fg-secondary placeholder:text-fg-ghost resize-none rf-focus-ring transition-all"
                     />
                   </div>
 
@@ -324,32 +353,32 @@ export function SessionDetailPage() {
                       setMsSaveError(null)
                       setCompletionOpen(true)
                     }}
-                    className="w-full py-4 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-black uppercase italic tracking-wide transition-all shadow-lg shadow-[#ff6b35]/20 flex items-center justify-center gap-2"
+                    className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
                   >
                     <CheckCircle2 className="w-5 h-5" />
                     Marquer comme faite
                   </button>
 
                   {msSaveError && (
-                    <div className="px-4 py-3 bg-rose-900/20 border border-rose-500/20 rounded-2xl">
-                      <p className="text-xs text-rose-300 font-bold">{msSaveError}</p>
+                    <div className="px-4 py-3 bg-danger-bg border border-danger-bd rounded-2xl">
+                      <p className="text-xs text-danger-soft font-bold">{msSaveError}</p>
                     </div>
                   )}
 
                   {msSaved && (
-                    <div className="flex items-center gap-2 px-4 py-3 bg-emerald-900/20 border border-emerald-500/20 rounded-2xl">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                      <p className="text-xs text-emerald-400 font-bold">Séance enregistrée !</p>
+                    <div className="flex items-center gap-2 px-4 py-3 bg-ok-bg-muted border border-ok-bd rounded-2xl">
+                      <CheckCircle2 className="w-4 h-4 text-ok flex-shrink-0" />
+                      <p className="text-xs text-ok font-bold">Séance enregistrée !</p>
                     </div>
                   )}
                 </section>
               </>
             ) : (
               <div className="p-8 text-center space-y-3" data-testid="session-not-found">
-                <p className="text-sm text-white/40">Séance introuvable à cet index.</p>
+                <p className="text-sm text-fg-muted">Séance introuvable à cet index.</p>
                 <Link
                   to="/week"
-                  className="inline-flex items-center gap-1.5 text-sm font-bold text-[#ff6b35]"
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-brand"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Retour au plan semaine

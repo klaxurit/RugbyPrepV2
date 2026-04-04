@@ -2,7 +2,9 @@ import type {
   AnnualCycle,
   AnnualPlanningContext,
   AthletePlanningInputs,
+  InSeasonSubMode,
   OffSeasonPhase,
+  PlayoffTaperPhase,
   PreSeasonPhase,
 } from '../../types/annualPlanning'
 import type { CalendarEvent } from '../../types/training'
@@ -15,6 +17,11 @@ const PRE_SEASON_WEEKS = 12
 const OFF_SEASON_WEEKS_V1 = 10
 const OFF_SEASON_BACKFILL_WEEKS = 10
 const DAYS_PER_WEEK = 7
+
+const MIN_PRE_SEASON_WEEKS = 6
+const MAX_PRE_SEASON_WEEKS = 12
+const MIN_OFF_SEASON_WEEKS = 6
+const MAX_OFF_SEASON_WEEKS = 12
 
 const MODE_RANK: Record<TraceMode, number> = {
   manual_override: 5,
@@ -134,6 +141,86 @@ function endOfIsoWeekSunday(monday: Date): Date {
   return addDays(monday, 6)
 }
 
+function resolvePreSeasonStart(
+  firstMatchWeekMonday: Date,
+  anchors: NonNullable<AthletePlanningInputs['planningAnchors']>,
+  acc: TraceAcc
+): { preSeasonStartMonday: Date; effectivePreSeasonWeeks: number } {
+  if (anchors.returnToTeamTrainingAt) {
+    const returnDate = parseLocalDateOnly(anchors.returnToTeamTrainingAt)
+    if (returnDate) {
+      const returnMonday = startOfIsoWeekMonday(returnDate)
+      const availableWeeks = Math.floor(
+        wholeDaysBetween(returnMonday, firstMatchWeekMonday) / DAYS_PER_WEEK
+      )
+      const effective = Math.min(MAX_PRE_SEASON_WEEKS, Math.max(MIN_PRE_SEASON_WEEKS, availableWeeks))
+      acc.bump('explicit_anchors')
+      acc.rule('rule:pre_season_anchored_return_to_team')
+      if (availableWeeks < MIN_PRE_SEASON_WEEKS) {
+        acc.warn(`Pré-saison compressée : ${availableWeeks} semaines disponibles, minimum ${MIN_PRE_SEASON_WEEKS} appliqué.`)
+      }
+      return {
+        preSeasonStartMonday: addDays(firstMatchWeekMonday, -effective * DAYS_PER_WEEK),
+        effectivePreSeasonWeeks: effective,
+      }
+    }
+  }
+  // Fallback V1 (12 semaines)
+  return {
+    preSeasonStartMonday: addDays(firstMatchWeekMonday, -PRE_SEASON_WEEKS * DAYS_PER_WEEK),
+    effectivePreSeasonWeeks: PRE_SEASON_WEEKS,
+  }
+}
+
+function resolveOffSeasonDuration(
+  offSeasonStartMonday: Date,
+  preSeasonStartMonday: Date,
+  acc: TraceAcc
+): number {
+  const availableWeeks = Math.floor(
+    wholeDaysBetween(offSeasonStartMonday, preSeasonStartMonday) / DAYS_PER_WEEK
+  )
+  const effective = Math.min(MAX_OFF_SEASON_WEEKS, Math.max(MIN_OFF_SEASON_WEEKS, availableWeeks))
+  if (availableWeeks < MIN_OFF_SEASON_WEEKS) {
+    acc.warn(`Off-season compressée : ${availableWeeks} semaines disponibles, minimum ${MIN_OFF_SEASON_WEEKS} appliqué.`)
+  }
+  return effective
+}
+
+function taperPhaseLabel(phase: PlayoffTaperPhase): string {
+  switch (phase) {
+    case 'taper_1': return 'Phase 1 — Maintien'
+    case 'taper_2': return 'Phase 2 — Affûtage'
+    case 'match_week': return 'Semaine de match'
+  }
+}
+
+function resolveInSeasonSubMode(
+  daysUntilNextMatch: number | null,
+  daysSinceLastMatch: number | null,
+  acc: TraceAcc
+): InSeasonSubMode {
+  if (daysUntilNextMatch != null && daysUntilNextMatch > 21) {
+    acc.rule('rule:treve_deep_detected')
+    return 'treve_deep'
+  }
+  if (
+    daysUntilNextMatch != null && daysUntilNextMatch >= 8 && daysUntilNextMatch <= 14 &&
+    daysSinceLastMatch != null && daysSinceLastMatch >= 14
+  ) {
+    acc.rule('rule:treve_return_detected')
+    return 'treve_return'
+  }
+  if (
+    daysUntilNextMatch != null && daysUntilNextMatch <= 7 &&
+    daysSinceLastMatch != null && daysSinceLastMatch >= 14
+  ) {
+    acc.rule('rule:treve_rampup_detected')
+    return 'treve_rampup'
+  }
+  return 'competition'
+}
+
 function collectMatchDates(events: MatchInput[]): string[] {
   const out: string[] = []
   for (const e of events) {
@@ -161,9 +248,10 @@ function isDateInClosedRange(iso: string, startIso: string, endIso: string): boo
   return iso >= startIso && iso <= endIso
 }
 
-function preSeasonPhaseFromWeek(weekNumber: number): PreSeasonPhase {
-  if (weekNumber <= 4) return 1
-  if (weekNumber <= 8) return 2
+function preSeasonPhaseFromWeek(weekNumber: number, totalWeeks: number = PRE_SEASON_WEEKS): PreSeasonPhase {
+  const third = totalWeeks / 3
+  if (weekNumber <= Math.ceil(third)) return 1
+  if (weekNumber <= Math.ceil(third * 2)) return 2
   return 3
 }
 
@@ -171,11 +259,11 @@ function preSeasonWeekLabel(weekNumber: number, phase: PreSeasonPhase): string {
   return `Pre-season Phase ${phase} - S${weekNumber}`
 }
 
-function offSeasonPhaseFromWeek(weekNumber: number): OffSeasonPhase {
-  if (weekNumber <= 2) return 1
-  if (weekNumber <= 4) return 2
-  if (weekNumber <= 8) return 3
-  return 4
+function offSeasonPhaseFromWeek(weekNumber: number, totalWeeks: number = OFF_SEASON_WEEKS_V1): OffSeasonPhase {
+  if (weekNumber <= 2) return 1  // Recovery : toujours 2 semaines
+  if (weekNumber <= 4) return 2  // Transition : toujours 2 semaines
+  if (weekNumber <= totalWeeks - 2) return 3  // Hypertrophy : absorbe le delta
+  return 4  // Force-Bridge : 2 dernières semaines
 }
 
 function offSeasonPhaseName(phase: OffSeasonPhase): string {
@@ -254,9 +342,11 @@ function baseContextFields(
 function buildOffSeasonContext(
   weekNumber: number,
   offSeasonStartIso: string,
-  base: ReturnType<typeof baseContextFields>
+  base: ReturnType<typeof baseContextFields>,
+  effectiveOffSeasonWeeks?: number
 ): AnnualPlanningContext {
-  const phase = offSeasonPhaseFromWeek(weekNumber)
+  const totalWeeks = effectiveOffSeasonWeeks ?? OFF_SEASON_WEEKS_V1
+  const phase = offSeasonPhaseFromWeek(weekNumber, totalWeeks)
   return {
     cycle: 'off_season',
     offSeasonPhase: phase,
@@ -264,6 +354,7 @@ function buildOffSeasonContext(
     weekLabel: offSeasonWeekLabel(weekNumber, phase),
     isDeloadWeek: false,
     offSeasonStartAt: offSeasonStartIso,
+    effectiveOffSeasonWeeks: totalWeeks,
     ...base,
   }
 }
@@ -283,24 +374,34 @@ function resolveManualCycle(
     baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, t)
 
   if (cycle === 'off_season') {
-    let wn = anchors.manualOffSeasonWeekOverride ?? 1
-    wn = Math.min(OFF_SEASON_WEEKS_V1, Math.max(1, wn))
     let offStartMonday: Date
     if (anchors.offSeasonStartAt) {
       offStartMonday = startOfIsoWeekMonday(parseLocalDateOnly(anchors.offSeasonStartAt)!)
+      acc.bump('explicit_anchors')
+      acc.rule('rule:manual_off_season_start_at')
+    } else if (anchors.seasonEndedAt) {
+      // V2: derive off-season start from the real season-end anchor
+      const ended = parseLocalDateOnly(anchors.seasonEndedAt)!
+      offStartMonday = addDays(startOfIsoWeekMonday(ended), DAYS_PER_WEEK)
+      acc.bump('explicit_anchors')
+      acc.rule('rule:manual_off_season_from_season_ended')
     } else if (firstMatchDate) {
       const firstMatchWeekMonday = startOfIsoWeekMonday(parseLocalDateOnly(firstMatchDate)!)
       const preSeasonStartMonday = addDays(firstMatchWeekMonday, -PRE_SEASON_WEEKS * DAYS_PER_WEEK)
       offStartMonday = addDays(preSeasonStartMonday, -OFF_SEASON_BACKFILL_WEEKS * DAYS_PER_WEEK)
       acc.warn(
-        'Cycle off-season manuel : début d’off-season dérivé du premier match (−22 sem.) faute d’ancre explicite.'
+        'Cycle off-season manuel : debut d\'off-season derive du premier match (-22 sem.) faute d\'ancre explicite.'
       )
     } else {
       offStartMonday = todayWeekMonday
       acc.warn(
-        'Cycle off-season manuel sans calendrier : ancrage du début d’off-season sur la semaine ISO courante.'
+        'Cycle off-season manuel sans calendrier : ancrage du debut d\'off-season sur la semaine ISO courante.'
       )
     }
+    // Compute the week number from the off-season start
+    let wn = anchors.manualOffSeasonWeekOverride ??
+      Math.max(1, Math.floor(wholeDaysBetween(offStartMonday, todayWeekMonday) / DAYS_PER_WEEK) + 1)
+    wn = Math.min(OFF_SEASON_WEEKS_V1, Math.max(1, wn))
     return buildOffSeasonContext(wn, toIsoDate(offStartMonday), base(acc.freeze()))
   }
 
@@ -400,14 +501,39 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   const firstMatchCalendar = matchDates.length > 0 ? matchDates[0] : null
   const firstMatchDate = anchors.firstMatchDateOverride ?? firstMatchCalendar
 
-  if (anchors.manualPlayoffs === true || anchors.manualCycleOverride === 'playoffs') {
+  // Playoffs : only honour the flag during April-May (FFR season).
+  // After June the flag is stale — fall through to normal cycle detection.
+  const playoffsMonthGuard = todayDate.getMonth() + 1 <= 5 // Jan–May
+  if (
+    playoffsMonthGuard &&
+    (anchors.manualPlayoffs === true || anchors.manualCycleOverride === 'playoffs')
+  ) {
     acc.bump('manual_override')
     acc.rule('rule:manual_playoffs')
+
+    // Compute taper phase based on daysUntilNextMatch
+    const nextMatch = nextMatchOnOrAfter(matchDates, todayIso)
+    const dun = nextMatch ? wholeDaysBetween(todayDate, parseLocalDateOnly(nextMatch)!) : null
+
+    let taperPhase: PlayoffTaperPhase = 'taper_1'
+    if (dun != null) {
+      if (dun <= 5) {
+        taperPhase = 'match_week'
+        acc.rule('rule:playoffs_match_week')
+      } else if (dun <= 10) {
+        taperPhase = 'taper_2'
+        acc.rule('rule:playoffs_taper_2')
+      } else {
+        acc.rule('rule:playoffs_taper_1')
+      }
+    }
+
     const trace = acc.freeze()
     return {
       cycle: 'playoffs',
       weekNumber: 1,
-      weekLabel: 'Playoffs - W1',
+      weekLabel: `Playoffs — ${taperPhaseLabel(taperPhase)}`,
+      playoffTaperPhase: taperPhase,
       isDeloadWeek: false,
       offSeasonStartAt: null,
       ...baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace),
@@ -492,7 +618,11 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
 
   const firstMatchParsed = parseLocalDateOnly(firstMatchDate)!
   const firstMatchWeekMonday = startOfIsoWeekMonday(firstMatchParsed)
-  const preSeasonStartMonday = addDays(firstMatchWeekMonday, -PRE_SEASON_WEEKS * DAYS_PER_WEEK)
+
+  // V2: Resolve pre-season start (flexible anchoring via returnToTeamTrainingAt)
+  const { preSeasonStartMonday, effectivePreSeasonWeeks } = resolvePreSeasonStart(
+    firstMatchWeekMonday, anchors, acc
+  )
   const preSeasonStartIso = toIsoDate(preSeasonStartMonday)
 
   let offSeasonStartMonday: Date
@@ -521,7 +651,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
       acc.bump('backfilled')
       acc.rule('rule:off_season_backfill_pre_season_minus_10w')
       acc.warn(
-        'Début d’off-season reconstruit : 10 semaines avant le début de pré-saison (ancre calendrier insuffisante).'
+        'Début d\'off-season reconstruit : 10 semaines avant le début de pré-saison (ancre calendrier insuffisante).'
       )
     } else {
       offSeasonStartMonday = addDays(preSeasonStartMonday, -OFF_SEASON_BACKFILL_WEEKS * DAYS_PER_WEEK)
@@ -532,6 +662,9 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   }
 
   const offSeasonStartIso = toIsoDate(offSeasonStartMonday)
+
+  // V2: Elastic off-season duration
+  const effectiveOffSeasonWeeks = resolveOffSeasonDuration(offSeasonStartMonday, preSeasonStartMonday, acc)
 
   if (todayWeekMonday < preSeasonStartMonday) {
     let rawOffWeek =
@@ -546,15 +679,15 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
       rawOffWeek = 1
       clamped = true
     }
-    if (rawOffWeek > OFF_SEASON_WEEKS_V1) {
-      rawOffWeek = OFF_SEASON_WEEKS_V1
+    if (rawOffWeek > effectiveOffSeasonWeeks) {
+      rawOffWeek = effectiveOffSeasonWeeks
       clamped = true
       acc.warn(
-        'Semaine off-season hors fenêtre V1 (S1–S10) : valeur ramenée à S10 (Force-Bridge).'
+        `Semaine off-season hors fenêtre (S1–S${effectiveOffSeasonWeeks}) : valeur ramenée à S${effectiveOffSeasonWeeks} (Force-Bridge).`
       )
     }
     if (clamped && anchors.manualOffSeasonWeekOverride === undefined) {
-      acc.warn('Semaine off-season bornée au modèle annuel V1.')
+      acc.warn('Semaine off-season bornée au modèle annuel.')
     }
     if (anchors.offSeasonStartAt || anchors.seasonEndedAt) {
       acc.bump('explicit_anchors')
@@ -567,24 +700,26 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     return buildOffSeasonContext(
       rawOffWeek,
       offSeasonStartIso,
-      baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace)
+      baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace),
+      effectiveOffSeasonWeeks
     )
   }
 
   if (todayWeekMonday < firstMatchWeekMonday) {
     const rawWeek =
       Math.floor(wholeDaysBetween(preSeasonStartMonday, todayWeekMonday) / DAYS_PER_WEEK) + 1
-    let wn = Math.min(PRE_SEASON_WEEKS, Math.max(1, rawWeek))
+    let wn = Math.min(effectivePreSeasonWeeks, Math.max(1, rawWeek))
     if (anchors.manualPreSeasonWeekOverride !== undefined) {
       acc.bump('manual_override')
       acc.rule('rule:manual_pre_season_week')
-      wn = Math.min(PRE_SEASON_WEEKS, Math.max(1, anchors.manualPreSeasonWeekOverride))
+      wn = Math.min(effectivePreSeasonWeeks, Math.max(1, anchors.manualPreSeasonWeekOverride))
     } else {
       acc.bump('calendar_inferred')
       acc.rule('rule:pre_season_from_calendar')
     }
-    const phase = preSeasonPhaseFromWeek(wn)
-    const isDeload = wn === 4 || wn === 8 || wn === 12
+    const phase = preSeasonPhaseFromWeek(wn, effectivePreSeasonWeeks)
+    // Deload every 4 weeks and at the last week
+    const isDeload = wn % 4 === 0 || wn === effectivePreSeasonWeeks
     const trace = acc.freeze()
     return {
       cycle: 'pre_season',
@@ -592,9 +727,31 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
       weekNumber: wn,
       weekLabel: preSeasonWeekLabel(wn, phase),
       isDeloadWeek: isDeload,
+      effectivePreSeasonWeeks,
       offSeasonStartAt: offSeasonStartIso,
       ...baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace),
     }
+  }
+
+  // Auto-transition: if no future match and last match > 28 days ago,
+  // the season is effectively over — fall back to off-season rather than
+  // staying stuck in in_season indefinitely (dead-end after dismiss).
+  const AUTO_SEASON_END_DAYS = 28
+  const base = baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, acc.freeze())
+  if (
+    base.daysUntilNextMatch == null &&
+    base.daysSinceLastMatch != null &&
+    base.daysSinceLastMatch >= AUTO_SEASON_END_DAYS
+  ) {
+    acc.bump('calendar_inferred')
+    acc.rule('rule:auto_season_ended_28d')
+    acc.warn('Aucun match futur et dernier match > 28j : basculement automatique en off-season.')
+    const autoTrace = acc.freeze()
+    return buildOffSeasonContext(
+      1,
+      toIsoDate(todayWeekMonday),
+      baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, autoTrace)
+    )
   }
 
   const inSeasonWeekNumber =
@@ -604,6 +761,10 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   acc.rule('rule:in_season_from_calendar')
   const mesoCal = computeInSeasonMesocycle(wIn)
   if (mesoCal.isDeloadWeek) acc.rule('rule:in_season_deload_3_1')
+
+  // V2: Resolve in-season sub-mode (trêve formalisée)
+  const inSeasonSubMode = resolveInSeasonSubMode(base.daysUntilNextMatch, base.daysSinceLastMatch, acc)
+
   const trace = acc.freeze()
   return {
     cycle: 'in_season',
@@ -612,6 +773,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     isDeloadWeek: mesoCal.isDeloadWeek,
     mesocycleWeek: mesoCal.mesocycleWeek,
     mesocycleBlock: mesoCal.mesocycleBlock,
+    inSeasonSubMode,
     offSeasonStartAt: offSeasonStartIso,
     ...baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace),
   }

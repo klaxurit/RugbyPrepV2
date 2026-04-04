@@ -176,14 +176,16 @@ describe('Trêve detection and adaptation', () => {
     }
   })
 
-  it('no trêve if next match in 2 weeks', () => {
+  it('V2: trêve_return if next match in 2 weeks + long gap since last', () => {
     const ctx = detectAnnualPlanningContext(baseInputs({
       events,
-      today: '2026-01-05', // ~12 days before Jan 17
+      today: '2026-01-05', // ~12 days before Jan 17, ~23 days since Dec 13
     }))
+    // V2: daysUntilNextMatch 8-14 + daysSinceLastMatch >= 14 → treve_return
+    expect(ctx.inSeasonSubMode).toBe('treve_return')
     const t = detectSeasonTransitions({ planningContext: ctx, today: '2026-01-05' })
-    // daysUntilNextMatch ~12, not > 21 → no trêve
-    expect(t?.type).not.toBe('treve_detected')
+    // V2: treve_return IS a trêve sub-mode, so it's detected
+    expect(t?.type).toBe('treve_detected')
   })
 })
 
@@ -195,19 +197,17 @@ describe('Ramp-up after 2+ week break', () => {
     ...buildSeason('2026-01-17', 14),
   ]
 
-  it('resolver applies ramp-up when match in 5-14 days and last match was 14+ days ago', () => {
-    // Jan 8: next match Jan 17 (9 days), last match Dec 13 (26 days ago)
+  it('V2: resolver applies treve_return when match in 8-14 days and last match 14+ days ago', () => {
+    // Jan 8: next match Jan 17 (9 days), last match Dec 13 (26 days ago) → treve_return
     const r = resolveMotherSessionsForWeek({
       events,
       today: '2026-01-08',
       weeklyFrequency: 2,
       positionGroup: 'back_three',
     })
-    expect(r.warnings.some(w => /reprise|pause/i.test(w))).toBe(true)
-    expect(r.sessions).toHaveLength(2)
-    for (const s of r.sessions) {
-      expect(s.variant).toBe('light')
-    }
+    expect(r.planningContext.inSeasonSubMode).toBe('treve_return')
+    expect(r.warnings.some(w => /retour|trêve|post-trêve/i.test(w))).toBe(true)
+    expect(r.sessions.length).toBeGreaterThan(0)
   })
 })
 

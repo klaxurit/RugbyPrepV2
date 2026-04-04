@@ -164,34 +164,36 @@ describe('resolveMotherSessionsForWeek', () => {
     ])
   })
 
-  it('playoffs 2x → 2 sessions light + maxBlocks 2 + taper warning', () => {
+  it('playoffs V2 taper_1: normal variant + maxBlocks 3 when dun > 10', () => {
     const r = resolveMotherSessionsForWeek({
-      events: [match(FIRST_MATCH)],
-      today: '2025-06-01',
-      weeklyFrequency: 2,
+      events: [match(FIRST_MATCH), match('2025-05-14')],
+      today: '2025-05-01', // May — within playoffs window, 13 days to next match
+      weeklyFrequency: 3,
       positionGroup: 'front_row',
       planningAnchors: { manualCycleOverride: 'playoffs' },
     })
     expect(r.planningContext.cycle).toBe('playoffs')
+    expect(r.planningContext.playoffTaperPhase).toBe('taper_1')
     expect(r.status).toBe('resolved_with_warnings')
-    expect(r.warnings.some((w) => /taper|playoffs/i.test(w))).toBe(true)
-    expect(r.sessions).toHaveLength(2)
+    expect(r.warnings.some((w) => /playoffs|taper/i.test(w))).toBe(true)
+    expect(r.sessions).toHaveLength(3) // taper_1 preserves frequency up to 3
     for (const s of r.sessions) {
-      expect(s.variant).toBe('light')
-      expect(s.maxBlocks).toBe(2)
+      expect(s.variant).toBe('normal')
+      expect(s.maxBlocks).toBe(3)
     }
     expect(r.templateContext?.playoffsTaper).toBe(true)
   })
 
-  it('playoffs 3x → capped at 2 sessions light + maxBlocks 2', () => {
+  it('playoffs V2 taper_2: light + maxBlocks 2 + freq capped at 2', () => {
     const r = resolveMotherSessionsForWeek({
-      events: [match(FIRST_MATCH)],
-      today: '2025-06-01',
+      events: [match(FIRST_MATCH), match('2025-05-08')],
+      today: '2025-05-01', // 7 days to next match → taper_2
       weeklyFrequency: 3,
       positionGroup: 'front_row',
       planningAnchors: { manualPlayoffs: true },
     })
     expect(r.planningContext.cycle).toBe('playoffs')
+    expect(r.planningContext.playoffTaperPhase).toBe('taper_2')
     expect(r.sessions).toHaveLength(2) // capped from 3 to 2
     for (const s of r.sessions) {
       expect(s.variant).toBe('light')
@@ -199,6 +201,23 @@ describe('resolveMotherSessionsForWeek', () => {
     }
     expect(r.templateContext?.playoffsTaper).toBe(true)
     expect(r.templateContext?.effectiveFrequency).toBe(2)
+  })
+
+  it('playoffs V2 match_week: light + maxBlocks 2', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-05-04')],
+      today: '2025-05-01', // 3 days to next match → match_week
+      weeklyFrequency: 2,
+      positionGroup: 'front_row',
+      planningAnchors: { manualCycleOverride: 'playoffs' },
+    })
+    expect(r.planningContext.cycle).toBe('playoffs')
+    expect(r.planningContext.playoffTaperPhase).toBe('match_week')
+    expect(r.sessions).toHaveLength(2)
+    for (const s of r.sessions) {
+      expect(s.variant).toBe('light')
+      expect(s.maxBlocks).toBe(2)
+    }
   })
 
   it('sessionId absente du dataset → missing_session + planningContext + warnings conservés', () => {
@@ -224,5 +243,148 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.templateContext?.cycle).toBe('pre_season')
     expect(r.warnings.length).toBeGreaterThanOrEqual(0)
     expect(r.message).toMatch(/absentes du dataset/)
+  })
+
+  // ── V2: Trêve sub-modes ──────────────────────────────────────────
+  it('V2 treve_deep: bloc force opportuniste + no_match_week', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-15'), match('2025-05-15')],
+      today: '2025-04-18', // 27 days until next match → treve_deep
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+    })
+    expect(r.planningContext.inSeasonSubMode).toBe('treve_deep')
+    expect(r.warnings.some((w) => /trêve/i.test(w) || /force/i.test(w))).toBe(true)
+    expect(r.sessions.length).toBeGreaterThan(0)
+  })
+
+  it('V2 treve_rampup: freq plafonnée à 2, variant light', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-01'), match('2025-04-20')],
+      today: '2025-04-16', // 4 days until match, 15 days since last → rampup
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+    })
+    expect(r.planningContext.inSeasonSubMode).toBe('treve_rampup')
+    expect(r.warnings.some((w) => /ramp-up|ré-acclimation/i.test(w))).toBe(true)
+    expect(r.sessions).toHaveLength(2) // capped at 2
+    for (const s of r.sessions) {
+      expect(s.variant).toBe('light')
+      expect(s.maxBlocks).toBe(2)
+    }
+  })
+
+  // ── V2: Monitoring micro-modulation ──────────────────────────────
+  it('V2 readinessScore < 50 → maxBlocks réduit + warning', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-03-22')],
+      today: '2025-03-18',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      monitoringSnapshot: {
+        completedSessionsLast7d: 2,
+        completedSessionsLast28d: 8,
+        readinessScore: 35,
+      },
+    })
+    expect(r.planningContext.cycle).toBe('in_season')
+    expect(r.warnings.some((w) => /readiness basse/i.test(w))).toBe(true)
+    for (const s of r.sessions) {
+      expect(s.maxBlocks).toBe(2)
+    }
+  })
+
+  it('V2 jumpTrend down → warning + maxBlocks réduit', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-03-22')],
+      today: '2025-03-18',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      monitoringSnapshot: {
+        completedSessionsLast7d: 2,
+        completedSessionsLast28d: 8,
+        jumpTrend: 'down',
+      },
+    })
+    expect(r.warnings.some((w) => /CMJ/i.test(w))).toBe(true)
+    for (const s of r.sessions) {
+      expect(s.maxBlocks).toBe(2)
+    }
+  })
+
+  // ── Return after long absence (Slice 4 S2) ──
+
+  it('long absence (0 sessions in 28d, historical logs) → sessions become light with reduced maxBlocks', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH)],
+      today: '2024-12-16',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      monitoringSnapshot: {
+        completedSessionsLast7d: 0,
+        completedSessionsLast28d: 0,
+        hasHistoricalLogs: true,
+      },
+    })
+
+    expect(r.status).not.toBe('missing_session')
+    for (const s of r.sessions) {
+      expect(s.variant).toBe('light')
+      expect(s.maxBlocks).toBeDefined()
+    }
+    expect(r.warnings.some((w) => w.toLowerCase().includes('reprise'))).toBe(true)
+  })
+
+  it('long absence adapted result has status resolved_with_warnings', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH)],
+      today: '2024-12-16',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      monitoringSnapshot: {
+        completedSessionsLast7d: 0,
+        completedSessionsLast28d: 0,
+        hasHistoricalLogs: true,
+      },
+    })
+
+    expect(r.status).toBe('resolved_with_warnings')
+  })
+
+  it('recent activity (completedSessionsLast7d > 0) → sessions are normal', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH)],
+      today: '2024-12-16',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      monitoringSnapshot: {
+        completedSessionsLast7d: 2,
+        completedSessionsLast28d: 6,
+        hasHistoricalLogs: true,
+      },
+    })
+
+    // Normal sessions — NOT all light
+    const hasNonLight = r.sessions.some((s) => s.variant !== 'light')
+    expect(hasNonLight).toBe(true)
+  })
+
+  it('new user (no historical logs) → sessions are normal even with 0 sessions', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH)],
+      today: '2024-12-16',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      monitoringSnapshot: {
+        completedSessionsLast7d: 0,
+        completedSessionsLast28d: 0,
+        hasHistoricalLogs: false,
+      },
+    })
+
+    // New user — no false return-after-break
+    const hasNonLight = r.sessions.some((s) => s.variant !== 'light')
+    expect(hasNonLight).toBe(true)
+    expect(r.warnings.some((w) => w.toLowerCase().includes('reprise'))).toBe(false)
   })
 })

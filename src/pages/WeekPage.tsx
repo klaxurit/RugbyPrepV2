@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Activity, Leaf } from 'lucide-react'
+import { useState } from 'react'
+import { Activity, Plus } from 'lucide-react'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
@@ -8,8 +9,9 @@ import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
+import { useAuth } from '../hooks/useAuth'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
-import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
+import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { markWeekViewed, useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
@@ -17,22 +19,36 @@ import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramH
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
-import { AnnualPlanningSummaryCard } from '../components/motherSession/AnnualPlanningSummaryCard'
-import { MotherSessionWeekPanel } from '../components/motherSession/MotherSessionWeekPanel'
-import { useAdaptiveSchedule } from '../hooks/useAdaptiveSchedule'
+import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
+import { CalendarWeekTimeline } from '../components/scheduling/CalendarWeekTimeline'
+import { SequentialSessionList } from '../components/scheduling/SequentialSessionList'
+import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
+import { SchedulingTransitionBanner, SeasonTransitionBanner } from '../components/SeasonTransitionBanner'
+import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
+import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
+import type { DatedSession, SequentialSession } from '../types/scheduling'
+import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
+
+function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
+  if (lang !== 'fr') return label
+  return label
+    .replace(/\boff_season\b/gi, 'Hors-saison')
+    .replace(/\bpre_season\b/gi, 'Pré-saison')
+    .replace(/\bin_season\b/gi, 'En saison')
+}
 
 export function WeekPage() {
   const { profile } = useProfile()
+  const { authState } = useAuth()
+  const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
-  const weekPageTitle = lang === 'fr' ? 'Ma Semaine' : 'My Week'
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue, setFatigue } = useFatigue()
-  const { logs } = useHistory()
-  const { events } = useCalendar()
+  const { logs, addLog } = useHistory()
+  const { events, addEvent } = useCalendar()
   const navigate = useNavigate()
 
-  const adaptiveSchedule = useAdaptiveSchedule(profile, events)
   const acwrResult = useACWR(logs, events)
   const { isPremium: weekIsPremium } = useFeatureAccess()
   const { canShowUpsell: weekCanShowUpsell } = useUpsellTiming()
@@ -54,6 +70,17 @@ export function WeekPage() {
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
+  const nextMatchDate = useMemo(() => {
+    const fm = events.filter((e) => e.type === 'match' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
+    return fm.length > 0 ? fm[0].date : null
+  }, [events, today])
+  const readinessResult = useReadinessScore({
+    acwrZone: acwrResult.hasSufficientData ? acwrResult.zone : null,
+    fatigue,
+    logs,
+    nextMatchDate,
+    today,
+  })
   const surfaceParams = useMemo(() => ({
     profile,
     events,
@@ -66,8 +93,32 @@ export function WeekPage() {
     ignoreAcwrOverload: false,
     hasSufficientACWRData: acwrResult.hasSufficientData,
     featureFlags: programFeatureFlags,
-  }), [profile, events, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags])
-  const { surface } = useWeeklyProgramSurface(surfaceParams)
+    readinessScore: readinessResult.score,
+    userId,
+  }), [profile, events, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId])
+  const {
+    surface, blockProgression, snapshot,
+    skipSession, rescheduleSession, markDayUnavailable,
+    undoCorrection, confirmPendingUpdate,
+    setFatigue: snapshotSetFatigue, addMatch,
+    hasConfirmationRequired,
+    toastMessage, clearToast,
+  } = useWeekSnapshot(surfaceParams)
+  const weekPresentation = snapshot?.presentation ?? null
+
+  // ── Transition banners (scheduling > season, max 1) ────────────────────────
+  // Use snapshot-visible mode, not raw upstream, to respect snapshot ownership
+  const visibleSchedulingMode = snapshot?.surface?.schedulingMode ?? surface?.schedulingMode ?? null
+  const { transition: schedulingTransition, dismiss: dismissSchedulingTransition } = useSchedulingTransition({
+    schedulingMode: visibleSchedulingMode,
+    logs,
+    today,
+    userId,
+  })
+  const { transition: seasonTransition, dismiss: dismissSeasonTransition } = useSeasonTransitions({
+    planningContext: surface?.planningContext ?? null,
+    today,
+  })
 
   // ── Hard-block global ──────────────────────────────────────────────────────
   const { hasHardBlock, hardBlockReasons } = getGlobalProgramHardBlock(profile)
@@ -83,21 +134,22 @@ export function WeekPage() {
   }, [hasHardBlock, hardBlockReasons])
 
   if (hasHardBlock) {
+    const hardBlockTitle = lang === 'fr' ? 'Ma Semaine' : 'My Week'
     return (
-      <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24">
-        <PageHeader title={weekPageTitle} backTo="/home" />
+      <div className="min-h-screen bg-app font-sans text-fg pb-24">
+        <PageHeader title={hardBlockTitle} backTo="/home" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
-          <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
-            <p className="font-bold text-amber-400">Programme temporairement indisponible</p>
+          <div className="bg-warn-bg border border-warn-bd-strong rounded-2xl p-5 space-y-3">
+            <p className="font-bold text-warn-strong">Programme temporairement indisponible</p>
             <ul className="space-y-2">
               {hardBlockReasons.map((r) => (
-                <li key={r} className="text-sm text-amber-300/80">
+                <li key={r} className="text-sm text-warn-body">
                   <span className="font-semibold">{BETA_ELIGIBILITY_MESSAGES[r].reason}</span>
                   <br />{BETA_ELIGIBILITY_MESSAGES[r].detail}
                 </li>
               ))}
             </ul>
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-fg-muted">
               Ton compte et ton profil sont conservés. Réessaie dans quelques instants.
             </p>
           </div>
@@ -111,27 +163,135 @@ export function WeekPage() {
   const primarySource = surface?.primarySource ?? 'mother_session'
   const isUnavailable = primarySource === 'unavailable'
   const msResolution = surface?.motherSession ?? null
+  const schedulingMode = surface?.schedulingMode ?? 'calendar'
+  const isSequential = schedulingMode === 'sequential'
+
+  // Extract calendar sessions from the presentation layer
+  const calendarSessions: DatedSession[] = useMemo(() => {
+    if (isSequential || !weekPresentation) return []
+    return weekPresentation.sessions.filter(
+      (s): s is DatedSession => s.kind === 'dated',
+    )
+  }, [isSequential, weekPresentation])
+
+  // Extract sequential sessions from the presentation layer
+  const sequentialSessions: SequentialSession[] = useMemo(() => {
+    if (!isSequential || !weekPresentation) return []
+    return weekPresentation.sessions.filter(
+      (s): s is SequentialSession => s.kind === 'sequential',
+    )
+  }, [isSequential, weekPresentation])
+
+  const hasWeekMatch = (weekPresentation?.matchEvents.length ?? 0) > 0
+
+  // ── Active recovery on rest days ──────────────────────────────────────────
+  const isRehabP1 = profile.rehabInjury?.phase === 1
+
+  // Global AR guards (day-independent)
+  const arGlobalOk = !isSequential
+    && !isUnavailable
+    && readinessResult.score >= 40
+    && acwrResult.zone !== 'critical'
+    && !isRehabP1
+    && msResolution != null
+
+  // Per-DOW eligibility: rest days only (no session, no match, no club day)
+  const activeRecoveryEligibleDays = useMemo(() => {
+    if (!arGlobalOk) return [] as import('../types/scheduling').DayOfWeek[]
+    const sessionDays = new Set(calendarSessions.map((s) => s.dayOfWeek))
+    const clubDaySet = new Set(weekPresentation?.clubDays ?? [])
+    // Build set of DOWs that have a match event this week
+    const matchDowSet = new Set<number>()
+    for (const e of weekPresentation?.matchEvents ?? []) {
+      const d = new Date(`${e.date}T12:00:00`)
+      matchDowSet.add(d.getDay())
+    }
+    const unavailSet = new Set(weekPresentation?.unavailableDays ?? [])
+    const DAY_ORDER: import('../types/scheduling').DayOfWeek[] = [0, 1, 2, 3, 4, 5, 6]
+    return DAY_ORDER.filter((dow) =>
+      !sessionDays.has(dow) && !matchDowSet.has(dow) && !clubDaySet.has(dow) && !unavailSet.has(dow),
+    )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arGlobalOk, calendarSessions, weekPresentation?.clubDays, weekPresentation?.matchEvents, weekPresentation?.unavailableDays])
+
+  // Dates with active recovery logs this week (for timeline badge)
+  const activeRecoveryDates = useMemo(() =>
+    logs
+      .filter((l) => l.sessionType === 'ACTIVE_RECOVERY')
+      .map((l) => l.dateISO.slice(0, 10)),
+    [logs],
+  )
+
+  // First confirmation required item (max 1 banner)
+  const confirmationItem = hasConfirmationRequired
+    ? snapshot?.confirmationRequired[0] ?? null
+    : null
+
+  // Title adapts to mode
+  const weekPageTitle = isSequential
+    ? (lang === 'fr' ? 'Mon Programme' : 'My Program')
+    : (lang === 'fr' ? 'Ma Semaine' : 'My Week')
 
   return (
-    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
         title={weekPageTitle}
         backTo="/home"
-        titleSuffix={surface?.planningContext.weekLabel ?? week}
+        titleSuffix={isSequential
+          ? (blockProgression?.currentBlockLabel ?? '')
+          : localizeWeekLabel(surface?.planningContext.weekLabel ?? week, lang)}
       />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
         {isUnavailable && (
-          <section className="rounded-[24px] border border-amber-500/25 bg-amber-900/10 p-5 space-y-3">
-            <p className="text-sm font-bold text-amber-300">Programme en préparation</p>
-            <p className="text-xs text-white/50">
+          <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
+            <p className="text-sm font-bold text-warn">Programme en préparation</p>
+            <p className="text-xs text-fg-soft">
               Le plan annuel n'a pas pu être résolu pour cette semaine. Vérifie ton profil ou réessaie après une mise à jour.
             </p>
           </section>
         )}
+
+        {/* Confirmation banner (Category C) */}
+        {confirmationItem && (
+          <section
+            data-testid="confirmation-banner"
+            className="flex items-center gap-3 px-4 py-3 bg-warn-bg border border-warn-bd rounded-2xl"
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-black text-warn">{confirmationItem.message}</p>
+            </div>
+            <button
+              type="button"
+              data-testid="confirmation-banner-cta"
+              onClick={() => confirmPendingUpdate(confirmationItem.id)}
+              className="flex-shrink-0 px-3 py-2 rounded-2xl bg-warn-button text-on-brand text-[10px] font-black uppercase tracking-wide hover:bg-warn-button-hover transition-colors"
+            >
+              {confirmationItem.cta}
+            </button>
+          </section>
+        )}
+
+        {/* Transition banner (scheduling > season, max 1) */}
+        {!confirmationItem && schedulingTransition && (
+          <SchedulingTransitionBanner
+            transition={schedulingTransition}
+            onAction={() => dismissSchedulingTransition(schedulingTransition.type)}
+            onDismiss={() => dismissSchedulingTransition(schedulingTransition.type)}
+          />
+        )}
+        {!confirmationItem && !schedulingTransition && seasonTransition && (
+          <SeasonTransitionBanner
+            transition={seasonTransition}
+            onAction={() => dismissSeasonTransition(seasonTransition.type)}
+            onDismiss={() => dismissSeasonTransition(seasonTransition.type)}
+          />
+        )}
+
+        {/* Global undo bar removed — local undo affordances are in the timeline components */}
 
         {msResolution && surface && (
           <section
@@ -143,48 +303,37 @@ export function WeekPage() {
             {unmatchedYesterdayMatch && (
               <Link
                 to="/calendar"
-                className="flex items-center gap-3 px-4 py-3 bg-amber-900/20 border border-amber-500/20 rounded-2xl hover:bg-amber-900/30 transition-colors"
+                className="flex items-center gap-3 px-4 py-3 bg-warn-bg border border-warn-bd rounded-2xl hover:bg-warn-bg-strong transition-colors"
               >
-                <div className="p-1.5 rounded-xl bg-amber-900/20 text-amber-400 flex-shrink-0">
+                <div className="p-1.5 rounded-xl bg-warn-bg text-warn-strong flex-shrink-0">
                   <Activity className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-black text-amber-300">
+                  <p className="text-xs font-black text-warn">
                     Match hier{unmatchedYesterdayMatch.opponent ? ` vs ${unmatchedYesterdayMatch.opponent}` : ''} — enregistre ta charge
                   </p>
-                  <p className="text-[10px] text-amber-400 mt-0.5">Mise à jour ACWR → Calendrier</p>
+                  <p className="text-[10px] text-warn-strong mt-0.5">Mise à jour ACWR → Calendrier</p>
                 </div>
               </Link>
             )}
 
-            {/* Bannière mobilité (lendemain de match) */}
-            {isRecoveryDay && (
-              <Link
-                to="/mobility"
-                className="flex items-center gap-3 px-4 py-3 bg-teal-900/20 border border-teal-500/20 rounded-2xl hover:bg-teal-900/30 transition-colors"
-              >
-                <div className="p-1.5 rounded-xl bg-teal-900/20 text-teal-400 flex-shrink-0">
-                  <Leaf className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-black text-teal-300">Session mobilité suggérée</p>
-                  <p className="text-[10px] text-teal-400 mt-0.5">Récupération active · 10-15 min</p>
-                </div>
-              </Link>
-            )}
 
 
             {/* Fatigue check-in discret */}
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5">
-              <span className="text-[11px] font-bold text-white/50">Forme</span>
-              <div className="flex gap-1.5 bg-white/10 rounded-xl p-0.5">
+            <div className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-5 px-4 py-2.5">
+              <span className="text-[11px] font-bold text-fg-soft">Forme</span>
+              <div className="flex gap-1.5 bg-layer-10 rounded-xl p-0.5">
                 {(['OK', 'FATIGUE'] as const).map((f) => (
                   <button
                     key={f}
                     type="button"
-                    onClick={() => setFatigue(f)}
+                    data-testid={`fatigue-btn-${f}`}
+                    onClick={() => {
+                      setFatigue(f) // persist locally
+                      snapshotSetFatigue(f) // heavy correction: re-run engine
+                    }}
                     className={`px-3 py-1 rounded-[10px] text-[10px] font-black transition-all ${
-                      fatigue === f ? 'bg-white/20 text-white shadow-sm' : 'text-white/40'
+                      fatigue === f ? 'bg-layer-20 text-fg shadow-sm' : 'text-fg-muted'
                     }`}
                   >
                     {f === 'OK' ? 'En forme' : 'Fatigué'}
@@ -193,29 +342,82 @@ export function WeekPage() {
               </div>
             </div>
 
-            <AnnualPlanningSummaryCard
-              planningContext={surface.planningContext}
-              planningInputsWarnings={surface.planningInputWarnings}
-              resolutionWarnings={msResolution.warnings}
-              companionRecommendations={msResolution.companionRecommendations}
-              fatigueLevel={surface.planningContext.fatigueLevel}
-              lang={lang}
-            />
+            {snapshot?.explanation && (
+              <PlanningContextCard
+                explanation={snapshot.explanation}
+                hideCorrections
+                companionRecommendations={msResolution.companionRecommendations}
+                warnings={(() => {
+                  const merged = [...new Set([...surface.planningInputWarnings, ...msResolution.warnings])]
+                    .filter((w) => !w.toLowerCase().includes('recovery override'))
+                  return merged.length > 0 ? merged : undefined
+                })()}
+              />
+            )}
 
             {/* Séances de la semaine — navigation vers /session/:id */}
-            {/* Warnings/companions déjà montrés dans AnnualPlanningSummaryCard ci-dessus */}
-            <MotherSessionWeekPanel
-              sessions={msResolution.sessions}
-              warnings={[]}
-              companionRecommendations={[]}
-              status={msResolution.status}
-              missingMessage={msResolution.message}
-              scSchedule={adaptiveSchedule}
-              clubSchedule={profile.clubSchedule}
-              lang={lang}
-              onSessionSelect={(index) => navigate(`/session/${index}`)}
-            />
+            {isSequential ? (
+              sequentialSessions.length > 0 ? (
+                <SequentialSessionList
+                  sessions={sequentialSessions}
+                  blockProgression={blockProgression}
+                  lang={lang}
+                  onSessionSelect={(index) => navigate(`/session/${index}`)}
+                  onSkipSession={skipSession}
+                />
+              ) : null
+            ) : (
+              <CalendarWeekTimeline
+                sessions={calendarSessions}
+                matchEvents={weekPresentation?.matchEvents ?? []}
+                unavailableDays={weekPresentation?.unavailableDays ?? []}
+                clubDays={weekPresentation?.clubDays ?? []}
+                corrections={snapshot?.corrections ?? []}
+                activeRecoveryDates={activeRecoveryDates}
+                activeRecoveryEligibleDays={activeRecoveryEligibleDays}
+                isRecoveryDay={isRecoveryDay}
+                onActiveRecoveryComplete={(activityType, durationMin, rpe) => {
+                  addLog({
+                    dateISO: new Date().toISOString(),
+                    week: week as import('../types/training').CycleWeek,
+                    sessionType: 'ACTIVE_RECOVERY',
+                    fatigue,
+                    rpe,
+                    durationMin,
+                    sessionLabel: activityType,
+                  })
+                }}
+                today={today}
+                lang={lang}
+                onSessionSelect={(index) => navigate(`/session/${index}`)}
+                onSkipSession={skipSession}
+                onRescheduleSession={rescheduleSession}
+                onMarkDayUnavailable={markDayUnavailable}
+                onUndoCorrection={undoCorrection}
+              />
+            )}
           </section>
+        )}
+
+        {/* Add match CTA */}
+        {!hasWeekMatch && msResolution && surface && (
+          <AddMatchInline
+            onAddMatch={async (date, opponent) => {
+              const matchPayload = {
+                date,
+                type: 'match' as const,
+                opponent: opponent || undefined,
+                is_home: true,
+                source: 'manual' as const,
+              }
+              // Persist to Supabase — returns the canonical event with real id
+              const createdEvent = await addEvent(matchPayload)
+              // Heavy correction with the canonical event
+              if (createdEvent) addMatch(createdEvent)
+            }}
+            lang={lang}
+            today={today}
+          />
         )}
 
         {/* T2.5: Upsell contextuel — match dans les 3 jours */}
@@ -240,7 +442,95 @@ export function WeekPage() {
         })()}
       </main>
 
+      <WeekCorrectionToast message={toastMessage} onDismiss={clearToast} />
       <BottomNav />
+    </div>
+  )
+}
+
+// ── Inline add-match component ──────────────────────────────────────
+
+function AddMatchInline({
+  onAddMatch,
+  lang,
+  today,
+}: {
+  onAddMatch: (date: string, opponent: string) => void
+  lang: 'fr' | 'en'
+  today: string
+}) {
+  const [open, setOpen] = useState(false)
+  const [date, setDate] = useState(() => {
+    // Default to next Saturday
+    const d = new Date(today)
+    const dow = d.getDay()
+    d.setDate(d.getDate() + ((6 - dow + 7) % 7 || 7))
+    return d.toISOString().split('T')[0]
+  })
+  const [opponent, setOpponent] = useState('')
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        data-testid="add-match-cta"
+        onClick={() => setOpen(true)}
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-border-dashed-app text-fg-muted hover:text-brand hover:border-brand-border-strong transition-colors"
+      >
+        <Plus className="w-4 h-4" />
+        <span className="text-xs font-bold">
+          {lang === 'fr' ? 'J\'ai un match cette semaine' : 'I have a match this week'}
+        </span>
+      </button>
+    )
+  }
+
+  return (
+    <div
+      data-testid="add-match-form"
+      className="bg-glass border border-border-app rounded-2xl p-4 space-y-3"
+    >
+      <p className="text-xs font-black text-fg">
+        {lang === 'fr' ? 'Ajouter un match' : 'Add a match'}
+      </p>
+      <div className="flex gap-2">
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="flex-1 bg-layer-10 border border-border-app rounded-xl px-3 py-2 text-xs text-fg rf-focus-ring"
+        />
+        <input
+          type="text"
+          placeholder={lang === 'fr' ? 'Adversaire' : 'Opponent'}
+          value={opponent}
+          onChange={(e) => setOpponent(e.target.value)}
+          className="flex-1 bg-layer-10 border border-border-app rounded-xl px-3 py-2 text-xs text-fg placeholder:text-fg-faint rf-focus-ring"
+        />
+      </div>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="flex-1 py-2 rounded-xl text-xs font-bold text-fg-muted hover:text-fg-secondary transition-colors"
+        >
+          {lang === 'fr' ? 'Annuler' : 'Cancel'}
+        </button>
+        <button
+          type="button"
+          data-testid="add-match-confirm"
+          onClick={() => {
+            if (date) {
+              onAddMatch(date, opponent)
+              setOpen(false)
+              setOpponent('')
+            }
+          }}
+          className="flex-1 py-2 rounded-xl bg-brand text-xs font-black text-on-brand hover:bg-brand-hover transition-colors"
+        >
+          {lang === 'fr' ? 'Ajouter' : 'Add'}
+        </button>
+      </div>
     </div>
   )
 }

@@ -25,7 +25,8 @@ export function useEntitlements() {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  const [loading, setLoading] = useState(false)
+  // Start loading=true when authenticated so consumers don't flash free-tier UI
+  const [loading, setLoading] = useState(!!userId)
   const [error, setError] = useState<string | null>(null)
   const [keys, setKeys] = useState<string[]>([])
   const [planId, setPlanId] = useState<string | null>(null)

@@ -5,6 +5,9 @@ export type AnnualCycle = 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
 export type OffSeasonPhase = 1 | 2 | 3 | 4
 export type PreSeasonPhase = 1 | 2 | 3
 
+export type InSeasonSubMode = 'competition' | 'treve_deep' | 'treve_return' | 'treve_rampup'
+export type PlayoffTaperPhase = 'taper_1' | 'taper_2' | 'match_week'
+
 export interface AthleteIdentityContext {
   athleteId?: string
   clubId?: string
@@ -47,6 +50,8 @@ export interface AthletePlanningInputs {
     jumpTrend?: 'up' | 'flat' | 'down'
     painFlags?: string[]
     latestRpeLoad?: number
+    /** True if the athlete has any session logs in history (distinguishes long absence from first-run). */
+    hasHistoricalLogs?: boolean
   }
 }
 
@@ -76,6 +81,18 @@ export interface AnnualPlanningContext {
   loadManagementOverride?: 'recovery'
   weeklyFrequency: 2 | 3 | 4
   positionGroup: 'front_row' | 'back_three'
+
+  /** Sous-mode in-season (trêve, compétition normale). Absent si cycle ≠ in_season. */
+  inSeasonSubMode?: InSeasonSubMode
+
+  /** Phase de taper en playoffs. Absent si cycle ≠ playoffs. */
+  playoffTaperPhase?: PlayoffTaperPhase
+
+  /** Durée effective de la pré-saison en semaines (6-12). */
+  effectivePreSeasonWeeks?: number
+
+  /** Durée effective de l'off-season en semaines (6-12). */
+  effectiveOffSeasonWeeks?: number
 
   identity?: AthleteIdentityContext
   monitoringSnapshot?: AthletePlanningInputs['monitoringSnapshot']

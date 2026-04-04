@@ -1,5 +1,6 @@
 /**
- * Données démo sandbox staff — même date de référence : 2025-03-18 (semaine ISO avec match le 22/03).
+ * Données démo sandbox staff — même date de référence : 2025-04-14 (semaine ISO avec match le 19/04).
+ * April is used so the playoffs athlete is within the April-May playoffs window.
  */
 import type { StaffPlanningAthleteRecord } from '../staffPlanningRepository'
 import type { AthletePlanningInputs } from '../../../types/annualPlanning'
@@ -11,10 +12,10 @@ export const SANDBOX_CLUB_ID = 'sandbox-club-rugbyforge'
 export const SANDBOX_SQUAD_ID = 'seniors-1'
 
 /** Référence démo partagée avec la page sandbox. */
-export const SANDBOX_REFERENCE_DATE = '2025-03-18'
+export const SANDBOX_REFERENCE_DATE = '2025-04-14'
 
-const FIRST_IN_SEASON = '2025-03-15'
-const MATCH_SAME_WEEK = '2025-03-22'
+const FIRST_IN_SEASON = '2025-04-12'
+const MATCH_SAME_WEEK = '2025-04-19'
 const FIRST_LATE_SEASON = '2025-06-01'
 
 function match(id: string, date: string): CalendarEvent {
@@ -97,7 +98,7 @@ export const SANDBOX_ROSTER: StaffPlanningAthleteSeed[] = [
     logs: [
       {
         id: 'l1',
-        dateISO: '2025-03-11T18:00:00.000Z',
+        dateISO: '2025-04-08T18:00:00.000Z',
         week: 'W1',
         sessionType: 'LOWER',
         fatigue: 'OK',
@@ -117,7 +118,7 @@ export const SANDBOX_ROSTER: StaffPlanningAthleteSeed[] = [
       rugbyPosition: 'BACK_THREE',
       weeklySessions: 3,
     }),
-    events: [match('m-a', FIRST_IN_SEASON), match('m-b', '2025-04-12')],
+    events: [match('m-a', FIRST_IN_SEASON), match('m-b', '2025-05-10')],
     logs: [],
     fatigue: 'FATIGUE',
     acwrZone: 'caution',

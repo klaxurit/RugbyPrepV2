@@ -7,6 +7,7 @@ import { useCalendar } from './useCalendar'
 import { useFatigue } from './useFatigue'
 import { useHistory } from './useHistory'
 import { useProfile } from './useProfile'
+import { useReadinessScore } from './useReadinessScore'
 
 function localDateISO(d: Date): string {
   const y = d.getFullYear()
@@ -36,6 +37,23 @@ export function useAthleteAnnualPlan(): UseAthleteAnnualPlanResult {
   const { fatigue } = useFatigue()
   const acwrResult = useACWR(logs, events)
 
+  const today = localDateISO(new Date())
+  // Next match for readiness score
+  const nextMatchDate = useMemo(() => {
+    const futureMatches = events
+      .filter((e) => e.type === 'match' && e.date >= today)
+      .sort((a, b) => a.date.localeCompare(b.date))
+    return futureMatches.length > 0 ? futureMatches[0].date : null
+  }, [events, today])
+
+  const readinessResult = useReadinessScore({
+    acwrZone: acwrResult.hasSufficientData ? acwrResult.zone : null,
+    fatigue,
+    logs,
+    nextMatchDate,
+    today,
+  })
+
   const isReady = !isInitializing
   const userId = authState.status === 'authenticated' ? authState.user?.id : undefined
 
@@ -48,8 +66,6 @@ export function useAthleteAnnualPlan(): UseAthleteAnnualPlanResult {
         derived: null,
       }
     }
-
-    const today = localDateISO(new Date())
 
     const athleteIdentity =
       userId || profile.clubCode
@@ -68,6 +84,7 @@ export function useAthleteAnnualPlan(): UseAthleteAnnualPlanResult {
       fatigue,
       acwrZone: acwrResult.hasSufficientData ? acwrResult.zone : null,
       athleteIdentity,
+      readinessScore: readinessResult.score,
     })
 
     const resolution = resolveMotherSessionsForWeek(inputs)
@@ -87,5 +104,7 @@ export function useAthleteAnnualPlan(): UseAthleteAnnualPlanResult {
     acwrResult.hasSufficientData,
     acwrResult.zone,
     userId,
+    today,
+    readinessResult.score,
   ])
 }

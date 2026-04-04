@@ -87,6 +87,9 @@ export function useACWR(logs: SessionLog[], matchEvents?: CalendarEvent[]): ACWR
   return useMemo(() => {
     const today = startOfDay(new Date())
 
+    // Exclude active recovery from load calculations — it's not training
+    const trainingLogs = logs.filter((l) => l.sessionType !== 'ACTIVE_RECOVERY')
+
     // Convertir les matchs avec charge renseignée en SessionLog-like
     const matchAsLogs: SessionLog[] = (matchEvents ?? [])
       .filter((e) => e.type === 'match' && e.rpe != null && e.duration_min != null)
@@ -100,7 +103,7 @@ export function useACWR(logs: SessionLog[], matchEvents?: CalendarEvent[]): ACWR
         durationMin: e.duration_min,
       }))
 
-    const allLogs = [...logs, ...matchAsLogs]
+    const allLogs = [...trainingLogs, ...matchAsLogs]
 
     // Charge aiguë = 7 derniers jours
     const acuteFrom = startOfDay(addDays(today, -7))
@@ -153,37 +156,37 @@ export const ACWR_ZONE_CONFIG: Record<ACWRZone, {
 }> = {
   underload: {
     label: 'Sous-charge',
-    color: 'text-slate-600',
-    bg: 'bg-slate-50',
-    border: 'border-slate-200',
+    color: 'text-z-ul-fg',
+    bg: 'bg-z-ul-bg',
+    border: 'border-z-ul-bd',
     message: 'Volume insuffisant — risque de déconditionnement.',
   },
   optimal: {
     label: 'Zone optimale',
-    color: 'text-emerald-700',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-200',
+    color: 'text-z-op-fg',
+    bg: 'bg-z-op-bg',
+    border: 'border-z-op-bd',
     message: 'Charge idéale — continue comme ça.',
   },
   caution: {
     label: 'Vigilance',
-    color: 'text-amber-700',
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
+    color: 'text-z-ca-fg',
+    bg: 'bg-z-ca-bg',
+    border: 'border-z-ca-bd',
     message: 'Charge élevée — surveille la récupération.',
   },
   danger: {
     label: 'Surcharge',
-    color: 'text-rose-700',
-    bg: 'bg-rose-50',
-    border: 'border-rose-200',
+    color: 'text-z-da-fg',
+    bg: 'bg-z-da-bg',
+    border: 'border-z-da-bd',
     message: '⚠ Risque blessure ×2.12 — réduis la charge.',
   },
   critical: {
     label: 'Critique',
-    color: 'text-red-700',
-    bg: 'bg-red-50',
-    border: 'border-red-200',
+    color: 'text-z-cr-fg',
+    bg: 'bg-z-cr-bg',
+    border: 'border-z-cr-bd',
     message: '🛑 Charge critique — repos impératif.',
   },
 }

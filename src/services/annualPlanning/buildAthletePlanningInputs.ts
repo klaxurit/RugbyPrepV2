@@ -23,6 +23,8 @@ export interface BuildAthletePlanningInputsParams {
   fatigue: 'OK' | 'FATIGUE'
   acwrZone?: AcwrZoneInput
   athleteIdentity?: AthleteIdentityContext
+  readinessScore?: number
+  jumpTrend?: 'up' | 'flat' | 'down'
 }
 
 export interface BuildAthletePlanningInputsResult {
@@ -173,6 +175,7 @@ function resolvePlanningAnchors(
   profile: UserProfile,
   hasMatchInCalendar: boolean,
   hasFutureMatch: boolean,
+  hasMatchThisWeek: boolean,
 ): PlanningAnchorsResult {
   const seasonMode = profile.seasonMode
   const pa = profile.planningAnchors
@@ -182,27 +185,39 @@ function resolvePlanningAnchors(
   if (pa?.manualPlayoffs) base.manualPlayoffs = true
   if (pa?.returnToTeamTrainingAt) base.returnToTeamTrainingAt = pa.returnToTeamTrainingAt
 
-  // seasonEndedAt: only apply if no future matches exist (stale anchor guard)
-  if (pa?.seasonEndedAt && !hasFutureMatch) {
+  // seasonEndedAt: only apply if no match is visible in the current context.
+  // A match in the current week (even if before today) is still visible in the
+  // CalendarWeekTimeline — keeping a stale seasonEndedAt anchor would produce a
+  // contradictory "off_season" label next to a visible match.
+  const matchInvalidatesSeasonEnd = hasFutureMatch || hasMatchThisWeek
+  if (pa?.seasonEndedAt && !matchInvalidatesSeasonEnd) {
     base.seasonEndedAt = pa.seasonEndedAt
   }
-  if (pa?.offSeasonStartAt && !hasFutureMatch) {
+  if (pa?.offSeasonStartAt && !matchInvalidatesSeasonEnd) {
     base.offSeasonStartAt = pa.offSeasonStartAt
   }
 
-  if (!seasonMode) {
+  // Preferred source for bootstrap hint: planningAnchors.onboardingCycleHint
+  // Fallback: seasonMode (compatibility with pre-Slice 4 profiles)
+  const cycleHint = pa?.onboardingCycleHint ?? seasonMode
+
+  if (!cycleHint) {
     return Object.keys(base).length > 0 ? base : undefined
   }
 
-  if (seasonMode === 'off_season') {
+  // V2: Only force manualCycleOverride for explicit off_season confirmation
+  // (seasonEndedAt anchor present). Without that anchor, off_season from
+  // onboardingCycleHint goes through the normal hint path, not manual override.
+  if (base.seasonEndedAt && cycleHint === 'off_season') {
     return { ...base, manualCycleOverride: 'off_season' }
   }
 
+  // With matches in calendar, let V2 auto-detect the cycle from calendar data.
   if (hasMatchInCalendar) {
-    return { ...base, manualCycleOverride: seasonMode }
+    return Object.keys(base).length > 0 ? base : undefined
   }
 
-  return { ...base, onboardingCycleHint: seasonMode }
+  return { ...base, onboardingCycleHint: cycleHint }
 }
 
 /**
@@ -212,7 +227,7 @@ export function buildAthletePlanningInputs(
   params: BuildAthletePlanningInputsParams
 ): BuildAthletePlanningInputsResult {
   const warnings: string[] = []
-  const { profile, events, logs, today, fatigue, acwrZone, athleteIdentity } = params
+  const { profile, events, logs, today, fatigue, acwrZone, athleteIdentity, readinessScore, jumpTrend } = params
 
   const resolvedPositionGroup = resolvePositionGroup(profile, warnings)
   const weeklyFrequency = clampWeeklyFrequency(profile, warnings)
@@ -228,13 +243,30 @@ export function buildAthletePlanningInputs(
     completedSessionsLast28d,
     painFlags: painFlags.length > 0 ? painFlags : undefined,
     latestRpeLoad,
+    readinessScore,
+    jumpTrend,
+    hasHistoricalLogs: logs.length > 0,
   }
 
   const identity = buildIdentity(profile, athleteIdentity)
 
   const hasMatchInCalendar = events.some((e) => e.type === 'match')
   const hasFutureMatch = events.some((e) => e.type === 'match' && e.date >= today)
-  const planningAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar, hasFutureMatch)
+
+  // Current ISO week boundaries (Mon–Sun) — matches here are visible in the timeline
+  const todayD = new Date(`${today}T12:00:00`)
+  const mondayOffset = (todayD.getDay() + 6) % 7
+  const weekMon = new Date(todayD)
+  weekMon.setDate(weekMon.getDate() - mondayOffset)
+  const weekSun = new Date(weekMon)
+  weekSun.setDate(weekSun.getDate() + 6)
+  const weekMonIso = weekMon.toISOString().slice(0, 10)
+  const weekSunIso = weekSun.toISOString().slice(0, 10)
+  const hasMatchThisWeek = events.some(
+    (e) => e.type === 'match' && e.date >= weekMonIso && e.date <= weekSunIso,
+  )
+
+  const planningAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar, hasFutureMatch, hasMatchThisWeek)
 
   const inputs: AthletePlanningInputs = {
     events: events.map((e) => ({ date: e.date, type: e.type })),

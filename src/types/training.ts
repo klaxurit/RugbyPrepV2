@@ -280,6 +280,11 @@ export interface UserProfile {
     offSeasonStartAt?: string
     returnToTeamTrainingAt?: string
     manualPlayoffs?: boolean
+    /**
+     * Indication de cycle posée à l’onboarding (alignée sur AnnualCycle côté planning).
+     * Évite une dépendance circulaire training → annualPlanning : mêmes littéraux.
+     */
+    onboardingCycleHint?: 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
   }
 }
 
@@ -313,7 +318,7 @@ export interface Exercise {
   defaultNotes?: string;
 }
 
-export type SessionType = 'UPPER' | 'LOWER' | 'FULL' | 'CONDITIONING' | 'RECOVERY';
+export type SessionType = 'UPPER' | 'LOWER' | 'FULL' | 'CONDITIONING' | 'RECOVERY' | 'ACTIVE_RECOVERY';
 
 export type RehabZone = 'upper' | 'lower'
 export type RehabPhase = 1 | 2 | 3

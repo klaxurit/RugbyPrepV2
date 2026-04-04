@@ -22,6 +22,7 @@ const sessionTypeStyles: Record<SessionType, string> = {
   FULL: 'bg-amber-900/20 text-amber-400',
   CONDITIONING: 'bg-violet-900/20 text-violet-400',
   RECOVERY: 'bg-teal-900/20 text-teal-400',
+  ACTIVE_RECOVERY: 'bg-sky-900/20 text-sky-400',
 }
 
 const sessionTypeIcon: Record<SessionType, React.ReactNode> = {
@@ -30,6 +31,7 @@ const sessionTypeIcon: Record<SessionType, React.ReactNode> = {
   FULL: <Zap className="w-4 h-4" />,
   CONDITIONING: <Activity className="w-4 h-4" />,
   RECOVERY: <Activity className="w-4 h-4" />,
+  ACTIVE_RECOVERY: <Activity className="w-4 h-4" />,
 }
 
 const weekLabel = (w: CycleWeek) => (w === 'DELOAD' ? 'Décharge' : `S${w.replace('W', '')}`)

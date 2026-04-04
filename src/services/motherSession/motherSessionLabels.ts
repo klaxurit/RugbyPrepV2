@@ -60,7 +60,7 @@ const SESSION_TYPE_LABELS: Record<string, Record<AppLang, string>> = {
   upper:             { fr: 'Haut du corps',       en: 'Upper' },
   lower:             { fr: 'Bas du corps',         en: 'Lower' },
   full:              { fr: 'Corps complet',        en: 'Full' },
-  full_light_primer: { fr: 'Préparation légère',   en: 'Full (light primer)' },
+  full_light_primer: { fr: 'Power-up',             en: 'Full (light primer)' },
   speed_power:       { fr: 'Vitesse / puissance',  en: 'Speed / power' },
 }
 

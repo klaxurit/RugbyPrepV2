@@ -1,6 +1,6 @@
 import { getWeeklyTemplate, type WeeklySessionSlot } from '../../data/weeklyTemplates'
 import { MOTHER_SESSIONS_BY_ID } from '../../data/motherSessions.generated'
-import type { AthletePlanningInputs, AnnualPlanningContext } from '../../types/annualPlanning'
+import type { AthletePlanningInputs, AnnualPlanningContext, PlayoffTaperPhase } from '../../types/annualPlanning'
 import type { MotherSession } from '../../types/motherSession'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
 
@@ -129,31 +129,61 @@ export function resolveMotherSessionsForWeek(
   params: ResolveMotherSessionsForWeekParams,
   options?: ResolveMotherSessionsForWeekOptions
 ): ResolveMotherSessionsForWeekResult {
+  const result = resolveMotherSessionsForWeekCore(params, options)
+
+  // ── Post-process: long-absence adaptation (>28 days) ───────────────
+  const monitoring = result.planningContext.monitoringSnapshot
+  const isLongAbsence =
+    monitoring?.completedSessionsLast7d === 0 &&
+    monitoring?.completedSessionsLast28d === 0 &&
+    monitoring?.hasHistoricalLogs === true
+
+  if (isLongAbsence && result.status !== 'missing_session') {
+    return applyLongAbsenceAdaptation(result)
+  }
+
+  return result
+}
+
+function resolveMotherSessionsForWeekCore(
+  params: ResolveMotherSessionsForWeekParams,
+  options?: ResolveMotherSessionsForWeekOptions
+): ResolveMotherSessionsForWeekResult {
   const sessionsById = options?.sessionsById ?? MOTHER_SESSIONS_BY_ID
   const planningContext = detectAnnualPlanningContext(params)
   const { weeklyFrequency, positionGroup, fatigueLevel } = planningContext
 
   const resolverWarnings: string[] = []
 
-  // ── Playoffs V1 : variante in-season « match week » + primer light forcé en 3x
-  // ── Playoffs tapering : fréquence plafonnée à 2, volume -50% (Mujika & Padilla 2003)
+  // ── Playoffs V2 : taper phasé (Mujika & Padilla 2003)
   if (planningContext.cycle === 'playoffs') {
-    resolverWarnings.push('Playoffs taper : fréquence plafonnée à 2, volume -50%, intensité maintenue.')
+    const taperPhase: PlayoffTaperPhase = planningContext.playoffTaperPhase ?? 'taper_1'
+
+    const taperConfig: Record<PlayoffTaperPhase, { freq: 2 | 3; maxBlocks: number; variant: 'normal' | 'light' }> = {
+      taper_1:    { freq: Math.min(weeklyFrequency, 3) as 2 | 3, maxBlocks: 3, variant: 'normal' },
+      taper_2:    { freq: 2, maxBlocks: 2, variant: 'light' },
+      match_week: { freq: 2, maxBlocks: 2, variant: 'light' },
+    }
+
+    const cfg = taperConfig[taperPhase]
+    resolverWarnings.push(`Playoffs ${taperPhase} — volume ${taperPhase === 'taper_1' ? '-30%' : '-50%'}, intensité maintenue.`)
+
     const tpl = getWeeklyTemplate({
       cycle: 'in_season',
-      frequency: 2,
+      frequency: cfg.freq,
       positionGroup,
+      matchContext: cfg.freq === 3 ? 'match_week' : undefined,
       fatigueLevel,
     })
     const taperSlots = tpl.sessions.map((s) => ({
       ...s,
-      variant: 'light' as const,
-      maxBlocks: 2,
+      variant: cfg.variant,
+      maxBlocks: cfg.maxBlocks,
     }))
     const templateContext: ResolvedWeeklyTemplateContext = {
       cycle: 'in_season',
       requestedFrequency: weeklyFrequency,
-      effectiveFrequency: 2,
+      effectiveFrequency: cfg.freq,
       positionGroup,
       fatigueLevel,
       playoffsTaper: true,
@@ -292,28 +322,44 @@ export function resolveMotherSessionsForWeek(
     )
   }
 
-  // ── In-season trêve adaptation (gap > 3 weeks between matches)
-  const dun = planningContext.daysUntilNextMatch
-  const dsl = planningContext.daysSinceLastMatch
+  // ── In-season trêve V2 : utiliser le sous-mode calculé par detectAnnualPlanningContext
+  if (planningContext.inSeasonSubMode === 'treve_rampup') {
+    resolverWarnings.push('Ramp-up pré-reprise — programme allégé pour ré-acclimation.')
+    const rampTpl = getWeeklyTemplate({ cycle: 'in_season', frequency: 2, positionGroup, fatigueLevel })
+    const rampSlots = rampTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
+    return hydrateSlots(
+      rampSlots,
+      { ...planningContext, loadManagementOverride: 'recovery' },
+      { cycle: 'in_season', requestedFrequency: weeklyFrequency, effectiveFrequency: 2, positionGroup, fatigueLevel },
+      rampTpl.warnings,
+      ['Activation neuromusculaire + mobilité avant la reprise des matchs'],
+      resolverWarnings,
+      sessionsById
+    )
+  }
 
-  if (dun != null && dun > 21) {
-    if (dun <= 7) {
-      // Last week before match return: deload + activation (ramp-down)
-      resolverWarnings.push('Reprise J-' + dun + ' — programme allégé pour la ré-acclimation.')
-      const rampTpl = getWeeklyTemplate({ cycle: 'in_season', frequency: 2, positionGroup, fatigueLevel })
-      const rampSlots = rampTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
-      return hydrateSlots(
-        rampSlots,
-        { ...planningContext, loadManagementOverride: 'recovery' },
-        { cycle: 'in_season', requestedFrequency: weeklyFrequency, effectiveFrequency: 2, positionGroup, fatigueLevel },
-        rampTpl.warnings,
-        ['Activation neuromusculaire + mobilité avant la reprise des matchs'],
-        resolverWarnings,
-        sessionsById
-      )
-    }
-    // Deep in trêve: use no_match_week templates (full body available) — opportunity for force block
-    resolverWarnings.push(`Trêve détectée — prochain match dans ${Math.floor(dun / 7)} semaines. Bloc force opportuniste.`)
+  if (planningContext.inSeasonSubMode === 'treve_return') {
+    resolverWarnings.push('Semaine de retour post-trêve — intensité progressive.')
+    const returnTpl = getWeeklyTemplate({
+      cycle: 'in_season',
+      frequency: weeklyFrequency,
+      positionGroup,
+      matchContext: 'no_match_week',
+      fatigueLevel,
+    })
+    return hydrateSlots(
+      returnTpl.sessions,
+      planningContext,
+      { cycle: 'in_season', requestedFrequency: weeklyFrequency, effectiveFrequency: returnTpl.effectiveFrequency, positionGroup, matchContext: 'no_match_week', fatigueLevel },
+      returnTpl.warnings,
+      ['Reprise progressive — maintenir l\'intensité, ne pas surcharger le volume'],
+      resolverWarnings,
+      sessionsById
+    )
+  }
+
+  if (planningContext.inSeasonSubMode === 'treve_deep') {
+    resolverWarnings.push(`Trêve détectée — prochain match dans ${Math.floor((planningContext.daysUntilNextMatch ?? 0) / 7)} semaines. Bloc force opportuniste.`)
     const treveTpl = getWeeklyTemplate({
       cycle: 'in_season',
       frequency: weeklyFrequency,
@@ -332,20 +378,18 @@ export function resolveMotherSessionsForWeek(
     )
   }
 
-  // ── In-season ramp-up after 2+ week gap, match approaching in 5-14 days
-  if (dun != null && dun >= 5 && dun <= 14 && dsl != null && dsl >= 14) {
-    resolverWarnings.push('Reprise après pause — programme allégé cette semaine.')
-    const rampTpl = getWeeklyTemplate({ cycle: 'in_season', frequency: 2, positionGroup, fatigueLevel })
-    const rampSlots = rampTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
-    return hydrateSlots(
-      rampSlots,
-      { ...planningContext, loadManagementOverride: 'recovery' },
-      { cycle: 'in_season', requestedFrequency: weeklyFrequency, effectiveFrequency: 2, positionGroup, fatigueLevel },
-      rampTpl.warnings,
-      ['Reprise progressive — ne pas charger trop vite après une pause'],
-      resolverWarnings,
-      sessionsById
-    )
+  // ── Monitoring micro-modulation V2 : readinessScore et jumpTrend
+  const monitoring = planningContext.monitoringSnapshot
+  let microMaxBlocksOverride: number | undefined
+  if (monitoring) {
+    if (monitoring.readinessScore != null && monitoring.readinessScore < 50) {
+      resolverWarnings.push('Readiness basse — volume réduit cette semaine.')
+      microMaxBlocksOverride = 2
+    }
+    if (monitoring.jumpTrend === 'down') {
+      resolverWarnings.push('Tendance CMJ en baisse — fatigue neuromusculaire probable, volume réduit.')
+      microMaxBlocksOverride = 2
+    }
   }
 
   // ── In-season normal
@@ -373,6 +417,11 @@ export function resolveMotherSessionsForWeek(
     ]
   }
 
+  // Apply micro-modulation maxBlocks override if set
+  if (microMaxBlocksOverride != null) {
+    sessions = sessions.map((s) => ({ ...s, maxBlocks: microMaxBlocksOverride }))
+  }
+
   const templateContext: ResolvedWeeklyTemplateContext = {
     cycle: 'in_season',
     requestedFrequency: tpl.requestedFrequency,
@@ -390,4 +439,32 @@ export function resolveMotherSessionsForWeek(
     resolverWarnings,
     sessionsById
   )
+}
+
+/**
+ * Reduce volume for athletes returning after >28 days of inactivity.
+ * Uses existing variant/maxBlocks mechanisms — no new session types.
+ */
+function applyLongAbsenceAdaptation(
+  result: ResolveMotherSessionsForWeekResult,
+): ResolveMotherSessionsForWeekResult {
+  const adaptedSessions = result.sessions.map((slot) => ({
+    ...slot,
+    variant: 'light' as const,
+    maxBlocks: slot.maxBlocks != null
+      ? Math.max(slot.maxBlocks - 1, 2)
+      : Math.max(slot.session.blocks.length - 1, 2),
+  }))
+
+  const warnings = [
+    ...result.warnings,
+    'Reprise progressive après une longue pause — volume réduit cette semaine.',
+  ]
+
+  return {
+    ...result,
+    sessions: adaptedSessions,
+    warnings,
+    status: 'resolved_with_warnings',
+  }
 }

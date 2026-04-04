@@ -1,8 +1,110 @@
-@import "tailwindcss";
+@import './theme-tokens.css';
+@import 'tailwindcss';
 
-/* ── Override Tailwind font-sans → Lexend (v4 theme) ── */
+/* Pont Tailwind v4 → tokens sémantiques (évite bg-[#…] / récursion --color-* ) */
 @theme {
   --font-family-sans: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --color-app: var(--color-bg-app);
+  /* bg-panel / bg-glass : ponts vers --color-surface et --color-surface-glass (tokens html) */
+  --color-panel: var(--color-surface);
+  --color-glass: var(--color-surface-glass);
+  --color-fg: var(--color-text-primary);
+  --color-fg-secondary: var(--color-text-secondary);
+  --color-fg-muted: var(--color-text-muted);
+  --color-fg-faint: var(--color-text-faint);
+  --color-fg-soft: var(--color-text-soft);
+  --color-fg-emphasis: var(--color-text-emphasis);
+  --color-fg-ghost: var(--color-text-ghost);
+  --color-layer-2: var(--color-surface-a02);
+  --color-layer-5: var(--color-surface-a05);
+  --color-layer-7: var(--color-surface-a07);
+  --color-layer-10: var(--color-surface-a10);
+  --color-layer-15: var(--color-surface-a15);
+  --color-layer-20: var(--color-surface-a20);
+  --color-edge-hairline: var(--color-edge-faint);
+  --color-badge-muted-fg: var(--color-badge-neutral-fg);
+  --color-badge-muted-bg: var(--color-badge-neutral-bg);
+  /* noms @theme distincts des --color-* du document → évite récursion */
+  --color-warn: var(--color-warn-fg);
+  --color-warn-strong: var(--color-warn-fg-strong);
+  --color-warn-body: var(--color-warn-fg-body);
+  --color-warn-bg: var(--color-warn-surface);
+  --color-warn-bg-muted: var(--color-warn-surface-muted);
+  --color-warn-bg-strong: var(--color-warn-surface-strong);
+  --color-warn-bd: var(--color-warn-border);
+  --color-warn-bd-strong: var(--color-warn-border-strong);
+  --color-warn-button: var(--color-warn-cta);
+  --color-warn-button-hover: var(--color-warn-cta-hover);
+  --color-ok: var(--color-ok-fg);
+  --color-ok-strong: var(--color-ok-fg-strong);
+  --color-ok-bg: var(--color-ok-surface);
+  --color-ok-bg-muted: var(--color-ok-surface-muted);
+  --color-ok-strip: var(--color-ok-band);
+  --color-ok-bd: var(--color-ok-border);
+  --color-danger: var(--color-danger-fg);
+  --color-danger-soft: var(--color-danger-fg-soft);
+  --color-danger-bg: var(--color-danger-surface);
+  --color-danger-bg-hover: var(--color-danger-surface-hover);
+  --color-danger-bg-cta: var(--color-danger-surface-cta);
+  --color-danger-bd: var(--color-danger-border);
+  --color-critical: var(--color-critical-fg);
+  --color-critical-strong: var(--color-critical-fg-strong);
+  --color-critical-body: var(--color-critical-fg-body);
+  --color-critical-bg: var(--color-critical-surface);
+  --color-critical-bd: var(--color-critical-border);
+  --color-info: var(--color-info-fg);
+  --color-info-bg: var(--color-info-surface);
+  --color-info-bd: var(--color-info-border);
+  --color-tone-orange: var(--color-orange-fg);
+  --color-tone-orange-bg: var(--color-orange-surface);
+  --color-tone-orange-bd: var(--color-orange-border);
+  --color-meter-underload: var(--color-acwr-bar-underload);
+  --color-meter-optimal: var(--color-acwr-bar-optimal);
+  --color-meter-caution: var(--color-acwr-bar-caution);
+  --color-meter-danger: var(--color-acwr-bar-danger);
+  --color-z-ul-fg: var(--color-zone-underload-fg);
+  --color-z-ul-bg: var(--color-zone-underload-surface);
+  --color-z-ul-bd: var(--color-zone-underload-border);
+  --color-z-op-fg: var(--color-zone-optimal-fg);
+  --color-z-op-bg: var(--color-zone-optimal-surface);
+  --color-z-op-bd: var(--color-zone-optimal-border);
+  --color-z-ca-fg: var(--color-zone-caution-fg);
+  --color-z-ca-bg: var(--color-zone-caution-surface);
+  --color-z-ca-bd: var(--color-zone-caution-border);
+  --color-z-da-fg: var(--color-zone-danger-fg);
+  --color-z-da-bg: var(--color-zone-danger-surface);
+  --color-z-da-bd: var(--color-zone-danger-border);
+  --color-z-cr-fg: var(--color-zone-critical-fg);
+  --color-z-cr-bg: var(--color-zone-critical-surface);
+  --color-z-cr-bd: var(--color-zone-critical-border);
+  --color-border-app: var(--color-border);
+  --color-border-dashed-app: var(--color-border-dashed);
+  --color-brand: var(--color-accent);
+  --color-brand-hover: var(--color-accent-hover);
+  --color-brand-soft: var(--color-accent-soft);
+  --color-brand-medium: var(--color-accent-medium);
+  --color-brand-border: var(--color-accent-border);
+  --color-brand-border-strong: var(--color-accent-border-strong);
+  --color-brand-muted: var(--color-accent-muted);
+  --color-brand-glow: var(--color-accent-glow);
+  --color-brand-tint: var(--color-accent-tint);
+  --color-on-brand: var(--color-on-accent);
+  --color-success-app: var(--color-success);
+  --color-on-success: var(--color-fg-on-success);
+  --color-raster-dot: var(--color-grid-dot);
+  --color-paper: var(--color-surface-paper);
+  --color-selected-bd: var(--color-control-selected-border);
+  --color-selected-bg: var(--color-control-selected-bg);
+  --color-selected-fg: var(--color-control-selected-fg);
+  --color-tl-today: var(--color-timeline-today-bg);
+  --color-tl-day: var(--color-timeline-day-bg);
+  --color-tl-pool: var(--color-timeline-pool-bg);
+  --color-tl-card: var(--color-timeline-card-bg);
+  --color-bd-muted: var(--color-edge-muted);
+  --color-bd-soft: var(--color-edge-soft);
+  --shadow-elevated: var(--color-shadow-elevated);
+  --shadow-brand-float: var(--color-shadow-brand-float);
 }
 
 /* ── Resets dans @layer base pour que les utilities Tailwind gagnent ── */
@@ -10,8 +112,8 @@
   body {
     margin: 0;
     font-family: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #faf9f7;
-    color: #1f2937;
+    background: var(--color-bg-app);
+    color: var(--color-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -21,7 +123,7 @@
   option,
   input,
   textarea {
-    color: #1d232c;
+    color: inherit;
   }
 
   button,
@@ -65,22 +167,24 @@
 
 .field select {
   padding: 8px;
-  border: 1px solid #d5d9df;
+  border: 1px solid var(--color-border-form);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-surface-paper);
+  color: var(--color-fg-on-paper);
 }
 
 .week-button {
-  border: 1px solid #d5d9df;
+  border: 1px solid var(--color-border-form);
   border-radius: 8px;
   padding: 8px 0;
-  background: #fff;
+  background: var(--color-surface-paper);
+  color: var(--color-fg-on-paper);
 }
 
 .week-button.active {
-  border-color: #1d4ed8;
-  background: #e8efff;
-  color: #123db3;
+  border-color: var(--color-control-selected-border);
+  background: var(--color-control-selected-bg);
+  color: var(--color-control-selected-fg);
 }
 
 .log-entry {
@@ -94,22 +198,33 @@
 
 .log-entry input[type='number'],
 .log-entry input[type='text'] {
-  border: 1px solid #d5d9df;
+  border: 1px solid var(--color-border-form);
   border-radius: 8px;
   padding: 6px 8px;
+  color: var(--color-fg-on-paper);
 }
 
 textarea {
   width: 100%;
-  border: 1px solid #d5d9df;
+  border: 1px solid var(--color-border-form);
   border-radius: 8px;
   padding: 8px;
   resize: vertical;
   font-family: inherit;
+  color: var(--color-fg-on-paper);
 }
 
 @media (min-width: 768px) {
   .page {
     padding: 24px;
+  }
+}
+
+/* Focus harmonisé (champs / actions) */
+@layer components {
+  .rf-focus-ring:focus-visible {
+    outline: none;
+    border-color: var(--color-focus-ring);
+    box-shadow: 0 0 0 3px var(--color-focus-glow);
   }
 }

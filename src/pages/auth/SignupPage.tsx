@@ -59,16 +59,16 @@ export function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a100c] flex flex-col px-6 py-12">
+    <div className="min-h-screen bg-app flex flex-col px-6 py-12">
       {/* Decorative dot grid */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <main className="relative w-full max-w-md mx-auto flex flex-col flex-1 justify-center gap-10">
 
         {/* Wordmark */}
         <div className="flex flex-col items-center text-center gap-3">
           <RugbyForgeLogo size="hero" />
-          <p className="text-white/40 text-xs font-bold tracking-[0.2em] uppercase">
+          <p className="text-fg-muted text-xs font-bold tracking-[0.2em] uppercase">
             Préparation physique rugby
           </p>
         </div>
@@ -78,7 +78,7 @@ export function SignupPage() {
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="space-y-1.5">
-              <label htmlFor="display-name" className="text-xs font-bold text-white/50 uppercase tracking-wider">
+              <label htmlFor="display-name" className="text-xs font-bold text-fg-soft uppercase tracking-wider">
                 Prénom
               </label>
               <input
@@ -86,7 +86,7 @@ export function SignupPage() {
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full h-14 rounded-2xl border-2 border-white/10 bg-white/5 px-5 text-white placeholder:text-white/25 focus:outline-none focus:border-[#ff6b35] text-sm transition-colors"
+                className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-5 text-fg placeholder:text-fg-faint rf-focus-ring text-sm transition-colors"
                 placeholder="Antoine"
                 autoComplete="name"
                 required
@@ -94,7 +94,7 @@ export function SignupPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-xs font-bold text-white/50 uppercase tracking-wider">
+              <label htmlFor="email" className="text-xs font-bold text-fg-soft uppercase tracking-wider">
                 Email
               </label>
               <input
@@ -102,7 +102,7 @@ export function SignupPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-14 rounded-2xl border-2 border-white/10 bg-white/5 px-5 text-white placeholder:text-white/25 focus:outline-none focus:border-[#ff6b35] text-sm transition-colors"
+                className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-5 text-fg placeholder:text-fg-faint rf-focus-ring text-sm transition-colors"
                 placeholder="toi@club.fr"
                 autoComplete="email"
                 required
@@ -110,7 +110,7 @@ export function SignupPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="password" className="text-xs font-bold text-white/50 uppercase tracking-wider">
+              <label htmlFor="password" className="text-xs font-bold text-fg-soft uppercase tracking-wider">
                 Mot de passe
               </label>
               <input
@@ -118,7 +118,7 @@ export function SignupPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-14 rounded-2xl border-2 border-white/10 bg-white/5 px-5 text-white placeholder:text-white/25 focus:outline-none focus:border-[#ff6b35] text-sm transition-colors"
+                className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-5 text-fg placeholder:text-fg-faint rf-focus-ring text-sm transition-colors"
                 placeholder="6 caractères minimum"
                 autoComplete="new-password"
                 required
@@ -126,20 +126,20 @@ export function SignupPage() {
             </div>
 
             {error && (
-              <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-2xl">
-                <p className="text-xs text-rose-400 font-medium">{error}</p>
+              <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">
+                <p className="text-xs text-danger font-medium">{error}</p>
               </div>
             )}
             {info && (
-              <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
-                <p className="text-xs text-emerald-400 font-medium">{info}</p>
+              <div className="p-3.5 bg-ok-bg-muted border border-ok-bd rounded-2xl">
+                <p className="text-xs text-ok font-medium">{info}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-14 rounded-full bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-bold text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-[#ff6b35]/20 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-brand-float disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {isSubmitting ? 'Création…' : 'Créer mon compte'}
             </button>
@@ -148,10 +148,10 @@ export function SignupPage() {
           <div className="text-center pt-2">
             <Link
               to="/auth/login"
-              className="text-sm text-white/50 hover:text-white font-medium transition-colors"
+              className="text-sm text-fg-soft hover:text-fg font-medium transition-colors"
             >
               Déjà un compte ?{' '}
-              <span className="text-[#ff6b35] font-bold">Se connecter</span>
+              <span className="text-brand font-bold">Se connecter</span>
             </Link>
           </div>
         </div>

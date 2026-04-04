@@ -1,10 +1,22 @@
 import { CalendarDays, AlertTriangle } from 'lucide-react'
-import type { AnnualPlanningContext } from '../../types/annualPlanning'
+import type { AnnualPlanningContext, InSeasonSubMode, PlayoffTaperPhase } from '../../types/annualPlanning'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import {
   msCycleLabel,
   msLabel,
 } from '../../services/motherSession/motherSessionLabels'
+
+const SUB_MODE_LABELS: Record<Exclude<InSeasonSubMode, 'competition'>, string> = {
+  treve_deep: 'Trêve — Bloc force',
+  treve_return: 'Reprise progressive',
+  treve_rampup: 'Ramp-up pré-match',
+}
+
+const TAPER_LABELS: Record<PlayoffTaperPhase, string> = {
+  taper_1: 'Phase 1 — Maintien',
+  taper_2: 'Phase 2 — Affûtage',
+  match_week: 'Semaine de match',
+}
 
 function humanizeTrace(trace: AnnualPlanningContext['planningTrace'], lang: AppLang): string {
   switch (trace.resolutionMode) {
@@ -81,6 +93,16 @@ export function AnnualPlanningSummaryCard({
                 : `Week ${planningContext.mesocycleWeek}/4 — ${planningContext.isDeloadWeek ? 'Deload' : `${(planningContext.mesocycleBlock ?? 1) % 2 === 1 ? 'Force' : 'Power'} Block`}`
               }
             </p>
+          )}
+          {planningContext.inSeasonSubMode && planningContext.inSeasonSubMode !== 'competition' && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/30 bg-blue-900/15 px-2 py-0.5 text-[10px] font-bold text-blue-300 mt-1">
+              {SUB_MODE_LABELS[planningContext.inSeasonSubMode]}
+            </span>
+          )}
+          {planningContext.playoffTaperPhase && (
+            <span className={`inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-900/15 px-2 py-0.5 text-[10px] font-bold text-rose-300 mt-1${planningContext.playoffTaperPhase === 'match_week' ? ' animate-pulse' : ''}`}>
+              {TAPER_LABELS[planningContext.playoffTaperPhase]}
+            </span>
           )}
         </div>
       </div>
