@@ -7,7 +7,7 @@ function makeMinimalContext(
 ): AnnualPlanningContext {
   return {
     cycle: 'off_season',
-    weekLabel: 'Off-season S1',
+    weekLabel: 'Inter-saison S1',
     isDeloadWeek: false,
     isMatchWeek: false,
     firstMatchDate: null,
@@ -79,7 +79,7 @@ describe('buildSafeSequentialFallback', () => {
   it('preserves the planningContext as-is (backfilled context)', () => {
     const ctx = makeMinimalContext({
       cycle: 'pre_season',
-      weekLabel: 'Pre-season Phase 1',
+      weekLabel: 'Pré-saison Phase 1',
       planningTrace: {
         resolutionMode: 'backfilled',
         rulesApplied: ['some_rule'],

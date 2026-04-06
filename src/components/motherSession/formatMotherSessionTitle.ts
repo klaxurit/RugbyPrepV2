@@ -31,7 +31,7 @@ const TOKEN_FR: Record<string, string> = {
   SPEED: 'Vitesse',
   HYPERTROPHY: 'Hypertrophie',
   BODY: '',
-  OFFSEASON: 'Hors-saison',
+  OFFSEASON: 'Inter-saison',
   TRANSITION: 'Transition',
 }
 

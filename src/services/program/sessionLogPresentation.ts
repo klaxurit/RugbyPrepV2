@@ -73,7 +73,7 @@ export function getSessionLogPrimaryWeekLabel(log: SessionLog): string {
 // ── Cycle label ─────────────────────────────────────────────────────────────
 
 const CYCLE_LABELS: Record<string, string> = {
-  off_season: 'Hors-saison',
+  off_season: 'Inter-saison',
   pre_season: 'Pré-saison',
   in_season: 'En saison',
   playoffs: 'Playoffs',

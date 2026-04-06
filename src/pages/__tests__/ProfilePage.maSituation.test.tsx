@@ -9,6 +9,7 @@ import { renderWithRouter } from '../../test/ui/renderWithRouter'
 
 const mockUpdateProfile = vi.fn()
 const mockEvents: any[] = []
+let mockProfileOverrides: Record<string, unknown> = {}
 
 const mockDetectCtx = vi.fn()
 
@@ -46,6 +47,7 @@ vi.mock('../../hooks/useProfile', () => ({
       healthDataRetentionState: 'active',
       healthConsentAuditTrail: [],
       planningAnchors: {},
+      ...mockProfileOverrides,
     },
     updateProfile: (...args: unknown[]) => mockUpdateProfile(...args),
     resetProfile: vi.fn(),
@@ -53,7 +55,10 @@ vi.mock('../../hooks/useProfile', () => ({
 }))
 
 vi.mock('../../hooks/useCalendar', () => ({
-  useCalendar: () => ({ events: mockEvents }),
+  useCalendar: () => ({
+    events: mockEvents,
+    visibleEvents: mockEvents.filter((event) => event.user_hidden !== true),
+  }),
 }))
 
 vi.mock('../../hooks/useFeatureAccess', () => ({
@@ -91,6 +96,7 @@ describe('ProfilePage · Ma situation', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockEvents.length = 0
+    mockProfileOverrides = {}
     mockDetectCtx.mockReturnValue({ cycle: 'in_season' })
   })
 
@@ -126,31 +132,6 @@ describe('ProfilePage · Ma situation', () => {
     expect(screen.getByTestId('situation-next-match')).toHaveTextContent('Aucun match prévu')
   })
 
-  it('displays "Aucun calendrier" when no events', () => {
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
-
-    expect(screen.getByTestId('situation-calendar')).toHaveTextContent('Aucun calendrier')
-  })
-
-  it('displays FFR calendar source count', () => {
-    mockEvents.push(
-      { id: '1', date: '2026-04-10', type: 'match', source: 'ffr_import' },
-      { id: '2', date: '2026-04-17', type: 'match', source: 'ffr_import' },
-    )
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
-
-    expect(screen.getByTestId('situation-calendar')).toHaveTextContent('FFR (2 matchs)')
-  })
-
-  it('displays "Manuel" when only manual events', () => {
-    mockEvents.push(
-      { id: '1', date: '2026-04-10', type: 'match', source: 'manual' },
-    )
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
-
-    expect(screen.getByTestId('situation-calendar')).toHaveTextContent('Manuel')
-  })
-
   it('"La saison est finie" writes seasonEndedAt anchor + seasonMode compat', () => {
     mockEvents.push(
       { id: '1', date: '2026-03-15', type: 'match', source: 'manual' },
@@ -167,6 +148,24 @@ describe('ProfilePage · Ma situation', () => {
     expect(call.seasonMode).toBe('off_season')
     // manualPlayoffs cleared
     expect(call.planningAnchors.manualPlayoffs).toBeUndefined()
+  })
+
+  it('ignores hidden reserve matches for cycle detection and season-ended anchor', () => {
+    mockEvents.push(
+      { id: 'hidden', date: '2026-03-22', type: 'match', source: 'ffr_import', user_hidden: true },
+      { id: 'visible', date: '2026-03-15', type: 'match', source: 'manual' },
+    )
+    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+
+    expect(mockDetectCtx).toHaveBeenCalled()
+    expect(mockDetectCtx.mock.calls[0][0].events).toEqual([
+      { date: '2026-03-15', type: 'match' },
+    ])
+
+    fireEvent.click(screen.getByTestId('situation-season-ended'))
+
+    const call = mockUpdateProfile.mock.calls[0][0]
+    expect(call.planningAnchors.seasonEndedAt).toBe('2026-03-15')
   })
 
   it('"La saison est finie" falls back to today when no past match', () => {
@@ -201,5 +200,24 @@ describe('ProfilePage · Ma situation', () => {
     for (const term of jargon) {
       expect(text.toLowerCase()).not.toContain(term.toLowerCase())
     }
+  })
+
+  it('shows "En fait, la saison reprend" when seasonEndedAt is set', () => {
+    mockProfileOverrides = {
+      seasonMode: 'off_season',
+      planningAnchors: { seasonEndedAt: '2026-03-29' },
+    }
+
+    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+
+    expect(screen.getByTestId('situation-confirmed')).toHaveTextContent('Saison terminée')
+    expect(screen.getByTestId('situation-resume-season')).toHaveTextContent('En fait, la saison reprend')
+
+    fireEvent.click(screen.getByTestId('situation-resume-season'))
+
+    expect(mockUpdateProfile).toHaveBeenCalledTimes(1)
+    const call = mockUpdateProfile.mock.calls[0][0]
+    expect(call.planningAnchors.seasonEndedAt).toBeUndefined()
+    expect(call.seasonMode).toBe('in_season')
   })
 })

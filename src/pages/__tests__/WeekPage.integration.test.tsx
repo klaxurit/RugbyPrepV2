@@ -19,6 +19,13 @@ import { renderWithRouter } from '../../test/ui/renderWithRouter'
 
 const useProfileMock = vi.fn()
 const useWeekSnapshotMock = vi.fn()
+const calendarState = {
+  events: [] as Array<Record<string, unknown>>,
+  visibleEvents: [] as Array<Record<string, unknown>>,
+  addEvent: vi.fn(),
+  syncNotification: null as string | null,
+  dismissSyncNotification: vi.fn(),
+}
 
 function makePlanningContext(cycle: AnnualPlanningContext['cycle']): AnnualPlanningContext {
   return {
@@ -256,7 +263,7 @@ vi.mock('../../hooks/useHistory', () => ({
 }))
 
 vi.mock('../../hooks/useCalendar', () => ({
-  useCalendar: () => ({ events: [] }),
+  useCalendar: () => calendarState,
 }))
 
 vi.mock('../../hooks/useACWR', () => ({
@@ -328,6 +335,9 @@ describe('WeekPage · convergence moteurs', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     useProfileMock.mockReturnValue({ profile: { ...BASE_PROFILE } })
+    calendarState.events = []
+    calendarState.visibleEvents = []
+    calendarState.syncNotification = null
   })
 
   afterEach(() => {
@@ -341,6 +351,24 @@ describe('WeekPage · convergence moteurs', () => {
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
     expect(screen.getByTestId('annual-plan-section')).toBeInTheDocument()
+  })
+
+  it('ignores hidden yesterday match for the ACWR reminder banner', () => {
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    calendarState.events = [{
+      id: 'hidden-match',
+      date: yesterday.toISOString().slice(0, 10),
+      type: 'match',
+      opponent: 'ASSOCIATION SPORTIVE ROUEN UNIVERSITE CLUB RUGBY',
+      user_hidden: true,
+    }]
+    calendarState.visibleEvents = []
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season')))
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.queryByText(/Match hier/i)).toBeNull()
   })
 
   it('in_season : surface mother-session visible (annual-first)', () => {
@@ -522,17 +550,14 @@ describe('WeekPage · convergence moteurs', () => {
     expect(dayRow.textContent).toContain('Récupération')
   })
 
-  it('calendar timeline shows inline active-recovery or "Repos" for empty days', () => {
+  it('calendar timeline shows rest-day placeholder for empty days (AR only after effort)', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    // Day 1 (Mon) has no session — shows either inline AR module (if eligible) or "Repos"
+    // Day 1 (Mon) has no session and no effort the day before → rest day placeholder
+    // Active recovery only shows after effort days (KB recovery.md §3.4)
     const restDay = screen.getByTestId('timeline-rest-1')
     expect(restDay).toBeInTheDocument()
-    // In this mock context (no ACWR critical, readiness OK), AR module should show
-    const hasAR = restDay.querySelector('[data-testid="inline-active-recovery"]')
-    const hasRepos = restDay.textContent?.includes('Repos')
-    expect(hasAR || hasRepos).toBeTruthy()
   })
 
   it('calendar timeline exposes reschedule action on session', () => {

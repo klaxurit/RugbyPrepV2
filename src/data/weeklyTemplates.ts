@@ -443,7 +443,8 @@ export function resolveOffSeasonWeeklyTemplate(params: {
       sessions: cloneSlots(makeRecoveryOffSeasonSlots()),
       warnings,
       companionRecommendations: [
-        '2x 20-30 min zone 2 (marche, vélo, footing facile, natation)',
+        '2x 20-30 min activité légère : marche, vélo, natation, mobilité',
+        'Objectif : bouger sans forcer, favoriser la récupération',
       ],
       requestedFrequency,
       effectiveFrequency,
@@ -471,7 +472,8 @@ export function resolveOffSeasonWeeklyTemplate(params: {
 
   if (offSeasonPhase === 2) {
     companionRecommendations.push(
-      '2x 25-35 min zone 2 ou 1x zone 2 + 1x tempo léger'
+      '2x 25-35 min cardio léger : vélo, footing tranquille, natation',
+      'Tu peux ajouter 1 séance de course à allure modérée (conversation possible)',
     )
     if (effectiveFrequency >= 3) {
       sessions = makeSlots([
@@ -484,7 +486,8 @@ export function resolveOffSeasonWeeklyTemplate(params: {
     }
   } else if (offSeasonPhase === 3) {
     companionRecommendations.push(
-      '1–2 exposures aérobies / tempo ; éviter de saturer avec le volume bas du corps'
+      '1-2x 30 min cardio modéré : footing, vélo, rameur',
+      'Évite le cardio jambes le lendemain de ta séance bas du corps',
     )
     const b3 = positionGroup === 'back_three'
     const hypoLower = b3 ? 'LOWER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1' : 'LOWER_OFFSEASON_HYPERTROPHY_V1'
@@ -498,7 +501,8 @@ export function resolveOffSeasonWeeklyTemplate(params: {
   } else {
     // Phase 4 Force-Bridge
     companionRecommendations.push(
-      '1–2 exposures maintenance aérobie ; optionnel court travail accélération technique si récup OK'
+      '1-2x 25 min cardio entretien : footing, vélo',
+      'Optionnel : 3-4 sprints courts (20-30m) si tu te sens frais',
     )
     const b3 = positionGroup === 'back_three'
     const fbLower = b3 ? 'LOWER_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1' : LOWER_OFFSEASON_FORCE_BRIDGE

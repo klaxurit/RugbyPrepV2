@@ -256,7 +256,7 @@ function preSeasonPhaseFromWeek(weekNumber: number, totalWeeks: number = PRE_SEA
 }
 
 function preSeasonWeekLabel(weekNumber: number, phase: PreSeasonPhase): string {
-  return `Pre-season Phase ${phase} - S${weekNumber}`
+  return `Pré-saison Phase ${phase} - S${weekNumber}`
 }
 
 function offSeasonPhaseFromWeek(weekNumber: number, totalWeeks: number = OFF_SEASON_WEEKS_V1): OffSeasonPhase {
@@ -269,18 +269,18 @@ function offSeasonPhaseFromWeek(weekNumber: number, totalWeeks: number = OFF_SEA
 function offSeasonPhaseName(phase: OffSeasonPhase): string {
   switch (phase) {
     case 1:
-      return 'Recovery'
+      return 'Récupération'
     case 2:
       return 'Transition'
     case 3:
-      return 'Hypertrophy'
+      return 'Hypertrophie'
     case 4:
-      return 'Force-Bridge'
+      return 'Force-Pont'
   }
 }
 
 function offSeasonWeekLabel(weekNumber: number, phase: OffSeasonPhase): string {
-  return `Off-season ${offSeasonPhaseName(phase)} - S${weekNumber}`
+  return `Inter-saison ${offSeasonPhaseName(phase)} - S${weekNumber}`
 }
 
 function baseContextFields(
@@ -460,7 +460,7 @@ function resolveManualCycle(
   return {
     cycle: 'in_season',
     weekNumber: wIn,
-    weekLabel: `In-season - W${wIn} (${meso.mesocycleWeek}/4)`,
+    weekLabel: `En saison - S${wIn} (${meso.mesocycleWeek}/4)`,
     isDeloadWeek: meso.isDeloadWeek,
     mesocycleWeek: meso.mesocycleWeek,
     mesocycleBlock: meso.mesocycleBlock,
@@ -663,6 +663,56 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
 
   const offSeasonStartIso = toIsoDate(offSeasonStartMonday)
 
+  // Explicit season-ended anchor: if the user declared the season over and today is
+  // at or past the derived off-season start, force off-season immediately instead of
+  // falling through to in-season (preSeasonStartMonday refers to the already-completed
+  // current season and would be in the past).
+  if (anchors.seasonEndedAt && todayWeekMonday >= offSeasonStartMonday) {
+    // If returnToTeamTrainingAt is set, check if we should already be in pre-season.
+    // The return date acts as a synthetic "first match" for pre-season calculation.
+    if (anchors.returnToTeamTrainingAt) {
+      const returnDate = parseLocalDateOnly(anchors.returnToTeamTrainingAt)
+      if (returnDate) {
+        const returnMonday = startOfIsoWeekMonday(returnDate)
+        // Pre-season = 8 weeks before return date (compressed; full team training
+        // will cover the remaining sport-specific prep).
+        const PRE_SEASON_BEFORE_RETURN = 8
+        const preSeasonStart = addDays(returnMonday, -PRE_SEASON_BEFORE_RETURN * DAYS_PER_WEEK)
+        if (todayWeekMonday >= preSeasonStart) {
+          const rawWeek = Math.floor(wholeDaysBetween(preSeasonStart, todayWeekMonday) / DAYS_PER_WEEK) + 1
+          const wn = Math.min(PRE_SEASON_BEFORE_RETURN, Math.max(1, rawWeek))
+          const phase = preSeasonPhaseFromWeek(wn, PRE_SEASON_BEFORE_RETURN)
+          const isDeload = wn % 4 === 0 || wn === PRE_SEASON_BEFORE_RETURN
+          acc.bump('explicit_anchors')
+          acc.rule('rule:pre_season_from_return_date')
+          const trace = acc.freeze()
+          return {
+            cycle: 'pre_season',
+            preSeasonPhase: phase,
+            weekNumber: wn,
+            weekLabel: preSeasonWeekLabel(wn, phase),
+            isDeloadWeek: isDeload,
+            effectivePreSeasonWeeks: PRE_SEASON_BEFORE_RETURN,
+            offSeasonStartAt: offSeasonStartIso,
+            ...baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace),
+          }
+        }
+      }
+    }
+
+    const rawWeek = Math.floor(wholeDaysBetween(offSeasonStartMonday, todayWeekMonday) / DAYS_PER_WEEK) + 1
+    const wn = Math.max(1, Math.min(rawWeek, MAX_OFF_SEASON_WEEKS))
+    acc.bump('explicit_anchors')
+    acc.rule('rule:season_ended_force_off_season')
+    const trace = acc.freeze()
+    return buildOffSeasonContext(
+      wn,
+      offSeasonStartIso,
+      baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace),
+      MAX_OFF_SEASON_WEEKS
+    )
+  }
+
   // V2: Elastic off-season duration
   const effectiveOffSeasonWeeks = resolveOffSeasonDuration(offSeasonStartMonday, preSeasonStartMonday, acc)
 
@@ -769,7 +819,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   return {
     cycle: 'in_season',
     weekNumber: wIn,
-    weekLabel: `In-season - W${wIn} (${mesoCal.mesocycleWeek}/4)`,
+    weekLabel: `En saison - S${wIn} (${mesoCal.mesocycleWeek}/4)`,
     isDeloadWeek: mesoCal.isDeloadWeek,
     mesocycleWeek: mesoCal.mesocycleWeek,
     mesocycleBlock: mesoCal.mesocycleBlock,

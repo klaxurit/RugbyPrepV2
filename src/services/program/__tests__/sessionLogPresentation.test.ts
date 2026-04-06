@@ -95,7 +95,7 @@ describe('sessionLogPresentation', () => {
     })
 
     it('off_season → Hors-saison', () => {
-      expect(getSessionLogCycleLabel({ ...BASE_LOG, programContext: { cycle: 'off_season' } })).toBe('Hors-saison')
+      expect(getSessionLogCycleLabel({ ...BASE_LOG, programContext: { cycle: 'off_season' } })).toBe('Inter-saison')
     })
 
     it('pre_season → Pré-saison', () => {
@@ -126,7 +126,7 @@ describe('sessionLogPresentation', () => {
       }
       const subtitle = getSessionLogDisplaySubtitle(log)
       expect(subtitle).toContain('OFF_S03')
-      expect(subtitle).toContain('Hors-saison')
+      expect(subtitle).toContain('Inter-saison')
     })
   })
 })

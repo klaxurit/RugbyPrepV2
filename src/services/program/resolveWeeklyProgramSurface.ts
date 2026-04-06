@@ -93,6 +93,7 @@ export function resolveWeeklyProgramSurface(
     today,
     planningAnchors: inputs.planningAnchors,
     onboardingCycleHint: inputs.planningAnchors?.onboardingCycleHint,
+    hasClubDays: (profile.clubSchedule?.clubDays?.length ?? 0) > 0,
   })
 
   // 3. Résoudre les mother sessions

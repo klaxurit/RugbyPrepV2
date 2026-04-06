@@ -26,6 +26,11 @@ export interface ACWRResult {
   zone: ACWRZone | null    // null si pas assez de données
   hasSufficientData: boolean
   weeksOfData: number      // nombre de semaines avec des données
+  /** Breakdown of acute load sources (last 7 days) */
+  acuteMatchLoad: number
+  acuteTrainingLoad: number
+  acuteMatchCount: number
+  acuteTrainingCount: number
 }
 
 const addDays = (d: Date, days: number): Date => {
@@ -92,6 +97,7 @@ export function useACWR(logs: SessionLog[], matchEvents?: CalendarEvent[]): ACWR
 
     // Convertir les matchs avec charge renseignée en SessionLog-like
     const matchAsLogs: SessionLog[] = (matchEvents ?? [])
+      .filter((e) => e.user_hidden !== true)
       .filter((e) => e.type === 'match' && e.rpe != null && e.duration_min != null)
       .map((e) => ({
         id: `match-${e.id}`,
@@ -107,19 +113,40 @@ export function useACWR(logs: SessionLog[], matchEvents?: CalendarEvent[]): ACWR
 
     // Charge aiguë = 7 derniers jours
     const acuteFrom = startOfDay(addDays(today, -7))
-    const acuteLoad = loadInWindow(allLogs, acuteFrom, addDays(today, 1))
+    const acuteTo = addDays(today, 1)
+    const acuteLoad = loadInWindow(allLogs, acuteFrom, acuteTo)
+    const acuteMatchLoad = loadInWindow(matchAsLogs, acuteFrom, acuteTo)
+    const acuteTrainingLoad = loadInWindow(trainingLogs, acuteFrom, acuteTo)
+    const acuteMatchCount = matchAsLogs.filter((l) => {
+      const d = new Date(l.dateISO); return d >= acuteFrom && d < acuteTo
+    }).length
+    const acuteTrainingCount = trainingLogs.filter((l) => {
+      if (l.rpe == null || l.durationMin == null) return false
+      const d = new Date(l.dateISO); return d >= acuteFrom && d < acuteTo
+    }).length
 
-    // Charge chronique = moyenne sur 4 fenêtres de 7 jours (sem 1 à 4)
+    // Charge chronique = moyenne sur semaines 1 à 4 (uncoupled — exclut la semaine aiguë)
+    // Hulin et al. 2016 / Windt & Gabbett 2019: uncoupled ACWR avoids mathematical
+    // coupling where a single acute spike inflates both numerator and denominator.
     const weekLoads: number[] = []
-    for (let i = 0; i < 4; i++) {
-      const to = startOfDay(addDays(today, -i * 7))
-      const from = startOfDay(addDays(today, -(i + 1) * 7))
+    for (let i = 1; i <= 4; i++) {
+      const to = startOfDay(addDays(today, -(i - 1) * 7))
+      const from = startOfDay(addDays(today, -i * 7))
       weekLoads.push(loadInWindow(allLogs, from, to))
     }
     const chronicLoad = weekLoads.reduce((s, v) => s + v, 0) / 4
+    // Floor chronique pour le calcul ACWR uniquement — évite les ratios absurdes
+    // quand l'historique est trop court. Un joueur de club actif (1 match + 2-3
+    // séances/sem) charge ~500-800 UA/sem. Floor à 500 = un match seul (640 UA)
+    // donne ACWR 1.28 (optimal) au lieu de +∞.
+    // Rationale: Gabbett (2016) — ACWR is unreliable with low chronic loads.
+    const CHRONIC_FLOOR = 500
+    const effectiveChronicLoad = Math.max(chronicLoad, CHRONIC_FLOOR)
 
     const weeksData = weeksWithData(allLogs, today)
     const hasSufficientData = weeksData >= 2 // au moins 2 semaines pour estimer
+
+    const breakdown = { acuteMatchLoad, acuteTrainingLoad, acuteMatchCount, acuteTrainingCount }
 
     if (!hasSufficientData || chronicLoad === 0) {
       return {
@@ -129,10 +156,11 @@ export function useACWR(logs: SessionLog[], matchEvents?: CalendarEvent[]): ACWR
         zone: null,
         hasSufficientData,
         weeksOfData: weeksData,
+        ...breakdown,
       }
     }
 
-    const acwr = Math.round((acuteLoad / chronicLoad) * 100) / 100
+    const acwr = Math.round((acuteLoad / effectiveChronicLoad) * 100) / 100
 
     return {
       acwr,
@@ -141,6 +169,7 @@ export function useACWR(logs: SessionLog[], matchEvents?: CalendarEvent[]): ACWR
       zone: classifyACWR(acwr),
       hasSufficientData: true,
       weeksOfData: weeksData,
+      ...breakdown,
     }
   }, [logs, matchEvents])
 }

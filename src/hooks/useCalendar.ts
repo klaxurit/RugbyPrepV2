@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
+import { useProfile } from './useProfile'
 import { syncCalendar } from '../services/calendar/ffrSyncService'
 import type { CalendarEvent } from '../types/training'
 
 const STORAGE_KEY = 'rugbyprep.calendar.v1'
+const AUTO_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24h
 const CALENDAR_SELECT = 'id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, venue, user_hidden, user_override, synced_at'
 
 // ─── Helpers ────────────────────────────────────────────────
@@ -59,12 +61,17 @@ function saveToStorage(events: CalendarEvent[]) {
 
 export function useCalendar() {
   const { authState } = useAuth()
+  const { profile, updateProfile } = useProfile()
   const userId =
     authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
   const [events, setEvents] = useState<CalendarEvent[]>(readFromStorage)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [syncNotification, setSyncNotification] = useState<string | null>(null)
+  const autoSyncRanRef = useRef(false)
+
+  const dismissSyncNotification = useCallback(() => setSyncNotification(null), [])
 
   // Sync from Supabase when authenticated
   useEffect(() => {
@@ -86,6 +93,50 @@ export function useCalendar() {
         saveToStorage(loaded)
       })
   }, [userId])
+
+  // ── Auto-sync FFR calendar if stale (>24h since last sync) ──
+  useEffect(() => {
+    if (!userId || autoSyncRanRef.current) return
+    const competitionId = profile.ffrCompetitionId
+    const clubCode = profile.clubCode
+    if (!competitionId || !clubCode) return
+
+    const lastSync = profile.ffrLastSyncAt ? new Date(profile.ffrLastSyncAt).getTime() : 0
+    const isStale = Date.now() - lastSync > AUTO_SYNC_INTERVAL_MS
+    if (!isStale) return
+
+    autoSyncRanRef.current = true
+
+    // Count current FFR events before sync
+    const beforeCount = events.filter(e => e.source === 'ffr_import' && !e.user_hidden).length
+
+    syncCalendar(competitionId, clubCode).then(async (result) => {
+      if (result.error) return // silent fail
+
+      // Reload events from Supabase
+      const { data } = await supabase
+        .from('match_calendar')
+        .select(CALENDAR_SELECT)
+        .order('date', { ascending: true })
+
+      if (data) {
+        const loaded = (data as CalendarEvent[]).map(normalizeCalendarEvent)
+        setEvents(loaded)
+        saveToStorage(loaded)
+
+        // Compare to detect new matches
+        const afterCount = loaded.filter(e => e.source === 'ffr_import' && !e.user_hidden).length
+        const diff = afterCount - beforeCount
+        if (diff > 0) {
+          setSyncNotification(`${diff} nouveau${diff > 1 ? 'x' : ''} match${diff > 1 ? 's' : ''} détecté${diff > 1 ? 's' : ''}`)
+        }
+      }
+
+      // Update last sync timestamp on profile
+      updateProfile({ ffrLastSyncAt: new Date().toISOString() })
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, profile.ffrCompetitionId, profile.clubCode])
 
   const addEvent = useCallback(
     async (payload: Omit<CalendarEvent, 'id' | 'created_at'>): Promise<CalendarEvent | undefined> => {
@@ -287,5 +338,8 @@ export function useCalendar() {
     manualCount,
     loading,
     error,
+    /** Non-null when auto-sync detected new matches. Dismiss after showing to user. */
+    syncNotification,
+    dismissSyncNotification,
   }
 }

@@ -18,7 +18,8 @@ import {
   TrendingUp,
   Trophy,
   Swords,
-  Sparkles,
+  ChevronDown,
+  Info,
 } from 'lucide-react'
 import { PageHeader } from '../components/PageHeader'
 import { useProfile } from '../hooks/useProfile'
@@ -27,9 +28,8 @@ import { useWeek } from '../hooks/useWeek'
 import { useHistory } from '../hooks/useHistory'
 import { useAuth } from '../hooks/useAuth'
 import { useCalendar } from '../hooks/useCalendar'
-import { useAdaptiveSchedule } from '../hooks/useAdaptiveSchedule'
 import { useACWR, ACWR_ZONE_CONFIG } from '../hooks/useACWR'
-import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
+import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useAthleteTests } from '../hooks/useAthleteTests'
@@ -42,9 +42,7 @@ import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
 import { SeasonTransitionBanner, SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
-import { buildExplanation } from '../services/scheduling/buildExplanation'
 import { ReadinessScoreSkeleton, WeeklySummarySkeleton } from '../components/SkeletonCard'
-import { getTodaySessionIndex } from '../services/ui/getTodaySessionIndex'
 import { getToday } from '../services/ui/debugDateOverride'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import type { CycleWeek, SessionType, SeasonPhase, SeasonMode } from '../types/training'
@@ -54,7 +52,7 @@ import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 // ─── Helpers ────────────────────────────────────────────────
 
 const seasonPhaseLabel: Record<SeasonPhase, { label: string; color: string; bg: string }> = {
-  'off-season': { label: 'Hors-saison', color: 'text-badge-muted-fg', bg: 'bg-badge-muted-bg' },
+  'off-season': { label: 'Inter-saison', color: 'text-badge-muted-fg', bg: 'bg-badge-muted-bg' },
   'pre-season': { label: 'Pré-saison', color: 'text-warn-strong', bg: 'bg-warn-bg' },
   'in-season': { label: 'En saison', color: 'text-ok', bg: 'bg-ok-bg-muted' },
   'playoffs': { label: 'Playoffs', color: 'text-danger', bg: 'bg-danger-bg' },
@@ -99,14 +97,6 @@ const LEVEL_DURATION: Record<string, string> = {
   performance: '~55 min',
 }
 
-// Mapping SeasonPhase (calendrier) → SeasonMode (profil)
-const CALENDAR_TO_SEASON_MODE: Record<SeasonPhase, SeasonMode> = {
-  'in-season':  'in_season',
-  'playoffs':   'in_season',
-  'pre-season': 'pre_season',
-  'off-season': 'off_season',
-}
-
 const SEASON_MODE_LABEL: Record<SeasonMode, string> = {
   in_season:  '⚡ Saison',
   off_season: '🌿 Inter-saison',
@@ -132,7 +122,7 @@ export function HomePage() {
   const { week } = useWeek()
   const { logs } = useHistory()
   const { events, nextMatch, isMatchDay } = useCalendar()
-  const adaptiveSchedule = useAdaptiveSchedule(profile, events)
+
   const acwr = useACWR(logs, events)
   const { isPremium, loading: entitlementsLoading } = useFeatureAccess()
   // Don't show premium-gated sections until entitlements are resolved
@@ -173,27 +163,39 @@ export function HomePage() {
     readinessScore: readinessResult.score,
     userId,
   }), [profile, events, logs, today, fatigue, acwr.hasSufficientData, acwr.zone, week, programFeatureFlags, readinessResult.score, userId])
-  const { surface, blockProgression, weekPresentation } = useWeeklyProgramSurface(surfaceParams)
+  const {
+    surface, blockProgression, snapshot,
+  } = useWeekSnapshot(surfaceParams)
 
   // Season phase derived from the single source of truth (planning context)
   const seasonPhase = cycleToSeasonPhase(surface?.planningContext?.cycle)
 
-  const msSessions = useMemo(
-    () => surface?.motherSession?.sessions ?? [],
-    [surface],
-  )
-  const todaySessionIndex = useMemo(
-    () => getTodaySessionIndex(msSessions, adaptiveSchedule, profile.clubSchedule),
-    [msSessions, adaptiveSchedule, profile.clubSchedule],
-  )
-  const todaySession = todaySessionIndex != null ? msSessions[todaySessionIndex] : null
+  const weekPresentation = snapshot?.presentation ?? null
+
+  // In calendar mode, find today's active (non-skipped) session from the corrected presentation
+  const { todayDatedSession, todaySessionIndex } = useMemo(() => {
+    if (!weekPresentation || weekPresentation.mode !== 'calendar') {
+      return { todayDatedSession: null, todaySessionIndex: null }
+    }
+    const todayDow = new Date(today + 'T12:00:00').getDay()
+    const allDated = weekPresentation.sessions.filter(
+      (s): s is import('../types/scheduling').DatedSession => s.kind === 'dated',
+    )
+    for (let i = 0; i < allDated.length; i++) {
+      if (allDated[i].dayOfWeek === todayDow && allDated[i].completionStatus !== 'skipped') {
+        return { todayDatedSession: allDated[i], todaySessionIndex: i }
+      }
+    }
+    return { todayDatedSession: null, todaySessionIndex: null }
+  }, [weekPresentation, today])
+
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
 
   // ── Premium features: weekly summary ──────────────────────────────────────
   const weeklySummary = useWeeklySummary({
     logs,
     blockLogs,
-    plannedSessionCount: msSessions.length,
+    plannedSessionCount: weekPresentation?.sessions.length ?? 0,
     today,
   })
   const { transition: seasonTransition, dismiss: dismissSeasonTransition } = useSeasonTransitions({
@@ -207,20 +209,11 @@ export function HomePage() {
     userId,
   })
 
-  // Derive summaryLine from buildExplanation (compact, no disclosure on HomePage)
-  const summaryLine = useMemo(() => {
-    if (!surface || !weekPresentation) return null
-    const explanation = buildExplanation({
-      planningContext: surface.planningContext,
-      schedulingMode: surface.schedulingMode,
-      presentation: weekPresentation,
-      corrections: [],
-    })
-    return explanation.summaryLine
-  }, [surface, weekPresentation])
+  // Use summaryLine from the snapshot's explanation (includes corrections)
+  const summaryLine = snapshot?.explanation?.summaryLine ?? null
 
-  const todaySessionTitle = todaySession
-    ? formatTitleFromMotherSessionId(todaySession.session.metadata.id, lang)
+  const todaySessionTitle = todayDatedSession
+    ? formatTitleFromMotherSessionId(todayDatedSession.sessionSlot.session.metadata.id, lang)
     : null
 
   // ── Sequential mode awareness ────────────────────────────────────────────
@@ -244,16 +237,19 @@ export function HomePage() {
   )
 
   const visibleTrainingLevel = getVisibleTrainingLevel(profile.trainingLevel)
-  const sessionDuration = LEVEL_DURATION[profile.trainingLevel ?? 'builder']
+  // Adapt duration/frequency to the actual programme (recovery sessions are shorter)
+  const actualSessionCount = (weekPresentation?.sessions?.length || 0) > 0
+    ? weekPresentation!.sessions.length
+    : (profile.weeklySessions ?? 3)
+  const isRecoveryWeek = surface?.planningContext?.loadManagementOverride === 'recovery'
+  const sessionDuration = isRecoveryWeek ? '~30 min' : LEVEL_DURATION[profile.trainingLevel ?? 'builder']
   const trainingLevelLabel = TRAINING_LEVEL_LABEL[visibleTrainingLevel]
 
-  // Auto-suggestion: if calendar phase differs from profile.seasonMode (Performance only)
-  const currentSeasonMode = profile.seasonMode ?? 'in_season'
-  const suggestedSeasonMode = seasonPhase ? CALENDAR_TO_SEASON_MODE[seasonPhase] : null
-  const showSeasonSuggestion =
-    visibleTrainingLevel === 'performance' &&
-    suggestedSeasonMode !== null &&
-    suggestedSeasonMode !== currentSeasonMode
+  // Use planning context as single source of truth for display season mode
+  const currentSeasonMode: import('../types/training').SeasonMode =
+    seasonPhase === 'off-season' ? 'off_season'
+    : seasonPhase === 'pre-season' ? 'pre_season'
+    : 'in_season'
 
   return (
     <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
@@ -347,7 +343,7 @@ export function HomePage() {
                 ) : (
                   <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
                     <Activity className="w-3.5 h-3.5 text-fg-faint" />
-                    {profile.weeklySessions}x/sem.
+                    {actualSessionCount} séance{actualSessionCount > 1 ? 's' : ''} cette semaine
                   </span>
                 )}
               </div>
@@ -361,7 +357,7 @@ export function HomePage() {
             {/* CTA */}
             <Link
               to={isSequential
-                ? (nextSequentialSession ? `/session/0` : '/week')
+                ? '/week'
                 : (todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week')}
               data-testid="home-cta-primary"
               className="block"
@@ -373,8 +369,8 @@ export function HomePage() {
                 <Play className="w-4 h-4 text-on-brand fill-current" />
                 <span className="font-black text-on-brand text-sm tracking-wide">
                   {isSequential
-                    ? (nextSequentialSession ? 'Commencer la séance' : 'Voir mon programme')
-                    : (todaySession ? 'Commencer la séance' : 'Voir ma semaine')}
+                    ? 'Voir mes séances'
+                    : (todayDatedSession ? 'Commencer la séance' : 'Voir ma semaine')}
                 </span>
               </motion.button>
             </Link>
@@ -409,6 +405,9 @@ export function HomePage() {
                     manualPlayoffs: true,
                   },
                 })
+              } else if (seasonTransition.type === 'pre_season_suggested') {
+                // Navigate to profile where the user can set their return date
+                window.location.href = '/profile#reprise'
               }
               dismissSeasonTransition(seasonTransition.type)
             }}
@@ -470,44 +469,65 @@ export function HomePage() {
               <div className="text-lg font-black tracking-tight text-fg leading-none" data-testid="home-stats-sessions">
                 {isSequential && blockProgression
                   ? `${blockProgression.sessionsCompletedInBlock}/${blockProgression.totalSessionsInBlock}`
-                  : `${sessionsThisWeek}/${profile.weeklySessions}`}
+                  : `${sessionsThisWeek}/${actualSessionCount}`}
               </div>
               <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Séances</div>
             </div>
           </div>
         </section>
 
-        {/* ── Auto-suggestion mode saison (Performance only, quand calendrier diverge) ── */}
-        {showSeasonSuggestion && suggestedSeasonMode && (
-          <section>
-            <div className="flex items-center gap-3 p-4 bg-warn-bg border border-warn-bd rounded-[2rem]">
-              <div className="p-2 rounded-2xl bg-warn-bg-strong text-warn-strong flex-shrink-0">
-                <Sparkles className="w-4 h-4" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-black text-warn">Programme adapté à ta saison</p>
-                <p className="text-[10px] text-warn-strong mt-0.5">
-                  Ton calendrier suggère : {SEASON_MODE_LABEL[suggestedSeasonMode]}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => updateProfile({ seasonMode: suggestedSeasonMode })}
-                className="flex-shrink-0 px-3 py-2 rounded-2xl bg-warn-button text-on-brand text-[10px] font-black uppercase tracking-wide hover:bg-warn-button-hover transition-colors"
-              >
-                Appliquer
-              </button>
-            </div>
-          </section>
-        )}
+        {/* Season suggestion removed — planning context is the single source of truth */}
 
         {/* ── ACWR Widget ── */}
         <section>
           {acwr.hasSufficientData && acwr.zone ? (() => {
             const cfg = ACWR_ZONE_CONFIG[acwr.zone]
-            const pct = Math.min((acwr.acwr ?? 0) / 2, 1) // 0→2 mapped to 0→100%
+            const pct = Math.min((acwr.acwr ?? 0) / 2, 1)
+            const matchPct = acwr.acuteLoad > 0 ? Math.round((acwr.acuteMatchLoad / acwr.acuteLoad) * 100) : 0
+            const trainingPct = 100 - matchPct
+
+            // Build human-readable explanation
+            const explanationParts: string[] = []
+            if (acwr.acuteMatchCount > 0) {
+              explanationParts.push(`${acwr.acuteMatchCount} match${acwr.acuteMatchCount > 1 ? 's' : ''} (${acwr.acuteMatchLoad} UA)`)
+            }
+            if (acwr.acuteTrainingCount > 0) {
+              explanationParts.push(`${acwr.acuteTrainingCount} séance${acwr.acuteTrainingCount > 1 ? 's' : ''} (${acwr.acuteTrainingLoad} UA)`)
+            }
+
+            // Why is the ratio high/low?
+            let ratioExplanation = ''
+            if (acwr.acwr != null) {
+              if (acwr.acwr >= 1.5 && acwr.chronicLoad < 200) {
+                ratioExplanation = 'Ta charge habituelle est basse — un pic ponctuel fait monter le ratio.'
+              } else if (acwr.acwr >= 1.5 && matchPct >= 60) {
+                ratioExplanation = 'Les matchs représentent la majorité de ta charge cette semaine.'
+              } else if (acwr.acwr >= 1.3) {
+                ratioExplanation = 'Tu t\'entraînes plus que d\'habitude ces 7 derniers jours.'
+              } else if (acwr.acwr < 0.8 && acwr.acuteLoad === 0) {
+                ratioExplanation = 'Aucune activité enregistrée cette semaine.'
+              } else if (acwr.acwr < 0.8) {
+                ratioExplanation = 'Volume plus faible que tes semaines précédentes.'
+              }
+            }
+
+            // What the programme does about it
+            let programAction = ''
+            if (acwr.zone === 'critical') {
+              programAction = 'Programme réduit à 1 séance + récupération.'
+            } else if (acwr.zone === 'danger') {
+              programAction = 'Dernière séance remplacée par mobilité.'
+            } else if (acwr.zone === 'caution') {
+              programAction = 'Volume réduit sur la dernière séance.'
+            } else if (acwr.zone === 'optimal') {
+              programAction = 'Programme normal — bon équilibre.'
+            } else if (acwr.zone === 'underload') {
+              programAction = 'Tu peux augmenter le volume progressivement.'
+            }
+
             return (
               <div className={`bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-3 ${cfg.border}`}>
+                {/* Header + badge */}
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-fg">Charge d'entraînement</h3>
                   <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${cfg.bg} ${cfg.color}`}>
@@ -515,12 +535,10 @@ export function HomePage() {
                   </span>
                 </div>
 
-                {/* Bar */}
+                {/* Gauge bar */}
                 <div className="relative h-2.5 bg-layer-10 rounded-full overflow-hidden">
-                  {/* Optimal zone highlight */}
                   <div className="absolute top-0 bottom-0 bg-ok-strip rounded-full"
                     style={{ left: '40%', width: '25%' }} />
-                  {/* ACWR indicator */}
                   <div
                     className={`absolute top-0 bottom-0 rounded-full transition-all ${
                       acwr.zone === 'optimal' ? 'bg-meter-optimal'
@@ -532,20 +550,67 @@ export function HomePage() {
                   />
                 </div>
 
-                <div className="flex items-end justify-between">
-                  <div>
-                    <div className={`text-2xl font-black ${cfg.color}`}>
-                      {acwr.acwr?.toFixed(2)}
-                    </div>
-                    <div className="text-[10px] text-fg-muted">ACWR cette semaine</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-bold text-fg-emphasis">{acwr.acuteLoad} UA</div>
-                    <div className="text-[10px] text-fg-muted">charge aiguë</div>
-                  </div>
+                {/* Explanation + programme action (always visible) */}
+                {ratioExplanation && (
+                  <p className="text-xs text-fg-soft leading-relaxed">{ratioExplanation}</p>
+                )}
+                <div className={`rounded-xl px-3 py-2 ${cfg.bg}`}>
+                  <p className={`text-[11px] font-bold ${cfg.color}`}>{programAction}</p>
                 </div>
 
-                <p className={`text-xs font-medium ${cfg.color}`}>{cfg.message}</p>
+                {/* Collapsible details */}
+                <details className="group">
+                  <summary className="flex items-center gap-1.5 cursor-pointer list-none text-[10px] font-bold text-fg-muted hover:text-fg-soft transition-colors [&::-webkit-details-marker]:hidden">
+                    <ChevronDown className="w-3 h-3 transition-transform group-open:rotate-180" />
+                    Comprendre ma charge
+                  </summary>
+                  <div className="mt-3 space-y-3 pt-3 border-t border-border-app">
+                    {/* Source breakdown */}
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider">7 derniers jours — {acwr.acuteLoad} UA</p>
+                      {acwr.acuteLoad > 0 && (
+                        <div className="flex h-2 rounded-full overflow-hidden">
+                          {acwr.acuteMatchLoad > 0 && (
+                            <div className="bg-danger-bg-cta h-full" style={{ width: `${matchPct}%` }} />
+                          )}
+                          {acwr.acuteTrainingLoad > 0 && (
+                            <div className="bg-brand h-full" style={{ width: `${trainingPct}%` }} />
+                          )}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-4 text-[10px] text-fg-muted">
+                        {acwr.acuteMatchCount > 0 && (
+                          <span className="flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full bg-danger-bg-cta inline-block" />
+                            {explanationParts[0]}
+                          </span>
+                        )}
+                        {acwr.acuteTrainingCount > 0 && (
+                          <span className="flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full bg-brand inline-block" />
+                            {explanationParts[acwr.acuteMatchCount > 0 ? 1 : 0]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Chronic context */}
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="text-fg-muted">Charge habituelle</span>
+                      <span className="font-bold text-fg-soft">{Math.round(acwr.chronicLoad)} UA/sem</span>
+                    </div>
+
+                    {/* RPE explainer */}
+                    <div className="flex gap-2 p-2.5 rounded-xl bg-layer-3">
+                      <Info className="w-3.5 h-3.5 text-fg-faint flex-shrink-0 mt-0.5" />
+                      <div className="text-[10px] text-fg-muted leading-relaxed">
+                        <p className="font-bold text-fg-soft mb-1">Comment ça marche ?</p>
+                        <p>Après chaque séance ou match, tu notes ton <span className="font-bold text-fg-soft">effort ressenti (RPE)</span> de 1 (facile) à 10 (maximal).</p>
+                        <p className="mt-1">Ta charge = RPE x durée. On compare ta semaine en cours à ta moyenne des 4 dernières semaines pour détecter les pics de charge.</p>
+                      </div>
+                    </div>
+                  </div>
+                </details>
               </div>
             )
           })() : (
@@ -582,28 +647,6 @@ export function HomePage() {
             </div>
           )}
         </section>
-
-        {/* ── Premium: Qualitative charge label (T2.2) ── */}
-        {isPremium && acwr.hasSufficientData && acwr.acwr != null && (() => {
-          const val = acwr.acwr
-          const label = val > 1.5 ? 'Danger — deload fortement recommandé'
-            : val > 1.3 ? 'Charge élevée — envisage un allègement'
-            : val > 1.1 ? 'Semaine chargée — reste attentif'
-            : val >= 0.8 ? 'Charge maîtrisée — continue'
-            : 'Semaine légère — tu peux pousser'
-          const color = val > 1.5 ? 'text-critical bg-critical-bg border border-critical-bd'
-            : val > 1.3 ? 'text-tone-orange bg-tone-orange-bg border border-tone-orange-bd'
-            : val > 1.1 ? 'text-warn bg-warn-bg border border-warn-bd'
-            : val >= 0.8 ? 'text-ok bg-ok-bg-muted border border-ok-bd'
-            : 'text-info bg-info-bg border border-info-bd'
-          return (
-            <section>
-              <div className={`rounded-2xl border px-4 py-3 ${color}`}>
-                <p className="text-xs font-bold">{label}</p>
-              </div>
-            </section>
-          )
-        })()}
 
         {/* ── Weekly Summary ── */}
         <section>
@@ -715,7 +758,7 @@ export function HomePage() {
               </Link>
             )}
 
-            {!nextMatch && (
+            {!nextMatch && currentSeasonMode !== 'off_season' && (
               <Link to="/calendar">
                 <div className="flex items-center gap-3 text-fg-muted hover:text-brand transition-colors">
                   <Calendar className="w-4 h-4" />

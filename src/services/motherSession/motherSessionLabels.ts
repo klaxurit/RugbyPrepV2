@@ -47,7 +47,7 @@ export function msLabel(key: string, lang: AppLang): string {
 
 const CYCLE_LABELS: Record<string, Record<AppLang, string>> = {
   in_season:  { fr: 'En saison',    en: 'In-season' },
-  off_season: { fr: 'Hors-saison',  en: 'Off-season' },
+  off_season: { fr: 'Inter-saison',  en: 'Off-season' },
   pre_season: { fr: 'Pré-saison',   en: 'Pre-season' },
   playoffs:   { fr: 'Playoffs',     en: 'Playoffs' },
 }

@@ -259,7 +259,7 @@ export const sessionRecipesV1: Record<SessionRecipeId, SessionRecipe> = {
 
   COND_OFF_V1: {
     id: 'COND_OFF_V1',
-    title: 'Conditionnement Hors-saison',
+    title: 'Conditionnement Inter-saison',
     sequence: [
       { intent: 'warmup', required: false },
       { intent: 'activation', required: true },

@@ -91,7 +91,7 @@ function preSeasonPhaseFromWeek(weekNumber: number): 1 | 2 | 3 {
 }
 
 function preSeasonWeekLabel(weekNumber: number, phase: 1 | 2 | 3): string {
-  return `Pre-season Phase ${phase} - S${weekNumber}`
+  return `Pré-saison Phase ${phase} - S${weekNumber}`
 }
 
 function collectMatchDates(events: CalendarMatchInput[]): string[] {
@@ -149,7 +149,7 @@ export function detectSeasonPhaseInfo(
   if (!firstMatch) {
     return {
       cycle: 'off_season',
-      weekLabel: 'Off-season',
+      weekLabel: 'Inter-saison',
       isDeloadWeek: false,
       ...base,
     }
@@ -173,7 +173,7 @@ export function detectSeasonPhaseInfo(
   if (todayWeekMonday < preSeasonStartMonday) {
     return {
       cycle: 'off_season',
-      weekLabel: 'Off-season',
+      weekLabel: 'Inter-saison',
       isDeloadWeek: false,
       ...base,
     }
@@ -202,7 +202,7 @@ export function detectSeasonPhaseInfo(
   return {
     cycle: 'in_season',
     weekNumber: wIn,
-    weekLabel: `In-season - W${wIn}`,
+    weekLabel: `En saison - S${wIn}`,
     isDeloadWeek: false,
     ...base,
   }

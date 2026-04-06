@@ -26,6 +26,8 @@ export interface ResolveSchedulingModeParams {
     onboardingCycleHint?: AnnualCycle
   }
   onboardingCycleHint?: AnnualCycle
+  /** If the user has configured club training days, calendar mode is preferred. */
+  hasClubDays?: boolean
 }
 
 // ─── Week Presentation (used by S4/S5) ─────────────────────────────
@@ -104,6 +106,8 @@ export interface WeekSnapshot {
   explanation?: WeekExplanation
   /** Schema version for migration. Absent in pre-versioned snapshots. */
   schemaVersion?: number
+  /** Hash of profile fields that affect the programme. Used to invalidate cache on profile change. */
+  profileHash?: string
 }
 
 export interface PendingUpdate {

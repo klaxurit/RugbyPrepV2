@@ -287,7 +287,7 @@ describe('buildExplanation', () => {
     })
 
     expect(result.summaryLine).toContain('3 séances')
-    expect(result.summaryLine).toContain('Force')
+    expect(result.summaryLine).toContain('Hypertrophie')
     expect(result.summaryLine).toContain('rythme')
     assertNoJargon(result)
   })

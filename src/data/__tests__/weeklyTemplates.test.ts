@@ -203,7 +203,7 @@ describe('getWeeklyTemplate', () => {
     expect(slots[2].dayPreference).toBe('pre_match')
   })
 
-  it('off-season Recovery 2x -> Recovery A + Recovery B + companion zone 2', () => {
+  it('off-season Recovery 2x -> Recovery A + Recovery B + companion recommendations', () => {
     const r = getWeeklyTemplate({
       cycle: 'off_season',
       offSeasonPhase: 1,
@@ -215,7 +215,8 @@ describe('getWeeklyTemplate', () => {
       'FULL_OFFSEASON_RECOVERY_B_V1',
     ])
     expect(r.warnings).toHaveLength(0)
-    expect(r.companionRecommendations?.join(' ')).toMatch(/zone 2/i)
+    expect(r.companionRecommendations?.length).toBeGreaterThan(0)
+    expect(r.companionRecommendations?.join(' ')).toMatch(/récupération|activité légère/i)
     expect(r.requestedFrequency).toBe(2)
     expect(r.effectiveFrequency).toBe(2)
   })
@@ -246,7 +247,7 @@ describe('getWeeklyTemplate', () => {
       'FULL_OFFSEASON_HYPERTROPHY_V1',
     ])
     expect(r.effectiveFrequency).toBe(3)
-    expect(r.companionRecommendations?.join(' ')).toMatch(/aérobie|tempo/i)
+    expect(r.companionRecommendations?.join(' ')).toMatch(/cardio|footing/i)
   })
 
   it('off-season Force-Bridge 3x → 3 sessions (Lower + Upper + Full)', () => {

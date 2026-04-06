@@ -3,7 +3,7 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useACWR } from '../useACWR'
-import type { SessionLog } from '../../types/training'
+import type { CalendarEvent, SessionLog } from '../../types/training'
 
 function makeLog(
   dateISO: string,
@@ -76,5 +76,22 @@ describe('useACWR — ACTIVE_RECOVERY exclusion', () => {
 
     expect(result.current.acuteLoad).toBe(0)
     expect(result.current.chronicLoad).toBe(0)
+  })
+
+  it('ignores hidden matches when converting calendar load into ACWR', () => {
+    const trainingLog = makeLog('2026-04-02T10:00:00', 'FULL', 7, 60) // 420 AU
+    const hiddenMatch: CalendarEvent = {
+      id: 'match-hidden',
+      date: '2026-04-03',
+      type: 'match',
+      source: 'ffr_import',
+      rpe: 8,
+      duration_min: 80,
+      user_hidden: true,
+    }
+
+    const { result } = renderHook(() => useACWR([trainingLog], [hiddenMatch]))
+
+    expect(result.current.acuteLoad).toBe(420)
   })
 })

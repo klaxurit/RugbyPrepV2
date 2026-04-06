@@ -104,8 +104,17 @@ function clampWeeklyFrequency(
 
 function resolveFatigueLevel(
   fatigue: 'OK' | 'FATIGUE',
-  acwrZone: AcwrZoneInput
+  acwrZone: AcwrZoneInput,
+  options?: { seasonEnded?: boolean }
 ): 'normal' | 'high' | 'very_high' {
+  // When the season is explicitly over, ACWR spikes from recent match loads
+  // are expected and transient — don't lock the off-season programme into
+  // recovery mode. Cap at 'high' so the engine still reduces volume but
+  // doesn't replace the entire week with recovery sessions.
+  if (options?.seasonEnded) {
+    if (fatigue === 'FATIGUE') return 'high'
+    return 'normal'
+  }
   if (acwrZone === 'critical' || acwrZone === 'danger') return 'very_high'
   if (fatigue === 'FATIGUE' || acwrZone === 'caution') return 'high'
   return 'normal'
@@ -228,10 +237,12 @@ export function buildAthletePlanningInputs(
 ): BuildAthletePlanningInputsResult {
   const warnings: string[] = []
   const { profile, events, logs, today, fatigue, acwrZone, athleteIdentity, readinessScore, jumpTrend } = params
+  const visibleEvents = events.filter((event) => event.user_hidden !== true)
 
   const resolvedPositionGroup = resolvePositionGroup(profile, warnings)
   const weeklyFrequency = clampWeeklyFrequency(profile, warnings)
-  const fatigueLevel = resolveFatigueLevel(fatigue, acwrZone)
+  const seasonEnded = !!profile.planningAnchors?.seasonEndedAt
+  const fatigueLevel = resolveFatigueLevel(fatigue, acwrZone, { seasonEnded })
 
   const completedSessionsLast7d = countCompletedInRollingDays(logs, today, 7)
   const completedSessionsLast28d = countCompletedInRollingDays(logs, today, 28)
@@ -250,8 +261,8 @@ export function buildAthletePlanningInputs(
 
   const identity = buildIdentity(profile, athleteIdentity)
 
-  const hasMatchInCalendar = events.some((e) => e.type === 'match')
-  const hasFutureMatch = events.some((e) => e.type === 'match' && e.date >= today)
+  const hasMatchInCalendar = visibleEvents.some((e) => e.type === 'match')
+  const hasFutureMatch = visibleEvents.some((e) => e.type === 'match' && e.date >= today)
 
   // Current ISO week boundaries (Mon–Sun) — matches here are visible in the timeline
   const todayD = new Date(`${today}T12:00:00`)
@@ -262,14 +273,14 @@ export function buildAthletePlanningInputs(
   weekSun.setDate(weekSun.getDate() + 6)
   const weekMonIso = weekMon.toISOString().slice(0, 10)
   const weekSunIso = weekSun.toISOString().slice(0, 10)
-  const hasMatchThisWeek = events.some(
+  const hasMatchThisWeek = visibleEvents.some(
     (e) => e.type === 'match' && e.date >= weekMonIso && e.date <= weekSunIso,
   )
 
   const planningAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar, hasFutureMatch, hasMatchThisWeek)
 
   const inputs: AthletePlanningInputs = {
-    events: events.map((e) => ({ date: e.date, type: e.type })),
+    events: visibleEvents.map((e) => ({ date: e.date, type: e.type })),
     today,
     weeklyFrequency,
     positionGroup: resolvedPositionGroup,

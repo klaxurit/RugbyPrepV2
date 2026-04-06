@@ -79,6 +79,17 @@ function nextCorrectionId(): string {
   return `c-${Date.now()}-${++correctionCounter}`
 }
 
+function computeProfileHash(profile: import('../types/training').UserProfile): string {
+  return [
+    profile.weeklySessions,
+    profile.trainingLevel,
+    profile.seasonMode,
+    profile.planningAnchors?.seasonEndedAt ?? '',
+    profile.planningAnchors?.returnToTeamTrainingAt ?? '',
+    (profile.injuries ?? []).join(','),
+  ].join('|')
+}
+
 // ── Hook ────────────────────────────────────────────────────────────
 
 export function useWeekSnapshot(
@@ -110,16 +121,24 @@ export function useWeekSnapshot(
     const currentWeekId = toISOWeekId(params.today)
     const snapshotStorage = params.snapshotStorage
 
-    // Dedup: don't re-resolve if we already resolved this weekId for this identity
-    const resolvedKey = `${userId ?? 'anon'}:${currentWeekId}`
+    // Dedup: don't re-resolve if we already resolved this weekId for this identity + profile
+    const profileHash = computeProfileHash(params.profile)
+    const resolvedKey = `${userId ?? 'anon'}:${currentWeekId}:${profileHash}`
     if (resolvedWeekRef.current === resolvedKey && snapshot?.weekId === currentWeekId) {
       return
     }
 
-    // Try to restore from localStorage if userId is available
+    // Try to restore from localStorage if userId is available.
+    // Skip restore if the profile has changed since the snapshot was saved
+    // (e.g. user changed weeklySessions, trainingLevel, injuries in /profile).
     if (userId) {
       const persisted = loadSnapshot(userId, params.today, snapshotStorage)
-      if (persisted && persisted.weekId === currentWeekId) {
+      if (
+        persisted &&
+        persisted.weekId === currentWeekId &&
+        // profileHash absent in old snapshots → always re-resolve (safe migration)
+        persisted.profileHash === profileHash
+      ) {
         // Migrate old snapshots to current schema (explanation, clubDays, schemaVersion)
         const profileClubDays = (params.profile.clubSchedule?.clubDays ?? []).map(
           (d: { day: DayOfWeek }) => d.day,
@@ -148,16 +167,19 @@ export function useWeekSnapshot(
       )
     }
 
-    // Create fresh snapshot (pure)
-    const fresh = resolveWeek({
-      surface: upstream.surface,
-      events: params.events,
-      today: params.today,
-      clubSchedule: params.profile.clubSchedule,
-      scSchedule: params.profile.scSchedule,
-      previousSnapshot: snapshot,
-      blockProgression,
-    })
+    // Create fresh snapshot (pure) and stamp with profileHash for cache invalidation
+    const fresh = {
+      ...resolveWeek({
+        surface: upstream.surface,
+        events: params.events,
+        today: params.today,
+        clubSchedule: params.profile.clubSchedule,
+        scSchedule: params.profile.scSchedule,
+        previousSnapshot: snapshot,
+        blockProgression,
+      }),
+      profileHash,
+    }
 
     // Persist
     if (userId) {
@@ -449,6 +471,7 @@ export function useWeekSnapshot(
       : [...snap.corrections, correction]
     const withCorrection: WeekSnapshot = {
       ...fresh,
+      profileHash: computeProfileHash(p.profile),
       corrections: finalCorrections,
       explanation: buildExplanation({
         planningContext: freshSurface.planningContext,

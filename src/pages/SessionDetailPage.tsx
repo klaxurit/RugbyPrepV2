@@ -41,9 +41,13 @@ import { getToday } from '../services/ui/debugDateOverride'
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
   if (lang !== 'fr') return label
   return label
-    .replace(/\boff_season\b/gi, 'Hors-saison')
+    .replace(/\bOff-season\b/gi, 'Inter-saison')
+    .replace(/\boff_season\b/gi, 'Inter-saison')
+    .replace(/\bPre-season\b/gi, 'Pré-saison')
     .replace(/\bpre_season\b/gi, 'Pré-saison')
+    .replace(/\bIn-season\b/gi, 'En saison')
     .replace(/\bin_season\b/gi, 'En saison')
+    .replace(/ - W(\d)/, ' - S$1')
 }
 
 export function SessionDetailPage() {
@@ -57,7 +61,7 @@ export function SessionDetailPage() {
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue, setFatigue } = useFatigue()
   const { addLog, logs } = useHistory()
-  const { events } = useCalendar()
+  const { visibleEvents } = useCalendar()
   const navigate = useNavigate()
   const { addBlockLog, getLastEntryForExercise, getBestForExercise } = useBlockLogs()
   const { isPremium } = useFeatureAccess()
@@ -71,16 +75,16 @@ export function SessionDetailPage() {
 
   useEffect(() => { posthog.capture('session_viewed', { index }) }, [index])
 
-  const { acwr, zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, events)
+  const { acwr, zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, visibleEvents)
   const { ignoreAcwrOverload } = useAcwrOverride()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
   const nextMatchDate = useMemo(() => {
-    const fm = events.filter((e) => e.type === 'match' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
+    const fm = visibleEvents.filter((e) => e.type === 'match' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
     return fm.length > 0 ? fm[0].date : null
-  }, [events, today])
+  }, [visibleEvents, today])
   const readinessResult = useReadinessScore({
     acwrZone: acwrHasData ? acwrZone : null,
     fatigue,
@@ -90,7 +94,7 @@ export function SessionDetailPage() {
   })
   const surfaceParams = useMemo(() => ({
     profile,
-    events,
+    events: visibleEvents,
     logs,
     today,
     fatigue,
@@ -102,7 +106,7 @@ export function SessionDetailPage() {
     featureFlags: programFeatureFlags,
     readinessScore: readinessResult.score,
     userId,
-  }), [profile, events, logs, today, fatigue, acwrHasData, acwrZone, week, lastNonDeloadWeek, ignoreAcwrOverload, programFeatureFlags, readinessResult.score, userId])
+  }), [profile, visibleEvents, logs, today, fatigue, acwrHasData, acwrZone, week, lastNonDeloadWeek, ignoreAcwrOverload, programFeatureFlags, readinessResult.score, userId])
   const { surface: rawSurface } = useWeeklyProgramSurface(surfaceParams)
   // F2: Use snapshot-owned sessions so corrections (fatigue, skip, reschedule) are respected
   const { surface: snapshotSurface, snapshot } = useWeekSnapshot(surfaceParams)

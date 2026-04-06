@@ -2111,7 +2111,7 @@
   },
   {
     "exerciseId": "lower_rehab__hamstring_isometric__heel_dig",
-    "nameFr": "Isometrie ischios talon au sol",
+    "nameFr": "Isométrie ischios talon au sol",
     "metricType": "seconds",
     "equipment": [
       "none"
@@ -2195,7 +2195,7 @@
   },
   {
     "id": "hinge__good_morning__bodyweight",
-    "name": "Bon matin poids du corps",
+    "name": "Good Morning poids du corps",
     "pattern": "hinge",
     "equipment": [
       "none"
@@ -2206,7 +2206,7 @@
     "level": "beginner",
     "notes": "Mains derrière la tête, charnière à la hanche uniquement. Dos neutre. Ischios tendus = bonne profondeur. Stop si dos arrondit.",
     "exerciseId": "hinge__good_morning__bodyweight",
-    "nameFr": "Bon matin poids du corps",
+    "nameFr": "Good Morning poids du corps",
     "metricType": "reps",
     "tags": [
       "lower",
@@ -2239,7 +2239,7 @@
   },
   {
     "id": "pull_horizontal__inverted_row__knees_bent",
-    "name": "Traction inversée genoux fléchis",
+    "name": "Rowing inversé (pompe australienne)",
     "pattern": "pull_horizontal",
     "equipment": [
       "none"
@@ -2251,7 +2251,7 @@
     "level": "beginner",
     "notes": "Sous une table solide (ou barre basse). Genoux fléchis à 90° pour réduire la charge. Tirer la poitrine vers la barre/table. Corps rigide.",
     "exerciseId": "pull_horizontal__inverted_row__knees_bent",
-    "nameFr": "Traction inversée genoux fléchis",
+    "nameFr": "Rowing inversé (pompe australienne)",
     "metricType": "reps",
     "tags": [
       "upper",
@@ -2654,7 +2654,7 @@
     "level": "beginner",
     "notes": "Genou arriere au sol contre un mur. Etire le flechisseur de hanche.",
     "exerciseId": "mobility__hip_couch_stretch",
-    "nameFr": "Couch stretch (flechisseur de hanche)",
+    "nameFr": "Couch Stretch (fléchisseur de hanche)",
     "metricType": "seconds",
     "tags": [
       "mobility",
@@ -2734,7 +2734,7 @@
     "level": "beginner",
     "notes": "Fente avant, bras vers le ciel, rotation thoracique. Mobilite totale en un seul mouvement.",
     "exerciseId": "mobility__worlds_greatest_stretch",
-    "nameFr": "Grand etirement mondial",
+    "nameFr": "World's Greatest Stretch",
     "metricType": "reps",
     "tags": [
       "mobility",
@@ -3895,7 +3895,7 @@
     "level": "beginner",
     "notes": "Lancer de med ball allongé sur le dos.",
     "exerciseId": "power__medball_throw__supine",
-    "nameFr": "Lancer med ball allongé",
+    "nameFr": "Lancer médecine ball allongé",
     "metricType": "reps",
     "tags": ["upper", "power"],
     "defaultNotes": "Lancer explosif, relâche total."

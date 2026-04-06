@@ -5512,7 +5512,7 @@
   },
   {
     "blockId": "BLK_STR_HP_A_01",
-    "name": "Push-Pull Horizontal — Pompe + Traction inversée",
+    "name": "Push-Pull Horizontal — Pompe + Rowing inversé",
     "intent": "hypertrophy",
     "tags": [
       "starter",
@@ -5583,7 +5583,7 @@
         "rer": 5
       }
     ],
-    "coachingNotes": "Pompes puis traction inversée sans repos entre les 2. Repos 90s après la paire. Progression : 12 pompes parfaites → passer au bloc avec élastique."
+    "coachingNotes": "Pompes puis rowing inversé sans repos entre les 2. Repos 90s après la paire. Progression : 12 pompes parfaites → passer au bloc avec élastique."
   },
   {
     "blockId": "BLK_STR_HP_A_02",
@@ -8215,7 +8215,7 @@
   },
   {
     "blockId": "BLK_STR_HP_A_05",
-    "name": "Push-Pull BW — Pompe genoux + Traction inversée",
+    "name": "Push-Pull BW — Pompe genoux + Rowing inversé",
     "intent": "hypertrophy",
     "tags": [
       "starter",
@@ -8286,7 +8286,7 @@
         "rer": 5
       }
     ],
-    "coachingNotes": "Variante BW upper starter : pompes genoux (plus facile que standard) + traction inversée. Pour débutants sans matériel qui ne maîtrisent pas les pompes complètes."
+    "coachingNotes": "Variante BW upper starter : pompes genoux (plus facile que standard) + rowing inversé. Pour débutants sans matériel qui ne maîtrisent pas les pompes complètes."
   },
   {
     "blockId": "BLK_FORCE_LOWER_BACK_SQUAT_01",

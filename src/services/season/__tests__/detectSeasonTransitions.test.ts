@@ -5,7 +5,7 @@ import type { AnnualPlanningContext } from '../../../types/annualPlanning'
 const baseCtx: AnnualPlanningContext = {
   cycle: 'in_season',
   weekNumber: 10,
-  weekLabel: 'In-season - W10 (2/4)',
+  weekLabel: 'En saison - S10 (2/4)',
   isDeloadWeek: false,
   mesocycleWeek: 2,
   mesocycleBlock: 3,
@@ -131,11 +131,29 @@ describe('detectSeasonTransitions', () => {
 
   // ── Off-season / pre-season: no transitions ────────────────
 
-  it('returns null for off-season cycle', () => {
+  it('returns null for early off-season (S3, before July)', () => {
     const r = detectSeasonTransitions({
-      planningContext: { ...baseCtx, cycle: 'off_season' },
-      today: '2026-06-15',
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 3 },
+      today: '2026-05-01',
     })
     expect(r).toBeNull()
+  })
+
+  it('suggests pre-season when off-season week >= 8', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 8 },
+      today: '2026-06-01',
+    })
+    expect(r).not.toBeNull()
+    expect(r!.type).toBe('pre_season_suggested')
+  })
+
+  it('suggests pre-season when July+ regardless of week', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 4 },
+      today: '2026-07-01',
+    })
+    expect(r).not.toBeNull()
+    expect(r!.type).toBe('pre_season_suggested')
   })
 })

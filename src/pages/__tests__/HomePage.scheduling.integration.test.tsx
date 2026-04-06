@@ -84,11 +84,14 @@ function makeSurface(
   }
 }
 
+const noop = () => {}
+
+/** Wraps a surface into the full useWeekSnapshot result shape. */
 function hookResult(surface: WeeklyProgramSurfaceResult) {
   const isSequential = surface.schedulingMode === 'sequential'
   const sessions = surface.motherSession?.sessions ?? []
 
-  const weekPresentation: WeekPresentation = isSequential
+  const presentation: WeekPresentation = isSequential
     ? {
         mode: 'sequential',
         sessions: sessions.map((slot, i): SequentialSession => ({
@@ -112,18 +115,47 @@ function hookResult(surface: WeeklyProgramSurfaceResult) {
         corrections: [],
       }
 
+  const blockProgression = isSequential ? DEFAULT_BLOCK_PROGRESSION : undefined
+
   return {
+    snapshot: {
+      weekId: 'W2026-15',
+      resolvedAt: '2026-04-06T00:00:00Z',
+      eventsFingerprint: '0',
+      globalEventsHash: '0',
+      surface,
+      presentation,
+      corrections: [],
+      pendingUpdates: [],
+      confirmationRequired: [],
+      blockProgression,
+      explanation: {
+        summaryLine: '0 séance prévue cette semaine',
+        detailLines: [],
+        corrections: [],
+      },
+      schemaVersion: 1,
+    },
     isReady: true,
+    hasPendingUpdates: false,
+    hasConfirmationRequired: false,
     surface,
-    schedulingMode: surface.schedulingMode,
-    weekPresentation,
-    blockProgression: isSequential ? DEFAULT_BLOCK_PROGRESSION : undefined,
+    blockProgression,
+    toastMessage: null,
+    clearToast: noop,
+    rescheduleSession: noop,
+    skipSession: noop,
+    markDayUnavailable: noop,
+    undoCorrection: noop,
+    setFatigue: noop,
+    addMatch: noop,
+    confirmPendingUpdate: noop,
   }
 }
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
-const useWeeklyProgramSurfaceMock = vi.fn()
+const useWeekSnapshotMock = vi.fn()
 const useProfileMock = vi.fn()
 
 vi.mock('../../services/analytics/posthog', () => ({
@@ -171,8 +203,8 @@ vi.mock('../../hooks/useProgramFeatureFlags', () => ({
   useProgramFeatureFlags: () => ({ featureFlags: {}, rollout: { enabled: true } }),
 }))
 
-vi.mock('../../hooks/useWeeklyProgramSurface', () => ({
-  useWeeklyProgramSurface: (params: unknown) => useWeeklyProgramSurfaceMock(params),
+vi.mock('../../hooks/useWeekSnapshot', () => ({
+  useWeekSnapshot: (params: unknown) => useWeekSnapshotMock(params),
 }))
 
 vi.mock('../../hooks/useFeatureAccess', () => ({
@@ -260,28 +292,28 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
   // ── Calendar mode ──
 
   it('calendar mode: shows "Pas de séance aujourd\'hui" when no today session', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByText("Pas de séance aujourd'hui")).toBeInTheDocument()
   })
 
   it('calendar mode: week badge shows cycle week (W1)', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('calendar')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-stats-cycle')).toHaveTextContent('W1')
   })
 
   it('calendar mode: sessions stat shows weekly count', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('calendar')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-stats-sessions')).toHaveTextContent('0/3')
   })
 
   it('calendar mode: CTA says "Voir ma semaine" when no today session', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('calendar')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-cta-primary')).toHaveTextContent('Voir ma semaine')
@@ -290,45 +322,45 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
   // ── Sequential mode ──
 
   it('sequential mode: shows "Ta prochaine séance" framing', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('sequential')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-hero-label')).toHaveTextContent('Ta prochaine séance')
   })
 
   it('sequential mode: shows block label badge instead of cycle week', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('sequential')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByText('Inter-saison · Force')).toBeInTheDocument()
   })
 
   it('sequential mode: shows "Séance N sur M" in hero subtitle', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('sequential')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-hero-sequence')).toHaveTextContent('Séance 1 sur 1')
   })
 
   it('sequential mode: stats show block progression counts', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('sequential')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-stats-sessions')).toHaveTextContent('5/12')
     expect(screen.getByTestId('home-stats-cycle')).toHaveTextContent('B2')
   })
 
-  it('sequential mode: CTA says "Commencer la séance" when session available', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('sequential')))
+  it('sequential mode: CTA says "Voir mes séances" (always routes to /week)', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    expect(screen.getByTestId('home-cta-primary')).toHaveTextContent('Commencer la séance')
+    expect(screen.getByTestId('home-cta-primary')).toHaveTextContent('Voir mes séances')
   })
 
   // ── No internal jargon ──
 
   it('no internal engine terminology appears in UI copy', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('sequential')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     const text = document.body.textContent ?? ''
@@ -341,14 +373,14 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
   // ── S4 Slice 3 — summaryLine + transitions ──
 
   it('renders summaryLine in hero card', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-summary-line')).toBeInTheDocument()
   })
 
   it('does NOT render PlanningContextCard', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.queryByTestId('planning-context-card')).toBeNull()
@@ -356,7 +388,7 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
   })
 
   it('renders scheduling transition banner when present', () => {
-    useWeeklyProgramSurfaceMock.mockReturnValue(hookResult(makeSurface('calendar')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
     mockSchedulingTransition.mockReturnValue({
       transition: {
         type: 'calendar_mode_activated',

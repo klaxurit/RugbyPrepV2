@@ -33,9 +33,13 @@ import { getToday } from '../services/ui/debugDateOverride'
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
   if (lang !== 'fr') return label
   return label
-    .replace(/\boff_season\b/gi, 'Hors-saison')
+    .replace(/\bOff-season\b/gi, 'Inter-saison')
+    .replace(/\boff_season\b/gi, 'Inter-saison')
+    .replace(/\bPre-season\b/gi, 'Pré-saison')
     .replace(/\bpre_season\b/gi, 'Pré-saison')
+    .replace(/\bIn-season\b/gi, 'En saison')
     .replace(/\bin_season\b/gi, 'En saison')
+    .replace(/ - W(\d)/, ' - S$1')
 }
 
 export function WeekPage() {
@@ -46,10 +50,10 @@ export function WeekPage() {
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue, setFatigue } = useFatigue()
   const { logs, addLog } = useHistory()
-  const { events, addEvent } = useCalendar()
+  const { visibleEvents, addEvent, syncNotification, dismissSyncNotification } = useCalendar()
   const navigate = useNavigate()
 
-  const acwrResult = useACWR(logs, events)
+  const acwrResult = useACWR(logs, visibleEvents)
   const { isPremium: weekIsPremium } = useFeatureAccess()
   const { canShowUpsell: weekCanShowUpsell } = useUpsellTiming()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
@@ -63,17 +67,17 @@ export function WeekPage() {
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
   const yesterdayStr = yesterday.toISOString().split('T')[0]
-  const unmatchedYesterdayMatch = events.find(
+  const unmatchedYesterdayMatch = visibleEvents.find(
     (e) => e.type === 'match' && e.date === yesterdayStr && !e.rpe
   ) ?? null
-  const isRecoveryDay = events.some((e) => e.type === 'match' && e.date === yesterdayStr)
+  const isRecoveryDay = visibleEvents.some((e) => e.type === 'match' && e.date === yesterdayStr)
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
   const nextMatchDate = useMemo(() => {
-    const fm = events.filter((e) => e.type === 'match' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
+    const fm = visibleEvents.filter((e) => e.type === 'match' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
     return fm.length > 0 ? fm[0].date : null
-  }, [events, today])
+  }, [visibleEvents, today])
   const readinessResult = useReadinessScore({
     acwrZone: acwrResult.hasSufficientData ? acwrResult.zone : null,
     fatigue,
@@ -83,7 +87,7 @@ export function WeekPage() {
   })
   const surfaceParams = useMemo(() => ({
     profile,
-    events,
+    events: visibleEvents,
     logs,
     today,
     fatigue,
@@ -95,7 +99,7 @@ export function WeekPage() {
     featureFlags: programFeatureFlags,
     readinessScore: readinessResult.score,
     userId,
-  }), [profile, events, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId])
+  }), [profile, visibleEvents, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId])
   const {
     surface, blockProgression, snapshot,
     skipSession, rescheduleSession, markDayUnavailable,
@@ -200,17 +204,22 @@ export function WeekPage() {
     if (!arGlobalOk) return [] as import('../types/scheduling').DayOfWeek[]
     const sessionDays = new Set(calendarSessions.map((s) => s.dayOfWeek))
     const clubDaySet = new Set(weekPresentation?.clubDays ?? [])
-    // Build set of DOWs that have a match event this week
     const matchDowSet = new Set<number>()
     for (const e of weekPresentation?.matchEvents ?? []) {
       const d = new Date(`${e.date}T12:00:00`)
       matchDowSet.add(d.getDay())
     }
     const unavailSet = new Set(weekPresentation?.unavailableDays ?? [])
+
+    // KB recovery.md §3.4: active recovery = lendemain d'un effort intense.
+    // One AR session per effort — only J+1, not J+2 (avoids back-to-back AR days).
+    const effortDays = new Set<number>([...sessionDays, ...clubDaySet, ...matchDowSet])
     const DAY_ORDER: import('../types/scheduling').DayOfWeek[] = [0, 1, 2, 3, 4, 5, 6]
-    return DAY_ORDER.filter((dow) =>
-      !sessionDays.has(dow) && !matchDowSet.has(dow) && !clubDaySet.has(dow) && !unavailSet.has(dow),
-    )
+    return DAY_ORDER.filter((dow) => {
+      if (sessionDays.has(dow) || matchDowSet.has(dow) || clubDaySet.has(dow) || unavailSet.has(dow)) return false
+      const yesterday = ((dow + 6) % 7) as import('../types/scheduling').DayOfWeek
+      return effortDays.has(yesterday)
+    })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arGlobalOk, calendarSessions, weekPresentation?.clubDays, weekPresentation?.matchEvents, weekPresentation?.unavailableDays])
 
@@ -291,7 +300,25 @@ export function WeekPage() {
           />
         )}
 
-        {/* Global undo bar removed — local undo affordances are in the timeline components */}
+        {/* FFR auto-sync notification */}
+        {syncNotification && (
+          <section
+            data-testid="ffr-sync-notification"
+            className="flex items-center gap-3 px-4 py-3 bg-info-bg border border-info-bd rounded-2xl"
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-info">{syncNotification}</p>
+              <p className="text-[10px] text-fg-muted mt-0.5">Calendrier mis à jour automatiquement</p>
+            </div>
+            <button
+              type="button"
+              onClick={dismissSyncNotification}
+              className="text-[10px] font-bold text-info hover:text-info/80 transition-colors"
+            >
+              OK
+            </button>
+          </section>
+        )}
 
         {msResolution && surface && (
           <section
@@ -348,8 +375,18 @@ export function WeekPage() {
                 hideCorrections
                 companionRecommendations={msResolution.companionRecommendations}
                 warnings={(() => {
+                  // Filter out internal engine warnings that are not user-actionable
+                  const internalPatterns = [
+                    'recovery override',
+                    'repli déterministe',
+                    'pas de structure',
+                    'pas de mother session',
+                    'fréquence.*non prévue',
+                    'repli sur',
+                  ]
+                  const isInternal = (w: string) => internalPatterns.some((p) => new RegExp(p, 'i').test(w))
                   const merged = [...new Set([...surface.planningInputWarnings, ...msResolution.warnings])]
-                    .filter((w) => !w.toLowerCase().includes('recovery override'))
+                    .filter((w) => !isInternal(w))
                   return merged.length > 0 ? merged : undefined
                 })()}
               />

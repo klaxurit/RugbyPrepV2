@@ -23,7 +23,7 @@ describe('resolveMotherSessionsForWeek', () => {
       positionGroup: 'front_row',
     })
     expect(r.status).toBe('resolved')
-    expect(r.planningContext.weekLabel).toBe('Pre-season Phase 1 - S1')
+    expect(r.planningContext.weekLabel).toBe('Pré-saison Phase 1 - S1')
     expect(r.planningContext.cycle).toBe('pre_season')
     expect(r.templateContext).toMatchObject({
       cycle: 'pre_season',
@@ -51,7 +51,7 @@ describe('resolveMotherSessionsForWeek', () => {
     })
     expect(r.status).toBe('resolved')
     expect(r.planningContext.preSeasonPhase).toBe(3)
-    expect(r.planningContext.weekLabel).toBe('Pre-season Phase 3 - S12')
+    expect(r.planningContext.weekLabel).toBe('Pré-saison Phase 3 - S12')
     expect(r.templateContext?.requestedFrequency).toBe(4)
     expect(r.templateContext?.effectiveFrequency).toBe(3)
     expect(r.sessions).toHaveLength(3)
@@ -117,7 +117,7 @@ describe('resolveMotherSessionsForWeek', () => {
       'FULL_OFFSEASON_RECOVERY_A_V1',
       'FULL_OFFSEASON_RECOVERY_B_V1',
     ])
-    expect(r.companionRecommendations?.join(' ')).toMatch(/zone 2/i)
+    expect(r.companionRecommendations?.join(' ')).toMatch(/récupération|activité légère/i)
     expect(r.status).toBe('resolved_with_warnings')
     expect(r.warnings.length).toBeGreaterThan(0)
   })
@@ -238,7 +238,7 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.status).toBe('missing_session')
     expect(r.missingSessionIds).toEqual([missingId])
     expect(r.sessions).toEqual([])
-    expect(r.planningContext.weekLabel).toBe('Pre-season Phase 1 - S1')
+    expect(r.planningContext.weekLabel).toBe('Pré-saison Phase 1 - S1')
     expect(r.planningContext.cycle).toBe('pre_season')
     expect(r.templateContext?.cycle).toBe('pre_season')
     expect(r.warnings.length).toBeGreaterThanOrEqual(0)

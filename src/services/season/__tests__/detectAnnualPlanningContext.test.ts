@@ -23,7 +23,7 @@ describe('detectAnnualPlanningContext', () => {
       today: '2024-12-16',
     })
     expect(r.cycle).toBe('pre_season')
-    expect(r.weekLabel).toBe('Pre-season Phase 1 - S1')
+    expect(r.weekLabel).toBe('Pré-saison Phase 1 - S1')
     expect(r.preSeasonPhase).toBe(1)
     expect(r.weekNumber).toBe(1)
     expect(r.isDeloadWeek).toBe(false)
@@ -38,7 +38,7 @@ describe('detectAnnualPlanningContext', () => {
       today: '2025-01-20',
     })
     expect(r.cycle).toBe('pre_season')
-    expect(r.weekLabel).toBe('Pre-season Phase 2 - S6')
+    expect(r.weekLabel).toBe('Pré-saison Phase 2 - S6')
     expect(r.preSeasonPhase).toBe(2)
     expect(r.weekNumber).toBe(6)
     expect(r.planningTrace.resolutionMode).toBe('calendar_inferred')
@@ -51,7 +51,7 @@ describe('detectAnnualPlanningContext', () => {
       today: '2025-03-03',
     })
     expect(r.cycle).toBe('pre_season')
-    expect(r.weekLabel).toBe('Pre-season Phase 3 - S12')
+    expect(r.weekLabel).toBe('Pré-saison Phase 3 - S12')
     expect(r.isDeloadWeek).toBe(true)
     expect(r.preSeasonPhase).toBe(3)
   })
@@ -64,7 +64,7 @@ describe('detectAnnualPlanningContext', () => {
     })
     expect(r.cycle).toBe('in_season')
     expect(r.isMatchWeek).toBe(true)
-    expect(r.weekLabel).toMatch(/^In-season - W\d+/)
+    expect(r.weekLabel).toMatch(/^En saison - S\d+/)
     expect(r.planningTrace.rulesApplied).toContain('rule:in_season_from_calendar')
   })
 
@@ -86,7 +86,7 @@ describe('detectAnnualPlanningContext', () => {
       planningAnchors: { offSeasonStartAt: '2024-10-07' },
     })
     expect(r.cycle).toBe('off_season')
-    expect(r.weekLabel).toBe('Off-season Recovery - S1')
+    expect(r.weekLabel).toBe('Inter-saison Récupération - S1')
     expect(r.offSeasonPhase).toBe(1)
     expect(r.weekNumber).toBe(1)
     expect(r.offSeasonStartAt).toBe('2024-10-07')
@@ -102,7 +102,7 @@ describe('detectAnnualPlanningContext', () => {
       planningAnchors: { offSeasonStartAt: '2024-10-07' },
     })
     expect(r.cycle).toBe('off_season')
-    expect(r.weekLabel).toBe('Off-season Hypertrophy - S6')
+    expect(r.weekLabel).toBe('Inter-saison Hypertrophie - S6')
     expect(r.offSeasonPhase).toBe(3)
     expect(r.weekNumber).toBe(6)
   })
@@ -115,7 +115,7 @@ describe('detectAnnualPlanningContext', () => {
       planningAnchors: { offSeasonStartAt: '2024-10-07' },
     })
     expect(r.cycle).toBe('off_season')
-    expect(r.weekLabel).toBe('Off-season Force-Bridge - S10')
+    expect(r.weekLabel).toBe('Inter-saison Force-Pont - S10')
     expect(r.offSeasonPhase).toBe(4)
     expect(r.weekNumber).toBe(10)
   })
@@ -195,7 +195,7 @@ describe('detectAnnualPlanningContext', () => {
     })
     expect(r.cycle).toBe('off_season')
     expect(r.weekNumber).toBe(4)
-    expect(r.weekLabel).toBe('Off-season Transition - S4')
+    expect(r.weekLabel).toBe('Inter-saison Transition - S4')
     expect(r.planningTrace.resolutionMode).toBe('manual_override')
     expect(r.planningTrace.rulesApplied.some((x) => x.startsWith('rule:manual_cycle'))).toBe(true)
   })
@@ -212,7 +212,7 @@ describe('detectAnnualPlanningContext', () => {
     })
     expect(r.cycle).toBe('pre_season')
     expect(r.weekNumber).toBe(6)
-    expect(r.weekLabel).toBe('Pre-season Phase 2 - S6')
+    expect(r.weekLabel).toBe('Pré-saison Phase 2 - S6')
     expect(r.planningTrace.resolutionMode).toBe('manual_override')
   })
 
@@ -235,7 +235,7 @@ describe('detectAnnualPlanningContext', () => {
     })
     expect(r.firstMatchDate).toBe(FIRST_MATCH)
     expect(r.cycle).toBe('pre_season')
-    expect(r.weekLabel).toBe('Pre-season Phase 1 - S1')
+    expect(r.weekLabel).toBe('Pré-saison Phase 1 - S1')
     expect(r.planningTrace.rulesApplied).toContain('anchor:first_match_date_override_validated')
   })
 
@@ -404,6 +404,73 @@ describe('detectAnnualPlanningContext', () => {
       planningAnchors: {
         manualCycleOverride: 'off_season',
         seasonEndedAt: '2025-05-25',
+      },
+    })
+    expect(r.cycle).toBe('off_season')
+  })
+
+  it('seasonEndedAt forces off-season even when last match < 28 days ago', () => {
+    // User clicked "La saison est finie" with recent matches in calendar.
+    // Without the fix, the code would fall through to in-season because
+    // daysSinceLastMatch < 28 and preSeasonStartMonday is in the past.
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [
+        match('2025-09-20'),
+        match('2025-10-04'),
+        match('2026-03-15'),
+        match('2026-03-29'),
+      ],
+      today: '2026-04-06',
+      planningAnchors: {
+        seasonEndedAt: '2026-03-29',
+      },
+    })
+    expect(r.cycle).toBe('off_season')
+    // Off-season starts Mon after 2026-03-29 = 2026-03-30; today 2026-04-06 = week 2
+    expect(r.weekNumber).toBe(2)
+    expect(r.planningTrace.rulesApplied).toContain('rule:season_ended_force_off_season')
+  })
+
+  it('seasonEndedAt computes correct off-season week when set weeks ago', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match('2025-09-20'), match('2026-02-15')],
+      today: '2026-04-06',
+      planningAnchors: {
+        seasonEndedAt: '2026-02-15',
+      },
+    })
+    expect(r.cycle).toBe('off_season')
+    // Off-season starts Monday after 2026-02-15 = 2026-02-23.
+    // 2026-04-06 is ~6 weeks later.
+    expect(r.weekNumber).toBeGreaterThanOrEqual(5)
+  })
+
+  it('returnToTeamTrainingAt triggers pre-season even without match in calendar', () => {
+    // Season ended April 6, return to club August 3, today is July 1 (within 8-week window)
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match('2025-09-20'), match('2026-03-29')],
+      today: '2026-07-01',
+      planningAnchors: {
+        seasonEndedAt: '2026-04-06',
+        returnToTeamTrainingAt: '2026-08-03',
+      },
+    })
+    expect(r.cycle).toBe('pre_season')
+    expect(r.planningTrace.rulesApplied).toContain('rule:pre_season_from_return_date')
+  })
+
+  it('returnToTeamTrainingAt stays off-season if today is before pre-season window', () => {
+    // Season ended April 6, return to club August 3, today is May 15 (too early for pre-season)
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match('2025-09-20'), match('2026-03-29')],
+      today: '2026-05-15',
+      planningAnchors: {
+        seasonEndedAt: '2026-04-06',
+        returnToTeamTrainingAt: '2026-08-03',
       },
     })
     expect(r.cycle).toBe('off_season')

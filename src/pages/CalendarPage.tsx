@@ -62,7 +62,7 @@ const MONTH_NAMES_FR = [
 const DAY_NAMES_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 const seasonPhaseConfig: Record<SeasonPhase, { label: string; color: string; bg: string }> = {
-  'off-season': { label: 'Hors-saison', color: 'text-fg-muted', bg: 'bg-layer-10' },
+  'off-season': { label: 'Inter-saison', color: 'text-fg-muted', bg: 'bg-layer-10' },
   'pre-season': { label: 'Pré-saison', color: 'text-amber-400', bg: 'bg-amber-900/20' },
   'in-season': { label: 'En saison', color: 'text-emerald-400', bg: 'bg-emerald-900/20' },
   'playoffs': { label: 'Playoffs', color: 'text-rose-400', bg: 'bg-rose-900/20' },

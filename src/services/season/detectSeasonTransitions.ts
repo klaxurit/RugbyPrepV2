@@ -4,6 +4,7 @@ export type SeasonTransition =
   | { type: 'season_ended'; lastMatchDate: string; daysSinceLastMatch: number }
   | { type: 'treve_detected'; nextMatchDate: string; gapWeeks: number; subMode?: InSeasonSubMode }
   | { type: 'playoffs_suggested' }
+  | { type: 'pre_season_suggested'; reason: 'calendar_date' | 'off_season_late' }
 
 const SEASON_END_THRESHOLD_DAYS = 7
 const TREVE_THRESHOLD_DAYS = 21
@@ -78,6 +79,25 @@ export function detectSeasonTransitions(params: {
     !isDismissed('playoffs_suggested')
   ) {
     return { type: 'playoffs_suggested' }
+  }
+
+  // UC8: Pre-season suggested — off-season athlete approaching typical pre-season window
+  // Two triggers: (a) calendar date July+ or (b) off-season week >= 8
+  // Only when no future match exists (FFR sync would auto-trigger pre-season otherwise)
+  if (
+    ctx.cycle === 'off_season' &&
+    ctx.daysUntilNextMatch == null &&
+    !isDismissed('pre_season_suggested')
+  ) {
+    const monthNow = new Date(`${today}T12:00:00`).getMonth() + 1
+    const offWeek = ctx.weekNumber ?? 0
+
+    if (monthNow >= 7) {
+      return { type: 'pre_season_suggested', reason: 'calendar_date' }
+    }
+    if (offWeek >= 8) {
+      return { type: 'pre_season_suggested', reason: 'off_season_late' }
+    }
   }
 
   return null

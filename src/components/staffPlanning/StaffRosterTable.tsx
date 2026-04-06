@@ -7,7 +7,7 @@ const ORANGE = '#ff6b35'
 const SURFACE_HIGH = '#1c2028'
 
 const cycleShort: Record<AthleteStaffWeeklyView['annualPlanning']['cycle'], string> = {
-  off_season: 'Hors-saison',
+  off_season: 'Inter-saison',
   pre_season: 'Pré-saison',
   in_season: 'En saison',
   playoffs: 'Playoffs',

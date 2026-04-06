@@ -18,7 +18,7 @@ const SEASON_CONFIG: Record<SeasonTransition['type'], BannerConfig> = {
     bg: 'bg-amber-900/15',
     border: 'border-amber-500/25',
     text: 'text-amber-300',
-    cta: 'Passer en hors-saison',
+    cta: 'Passer en inter-saison',
   },
   treve_detected: {
     icon: Calendar,
@@ -33,6 +33,13 @@ const SEASON_CONFIG: Record<SeasonTransition['type'], BannerConfig> = {
     border: 'border-[#ff6b35]/25',
     text: 'text-[#ff6b35]',
     cta: 'Activer Playoffs',
+  },
+  pre_season_suggested: {
+    icon: Calendar,
+    bg: 'bg-emerald-900/15',
+    border: 'border-emerald-500/25',
+    text: 'text-emerald-300',
+    cta: 'Indiquer ma date de reprise',
   },
 }
 
@@ -81,6 +88,10 @@ function getSeasonMessage(t: SeasonTransition): string {
       return `Période sans match détectée (~${t.gapWeeks} sem.). Programme adapté automatiquement.`
     case 'playoffs_suggested':
       return "Phase finale ? Active le mode Playoffs pour un programme d'affûtage."
+    case 'pre_season_suggested':
+      return t.reason === 'calendar_date'
+        ? 'La reprise approche. Indique ta date de retour au club pour lancer ta pré-saison.'
+        : 'Tu avances bien dans ton inter-saison. Prêt à lancer la pré-saison ?'
   }
 }
 

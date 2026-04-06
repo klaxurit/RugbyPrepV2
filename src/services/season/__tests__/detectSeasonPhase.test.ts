@@ -16,7 +16,7 @@ describe('detectSeasonPhaseInfo', () => {
     const r = detectSeasonPhaseInfo([], '2025-01-01')
     expect(r).toMatchObject({
       cycle: 'off_season',
-      weekLabel: 'Off-season',
+      weekLabel: 'Inter-saison',
       isDeloadWeek: false,
       firstMatchDate: null,
       daysUntilNextMatch: null,
@@ -43,7 +43,7 @@ describe('detectSeasonPhaseInfo', () => {
     // Lundi 2024-12-09 : avant preStart 2024-12-16
     const r = detectSeasonPhaseInfo(events, '2024-12-09')
     expect(r.cycle).toBe('off_season')
-    expect(r.weekLabel).toBe('Off-season')
+    expect(r.weekLabel).toBe('Inter-saison')
     expect(r.firstMatchDate).toBe(FIRST_MATCH)
     expect(r.daysUntilNextMatch).toBeGreaterThan(0)
     expect(r.isMatchWeek).toBe(false)
@@ -55,7 +55,7 @@ describe('detectSeasonPhaseInfo', () => {
     expect(r.cycle).toBe('pre_season')
     expect(r.phase).toBe(1)
     expect(r.weekNumber).toBe(1)
-    expect(r.weekLabel).toBe('Pre-season Phase 1 - S1')
+    expect(r.weekLabel).toBe('Pré-saison Phase 1 - S1')
     expect(r.isDeloadWeek).toBe(false)
   })
 
@@ -65,7 +65,7 @@ describe('detectSeasonPhaseInfo', () => {
     expect(r.cycle).toBe('pre_season')
     expect(r.phase).toBe(2)
     expect(r.weekNumber).toBe(6)
-    expect(r.weekLabel).toBe('Pre-season Phase 2 - S6')
+    expect(r.weekLabel).toBe('Pré-saison Phase 2 - S6')
     expect(r.isDeloadWeek).toBe(false)
   })
 
@@ -75,7 +75,7 @@ describe('detectSeasonPhaseInfo', () => {
     expect(r.cycle).toBe('pre_season')
     expect(r.phase).toBe(3)
     expect(r.weekNumber).toBe(12)
-    expect(r.weekLabel).toBe('Pre-season Phase 3 - S12')
+    expect(r.weekLabel).toBe('Pré-saison Phase 3 - S12')
     expect(r.isDeloadWeek).toBe(true)
   })
 
@@ -85,7 +85,7 @@ describe('detectSeasonPhaseInfo', () => {
     const r = detectSeasonPhaseInfo(events, '2025-03-18')
     expect(r.cycle).toBe('in_season')
     expect(r.isMatchWeek).toBe(true)
-    expect(r.weekLabel).toMatch(/^In-season - W\d+$/)
+    expect(r.weekLabel).toMatch(/^En saison - S\d+$/)
     expect(r.weekNumber).toBeGreaterThanOrEqual(2)
   })
 

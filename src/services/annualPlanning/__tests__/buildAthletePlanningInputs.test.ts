@@ -361,4 +361,56 @@ describe('buildAthletePlanningInputs', () => {
     expect(r.inputs.planningAnchors?.seasonEndedAt).toBeUndefined()
     expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
   })
+
+  it('hidden match does not invalidate seasonEndedAt anchor', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'off_season',
+        planningAnchors: { seasonEndedAt: '2025-02-28' },
+      }),
+      events: [{
+        id: 'm-hidden',
+        date: TODAY,
+        type: 'match',
+        source: 'ffr_import',
+        user_hidden: true,
+      }] as CalendarEvent[],
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+
+    expect(r.inputs.events).toEqual([])
+    expect(r.inputs.planningAnchors?.seasonEndedAt).toBe('2025-02-28')
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBe('off_season')
+  })
+
+  it('ACWR critical is ignored when seasonEndedAt is set (off-season transition)', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'off_season',
+        planningAnchors: { seasonEndedAt: '2025-02-28' },
+      }),
+      events: [],
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+      acwrZone: 'critical',
+    })
+    // ACWR critical should NOT produce very_high fatigue in off-season
+    // (match loads from the ended season are transient)
+    expect(r.derived.fatigueLevel).toBe('normal')
+  })
+
+  it('ACWR critical still applies when season is active (no seasonEndedAt)', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({ seasonMode: 'in_season' }),
+      events: [{ id: 'm1', date: TODAY, type: 'match' }] as CalendarEvent[],
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+      acwrZone: 'critical',
+    })
+    expect(r.derived.fatigueLevel).toBe('very_high')
+  })
 })

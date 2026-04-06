@@ -5,7 +5,7 @@ import { AthleteMotherSessionsPreview } from './AthleteMotherSessionsPreview'
 const accent = '#ff6b35'
 
 const cycleFr: Record<AthleteStaffWeeklyView['annualPlanning']['cycle'], string> = {
-  off_season: 'Hors-saison',
+  off_season: 'Inter-saison',
   pre_season: 'Pré-saison',
   in_season: 'En saison',
   playoffs: 'Playoffs',

@@ -103,7 +103,7 @@ describe('HistoryPage · enriched logs', () => {
     renderWithRouter(<HistoryPage />, { initialEntries: ['/history'] })
 
     expect(screen.getByTestId('log-week-label')).toHaveTextContent('OFF_S03')
-    expect(screen.getByTestId('log-cycle-label')).toHaveTextContent('Hors-saison')
+    expect(screen.getByTestId('log-cycle-label')).toHaveTextContent('Inter-saison')
   })
 
   it('stats rapides calculées', () => {

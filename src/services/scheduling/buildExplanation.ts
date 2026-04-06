@@ -82,9 +82,21 @@ const RULE_COPY: Record<string, RuleCopy> = {
     detail: () => 'Le programme s\'adapte à ta date de retour au collectif.',
   },
 
+  'rule:pre_season_from_return_date': {
+    summary: () => 'Pré-saison — préparation de ta reprise',
+    detail: () => 'Programme de pré-saison calé sur ta date de retour au club. Force, puissance et conditionnement progressifs.',
+    overridesSequential: true,
+  },
+
   'rule:off_season_start_at': {
     summary: () => 'Inter-saison',
     detail: () => 'Pas de match prévu — le programme se concentre sur la construction physique.',
+  },
+
+  'rule:season_ended_force_off_season': {
+    summary: () => 'Inter-saison — saison terminée',
+    detail: () => 'Les 2 premières semaines sont consacrées à la récupération (décharge du système nerveux après la saison). Ensuite, le programme passera en construction physique.',
+    overridesSequential: true,
   },
 
   'rule:auto_season_ended_28d': {
@@ -328,9 +340,9 @@ function collectExplanations(
 // ── Summary Line ────────────────────────────────────────────────────
 
 const OFF_SEASON_PHASE_LABELS: Record<OffSeasonPhase, string> = {
-  1: 'Hypertrophie',
-  2: 'Hypertrophie',
-  3: 'Force',
+  1: 'Récupération',
+  2: 'Transition',
+  3: 'Hypertrophie',
   4: 'Force-Puissance',
 }
 

@@ -84,6 +84,18 @@ function getVisibleTrainingLevel(level: TrainingLevel | undefined): Exclude<Trai
   return 'performance'
 }
 
+function formatRelativeTime(isoDate: string): string {
+  const diffMs = Date.now() - new Date(isoDate).getTime()
+  const mins = Math.floor(diffMs / 60000)
+  if (mins < 1) return "à l'instant"
+  if (mins < 60) return `il y a ${mins} min`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `il y a ${hours}h`
+  const days = Math.floor(hours / 24)
+  if (days === 1) return 'hier'
+  return `il y a ${days} jours`
+}
+
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
   { day: 1, label: 'Lundi',    short: 'L' },
   { day: 2, label: 'Mardi',    short: 'M' },
@@ -138,7 +150,7 @@ export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
   const { authState, updateAvatar } = useAuth()
   const { features, isPremium } = useFeatureAccess()
-  const { events } = useCalendar()
+  const { visibleEvents } = useCalendar()
   const { canShowUpsell } = useUpsellTiming()
   const [profileUpsellDismissed, setProfileUpsellDismissed] = useState(() => isDismissed('profile_premium'))
   const {
@@ -188,7 +200,7 @@ export function ProfilePage() {
     let detectedCycle: AnnualCycle = profile.seasonMode ?? 'in_season'
     try {
       const ctx = detectAnnualPlanningContext({
-        events: events.map((e) => ({ date: e.date, type: e.type })),
+        events: visibleEvents.map((e) => ({ date: e.date, type: e.type })),
         today,
         weeklyFrequency: (profile.weeklySessions ?? 3) as 2 | 3 | 4,
         positionGroup: 'back_three',
@@ -201,31 +213,22 @@ export function ProfilePage() {
     const cycleLabel = CYCLE_LABELS[detectedCycle] ?? 'En saison'
 
     // Next match
-    const futureMatches = events
-      .filter((e) => e.type === 'match' && e.date >= today && e.user_hidden !== true)
+    const futureMatches = visibleEvents
+      .filter((e) => e.type === 'match' && e.date >= today)
       .sort((a, b) => a.date.localeCompare(b.date))
     const nextMatch = futureMatches.length > 0 ? futureMatches[0] : null
     const nextMatchLabel = nextMatch
       ? new Date(nextMatch.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
       : 'Aucun match prévu'
 
-    // Calendar source
-    const ffrCount = events.filter((e) => e.source === 'ffr_import').length
-    const manualCount = events.filter((e) => e.source === 'manual').length
-    const calendarSource = ffrCount > 0
-      ? `FFR (${ffrCount} matchs)`
-      : manualCount > 0
-        ? 'Manuel'
-        : 'Aucun calendrier'
-
     // Last known match date (for "La saison est finie")
-    const pastMatches = events
-      .filter((e) => e.type === 'match' && e.date < today && e.user_hidden !== true)
+    const pastMatches = visibleEvents
+      .filter((e) => e.type === 'match' && e.date < today)
       .sort((a, b) => b.date.localeCompare(a.date))
     const lastMatchDate = pastMatches.length > 0 ? pastMatches[0].date : null
 
-    return { cycleLabel, nextMatchLabel, calendarSource, lastMatchDate, nextMatch }
-  }, [profile.seasonMode, events, today])
+    return { cycleLabel, nextMatchLabel, lastMatchDate, nextMatch }
+  }, [profile.seasonMode, profile.weeklySessions, profile.planningAnchors, visibleEvents, today])
 
   // Load competitions when club is set (only on initial profile load, not on manual selection)
   const isAuthenticated = authState.status === 'authenticated'
@@ -584,50 +587,117 @@ export function ProfilePage() {
                 <span className="text-[10px] font-bold text-fg-muted">Prochain match</span>
                 <span className="text-xs font-bold text-fg-emphasis" data-testid="situation-next-match">{situationData.nextMatchLabel}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-fg-muted">Calendrier</span>
-                <span className="text-xs font-bold text-fg-emphasis" data-testid="situation-calendar">{situationData.calendarSource}</span>
-              </div>
             </div>
 
-            <p className="text-[10px] text-fg-faint">Quelque chose a changé ?</p>
-            <div className="flex flex-col gap-2">
-              <button
-                type="button"
-                data-testid="situation-season-ended"
-                onClick={() => {
-                  const anchor = situationData.lastMatchDate ?? today
-                  const cleanAnchors = { ...profile.planningAnchors }
-                  delete cleanAnchors.manualPlayoffs
-                  updateProfile({
-                    // Primary: factual anchor
-                    planningAnchors: { ...cleanAnchors, seasonEndedAt: anchor },
-                    // Transitional compatibility
-                    seasonMode: 'off_season',
-                  })
-                }}
-                className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
-              >
-                La saison est finie
-              </button>
-              <button
-                type="button"
-                data-testid="situation-no-match"
-                onClick={() => {
-                  const cleanAnchors = { ...profile.planningAnchors }
-                  delete cleanAnchors.manualPlayoffs
-                  updateProfile({
-                    // Primary: factual anchor
-                    planningAnchors: { ...cleanAnchors, seasonEndedAt: today },
-                    // Transitional compatibility
-                    seasonMode: 'off_season',
-                  })
-                }}
-                className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
-              >
-                Je n'ai plus de match pour l'instant
-              </button>
-            </div>
+            {profile.planningAnchors?.seasonEndedAt ? (
+              <div className="space-y-2" id="reprise">
+                <div className="flex items-center gap-2 py-2.5 px-3 rounded-2xl bg-ok-bg-muted border border-ok-bd" data-testid="situation-confirmed">
+                  <span className="text-xs font-bold text-ok-strong">Saison terminée — programme inter-saison actif</span>
+                </div>
+
+                {/* Pre-season return date */}
+                {profile.planningAnchors?.returnToTeamTrainingAt ? (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-brand-soft border border-brand-border" data-testid="situation-return-set">
+                      <span className="text-xs font-bold text-brand">
+                        Reprise le {new Date(profile.planningAnchors.returnToTeamTrainingAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                      </span>
+                      <button
+                        type="button"
+                        data-testid="situation-clear-return"
+                        onClick={() => {
+                          const cleanAnchors = { ...profile.planningAnchors }
+                          delete cleanAnchors.returnToTeamTrainingAt
+                          updateProfile({ planningAnchors: cleanAnchors })
+                        }}
+                        className="text-[10px] font-bold text-brand-muted hover:text-brand"
+                      >
+                        Modifier
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] text-fg-faint">Tu connais ta date de reprise au club ?</p>
+                    <input
+                      type="date"
+                      data-testid="situation-return-date"
+                      min={today}
+                      onChange={(e) => {
+                        if (!e.target.value) return
+                        updateProfile({
+                          planningAnchors: {
+                            ...profile.planningAnchors,
+                            returnToTeamTrainingAt: e.target.value,
+                          },
+                          seasonMode: 'pre_season',
+                        })
+                      }}
+                      style={{ colorScheme: 'dark' }}
+                      className="w-full py-2.5 px-3 rounded-2xl text-xs font-bold bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all [&::-webkit-calendar-picker-indicator]:brightness-[0.7] [&::-webkit-calendar-picker-indicator]:invert"
+                    />
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  data-testid="situation-resume-season"
+                  onClick={() => {
+                    const cleanAnchors = { ...profile.planningAnchors }
+                    delete cleanAnchors.seasonEndedAt
+                    delete cleanAnchors.returnToTeamTrainingAt
+                    updateProfile({
+                      planningAnchors: cleanAnchors,
+                      seasonMode: 'in_season',
+                    })
+                  }}
+                  className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
+                >
+                  En fait, la saison reprend
+                </button>
+              </div>
+            ) : (
+              <>
+                <p className="text-[10px] text-fg-faint">Quelque chose a changé ?</p>
+                <div className="flex flex-col gap-2">
+                  <button
+                    type="button"
+                    data-testid="situation-season-ended"
+                    onClick={() => {
+                      const anchor = situationData.lastMatchDate ?? today
+                      const cleanAnchors = { ...profile.planningAnchors }
+                      delete cleanAnchors.manualPlayoffs
+                      updateProfile({
+                        // Primary: factual anchor
+                        planningAnchors: { ...cleanAnchors, seasonEndedAt: anchor },
+                        // Transitional compatibility
+                        seasonMode: 'off_season',
+                      })
+                    }}
+                    className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
+                  >
+                    La saison est finie
+                  </button>
+                  <button
+                    type="button"
+                    data-testid="situation-no-match"
+                    onClick={() => {
+                      const cleanAnchors = { ...profile.planningAnchors }
+                      delete cleanAnchors.manualPlayoffs
+                      updateProfile({
+                        // Primary: factual anchor
+                        planningAnchors: { ...cleanAnchors, seasonEndedAt: today },
+                        // Transitional compatibility
+                        seasonMode: 'off_season',
+                      })
+                    }}
+                    className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
+                  >
+                    Je n'ai plus de match pour l'instant
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -820,40 +890,42 @@ export function ProfilePage() {
               )}
 
               {profile.ffrCompetitionName && (
-                <div className="p-3 rounded-2xl border border-info-bd bg-info-bg space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-bold text-fg">{profile.ffrCompetitionName}</p>
-                      <p className="text-xs text-fg-muted">
-                        {profile.ffrLastSyncAt
-                          ? `Dernière sync : ${new Date(profile.ffrLastSyncAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}`
-                          : 'Jamais synchronisé'}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleManualSync}
-                      disabled={ffrSyncLoading}
-                      className="px-3 py-1.5 rounded-xl bg-info-bg text-info text-xs font-bold hover:bg-info-bd/30 border border-info-bd transition-colors disabled:opacity-50 rf-focus-ring"
-                    >
-                      {ffrSyncLoading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : 'Sync'}
-                    </button>
+                <div className="p-3 rounded-2xl border border-info-bd bg-info-bg space-y-2.5">
+                  <div>
+                    <p className="text-sm font-bold text-fg">{profile.ffrCompetitionName}</p>
+                    <p className="text-[10px] text-fg-muted mt-0.5">
+                      {profile.ffrLastSyncAt
+                        ? `Synchronisé ${formatRelativeTime(profile.ffrLastSyncAt)} · auto-sync quotidien`
+                        : 'Synchronisation automatique activée'}
+                    </p>
                   </div>
                   {ffrSyncMessage && (
                     <p className={`text-xs ${ffrSyncMessage.startsWith('Erreur') ? 'text-danger' : 'text-ok-strong'}`}>
                       {ffrSyncMessage}
                     </p>
                   )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      updateProfile({ ffrCompetitionId: undefined, ffrCompetitionName: undefined })
-                      setFfrSyncMessage(null)
-                    }}
-                    className="text-[11px] font-bold text-fg-faint hover:text-fg-soft transition-colors"
-                  >
-                    Changer de compétition
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleManualSync}
+                      disabled={ffrSyncLoading}
+                      className="text-[11px] font-bold text-info hover:text-info/80 transition-colors disabled:opacity-50 flex items-center gap-1"
+                    >
+                      {ffrSyncLoading ? <RefreshCw className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                      Forcer la sync
+                    </button>
+                    <span className="text-fg-faint">·</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateProfile({ ffrCompetitionId: undefined, ffrCompetitionName: undefined })
+                        setFfrSyncMessage(null)
+                      }}
+                      className="text-[11px] font-bold text-fg-faint hover:text-fg-soft transition-colors"
+                    >
+                      Changer de compétition
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

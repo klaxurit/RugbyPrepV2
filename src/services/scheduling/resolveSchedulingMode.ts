@@ -45,7 +45,20 @@ export function resolveSchedulingMode(params: ResolveSchedulingModeParams): Sche
     }
   }
 
-  // Level 2: recent past match within 28 days
+  // Level 2: season ended explicitly — takes priority over recent past matches.
+  // If the user has club training days configured, keep calendar mode (they still
+  // have a weekly rhythm even in off-season). Sequential only for users without
+  // any weekly structure.
+  if (planningAnchors?.seasonEndedAt) {
+    return {
+      mode: params.hasClubDays ? 'calendar' : 'sequential',
+      confidence: 'high',
+      reason: 'season_ended',
+      calendarSignalStrength: params.hasClubDays ? 1 : 0,
+    }
+  }
+
+  // Level 3: recent past match within 28 days (only if season NOT explicitly ended)
   const recentMs = 28 * 24 * 60 * 60 * 1000
   const recentPastMatch = matchEvents.some((e) => {
     const eventMs = parseLocalDate(e.date).getTime()
@@ -58,16 +71,6 @@ export function resolveSchedulingMode(params: ResolveSchedulingModeParams): Sche
       mode: 'calendar',
       confidence: 'medium',
       reason: 'recent_match_detected',
-      calendarSignalStrength: 0,
-    }
-  }
-
-  // Level 3: season ended explicitly
-  if (planningAnchors?.seasonEndedAt) {
-    return {
-      mode: 'sequential',
-      confidence: 'high',
-      reason: 'season_ended',
       calendarSignalStrength: 0,
     }
   }
