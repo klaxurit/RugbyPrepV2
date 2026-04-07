@@ -71,7 +71,7 @@ const mapSignInError = (error: SupabaseAuthError | null): AuthError => {
   const message = error.message.toLowerCase()
 
   if (message.includes('invalid login credentials')) return 'INVALID_CREDENTIALS'
-  if (message.includes('email not confirmed')) return 'INVALID_CREDENTIALS'
+  if (message.includes('email not confirmed')) return 'EMAIL_CONFIRMATION_REQUIRED'
 
   return 'INVALID_CREDENTIALS'
 }

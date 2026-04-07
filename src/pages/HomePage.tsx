@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav } from '../components/BottomNav'
+import { posthog } from '../services/analytics/posthog'
 import { motion } from 'framer-motion'
 import {
   LogOut,
@@ -20,6 +21,7 @@ import {
   Swords,
   ChevronDown,
   Info,
+  MessageSquare,
 } from 'lucide-react'
 import { PageHeader } from '../components/PageHeader'
 import { useProfile } from '../hooks/useProfile'
@@ -853,6 +855,22 @@ export function HomePage() {
         )}
 
       </main>
+
+      {/* Beta feedback banner */}
+      <div className="mx-4 mb-24 mt-4">
+        <a
+          href="mailto:support@rugbyforge.fr?subject=Feedback%20Beta%20RugbyForge"
+          onClick={() => posthog.capture('feedback_clicked', { source: 'home' })}
+          className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand/10 border border-brand/20"
+        >
+          <MessageSquare className="w-5 h-5 text-brand shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-fg">Tu es en bêta !</p>
+            <p className="text-[11px] text-fg-muted">Un bug, une idée ? Ton retour compte.</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-fg-ghost shrink-0" />
+        </a>
+      </div>
 
       <BottomNav />
     </div>

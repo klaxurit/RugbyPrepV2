@@ -3,7 +3,7 @@
  * No side effects, no router dependency — returns path strings.
  */
 
-const DEFAULT_DESTINATION = '/program'
+const DEFAULT_DESTINATION = '/home'
 
 /** Routes that must never be a post-auth destination (would cause loops or are meaningless). */
 const EXCLUDED_DESTINATIONS = new Set([
@@ -16,6 +16,7 @@ const EXCLUDED_DESTINATIONS = new Set([
 
 /** All known protected routes that make sense as a deep-link destination. */
 const VALID_PROTECTED_PREFIXES = [
+  '/home',
   '/program',
   '/week',
   '/session',
@@ -25,6 +26,7 @@ const VALID_PROTECTED_PREFIXES = [
   '/mobility',
   '/chat',
   '/staff',
+  '/calendar',
 ]
 
 // ── Public API ──────────────────────────────────────────────────────────────

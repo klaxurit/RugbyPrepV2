@@ -32,6 +32,7 @@ describe('sanitizeRequestedAppPath', () => {
   })
 
   it('route protégée valide → conservée', () => {
+    expect(sanitizeRequestedAppPath('/home')).toBe('/home')
     expect(sanitizeRequestedAppPath('/program')).toBe('/program')
     expect(sanitizeRequestedAppPath('/week')).toBe('/week')
     expect(sanitizeRequestedAppPath('/progress')).toBe('/progress')
@@ -68,7 +69,7 @@ describe('resolveAuthenticatedAppDestination', () => {
   })
 
   it('onboarding complet sans destination → /program', () => {
-    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete' })).toBe('/program')
+    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete' })).toBe('/home')
   })
 
   it('onboarding complet + destination protégée valide → destination conservée', () => {
@@ -76,35 +77,35 @@ describe('resolveAuthenticatedAppDestination', () => {
   })
 
   it('onboarding complet + route auth invalide → fallback /program', () => {
-    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete', requestedPath: '/auth/login' })).toBe('/program')
+    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete', requestedPath: '/auth/login' })).toBe('/home')
   })
 
   it('onboarding complet + /landing → fallback /program', () => {
-    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete', requestedPath: '/landing' })).toBe('/program')
+    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete', requestedPath: '/landing' })).toBe('/home')
   })
 
   it('onboarding complet + path vide → fallback /program', () => {
-    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete', requestedPath: '' })).toBe('/program')
-    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete', requestedPath: null })).toBe('/program')
+    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete', requestedPath: '' })).toBe('/home')
+    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete', requestedPath: null })).toBe('/home')
   })
 
   it('ne jamais retomber sur /week par défaut', () => {
     // /week est valide si demandé explicitement, mais le défaut est /program
-    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete' })).toBe('/program')
+    expect(resolveAuthenticatedAppDestination({ onboardingStatus: 'complete' })).toBe('/home')
   })
 })
 
 describe('resolvePostOnboardingDestination', () => {
-  it('sans intention → /program', () => {
-    expect(resolvePostOnboardingDestination()).toBe('/program')
-    expect(resolvePostOnboardingDestination(null)).toBe('/program')
+  it('sans intention → /home', () => {
+    expect(resolvePostOnboardingDestination()).toBe('/home')
+    expect(resolvePostOnboardingDestination(null)).toBe('/home')
   })
 
   it('avec intention valide → destination conservée', () => {
     expect(resolvePostOnboardingDestination('/progress')).toBe('/progress')
   })
 
-  it('avec intention invalide → /program', () => {
-    expect(resolvePostOnboardingDestination('/auth/login')).toBe('/program')
+  it('avec intention invalide → /home', () => {
+    expect(resolvePostOnboardingDestination('/auth/login')).toBe('/home')
   })
 })

@@ -98,7 +98,7 @@ describe('OnboardingPage · first run flow', () => {
     cleanup()
   })
 
-  it('fin d\'onboarding standard → navigate(/program)', () => {
+  it('fin d\'onboarding standard → navigate(/home)', () => {
     renderOnboarding()
     navigateToSummary()
 
@@ -107,7 +107,7 @@ describe('OnboardingPage · first run flow', () => {
     expect(finishBtn).not.toBeDisabled()
     fireEvent.click(finishBtn)
 
-    expect(navigateMock).toHaveBeenCalledWith('/program', { replace: true })
+    expect(navigateMock).toHaveBeenCalledWith('/home', { replace: true })
     expect(markOnboardingCompleteMock).toHaveBeenCalledWith('u1')
   })
 
@@ -131,7 +131,7 @@ describe('OnboardingPage · first run flow', () => {
     expect(finishBtn).not.toBeDisabled()
     fireEvent.click(finishBtn)
 
-    expect(navigateMock).toHaveBeenCalledWith('/program', { replace: true })
+    expect(navigateMock).toHaveBeenCalledWith('/home', { replace: true })
     expect(markOnboardingCompleteMock).toHaveBeenCalledWith('u1')
   })
 

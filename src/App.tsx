@@ -107,7 +107,11 @@ function App() {
             <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
             <Route path="/mobility" element={<MobilityPage />} />
             <Route path="/chat" element={<ChatPage />} />
-            <Route path="/staff-sandbox" element={<StaffPlanningSandboxPage />} />          </Route>
+            <Route path="/staff-sandbox" element={<StaffPlanningSandboxPage />} />
+          </Route>
+
+          {/* Catch-all : redirige vers /home (RequireAuth gère le reste) */}
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

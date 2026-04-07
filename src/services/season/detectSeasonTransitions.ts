@@ -32,12 +32,16 @@ export function detectSeasonTransitions(params: {
   }
 
   // UC1: Season ended — in_season, no future match, last match > 7 days ago
+  // Guard: only trigger if the athlete has a meaningful calendar (firstMatchDate !== lastMatchDate
+  // means at least 2 distinct match dates — a single match is likely a manual test, not a real season).
+  const hasMultipleMatches = ctx.firstMatchDate != null && ctx.lastMatchDate != null && ctx.firstMatchDate !== ctx.lastMatchDate
   if (
     ctx.cycle === 'in_season' &&
     ctx.daysUntilNextMatch == null &&
     ctx.daysSinceLastMatch != null &&
     ctx.daysSinceLastMatch >= SEASON_END_THRESHOLD_DAYS &&
     ctx.lastMatchDate != null &&
+    hasMultipleMatches &&
     !isDismissed('season_ended')
   ) {
     return {

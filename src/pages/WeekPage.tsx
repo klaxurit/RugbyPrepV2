@@ -463,7 +463,7 @@ export function WeekPage() {
           now.setHours(0, 0, 0, 0)
           const in3days = new Date(now)
           in3days.setDate(in3days.getDate() + 3)
-          const hasMatchSoon = events.some(e =>
+          const hasMatchSoon = visibleEvents.some((e: { type: string; date: string }) =>
             e.type === 'match' &&
             new Date(e.date + 'T00:00:00') >= now &&
             new Date(e.date + 'T00:00:00') <= in3days

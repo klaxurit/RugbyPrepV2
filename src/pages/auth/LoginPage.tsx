@@ -129,14 +129,37 @@ export function LoginPage() {
             </button>
           </form>
 
-          <div className="text-center pt-2">
-            <Link
-              to="/auth/signup"
-              className="text-sm text-fg-soft hover:text-fg font-medium transition-colors"
+          <div className="text-center pt-2 space-y-2">
+            <button
+              type="button"
+              onClick={async () => {
+                if (!email) {
+                  setError('Entre ton email ci-dessus pour recevoir un lien de réinitialisation.')
+                  return
+                }
+                const { error: resetError } = await (await import('../../services/supabase/client')).supabase.auth.resetPasswordForEmail(email, {
+                  redirectTo: `${window.location.origin}/auth/callback`,
+                })
+                if (resetError) {
+                  setError('Impossible d\'envoyer le lien. Réessaie dans quelques minutes.')
+                } else {
+                  setError(null)
+                  alert('Un email de réinitialisation a été envoyé. Vérifie ta boîte mail (et les spams).')
+                }
+              }}
+              className="text-xs text-fg-faint hover:text-fg-soft transition-colors"
             >
-              Pas encore de compte ?{' '}
-              <span className="text-brand font-bold">Créer un compte</span>
-            </Link>
+              Mot de passe oublié ?
+            </button>
+            <div>
+              <Link
+                to="/auth/signup"
+                className="text-sm text-fg-soft hover:text-fg font-medium transition-colors"
+              >
+                Pas encore de compte ?{' '}
+                <span className="text-brand font-bold">Créer un compte</span>
+              </Link>
+            </div>
           </div>
         </div>
 

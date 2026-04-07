@@ -256,48 +256,53 @@ export function OnboardingPage() {
   }
 
   const handleFinish = async () => {
-    const clubSchedule = buildClubSchedule()
-    const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
-    const finalEquipment = equipment.size > 0 ? Array.from(equipment) : ['none' as Equipment]
-    const derivedPopulationSegment: PopulationSegment =
-      gender === 'female' ? 'female_senior' : 'male_senior'
-    const profilePayload = {
-      position: position!,
-      rugbyPosition: position!,
-      level: levelDef.legacyLevel,
-      trainingLevel: trainingLevel!,
-      // Dual-write: seasonMode (compatibility) + onboardingCycleHint (source of truth)
-      seasonMode,
-      planningAnchors: { ...(existingProfile?.planningAnchors ?? {}), onboardingCycleHint: seasonMode },
-      performanceFocus: 'balanced' as const,
-      weeklySessions: sessions!,
-      equipment: finalEquipment,
-      injuries: Array.from(injuries),
-      heightCm: validHeight ? parsedHeight : undefined,
-      weightKg: validWeight ? parsedWeight : undefined,
-      clubSchedule,
-      scSchedule,
-      ageBand,
-      populationSegment: derivedPopulationSegment,
+    try {
+      const clubSchedule = buildClubSchedule()
+      const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
+      const finalEquipment = equipment.size > 0 ? Array.from(equipment) : ['none' as Equipment]
+      const derivedPopulationSegment: PopulationSegment =
+        gender === 'female' ? 'female_senior' : 'male_senior'
+      const profilePayload = {
+        position: position!,
+        rugbyPosition: position!,
+        level: levelDef.legacyLevel,
+        trainingLevel: trainingLevel!,
+        // Dual-write: seasonMode (compatibility) + onboardingCycleHint (source of truth)
+        seasonMode,
+        planningAnchors: { ...(existingProfile?.planningAnchors ?? {}), onboardingCycleHint: seasonMode },
+        performanceFocus: 'balanced' as const,
+        weeklySessions: sessions!,
+        equipment: finalEquipment,
+        injuries: Array.from(injuries),
+        heightCm: validHeight ? parsedHeight : undefined,
+        weightKg: validWeight ? parsedWeight : undefined,
+        clubSchedule,
+        scSchedule,
+        ageBand,
+        populationSegment: derivedPopulationSegment,
+      }
+      updateProfile(profilePayload, { source: 'onboarding' })
+
+      // Semaine initiale selon le mode saison : off_season → H1, sinon W1
+      const initialWeek = seasonMode === 'off_season' ? 'H1' : 'W1'
+      window.localStorage.setItem('rugbyprep.week.v1', initialWeek)
+
+      // ── Tous les profils passent maintenant — le moteur annuel gère tout ──
+      if (userId) markOnboardingComplete(userId)
+      posthog.capture('onboarding_completed', {
+        position, trainingLevel, seasonMode, ageBand, gender,
+        populationSegment: derivedPopulationSegment,
+        performanceFocus: 'balanced',
+        sessions,
+        eligible: true,
+      })
+
+      const destination = resolvePostOnboardingDestination(intendedPath)
+      navigate(destination, { replace: true })
+    } catch (err) {
+      console.error('[Onboarding] handleFinish error:', err)
+      alert('Une erreur est survenue. Vérifie ta connexion et réessaie.')
     }
-    updateProfile(profilePayload, { source: 'onboarding' })
-
-    // Semaine initiale selon le mode saison : off_season → H1, sinon W1
-    const initialWeek = seasonMode === 'off_season' ? 'H1' : 'W1'
-    window.localStorage.setItem('rugbyprep.week.v1', initialWeek)
-
-    // ── Tous les profils passent maintenant — le moteur annuel gère tout ──
-    if (userId) markOnboardingComplete(userId)
-    posthog.capture('onboarding_completed', {
-      position, trainingLevel, seasonMode, ageBand, gender,
-      populationSegment: derivedPopulationSegment,
-      performanceFocus: 'balanced',
-      sessions,
-      eligible: true,
-    })
-
-    const destination = resolvePostOnboardingDestination(intendedPath)
-    navigate(destination, { replace: true })
   }
 
   // Moteur annuel gère tous les profils — pas de guard beta/eligibility

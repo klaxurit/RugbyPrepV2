@@ -13,8 +13,8 @@ export function RequireAuth() {
   // Pendant la restauration de session, ne pas rediriger trop vite
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-[#faf9f7] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-[#1a5f3f] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-app flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-brand border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -25,8 +25,8 @@ export function RequireAuth() {
 
   if (onboardingStatus === 'loading') {
     return (
-      <div className="min-h-screen bg-[#faf9f7] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-[#1a5f3f] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-app flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-brand border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }

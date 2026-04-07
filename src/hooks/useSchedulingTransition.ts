@@ -58,8 +58,9 @@ export function useSchedulingTransition(
     const previousMode = storage.getItem(baselineKey)
 
     // 1. Mode transitions (require baseline comparison)
-    if (previousMode === null) {
-      // First access — no baseline yet. Will be initialized in useEffect. No transition.
+    // Guard: skip transitions for anonymous users (identity 'anon') to avoid cross-account leaks
+    if (previousMode === null || identity === 'anon') {
+      // First access or no authenticated user — no baseline yet. Will be initialized in useEffect. No transition.
     } else if (previousMode !== schedulingMode) {
       if (previousMode === 'sequential' && schedulingMode === 'calendar') {
         if (!isDismissed(dismissed, 'calendar_mode_activated', today)) {

@@ -73,7 +73,10 @@ export function SessionDetailPage() {
   const [isSavingSession, setIsSavingSession] = useState(false)
   const handleSaveBlock = (log: Parameters<typeof addBlockLog>[0]) => { addBlockLog(log) }
 
-  useEffect(() => { posthog.capture('session_viewed', { index }) }, [index])
+  useEffect(() => {
+    posthog.capture('session_viewed', { index })
+    window.scrollTo(0, 0)
+  }, [index])
 
   const { acwr, zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, visibleEvents)
   const { ignoreAcwrOverload } = useAcwrOverride()

@@ -1497,7 +1497,7 @@ export function ProfilePage() {
       {/* Footer */}
       <footer className="px-4 py-6 flex flex-col items-center gap-3 text-center relative">
         <a
-          href="mailto:feedback@rugbyforge.fr?subject=Feedback%20RugbyForge"
+          href="mailto:support@rugbyforge.fr?subject=Feedback%20RugbyForge"
           onClick={() => posthog.capture('feedback_clicked')}
           className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-success-app text-on-success text-xs font-black uppercase tracking-wide opacity-95 hover:opacity-100 transition-opacity shadow-elevated rf-focus-ring"
         >

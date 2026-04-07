@@ -228,3 +228,9 @@ textarea {
     box-shadow: 0 0 0 3px var(--color-focus-glow);
   }
 }
+
+/* Icônes natives des inputs time/date lisibles sur fond sombre */
+input[type='time']::-webkit-calendar-picker-indicator,
+input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0.8);
+}
