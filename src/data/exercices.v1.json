@@ -94,7 +94,8 @@
       "power",
       "neural"
     ],
-    "defaultNotes": "Travail explosif. Priorité à la qualité, arrêt avant dégradation."
+    "defaultNotes": "Travail explosif. Priorité à la qualité, arrêt avant dégradation.",
+    "videoUrl": "https://www.youtube.com/shorts/oTfU-qt6cGc"
   },
   {
     "id": "push_horizontal__push_up__oscillation",
@@ -190,7 +191,8 @@
       "upper",
       "push"
     ],
-    "defaultNotes": "Très rugby: pousse + anti-rotation + stabilité scapulaire."
+    "defaultNotes": "Très rugby: pousse + anti-rotation + stabilité scapulaire.",
+    "videoUrl": "https://www.youtube.com/watch?v=39lH32_Ukos"
   },
   {
     "id": "pull_vertical__pull_up__neutral",
@@ -431,7 +433,8 @@
       "prehab",
       "shoulder_health"
     ],
-    "defaultNotes": "Travail arrière d’épaule / coiffe."
+    "defaultNotes": "Travail arrière d’épaule / coiffe.",
+    "videoUrl": "https://www.youtube.com/shorts/1s-0WtJMsu8"
   },
   {
     "id": "olympic_variant__hang_high_pull",
@@ -454,7 +457,8 @@
       "power",
       "neural"
     ],
-    "defaultNotes": "Bloc neural. Vitesse de barre > charge."
+    "defaultNotes": "Bloc neural. Vitesse de barre > charge.",
+    "videoUrl": "https://www.youtube.com/shorts/e1E6TGWiUac"
   },
   {
     "id": "olympic_variant__clean_high_pull",
@@ -477,7 +481,8 @@
       "power",
       "neural"
     ],
-    "defaultNotes": "Variante explosive du clean, sans réception."
+    "defaultNotes": "Variante explosive du clean, sans réception.",
+    "videoUrl": "https://www.youtube.com/shorts/er9Rc2S_kLA"
   },
   {
     "id": "olympic_variant__power_clean__hang",
@@ -501,7 +506,8 @@
       "power",
       "neural"
     ],
-    "defaultNotes": "Technique. Doit rester propre, sinon remplacer par high pull."
+    "defaultNotes": "Technique. Doit rester propre, sinon remplacer par high pull.",
+    "videoUrl": "https://www.youtube.com/shorts/CCZK0ouzd4A"
   },
   {
     "id": "full_power__db_snatch__single_arm",
@@ -525,7 +531,8 @@
       "power",
       "neural"
     ],
-    "defaultNotes": "Très bon en EMOM: simple, explosif, transférable."
+    "defaultNotes": "Très bon en EMOM: simple, explosif, transférable.",
+    "videoUrl": "https://www.youtube.com/watch?v=3mlhF3dptAo"
   },
   {
     "id": "lower_jump__broad_jump__seated",
@@ -570,7 +577,8 @@
       "power",
       "neural"
     ],
-    "defaultNotes": "Plyo contrôlée. Atterrissage silencieux."
+    "defaultNotes": "Plyo contrôlée. Atterrissage silencieux.",
+    "videoUrl": "https://www.youtube.com/watch?v=k7dmYdknbac"
   },
   {
     "id": "unilateral__jump_step_up",
@@ -640,7 +648,8 @@
       "lower",
       "squat"
     ],
-    "defaultNotes": "Contrôle amplitude et posture. Utile pour force."
+    "defaultNotes": "Contrôle amplitude et posture. Utile pour force.",
+    "videoUrl": "https://www.youtube.com/shorts/2aIgi73HIw8"
   },
   {
     "id": "hinge__rdl__barbell",
@@ -749,7 +758,8 @@
       "groin",
       "prehab"
     ],
-    "defaultNotes": "Adducteurs (essentiel rugby). Monter progressivement."
+    "defaultNotes": "Adducteurs (essentiel rugby). Monter progressivement.",
+    "videoUrl": "https://www.youtube.com/shorts/dhw1wsOSA1c"
   },
   {
     "id": "core_anti_extension__ghd_iso",
@@ -769,7 +779,8 @@
     "tags": [
       "core"
     ],
-    "defaultNotes": "Format temps (10–20s). Ne pas cambrer."
+    "defaultNotes": "Format temps (10–20s). Ne pas cambrer.",
+    "videoUrl": "https://www.youtube.com/shorts/EjuzZs6JJrE"
   },
   {
     "id": "core_anti_extension__dead_bug",
@@ -789,7 +800,8 @@
     "tags": [
       "core"
     ],
-    "defaultNotes": "Alternative safe sans matériel."
+    "defaultNotes": "Alternative safe sans matériel.",
+    "videoUrl": "https://www.youtube.com/shorts/DqLL45uk2Tk"
   },
   {
     "id": "core_anti_rotation__pallof_press__band",
@@ -810,7 +822,8 @@
     "tags": [
       "core"
     ],
-    "defaultNotes": "Anti-rotation essentiel en rugby (contact, rucks)."
+    "defaultNotes": "Anti-rotation essentiel en rugby (contact, rucks).",
+    "videoUrl": "https://www.youtube.com/shorts/bnpqMNtaBIA"
   },
   {
     "id": "core_rotation__ghd_rotations",
@@ -831,7 +844,8 @@
     "tags": [
       "core"
     ],
-    "defaultNotes": "Contrôle du tronc. Éviter si douleur lombaire."
+    "defaultNotes": "Contrôle du tronc. Éviter si douleur lombaire.",
+    "videoUrl": "https://www.youtube.com/watch?v=AItu4tPTM8Y"
   },
   {
     "id": "neck__flexion",
@@ -1070,7 +1084,8 @@
     "defaultNotes": "Levier court, qualite.",
     "id": "groin_adductors__copenhagen_plank__short",
     "name": "Copenhagen court",
-    "notes": "Levier court, qualite."
+    "notes": "Levier court, qualite.",
+    "videoUrl": "https://www.youtube.com/shorts/Rwap0_j5i5A"
   },
   {
     "exerciseId": "groin_adductors__copenhagen_plank__long",
@@ -1090,7 +1105,8 @@
     "defaultNotes": "Levier long, controle.",
     "id": "groin_adductors__copenhagen_plank__long",
     "name": "Copenhagen long",
-    "notes": "Levier long, controle."
+    "notes": "Levier long, controle.",
+    "videoUrl": "https://www.youtube.com/shorts/tgK5r1no_BU"
   },
   {
     "exerciseId": "hamstring__nordic__partner",
@@ -1110,7 +1126,8 @@
     "defaultNotes": "Descente controlee.",
     "id": "hamstring__nordic__partner",
     "name": "Nordic hamstring partenaire",
-    "notes": "Descente controlee."
+    "notes": "Descente controlee.",
+    "videoUrl": "https://www.youtube.com/shorts/GzxNzNRy9T0"
   },
   {
     "exerciseId": "hamstring__nordic__band_assist",
@@ -1130,7 +1147,8 @@
     "defaultNotes": "Assistance progressive.",
     "id": "hamstring__nordic__band_assist",
     "name": "Nordic hamstring élastique",
-    "notes": "Assistance progressive."
+    "notes": "Assistance progressive.",
+    "videoUrl": "https://www.youtube.com/shorts/paVZ-Vrm6Z4"
   },
   {
     "exerciseId": "hamstring__slide_leg_curl__towel",
@@ -1231,7 +1249,8 @@
     "defaultNotes": "Amplitude controlee.",
     "id": "lower_squat__bulgarian_split_squat__dumbbell",
     "name": "Bulgarian split squat haltères",
-    "notes": "Amplitude controlee."
+    "notes": "Amplitude controlee.",
+    "videoUrl": "https://www.youtube.com/shorts/or1frhkjBDc"
   },
   {
     "exerciseId": "lower_lunge__reverse_lunge__barbell",
@@ -1349,7 +1368,8 @@
     "defaultNotes": "Qualite des receptions.",
     "id": "lower_jump__step_up__box",
     "name": "Montée pliométrique sur box",
-    "notes": "Qualite des receptions."
+    "notes": "Qualite des receptions.",
+    "videoUrl": "https://www.youtube.com/shorts/D4iulYo-udo"
   },
   {
     "exerciseId": "calf__standing_raise__bodyweight",
@@ -1405,7 +1425,8 @@
     "defaultNotes": "Controle et amplitude.",
     "id": "lower_squat__pistol_box__bodyweight",
     "name": "Pistol squat sur box",
-    "notes": "Controle et amplitude."
+    "notes": "Controle et amplitude.",
+    "videoUrl": "https://www.youtube.com/shorts/D5Iib9ZEkk8"
   },
   {
     "exerciseId": "power__medball_chest_pass__wall",
@@ -1423,7 +1444,8 @@
     "defaultNotes": "Explosif, retour rapide.",
     "id": "power__medball_chest_pass__wall",
     "name": "Lancer medecine ball poitrine mur",
-    "notes": "Explosif, retour rapide."
+    "notes": "Explosif, retour rapide.",
+    "videoUrl": "https://www.youtube.com/shorts/LS75csmzdAE"
   },
   {
     "exerciseId": "power__medball_slam__overhead",
@@ -1443,7 +1465,8 @@
     "defaultNotes": "Tronc gainé.",
     "id": "power__medball_slam__overhead",
     "name": "Slam medecine ball",
-    "notes": "Tronc gainé."
+    "notes": "Tronc gainé.",
+    "videoUrl": "https://www.youtube.com/shorts/99DLQtHP7jE"
   },
   {
     "exerciseId": "power__medball_rotational_throw__wall",
@@ -1463,7 +1486,8 @@
     "defaultNotes": "Rotation controlee.",
     "id": "power__medball_rotational_throw__wall",
     "name": "Lancer rotationnel medball",
-    "notes": "Rotation controlee."
+    "notes": "Rotation controlee.",
+    "videoUrl": "https://www.youtube.com/shorts/02c2YLgF8iE"
   },
   {
     "exerciseId": "power__cable_press__explosive",
@@ -1503,7 +1527,8 @@
     "defaultNotes": "Trajectoire explosive, tronc gainé.",
     "id": "power__cable_slam__high_to_low",
     "name": "Cable Slam haut vers bas",
-    "notes": "Trajectoire explosive, tronc gainé."
+    "notes": "Trajectoire explosive, tronc gainé.",
+    "videoUrl": "https://www.youtube.com/watch?v=EdFOej2lMMI"
   },
   {
     "exerciseId": "power__jump__box_jump",
@@ -1523,7 +1548,8 @@
     "defaultNotes": "Reception silencieuse.",
     "id": "power__jump__box_jump",
     "name": "Box jump",
-    "notes": "Reception silencieuse."
+    "notes": "Reception silencieuse.",
+    "videoUrl": "https://www.youtube.com/shorts/bXgFx93CGow"
   },
   {
     "exerciseId": "power__jump__vertical_jump",
@@ -1584,7 +1610,8 @@
     "defaultNotes": "Stabilite au sol.",
     "id": "power__bound__single_leg",
     "name": "Bounds unilateraux",
-    "notes": "Stabilite au sol."
+    "notes": "Stabilite au sol.",
+    "videoUrl": "https://www.youtube.com/shorts/ZkYORFHgRTw"
   },
   {
     "exerciseId": "power__landmine_press__speed",
@@ -1604,7 +1631,8 @@
     "defaultNotes": "Vitesse maximale.",
     "id": "power__landmine_press__speed",
     "name": "Landmine press vitesse",
-    "notes": "Vitesse maximale."
+    "notes": "Vitesse maximale.",
+    "videoUrl": "https://www.youtube.com/watch?v=p-skt3yYHn8"
   },
   {
     "exerciseId": "power__push_press__barbell",
@@ -1644,7 +1672,8 @@
     "defaultNotes": "Trajectoire verticale.",
     "id": "power__hang_clean_pull__barbell",
     "name": "Hang clean pull",
-    "notes": "Trajectoire verticale."
+    "notes": "Trajectoire verticale.",
+    "videoUrl": "https://www.youtube.com/shorts/yz4KXzZHAE8"
   },
   {
     "exerciseId": "pull_horizontal__chest_supported_row__dumbbell",
@@ -1684,7 +1713,8 @@
     "defaultNotes": "Buste fixe.",
     "id": "pull_horizontal__seal_row__barbell",
     "name": "Seal row barre",
-    "notes": "Buste fixe."
+    "notes": "Buste fixe.",
+    "videoUrl": "https://www.youtube.com/shorts/YSW2SKoiN1s"
   },
   {
     "exerciseId": "pull_horizontal__band_row__elbows_low",
@@ -1841,7 +1871,8 @@
     "defaultNotes": "Gainage fort.",
     "id": "carry__zercher_carry__barbell",
     "name": "Zercher carry",
-    "notes": "Gainage fort."
+    "notes": "Gainage fort.",
+    "videoUrl": "https://www.youtube.com/shorts/IU9yYNTON38"
   },
   {
     "exerciseId": "carry__overhead_carry__dumbbell",
@@ -1953,7 +1984,8 @@
     "defaultNotes": "Controle amplitude.",
     "id": "core_anti_extension__ab_wheel__kneeling",
     "name": "Roue abdominale à genoux",
-    "notes": "Controle amplitude."
+    "notes": "Controle amplitude.",
+    "videoUrl": "https://www.youtube.com/shorts/kFv2rLtgc8w"
   },
   {
     "exerciseId": "core_anti_extension__hollow_hold",
@@ -1972,7 +2004,8 @@
     "defaultNotes": "Respiration controlee.",
     "id": "core_anti_extension__hollow_hold",
     "name": "Gainage creux (hollow hold)",
-    "notes": "Respiration controlee."
+    "notes": "Respiration controlee.",
+    "videoUrl": "https://www.youtube.com/shorts/_wBPcny-7Hc"
   },
   {
     "exerciseId": "prehab_shoulder__external_rotation_iso__band",
@@ -2214,7 +2247,8 @@
       "posterior_chain",
       "starter"
     ],
-    "defaultNotes": "Mains derrière la tête. Fléchir à la hanche (pas à la colonne). Dos neutre obligatoire."
+    "defaultNotes": "Mains derrière la tête. Fléchir à la hanche (pas à la colonne). Dos neutre obligatoire.",
+    "videoUrl": "https://www.youtube.com/shorts/gMaBKExWnFI"
   },
   {
     "id": "hinge__glute_bridge__bodyweight",
@@ -2258,7 +2292,8 @@
       "pull",
       "starter"
     ],
-    "defaultNotes": "Corps rigide des genoux aux épaules. Initier par les omoplates, puis coudes. Poitrine vers la barre."
+    "defaultNotes": "Corps rigide des genoux aux épaules. Initier par les omoplates, puis coudes. Poitrine vers la barre.",
+    "videoUrl": "https://www.youtube.com/shorts/vZy_Eu_Z0WA"
   },
   {
     "id": "pull_horizontal__band_row__standing",
@@ -2641,7 +2676,8 @@
       "hip",
       "recovery"
     ],
-    "defaultNotes": "Assis au sol, deux jambes a 90. Maintenez la position, respirez."
+    "defaultNotes": "Assis au sol, deux jambes a 90. Maintenez la position, respirez.",
+    "videoUrl": "https://www.youtube.com/shorts/NTV0hCylL-I"
   },
   {
     "id": "mobility__hip_couch_stretch",
@@ -2661,7 +2697,8 @@
       "hip",
       "recovery"
     ],
-    "defaultNotes": "Genou arriere au sol contre un mur. Etire le flechisseur de hanche."
+    "defaultNotes": "Genou arriere au sol contre un mur. Etire le flechisseur de hanche.",
+    "videoUrl": "https://www.youtube.com/shorts/D2ZzwlSYgeE"
   },
   {
     "id": "mobility__pigeon_pose",
@@ -2681,7 +2718,8 @@
       "hip",
       "recovery"
     ],
-    "defaultNotes": "Au sol, jambe avant flechie en rotation externe. Inclinaison vers l'avant douce."
+    "defaultNotes": "Au sol, jambe avant flechie en rotation externe. Inclinaison vers l'avant douce.",
+    "videoUrl": "https://www.youtube.com/shorts/pjmR5Kacu1w"
   },
   {
     "id": "mobility__thoracic_rotation_seated",
@@ -2743,7 +2781,8 @@
       "thoracic",
       "recovery"
     ],
-    "defaultNotes": "Fente avant, bras vers le ciel, rotation thoracique. Mobilite totale en un seul mouvement."
+    "defaultNotes": "Fente avant, bras vers le ciel, rotation thoracique. Mobilite totale en un seul mouvement.",
+    "videoUrl": "https://www.youtube.com/watch?v=-CiWQ2IvY34"
   },
   {
     "id": "mobility__ankle_circles",
@@ -3191,7 +3230,8 @@
       "starter"
     ],
     "notes": "À quatre pattes, tendre bras et jambe opposés simultanément. Bassin stable. Maintenir 2s. Anti-extension + anti-rotation.",
-    "defaultNotes": "4 pattes, bras + jambe opposés tendus. Bassin stable 2s. Retour contrôlé."
+    "defaultNotes": "4 pattes, bras + jambe opposés tendus. Bassin stable 2s. Retour contrôlé.",
+    "videoUrl": "https://www.youtube.com/shorts/X0FpQEjEA40"
   },
   {
     "id": "activation__glute_clam__band",
@@ -3256,7 +3296,8 @@
       "squat"
     ],
     "notes": "Descendre en squat puis sauter le plus haut possible. Réception souple genoux fléchis. Transfert rugby : départ en sprint, plaquage.",
-    "defaultNotes": "Squat complet → saut max. Réception souple. Qualité > vitesse."
+    "defaultNotes": "Squat complet → saut max. Réception souple. Qualité > vitesse.",
+    "videoUrl": "https://www.youtube.com/watch?v=BRfxI2Es2lE"
   },
   {
     "id": "power__split_jump__bodyweight",
@@ -3279,7 +3320,8 @@
       "unilateral"
     ],
     "notes": "Position de fente, sauter et alterner les jambes en l'air. Réception souple. Excellent pour la puissance unilatérale rugby.",
-    "defaultNotes": "Fente → saut → alterner jambes. Réception souple. Qualité des réceptions."
+    "defaultNotes": "Fente → saut → alterner jambes. Réception souple. Qualité des réceptions.",
+    "videoUrl": "https://www.youtube.com/shorts/x6GB7M7IvQQ"
   },
   {
     "id": "pull_horizontal__band_row__face_pull_height",
@@ -3300,7 +3342,8 @@
       "prehab"
     ],
     "notes": "Élastique fixé à hauteur du visage. Tirer vers le visage en écartant les mains. Rotation externe en fin de mouvement. Excellent pour la coiffe.",
-    "defaultNotes": "Tirer vers le visage, écarter en fin de mouvement. Rétraction scapulaire. Contrôle."
+    "defaultNotes": "Tirer vers le visage, écarter en fin de mouvement. Rétraction scapulaire. Contrôle.",
+    "videoUrl": "https://www.youtube.com/shorts/1s-0WtJMsu8"
   },
   {
     "id": "hinge__hip_thrust__barbell",
@@ -3329,112 +3372,175 @@
     "id": "hinge__deadlift__trap_bar",
     "name": "Trap Bar Deadlift",
     "pattern": "hinge",
-    "equipment": ["trap_bar"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "trap_bar"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "notes": "Deadlift avec trap bar. Position plus neutre pour le dos.",
     "exerciseId": "hinge__deadlift__trap_bar",
     "nameFr": "Soulevé de terre trap bar",
     "metricType": "load_reps",
-    "tags": ["lower", "hinge", "posterior_chain"],
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain"
+    ],
     "defaultNotes": "Prise neutre, poussée des jambes, dos verrouillé."
   },
   {
     "id": "push_horizontal__bench_press__football_bar",
     "name": "Football Bar Bench Press",
     "pattern": "push_horizontal",
-    "equipment": ["barbell", "bench"],
-    "contraindications": ["shoulder_pain", "elbow_pain", "wrist_pain"],
+    "equipment": [
+      "barbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
     "level": "intermediate",
     "notes": "Prise neutre, moins de stress sur l'épaule.",
     "exerciseId": "push_horizontal__bench_press__football_bar",
     "nameFr": "Développé couché football bar",
     "metricType": "load_reps",
-    "tags": ["upper", "push"],
+    "tags": [
+      "upper",
+      "push"
+    ],
     "defaultNotes": "Prise neutre, moins de stress sur l'épaule."
   },
   {
     "id": "push_horizontal__bench_press__incline__dumbbell",
     "name": "Incline DB Bench Press",
     "pattern": "push_horizontal",
-    "equipment": ["dumbbell", "bench"],
-    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "equipment": [
+      "dumbbell",
+      "bench"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
     "level": "beginner",
     "notes": "Développé incliné haltères. Bon travail de la portion claviculaire.",
     "exerciseId": "push_horizontal__bench_press__incline__dumbbell",
     "nameFr": "Développé incliné haltères",
     "metricType": "load_reps",
-    "tags": ["upper", "push"],
+    "tags": [
+      "upper",
+      "push"
+    ],
     "defaultNotes": "Incliné 30-45°. Descente contrôlée, poussée explosive."
   },
   {
     "id": "core_rotation__landmine_rotation",
     "name": "Landmine Rotation",
     "pattern": "core_rotation",
-    "equipment": ["landmine"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "landmine"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "notes": "Rotation contrôlée avec landmine. Anti-rotation dynamique.",
     "exerciseId": "core_rotation__landmine_rotation",
     "nameFr": "Rotation à la landmine",
     "metricType": "load_reps",
-    "tags": ["core", "rotation"],
-    "defaultNotes": "Contrôle et amplitude, pas charge."
+    "tags": [
+      "core",
+      "rotation"
+    ],
+    "defaultNotes": "Contrôle et amplitude, pas charge.",
+    "videoUrl": "https://www.youtube.com/watch?v=e5DP6961WEk"
   },
   {
     "id": "core_rotation__cable_chop",
     "name": "Cable Chop",
     "pattern": "core_rotation",
-    "equipment": ["cable"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "cable"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "beginner",
     "notes": "Anti-rotation dynamique au câble. Contrôle du tronc.",
     "exerciseId": "core_rotation__cable_chop",
     "nameFr": "Chop au câble",
     "metricType": "load_reps",
-    "tags": ["core", "rotation"],
+    "tags": [
+      "core",
+      "rotation"
+    ],
     "defaultNotes": "Tronc gainé, rotation contrôlée."
   },
   {
     "id": "core_rotation__cable_rotation__explosive",
     "name": "Cable Rotation explosif",
     "pattern": "core_rotation",
-    "equipment": ["cable"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "cable"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "notes": "Rotation explosive au câble avec tronc verrouillé.",
     "exerciseId": "core_rotation__cable_rotation__explosive",
     "nameFr": "Cable Rotation explosif",
     "metricType": "load_reps",
-    "tags": ["core", "rotation", "power"],
+    "tags": [
+      "core",
+      "rotation",
+      "power"
+    ],
     "defaultNotes": "Intention maximale, rotation propre."
   },
   {
     "id": "pull_horizontal__landmine_row",
     "name": "Landmine Row",
     "pattern": "pull_horizontal",
-    "equipment": ["landmine"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "landmine"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "notes": "Tirage unilatéral à la landmine.",
     "exerciseId": "pull_horizontal__landmine_row",
     "nameFr": "Rowing à la landmine",
     "metricType": "load_reps",
-    "tags": ["upper", "pull"],
-    "defaultNotes": "Dos neutre, tirage puissant."
+    "tags": [
+      "upper",
+      "pull"
+    ],
+    "defaultNotes": "Dos neutre, tirage puissant.",
+    "videoUrl": "https://www.youtube.com/shorts/Sr2q7i-i8X0"
   },
   {
     "id": "pull_horizontal__cable_row__half_kneeling",
     "name": "Half-Kneeling Cable Row",
     "pattern": "pull_horizontal",
-    "equipment": ["cable"],
+    "equipment": [
+      "cable"
+    ],
     "contraindications": [],
     "level": "beginner",
     "notes": "Rowing unilatéral au câble, position demi-genou.",
     "exerciseId": "pull_horizontal__cable_row__half_kneeling",
     "nameFr": "Rowing câble demi-genou",
     "metricType": "load_reps",
-    "tags": ["upper", "pull"],
+    "tags": [
+      "upper",
+      "pull"
+    ],
     "defaultNotes": "Tronc gainé, tirage contrôlé."
   },
   {
@@ -3442,13 +3548,20 @@
     "name": "Seated Cable Row",
     "nameFr": "Rowing poulie assis",
     "pattern": "pull_horizontal",
-    "equipment": ["cable"],
-    "contraindications": ["shoulder_pain"],
+    "equipment": [
+      "cable"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "level": "beginner",
     "notes": "Tirage horizontal guidé à la poulie. Très lisible pour un niveau Fondations.",
     "exerciseId": "pull_horizontal__cable_row__seated",
     "metricType": "load_reps",
-    "tags": ["upper", "pull"],
+    "tags": [
+      "upper",
+      "pull"
+    ],
     "defaultNotes": "Poitrine sortie, tirage vers le bas des côtes, pas d'élan."
   },
   {
@@ -3456,154 +3569,248 @@
     "name": "Chest-Supported Machine Row",
     "nameFr": "Rowing machine poitrine appuyée",
     "pattern": "pull_horizontal",
-    "equipment": ["machine"],
-    "contraindications": ["shoulder_pain"],
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "level": "beginner",
     "notes": "Tirage poitrine appuyée sur machine. Très stable pour un niveau Fondations.",
     "exerciseId": "pull_horizontal__chest_supported_row__machine",
     "metricType": "load_reps",
-    "tags": ["upper", "pull"],
+    "tags": [
+      "upper",
+      "pull"
+    ],
     "defaultNotes": "Buste collé au support, tirage strict, contrôle scapulaire."
   },
   {
     "id": "arm_curl__hammer_curl__dumbbell",
     "name": "Hammer Curl",
     "pattern": "arm_curl",
-    "equipment": ["dumbbell"],
-    "contraindications": ["elbow_pain", "wrist_pain"],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "elbow_pain",
+      "wrist_pain"
+    ],
     "level": "beginner",
     "notes": "Curl prise neutre. Travail brachioradial + biceps.",
     "exerciseId": "arm_curl__hammer_curl__dumbbell",
     "nameFr": "Curl marteau haltère",
     "metricType": "load_reps",
-    "tags": ["upper", "pull", "assistance"],
+    "tags": [
+      "upper",
+      "pull",
+      "assistance"
+    ],
     "defaultNotes": "Progresse par reps d'abord, puis charge."
   },
   {
     "id": "arm_curl__alternating_curl__dumbbell",
     "name": "Alternating DB Curl",
     "pattern": "arm_curl",
-    "equipment": ["dumbbell"],
-    "contraindications": ["elbow_pain", "wrist_pain"],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "elbow_pain",
+      "wrist_pain"
+    ],
     "level": "beginner",
     "notes": "Curl alterné haltères.",
     "exerciseId": "arm_curl__alternating_curl__dumbbell",
     "nameFr": "Curl alterné haltères",
     "metricType": "load_reps",
-    "tags": ["upper", "pull", "assistance"],
+    "tags": [
+      "upper",
+      "pull",
+      "assistance"
+    ],
     "defaultNotes": "Contrôle la descente, pas de balancier."
   },
   {
     "id": "arm_extension__french_press__ez_bar",
     "name": "French Press",
     "pattern": "arm_extension",
-    "equipment": ["ez_bar"],
-    "contraindications": ["elbow_pain", "wrist_pain"],
+    "equipment": [
+      "ez_bar"
+    ],
+    "contraindications": [
+      "elbow_pain",
+      "wrist_pain"
+    ],
     "level": "beginner",
     "notes": "Extension triceps couché avec barre EZ.",
     "exerciseId": "arm_extension__french_press__ez_bar",
     "nameFr": "French press barre EZ",
     "metricType": "load_reps",
-    "tags": ["upper", "push", "assistance"],
+    "tags": [
+      "upper",
+      "push",
+      "assistance"
+    ],
     "defaultNotes": "Descente contrôlée derrière la tête, coudes fixes."
   },
   {
     "id": "arm_extension__skull_crusher__ez_bar",
     "name": "Skull Crusher",
     "pattern": "arm_extension",
-    "equipment": ["ez_bar", "bench"],
-    "contraindications": ["elbow_pain", "wrist_pain"],
+    "equipment": [
+      "ez_bar",
+      "bench"
+    ],
+    "contraindications": [
+      "elbow_pain",
+      "wrist_pain"
+    ],
     "level": "beginner",
     "notes": "Extension triceps couché, barre EZ au front.",
     "exerciseId": "arm_extension__skull_crusher__ez_bar",
     "nameFr": "Skull crusher barre EZ",
     "metricType": "load_reps",
-    "tags": ["upper", "push", "assistance"],
+    "tags": [
+      "upper",
+      "push",
+      "assistance"
+    ],
     "defaultNotes": "Coudes fixes, descente au front."
   },
   {
     "id": "arm_extension__pressdown__cable_rope",
     "name": "Rope Pressdown",
     "pattern": "arm_extension",
-    "equipment": ["cable"],
-    "contraindications": ["elbow_pain"],
+    "equipment": [
+      "cable"
+    ],
+    "contraindications": [
+      "elbow_pain"
+    ],
     "level": "beginner",
     "notes": "Pressdown triceps au câble avec corde.",
     "exerciseId": "arm_extension__pressdown__cable_rope",
     "nameFr": "Pressdown corde câble",
     "metricType": "load_reps",
-    "tags": ["upper", "push", "assistance"],
+    "tags": [
+      "upper",
+      "push",
+      "assistance"
+    ],
     "defaultNotes": "Coudes au corps, extension complète."
   },
   {
     "id": "hinge__rdl__single_leg__dumbbell",
     "name": "Single-Leg RDL",
     "pattern": "hinge",
-    "equipment": ["dumbbell"],
-    "contraindications": ["low_back_pain", "ankle_pain"],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "ankle_pain"
+    ],
     "level": "intermediate",
     "unilateral": true,
     "notes": "RDL unipodal. Travail stabilité + ischio.",
     "exerciseId": "hinge__rdl__single_leg__dumbbell",
     "nameFr": "RDL unipodal haltère",
     "metricType": "load_reps",
-    "tags": ["lower", "hinge", "unilateral"],
-    "defaultNotes": "Dos neutre, bassin stable, descente contrôlée."
+    "tags": [
+      "lower",
+      "hinge",
+      "unilateral"
+    ],
+    "defaultNotes": "Dos neutre, bassin stable, descente contrôlée.",
+    "videoUrl": "https://www.youtube.com/shorts/_C5ySSb9N28"
   },
   {
     "id": "hinge__rdl__hex_bar",
     "name": "Hex Bar RDL",
     "pattern": "hinge",
-    "equipment": ["trap_bar"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "trap_bar"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "notes": "RDL avec trap bar. Plus stable que barre droite.",
     "exerciseId": "hinge__rdl__hex_bar",
     "nameFr": "RDL hex bar",
     "metricType": "load_reps",
-    "tags": ["lower", "hinge", "posterior_chain"],
+    "tags": [
+      "lower",
+      "hinge",
+      "posterior_chain"
+    ],
     "defaultNotes": "Prise neutre, dos verrouillé, descente contrôlée."
   },
   {
     "id": "shoulder_isolation__lateral_raise__dumbbell",
     "name": "Lateral Raise",
     "pattern": "shoulder_isolation",
-    "equipment": ["dumbbell"],
-    "contraindications": ["shoulder_pain"],
+    "equipment": [
+      "dumbbell"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "level": "beginner",
     "notes": "Élévation latérale haltères.",
     "exerciseId": "shoulder_isolation__lateral_raise__dumbbell",
     "nameFr": "Élévation latérale haltères",
     "metricType": "load_reps",
-    "tags": ["upper", "push", "assistance"],
+    "tags": [
+      "upper",
+      "push",
+      "assistance"
+    ],
     "defaultNotes": "Léger, contrôle, pas de balancier."
   },
   {
     "id": "knee_extension__leg_extension__machine",
     "name": "Leg Extension",
     "pattern": "knee_extension",
-    "equipment": ["machine"],
-    "contraindications": ["knee_pain"],
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "level": "beginner",
     "notes": "Extension du genou, machine isolée.",
     "exerciseId": "knee_extension__leg_extension__machine",
     "nameFr": "Leg extension machine",
     "metricType": "load_reps",
-    "tags": ["lower", "quad", "assistance"],
+    "tags": [
+      "lower",
+      "quad",
+      "assistance"
+    ],
     "defaultNotes": "Extension complète, descente contrôlée."
   },
   {
     "id": "squat__leg_press__machine",
     "name": "Leg Press",
     "pattern": "squat",
-    "equipment": ["machine"],
-    "contraindications": ["knee_pain", "low_back_pain"],
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
     "level": "beginner",
     "notes": "Presse à cuisses. Gros volume possible.",
     "exerciseId": "squat__leg_press__machine",
     "nameFr": "Presse à cuisses",
     "metricType": "load_reps",
-    "tags": ["lower", "quad"],
+    "tags": [
+      "lower",
+      "quad"
+    ],
     "defaultNotes": "Pieds largeur épaules, descente 90°."
   },
   {
@@ -3611,391 +3818,602 @@
     "name": "Hack Squat",
     "nameFr": "Hack squat machine",
     "pattern": "squat",
-    "equipment": ["machine"],
-    "contraindications": ["knee_pain", "low_back_pain"],
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
     "level": "beginner",
     "notes": "Squat guidé sur machine. Plus simple à mettre en place qu'un pin squat.",
     "exerciseId": "squat__hack_squat__machine",
     "metricType": "load_reps",
-    "tags": ["lower", "quad", "force"],
+    "tags": [
+      "lower",
+      "quad",
+      "force"
+    ],
     "defaultNotes": "Dos calé, amplitude contrôlée, pousser fort sans perdre la ligne."
   },
   {
     "id": "calf__seated_raise__machine",
     "name": "Seated Calf Raise",
     "pattern": "calf",
-    "equipment": ["machine"],
-    "contraindications": ["ankle_pain"],
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
     "level": "beginner",
     "notes": "Mollets assis. Travail du soléaire.",
     "exerciseId": "calf__seated_raise__machine",
     "nameFr": "Mollets assis machine",
     "metricType": "load_reps",
-    "tags": ["lower", "calf"],
+    "tags": [
+      "lower",
+      "calf"
+    ],
     "defaultNotes": "Amplitude complète, 2s en bas."
   },
   {
     "id": "calf__weighted_raise__barbell",
     "name": "Weighted Calf Raise",
     "pattern": "calf",
-    "equipment": ["barbell"],
-    "contraindications": ["ankle_pain"],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
     "level": "intermediate",
     "notes": "Mollets debout avec charge.",
     "exerciseId": "calf__weighted_raise__barbell",
     "nameFr": "Mollets debout avec charge",
     "metricType": "load_reps",
-    "tags": ["lower", "calf"],
+    "tags": [
+      "lower",
+      "calf"
+    ],
     "defaultNotes": "Amplitude complète, pause en bas."
   },
   {
     "id": "calf__leg_press_calf__machine",
     "name": "Leg Press Calf Press",
     "pattern": "calf",
-    "equipment": ["machine"],
-    "contraindications": ["ankle_pain"],
+    "equipment": [
+      "machine"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
     "level": "beginner",
     "notes": "Mollets sur la presse à cuisses.",
     "exerciseId": "calf__leg_press_calf__machine",
     "nameFr": "Mollets presse à cuisses",
     "metricType": "load_reps",
-    "tags": ["lower", "calf"],
+    "tags": [
+      "lower",
+      "calf"
+    ],
     "defaultNotes": "Extension complète, descente lente."
   },
   {
     "id": "mobility__ankle_rocks",
     "name": "Ankle Rocks",
     "pattern": "mobility",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "notes": "Mobilité cheville. Genou au-dessus des orteils.",
     "exerciseId": "mobility__ankle_rocks",
     "nameFr": "Mobilité cheville",
     "metricType": "reps",
-    "tags": ["warmup", "mobility"],
+    "tags": [
+      "warmup",
+      "mobility"
+    ],
     "defaultNotes": "Lent et contrôlé, chercher l'amplitude."
   },
   {
     "id": "mobility__adductor_rock_back",
     "name": "Adductor Rock-Back",
     "pattern": "mobility",
-    "equipment": ["none"],
-    "contraindications": ["groin_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
     "level": "beginner",
     "notes": "Mobilité adducteurs. Doux et progressif.",
     "exerciseId": "mobility__adductor_rock_back",
     "nameFr": "Mobilité adducteurs",
     "metricType": "reps",
-    "tags": ["warmup", "mobility"],
+    "tags": [
+      "warmup",
+      "mobility"
+    ],
     "defaultNotes": "Doux, progressif, sans douleur."
   },
   {
     "id": "locomotion__bear_crawl",
     "name": "Bear Crawl",
     "pattern": "locomotion",
-    "equipment": ["none"],
-    "contraindications": ["wrist_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "wrist_pain"
+    ],
     "level": "beginner",
     "notes": "Marche de l'ours. Gainage dynamique.",
     "exerciseId": "locomotion__bear_crawl",
     "nameFr": "Marche de l'ours",
     "metricType": "meters",
-    "tags": ["warmup", "core"],
+    "tags": [
+      "warmup",
+      "core"
+    ],
     "defaultNotes": "Distance propre, pas de vitesse forcée."
   },
   {
     "id": "squat__anderson_box_squat__banded",
     "name": "Banded Anderson Box Squat",
     "pattern": "squat",
-    "equipment": ["barbell", "band", "box"],
-    "contraindications": ["knee_pain", "low_back_pain"],
+    "equipment": [
+      "barbell",
+      "band",
+      "box"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "notes": "Squat à partir du box avec bandes. Départ concentrique.",
     "exerciseId": "squat__anderson_box_squat__banded",
     "nameFr": "Squat Anderson box bandé",
     "metricType": "reps",
-    "tags": ["lower", "squat", "power"],
-    "defaultNotes": "Tension de bande = résistance. Explosion depuis le box."
+    "tags": [
+      "lower",
+      "squat",
+      "power"
+    ],
+    "defaultNotes": "Tension de bande = résistance. Explosion depuis le box.",
+    "videoUrl": "https://www.youtube.com/shorts/pD2vnqrApzU"
   },
   {
     "id": "hinge__kb_swing__banded",
     "name": "Banded KB Swing",
     "pattern": "hinge",
-    "equipment": ["kettlebell", "band"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "kettlebell",
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "notes": "Swing kettlebell avec bande de résistance.",
     "exerciseId": "hinge__kb_swing__banded",
     "nameFr": "Swing kettlebell bandé",
     "metricType": "reps",
-    "tags": ["lower", "hinge", "power"],
+    "tags": [
+      "lower",
+      "hinge",
+      "power"
+    ],
     "defaultNotes": "Extension explosive des hanches, bande augmente la résistance en haut."
   },
   {
     "id": "neck__extension__band",
     "name": "Banded Neck Extension",
     "pattern": "neck",
-    "equipment": ["band"],
-    "contraindications": ["neck_pain"],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
     "level": "beginner",
     "notes": "Extension cervicale avec bande.",
     "exerciseId": "neck__extension__band",
     "nameFr": "Extension cervicale bande",
     "metricType": "seconds",
-    "tags": ["neck"],
+    "tags": [
+      "neck"
+    ],
     "defaultNotes": "Isométrique contrôlé, augmente le temps si stable."
   },
   {
     "id": "squat__pin_squat__barbell",
     "name": "Pin Back Squat",
     "pattern": "squat",
-    "equipment": ["barbell"],
-    "contraindications": ["knee_pain", "low_back_pain"],
+    "equipment": [
+      "barbell"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "notes": "Squat depuis les pins. Départ concentrique pur.",
     "exerciseId": "squat__pin_squat__barbell",
     "nameFr": "Pin squat barre",
     "metricType": "load_reps",
-    "tags": ["lower", "squat", "force"],
-    "defaultNotes": "Départ bas, explosion, pas de rebond."
+    "tags": [
+      "lower",
+      "squat",
+      "force"
+    ],
+    "defaultNotes": "Départ bas, explosion, pas de rebond.",
+    "videoUrl": "https://www.youtube.com/shorts/-m8qDAVcKn8"
   },
   {
     "id": "power__pogo_hops__low",
     "name": "Low Pogo Hops",
     "pattern": "power",
-    "equipment": ["none"],
-    "contraindications": ["ankle_pain", "knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "ankle_pain",
+      "knee_pain"
+    ],
     "level": "beginner",
     "notes": "Petits sauts rapides sur la pointe des pieds.",
     "exerciseId": "power__pogo_hops__low",
     "nameFr": "Pogo hops bas",
     "metricType": "reps",
-    "tags": ["lower", "power", "warmup"],
-    "defaultNotes": "Rapides, minimalistes, contact sol court."
+    "tags": [
+      "lower",
+      "power",
+      "warmup"
+    ],
+    "defaultNotes": "Rapides, minimalistes, contact sol court.",
+    "videoUrl": "https://www.youtube.com/shorts/s_qM8NDHp1k"
   },
   {
     "id": "carry__front_rack_carry",
     "name": "Front Rack Carry",
     "pattern": "carry",
-    "equipment": ["kettlebell"],
-    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "equipment": [
+      "kettlebell"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
     "level": "intermediate",
     "notes": "Portage en position front rack.",
     "exerciseId": "carry__front_rack_carry",
     "nameFr": "Portage front rack",
     "metricType": "meters",
-    "tags": ["core", "carry"],
+    "tags": [
+      "core",
+      "carry"
+    ],
     "defaultNotes": "Tronc gainé, posture haute."
   },
   {
     "id": "sprint__short_acceleration",
     "name": "Short Acceleration Sprint",
     "pattern": "sprint",
-    "equipment": ["sprint_track"],
+    "equipment": [
+      "sprint_track"
+    ],
     "contraindications": [],
     "level": "beginner",
     "notes": "Sprint d'accélération courte (10-20m).",
     "exerciseId": "sprint__short_acceleration",
     "nameFr": "Sprint accélération courte",
     "metricType": "meters",
-    "tags": ["conditioning", "speed"],
+    "tags": [
+      "conditioning",
+      "speed"
+    ],
     "defaultNotes": "Qualité technique, repos complet entre les sprints."
   },
   {
     "id": "sprint__free_acceleration",
     "name": "Free Acceleration Sprint",
     "pattern": "sprint",
-    "equipment": ["sprint_track"],
+    "equipment": [
+      "sprint_track"
+    ],
     "contraindications": [],
     "level": "beginner",
     "notes": "Sprint libre sur 20-40m.",
     "exerciseId": "sprint__free_acceleration",
     "nameFr": "Sprint accélération libre",
     "metricType": "meters",
-    "tags": ["conditioning", "speed"],
+    "tags": [
+      "conditioning",
+      "speed"
+    ],
     "defaultNotes": "Départ libre, vitesse maximale progressive."
   },
   {
     "id": "sprint__resisted_acceleration",
     "name": "Resisted Acceleration",
     "pattern": "sprint",
-    "equipment": ["sled"],
+    "equipment": [
+      "sled"
+    ],
     "contraindications": [],
     "level": "intermediate",
     "notes": "Sprint résisté (sled, bande, pente).",
     "exerciseId": "sprint__resisted_acceleration",
     "nameFr": "Accélération résistée",
     "metricType": "meters",
-    "tags": ["conditioning", "speed", "power"],
+    "tags": [
+      "conditioning",
+      "speed",
+      "power"
+    ],
     "defaultNotes": "10-20% du poids de corps en résistance. Qualité du mouvement."
   },
   {
     "id": "agility__shuttle_5_10_5",
     "name": "5-10-5 Shuttle",
     "pattern": "agility",
-    "equipment": ["none"],
-    "contraindications": ["ankle_pain", "knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "ankle_pain",
+      "knee_pain"
+    ],
     "level": "beginner",
     "notes": "Pro-agility shuffle. Travail de changement de direction.",
     "exerciseId": "agility__shuttle_5_10_5",
     "nameFr": "Navette 5-10-5",
     "metricType": "seconds",
-    "tags": ["conditioning", "agility"],
-    "defaultNotes": "Décélérations et accélérations nettes."
+    "tags": [
+      "conditioning",
+      "agility"
+    ],
+    "defaultNotes": "Décélérations et accélérations nettes.",
+    "videoUrl": "https://www.youtube.com/shorts/AVRhI8bX7ys"
   },
   {
     "id": "agility__lateral_shuffle_sprint",
     "name": "Acceleration to Lateral Shuffle to Sprint",
     "pattern": "agility",
-    "equipment": ["none"],
-    "contraindications": ["ankle_pain", "knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "ankle_pain",
+      "knee_pain"
+    ],
     "level": "intermediate",
     "notes": "Enchaînement multi-directionnel.",
     "exerciseId": "agility__lateral_shuffle_sprint",
     "nameFr": "Accélération + shuffle latéral + sprint",
     "metricType": "reps",
-    "tags": ["conditioning", "agility", "speed"],
+    "tags": [
+      "conditioning",
+      "agility",
+      "speed"
+    ],
     "defaultNotes": "Transitions fluides, qualité du mouvement."
   },
   {
     "id": "agility__reactive_cut_45",
     "name": "Reactive Start to 45-Degree Cut",
     "pattern": "agility",
-    "equipment": ["none"],
-    "contraindications": ["ankle_pain", "knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "ankle_pain",
+      "knee_pain"
+    ],
     "level": "intermediate",
     "notes": "Départ réactif + coupure 45°.",
     "exerciseId": "agility__reactive_cut_45",
     "nameFr": "Départ réactif + coupe 45°",
     "metricType": "reps",
-    "tags": ["conditioning", "agility"],
+    "tags": [
+      "conditioning",
+      "agility"
+    ],
     "defaultNotes": "Réaction rapide, appui net sur la coupure."
   },
   {
     "id": "power__split_jump__band_assisted",
     "name": "Band-Assisted Split Jump",
     "pattern": "power",
-    "equipment": ["band"],
-    "contraindications": ["knee_pain", "ankle_pain"],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "ankle_pain"
+    ],
     "level": "beginner",
     "notes": "Split jump avec assistance bande. Réduit l'impact.",
     "exerciseId": "power__split_jump__band_assisted",
     "nameFr": "Split jump assisté bande",
     "metricType": "reps",
-    "tags": ["lower", "power"],
-    "defaultNotes": "Explosif, atterrissage doux."
+    "tags": [
+      "lower",
+      "power"
+    ],
+    "defaultNotes": "Explosif, atterrissage doux.",
+    "videoUrl": "https://www.youtube.com/shorts/hNqqFIldbeg"
   },
   {
     "id": "power__medball_throw__supine",
     "name": "Supine Med Ball Throw",
     "pattern": "power",
-    "equipment": ["med_ball"],
-    "contraindications": ["shoulder_pain"],
+    "equipment": [
+      "med_ball"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
     "level": "beginner",
     "notes": "Lancer de med ball allongé sur le dos.",
     "exerciseId": "power__medball_throw__supine",
     "nameFr": "Lancer médecine ball allongé",
     "metricType": "reps",
-    "tags": ["upper", "power"],
-    "defaultNotes": "Lancer explosif, relâche total."
+    "tags": [
+      "upper",
+      "power"
+    ],
+    "defaultNotes": "Lancer explosif, relâche total.",
+    "videoUrl": "https://www.youtube.com/watch?v=setdYqyMRC4"
   },
   {
     "id": "power__countermovement_jump",
     "name": "Countermovement Jump",
     "pattern": "power",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain", "ankle_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "ankle_pain"
+    ],
     "level": "beginner",
     "notes": "Saut vertical avec contre-mouvement. Base du testing.",
     "exerciseId": "power__countermovement_jump",
     "nameFr": "Saut vertical CMJ",
     "metricType": "reps",
-    "tags": ["lower", "power"],
+    "tags": [
+      "lower",
+      "power"
+    ],
     "defaultNotes": "Descente rapide, explosion verticale maximale."
   },
   {
     "id": "power__lateral_bound",
     "name": "Lateral Bound",
     "pattern": "power",
-    "equipment": ["none"],
-    "contraindications": ["ankle_pain", "knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "ankle_pain",
+      "knee_pain"
+    ],
     "level": "intermediate",
     "notes": "Bond latéral. Travail de puissance frontal.",
     "exerciseId": "power__lateral_bound",
     "nameFr": "Bond latéral",
     "metricType": "meters",
-    "tags": ["lower", "power"],
-    "defaultNotes": "Réception stable, relance explosive."
+    "tags": [
+      "lower",
+      "power"
+    ],
+    "defaultNotes": "Réception stable, relance explosive.",
+    "videoUrl": "https://www.youtube.com/shorts/ZkYORFHgRTw"
   },
   {
     "id": "sled__push__standard",
     "name": "Sled Push",
     "pattern": "sled",
-    "equipment": ["sled"],
+    "equipment": [
+      "sled"
+    ],
     "contraindications": [],
     "level": "beginner",
     "notes": "Poussée de traîneau.",
     "exerciseId": "sled__push__standard",
     "nameFr": "Poussée de traîneau",
     "metricType": "meters",
-    "tags": ["conditioning", "lower"],
+    "tags": [
+      "conditioning",
+      "lower"
+    ],
     "defaultNotes": "Poussée puissante, posture basse."
   },
   {
     "id": "warmup__wall_drill_march",
     "name": "Wall Drill March",
     "pattern": "warmup",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "notes": "Drill mur pour activation sprint.",
     "exerciseId": "warmup__wall_drill_march",
     "nameFr": "Wall drill march",
     "metricType": "reps",
-    "tags": ["warmup", "speed"],
-    "defaultNotes": "Contact mur, alternance genoux rapide."
+    "tags": [
+      "warmup",
+      "speed"
+    ],
+    "defaultNotes": "Contact mur, alternance genoux rapide.",
+    "videoUrl": "https://www.youtube.com/shorts/yC3Vpiv9InY"
   },
   {
     "id": "warmup__a_skip",
     "name": "A-Skip",
     "pattern": "warmup",
-    "equipment": ["none"],
+    "equipment": [
+      "none"
+    ],
     "contraindications": [],
     "level": "beginner",
     "notes": "A-skip pour activation sprint.",
     "exerciseId": "warmup__a_skip",
     "nameFr": "A-Skip",
     "metricType": "meters",
-    "tags": ["warmup", "speed"],
-    "defaultNotes": "Genoux hauts, rythme progressif."
+    "tags": [
+      "warmup",
+      "speed"
+    ],
+    "defaultNotes": "Genoux hauts, rythme progressif.",
+    "videoUrl": "https://www.youtube.com/shorts/5j2QHj5wpr4"
   },
   {
     "id": "lower_squat__split_squat_iso__bodyweight",
     "name": "Split Squat Isometric Hold",
     "pattern": "lower_squat",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "level": "beginner",
     "notes": "Tenue isométrique en position split squat.",
     "exerciseId": "lower_squat__split_squat_iso__bodyweight",
     "nameFr": "Split squat isométrique",
     "metricType": "seconds",
-    "tags": ["lower", "isometric"],
+    "tags": [
+      "lower",
+      "isometric"
+    ],
     "defaultNotes": "Position basse, genou arrière proche du sol."
   },
   {
     "id": "groin_adductors__supine_squeeze",
     "name": "Supine Adductor Squeeze",
     "pattern": "groin_adductors",
-    "equipment": ["none"],
-    "contraindications": ["groin_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
     "level": "beginner",
     "notes": "Squeeze adducteurs allongé. Isométrique.",
     "exerciseId": "groin_adductors__supine_squeeze",
     "nameFr": "Squeeze adducteurs allongé",
     "metricType": "seconds",
-    "tags": ["prehab", "groin"],
+    "tags": [
+      "prehab",
+      "groin"
+    ],
     "defaultNotes": "Serrer un ballon/coussin entre les genoux."
   }
 ]

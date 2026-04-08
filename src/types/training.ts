@@ -316,6 +316,8 @@ export interface Exercise {
   metricType?: ExerciseMetricType;
   tags?: string[];
   defaultNotes?: string;
+  /** YouTube demo URL for the exercise. */
+  videoUrl?: string;
 }
 
 export type SessionType = 'UPPER' | 'LOWER' | 'FULL' | 'CONDITIONING' | 'RECOVERY' | 'ACTIVE_RECOVERY';

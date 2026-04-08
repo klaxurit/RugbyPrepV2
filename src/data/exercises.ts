@@ -94,8 +94,12 @@ export const getExerciseDemo = (
   lang: ExerciseDemoLang = 'fr',
 ): ExerciseDemoContent | null => {
   const exercise = getExerciseById(id)
+  if (!exercise) return null
+
   const demo = EXERCISE_DEMOS[id]
-  if (!exercise || !demo?.youtubeUrl) return null
+  // Curated demo (with cues) takes priority, then fall back to videoUrl from exercise data
+  const youtubeUrl = demo?.youtubeUrl ?? exercise.videoUrl
+  if (!youtubeUrl) return null
 
   const fallbackLang: ExerciseDemoLang = lang === 'fr' ? 'en' : 'fr'
   const cues = demo?.cues?.[lang] ?? demo?.cues?.[fallbackLang] ?? []
@@ -105,11 +109,15 @@ export const getExerciseDemo = (
     title: getExerciseName(id, lang),
     notes: exercise.defaultNotes ?? exercise.notes,
     cues,
-    youtubeEmbedUrl: buildYouTubeEmbedUrl(demo.youtubeUrl, demo.startSeconds),
-    youtubeWatchUrl: buildYouTubeWatchUrl(demo.youtubeUrl, demo.startSeconds),
-    isCurated: true,
+    youtubeEmbedUrl: buildYouTubeEmbedUrl(youtubeUrl, demo?.startSeconds),
+    youtubeWatchUrl: buildYouTubeWatchUrl(youtubeUrl, demo?.startSeconds),
+    isCurated: Boolean(demo?.youtubeUrl),
     equipment: exercise.equipment,
   }
 }
 
-export const hasExerciseDemo = (id: string): boolean => Boolean(EXERCISE_DEMOS[id]?.youtubeUrl)
+export const hasExerciseDemo = (id: string): boolean => {
+  if (EXERCISE_DEMOS[id]?.youtubeUrl) return true
+  const exercise = getExerciseById(id)
+  return Boolean(exercise?.videoUrl)
+}
