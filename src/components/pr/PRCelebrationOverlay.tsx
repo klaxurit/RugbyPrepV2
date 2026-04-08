@@ -36,7 +36,7 @@ export function PRCelebrationOverlay({ prs, lang = 'fr', onDone }: PRCelebration
 
           {/* Card */}
           <motion.div
-            className="relative z-10 w-[min(85vw,320px)] bg-[#23140f] border border-white/10 rounded-[2rem] p-6 text-center space-y-4"
+            className="relative z-10 w-[min(85vw,320px)] rounded-[2rem] border border-border-app bg-panel p-6 text-center space-y-4"
             initial={{ scale: 0.7, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -47,12 +47,12 @@ export function PRCelebrationOverlay({ prs, lang = 'fr', onDone }: PRCelebration
             {/* Trophy with glow */}
             <div className="flex justify-center">
               <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-xl scale-150" />
+                <div className="absolute inset-0 scale-150 rounded-full bg-brand/20 blur-xl" />
                 <motion.div
                   animate={{ scale: [1, 1.15, 1] }}
                   transition={{ duration: 0.6, repeat: 2, ease: 'easeInOut' }}
                 >
-                  <Trophy className="relative w-12 h-12 text-amber-400" />
+                  <Trophy className="relative h-12 w-12 text-brand" />
                 </motion.div>
               </div>
             </div>
@@ -68,11 +68,11 @@ export function PRCelebrationOverlay({ prs, lang = 'fr', onDone }: PRCelebration
             <div className="space-y-2">
               {prs.slice(0, 3).map((pr) => (
                 <div key={pr.exerciseId} className="space-y-0.5">
-                  <p className="text-sm font-bold text-[#ff6b35]">
+                  <p className="text-sm font-bold text-brand">
                     {getExerciseName(pr.exerciseId, lang)}
                   </p>
                   <p className="text-xl font-black text-white">{pr.label}</p>
-                  <span className="inline-block text-xs font-bold text-[#10b981] bg-[#10b981]/10 px-3 py-1 rounded-full">
+                  <span className="inline-block rounded-full bg-ok-bg px-3 py-1 text-xs font-bold text-ok-strong">
                     {pr.improvement}
                   </span>
                 </div>

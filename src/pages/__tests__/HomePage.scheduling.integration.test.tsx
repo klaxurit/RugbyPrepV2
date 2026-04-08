@@ -7,6 +7,7 @@ import type { ResolveMotherSessionsForWeekResult } from '../../services/motherSe
 import type { WeeklyProgramSurfaceResult } from '../../services/program/resolveWeeklyProgramSurface'
 import type { AnnualPlanningContext } from '../../types/annualPlanning'
 import type { SchedulingMode, SchedulingModeResult, WeekPresentation, SequentialSession, BlockProgressionState } from '../../types/scheduling'
+import { planningContextBannerCopyForMode } from '../../components/planning/PlanningContextBanner'
 import { HomePage } from '../HomePage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 
@@ -243,8 +244,10 @@ vi.mock('../../hooks/useSchedulingTransition', () => ({
   useSchedulingTransition: (...args: unknown[]) => mockSchedulingTransition(...args),
 }))
 
+const mockSeasonTransitions = vi.fn()
+
 vi.mock('../../hooks/useSeasonTransitions', () => ({
-  useSeasonTransitions: () => ({ transition: null, dismiss: vi.fn() }),
+  useSeasonTransitions: (...args: unknown[]) => mockSeasonTransitions(...args),
 }))
 
 vi.mock('../../hooks/useUpsellTiming', () => ({
@@ -283,6 +286,7 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
     vi.clearAllMocks()
     useProfileMock.mockReturnValue({ profile: { ...BASE_PROFILE }, updateProfile: vi.fn() })
     mockSchedulingTransition.mockReturnValue({ transition: null, dismiss: vi.fn() })
+    mockSeasonTransitions.mockReturnValue({ transition: null, dismiss: vi.fn() })
   })
 
   afterEach(() => {
@@ -402,5 +406,36 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
 
     expect(screen.getByTestId('transition-banner')).toBeInTheDocument()
     expect(screen.getByTestId('transition-banner-cta')).toBeInTheDocument()
+    expect(screen.queryByTestId('home-planning-context-banner')).toBeNull()
+  })
+
+  it('ne rend pas PlanningContextBanner sur Home (désactivé produit)', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
+    renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
+
+    expect(screen.queryByTestId('home-planning-context-banner')).toBeNull()
+    expect(screen.queryByRole('region', { name: 'Vue calendrier' })).toBeNull()
+  })
+
+  it('affiche le résumé héros quand la ligne de résumé matchait l’ancien corps du bandeau calendrier', () => {
+    const hr = hookResult(makeSurface('calendar', 'in_season'))
+    hr.snapshot!.explanation!.summaryLine = planningContextBannerCopyForMode('calendar').body
+    useWeekSnapshotMock.mockReturnValue(hr)
+    renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
+
+    expect(screen.queryByTestId('home-planning-context-banner')).toBeNull()
+    expect(screen.getByTestId('home-summary-line')).toBeInTheDocument()
+  })
+
+  it('masque PlanningContextBanner si une transition saisonnière est affichée', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
+    mockSeasonTransitions.mockReturnValue({
+      transition: { type: 'playoffs_suggested' },
+      dismiss: vi.fn(),
+    })
+
+    renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
+
+    expect(screen.queryByTestId('home-planning-context-banner')).toBeNull()
   })
 })

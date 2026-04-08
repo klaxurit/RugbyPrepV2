@@ -31,7 +31,7 @@ export function InlineActiveRecovery({ isRecoveryDay, onComplete }: InlineActive
 
   return (
     <div data-testid="inline-active-recovery" className="space-y-1.5">
-      <p className="text-[9px] font-bold text-teal-400/60 uppercase tracking-wider">
+      <p className="text-[9px] font-bold text-info/75 uppercase tracking-wider">
         {isRecoveryDay ? 'Récup post-match' : 'Récup active · optionnel'}
       </p>
 
@@ -45,13 +45,13 @@ export function InlineActiveRecovery({ isRecoveryDay, onComplete }: InlineActive
             onClick={() => setSelected(selected === a.id ? null : a.id)}
             className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-bold transition-colors ${
               selected === a.id
-                ? 'bg-teal-500/20 border border-teal-400/30 text-teal-200'
-                : 'bg-white/[0.04] border border-transparent text-white/40 hover:bg-white/[0.07]'
+                ? 'bg-info-bg border border-info-bd text-info'
+                : 'bg-white/[0.04] border border-transparent text-fg-ghost hover:bg-white/[0.07]'
             }`}
           >
-            <span className={selected === a.id ? 'text-teal-300' : 'text-white/25'}>{a.icon}</span>
-            <span>{a.shortLabel}</span>
-            <span className={`${selected === a.id ? 'text-teal-400/70' : 'text-white/20'}`}>{a.duration}</span>
+            <span className={selected === a.id ? 'text-info' : 'text-fg-ghost'}>{a.icon}</span>
+            <span className={selected === a.id ? 'text-fg-secondary' : ''}>{a.shortLabel}</span>
+            <span className={selected === a.id ? 'text-info/80' : 'text-fg-ghost'}>{a.duration}</span>
           </button>
         ))}
       </div>
@@ -61,14 +61,14 @@ export function InlineActiveRecovery({ isRecoveryDay, onComplete }: InlineActive
         const activity = ACTIVITIES.find((act) => act.id === selected)!
         return (
           <div className="flex items-center gap-2 pt-0.5">
-            <span className="text-[9px] text-teal-400/50 flex-1">
+            <span className="text-[9px] text-fg-muted flex-1">
               {activity.label} · RPE 2-3 · Favorise la récupération
             </span>
             <button
               type="button"
               data-testid="ar-complete-btn"
               onClick={() => onComplete(activity.id, activity.durationMin, 2)}
-              className="px-2.5 py-1 rounded-lg bg-teal-500/20 text-teal-300 text-[9px] font-black hover:bg-teal-500/30 transition-colors flex-shrink-0"
+              className="px-2.5 py-1 rounded-lg bg-info-bg border border-info-bd text-info text-[9px] font-black hover:opacity-90 transition-opacity flex-shrink-0"
             >
               Fait ✓
             </button>
@@ -80,15 +80,15 @@ export function InlineActiveRecovery({ isRecoveryDay, onComplete }: InlineActive
 }
 
 /**
- * Compact teal badge shown after active recovery completion.
+ * Pastille après récup active complétée (bleu info — distinct du vert club et de l’orange séance faite).
  */
 export function ActiveRecoveryBadge() {
   return (
     <span
       data-testid="active-recovery-badge"
-      className="inline-flex items-center gap-1 rounded-full border border-teal-500/20 bg-teal-900/15 px-2.5 py-1 text-[10px] font-bold text-teal-300"
+      className="inline-flex items-center gap-1 rounded-full border border-info-bd bg-info-bg px-2.5 py-1 text-[10px] font-bold text-info"
     >
-      <Check className="w-3 h-3" />
+      <Check className="w-3 h-3 shrink-0" aria-hidden />
       Récup active
     </span>
   )

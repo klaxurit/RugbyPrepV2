@@ -33,8 +33,8 @@ export function PRBoard({ prs, isPremium, lang = 'fr' }: PRBoardProps) {
       <div className="space-y-4">
         {recentPRs.length > 0 && (
           <div className="flex items-center gap-2 mb-1">
-            <Trophy className="w-4 h-4 text-amber-400" />
-            <span className="text-xs font-black text-amber-400 uppercase tracking-wider">
+            <Trophy className="h-4 w-4 text-warn-strong" />
+            <span className="text-xs font-black uppercase tracking-wider text-warn-strong">
               {recentPRs.length} record{recentPRs.length > 1 ? 's' : ''} recent{recentPRs.length > 1 ? 's' : ''}
             </span>
           </div>
@@ -55,9 +55,9 @@ export function PRBoard({ prs, isPremium, lang = 'fr' }: PRBoardProps) {
   return (
     <div className="space-y-4">
       {recentPRs.length > 0 && (
-        <div className="flex items-center gap-2 mb-1">
-          <Trophy className="w-4 h-4 text-amber-400" />
-          <span className="text-xs font-black text-amber-400 uppercase tracking-wider">
+        <div className="mb-1 flex items-center gap-2">
+          <Trophy className="h-4 w-4 text-warn-strong" />
+          <span className="text-xs font-black uppercase tracking-wider text-warn-strong">
             {recentPRs.length} record{recentPRs.length > 1 ? 's' : ''} recent{recentPRs.length > 1 ? 's' : ''}
           </span>
         </div>

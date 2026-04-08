@@ -14,6 +14,7 @@ import type {
   WeekSnapshot,
   WeekCorrection,
 } from '../../types/scheduling'
+import { planningContextBannerCopyForMode } from '../../components/planning/PlanningContextBanner'
 import { WeekPage } from '../WeekPage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 
@@ -314,6 +315,17 @@ vi.mock('../../hooks/useWeekSnapshot', () => ({
   useWeekSnapshot: (params: unknown) => useWeekSnapshotMock(params),
 }))
 
+const mockUseSchedulingTransition = vi.fn()
+const mockUseSeasonTransitions = vi.fn()
+
+vi.mock('../../hooks/useSchedulingTransition', () => ({
+  useSchedulingTransition: (...args: unknown[]) => mockUseSchedulingTransition(...args),
+}))
+
+vi.mock('../../hooks/useSeasonTransitions', () => ({
+  useSeasonTransitions: (...args: unknown[]) => mockUseSeasonTransitions(...args),
+}))
+
 vi.mock('../../services/program', () => ({
   validateSession: () => ({ isValid: true, warnings: [] }),
 }))
@@ -340,6 +352,8 @@ describe('WeekPage · convergence moteurs', () => {
     calendarState.visibleEvents = []
     calendarState.structuralEvents = []
     calendarState.syncNotification = null
+    mockUseSchedulingTransition.mockReturnValue({ transition: null, dismiss: vi.fn() })
+    mockUseSeasonTransitions.mockReturnValue({ transition: null, dismiss: vi.fn() })
   })
 
   afterEach(() => {
@@ -470,6 +484,8 @@ describe('WeekPage · convergence moteurs', () => {
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
     expect(screen.getByTestId('calendar-week-timeline')).toBeInTheDocument()
+    expect(screen.getByTestId('week-planning-legend')).toBeInTheDocument()
+    expect(screen.getByTestId('legend-marker-personal')).toBeInTheDocument()
     expect(screen.queryByTestId('sequential-session-list')).toBeNull()
     expect(screen.getByText(/Ma Semaine/)).toBeInTheDocument()
   })
@@ -479,6 +495,7 @@ describe('WeekPage · convergence moteurs', () => {
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
+    expect(screen.queryByTestId('week-planning-legend')).toBeNull()
     expect(screen.getByTestId('sequential-session-list')).toBeInTheDocument()
     expect(screen.queryByTestId('mother-session-week-panel')).toBeNull()
   })
@@ -529,6 +546,74 @@ describe('WeekPage · convergence moteurs', () => {
 
     expect(screen.getByTestId('planning-context-card')).toBeInTheDocument()
     expect(screen.getByText('Programme de test')).toBeInTheDocument()
+  })
+
+  it('ne rend pas PlanningContextBanner sur Week (désactivé produit)', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.queryByTestId('planning-context-banner')).toBeNull()
+    expect(screen.queryByRole('region', { name: 'Vue calendrier' })).toBeNull()
+  })
+
+  it('PlanningContextCard toujours présent si le summary recoupait l’ancien corps du bandeau', () => {
+    const result = hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' }))
+    result.snapshot!.explanation!.summaryLine = planningContextBannerCopyForMode('calendar').body
+    useWeekSnapshotMock.mockReturnValue(result)
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.queryByTestId('planning-context-banner')).toBeNull()
+    expect(screen.getByTestId('planning-context-card')).toBeInTheDocument()
+  })
+
+  it('PlanningContextBanner masqué si bannière de transition scheduling visible', () => {
+    mockUseSchedulingTransition.mockReturnValue({
+      transition: {
+        type: 'calendar_mode_activated',
+        message: 'Match détecté — ton programme s\'adapte à ton calendrier.',
+        cta: 'OK',
+      },
+      dismiss: vi.fn(),
+    })
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.getByTestId('transition-banner')).toBeInTheDocument()
+    expect(screen.queryByTestId('planning-context-banner')).toBeNull()
+  })
+
+  it('PlanningContextBanner masqué si bannière de transition saisonnière visible', () => {
+    mockUseSeasonTransitions.mockReturnValue({
+      transition: { type: 'playoffs_suggested' },
+      dismiss: vi.fn(),
+    })
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.getByTestId('transition-banner')).toBeInTheDocument()
+    expect(screen.queryByTestId('planning-context-banner')).toBeNull()
+  })
+
+  it('PlanningContextBanner masqué si bannière de confirmation prioritaire visible', () => {
+    const result = hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' }))
+    result.hasConfirmationRequired = true
+    result.snapshot!.confirmationRequired = [{
+      id: 'cr-wp-1',
+      type: 'match_changed',
+      message: 'Une confirmation est requise.',
+      cta: 'Confirmer',
+      data: {},
+    }]
+    useWeekSnapshotMock.mockReturnValue(result)
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.getByTestId('confirmation-banner')).toBeInTheDocument()
+    expect(screen.queryByTestId('planning-context-banner')).toBeNull()
   })
 
   // ── S4 Slice 4: Calendar week timeline ──
@@ -693,7 +778,7 @@ describe('WeekPage · convergence moteurs', () => {
     expect(matchCard.textContent).toContain('15:00')
   })
 
-  it('calendar: club rugby day shows "Entraînement rugby" not "Indisponible"', () => {
+  it('calendar: club day shows "Entraînement club" not "Indisponible"', () => {
     const result = hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' }))
     // Mark day 3 (Mercredi) as a club day
     result.snapshot!.presentation.clubDays = [3 as any]
@@ -702,7 +787,7 @@ describe('WeekPage · convergence moteurs', () => {
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
     expect(screen.getByTestId('timeline-club-3')).toBeInTheDocument()
-    expect(screen.getByTestId('timeline-club-3').textContent).toContain('Entraînement rugby')
+    expect(screen.getByTestId('timeline-club-3').textContent).toContain('Entraînement club')
   })
 
   it('calendar: user-unavailable day shows "Indisponible"', () => {

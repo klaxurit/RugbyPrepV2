@@ -82,23 +82,23 @@ const PRIVACY_SECTIONS: Section[] = [
 
 export function LegalPage() {
   return (
-    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+    <div className="min-h-screen bg-app font-sans text-white pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title="Mentions légales" backTo="/" />
 
       <main className="max-w-md mx-auto px-6 py-6 space-y-6 relative">
 
         {/* Disclaimer santé */}
-        <section className="bg-amber-900/20 border border-amber-500/20 rounded-[24px] p-5 space-y-2">
-          <p className="text-xs font-black text-amber-400 uppercase tracking-wider">Avertissement important</p>
-          <p className="text-sm text-amber-200/90 leading-relaxed">
+        <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-2">
+          <p className="text-xs font-black uppercase tracking-wider text-warn-strong">Avertissement important</p>
+          <p className="text-sm text-warn-body leading-relaxed">
             Les programmes d&apos;entraînement générés par RugbyForge sont fournis à titre indicatif et ne remplacent pas l&apos;avis d&apos;un médecin, kinésithérapeute ou préparateur physique certifié.
           </p>
-          <p className="text-sm text-amber-200/90 leading-relaxed">
+          <p className="text-sm text-warn-body leading-relaxed">
             Avant de commencer tout programme d&apos;entraînement intensif, consultez un professionnel de santé, en particulier si vous avez des antécédents médicaux, des blessures en cours ou si vous reprenez l&apos;activité après une longue pause.
           </p>
-          <p className="text-sm text-amber-200 font-bold leading-relaxed">
+          <p className="text-sm font-bold text-warn-strong leading-relaxed">
             En cas de douleur, arrêtez immédiatement l&apos;exercice et consultez un médecin.
           </p>
         </section>
@@ -139,7 +139,7 @@ export function LegalPage() {
           </p>
           <a
             href="mailto:bonjour@rugbyforge.fr"
-            className="inline-block text-sm font-bold text-[#ff6b35] hover:underline"
+            className="inline-block text-sm font-bold text-brand hover:underline"
           >
             bonjour@rugbyforge.fr
           </a>

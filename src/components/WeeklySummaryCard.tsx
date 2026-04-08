@@ -7,8 +7,8 @@ export function WeeklySummaryCard({ result }: { result: WeeklySummaryResult }) {
     return (
       <div className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-2">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-2xl bg-[#ff6b35]/10">
-            <BarChart3 className="w-4 h-4 text-[#ff6b35]" />
+          <div className="rounded-2xl bg-brand-soft p-2">
+            <BarChart3 className="h-4 w-4 text-brand" />
           </div>
           <h3 className="text-sm font-black text-white">Bilan de semaine</h3>
         </div>
@@ -24,8 +24,8 @@ export function WeeklySummaryCard({ result }: { result: WeeklySummaryResult }) {
     <div className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-2xl bg-[#ff6b35]/10">
-            <BarChart3 className="w-4 h-4 text-[#ff6b35]" />
+          <div className="rounded-2xl bg-brand-soft p-2">
+            <BarChart3 className="h-4 w-4 text-brand" />
           </div>
           <h3 className="text-sm font-black text-white">Bilan de semaine</h3>
         </div>
@@ -41,7 +41,7 @@ export function WeeklySummaryCard({ result }: { result: WeeklySummaryResult }) {
         </div>
         <div className="h-2 bg-white/10 rounded-full">
           <div
-            className="h-full rounded-full bg-[#ff6b35] transition-all"
+            className="h-full rounded-full bg-brand transition-all"
             style={{ width: `${Math.min(100, result.completionRatio * 100)}%` }}
           />
         </div>
@@ -55,9 +55,9 @@ export function WeeklySummaryCard({ result }: { result: WeeklySummaryResult }) {
           <p className="text-sm font-black text-white">{result.totalLoad} <span className="text-[10px] font-bold text-white/40">UA</span></p>
           {result.loadChangePercent != null && (
             <div className="flex items-center gap-0.5 mt-0.5">
-              {loadUp && <TrendingUp className="w-3 h-3 text-emerald-400" />}
-              {loadDown && <TrendingDown className="w-3 h-3 text-red-400" />}
-              <span className={`text-[10px] font-bold ${loadUp ? 'text-emerald-400' : loadDown ? 'text-red-400' : 'text-white/40'}`}>
+              {loadUp && <TrendingUp className="h-3 w-3 text-ok" />}
+              {loadDown && <TrendingDown className="h-3 w-3 text-danger" />}
+              <span className={`text-[10px] font-bold ${loadUp ? 'text-ok' : loadDown ? 'text-danger' : 'text-white/40'}`}>
                 {result.loadChangePercent > 0 ? '+' : ''}{result.loadChangePercent}%
               </span>
             </div>
@@ -78,10 +78,10 @@ export function WeeklySummaryCard({ result }: { result: WeeklySummaryResult }) {
           <p className="text-[10px] text-white/40 font-bold">Progression</p>
           {result.topProgressedExercise ? (
             <>
-              <p className="text-[10px] font-bold text-emerald-400 truncate">
+              <p className="truncate text-[10px] font-bold text-ok">
                 {getExerciseName(result.topProgressedExercise.exerciseId, 'fr')}
               </p>
-              <p className="text-[10px] font-black text-emerald-400">
+              <p className="text-[10px] font-black text-ok">
                 {result.topProgressedExercise.improvementLabel}
               </p>
             </>

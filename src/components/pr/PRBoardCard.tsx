@@ -36,19 +36,19 @@ export function PRBoardCard({ pr, lang = 'fr' }: { pr: PRRecord; lang?: 'fr' | '
   return (
     <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-[20px] p-4">
       {/* Metric icon */}
-      <div className="flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center bg-[#ff6b35]/10">
-        <Icon className="w-4.5 h-4.5 text-[#ff6b35]" />
+      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-brand-soft">
+        <Icon className="h-4.5 w-4.5 text-brand" />
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
         <p className="text-sm font-bold text-white truncate">{name}</p>
-        <p className="text-lg font-black text-[#ff6b35]">{pr.bestLabel}</p>
+        <p className="text-lg font-black text-brand">{pr.bestLabel}</p>
         <p className="text-[10px] text-white/40">{formatDate(pr.dateISO, lang)}</p>
       </div>
 
       {/* Trophy */}
-      <Trophy className={`w-5 h-5 flex-shrink-0 ${pr.isRecent ? 'text-amber-400' : 'text-white/20'}`} />
+      <Trophy className={`h-5 w-5 flex-shrink-0 ${pr.isRecent ? 'text-warn-strong' : 'text-white/20'}`} />
     </div>
   )
 }

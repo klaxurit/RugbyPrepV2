@@ -40,8 +40,8 @@ export interface DatedSession {
   dayOfWeek: DayOfWeek
   dayLabel: string
   matchProximity?: string | null
-  /** Set by corrections (skip). Absent means pending/active. */
-  completionStatus?: 'skipped'
+  /** Skip = correction ; completed = dérivé des logs (UI calendrier). Absent = à faire. */
+  completionStatus?: 'skipped' | 'completed'
 }
 
 export interface SequentialSession {

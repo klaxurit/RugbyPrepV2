@@ -31,14 +31,14 @@ export function MobilityPage() {
 
   if (hasHardBlock) {
     return (
-      <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24">
+      <div className="min-h-screen bg-app font-sans text-white pb-24">
         <PageHeader title={mobilityPageTitle} backTo="/week" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
-          <div className="bg-amber-900/20 border border-amber-500/30 rounded-2xl p-5 space-y-3">
-            <p className="font-bold text-amber-400">Programme temporairement indisponible</p>
+          <div className="rounded-2xl border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
+            <p className="font-bold text-warn-strong">Programme temporairement indisponible</p>
             <ul className="space-y-2">
               {hardBlockReasons.map((r) => (
-                <li key={r} className="text-sm text-amber-300/80">
+                <li key={r} className="text-sm text-warn-body">
                   <span className="font-semibold">{BETA_ELIGIBILITY_MESSAGES[r].reason}</span>
                   <br />{BETA_ELIGIBILITY_MESSAGES[r].detail}
                 </li>
@@ -60,21 +60,21 @@ export function MobilityPage() {
   const session = buildMobilitySession(profile)
 
   return (
-    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+    <div className="min-h-screen bg-app font-sans text-white pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title={mobilityPageTitle} backTo="/week" />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
         {/* Intro banner */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-teal-900/20 border border-teal-500/20 rounded-2xl">
-          <div className="p-2 rounded-xl bg-teal-900/30 text-teal-400 flex-shrink-0">
+        <div className="flex items-center gap-3 rounded-2xl border border-ok-bd bg-ok-bg-muted px-4 py-3">
+          <div className="flex-shrink-0 rounded-xl bg-ok-bg p-2 text-ok">
             <Leaf className="w-4 h-4" />
           </div>
           <div>
-            <p className="text-xs font-black text-teal-300">Mobilité & Flexibilité</p>
-            <p className="text-[10px] text-teal-400/70 flex items-center gap-1 mt-0.5">
+            <p className="text-xs font-black text-ok-strong">Mobilité & Flexibilité</p>
+            <p className="mt-0.5 flex items-center gap-1 text-[10px] text-ok opacity-70">
               <Clock className="w-3 h-3" />
               ~10-15 min · Corps entier · Aucun matériel
             </p>
@@ -89,12 +89,12 @@ export function MobilityPage() {
           >
             {/* Block header */}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-2xl bg-teal-900/30 flex items-center justify-center flex-shrink-0">
-                <span className="text-xs font-black text-teal-400">{idx + 1}</span>
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-2xl bg-ok-bg">
+                <span className="text-xs font-black text-ok">{idx + 1}</span>
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-sm font-black text-white leading-tight">{block.name}</h2>
-                <p className="text-[10px] text-teal-400 mt-0.5">
+                <p className="mt-0.5 text-[10px] text-ok">
                   {version.sets} série
                   {' · '}
                   {version.scheme.kind === 'time'
@@ -111,8 +111,8 @@ export function MobilityPage() {
             {/* Exercises */}
             <div className="space-y-2">
               {block.exercises.map((ex) => (
-                <div key={ex.exerciseId} className="flex items-start gap-3 p-3 bg-teal-900/10 rounded-2xl">
-                  <div className="w-1.5 h-1.5 rounded-full bg-teal-400 flex-shrink-0 mt-1.5" />
+                <div key={ex.exerciseId} className="flex items-start gap-3 rounded-2xl bg-ok-bg-muted p-3">
+                  <div className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-ok" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-white/80">{getExerciseName(ex.exerciseId, lang)}</p>
                     {ex.notes && (
@@ -125,7 +125,7 @@ export function MobilityPage() {
 
             {/* Coaching notes */}
             {block.coachingNotes && (
-              <p className="text-[10px] text-teal-400/70 italic leading-relaxed border-t border-white/10 pt-3">
+              <p className="border-t border-white/10 pt-3 text-[10px] italic leading-relaxed text-ok opacity-70">
                 {block.coachingNotes}
               </p>
             )}
@@ -141,7 +141,7 @@ export function MobilityPage() {
         {/* Done CTA */}
         <Link
           to="/week"
-          className="flex items-center justify-center gap-2 py-4 bg-teal-600/80 text-white rounded-[2rem] text-sm font-black shadow-lg shadow-teal-900/20 hover:bg-teal-600 transition-colors"
+          className="flex items-center justify-center gap-2 rounded-[2rem] bg-brand py-4 text-sm font-black text-on-brand shadow-brand-float transition-colors hover:bg-brand-hover"
         >
           <Leaf className="w-4 h-4" />
           Séance terminée — Retour au plan

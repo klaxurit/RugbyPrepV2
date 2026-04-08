@@ -50,6 +50,7 @@ import { formatTitleFromMotherSessionId } from '../components/motherSession/form
 import type { CycleWeek, SessionType, SeasonPhase, SeasonMode, TransitionEntry } from '../types/training'
 import { appendTransitionEntry, computeDeferralExpiry } from '../services/season/transitionJournal'
 import type { SequentialSession } from '../types/scheduling'
+import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 
 // ─── Helpers ────────────────────────────────────────────────
@@ -175,22 +176,28 @@ export function HomePage() {
 
   const weekPresentation = snapshot?.presentation ?? null
 
-  // In calendar mode, find today's active (non-skipped) session from the corrected presentation
+  // In calendar mode, find today's active (non-skipped, non-completed) session from the corrected presentation
   const { todayDatedSession, todaySessionIndex } = useMemo(() => {
     if (!weekPresentation || weekPresentation.mode !== 'calendar') {
       return { todayDatedSession: null, todaySessionIndex: null }
     }
     const todayDow = new Date(today + 'T12:00:00').getDay()
-    const allDated = weekPresentation.sessions.filter(
+    const allDatedRaw = weekPresentation.sessions.filter(
       (s): s is import('../types/scheduling').DatedSession => s.kind === 'dated',
     )
+    const allDated = mergeDatedSessionCompletion(allDatedRaw, logs, today)
     for (let i = 0; i < allDated.length; i++) {
-      if (allDated[i].dayOfWeek === todayDow && allDated[i].completionStatus !== 'skipped') {
-        return { todayDatedSession: allDated[i], todaySessionIndex: i }
+      const s = allDated[i]
+      if (
+        s.dayOfWeek === todayDow &&
+        s.completionStatus !== 'skipped' &&
+        s.completionStatus !== 'completed'
+      ) {
+        return { todayDatedSession: s, todaySessionIndex: i }
       }
     }
     return { todayDatedSession: null, todaySessionIndex: null }
-  }, [weekPresentation, today])
+  }, [weekPresentation, today, logs])
 
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
 

@@ -21,6 +21,7 @@ import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
 import { CalendarWeekTimeline } from '../components/scheduling/CalendarWeekTimeline'
+import { WeekPlanningLegend } from '../components/planning'
 import { SequentialSessionList } from '../components/scheduling/SequentialSessionList'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
 import { SchedulingTransitionBanner, SeasonTransitionBanner } from '../components/SeasonTransitionBanner'
@@ -29,6 +30,7 @@ import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import type { DatedSession, SequentialSession } from '../types/scheduling'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
+import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
 
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
   if (lang !== 'fr') return label
@@ -173,10 +175,11 @@ export function WeekPage() {
   // Extract calendar sessions from the presentation layer
   const calendarSessions: DatedSession[] = useMemo(() => {
     if (isSequential || !weekPresentation) return []
-    return weekPresentation.sessions.filter(
+    const dated = weekPresentation.sessions.filter(
       (s): s is DatedSession => s.kind === 'dated',
     )
-  }, [isSequential, weekPresentation])
+    return mergeDatedSessionCompletion(dated, logs, today)
+  }, [isSequential, weekPresentation, logs, today])
 
   // Extract sequential sessions from the presentation layer
   const sequentialSessions: SequentialSession[] = useMemo(() => {
@@ -439,6 +442,13 @@ export function WeekPage() {
                 />
               ) : null
             ) : (
+              <>
+              <div
+                data-testid="week-planning-legend"
+                className="rounded-2xl border border-border-app bg-layer-5 px-3 py-2.5"
+              >
+                <WeekPlanningLegend />
+              </div>
               <CalendarWeekTimeline
                 sessions={calendarSessions}
                 matchEvents={weekPresentation?.matchEvents ?? []}
@@ -467,6 +477,7 @@ export function WeekPage() {
                 onMarkDayUnavailable={markDayUnavailable}
                 onUndoCorrection={undoCorrection}
               />
+              </>
             )}
           </section>
         )}

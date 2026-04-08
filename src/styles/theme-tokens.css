@@ -123,6 +123,19 @@
   --color-zone-critical-fg: #f87171;
   --color-zone-critical-surface: rgb(239 68 68 / 0.12);
   --color-zone-critical-border: rgb(239 68 68 / 0.32);
+
+  /* Statuts séance (spec UX : completed = terminée, missed = passée, skipped = sautée) */
+  --color-session-completed-fg: var(--color-ok-fg-strong);
+  --color-session-completed-bg: var(--color-ok-surface);
+  --color-session-completed-bd: var(--color-ok-border);
+  --color-session-completed-icon-bg: var(--color-ok-fg-strong);
+  --color-session-completed-icon-fg: #ffffff;
+  --color-session-missed-fg: var(--color-text-secondary);
+  --color-session-missed-bg: rgb(255 255 255 / 0.06);
+  --color-session-missed-bd: rgb(255 255 255 / 0.12);
+  --color-session-skipped-fg: var(--color-text-secondary);
+  --color-session-skipped-bg: rgb(255 255 255 / 0.06);
+  --color-session-skipped-bd: rgb(255 255 255 / 0.12);
 }
 
 [data-theme='paper'] {
@@ -241,4 +254,16 @@
   --color-zone-critical-fg: #b91c1c;
   --color-zone-critical-surface: rgb(254 226 226 / 0.98);
   --color-zone-critical-border: rgb(220 38 38 / 0.45);
+
+  --color-session-completed-fg: var(--color-ok-fg-strong);
+  --color-session-completed-bg: var(--color-ok-surface);
+  --color-session-completed-bd: var(--color-ok-border);
+  --color-session-completed-icon-bg: var(--color-ok-fg-strong);
+  --color-session-completed-icon-fg: #ffffff;
+  --color-session-missed-fg: var(--color-text-muted);
+  --color-session-missed-bg: rgb(241 245 249 / 0.95);
+  --color-session-missed-bd: rgb(203 213 225);
+  --color-session-skipped-fg: var(--color-text-muted);
+  --color-session-skipped-bg: rgb(241 245 249 / 0.95);
+  --color-session-skipped-bd: rgb(203 213 225);
 }
