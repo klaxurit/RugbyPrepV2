@@ -47,6 +47,7 @@ const makeRow = (overrides: Partial<ProfileRow> = {}): ProfileRow => ({
   ffr_competition_name: null,
   ffr_last_sync_at: null,
   planning_anchors: null,
+  season_transition_state: null,
   ...overrides,
 })
 
@@ -117,6 +118,35 @@ describe('rowToProfile legacy normalization', () => {
 
     expect(profile.trainingLevel).toBe('performance')
     expect(profile.levelModifierProfile?.visibleLabel).toBe('performance')
+  })
+})
+
+describe('seasonTransitionState persistence', () => {
+  it('reads seasonTransitionState from row', () => {
+    const state = {
+      transitionJournal: [],
+      activeDeferral: {
+        eventId: 'match-1',
+        matchDateAtDefer: '2026-09-12',
+        deferredAt: '2026-06-01',
+        expiresAt: '2026-07-18',
+      },
+    }
+    const profile = rowToProfile(makeRow({ season_transition_state: state }))
+    expect(profile.seasonTransitionState).toEqual(state)
+    expect(profile.seasonTransitionState?.activeDeferral?.eventId).toBe('match-1')
+  })
+
+  it('reads seasonEndedSource from planningAnchors', () => {
+    const profile = rowToProfile(makeRow({
+      planning_anchors: { seasonEndedAt: '2026-04-06', seasonEndedSource: 'derived' },
+    }))
+    expect(profile.planningAnchors?.seasonEndedSource).toBe('derived')
+  })
+
+  it('tolerates missing season_transition_state (legacy compat)', () => {
+    const profile = rowToProfile(makeRow({ season_transition_state: null }))
+    expect(profile.seasonTransitionState).toBeUndefined()
   })
 })
 

@@ -24,7 +24,7 @@ export interface ResolvedMotherSessionSlot {
 export interface ResolvedWeeklyTemplateContext {
   cycle: 'pre_season' | 'in_season' | 'off_season'
   phase?: 1 | 2 | 3
-  offSeasonPhase?: 1 | 2 | 3 | 4
+  offSeasonPhase?: 1 | 2 | 3 | 4 | 5
   matchContext?: 'match_week' | 'no_match_week'
   requestedFrequency: 2 | 3 | 4
   effectiveFrequency: 2 | 3 | 4
@@ -212,6 +212,7 @@ function resolveMotherSessionsForWeekCore(
       frequency: weeklyFrequency,
       positionGroup,
       fatigueLevel,
+      maintenanceParity: (planningContext.weekNumber ?? 1) % 2 === 1 ? 'A' : 'B',
     })
     const templateContext: ResolvedWeeklyTemplateContext = {
       cycle: 'off_season',

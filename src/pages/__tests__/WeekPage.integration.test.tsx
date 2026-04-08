@@ -22,6 +22,7 @@ const useWeekSnapshotMock = vi.fn()
 const calendarState = {
   events: [] as Array<Record<string, unknown>>,
   visibleEvents: [] as Array<Record<string, unknown>>,
+  structuralEvents: [] as Array<Record<string, unknown>>,
   addEvent: vi.fn(),
   syncNotification: null as string | null,
   dismissSyncNotification: vi.fn(),
@@ -337,6 +338,7 @@ describe('WeekPage · convergence moteurs', () => {
     useProfileMock.mockReturnValue({ profile: { ...BASE_PROFILE } })
     calendarState.events = []
     calendarState.visibleEvents = []
+    calendarState.structuralEvents = []
     calendarState.syncNotification = null
   })
 
@@ -888,5 +890,48 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.queryByTestId('calendar-week-timeline')).toBeNull()
     // No global undo bar
     expect(screen.queryByTestId('undo-bar')).toBeNull()
+  })
+
+  // ── Match bandeau in off-season sequential ─────────────────────────
+
+  it('off-season sequential: shows match bandeau when structural future match exists', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
+    calendarState.structuralEvents = [
+      { id: 'match-senior', date: '2026-09-12', type: 'match', opponent: 'Rouen' },
+    ]
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.getByText(/Match prévu le/)).toBeInTheDocument()
+    expect(screen.getByText(/Rouen/)).toBeInTheDocument()
+    expect(screen.getByText(/Voir calendrier/)).toBeInTheDocument()
+  })
+
+  it('off-season sequential: no match bandeau when match is deferred (not in structuralEvents)', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
+    // Match is in visibleEvents but NOT in structuralEvents (deferred)
+    calendarState.visibleEvents = [
+      { id: 'match-deferred', date: '2026-09-12', type: 'match', opponent: 'Rouen' },
+    ]
+    calendarState.structuralEvents = [] // deferred → filtered out
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.queryByText(/Match prévu le/)).toBeNull()
+  })
+
+  it('off-season sequential: two matches, first deferred, bandeau shows structural one', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
+    calendarState.visibleEvents = [
+      { id: 'match-reserve', date: '2026-09-12', type: 'match', opponent: 'Réserve' },
+      { id: 'match-senior', date: '2026-09-19', type: 'match', opponent: 'Dieppe' },
+    ]
+    // First match deferred, second still structural
+    calendarState.structuralEvents = [
+      { id: 'match-senior', date: '2026-09-19', type: 'match', opponent: 'Dieppe' },
+    ]
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.getByText(/Match prévu le/)).toBeInTheDocument()
+    expect(screen.getByText(/Dieppe/)).toBeInTheDocument()
+    expect(screen.queryByText(/Réserve/)).toBeNull()
   })
 })

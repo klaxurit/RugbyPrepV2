@@ -173,7 +173,7 @@ vi.mock('../../hooks/useHistory', () => ({
 }))
 
 vi.mock('../../hooks/useCalendar', () => ({
-  useCalendar: () => ({ events: [], visibleEvents: [] }),
+  useCalendar: () => ({ events: [], visibleEvents: [], structuralEvents: [] }),
 }))
 
 vi.mock('../../hooks/useACWR', () => ({

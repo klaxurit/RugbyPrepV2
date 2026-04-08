@@ -80,6 +80,8 @@ function nextCorrectionId(): string {
 }
 
 function computeProfileHash(profile: import('../types/training').UserProfile): string {
+  const deferral = profile.seasonTransitionState?.activeDeferral
+  const ack = profile.seasonTransitionState?.offseasonMatchResumeAckEventId
   return [
     profile.weeklySessions,
     profile.trainingLevel,
@@ -87,6 +89,8 @@ function computeProfileHash(profile: import('../types/training').UserProfile): s
     profile.planningAnchors?.seasonEndedAt ?? '',
     profile.planningAnchors?.returnToTeamTrainingAt ?? '',
     (profile.injuries ?? []).join(','),
+    deferral ? `${deferral.eventId}:${deferral.expiresAt}` : '',
+    ack ?? '',
   ].join('|')
 }
 

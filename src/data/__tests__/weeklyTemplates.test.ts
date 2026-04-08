@@ -275,4 +275,40 @@ describe('getWeeklyTemplate', () => {
       } as Parameters<typeof getWeeklyTemplate>[0])
     ).toThrow(/offSeasonPhase requise/)
   })
+
+  it('off-season phase 5 maintenance → 2 sessions A/B', () => {
+    const rA = getWeeklyTemplate({
+      cycle: 'off_season',
+      offSeasonPhase: 5,
+      frequency: 3,
+      positionGroup: 'front_row',
+      maintenanceParity: 'A',
+    })
+    expect(rA.effectiveFrequency).toBe(2)
+    expect(rA.sessions).toHaveLength(2)
+
+    const rB = getWeeklyTemplate({
+      cycle: 'off_season',
+      offSeasonPhase: 5,
+      frequency: 3,
+      positionGroup: 'front_row',
+      maintenanceParity: 'B',
+    })
+    expect(rB.effectiveFrequency).toBe(2)
+    expect(rB.sessions).toHaveLength(2)
+    // A and B should differ
+    expect(rA.sessions.map((s) => s.sessionId)).not.toEqual(rB.sessions.map((s) => s.sessionId))
+  })
+
+  it('off-season phase 5 back_three uses position-specific sessions', () => {
+    const r = getWeeklyTemplate({
+      cycle: 'off_season',
+      offSeasonPhase: 5,
+      frequency: 2,
+      positionGroup: 'back_three',
+      maintenanceParity: 'A',
+    })
+    expect(r.sessions).toHaveLength(2)
+    expect(r.sessions.every((s) => s.sessionId.includes('BACK_THREE'))).toBe(true)
+  })
 })

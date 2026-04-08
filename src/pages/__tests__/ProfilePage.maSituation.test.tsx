@@ -58,6 +58,7 @@ vi.mock('../../hooks/useCalendar', () => ({
   useCalendar: () => ({
     events: mockEvents,
     visibleEvents: mockEvents.filter((event) => event.user_hidden !== true),
+    structuralEvents: mockEvents.filter((event) => event.user_hidden !== true),
   }),
 }))
 
@@ -144,10 +145,16 @@ describe('ProfilePage · Ma situation', () => {
     const call = mockUpdateProfile.mock.calls[0][0]
     // Primary: anchor
     expect(call.planningAnchors.seasonEndedAt).toBe('2026-03-15')
+    // Source tag
+    expect(call.planningAnchors.seasonEndedSource).toBe('manual')
     // Transitional compat
     expect(call.seasonMode).toBe('off_season')
     // manualPlayoffs cleared
     expect(call.planningAnchors.manualPlayoffs).toBeUndefined()
+    // Journal entry written
+    expect(call.seasonTransitionState).toBeDefined()
+    expect(call.seasonTransitionState.transitionJournal).toHaveLength(1)
+    expect(call.seasonTransitionState.transitionJournal[0].to).toBe('off_season')
   })
 
   it('ignores hidden reserve matches for cycle detection and season-ended anchor', () => {
@@ -202,7 +209,7 @@ describe('ProfilePage · Ma situation', () => {
     }
   })
 
-  it('shows "En fait, la saison reprend" when seasonEndedAt is set', () => {
+  it('shows "En fait, la saison reprend" when seasonEndedAt is set (no journal)', () => {
     mockProfileOverrides = {
       seasonMode: 'off_season',
       planningAnchors: { seasonEndedAt: '2026-03-29' },
@@ -217,7 +224,38 @@ describe('ProfilePage · Ma situation', () => {
 
     expect(mockUpdateProfile).toHaveBeenCalledTimes(1)
     const call = mockUpdateProfile.mock.calls[0][0]
+    // Fallback path: no journal → simple clear
+    expect(call.planningAnchors.seasonEndedAt).toBeUndefined()
+    expect(call.planningAnchors.seasonEndedSource).toBeUndefined()
+    expect(call.seasonMode).toBe('in_season')
+  })
+
+  it('"En fait, la saison reprend" restores from journal when available', () => {
+    mockProfileOverrides = {
+      seasonMode: 'off_season',
+      planningAnchors: { seasonEndedAt: '2026-03-29', seasonEndedSource: 'manual' },
+      seasonTransitionState: {
+        transitionJournal: [{
+          id: 't-1',
+          at: '2026-03-29',
+          trigger: 'user_manual',
+          from: { cycle: 'in_season', weekNumber: 10, schedulingMode: 'calendar' },
+          anchorsSnapshot: { manualPlayoffs: true },
+          to: 'off_season',
+        }],
+      },
+    }
+
+    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    fireEvent.click(screen.getByTestId('situation-resume-season'))
+
+    expect(mockUpdateProfile).toHaveBeenCalledTimes(1)
+    const call = mockUpdateProfile.mock.calls[0][0]
+    // Restored from journal snapshot
+    expect(call.planningAnchors.manualPlayoffs).toBe(true)
     expect(call.planningAnchors.seasonEndedAt).toBeUndefined()
     expect(call.seasonMode).toBe('in_season')
+    // Journal trimmed
+    expect(call.seasonTransitionState.transitionJournal).toBeUndefined()
   })
 })

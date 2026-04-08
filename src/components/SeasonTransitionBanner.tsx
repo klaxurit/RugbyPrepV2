@@ -41,6 +41,13 @@ const SEASON_CONFIG: Record<SeasonTransition['type'], BannerConfig> = {
     text: 'text-emerald-300',
     cta: 'Indiquer ma date de reprise',
   },
+  match_detected_in_offseason: {
+    icon: Calendar,
+    bg: 'bg-blue-900/15',
+    border: 'border-blue-500/25',
+    text: 'text-blue-300',
+    cta: null, // uses custom actions instead
+  },
 }
 
 // ── Scheduling transition config ────────────────────────────────────
@@ -69,6 +76,12 @@ const SCHEDULING_CONFIG: Record<SchedulingTransition['type'], BannerConfig> = {
   },
 }
 
+// ── Helpers ─────────────────────────────────────────────────────────
+
+function formatShortDate(iso: string): string {
+  return new Date(`${iso}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+}
+
 // ── Season transition message ───────────────────────────────────────
 
 function getSeasonMessage(t: SeasonTransition): string {
@@ -92,6 +105,10 @@ function getSeasonMessage(t: SeasonTransition): string {
       return t.reason === 'calendar_date'
         ? 'La reprise approche. Indique ta date de retour au club pour lancer ta pré-saison.'
         : 'Tu avances bien dans ton inter-saison. Prêt à lancer la pré-saison ?'
+    case 'match_detected_in_offseason':
+      return t.opponent
+        ? `Un match a été ajouté le ${formatShortDate(t.matchDate)} contre ${t.opponent}. Ta saison reprend ?`
+        : `Un match a été ajouté le ${formatShortDate(t.matchDate)}. Ta saison reprend ?`
   }
 }
 
@@ -101,12 +118,100 @@ interface SeasonTransitionBannerProps {
   transition: SeasonTransition
   onAction?: () => void
   onDismiss?: () => void
+  /** For match_detected_in_offseason: 3 actions */
+  onConfirmResume?: () => void
+  onDeferMatch?: () => void
+  onHideMatch?: () => void
 }
 
-export function SeasonTransitionBanner({ transition, onAction, onDismiss }: SeasonTransitionBannerProps) {
+export function SeasonTransitionBanner({ transition, onAction, onDismiss, onConfirmResume, onDeferMatch, onHideMatch }: SeasonTransitionBannerProps) {
   const cfg = SEASON_CONFIG[transition.type]
   const message = getSeasonMessage(transition)
+
+  if (transition.type === 'match_detected_in_offseason') {
+    return (
+      <MatchDetectedBanner
+        cfg={cfg}
+        message={message}
+        onConfirm={onConfirmResume}
+        onDefer={onDeferMatch}
+        onHide={onHideMatch}
+        onDismiss={onDismiss}
+      />
+    )
+  }
+
   return <TransitionBannerShell cfg={cfg} message={message} onAction={onAction} onDismiss={onDismiss} />
+}
+
+// ── Match detected banner (3 actions) ──────────────────────────────
+
+function MatchDetectedBanner({
+  cfg,
+  message,
+  onConfirm,
+  onDefer,
+  onHide,
+  onDismiss,
+}: {
+  cfg: BannerConfig
+  message: string
+  onConfirm?: () => void
+  onDefer?: () => void
+  onHide?: () => void
+  onDismiss?: () => void
+}) {
+  const Icon = cfg.icon
+  return (
+    <div
+      className={`${cfg.bg} border ${cfg.border} rounded-[2rem] p-4 space-y-3`}
+      data-testid="transition-banner"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-2.5">
+          <Icon className={`w-4 h-4 ${cfg.text} flex-shrink-0 mt-0.5`} />
+          <p className={`text-xs font-bold ${cfg.text} leading-relaxed`}>{message}</p>
+        </div>
+        {onDismiss && (
+          <button type="button" onClick={onDismiss} className="flex-shrink-0 p-1 rounded-full hover:bg-white/10 transition-colors">
+            <X className="w-3.5 h-3.5 text-white/30" />
+          </button>
+        )}
+      </div>
+      <div className="flex flex-col gap-2">
+        {onConfirm && (
+          <button
+            type="button"
+            onClick={onConfirm}
+            data-testid="match-banner-confirm"
+            className="w-full py-2.5 rounded-2xl text-xs font-black bg-blue-500/20 border border-blue-400/30 text-blue-300 hover:bg-blue-500/30 transition-colors"
+          >
+            Oui, ma saison reprend
+          </button>
+        )}
+        {onDefer && (
+          <button
+            type="button"
+            onClick={onDefer}
+            data-testid="match-banner-defer"
+            className="w-full py-2.5 rounded-2xl text-xs font-bold bg-white/5 border border-white/10 text-white/50 hover:bg-white/10 transition-colors"
+          >
+            Non, pas maintenant
+          </button>
+        )}
+        {onHide && (
+          <button
+            type="button"
+            onClick={onHide}
+            data-testid="match-banner-hide"
+            className="w-full py-2 rounded-2xl text-[10px] font-bold text-white/30 hover:text-white/50 transition-colors"
+          >
+            Ce n&#39;est pas mon équipe
+          </button>
+        )}
+      </div>
+    </div>
+  )
 }
 
 // ── Scheduling Banner Props (new) ───────────────────────────────────

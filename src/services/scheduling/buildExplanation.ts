@@ -344,6 +344,7 @@ const OFF_SEASON_PHASE_LABELS: Record<OffSeasonPhase, string> = {
   2: 'Transition',
   3: 'Hypertrophie',
   4: 'Force-Puissance',
+  5: 'Entretien',
 }
 
 const PRE_SEASON_PHASE_LABELS: Record<PreSeasonPhase, string> = {

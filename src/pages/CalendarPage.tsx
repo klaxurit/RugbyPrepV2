@@ -874,7 +874,7 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
 
 export function CalendarPage() {
   const {
-    visibleEvents, events, nextMatch, addEvent, removeEvent, updateMatchLoad,
+    visibleEvents, structuralEvents, events, nextMatch, addEvent, removeEvent, updateMatchLoad,
     hideImportedEvent, unhideImportedEvent, refreshFromFFR, hiddenCount, ffrCount, manualCount, loading,
   } = useCalendar()
   const { profile, updateProfile } = useProfile()
@@ -888,14 +888,16 @@ export function CalendarPage() {
   const [showPlayoffExitModal, setShowPlayoffExitModal] = useState(false)
 
   // Season phase from the single source of truth (planning context)
+  // Use structuralEvents (not raw events) so the cycle is consistent
+  // with /week and /profile even when a deferral is active.
   const seasonPhase = useMemo(() => {
     const todayIso = toDateStr(new Date())
     const { inputs } = buildAthletePlanningInputs({
-      profile, events, logs: [], today: todayIso, fatigue: 'OK',
+      profile, events: structuralEvents, logs: [], today: todayIso, fatigue: 'OK',
     })
     const ctx = detectAnnualPlanningContext(inputs)
     return cycleToSeasonPhase(ctx.cycle)
-  }, [profile, events])
+  }, [profile, structuralEvents])
 
   // Recurring club and S&C days from profile
   const clubDays: DayOfWeek[] = profile.clubSchedule?.clubDays.map((d) => d.day) ?? []

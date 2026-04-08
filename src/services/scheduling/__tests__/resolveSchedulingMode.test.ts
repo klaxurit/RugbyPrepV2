@@ -227,4 +227,37 @@ describe('resolveSchedulingMode', () => {
     expect(r.confidence).toBe('high')
     expect(r.reason).toBe('future_matches_detected')
   })
+
+  // ── Cycle gating: off-season ignores future matches ──
+
+  it('future match in off-season does NOT force calendar', () => {
+    const r = resolveSchedulingMode({
+      events: [match('2026-05-01')],
+      today: TODAY,
+      planningAnchors: { seasonEndedAt: '2026-03-15' },
+      resolvedCycle: 'off_season',
+    })
+    // seasonEndedAt without clubDays → sequential, not calendar
+    expect(r.mode).toBe('sequential')
+    expect(r.reason).toBe('season_ended')
+  })
+
+  it('future match in in_season still forces calendar', () => {
+    const r = resolveSchedulingMode({
+      events: [match('2026-04-10')],
+      today: TODAY,
+      resolvedCycle: 'in_season',
+    })
+    expect(r.mode).toBe('calendar')
+    expect(r.reason).toBe('future_matches_detected')
+  })
+
+  it('future match without resolvedCycle still forces calendar (backward compat)', () => {
+    const r = resolveSchedulingMode({
+      events: [match('2026-04-10')],
+      today: TODAY,
+    })
+    expect(r.mode).toBe('calendar')
+    expect(r.reason).toBe('future_matches_detected')
+  })
 })

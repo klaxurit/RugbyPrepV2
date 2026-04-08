@@ -32,19 +32,13 @@ export interface UseAthleteAnnualPlanResult {
 export function useAthleteAnnualPlan(): UseAthleteAnnualPlanResult {
   const { authState, isInitializing } = useAuth()
   const { profile } = useProfile()
-  const { visibleEvents } = useCalendar()
+  const { structuralEvents, nextStructuralMatch } = useCalendar()
   const { logs } = useHistory()
   const { fatigue } = useFatigue()
-  const acwrResult = useACWR(logs, visibleEvents)
+  const acwrResult = useACWR(logs, structuralEvents)
 
   const today = localDateISO(new Date())
-  // Next match for readiness score
-  const nextMatchDate = useMemo(() => {
-    const futureMatches = visibleEvents
-      .filter((e) => e.type === 'match' && e.date >= today)
-      .sort((a, b) => a.date.localeCompare(b.date))
-    return futureMatches.length > 0 ? futureMatches[0].date : null
-  }, [visibleEvents, today])
+  const nextMatchDate = nextStructuralMatch?.date ?? null
 
   const readinessResult = useReadinessScore({
     acwrZone: acwrResult.hasSufficientData ? acwrResult.zone : null,
@@ -78,7 +72,7 @@ export function useAthleteAnnualPlan(): UseAthleteAnnualPlanResult {
 
     const { inputs, warnings: planningInputsWarnings, derived } = buildAthletePlanningInputs({
       profile,
-      events: visibleEvents,
+      events: structuralEvents,
       logs,
       today,
       fatigue,
@@ -98,7 +92,7 @@ export function useAthleteAnnualPlan(): UseAthleteAnnualPlanResult {
   }, [
     isReady,
     profile,
-    visibleEvents,
+    structuralEvents,
     logs,
     fatigue,
     acwrResult.hasSufficientData,

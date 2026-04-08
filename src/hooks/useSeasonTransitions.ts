@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import type { AnnualPlanningContext } from '../types/annualPlanning'
+import type { CalendarEvent, UserProfile } from '../types/training'
 import { detectSeasonTransitions, type SeasonTransition } from '../services/season/detectSeasonTransitions'
 
 const STORAGE_KEY = 'rugbyforge.season_transition_dismissed'
@@ -23,8 +24,10 @@ function writeDismissed(data: Record<string, string>) {
 export function useSeasonTransitions(params: {
   planningContext: AnnualPlanningContext | null
   today: string
+  visibleEvents?: CalendarEvent[]
+  profile?: UserProfile
 }) {
-  const { planningContext, today } = params
+  const { planningContext, today, visibleEvents, profile } = params
 
   const transition = useMemo((): SeasonTransition | null => {
     if (!planningContext) return null
@@ -32,10 +35,28 @@ export function useSeasonTransitions(params: {
       planningContext,
       today,
       dismissedUntil: readDismissed(),
+      visibleEvents: visibleEvents?.map((e) => ({
+        id: e.id,
+        date: e.date,
+        type: e.type,
+        opponent: e.opponent,
+      })),
+      hasActiveDeferral: Boolean(profile?.seasonTransitionState?.activeDeferral),
+      hasReturnDate: Boolean(profile?.planningAnchors?.returnToTeamTrainingAt),
+      offseasonMatchResumeAckEventId: profile?.seasonTransitionState?.offseasonMatchResumeAckEventId,
     })
-  }, [planningContext, today])
+  }, [
+    planningContext,
+    today,
+    visibleEvents,
+    profile?.seasonTransitionState?.activeDeferral,
+    profile?.seasonTransitionState?.offseasonMatchResumeAckEventId,
+    profile?.planningAnchors?.returnToTeamTrainingAt,
+  ])
 
   const dismiss = useCallback((type: string) => {
+    // match_detected_in_offseason is NOT dismissed via localStorage — it's controlled by activeDeferral
+    if (type === 'match_detected_in_offseason') return
     const d = new Date(`${today}T12:00:00`)
     d.setDate(d.getDate() + DISMISS_DAYS)
     const current = readDismissed()

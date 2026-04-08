@@ -2,7 +2,7 @@ import type { CalendarEvent } from './training'
 
 export type AnnualCycle = 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
 
-export type OffSeasonPhase = 1 | 2 | 3 | 4
+export type OffSeasonPhase = 1 | 2 | 3 | 4 | 5
 export type PreSeasonPhase = 1 | 2 | 3
 
 export type InSeasonSubMode = 'competition' | 'treve_deep' | 'treve_return' | 'treve_rampup'

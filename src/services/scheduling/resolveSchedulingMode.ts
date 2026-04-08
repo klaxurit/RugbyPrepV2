@@ -36,7 +36,9 @@ export function resolveSchedulingMode(params: ResolveSchedulingModeParams): Sche
     return delta >= 0 && delta <= horizonMs
   })
 
-  if (futureMatches.length > 0) {
+  // Level 1: future matches within 42 days — only force calendar if NOT in off-season.
+  // In off-season, future matches are handled via the match_detected_in_offseason banner.
+  if (futureMatches.length > 0 && params.resolvedCycle !== 'off_season') {
     return {
       mode: 'calendar',
       confidence: 'high',

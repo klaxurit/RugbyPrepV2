@@ -22,6 +22,7 @@ import {
 } from '../annualPlanning/buildAthletePlanningInputs'
 import { resolveSchedulingMode } from '../scheduling/resolveSchedulingMode'
 import { buildSafeSequentialFallback } from '../scheduling/buildSafeSequentialFallback'
+import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
 import type { ProgramFeatureFlags } from './policies/featureFlags'
 
 // ── Types publics ────────────────────────────────────────────────────────────
@@ -87,6 +88,9 @@ export function resolveWeeklyProgramSurface(
     jumpTrend,
   })
 
+  // 1b. Pre-resolve cycle for scheduling mode gating (lightweight, no session resolution)
+  const preResolvedContext = detectAnnualPlanningContext(inputs)
+
   // 2. Résoudre le scheduling mode (après planning inputs pour accéder aux anchors)
   const schedulingModeResult = resolveSchedulingMode({
     events,
@@ -94,6 +98,7 @@ export function resolveWeeklyProgramSurface(
     planningAnchors: inputs.planningAnchors,
     onboardingCycleHint: inputs.planningAnchors?.onboardingCycleHint,
     hasClubDays: (profile.clubSchedule?.clubDays?.length ?? 0) > 0,
+    resolvedCycle: preResolvedContext.cycle,
   })
 
   // 3. Résoudre les mother sessions

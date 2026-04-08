@@ -28,6 +28,8 @@ export interface ResolveSchedulingModeParams {
   onboardingCycleHint?: AnnualCycle
   /** If the user has configured club training days, calendar mode is preferred. */
   hasClubDays?: boolean
+  /** Resolved annual cycle — when off_season, future matches don't force calendar. */
+  resolvedCycle?: AnnualCycle
 }
 
 // ─── Week Presentation (used by S4/S5) ─────────────────────────────

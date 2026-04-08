@@ -49,6 +49,8 @@ export interface GetWeeklyTemplateParams {
   /** Requis si cycle === 'in_season' et frequency === 3 */
   matchContext?: MatchContext
   fatigueLevel?: FatigueLevel
+  /** For off-season phase 5 maintenance: A/B alternation based on week parity. */
+  maintenanceParity?: 'A' | 'B'
 }
 
 /** Résolution template : séances + signaux métier (warnings, conditioning compagnon). */
@@ -417,6 +419,8 @@ export function resolveOffSeasonWeeklyTemplate(params: {
   frequency: Frequency
   positionGroup?: PositionGroup
   fatigueLevel?: FatigueLevel
+  /** For phase 5 maintenance: A/B alternation based on week parity. */
+  maintenanceParity?: 'A' | 'B'
 }): WeeklyTemplateResolution {
   const { offSeasonPhase, frequency: requestedFrequency, positionGroup } = params
   const fatigueLevel = params.fatigueLevel ?? 'normal'
@@ -445,6 +449,31 @@ export function resolveOffSeasonWeeklyTemplate(params: {
       companionRecommendations: [
         '2x 20-30 min activité légère : marche, vélo, natation, mobilité',
         'Objectif : bouger sans forcer, favoriser la récupération',
+      ],
+      requestedFrequency,
+      effectiveFrequency,
+    }
+  }
+
+  // ── Phase 5 Maintenance : 2 sessions/week, A/B alternation
+  if (offSeasonPhase === 5) {
+    effectiveFrequency = 2
+    const parity = params.maintenanceParity ?? 'A'
+    const b3 = positionGroup === 'back_three'
+    const hypoLower = b3 ? 'LOWER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1' : 'LOWER_OFFSEASON_HYPERTROPHY_V1'
+    const hypoUpper = b3 ? 'UPPER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1' : 'UPPER_OFFSEASON_HYPERTROPHY_V1'
+    const hypoFull = b3 ? 'FULL_OFFSEASON_HYPERTROPHY_BACK_THREE_V1' : 'FULL_OFFSEASON_HYPERTROPHY_V1'
+
+    const sessions = parity === 'A'
+      ? makeSlots([hypoLower, hypoUpper])
+      : makeSlots([hypoUpper, hypoFull])
+
+    return {
+      sessions: cloneSlots(sessions),
+      warnings,
+      companionRecommendations: [
+        '1-2x 30 min cardio entretien : footing, vélo, natation',
+        'Maintien des acquis en attendant la pré-saison',
       ],
       requestedFrequency,
       effectiveFrequency,
@@ -597,6 +626,7 @@ export function getWeeklyTemplate(params: GetWeeklyTemplateParams): WeeklyTempla
       frequency,
       positionGroup,
       fatigueLevel,
+      maintenanceParity: params.maintenanceParity,
     })
   }
 

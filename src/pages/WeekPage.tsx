@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { Activity, Plus } from 'lucide-react'
+import { Activity, Calendar, Plus } from 'lucide-react'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
@@ -50,10 +50,10 @@ export function WeekPage() {
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue, setFatigue } = useFatigue()
   const { logs, addLog } = useHistory()
-  const { visibleEvents, addEvent, syncNotification, dismissSyncNotification } = useCalendar()
+  const { visibleEvents, structuralEvents, addEvent, syncNotification, dismissSyncNotification } = useCalendar()
   const navigate = useNavigate()
 
-  const acwrResult = useACWR(logs, visibleEvents)
+  const acwrResult = useACWR(logs, structuralEvents)
   const { isPremium: weekIsPremium } = useFeatureAccess()
   const { canShowUpsell: weekCanShowUpsell } = useUpsellTiming()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
@@ -87,7 +87,7 @@ export function WeekPage() {
   })
   const surfaceParams = useMemo(() => ({
     profile,
-    events: visibleEvents,
+    events: structuralEvents,
     logs,
     today,
     fatigue,
@@ -99,7 +99,7 @@ export function WeekPage() {
     featureFlags: programFeatureFlags,
     readinessScore: readinessResult.score,
     userId,
-  }), [profile, visibleEvents, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId])
+  }), [profile, structuralEvents, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId])
   const {
     surface, blockProgression, snapshot,
     skipSession, rescheduleSession, markDayUnavailable,
@@ -391,6 +391,41 @@ export function WeekPage() {
                 })()}
               />
             )}
+
+            {/* Maintenance CTA — permanent until returnDate is set */}
+            {surface?.planningContext?.cycle === 'off_season' &&
+             surface?.planningContext?.offSeasonPhase === 5 &&
+             !profile.planningAnchors?.returnToTeamTrainingAt && (
+              <div className="rounded-2xl border border-brand-border bg-brand-soft px-4 py-3 space-y-1.5">
+                <p className="text-xs font-bold text-brand">Ton programme d&apos;inter-saison est terminé.</p>
+                <p className="text-[10px] text-brand-muted">Indique ta date de reprise pour lancer ta pré-saison.</p>
+                <Link to="/profile#reprise" className="inline-flex items-center gap-1 text-[10px] font-black text-brand hover:text-brand-hover transition-colors">
+                  Indiquer ma date de reprise →
+                </Link>
+              </div>
+            )}
+
+            {/* Match visible but not confirmed — informational bandeau */}
+            {surface?.planningContext?.cycle === 'off_season' &&
+             isSequential &&
+             !profile.planningAnchors?.returnToTeamTrainingAt &&
+             (() => {
+               const futureMatch = structuralEvents.find((e) => e.type === 'match' && e.date >= today)
+               if (!futureMatch) return null
+               return (
+                 <div className="rounded-2xl border border-border-app bg-layer-5 px-4 py-3 space-y-1">
+                   <p className="text-xs font-bold text-fg-soft flex items-center gap-1.5">
+                     <Calendar className="w-3.5 h-3.5 text-fg-faint" />
+                     Match prévu le {new Date(`${futureMatch.date}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                     {futureMatch.opponent ? ` vs ${futureMatch.opponent}` : ''}
+                   </p>
+                   <p className="text-[10px] text-fg-muted">Ton programme ne change pas tant que tu ne confirmes pas ta reprise.</p>
+                   <Link to="/calendar" className="text-[10px] font-bold text-fg-faint hover:text-fg-soft transition-colors">
+                     Voir calendrier →
+                   </Link>
+                 </div>
+               )
+             })()}
 
             {/* Séances de la semaine — navigation vers /session/:id */}
             {isSequential ? (

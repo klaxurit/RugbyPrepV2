@@ -240,6 +240,7 @@ const OFF_SEASON_PHASE_LABELS: Record<OffSeasonPhase, string> = {
   2: 'Hypertrophie',
   3: 'Force',
   4: 'Force-Puissance',
+  5: 'Entretien',
 }
 
 const PRE_SEASON_PHASE_LABELS: Record<PreSeasonPhase, string> = {
@@ -254,6 +255,11 @@ const PRE_SEASON_PHASE_LABELS: Record<PreSeasonPhase, string> = {
  */
 export function deriveBlockLabel(ctx: AnnualPlanningContext): string {
   const cycleName = CYCLE_LABELS[ctx.cycle] ?? ctx.cycle
+
+  if (ctx.cycle === 'off_season' && ctx.offSeasonPhase === 5) {
+    const ab = (ctx.weekNumber ?? 1) % 2 === 1 ? 'A' : 'B'
+    return `${cycleName} · Entretien — Sem. ${ab}`
+  }
 
   if (ctx.cycle === 'off_season' && ctx.offSeasonPhase) {
     const phaseLabel = OFF_SEASON_PHASE_LABELS[ctx.offSeasonPhase]

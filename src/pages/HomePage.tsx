@@ -47,7 +47,8 @@ import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
 import { ReadinessScoreSkeleton, WeeklySummarySkeleton } from '../components/SkeletonCard'
 import { getToday } from '../services/ui/debugDateOverride'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
-import type { CycleWeek, SessionType, SeasonPhase, SeasonMode } from '../types/training'
+import type { CycleWeek, SessionType, SeasonPhase, SeasonMode, TransitionEntry } from '../types/training'
+import { appendTransitionEntry, computeDeferralExpiry } from '../services/season/transitionJournal'
 import type { SequentialSession } from '../types/scheduling'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 
@@ -123,9 +124,9 @@ export function HomePage() {
   const { fatigue } = useFatigue()
   const { week } = useWeek()
   const { logs } = useHistory()
-  const { events, nextMatch, isMatchDay } = useCalendar()
+  const { structuralEvents, visibleEvents, nextMatch, nextStructuralMatch, isMatchDay, hideImportedEvent } = useCalendar()
 
-  const acwr = useACWR(logs, events)
+  const acwr = useACWR(logs, structuralEvents)
   const { isPremium, loading: entitlementsLoading } = useFeatureAccess()
   // Don't show premium-gated sections until entitlements are resolved
   // This prevents a flash of blurred content for premium users
@@ -145,14 +146,14 @@ export function HomePage() {
     acwrZone: acwr.hasSufficientData ? acwr.zone : null,
     fatigue,
     logs,
-    nextMatchDate: nextMatch?.date ?? null,
+    nextMatchDate: nextStructuralMatch?.date ?? null,
     today,
   })
 
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
   const surfaceParams = useMemo(() => ({
     profile,
-    events,
+    events: structuralEvents,
     logs,
     today,
     fatigue,
@@ -164,7 +165,7 @@ export function HomePage() {
     featureFlags: programFeatureFlags,
     readinessScore: readinessResult.score,
     userId,
-  }), [profile, events, logs, today, fatigue, acwr.hasSufficientData, acwr.zone, week, programFeatureFlags, readinessResult.score, userId])
+  }), [profile, structuralEvents, logs, today, fatigue, acwr.hasSufficientData, acwr.zone, week, programFeatureFlags, readinessResult.score, userId])
   const {
     surface, blockProgression, snapshot,
   } = useWeekSnapshot(surfaceParams)
@@ -203,6 +204,8 @@ export function HomePage() {
   const { transition: seasonTransition, dismiss: dismissSeasonTransition } = useSeasonTransitions({
     planningContext: surface?.planningContext ?? null,
     today,
+    visibleEvents: visibleEvents ?? [],
+    profile,
   })
   const { transition: schedulingTransition, dismiss: dismissSchedulingTransition } = useSchedulingTransition({
     schedulingMode: surface?.schedulingMode ?? null,
@@ -387,34 +390,155 @@ export function HomePage() {
             onDismiss={() => dismissSchedulingTransition(schedulingTransition.type)}
           />
         ) : seasonTransition ? (
-          <SeasonTransitionBanner
-            transition={seasonTransition}
-            onAction={() => {
-              if (seasonTransition.type === 'season_ended') {
-                const cleanAnchors = { ...profile.planningAnchors }
-                delete cleanAnchors.manualPlayoffs
+          seasonTransition.type === 'match_detected_in_offseason' ? (
+            <SeasonTransitionBanner
+              transition={seasonTransition}
+              onConfirmResume={() => {
+                // "Oui, ma saison reprend"
+                const prevAnchors = { ...profile.planningAnchors }
+                const entry: TransitionEntry = {
+                  id: `t-${Date.now()}`,
+                  at: today,
+                  trigger: 'ffr_match',
+                  from: {
+                    cycle: surface?.planningContext?.cycle ?? 'off_season',
+                    weekNumber: surface?.planningContext?.weekNumber ?? 1,
+                    phase: surface?.planningContext?.offSeasonPhase,
+                    schedulingMode: surface?.schedulingMode ?? 'sequential',
+                  },
+                  anchorsSnapshot: prevAnchors,
+                  to: 'pre_season',
+                }
+                const cleanAnchors = { ...prevAnchors }
+                delete cleanAnchors.seasonEndedAt
+                delete cleanAnchors.seasonEndedSource
                 updateProfile({
-                  seasonMode: 'off_season',
-                  planningAnchors: {
-                    ...cleanAnchors,
-                    seasonEndedAt: seasonTransition.lastMatchDate,
+                  planningAnchors: cleanAnchors,
+                  seasonTransitionState: {
+                    ...appendTransitionEntry(profile.seasonTransitionState, entry),
+                    activeDeferral: undefined,
+                    offseasonMatchResumeAckEventId: seasonTransition.matchEventId,
                   },
                 })
-              } else if (seasonTransition.type === 'playoffs_suggested') {
+              }}
+              onDeferMatch={() => {
+                // "Non, pas maintenant" — create deferral
+                if (seasonTransition.type !== 'match_detected_in_offseason') return
+                const { matchEventId, matchDate } = seasonTransition
+                const matchEvent = (visibleEvents ?? []).find((e) => e.id === matchEventId)
+                if (!matchEvent) return
                 updateProfile({
-                  planningAnchors: {
-                    ...profile.planningAnchors,
-                    manualPlayoffs: true,
+                  seasonTransitionState: {
+                    ...profile.seasonTransitionState,
+                    offseasonMatchResumeAckEventId: undefined,
+                    activeDeferral: {
+                      eventId: matchEvent.id ?? `unknown-${matchDate}`,
+                      matchDateAtDefer: matchDate,
+                      deferredAt: today,
+                      expiresAt: computeDeferralExpiry(matchDate, today),
+                    },
                   },
                 })
-              } else if (seasonTransition.type === 'pre_season_suggested') {
-                // Navigate to profile where the user can set their return date
-                window.location.href = '/profile#reprise'
-              }
-              dismissSeasonTransition(seasonTransition.type)
-            }}
-            onDismiss={() => dismissSeasonTransition(seasonTransition.type)}
-          />
+              }}
+              onHideMatch={() => {
+                // "Ce n'est pas mon équipe" — hide the match
+                if (seasonTransition.type !== 'match_detected_in_offseason') return
+                const matchEvent = (visibleEvents ?? []).find((e) => e.id === seasonTransition.matchEventId)
+                if (matchEvent?.id) {
+                  hideImportedEvent(matchEvent.id)
+                  const st = profile.seasonTransitionState
+                  const clearAck = st?.offseasonMatchResumeAckEventId === matchEvent.id
+                  const clearDef = st?.activeDeferral?.eventId === matchEvent.id
+                  if (clearAck || clearDef) {
+                    updateProfile({
+                      seasonTransitionState: {
+                        ...st,
+                        ...(clearAck ? { offseasonMatchResumeAckEventId: undefined } : {}),
+                        ...(clearDef ? { activeDeferral: undefined } : {}),
+                      },
+                    })
+                  }
+                }
+              }}
+              onDismiss={() => {
+                // X button = same as defer for this banner type
+                if (seasonTransition.type !== 'match_detected_in_offseason') return
+                const { matchEventId, matchDate } = seasonTransition
+                const matchEvent = (visibleEvents ?? []).find((e) => e.id === matchEventId)
+                if (!matchEvent) return
+                updateProfile({
+                  seasonTransitionState: {
+                    ...profile.seasonTransitionState,
+                    offseasonMatchResumeAckEventId: undefined,
+                    activeDeferral: {
+                      eventId: matchEvent.id ?? `unknown-${matchDate}`,
+                      matchDateAtDefer: matchDate,
+                      deferredAt: today,
+                      expiresAt: computeDeferralExpiry(matchDate, today),
+                    },
+                  },
+                })
+              }}
+            />
+          ) : (
+            <SeasonTransitionBanner
+              transition={seasonTransition}
+              onAction={() => {
+                if (seasonTransition.type === 'season_ended') {
+                  const prevAnchors = { ...profile.planningAnchors }
+                  const entry: TransitionEntry = {
+                    id: `t-${Date.now()}`,
+                    at: today,
+                    trigger: 'banner_action',
+                    from: {
+                      cycle: surface?.planningContext?.cycle ?? 'in_season',
+                      weekNumber: surface?.planningContext?.weekNumber ?? 1,
+                      phase: surface?.planningContext?.mesocycleWeek,
+                      schedulingMode: surface?.schedulingMode ?? 'calendar',
+                    },
+                    anchorsSnapshot: prevAnchors,
+                    to: 'off_season',
+                  }
+                  const cleanAnchors = { ...prevAnchors }
+                  delete cleanAnchors.manualPlayoffs
+                  updateProfile({
+                    seasonMode: 'off_season',
+                    planningAnchors: {
+                      ...cleanAnchors,
+                      seasonEndedAt: seasonTransition.lastMatchDate,
+                      seasonEndedSource: 'manual',
+                    },
+                    seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
+                  })
+                } else if (seasonTransition.type === 'playoffs_suggested') {
+                  const entry: TransitionEntry = {
+                    id: `t-${Date.now()}`,
+                    at: today,
+                    trigger: 'banner_action',
+                    from: {
+                      cycle: surface?.planningContext?.cycle ?? 'in_season',
+                      weekNumber: surface?.planningContext?.weekNumber ?? 1,
+                      schedulingMode: surface?.schedulingMode ?? 'calendar',
+                    },
+                    anchorsSnapshot: { ...profile.planningAnchors },
+                    to: 'playoffs',
+                  }
+                  updateProfile({
+                    planningAnchors: {
+                      ...profile.planningAnchors,
+                      manualPlayoffs: true,
+                    },
+                    seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
+                  })
+                } else if (seasonTransition.type === 'pre_season_suggested') {
+                  // Navigate to profile where the user can set their return date
+                  window.location.href = '/profile#reprise'
+                }
+                dismissSeasonTransition(seasonTransition.type)
+              }}
+              onDismiss={() => dismissSeasonTransition(seasonTransition.type)}
+            />
+          )
         ) : null}
 
         {/* ── Readiness Score ── */}

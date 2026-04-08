@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { useProfile } from './useProfile'
 import { syncCalendar } from '../services/calendar/ffrSyncService'
+import { applyDeferralRules } from '../services/season/deferralRules'
 import type { CalendarEvent } from '../types/training'
 
 const STORAGE_KEY = 'rugbyprep.calendar.v1'
@@ -70,6 +71,8 @@ export function useCalendar() {
   const [error, setError] = useState<string | null>(null)
   const [syncNotification, setSyncNotification] = useState<string | null>(null)
   const autoSyncRanRef = useRef(false)
+  const profileRef: MutableRefObject<typeof profile> = useRef(profile)
+  profileRef.current = profile
 
   const dismissSyncNotification = useCallback(() => setSyncNotification(null), [])
 
@@ -313,7 +316,31 @@ export function useCalendar() {
   // Filter out hidden events for display
   const visibleEvents = events.filter((e) => !e.user_hidden)
 
+  // ── Structural events: visible minus active valid deferral ──
+  const { structuralEvents, shouldPurge: deferralShouldPurge } = useMemo(() => {
+    return applyDeferralRules({
+      activeDeferral: profile.seasonTransitionState?.activeDeferral,
+      visibleEvents,
+      today: toDateStr(new Date()),
+      returnToTeamTrainingAt: profile.planningAnchors?.returnToTeamTrainingAt,
+    })
+  }, [visibleEvents, profile.seasonTransitionState?.activeDeferral, profile.planningAnchors?.returnToTeamTrainingAt])
+
+  // ── Purge invalid deferral (side effect) ──
+  useEffect(() => {
+    if (!deferralShouldPurge) return
+    const st = profileRef.current.seasonTransitionState
+    if (!st?.activeDeferral) return
+    updateProfile({
+      seasonTransitionState: {
+        ...st,
+        activeDeferral: undefined,
+      },
+    })
+  }, [deferralShouldPurge, updateProfile])
+
   const nextMatch = visibleEvents.find((e) => e.type === 'match' && e.date >= todayStr) ?? null
+  const nextStructuralMatch = structuralEvents.find((e) => e.type === 'match' && e.date >= todayStr) ?? null
   const isMatchDay = visibleEvents.some((e) => e.type === 'match' && e.date === todayStr)
   const thisWeekEvents = visibleEvents.filter((e) => e.date >= weekStart && e.date <= weekEnd)
   const hiddenCount = events.filter((e) => e.user_hidden).length
@@ -323,7 +350,10 @@ export function useCalendar() {
   return {
     events,
     visibleEvents,
+    structuralEvents,
     nextMatch,
+    /** Next match from structural events only — use for motor/readiness decisions. */
+    nextStructuralMatch,
     isMatchDay,
     thisWeekEvents,
     addEvent,

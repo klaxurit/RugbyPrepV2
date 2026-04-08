@@ -61,7 +61,7 @@ export function SessionDetailPage() {
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue, setFatigue } = useFatigue()
   const { addLog, logs } = useHistory()
-  const { visibleEvents } = useCalendar()
+  const { structuralEvents } = useCalendar()
   const navigate = useNavigate()
   const { addBlockLog, getLastEntryForExercise, getBestForExercise } = useBlockLogs()
   const { isPremium } = useFeatureAccess()
@@ -78,16 +78,16 @@ export function SessionDetailPage() {
     window.scrollTo(0, 0)
   }, [index])
 
-  const { acwr, zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, visibleEvents)
+  const { acwr, zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, structuralEvents)
   const { ignoreAcwrOverload } = useAcwrOverride()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
   const nextMatchDate = useMemo(() => {
-    const fm = visibleEvents.filter((e) => e.type === 'match' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
+    const fm = structuralEvents.filter((e) => e.type === 'match' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
     return fm.length > 0 ? fm[0].date : null
-  }, [visibleEvents, today])
+  }, [structuralEvents, today])
   const readinessResult = useReadinessScore({
     acwrZone: acwrHasData ? acwrZone : null,
     fatigue,
@@ -97,7 +97,7 @@ export function SessionDetailPage() {
   })
   const surfaceParams = useMemo(() => ({
     profile,
-    events: visibleEvents,
+    events: structuralEvents,
     logs,
     today,
     fatigue,
@@ -109,7 +109,7 @@ export function SessionDetailPage() {
     featureFlags: programFeatureFlags,
     readinessScore: readinessResult.score,
     userId,
-  }), [profile, visibleEvents, logs, today, fatigue, acwrHasData, acwrZone, week, lastNonDeloadWeek, ignoreAcwrOverload, programFeatureFlags, readinessResult.score, userId])
+  }), [profile, structuralEvents, logs, today, fatigue, acwrHasData, acwrZone, week, lastNonDeloadWeek, ignoreAcwrOverload, programFeatureFlags, readinessResult.score, userId])
   const { surface: rawSurface } = useWeeklyProgramSurface(surfaceParams)
   // F2: Use snapshot-owned sessions so corrections (fatigue, skip, reschedule) are respected
   const { surface: snapshotSurface, snapshot } = useWeekSnapshot(surfaceParams)

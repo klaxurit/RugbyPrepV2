@@ -281,11 +281,44 @@ export interface UserProfile {
     returnToTeamTrainingAt?: string
     manualPlayoffs?: boolean
     /**
-     * Indication de cycle posée à l’onboarding (alignée sur AnnualCycle côté planning).
+     * Indication de cycle posée à l'onboarding (alignée sur AnnualCycle côté planning).
      * Évite une dépendance circulaire training → annualPlanning : mêmes littéraux.
      */
     onboardingCycleHint?: 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
+    seasonEndedSource?: 'manual' | 'derived'
   }
+  seasonTransitionState?: SeasonTransitionState
+}
+
+export interface ActiveDeferral {
+  eventId: string
+  matchDateAtDefer: string
+  deferredAt: string
+  expiresAt: string
+}
+
+export interface TransitionEntry {
+  id: string
+  at: string
+  trigger: 'user_manual' | 'banner_action' | 'auto_56d' | 'ffr_match' | 'profile_change'
+  from: {
+    cycle: 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
+    weekNumber: number
+    phase?: number
+    schedulingMode: 'calendar' | 'sequential'
+  }
+  anchorsSnapshot: NonNullable<UserProfile['planningAnchors']>
+  to: 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
+}
+
+export interface SeasonTransitionState {
+  transitionJournal?: TransitionEntry[]
+  activeDeferral?: ActiveDeferral
+  /**
+   * Après « Oui, ma saison reprend » sur la bannière match en inter-saison :
+   * supprime la re-détection UC9 pour ce match tant qu’il reste le prochain match futur visible.
+   */
+  offseasonMatchResumeAckEventId?: string
 }
 
 export interface WeeklyLoadContext {
@@ -349,7 +382,7 @@ export interface SessionLogProgramContext {
    * Pour les mother sessions, cette valeur prime sur `SessionLog.week` (compat legacy).
    */
   annualWeekCode?: string
-  offSeasonPhase?: 1 | 2 | 3 | 4
+  offSeasonPhase?: 1 | 2 | 3 | 4 | 5
   preSeasonPhase?: 1 | 2 | 3
 }
 

@@ -187,7 +187,7 @@ vi.mock('../../hooks/useHistory', () => ({
 }))
 
 vi.mock('../../hooks/useCalendar', () => ({
-  useCalendar: () => ({ events: [], nextMatch: null, isMatchDay: false }),
+  useCalendar: () => ({ events: [], structuralEvents: [], visibleEvents: [], nextMatch: null, nextStructuralMatch: null, isMatchDay: false, hideImportedEvent: vi.fn() }),
 }))
 
 vi.mock('../../hooks/useAdaptiveSchedule', () => ({

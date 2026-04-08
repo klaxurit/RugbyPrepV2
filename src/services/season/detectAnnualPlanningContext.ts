@@ -263,7 +263,8 @@ function offSeasonPhaseFromWeek(weekNumber: number, totalWeeks: number = OFF_SEA
   if (weekNumber <= 2) return 1  // Recovery : toujours 2 semaines
   if (weekNumber <= 4) return 2  // Transition : toujours 2 semaines
   if (weekNumber <= totalWeeks - 2) return 3  // Hypertrophy : absorbe le delta
-  return 4  // Force-Bridge : 2 dernières semaines
+  if (weekNumber <= totalWeeks) return 4  // Force-Bridge : 2 dernières semaines
+  return 5  // Maintenance — beyond planned off-season
 }
 
 function offSeasonPhaseName(phase: OffSeasonPhase): string {
@@ -276,10 +277,16 @@ function offSeasonPhaseName(phase: OffSeasonPhase): string {
       return 'Hypertrophie'
     case 4:
       return 'Force-Pont'
+    case 5:
+      return 'Entretien'
   }
 }
 
 function offSeasonWeekLabel(weekNumber: number, phase: OffSeasonPhase): string {
+  if (phase === 5) {
+    const ab = weekNumber % 2 === 1 ? 'A' : 'B'
+    return `Inter-saison Entretien — Semaine ${ab}`
+  }
   return `Inter-saison ${offSeasonPhaseName(phase)} - S${weekNumber}`
 }
 
@@ -701,7 +708,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     }
 
     const rawWeek = Math.floor(wholeDaysBetween(offSeasonStartMonday, todayWeekMonday) / DAYS_PER_WEEK) + 1
-    const wn = Math.max(1, Math.min(rawWeek, MAX_OFF_SEASON_WEEKS))
+    const wn = Math.max(1, rawWeek)
     acc.bump('explicit_anchors')
     acc.rule('rule:season_ended_force_off_season')
     const trace = acc.freeze()

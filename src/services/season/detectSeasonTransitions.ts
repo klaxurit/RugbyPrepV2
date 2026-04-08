@@ -5,6 +5,7 @@ export type SeasonTransition =
   | { type: 'treve_detected'; nextMatchDate: string; gapWeeks: number; subMode?: InSeasonSubMode }
   | { type: 'playoffs_suggested' }
   | { type: 'pre_season_suggested'; reason: 'calendar_date' | 'off_season_late' }
+  | { type: 'match_detected_in_offseason'; matchEventId: string; matchDate: string; opponent?: string }
 
 const SEASON_END_THRESHOLD_DAYS = 7
 const TREVE_THRESHOLD_DAYS = 21
@@ -22,6 +23,14 @@ export function detectSeasonTransitions(params: {
   planningContext: AnnualPlanningContext
   today: string
   dismissedUntil?: Record<string, string>
+  /** Visible (non-hidden) events — needed for match_detected_in_offseason. */
+  visibleEvents?: Array<{ id?: string; date: string; type: string; opponent?: string }>
+  /** Active deferral — if set, suppresses match_detected_in_offseason. */
+  hasActiveDeferral?: boolean
+  /** If returnToTeamTrainingAt is already set, no need to suggest. */
+  hasReturnDate?: boolean
+  /** User already confirmed season resume for this calendar event — suppress UC9 repeat. */
+  offseasonMatchResumeAckEventId?: string
 }): SeasonTransition | null {
   const { planningContext: ctx, today, dismissedUntil } = params
 
@@ -83,6 +92,30 @@ export function detectSeasonTransitions(params: {
     !isDismissed('playoffs_suggested')
   ) {
     return { type: 'playoffs_suggested' }
+  }
+
+  // UC9: Match detected in off-season — visible future match while in off-season
+  // Higher priority than pre_season_suggested (this is the active trigger, not just a suggestion)
+  if (
+    ctx.cycle === 'off_season' &&
+    !params.hasActiveDeferral &&
+    !params.hasReturnDate
+  ) {
+    const futureMatches = (params.visibleEvents ?? [])
+      .filter((e) => e.type === 'match' && e.date >= today)
+      .sort((a, b) => a.date.localeCompare(b.date))
+    const first = futureMatches[0]
+    const ackId = params.offseasonMatchResumeAckEventId
+    if (first?.id && ackId === first.id) {
+      // Bannière déjà confirmée pour ce match — ne pas boucler UC9
+    } else if (first?.id) {
+      return {
+        type: 'match_detected_in_offseason',
+        matchEventId: first.id,
+        matchDate: first.date,
+        opponent: first.opponent,
+      }
+    }
   }
 
   // UC8: Pre-season suggested — off-season athlete approaching typical pre-season window

@@ -17,6 +17,8 @@ import { useCalendar } from '../hooks/useCalendar'
 import { getToday } from '../services/ui/debugDateOverride'
 import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
 import type { AnnualCycle } from '../types/annualPlanning'
+import type { TransitionEntry } from '../types/training'
+import { appendTransitionEntry, restoreLastTransition, cycleToSeasonMode } from '../services/season/transitionJournal'
 import type { AuthError } from '../types/auth'
 import type {
   Contra,
@@ -150,7 +152,7 @@ export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
   const { authState, updateAvatar } = useAuth()
   const { features, isPremium } = useFeatureAccess()
-  const { visibleEvents } = useCalendar()
+  const { visibleEvents, structuralEvents } = useCalendar()
   const { canShowUpsell } = useUpsellTiming()
   const [profileUpsellDismissed, setProfileUpsellDismissed] = useState(() => isDismissed('profile_premium'))
   const {
@@ -200,7 +202,7 @@ export function ProfilePage() {
     let detectedCycle: AnnualCycle = profile.seasonMode ?? 'in_season'
     try {
       const ctx = detectAnnualPlanningContext({
-        events: visibleEvents.map((e) => ({ date: e.date, type: e.type })),
+        events: structuralEvents.map((e) => ({ date: e.date, type: e.type })),
         today,
         weeklyFrequency: (profile.weeklySessions ?? 3) as 2 | 3 | 4,
         positionGroup: 'back_three',
@@ -227,8 +229,8 @@ export function ProfilePage() {
       .sort((a, b) => b.date.localeCompare(a.date))
     const lastMatchDate = pastMatches.length > 0 ? pastMatches[0].date : null
 
-    return { cycleLabel, nextMatchLabel, lastMatchDate, nextMatch }
-  }, [profile.seasonMode, profile.weeklySessions, profile.planningAnchors, visibleEvents, today])
+    return { cycleLabel, nextMatchLabel, lastMatchDate, nextMatch, detectedCycle }
+  }, [profile.seasonMode, profile.weeklySessions, profile.planningAnchors, visibleEvents, structuralEvents, today])
 
   // Load competitions when club is set (only on initial profile load, not on manual selection)
   const isAuthenticated = authState.status === 'authenticated'
@@ -643,13 +645,25 @@ export function ProfilePage() {
                   type="button"
                   data-testid="situation-resume-season"
                   onClick={() => {
-                    const cleanAnchors = { ...profile.planningAnchors }
-                    delete cleanAnchors.seasonEndedAt
-                    delete cleanAnchors.returnToTeamTrainingAt
-                    updateProfile({
-                      planningAnchors: cleanAnchors,
-                      seasonMode: 'in_season',
-                    })
+                    const restored = restoreLastTransition(profile.seasonTransitionState)
+                    if (restored) {
+                      // Restore via journal — derive seasonMode from the cycle before transition
+                      updateProfile({
+                        planningAnchors: restored.restoredAnchors,
+                        seasonMode: cycleToSeasonMode(restored.restoredCycle),
+                        seasonTransitionState: restored.updatedTransitionState,
+                      })
+                    } else {
+                      // Fallback: simple clear (no journal entry to restore)
+                      const cleanAnchors = { ...profile.planningAnchors }
+                      delete cleanAnchors.seasonEndedAt
+                      delete cleanAnchors.seasonEndedSource
+                      delete cleanAnchors.returnToTeamTrainingAt
+                      updateProfile({
+                        planningAnchors: cleanAnchors,
+                        seasonMode: 'in_season',
+                      })
+                    }
                   }}
                   className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
                 >
@@ -665,13 +679,25 @@ export function ProfilePage() {
                     data-testid="situation-season-ended"
                     onClick={() => {
                       const anchor = situationData.lastMatchDate ?? today
-                      const cleanAnchors = { ...profile.planningAnchors }
+                      const prevAnchors = { ...profile.planningAnchors }
+                      const entry: TransitionEntry = {
+                        id: `t-${Date.now()}`,
+                        at: today,
+                        trigger: 'user_manual',
+                        from: {
+                          cycle: situationData.detectedCycle ?? 'in_season',
+                          weekNumber: 1,
+                          schedulingMode: 'calendar',
+                        },
+                        anchorsSnapshot: prevAnchors,
+                        to: 'off_season',
+                      }
+                      const cleanAnchors = { ...prevAnchors }
                       delete cleanAnchors.manualPlayoffs
                       updateProfile({
-                        // Primary: factual anchor
-                        planningAnchors: { ...cleanAnchors, seasonEndedAt: anchor },
-                        // Transitional compatibility
+                        planningAnchors: { ...cleanAnchors, seasonEndedAt: anchor, seasonEndedSource: 'manual' },
                         seasonMode: 'off_season',
+                        seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
                       })
                     }}
                     className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
@@ -682,13 +708,25 @@ export function ProfilePage() {
                     type="button"
                     data-testid="situation-no-match"
                     onClick={() => {
-                      const cleanAnchors = { ...profile.planningAnchors }
+                      const prevAnchors = { ...profile.planningAnchors }
+                      const entry: TransitionEntry = {
+                        id: `t-${Date.now()}`,
+                        at: today,
+                        trigger: 'user_manual',
+                        from: {
+                          cycle: situationData.detectedCycle ?? 'in_season',
+                          weekNumber: 1,
+                          schedulingMode: 'calendar',
+                        },
+                        anchorsSnapshot: prevAnchors,
+                        to: 'off_season',
+                      }
+                      const cleanAnchors = { ...prevAnchors }
                       delete cleanAnchors.manualPlayoffs
                       updateProfile({
-                        // Primary: factual anchor
-                        planningAnchors: { ...cleanAnchors, seasonEndedAt: today },
-                        // Transitional compatibility
+                        planningAnchors: { ...cleanAnchors, seasonEndedAt: today, seasonEndedSource: 'manual' },
                         seasonMode: 'off_season',
+                        seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
                       })
                     }}
                     className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"

@@ -475,4 +475,42 @@ describe('detectAnnualPlanningContext', () => {
     })
     expect(r.cycle).toBe('off_season')
   })
+
+  it('off-season > 12 weeks enters phase 5 (maintenance)', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match('2025-09-20'), match('2026-03-29')],
+      today: '2026-07-20', // ~15 weeks after season ended April 6
+      planningAnchors: {
+        seasonEndedAt: '2026-04-06',
+      },
+    })
+    expect(r.cycle).toBe('off_season')
+    expect(r.offSeasonPhase).toBe(5)
+    expect(r.weekNumber).toBeGreaterThan(12)
+    expect(r.weekLabel).toContain('Entretien')
+    expect(r.weekLabel).toMatch(/Semaine [AB]/)
+  })
+
+  it('off-season phase 5 week label alternates A/B by parity', () => {
+    // Odd week → A
+    const r1 = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match('2025-09-20'), match('2026-03-29')],
+      today: '2026-07-13', // week 14 (even) → B
+      planningAnchors: { seasonEndedAt: '2026-04-06' },
+    })
+    const r2 = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match('2025-09-20'), match('2026-03-29')],
+      today: '2026-07-20', // week 15 (odd) → A
+      planningAnchors: { seasonEndedAt: '2026-04-06' },
+    })
+    expect(r1.offSeasonPhase).toBe(5)
+    expect(r2.offSeasonPhase).toBe(5)
+    // Parity check: different week numbers should yield different A/B
+    if (r1.weekNumber! % 2 !== r2.weekNumber! % 2) {
+      expect(r1.weekLabel).not.toBe(r2.weekLabel)
+    }
+  })
 })

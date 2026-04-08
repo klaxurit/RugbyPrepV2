@@ -129,6 +129,94 @@ describe('detectSeasonTransitions', () => {
     expect(r!.type).toBe('treve_detected')
   })
 
+  // ── UC9: Match detected in off-season ─────────────────────
+
+  it('detects match_detected_in_offseason when off-season + future visible match', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 5 },
+      today: '2026-06-01',
+      visibleEvents: [{ id: 'match-senior', date: '2026-09-12', type: 'match', opponent: 'Rouen' }],
+    })
+    expect(r).not.toBeNull()
+    expect(r!.type).toBe('match_detected_in_offseason')
+    if (r!.type === 'match_detected_in_offseason') {
+      expect(r!.matchEventId).toBe('match-senior')
+      expect(r!.matchDate).toBe('2026-09-12')
+      expect(r!.opponent).toBe('Rouen')
+    }
+  })
+
+  it('picks the correct match when two matches share the same date', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 5 },
+      today: '2026-06-01',
+      visibleEvents: [
+        { id: 'match-reserve', date: '2026-09-12', type: 'match', opponent: 'Réserve' },
+        { id: 'match-senior', date: '2026-09-12', type: 'match', opponent: 'Senior' },
+      ],
+    })
+    expect(r).not.toBeNull()
+    if (r!.type === 'match_detected_in_offseason') {
+      // Returns the first one sorted by date — stable, deterministic
+      expect(r!.matchEventId).toBe('match-reserve')
+    }
+  })
+
+  it('no match_detected_in_offseason if deferral active', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 5 },
+      today: '2026-06-01',
+      visibleEvents: [{ id: 'm1', date: '2026-09-12', type: 'match' }],
+      hasActiveDeferral: true,
+    })
+    // Should fall through to pre_season_suggested or null
+    expect(r?.type).not.toBe('match_detected_in_offseason')
+  })
+
+  it('no match_detected_in_offseason if returnDate already set', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 5 },
+      today: '2026-06-01',
+      visibleEvents: [{ id: 'm1', date: '2026-09-12', type: 'match' }],
+      hasReturnDate: true,
+    })
+    expect(r?.type).not.toBe('match_detected_in_offseason')
+  })
+
+  it('no match_detected_in_offseason if user already acknowledged resume for that match', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 5 },
+      today: '2026-06-01',
+      visibleEvents: [{ id: 'm1', date: '2026-09-12', type: 'match' }],
+      offseasonMatchResumeAckEventId: 'm1',
+    })
+    expect(r?.type).not.toBe('match_detected_in_offseason')
+  })
+
+  it('match_detected_in_offseason returns if next match changed after acknowledgment', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 5 },
+      today: '2026-06-01',
+      visibleEvents: [
+        { id: 'm-new', date: '2026-09-05', type: 'match' },
+        { id: 'm1', date: '2026-09-12', type: 'match' },
+      ],
+      offseasonMatchResumeAckEventId: 'm1',
+    })
+    expect(r).not.toBeNull()
+    expect(r!.type).toBe('match_detected_in_offseason')
+    if (r!.type === 'match_detected_in_offseason') expect(r!.matchEventId).toBe('m-new')
+  })
+
+  it('match_detected_in_offseason has priority over pre_season_suggested', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 10 },
+      today: '2026-07-01', // July → would trigger pre_season_suggested
+      visibleEvents: [{ id: 'm1', date: '2026-09-12', type: 'match' }],
+    })
+    expect(r!.type).toBe('match_detected_in_offseason')
+  })
+
   // ── Off-season / pre-season: no transitions ────────────────
 
   it('returns null for early off-season (S3, before July)', () => {
