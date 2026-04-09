@@ -190,7 +190,10 @@ export async function syncCalendar(competitionId: string, clubCode: string): Pro
           home_club_name: getClubName(r.CompetitionEquipeLocale),
           away_club_code: getClubCode(r.CompetitionEquipeVisiteuse),
           away_club_name: getClubName(r.CompetitionEquipeVisiteuse),
-          match_day: r.Journee?.numero,
+          match_day:
+            typeof r.Journee?.numero === 'number' && r.Journee.numero > 0
+              ? r.Journee.numero
+              : undefined,
           venue,
           match_status: r.Etat?.nom ?? 'unknown',
         })

@@ -55,7 +55,7 @@ function renderOnboarding(state?: Record<string, unknown>) {
   )
 }
 
-/** Click through welcome + all steps to reach summary (step 6). */
+/** Click through welcome + all steps to reach summary. */
 function navigateToSummary(options?: { seasonMode?: string }) {
   // Welcome screen → "Créer mon programme"
   fireEvent.click(screen.getByText('Créer mon programme'))
@@ -79,13 +79,8 @@ function navigateToSummary(options?: { seasonMode?: string }) {
   // Step 3: Planning club → skip
   fireEvent.click(screen.getByText(/Pas d'entraînement club/))
 
-  // Step 4: Injuries → skip
-  fireEvent.click(screen.getByText(/Aucun inconfort/))
-
-  // Step 5: Morphology → skip
+  // Step 4: Morphology → skip
   fireEvent.click(screen.getByText('Passer cette étape'))
-
-  // Now on step 6 (summary)
 }
 
 describe('OnboardingPage · first run flow', () => {
@@ -211,7 +206,6 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Oui'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
     fireEvent.click(screen.getByText(/Pas d'entraînement club/))
-    fireEvent.click(screen.getByText(/Aucun inconfort/))
     fireEvent.click(screen.getByText('Passer cette étape'))
 
     // Finish

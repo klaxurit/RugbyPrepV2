@@ -988,7 +988,7 @@ export function HomePage() {
       </main>
 
       {/* Beta feedback banner */}
-      <div className="mx-4 mb-24 mt-4">
+      <div className="mx-auto max-w-md px-6 mb-24 mt-4">
         <a
           href="mailto:support@rugbyforge.fr?subject=Feedback%20Beta%20RugbyForge"
           onClick={() => posthog.capture('feedback_clicked', { source: 'home' })}

@@ -12,7 +12,6 @@ import { resolvePostOnboardingDestination } from '../services/navigation/resolve
 import type {
   UserProfile,
   Equipment,
-  Contra,
   DayOfWeek,
   ClubSchedule,
   SCSchedule,
@@ -54,17 +53,6 @@ const EQUIPMENT_OPTIONS: { value: Equipment; label: string; emoji: string }[] = 
   { value: 'tbar_row',     label: 'T-Bar Row',                 emoji: '🔧' },
   { value: 'sprint_track', label: 'Piste / Gazon',             emoji: '🏃' },
   { value: 'ab_wheel',     label: 'Ab Wheel',                  emoji: '⭕' },
-]
-
-const INJURY_OPTIONS: { value: Contra; label: string }[] = [
-  { value: 'shoulder_pain', label: 'Épaule' },
-  { value: 'knee_pain',     label: 'Genou' },
-  { value: 'low_back_pain', label: 'Bas du dos' },
-  { value: 'neck_pain',     label: 'Nuque' },
-  { value: 'elbow_pain',    label: 'Coude' },
-  { value: 'wrist_pain',    label: 'Poignet' },
-  { value: 'groin_pain',    label: 'Aine' },
-  { value: 'ankle_pain',    label: 'Cheville' },
 ]
 
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
@@ -191,26 +179,17 @@ export function OnboardingPage() {
   const [gymMode, setGymMode] = useState<'auto' | 'manual'>('auto')
   const [manualGymDays, setManualGymDays] = useState<Set<DayOfWeek>>(new Set())
   const [scSchedule, setScSchedule] = useState<SCSchedule | undefined>(undefined)
-  const [injuries, setInjuries] = useState<Set<Contra>>(new Set())
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
   // betaCapReached removed — the annual engine supports all profiles now
 
-  const STEPS = ['Position', 'Profil', 'Équipement', 'Planning', 'Inconforts', 'Morphologie', 'Résumé']
+  const STEPS = ['Position', 'Profil', 'Équipement', 'Planning', 'Morphologie', 'Résumé']
   const progress = (step / (STEPS.length - 1)) * 100
 
   const toggleEquipment = (eq: Equipment) => {
     setEquipment((prev) => {
       const next = new Set(prev)
       if (next.has(eq)) { next.delete(eq) } else { next.add(eq) }
-      return next
-    })
-  }
-
-  const toggleInjury = (inj: Contra) => {
-    setInjuries((prev) => {
-      const next = new Set(prev)
-      if (next.has(inj)) { next.delete(inj) } else { next.add(inj) }
       return next
     })
   }
@@ -273,7 +252,6 @@ export function OnboardingPage() {
         performanceFocus: 'balanced' as const,
         weeklySessions: sessions!,
         equipment: finalEquipment,
-        injuries: Array.from(injuries),
         heightCm: validHeight ? parsedHeight : undefined,
         weightKg: validWeight ? parsedWeight : undefined,
         clubSchedule,
@@ -842,54 +820,8 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 4 : Inconforts ── */}
+        {/* ── Step 4 : Morphologie ── */}
         {step === 4 && (
-          <div className="space-y-6">
-            <StepTitle
-              title="Zones sensibles ?"
-              sub="Optionnel — l'app adapte les exercices et ajoute un échauffement ciblé."
-            />
-            <div className="grid grid-cols-2 gap-2.5">
-              {INJURY_OPTIONS.map((inj) => {
-                const selected = injuries.has(inj.value)
-                return (
-                  <button
-                    key={inj.value}
-                    type="button"
-                    onClick={() => toggleInjury(inj.value)}
-                    className={`flex items-center justify-between gap-3 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
-                      selected
-                        ? 'border-brand bg-brand-soft'
-                        : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
-                    }`}
-                  >
-                    <span className={`text-sm font-bold ${selected ? 'text-brand' : 'text-fg-secondary'}`}>
-                      {inj.label}
-                    </span>
-                    {selected && (
-                      <span className="w-4 h-4 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
-                        <Check className="w-2.5 h-2.5 text-on-brand" strokeWidth={3} />
-                      </span>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-
-            {injuries.size === 0 && (
-              <button
-                type="button"
-                onClick={() => setStep((s) => s + 1)}
-                className="w-full py-3 rounded-2xl border border-border-dashed-app text-sm font-bold text-fg-muted hover:border-layer-20 hover:text-fg-soft transition-all"
-              >
-                Aucun inconfort — passer
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* ── Step 5 : Morphologie ── */}
-        {step === 5 && (
           <div className="space-y-6">
             <StepTitle
               title="Ta morphologie"
@@ -962,8 +894,8 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 6 : Résumé ── */}
-        {step === 6 && (
+        {/* ── Step 5 : Résumé ── */}
+        {step === 5 && (
           <div className="space-y-6">
             <StepTitle
               title="C'est parti !"
@@ -988,16 +920,6 @@ export function OnboardingPage() {
                       : 'Poids du corps'
                 }
               />
-              {injuries.size > 0 && (
-                <SummaryRow
-                  label="Zones sensibles"
-                  value={
-                    Array.from(injuries)
-                      .map((inj) => INJURY_OPTIONS.find((o) => o.value === inj)?.label ?? inj)
-                      .join(', ')
-                  }
-                />
-              )}
               {scSchedule && scSchedule.sessions.length > 0 && (
                 <SummaryRow
                   label="Muscu"
@@ -1030,8 +952,8 @@ export function OnboardingPage() {
 
       </main>
 
-      {/* ── CTA flottant principal (steps 0, 1, 2, 5) ── */}
-      {step !== 3 && step !== 4 && step !== 6 && (
+      {/* ── CTA flottant principal (steps 0, 1, 2, 4) ── */}
+      {step !== 3 && step !== 5 && (
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto pointer-events-auto">
             <button
@@ -1065,22 +987,6 @@ export function OnboardingPage() {
               className="w-full py-2.5 rounded-2xl text-sm font-bold text-fg-muted hover:text-fg-soft transition-colors text-center"
             >
               Pas d'entraînement club — passer
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── CTA step 4 : Inconforts ── */}
-      {step === 4 && injuries.size > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
-          <div className="max-w-md mx-auto pointer-events-auto">
-            <button
-              type="button"
-              onClick={() => setStep((s) => s + 1)}
-              className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
-            >
-              Suivant
-              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>

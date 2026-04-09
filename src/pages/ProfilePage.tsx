@@ -4,7 +4,7 @@ import { posthog } from '../services/analytics/posthog'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { Dumbbell, Shield, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw } from 'lucide-react'
+import { Dumbbell, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw } from 'lucide-react'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
@@ -22,20 +22,10 @@ import type { TransitionEntry } from '../types/training'
 import { appendTransitionEntry, restoreLastTransition, cycleToSeasonMode } from '../services/season/transitionJournal'
 import type { AuthError } from '../types/auth'
 import type {
-  Contra,
   Equipment,
-  DayOfWeek,
-  ClubSchedule,
   TrainingLevel,
-  FfrCompetition,
 } from '../types/training'
-import { fetchCompetitions, syncCalendar } from '../services/calendar/ffrSyncService'
-import { supabase } from '../services/supabase/client'
-import ffrClubsData from '../data/ffrClubs.v2021.json'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
-import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
-import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
-import { GymDaySelector } from '../components/GymDaySelector'
 
 /** Équipements qui déclenchent des substitutions en mode Fondation. */
 const FOUNDATIONS_EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string; hint: string }[] = [
@@ -44,17 +34,6 @@ const FOUNDATIONS_EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label:
   { value: 'cable',     label: 'Poulie / Câble',        hint: 'Cable row, cable chop' },
   { value: 'bench',     label: 'Banc',                  hint: 'Chest supported row' },
   { value: 'landmine',  label: 'Landmine',              hint: 'Landmine press' },
-]
-
-const SENSITIVE_ZONE_OPTIONS: { value: Contra; label: string }[] = [
-  { value: 'shoulder_pain', label: 'Épaule' },
-  { value: 'elbow_pain', label: 'Coude' },
-  { value: 'wrist_pain', label: 'Poignet' },
-  { value: 'low_back_pain', label: 'Bas du dos' },
-  { value: 'knee_pain', label: 'Genou' },
-  { value: 'groin_pain', label: 'Aine' },
-  { value: 'neck_pain', label: 'Nuque' },
-  { value: 'ankle_pain', label: 'Cheville' },
 ]
 
 const POSITION_OPTIONS = [
@@ -79,60 +58,13 @@ const TRAINING_LEVELS: {
 
 const LANGUAGE_OPTIONS = [
   { value: 'fr' as const, label: 'Français', sub: 'Programme affiché en français' },
-  { value: 'en' as const, label: 'English', sub: 'Program and exercises in English' },
+  { value: 'en' as const, label: 'English', sub: 'Program and exercises in english' },
 ]
 
 function getVisibleTrainingLevel(level: TrainingLevel | undefined): Exclude<TrainingLevel, 'builder'> {
   if (level === 'starter') return 'starter'
   return 'performance'
 }
-
-function formatRelativeTime(isoDate: string): string {
-  const diffMs = Date.now() - new Date(isoDate).getTime()
-  const mins = Math.floor(diffMs / 60000)
-  if (mins < 1) return "à l'instant"
-  if (mins < 60) return `il y a ${mins} min`
-  const hours = Math.floor(mins / 60)
-  if (hours < 24) return `il y a ${hours}h`
-  const days = Math.floor(hours / 24)
-  if (days === 1) return 'hier'
-  return `il y a ${days} jours`
-}
-
-const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
-  { day: 1, label: 'Lundi',    short: 'L' },
-  { day: 2, label: 'Mardi',    short: 'M' },
-  { day: 3, label: 'Mercredi', short: 'M' },
-  { day: 4, label: 'Jeudi',    short: 'J' },
-  { day: 5, label: 'Vendredi', short: 'V' },
-  { day: 6, label: 'Samedi',   short: 'S' },
-  { day: 0, label: 'Dimanche', short: 'D' },
-]
-
-const MATCH_DAY_OPTIONS: { day: DayOfWeek | null; label: string }[] = [
-  { day: 6,    label: 'Samedi' },
-  { day: 0,    label: 'Dimanche' },
-  { day: null, label: 'Pas de jour fixe' },
-]
-
-const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
-
-
-
-interface FfrClub {
-  ligue: string
-  departmentCode: string
-  code: string
-  name: string
-}
-
-const FFR_CLUBS: FfrClub[] = ffrClubsData as FfrClub[]
-
-const normalizeSearch = (value: string): string =>
-  value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
 
 const toggleValue = <T,>(list: T[], value: T): T[] =>
   list.includes(value) ? list.filter((entry) => entry !== value) : [...list, value]
@@ -177,19 +109,8 @@ export function ProfilePage() {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
-  const [clubQuery, setClubQuery] = useState('')
   const [heightInput, setHeightInput] = useState(profile.heightCm?.toString() ?? '')
   const [weightInput, setWeightInput] = useState(profile.weightKg?.toString() ?? '')
-  const [showPlanningEditor, setShowPlanningEditor] = useState(false)
-  const [editClubDays, setEditClubDays] = useState<Set<DayOfWeek>>(new Set())
-  const [editClubDayTimes, setEditClubDayTimes] = useState<Record<number, string>>({})
-  const [editMatchDay, setEditMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
-  const [gymMode, setGymMode] = useState<'auto' | 'manual'>('auto')
-  const [editGymDays, setEditGymDays] = useState<Set<DayOfWeek>>(new Set())
-  const [ffrCompetitions, setFfrCompetitions] = useState<FfrCompetition[]>([])
-  const [ffrCompLoading, setFfrCompLoading] = useState(false)
-  const [ffrSyncLoading, setFfrSyncLoading] = useState(false)
-  const [ffrSyncMessage, setFfrSyncMessage] = useState<string | null>(null)
 
   // Sync inputs quand le profil charge depuis Supabase
   useEffect(() => {
@@ -241,41 +162,7 @@ export function ProfilePage() {
     return { cycleLabel, nextMatchLabel, lastMatchDate, nextMatch, detectedCycle }
   }, [profile.seasonMode, profile.weeklySessions, profile.planningAnchors, visibleEvents, structuralEvents, today])
 
-  // Load competitions when club is set (only on initial profile load, not on manual selection)
-  const isAuthenticated = authState.status === 'authenticated'
-  const [clubCompsFetched, setClubCompsFetched] = useState<string | null>(null)
-  useEffect(() => {
-    if (!isAuthenticated) return
-    if (!profile.clubCode) return
-    if (profile.ffrCompetitionId) return
-    // Skip if already fetched for this club (handleSelectClub handles its own fetch)
-    if (clubCompsFetched === profile.clubCode) return
-    setClubCompsFetched(profile.clubCode)
-    setFfrCompLoading(true)
-    setFfrSyncMessage(null)
-    fetchCompetitions(profile.clubCode).then((result) => {
-      setFfrCompLoading(false)
-      if (result.error) {
-        if (result.error !== 'club_not_mapped') {
-          setFfrSyncMessage(`Erreur FFR : ${result.error}`)
-        }
-        return
-      }
-      setFfrCompetitions(result.competitions)
-    })
-  }, [isAuthenticated, profile.clubCode, profile.ffrCompetitionId, clubCompsFetched])
-
   const fileInputRef = useRef<HTMLInputElement | null>(null)
-
-  const filteredClubs = useMemo(() => {
-    const query = normalizeSearch(clubQuery.trim())
-    if (!query) return []
-
-    return FFR_CLUBS.filter((club) => {
-      const searchable = normalizeSearch(`${club.name} ${club.code} ${club.ligue}`)
-      return searchable.includes(query)
-    }).slice(0, 10)
-  }, [clubQuery])
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click()
@@ -330,142 +217,12 @@ export function ProfilePage() {
     }
   }
 
-  const openPlanningEditor = () => {
-    const cs = profile.clubSchedule
-    setEditClubDays(new Set((cs?.clubDays ?? []).map((d) => d.day)))
-    setEditClubDayTimes(
-      Object.fromEntries((cs?.clubDays ?? []).filter((d) => d.time).map((d) => [d.day, d.time!]))
-    )
-    setEditMatchDay(cs?.matchDay ?? null)
-    // Pré-remplir les jours muscu manuels depuis scSchedule existant
-    setEditGymDays(new Set(profile.scSchedule?.sessions.map((s) => s.day) ?? []))
-    setGymMode('auto')
-    setShowPlanningEditor(true)
-  }
-
-  const applyPlanningSchedule = () => {
-    const clubSchedule: ClubSchedule | undefined =
-      editClubDays.size > 0
-        ? {
-            clubDays: Array.from(editClubDays).map((d) => ({
-              day: d,
-              time: editClubDayTimes[d] ?? undefined,
-            })),
-            matchDay: editMatchDay ?? undefined,
-          }
-        : undefined
-
-    let scSchedule
-    if (gymMode === 'manual' && editGymDays.size > 0) {
-      scSchedule = buildManualSCSchedule(Array.from(editGymDays))
-    } else if (clubSchedule) {
-      scSchedule = computeSCSchedule(clubSchedule, profile.weeklySessions)
-    }
-
-    updateProfile({ clubSchedule, scSchedule })
-    posthog.capture('profile_updated', { field: 'schedule' })
-    setShowPlanningEditor(false)
-  }
-
-  const handleSelectClub = async (club: FfrClub) => {
-    // If changing club, clear previous competition and delete old FFR matches
-    if (profile.clubCode && profile.clubCode !== club.code) {
-      await supabase
-        .from('match_calendar')
-        .delete()
-        .eq('source', 'ffr_import')
-      updateProfile({
-        clubCode: club.code,
-        clubName: club.name,
-        clubLigue: club.ligue,
-        clubDepartmentCode: club.departmentCode,
-        ffrCompetitionId: undefined,
-        ffrCompetitionName: undefined,
-      })
-    } else {
-      updateProfile({
-        clubCode: club.code,
-        clubName: club.name,
-        clubLigue: club.ligue,
-        clubDepartmentCode: club.departmentCode,
-      })
-    }
-    setClubQuery('')
-
-    // Fetch competitions for the new club (mark as fetched to prevent useEffect double-call)
-    setClubCompsFetched(club.code)
-    setFfrCompLoading(true)
-    setFfrCompetitions([])
-    setFfrSyncMessage(null)
-    const result = await fetchCompetitions(club.code)
-    setFfrCompLoading(false)
-
-    if (result.error) {
-      setFfrCompetitions([])
-      if (result.error === 'club_not_mapped') {
-        setFfrSyncMessage(null) // pas de message, juste "non disponible"
-      } else {
-        setFfrSyncMessage(`Erreur FFR : ${result.error}`)
-      }
-      return
-    }
-
-    setFfrCompetitions(result.competitions)
-
-    if (result.competitions.length === 0) {
-      setFfrSyncMessage(null) // aucune compétition senior trouvée
-      return
-    }
-
-    // Auto-select if only 1 competition
-    if (result.competitions.length === 1) {
-      await handleSelectCompetition(result.competitions[0])
-    }
-  }
-
-  const handleSelectCompetition = async (comp: FfrCompetition) => {
-    updateProfile({
-      ffrCompetitionId: comp.id,
-      ffrCompetitionName: comp.name,
-    })
-
-    // Trigger initial sync
-    setFfrSyncLoading(true)
-    setFfrSyncMessage(null)
-    const result = await syncCalendar(comp.id, profile.clubCode!)
-    setFfrSyncLoading(false)
-
-    if (result.error) {
-      setFfrSyncMessage(`Erreur sync : ${result.error}`)
-    } else {
-      setFfrSyncMessage(`${result.imported} match${result.imported > 1 ? 's' : ''} importé${result.imported > 1 ? 's' : ''}`)
-      updateProfile({ ffrLastSyncAt: new Date().toISOString() })
-    }
-  }
-
   const handleRestorePlayPurchases = async () => {
     const restored = await restorePurchases()
     if (restored) {
       await refreshEntitlements()
     }
   }
-
-  const handleManualSync = async () => {
-    if (!profile.ffrCompetitionId || !profile.clubCode) return
-    setFfrSyncLoading(true)
-    setFfrSyncMessage(null)
-    const result = await syncCalendar(profile.ffrCompetitionId, profile.clubCode)
-    setFfrSyncLoading(false)
-    if (result.error) {
-      setFfrSyncMessage(`Erreur sync : ${result.error}`)
-    } else {
-      setFfrSyncMessage(`${result.imported} match${result.imported > 1 ? 's' : ''} importé${result.imported > 1 ? 's' : ''}`)
-      updateProfile({ ffrLastSyncAt: new Date().toISOString() })
-    }
-  }
-
-  const selectedClubLogoUrl = getClubLogoUrl(profile.clubCode)
-  const selectedClubMonogram = getClubMonogram(profile.clubName)
   const resolvedAvatarUrl = authState.user?.avatarUrl ?? profile.avatarUrl
 
   return (
@@ -802,189 +559,6 @@ export function ProfilePage() {
             </div>
           </div>
 
-          {/* Club */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">
-              Club <span className="text-fg-ghost font-normal normal-case">(optionnel)</span>
-            </label>
-
-            <input
-              type="text"
-              value={clubQuery}
-              onChange={(event) => setClubQuery(event.target.value)}
-              placeholder="Recherche nom, code ou ligue"
-              className="w-full h-11 rounded-2xl border border-border-app bg-layer-5 px-3 text-sm text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand rf-focus-ring"
-            />
-
-            {profile.clubName && (
-              <div className="p-3 rounded-2xl border border-border-app bg-layer-5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-layer-10 border border-border-app flex items-center justify-center overflow-hidden">
-                    {selectedClubLogoUrl ? (
-                      <img src={selectedClubLogoUrl} alt={profile.clubName} className="w-full h-full object-contain" />
-                    ) : (
-                      <span className="text-xs font-black text-fg-soft">{selectedClubMonogram}</span>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-fg">{profile.clubName}</p>
-                    <p className="text-xs text-fg-muted">
-                      {profile.clubCode} · {profile.clubLigue} · CD {profile.clubDepartmentCode}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    updateProfile({
-                      clubCode: undefined,
-                      clubName: undefined,
-                      clubLigue: undefined,
-                      clubDepartmentCode: undefined,
-                    })
-                  }
-                  className="text-[11px] font-bold text-fg-muted hover:text-brand transition-colors"
-                >
-                  Retirer
-                </button>
-              </div>
-            )}
-
-            {clubQuery.trim().length > 0 && (
-              <div className="max-h-56 overflow-auto rounded-2xl border border-border-app bg-panel">
-                {filteredClubs.length === 0 ? (
-                  <p className="px-3 py-2 text-xs text-fg-muted">Aucun club trouvé.</p>
-                ) : (
-                  filteredClubs.map((club) => (
-                    <button
-                      key={club.code}
-                      type="button"
-                      onClick={() => handleSelectClub(club)}
-                      className="w-full px-3 py-2 text-left hover:bg-layer-10 border-b border-border-app last:border-b-0 transition-colors"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-layer-10 border border-border-app flex items-center justify-center overflow-hidden flex-shrink-0">
-                          {getClubLogoUrl(club.code) ? (
-                            <img src={getClubLogoUrl(club.code) ?? ''} alt={club.name} className="w-full h-full object-contain" />
-                          ) : (
-                            <span className="text-[10px] font-black text-fg-soft">{getClubMonogram(club.name)}</span>
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-fg">{club.name}</p>
-                          <p className="text-[11px] text-fg-muted">{club.code} · {club.ligue} · CD {club.departmentCode}</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Compétition FFR (calendrier auto) */}
-          {profile.clubCode && (
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">
-                Compétition <span className="text-fg-ghost font-normal normal-case">(calendrier auto)</span>
-              </label>
-
-              {ffrCompLoading && (
-                <div className="h-11 rounded-2xl border border-border-app bg-layer-5 flex items-center justify-center">
-                  <RefreshCw className="w-4 h-4 text-fg-faint animate-spin" />
-                </div>
-              )}
-
-              {!ffrCompLoading && ffrCompetitions.length === 0 && !profile.ffrCompetitionId && !ffrSyncMessage && (
-                <p className="text-xs text-fg-faint italic">Import auto non disponible pour ce club</p>
-              )}
-
-              {!ffrCompLoading && ffrSyncMessage && !profile.ffrCompetitionId && (
-                <p className={`text-xs italic ${ffrSyncMessage.startsWith('Erreur') ? 'text-danger' : 'text-fg-faint'}`}>
-                  {ffrSyncMessage}
-                </p>
-              )}
-
-              {!ffrCompLoading && ffrCompetitions.length > 1 && !profile.ffrCompetitionId && (
-                <div className="space-y-1">
-                  {ffrCompetitions
-                    .slice()
-                    .sort((a, b) => {
-                      // Pre-select: match leagueLevel to competition level
-                      const ll = (profile.leagueLevel ?? '').toLowerCase()
-                      const aMatch = (a.level ?? '').toLowerCase().includes(ll) && ll.length > 0 ? 1 : 0
-                      const bMatch = (b.level ?? '').toLowerCase().includes(ll) && ll.length > 0 ? 1 : 0
-                      return bMatch - aMatch
-                    })
-                    .map((comp, idx) => {
-                      const ll = (profile.leagueLevel ?? '').toLowerCase()
-                      const isRecommended = ll.length > 0 && (comp.level ?? '').toLowerCase().includes(ll)
-                      return (
-                        <button
-                          key={comp.id}
-                          type="button"
-                          onClick={() => handleSelectCompetition(comp)}
-                          className={`w-full px-3 py-2.5 text-left rounded-2xl border transition-colors ${
-                            isRecommended && idx === 0
-                              ? 'border-info-bd bg-info-bg hover:bg-info-bg/80'
-                              : 'border-border-app bg-layer-5 hover:bg-layer-10'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold text-fg">{comp.name}</p>
-                            {isRecommended && idx === 0 && (
-                              <span className="text-[9px] font-black text-info bg-info-bg px-1.5 py-0.5 rounded-full border border-info-bd">Recommandé</span>
-                            )}
-                          </div>
-                          <p className="text-xs text-fg-muted">{comp.level}{comp.pool ? ` · ${comp.pool}` : ''} · {comp.season}</p>
-                        </button>
-                      )
-                    })}
-                </div>
-              )}
-
-              {profile.ffrCompetitionName && (
-                <div className="p-3 rounded-2xl border border-info-bd bg-info-bg space-y-2.5">
-                  <div>
-                    <p className="text-sm font-bold text-fg">{profile.ffrCompetitionName}</p>
-                    <p className="text-[10px] text-fg-muted mt-0.5">
-                      {profile.ffrLastSyncAt
-                        ? `Synchronisé ${formatRelativeTime(profile.ffrLastSyncAt)} · auto-sync quotidien`
-                        : 'Synchronisation automatique activée'}
-                    </p>
-                  </div>
-                  {ffrSyncMessage && (
-                    <p className={`text-xs ${ffrSyncMessage.startsWith('Erreur') ? 'text-danger' : 'text-ok-strong'}`}>
-                      {ffrSyncMessage}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={handleManualSync}
-                      disabled={ffrSyncLoading}
-                      className="text-[11px] font-bold text-info hover:text-info/80 transition-colors disabled:opacity-50 flex items-center gap-1"
-                    >
-                      {ffrSyncLoading ? <RefreshCw className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-                      Forcer la sync
-                    </button>
-                    <span className="text-fg-faint">·</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        updateProfile({ ffrCompetitionId: undefined, ffrCompetitionName: undefined })
-                        setFfrSyncMessage(null)
-                      }}
-                      className="text-[11px] font-bold text-fg-faint hover:text-fg-soft transition-colors"
-                    >
-                      Changer de compétition
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
         </section>
 
         {/* Morphologie */}
@@ -1101,116 +675,24 @@ export function ProfilePage() {
         </section>
         )}
 
-        {/* Planning club */}
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-2xl bg-ok-bg-muted text-ok border border-ok-bd">
-                <Calendar className="w-4 h-4" />
-              </div>
-              <div>
-                <h2 className="text-sm font-black text-fg">Planning club</h2>
-                <p className="text-xs text-fg-muted">Entraînements club & séances muscu adaptées</p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={openPlanningEditor}
-              className="text-xs font-bold text-brand hover:text-brand-hover transition-colors"
-            >
-              Modifier
-            </button>
-          </div>
-
-          {profile.clubSchedule ? (
-            <div className="space-y-2">
-              <div>
-                <p className="text-[10px] font-black text-fg-muted uppercase tracking-wide mb-1">Entraînements club</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {profile.clubSchedule.clubDays.map((d) => (
-                    <span key={d.day} className="px-2.5 py-1 rounded-full bg-ok-bg-muted text-ok text-xs font-bold border border-ok-bd">
-                      {DAY_LABELS[d.day]}{d.time ? ` ${d.time}` : ''}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              {profile.clubSchedule.matchDay !== undefined && (
-                <p className="text-xs text-fg-muted">
-                  Match habituel : <span className="font-bold text-fg-soft">{DAY_LABELS[profile.clubSchedule.matchDay]}</span>
-                </p>
-              )}
-              {profile.scSchedule && profile.scSchedule.sessions.length > 0 && (
-                <div>
-                  <p className="text-[10px] font-black text-fg-muted uppercase tracking-wide mb-1">Séances muscu suggérées</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {profile.scSchedule.sessions.map((s) => (
-                      <span key={s.day} className="px-2.5 py-1 rounded-full bg-danger-bg text-danger text-xs font-bold border border-danger-bd">
-                        {DAY_LABELS[s.day]}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-[10px] text-fg-faint mt-1">Calculé automatiquement selon ton planning</p>
-                </div>
-              )}
-              <button
-                type="button"
-                onClick={() => {
-                  if (!profile.clubSchedule) return
-                  const sc = computeSCSchedule(profile.clubSchedule, profile.weeklySessions)
-                  updateProfile({ scSchedule: sc })
-                }}
-                className="flex items-center gap-1.5 text-xs font-bold text-fg-muted hover:text-brand transition-colors mt-1"
-              >
-                <RotateCcw className="w-3 h-3" />
-                Recalculer les séances muscu
-              </button>
-            </div>
-          ) : (
-            <p className="text-xs text-fg-muted">Non configuré — clique sur "Modifier" pour ajouter ton planning.</p>
-          )}
-        </section>
-
-        {/* Population & conformité supprimés — app réservée aux adultes (V2 pour U18) */}
-
-        {/* Zones sensibles */}
-        <section className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-warn-bg-muted text-warn border border-warn-bd">
-              <Shield className="w-4 h-4" />
+            <div className="p-2 rounded-2xl bg-ok-bg-muted text-ok border border-ok-bd">
+              <Calendar className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-fg">Zones sensibles</h2>
-              <p className="text-xs text-fg-muted">On adapte les exercices pour éviter ces zones</p>
+              <h2 className="text-sm font-black text-fg">Club & calendrier</h2>
+              <p className="text-xs text-fg-muted">Le club, la sync FFR, les matchs et le planning collectif se gèrent désormais depuis Calendrier.</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            {SENSITIVE_ZONE_OPTIONS.map(({ value, label }) => {
-              const active = profile.injuries.includes(value)
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => updateProfile({ injuries: toggleValue(profile.injuries, value) })}
-                  className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all flex items-center gap-2 ${
-                    active
-                      ? 'bg-warn-button text-fg shadow-sm hover:bg-warn-button-hover'
-                      : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${active ? 'bg-fg' : 'bg-layer-20'}`} />
-                  {label}
-                </button>
-              )
-            })}
-          </div>
-          {profile.injuries.length > 0 && (
-            <p className="text-xs text-warn font-medium">
-              {profile.injuries.length} zone{profile.injuries.length > 1 ? 's' : ''} — les exercices sollicitant ces zones seront remplacés par des alternatives.
-            </p>
-          )}
+          <Link
+            to="/calendar"
+            className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
+          >
+            <span>Ouvrir le calendrier</span>
+            <span className="text-xs text-fg-muted">Gérer</span>
+          </Link>
         </section>
-
-        {/* Programme Réhab supprimé — hors périmètre prépa physique (V2 avec partenariat kiné) */}
 
         {/* ─── Notifications ───────────────────────────────────────────── */}
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
@@ -1450,168 +932,6 @@ export function ProfilePage() {
                 {isAvatarUploading ? 'Upload...' : 'Valider'}
               </button>
             </div>
-          </section>
-        </div>
-      )}
-
-      {/* Planning editor modal */}
-      {showPlanningEditor && (
-        <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center">
-          <section className="w-full sm:max-w-md bg-app border border-border-app rounded-t-[2rem] sm:rounded-[2rem] p-6 space-y-5 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-black text-fg">Planning club</h3>
-              <button
-                type="button"
-                onClick={() => setShowPlanningEditor(false)}
-                className="text-xs font-bold text-fg-muted hover:text-fg transition-colors rf-focus-ring"
-              >
-                Annuler
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Jours d'entraînement club</p>
-              <div className="grid grid-cols-4 gap-2">
-                {CLUB_DAYS_OPTIONS.map((opt) => {
-                  const selected = editClubDays.has(opt.day)
-                  return (
-                    <div key={opt.day} className="space-y-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditClubDays((prev) => {
-                            const next = new Set(prev)
-                            if (next.has(opt.day)) { next.delete(opt.day) } else { next.add(opt.day) }
-                            return next
-                          })
-                        }}
-                        className={`w-full py-3 rounded-2xl border-2 text-xs font-black transition-all ${
-                          selected
-                            ? 'border-brand bg-brand-soft text-brand'
-                            : 'border-border-app bg-layer-5 text-fg-soft hover:border-layer-20'
-                        }`}
-                      >
-                        {opt.short}
-                        <span className="block text-[9px] font-bold mt-0.5 opacity-70">{opt.label.slice(0, 3)}</span>
-                      </button>
-                      {selected && (
-                        <input
-                          type="time"
-                          value={editClubDayTimes[opt.day] ?? ''}
-                          onChange={(e) => setEditClubDayTimes((prev) => ({ ...prev, [opt.day]: e.target.value }))}
-                          className="w-full text-[10px] rounded-xl border border-border-app bg-layer-5 px-1.5 py-1 text-fg-soft focus:outline-none focus:border-brand rf-focus-ring"
-                        />
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Jour de match habituel</p>
-              <div className="flex gap-2 flex-wrap">
-                {MATCH_DAY_OPTIONS.map((opt) => (
-                  <button
-                    key={String(opt.day)}
-                    type="button"
-                    onClick={() => setEditMatchDay(opt.day)}
-                    className={`px-4 py-2.5 rounded-2xl text-xs font-black border-2 transition-all ${
-                      editMatchDay === opt.day
-                        ? 'border-brand bg-brand-soft text-brand'
-                        : 'border-border-app bg-layer-5 text-fg-soft hover:border-layer-20'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* ─── Séances muscu ─── */}
-            <div className="space-y-3 pt-1 border-t border-border-app">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Séances muscu</p>
-                <div className="flex gap-1 bg-layer-5 border border-border-app rounded-2xl p-0.5">
-                  <button
-                    type="button"
-                    onClick={() => setGymMode('auto')}
-                    className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                      gymMode === 'auto' ? 'bg-layer-15 text-fg shadow-sm' : 'text-fg-muted'
-                    }`}
-                  >
-                    Auto
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setGymMode('manual')
-                      // pré-remplir depuis la suggestion auto si vide
-                      if (editGymDays.size === 0 && editClubDays.size > 0) {
-                        const cs = {
-                          clubDays: Array.from(editClubDays).map((d) => ({ day: d })),
-                          matchDay: editMatchDay ?? undefined,
-                        }
-                        const auto = computeSCSchedule(cs, profile.weeklySessions)
-                        setEditGymDays(new Set(auto.sessions.map((s) => s.day)))
-                      }
-                    }}
-                    className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                      gymMode === 'manual' ? 'bg-layer-15 text-fg shadow-sm' : 'text-fg-muted'
-                    }`}
-                  >
-                    Manuel
-                  </button>
-                </div>
-              </div>
-
-              {gymMode === 'auto' && editClubDays.size > 0 && (
-                <div className="p-3 rounded-2xl bg-ok-bg-muted border border-ok-bd">
-                  <p className="text-[10px] font-black text-ok uppercase tracking-wide mb-1">
-                    Suggestion calculée
-                  </p>
-                  <p className="text-sm font-black text-ok-strong">
-                    {computeSCSchedule(
-                      {
-                        clubDays: Array.from(editClubDays).map((d) => ({ day: d })),
-                        matchDay: editMatchDay ?? undefined,
-                      },
-                      profile.weeklySessions
-                    ).sessions.map((s) => DAY_LABELS[s.day]).join(' · ')}
-                  </p>
-                  <p className="text-[10px] text-ok opacity-90 mt-1">
-                    Basé sur ton planning club et les bonnes pratiques de récupération
-                  </p>
-                </div>
-              )}
-
-              {gymMode === 'auto' && editClubDays.size === 0 && (
-                <p className="text-xs text-fg-muted">
-                  Sélectionne tes jours d'entraînement club pour obtenir une suggestion.
-                </p>
-              )}
-
-              {gymMode === 'manual' && (
-                <GymDaySelector
-                  clubSchedule={{
-                    clubDays: Array.from(editClubDays).map((d) => ({ day: d })),
-                    matchDay: editMatchDay ?? undefined,
-                  }}
-                  selectedDays={editGymDays}
-                  weeklySessions={profile.weeklySessions}
-                  onChange={setEditGymDays}
-                />
-              )}
-            </div>
-
-            <button
-              type="button"
-              onClick={applyPlanningSchedule}
-              disabled={gymMode === 'manual' && editGymDays.size === 0}
-              className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover disabled:opacity-40 text-on-brand font-black uppercase tracking-wide transition-colors shadow-brand-float rf-focus-ring"
-            >
-              Appliquer
-            </button>
           </section>
         </div>
       )}

@@ -66,3 +66,5 @@ _bmad-output/
 .claude/
 docs/*
 !docs/testing/
+!docs/google-play-launch-checklist.md
+!docs/google-play-store-listing.md

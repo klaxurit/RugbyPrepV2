@@ -16,6 +16,8 @@ import { OnboardingPage } from './pages/OnboardingPage'
 import { LoginPage } from './pages/auth/LoginPage'
 import { SignupPage } from './pages/auth/SignupPage'
 import { CallbackPage } from './pages/auth/CallbackPage'
+import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage'
+import { ResetPasswordPage } from './pages/auth/ResetPasswordPage'
 import { LegalPage } from './pages/LegalPage'
 import { DeleteAccountPage } from './pages/DeleteAccountPage'
 import { LandingPage } from './pages/LandingPage'
@@ -94,6 +96,8 @@ function App() {
           <Route path="/auth/signup" element={<SignupPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/auth/callback" element={<CallbackPage />} />
+          <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
           <Route path="/legal" element={<LegalPage />} />
           <Route path="/delete-account" element={<DeleteAccountPage />} />
 

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Plus,
@@ -24,10 +24,13 @@ import { useCalendar } from '../hooks/useCalendar'
 import { useProfile } from '../hooks/useProfile'
 import { useAdaptiveSchedule } from '../hooks/useAdaptiveSchedule'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
+import { GymDaySelector } from '../components/GymDaySelector'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
+import { fetchCompetitions } from '../services/calendar/ffrSyncService'
+import { supabase } from '../services/supabase/client'
 import ffrClubs from '../data/ffrClubs.v2021.json'
-import type { CalendarEventType, CalendarEvent, SeasonPhase, DayOfWeek } from '../types/training'
-import { TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
+import type { CalendarEventType, CalendarEvent, SeasonPhase, DayOfWeek, ClubSchedule, FfrCompetition } from '../types/training'
+import { TRAINING_DAYS_DEFAULT, buildManualSCSchedule, computeSCSchedule } from '../services/program/scheduleOptimizer'
 import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
 import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
@@ -49,7 +52,7 @@ const normalize = (s: string) =>
 const searchClubs = (query: string): FfrClub[] => {
   if (!query || query.length < 2) return []
   const q = normalize(query)
-  return ALL_CLUBS.filter((c) => normalize(c.name).includes(q)).slice(0, 8)
+  return ALL_CLUBS.filter((c) => normalize(`${c.name} ${c.code} ${c.ligue}`).includes(q)).slice(0, 8)
 }
 
 // ─── Constants ───────────────────────────────────────────────
@@ -60,6 +63,24 @@ const MONTH_NAMES_FR = [
 ]
 
 const DAY_NAMES_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
+
+const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
+  { day: 1, label: 'Lundi', short: 'L' },
+  { day: 2, label: 'Mardi', short: 'M' },
+  { day: 3, label: 'Mercredi', short: 'M' },
+  { day: 4, label: 'Jeudi', short: 'J' },
+  { day: 5, label: 'Vendredi', short: 'V' },
+  { day: 6, label: 'Samedi', short: 'S' },
+  { day: 0, label: 'Dimanche', short: 'D' },
+]
+
+const MATCH_DAY_OPTIONS: { day: DayOfWeek | null; label: string }[] = [
+  { day: 6, label: 'Samedi' },
+  { day: 0, label: 'Dimanche' },
+  { day: null, label: 'Pas de jour fixe' },
+]
+
+const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 
 const seasonPhaseConfig: Record<SeasonPhase, { label: string; color: string; bg: string }> = {
   'off-season': { label: 'Inter-saison', color: 'text-fg-muted', bg: 'bg-layer-10' },
@@ -126,6 +147,10 @@ function ClubSearchInput({ value, clubCode, onChange }: ClubSearchInputProps) {
   const [results, setResults] = useState<FfrClub[]>([])
   const [focused, setFocused] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setQuery(value)
+  }, [value])
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const q = e.target.value
@@ -318,7 +343,7 @@ function EventRow({
           {event.kickoff_time && (
             <div className="text-[10px] text-fg-muted">{event.kickoff_time}</div>
           )}
-          {isFFR && event.match_day && event.competition_name && (
+          {isFFR && typeof event.match_day === 'number' && event.match_day > 0 && event.competition_name && (
             <div className="text-[10px] text-info/70">J{event.match_day} · {event.competition_name}</div>
           )}
           {event.venue && (
@@ -875,7 +900,7 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
 export function CalendarPage() {
   const {
     visibleEvents, structuralEvents, events, nextMatch, addEvent, removeEvent, updateMatchLoad,
-    hideImportedEvent, unhideImportedEvent, refreshFromFFR, hiddenCount, ffrCount, manualCount, loading,
+    hideImportedEvent, unhideImportedEvent, refreshFromFFR, hiddenCount, loading,
   } = useCalendar()
   const { profile, updateProfile } = useProfile()
   const adaptiveSchedule = useAdaptiveSchedule(profile, events)
@@ -883,9 +908,20 @@ export function CalendarPage() {
   const [showModal, setShowModal] = useState(false)
   const [selectedDate, setSelectedDate] = useState<string | undefined>()
   const [showHidden, setShowHidden] = useState(false)
-  const [refreshing, setRefreshing] = useState(false)
-  const [refreshMsg, setRefreshMsg] = useState<string | null>(null)
   const [showPlayoffExitModal, setShowPlayoffExitModal] = useState(false)
+  const [showClubContext, setShowClubContext] = useState(() => !profile.clubCode || !profile.ffrCompetitionId)
+  const [clubQuery, setClubQuery] = useState(profile.clubName ?? '')
+  const [showPlanningEditor, setShowPlanningEditor] = useState(false)
+  const [editClubDays, setEditClubDays] = useState<Set<DayOfWeek>>(new Set())
+  const [editClubDayTimes, setEditClubDayTimes] = useState<Record<number, string>>({})
+  const [editMatchDay, setEditMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
+  const [gymMode, setGymMode] = useState<'auto' | 'manual'>('auto')
+  const [editGymDays, setEditGymDays] = useState<Set<DayOfWeek>>(new Set())
+  const [ffrCompetitions, setFfrCompetitions] = useState<FfrCompetition[]>([])
+  const [ffrCompLoading, setFfrCompLoading] = useState(false)
+  const [ffrSyncLoading, setFfrSyncLoading] = useState(false)
+  const [ffrSyncMessage, setFfrSyncMessage] = useState<string | null>(null)
+  const [clubCompsFetched, setClubCompsFetched] = useState<string | null>(null)
 
   // Season phase from the single source of truth (planning context)
   // Use structuralEvents (not raw events) so the cycle is consistent
@@ -904,6 +940,58 @@ export function CalendarPage() {
   const scDays: DayOfWeek[] =
     adaptiveSchedule?.sessions.map((s) => s.day) ??
     TRAINING_DAYS_DEFAULT[profile.weeklySessions]
+  const displayedScDays = profile.scSchedule?.sessions ?? adaptiveSchedule?.sessions ?? []
+  const clubDaysSummary = profile.clubSchedule?.clubDays.length
+    ? profile.clubSchedule.clubDays.map((day) => DAY_LABELS[day.day]).join(' · ')
+    : null
+  const matchDaySummary = profile.clubSchedule?.matchDay !== undefined
+    ? DAY_LABELS[profile.clubSchedule.matchDay]
+    : null
+  const scDaysSummary = displayedScDays.length > 0
+    ? displayedScDays.map((session) => DAY_LABELS[session.day]).join(' · ')
+    : null
+  const selectedClubLogoUrl = getClubLogoUrl(profile.clubCode)
+  const selectedClubMonogram = getClubMonogram(profile.clubName)
+
+  useEffect(() => {
+    setClubQuery(profile.clubName ?? '')
+  }, [profile.clubName])
+
+  useEffect(() => {
+    if (!profile.clubCode || !profile.ffrCompetitionId) {
+      setShowClubContext(true)
+    }
+  }, [profile.clubCode, profile.ffrCompetitionId])
+
+  useEffect(() => {
+    if (!profile.clubCode) {
+      setFfrCompetitions([])
+      return
+    }
+    if (profile.ffrCompetitionId) return
+    if (clubCompsFetched === profile.clubCode) return
+
+    let cancelled = false
+    setClubCompsFetched(profile.clubCode)
+    setFfrCompLoading(true)
+    setFfrSyncMessage(null)
+
+    fetchCompetitions(profile.clubCode).then((result) => {
+      if (cancelled) return
+      setFfrCompLoading(false)
+      if (result.error) {
+        if (result.error !== 'club_not_mapped') {
+          setFfrSyncMessage(`Erreur FFR : ${result.error}`)
+        }
+        return
+      }
+      setFfrCompetitions(result.competitions)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [clubCompsFetched, profile.clubCode, profile.ffrCompetitionId])
 
   const today = new Date()
   const [nowMs] = useState(() => Date.now())
@@ -914,18 +1002,141 @@ export function CalendarPage() {
   const pastEvents = visibleEvents.filter((e) => e.date < toDateStr(today))
   const hiddenEvents = events.filter((e) => e.user_hidden)
 
-  const handleRefreshFFR = async () => {
-    if (!profile.ffrCompetitionId || !profile.clubCode) return
-    setRefreshing(true)
-    setRefreshMsg(null)
-    const result = await refreshFromFFR(profile.ffrCompetitionId, profile.clubCode)
-    setRefreshing(false)
-    if (result.error) {
-      setRefreshMsg(`Erreur : ${result.error}`)
-    } else {
-      setRefreshMsg(`${result.imported} match${result.imported > 1 ? 's' : ''} mis à jour`)
-      setTimeout(() => setRefreshMsg(null), 3000)
+  const openPlanningEditor = () => {
+    const currentClubSchedule = profile.clubSchedule
+    setEditClubDays(new Set((currentClubSchedule?.clubDays ?? []).map((day) => day.day)))
+    setEditClubDayTimes(
+      Object.fromEntries(
+        (currentClubSchedule?.clubDays ?? [])
+          .filter((day) => day.time)
+          .map((day) => [day.day, day.time!]),
+      ),
+    )
+    setEditMatchDay(currentClubSchedule?.matchDay ?? null)
+    setEditGymDays(new Set(profile.scSchedule?.sessions.map((session) => session.day) ?? []))
+    setGymMode('auto')
+    setShowPlanningEditor(true)
+  }
+
+  const applyPlanningSchedule = () => {
+    const clubSchedule: ClubSchedule | undefined =
+      editClubDays.size > 0
+        ? {
+            clubDays: Array.from(editClubDays).map((day) => ({
+              day,
+              time: editClubDayTimes[day] ?? undefined,
+            })),
+            matchDay: editMatchDay ?? undefined,
+          }
+        : undefined
+
+    let nextScSchedule
+    if (gymMode === 'manual' && editGymDays.size > 0) {
+      nextScSchedule = buildManualSCSchedule(Array.from(editGymDays))
+    } else if (clubSchedule) {
+      nextScSchedule = computeSCSchedule(clubSchedule, profile.weeklySessions)
     }
+
+    updateProfile({ clubSchedule, scSchedule: nextScSchedule })
+    setShowPlanningEditor(false)
+  }
+
+  const handleClubSearchChange = (name: string, code?: string) => {
+    setClubQuery(name)
+    if (!code) return
+    const club = ALL_CLUBS.find((candidate) => candidate.code === code)
+    if (club) {
+      void handleSelectClub(club)
+    }
+  }
+
+  const handleSelectClub = async (club: FfrClub) => {
+    if (profile.clubCode && profile.clubCode !== club.code) {
+      await supabase
+        .from('match_calendar')
+        .delete()
+        .eq('source', 'ffr_import')
+
+      updateProfile({
+        clubCode: club.code,
+        clubName: club.name,
+        clubLigue: club.ligue,
+        clubDepartmentCode: club.departmentCode,
+        ffrCompetitionId: undefined,
+        ffrCompetitionName: undefined,
+        ffrLastSyncAt: undefined,
+      })
+    } else {
+      updateProfile({
+        clubCode: club.code,
+        clubName: club.name,
+        clubLigue: club.ligue,
+        clubDepartmentCode: club.departmentCode,
+      })
+    }
+
+    setClubQuery(club.name)
+    setClubCompsFetched(club.code)
+    setFfrCompLoading(true)
+    setFfrCompetitions([])
+    setFfrSyncMessage(null)
+
+    const result = await fetchCompetitions(club.code)
+    setFfrCompLoading(false)
+
+    if (result.error) {
+      setFfrCompetitions([])
+      if (result.error !== 'club_not_mapped') {
+        setFfrSyncMessage(`Erreur FFR : ${result.error}`)
+      }
+      return
+    }
+
+    setFfrCompetitions(result.competitions)
+
+    if (result.competitions.length === 1) {
+      await handleSelectCompetition(result.competitions[0], club.code)
+    }
+  }
+
+  const handleSelectCompetition = async (competition: FfrCompetition, explicitClubCode?: string) => {
+    const clubCode = explicitClubCode ?? profile.clubCode
+    if (!clubCode) return
+
+    updateProfile({
+      ffrCompetitionId: competition.id,
+      ffrCompetitionName: competition.name,
+    })
+
+    setFfrSyncLoading(true)
+    setFfrSyncMessage(null)
+    const result = await refreshFromFFR(competition.id, clubCode)
+    setFfrSyncLoading(false)
+
+    if (result.error) {
+      setFfrSyncMessage(`Erreur sync : ${result.error}`)
+      return
+    }
+
+    setFfrSyncMessage(`${result.imported} match${result.imported > 1 ? 's' : ''} importé${result.imported > 1 ? 's' : ''}`)
+    updateProfile({ ffrLastSyncAt: new Date().toISOString() })
+  }
+
+  const handleManualSync = async () => {
+    if (!profile.ffrCompetitionId || !profile.clubCode) return
+
+    setFfrSyncLoading(true)
+    setFfrSyncMessage(null)
+    const result = await refreshFromFFR(profile.ffrCompetitionId, profile.clubCode)
+    setFfrSyncLoading(false)
+
+    if (result.error) {
+      setFfrSyncMessage(`Erreur sync : ${result.error}`)
+      return
+    }
+
+    setFfrSyncMessage(`${result.imported} match${result.imported > 1 ? 's' : ''} mis à jour`)
+    updateProfile({ ffrLastSyncAt: new Date().toISOString() })
   }
 
   const prevMonth = () => {
@@ -995,32 +1206,6 @@ export function CalendarPage() {
           />
         </section>
 
-        {/* ── FFR Sync Bar ── */}
-        {(ffrCount > 0 || profile.ffrCompetitionId) && (
-          <section className="flex items-center justify-between bg-info-bg/80 border border-info-bd rounded-2xl px-4 py-2.5">
-            <div className="text-xs text-fg-soft">
-              {ffrCount > 0 && <span className="text-info font-bold">{ffrCount} FFR</span>}
-              {ffrCount > 0 && manualCount > 0 && <span> · </span>}
-              {manualCount > 0 && <span>{manualCount} manuel{manualCount > 1 ? 's' : ''}</span>}
-            </div>
-            <button
-              type="button"
-              onClick={handleRefreshFFR}
-              disabled={refreshing || !profile.ffrCompetitionId}
-              className="flex items-center gap-1.5 text-[11px] font-bold text-info hover:text-info/80 disabled:opacity-50 transition-colors rf-focus-ring"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-              Actualiser FFR
-            </button>
-          </section>
-        )}
-
-        {refreshMsg && (
-          <div className={`text-xs text-center py-1.5 rounded-xl ${refreshMsg.startsWith('Erreur') ? 'bg-danger-bg text-danger' : 'bg-ok-bg text-ok-strong'}`}>
-            {refreshMsg}
-          </div>
-        )}
-
         {/* ── Upcoming Events ── */}
         {upcomingEvents.length > 0 && (
           <section>
@@ -1077,6 +1262,265 @@ export function CalendarPage() {
             )}
           </section>
         )}
+
+        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-black text-fg">Contexte club</h2>
+              {!showClubContext && (
+                <div className="mt-2 space-y-2">
+                  <p className="text-sm font-bold text-fg">
+                    {profile.clubName ?? 'Aucun club configuré'}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.ffrCompetitionName && (
+                      <span className="px-2.5 py-1 rounded-full border border-info-bd bg-info-bg text-info text-[10px] font-bold">
+                        {profile.ffrCompetitionName}
+                      </span>
+                    )}
+                    {clubDaysSummary && (
+                      <span className="px-2.5 py-1 rounded-full border border-ok-bd bg-ok-bg-muted text-ok text-[10px] font-bold">
+                        Club {clubDaysSummary}
+                      </span>
+                    )}
+                    {matchDaySummary && (
+                      <span className="px-2.5 py-1 rounded-full border border-warn-bd bg-warn-bg-muted text-warn-strong text-[10px] font-bold">
+                        Match {matchDaySummary}
+                      </span>
+                    )}
+                    {scDaysSummary && (
+                      <span className="px-2.5 py-1 rounded-full border border-danger-bd bg-danger-bg text-danger text-[10px] font-bold">
+                        Muscu {scDaysSummary}
+                      </span>
+                    )}
+                    {!profile.ffrCompetitionName && !clubDaysSummary && !matchDaySummary && !scDaysSummary && (
+                      <span className="px-2.5 py-1 rounded-full border border-border-app bg-layer-6 text-fg-muted text-[10px] font-bold">
+                        À configurer
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setShowClubContext((current) => !current)}
+                className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 transition-colors rf-focus-ring"
+                aria-expanded={showClubContext}
+                aria-label={showClubContext ? 'Réduire le contexte club' : 'Afficher le contexte club'}
+              >
+                <ChevronRight className={`w-4 h-4 transition-transform ${showClubContext ? 'rotate-90' : ''}`} />
+              </button>
+            </div>
+          </div>
+
+          {showClubContext && (
+            <>
+              <div className="rounded-[1.5rem] border border-border-app bg-layer-6 p-4 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Planning hebdo</p>
+                    <p className="text-xs text-fg-muted mt-1">Place ton collectif et tes séances muscu au bon endroit.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={openPlanningEditor}
+                    className="text-xs font-bold text-brand hover:text-brand-hover transition-colors"
+                  >
+                    Modifier
+                  </button>
+                </div>
+
+                {profile.clubSchedule || displayedScDays.length > 0 ? (
+                  <div className="space-y-3">
+                    {profile.clubSchedule && (
+                      <>
+                        <div>
+                          <p className="text-[10px] font-black text-fg-muted uppercase tracking-wide mb-1">Entraînements club</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {profile.clubSchedule.clubDays.map((day) => (
+                              <span key={day.day} className="px-2.5 py-1 rounded-full bg-ok-bg-muted text-ok text-xs font-bold border border-ok-bd">
+                                {DAY_LABELS[day.day]}{day.time ? ` ${day.time}` : ''}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        {profile.clubSchedule.matchDay !== undefined && (
+                          <p className="text-xs text-fg-muted">
+                            Match habituel : <span className="font-bold text-fg-soft">{DAY_LABELS[profile.clubSchedule.matchDay]}</span>
+                          </p>
+                        )}
+                      </>
+                    )}
+
+                    {displayedScDays.length > 0 && (
+                      <div>
+                        <p className="text-[10px] font-black text-fg-muted uppercase tracking-wide mb-1">Séances muscu prévues</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {displayedScDays.map((session, index) => (
+                            <span key={`${session.day}-${index}`} className="px-2.5 py-1 rounded-full bg-danger-bg text-danger text-xs font-bold border border-danger-bd">
+                              {DAY_LABELS[session.day]}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-fg-muted">
+                    Non configuré. Ajoute ton agenda collectif ou choisis tes jours muscu.
+                  </p>
+                )}
+              </div>
+
+              <div className="rounded-[1.5rem] border border-border-app bg-layer-6 p-4 space-y-4">
+                <div>
+                  <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Club & FFR</p>
+                  <p className="text-xs text-fg-muted mt-1">Choisis ton club, la compétition FFR et la sync des matchs.</p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs font-black text-fg-muted uppercase tracking-wide">
+                    Club <span className="text-fg-ghost font-normal normal-case">(optionnel)</span>
+                  </p>
+                  <ClubSearchInput
+                    value={clubQuery}
+                    clubCode={profile.clubCode}
+                    onChange={handleClubSearchChange}
+                  />
+                </div>
+
+                {profile.clubName && (
+                  <div className="p-3 rounded-2xl border border-border-app bg-layer-5 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-11 h-11 rounded-2xl bg-layer-10 border border-border-app flex items-center justify-center overflow-hidden flex-shrink-0">
+                        {selectedClubLogoUrl ? (
+                          <img src={selectedClubLogoUrl} alt={profile.clubName} className="w-full h-full object-contain" />
+                        ) : (
+                          <span className="text-xs font-black text-fg-soft">{selectedClubMonogram}</span>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-fg truncate">{profile.clubName}</p>
+                        <p className="text-xs text-fg-muted truncate">
+                          {profile.clubCode} · {profile.clubLigue} · CD {profile.clubDepartmentCode}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateProfile({
+                          clubCode: undefined,
+                          clubName: undefined,
+                          clubLigue: undefined,
+                          clubDepartmentCode: undefined,
+                          ffrCompetitionId: undefined,
+                          ffrCompetitionName: undefined,
+                          ffrLastSyncAt: undefined,
+                        })
+                        setClubQuery('')
+                        setFfrCompetitions([])
+                        setFfrSyncMessage(null)
+                        setClubCompsFetched(null)
+                      }}
+                      className="text-[11px] font-bold text-fg-muted hover:text-brand transition-colors"
+                    >
+                      Retirer
+                    </button>
+                  </div>
+                )}
+
+                {profile.clubCode && (
+                  <div className="space-y-3 pt-1 border-t border-border-app">
+                    <p className="text-xs font-black text-fg-muted uppercase tracking-wide">
+                      Compétition FFR <span className="text-fg-ghost font-normal normal-case">(optionnel)</span>
+                    </p>
+
+                    {ffrCompLoading && (
+                      <div className="h-11 rounded-2xl border border-border-app bg-layer-5 flex items-center justify-center">
+                        <RefreshCw className="w-4 h-4 text-fg-faint animate-spin" />
+                      </div>
+                    )}
+
+                    {!ffrCompLoading && ffrCompetitions.length === 0 && !profile.ffrCompetitionId && !ffrSyncMessage && (
+                      <p className="text-xs text-fg-faint italic">Import auto non disponible pour ce club</p>
+                    )}
+
+                    {!ffrCompLoading && ffrSyncMessage && !profile.ffrCompetitionId && (
+                      <p className={`text-xs italic ${ffrSyncMessage.startsWith('Erreur') ? 'text-danger' : 'text-fg-faint'}`}>
+                        {ffrSyncMessage}
+                      </p>
+                    )}
+
+                    {!ffrCompLoading && ffrCompetitions.length > 1 && !profile.ffrCompetitionId && (
+                      <div className="space-y-1">
+                        {ffrCompetitions.map((competition) => (
+                          <button
+                            key={competition.id}
+                            type="button"
+                            onClick={() => {
+                              void handleSelectCompetition(competition)
+                            }}
+                            className="w-full px-3 py-2.5 text-left rounded-2xl border border-border-app bg-layer-5 hover:bg-layer-10 transition-colors"
+                          >
+                            <p className="text-sm font-bold text-fg">{competition.name}</p>
+                            <p className="text-xs text-fg-muted">
+                              {competition.level}{competition.pool ? ` · ${competition.pool}` : ''} · {competition.season}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {profile.ffrCompetitionName && (
+                      <div className="p-3 rounded-2xl border border-info-bd bg-info-bg space-y-2.5">
+                        <div>
+                          <p className="text-sm font-bold text-fg">{profile.ffrCompetitionName}</p>
+                          <p className="text-[10px] text-fg-muted mt-0.5">
+                            {profile.ffrLastSyncAt
+                              ? `Synchronisé ${new Date(profile.ffrLastSyncAt).toLocaleDateString('fr-FR')} · auto-sync quotidien`
+                              : 'Synchronisation automatique activée'}
+                          </p>
+                        </div>
+                        {ffrSyncMessage && (
+                          <p className={`text-xs ${ffrSyncMessage.startsWith('Erreur') ? 'text-danger' : 'text-ok-strong'}`}>
+                            {ffrSyncMessage}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              void handleManualSync()
+                            }}
+                            disabled={ffrSyncLoading}
+                            className="text-[11px] font-bold text-info hover:text-info/80 transition-colors disabled:opacity-50 flex items-center gap-1 rf-focus-ring"
+                          >
+                            <RefreshCw className={`w-3 h-3 ${ffrSyncLoading ? 'animate-spin' : ''}`} />
+                            Actualiser FFR
+                          </button>
+                          <span className="text-fg-faint">·</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              updateProfile({ ffrCompetitionId: undefined, ffrCompetitionName: undefined, ffrLastSyncAt: undefined })
+                              setFfrSyncMessage(null)
+                            }}
+                            className="text-[11px] font-bold text-fg-faint hover:text-fg-soft transition-colors"
+                          >
+                            Changer de compétition
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </section>
 
         {/* ── Season Info ── */}
         <section>
@@ -1145,6 +1589,178 @@ export function CalendarPage() {
             onClose={() => setShowModal(false)}
             onSave={handleAddEvent}
           />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showPlanningEditor && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 px-4"
+          >
+            <motion.section
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 20, opacity: 0 }}
+              className="w-full max-w-md bg-panel border border-border-app rounded-[2rem] p-6 space-y-5 max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-black text-fg">Planning club</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowPlanningEditor(false)}
+                  className="text-xs font-bold text-fg-muted hover:text-fg transition-colors rf-focus-ring"
+                >
+                  Annuler
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Jours d&apos;entraînement club</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {CLUB_DAYS_OPTIONS.map((option) => {
+                    const selected = editClubDays.has(option.day)
+                    return (
+                      <div key={option.day} className="space-y-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditClubDays((previous) => {
+                              const next = new Set(previous)
+                              if (next.has(option.day)) next.delete(option.day)
+                              else next.add(option.day)
+                              return next
+                            })
+                          }}
+                          className={`w-full py-3 rounded-2xl border-2 text-xs font-black transition-all ${
+                            selected
+                              ? 'border-brand bg-brand-soft text-brand'
+                              : 'border-border-app bg-layer-5 text-fg-soft hover:border-layer-20'
+                          }`}
+                        >
+                          {option.short}
+                          <span className="block text-[9px] font-bold mt-0.5 opacity-70">{option.label.slice(0, 3)}</span>
+                        </button>
+                        {selected && (
+                          <input
+                            type="time"
+                            value={editClubDayTimes[option.day] ?? ''}
+                            onChange={(event) => {
+                              setEditClubDayTimes((previous) => ({ ...previous, [option.day]: event.target.value }))
+                            }}
+                            className="w-full text-[10px] rounded-xl border border-border-app bg-layer-5 px-1.5 py-1 text-fg-soft focus:outline-none focus:border-brand rf-focus-ring"
+                          />
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Jour de match habituel</p>
+                <div className="flex gap-2 flex-wrap">
+                  {MATCH_DAY_OPTIONS.map((option) => (
+                    <button
+                      key={String(option.day)}
+                      type="button"
+                      onClick={() => setEditMatchDay(option.day)}
+                      className={`px-4 py-2.5 rounded-2xl text-xs font-black border-2 transition-all ${
+                        editMatchDay === option.day
+                          ? 'border-brand bg-brand-soft text-brand'
+                          : 'border-border-app bg-layer-5 text-fg-soft hover:border-layer-20'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-1 border-t border-border-app">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Séances muscu</p>
+                  <div className="flex gap-1 bg-layer-5 border border-border-app rounded-2xl p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setGymMode('auto')}
+                      className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
+                        gymMode === 'auto' ? 'bg-layer-15 text-fg shadow-sm' : 'text-fg-muted'
+                      }`}
+                    >
+                      Auto
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGymMode('manual')
+                        if (editGymDays.size === 0 && editClubDays.size > 0) {
+                          const clubSchedule: ClubSchedule = {
+                            clubDays: Array.from(editClubDays).map((day) => ({ day })),
+                            matchDay: editMatchDay ?? undefined,
+                          }
+                          const automaticSchedule = computeSCSchedule(clubSchedule, profile.weeklySessions)
+                          setEditGymDays(new Set(automaticSchedule.sessions.map((session) => session.day)))
+                        }
+                      }}
+                      className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
+                        gymMode === 'manual' ? 'bg-layer-15 text-fg shadow-sm' : 'text-fg-muted'
+                      }`}
+                    >
+                      Manuel
+                    </button>
+                  </div>
+                </div>
+
+                {gymMode === 'auto' && editClubDays.size > 0 && (
+                  <div className="p-3 rounded-2xl bg-ok-bg-muted border border-ok-bd">
+                    <p className="text-[10px] font-black text-ok uppercase tracking-wide mb-1">Suggestion calculée</p>
+                    <p className="text-sm font-black text-ok-strong">
+                      {computeSCSchedule(
+                        {
+                          clubDays: Array.from(editClubDays).map((day) => ({ day })),
+                          matchDay: editMatchDay ?? undefined,
+                        },
+                        profile.weeklySessions,
+                      ).sessions.map((session) => DAY_LABELS[session.day]).join(' · ')}
+                    </p>
+                    <p className="text-[10px] text-ok opacity-90 mt-1">
+                      Basé sur ton planning club et les règles de récupération.
+                    </p>
+                  </div>
+                )}
+
+                {gymMode === 'auto' && editClubDays.size === 0 && (
+                  <p className="text-xs text-fg-muted">
+                    Sélectionne tes jours d&apos;entraînement club pour obtenir une suggestion.
+                  </p>
+                )}
+
+                {gymMode === 'manual' && (
+                  <GymDaySelector
+                    clubSchedule={{
+                      clubDays: Array.from(editClubDays).map((day) => ({ day })),
+                      matchDay: editMatchDay ?? undefined,
+                    }}
+                    selectedDays={editGymDays}
+                    weeklySessions={profile.weeklySessions}
+                    onChange={setEditGymDays}
+                  />
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={applyPlanningSchedule}
+                disabled={gymMode === 'manual' && editGymDays.size === 0}
+                className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover disabled:opacity-40 text-on-brand font-black uppercase tracking-wide transition-colors shadow-brand-float rf-focus-ring"
+              >
+                Appliquer
+              </button>
+            </motion.section>
+          </motion.div>
         )}
       </AnimatePresence>
 

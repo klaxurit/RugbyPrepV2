@@ -1,13 +1,11 @@
 [
   {
-    "relation": [
-      "delegate_permission/common.handle_all_urls"
-    ],
+    "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
       "package_name": "fr.rugbyforge.app",
       "sha256_cert_fingerprints": [
-        "49:06:0A:AF:EA:82:07:E7:CE:67:64:1F:9B:9B:0F:F5:39:1D:3B:C4:EC:3B:FD:8D:9B:ED:48:FB:26:01:4E:2F"
+        "36:A0:D3:97:C6:12:79:E5:1B:EC:F5:2E:5E:DA:30:26:CF:CA:49:3D:C5:BA:F7:C3:46:38:2E:FA:73:08:50:DB"
       ]
     }
   }
