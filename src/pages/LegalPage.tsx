@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { PageHeader } from '../components/PageHeader'
 
 interface Section {
@@ -6,6 +7,13 @@ interface Section {
 }
 
 const CGU_SECTIONS: Section[] = [
+  {
+    title: '0. Éditeur du service',
+    content: [
+      `RugbyForge est un service édité par Axurit, organisation responsable de la publication de l'application et du site rugbyforge.fr.`,
+      `Pour toute demande liée au compte développeur Google Play, au support utilisateur ou à la protection des données, vous pouvez nous contacter à bonjour@rugbyforge.fr.`,
+    ],
+  },
   {
     title: '1. Objet',
     content: [
@@ -55,13 +63,13 @@ const PRIVACY_SECTIONS: Section[] = [
   {
     title: 'Hébergement et sous-traitants',
     content: [
-      `Vos données sont hébergées sur Supabase (infrastructure PostgreSQL sécurisée, EU). Le traitement IA du Coach est assuré par Anthropic (API Claude). Des outils d'analyse anonymisés (PostHog) peuvent collecter des données d'usage agrégées pour améliorer l'application. Les paiements sont traités par Stripe.`,
+      `Vos données sont hébergées sur Supabase (infrastructure PostgreSQL sécurisée, EU). Le traitement IA du Coach est assuré par Anthropic (API Claude). Des outils d'analyse anonymisés (PostHog) peuvent collecter des données d'usage agrégées pour améliorer l'application. Les paiements sont traités par Google Play Billing sur Android et par Stripe sur le web.`,
     ],
   },
   {
     title: 'Paiements et données bancaires',
     content: [
-      `Les paiements sont sécurisés par Stripe. RugbyForge ne conserve pas vos informations de carte bancaire. Consultez la politique de confidentialité de Stripe (stripe.com/fr/privacy) pour plus de détails sur le traitement des données de paiement.`,
+      `RugbyForge ne conserve pas vos informations de carte bancaire. Sur Android, les abonnements sont encaissés via Google Play Billing / Google Payments. Sur le web, les paiements sont sécurisés par Stripe. Consultez les politiques de confidentialité des prestataires de paiement concernés pour plus de détails sur le traitement des données de paiement.`,
     ],
   },
   {
@@ -74,7 +82,7 @@ const PRIVACY_SECTIONS: Section[] = [
   {
     title: 'Suppression de compte et droit à l\'effacement',
     content: [
-      `Vous pouvez demander la suppression de votre compte à tout moment en nous contactant à bonjour@rugbyforge.fr. La suppression entraîne l'effacement de toutes vos données personnelles : profil, historique de séances, tests physiques et calendrier.`,
+      `Vous pouvez demander la suppression de votre compte à tout moment depuis la page dédiée /delete-account ou en nous contactant à bonjour@rugbyforge.fr. La suppression entraîne l'effacement de toutes vos données personnelles : profil, historique de séances, tests physiques et calendrier.`,
       `La suppression est effective dans un délai de 30 jours suivant la demande. Les données analytiques agrégées et anonymisées peuvent être conservées à des fins statistiques.`,
     ],
   },
@@ -135,6 +143,9 @@ export function LegalPage() {
         <section className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-2">
           <h2 className="text-sm font-black text-white">Contact</h2>
           <p className="text-sm text-white/70">
+            Service édité par <span className="font-bold text-white">Axurit</span>.
+          </p>
+          <p className="text-sm text-white/70">
             Pour toute question relative aux présentes mentions légales ou à vos données personnelles :
           </p>
           <a
@@ -143,6 +154,12 @@ export function LegalPage() {
           >
             bonjour@rugbyforge.fr
           </a>
+          <Link
+            to="/delete-account"
+            className="inline-flex items-center text-sm font-bold text-brand hover:underline"
+          >
+            Demander la suppression du compte
+          </Link>
         </section>
 
       </main>

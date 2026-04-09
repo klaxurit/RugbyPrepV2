@@ -10,6 +10,7 @@ import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
+import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
@@ -151,9 +152,17 @@ const avatarErrorLabel: Record<AuthError, string> = {
 export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
   const { authState, updateAvatar } = useAuth()
-  const { features, isPremium } = useFeatureAccess()
+  const { features, isPremium, refresh: refreshEntitlements } = useFeatureAccess()
   const { visibleEvents, structuralEvents } = useCalendar()
   const { canShowUpsell } = useUpsellTiming()
+  const {
+    loading: billingLoading,
+    error: billingError,
+    message: billingMessage,
+    startCheckout,
+    restorePurchases,
+    isPlayStore,
+  } = usePremiumCheckout()
   const [profileUpsellDismissed, setProfileUpsellDismissed] = useState(() => isDismissed('profile_premium'))
   const {
     status: notifStatus,
@@ -431,6 +440,13 @@ export function ProfilePage() {
     } else {
       setFfrSyncMessage(`${result.imported} match${result.imported > 1 ? 's' : ''} importé${result.imported > 1 ? 's' : ''}`)
       updateProfile({ ffrLastSyncAt: new Date().toISOString() })
+    }
+  }
+
+  const handleRestorePlayPurchases = async () => {
+    const restored = await restorePurchases()
+    if (restored) {
+      await refreshEntitlements()
     }
   }
 
@@ -1258,6 +1274,74 @@ export function ProfilePage() {
               }}
             />
           )}
+
+          {!isPremium && (
+            <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-3">
+              <div>
+                <p className="text-sm font-black text-fg">Gestion de l’abonnement</p>
+                <p className="mt-1 text-xs leading-relaxed text-fg-muted">
+                  Active Premium depuis l’app, puis restaure ton achat Google Play ici si tu changes d’appareil ou si l’accès n’apparaît pas encore.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    void startCheckout('premium_monthly')
+                  }}
+                  disabled={billingLoading}
+                  className="inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
+                >
+                  {billingLoading ? 'Chargement...' : 'Activer Premium'}
+                </button>
+                {isPlayStore && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void handleRestorePlayPurchases()
+                    }}
+                    disabled={billingLoading}
+                    className="inline-flex items-center gap-1.5 rounded-2xl border border-border-app px-4 py-2 text-xs font-bold text-fg-muted transition-colors hover:border-brand-border hover:text-fg disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    Restaurer mes achats
+                  </button>
+                )}
+              </div>
+              {billingMessage && (
+                <p className="text-[11px] leading-relaxed text-brand-tint">{billingMessage}</p>
+              )}
+              {billingError && (
+                <p className="text-[11px] leading-relaxed text-warn-body">{billingError}</p>
+              )}
+            </div>
+          )}
+        </section>
+
+        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
+          <div>
+            <p className="text-sm font-black text-fg">Compte & données</p>
+            <p className="text-xs text-fg-muted mt-0.5">
+              Gère tes informations légales, la confidentialité et la suppression de compte.
+            </p>
+          </div>
+
+          <div className="grid gap-2">
+            <Link
+              to="/legal"
+              className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
+            >
+              <span>Mentions légales et confidentialité</span>
+              <span className="text-xs text-fg-muted">Ouvrir</span>
+            </Link>
+            <Link
+              to="/delete-account"
+              className="flex items-center justify-between rounded-2xl border border-warn-bd bg-warn-bg-muted px-4 py-3 text-sm font-semibold text-warn-body transition-colors hover:border-warn-strong rf-focus-ring"
+            >
+              <span>Demander la suppression du compte</span>
+              <span className="text-xs text-warn-strong">Ouvrir</span>
+            </Link>
+          </div>
         </section>
 
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">

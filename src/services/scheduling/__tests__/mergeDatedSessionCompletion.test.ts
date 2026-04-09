@@ -13,7 +13,7 @@ function mockSlot(sessionId: string): ResolvedMotherSessionSlot {
       metadata: { id: 'X_V1', sessionType: 'full', blockRole: 'primary' },
       blocks: [],
     },
-  } as ResolvedMotherSessionSlot
+  } as unknown as ResolvedMotherSessionSlot
 }
 
 function baseDated(sessionId: string): DatedSession {

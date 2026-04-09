@@ -21,6 +21,7 @@ de la périodisation, des tests physiques, de la force, de la récupération et 
 ## Faits utiles
 - Langue principale : français
 - Type de produit : application web de préparation physique rugby
+- Éditeur du service : Axurit
 - Fonctionnalités : suivi ACWR, tests physiques, prévention blessures, planification, coaching IA
 - Méthodologie : synthèse d'une base interne en sciences du sport couvrant la charge, la périodisation, les tests physiques, la force et la prévention des blessures
 - Public cible : joueurs, entraineurs, clubs et staffs rugby
@@ -31,4 +32,5 @@ de la périodisation, des tests physiques, de la force, de la récupération et 
 
 ## Contact
 - Site : https://rugbyforge.fr/
+- Éditeur : Axurit
 - Email : bonjour@rugbyforge.fr

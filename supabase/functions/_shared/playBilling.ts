@@ -92,12 +92,17 @@ const getGoogleAccessToken = async (serviceAccountKey: {
 
 type PlaySubscriptionResource = {
   kind: string
-  startTimeMillis?: string
-  expiryTimeMillis?: string
-  autoRenewing?: boolean
-  cancelReason?: number
-  paymentState?: number
-  orderId?: string
+  startTime?: string
+  subscriptionState?: string
+  latestOrderId?: string
+  acknowledgementState?: string
+  lineItems?: Array<{
+    productId?: string
+    expiryTime?: string
+    autoRenewingPlan?: {
+      autoRenewEnabled?: boolean
+    }
+  }>
 }
 
 export type VerifyResult = {
@@ -131,7 +136,7 @@ export const verifyPlayPurchase = async (
 
   const accessToken = await getGoogleAccessToken(serviceAccountKey)
 
-  const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/subscriptions/${productId}/tokens/${purchaseToken}`
+  const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/subscriptionsv2/tokens/${purchaseToken}`
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${accessToken}` },
   })
@@ -143,15 +148,26 @@ export const verifyPlayPurchase = async (
 
   const sub = (await res.json()) as PlaySubscriptionResource
   const planId = getPlanIdForPlayProduct(productId)
-  const expiryMs = sub.expiryTimeMillis ? Number(sub.expiryTimeMillis) : 0
-  const isActive = expiryMs > Date.now()
+  const matchingLineItem =
+    sub.lineItems?.find((lineItem) => lineItem.productId === productId) ??
+    sub.lineItems?.[0] ??
+    null
+
+  const expiresAt = matchingLineItem?.expiryTime ?? null
+  const expiryMs = expiresAt ? new Date(expiresAt).getTime() : 0
+  const subscriptionState = sub.subscriptionState ?? ''
+  const isEntitledState =
+    subscriptionState === 'SUBSCRIPTION_STATE_ACTIVE' ||
+    subscriptionState === 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD' ||
+    (subscriptionState === 'SUBSCRIPTION_STATE_CANCELED' && expiryMs > Date.now())
+  const isActive = expiryMs > Date.now() && isEntitledState
 
   return {
     valid: isActive,
     planId,
-    expiresAt: expiryMs ? new Date(expiryMs).toISOString() : null,
-    startedAt: sub.startTimeMillis ? new Date(Number(sub.startTimeMillis)).toISOString() : null,
-    autoRenewing: sub.autoRenewing ?? false,
-    orderId: sub.orderId ?? null,
+    expiresAt,
+    startedAt: sub.startTime ?? null,
+    autoRenewing: matchingLineItem?.autoRenewingPlan?.autoRenewEnabled ?? false,
+    orderId: sub.latestOrderId ?? null,
   }
 }

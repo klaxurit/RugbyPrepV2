@@ -17,6 +17,7 @@ import { LoginPage } from './pages/auth/LoginPage'
 import { SignupPage } from './pages/auth/SignupPage'
 import { CallbackPage } from './pages/auth/CallbackPage'
 import { LegalPage } from './pages/LegalPage'
+import { DeleteAccountPage } from './pages/DeleteAccountPage'
 import { LandingPage } from './pages/LandingPage'
 import { StaffPlanningSandboxPage } from './pages/StaffPlanningSandboxPage'
 
@@ -94,6 +95,7 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/auth/callback" element={<CallbackPage />} />
           <Route path="/legal" element={<LegalPage />} />
+          <Route path="/delete-account" element={<DeleteAccountPage />} />
 
           <Route element={<RequireAuth />}>
             <Route path="/home" element={<HomePage />} />

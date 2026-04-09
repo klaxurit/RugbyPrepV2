@@ -842,6 +842,11 @@ export function LandingPage() {
                     CGU / CGV
                   </Link>
                 </li>
+                <li>
+                  <Link to="/delete-account" className="text-sm text-fg-ghost hover:text-fg transition-colors">
+                    Suppression de compte
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
@@ -860,7 +865,7 @@ export function LandingPage() {
 
           <div className="border-t border-border-app pt-8 text-center">
             <p className="text-[10px] text-fg-ghost">
-              © 2026 RugbyForge. v1.0
+              © 2026 RugbyForge, édité par Axurit. v1.0
             </p>
           </div>
         </div>

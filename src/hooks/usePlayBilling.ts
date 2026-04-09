@@ -28,9 +28,15 @@ type ItemDetails = {
   price: { currency: string; value: string }
 }
 
+type PurchaseDetails = {
+  itemId: string
+  purchaseToken: string
+  acknowledged?: boolean
+}
+
 type DigitalGoodsService = {
   getDetails(itemIds: string[]): Promise<ItemDetails[]>
-  listPurchases(): Promise<Array<{ itemId: string; purchaseToken: string }>>
+  listPurchases(): Promise<PurchaseDetails[]>
   acknowledge(purchaseToken: string, type: 'onetime' | 'repeatable'): Promise<void>
 }
 
@@ -136,7 +142,9 @@ export function usePlayBilling() {
 
       const request = new PaymentRequest([paymentMethod], paymentDetails)
       const response = await request.show()
-      const { purchaseToken } = response.details as { purchaseToken: string }
+      const paymentResponseDetails = response.details as { purchaseToken?: string; token?: string }
+      const purchaseToken = paymentResponseDetails.purchaseToken ?? paymentResponseDetails.token
+      if (!purchaseToken) throw new Error('Play purchase token missing from Payment Request response')
 
       // Verify purchase server-side
       const { data, error } = await supabase.functions.invoke('verify-play-purchase', {
@@ -180,25 +188,28 @@ export function usePlayBilling() {
 
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
-    try {
-      const service = await window.getDigitalGoodsService!(
-        'https://play.google.com/billing',
-      )
+      try {
+        const service = await window.getDigitalGoodsService!(
+          'https://play.google.com/billing',
+        )
 
-      const purchases = await service.listPurchases()
+        const purchases = await service.listPurchases()
 
-      for (const { itemId, purchaseToken } of purchases) {
-        const { data, error } = await supabase.functions.invoke('verify-play-purchase', {
-          body: { productId: itemId, purchaseToken },
-        })
-        if (!error && (data as { ok: boolean }).ok) {
-          setState((prev) => ({ ...prev, loading: false }))
-          return data
+        for (const { itemId, purchaseToken, acknowledged } of purchases) {
+          const { data, error } = await supabase.functions.invoke('verify-play-purchase', {
+            body: { productId: itemId, purchaseToken },
+          })
+          if (!error && (data as { ok: boolean }).ok) {
+            if (acknowledged === false) {
+              await service.acknowledge(purchaseToken, 'repeatable')
+            }
+            setState((prev) => ({ ...prev, loading: false }))
+            return data
+          }
         }
-      }
 
-      setState((prev) => ({ ...prev, loading: false }))
-      return null
+        setState((prev) => ({ ...prev, loading: false }))
+        return null
     } catch (err) {
       setState((prev) => ({
         ...prev,

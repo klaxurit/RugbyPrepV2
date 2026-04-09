@@ -91,6 +91,46 @@ export function usePremiumCheckout() {
     }
   }, [playBilling])
 
+  const restorePurchases = useCallback(async () => {
+    if (!isPlayBillingAvailable()) {
+      setState({
+        loading: false,
+        error: null,
+        message: 'La restauration Google Play est disponible uniquement dans l’application Android publiée sur le Play Store.',
+      })
+      return null
+    }
+
+    setState({ loading: true, error: null, message: null })
+
+    try {
+      const result = await playBilling.restorePurchases()
+      if (result) {
+        setState({
+          loading: false,
+          error: null,
+          message: 'Achat Google Play restauré.',
+        })
+        return result
+      }
+
+      setState({
+        loading: false,
+        error: null,
+        message: 'Aucun achat Google Play actif n’a été retrouvé pour ce compte.',
+      })
+      return null
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      setState({
+        loading: false,
+        error: message,
+        message: null,
+      })
+      return null
+    }
+  }, [playBilling])
+
   const reset = useCallback(() => {
     setState({ loading: false, error: null, message: null })
   }, [])
@@ -98,6 +138,7 @@ export function usePremiumCheckout() {
   return {
     ...state,
     startCheckout,
+    restorePurchases,
     reset,
     isPlayStore: isPlayBillingAvailable(),
     playProducts: playBilling.products,
