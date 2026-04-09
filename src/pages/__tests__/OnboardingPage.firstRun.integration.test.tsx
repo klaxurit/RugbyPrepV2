@@ -289,6 +289,10 @@ describe('OnboardingPage · first run flow', () => {
 
   it('onboarding submit preserves existing planningAnchors', () => {
     mockProfile = {
+      equipment: [],
+      injuries: [],
+      weeklySessions: 2,
+      level: 'intermediate',
       planningAnchors: { seasonEndedAt: '2026-03-01', returnToTeamTrainingAt: '2026-08-01' },
     }
 

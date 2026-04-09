@@ -72,7 +72,7 @@ export function resolveWeekPresentation(
     return buildSequentialPresentation(motherSessions, matchEvents, corrections)
   }
 
-  return buildCalendarPresentation(motherSessions, matchEvents, today, corrections, params)
+  return buildCalendarPresentation(motherSessions, matchEvents, corrections, params)
 }
 
 // ── Sequential mode ─────────────────────────────────────────────────
@@ -114,7 +114,6 @@ function buildSequentialPresentation(
 function buildCalendarPresentation(
   slots: ResolvedMotherSessionSlot[],
   matchEvents: PresentedMatchEvent[],
-  today: string,
   corrections: WeekCorrection[],
   params: ResolveWeekPresentationParams,
 ): WeekPresentation {

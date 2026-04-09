@@ -705,6 +705,7 @@ describe('useWeekSnapshot lifecycle', () => {
     // Persisted
     const persisted = JSON.parse(storage.data['rugbyprep.weekSnapshot.v2.user-a.W2026-15']) as {
       corrections: Array<{ type: string }>
+      globalEventsHash?: string
     }
     expect(persisted.corrections.some((c) => c.type === 'fatigue')).toBe(true)
   })
@@ -746,6 +747,7 @@ describe('useWeekSnapshot lifecycle', () => {
     // Persisted
     const persisted = JSON.parse(storage.data['rugbyprep.weekSnapshot.v2.user-a.W2026-15']) as {
       corrections: Array<{ type: string }>
+      globalEventsHash?: string
     }
     expect(persisted.corrections.some((c) => c.type === 'add_match')).toBe(true)
     // Global hash baseline includes the canonical event id (not a synthetic one)
