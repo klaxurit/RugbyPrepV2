@@ -40,6 +40,7 @@ video/out
 
 # Android TWA (bubblewrap)
 android.keystore
+key.properties
 local.properties
 *.apk
 *.aab

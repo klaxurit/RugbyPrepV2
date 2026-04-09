@@ -15,6 +15,7 @@
  */
 
 import groovy.xml.MarkupBuilder
+import java.util.Properties
 
 plugins {
     id 'com.android.application'
@@ -50,9 +51,27 @@ def twaManifest = [
     orientation: 'portrait',
 ]
 
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { stream ->
+        keystoreProperties.load(stream)
+    }
+}
+
 android {
     compileSdkVersion 36
     namespace "fr.rugbyforge.app"
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile rootProject.file(keystoreProperties["storeFile"])
+                storePassword keystoreProperties["storePassword"]
+                keyAlias keystoreProperties["keyAlias"]
+                keyPassword keystoreProperties["keyPassword"]
+            }
+        }
+    }
     defaultConfig {
         applicationId "fr.rugbyforge.app"
         minSdkVersion 21
@@ -153,6 +172,9 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
     compileOptions {
