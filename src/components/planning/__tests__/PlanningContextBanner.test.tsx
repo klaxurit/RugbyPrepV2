@@ -2,12 +2,12 @@
 
 import { describe, expect, it, vi, afterEach } from 'vitest'
 import { cleanup, render, within, fireEvent } from '@testing-library/react'
+import { PlanningContextBanner } from '../PlanningContextBanner'
 import {
-  PlanningContextBanner,
   isPlanningContextBannerDuplicateOfSummary,
   planningContextBannerCopyForMode,
   resolvePlanningContextBannerModel,
-} from '../PlanningContextBanner'
+} from '../planningContextBannerModel'
 import type { WeeklyProgramSurfaceResult } from '../../../services/program/resolveWeeklyProgramSurface'
 import type { WeekExplanation } from '../../../types/scheduling'
 

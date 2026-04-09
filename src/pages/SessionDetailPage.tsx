@@ -128,6 +128,16 @@ export function SessionDetailPage() {
     }
   }, [hasHardBlock, hardBlockReasons])
 
+  const msResolution = surface?.motherSession ?? null
+  const activeSlot = useMemo(() => {
+    const presentationSessions = snapshot?.presentation?.sessions
+    if (presentationSessions && index < presentationSessions.length) {
+      return presentationSessions[index].sessionSlot
+    }
+    const rawSessions = msResolution?.sessions ?? []
+    return rawSessions[index] ?? null
+  }, [snapshot, msResolution, index])
+
   if (hasHardBlock) {
     return (
       <div className="min-h-screen bg-app font-sans text-fg pb-24">
@@ -158,18 +168,6 @@ export function SessionDetailPage() {
   const isUnavailable = primarySource === 'unavailable'
 
   // ── Mother-session path (F2: prefer snapshot-owned sessions) ─────────
-  const msResolution = surface?.motherSession ?? null
-  // Use snapshot presentation to get the slot — this respects corrections
-  const activeSlot = useMemo(() => {
-    const presentationSessions = snapshot?.presentation?.sessions
-    if (presentationSessions && index < presentationSessions.length) {
-      return presentationSessions[index].sessionSlot
-    }
-    // Fallback to raw surface sessions if snapshot isn't ready yet
-    const rawSessions = msResolution?.sessions ?? []
-    return rawSessions[index] ?? null
-  }, [snapshot, msResolution, index])
-
   const msSessionType = activeSlot?.session.metadata.sessionType
     ? MS_TYPE_TO_SESSION_TYPE[activeSlot.session.metadata.sessionType]
     : undefined

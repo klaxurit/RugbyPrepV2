@@ -69,7 +69,7 @@ export function resolveWeekPresentation(
   const matchEvents = getWeekMatchEvents(events, today)
 
   if (schedulingMode === 'sequential') {
-    return buildSequentialPresentation(motherSessions, matchEvents, corrections, params.blockProgression)
+    return buildSequentialPresentation(motherSessions, matchEvents, corrections)
   }
 
   return buildCalendarPresentation(motherSessions, matchEvents, today, corrections, params)
@@ -81,7 +81,6 @@ function buildSequentialPresentation(
   slots: ResolvedMotherSessionSlot[],
   matchEvents: PresentedMatchEvent[],
   corrections: WeekCorrection[],
-  _blockProgression?: BlockProgressionState,
 ): WeekPresentation {
   const total = slots.length
 
@@ -122,7 +121,7 @@ function buildCalendarPresentation(
   const { clubSchedule, scSchedule } = params
 
   // Identify blocked days
-  const matchDays = getMatchDaysOfWeek(matchEvents, today)
+  const matchDays = getMatchDaysOfWeek(matchEvents)
   const clubDays = new Set<DayOfWeek>(
     clubSchedule?.clubDays.map((d) => d.day) ?? [],
   )
@@ -386,7 +385,6 @@ function getWeekMatchEvents(
  */
 function getMatchDaysOfWeek(
   weekMatchEvents: Array<Pick<CalendarEvent, 'date' | 'type'>>,
-  _today: string,
 ): DayOfWeek[] {
   return weekMatchEvents.map((ev) => parseLocalDate(ev.date).getDay() as DayOfWeek)
 }

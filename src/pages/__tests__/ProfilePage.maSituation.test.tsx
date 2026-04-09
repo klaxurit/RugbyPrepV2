@@ -4,11 +4,12 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { cleanup, screen, fireEvent } from '@testing-library/react'
 import { ProfilePage } from '../ProfilePage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
+import type { CalendarEvent } from '../../types/training'
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
 const mockUpdateProfile = vi.fn()
-const mockEvents: any[] = []
+const mockEvents: CalendarEvent[] = []
 let mockProfileOverrides: Record<string, unknown> = {}
 
 const mockDetectCtx = vi.fn()

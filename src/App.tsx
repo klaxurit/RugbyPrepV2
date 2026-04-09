@@ -22,6 +22,7 @@ import { LegalPage } from './pages/LegalPage'
 import { DeleteAccountPage } from './pages/DeleteAccountPage'
 import { LandingPage } from './pages/LandingPage'
 import { StaffPlanningSandboxPage } from './pages/StaffPlanningSandboxPage'
+import { ScrollToTop } from './components/navigation/ScrollToTop'
 
 const isStandaloneMode =
   typeof window !== 'undefined' &&
@@ -88,6 +89,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<RootRoute />} />
           <Route path="/landing" element={<LandingPage />} />

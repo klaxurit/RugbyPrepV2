@@ -139,6 +139,72 @@ export function WeekPage() {
     }
   }, [hasHardBlock, hardBlockReasons])
 
+  const primarySource = surface?.primarySource ?? 'mother_session'
+  const isUnavailable = primarySource === 'unavailable'
+  const msResolution = surface?.motherSession ?? null
+  const schedulingMode = surface?.schedulingMode ?? 'calendar'
+  const isSequential = schedulingMode === 'sequential'
+
+  const calendarSessions: DatedSession[] = useMemo(() => {
+    if (isSequential || !weekPresentation) return []
+    const dated = weekPresentation.sessions.filter(
+      (s): s is DatedSession => s.kind === 'dated',
+    )
+    return mergeDatedSessionCompletion(dated, logs, today)
+  }, [isSequential, weekPresentation, logs, today])
+
+  const sequentialSessions: SequentialSession[] = useMemo(() => {
+    if (!isSequential || !weekPresentation) return []
+    return weekPresentation.sessions.filter(
+      (s): s is SequentialSession => s.kind === 'sequential',
+    )
+  }, [isSequential, weekPresentation])
+
+  const hasWeekMatch = (weekPresentation?.matchEvents.length ?? 0) > 0
+  const isRehabP1 = profile.rehabInjury?.phase === 1
+  const arGlobalOk = !isSequential
+    && !isUnavailable
+    && readinessResult.score >= 40
+    && acwrResult.zone !== 'critical'
+    && !isRehabP1
+    && msResolution != null
+
+  const activeRecoveryEligibleDays = useMemo(() => {
+    if (!arGlobalOk) return [] as import('../types/scheduling').DayOfWeek[]
+    const sessionDays = new Set(calendarSessions.map((s) => s.dayOfWeek))
+    const clubDaySet = new Set(weekPresentation?.clubDays ?? [])
+    const matchDowSet = new Set<number>()
+    for (const e of weekPresentation?.matchEvents ?? []) {
+      const d = new Date(`${e.date}T12:00:00`)
+      matchDowSet.add(d.getDay())
+    }
+    const unavailSet = new Set(weekPresentation?.unavailableDays ?? [])
+
+    const effortDays = new Set<number>([...sessionDays, ...clubDaySet, ...matchDowSet])
+    const DAY_ORDER: import('../types/scheduling').DayOfWeek[] = [0, 1, 2, 3, 4, 5, 6]
+    return DAY_ORDER.filter((dow) => {
+      if (sessionDays.has(dow) || matchDowSet.has(dow) || clubDaySet.has(dow) || unavailSet.has(dow)) return false
+      const yesterday = ((dow + 6) % 7) as import('../types/scheduling').DayOfWeek
+      return effortDays.has(yesterday)
+    })
+  }, [arGlobalOk, calendarSessions, weekPresentation])
+
+  const activeRecoveryDates = useMemo(
+    () =>
+      logs
+        .filter((l) => l.sessionType === 'ACTIVE_RECOVERY')
+        .map((l) => l.dateISO.slice(0, 10)),
+    [logs],
+  )
+
+  const confirmationItem = hasConfirmationRequired
+    ? snapshot?.confirmationRequired[0] ?? null
+    : null
+
+  const weekPageTitle = isSequential
+    ? (lang === 'fr' ? 'Mon Programme' : 'My Program')
+    : (lang === 'fr' ? 'Ma Semaine' : 'My Week')
+
   if (hasHardBlock) {
     const hardBlockTitle = lang === 'fr' ? 'Ma Semaine' : 'My Week'
     return (
@@ -164,85 +230,6 @@ export function WeekPage() {
       </div>
     )
   }
-
-  // ── Décision moteur ────────────────────────────────────────────────────────
-  const primarySource = surface?.primarySource ?? 'mother_session'
-  const isUnavailable = primarySource === 'unavailable'
-  const msResolution = surface?.motherSession ?? null
-  const schedulingMode = surface?.schedulingMode ?? 'calendar'
-  const isSequential = schedulingMode === 'sequential'
-
-  // Extract calendar sessions from the presentation layer
-  const calendarSessions: DatedSession[] = useMemo(() => {
-    if (isSequential || !weekPresentation) return []
-    const dated = weekPresentation.sessions.filter(
-      (s): s is DatedSession => s.kind === 'dated',
-    )
-    return mergeDatedSessionCompletion(dated, logs, today)
-  }, [isSequential, weekPresentation, logs, today])
-
-  // Extract sequential sessions from the presentation layer
-  const sequentialSessions: SequentialSession[] = useMemo(() => {
-    if (!isSequential || !weekPresentation) return []
-    return weekPresentation.sessions.filter(
-      (s): s is SequentialSession => s.kind === 'sequential',
-    )
-  }, [isSequential, weekPresentation])
-
-  const hasWeekMatch = (weekPresentation?.matchEvents.length ?? 0) > 0
-
-  // ── Active recovery on rest days ──────────────────────────────────────────
-  const isRehabP1 = profile.rehabInjury?.phase === 1
-
-  // Global AR guards (day-independent)
-  const arGlobalOk = !isSequential
-    && !isUnavailable
-    && readinessResult.score >= 40
-    && acwrResult.zone !== 'critical'
-    && !isRehabP1
-    && msResolution != null
-
-  // Per-DOW eligibility: rest days only (no session, no match, no club day)
-  const activeRecoveryEligibleDays = useMemo(() => {
-    if (!arGlobalOk) return [] as import('../types/scheduling').DayOfWeek[]
-    const sessionDays = new Set(calendarSessions.map((s) => s.dayOfWeek))
-    const clubDaySet = new Set(weekPresentation?.clubDays ?? [])
-    const matchDowSet = new Set<number>()
-    for (const e of weekPresentation?.matchEvents ?? []) {
-      const d = new Date(`${e.date}T12:00:00`)
-      matchDowSet.add(d.getDay())
-    }
-    const unavailSet = new Set(weekPresentation?.unavailableDays ?? [])
-
-    // KB recovery.md §3.4: active recovery = lendemain d'un effort intense.
-    // One AR session per effort — only J+1, not J+2 (avoids back-to-back AR days).
-    const effortDays = new Set<number>([...sessionDays, ...clubDaySet, ...matchDowSet])
-    const DAY_ORDER: import('../types/scheduling').DayOfWeek[] = [0, 1, 2, 3, 4, 5, 6]
-    return DAY_ORDER.filter((dow) => {
-      if (sessionDays.has(dow) || matchDowSet.has(dow) || clubDaySet.has(dow) || unavailSet.has(dow)) return false
-      const yesterday = ((dow + 6) % 7) as import('../types/scheduling').DayOfWeek
-      return effortDays.has(yesterday)
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [arGlobalOk, calendarSessions, weekPresentation?.clubDays, weekPresentation?.matchEvents, weekPresentation?.unavailableDays])
-
-  // Dates with active recovery logs this week (for timeline badge)
-  const activeRecoveryDates = useMemo(() =>
-    logs
-      .filter((l) => l.sessionType === 'ACTIVE_RECOVERY')
-      .map((l) => l.dateISO.slice(0, 10)),
-    [logs],
-  )
-
-  // First confirmation required item (max 1 banner)
-  const confirmationItem = hasConfirmationRequired
-    ? snapshot?.confirmationRequired[0] ?? null
-    : null
-
-  // Title adapts to mode
-  const weekPageTitle = isSequential
-    ? (lang === 'fr' ? 'Mon Programme' : 'My Program')
-    : (lang === 'fr' ? 'Ma Semaine' : 'My Week')
 
   return (
     <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">

@@ -279,7 +279,10 @@ export function ChatPage() {
       />
 
       {/* Messages area */}
-      <main className="relative flex-1 overflow-y-auto px-4 pt-5 pb-32 space-y-4 max-w-md mx-auto w-full">
+      <main
+        data-app-scroll-root
+        className="relative flex-1 overflow-y-auto px-4 pt-5 pb-32 space-y-4 max-w-md mx-auto w-full"
+      >
 
         {/* Welcome state */}
         {messages.length === 0 && (

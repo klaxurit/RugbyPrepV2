@@ -79,7 +79,6 @@ export function useCalendar() {
   // Sync from Supabase when authenticated
   useEffect(() => {
     if (!userId) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true)
     supabase
       .from('match_calendar')

@@ -1,21 +1,8 @@
 import { useState } from 'react'
-import { Check, Footprints, Bike, Waves, Leaf } from 'lucide-react'
+import { Check } from 'lucide-react'
+import { ACTIVE_RECOVERY_ACTIVITIES } from './activeRecoveryConstants'
 
-export interface ActiveRecoveryActivity {
-  id: string
-  label: string
-  shortLabel: string
-  duration: string
-  durationMin: number
-  icon: React.ReactNode
-}
-
-export const ACTIVITIES: ActiveRecoveryActivity[] = [
-  { id: 'walk', shortLabel: 'Marche', label: 'Marche', duration: '20-30\'', durationMin: 25, icon: <Footprints className="w-3 h-3" /> },
-  { id: 'bike', shortLabel: 'Vélo', label: 'Vélo léger', duration: '15-20\'', durationMin: 17, icon: <Bike className="w-3 h-3" /> },
-  { id: 'mobility', shortLabel: 'Mobilité', label: 'Mobilité / Yoga', duration: '15-20\'', durationMin: 17, icon: <Leaf className="w-3 h-3" /> },
-  { id: 'swim', shortLabel: 'Natation', label: 'Natation légère', duration: '20-30\'', durationMin: 25, icon: <Waves className="w-3 h-3" /> },
-]
+export type { ActiveRecoveryActivity } from './activeRecoveryConstants'
 
 interface InlineActiveRecoveryProps {
   isRecoveryDay: boolean
@@ -37,7 +24,7 @@ export function InlineActiveRecovery({ isRecoveryDay, onComplete }: InlineActive
 
       {/* Compact activity chips — wrap on narrow screens */}
       <div className="flex flex-wrap gap-1">
-        {ACTIVITIES.map((a) => (
+        {ACTIVE_RECOVERY_ACTIVITIES.map((a) => (
           <button
             key={a.id}
             type="button"
@@ -58,7 +45,7 @@ export function InlineActiveRecovery({ isRecoveryDay, onComplete }: InlineActive
 
       {/* Detail line + confirm — only when an activity is selected */}
       {selected && (() => {
-        const activity = ACTIVITIES.find((act) => act.id === selected)!
+        const activity = ACTIVE_RECOVERY_ACTIVITIES.find((act) => act.id === selected)!
         return (
           <div className="flex items-center gap-2 pt-0.5">
             <span className="text-[9px] text-fg-muted flex-1">

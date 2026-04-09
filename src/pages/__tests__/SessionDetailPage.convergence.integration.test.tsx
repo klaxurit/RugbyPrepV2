@@ -4,7 +4,10 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { cleanup, screen, fireEvent, render, waitFor } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { MOTHER_SESSIONS_BY_ID } from '../../data/motherSessions.generated'
-import type { ResolveMotherSessionsForWeekResult } from '../../services/motherSession/resolveMotherSessionsForWeek'
+import type {
+  ResolveMotherSessionsForWeekResult,
+  ResolvedMotherSessionSlot,
+} from '../../services/motherSession/resolveMotherSessionsForWeek'
 import type { WeeklyProgramSurfaceResult } from '../../services/program/resolveWeeklyProgramSurface'
 import type { AnnualPlanningContext } from '../../types/annualPlanning'
 import { SessionDetailPage } from '../SessionDetailPage'
@@ -210,7 +213,7 @@ vi.mock('../../hooks/useWeekSnapshot', () => ({
     const sessions = surface?.motherSession?.sessions ?? []
     const presentation = sessions.length > 0
       ? {
-          sessions: sessions.map((slot: any, i: number) => ({
+          sessions: sessions.map((slot: ResolvedMotherSessionSlot, i: number) => ({
             kind: 'sequential' as const,
             sessionSlot: slot,
             sequenceIndex: i + 1,

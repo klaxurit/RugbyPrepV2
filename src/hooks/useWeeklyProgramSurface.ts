@@ -62,13 +62,13 @@ export function useWeeklyProgramSurface(
   const blockProgression = useMemo(() => {
     if (!surface || !params?.userId || surface.schedulingMode !== 'sequential') return undefined
     return previewBlockProgression(params.userId, params.today, surface.planningContext)
-  }, [surface, params?.userId, params?.today])
+  }, [surface, params])
 
   // 3. Persist/init/advance after paint using the same deterministic source.
   useEffect(() => {
     if (!surface || !params?.userId || surface.schedulingMode !== 'sequential') return
     getBlockProgression(params.userId, params.today, surface.planningContext)
-  }, [surface, params?.userId, params?.today])
+  }, [surface, params])
 
   // 4. Week presentation (pure, synchronous)
   const weekPresentation = useMemo(() => {

@@ -7,6 +7,7 @@ import type { ResolveMotherSessionsForWeekResult } from '../../services/motherSe
 import type { WeeklyProgramSurfaceResult } from '../../services/program/resolveWeeklyProgramSurface'
 import type { AnnualPlanningContext } from '../../types/annualPlanning'
 import type {
+  DayOfWeek,
   SchedulingMode,
   SchedulingModeResult,
   WeekPresentation,
@@ -14,7 +15,7 @@ import type {
   WeekSnapshot,
   WeekCorrection,
 } from '../../types/scheduling'
-import { planningContextBannerCopyForMode } from '../../components/planning/PlanningContextBanner'
+import { planningContextBannerCopyForMode } from '../../components/planning/planningContextBannerModel'
 import { WeekPage } from '../WeekPage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 
@@ -781,7 +782,7 @@ describe('WeekPage · convergence moteurs', () => {
   it('calendar: club day shows "Entraînement club" not "Indisponible"', () => {
     const result = hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' }))
     // Mark day 3 (Mercredi) as a club day
-    result.snapshot!.presentation.clubDays = [3 as any]
+    result.snapshot!.presentation.clubDays = [3 as DayOfWeek]
     useWeekSnapshotMock.mockReturnValue(result)
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
@@ -793,7 +794,7 @@ describe('WeekPage · convergence moteurs', () => {
   it('calendar: user-unavailable day shows "Indisponible"', () => {
     const result = hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' }))
     // Mark day 1 (Lundi) as user-unavailable
-    result.snapshot!.presentation.unavailableDays = [1 as any]
+    result.snapshot!.presentation.unavailableDays = [1 as DayOfWeek]
     useWeekSnapshotMock.mockReturnValue(result)
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
@@ -829,7 +830,7 @@ describe('WeekPage · convergence moteurs', () => {
 
   it('calendar: club rugby days are eligible in reschedule picker (not excluded)', () => {
     const result = hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' }))
-    result.snapshot!.presentation.clubDays = [3 as any] // Wed is club day
+    result.snapshot!.presentation.clubDays = [3 as DayOfWeek] // Wed is club day
     useWeekSnapshotMock.mockReturnValue(result)
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
@@ -957,7 +958,7 @@ describe('WeekPage · convergence moteurs', () => {
     result.snapshot!.corrections = [
       { id: 'u1', type: 'unavailable_day', toDay: 1, appliedAt: new Date().toISOString(), reversible: true },
     ]
-    result.snapshot!.presentation.unavailableDays = [1 as any]
+    result.snapshot!.presentation.unavailableDays = [1 as DayOfWeek]
     useWeekSnapshotMock.mockReturnValue(result)
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })

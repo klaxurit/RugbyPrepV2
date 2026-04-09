@@ -31,7 +31,7 @@ export function buildExplanation(params: BuildExplanationParams): WeekExplanatio
   const { planningContext: ctx, schedulingMode, corrections } = params
 
   // 1. Collect applicable explanations from rules + context
-  const explanations = collectExplanations(ctx, schedulingMode)
+  const explanations = collectExplanations(ctx)
 
   // 2. Build summary from dominant explanation or sequential fallback
   const summaryLine = buildSummaryLine(explanations, ctx, schedulingMode, params.presentation)
@@ -240,10 +240,7 @@ function matchRule(ruleId: string): RuleCopy | undefined {
   return undefined
 }
 
-function collectExplanations(
-  ctx: AnnualPlanningContext,
-  _schedulingMode: SchedulingMode,
-): Explanation[] {
+function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
   const result: Explanation[] = []
   const seen = new Set<string>()
 

@@ -4,6 +4,7 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { cleanup, screen, fireEvent, render } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { OnboardingPage } from '../OnboardingPage'
+import type { UserProfile } from '../../types/training'
 
 const updateProfileMock = vi.fn()
 const navigateMock = vi.fn()
@@ -20,7 +21,7 @@ vi.mock('../../hooks/useAuth', () => ({
   }),
 }))
 
-let mockProfile: any = null
+let mockProfile: UserProfile | null = null
 
 vi.mock('../../hooks/useProfile', () => ({
   useProfile: () => ({

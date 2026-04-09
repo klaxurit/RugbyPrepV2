@@ -15,11 +15,9 @@ export { WeekPlanningLegend, type WeekPlanningLegendProps } from './WeekPlanning
 
 export { WeekTimelineRow, type WeekTimelineRowProps } from './WeekTimelineRow'
 
+export { PlanningContextBanner, type PlanningContextBannerTone, type PlanningContextBannerProps } from './PlanningContextBanner'
 export {
-  PlanningContextBanner,
   planningContextBannerCopyForMode,
   isPlanningContextBannerDuplicateOfSummary,
   resolvePlanningContextBannerModel,
-  type PlanningContextBannerTone,
-  type PlanningContextBannerProps,
-} from './PlanningContextBanner'
+} from './planningContextBannerModel'

@@ -8,6 +8,45 @@ import type { AnnualPlanningContext } from '../../types/annualPlanning'
 import type { SnapshotStorage } from '../../services/scheduling/weekSnapshot'
 import type { BlockProgressionStorage } from '../../services/scheduling/resolveBlockProgression'
 import type { CalendarEvent, Equipment, UserProfile, DayOfWeek } from '../../types/training'
+import type { MotherSession } from '../../types/motherSession'
+import type { ResolvedMotherSessionSlot } from '../../services/motherSession/resolveMotherSessionsForWeek'
+
+function minimalMotherSession(id: string): MotherSession {
+  return {
+    metadata: {
+      id,
+      status: 'validated',
+      version: 'V1',
+      cycle: 'in_season',
+      sessionType: 'full',
+      targetLevel: 'builder',
+      targetPositionGroup: 'back_three',
+      equipment: 'full_gym',
+      targetDuration: '50 min',
+    },
+    goal: [],
+    sessionIdentity: [],
+    warmUp: { exercises: [], notes: [] },
+    blocks: [],
+    progressionRules: [],
+    positionAccent: [],
+    injurySubstitutions: [],
+    coachingWarnings: [],
+    sourceReferences: [],
+  }
+}
+
+function mockResolvedSlot(
+  sessionId: string,
+  opts: Partial<Pick<ResolvedMotherSessionSlot, 'dayPreference'>> = {},
+): ResolvedMotherSessionSlot {
+  return {
+    sessionId,
+    role: 'primary',
+    session: minimalMotherSession(sessionId),
+    ...opts,
+  }
+}
 
 // ── Mocks ───────────────────────────────────────────────────────────
 
@@ -230,8 +269,8 @@ describe('useWeekSnapshot lifecycle', () => {
         status: 'resolved',
         planningContext: makePlanningContext(),
         sessions: [
-          { sessionId: 'S1', session: { metadata: { id: 'S1', sessionType: 'full' }, blocks: [] } as any, role: 'primary', dayPreference: 'early_week' },
-          { sessionId: 'S2', session: { metadata: { id: 'S2', sessionType: 'full' }, blocks: [] } as any, role: 'primary', dayPreference: 'late_week' },
+          mockResolvedSlot('S1', { dayPreference: 'early_week' }),
+          mockResolvedSlot('S2', { dayPreference: 'late_week' }),
         ],
         warnings: [],
       },
@@ -268,9 +307,7 @@ describe('useWeekSnapshot lifecycle', () => {
       motherSession: {
         status: 'resolved',
         planningContext: makePlanningContext(),
-        sessions: [
-          { sessionId: 'S1', session: { metadata: { id: 'S1', sessionType: 'full' }, blocks: [] } as any, role: 'primary' },
-        ],
+        sessions: [mockResolvedSlot('S1')],
         warnings: [],
       },
     }
@@ -299,9 +336,7 @@ describe('useWeekSnapshot lifecycle', () => {
       motherSession: {
         status: 'resolved',
         planningContext: makePlanningContext(),
-        sessions: [
-          { sessionId: 'S1', session: { metadata: { id: 'S1', sessionType: 'full' }, blocks: [] } as any, role: 'primary', dayPreference: 'early_week' },
-        ],
+        sessions: [mockResolvedSlot('S1', { dayPreference: 'early_week' })],
         warnings: [],
       },
     }
@@ -331,9 +366,7 @@ describe('useWeekSnapshot lifecycle', () => {
       motherSession: {
         status: 'resolved',
         planningContext: makePlanningContext(),
-        sessions: [
-          { sessionId: 'S1', session: { metadata: { id: 'S1', sessionType: 'full' }, blocks: [] } as any, role: 'primary' },
-        ],
+        sessions: [mockResolvedSlot('S1')],
         warnings: [],
       },
     }
@@ -366,9 +399,7 @@ describe('useWeekSnapshot lifecycle', () => {
       motherSession: {
         status: 'resolved',
         planningContext: makePlanningContext(),
-        sessions: [
-          { sessionId: 'S1', session: { metadata: { id: 'S1', sessionType: 'full' }, blocks: [] } as any, role: 'primary', dayPreference: 'early_week' },
-        ],
+        sessions: [mockResolvedSlot('S1', { dayPreference: 'early_week' })],
         warnings: [],
       },
     }
@@ -404,9 +435,7 @@ describe('useWeekSnapshot lifecycle', () => {
       motherSession: {
         status: 'resolved',
         planningContext: makePlanningContext(),
-        sessions: [
-          { sessionId: 'S1', session: { metadata: { id: 'S1', sessionType: 'full' }, blocks: [] } as any, role: 'primary' },
-        ],
+        sessions: [mockResolvedSlot('S1')],
         warnings: [],
       },
     }
@@ -446,9 +475,7 @@ describe('useWeekSnapshot lifecycle', () => {
       motherSession: {
         status: 'resolved',
         planningContext: makePlanningContext(),
-        sessions: [
-          { sessionId: 'S1', session: { metadata: { id: 'S1', sessionType: 'full' }, blocks: [] } as any, role: 'primary' },
-        ],
+        sessions: [mockResolvedSlot('S1')],
         warnings: [],
       },
     }
@@ -649,9 +676,7 @@ describe('useWeekSnapshot lifecycle', () => {
       motherSession: {
         status: 'resolved',
         planningContext: makePlanningContext(),
-        sessions: [
-          { sessionId: 'S1', session: { metadata: { id: 'S1', sessionType: 'full' }, blocks: [] } as any, role: 'primary' },
-        ],
+        sessions: [mockResolvedSlot('S1')],
         warnings: [],
       },
     }
@@ -678,8 +703,10 @@ describe('useWeekSnapshot lifecycle', () => {
     // Toast
     expect(result.current.toastMessage).toContain('réduit')
     // Persisted
-    const persisted = JSON.parse(storage.data['rugbyprep.weekSnapshot.v2.user-a.W2026-15'])
-    expect(persisted.corrections.some((c: any) => c.type === 'fatigue')).toBe(true)
+    const persisted = JSON.parse(storage.data['rugbyprep.weekSnapshot.v2.user-a.W2026-15']) as {
+      corrections: Array<{ type: string }>
+    }
+    expect(persisted.corrections.some((c) => c.type === 'fatigue')).toBe(true)
   })
 
   it('addMatch performs full re-resolution with canonical created event', async () => {
@@ -717,8 +744,10 @@ describe('useWeekSnapshot lifecycle', () => {
     // Toast
     expect(result.current.toastMessage).toContain('Match ajouté')
     // Persisted
-    const persisted = JSON.parse(storage.data['rugbyprep.weekSnapshot.v2.user-a.W2026-15'])
-    expect(persisted.corrections.some((c: any) => c.type === 'add_match')).toBe(true)
+    const persisted = JSON.parse(storage.data['rugbyprep.weekSnapshot.v2.user-a.W2026-15']) as {
+      corrections: Array<{ type: string }>
+    }
+    expect(persisted.corrections.some((c) => c.type === 'add_match')).toBe(true)
     // Global hash baseline includes the canonical event id (not a synthetic one)
     expect(persisted.globalEventsHash).toBeDefined()
   })

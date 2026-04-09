@@ -909,7 +909,9 @@ export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<string | undefined>()
   const [showHidden, setShowHidden] = useState(false)
   const [showPlayoffExitModal, setShowPlayoffExitModal] = useState(false)
-  const [showClubContext, setShowClubContext] = useState(() => !profile.clubCode || !profile.ffrCompetitionId)
+  const clubContextIncomplete = !profile.clubCode || !profile.ffrCompetitionId
+  const [clubContextExpandedWhenComplete, setClubContextExpandedWhenComplete] = useState(true)
+  const showClubContext = clubContextIncomplete || clubContextExpandedWhenComplete
   const [clubQuery, setClubQuery] = useState(profile.clubName ?? '')
   const [showPlanningEditor, setShowPlanningEditor] = useState(false)
   const [editClubDays, setEditClubDays] = useState<Set<DayOfWeek>>(new Set())
@@ -918,6 +920,7 @@ export function CalendarPage() {
   const [gymMode, setGymMode] = useState<'auto' | 'manual'>('auto')
   const [editGymDays, setEditGymDays] = useState<Set<DayOfWeek>>(new Set())
   const [ffrCompetitions, setFfrCompetitions] = useState<FfrCompetition[]>([])
+  const ffrCompetitionsForUi = profile.clubCode ? ffrCompetitions : []
   const [ffrCompLoading, setFfrCompLoading] = useState(false)
   const [ffrSyncLoading, setFfrSyncLoading] = useState(false)
   const [ffrSyncMessage, setFfrSyncMessage] = useState<string | null>(null)
@@ -954,27 +957,25 @@ export function CalendarPage() {
   const selectedClubMonogram = getClubMonogram(profile.clubName)
 
   useEffect(() => {
+    // Synchroniser le champ local lorsque le nom club vient du profil (chargement async, autre appareil).
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- état de brouillon aligné sur une source externe (profil)
     setClubQuery(profile.clubName ?? '')
   }, [profile.clubName])
 
   useEffect(() => {
-    if (!profile.clubCode || !profile.ffrCompetitionId) {
-      setShowClubContext(true)
-    }
-  }, [profile.clubCode, profile.ffrCompetitionId])
-
-  useEffect(() => {
     if (!profile.clubCode) {
-      setFfrCompetitions([])
       return
     }
     if (profile.ffrCompetitionId) return
     if (clubCompsFetched === profile.clubCode) return
 
     let cancelled = false
+    /* Préparation du fetch FFR : plusieurs setState synchrones avant la promesse (intentionnel). */
+    /* eslint-disable react-hooks/set-state-in-effect */
     setClubCompsFetched(profile.clubCode)
     setFfrCompLoading(true)
     setFfrSyncMessage(null)
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     fetchCompetitions(profile.clubCode).then((result) => {
       if (cancelled) return
@@ -1305,7 +1306,7 @@ export function CalendarPage() {
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setShowClubContext((current) => !current)}
+                onClick={() => setClubContextExpandedWhenComplete((current) => !current)}
                 className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 transition-colors rf-focus-ring"
                 aria-expanded={showClubContext}
                 aria-label={showClubContext ? 'Réduire le contexte club' : 'Afficher le contexte club'}
@@ -1444,7 +1445,7 @@ export function CalendarPage() {
                       </div>
                     )}
 
-                    {!ffrCompLoading && ffrCompetitions.length === 0 && !profile.ffrCompetitionId && !ffrSyncMessage && (
+                    {!ffrCompLoading && ffrCompetitionsForUi.length === 0 && !profile.ffrCompetitionId && !ffrSyncMessage && (
                       <p className="text-xs text-fg-faint italic">Import auto non disponible pour ce club</p>
                     )}
 
@@ -1454,9 +1455,9 @@ export function CalendarPage() {
                       </p>
                     )}
 
-                    {!ffrCompLoading && ffrCompetitions.length > 1 && !profile.ffrCompetitionId && (
+                    {!ffrCompLoading && ffrCompetitionsForUi.length > 1 && !profile.ffrCompetitionId && (
                       <div className="space-y-1">
-                        {ffrCompetitions.map((competition) => (
+                        {ffrCompetitionsForUi.map((competition) => (
                           <button
                             key={competition.id}
                             type="button"

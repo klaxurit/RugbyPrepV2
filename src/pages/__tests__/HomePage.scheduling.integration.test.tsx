@@ -7,7 +7,7 @@ import type { ResolveMotherSessionsForWeekResult } from '../../services/motherSe
 import type { WeeklyProgramSurfaceResult } from '../../services/program/resolveWeeklyProgramSurface'
 import type { AnnualPlanningContext } from '../../types/annualPlanning'
 import type { SchedulingMode, SchedulingModeResult, WeekPresentation, SequentialSession, BlockProgressionState } from '../../types/scheduling'
-import { planningContextBannerCopyForMode } from '../../components/planning/PlanningContextBanner'
+import { planningContextBannerCopyForMode } from '../../components/planning/planningContextBannerModel'
 import { HomePage } from '../HomePage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 

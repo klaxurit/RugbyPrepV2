@@ -302,7 +302,7 @@ describe('resolveWeekPresentation — calendar mode matchProximity', () => {
       events: [match('2026-04-11')], // Saturday = day 6
       today: TODAY,
       corrections: [
-        { id: 'c1', type: 'reschedule', sessionId: 'A', toDay: 0 as any, appliedAt: '2026-04-06', reversible: true },
+        { id: 'c1', type: 'reschedule', sessionId: 'A', toDay: 0 as DayOfWeek, appliedAt: '2026-04-06', reversible: true },
       ],
     })
 

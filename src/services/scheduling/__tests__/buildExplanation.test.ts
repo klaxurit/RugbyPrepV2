@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { buildExplanation } from '../buildExplanation'
 import type { AnnualPlanningContext } from '../../../types/annualPlanning'
-import type { WeekPresentation } from '../../../types/scheduling'
+import type { DayOfWeek, WeekPresentation } from '../../../types/scheduling'
+import type { ResolvedMotherSessionSlot } from '../../motherSession/resolveMotherSessionsForWeek'
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
@@ -32,8 +33,12 @@ function makePres(sessionCount = 2): WeekPresentation {
   return {
     sessions: Array.from({ length: sessionCount }, (_, i) => ({
       kind: 'dated' as const,
-      sessionSlot: { sessionId: `s${i}`, session: { metadata: { id: `S${i}` } } as any, role: 'primary' as const },
-      dayOfWeek: (i + 1) as any,
+      sessionSlot: {
+        sessionId: `s${i}`,
+        session: { metadata: { id: `S${i}` } },
+        role: 'primary',
+      } as unknown as ResolvedMotherSessionSlot,
+      dayOfWeek: (i + 1) as DayOfWeek,
       dayLabel: 'Lun',
     })),
     matchEvents: [],
@@ -48,7 +53,11 @@ function makeSeqPres(sessionCount = 3): WeekPresentation {
   return {
     sessions: Array.from({ length: sessionCount }, (_, i) => ({
       kind: 'sequential' as const,
-      sessionSlot: { sessionId: `s${i}`, session: { metadata: { id: `S${i}` } } as any, role: 'primary' as const },
+      sessionSlot: {
+        sessionId: `s${i}`,
+        session: { metadata: { id: `S${i}` } },
+        role: 'primary',
+      } as unknown as ResolvedMotherSessionSlot,
       sequenceIndex: i + 1,
       totalInWeek: sessionCount,
       completionStatus: 'pending' as const,

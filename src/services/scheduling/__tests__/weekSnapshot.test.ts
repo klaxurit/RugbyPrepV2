@@ -17,7 +17,7 @@ import {
 } from '../weekSnapshot'
 import type { WeeklyProgramSurfaceResult } from '../../program/resolveWeeklyProgramSurface'
 import type { AnnualPlanningContext } from '../../../types/annualPlanning'
-import type { BlockProgressionState, WeekCorrection } from '../../../types/scheduling'
+import type { BlockProgressionState, DayOfWeek, WeekCorrection, WeekSnapshot } from '../../../types/scheduling'
 
 // ── Mocks ───────────────────────────────────────────────────────────
 
@@ -1111,7 +1111,7 @@ describe('migrateSnapshot', () => {
       today: TODAY,
     })
     // Simulate pre-Slice 3 snapshot without explanation
-    const old = { ...snapshot, explanation: undefined, schemaVersion: undefined } as any
+    const old = { ...snapshot, explanation: undefined, schemaVersion: undefined } as unknown as WeekSnapshot
 
     const { snapshot: migrated, changed } = migrateSnapshot(old, { profileClubDays: [] })
     expect(changed).toBe(true)
@@ -1130,9 +1130,10 @@ describe('migrateSnapshot', () => {
       ...snapshot,
       presentation: { ...snapshot.presentation, clubDays: undefined },
       schemaVersion: undefined,
-    } as any
+    } as unknown as WeekSnapshot
 
-    const { snapshot: migrated, changed } = migrateSnapshot(old, { profileClubDays: [2, 4] as any })
+    const clubDaysProfile: DayOfWeek[] = [2, 4]
+    const { snapshot: migrated, changed } = migrateSnapshot(old, { profileClubDays: clubDaysProfile })
     expect(changed).toBe(true)
     expect(migrated.presentation.clubDays).toEqual([2, 4])
   })
@@ -1152,9 +1153,10 @@ describe('migrateSnapshot', () => {
         unavailableDays: [2, 4, 1], // 2 and 4 are club days, 1 is legit unavailable
       },
       schemaVersion: undefined,
-    } as any
+    } as unknown as WeekSnapshot
 
-    const { snapshot: migrated, changed } = migrateSnapshot(old, { profileClubDays: [2, 4] as any })
+    const clubDaysProfile2: DayOfWeek[] = [2, 4]
+    const { snapshot: migrated, changed } = migrateSnapshot(old, { profileClubDays: clubDaysProfile2 })
     expect(changed).toBe(true)
     expect(migrated.presentation.clubDays).toEqual([2, 4])
     expect(migrated.presentation.unavailableDays).toEqual([1])
@@ -1166,7 +1168,7 @@ describe('migrateSnapshot', () => {
       events: [],
       today: TODAY,
     })
-    const old = { ...snapshot, schemaVersion: undefined } as any
+    const old = { ...snapshot, schemaVersion: undefined } as unknown as WeekSnapshot
 
     const { snapshot: migrated, changed } = migrateSnapshot(old, { profileClubDays: [] })
     expect(changed).toBe(true)
