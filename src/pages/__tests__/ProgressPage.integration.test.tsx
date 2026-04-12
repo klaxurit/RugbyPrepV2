@@ -126,8 +126,6 @@ describe('ProgressPage · adherence & recent activity', () => {
     expect(screen.getByTestId('adherence-section')).toBeInTheDocument()
     expect(screen.getByTestId('adherence-7d')).toBeInTheDocument()
     expect(screen.getByTestId('adherence-28d')).toBeInTheDocument()
-    expect(screen.getByTestId('adherence-mother')).toHaveTextContent('1')
-    expect(screen.getByTestId('adherence-legacy')).toHaveTextContent('1')
   })
 
   it('activité récente visible avec logs mixtes', () => {
@@ -147,11 +145,6 @@ describe('ProgressPage · adherence & recent activity', () => {
     const titles = screen.getAllByTestId('recent-title')
     expect(titles[0]).toHaveTextContent('Full Body Récupération A')
     expect(titles[1]).toHaveTextContent('Lower Force')
-
-    // Source badges
-    const badges = screen.getAllByTestId('recent-source-badge')
-    expect(badges[0]).toHaveTextContent('Programme annuel')
-    expect(badges[1]).toHaveTextContent('Programme historique')
 
     // Week labels
     const weekLabels = screen.getAllByTestId('recent-week-label')

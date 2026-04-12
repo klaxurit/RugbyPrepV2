@@ -159,7 +159,7 @@ describe('OnboardingPage · first run flow', () => {
 
     // Step 2: Equipment → click "Oui"
     fireEvent.click(screen.getByText('Oui'))
-    expect(screen.getByText('Salle standard sélectionnée')).toBeInTheDocument()
+    expect(screen.getByText('Tout l\'équipement salle activé')).toBeInTheDocument()
   })
 
   it('question binaire matériel : non → checklist maison', () => {
