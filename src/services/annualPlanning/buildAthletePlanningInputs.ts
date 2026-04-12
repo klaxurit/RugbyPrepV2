@@ -194,11 +194,10 @@ function resolvePlanningAnchors(
   if (pa?.manualPlayoffs) base.manualPlayoffs = true
   if (pa?.returnToTeamTrainingAt) base.returnToTeamTrainingAt = pa.returnToTeamTrainingAt
 
-  // seasonEndedAt: only apply if no match is visible in the current context.
-  // A match in the current week (even if before today) is still visible in the
-  // CalendarWeekTimeline — keeping a stale seasonEndedAt anchor would produce a
-  // contradictory "off_season" label next to a visible match.
-  const matchInvalidatesSeasonEnd = hasFutureMatch || hasMatchThisWeek
+  // seasonEndedAt: apply if no match invalidates it, OR if the user explicitly
+  // confirmed end-of-season manually (manual decision overrides calendar data).
+  const isManualSeasonEnd = pa?.seasonEndedSource === 'manual'
+  const matchInvalidatesSeasonEnd = !isManualSeasonEnd && (hasFutureMatch || hasMatchThisWeek)
   if (pa?.seasonEndedAt && !matchInvalidatesSeasonEnd) {
     base.seasonEndedAt = pa.seasonEndedAt
   }

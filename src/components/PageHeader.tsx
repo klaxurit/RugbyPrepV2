@@ -39,7 +39,7 @@ export function PageHeader({ title, backTo, right }: PageHeaderProps) {
         {backTo && (
           <Link
             to={backTo}
-            className="p-2 -ml-2 rounded-xl flex-shrink-0 transition-colors hover:bg-white/10 text-shell-text-muted hover:text-shell-text"
+            className="p-2 -ml-2 rounded-xl flex-shrink-0 transition-colors hover:bg-white/20 text-shell-text-muted hover:text-shell-text"
             aria-label="Retour"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -61,7 +61,7 @@ export function PageHeader({ title, backTo, right }: PageHeaderProps) {
           >
             <div className="relative h-14 w-14">
               {/* Avatar 56px rond */}
-              <div className="h-14 w-14 rounded-full overflow-hidden bg-white/15 border border-white/20">
+              <div className="h-14 w-14 rounded-full overflow-hidden bg-white/20 border-2 border-white/25">
                 {resolvedAvatarUrl ? (
                   <img
                     src={resolvedAvatarUrl}

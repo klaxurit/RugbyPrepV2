@@ -66,7 +66,7 @@ describe('HistoryPage · enriched logs', () => {
     cleanup()
   })
 
-  it('affiche un log legacy + un log mother-session avec badges source', () => {
+  it('affiche un log legacy + un log mother-session', () => {
     useHistoryMock.mockReturnValue({
       logs: [MOTHER_LOG, LEGACY_LOG],
       clearLogs: vi.fn(),
@@ -76,11 +76,6 @@ describe('HistoryPage · enriched logs', () => {
 
     const entries = screen.getAllByTestId('history-log-entry')
     expect(entries).toHaveLength(2)
-
-    // Source badges
-    const badges = screen.getAllByTestId('log-source-badge')
-    expect(badges[0]).toHaveTextContent('Programme annuel')
-    expect(badges[1]).toHaveTextContent('Programme historique')
   })
 
   it('sessionLabel visible si présent', () => {
@@ -94,7 +89,7 @@ describe('HistoryPage · enriched logs', () => {
     expect(screen.getByTestId('log-title')).toHaveTextContent('Lower Force')
   })
 
-  it('annualWeekCode visible pour mother-session', () => {
+  it('cycle label visible pour mother-session', () => {
     useHistoryMock.mockReturnValue({
       logs: [MOTHER_LOG],
       clearLogs: vi.fn(),
@@ -102,7 +97,6 @@ describe('HistoryPage · enriched logs', () => {
 
     renderWithRouter(<HistoryPage />, { initialEntries: ['/history'] })
 
-    expect(screen.getByTestId('log-week-label')).toHaveTextContent('OFF_S03')
     expect(screen.getByTestId('log-cycle-label')).toHaveTextContent('Inter-saison')
   })
 

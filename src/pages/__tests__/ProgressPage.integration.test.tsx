@@ -145,11 +145,6 @@ describe('ProgressPage · adherence & recent activity', () => {
     const titles = screen.getAllByTestId('recent-title')
     expect(titles[0]).toHaveTextContent('Full Body Récupération A')
     expect(titles[1]).toHaveTextContent('Lower Force')
-
-    // Week labels
-    const weekLabels = screen.getAllByTestId('recent-week-label')
-    expect(weekLabels[0]).toHaveTextContent('OFF_S03')
-    expect(weekLabels[1]).toHaveTextContent('S2')
   })
 
   it('sections existantes (sessions tab) non cassées — état vide', () => {

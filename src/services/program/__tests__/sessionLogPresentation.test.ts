@@ -62,8 +62,8 @@ describe('sessionLogPresentation', () => {
       expect(getSessionLogPrimaryWeekLabel(BASE_LOG)).toBe('S2')
     })
 
-    it('DELOAD → Décharge', () => {
-      expect(getSessionLogPrimaryWeekLabel({ ...BASE_LOG, week: 'DELOAD' })).toBe('Décharge')
+    it('DELOAD → Semaine légère', () => {
+      expect(getSessionLogPrimaryWeekLabel({ ...BASE_LOG, week: 'DELOAD' })).toBe('Semaine légère')
     })
 
     it('mother_session → priorité à annualWeekCode', () => {

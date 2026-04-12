@@ -27,7 +27,7 @@ function GaugeArc({ score, color }: { score: number; color: string }) {
       <path
         d="M 6 50 A 44 44 0 0 1 94 50"
         fill="none"
-        stroke="rgba(255,255,255,0.08)"
+        stroke="rgba(44,24,16,0.08)"
         strokeWidth="6"
         strokeLinecap="round"
       />
@@ -73,6 +73,7 @@ export function ReadinessScoreCard({ result }: { result: ReadinessResult }) {
           </div>
         </div>
         <span className={`text-xs font-bold ${c.text} -mt-2`}>{result.label}</span>
+        <p className="text-[9px] text-fg-faint mt-1">60+ Prêt · 40-59 Prudence · &lt;40 Repos conseillé</p>
       </div>
 
       {/* Component breakdown */}

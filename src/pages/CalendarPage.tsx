@@ -428,7 +428,7 @@ function EventRow({
                   />
                 </div>
                 <p className="text-[10px] text-fg-muted">
-                  Charge ≈ {rpeInput * durationInput} UA · impact ACWR automatique
+                  Charge ≈ {rpeInput * durationInput} pts · impact ratio de charge automatique
                 </p>
               </div>
               <div className="flex gap-2">

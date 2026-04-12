@@ -15,9 +15,9 @@ describe('InlineActiveRecovery', () => {
     expect(root.getByTestId('ar-activity-swim')).toBeInTheDocument()
   })
 
-  it('shows "optionnel" header on normal rest days', () => {
+  it('shows "accélère ta récupération" header on normal rest days', () => {
     const { container } = render(<InlineActiveRecovery isRecoveryDay={false} onComplete={vi.fn()} />)
-    expect(container.textContent).toContain('optionnel')
+    expect(container.textContent).toContain('accélère ta récupération')
   })
 
   it('shows "post-match" header on recovery days', () => {

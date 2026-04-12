@@ -89,7 +89,7 @@ export function AnnualPlanningSummaryCard({
           {planningContext.cycle === 'in_season' && planningContext.mesocycleWeek != null && (
             <p className="text-[10px] font-bold text-fg-muted mt-0.5">
               {lang === 'fr'
-                ? `Semaine ${planningContext.mesocycleWeek}/4 — ${planningContext.isDeloadWeek ? 'Décharge' : `Bloc ${(planningContext.mesocycleBlock ?? 1) % 2 === 1 ? 'Force' : 'Puissance'}`}`
+                ? `Semaine ${planningContext.mesocycleWeek}/4 — ${planningContext.isDeloadWeek ? 'Semaine légère' : `Bloc ${(planningContext.mesocycleBlock ?? 1) % 2 === 1 ? 'Force' : 'Puissance'}`}`
                 : `Week ${planningContext.mesocycleWeek}/4 — ${planningContext.isDeloadWeek ? 'Deload' : `${(planningContext.mesocycleBlock ?? 1) % 2 === 1 ? 'Force' : 'Power'} Block`}`
               }
             </p>

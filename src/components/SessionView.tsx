@@ -582,7 +582,7 @@ export function SessionView({
                           {getExerciseName(exercise.exerciseId)}
                         </span>
                         {isPR && (
-                          <span className="px-1.5 py-0.5 rounded-full bg-amber-400 text-white text-[9px] font-black tracking-wider flex-shrink-0">
+                          <span className="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-300 text-[9px] font-black tracking-wider flex-shrink-0">
                             PR
                           </span>
                         )}

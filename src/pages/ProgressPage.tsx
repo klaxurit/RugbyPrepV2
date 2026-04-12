@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import {
   TrendingUp, TrendingDown, Minus, AlertCircle, BarChart2,
-  Plus, X, FlaskConical, Dumbbell, ChevronDown, Lock, Activity, Trophy
+  Plus, X, FlaskConical, Dumbbell, ChevronDown, Lock, Activity, Trophy, Zap
 } from 'lucide-react'
+import type { SessionType } from '../types/training'
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import blocksData from '../data/blocks.v1.json'
 import { getExerciseName } from '../data/exercises'
@@ -13,7 +14,7 @@ import { useHistory } from '../hooks/useHistory'
 import { useAthleteTests } from '../hooks/useAthleteTests'
 import { useProfile } from '../hooks/useProfile'
 import { getProgramHistorySummary, getRecentProgramSessions } from '../services/program/programHistoryAnalytics'
-import { getSessionLogDisplayTitle, getSessionLogPrimaryWeekLabel, getSessionLogCycleLabel } from '../services/program/sessionLogPresentation'
+import { getSessionLogDisplayTitle, getSessionLogCycleLabel } from '../services/program/sessionLogPresentation'
 import { getExerciseDeltaW1W4, getExerciseRecentHistory } from '../services/ui/progression'
 import { getExerciseSuggestion } from '../services/ui/suggestions'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
@@ -32,6 +33,26 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useUpsellTiming, isDismissed } from '../hooks/useUpsellTiming'
 import type { TrainingBlock } from '../types/training'
 import type { PhysicalTestType, PhysicalTest } from '../types/athleticTesting'
+
+// ─── Session type styles (aligned with HistoryPage) ────────────────────────
+
+const recentSessionIcon: Record<SessionType, React.ReactNode> = {
+  UPPER: <Dumbbell className="w-4 h-4" />,
+  LOWER: <Activity className="w-4 h-4" />,
+  FULL: <Zap className="w-4 h-4" />,
+  CONDITIONING: <Activity className="w-4 h-4" />,
+  RECOVERY: <Activity className="w-4 h-4" />,
+  ACTIVE_RECOVERY: <Activity className="w-4 h-4" />,
+}
+
+const recentSessionStyles: Record<SessionType, string> = {
+  UPPER: 'bg-blue-50 text-blue-600 border border-blue-200',
+  LOWER: 'bg-emerald-50 text-emerald-600 border border-emerald-200',
+  FULL: 'bg-amber-50 text-amber-600 border border-amber-200',
+  CONDITIONING: 'bg-violet-50 text-violet-600 border border-violet-200',
+  RECOVERY: 'bg-teal-50 text-teal-600 border border-teal-200',
+  ACTIVE_RECOVERY: 'bg-sky-50 text-sky-600 border border-sky-200',
+}
 
 // ─── Sessions tab — existing config ─────────────────────────────────────────
 
@@ -275,11 +296,6 @@ export function ProgressPage() {
 
       <main className="relative px-6 pt-5 space-y-6 max-w-md mx-auto">
 
-        {/* Mode démo masqué — décommenter pour debug données fictives
-        {import.meta.env.DEV && (
-          ...
-        )}
-        */}
 
         {/* Tabs */}
         <div className="flex gap-2 bg-layer-5 border border-border-app rounded-[18px] p-1">
@@ -341,28 +357,24 @@ export function ProgressPage() {
             {/* Activité récente programme */}
             {recentSessions.length > 0 && (
               <section data-testid="recent-activity-section">
-                <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Activité récente</h2>
+                <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Dernières séances</h2>
                 <div className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden divide-y divide-edge-hairline">
                   {(showAllSessions ? recentSessions : recentSessions.slice(0, 3)).map((log) => {
                     const title = getSessionLogDisplayTitle(log)
-                    const weekPart = getSessionLogPrimaryWeekLabel(log)
                     const cyclePart = getSessionLogCycleLabel(log)
                     const datePart = new Date(log.dateISO).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
 
                     return (
                       <div key={log.id} className="px-4 py-3 flex items-center justify-between gap-2" data-testid="recent-session-entry">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-8 h-8 rounded-xl bg-layer-5 flex items-center justify-center flex-shrink-0 text-fg-faint">
-                            <Activity className="w-3.5 h-3.5" />
+                          <div className={`w-9 h-9 rounded-2xl flex items-center justify-center flex-shrink-0 ${recentSessionStyles[log.sessionType]}`}>
+                            {recentSessionIcon[log.sessionType]}
                           </div>
                           <div className="min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs font-bold text-fg truncate" data-testid="recent-title">{title}</span>
-                            </div>
+                            <span className="text-xs font-bold text-fg truncate block" data-testid="recent-title">{title}</span>
                             <div className="text-[10px] text-fg-muted">
-                              <span data-testid="recent-week-label">{weekPart}</span>
-                              {cyclePart && <> · {cyclePart}</>}
-                              {' · '}{datePart}
+                              {cyclePart && <>{cyclePart} · </>}
+                              {datePart}
                             </div>
                           </div>
                         </div>
@@ -527,10 +539,13 @@ export function ProgressPage() {
                 <button
                   type="button"
                   onClick={() => setMissingOpen((o) => !o)}
-                  className="flex items-center justify-between w-full mb-3"
+                  className="flex items-center justify-between w-full mb-2"
                 >
-                  <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted">À renseigner ({missingRows.length})</h2>
-                  <ChevronDown className={`w-4 h-4 text-fg-muted transition-transform ${missingOpen ? 'rotate-180' : ''}`} />
+                  <div>
+                    <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted text-left">Exercices non loggés ({missingRows.length})</h2>
+                    <p className="text-[10px] text-fg-faint text-left mt-0.5">Logge-les pendant tes séances pour suivre ta progression</p>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-fg-muted transition-transform flex-shrink-0 ${missingOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {missingOpen && (
                   <div className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-2">
@@ -538,7 +553,7 @@ export function ProgressPage() {
                       <div key={exerciseId} className="flex items-center justify-between py-1.5 border-b border-border-app last:border-0">
                         <span className="text-sm font-medium text-fg">{getExerciseName(exerciseId, lang)}</span>
                         <span className="text-[10px] font-bold text-fg-muted bg-layer-10 px-2 py-1 rounded-full">
-                          {count} blocs
+                          dans {count} séances
                         </span>
                       </div>
                     ))}

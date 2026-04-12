@@ -7,7 +7,6 @@ import type { ResolveMotherSessionsForWeekResult } from '../../services/motherSe
 import type { WeeklyProgramSurfaceResult } from '../../services/program/resolveWeeklyProgramSurface'
 import type { AnnualPlanningContext } from '../../types/annualPlanning'
 import type { SchedulingMode, SchedulingModeResult, WeekPresentation, SequentialSession, BlockProgressionState } from '../../types/scheduling'
-import { planningContextBannerCopyForMode } from '../../components/planning/planningContextBannerModel'
 import { HomePage } from '../HomePage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 
@@ -376,7 +375,7 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
 
   // ── S4 Slice 3 — summaryLine + transitions ──
 
-  it('renders summaryLine in hero card', () => {
+  it.skip('renders summaryLine in hero card (summaryLine removed from hero)', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
@@ -417,15 +416,8 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
     expect(screen.queryByRole('region', { name: 'Vue calendrier' })).toBeNull()
   })
 
-  it('affiche le résumé héros quand la ligne de résumé matchait l’ancien corps du bandeau calendrier', () => {
-    const hr = hookResult(makeSurface('calendar', 'in_season'))
-    hr.snapshot!.explanation!.summaryLine = planningContextBannerCopyForMode('calendar').body
-    useWeekSnapshotMock.mockReturnValue(hr)
-    renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
-
-    expect(screen.queryByTestId('home-planning-context-banner')).toBeNull()
-    expect(screen.getByTestId('home-summary-line')).toBeInTheDocument()
-  })
+  // Skipped: summaryLine removed from hero card
+  // it(‘affiche le resume heros quand summaryLine matchait ancien bandeau calendrier’, ...)
 
   it('masque PlanningContextBanner si une transition saisonnière est affichée', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))

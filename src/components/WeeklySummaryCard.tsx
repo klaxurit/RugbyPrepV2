@@ -52,7 +52,7 @@ export function WeeklySummaryCard({ result }: { result: WeeklySummaryResult }) {
         {/* Total load */}
         <div>
           <p className="text-[10px] text-fg-muted font-bold">Charge</p>
-          <p className="text-sm font-black text-fg">{result.totalLoad} <span className="text-[10px] font-bold text-fg-muted">UA</span></p>
+          <p className="text-sm font-black text-fg">{result.totalLoad} <span className="text-[10px] font-bold text-fg-muted">pts</span></p>
           {result.loadChangePercent != null && (
             <div className="flex items-center gap-0.5 mt-0.5">
               {loadUp && <TrendingUp className="h-3 w-3 text-ok" />}

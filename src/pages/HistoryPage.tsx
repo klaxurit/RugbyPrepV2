@@ -8,21 +8,17 @@ import { PageHeader } from '../components/PageHeader'
 import { getProgramHistorySummary } from '../services/program/programHistoryAnalytics'
 import {
   getSessionLogDisplayTitle,
-  getSessionLogPrimaryWeekLabel,
-  getSessionLogSourceLabel,
-  getSessionLogSourceTone,
   getSessionLogCycleLabel,
-  SOURCE_BADGE_STYLES,
 } from '../services/program/sessionLogPresentation'
 import type { SessionType, CycleWeek } from '../types/training'
 
 const sessionTypeStyles: Record<SessionType, string> = {
-  UPPER: 'bg-blue-900/20 text-blue-400',
-  LOWER: 'bg-emerald-900/20 text-emerald-400',
-  FULL: 'bg-amber-900/20 text-amber-400',
-  CONDITIONING: 'bg-violet-900/20 text-violet-400',
-  RECOVERY: 'bg-teal-900/20 text-teal-400',
-  ACTIVE_RECOVERY: 'bg-sky-900/20 text-sky-400',
+  UPPER: 'bg-blue-50 text-blue-600 border border-blue-200',
+  LOWER: 'bg-emerald-50 text-emerald-600 border border-emerald-200',
+  FULL: 'bg-amber-50 text-amber-600 border border-amber-200',
+  CONDITIONING: 'bg-violet-50 text-violet-600 border border-violet-200',
+  RECOVERY: 'bg-teal-50 text-teal-600 border border-teal-200',
+  ACTIVE_RECOVERY: 'bg-sky-50 text-sky-600 border border-sky-200',
 }
 
 const sessionTypeIcon: Record<SessionType, React.ReactNode> = {
@@ -34,7 +30,7 @@ const sessionTypeIcon: Record<SessionType, React.ReactNode> = {
   ACTIVE_RECOVERY: <Activity className="w-4 h-4" />,
 }
 
-const weekLabel = (w: CycleWeek) => (w === 'DELOAD' ? 'Décharge' : `S${w.replace('W', '')}`)
+const weekLabel = (w: CycleWeek) => (w === 'DELOAD' ? 'Semaine légère' : `Semaine ${w.replace('W', '')}`)
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
@@ -62,7 +58,7 @@ export function HistoryPage() {
             <button
               type="button"
               onClick={clearLogs}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-shell-bd bg-white/10 text-xs font-bold text-shell-text-muted hover:bg-white/20 hover:text-shell-text transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/20 bg-white/15 text-xs font-bold text-shell-text-muted hover:bg-white/30 hover:text-shell-text transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
               Effacer
@@ -120,10 +116,7 @@ export function HistoryPage() {
             <div className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden divide-y divide-border-app">
               {logs.map((log) => {
                 const title = getSessionLogDisplayTitle(log)
-                const weekPart = getSessionLogPrimaryWeekLabel(log)
                 const cyclePart = getSessionLogCycleLabel(log)
-                const sourceLabel = getSessionLogSourceLabel(log)
-                const sourceTone = getSessionLogSourceTone(log)
 
                 return (
                   <div key={log.id} className="p-4 flex items-start justify-between gap-2" data-testid="history-log-entry">
@@ -132,24 +125,18 @@ export function HistoryPage() {
                         {sessionTypeIcon[log.sessionType]}
                       </div>
                       <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-bold text-fg truncate" data-testid="log-title">{title}</span>
-                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${SOURCE_BADGE_STYLES[sourceTone]}`} data-testid="log-source-badge">
-                            {sourceLabel}
-                          </span>
-                        </div>
-                        <div className="text-xs text-fg-muted italic mt-0.5">
-                          <span data-testid="log-week-label">{weekPart}</span>
-                          {cyclePart && <> · <span data-testid="log-cycle-label">{cyclePart}</span></>}
-                          {' · '}{formatDate(log.dateISO)}
+                        <span className="text-sm font-bold text-fg truncate block" data-testid="log-title">{title}</span>
+                        <div className="text-xs text-fg-muted mt-0.5">
+                          {cyclePart && <><span data-testid="log-cycle-label">{cyclePart}</span> · </>}
+                          {formatDate(log.dateISO)}
                         </div>
                         {log.notes && (
-                          <div className="text-xs text-fg-muted mt-0.5 italic">&quot;{log.notes}&quot;</div>
+                          <div className="text-xs text-fg-faint mt-0.5 italic">&quot;{log.notes}&quot;</div>
                         )}
                       </div>
                     </div>
                     <div className={`text-[10px] font-black px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5 ${
-                      log.fatigue === 'OK' ? 'bg-[#10b981]/20 text-[#10b981]' : 'bg-[#f59e0b]/20 text-[#f59e0b]'
+                      log.fatigue === 'OK' ? 'bg-ok-bg text-ok-strong' : 'bg-warn-bg text-warn-strong'
                     }`}>
                       {log.fatigue === 'OK' ? 'OK' : 'Fatigue'}
                     </div>
@@ -163,7 +150,7 @@ export function HistoryPage() {
         {/* Blocs enregistrés */}
         {blockLogs.length > 0 && (
           <section>
-            <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">Blocs enregistrés</h2>
+            <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">Détail des exercices</h2>
             <div className="space-y-2">
               {blockLogs.map((log) => (
                 <div key={log.id} className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden">

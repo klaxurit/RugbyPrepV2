@@ -66,7 +66,7 @@ export function getSessionLogPrimaryWeekLabel(log: SessionLog): string {
     return log.programContext.annualWeekCode
   }
   // Legacy or old logs: classic week label
-  if (log.week === 'DELOAD') return 'Décharge'
+  if (log.week === 'DELOAD') return 'Semaine légère'
   return `S${log.week.replace('W', '').replace('H', '')}`
 }
 

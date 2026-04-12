@@ -100,9 +100,10 @@ function RPEModalContent({
 
         {/* RPE */}
         <div>
-          <label className="text-xs font-black text-fg-muted uppercase tracking-wide block mb-3">
-            État de fatigue
+          <label className="text-xs font-black text-fg-muted uppercase tracking-wide block mb-1">
+            Ta forme du jour
           </label>
+          <p className="text-[10px] text-fg-faint mb-3">Ajuste le volume de ta semaine si tu n'es pas à 100%</p>
           <div className="grid grid-cols-2 gap-2">
             {([
               { value: 'OK', label: 'En forme' },
@@ -130,7 +131,7 @@ function RPEModalContent({
           <div className="flex items-center gap-2 mb-3">
             <Zap className="w-4 h-4 text-brand-tint" />
             <label className="text-xs font-black text-fg-muted uppercase tracking-wide">
-              Effort perçu (RPE)
+              Effort ressenti
             </label>
             {rpe && (
               <span className="ml-auto text-xs font-bold text-fg-secondary">{RPE_LABELS[rpe]}</span>
@@ -198,7 +199,7 @@ function RPEModalContent({
         {/* Charge preview */}
         {load != null && (
           <div className="flex items-center gap-3 px-4 py-3 bg-panel border border-border-app rounded-2xl">
-            <div className="text-xl font-black text-fg">{load} UA</div>
+            <div className="text-xl font-black text-fg">{load} pts</div>
             <div className="text-xs text-fg-muted">
               Charge séance<br />
               <span className="text-[10px]">RPE {rpe} × {effectiveDuration} min</span>

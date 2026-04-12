@@ -4,7 +4,6 @@ import type { ExerciseMetricType } from '../types/training'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
-import { DEMO_MODE_KEY } from '../data/fakeDataForProgress'
 
 const STORAGE_KEY = 'rugbyprep.blocklogs.v1'
 
@@ -79,7 +78,6 @@ export const useBlockLogs = () => {
   // Sync from Supabase on auth (skip if demo mode — keep localStorage data)
   useEffect(() => {
     if (!userId) return
-    if (typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1') return
     supabase
       .from('block_logs')
       .select('id, date_iso, week, session_type, block_id, block_name, entries, mother_session_id, program_source')
@@ -102,9 +100,7 @@ export const useBlockLogs = () => {
         ? log.sessionType
         : 'FULL' as BlockLog['sessionType']
       const next: BlockLog = { ...log, sessionType: safeSessionType, id }
-      const demoMode = typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1'
-
-      if (userId && !demoMode) {
+      if (userId) {
         const { data, error } = await supabase
           .from('block_logs')
           .insert(logToRow(next, userId))

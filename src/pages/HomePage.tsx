@@ -76,15 +76,24 @@ const sessionTypeLabel: Record<SessionType, string> = {
 }
 
 const sessionTypeIcon: Record<SessionType, React.ReactNode> = {
-  UPPER: <Dumbbell className="w-3 h-3 text-fg fill-current" />,
-  LOWER: <Activity className="w-3 h-3 text-fg" />,
-  FULL: <Zap className="w-3 h-3 text-fg fill-current" />,
-  CONDITIONING: <Activity className="w-3 h-3 text-fg" />,
-  RECOVERY: <Activity className="w-3 h-3 text-fg" />,
-  ACTIVE_RECOVERY: <Activity className="w-3 h-3 text-fg" />,
+  UPPER: <Dumbbell className="w-4 h-4" />,
+  LOWER: <Activity className="w-4 h-4" />,
+  FULL: <Zap className="w-4 h-4" />,
+  CONDITIONING: <Activity className="w-4 h-4" />,
+  RECOVERY: <Activity className="w-4 h-4" />,
+  ACTIVE_RECOVERY: <Activity className="w-4 h-4" />,
 }
 
-const weekLabel = (w: CycleWeek) => (w === 'DELOAD' ? 'Décharge' : w.startsWith('H') ? `Hypert. ${w.replace('H', '')}` : `Semaine ${w.replace('W', '')}`)
+const sessionTypeStyles: Record<SessionType, string> = {
+  UPPER: 'bg-blue-50 text-blue-600 border border-blue-200',
+  LOWER: 'bg-emerald-50 text-emerald-600 border border-emerald-200',
+  FULL: 'bg-amber-50 text-amber-600 border border-amber-200',
+  CONDITIONING: 'bg-violet-50 text-violet-600 border border-violet-200',
+  RECOVERY: 'bg-teal-50 text-teal-600 border border-teal-200',
+  ACTIVE_RECOVERY: 'bg-sky-50 text-sky-600 border border-sky-200',
+}
+
+const weekLabel = (w: CycleWeek) => (w === 'DELOAD' ? 'Semaine légère' : w.startsWith('H') ? `Hypertrophie ${w.replace('H', '')}` : `Semaine ${w.replace('W', '')}`)
 
 const formatDate = (iso: string) => {
   const d = new Date(iso)
@@ -213,8 +222,6 @@ export function HomePage() {
     userId,
   })
 
-  // Use summaryLine from the snapshot's explanation (includes corrections)
-  const summaryLine = snapshot?.explanation?.summaryLine ?? null
 
   const todaySessionTitle = todayDatedSession
     ? formatTitleFromMotherSessionId(todayDatedSession.sessionSlot.session.metadata.id, lang)
@@ -262,7 +269,7 @@ export function HomePage() {
         authState.status !== 'authenticated' ? (
           <Link
             to="/auth/login"
-            className="px-3 py-2 rounded-2xl border border-shell-bd bg-white/10 text-xs font-bold text-shell-text-muted hover:bg-white/20 hover:text-shell-text transition-colors"
+            className="px-3 py-2 rounded-2xl border border-white/20 bg-white/15 text-xs font-bold text-shell-text-muted hover:bg-white/30 hover:text-shell-text transition-colors"
           >
             Se connecter
           </Link>
@@ -364,11 +371,6 @@ export function HomePage() {
                   </span>
                 )}
               </div>
-              {summaryLine && (
-                <p className="text-[11px] text-fg-muted mt-1.5" data-testid="home-summary-line">
-                  {summaryLine}
-                </p>
-              )}
             </div>
 
             {/* CTA */}
@@ -627,10 +629,10 @@ export function HomePage() {
             // Build human-readable explanation
             const explanationParts: string[] = []
             if (acwr.acuteMatchCount > 0) {
-              explanationParts.push(`${acwr.acuteMatchCount} match${acwr.acuteMatchCount > 1 ? 's' : ''} (${acwr.acuteMatchLoad} UA)`)
+              explanationParts.push(`${acwr.acuteMatchCount} match${acwr.acuteMatchCount > 1 ? 's' : ''} (${acwr.acuteMatchLoad} pts)`)
             }
             if (acwr.acuteTrainingCount > 0) {
-              explanationParts.push(`${acwr.acuteTrainingCount} séance${acwr.acuteTrainingCount > 1 ? 's' : ''} (${acwr.acuteTrainingLoad} UA)`)
+              explanationParts.push(`${acwr.acuteTrainingCount} séance${acwr.acuteTrainingCount > 1 ? 's' : ''} (${acwr.acuteTrainingLoad} pts)`)
             }
 
             // Why is the ratio high/low?
@@ -705,7 +707,7 @@ export function HomePage() {
                   <div className="mt-3 space-y-3 pt-3 border-t border-border-app">
                     {/* Source breakdown */}
                     <div className="space-y-2">
-                      <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider">7 derniers jours — {acwr.acuteLoad} UA</p>
+                      <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider">7 derniers jours — {acwr.acuteLoad} pts</p>
                       {acwr.acuteLoad > 0 && (
                         <div className="flex h-2 rounded-full overflow-hidden">
                           {acwr.acuteMatchLoad > 0 && (
@@ -735,7 +737,7 @@ export function HomePage() {
                     {/* Chronic context */}
                     <div className="flex items-center justify-between text-[10px]">
                       <span className="text-fg-muted">Charge habituelle</span>
-                      <span className="font-bold text-fg-soft">{Math.round(acwr.chronicLoad)} UA/sem</span>
+                      <span className="font-bold text-fg-soft">{Math.round(acwr.chronicLoad)} pts/sem</span>
                     </div>
 
                     {/* RPE explainer */}
@@ -762,7 +764,7 @@ export function HomePage() {
                   <p className="text-xs text-fg-muted">
                     {acwr.weeksOfData === 0
                       ? 'Disponible après ta 1re semaine de séances.'
-                      : `Sem. ${acwr.weeksOfData}/2 — encore ${2 - acwr.weeksOfData} sem. pour activer l'ACWR.`}
+                      : `Sem. ${acwr.weeksOfData}/2 — encore ${2 - acwr.weeksOfData} sem. pour activer le ratio de charge.`}
                   </p>
                 </div>
               </div>
@@ -845,7 +847,7 @@ export function HomePage() {
                   </button>
                 </div>
                 <p className="text-xs text-critical-body leading-relaxed">
-                  Ton ratio de charge (ACWR {acwr.acwr.toFixed(2)}) et ta fraîcheur neuromusculaire (CMJ {pctDrop.toFixed(0)}% sous ta baseline) indiquent un risque élevé. Deload recommandé cette semaine.
+                  Ton ratio de charge ({acwr.acwr.toFixed(2)}) et ta fraîcheur neuromusculaire (CMJ {pctDrop.toFixed(0)}% sous ta baseline) indiquent un risque élevé. Semaine légère recommandée.
                 </p>
               </div>
             </section>
@@ -872,7 +874,7 @@ export function HomePage() {
                 {recentLogs.map((log) => (
                   <div key={log.id} className="flex items-center justify-between group">
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 bg-layer-10 rounded-2xl flex items-center justify-center text-fg-muted group-hover:bg-brand-soft group-hover:text-brand-tint transition-colors">
+                      <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 ${sessionTypeStyles[log.sessionType]}`}>
                         {sessionTypeIcon[log.sessionType]}
                       </div>
                       <div>

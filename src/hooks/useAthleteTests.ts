@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import type { PhysicalTest, PhysicalTestType } from '../types/athleticTesting'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
-import { DEMO_MODE_KEY } from '../data/fakeDataForProgress'
 
 const STORAGE_KEY = 'rugbyprep.athletictests.v1'
 
@@ -78,7 +77,6 @@ export const useAthleteTests = () => {
   // Sync from Supabase on auth (skip if demo mode — keep localStorage data)
   useEffect(() => {
     if (!userId) return
-    if (typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1') return
     supabase
       .from('athletic_tests')
       .select('id, date_iso, type, value, estimated_from, notes')
@@ -95,9 +93,7 @@ export const useAthleteTests = () => {
     async (test: Omit<PhysicalTest, 'id'>) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
       const next: PhysicalTest = { ...test, id }
-      const demoMode = typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1'
-
-      if (userId && !demoMode) {
+      if (userId) {
         const { data, error } = await supabase
           .from('athletic_tests')
           .insert(testToRow(next, userId))
@@ -126,8 +122,7 @@ export const useAthleteTests = () => {
 
   const deleteTest = useCallback(
     async (id: string) => {
-      const demoMode = typeof window !== 'undefined' && window.localStorage.getItem(DEMO_MODE_KEY) === '1'
-      if (userId && !demoMode) {
+      if (userId) {
         await supabase.from('athletic_tests').delete().eq('id', id)
       }
       setTests((current) => {

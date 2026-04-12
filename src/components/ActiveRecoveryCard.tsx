@@ -19,11 +19,11 @@ export function InlineActiveRecovery({ isRecoveryDay, onComplete }: InlineActive
   return (
     <div data-testid="inline-active-recovery" className="space-y-1.5">
       <p className="text-[9px] font-bold text-info/75 uppercase tracking-wider">
-        {isRecoveryDay ? 'Récup post-match' : 'Récup active · optionnel'}
+        {isRecoveryDay ? 'Récup post-match · accélère ta récupération' : 'Récup active · accélère ta récupération'}
       </p>
 
-      {/* Compact activity chips — wrap on narrow screens */}
-      <div className="flex flex-wrap gap-1">
+      {/* Activity chips — grille 2×2 */}
+      <div className="grid grid-cols-2 gap-1">
         {ACTIVE_RECOVERY_ACTIVITIES.map((a) => (
           <button
             key={a.id}

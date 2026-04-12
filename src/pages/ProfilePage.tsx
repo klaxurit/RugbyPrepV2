@@ -240,7 +240,7 @@ export function ProfilePage() {
           <button
             type="button"
             onClick={resetProfile}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-shell-bd bg-white/10 text-xs font-bold text-shell-text-muted hover:bg-white/20 hover:text-shell-text transition-colors rf-focus-ring"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/20 bg-white/15 text-xs font-bold text-shell-text-muted hover:bg-white/30 hover:text-shell-text transition-colors rf-focus-ring"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Réinitialiser

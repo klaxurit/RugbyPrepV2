@@ -249,7 +249,7 @@ export function WeekPage() {
           <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
             <p className="text-sm font-bold text-warn">Programme en préparation</p>
             <p className="text-xs text-fg-soft">
-              Le plan annuel n'a pas pu être résolu pour cette semaine. Vérifie ton profil ou réessaie après une mise à jour.
+              Le programme n'a pas pu être généré pour cette semaine. Vérifie ton profil.
             </p>
           </section>
         )}
@@ -329,7 +329,7 @@ export function WeekPage() {
                   <p className="text-xs font-black text-warn">
                     Match hier{unmatchedYesterdayMatch.opponent ? ` vs ${unmatchedYesterdayMatch.opponent}` : ''} — enregistre ta charge
                   </p>
-                  <p className="text-[10px] text-warn-strong mt-0.5">Mise à jour ACWR → Calendrier</p>
+                  <p className="text-[10px] text-warn-strong mt-0.5">Mise à jour du ratio de charge → Calendrier</p>
                 </div>
               </Link>
             )}
@@ -338,7 +338,7 @@ export function WeekPage() {
 
             {/* Fatigue check-in discret */}
             <div className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-5 px-4 py-2.5">
-              <span className="text-[11px] font-bold text-fg-soft">Forme</span>
+              <span className="text-[11px] font-bold text-fg-soft">Ta forme du jour</span>
               <div className="flex gap-1.5 bg-layer-10 rounded-xl p-0.5">
                 {(['OK', 'FATIGUE'] as const).map((f) => (
                   <button
