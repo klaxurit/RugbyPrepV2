@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import type { AnnualPlanningContext } from '../types/annualPlanning'
 import type { CalendarEvent, UserProfile } from '../types/training'
 import { detectSeasonTransitions, type SeasonTransition } from '../services/season/detectSeasonTransitions'
@@ -28,8 +28,11 @@ export function useSeasonTransitions(params: {
   profile?: UserProfile
 }) {
   const { planningContext, today, visibleEvents, profile } = params
+  const [dismissCount, setDismissCount] = useState(0)
 
   const transition = useMemo((): SeasonTransition | null => {
+    // dismissCount dependency forces re-evaluation after dismiss
+    void dismissCount
     if (!planningContext) return null
     return detectSeasonTransitions({
       planningContext,
@@ -52,6 +55,7 @@ export function useSeasonTransitions(params: {
     profile?.seasonTransitionState?.activeDeferral,
     profile?.seasonTransitionState?.offseasonMatchResumeAckEventId,
     profile?.planningAnchors?.returnToTeamTrainingAt,
+    dismissCount,
   ])
 
   const dismiss = useCallback((type: string) => {
@@ -62,6 +66,7 @@ export function useSeasonTransitions(params: {
     const current = readDismissed()
     current[type] = d.toISOString().slice(0, 10)
     writeDismissed(current)
+    setDismissCount((c) => c + 1)
   }, [today])
 
   return { transition, dismiss }

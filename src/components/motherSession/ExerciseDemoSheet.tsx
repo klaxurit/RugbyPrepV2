@@ -74,18 +74,18 @@ export function ExerciseDemoSheet({
         aria-modal="true"
         aria-labelledby="exercise-demo-title"
         data-testid="exercise-demo-sheet"
-        className="w-full max-w-md overflow-hidden rounded-[2rem] border border-white/10 bg-[#1a100c] shadow-2xl shadow-black/50"
+        className="w-full max-w-md overflow-hidden rounded-[2rem] border border-border-app bg-app shadow-2xl shadow-black/50"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-4">
+        <div className="flex items-start justify-between gap-4 border-b border-border-app px-5 py-4">
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#ff6b35]/80">
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-brand-tint">
               {labels.title}
             </p>
-            <h3 id="exercise-demo-title" className="mt-1 text-lg font-black text-white">
+            <h3 id="exercise-demo-title" className="mt-1 text-lg font-black text-fg">
               {demo.title}
             </h3>
-            <p className="mt-2 text-xs leading-relaxed text-white/50">
+            <p className="mt-2 text-xs leading-relaxed text-fg-muted">
               {labels.helper}
             </p>
           </div>
@@ -93,7 +93,7 @@ export function ExerciseDemoSheet({
             type="button"
             onClick={onClose}
             aria-label={lang === 'fr' ? 'Fermer la fiche exercice' : 'Close exercise guide'}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/65 transition-colors hover:border-white/20 hover:text-white"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border-app bg-layer-5 text-fg-muted transition-colors hover:border-border-app hover:text-fg"
           >
             <X className="h-4 w-4" />
           </button>
@@ -101,10 +101,10 @@ export function ExerciseDemoSheet({
 
         <div className="max-h-[70vh] space-y-5 overflow-y-auto px-5 py-5">
           <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-fg-faint">
               {labels.video}
             </p>
-            <div className="overflow-hidden rounded-[20px] border border-white/10 bg-black">
+            <div className="overflow-hidden rounded-[20px] border border-border-app bg-black">
               <div className="aspect-video">
                 <iframe
                   src={demo.youtubeEmbedUrl}
@@ -121,14 +121,14 @@ export function ExerciseDemoSheet({
 
           {demo.equipment.length > 0 ? (
             <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-fg-faint">
                 {labels.equipment}
               </p>
               <div className="flex flex-wrap gap-2">
                 {demo.equipment.map((item) => (
                   <span
                     key={item}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold text-white/75"
+                    className="rounded-full border border-border-app bg-layer-5 px-3 py-1 text-[11px] font-bold text-fg-secondary"
                   >
                     {EQUIPMENT_LABELS[item]?.[lang] ?? item}
                   </span>
@@ -139,14 +139,14 @@ export function ExerciseDemoSheet({
 
           {demo.cues.length > 0 ? (
             <div className="space-y-2.5">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-fg-faint">
                 {labels.cues}
               </p>
               <ul className="space-y-2">
                 {demo.cues.map((cue) => (
                   <li
                     key={cue}
-                    className="rounded-[20px] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm leading-relaxed text-white/80"
+                    className="rounded-[20px] border border-border-app bg-layer-5 px-4 py-3 text-sm leading-relaxed text-fg-secondary"
                   >
                     {cue}
                   </li>
@@ -157,10 +157,10 @@ export function ExerciseDemoSheet({
 
           {demo.notes ? (
             <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-fg-faint">
                 {labels.notes}
               </p>
-              <div className="rounded-[20px] border border-[#ff6b35]/15 bg-[#ff6b35]/[0.06] px-4 py-3 text-sm leading-relaxed text-white/75">
+              <div className="rounded-[20px] border border-brand-border bg-brand-soft px-4 py-3 text-sm leading-relaxed text-fg-secondary">
                 {demo.notes}
               </div>
             </div>
@@ -170,7 +170,7 @@ export function ExerciseDemoSheet({
             href={demo.youtubeWatchUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-center gap-2 rounded-[1.2rem] bg-[#ff6b35] px-4 py-3 text-sm font-black text-white shadow-lg shadow-[#ff6b35]/20 transition-colors hover:bg-[#e55a2b]"
+            className="flex items-center justify-center gap-2 rounded-[1.2rem] bg-brand px-4 py-3 text-sm font-black text-on-brand shadow-lg shadow-brand-glow transition-colors hover:bg-brand-hover"
           >
             {labels.openVideo}
             <ExternalLink className="h-3.5 w-3.5" />

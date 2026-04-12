@@ -31,7 +31,7 @@ export function MobilityPage() {
 
   if (hasHardBlock) {
     return (
-      <div className="min-h-screen bg-app font-sans text-white pb-24">
+      <div className="min-h-screen bg-app font-sans text-fg pb-24">
         <PageHeader title={mobilityPageTitle} backTo="/week" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="rounded-2xl border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
@@ -46,7 +46,7 @@ export function MobilityPage() {
             </ul>
             <a
               href="mailto:bonjour@rugbyforge.fr?subject=Support%20RugbyForge"
-              className="inline-block text-xs text-white/40 hover:text-white/60 mt-1"
+              className="inline-block text-xs text-fg-muted hover:text-fg-secondary mt-1"
             >
               Un souci ? Contacte-nous →
             </a>
@@ -60,7 +60,7 @@ export function MobilityPage() {
   const session = buildMobilitySession(profile)
 
   return (
-    <div className="min-h-screen bg-app font-sans text-white pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title={mobilityPageTitle} backTo="/week" />
@@ -85,7 +85,7 @@ export function MobilityPage() {
         {session.blocks.map(({ block, version }, idx) => (
           <section
             key={block.blockId}
-            className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-4"
+            className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-4"
           >
             {/* Block header */}
             <div className="flex items-center gap-3">
@@ -93,7 +93,7 @@ export function MobilityPage() {
                 <span className="text-xs font-black text-ok">{idx + 1}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-sm font-black text-white leading-tight">{block.name}</h2>
+                <h2 className="text-sm font-black text-fg leading-tight">{block.name}</h2>
                 <p className="mt-0.5 text-[10px] text-ok">
                   {version.sets} série
                   {' · '}
@@ -114,9 +114,9 @@ export function MobilityPage() {
                 <div key={ex.exerciseId} className="flex items-start gap-3 rounded-2xl bg-ok-bg-muted p-3">
                   <div className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-ok" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-white/80">{getExerciseName(ex.exerciseId, lang)}</p>
+                    <p className="text-xs font-bold text-fg-secondary">{getExerciseName(ex.exerciseId, lang)}</p>
                     {ex.notes && (
-                      <p className="text-[10px] text-white/40 mt-0.5 leading-relaxed">{ex.notes}</p>
+                      <p className="text-[10px] text-fg-muted mt-0.5 leading-relaxed">{ex.notes}</p>
                     )}
                   </div>
                 </div>
@@ -125,7 +125,7 @@ export function MobilityPage() {
 
             {/* Coaching notes */}
             {block.coachingNotes && (
-              <p className="border-t border-white/10 pt-3 text-[10px] italic leading-relaxed text-ok opacity-70">
+              <p className="border-t border-border-app pt-3 text-[10px] italic leading-relaxed text-ok opacity-70">
                 {block.coachingNotes}
               </p>
             )}
@@ -133,8 +133,8 @@ export function MobilityPage() {
         ))}
 
         {session.blocks.length === 0 && (
-          <div className="p-4 bg-white/5 border border-white/10 rounded-2xl">
-            <p className="text-xs text-white/40 text-center">Aucun bloc de mobilité disponible.</p>
+          <div className="p-4 bg-layer-5 border border-border-app rounded-2xl">
+            <p className="text-xs text-fg-muted text-center">Aucun bloc de mobilité disponible.</p>
           </div>
         )}
 

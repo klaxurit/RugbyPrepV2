@@ -21,8 +21,8 @@ export function MotherSessionCollapsible({
 
   const shell =
     variant === 'nested'
-      ? 'rounded-xl border border-white/10 bg-black/20'
-      : 'rounded-2xl border border-white/10 bg-white/5'
+      ? 'rounded-xl border border-border-app bg-layer-5'
+      : 'rounded-2xl border border-border-app bg-layer-5'
 
   return (
     <div className={`overflow-hidden ${shell} ${className}`.trim()}>
@@ -35,14 +35,14 @@ export function MotherSessionCollapsible({
         <span
           className={
             variant === 'nested'
-              ? 'text-sm font-medium text-white/80'
-              : 'text-sm font-semibold text-white'
+              ? 'text-sm font-medium text-fg-secondary'
+              : 'text-sm font-semibold text-fg'
           }
         >
           {title}
         </span>
         <ChevronDown
-          className={`h-5 w-5 shrink-0 text-[#ff6b35] transition-transform duration-200 ease-out ${
+          className={`h-5 w-5 shrink-0 text-brand-tint transition-transform duration-200 ease-out ${
             open ? 'rotate-180' : ''
           }`}
           aria-hidden
@@ -52,8 +52,8 @@ export function MotherSessionCollapsible({
         <div
           className={
             variant === 'nested'
-              ? 'border-t border-white/10 px-3 pb-3 pt-1 text-sm text-white/70'
-              : 'border-t border-white/10 px-4 pb-4 pt-1 text-sm text-white/70'
+              ? 'border-t border-border-app px-3 pb-3 pt-1 text-sm text-fg-secondary'
+              : 'border-t border-border-app px-4 pb-4 pt-1 text-sm text-fg-secondary'
           }
         >
           {children}

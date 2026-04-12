@@ -1,11 +1,24 @@
 @import './theme-tokens.css';
 @import 'tailwindcss';
 
+/* ── Gontserrat — polices locales ── */
+@font-face { font-family: 'Gontserrat'; src: url('../fonts/gontserrat-light.ttf') format('truetype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Gontserrat'; src: url('../fonts/gontserrat-regular.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Gontserrat'; src: url('../fonts/gontserrat-medium.ttf') format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Gontserrat'; src: url('../fonts/gontserrat-semi-bold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Gontserrat'; src: url('../fonts/gontserrat-italic.ttf') format('truetype'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Gontserrat'; src: url('../fonts/gontserrat-semi-bold-italic.ttf') format('truetype'); font-weight: 600; font-style: italic; font-display: swap; }
+
 /* Pont Tailwind v4 → tokens sémantiques (évite bg-[#…] / récursion --color-* ) */
 @theme {
-  --font-family-sans: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-sans: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --color-app: var(--color-bg-app);
+  /* Shell (header/footer) — bordeaux + crème */
+  --color-shell: var(--color-shell-bg);
+  --color-shell-text: var(--color-shell-fg);
+  --color-shell-text-muted: var(--color-shell-fg-muted);
+  --color-shell-bd: var(--color-shell-border);
   /* bg-panel / bg-glass : ponts vers --color-surface et --color-surface-glass (tokens html) */
   --color-panel: var(--color-surface);
   --color-glass: var(--color-surface-glass);
@@ -59,6 +72,13 @@
   --color-tone-orange: var(--color-orange-fg);
   --color-tone-orange-bg: var(--color-orange-surface);
   --color-tone-orange-bd: var(--color-orange-border);
+  /* Match — événement bordeaux */
+  --color-match: var(--color-match-fg);
+  --color-match-bg: var(--color-match-surface);
+  --color-match-bd: var(--color-match-border);
+  --color-match-bar: var(--color-match-accent);
+  /* Logo monochrome */
+  --color-logo: var(--color-logo-fg);
   --color-meter-underload: var(--color-acwr-bar-underload);
   --color-meter-optimal: var(--color-acwr-bar-optimal);
   --color-meter-caution: var(--color-acwr-bar-caution);
@@ -111,7 +131,7 @@
 @layer base {
   body {
     margin: 0;
-    font-family: 'Lexend', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--color-bg-app);
     color: var(--color-text-primary);
     -webkit-font-smoothing: antialiased;

@@ -1,24 +1,21 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav } from '../components/BottomNav'
 import { posthog } from '../services/analytics/posthog'
 import { motion } from 'framer-motion'
 import {
-  LogOut,
   Play,
   Clock,
   Activity,
   Calendar,
   Zap,
   ChevronRight,
-  BarChart2,
   History,
   AlertTriangle,
   CheckCircle2,
   Dumbbell,
   TrendingUp,
   Trophy,
-  Swords,
   ChevronDown,
   Info,
   MessageSquare,
@@ -47,7 +44,7 @@ import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
 import { ReadinessScoreSkeleton, WeeklySummarySkeleton } from '../components/SkeletonCard'
 import { getToday } from '../services/ui/debugDateOverride'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
-import type { CycleWeek, SessionType, SeasonPhase, SeasonMode, TransitionEntry } from '../types/training'
+import type { CycleWeek, SessionType, SeasonPhase, TransitionEntry } from '../types/training'
 import { appendTransitionEntry, computeDeferralExpiry } from '../services/season/transitionJournal'
 import type { SequentialSession } from '../types/scheduling'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
@@ -58,7 +55,7 @@ import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 const seasonPhaseLabel: Record<SeasonPhase, { label: string; color: string; bg: string }> = {
   'off-season': { label: 'Inter-saison', color: 'text-badge-muted-fg', bg: 'bg-badge-muted-bg' },
   'pre-season': { label: 'Pré-saison', color: 'text-warn-strong', bg: 'bg-warn-bg' },
-  'in-season': { label: 'En saison', color: 'text-ok', bg: 'bg-ok-bg-muted' },
+  'in-season': { label: 'En saison', color: 'text-brand-tint', bg: 'bg-brand-soft' },
   'playoffs': { label: 'Playoffs', color: 'text-danger', bg: 'bg-danger-bg' },
 }
 
@@ -101,11 +98,6 @@ const LEVEL_DURATION: Record<string, string> = {
   performance: '~55 min',
 }
 
-const SEASON_MODE_LABEL: Record<SeasonMode, string> = {
-  in_season:  '⚡ Saison',
-  off_season: '🌿 Inter-saison',
-  pre_season: '🔥 Pré-saison',
-}
 
 const TRAINING_LEVEL_LABEL: Record<string, string> = {
   starter:     '🌱 Fondations',
@@ -121,7 +113,7 @@ function getVisibleTrainingLevel(level: string | undefined): 'starter' | 'perfor
 
 export function HomePage() {
   const { profile, updateProfile } = useProfile()
-  const { authState, signOut } = useAuth()
+  const { authState } = useAuth()
   const { fatigue } = useFatigue()
   const { week } = useWeek()
   const { logs } = useHistory()
@@ -247,6 +239,7 @@ export function HomePage() {
     () => new Date(`${today}T12:00:00`).getTime(),
     [today],
   )
+  const [injuryDismissed, setInjuryDismissed] = useState(false)
 
   const visibleTrainingLevel = getVisibleTrainingLevel(profile.trainingLevel)
   // Adapt duration/frequency to the actual programme (recovery sessions are shorter)
@@ -257,11 +250,6 @@ export function HomePage() {
   const sessionDuration = isRecoveryWeek ? '~30 min' : LEVEL_DURATION[profile.trainingLevel ?? 'builder']
   const trainingLevelLabel = TRAINING_LEVEL_LABEL[visibleTrainingLevel]
 
-  // Use planning context as single source of truth for display season mode
-  const currentSeasonMode: import('../types/training').SeasonMode =
-    seasonPhase === 'off-season' ? 'off_season'
-    : seasonPhase === 'pre-season' ? 'pre_season'
-    : 'in_season'
 
   return (
     <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
@@ -271,42 +259,39 @@ export function HomePage() {
       <PageHeader
         title={lang === 'fr' ? 'Accueil' : 'Home'}
         right={
-        authState.status === 'authenticated' && authState.user ? (
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={signOut}
-              className="w-9 h-9 rounded-2xl border border-border-app bg-glass flex items-center justify-center text-fg-muted hover:text-brand hover:border-brand-border transition-colors"
-              aria-label="Se déconnecter"
-              title="Se déconnecter"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        ) : (
+        authState.status !== 'authenticated' ? (
           <Link
             to="/auth/login"
-            className="px-3 py-2 rounded-2xl border border-border-app bg-glass text-xs font-bold text-fg-muted hover:border-brand-border hover:text-brand transition-colors"
+            className="px-3 py-2 rounded-2xl border border-shell-bd bg-white/10 text-xs font-bold text-shell-text-muted hover:bg-white/20 hover:text-shell-text transition-colors"
           >
             Se connecter
           </Link>
-        )}
+        ) : undefined}
       />
 
       <main className="px-6 pt-6 space-y-6 max-w-md mx-auto relative">
 
-        {/* ── Hero Session Card ── */}
+        {/* ── Hero Card : Saison + Séance + CTA ── */}
         <section data-testid="home-hero-card">
           <div className="bg-glass border border-border-app rounded-[24px] p-5 space-y-4">
-            {/* Header: badges */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+            {/* Row 1: Season phase + match info */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                {(() => {
+                  const cfg = seasonPhaseLabel[seasonPhase]
+                  return (
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wide ${cfg.bg} ${cfg.color}`}>
+                      <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+                      {cfg.label}
+                    </span>
+                  )
+                })()}
                 {isSequential && blockProgression?.currentBlockLabel ? (
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-medium text-brand">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-medium text-brand-tint">
                     {blockProgression.currentBlockLabel}
                   </span>
                 ) : (
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-medium text-brand">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-medium text-brand-tint">
                     {weekLabel(week)}
                   </span>
                 )}
@@ -314,11 +299,31 @@ export function HomePage() {
                   {trainingLevelLabel}
                 </span>
               </div>
-              <span className="text-[10px] font-bold text-fg-faint flex items-center gap-1">
-                <Activity className="w-3 h-3" />
-                {SEASON_MODE_LABEL[currentSeasonMode]}
-              </span>
             </div>
+
+            {/* Match day or next match inline */}
+            {isMatchDay && (
+              <div className="flex items-center gap-2 py-2 px-3 bg-warn-bg border border-warn-bd rounded-2xl">
+                <Trophy className="w-4 h-4 text-warn-strong fill-current" />
+                <span className="text-xs font-black text-warn-strong uppercase tracking-wide">Jour de match !</span>
+              </div>
+            )}
+            {nextMatch && !isMatchDay && (
+              <Link to="/calendar" className="block">
+                <div className="flex items-center gap-3 py-2 px-3 bg-layer-5 rounded-2xl group">
+                  <div className="w-8 h-8 rounded-xl bg-warn-bg flex items-center justify-center flex-shrink-0">
+                    <Trophy className="w-3.5 h-3.5 text-warn-strong" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-bold text-fg">Prochain match — J−{diffDays(nextMatch.date)}</span>
+                    {nextMatch.opponent && (
+                      <span className="text-[10px] text-fg-muted ml-2">vs {nextMatch.opponent}</span>
+                    )}
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-fg-faint group-hover:text-brand-tint transition-colors" />
+                </div>
+              </Link>
+            )}
 
             {/* Session info */}
             <div className="space-y-1">
@@ -567,7 +572,7 @@ export function HomePage() {
           <div className="grid grid-cols-3 gap-3">
             {/* Week / Block */}
             <div className="bg-glass border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-2">
-              <div className="p-2 rounded-2xl bg-layer-10 text-success-app">
+              <div className="p-2 rounded-2xl bg-layer-10 text-brand-tint">
                 <Calendar className="w-5 h-5" />
               </div>
               <div className="text-lg font-black tracking-tight text-fg leading-none" data-testid="home-stats-cycle">
@@ -596,7 +601,7 @@ export function HomePage() {
 
             {/* Sessions */}
             <div className="bg-glass border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-2">
-              <div className="p-2 rounded-2xl bg-brand-soft text-brand">
+              <div className="p-2 rounded-2xl bg-brand-soft text-brand-tint">
                 <TrendingUp className="w-5 h-5" />
               </div>
               <div className="text-lg font-black tracking-tight text-fg leading-none" data-testid="home-stats-sessions">
@@ -766,7 +771,7 @@ export function HomePage() {
                   <span className="text-[10px] font-bold text-fg-muted uppercase tracking-wide">
                     {acwr.weeksOfData === 0 ? 'Étape 1 sur 2' : 'Étape 2 sur 2'}
                   </span>
-                  <span className="text-[10px] font-bold text-brand">
+                  <span className="text-[10px] font-bold text-brand-tint">
                     {acwr.weeksOfData === 0 ? 'Note ton RPE après chaque séance' : 'Continue — presque là !'}
                   </span>
                 </div>
@@ -795,7 +800,7 @@ export function HomePage() {
         </section>
 
         {/* ── Premium: Injury risk alert (T2.3) ── */}
-        {isPremium && (() => {
+        {isPremium && !injuryDismissed && (() => {
           // Conditions: ACWR > 1.3 AND CMJ regression > 10% vs baseline AND >= 3 CMJ measures
           if (!acwr.hasSufficientData || acwr.acwr == null || acwr.acwr <= 1.3) return null
 
@@ -832,6 +837,7 @@ export function HomePage() {
                     type="button"
                     onClick={() => {
                       try { localStorage.setItem(dismissKey, String(Date.now())) } catch { /* ignore */ }
+                      setInjuryDismissed(true)
                     }}
                     className="text-[10px] text-fg-faint hover:text-fg-soft"
                   >
@@ -846,86 +852,7 @@ export function HomePage() {
           )
         })()}
 
-        {/* ── Season + Next Match ── */}
-        <section>
-          <div className="bg-glass border border-border-app rounded-[2rem] p-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-fg">Saison</h3>
-              {(() => {
-                const cfg = seasonPhaseLabel[seasonPhase]
-                return (
-                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wide ${cfg.bg} ${cfg.color}`}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
-                    {cfg.label}
-                  </span>
-                )
-              })()}
-            </div>
-
-            {isMatchDay && (
-              <div className="flex items-center gap-2 py-2 px-3 bg-danger-bg rounded-2xl">
-                <Trophy className="w-4 h-4 text-brand fill-current" />
-                <span className="text-xs font-black text-danger uppercase tracking-wide">Jour de match !</span>
-              </div>
-            )}
-
-            {nextMatch && !isMatchDay && (
-              <Link to="/calendar">
-                <div className="flex items-center gap-3 group">
-                  <div className="w-10 h-10 rounded-2xl bg-danger-bg flex items-center justify-center flex-shrink-0">
-                    <Trophy className="w-4 h-4 text-brand" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-xs font-bold text-fg">
-                      Prochain match — J−{diffDays(nextMatch.date)}
-                    </div>
-                    {nextMatch.opponent && (
-                      <div className="text-[10px] text-fg-muted flex items-center gap-1">
-                        <Swords className="w-2.5 h-2.5" />
-                        vs {nextMatch.opponent}
-                      </div>
-                    )}
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-fg-faint group-hover:text-brand transition-colors" />
-                </div>
-              </Link>
-            )}
-
-            {!nextMatch && currentSeasonMode !== 'off_season' && (
-              <Link to="/calendar">
-                <div className="flex items-center gap-3 text-fg-muted hover:text-brand transition-colors">
-                  <Calendar className="w-4 h-4" />
-                  <span className="text-xs font-bold">Ajoute tes matchs →</span>
-                </div>
-              </Link>
-            )}
-          </div>
-        </section>
-
-        {/* ── Quick Access ── */}
-        <section>
-          <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Accès Rapide</h2>
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { to: '/week', icon: Dumbbell, label: 'Programme', color: 'text-brand', bg: 'bg-brand-soft' },
-              { to: '/calendar', icon: Calendar, label: 'Calendrier', color: 'text-info', bg: 'bg-info-bg' },
-              { to: '/progress', icon: BarChart2, label: 'Progression', color: 'text-warn-strong', bg: 'bg-warn-bg' },
-            ].map(({ to, icon: Icon, label, color, bg }) => (
-              <Link key={to} to={to}>
-                <motion.div
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="bg-glass border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-2 cursor-pointer"
-                >
-                  <div className={`p-2.5 rounded-2xl ${bg} ${color}`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className="text-[11px] font-bold text-fg text-center leading-tight">{label}</span>
-                </motion.div>
-              </Link>
-            ))}
-          </div>
-        </section>
+        {/* Bloc "Accès Rapide" supprimé — le footer navigation couvre désormais ces liens */}
 
         {/* ── Recent History ── */}
         {recentLogs.length > 0 && (
@@ -935,7 +862,7 @@ export function HomePage() {
                 <h3 className="font-bold text-fg">Dernières séances</h3>
                 <Link
                   to="/history"
-                  className="text-xs font-bold text-fg-muted flex items-center hover:text-brand transition-colors"
+                  className="text-xs font-bold text-fg-muted flex items-center hover:text-brand-tint transition-colors"
                 >
                   Tout voir <ChevronRight className="w-4 h-4" />
                 </Link>
@@ -945,7 +872,7 @@ export function HomePage() {
                 {recentLogs.map((log) => (
                   <div key={log.id} className="flex items-center justify-between group">
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 bg-layer-10 rounded-2xl flex items-center justify-center text-fg-muted group-hover:bg-brand-soft group-hover:text-brand transition-colors">
+                      <div className="w-11 h-11 bg-layer-10 rounded-2xl flex items-center justify-center text-fg-muted group-hover:bg-brand-soft group-hover:text-brand-tint transition-colors">
                         {sessionTypeIcon[log.sessionType]}
                       </div>
                       <div>
@@ -979,7 +906,7 @@ export function HomePage() {
                 <p className="text-xs text-fg-muted mt-0.5">Lance ta première séance pour commencer à tracker ta progression.</p>
               </div>
               <Link to="/week">
-                <span className="text-xs font-black text-brand uppercase tracking-wide">Commencer maintenant →</span>
+                <span className="text-xs font-black text-brand-tint uppercase tracking-wide">Commencer maintenant →</span>
               </Link>
             </div>
           </section>
@@ -994,7 +921,7 @@ export function HomePage() {
           onClick={() => posthog.capture('feedback_clicked', { source: 'home' })}
           className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-brand/10 border border-brand/20"
         >
-          <MessageSquare className="w-5 h-5 text-brand shrink-0" />
+          <MessageSquare className="w-5 h-5 text-brand-tint shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-xs font-bold text-fg">Tu es en bêta !</p>
             <p className="text-[11px] text-fg-muted">Un bug, une idée ? Ton retour compte.</p>

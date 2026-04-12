@@ -34,7 +34,7 @@ function getProgressionIndicator(
       return { icon: '↑', color: 'text-emerald-400', label: 'Progression' }
     }
     if (currentReps < lastReps) return { icon: '↓', color: 'text-red-400', label: 'Regression' }
-    return { icon: '→', color: 'text-white/40', label: 'Stable' }
+    return { icon: '→', color: 'text-fg-muted', label: 'Stable' }
   }
 
   // Weighted: compare load
@@ -47,10 +47,10 @@ function getProgressionIndicator(
       return { icon: '↑', color: 'text-emerald-400', label: 'Progression' }
     }
     if (currentLoad < lastLoad) return { icon: '↓', color: 'text-red-400', label: 'Regression' }
-    return { icon: '→', color: 'text-white/40', label: 'Stable' }
+    return { icon: '→', color: 'text-fg-muted', label: 'Stable' }
   }
 
-  return { icon: '○', color: 'text-white/20', label: 'Pas de comparaison' }
+  return { icon: '○', color: 'text-fg-ghost', label: 'Pas de comparaison' }
 }
 
 export type EntryDraft = {
@@ -94,7 +94,7 @@ function NumberInput({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-[10px] font-bold uppercase tracking-wider text-white/40">{label}</label>
+      <label className="text-[10px] font-bold uppercase tracking-wider text-fg-muted">{label}</label>
       <input
         type="number"
         inputMode="decimal"
@@ -109,7 +109,7 @@ function NumberInput({
           onChange(Math.max(min, n))
         }}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/20 focus:border-[#ff6b35] focus:outline-none transition-colors [color-scheme:dark]"
+        className="w-full rounded-xl border border-border-app bg-layer-5 px-3 py-2 text-sm text-fg placeholder:text-fg-ghost focus:border-brand focus:outline-none transition-colors"
       />
     </div>
   )
@@ -118,8 +118,8 @@ function NumberInput({
 const DECISION_STYLES: Record<string, { icon: string; color: string }> = {
   increase: { icon: '↑', color: 'text-emerald-400' },
   decrease: { icon: '↓', color: 'text-red-400' },
-  maintain: { icon: '→', color: 'text-white/50' },
-  no_data: { icon: '○', color: 'text-white/30' },
+  maintain: { icon: '→', color: 'text-fg-muted' },
+  no_data: { icon: '○', color: 'text-fg-faint' },
   bodyweight: { icon: '●', color: 'text-blue-400' },
   no_suggestion: { icon: '', color: '' },
 }
@@ -147,9 +147,9 @@ export function MotherSessionExerciseLogger({
   const showMeters = metricType === 'meters'
 
   return (
-    <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
+    <div className="space-y-2 rounded-xl border border-border-app bg-layer-5 p-3">
       <div className="flex items-center gap-2">
-        <p className="text-xs font-semibold text-white/80">{exerciseName}</p>
+        <p className="text-xs font-semibold text-fg-secondary">{exerciseName}</p>
         {progressionIndicator && (draft.loadKg !== undefined || draft.reps !== undefined) && (
           <span className={`text-sm font-bold ${progressionIndicator.color}`} title={progressionIndicator.label}>
             {progressionIndicator.icon}
@@ -159,14 +159,14 @@ export function MotherSessionExerciseLogger({
 
       {/* Premium suggestion badge */}
       {premiumSuggestion && premiumSuggestion.decision !== 'no_suggestion' && (
-        <div className="flex items-start gap-2 rounded-lg bg-[#ff6b35]/8 border border-[#ff6b35]/15 px-2.5 py-1.5">
+        <div className="flex items-start gap-2 rounded-lg bg-brand-soft border border-brand-border px-2.5 py-1.5">
           {DECISION_STYLES[premiumSuggestion.decision] && (
             <span className={`text-sm font-bold ${DECISION_STYLES[premiumSuggestion.decision].color}`}>
               {DECISION_STYLES[premiumSuggestion.decision].icon}
             </span>
           )}
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-bold text-white/80">
+            <p className="text-[11px] font-bold text-fg-secondary">
               {premiumSuggestion.suggestedWeight !== null
                 ? `${premiumSuggestion.suggestedWeight} kg`
                 : premiumSuggestion.suggestedReps !== null
@@ -176,9 +176,9 @@ export function MotherSessionExerciseLogger({
                 ? ` × ${premiumSuggestion.suggestedReps}`
                 : ''}
             </p>
-            <p className="text-[10px] text-white/50">{premiumSuggestion.justification}</p>
+            <p className="text-[10px] text-fg-muted">{premiumSuggestion.justification}</p>
             {premiumSuggestion.nextTarget && (
-              <p className="text-[10px] text-[#ff6b35]/60 mt-0.5">{premiumSuggestion.nextTarget}</p>
+              <p className="text-[10px] text-brand-tint mt-0.5">{premiumSuggestion.nextTarget}</p>
             )}
           </div>
         </div>
@@ -186,11 +186,11 @@ export function MotherSessionExerciseLogger({
 
       {/* Existing suggestion (shown when no premium suggestion) */}
       {!premiumSuggestion && suggestion?.lastText && (
-        <p className="text-[10px] text-white/30">{suggestion.lastText}</p>
+        <p className="text-[10px] text-fg-faint">{suggestion.lastText}</p>
       )}
 
       {!premiumSuggestion && suggestion?.rationale && (
-        <p className="text-[10px] text-[#ff6b35]/70">{suggestion.rationale}</p>
+        <p className="text-[10px] text-brand-tint">{suggestion.rationale}</p>
       )}
 
       <div className="grid grid-cols-2 gap-2">
@@ -240,14 +240,14 @@ export function MotherSessionExerciseLogger({
 
         {(showLoad || showReps) && (
           <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-bold uppercase tracking-wider text-white/40">RIR</label>
+            <label className="text-[10px] font-bold uppercase tracking-wider text-fg-muted">RIR</label>
             <select
               value={draft.rir ?? ''}
               onChange={(e) => {
                 const v = e.target.value
                 onDraftChange({ rir: v === '' ? undefined : Number(v) })
               }}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-[#ff6b35] focus:outline-none transition-colors [color-scheme:dark]"
+              className="w-full rounded-xl border border-border-app bg-layer-5 px-3 py-2 text-sm text-fg focus:border-brand focus:outline-none transition-colors"
             >
               <option value="">—</option>
               {RIR_OPTIONS.map((r) => (

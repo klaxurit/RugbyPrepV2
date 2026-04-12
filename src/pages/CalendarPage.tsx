@@ -84,9 +84,9 @@ const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 
 const seasonPhaseConfig: Record<SeasonPhase, { label: string; color: string; bg: string }> = {
   'off-season': { label: 'Inter-saison', color: 'text-fg-muted', bg: 'bg-layer-10' },
-  'pre-season': { label: 'Pré-saison', color: 'text-amber-400', bg: 'bg-amber-900/20' },
-  'in-season': { label: 'En saison', color: 'text-emerald-400', bg: 'bg-emerald-900/20' },
-  'playoffs': { label: 'Playoffs', color: 'text-rose-400', bg: 'bg-rose-900/20' },
+  'pre-season': { label: 'Pré-saison', color: 'text-amber-700', bg: 'bg-amber-50' },
+  'in-season': { label: 'En saison', color: 'text-brand-tint', bg: 'bg-brand-soft' },
+  'playoffs': { label: 'Playoffs', color: 'text-rose-700', bg: 'bg-rose-50' },
 }
 
 const eventTypeConfig: Record<CalendarEventType, { label: string; icon: React.ElementType; color: string; bg: string }> = {
@@ -116,7 +116,7 @@ const diffDays = (dateStr: string): number => {
 function ClubAvatar({ code, name, size = 'md' }: { code?: string; name?: string; size?: 'sm' | 'md' | 'lg' }) {
   const logoUrl = code ? getClubLogoUrl(code) : null
   const monogram = getClubMonogram(name)
-  const sizeClass = size === 'sm' ? 'w-6 h-6 text-[8px]' : size === 'lg' ? 'w-12 h-12 text-sm' : 'w-8 h-8 text-[10px]'
+  const sizeClass = size === 'sm' ? 'w-8 h-8 text-[9px]' : size === 'lg' ? 'w-14 h-14 text-sm' : 'w-10 h-10 text-[11px]'
 
   return (
     <div className={`${sizeClass} rounded-xl bg-layer-10 flex items-center justify-center overflow-hidden flex-shrink-0`}>
@@ -394,7 +394,7 @@ function EventRow({
             <button
               type="button"
               onClick={() => setLoadOpen(true)}
-              className="flex items-center gap-1.5 text-[11px] font-bold text-brand bg-brand-soft hover:bg-brand-medium px-3 py-1.5 rounded-xl transition-colors rf-focus-ring"
+              className="flex items-center gap-1.5 text-[11px] font-bold text-brand-tint bg-brand-soft hover:bg-brand-medium px-3 py-1.5 rounded-xl transition-colors rf-focus-ring"
             >
               <Activity className="w-3 h-3" />
               Enregistrer la charge match
@@ -697,7 +697,7 @@ function DayDetailModal({
           <button
             type="button"
             onClick={onAddEvent}
-            className="flex-1 py-3 rounded-2xl border-2 border-brand text-brand font-black uppercase tracking-wide hover:bg-brand-soft transition-colors rf-focus-ring"
+            className="flex-1 py-3 rounded-2xl border-2 border-brand text-brand-tint font-black uppercase tracking-wide hover:bg-brand-soft transition-colors rf-focus-ring"
           >
             Ajouter un événement
           </button>
@@ -860,7 +860,7 @@ function AddEventModal({ initialDate, existingEvents, onClose, onSave }: AddEven
                     onClick={() => setIsHome(value)}
                     className={`flex items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all ${
                       isHome === value
-                        ? 'border-brand text-brand bg-brand-soft'
+                        ? 'border-brand text-brand-tint bg-brand-soft'
                         : 'border-border-app text-fg-muted hover:border-layer-15'
                     }`}
                   >
@@ -1385,53 +1385,54 @@ export function CalendarPage() {
                   <p className="text-xs font-black text-fg-muted uppercase tracking-wide">
                     Club <span className="text-fg-ghost font-normal normal-case">(optionnel)</span>
                   </p>
-                  <ClubSearchInput
-                    value={clubQuery}
-                    clubCode={profile.clubCode}
-                    onChange={handleClubSearchChange}
-                  />
-                </div>
 
-                {profile.clubName && (
-                  <div className="p-3 rounded-2xl border border-border-app bg-layer-5 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-11 h-11 rounded-2xl bg-layer-10 border border-border-app flex items-center justify-center overflow-hidden flex-shrink-0">
-                        {selectedClubLogoUrl ? (
-                          <img src={selectedClubLogoUrl} alt={profile.clubName} className="w-full h-full object-contain" />
-                        ) : (
-                          <span className="text-xs font-black text-fg-soft">{selectedClubMonogram}</span>
-                        )}
+                  {profile.clubName ? (
+                    <div className="p-3 rounded-2xl border border-border-app bg-layer-5 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-11 h-11 rounded-2xl bg-layer-10 border border-border-app flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {selectedClubLogoUrl ? (
+                            <img src={selectedClubLogoUrl} alt={profile.clubName} className="w-full h-full object-contain" />
+                          ) : (
+                            <span className="text-xs font-black text-fg-soft">{selectedClubMonogram}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-fg truncate">{profile.clubName}</p>
+                          <p className="text-xs text-fg-muted truncate">
+                            {profile.clubCode} · {profile.clubLigue} · CD {profile.clubDepartmentCode}
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-bold text-fg truncate">{profile.clubName}</p>
-                        <p className="text-xs text-fg-muted truncate">
-                          {profile.clubCode} · {profile.clubLigue} · CD {profile.clubDepartmentCode}
-                        </p>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          updateProfile({
+                            clubCode: undefined,
+                            clubName: undefined,
+                            clubLigue: undefined,
+                            clubDepartmentCode: undefined,
+                            ffrCompetitionId: undefined,
+                            ffrCompetitionName: undefined,
+                            ffrLastSyncAt: undefined,
+                          })
+                          setClubQuery('')
+                          setFfrCompetitions([])
+                          setFfrSyncMessage(null)
+                          setClubCompsFetched(null)
+                        }}
+                        className="text-[11px] font-bold text-fg-muted hover:text-brand transition-colors"
+                      >
+                        Retirer
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        updateProfile({
-                          clubCode: undefined,
-                          clubName: undefined,
-                          clubLigue: undefined,
-                          clubDepartmentCode: undefined,
-                          ffrCompetitionId: undefined,
-                          ffrCompetitionName: undefined,
-                          ffrLastSyncAt: undefined,
-                        })
-                        setClubQuery('')
-                        setFfrCompetitions([])
-                        setFfrSyncMessage(null)
-                        setClubCompsFetched(null)
-                      }}
-                      className="text-[11px] font-bold text-fg-muted hover:text-brand transition-colors"
-                    >
-                      Retirer
-                    </button>
-                  </div>
-                )}
+                  ) : (
+                    <ClubSearchInput
+                      value={clubQuery}
+                      clubCode={profile.clubCode}
+                      onChange={handleClubSearchChange}
+                    />
+                  )}
+                </div>
 
                 {profile.clubCode && (
                   <div className="space-y-3 pt-1 border-t border-border-app">

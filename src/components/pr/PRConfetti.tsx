@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-const COLORS = ['#ff6b35', '#10b981', '#f59e0b', '#e11d48', '#6366f1', '#0ea5e9']
+const COLORS = ['#7B0D1E', '#10b981', '#f59e0b', '#e11d48', '#6366f1', '#0ea5e9']
 const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
   id: i,
   color: COLORS[i % COLORS.length],

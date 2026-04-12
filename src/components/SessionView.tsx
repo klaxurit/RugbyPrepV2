@@ -408,7 +408,7 @@ export function SessionView({
   }
 
   const inputClass =
-    'w-full px-3 py-2 rounded-2xl border border-white/20 bg-white/5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#ff6b35]/20 focus:border-[#ff6b35]/40 transition-all [color-scheme:dark]'
+    'w-full px-3 py-2 rounded-2xl border border-border-app bg-layer-5 text-sm text-fg placeholder:text-fg-faint focus:outline-none focus:ring-2 focus:ring-brand-glow focus:border-brand-border-strong transition-all'
 
   return (
     <div className="p-5 space-y-4">
@@ -416,9 +416,9 @@ export function SessionView({
       {/* Session header */}
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1.5">
-          <h2 className="text-lg font-extrabold text-white">{session.title}</h2>
+          <h2 className="text-lg font-extrabold text-fg">{session.title}</h2>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 text-white/50">
+            <div className="flex items-center gap-1 text-fg-muted">
               <Clock className="w-3.5 h-3.5" />
               <span className="text-[11px] font-medium">≈ {estimatedMinutes} min</span>
             </div>
@@ -435,7 +435,7 @@ export function SessionView({
           <button
             type="button"
             onClick={onMarkComplete}
-            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a2b] text-white text-xs font-black uppercase tracking-wide transition-all shadow-lg shadow-[#ff6b35]/20"
+            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand text-xs font-black uppercase tracking-wide transition-all shadow-lg shadow-brand-glow"
           >
             <CheckCircle2 className="w-3.5 h-3.5" />
             Fait
@@ -465,34 +465,34 @@ export function SessionView({
       )}
 
       {prepBlocks.length > 0 && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+        <div className="bg-layer-5 border border-border-app rounded-2xl overflow-hidden">
           <button
             type="button"
             onClick={() => setIsPrepSectionOpen((open) => !open)}
-            className="w-full px-4 py-3.5 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
+            className="w-full px-4 py-3.5 flex items-center justify-between text-left hover:bg-layer-5 transition-colors"
           >
             <div>
-              <p className="text-xs font-black text-white/70 uppercase tracking-wide">
+              <p className="text-xs font-black text-fg-secondary uppercase tracking-wide">
                 Préparation & retour au calme
               </p>
-              <p className="text-[11px] text-white/40">
+              <p className="text-[11px] text-fg-muted">
                 {prepBlocks.length} bloc{prepBlocks.length > 1 ? 's' : ''} masqué{prepBlocks.length > 1 ? 's' : ''} pour alléger la séance
               </p>
             </div>
-            <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${isPrepSectionOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 text-fg-muted transition-transform ${isPrepSectionOpen ? 'rotate-180' : ''}`} />
           </button>
           {isPrepSectionOpen && (
-            <div className="px-4 pt-3 pb-5 border-t border-white/10 space-y-3">
+            <div className="px-4 pt-3 pb-5 border-t border-border-app space-y-3">
               {prepBlocks.map(({ block, version }) => (
-                <div key={block.blockId} className="bg-white/5 border border-white/10 rounded-2xl px-3.5 py-3 space-y-1.5">
+                <div key={block.blockId} className="bg-layer-5 border border-border-app rounded-2xl px-3.5 py-3 space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-xs font-black text-white leading-snug">{block.name}</p>
-                    <span className="text-[10px] font-bold text-white/50 uppercase">
+                    <p className="text-xs font-black text-fg leading-snug">{block.name}</p>
+                    <span className="text-[10px] font-bold text-fg-muted uppercase">
                       {toIntentLabel(block.intent)}
                     </span>
                   </div>
-                  <p className="text-[11px] text-white/50 mt-1.5">{formatBlockVolume(version)}</p>
-                  <p className="text-[11px] text-white/40 mt-2 leading-snug">
+                  <p className="text-[11px] text-fg-muted mt-1.5">{formatBlockVolume(version)}</p>
+                  <p className="text-[11px] text-fg-muted mt-2 leading-snug">
                     {block.exercises.map((exercise) => getExerciseName(exercise.exerciseId)).join(' · ')}
                   </p>
                 </div>
@@ -528,19 +528,19 @@ export function SessionView({
               <div className="space-y-3">
                 {/* Block label + name */}
                 <div className="flex items-center gap-2.5">
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-[#ff6b35] text-white text-[11px] font-black flex items-center justify-center">
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-brand text-on-brand text-[11px] font-black flex items-center justify-center">
                     {getBlockLabel(index)}
                   </span>
-                  <h3 className="text-sm font-black text-white leading-tight">{block.name}</h3>
+                  <h3 className="text-sm font-black text-fg leading-tight">{block.name}</h3>
                 </div>
 
                 {/* Summary pill */}
-                <div className="px-3 py-2 bg-white/10 rounded-2xl">
-                  <p className="text-[11px] text-white/70 leading-relaxed">{summaryLine}</p>
+                <div className="px-3 py-2 bg-layer-10 rounded-2xl">
+                  <p className="text-[11px] text-fg-secondary leading-relaxed">{summaryLine}</p>
                 </div>
 
                 {/* Coach cue */}
-                <p className="text-xs text-white/50 italic leading-snug">
+                <p className="text-xs text-fg-muted italic leading-snug">
                   {isDeload
                     ? 'Allège la charge et garde la qualité.'
                     : getRerCue(block.intent, version.rer)}
@@ -575,10 +575,10 @@ export function SessionView({
                   const lastText = formatLastEntryByMetric(metricType, lastEntry)
 
                   return (
-                    <div key={`${exercise.exerciseId}-${exerciseIndex}`} className="bg-white/5 border border-white/10 rounded-2xl px-4 py-3 space-y-1.5">
+                    <div key={`${exercise.exerciseId}-${exerciseIndex}`} className="bg-layer-5 border border-border-app rounded-2xl px-4 py-3 space-y-1.5">
                       {/* Name + PR badge */}
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-white flex-1 leading-snug">
+                        <span className="text-sm font-bold text-fg flex-1 leading-snug">
                           {getExerciseName(exercise.exerciseId)}
                         </span>
                         {isPR && (
@@ -590,22 +590,22 @@ export function SessionView({
 
                       {/* Exercise ID in detail mode */}
                       {viewMode === 'detail' && (
-                        <p className="text-[10px] text-white/40 font-mono">{exercise.exerciseId}</p>
+                        <p className="text-[10px] text-fg-muted font-mono">{exercise.exerciseId}</p>
                       )}
 
                       {/* Exercise notes always visible (key instruction for EMOM, unilateral, etc.) */}
                       {exercise.notes && (
-                        <p className="text-[11px] text-white/50 italic">{exercise.notes}</p>
+                        <p className="text-[11px] text-fg-muted italic">{exercise.notes}</p>
                       )}
 
                       {/* EMOM detail in detail mode only (redundant with block summary) */}
                       {viewMode === 'detail' && emomDetail && (
-                        <p className="text-[11px] text-white/50 italic">{emomDetail}</p>
+                        <p className="text-[11px] text-fg-muted italic">{emomDetail}</p>
                       )}
 
                       {/* Last entry */}
                       {lastText && (
-                        <p className="text-[10px] text-white/50 italic">{lastText}</p>
+                        <p className="text-[10px] text-fg-muted italic">{lastText}</p>
                       )}
 
                       {/* Mini history row */}
@@ -615,8 +615,8 @@ export function SessionView({
                         return (
                           <div className="flex items-center gap-1 flex-wrap">
                             {history.map((h, i) => (
-                              <span key={h.dateISO} className="text-[10px] text-white/50 font-mono">
-                                {h.text}{i < history.length - 1 ? <span className="text-white/30 mx-0.5">→</span> : null}
+                              <span key={h.dateISO} className="text-[10px] text-fg-muted font-mono">
+                                {h.text}{i < history.length - 1 ? <span className="text-fg-faint mx-0.5">→</span> : null}
                               </span>
                             ))}
                           </div>
@@ -646,8 +646,8 @@ export function SessionView({
                                 suggestionPill.direction === 'up'
                                   ? 'bg-[#10b981]/20 text-[#10b981]'
                                   : suggestionPill.direction === 'down'
-                                    ? 'bg-[#ff6b35]/20 text-[#ff6b35]'
-                                    : 'bg-white/10 text-white/50'
+                                    ? 'bg-brand-medium text-brand-tint'
+                                    : 'bg-layer-10 text-fg-muted'
                               }`}>
                                 {suggestionPill.direction === 'up' ? '↑' : suggestionPill.direction === 'down' ? '↓' : '·'}
                                 {' '}{suggestionPill.target}
@@ -659,19 +659,19 @@ export function SessionView({
                           )
                         }
                         return (
-                          <p className="text-xs text-white/50 leading-snug">{suggestion.suggestionText}</p>
+                          <p className="text-xs text-fg-muted leading-snug">{suggestion.suggestionText}</p>
                         )
                       })()}
 
                       {/* Rationale in detail mode */}
                       {viewMode === 'detail' && suggestion.rationale && (
-                        <p className="text-[11px] text-white/50 leading-snug">{suggestion.rationale}</p>
+                        <p className="text-[11px] text-fg-muted leading-snug">{suggestion.rationale}</p>
                       )}
 
                       {/* Apply suggestion */}
                       <button
                         type="button"
-                        className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white/70 text-[10px] font-bold transition-colors"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full bg-layer-10 hover:bg-layer-20 text-fg-secondary text-[10px] font-bold transition-colors"
                         onClick={() => {
                           const patch = getPatchFromPrefill(metricType, suggestion, lastEntry)
                           const hasPatch = Object.values(patch).some((value) => value !== undefined)
@@ -688,28 +688,28 @@ export function SessionView({
 
               {/* Coaching notes (detail mode) */}
               {viewMode === 'detail' && (
-                <div className="mt-2 bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                <div className="mt-2 bg-layer-5 border border-border-app rounded-2xl overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setOpenNotesBlock(isNotesOpen ? null : block.blockId)}
-                    className="w-full flex items-center justify-between px-4 py-3 text-xs font-bold text-white/50 hover:bg-white/10 transition-colors"
+                    className="w-full flex items-center justify-between px-4 py-3 text-xs font-bold text-fg-muted hover:bg-layer-10 transition-colors"
                   >
                     <span className="flex items-center gap-1.5">
                       <BookOpen className="w-3.5 h-3.5" />
                       Notes coaching
                     </span>
-                    <ChevronDown className={`w-4 h-4 text-white/30 transition-transform ${isNotesOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-fg-faint transition-transform ${isNotesOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {isNotesOpen && (
                     <div className="px-4 pb-4">
-                      <p className="text-xs text-white/50 leading-relaxed">{block.coachingNotes}</p>
+                      <p className="text-xs text-fg-muted leading-relaxed">{block.coachingNotes}</p>
                     </div>
                   )}
                 </div>
               )}
 
               {/* Log section */}
-              <div className="mt-2 bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+              <div className="mt-2 bg-layer-5 border border-border-app rounded-2xl overflow-hidden">
                 <button
                   type="button"
                   onClick={() => {
@@ -730,21 +730,21 @@ export function SessionView({
                     }
                     setOpenLogBlock(isLogOpen ? null : block.blockId)
                   }}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-white/5 hover:bg-white/10 transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-3 bg-layer-5 hover:bg-layer-10 transition-colors"
                 >
-                  <span className="flex items-center gap-1.5 text-xs font-bold text-white/50">
+                  <span className="flex items-center gap-1.5 text-xs font-bold text-fg-muted">
                     <ClipboardList className="w-3.5 h-3.5" />
                     {viewMode === 'compact' ? 'Log' : 'Log du bloc'}
                   </span>
-                  <ChevronDown className={`w-4 h-4 text-white/30 transition-transform ${isLogOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-fg-faint transition-transform ${isLogOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {isLogOpen && (
-                  <div className="p-4 space-y-4 border-t border-white/10">
+                  <div className="p-4 space-y-4 border-t border-border-app">
                     {/* Apply all suggestions */}
                     <button
                       type="button"
-                      className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white/70 text-[10px] font-bold transition-colors"
+                      className="inline-flex items-center px-2.5 py-1 rounded-full bg-layer-10 hover:bg-layer-20 text-fg-secondary text-[10px] font-bold transition-colors"
                       onClick={() => {
                         setEntryDrafts((current) => {
                           let changed = false
@@ -789,14 +789,14 @@ export function SessionView({
 
                         return (
                           <div key={exercise.exerciseId} className="space-y-2">
-                            <p className="text-xs font-bold text-white/70">
+                            <p className="text-xs font-bold text-fg-secondary">
                               {getExerciseName(exercise.exerciseId)}
                             </p>
                             <div className="flex gap-2 flex-wrap">
                               {metricType === 'load_reps' && (
                                 <>
                                   <div className="flex-1 min-w-[70px]">
-                                    <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider block mb-1">kg</label>
+                                    <label className="text-[10px] font-bold text-fg-muted uppercase tracking-wider block mb-1">kg</label>
                                     <input
                                       type="number"
                                       min="0"
@@ -811,7 +811,7 @@ export function SessionView({
                                     />
                                   </div>
                                   <div className="flex-1 min-w-[70px]">
-                                    <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider block mb-1">reps</label>
+                                    <label className="text-[10px] font-bold text-fg-muted uppercase tracking-wider block mb-1">reps</label>
                                     <input
                                       type="number"
                                       min="0"
@@ -829,7 +829,7 @@ export function SessionView({
                               )}
                               {metricType === 'reps' && (
                                 <div className="flex-1 min-w-[70px]">
-                                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider block mb-1">reps</label>
+                                  <label className="text-[10px] font-bold text-fg-muted uppercase tracking-wider block mb-1">reps</label>
                                   <input
                                     type="number"
                                     min="0"
@@ -846,7 +846,7 @@ export function SessionView({
                               )}
                               {metricType === 'seconds' && (
                                 <div className="flex-1 min-w-[70px]">
-                                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider block mb-1">sec</label>
+                                  <label className="text-[10px] font-bold text-fg-muted uppercase tracking-wider block mb-1">sec</label>
                                   <input
                                     type="number"
                                     min="0"
@@ -863,7 +863,7 @@ export function SessionView({
                               )}
                               {metricType === 'meters' && (
                                 <div className="flex-1 min-w-[70px]">
-                                  <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider block mb-1">m</label>
+                                  <label className="text-[10px] font-bold text-fg-muted uppercase tracking-wider block mb-1">m</label>
                                   <input
                                     type="number"
                                     min="0"
@@ -879,7 +879,7 @@ export function SessionView({
                                 </div>
                               )}
                               <div className="flex-[2] min-w-[120px]">
-                                <label className="text-[10px] font-bold text-white/40 uppercase tracking-wider block mb-1">note</label>
+                                <label className="text-[10px] font-bold text-fg-muted uppercase tracking-wider block mb-1">note</label>
                                 <input
                                   type="text"
                                   value={draft.note}
@@ -908,7 +908,7 @@ export function SessionView({
                           block.exercises.map((exercise) => exercise.exerciseId)
                         )
                       }
-                      className="w-full py-3 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-black text-xs uppercase tracking-wide transition-all shadow-lg shadow-[#ff6b35]/20"
+                      className="w-full py-3 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black text-xs uppercase tracking-wide transition-all shadow-lg shadow-brand-glow"
                     >
                       Enregistrer ce bloc
                     </button>

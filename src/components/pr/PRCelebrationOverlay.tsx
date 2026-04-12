@@ -52,13 +52,13 @@ export function PRCelebrationOverlay({ prs, lang = 'fr', onDone }: PRCelebration
                   animate={{ scale: [1, 1.15, 1] }}
                   transition={{ duration: 0.6, repeat: 2, ease: 'easeInOut' }}
                 >
-                  <Trophy className="relative h-12 w-12 text-brand" />
+                  <Trophy className="relative h-12 w-12 text-brand-tint" />
                 </motion.div>
               </div>
             </div>
 
             {/* Title */}
-            <p className="text-lg font-black text-white">
+            <p className="text-lg font-black text-fg">
               {prs.length === 1
                 ? (lang === 'fr' ? 'Nouveau Record !' : 'New PR!')
                 : (lang === 'fr' ? `${prs.length} Nouveaux Records !` : `${prs.length} New PRs!`)}
@@ -68,17 +68,17 @@ export function PRCelebrationOverlay({ prs, lang = 'fr', onDone }: PRCelebration
             <div className="space-y-2">
               {prs.slice(0, 3).map((pr) => (
                 <div key={pr.exerciseId} className="space-y-0.5">
-                  <p className="text-sm font-bold text-brand">
+                  <p className="text-sm font-bold text-brand-tint">
                     {getExerciseName(pr.exerciseId, lang)}
                   </p>
-                  <p className="text-xl font-black text-white">{pr.label}</p>
+                  <p className="text-xl font-black text-fg">{pr.label}</p>
                   <span className="inline-block rounded-full bg-ok-bg px-3 py-1 text-xs font-bold text-ok-strong">
                     {pr.improvement}
                   </span>
                 </div>
               ))}
               {prs.length > 3 && (
-                <p className="text-xs text-white/40">
+                <p className="text-xs text-fg-muted">
                   +{prs.length - 3} {lang === 'fr' ? 'autre(s) record(s)' : 'more record(s)'}
                 </p>
               )}

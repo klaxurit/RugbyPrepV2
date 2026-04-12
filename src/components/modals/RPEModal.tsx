@@ -81,18 +81,18 @@ function RPEModalContent({
         exit={{ scale: 0.95, opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-[#23140f] border border-white/10 rounded-[2rem] p-6 space-y-6 shadow-2xl"
+        className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-app border border-border-app rounded-[2rem] p-6 space-y-6 shadow-[0_8px_40px_rgb(44_24_16/0.15)]"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-black text-white">Séance terminée 💪</h3>
-            <p className="text-xs text-white/50 mt-0.5">{sessionLabel} — note ton effort</p>
+            <h3 className="text-lg font-black text-fg">Séance terminée 💪</h3>
+            <p className="text-xs text-fg-muted mt-0.5">{sessionLabel} — note ton effort</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-2xl border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+            className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:bg-layer-10 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -100,7 +100,7 @@ function RPEModalContent({
 
         {/* RPE */}
         <div>
-          <label className="text-xs font-black text-white/50 uppercase tracking-wide block mb-3">
+          <label className="text-xs font-black text-fg-muted uppercase tracking-wide block mb-3">
             État de fatigue
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -115,8 +115,8 @@ function RPEModalContent({
                 data-testid={`completion-fatigue-${option.value.toLowerCase()}`}
                 className={`px-3 py-3 rounded-2xl text-sm font-black border transition-all ${
                   sessionFatigue === option.value
-                    ? 'bg-[#1a5f3f] text-white border-[#1a5f3f]'
-                    : 'bg-white/10 text-white/70 border-white/10 hover:border-white/20'
+                    ? 'bg-brand text-on-brand border-brand'
+                    : 'bg-panel text-fg-secondary border border-border-app hover:bg-layer-10 hover:border-brand-border'
                 }`}
               >
                 {option.label}
@@ -128,12 +128,12 @@ function RPEModalContent({
         {/* RPE */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Zap className="w-4 h-4 text-[#ff6b35]" />
-            <label className="text-xs font-black text-white/50 uppercase tracking-wide">
+            <Zap className="w-4 h-4 text-brand-tint" />
+            <label className="text-xs font-black text-fg-muted uppercase tracking-wide">
               Effort perçu (RPE)
             </label>
             {rpe && (
-              <span className="ml-auto text-xs font-bold text-white/70">{RPE_LABELS[rpe]}</span>
+              <span className="ml-auto text-xs font-bold text-fg-secondary">{RPE_LABELS[rpe]}</span>
             )}
           </div>
           <div className="grid grid-cols-10 gap-1">
@@ -146,7 +146,7 @@ function RPEModalContent({
                 className={`aspect-square rounded-xl text-sm font-black transition-all ${
                   rpe === n
                     ? `${RPE_COLORS[n]} text-white scale-110 shadow-md`
-                    : 'bg-white/10 text-white/50 hover:bg-white/20 border border-white/10'
+                    : 'bg-panel text-fg-muted hover:bg-layer-10 border border-border-app'
                 }`}
               >
                 {n}
@@ -154,16 +154,16 @@ function RPEModalContent({
             ))}
           </div>
           <div className="flex justify-between mt-1 px-0.5">
-            <span className="text-[9px] text-white/40">Léger</span>
-            <span className="text-[9px] text-white/40">Max</span>
+            <span className="text-[9px] text-fg-muted">Léger</span>
+            <span className="text-[9px] text-fg-muted">Max</span>
           </div>
         </div>
 
         {/* Duration */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Clock className="w-4 h-4 text-[#ff6b35]" />
-            <label className="text-xs font-black text-white/50 uppercase tracking-wide">
+            <Clock className="w-4 h-4 text-brand-tint" />
+            <label className="text-xs font-black text-fg-muted uppercase tracking-wide">
               Durée
             </label>
           </div>
@@ -176,8 +176,8 @@ function RPEModalContent({
                 data-testid={`completion-duration-${d}`}
                 className={`px-3 py-2 rounded-2xl text-xs font-black transition-all ${
                   duration === d && !customDuration
-                    ? 'bg-[#1a5f3f] text-white border border-[#1a5f3f]'
-                    : 'bg-white/10 text-white/70 border border-white/10 hover:border-white/20'
+                    ? 'bg-brand text-on-brand border border-brand'
+                    : 'bg-layer-10 text-fg-secondary border border-border-app hover:border-border-app'
                 }`}
               >
                 {d} min
@@ -190,16 +190,16 @@ function RPEModalContent({
               placeholder="Autre"
               value={customDuration}
               onChange={(e) => setCustomDuration(e.target.value)}
-              className="w-20 px-3 py-2 rounded-2xl text-xs font-bold border border-white/20 bg-white/5 text-white placeholder:text-white/30 focus:outline-none focus:border-[#ff6b35] transition-all [color-scheme:dark]"
+              className="w-20 px-3 py-2 rounded-2xl text-xs font-bold border border-border-app bg-panel text-fg placeholder:text-fg-faint focus:outline-none focus:border-brand transition-all"
             />
           </div>
         </div>
 
         {/* Charge preview */}
         {load != null && (
-          <div className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-2xl">
-            <div className="text-xl font-black text-white">{load} UA</div>
-            <div className="text-xs text-white/50">
+          <div className="flex items-center gap-3 px-4 py-3 bg-panel border border-border-app rounded-2xl">
+            <div className="text-xl font-black text-fg">{load} UA</div>
+            <div className="text-xs text-fg-muted">
               Charge séance<br />
               <span className="text-[10px]">RPE {rpe} × {effectiveDuration} min</span>
             </div>
@@ -212,7 +212,7 @@ function RPEModalContent({
           onClick={handleConfirm}
           disabled={!canConfirm || isSubmitting}
           data-testid="completion-confirm-btn"
-          className="w-full py-4 rounded-2xl bg-[#ff6b35] hover:bg-[#e55a2b] disabled:opacity-40 disabled:cursor-not-allowed text-white font-black uppercase italic tracking-wide flex items-center justify-center gap-2 transition-colors shadow-lg shadow-[#ff6b35]/20"
+          className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover disabled:opacity-40 disabled:cursor-not-allowed text-on-brand font-black uppercase italic tracking-wide flex items-center justify-center gap-2 transition-colors shadow-lg shadow-brand-glow"
         >
           <CheckCircle2 className="w-4 h-4" />
           {isSubmitting ? 'Enregistrement...' : 'Enregistrer la séance'}

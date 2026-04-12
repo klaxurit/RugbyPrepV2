@@ -1,42 +1,41 @@
 /**
- * RugbyForgeLogo — Typographic logo component
- * "RUGBY" in brand green + "FORGE" in orange with custom rugby-ball "O" glyph
- *
- * Couleurs : tokens sémantiques (--color-success / --color-accent) pour suivre forge/paper.
+ * RugbyForgeLogo — Logo basé sur les assets PNG du nouveau branding.
+ * Utilise CSS mask-image pour coloriser via --color-logo-fg :
+ *   forge (dark) → crème #F5F2EE
+ *   paper (light) → bordeaux #7B0D1E
  */
 
+import fullLogo from '../assets/rugbyforge-full.png'
+
 interface RugbyForgeLogoProps {
-  /** 'hero' = 5xl auth/landing | 'md' = 2xl onboarding header | 'sm' = inline page label */
+  /** 'hero' = grande taille auth/landing | 'md' = header onboarding | 'sm' = header inline compact */
   size?: 'hero' | 'md' | 'sm'
 }
 
-const SIZE_CLASS: Record<NonNullable<RugbyForgeLogoProps['size']>, string> = {
-  hero: 'text-5xl',
-  md:   'text-3xl',
-  sm:   'text-base',
+const SIZE_STYLES: Record<NonNullable<RugbyForgeLogoProps['size']>, { height: string; ratio: string; src: string }> = {
+  hero: { height: 'h-14', ratio: 'aspect-[3.14/1]', src: fullLogo },
+  md:   { height: 'h-9',  ratio: 'aspect-[3.14/1]', src: fullLogo },
+  sm:   { height: 'h-5',  ratio: 'aspect-[3.14/1]', src: fullLogo },
 }
 
 export function RugbyForgeLogo({ size = 'hero' }: RugbyForgeLogoProps) {
-  const sizeClass = SIZE_CLASS[size]
+  const { height, ratio, src } = SIZE_STYLES[size]
 
   return (
-    <span className={`font-[800] tracking-tighter flex items-baseline leading-none ${sizeClass}`}>
-      <span className="text-success-app">RUGBY</span>
-      <span className="text-brand flex items-center">
-        F
-        {/* Custom rugby-ball "O" glyph */}
-        <span className="relative inline-block mx-[0.05em]" style={{ width: '0.65em', height: '0.85em' }}>
-          <span
-            className="absolute inset-0 bg-brand rounded-[100%]"
-            style={{ transform: 'rotate(15deg) scaleY(1.1)' }}
-          />
-          <span
-            className="absolute inset-0 rounded-[100%] border-2 border-fg/20"
-            style={{ transform: 'rotate(15deg) scale(0.6)' }}
-          />
-        </span>
-        RGE
-      </span>
-    </span>
+    <span
+      className={`inline-block ${height} ${ratio} bg-logo`}
+      role="img"
+      aria-label="RugbyForge"
+      style={{
+        WebkitMaskImage: `url(${src})`,
+        maskImage: `url(${src})`,
+        WebkitMaskSize: 'contain',
+        maskSize: 'contain',
+        WebkitMaskRepeat: 'no-repeat',
+        maskRepeat: 'no-repeat',
+        WebkitMaskPosition: 'left center',
+        maskPosition: 'left center',
+      }}
+    />
   )
 }

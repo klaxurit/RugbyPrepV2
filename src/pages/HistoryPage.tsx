@@ -51,8 +51,8 @@ export function HistoryPage() {
   const summary = useMemo(() => getProgramHistorySummary(logs, today), [logs, today])
 
   return (
-    <div className="min-h-screen bg-[#1a100c] font-sans text-white pb-24 relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(#ff6b35_1px,transparent_1px)] [background-size:20px_20px]" />
+    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
         title="Historique"
@@ -62,7 +62,7 @@ export function HistoryPage() {
             <button
               type="button"
               onClick={clearLogs}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/10 bg-white/5 text-xs font-bold text-white/60 hover:border-[#1a5f3f]/30 hover:text-[#1a5f3f] transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-shell-bd bg-white/10 text-xs font-bold text-shell-text-muted hover:bg-white/20 hover:text-shell-text transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
               Effacer
@@ -76,48 +76,48 @@ export function HistoryPage() {
         {/* Stats rapides */}
         {logs.length > 0 && (
           <div className="grid grid-cols-2 gap-3" data-testid="history-stats">
-            <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
-              <div className="text-2xl font-black text-white" data-testid="stat-total">{summary.totalSessions}</div>
-              <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">Séances totales</div>
+            <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
+              <div className="text-2xl font-black text-fg" data-testid="stat-total">{summary.totalSessions}</div>
+              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Séances totales</div>
             </div>
-            <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
-              <div className="text-2xl font-black text-white" data-testid="stat-7d">{summary.sessionsLast7d}</div>
-              <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">7 derniers jours</div>
+            <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
+              <div className="text-2xl font-black text-fg" data-testid="stat-7d">{summary.sessionsLast7d}</div>
+              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">7 derniers jours</div>
             </div>
-            <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
-              <div className="text-2xl font-black text-white" data-testid="stat-28d">{summary.sessionsLast28d}</div>
-              <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">28 derniers jours</div>
+            <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
+              <div className="text-2xl font-black text-fg" data-testid="stat-28d">{summary.sessionsLast28d}</div>
+              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">28 derniers jours</div>
             </div>
-            <div className="bg-white/5 border border-white/10 p-4 rounded-[24px] flex flex-col gap-1">
-              <div className="text-xs font-black text-white/70 flex items-center gap-2">
+            <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
+              <div className="text-xs font-black text-fg-secondary flex items-center gap-2">
                 <span className="text-emerald-400" data-testid="stat-mother">{summary.motherSessions}</span>
-                <span className="text-white/20">/</span>
+                <span className="text-fg-ghost">/</span>
                 <span className="text-blue-400" data-testid="stat-legacy">{summary.legacySessions}</span>
               </div>
-              <div className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">Annuel / Legacy</div>
+              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Annuel / Legacy</div>
             </div>
           </div>
         )}
 
         {/* Séances */}
         <section>
-          <h2 className="text-xs font-black uppercase tracking-wider text-white/40 mb-3">Séances</h2>
+          <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">Séances</h2>
 
           {logs.length === 0 ? (
-            <div className="bg-white/5 border border-white/10 rounded-[24px] p-6 flex flex-col items-center gap-3 text-center">
-              <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white/30">
+            <div className="bg-layer-5 border border-border-app rounded-[24px] p-6 flex flex-col items-center gap-3 text-center">
+              <div className="w-12 h-12 bg-layer-5 rounded-2xl flex items-center justify-center text-fg-faint">
                 <Calendar className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm font-bold text-white">Aucune séance</p>
-                <p className="text-xs text-white/40 mt-0.5">Lance ta première séance depuis la page Semaine.</p>
+                <p className="text-sm font-bold text-fg">Aucune séance</p>
+                <p className="text-xs text-fg-muted mt-0.5">Lance ta première séance depuis la page Semaine.</p>
               </div>
-              <Link to="/week" className="text-xs font-black text-[#1a5f3f] uppercase tracking-wide">
+              <Link to="/week" className="text-xs font-black text-brand-tint uppercase tracking-wide">
                 Voir la semaine →
               </Link>
             </div>
           ) : (
-            <div className="bg-white/5 border border-white/10 rounded-[24px] overflow-hidden divide-y divide-white/5">
+            <div className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden divide-y divide-border-app">
               {logs.map((log) => {
                 const title = getSessionLogDisplayTitle(log)
                 const weekPart = getSessionLogPrimaryWeekLabel(log)
@@ -133,18 +133,18 @@ export function HistoryPage() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-bold text-white truncate" data-testid="log-title">{title}</span>
+                          <span className="text-sm font-bold text-fg truncate" data-testid="log-title">{title}</span>
                           <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${SOURCE_BADGE_STYLES[sourceTone]}`} data-testid="log-source-badge">
                             {sourceLabel}
                           </span>
                         </div>
-                        <div className="text-xs text-white/40 italic mt-0.5">
+                        <div className="text-xs text-fg-muted italic mt-0.5">
                           <span data-testid="log-week-label">{weekPart}</span>
                           {cyclePart && <> · <span data-testid="log-cycle-label">{cyclePart}</span></>}
                           {' · '}{formatDate(log.dateISO)}
                         </div>
                         {log.notes && (
-                          <div className="text-xs text-white/40 mt-0.5 italic">&quot;{log.notes}&quot;</div>
+                          <div className="text-xs text-fg-muted mt-0.5 italic">&quot;{log.notes}&quot;</div>
                         )}
                       </div>
                     </div>
@@ -163,10 +163,10 @@ export function HistoryPage() {
         {/* Blocs enregistrés */}
         {blockLogs.length > 0 && (
           <section>
-            <h2 className="text-xs font-black uppercase tracking-wider text-white/40 mb-3">Blocs enregistrés</h2>
+            <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">Blocs enregistrés</h2>
             <div className="space-y-2">
               {blockLogs.map((log) => (
-                <div key={log.id} className="bg-white/5 border border-white/10 rounded-[24px] overflow-hidden">
+                <div key={log.id} className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setExpandedBlockId(expandedBlockId === log.id ? null : log.id)}
@@ -177,21 +177,21 @@ export function HistoryPage() {
                         {sessionTypeIcon[log.sessionType]}
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-white">{log.blockName}</div>
-                        <div className="text-xs text-white/40 italic">
+                        <div className="text-sm font-bold text-fg">{log.blockName}</div>
+                        <div className="text-xs text-fg-muted italic">
                           {weekLabel(log.week)} · {formatDateTime(log.dateISO)}
                         </div>
                       </div>
                     </div>
-                    <ChevronDown className={`w-4 h-4 text-white/30 transition-transform flex-shrink-0 ${expandedBlockId === log.id ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-fg-faint transition-transform flex-shrink-0 ${expandedBlockId === log.id ? 'rotate-180' : ''}`} />
                   </button>
 
                   {expandedBlockId === log.id && (
-                    <div className="px-4 pb-4 space-y-2 border-t border-white/5 pt-3">
+                    <div className="px-4 pb-4 space-y-2 border-t border-border-app pt-3">
                       {log.entries.map((entry, i) => (
                         <div key={`${entry.exerciseId}-${i}`} className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-white">{entry.exerciseId}</span>
-                          <span className="text-xs text-white/40">
+                          <span className="text-xs font-bold text-fg">{entry.exerciseId}</span>
+                          <span className="text-xs text-fg-muted">
                             {[
                               entry.loadKg !== undefined ? `${entry.loadKg}kg` : null,
                               entry.reps !== undefined ? `${entry.reps} reps` : null,

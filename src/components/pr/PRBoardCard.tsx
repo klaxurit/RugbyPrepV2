@@ -34,21 +34,21 @@ export function PRBoardCard({ pr, lang = 'fr' }: { pr: PRRecord; lang?: 'fr' | '
     : getExerciseName(pr.exerciseId, lang)
 
   return (
-    <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-[20px] p-4">
+    <div className="flex items-center gap-3 bg-layer-5 border border-border-app rounded-[20px] p-4">
       {/* Metric icon */}
       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-brand-soft">
-        <Icon className="h-4.5 w-4.5 text-brand" />
+        <Icon className="h-4.5 w-4.5 text-brand-tint" />
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-bold text-white truncate">{name}</p>
-        <p className="text-lg font-black text-brand">{pr.bestLabel}</p>
-        <p className="text-[10px] text-white/40">{formatDate(pr.dateISO, lang)}</p>
+        <p className="text-sm font-bold text-fg truncate">{name}</p>
+        <p className="text-lg font-black text-brand-tint">{pr.bestLabel}</p>
+        <p className="text-[10px] text-fg-muted">{formatDate(pr.dateISO, lang)}</p>
       </div>
 
       {/* Trophy */}
-      <Trophy className={`h-5 w-5 flex-shrink-0 ${pr.isRecent ? 'text-warn-strong' : 'text-white/20'}`} />
+      <Trophy className={`h-5 w-5 flex-shrink-0 ${pr.isRecent ? 'text-warn-strong' : 'text-fg-ghost'}`} />
     </div>
   )
 }

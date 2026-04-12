@@ -106,7 +106,10 @@ const CYCLE_HINTS: { value: SeasonMode; label: string; sub: string; emoji: strin
 
 // App réservée aux adultes — ageBand hardcodé à 'adult', pas de sélecteur U18.
 
-const GYM_PRESET: Equipment[] = ['barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box']
+const GYM_PRESET: Equipment[] = [
+  'barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box',
+  'machine', 'cable', 'landmine', 'tbar_row', 'ghd', 'med_ball', 'ab_wheel', 'sprint_track',
+]
 
 const HOME_EQUIPMENT_OPTIONS: { value: Equipment; label: string; emoji: string }[] = [
   { value: 'dumbbell',     label: 'Haltères',          emoji: '💪' },
@@ -293,7 +296,7 @@ export function OnboardingPage() {
         {/* Dot grid déco */}
         <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
         {/* Orbe déco */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-success-app opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-brand opacity-10 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
 
         <div className="max-w-sm mx-auto w-full space-y-10 py-12 relative">
@@ -313,19 +316,19 @@ export function OnboardingPage() {
           <div className="space-y-4">
             {[
               {
-                icon: <TrendingUp className="w-5 h-5 text-brand" />,
+                icon: <TrendingUp className="w-5 h-5 text-brand-tint" />,
                 bg: 'bg-layer-5 border border-border-app',
                 title: 'Programme adapté à ton poste',
                 desc: 'Pilier, flanker, arrière — chaque position a ses exigences physiques.',
               },
               {
-                icon: <Calendar className="w-5 h-5 text-brand" />,
+                icon: <Calendar className="w-5 h-5 text-brand-tint" />,
                 bg: 'bg-layer-5 border border-border-app',
                 title: 'Synchronisé avec ton club',
                 desc: 'Séances S&C placées intelligemment entre entraînements et matchs.',
               },
               {
-                icon: <Bot className="w-5 h-5 text-brand" />,
+                icon: <Bot className="w-5 h-5 text-brand-tint" />,
                 bg: 'bg-layer-5 border border-border-app',
                 title: 'Coach IA disponible 24/7',
                 desc: 'Nutrition, récupération, gestion de la fatigue.',
@@ -390,7 +393,7 @@ export function OnboardingPage() {
           <div className="w-9 h-9" />
         )}
         <div className="flex-1 text-center">
-          <p className="text-[10px] font-black tracking-widest text-brand uppercase italic">RugbyForge</p>
+          <p className="text-[10px] font-black tracking-widest text-brand-tint uppercase italic">RugbyForge</p>
         </div>
         <div className="w-9 text-right">
           <span className="text-[11px] font-bold text-fg-muted">{step + 1}/{STEPS.length}</span>
@@ -425,7 +428,7 @@ export function OnboardingPage() {
                     )}
                     <span className="text-2xl leading-none">{pos.emoji}</span>
                     <div>
-                      <p className={`text-sm font-black leading-tight ${selected ? 'text-brand' : 'text-fg'}`}>
+                      <p className={`text-sm font-black leading-tight ${selected ? 'text-brand-tint' : 'text-fg'}`}>
                         {pos.label}
                       </p>
                       <p className="text-[10px] text-fg-muted mt-0.5 leading-tight">{pos.sub}</p>
@@ -460,7 +463,7 @@ export function OnboardingPage() {
                       }`}
                     >
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-black ${selected ? 'text-brand' : 'text-fg'}`}>
+                        <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
                           {opt.label}
                         </p>
                         <p className="text-xs text-fg-muted mt-0.5">{opt.sub}</p>
@@ -469,7 +472,7 @@ export function OnboardingPage() {
                         )}
                       </div>
                       {selected && (
-                        <CheckCircle2 className="w-5 h-5 text-brand flex-shrink-0" />
+                        <CheckCircle2 className="w-5 h-5 text-brand-tint flex-shrink-0" />
                       )}
                     </button>
                   )
@@ -497,7 +500,7 @@ export function OnboardingPage() {
                       }`}
                     >
                       <span className="text-xl leading-none">{opt.emoji}</span>
-                      <span className={`text-[10px] font-black leading-tight ${selected ? 'text-brand' : 'text-fg-soft'}`}>
+                      <span className={`text-[10px] font-black leading-tight ${selected ? 'text-brand-tint' : 'text-fg-soft'}`}>
                         {opt.label}
                       </span>
                       <span className={`text-[9px] leading-tight ${selected ? 'text-brand-muted' : 'text-fg-faint'}`}>
@@ -529,7 +532,7 @@ export function OnboardingPage() {
                           : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <p className={`text-sm font-black ${selected ? 'text-brand' : 'text-fg'}`}>
+                      <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
                         {opt.label}
                       </p>
                       <p className="text-[10px] text-fg-muted">{opt.sub}</p>
@@ -560,7 +563,7 @@ export function OnboardingPage() {
                           : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <p className={`text-sm font-black ${selected ? 'text-brand' : 'text-fg'}`}>
+                      <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
                         {opt.label}
                       </p>
                     </button>
@@ -608,7 +611,7 @@ export function OnboardingPage() {
                           : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <p className={`text-sm font-black ${selected ? 'text-brand' : 'text-fg'}`}>
+                      <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
                         {opt.label}
                       </p>
                     </button>
@@ -620,9 +623,9 @@ export function OnboardingPage() {
             {/* Salle : confirmation preset */}
             {hasGymAccess === true && (
               <div className="p-4 rounded-2xl bg-ok-bg-muted border border-ok-bd space-y-1">
-                <p className="text-xs font-black text-ok-strong">Salle standard sélectionnée</p>
+                <p className="text-xs font-black text-ok-strong">Tout l&apos;équipement salle activé</p>
                 <p className="text-[10px] text-fg-soft leading-relaxed">
-                  Barre, haltères, banc, traction, élastiques, box. Tu pourras affiner dans ton profil.
+                  Barre, haltères, machines, câbles, banc, etc. Si ta salle manque de matériel, tu pourras ajuster dans ton profil.
                 </p>
               </div>
             )}
@@ -646,7 +649,7 @@ export function OnboardingPage() {
                         }`}
                       >
                         <span className="text-lg flex-shrink-0 leading-none">{eq.emoji}</span>
-                        <span className={`text-sm font-bold leading-tight flex-1 ${selected ? 'text-brand' : 'text-fg-secondary'}`}>
+                        <span className={`text-sm font-bold leading-tight flex-1 ${selected ? 'text-brand-tint' : 'text-fg-secondary'}`}>
                           {eq.label}
                         </span>
                         {selected && (
@@ -704,7 +707,7 @@ export function OnboardingPage() {
                           : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <span className={`text-[11px] font-black ${selected ? 'text-brand' : 'text-fg-soft'}`}>
+                      <span className={`text-[11px] font-black ${selected ? 'text-brand-tint' : 'text-fg-soft'}`}>
                         {opt.short}
                       </span>
                     </button>
@@ -741,7 +744,7 @@ export function OnboardingPage() {
                     onClick={() => setMatchDay(opt.day)}
                     className={`flex-1 py-2.5 rounded-xl text-xs font-black border-2 transition-all active:scale-[.97] ${
                       matchDay === opt.day
-                        ? 'border-brand bg-brand-soft text-brand'
+                        ? 'border-brand bg-brand-soft text-brand-tint'
                         : 'border-border-app bg-layer-5 text-fg-soft hover:border-border-dashed-app'
                     }`}
                   >

@@ -15,17 +15,17 @@ function SubList({ label, items }: { label: string; items: string[] }) {
   if (items.length === 0) {
     return (
       <div className="mt-2">
-        <p className="text-xs font-semibold text-white/60">{label}</p>
-        <p className="mt-1 text-sm text-white/35">—</p>
+        <p className="text-xs font-semibold text-fg-muted">{label}</p>
+        <p className="mt-1 text-sm text-fg-faint">—</p>
       </div>
     )
   }
   return (
     <div className="mt-3">
-      <p className="text-xs font-semibold text-[#ff6b35]/90">{label}</p>
+      <p className="text-xs font-semibold text-brand-tint">{label}</p>
       <ul className="mt-1.5 space-y-1">
         {items.map((line, i) => (
-          <li key={i} className="text-sm text-white/70">
+          <li key={i} className="text-sm text-fg-secondary">
             {line}
           </li>
         ))}
@@ -36,8 +36,8 @@ function SubList({ label, items }: { label: string; items: string[] }) {
 
 function InjuryAreaCard({ substitution, lang }: { substitution: InjurySubstitution; lang: AppLang }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-black/15 p-3">
-      <h3 className="text-sm font-semibold text-white">{msLabel(AREA_LABEL_KEY[substitution.area], lang)}</h3>
+    <div className="rounded-xl border border-border-app bg-black/15 p-3">
+      <h3 className="text-sm font-semibold text-fg">{msLabel(AREA_LABEL_KEY[substitution.area], lang)}</h3>
       <SubList label={msLabel('remove', lang)} items={substitution.remove} />
       <SubList label={msLabel('replace', lang)} items={substitution.replaceWith} />
       <SubList label={msLabel('rehab', lang)} items={substitution.rehabFinisher} />

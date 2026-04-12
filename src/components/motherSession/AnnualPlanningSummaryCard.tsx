@@ -66,28 +66,28 @@ export function AnnualPlanningSummaryCard({
 
   return (
     <section
-      className="rounded-[24px] border border-white/10 bg-white/5 p-4 sm:p-5 space-y-4"
+      className="rounded-[24px] border border-border-app bg-layer-5 p-4 sm:p-5 space-y-4"
       data-testid="annual-planning-summary"
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-[#ff6b35]/15 text-[#ff6b35]">
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-brand-medium text-brand-tint">
           <CalendarDays className="h-5 w-5" aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="text-xs font-black uppercase tracking-wider text-[#ff6b35]">
+          <h2 className="text-xs font-black uppercase tracking-wider text-brand-tint">
             {msLabel('this_week', lang)}
           </h2>
-          <p className="mt-1 text-lg font-black text-white leading-tight">
+          <p className="mt-1 text-lg font-black text-fg leading-tight">
             {msCycleLabel(planningContext.cycle, lang)}
           </p>
           <p
-            className="text-sm font-bold text-white/80 mt-0.5"
+            className="text-sm font-bold text-fg-secondary mt-0.5"
             data-testid="annual-plan-week-label"
           >
             {planningContext.weekLabel}
           </p>
           {planningContext.cycle === 'in_season' && planningContext.mesocycleWeek != null && (
-            <p className="text-[10px] font-bold text-white/40 mt-0.5">
+            <p className="text-[10px] font-bold text-fg-muted mt-0.5">
               {lang === 'fr'
                 ? `Semaine ${planningContext.mesocycleWeek}/4 — ${planningContext.isDeloadWeek ? 'Décharge' : `Bloc ${(planningContext.mesocycleBlock ?? 1) % 2 === 1 ? 'Force' : 'Puissance'}`}`
                 : `Week ${planningContext.mesocycleWeek}/4 — ${planningContext.isDeloadWeek ? 'Deload' : `${(planningContext.mesocycleBlock ?? 1) % 2 === 1 ? 'Force' : 'Power'} Block`}`
@@ -133,21 +133,21 @@ export function AnnualPlanningSummaryCard({
         </span>
       ) : null}
 
-      <details className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2.5">
-        <summary className="text-[10px] font-black uppercase tracking-wide text-white/40 cursor-pointer select-none">
+      <details className="rounded-2xl border border-border-app bg-black/20 px-3 py-2.5">
+        <summary className="text-[10px] font-black uppercase tracking-wide text-fg-muted cursor-pointer select-none">
           {lang === 'fr' ? 'Pourquoi ce plan ?' : 'Why this plan?'}
         </summary>
-        <p className="mt-2 text-xs text-white/55 leading-relaxed">
+        <p className="mt-2 text-xs text-fg-muted leading-relaxed">
           {humanizeTrace(trace, lang)}
         </p>
       </details>
 
       {companionRecommendations && companionRecommendations.length > 0 && (
-        <div className="rounded-2xl border border-[#ff6b35]/25 bg-[#ff6b35]/5 px-3 py-2.5">
-          <p className="text-[10px] font-black uppercase tracking-wide text-[#ff6b35] mb-1.5">
+        <div className="rounded-2xl border border-brand-border bg-brand-soft px-3 py-2.5">
+          <p className="text-[10px] font-black uppercase tracking-wide text-brand-tint mb-1.5">
             {msLabel('companion_conditioning', lang)}
           </p>
-          <ul className="space-y-1 text-xs text-white/70">
+          <ul className="space-y-1 text-xs text-fg-secondary">
             {companionRecommendations.map((line) => (
               <li key={line}>· {line}</li>
             ))}

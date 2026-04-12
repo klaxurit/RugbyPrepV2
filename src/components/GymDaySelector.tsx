@@ -40,10 +40,10 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-black text-white/40 uppercase tracking-wide">
+        <p className="text-xs font-black text-fg-muted uppercase tracking-wide">
           Jours de séances muscu
         </p>
-        <span className={`text-xs font-bold tabular-nums ${count === weeklySessions ? 'text-[#ff6b35]' : 'text-white/40'}`}>
+        <span className={`text-xs font-bold tabular-nums ${count === weeklySessions ? 'text-brand-tint' : 'text-fg-muted'}`}>
           {count}/{weeklySessions}
         </span>
       </div>
@@ -60,12 +60,12 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
             else if (info.risk === 'near_match') btnClass = 'bg-orange-900/20 border-orange-400/60 text-orange-300'
             else if (info.risk === 'recovery') btnClass = 'bg-amber-900/20 border-amber-400/60 text-amber-300'
             else if (info.risk === 'club') btnClass = 'bg-violet-900/20 border-violet-400/60 text-violet-300'
-            else btnClass = 'bg-[#ff6b35]/10 border-[#ff6b35] text-[#ff6b35]'
+            else btnClass = 'bg-brand-soft border-brand text-brand-tint'
           } else {
-            if (info.risk === 'match') btnClass = 'bg-white/5 border-red-900/40 text-white/50 hover:border-red-500/40'
-            else if (info.risk === 'near_match') btnClass = 'bg-white/5 border-orange-900/40 text-white/50 hover:border-orange-500/40'
-            else if (info.risk === 'club') btnClass = 'bg-white/5 border-violet-900/40 text-white/50 hover:border-violet-500/40'
-            else btnClass = 'bg-white/5 border-white/10 text-white/60 hover:border-white/25'
+            if (info.risk === 'match') btnClass = 'bg-layer-5 border-red-900/40 text-fg-muted hover:border-red-500/40'
+            else if (info.risk === 'near_match') btnClass = 'bg-layer-5 border-orange-900/40 text-fg-muted hover:border-orange-500/40'
+            else if (info.risk === 'club') btnClass = 'bg-layer-5 border-violet-900/40 text-fg-muted hover:border-violet-500/40'
+            else btnClass = 'bg-layer-5 border-border-app text-fg-muted hover:border-border-app'
           }
 
           return (
@@ -124,7 +124,7 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
       )}
 
       {count < weeklySessions && (
-        <p className="text-xs text-white/40 text-center">
+        <p className="text-xs text-fg-muted text-center">
           {weeklySessions - count} jour{weeklySessions - count > 1 ? 's' : ''} restant{weeklySessions - count > 1 ? 's' : ''}
         </p>
       )}

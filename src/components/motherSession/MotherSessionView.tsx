@@ -73,7 +73,7 @@ export function MotherSessionView({
   const showInjurySubs = injuries != null && injuries.length > 0
 
   return (
-    <div className="min-w-0 max-w-[min(100%,28rem)] space-y-4 p-3 text-white sm:p-4">
+    <div className="min-w-0 max-w-[min(100%,28rem)] space-y-4 p-3 text-fg sm:p-4">
       <MotherSessionHeader metadata={adaptedSession.metadata} lang={lang} />
 
       <MotherSessionWarmUp
@@ -108,12 +108,12 @@ export function MotherSessionView({
         <MotherSessionCollapsible title={msLabel('understand_session', lang)} defaultOpen={false}>
           {hasProgressionRules && (
             <>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40 mb-2">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-fg-muted mb-2">
                 {msLabel('progression_rules', lang)}
               </p>
               <ul className="space-y-2 mb-4">
                 {(frContent?.progressionRules ?? adaptedSession.progressionRules).map((rule, i) => (
-                  <li key={i} className="text-sm text-white/70">
+                  <li key={i} className="text-sm text-fg-secondary">
                     {stripBackticks(rule)}
                   </li>
                 ))}
@@ -122,12 +122,12 @@ export function MotherSessionView({
           )}
           {hasPositionAccent && (
             <>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40 mb-2">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-fg-muted mb-2">
                 {msLabel('position_accent', lang)}
               </p>
               <ul className="space-y-2">
                 {(frContent?.positionAccent ?? adaptedSession.positionAccent).map((line, i) => (
-                  <li key={i} className="text-sm text-white/70">
+                  <li key={i} className="text-sm text-fg-secondary">
                     {stripBackticks(line)}
                   </li>
                 ))}
@@ -145,7 +145,7 @@ export function MotherSessionView({
         <MotherSessionCollapsible title={msLabel('coaching_warnings', lang)} defaultOpen={false}>
           <ul className="space-y-2">
             {(frContent?.coachingWarnings ?? adaptedSession.coachingWarnings).map((w, i) => (
-              <li key={i} className="text-sm text-white/70">
+              <li key={i} className="text-sm text-fg-secondary">
                 {stripBackticks(w)}
               </li>
             ))}

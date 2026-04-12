@@ -54,26 +54,26 @@ function ExerciseRow({
   const canShowDemo = Boolean(displayExerciseId && hasExerciseDemo(displayExerciseId))
 
   return (
-    <li className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
+    <li className="border-b border-border-app pb-3 last:border-0 last:pb-0">
       {exercise.slotLabel ? (
         <div className="mb-1.5">
-          <span className="inline-flex rounded-full border border-[#ff6b35]/45 bg-[#ff6b35]/10 px-2 py-0.5 text-xs font-medium text-[#ff6b35]">
+          <span className="inline-flex rounded-full border border-brand-border-strong bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand-tint">
             {exercise.slotLabel}
           </span>
         </div>
       ) : null}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1 flex flex-col gap-0.5">
-          <span className="text-sm font-medium text-white">
+          <span className="text-sm font-medium text-fg">
             {exercise.role ? (
-              <span className="mr-1.5 text-xs font-normal uppercase text-[#ff6b35]/90">
+              <span className="mr-1.5 text-xs font-normal uppercase text-brand-tint">
                 ({exercise.role})
               </span>
             ) : null}
             {displayName}
           </span>
           {exercise.prescription ? (
-            <span className="text-sm text-white/70">{stripBackticks(exercise.prescription)}</span>
+            <span className="text-sm text-fg-secondary">{stripBackticks(exercise.prescription)}</span>
           ) : null}
         </div>
 
@@ -82,7 +82,7 @@ function ExerciseRow({
             type="button"
             onClick={() => onOpenDemo?.(displayExerciseId)}
             aria-label={lang === 'fr' ? `Voir l'exécution de ${displayName}` : `View execution for ${displayName}`}
-            className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/55 transition-colors hover:border-[#ff6b35]/30 hover:text-[#ff6b35]"
+            className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-border-app bg-layer-5 text-fg-muted transition-colors hover:border-brand-border-strong hover:text-brand-tint"
           >
             <Eye className="h-4 w-4" />
           </button>
@@ -223,10 +223,10 @@ export function MotherSessionBlock({
   }, [onSaveBlock, motherSessionId, sessionType, week, loggableExercises, drafts, block.number, block.name, getBestForExercise])
 
   return (
-    <article className="rounded-2xl border border-white/10 bg-white/5 p-4">
+    <article className="rounded-2xl border border-border-app bg-layer-5 p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold text-[#ff6b35]">
+          <p className="text-xs font-semibold text-brand-tint">
             {msLabel('block', lang)} {block.number}
             {block.isOptional ? (
               <span className="ml-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-300">
@@ -234,14 +234,14 @@ export function MotherSessionBlock({
               </span>
             ) : null}
           </p>
-          <h2 className="mt-1 text-base font-semibold leading-snug text-white">{blockName}</h2>
+          <h2 className="mt-1 text-base font-semibold leading-snug text-fg">{blockName}</h2>
         </div>
       </div>
 
       {blockFormat ? (
         <div className="mt-3">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">{msLabel('format', lang)}</p>
-          <p className="mt-1 text-sm text-white/70">{stripBackticks(blockFormat)}</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-fg-muted">{msLabel('format', lang)}</p>
+          <p className="mt-1 text-sm text-fg-secondary">{stripBackticks(blockFormat)}</p>
         </div>
       ) : null}
 
@@ -264,7 +264,7 @@ export function MotherSessionBlock({
           <MotherSessionCollapsible title={msLabel('coaching_notes', lang)} defaultOpen={false} variant="nested">
             <ul className="space-y-1.5">
               {coachingNotes.map((note, i) => (
-                <li key={i} className="text-sm text-white/40">
+                <li key={i} className="text-sm text-fg-muted">
                   {stripBackticks(note)}
                 </li>
               ))}
@@ -278,7 +278,7 @@ export function MotherSessionBlock({
           <MotherSessionCollapsible title={msLabel('alternatives', lang)} defaultOpen={false} variant="nested">
             <ul className="list-disc space-y-1.5 pl-4">
               {fallbackOptions.map((opt, i) => (
-                <li key={i} className="text-sm text-white/70">
+                <li key={i} className="text-sm text-fg-secondary">
                   {stripBackticks(opt)}
                 </li>
               ))}
@@ -294,7 +294,7 @@ export function MotherSessionBlock({
             type="button"
             data-testid="block-log-toggle"
             onClick={openLogger}
-            className="flex items-center gap-2 text-xs font-bold text-[#ff6b35] hover:text-[#e55a2b] transition-colors"
+            className="flex items-center gap-2 text-xs font-bold text-brand-tint hover:text-brand-hover transition-colors"
           >
             <ClipboardCheck className="w-3.5 h-3.5" />
             {loggerOpen ? 'Fermer le log' : 'Logger mes perfs'}
@@ -338,7 +338,7 @@ export function MotherSessionBlock({
               })}
 
               {hasUnmapped && (
-                <p className="text-white/30 text-[10px]">
+                <p className="text-fg-faint text-[10px]">
                   Certains exercices de ce bloc ne sont pas encore loggables
                 </p>
               )}
@@ -348,7 +348,7 @@ export function MotherSessionBlock({
                 data-testid="block-save-btn"
                 onClick={handleSave}
                 disabled={isSaving}
-                className="w-full py-3 rounded-xl bg-[#ff6b35] hover:bg-[#e55a2b] text-white text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSaving ? 'Enregistré !' : 'Enregistrer le bloc'}
               </button>

@@ -4,13 +4,13 @@
   "name": "RugbyForge",
   "launcherName": "RugbyForge",
   "display": "standalone",
-  "themeColor": "#1A100C",
-  "themeColorDark": "#1A100C",
-  "navigationColor": "#1A100C",
-  "navigationColorDark": "#1A100C",
-  "navigationDividerColor": "#1A100C",
-  "navigationDividerColorDark": "#1A100C",
-  "backgroundColor": "#1A100C",
+  "themeColor": "#7B0D1E",
+  "themeColorDark": "#7B0D1E",
+  "navigationColor": "#7B0D1E",
+  "navigationColorDark": "#7B0D1E",
+  "navigationDividerColor": "#7B0D1E",
+  "navigationDividerColorDark": "#7B0D1E",
+  "backgroundColor": "#7B0D1E",
   "enableNotifications": true,
   "startUrl": "/",
   "iconUrl": "https://rugbyforge.fr/icons/icon-512.png",
@@ -20,8 +20,8 @@
     "path": "/Users/junca/Projets/RugbyPrepV2/android.keystore",
     "alias": "android"
   },
-  "appVersionName": "1.0.1",
-  "appVersionCode": 2,
+  "appVersionName": "1.1.0",
+  "appVersionCode": 3,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://rugbyforge.fr/manifest.webmanifest",
@@ -47,5 +47,5 @@
   "fileHandlers": [],
   "launchHandlerClientMode": "",
   "displayOverride": [],
-  "appVersion": "1.0.1"
+  "appVersion": "1.1.0"
 }

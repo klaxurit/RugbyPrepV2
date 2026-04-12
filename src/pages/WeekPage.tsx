@@ -387,8 +387,8 @@ export function WeekPage() {
              surface?.planningContext?.offSeasonPhase === 5 &&
              !profile.planningAnchors?.returnToTeamTrainingAt && (
               <div className="rounded-2xl border border-brand-border bg-brand-soft px-4 py-3 space-y-1.5">
-                <p className="text-xs font-bold text-brand">Ton programme d&apos;inter-saison est terminé.</p>
-                <p className="text-[10px] text-brand-muted">Indique ta date de reprise pour lancer ta pré-saison.</p>
+                <p className="text-xs font-bold text-brand-tint">Ton programme d&apos;inter-saison est terminé.</p>
+                <p className="text-[10px] text-brand-tint">Indique ta date de reprise pour lancer ta pré-saison.</p>
                 <Link to="/profile#reprise" className="inline-flex items-center gap-1 text-[10px] font-black text-brand hover:text-brand-hover transition-colors">
                   Indiquer ma date de reprise →
                 </Link>
@@ -545,7 +545,7 @@ function AddMatchInline({
         type="button"
         data-testid="add-match-cta"
         onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-border-dashed-app text-fg-muted hover:text-brand hover:border-brand-border-strong transition-colors"
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-border-dashed-app text-fg-muted hover:text-brand-tint hover:border-brand-border-strong transition-colors"
       >
         <Plus className="w-4 h-4" />
         <span className="text-xs font-bold">

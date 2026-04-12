@@ -32,12 +32,12 @@ export function MotherSessionWarmUp({ warmUp, lang = 'fr', frWarmUp }: MotherSes
       {warmUp.exercises.length > 0 ? (
         <ul className="space-y-2">
           {warmUp.exercises.map((ex, i) => (
-            <li key={`${ex.name}-${i}`} className="flex flex-col gap-0.5 border-b border-white/5 pb-2 last:border-0 last:pb-0">
-              <span className="font-medium text-white">
+            <li key={`${ex.name}-${i}`} className="flex flex-col gap-0.5 border-b border-border-app pb-2 last:border-0 last:pb-0">
+              <span className="font-medium text-fg">
                 {formatWarmUpExerciseName(stripBackticks(frWarmUp?.exercises[i]?.name ?? ex.name))}
               </span>
               {(frWarmUp?.exercises[i]?.prescription ?? ex.prescription) ? (
-                <span className="text-white/70">
+                <span className="text-fg-secondary">
                   {stripBackticks(frWarmUp?.exercises[i]?.prescription ?? ex.prescription)}
                 </span>
               ) : null}
@@ -47,10 +47,10 @@ export function MotherSessionWarmUp({ warmUp, lang = 'fr', frWarmUp }: MotherSes
       ) : null}
       {notes.length > 0 ? (
         <div className={warmUp.exercises.length > 0 ? 'mt-4' : ''}>
-          <p className="text-xs font-semibold uppercase tracking-wide text-white/40">{msLabel('notes', lang)}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-fg-muted">{msLabel('notes', lang)}</p>
           <ul className="mt-2 space-y-1.5">
             {notes.map((note, i) => (
-              <li key={i} className="text-sm text-white/40">
+              <li key={i} className="text-sm text-fg-muted">
                 {stripBackticks(note)}
               </li>
             ))}

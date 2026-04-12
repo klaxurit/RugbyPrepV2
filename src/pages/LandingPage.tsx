@@ -48,14 +48,15 @@ function LandingNavbar() {
     { label: 'Fonctionnalités', href: '#features' },
     { label: 'La Science', href: '#science' },
     { label: 'Tarifs', href: '#pricing' },
+    { label: 'Blog', href: '/blog/' },
   ]
 
   return (
-    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-app/80 backdrop-blur-xl border-b border-border-app">
+    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-shell/95 backdrop-blur-xl shadow-[0_4px_16px_rgb(44_24_16/0.15)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/">
-            <RugbyForgeLogo size="sm" />
+            <RugbyForgeLogo size="md" />
           </Link>
 
           {/* Desktop nav */}
@@ -64,20 +65,20 @@ function LandingNavbar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-fg-soft hover:text-fg transition-colors"
+                className="text-sm font-medium text-shell-text-muted hover:text-shell-text transition-colors"
               >
                 {link.label}
               </a>
             ))}
             <Link
               to="/auth/login"
-              className="text-sm font-medium text-fg-soft hover:text-fg transition-colors"
+              className="text-sm font-medium text-shell-text-muted hover:text-shell-text transition-colors"
             >
               Connexion
             </Link>
             <Link
               to="/auth/signup"
-              className="bg-brand hover:bg-brand-hover text-on-brand text-sm font-semibold px-5 py-2 rounded-xl transition-colors"
+              className="bg-on-brand hover:bg-white text-brand text-sm font-semibold px-5 py-2 rounded-xl transition-colors"
             >
               Commencer gratuitement
             </Link>
@@ -86,7 +87,7 @@ function LandingNavbar() {
           {/* Mobile hamburger */}
           <button
             type="button"
-            className="md:hidden text-fg p-2"
+            className="md:hidden text-shell-text p-2"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
           >
@@ -100,14 +101,14 @@ function LandingNavbar() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-app/95 backdrop-blur-xl border-b border-border-app px-4 pb-4"
+          className="md:hidden bg-shell/95 backdrop-blur-xl border-b border-shell-bd px-4 pb-4"
         >
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="block w-full text-left py-3 text-sm font-medium text-fg-soft hover:text-fg transition-colors"
+              className="block w-full text-left py-3 text-sm font-medium text-shell-text-muted hover:text-shell-text transition-colors"
             >
               {link.label}
             </a>
@@ -115,14 +116,14 @@ function LandingNavbar() {
           <Link
             to="/auth/login"
             onClick={() => setMobileOpen(false)}
-            className="block py-3 text-sm font-medium text-fg-soft hover:text-fg transition-colors"
+            className="block py-3 text-sm font-medium text-shell-text-muted hover:text-shell-text transition-colors"
           >
             Connexion
           </Link>
           <Link
             to="/auth/signup"
             onClick={() => setMobileOpen(false)}
-            className="block mt-2 bg-brand hover:bg-brand-hover text-on-brand text-sm font-semibold px-5 py-3 rounded-xl text-center transition-colors"
+            className="block mt-2 bg-on-brand hover:bg-white text-brand text-sm font-semibold px-5 py-3 rounded-xl text-center transition-colors"
           >
             Commencer gratuitement
           </Link>
@@ -194,7 +195,7 @@ function PricingCard({ title, price, period, features, highlighted, cta, ctaLink
       <ul className="space-y-3 mb-8">
         {features.map((f) => (
           <li key={f} className="flex items-start gap-2 text-sm text-fg-secondary">
-            <Check className="w-4 h-4 text-brand mt-0.5 shrink-0" />
+            <Check className="w-4 h-4 text-brand-tint mt-0.5 shrink-0" />
             {f}
           </li>
         ))}
@@ -227,19 +228,31 @@ function PhoneMockup({
   fetchPriority,
 }: PhoneMockupProps) {
   return (
-    <div className="relative w-[280px] sm:w-[320px] bg-app border-4 border-fg-muted/25 rounded-[40px] p-3 shadow-elevated">
-      <div className="relative max-h-[480px] overflow-y-auto rounded-[28px] scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-        <img
-          src={src}
-          alt={alt}
-          loading={loading}
-          fetchPriority={fetchPriority}
-          decoding="async"
-          className="w-full"
-          onError={(e) => { e.currentTarget.style.display = 'none' }}
-        />
+    <div className="relative w-[260px] sm:w-[290px]">
+      {/* Phone frame — thin bezel, modern */}
+      <div className="relative bg-[#1a1a1a] rounded-[2.5rem] p-[5px] shadow-[0_12px_40px_rgb(0_0_0/0.25)]">
+        {/* Camera dot */}
+        <div className="absolute top-[12px] left-1/2 -translate-x-1/2 w-[10px] h-[10px] bg-[#1a1a1a] rounded-full z-10" />
+        {/* Screen */}
+        <div className="relative rounded-[2.1rem] overflow-hidden bg-app">
+          {/* Screen content — no fake status bar, screenshots include the real navbar */}
+          <div className="relative max-h-[560px] overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+            <img
+              src={src}
+              alt={alt}
+              loading={loading}
+              fetchPriority={fetchPriority}
+              decoding="async"
+              className="w-full"
+              onError={(e) => { e.currentTarget.style.display = 'none' }}
+            />
+          </div>
+          {/* Bottom fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-app to-transparent pointer-events-none" />
+        </div>
       </div>
-      <div className="absolute bottom-3 left-3 right-3 h-24 bg-gradient-to-t from-app to-transparent pointer-events-none rounded-b-[28px]" />
+      {/* Home indicator */}
+      <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[80px] h-[3px] bg-white/25 rounded-full" />
     </div>
   )
 }
@@ -331,10 +344,10 @@ export function LandingPage() {
       <LandingNavbar />
 
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative pt-32 pb-20 px-4">
+      <section className="relative pt-32 pb-20 px-4 bg-shell text-shell-text">
         {/* Decorative grid */}
         <div
-          className="absolute inset-0 opacity-20 bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:40px_40px]"
+          className="absolute inset-0 opacity-10 bg-[radial-gradient(#F5F2EE_1px,transparent_1px)] [background-size:40px_40px]"
         />
         <div className="relative max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -343,32 +356,32 @@ export function LandingPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7 }}
             >
-              <div className="inline-flex items-center gap-2 bg-brand-soft border border-brand-border-strong rounded-full px-4 py-1.5 mb-6">
-                <Zap className="w-4 h-4 text-brand" />
-                <span className="text-sm font-medium text-brand">
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
+                <Zap className="w-4 h-4 text-on-brand" />
+                <span className="text-sm font-medium text-on-brand/80">
                   Préparation physique rugby
                 </span>
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.1] mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.1] mb-6 text-on-brand">
                 Ta prépa physique,{' '}
-                <span className="text-brand">scientifiquement</span>{' '}
+                <span className="text-on-brand/70">scientifiquement</span>{' '}
                 optimisée
               </h1>
-              <p className="text-lg text-fg-muted max-w-xl mb-8">
+              <p className="text-lg text-on-brand/60 max-w-xl mb-8">
                 Le Free te donne déjà un vrai programme de rugby. Le Premium ajoute les suggestions
                 de charge, les analytics détaillées et la projection de ta progression.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/auth/signup"
-                  className="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-on-brand hover:bg-white text-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
                 >
                   Commencer gratuitement
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <a
                   href="#features"
-                  className="inline-flex items-center gap-2 bg-layer-10 hover:bg-layer-15 text-fg font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
                 >
                   Découvrir RugbyForge
                 </a>
@@ -382,11 +395,11 @@ export function LandingPage() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative flex justify-center"
             >
-              <div className="absolute w-72 h-72 bg-brand-medium/50 rounded-full blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-              <div className="absolute w-48 h-48 bg-success-app/30 rounded-full blur-2xl top-0 right-0" />
+              <div className="absolute w-72 h-72 bg-white/5 rounded-full blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              <div className="absolute w-48 h-48 bg-white/5 rounded-full blur-2xl top-0 right-0" />
               <PhoneMockup
-                src="/images/landing/app-week.png"
-                alt="RugbyForge — programme de la semaine"
+                src="/images/landing/rufo_home.png"
+                alt="RugbyForge — accueil et programme"
                 loading="eager"
                 fetchPriority="high"
               />
@@ -439,37 +452,37 @@ export function LandingPage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard
-              icon={<Dumbbell className="w-6 h-6 text-brand" />}
+              icon={<Dumbbell className="w-6 h-6 text-brand-tint" />}
               title="Programmes périodisés"
               description="Cycles Hypertrophie → Force → Puissance adaptés à ta saison, ton niveau et ton matériel disponible."
               delay={0}
             />
             <FeatureCard
-              icon={<Activity className="w-6 h-6 text-brand" />}
+              icon={<Activity className="w-6 h-6 text-brand-tint" />}
               title="Lecture de la charge"
               description="Lis l'ACWR, la récupération et les semaines à risque sans tableau compliqué. Le Premium ajoute des analytics détaillées."
               delay={0.1}
             />
             <FeatureCard
-              icon={<Shield className="w-6 h-6 text-brand" />}
+              icon={<Shield className="w-6 h-6 text-brand-tint" />}
               title="Prévention & vigilance"
               description="Échauffement adapté, mobilité utile et signaux de vigilance quand la fatigue et la charge deviennent moins bien absorbées."
               delay={0.2}
             />
             <FeatureCard
-              icon={<Brain className="w-6 h-6 text-brand" />}
+              icon={<Brain className="w-6 h-6 text-brand-tint" />}
               title="Coach IA"
               description="Pose tes questions nutrition, récupération ou semaine de match. Le Premium débloque le chat illimité (5 messages/jour en Free)."
               delay={0.3}
             />
             <FeatureCard
-              icon={<Calendar className="w-6 h-6 text-brand" />}
+              icon={<Calendar className="w-6 h-6 text-brand-tint" />}
               title="Calendrier club"
               description="Intègre tes matchs et entraînements club via la FFR. Le programme s'adapte automatiquement à ton planning."
               delay={0.4}
             />
             <FeatureCard
-              icon={<TrendingUp className="w-6 h-6 text-brand" />}
+              icon={<TrendingUp className="w-6 h-6 text-brand-tint" />}
               title="Tests & progression"
               description="Suis tes 1RM estimés, le CMJ et les autres repères utiles. Le Premium ajoute les projections et l'historique complet."
               delay={0.5}
@@ -496,16 +509,18 @@ export function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          {/* Desktop : 3 en ligne — Mobile : 2 en haut + 1 centré en bas */}
+          <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ delay: 0 }}
               className="flex flex-col items-center"
             >
               <PhoneMockup
-                src="/images/landing/tests-progression.png"
-                alt="Tests physiques et progression"
+                src="/images/landing/rufo_datas.png"
+                alt="Suivi de progression et données"
               />
               <p className="text-sm text-fg-muted text-center mt-5">
                 Suivi des tests physiques — CMJ, sprint, 1RM estimé
@@ -513,14 +528,31 @@ export function LandingPage() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
               className="flex flex-col items-center"
             >
               <PhoneMockup
-                src="/images/landing/acwr-monitoring.png"
-                alt="Monitoring ACWR"
+                src="/images/landing/rufo_calendar.png"
+                alt="Calendrier et planification"
+              />
+              <p className="text-sm text-fg-muted text-center mt-5">
+                Calendrier et planification de saison
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-col items-center"
+            >
+              <PhoneMockup
+                src="/images/landing/rufo_data2.png"
+                alt="Monitoring ACWR et charge"
               />
               <p className="text-sm text-fg-muted text-center mt-5">
                 Ratio charge aiguë/chronique — prévention du surentraînement
@@ -556,8 +588,8 @@ export function LandingPage() {
               transition={{ delay: 0 }}
               className="bg-layer-5 border border-border-app rounded-[24px] p-6"
             >
-              <div className="w-12 h-12 bg-success-app/25 rounded-2xl flex items-center justify-center mb-4">
-                <BookOpen className="w-6 h-6 text-success-app" />
+              <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
+                <BookOpen className="w-6 h-6 text-brand-tint" />
               </div>
               <h3 className="text-lg font-bold text-fg mb-2">Périodisation par blocs</h3>
               <p className="text-sm text-fg-muted leading-relaxed">
@@ -573,8 +605,8 @@ export function LandingPage() {
               transition={{ delay: 0.1 }}
               className="bg-layer-5 border border-border-app rounded-[24px] p-6"
             >
-              <div className="w-12 h-12 bg-success-app/25 rounded-2xl flex items-center justify-center mb-4">
-                <Target className="w-6 h-6 text-success-app" />
+              <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
+                <Target className="w-6 h-6 text-brand-tint" />
               </div>
               <h3 className="text-lg font-bold text-fg mb-2">Seuils ACWR validés</h3>
               <p className="text-sm text-fg-muted leading-relaxed">
@@ -590,8 +622,8 @@ export function LandingPage() {
               transition={{ delay: 0.2 }}
               className="bg-layer-5 border border-border-app rounded-[24px] p-6"
             >
-              <div className="w-12 h-12 bg-success-app/25 rounded-2xl flex items-center justify-center mb-4">
-                <Star className="w-6 h-6 text-success-app" />
+              <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
+                <Star className="w-6 h-6 text-brand-tint" />
               </div>
               <h3 className="text-lg font-bold text-fg mb-2">1RM & testing</h3>
               <p className="text-sm text-fg-muted leading-relaxed">
@@ -692,13 +724,13 @@ export function LandingPage() {
                 className="bg-layer-5 border border-border-app rounded-[24px] p-6 hover:bg-layer-7 transition-colors"
               >
                 <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
-                  <BookOpen className="w-6 h-6 text-brand" />
+                  <BookOpen className="w-6 h-6 text-brand-tint" />
                 </div>
                 <h3 className="text-lg font-bold text-fg mb-2">{resource.title}</h3>
                 <p className="text-sm text-fg-muted leading-relaxed mb-6">{resource.description}</p>
                 <a
                   href={resource.href}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand-tint transition-colors"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-brand-tint hover:text-fg transition-colors"
                 >
                   {resource.cta}
                   <ArrowRight className="w-4 h-4" />

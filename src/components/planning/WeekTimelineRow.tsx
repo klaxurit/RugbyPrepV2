@@ -14,12 +14,12 @@ export interface WeekTimelineRowProps {
   'data-testid'?: string
 }
 
-/** Fonds / bordures pour une ligne autonome — pas de sous-composant par type. */
+/** Fonds / bordures colorés par type — vert perso, violet club, jaune match, bleu récup. */
 const STANDALONE_SURFACE: Record<SessionPlanKind, string> = {
-  personal: 'border border-border-app bg-layer-7',
-  club: 'border border-bd-soft bg-layer-5',
-  match: 'border border-[var(--color-warn-border)] bg-[var(--color-warn-surface-muted)]',
-  recovery: 'border border-[var(--color-info-border)] bg-[var(--color-info-surface)]',
+  personal: 'border border-ok-bd bg-ok-bg',
+  club: 'border border-violet-200 bg-violet-50',
+  match: 'border border-warn-bd bg-warn-bg',
+  recovery: 'border border-info-bd bg-info-bg',
 }
 
 /**

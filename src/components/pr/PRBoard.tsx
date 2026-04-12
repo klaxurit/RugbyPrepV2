@@ -11,12 +11,12 @@ interface PRBoardProps {
 export function PRBoard({ prs, isPremium, lang = 'fr' }: PRBoardProps) {
   if (prs.length === 0) {
     return (
-      <div className="bg-white/5 border border-white/10 rounded-[24px] p-8 text-center space-y-3">
-        <Trophy className="w-10 h-10 text-white/15 mx-auto" />
-        <p className="text-sm font-bold text-white/40">
+      <div className="bg-layer-5 border border-border-app rounded-[24px] p-8 text-center space-y-3">
+        <Trophy className="w-10 h-10 text-fg-ghost mx-auto" />
+        <p className="text-sm font-bold text-fg-muted">
           {lang === 'fr' ? 'Aucun record pour le moment' : 'No records yet'}
         </p>
-        <p className="text-xs text-white/30">
+        <p className="text-xs text-fg-faint">
           {lang === 'fr'
             ? 'Logge tes performances dans tes seances pour voir tes records ici.'
             : 'Log your performance in sessions to see your records here.'}

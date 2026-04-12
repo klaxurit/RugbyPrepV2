@@ -9,7 +9,7 @@ import { formatTitleFromMotherSessionId } from './formatMotherSessionTitle'
 
 function Badge({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex max-w-full items-center rounded-full border border-[#ff6b35]/40 bg-[#ff6b35]/10 px-2.5 py-1 text-xs font-medium text-[#ff6b35]">
+    <span className="inline-flex max-w-full items-center rounded-full border border-brand-border-strong bg-brand-soft px-2.5 py-1 text-xs font-medium text-brand-tint">
       <span className="truncate">{children}</span>
     </span>
   )
@@ -24,8 +24,8 @@ export function MotherSessionHeader({ metadata, lang = 'fr' }: MotherSessionHead
   const title = formatTitleFromMotherSessionId(metadata.id, lang)
 
   return (
-    <header className="rounded-[2rem] border border-white/10 bg-white/5 p-4 sm:p-5">
-      <h1 className="text-xl font-bold leading-tight text-white sm:text-2xl">{title}</h1>
+    <header className="rounded-[2rem] border border-border-app bg-layer-5 p-4 sm:p-5">
+      <h1 className="text-xl font-bold leading-tight text-fg sm:text-2xl">{title}</h1>
       <div className="mt-4 flex flex-wrap gap-2">
         <Badge>{msCycleLabel(metadata.cycle, lang)}</Badge>
         {metadata.targetDuration ? <Badge>{metadata.targetDuration}</Badge> : null}

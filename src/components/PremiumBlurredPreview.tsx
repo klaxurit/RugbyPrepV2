@@ -43,9 +43,9 @@ export function PremiumBlurredPreview({
         disabled={loading}
         className="absolute inset-0 flex items-center justify-center cursor-pointer"
       >
-        <div className="flex items-center gap-2 bg-[#1a100c]/80 border border-[#ff6b35]/30 px-4 py-2.5 rounded-full shadow-lg">
-          <Lock className="w-3.5 h-3.5 text-[#ff6b35]" />
-          <span className="text-xs font-black text-[#ff6b35]">{label}</span>
+        <div className="flex items-center gap-2 bg-app/80 border border-brand-border-strong px-4 py-2.5 rounded-full shadow-lg">
+          <Lock className="w-3.5 h-3.5 text-brand-tint" />
+          <span className="text-xs font-black text-brand-tint">{label}</span>
         </div>
       </button>
     </div>

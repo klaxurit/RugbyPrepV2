@@ -260,22 +260,6 @@ export function ChatPage() {
       <PageHeader
         title="Coach IA"
         backTo="/home"
-        right={
-          <>
-            {(phaseLabel || isDeload) && (
-              <span className="px-2.5 py-1 rounded-full bg-layer-10 text-[10px] font-black text-fg-soft tracking-wide">
-                {isDeload ? 'DÉCHARGE' : phaseLabel?.toUpperCase()}
-              </span>
-            )}
-            <span
-              className={`px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide ${
-                isPremium ? 'bg-brand-medium text-brand' : 'bg-layer-10 text-fg-soft'
-              }`}
-            >
-              {isPremium ? 'PREMIUM' : 'FREE'}
-            </span>
-          </>
-        }
       />
 
       {/* Messages area */}

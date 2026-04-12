@@ -33,12 +33,12 @@ export function InlineActiveRecovery({ isRecoveryDay, onComplete }: InlineActive
             className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-bold transition-colors ${
               selected === a.id
                 ? 'bg-info-bg border border-info-bd text-info'
-                : 'bg-white/[0.04] border border-transparent text-fg-ghost hover:bg-white/[0.07]'
+                : 'bg-blue-50 border border-blue-100 text-blue-400 hover:bg-blue-100 hover:text-blue-500'
             }`}
           >
-            <span className={selected === a.id ? 'text-info' : 'text-fg-ghost'}>{a.icon}</span>
-            <span className={selected === a.id ? 'text-fg-secondary' : ''}>{a.shortLabel}</span>
-            <span className={selected === a.id ? 'text-info/80' : 'text-fg-ghost'}>{a.duration}</span>
+            <span>{a.icon}</span>
+            <span className={selected === a.id ? 'text-info' : ''}>{a.shortLabel}</span>
+            <span className="opacity-70">{a.duration}</span>
           </button>
         ))}
       </div>

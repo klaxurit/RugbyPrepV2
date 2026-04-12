@@ -25,9 +25,9 @@ const SURFACE: Record<SessionPlanKind, { fg: string; bg: string; bd: string }> =
     bd: 'var(--color-ok-border)',
   },
   club: {
-    fg: 'var(--color-badge-neutral-fg)',
-    bg: 'var(--color-badge-neutral-bg)',
-    bd: 'var(--color-border)',
+    fg: '#7C3AED',
+    bg: '#F5F3FF',
+    bd: '#DDD6FE',
   },
   match: {
     fg: 'var(--color-warn-fg-strong)',

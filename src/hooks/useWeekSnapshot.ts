@@ -428,11 +428,17 @@ export function useWeekSnapshot(
     const p = paramsRef.current
     if (!snap || !p) return
 
-    // Re-run the engine with modified inputs
+    // Re-run the engine with modified inputs.
+    // When user explicitly toggles back to OK, override acwrZone to 'optimal'
+    // so resolveFatigueLevel returns 'normal' — the user is saying "I feel fine"
+    // despite what the ACWR says. This prevents the programme from staying in
+    // reduced mode after the toggle.
+    const overrideAcwr = correctionType === 'fatigue' && modifiedFatigue === 'OK'
     const freshSurface = resolveWeeklyProgramSurface({
       ...p,
       events: modifiedEvents,
       fatigue: modifiedFatigue,
+      ...(overrideAcwr ? { acwrZone: 'optimal' as const, ignoreAcwrOverload: true } : {}),
     })
 
     const userId = p.userId ?? null
@@ -456,22 +462,26 @@ export function useWeekSnapshot(
       ...(matchDate ? { matchDate } : {}),
     }
 
-    // Full resolve with fresh surface (not a light patch)
+    // Full resolve with fresh surface (not a light patch).
+    // For fatigue corrections, drop previousSnapshot to force a complete layout
+    // rebuild — otherwise the reduced-volume layout from the previous state leaks.
     const fresh = resolveWeek({
       surface: freshSurface,
       events: modifiedEvents,
       today: p.today,
       clubSchedule: p.profile.clubSchedule,
       scSchedule: p.profile.scSchedule,
-      previousSnapshot: snap,
+      previousSnapshot: correctionType === 'fatigue' ? undefined : snap,
       blockProgression: blockProg,
     })
 
     // Carry over the correction into the fresh snapshot and recompute explanation.
-    // For fatigue corrections, replace any existing one to stay idempotent
-    // (repeated clicks must not append duplicate lines).
+    // For fatigue: when returning to OK, remove all fatigue corrections (clean slate).
+    // When going to FATIGUE, replace any existing fatigue correction (idempotent).
     const finalCorrections = correctionType === 'fatigue'
-      ? [...snap.corrections.filter(c => c.type !== 'fatigue'), correction]
+      ? (modifiedFatigue === 'OK'
+          ? snap.corrections.filter(c => c.type !== 'fatigue')
+          : [...snap.corrections.filter(c => c.type !== 'fatigue'), correction])
       : [...snap.corrections, correction]
     const withCorrection: WeekSnapshot = {
       ...fresh,

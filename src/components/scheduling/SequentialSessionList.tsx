@@ -62,7 +62,7 @@ export function SequentialSessionList({
 
       {/* Session cards */}
       <div className="flex items-center gap-2 mt-1">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-medium text-brand">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-medium text-brand-tint">
           <Layers className="h-4 w-4" aria-hidden />
         </div>
         <h3 className="text-sm font-black text-fg">
@@ -87,13 +87,13 @@ export function SequentialSessionList({
                 className={`w-full flex items-center gap-4 border rounded-[2rem] p-4 transition-all text-left ${
                   isSkipped
                     ? 'bg-layer-2 border-edge-hairline opacity-50'
-                    : 'bg-layer-5 border-border-app hover:border-brand-border-strong hover:bg-layer-7 group'
+                    : 'bg-ok-bg border-ok-bd hover:shadow-sm group'
                 }`}
               >
                 {/* Sequence badge */}
-                <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex flex-col items-center justify-center ${isSkipped ? 'bg-layer-5' : 'bg-brand-soft'}`}>
-                  <span className={`text-lg font-black ${isSkipped ? 'text-fg-faint line-through' : 'text-brand'}`}>{seq.sequenceIndex}</span>
-                  <span className={`text-[7px] font-bold uppercase -mt-0.5 ${isSkipped ? 'text-fg-ghost' : 'text-brand-muted'}`}>
+                <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex flex-col items-center justify-center ${isSkipped ? 'bg-layer-5' : 'bg-ok-bg-muted'}`}>
+                  <span className={`text-lg font-black ${isSkipped ? 'text-fg-faint line-through' : 'text-ok-strong'}`}>{seq.sequenceIndex}</span>
+                  <span className={`text-[7px] font-bold uppercase -mt-0.5 ${isSkipped ? 'text-fg-ghost' : 'text-ok'}`}>
                     /{seq.totalInWeek}
                   </span>
                 </div>
@@ -137,7 +137,7 @@ export function SequentialSessionList({
                       onClick={() => onSessionSelect?.(i)}
                       className="w-9 h-9 rounded-xl bg-brand-soft flex items-center justify-center group-hover:bg-brand-border transition-colors"
                     >
-                      <Play className="w-4 h-4 text-brand" />
+                      <Play className="w-4 h-4 text-brand-tint" />
                     </button>
                   </div>
                 )}

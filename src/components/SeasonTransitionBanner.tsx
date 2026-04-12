@@ -29,9 +29,9 @@ const SEASON_CONFIG: Record<SeasonTransition['type'], BannerConfig> = {
   },
   playoffs_suggested: {
     icon: Trophy,
-    bg: 'bg-[#ff6b35]/10',
-    border: 'border-[#ff6b35]/25',
-    text: 'text-[#ff6b35]',
+    bg: 'bg-brand-soft',
+    border: 'border-brand-border',
+    text: 'text-brand-tint',
     cta: 'Activer Playoffs',
   },
   pre_season_suggested: {
@@ -62,9 +62,9 @@ const SCHEDULING_CONFIG: Record<SchedulingTransition['type'], BannerConfig> = {
   },
   block_mode_activated: {
     icon: CheckCircle2,
-    bg: 'bg-white/5',
-    border: 'border-white/15',
-    text: 'text-white/70',
+    bg: 'bg-layer-5',
+    border: 'border-border-app',
+    text: 'text-fg-secondary',
     cta: 'OK',
   },
   return_after_break: {
@@ -173,8 +173,8 @@ function MatchDetectedBanner({
           <p className={`text-xs font-bold ${cfg.text} leading-relaxed`}>{message}</p>
         </div>
         {onDismiss && (
-          <button type="button" onClick={onDismiss} className="flex-shrink-0 p-1 rounded-full hover:bg-white/10 transition-colors">
-            <X className="w-3.5 h-3.5 text-white/30" />
+          <button type="button" onClick={onDismiss} className="flex-shrink-0 p-1 rounded-full hover:bg-layer-10 transition-colors">
+            <X className="w-3.5 h-3.5 text-fg-faint" />
           </button>
         )}
       </div>
@@ -194,7 +194,7 @@ function MatchDetectedBanner({
             type="button"
             onClick={onDefer}
             data-testid="match-banner-defer"
-            className="w-full py-2.5 rounded-2xl text-xs font-bold bg-white/5 border border-white/10 text-white/50 hover:bg-white/10 transition-colors"
+            className="w-full py-2.5 rounded-2xl text-xs font-bold bg-layer-5 border border-border-app text-fg-muted hover:bg-layer-10 transition-colors"
           >
             Non, pas maintenant
           </button>
@@ -204,7 +204,7 @@ function MatchDetectedBanner({
             type="button"
             onClick={onHide}
             data-testid="match-banner-hide"
-            className="w-full py-2 rounded-2xl text-[10px] font-bold text-white/30 hover:text-white/50 transition-colors"
+            className="w-full py-2 rounded-2xl text-[10px] font-bold text-fg-faint hover:text-fg-muted transition-colors"
           >
             Ce n&#39;est pas mon équipe
           </button>
@@ -255,9 +255,9 @@ function TransitionBannerShell({
           <button
             type="button"
             onClick={onDismiss}
-            className="flex-shrink-0 p-1 rounded-full hover:bg-white/10 transition-colors"
+            className="flex-shrink-0 p-1 rounded-full hover:bg-layer-10 transition-colors"
           >
-            <X className="w-3.5 h-3.5 text-white/30" />
+            <X className="w-3.5 h-3.5 text-fg-faint" />
           </button>
         )}
       </div>
@@ -266,7 +266,7 @@ function TransitionBannerShell({
           type="button"
           onClick={onAction}
           data-testid="transition-banner-cta"
-          className={`w-full py-2.5 rounded-2xl text-xs font-black ${cfg.bg} border ${cfg.border} ${cfg.text} hover:bg-white/5 transition-colors`}
+          className={`w-full py-2.5 rounded-2xl text-xs font-black ${cfg.bg} border ${cfg.border} ${cfg.text} hover:bg-layer-5 transition-colors`}
         >
           {cfg.cta}
         </button>

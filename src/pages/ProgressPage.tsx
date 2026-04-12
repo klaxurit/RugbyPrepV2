@@ -13,7 +13,7 @@ import { useHistory } from '../hooks/useHistory'
 import { useAthleteTests } from '../hooks/useAthleteTests'
 import { useProfile } from '../hooks/useProfile'
 import { getProgramHistorySummary, getRecentProgramSessions } from '../services/program/programHistoryAnalytics'
-import { getSessionLogDisplayTitle, getSessionLogPrimaryWeekLabel, getSessionLogSourceLabel, getSessionLogSourceTone, getSessionLogCycleLabel, SOURCE_BADGE_STYLES } from '../services/program/sessionLogPresentation'
+import { getSessionLogDisplayTitle, getSessionLogPrimaryWeekLabel, getSessionLogCycleLabel } from '../services/program/sessionLogPresentation'
 import { getExerciseDeltaW1W4, getExerciseRecentHistory } from '../services/ui/progression'
 import { getExerciseSuggestion } from '../services/ui/suggestions'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
@@ -23,7 +23,6 @@ import {
   getBaselineForLevel,
   getBaselineLevelLabel,
 } from '../services/athleticTesting/getPositionBaseline'
-import { seedDemoData, clearDemoMode, isDemoModeActive } from '../data/fakeDataForProgress'
 import { PageHeader } from '../components/PageHeader'
 import { BottomNav } from '../components/BottomNav'
 import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
@@ -47,8 +46,8 @@ const statusConfig = {
   down: {
     icon: <TrendingDown className="w-4 h-4" />,
     bg: 'bg-brand-soft',
-    text: 'text-brand',
-    badge: 'bg-brand-soft text-brand',
+    text: 'text-brand-tint',
+    badge: 'bg-brand-soft text-brand-tint',
     label: 'Régression',
   },
   same: {
@@ -107,7 +106,7 @@ function formatVariation(delta: number, higherIsBetter: boolean): { text: string
   const isNegative = higherIsBetter ? delta < 0 : delta > 0
   const pct = Math.abs(delta * 100).toFixed(1)
   if (isPositive)  return { text: `+${pct}%`, color: 'text-ok-strong' }
-  if (isNegative)  return { text: `-${pct}%`, color: 'text-brand' }
+  if (isNegative)  return { text: `-${pct}%`, color: 'text-brand-tint' }
   return { text: '0%', color: 'text-fg-muted' }
 }
 
@@ -136,7 +135,9 @@ export function ProgressPage() {
   // ─── Program adherence data ───────────────────────────────────
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const adherenceSummary = useMemo(() => getProgramHistorySummary(sessionLogs, today), [sessionLogs, today])
-  const recentSessions = useMemo(() => getRecentProgramSessions(sessionLogs, 5), [sessionLogs])
+  const recentSessions = useMemo(() => getRecentProgramSessions(sessionLogs, 8), [sessionLogs])
+  const [showAllSessions, setShowAllSessions] = useState(false)
+  const [missingOpen, setMissingOpen] = useState(false)
 
   // ─── Modal state ────────────────────────────────────────────
   const [modal, setModal] = useState<ModalState | null>(null)
@@ -274,47 +275,11 @@ export function ProgressPage() {
 
       <main className="relative px-6 pt-5 space-y-6 max-w-md mx-auto">
 
-        {/* Mode démo — visible en dev pour tester graphiques */}
+        {/* Mode démo masqué — décommenter pour debug données fictives
         {import.meta.env.DEV && (
-          <div className="bg-warn-bg-muted border border-warn-bd rounded-[20px] p-4 space-y-2">
-            <p className="text-xs font-black text-warn uppercase tracking-wider">
-              Mode démo {isDemoModeActive() && '· actif'}
-            </p>
-            {isDemoModeActive() ? (
-              <>
-                <p className="text-sm text-warn-body">
-                  Tu visualises des données fictives. Les graphiques et le suivi utilisent ces données.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    clearDemoMode()
-                    window.location.reload()
-                  }}
-                  className="w-full py-2.5 rounded-2xl bg-layer-10 hover:bg-layer-15 border border-warn-bd text-warn-strong text-xs font-black uppercase tracking-wide transition-colors rf-focus-ring"
-                >
-                  Quitter le mode démo
-                </button>
-              </>
-            ) : (
-              <>
-                <p className="text-sm text-warn-body">
-                  Charge des données fictives pour tester les graphiques et le suivi de performance.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    seedDemoData()
-                    window.location.reload()
-                  }}
-                  className="w-full py-2.5 rounded-2xl bg-warn-button hover:bg-warn-button-hover text-fg text-xs font-black uppercase tracking-wide transition-colors rf-focus-ring"
-                >
-                  Charger les données de démo
-                </button>
-              </>
-            )}
-          </div>
+          ...
         )}
+        */}
 
         {/* Tabs */}
         <div className="flex gap-2 bg-layer-5 border border-border-app rounded-[18px] p-1">
@@ -322,7 +287,7 @@ export function ProgressPage() {
             onClick={() => setTab('sessions')}
             className={`flex-1 py-2 rounded-[14px] text-xs font-black uppercase tracking-wider transition-all ${
               tab === 'sessions'
-                ? 'bg-success-app text-on-success shadow-sm'
+                ? 'bg-brand text-on-brand shadow-sm'
                 : 'text-fg-muted hover:text-fg'
             }`}
           >
@@ -332,7 +297,7 @@ export function ProgressPage() {
             onClick={() => setTab('tests')}
             className={`flex-1 py-2 rounded-[14px] text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
               tab === 'tests'
-                ? 'bg-success-app text-on-success shadow-sm'
+                ? 'bg-brand text-on-brand shadow-sm'
                 : 'text-fg-muted hover:text-fg'
             }`}
           >
@@ -344,7 +309,7 @@ export function ProgressPage() {
             onClick={() => setTab('records')}
             className={`flex-1 py-2 rounded-[14px] text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
               tab === 'records'
-                ? 'bg-success-app text-on-success shadow-sm'
+                ? 'bg-brand text-on-brand shadow-sm'
                 : 'text-fg-muted hover:text-fg'
             }`}
           >
@@ -369,14 +334,6 @@ export function ProgressPage() {
                     <div className="text-2xl font-black text-fg" data-testid="adherence-28d">{adherenceSummary.sessionsLast28d}</div>
                     <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Séances 28j</div>
                   </div>
-                  <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
-                    <div className="text-2xl font-black text-ok-strong" data-testid="adherence-mother">{adherenceSummary.motherSessions}</div>
-                    <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Moteur annuel</div>
-                  </div>
-                  <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
-                    <div className="text-2xl font-black text-info" data-testid="adherence-legacy">{adherenceSummary.legacySessions}</div>
-                    <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Legacy</div>
-                  </div>
                 </div>
               </section>
             )}
@@ -386,12 +343,10 @@ export function ProgressPage() {
               <section data-testid="recent-activity-section">
                 <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Activité récente</h2>
                 <div className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden divide-y divide-edge-hairline">
-                  {recentSessions.map((log) => {
+                  {(showAllSessions ? recentSessions : recentSessions.slice(0, 3)).map((log) => {
                     const title = getSessionLogDisplayTitle(log)
                     const weekPart = getSessionLogPrimaryWeekLabel(log)
                     const cyclePart = getSessionLogCycleLabel(log)
-                    const sourceLabel = getSessionLogSourceLabel(log)
-                    const sourceTone = getSessionLogSourceTone(log)
                     const datePart = new Date(log.dateISO).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
 
                     return (
@@ -403,9 +358,6 @@ export function ProgressPage() {
                           <div className="min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="text-xs font-bold text-fg truncate" data-testid="recent-title">{title}</span>
-                              <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-full ${SOURCE_BADGE_STYLES[sourceTone]}`} data-testid="recent-source-badge">
-                                {sourceLabel}
-                              </span>
                             </div>
                             <div className="text-[10px] text-fg-muted">
                               <span data-testid="recent-week-label">{weekPart}</span>
@@ -417,6 +369,15 @@ export function ProgressPage() {
                       </div>
                     )
                   })}
+                  {!showAllSessions && recentSessions.length > 3 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllSessions(true)}
+                      className="w-full px-4 py-3 text-xs font-bold text-brand-tint hover:bg-layer-5 transition-colors text-center"
+                    >
+                      Voir {recentSessions.length - 3} séances précédentes
+                    </button>
+                  )}
                 </div>
               </section>
             )}
@@ -431,10 +392,10 @@ export function ProgressPage() {
                   <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter text-center">En hausse</div>
                 </div>
                 <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-1.5">
-                  <div className="p-2 rounded-2xl bg-brand-soft text-brand">
+                  <div className="p-2 rounded-2xl bg-brand-soft text-brand-tint">
                     <TrendingDown className="w-5 h-5" />
                   </div>
-                  <div className="text-xl font-black text-brand">{regressionCount}</div>
+                  <div className="text-xl font-black text-brand-tint">{regressionCount}</div>
                   <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter text-center">En baisse</div>
                 </div>
                 <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-1.5">
@@ -458,7 +419,7 @@ export function ProgressPage() {
                     <p className="text-sm font-bold text-fg">Données insuffisantes</p>
                     <p className="text-xs text-fg-muted mt-0.5">Enregistre des séances en W1 et W4 pour voir ta progression.</p>
                   </div>
-                  <Link to="/week" className="text-xs font-black text-success-app uppercase tracking-wide">
+                  <Link to="/week" className="text-xs font-black text-brand-tint uppercase tracking-wide">
                     Aller s'entraîner →
                   </Link>
                 </div>
@@ -522,17 +483,17 @@ export function ProgressPage() {
                             <AreaChart data={chartData}>
                               <defs>
                                 <linearGradient id={`grad-${exerciseId}`} x1="0" y1="0" x2="0" y2="1">
-                                  <stop offset="0%" stopColor="var(--color-success-app)" stopOpacity={0.4} />
-                                  <stop offset="100%" stopColor="var(--color-success-app)" stopOpacity={0.05} />
+                                  <stop offset="0%" stopColor="var(--color-brand-tint)" stopOpacity={0.4} />
+                                  <stop offset="100%" stopColor="var(--color-brand-tint)" stopOpacity={0.05} />
                                 </linearGradient>
                               </defs>
                               <Area
                                 type="monotone"
                                 dataKey="v"
-                                stroke="var(--color-success-app)"
+                                stroke="var(--color-brand-tint)"
                                 strokeWidth={2}
                                 fill={`url(#grad-${exerciseId})`}
-                                dot={{ r: 3, fill: 'var(--color-success-app)', strokeWidth: 0 }}
+                                dot={{ r: 3, fill: 'var(--color-brand-tint)', strokeWidth: 0 }}
                               />
                               <XAxis dataKey="w" tick={{ fontSize: 9, fill: 'var(--color-text-faint)' }} axisLine={false} tickLine={false} />
                               <YAxis domain={['auto', 'auto']} tick={{ fontSize: 9, fill: 'var(--color-text-faint)' }} width={30} axisLine={false} tickLine={false} />
@@ -563,17 +524,26 @@ export function ProgressPage() {
 
             {features.premiumAnalytics && missingRows.length > 0 && (
               <section>
-                <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">À renseigner</h2>
-                <div className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-2">
-                  {missingRows.map(([exerciseId, count]) => (
-                    <div key={exerciseId} className="flex items-center justify-between py-1.5 border-b border-border-app last:border-0">
-                      <span className="text-sm font-medium text-fg">{getExerciseName(exerciseId, lang)}</span>
-                      <span className="text-[10px] font-bold text-fg-muted bg-layer-10 px-2 py-1 rounded-full">
-                        {count} blocs
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setMissingOpen((o) => !o)}
+                  className="flex items-center justify-between w-full mb-3"
+                >
+                  <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted">À renseigner ({missingRows.length})</h2>
+                  <ChevronDown className={`w-4 h-4 text-fg-muted transition-transform ${missingOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {missingOpen && (
+                  <div className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-2">
+                    {missingRows.map(([exerciseId, count]) => (
+                      <div key={exerciseId} className="flex items-center justify-between py-1.5 border-b border-border-app last:border-0">
+                        <span className="text-sm font-medium text-fg">{getExerciseName(exerciseId, lang)}</span>
+                        <span className="text-[10px] font-bold text-fg-muted bg-layer-10 px-2 py-1 rounded-full">
+                          {count} blocs
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </section>
             )}
 
@@ -817,7 +787,7 @@ export function ProgressPage() {
             <div className="border-b border-border-app px-4 pt-4 pb-3 sm:px-5 sm:pt-5 sm:pb-4">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
-                  <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-soft text-brand sm:h-10 sm:w-10">
+                  <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-soft text-brand-tint sm:h-10 sm:w-10">
                     {modal.is1RM ? <Dumbbell className="h-4.5 w-4.5" /> : <FlaskConical className="h-4.5 w-4.5" />}
                   </div>
                   <div className="min-w-0">

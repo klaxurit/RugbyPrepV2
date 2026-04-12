@@ -109,7 +109,7 @@ export function CalendarWeekTimeline({
 
         const dayRowClasses = (() => {
           if (isToday) {
-            return 'border border-bd-soft bg-tl-today shadow-sm'
+            return 'border-2 border-brand-border-strong bg-tl-today shadow-sm'
           }
           if (isUserUnavailable) {
             return 'border border-bd-muted bg-layer-2'
@@ -122,7 +122,7 @@ export function CalendarWeekTimeline({
 
         const dayPillClasses = (() => {
           if (isToday) {
-            return 'border-brand-border bg-brand-soft text-brand'
+            return 'border-brand-border bg-brand-soft text-brand-tint'
           }
           if (isUserUnavailable) {
             return 'border-bd-muted bg-layer-5 text-fg-muted'
@@ -146,7 +146,7 @@ export function CalendarWeekTimeline({
                 {dayLabel}
               </span>
               {isToday && (
-                <span className="text-[7px] font-bold uppercase text-brand-muted leading-none">
+                <span className="text-[7px] font-bold uppercase text-brand-tint leading-none">
                   Auj.
                 </span>
               )}
@@ -162,16 +162,16 @@ export function CalendarWeekTimeline({
                 return (
                   <div
                     data-testid={`timeline-match-${dow}`}
-                    className="rounded-xl border border-danger-bd bg-danger-bg py-2 px-3"
+                    className="rounded-xl border border-warn-bd bg-warn-bg py-2 px-3"
                   >
                     <WeekTimelineRow planKind="match" layout="embedded" data-testid={`week-timeline-match-${dow}`}>
                       <div className="flex min-w-0 items-center gap-2">
                         <div className="min-w-0 flex-1">
-                          <p className="text-[11px] font-black uppercase text-danger-soft">
+                          <p className="text-[11px] font-black uppercase text-warn-strong">
                             Match{matchEvent.opponent ? ` vs ${matchEvent.opponent}` : ''}
                           </p>
                           {(matchEvent.is_home != null || matchEvent.kickoff_time) && (
-                            <p className="mt-0.5 text-[9px] text-danger opacity-80">
+                            <p className="mt-0.5 text-[9px] text-warn opacity-80">
                               {matchEvent.is_home != null && (matchEvent.is_home ? 'Domicile' : 'Extérieur')}
                               {matchEvent.is_home != null && matchEvent.kickoff_time && ' · '}
                               {matchEvent.kickoff_time && `${matchEvent.kickoff_time}`}
@@ -233,7 +233,7 @@ export function CalendarWeekTimeline({
                     data-testid={`timeline-club-${dow}`}
                     className="items-center py-1.5"
                   >
-                    <span className="inline-flex h-5 max-w-full items-center text-[10px] font-bold leading-none text-fg-secondary">
+                    <span className="inline-flex h-5 max-w-full items-center text-[10px] font-bold leading-none text-violet-700">
                       Entraînement club
                     </span>
                   </WeekTimelineRow>
@@ -254,7 +254,7 @@ export function CalendarWeekTimeline({
                         type="button"
                         data-testid={`timeline-undo-unavailable-${dow}`}
                         onClick={() => onUndoCorrection(unavailCorrection.id)}
-                        className="flex items-center gap-0.5 text-[9px] font-bold text-brand hover:text-brand-muted transition-colors"
+                        className="flex items-center gap-0.5 text-[9px] font-bold text-brand-tint hover:text-brand-tint transition-colors"
                       >
                         <Undo2 className="w-3 h-3" />
                         Annuler
@@ -365,8 +365,8 @@ function SessionRow({
           isSkipped
             ? 'border border-edge-hairline bg-layer-2 opacity-50'
             : isCompleted
-              ? 'border border-brand-border bg-brand-soft shadow-sm'
-              : 'border border-border-app bg-layer-7 hover:border-brand-border'
+              ? 'border border-ok-bd bg-ok-bg shadow-sm'
+              : 'border border-ok-bd bg-ok-bg hover:shadow-sm'
         }`}
       >
         <WeekTimelineRow
@@ -385,13 +385,13 @@ function SessionRow({
             >
               <p
                 className={`truncate text-xs font-black ${
-                  isSkipped ? 'text-fg-faint line-through' : isCompleted ? 'text-brand' : 'text-fg'
+                  isSkipped ? 'text-fg-faint line-through' : isCompleted ? 'text-brand-tint' : 'text-fg'
                 }`}
               >
                 {title}
               </p>
               <p
-                className={`mt-0.5 text-[10px] ${isCompleted ? 'text-brand-muted' : 'text-fg-muted'}`}
+                className={`mt-0.5 text-[10px] ${isCompleted ? 'text-brand-tint' : 'text-fg-muted'}`}
                 data-testid={`session-meta-${globalIndex}`}
               >
                 {isSkipped ? (
@@ -471,7 +471,7 @@ function SessionRow({
                 <button
                   type="button"
                   onClick={() => onSessionSelect?.(globalIndex)}
-                  className="rounded-lg bg-brand-soft p-1.5 text-brand transition-colors hover:bg-brand-border"
+                  className="rounded-lg bg-brand-soft p-1.5 text-brand-tint transition-colors hover:bg-brand-border"
                 >
                   <Play className="h-3 w-3" />
                 </button>
@@ -519,7 +519,7 @@ function SessionRow({
                   onRescheduleSession(s.sessionSlot.sessionId, d)
                   setShowReschedule(false)
                 }}
-                className="px-2 py-1 rounded-lg text-[9px] font-bold bg-layer-10 text-fg-secondary hover:bg-brand-border hover:text-brand transition-colors"
+                className="px-2 py-1 rounded-lg text-[9px] font-bold bg-layer-10 text-fg-secondary hover:bg-brand-border hover:text-brand-tint transition-colors"
               >
                 {DAY_LABELS[d]}
               </button>
@@ -563,7 +563,7 @@ function SessionRow({
             <button
               type="button"
               onClick={() => onUndoCorrection(rescheduleCorrection.id)}
-              className="flex items-center gap-0.5 text-[9px] font-bold text-brand hover:text-brand-muted transition-colors"
+              className="flex items-center gap-0.5 text-[9px] font-bold text-brand-tint hover:text-brand-tint transition-colors"
             >
               <Undo2 className="w-3 h-3" />
               Annuler le report

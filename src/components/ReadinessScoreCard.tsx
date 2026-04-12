@@ -56,12 +56,12 @@ export function ReadinessScoreCard({ result }: { result: ReadinessResult }) {
   ].filter((x) => x.data != null)
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-3">
+    <div className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-3">
       <div className="flex items-center gap-2">
-        <div className="p-2 rounded-2xl bg-white/10">
-          <Activity className="w-4 h-4 text-white/60" />
+        <div className="p-2 rounded-2xl bg-layer-10">
+          <Activity className="w-4 h-4 text-fg-muted" />
         </div>
-        <h3 className="text-sm font-black text-white">Score de forme</h3>
+        <h3 className="text-sm font-black text-fg">Score de forme</h3>
       </div>
 
       {/* Gauge + score */}
@@ -80,15 +80,15 @@ export function ReadinessScoreCard({ result }: { result: ReadinessResult }) {
         {components.map(({ key, data }) => (
           <div key={key} className="flex items-center gap-2">
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] text-white/40 font-bold truncate">{COMP_LABELS[key]}</p>
-              <div className="h-1.5 bg-white/10 rounded-full mt-0.5">
+              <p className="text-[10px] text-fg-muted font-bold truncate">{COMP_LABELS[key]}</p>
+              <div className="h-1.5 bg-layer-10 rounded-full mt-0.5">
                 <div
                   className={`h-full rounded-full ${c.bg} opacity-70`}
                   style={{ width: `${data!.score}%`, transition: 'width 0.4s ease' }}
                 />
               </div>
             </div>
-            <span className="text-[10px] font-black text-white/50 w-6 text-right">{data!.score}</span>
+            <span className="text-[10px] font-black text-fg-muted w-6 text-right">{data!.score}</span>
           </div>
         ))}
       </div>

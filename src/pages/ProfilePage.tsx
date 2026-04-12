@@ -4,7 +4,7 @@ import { posthog } from '../services/analytics/posthog'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { Dumbbell, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw } from 'lucide-react'
+import { Dumbbell, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, ChevronDown, LogOut } from 'lucide-react'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
@@ -27,13 +27,16 @@ import type {
 } from '../types/training'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
 
-/** Équipements qui déclenchent des substitutions en mode Fondation. */
-const FOUNDATIONS_EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string; hint: string }[] = [
-  { value: 'dumbbell',  label: 'Haltères / Kettlebell', hint: 'Goblet squat, DB RDL, DB press' },
-  { value: 'machine',   label: 'Machines guidées',      hint: 'Leg press, leg curl, shoulder press' },
-  { value: 'cable',     label: 'Poulie / Câble',        hint: 'Cable row, cable chop' },
-  { value: 'bench',     label: 'Banc',                  hint: 'Chest supported row' },
-  { value: 'landmine',  label: 'Landmine',              hint: 'Landmine press' },
+/** Équipements "rares" qu'une salle peut ne pas avoir — l'utilisateur décoche ce qui manque. */
+const RARE_EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string }[] = [
+  { value: 'cable',        label: 'Poulie / Câble' },
+  { value: 'machine',      label: 'Machines guidées' },
+  { value: 'landmine',     label: 'Landmine' },
+  { value: 'tbar_row',     label: 'T-Bar Row' },
+  { value: 'ghd',          label: 'GHD (Glute-Ham)' },
+  { value: 'med_ball',     label: 'Médecine Ball' },
+  { value: 'ab_wheel',     label: 'Ab Wheel' },
+  { value: 'sprint_track', label: 'Piste / Gazon' },
 ]
 
 const POSITION_OPTIONS = [
@@ -83,7 +86,7 @@ const avatarErrorLabel: Record<AuthError, string> = {
 
 export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
-  const { authState, updateAvatar } = useAuth()
+  const { authState, updateAvatar, signOut } = useAuth()
   const { features, isPremium, refresh: refreshEntitlements } = useFeatureAccess()
   const { visibleEvents, structuralEvents } = useCalendar()
   const { canShowUpsell } = useUpsellTiming()
@@ -111,6 +114,7 @@ export function ProfilePage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
   const [heightInput, setHeightInput] = useState(profile.heightCm?.toString() ?? '')
   const [weightInput, setWeightInput] = useState(profile.weightKg?.toString() ?? '')
+  const [equipmentOpen, setEquipmentOpen] = useState(false)
 
   // Sync inputs quand le profil charge depuis Supabase
   useEffect(() => {
@@ -236,7 +240,7 @@ export function ProfilePage() {
           <button
             type="button"
             onClick={resetProfile}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-border-app bg-layer-5 text-xs font-bold text-fg-muted hover:border-brand-border-strong hover:text-brand transition-colors rf-focus-ring"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-shell-bd bg-white/10 text-xs font-bold text-shell-text-muted hover:bg-white/20 hover:text-shell-text transition-colors rf-focus-ring"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Réinitialiser
@@ -251,7 +255,7 @@ export function ProfilePage() {
               type="button"
               onClick={handleAvatarClick}
               disabled={isAvatarUploading}
-              className="relative w-20 h-20 rounded-3xl border border-border-app bg-layer-10 flex items-center justify-center overflow-hidden disabled:opacity-60"
+              className="relative w-24 h-24 rounded-3xl border border-border-app bg-layer-10 flex items-center justify-center overflow-hidden disabled:opacity-60"
               aria-label="Changer la photo de profil"
             >
               {resolvedAvatarUrl ? (
@@ -305,7 +309,7 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ rugbyPosition: opt.value })}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                       active
-                        ? 'bg-success-app text-on-success shadow-sm'
+                        ? 'bg-brand text-on-brand shadow-sm'
                         : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                     }`}
                   >
@@ -334,14 +338,14 @@ export function ProfilePage() {
                     }
                     className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
                       active
-                        ? 'bg-success-app text-on-success shadow-sm'
+                        ? 'bg-brand text-on-brand shadow-sm'
                         : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                     }`}
                   >
                     <span className="text-base flex-shrink-0">{opt.emoji}</span>
                     <div>
                       <p className="font-black">{opt.label}</p>
-                      <p className={`text-[10px] font-normal ${active ? 'text-ok' : 'text-fg-muted'}`}>{opt.sub}</p>
+                      <p className={`text-[10px] font-normal ${active ? 'text-on-brand/80' : 'text-fg-muted'}`}>{opt.sub}</p>
                     </div>
                   </button>
                 )
@@ -374,7 +378,7 @@ export function ProfilePage() {
                 {profile.planningAnchors?.returnToTeamTrainingAt ? (
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-brand-soft border border-brand-border" data-testid="situation-return-set">
-                      <span className="text-xs font-bold text-brand">
+                      <span className="text-xs font-bold text-brand-tint">
                         Reprise le {new Date(profile.planningAnchors.returnToTeamTrainingAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
                       </span>
                       <button
@@ -385,7 +389,7 @@ export function ProfilePage() {
                           delete cleanAnchors.returnToTeamTrainingAt
                           updateProfile({ planningAnchors: cleanAnchors })
                         }}
-                        className="text-[10px] font-bold text-brand-muted hover:text-brand"
+                        className="text-[10px] font-bold text-brand-muted hover:text-brand-tint"
                       >
                         Modifier
                       </button>
@@ -523,12 +527,12 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ preferredLanguage: opt.value })}
                     className={`py-2.5 px-3 rounded-2xl text-left transition-all ${
                       active
-                        ? 'bg-success-app text-on-success shadow-sm'
+                        ? 'bg-brand text-on-brand shadow-sm'
                         : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                     }`}
                   >
                     <p className="text-xs font-black">{opt.label}</p>
-                    <p className={`mt-0.5 text-[10px] ${active ? 'text-ok' : 'text-fg-muted'}`}>{opt.sub}</p>
+                    <p className={`mt-0.5 text-[10px] ${active ? 'text-on-brand/80' : 'text-fg-muted'}`}>{opt.sub}</p>
                   </button>
                 )
               })}
@@ -548,7 +552,7 @@ export function ProfilePage() {
                     onClick={() => updateProfile({ weeklySessions: n as 2 | 3 })}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
                       active
-                        ? 'bg-success-app text-on-success shadow-sm'
+                        ? 'bg-brand text-on-brand shadow-sm'
                         : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
                     }`}
                   >
@@ -564,7 +568,7 @@ export function ProfilePage() {
         {/* Morphologie */}
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-5">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-violet-900/20 text-violet-400">
+            <div className="p-2 rounded-2xl bg-violet-50 text-violet-600 border border-violet-200">
               <Ruler className="w-4 h-4" />
             </div>
             <div>
@@ -634,46 +638,50 @@ export function ProfilePage() {
           })()}
         </section>
 
-        {/* Équipement — visible uniquement en Fondation */}
-        {profile.trainingLevel === 'starter' && (
-        <section className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-info-bg text-info border border-info-bd">
+        {/* Équipement manquant — collapsible, visible pour tous les niveaux */}
+        <section className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setEquipmentOpen((o) => !o)}
+            className="w-full p-6 flex items-center gap-3 text-left"
+          >
+            <div className="p-2 rounded-2xl bg-info-bg text-info border border-info-bd flex-shrink-0">
               <Dumbbell className="w-4 h-4" />
             </div>
-            <div>
-              <h2 className="text-sm font-black text-fg">Matériel à disposition</h2>
-              <p className="text-xs text-fg-muted">On adapte tes exercices selon ce que tu as en salle</p>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-sm font-black text-fg">Équipement manquant dans ta salle ?</h2>
+              <p className="text-xs text-fg-muted">Décoche ce que ta salle n&apos;a pas</p>
             </div>
-          </div>
-          <p className="text-xs text-fg-soft leading-relaxed">
-            Si tu ne coches rien, tu garderas les exercices par défaut (barre, poids de corps). Coche ce que tu as pour débloquer des variantes plus guidées.
-          </p>
-          <div className="space-y-2">
-            {FOUNDATIONS_EQUIPMENT_OPTIONS.map(({ value, label, hint }) => {
-              const active = profile.equipment.includes(value)
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => updateProfile({ equipment: toggleValue(profile.equipment, value) })}
-                  className={`w-full py-3 px-4 rounded-2xl text-left transition-all flex items-center gap-3 ${
-                    active
-                      ? 'bg-info-bg border border-info-bd text-fg'
-                      : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
-                  }`}
-                >
-                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${active ? 'bg-info' : 'bg-layer-20'}`} />
-                  <div className="min-w-0">
-                    <span className="text-xs font-bold">{label}</span>
-                    <span className="block text-[10px] text-fg-muted mt-0.5">{hint}</span>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
+            <ChevronDown className={`w-4 h-4 text-fg-muted transition-transform ${equipmentOpen ? 'rotate-180' : ''}`} />
+          </button>
+          {equipmentOpen && (
+            <div className="px-6 pb-6 space-y-3">
+              <p className="text-xs text-fg-soft leading-relaxed">
+                Tout est coché par défaut. Décoche uniquement le matériel que ta salle ne possède pas.
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {RARE_EQUIPMENT_OPTIONS.map(({ value, label }) => {
+                  const active = profile.equipment.includes(value)
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => updateProfile({ equipment: toggleValue(profile.equipment, value) })}
+                      className={`py-2.5 px-3 rounded-xl text-left transition-all flex items-center gap-2 ${
+                        active
+                          ? 'bg-info-bg border border-info-bd text-fg'
+                          : 'bg-layer-5 text-fg-soft border border-border-app line-through opacity-60'
+                      }`}
+                    >
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${active ? 'bg-info' : 'bg-layer-20'}`} />
+                      <span className="text-[11px] font-bold leading-tight">{label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </section>
-        )}
 
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-4">
           <div className="flex items-center gap-2">
@@ -705,7 +713,7 @@ export function ProfilePage() {
             </div>
             <span className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-wide ${
               isPremium
-                ? 'bg-brand-medium text-brand'
+                ? 'bg-brand-medium text-brand-tint'
                 : 'bg-layer-10 text-fg-soft'
             }`}>
               {isPremium ? 'PREMIUM' : 'FREE'}
@@ -927,7 +935,7 @@ export function ProfilePage() {
                 type="button"
                 onClick={handleCropConfirm}
                 disabled={isAvatarUploading}
-                className="py-3 rounded-2xl bg-success-app text-on-success text-xs font-black uppercase tracking-wide opacity-95 hover:opacity-100 transition-opacity disabled:opacity-60 rf-focus-ring"
+                className="py-3 rounded-2xl bg-brand text-on-brand text-xs font-black uppercase tracking-wide opacity-95 hover:opacity-100 transition-opacity disabled:opacity-60 rf-focus-ring"
               >
                 {isAvatarUploading ? 'Upload...' : 'Valider'}
               </button>
@@ -941,16 +949,26 @@ export function ProfilePage() {
         <a
           href="mailto:support@rugbyforge.fr?subject=Feedback%20RugbyForge"
           onClick={() => posthog.capture('feedback_clicked')}
-          className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-success-app text-on-success text-xs font-black uppercase tracking-wide opacity-95 hover:opacity-100 transition-opacity shadow-elevated rf-focus-ring"
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-brand text-on-brand text-xs font-black uppercase tracking-wide opacity-95 hover:opacity-100 transition-opacity shadow-elevated rf-focus-ring"
         >
           Envoyer un feedback
         </a>
         <Link
           to="/legal"
-          className="text-xs text-fg-muted hover:text-brand transition-colors"
+          className="text-xs text-fg-muted hover:text-brand-tint transition-colors"
         >
           Mentions légales & Confidentialité
         </Link>
+        {authState.status === 'authenticated' && (
+          <button
+            type="button"
+            onClick={signOut}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-danger-bd bg-danger-bg text-xs font-bold text-danger hover:bg-danger-bg-hover transition-colors"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Se déconnecter
+          </button>
+        )}
         <p className="text-[10px] text-fg-ghost">RugbyForge v1.0</p>
       </footer>
 

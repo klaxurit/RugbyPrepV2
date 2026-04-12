@@ -90,7 +90,7 @@ const PRIVACY_SECTIONS: Section[] = [
 
 export function LegalPage() {
   return (
-    <div className="min-h-screen bg-app font-sans text-white pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title="Mentions légales" backTo="/" />
@@ -113,13 +113,13 @@ export function LegalPage() {
 
         {/* CGU */}
         <section className="space-y-4">
-          <h1 className="text-lg font-black text-white">Conditions Générales d&apos;Utilisation</h1>
-          <p className="text-xs text-white/40">Dernière mise à jour : avril 2026</p>
+          <h1 className="text-lg font-black text-fg">Conditions Générales d&apos;Utilisation</h1>
+          <p className="text-xs text-fg-muted">Dernière mise à jour : avril 2026</p>
           {CGU_SECTIONS.map((s) => (
-            <div key={s.title} className="bg-white/5 border border-white/10 rounded-[20px] p-5 space-y-2">
-              <h2 className="text-sm font-black text-white">{s.title}</h2>
+            <div key={s.title} className="bg-layer-5 border border-border-app rounded-[20px] p-5 space-y-2">
+              <h2 className="text-sm font-black text-fg">{s.title}</h2>
               {s.content.map((p, i) => (
-                <p key={i} className="text-sm text-white/70 leading-relaxed">{p}</p>
+                <p key={i} className="text-sm text-fg-secondary leading-relaxed">{p}</p>
               ))}
             </div>
           ))}
@@ -127,25 +127,25 @@ export function LegalPage() {
 
         {/* Confidentialité */}
         <section className="space-y-4">
-          <h1 className="text-lg font-black text-white">Politique de Confidentialité</h1>
-          <p className="text-xs text-white/40">Conformément au RGPD (UE 2016/679)</p>
+          <h1 className="text-lg font-black text-fg">Politique de Confidentialité</h1>
+          <p className="text-xs text-fg-muted">Conformément au RGPD (UE 2016/679)</p>
           {PRIVACY_SECTIONS.map((s) => (
-            <div key={s.title} className="bg-white/5 border border-white/10 rounded-[20px] p-5 space-y-2">
-              <h2 className="text-sm font-black text-white">{s.title}</h2>
+            <div key={s.title} className="bg-layer-5 border border-border-app rounded-[20px] p-5 space-y-2">
+              <h2 className="text-sm font-black text-fg">{s.title}</h2>
               {s.content.map((p, i) => (
-                <p key={i} className="text-sm text-white/70 leading-relaxed">{p}</p>
+                <p key={i} className="text-sm text-fg-secondary leading-relaxed">{p}</p>
               ))}
             </div>
           ))}
         </section>
 
         {/* Contact */}
-        <section className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-2">
-          <h2 className="text-sm font-black text-white">Contact</h2>
-          <p className="text-sm text-white/70">
-            Service édité par <span className="font-bold text-white">Axurit</span>.
+        <section className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-2">
+          <h2 className="text-sm font-black text-fg">Contact</h2>
+          <p className="text-sm text-fg-secondary">
+            Service édité par <span className="font-bold text-fg">Axurit</span>.
           </p>
-          <p className="text-sm text-white/70">
+          <p className="text-sm text-fg-secondary">
             Pour toute question relative aux présentes mentions légales ou à vos données personnelles :
           </p>
           <a

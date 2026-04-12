@@ -4,13 +4,13 @@
  */
 
 function Pulse({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse rounded-xl bg-white/[0.06] ${className}`} />
+  return <div className={`animate-pulse rounded-xl bg-layer-5 ${className}`} />
 }
 
 /** Matches ReadinessScoreCard layout */
 export function ReadinessScoreSkeleton() {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-4">
+    <div className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-4">
       <div className="flex items-center gap-2">
         <Pulse className="w-8 h-8 rounded-2xl" />
         <Pulse className="h-4 w-28" />
@@ -32,7 +32,7 @@ export function ReadinessScoreSkeleton() {
 /** Matches WeeklySummaryCard layout */
 export function WeeklySummarySkeleton() {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-[24px] p-5 space-y-4">
+    <div className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-4">
       <div className="flex items-center gap-2">
         <Pulse className="w-8 h-8 rounded-2xl" />
         <Pulse className="h-4 w-32" />
@@ -68,7 +68,7 @@ export function ProgressCurveSkeleton() {
     <div className="space-y-4">
       <Pulse className="h-4 w-36" />
       {[1, 2].map((i) => (
-        <div key={i} className="bg-white/5 border border-white/10 rounded-[24px] p-4 space-y-3">
+        <div key={i} className="bg-layer-5 border border-border-app rounded-[24px] p-4 space-y-3">
           <Pulse className="h-4 w-28" />
           <Pulse className="h-[80px] w-full rounded-xl" />
           <Pulse className="h-2.5 w-32" />
