@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useProfile } from '../hooks/useProfile'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
+import { useScrollThemeColor } from '../hooks/useScrollThemeColor'
 
 interface PageHeaderProps {
   /** Titre de la page affiché sous le logo */
@@ -22,6 +23,7 @@ interface PageHeaderProps {
  * Thème clair par défaut (crème + bordeaux). Suit les tokens sémantiques.
  */
 export function PageHeader({ title, backTo, right }: PageHeaderProps) {
+  useScrollThemeColor()
   const { authState } = useAuth()
   const { profile } = useProfile()
   const currentUser = authState.status === 'authenticated' ? authState.user : null

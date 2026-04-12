@@ -29,10 +29,10 @@ def twaManifest = [
     launcherName: 'RugbyForge', // The name shown on the Android Launcher.
     themeColor: '#7B0D1E', // The color used for the status bar.
     themeColorDark: '#7B0D1E', // The color used for the dark status bar.
-    navigationColor: '#7B0D1E', // The color used for the navigation bar.
-    navigationColorDark: '#7B0D1E', // The color used for the dark navbar.
-    navigationDividerColor: '#7B0D1E', // The navbar divider color.
-    navigationDividerColorDark: '#7B0D1E', // The dark navbar divider color.
+    navigationColor: '#F5F2EE', // The color used for the navigation bar.
+    navigationColorDark: '#F5F2EE', // The color used for the dark navbar.
+    navigationDividerColor: '#F5F2EE', // The navbar divider color.
+    navigationDividerColorDark: '#F5F2EE', // The dark navbar divider color.
     backgroundColor: '#7B0D1E', // The color used for the splash screen background.
     enableNotifications: true, // Set to true to enable notification delegation.
     // Every shortcut must include the following fields:
