@@ -66,7 +66,7 @@ function navigateToSummary(options?: { seasonMode?: string }) {
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
   // Step 1: Profil → select Advanced path + 2 séances
-  fireEvent.click(screen.getByText('Avancé'))
+  fireEvent.click(screen.getByText('Confirmé'))
   fireEvent.click(screen.getByText('2 séances'))
   if (options?.seasonMode === 'off_season') {
     fireEvent.click(screen.getByText('Inter-saison'))
@@ -140,7 +140,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
     // Step 1: select Avancé (performance)
-    fireEvent.click(screen.getByText('Avancé'))
+    fireEvent.click(screen.getByText('Confirmé'))
 
     // performanceFocus should NOT appear
     expect(screen.queryByText('Orientation performance')).toBeNull()
@@ -153,7 +153,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    fireEvent.click(screen.getByText('Avancé'))
+    fireEvent.click(screen.getByText('Confirmé'))
     fireEvent.click(screen.getByText('2 séances'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
@@ -169,7 +169,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    fireEvent.click(screen.getByText('Avancé'))
+    fireEvent.click(screen.getByText('Confirmé'))
     fireEvent.click(screen.getByText('2 séances'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
@@ -196,7 +196,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    fireEvent.click(screen.getByText('Avancé'))
+    fireEvent.click(screen.getByText('Confirmé'))
     fireEvent.click(screen.getByText('2 séances'))
 
     // Select "Joueuse"
@@ -225,7 +225,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    fireEvent.click(screen.getByText('Avancé'))
+    fireEvent.click(screen.getByText('Confirmé'))
     fireEvent.click(screen.getByText('2 séances'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
@@ -257,7 +257,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
     // Step 1: should show cycle hint question
-    expect(screen.getByText('Où en es-tu ?')).toBeInTheDocument()
+    expect(screen.getByText('Ta saison en ce moment')).toBeInTheDocument()
     expect(screen.getByText('En saison')).toBeInTheDocument()
     expect(screen.getByText('Inter-saison')).toBeInTheDocument()
     // Must NOT show mode selector wording

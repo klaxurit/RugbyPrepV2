@@ -19,8 +19,7 @@ import type {
   SeasonMode,
   PopulationSegment,
 } from '../types/training'
-import { computeSCSchedule, buildManualSCSchedule } from '../services/program/scheduleOptimizer'
-import { GymDaySelector } from '../components/GymDaySelector'
+import { computeSCSchedule } from '../services/program/scheduleOptimizer'
 // betaEligibility import removed — all profiles eligible since V2 launch
 
 // ─── Types ────────────────────────────────────────────────────
@@ -82,16 +81,16 @@ const TRAINING_LEVELS: {
 }[] = [
   {
     value: 'starter',
-    label: 'Fondations',
-    sub: 'Je construis mes bases',
-    details: 'Machines guidées, bases solides — progression simple',
+    label: 'Débutant',
+    sub: 'Je découvre la muscu',
+    details: 'Exercices simples, progression guidée',
     legacyLevel: 'beginner',
   },
   {
     value: 'performance',
-    label: 'Avancé',
-    sub: 'Je cherche la performance maximale',
-    details: 'Barre + blocs de contraste — transfert rugby direct',
+    label: 'Confirmé',
+    sub: 'J\'ai l\'habitude des barres et haltères',
+    details: 'Programme complet avec barres, haltères et explosivité',
     legacyLevel: 'intermediate',
   },
 ]
@@ -99,7 +98,7 @@ const TRAINING_LEVELS: {
 const CYCLE_HINTS: { value: SeasonMode; label: string; sub: string; emoji: string }[] = [
   { value: 'in_season',  label: 'En saison',      sub: 'J\'ai des matchs à venir',     emoji: '⚡' },
   { value: 'off_season', label: 'Inter-saison',    sub: 'Pas de match pour l\'instant',  emoji: '🌿' },
-  { value: 'pre_season', label: 'Pré-saison',      sub: 'Je prépare ma reprise',        emoji: '🔥' },
+  { value: 'pre_season', label: 'Pré-saison',      sub: 'Ma reprise approche',           emoji: '🔥' },
 ]
 // This seeds the initial cycle for program bootstrap. Once matches are added,
 // the annual context detector auto-detects the real cycle from the calendar.
@@ -177,10 +176,7 @@ export function OnboardingPage() {
   const [sessions, setSessions] = useState<2 | 3 | null>(null)
   const [equipment, setEquipment] = useState<Set<Equipment>>(new Set())
   const [clubDays, setClubDays] = useState<Set<DayOfWeek>>(new Set())
-  const [clubDayTimes, setClubDayTimes] = useState<Record<number, string>>({})
   const [matchDay, setMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
-  const [gymMode, setGymMode] = useState<'auto' | 'manual'>('auto')
-  const [manualGymDays, setManualGymDays] = useState<Set<DayOfWeek>>(new Set())
   const [scSchedule, setScSchedule] = useState<SCSchedule | undefined>(undefined)
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
@@ -217,10 +213,7 @@ export function OnboardingPage() {
   const buildClubSchedule = (): ClubSchedule | undefined => {
     if (clubDays.size === 0) return undefined
     return {
-      clubDays: Array.from(clubDays).map((d) => ({
-        day: d,
-        time: clubDayTimes[d] ?? undefined,
-      })),
+      clubDays: Array.from(clubDays).map((d) => ({ day: d })),
       matchDay: matchDay ?? undefined,
     }
   }
@@ -228,11 +221,7 @@ export function OnboardingPage() {
   const handleClubScheduleNext = () => {
     if (clubDays.size > 0 && sessions !== null) {
       const cs = buildClubSchedule()!
-      if (gymMode === 'manual' && manualGymDays.size > 0) {
-        setScSchedule(buildManualSCSchedule(Array.from(manualGymDays)))
-      } else {
-        setScSchedule(computeSCSchedule(cs, sessions))
-      }
+      setScSchedule(computeSCSchedule(cs, sessions))
     }
     setStep((s) => s + 1)
   }
@@ -482,7 +471,7 @@ export function OnboardingPage() {
 
             <div className="space-y-3">
               <div>
-                <SectionLabel>Où en es-tu ?</SectionLabel>
+                <SectionLabel>Ta saison en ce moment</SectionLabel>
                 <p className="text-[10px] text-fg-faint mt-0.5">Ton programme s'adaptera ensuite automatiquement à ton calendrier</p>
               </div>
               <div className="grid grid-cols-3 gap-2">
@@ -545,7 +534,7 @@ export function OnboardingPage() {
             {/* App réservée aux adultes — pas de sélecteur d'âge */}
 
             <div className="space-y-3">
-              <SectionLabel>Profil</SectionLabel>
+              <SectionLabel>Tu es</SectionLabel>
               <div className="grid grid-cols-2 gap-2.5">
                 {([
                   { value: 'male' as const, label: 'Joueur' },
@@ -714,23 +703,7 @@ export function OnboardingPage() {
                   )
                 })}
               </div>
-              {/* Horaires sous les jours sélectionnés */}
-              {clubDays.size > 0 && (
-                <div className="grid grid-cols-2 gap-2">
-                  {CLUB_DAYS_OPTIONS.filter((opt) => clubDays.has(opt.day)).map((opt) => (
-                    <div key={opt.day} className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-fg-soft w-8 flex-shrink-0">{opt.label.slice(0, 3)}</span>
-                      <input
-                        type="time"
-                        value={clubDayTimes[opt.day] ?? ''}
-                        onChange={(e) => setClubDayTimes((prev) => ({ ...prev, [opt.day]: e.target.value }))}
-                        className="flex-1 text-xs rounded-xl border-2 border-border-app bg-layer-5 px-2 py-1.5 text-fg-secondary focus:outline-none focus:border-brand transition-colors rf-focus-ring"
-                        placeholder="HH:MM"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
+              {/* Horaires ajustables dans le profil après onboarding */}
             </div>
 
             {/* Jour de match */}
@@ -757,67 +730,26 @@ export function OnboardingPage() {
             {/* Séances muscu — si jours club sélectionnés */}
             {clubDays.size > 0 && sessions !== null && (
               <div className="space-y-3 pt-4 border-t border-border-app">
-                <div className="flex items-center justify-between">
-                  <SectionLabel>Séances muscu</SectionLabel>
-                  <div className="flex gap-1 bg-layer-10 rounded-xl p-0.5">
-                    {(['auto', 'manual'] as const).map((mode) => (
-                      <button
-                        key={mode}
-                        type="button"
-                        onClick={() => {
-                          if (mode === 'manual' && manualGymDays.size === 0) {
-                            const cs: ClubSchedule = {
-                              clubDays: Array.from(clubDays).map((d) => ({ day: d })),
-                              matchDay: matchDay ?? undefined,
-                            }
-                            const auto = computeSCSchedule(cs, sessions)
-                            setManualGymDays(new Set(auto.sessions.map((s) => s.day)))
-                          }
-                          setGymMode(mode)
-                        }}
-                        className={`px-3 py-1 rounded-[10px] text-[10px] font-black transition-all ${
-                          gymMode === mode ? 'bg-layer-20 text-fg shadow-sm' : 'text-fg-muted'
-                        }`}
-                      >
-                        {mode === 'auto' ? 'Auto' : 'Manuel'}
-                      </button>
-                    ))}
-                  </div>
+                <SectionLabel>Tes séances muscu</SectionLabel>
+                <div className="p-3.5 rounded-2xl bg-ok-bg-muted border border-ok-bd">
+                  <p className="text-[10px] font-black text-ok-strong uppercase tracking-wide mb-1">
+                    Jours suggérés
+                  </p>
+                  <p className="text-sm font-black text-fg">
+                    {(() => {
+                      const cs: ClubSchedule = {
+                        clubDays: Array.from(clubDays).map((d) => ({ day: d })),
+                        matchDay: matchDay ?? undefined,
+                      }
+                      return computeSCSchedule(cs, sessions).sessions
+                        .map((s) => DAY_LABELS[s.day])
+                        .join(' · ')
+                    })()}
+                  </p>
+                  <p className="text-[10px] text-fg-muted mt-1">
+                    Placées automatiquement autour de ton club et de tes matchs
+                  </p>
                 </div>
-
-                {gymMode === 'auto' && (
-                  <div className="p-3.5 rounded-2xl bg-ok-bg-muted border border-ok-bd">
-                    <p className="text-[10px] font-black text-ok-strong uppercase tracking-wide mb-1">
-                      Suggestion calculée
-                    </p>
-                    <p className="text-sm font-black text-fg">
-                      {(() => {
-                        const cs: ClubSchedule = {
-                          clubDays: Array.from(clubDays).map((d) => ({ day: d })),
-                          matchDay: matchDay ?? undefined,
-                        }
-                        return computeSCSchedule(cs, sessions).sessions
-                          .map((s) => DAY_LABELS[s.day])
-                          .join(' · ')
-                      })()}
-                    </p>
-                    <p className="text-[10px] text-fg-muted mt-1">
-                      Basé sur tes entraînements club et les règles de récupération
-                    </p>
-                  </div>
-                )}
-
-                {gymMode === 'manual' && (
-                  <GymDaySelector
-                    clubSchedule={{
-                      clubDays: Array.from(clubDays).map((d) => ({ day: d })),
-                      matchDay: matchDay ?? undefined,
-                    }}
-                    selectedDays={manualGymDays}
-                    weeklySessions={sessions}
-                    onChange={setManualGymDays}
-                  />
-                )}
               </div>
             )}
           </div>
