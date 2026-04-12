@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import { RugbyForgeLogo } from '../../components/RugbyForgeLogo'
+import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import { useAuth } from '../../hooks/useAuth'
 import { supabase } from '../../services/supabase/client'
 
@@ -75,8 +75,8 @@ export function ResetPasswordPage() {
         <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
         <main className="relative w-full max-w-md mx-auto flex flex-col flex-1 justify-center gap-10">
-          <div className="flex flex-col items-center text-center gap-3">
-            <RugbyForgeLogo size="hero" />
+          <div className="flex flex-col items-center text-center gap-4">
+            <img src={rugbyforgeLogo} alt="RugbyForge" className="h-20" />
             <p className="text-fg-muted text-xs font-bold tracking-[0.2em] uppercase">
               Réinitialisation du mot de passe
             </p>
@@ -106,8 +106,8 @@ export function ResetPasswordPage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <main className="relative w-full max-w-md mx-auto flex flex-col flex-1 justify-center gap-10">
-        <div className="flex flex-col items-center text-center gap-3">
-          <RugbyForgeLogo size="hero" />
+        <div className="flex flex-col items-center text-center gap-4">
+          <img src={rugbyforgeLogo} alt="RugbyForge" className="h-20" />
           <p className="text-fg-muted text-xs font-bold tracking-[0.2em] uppercase">
             Nouveau mot de passe
           </p>

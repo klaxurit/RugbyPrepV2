@@ -1,8 +1,8 @@
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
-import { RugbyForgeLogo } from '../../components/RugbyForgeLogo'
 import { sanitizeRequestedAppPath } from '../../services/navigation/resolveAppEntryDestination'
+import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
 
 interface RedirectState {
@@ -70,9 +70,9 @@ export function LoginPage() {
 
       <main className="relative w-full max-w-md mx-auto flex flex-col flex-1 justify-center gap-10">
 
-        {/* Wordmark */}
-        <div className="flex flex-col items-center text-center gap-3">
-          <RugbyForgeLogo size="hero" />
+        {/* Logo */}
+        <div className="flex flex-col items-center text-center gap-4">
+          <img src={rugbyforgeLogo} alt="RugbyForge" className="h-20" />
           <p className="text-fg-muted text-xs font-bold tracking-[0.2em] uppercase">
             Préparation physique rugby
           </p>
