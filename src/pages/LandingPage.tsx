@@ -261,27 +261,27 @@ const PREMIUM_MONTHLY_PRICE = '5,99€'
 const PREMIUM_YEARLY_PRICE = '47,99€'
 
 const FREE_PLAN_FEATURES = [
-  'Programme périodisé complet',
-  "Séances et logs d'entraînement",
-  'Calendrier club + suivi ACWR',
+  'Programme complet adapté à ta saison',
+  "Séances et suivi d'entraînement",
+  'Calendrier club + suivi de charge',
   'Prévention et mobilité intégrées',
   'Chat IA (5 messages/jour)',
 ]
 
 const PREMIUM_MONTHLY_FEATURES = [
   'Tout le plan Free',
-  'Score de forme quotidien',
-  'Bilan de semaine automatique',
-  'Records personnels et courbes de progression',
+  'Score de forme du jour',
+  'Bilan de ta semaine',
+  'Records personnels et courbes de progrès',
   'Suggestions de charge personnalisées',
   'Chat IA illimité',
 ]
 
 const PREMIUM_YEARLY_FEATURES = [
   'Tout le plan Premium',
-  "33% d'économie vs mensuel",
+  "33% d'économie par rapport au mensuel",
   'Suivi de progression sur toute la saison',
-  'Tarif le plus rentable pour ton année rugby',
+  'Le meilleur tarif pour une saison complète',
 ]
 
 // ─── Main Landing Page ───────────────────────────────────────
@@ -303,9 +303,9 @@ export function LandingPage() {
       cta: 'Voir le programme',
     },
     {
-      title: 'ACWR, périodisation et tests',
+      title: 'Charge, fatigue et tests',
       description:
-        "Des ressources publiques pour mieux lire la charge, suivre la fatigue et objectiver la progression.",
+        "Des repères concrets pour mieux gérer ta charge et suivre ta progression.",
       href: '/blog/',
       cta: 'Explorer les ressources',
     },
@@ -315,27 +315,27 @@ export function LandingPage() {
     {
       question: "À qui s'adresse RugbyForge ?",
       answer:
-        "RugbyForge s'adresse aux joueurs, coachs et staffs qui veulent structurer la préparation physique rugby avec des repères plus lisibles sur la charge, la musculation, les tests physiques et la récupération.",
+        "Aux joueurs et staffs qui veulent structurer leur prépa physique rugby avec des repères clairs sur la charge, la musculation, les tests et la récupération.",
     },
     {
       question: "Faut-il une salle complète pour utiliser l'application ?",
       answer:
-        "Non. L'application adapte les cycles à ton matériel disponible, à ta semaine de club et au niveau de pratique pour garder un programme réaliste à tenir.",
+        "Non. Le programme s'adapte à ton matériel, ta semaine de club et ton niveau pour rester réaliste et tenable.",
     },
     {
       question: 'Que suit RugbyForge pendant la saison ?',
       answer:
-        "L'application suit notamment la charge, l'ACWR, les tests physiques utiles comme le CMJ, le sprint 10 m et l'estimation du 1RM, ainsi que les priorités par poste et par phase de saison.",
+        "Ta charge de travail, tes tests physiques (force, vitesse, détente), tes priorités par poste et l'évolution de ta saison.",
     },
     {
       question: 'Quelle différence entre Free et Premium ?',
       answer:
-        "Le Free donne déjà accès au programme complet, aux séances, au calendrier, aux logs et au suivi ACWR. Le Premium ajoute l'aide à la décision : suggestions de charge personnalisées, analytics détaillées, projection de progression et chat IA illimité.",
+        "Le Free donne accès au programme complet, aux séances, au calendrier et au suivi de charge. Le Premium ajoute les suggestions de charge personnalisées, les analyses détaillées, les projections de progression et le chat IA illimité.",
     },
     {
       question: 'Par où commencer si je découvre RugbyForge ?',
       answer:
-        "Commence par la page d'accueil, puis par le guide principal sur la préparation physique rugby. Ensuite, le blog te permet d'approfondir l'ACWR, la périodisation, les tests physiques et le programme musculation rugby.",
+        "Crée ton compte gratuit et laisse-toi guider. Le blog te permet aussi d'approfondir la charge, les tests physiques et la musculation rugby.",
     },
   ]
 
@@ -344,44 +344,49 @@ export function LandingPage() {
       <LandingNavbar />
 
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative pt-32 pb-20 px-4 bg-shell text-shell-text">
+      <section className="relative pt-32 pb-24 px-4 bg-app overflow-hidden">
         {/* Decorative grid */}
         <div
-          className="absolute inset-0 opacity-10 bg-[radial-gradient(#F5F2EE_1px,transparent_1px)] [background-size:40px_40px]"
+          className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:32px_32px]"
         />
+        {/* Glow bordeaux en haut à droite */}
+        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] bg-brand rounded-full blur-[120px] opacity-[0.08]" />
+        {/* Glow bordeaux en bas à gauche */}
+        <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-brand rounded-full blur-[100px] opacity-[0.06]" />
+
         <div className="relative max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
             >
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
-                <Zap className="w-4 h-4 text-on-brand" />
-                <span className="text-sm font-medium text-on-brand/80">
+              <div className="inline-flex items-center gap-2 bg-brand-soft border border-brand-border rounded-full px-4 py-1.5 mb-6">
+                <Zap className="w-4 h-4 text-brand" />
+                <span className="text-sm font-medium text-brand">
                   Préparation physique rugby
                 </span>
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.1] mb-6 text-on-brand">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.05] mb-6 text-fg">
                 Ta prépa physique,{' '}
-                <span className="text-on-brand/70">scientifiquement</span>{' '}
+                <span className="text-brand">scientifiquement</span>{' '}
                 optimisée
               </h1>
-              <p className="text-lg text-on-brand/60 max-w-xl mb-8">
-                Le Free te donne déjà un vrai programme de rugby. Le Premium ajoute les suggestions
-                de charge, les analytics détaillées et la projection de ta progression.
+              <p className="text-lg text-fg-muted max-w-xl mb-8 leading-relaxed">
+                Un programme complet dès l'inscription. Le Premium ajoute le suivi de charge
+                personnalisé et les projections de progression.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/auth/signup"
-                  className="inline-flex items-center gap-2 bg-on-brand hover:bg-white text-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors shadow-[0_4px_16px_rgb(123_13_30/0.2)]"
                 >
                   Commencer gratuitement
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <a
                   href="#features"
-                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-layer-10 hover:bg-layer-15 text-fg font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
                 >
                   Découvrir RugbyForge
                 </a>
@@ -390,13 +395,13 @@ export function LandingPage() {
 
             {/* Phone mockup */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative flex justify-center"
             >
-              <div className="absolute w-72 h-72 bg-white/5 rounded-full blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-              <div className="absolute w-48 h-48 bg-white/5 rounded-full blur-2xl top-0 right-0" />
+              <div className="absolute w-80 h-80 bg-brand rounded-full blur-[80px] opacity-[0.08] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              <div className="absolute w-48 h-48 bg-brand rounded-full blur-[60px] opacity-[0.06] top-0 right-0" />
               <PhoneMockup
                 src="/images/landing/rufo_home.png"
                 alt="RugbyForge — accueil et programme"
@@ -413,9 +418,9 @@ export function LandingPage() {
         <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
             { value: '186+', label: 'Références scientifiques' },
-            { value: '88', label: 'Blocs d\'entraînement' },
-            { value: '3', label: 'Niveaux de progression' },
-            { value: '12', label: 'Semaines de cycle' },
+            { value: '207', label: 'Exercices disponibles' },
+            { value: '2', label: 'Niveaux de progression' },
+            { value: '4 à 12', label: 'Semaines par programme' },
           ].map((stat) => (
             <motion.div
               key={stat.label}
@@ -445,46 +450,45 @@ export function LandingPage() {
               Tout pour ta prépa physique
             </h2>
             <p className="text-fg-muted max-w-2xl mx-auto">
-              RugbyForge combine science du sport, périodisation et coaching contextuel pour te
-              donner un cadre clair en Free, puis des outils d'aide à la décision en Premium.
+              Des outils concrets pour structurer ta prépa, suivre ta charge et progresser chaque semaine.
             </p>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard
               icon={<Dumbbell className="w-6 h-6 text-brand-tint" />}
-              title="Programmes périodisés"
-              description="Cycles Hypertrophie → Force → Puissance adaptés à ta saison, ton niveau et ton matériel disponible."
+              title="Programme adapté à ta saison"
+              description="Le programme s'adapte à ta saison, ton niveau et ton matériel. Les séances évoluent en force, puissance et volume au fil des semaines."
               delay={0}
             />
             <FeatureCard
               icon={<Activity className="w-6 h-6 text-brand-tint" />}
-              title="Lecture de la charge"
-              description="Lis l'ACWR, la récupération et les semaines à risque sans tableau compliqué. Le Premium ajoute des analytics détaillées."
+              title="Suivi de charge"
+              description="Suis ta charge de travail et repère les semaines à risque. Le Premium ajoute des analyses détaillées."
               delay={0.1}
             />
             <FeatureCard
               icon={<Shield className="w-6 h-6 text-brand-tint" />}
-              title="Prévention & vigilance"
-              description="Échauffement adapté, mobilité utile et signaux de vigilance quand la fatigue et la charge deviennent moins bien absorbées."
+              title="Prévention blessures"
+              description="Échauffement adapté, mobilité et alertes quand la fatigue s'accumule."
               delay={0.2}
             />
             <FeatureCard
               icon={<Brain className="w-6 h-6 text-brand-tint" />}
               title="Coach IA"
-              description="Pose tes questions nutrition, récupération ou semaine de match. Le Premium débloque le chat illimité (5 messages/jour en Free)."
+              description="Pose tes questions sur la nutrition, la récup ou ta semaine de match. 5 messages/jour en Free, illimité en Premium."
               delay={0.3}
             />
             <FeatureCard
               icon={<Calendar className="w-6 h-6 text-brand-tint" />}
               title="Calendrier club"
-              description="Intègre tes matchs et entraînements club via la FFR. Le programme s'adapte automatiquement à ton planning."
+              description="Synchronise tes matchs FFR et tes entraînements club. Le programme s'adapte automatiquement."
               delay={0.4}
             />
             <FeatureCard
               icon={<TrendingUp className="w-6 h-6 text-brand-tint" />}
               title="Tests & progression"
-              description="Suis tes 1RM estimés, le CMJ et les autres repères utiles. Le Premium ajoute les projections et l'historique complet."
+              description="Suis ta progression en force, en vitesse et en détente. Le Premium ajoute les projections et l'historique complet."
               delay={0.5}
             />
           </div>
@@ -504,8 +508,7 @@ export function LandingPage() {
               Suis ta progression en temps réel
             </h2>
             <p className="text-fg-muted max-w-2xl mx-auto">
-              Des tableaux de bord clairs pour suivre tes performances, ta charge d'entraînement et
-              tes tests physiques.
+              Tes performances, ta charge et tes tests physiques — lisibles en un coup d'œil.
             </p>
           </motion.div>
 
@@ -608,10 +611,10 @@ export function LandingPage() {
               <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
                 <Target className="w-6 h-6 text-brand-tint" />
               </div>
-              <h3 className="text-lg font-bold text-fg mb-2">Seuils ACWR validés</h3>
+              <h3 className="text-lg font-bold text-fg mb-2">Seuils de charge validés</h3>
               <p className="text-sm text-fg-muted leading-relaxed">
-                Ratios 0.8–1.3 (sweet spot) et alertes {">"} 1.5 basés sur Gabbett (2016) et Blanch
-                & Gabbett (2016).
+                Zones de charge optimale (0.8–1.3) et alertes surcharge ({">"} 1.5) basées sur les
+                travaux de Gabbett (2016).
               </p>
             </motion.div>
 
@@ -625,10 +628,10 @@ export function LandingPage() {
               <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
                 <Star className="w-6 h-6 text-brand-tint" />
               </div>
-              <h3 className="text-lg font-bold text-fg mb-2">1RM & testing</h3>
+              <h3 className="text-lg font-bold text-fg mb-2">Tests physiques</h3>
               <p className="text-sm text-fg-muted leading-relaxed">
-                Estimations Brzycki/Epley, baselines CMJ par poste, protocoles YYIR1 et sprint 10m
-                standards.
+                Estimation de ta force max, tests de détente par poste, protocoles endurance et
+                vitesse.
               </p>
             </motion.div>
           </div>
@@ -640,8 +643,8 @@ export function LandingPage() {
             className="mt-12 text-center"
           >
             <p className="text-sm text-fg-ghost">
-              Base de connaissances : 186+ références scientifiques réelles — périodisation,
-              récupération, prévention, nutrition, energy systems
+              Basé sur plus de 186 références en sciences du sport — force, récupération,
+              prévention et nutrition
             </p>
           </motion.div>
         </div>
@@ -708,8 +711,7 @@ export function LandingPage() {
               Des ressources publiques pour aller plus loin
             </h2>
             <p className="text-fg-muted max-w-2xl mx-auto">
-              Le blog RugbyForge transforme notre base de connaissances en guides concrets sur la préparation physique rugby,
-              l&apos;ACWR, la périodisation, les tests physiques et le programme de musculation rugby.
+              Des guides pratiques sur la préparation physique rugby, la charge, les tests et la musculation.
             </p>
           </motion.div>
 
@@ -789,8 +791,7 @@ export function LandingPage() {
               Prêt à passer au niveau supérieur ?
             </h2>
             <p className="text-fg-muted max-w-xl mx-auto mb-8">
-              Rejoins les joueurs qui utilisent RugbyForge pour structurer leur préparation physique
-              et progresser chaque semaine.
+              Rejoins les joueurs qui utilisent RugbyForge pour progresser sur le terrain.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
                 <Link
