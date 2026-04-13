@@ -82,6 +82,9 @@ function nextCorrectionId(): string {
 function computeProfileHash(profile: import('../types/training').UserProfile): string {
   const deferral = profile.seasonTransitionState?.activeDeferral
   const ack = profile.seasonTransitionState?.offseasonMatchResumeAckEventId
+  const scDays = profile.scSchedule?.sessions?.map((s: { day: number }) => s.day).sort().join(',') ?? ''
+  const clubDays = profile.clubSchedule?.clubDays?.map((d: { day: number }) => d.day).sort().join(',') ?? ''
+  const matchDay = profile.clubSchedule?.matchDay ?? ''
   return [
     profile.weeklySessions,
     profile.trainingLevel,
@@ -91,6 +94,9 @@ function computeProfileHash(profile: import('../types/training').UserProfile): s
     (profile.injuries ?? []).join(','),
     deferral ? `${deferral.eventId}:${deferral.expiresAt}` : '',
     ack ?? '',
+    `sc:${scDays}`,
+    `club:${clubDays}`,
+    `match:${matchDay}`,
   ].join('|')
 }
 
@@ -113,6 +119,12 @@ export function useWeekSnapshot(
   snapshotRef.current = snapshot
   paramsRef.current = params
 
+  // Profile hash as a stable dependency for the resolve effect
+  const profileHash = useMemo(
+    () => (params ? computeProfileHash(params.profile) : ''),
+    [params?.profile],
+  )
+
   // 3. Resolve or restore snapshot in useEffect
   useEffect(() => {
     if (!upstream.isReady || !upstream.surface || !params) {
@@ -126,7 +138,6 @@ export function useWeekSnapshot(
     const snapshotStorage = params.snapshotStorage
 
     // Dedup: don't re-resolve if we already resolved this weekId for this identity + profile
-    const profileHash = computeProfileHash(params.profile)
     const resolvedKey = `${userId ?? 'anon'}:${currentWeekId}:${profileHash}`
     if (resolvedWeekRef.current === resolvedKey && snapshot?.weekId === currentWeekId) {
       return
@@ -195,7 +206,7 @@ export function useWeekSnapshot(
     // Seed the external change baseline so the detection effect doesn't fire on first load
     lastGlobalHashRef.current = computeGlobalEventsHash(params.events)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [upstream.isReady, upstream.surface, params?.today, params?.userId])
+  }, [upstream.isReady, upstream.surface, params?.today, params?.userId, profileHash])
 
   // ── F8: Active-snapshot correction expiry ──
   // Normalize reversibility based on 24h window so the undo affordance
