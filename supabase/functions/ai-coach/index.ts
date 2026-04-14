@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const FREE_DAILY_LIMIT = 5
+const FREE_DAILY_LIMIT = 3
 
 interface ChatMessage {
   role: 'user' | 'assistant'

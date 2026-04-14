@@ -265,7 +265,7 @@ const FREE_PLAN_FEATURES = [
   "Séances et suivi d'entraînement",
   'Calendrier club + suivi de charge',
   'Prévention et mobilité intégrées',
-  'Chat IA (5 messages/jour)',
+  'Chat IA (3 messages/jour)',
 ]
 
 const PREMIUM_FEATURES = [
@@ -469,7 +469,7 @@ export function LandingPage() {
             <FeatureCard
               icon={<Brain className="w-6 h-6 text-brand-tint" />}
               title="Coach IA"
-              description="Pose tes questions sur la nutrition, la récup ou ta semaine de match. 5 messages/jour en Free, illimité en Premium."
+              description="Pose tes questions sur la nutrition, la récup ou ta semaine de match. 3 messages/jour en Free, illimité en Premium."
               delay={0.3}
             />
             <FeatureCard

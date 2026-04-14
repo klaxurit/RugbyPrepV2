@@ -264,6 +264,15 @@ vi.mock('../../services/ui/getPrehab', () => ({
   CONTRA_LABELS: {},
 }))
 
+vi.mock('../../hooks/useFeatureAccess', () => ({
+  useFeatureAccess: () => ({
+    isPremium: true,
+    features: { premiumLogging: true, premiumAnalytics: true, premiumProgramAdaptations: true },
+    loading: false,
+    hasEntitlement: () => true,
+  }),
+}))
+
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 describe('SessionDetailPage · annual-first', () => {

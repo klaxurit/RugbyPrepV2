@@ -53,6 +53,7 @@ describe('MotherSessionBlock — logger toggle visibility', () => {
         fatigue="OK"
         onSaveBlock={vi.fn()}
         getLastEntryForExercise={() => undefined}
+        isPremium
       />
     )
     expect(screen.getByTestId('block-log-toggle')).toBeTruthy()
@@ -83,6 +84,7 @@ describe('MotherSessionBlock — logger toggle visibility', () => {
         fatigue="OK"
         onSaveBlock={vi.fn()}
         getLastEntryForExercise={() => undefined}
+        isPremium
       />
     )
     const toggle = screen.getByTestId('block-log-toggle')
@@ -115,6 +117,7 @@ describe('MotherSessionBlock — logger inputs by metricType', () => {
         fatigue="OK"
         onSaveBlock={vi.fn()}
         getLastEntryForExercise={() => undefined}
+        isPremium
       />
     )
     fireEvent.click(screen.getByTestId('block-log-toggle'))
@@ -133,6 +136,7 @@ describe('MotherSessionBlock — logger inputs by metricType', () => {
         week="W1"
         fatigue="OK"
         onSaveBlock={vi.fn()}
+        isPremium
         getLastEntryForExercise={(id) =>
           id === 'push_horizontal__bench_press__barbell'
             ? { exerciseId: id, loadKg: 80, reps: 5 }

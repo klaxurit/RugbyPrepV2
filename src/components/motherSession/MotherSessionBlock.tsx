@@ -16,6 +16,7 @@ import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import { ExerciseDemoSheet } from './ExerciseDemoSheet'
 import { detectPRs, type DetectedPR } from '../../services/pr/detectPRs'
 import { PRCelebrationOverlay } from '../pr/PRCelebrationOverlay'
+import { Lock } from 'lucide-react'
 
 export type MotherSessionBlockProps = {
   block: Block
@@ -288,7 +289,27 @@ export function MotherSessionBlock({
       ) : null}
 
       {/* ── Logger toggle — only if at least 1 exercise is loggable ── */}
-      {hasLoggable && onSaveBlock && (
+      {hasLoggable && onSaveBlock && !isPremium && (
+        <div className="mt-4 rounded-2xl border border-brand-border bg-brand-soft/50 p-4 flex items-start gap-3">
+          <div className="rounded-xl bg-brand/10 p-2 flex-shrink-0">
+            <Lock className="w-4 h-4 text-brand-tint" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-fg">Suivi des charges</p>
+            <p className="text-[10px] text-fg-muted mt-0.5">
+              Note tes charges, reps et séries pour chaque exercice et suis ta progression semaine après semaine.
+            </p>
+            <a
+              href="/auth/signup?plan=premium"
+              className="inline-block mt-2 text-[10px] font-black text-brand-tint uppercase tracking-wider"
+            >
+              Passer en Premium →
+            </a>
+          </div>
+        </div>
+      )}
+
+      {hasLoggable && onSaveBlock && isPremium && (
         <div className="mt-4">
           <button
             type="button"
@@ -310,7 +331,7 @@ export function MotherSessionBlock({
                   : undefined
 
                 // Premium load suggestion
-                const premiumSuggestion = isPremium && week
+                const premiumSuggestion = week
                   ? getLoadSuggestion({
                       exerciseId,
                       lastEntry,
@@ -330,7 +351,7 @@ export function MotherSessionBlock({
                     lastEntry={lastEntry}
                     suggestion={suggestion}
                     premiumSuggestion={premiumSuggestion}
-                    showProgressionIndicator={isPremium}
+                    showProgressionIndicator
                     draft={drafts[exerciseId] ?? {}}
                     onDraftChange={(patch) => handleDraftChange(exerciseId, patch)}
                   />

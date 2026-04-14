@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
-import { Trash2, Calendar, Activity, Dumbbell, Zap, ChevronDown } from 'lucide-react'
+import { Trash2, Calendar, Activity, Dumbbell, Zap, ChevronDown, Lock } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
+import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { getProgramHistorySummary } from '../services/program/programHistoryAnalytics'
@@ -41,6 +42,7 @@ const formatDateTime = (iso: string) =>
 export function HistoryPage() {
   const { logs, clearLogs } = useHistory()
   const { logs: blockLogs } = useBlockLogs()
+  const { isPremium } = useFeatureAccess()
   const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null)
 
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
@@ -54,7 +56,7 @@ export function HistoryPage() {
         title="Historique"
         backTo="/home"
         right={
-          logs.length > 0 ? (
+          isPremium && logs.length > 0 ? (
             <button
               type="button"
               onClick={clearLogs}
@@ -69,8 +71,29 @@ export function HistoryPage() {
 
       <main className="px-6 pt-6 space-y-6 max-w-md mx-auto relative">
 
+        {/* Free tier: upsell */}
+        {!isPremium && (
+          <div className="bg-layer-5 border border-border-app rounded-[24px] p-6 flex flex-col items-center gap-4 text-center">
+            <div className="w-14 h-14 bg-brand-soft rounded-2xl flex items-center justify-center">
+              <Lock className="w-6 h-6 text-brand-tint" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-fg">Historique complet</p>
+              <p className="text-xs text-fg-muted mt-1 leading-relaxed">
+                Retrouve toutes tes seances, charges et exercices. Suis ta progression semaine apres semaine.
+              </p>
+            </div>
+            <Link
+              to="/auth/signup?plan=premium"
+              className="px-6 py-3 rounded-full bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold transition-colors"
+            >
+              Passer en Premium
+            </Link>
+          </div>
+        )}
+
         {/* Stats rapides */}
-        {logs.length > 0 && (
+        {isPremium && logs.length > 0 && (
           <div className="grid grid-cols-2 gap-3" data-testid="history-stats">
             <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
               <div className="text-2xl font-black text-fg" data-testid="stat-total">{summary.totalSessions}</div>
@@ -96,7 +119,7 @@ export function HistoryPage() {
         )}
 
         {/* Séances */}
-        <section>
+        {isPremium && <section>
           <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">Séances</h2>
 
           {logs.length === 0 ? (
@@ -145,10 +168,10 @@ export function HistoryPage() {
               })}
             </div>
           )}
-        </section>
+        </section>}
 
         {/* Blocs enregistrés */}
-        {blockLogs.length > 0 && (
+        {isPremium && blockLogs.length > 0 && (
           <section>
             <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">Détail des exercices</h2>
             <div className="space-y-2">

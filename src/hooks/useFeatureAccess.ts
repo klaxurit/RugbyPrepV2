@@ -9,6 +9,7 @@ export function useFeatureAccess() {
     notificationsBasic: entitlements.hasEntitlement('notifications_basic'),
     calendarBasic: entitlements.hasEntitlement('calendar_basic'),
     athleticTestsBasic: entitlements.hasEntitlement('athletic_tests_basic'),
+    premiumLogging: entitlements.hasEntitlement('premium_logging'),
     premiumProgramAdaptations: entitlements.hasEntitlement('premium_program_adaptations'),
     premiumAnalytics: entitlements.hasEntitlement('premium_analytics'),
     advancedNotifications: entitlements.hasEntitlement('advanced_notifications'),

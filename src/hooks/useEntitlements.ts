@@ -14,6 +14,7 @@ type SubscriptionRow = {
 }
 
 const PREMIUM_HINTS = new Set([
+  'premium_logging',
   'premium_program_adaptations',
   'advanced_notifications',
   'premium_analytics',

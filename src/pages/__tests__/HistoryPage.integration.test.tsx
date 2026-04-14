@@ -28,6 +28,19 @@ vi.mock('../../hooks/useBlockLogs', () => ({
   useBlockLogs: () => useBlockLogsMock(),
 }))
 
+vi.mock('../../hooks/useFeatureAccess', () => ({
+  useFeatureAccess: () => ({
+    isPremium: true,
+    features: {
+      premiumLogging: true,
+      premiumAnalytics: true,
+      premiumProgramAdaptations: true,
+    },
+    loading: false,
+    hasEntitlement: () => true,
+  }),
+}))
+
 const LEGACY_LOG: SessionLog = {
   id: 'log-legacy',
   dateISO: new Date().toISOString(),

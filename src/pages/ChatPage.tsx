@@ -415,7 +415,7 @@ export function ChatPage() {
         {rateLimited && !isPremium && (
           <div className="pl-11">
             <PremiumUpsellCard
-              title="Tu as utilisé tes 5 messages du jour"
+              title="Tu as utilisé tes 3 messages du jour"
               body="Le coach Premium te connaît — il sait ton poste, ta charge, tes blessures, et adapte chaque réponse. Messages illimités."
               ctaLabel="Passer en Premium"
               dismissable={false}
