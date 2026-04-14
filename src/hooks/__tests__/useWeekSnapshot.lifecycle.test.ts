@@ -734,6 +734,9 @@ describe('useWeekSnapshot lifecycle', () => {
       created_at: '2026-04-06T10:00:00Z',
     }
 
+    // Ensure timestamp will differ
+    await new Promise(r => setTimeout(r, 2))
+
     act(() => {
       result.current.addMatch(canonicalEvent)
     })
