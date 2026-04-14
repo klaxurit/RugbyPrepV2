@@ -15,16 +15,16 @@ interface BannerConfig {
 const SEASON_CONFIG: Record<SeasonTransition['type'], BannerConfig> = {
   season_ended: {
     icon: Sparkles,
-    bg: 'bg-amber-900/15',
-    border: 'border-amber-500/25',
-    text: 'text-amber-300',
+    bg: 'bg-amber-50',
+    border: 'border-amber-200',
+    text: 'text-amber-700',
     cta: 'Passer en inter-saison',
   },
   treve_detected: {
     icon: Calendar,
-    bg: 'bg-blue-900/15',
-    border: 'border-blue-500/25',
-    text: 'text-blue-300',
+    bg: 'bg-blue-50',
+    border: 'border-blue-200',
+    text: 'text-blue-700',
     cta: null,
   },
   playoffs_suggested: {
@@ -36,17 +36,17 @@ const SEASON_CONFIG: Record<SeasonTransition['type'], BannerConfig> = {
   },
   pre_season_suggested: {
     icon: Calendar,
-    bg: 'bg-emerald-900/15',
-    border: 'border-emerald-500/25',
-    text: 'text-emerald-300',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    text: 'text-emerald-700',
     cta: 'Indiquer ma date de reprise',
   },
   match_detected_in_offseason: {
     icon: Calendar,
-    bg: 'bg-blue-900/15',
-    border: 'border-blue-500/25',
-    text: 'text-blue-300',
-    cta: null, // uses custom actions instead
+    bg: 'bg-blue-50',
+    border: 'border-blue-200',
+    text: 'text-blue-700',
+    cta: null,
   },
 }
 
@@ -55,9 +55,9 @@ const SEASON_CONFIG: Record<SeasonTransition['type'], BannerConfig> = {
 const SCHEDULING_CONFIG: Record<SchedulingTransition['type'], BannerConfig> = {
   calendar_mode_activated: {
     icon: Calendar,
-    bg: 'bg-emerald-900/15',
-    border: 'border-emerald-500/25',
-    text: 'text-emerald-300',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    text: 'text-emerald-700',
     cta: 'OK',
   },
   block_mode_activated: {
@@ -69,9 +69,9 @@ const SCHEDULING_CONFIG: Record<SchedulingTransition['type'], BannerConfig> = {
   },
   return_after_break: {
     icon: RefreshCw,
-    bg: 'bg-teal-900/15',
-    border: 'border-teal-500/25',
-    text: 'text-teal-300',
+    bg: 'bg-teal-50',
+    border: 'border-teal-200',
+    text: 'text-teal-700',
     cta: "C'est parti",
   },
 }
@@ -184,7 +184,7 @@ function MatchDetectedBanner({
             type="button"
             onClick={onConfirm}
             data-testid="match-banner-confirm"
-            className="w-full py-2.5 rounded-2xl text-xs font-black bg-blue-500/20 border border-blue-400/30 text-blue-300 hover:bg-blue-500/30 transition-colors"
+            className="w-full py-2.5 rounded-2xl text-xs font-black bg-blue-100 border border-blue-200 text-blue-700 hover:bg-blue-200 transition-colors"
           >
             Oui, ma saison reprend
           </button>

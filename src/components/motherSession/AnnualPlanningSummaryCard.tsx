@@ -95,12 +95,12 @@ export function AnnualPlanningSummaryCard({
             </p>
           )}
           {planningContext.inSeasonSubMode && planningContext.inSeasonSubMode !== 'competition' && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/30 bg-blue-900/15 px-2 py-0.5 text-[10px] font-bold text-blue-300 mt-1">
+            <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 mt-1">
               {SUB_MODE_LABELS[planningContext.inSeasonSubMode]}
             </span>
           )}
           {planningContext.playoffTaperPhase && (
-            <span className={`inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-900/15 px-2 py-0.5 text-[10px] font-bold text-rose-300 mt-1${planningContext.playoffTaperPhase === 'match_week' ? ' animate-pulse' : ''}`}>
+            <span className={`inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-700 mt-1${planningContext.playoffTaperPhase === 'match_week' ? ' animate-pulse' : ''}`}>
               {TAPER_LABELS[planningContext.playoffTaperPhase]}
             </span>
           )}
@@ -109,24 +109,24 @@ export function AnnualPlanningSummaryCard({
 
       {/* Recovery override: chip + phrase + disclosure */}
       {planningContext.loadManagementOverride === 'recovery' ? (
-        <div className="rounded-2xl border border-amber-500/25 bg-amber-900/10 px-3 py-2.5 space-y-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-900/15 px-2.5 py-1 text-[10px] font-bold text-amber-300">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2.5 space-y-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-100 px-2.5 py-1 text-[10px] font-bold text-amber-700">
             {msLabel('light_week_chip', lang)}
           </span>
-          <p className="text-xs font-bold text-amber-300">
+          <p className="text-xs font-bold text-amber-700">
             {msLabel('recovery_explanation', lang)}
           </p>
           <details>
-            <summary className="text-[10px] font-black uppercase tracking-wide text-amber-400/60 cursor-pointer select-none">
+            <summary className="text-[10px] font-black uppercase tracking-wide text-amber-600 cursor-pointer select-none">
               {msLabel('recovery_why_title', lang)}
             </summary>
-            <p className="mt-1.5 text-xs text-amber-200/70 leading-relaxed">
+            <p className="mt-1.5 text-xs text-amber-600/80 leading-relaxed">
               {msLabel('recovery_why_body', lang)}
             </p>
           </details>
         </div>
       ) : fatigueLevel !== 'normal' ? (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-900/15 px-2.5 py-1 text-[10px] font-bold text-amber-300">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-700">
           {lang === 'fr'
             ? (fatigueLevel === 'very_high' ? 'Fatigue très élevée' : 'Fatigue élevée')
             : (fatigueLevel === 'very_high' ? 'Very high fatigue' : 'High fatigue')}
@@ -156,12 +156,12 @@ export function AnnualPlanningSummaryCard({
       )}
 
       {mergedWarnings.length > 0 && (
-        <div className="rounded-2xl border border-amber-500/25 bg-amber-900/10 px-3 py-2.5">
-          <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide text-amber-400 mb-1.5">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2.5">
+          <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide text-amber-700 mb-1.5">
             <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
             {lang === 'fr' ? 'Avertissements' : 'Warnings'}
           </p>
-          <ul className="space-y-1.5 text-xs text-amber-200/90">
+          <ul className="space-y-1.5 text-xs text-amber-700">
             {mergedWarnings.map((w) => (
               <li key={w} className="leading-snug">
                 {w}

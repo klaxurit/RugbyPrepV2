@@ -90,9 +90,9 @@ const seasonPhaseConfig: Record<SeasonPhase, { label: string; color: string; bg:
 }
 
 const eventTypeConfig: Record<CalendarEventType, { label: string; icon: React.ElementType; color: string; bg: string }> = {
-  match: { label: 'Match', icon: Trophy, color: 'text-rose-400', bg: 'bg-rose-900/20' },
+  match: { label: 'Match', icon: Trophy, color: 'text-rose-600', bg: 'bg-rose-50' },
   rest: { label: 'Repos', icon: Bed, color: 'text-info', bg: 'bg-info-bg' },
-  unavailable: { label: 'Indisponible', icon: AlertCircle, color: 'text-orange-400', bg: 'bg-orange-900/20' },
+  unavailable: { label: 'Indisponible', icon: AlertCircle, color: 'text-orange-600', bg: 'bg-orange-50' },
 }
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -266,7 +266,7 @@ function NextMatchCard({ event }: { event: CalendarEvent }) {
         </div>
         <div className="text-sm text-fg-muted mt-1 capitalize">{formatDateFR(event.date)}</div>
         {event.kickoff_time && (
-          <div className="text-xs text-rose-400 font-bold mt-0.5">Coup d'envoi {event.kickoff_time}</div>
+          <div className="text-xs text-rose-600 font-bold mt-0.5">Coup d'envoi {event.kickoff_time}</div>
         )}
       </div>
 
@@ -338,7 +338,7 @@ function EventRow({
           </div>
           <div className="text-xs text-fg-muted capitalize">
             {formatDateFR(event.date)}
-            {hasOverride && <span className="text-amber-400 ml-1">(modifié)</span>}
+            {hasOverride && <span className="text-amber-700 ml-1">(modifié)</span>}
           </div>
           {event.kickoff_time && (
             <div className="text-[10px] text-fg-muted">{event.kickoff_time}</div>
@@ -354,12 +354,12 @@ function EventRow({
         </div>
         <div className="flex items-center gap-2">
           {!isPast && days <= 7 && (
-            <span className="text-[10px] font-black text-rose-400 bg-rose-900/20 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">
               {days === 0 ? "Auj." : `J−${days}`}
             </span>
           )}
           {showLoadForm && event.rpe && event.duration_min && (
-            <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-900/20 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
               <CheckCircle2 className="w-3 h-3" />
               Charge ✓
             </span>
@@ -465,7 +465,7 @@ function EventRow({
               <div className="mt-2 bg-layer-5 rounded-xl p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <p className="text-[10px] font-bold text-fg-soft uppercase tracking-wide">Récupération</p>
-                  <p className={`text-[10px] font-black ${isRecovered ? 'text-emerald-400' : 'text-amber-400'}`}>
+                  <p className={`text-[10px] font-black ${isRecovered ? 'text-emerald-600' : 'text-amber-700'}`}>
                     {isRecovered ? 'Récupéré' : recoveryRange}
                   </p>
                 </div>
@@ -571,9 +571,9 @@ function MiniCalendar({
               onClick={() => onSelectDate(dateStr)}
               className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-bold transition-colors overflow-hidden
                 ${isToday ? 'bg-brand text-on-brand' : 'hover:bg-layer-10 text-fg-emphasis'}
-                ${isClubDay && !isToday && !isBothDay ? 'bg-emerald-900/20' : ''}
-                ${isScDay && !isClubDay && !isToday ? 'bg-rose-900/20' : ''}
-                ${isBothDay && !isToday ? 'bg-gradient-to-b from-rose-900/20 to-emerald-900/20' : ''}
+                ${isClubDay && !isToday && !isBothDay ? 'bg-emerald-50' : ''}
+                ${isScDay && !isClubDay && !isToday ? 'bg-rose-50' : ''}
+                ${isBothDay && !isToday ? 'bg-gradient-to-b from-rose-50 to-emerald-50' : ''}
                 ${eventType ? 'ring-1 ring-inset ' + (eventType === 'match' ? 'ring-danger-bd' : eventType === 'rest' ? 'ring-info-bd' : 'ring-tone-orange-bd') : ''}
               `}
             >
@@ -650,10 +650,10 @@ function DayDetailModal({
           <p className="text-[10px] font-black uppercase tracking-wider text-fg-muted">Programmé</p>
           <div className="space-y-2">
             {isScDay && (
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-rose-900/20 border border-rose-500/20">
-                <Dumbbell className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-rose-50 border border-rose-200">
+                <Dumbbell className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-rose-400">Muscu</p>
+                  <p className="text-xs font-bold text-rose-600">Muscu</p>
                   <p className="text-[11px] text-fg-emphasis mt-0.5">
                     {isClubDay
                       ? 'Matin recommandé · Séance adaptée (−20–30% volume) si rugby en intensité réduite'
@@ -663,10 +663,10 @@ function DayDetailModal({
               </div>
             )}
             {isClubDay && (
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-emerald-900/20 border border-emerald-500/20">
-                <Activity className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
+                <Activity className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-emerald-400">Entraînement rugby</p>
+                  <p className="text-xs font-bold text-emerald-600">Entraînement rugby</p>
                   {clubDayInfo?.time ? (
                     <p className="text-[11px] text-fg-emphasis mt-0.5">{clubDayInfo.time}</p>
                   ) : (
@@ -1542,7 +1542,7 @@ export function CalendarPage() {
               <button
                 type="button"
                 onClick={() => setShowPlayoffExitModal(true)}
-                className="mt-1 text-xs text-rose-400 hover:text-rose-300 underline underline-offset-2"
+                className="mt-1 text-xs text-rose-600 hover:text-rose-500 underline underline-offset-2"
               >
                 Désactiver le mode Playoffs
               </button>
@@ -1600,13 +1600,13 @@ export function CalendarPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 px-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
           >
             <motion.section
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 20, opacity: 0 }}
-              className="w-full max-w-md bg-panel border border-border-app rounded-[2rem] p-6 space-y-5 max-h-[90vh] overflow-y-auto"
+              className="w-full max-w-md bg-panel border border-border-app rounded-[2rem] p-6 space-y-5 max-h-[85vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-black text-fg">Planning club</h3>

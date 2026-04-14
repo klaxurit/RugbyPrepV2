@@ -77,7 +77,7 @@ export function MotherSessionWeekPanel({
   if (status === 'missing_session') {
     return (
       <section
-        className="rounded-[24px] border border-rose-500/30 bg-rose-900/15 p-4 space-y-2"
+        className="rounded-[24px] border border-rose-200 bg-rose-50 p-4 space-y-2"
         data-testid="mother-session-week-missing"
       >
         <p className="flex items-center gap-2 text-sm font-black text-rose-300">
@@ -89,7 +89,7 @@ export function MotherSessionWeekPanel({
             'Certaines séances ne sont pas encore disponibles dans le jeu de données. Réessaie après une mise à jour de l\'app.'}
         </p>
         {warnings.length > 0 && (
-          <ul className="mt-2 space-y-1 text-xs text-rose-200/80">
+          <ul className="mt-2 space-y-1 text-xs text-rose-600">
             {warnings.slice(0, 8).map((w) => (
               <li key={w}>{w}</li>
             ))}
@@ -109,7 +109,7 @@ export function MotherSessionWeekPanel({
       </div>
 
       {warnings.length > 0 && (
-        <div className="rounded-2xl border border-amber-500/20 bg-amber-900/10 px-3 py-2 text-xs text-amber-200/90 space-y-1">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700 space-y-1">
           {warnings.slice(0, 6).map((w) => (
             <p key={w} className="leading-snug">
               · {w}

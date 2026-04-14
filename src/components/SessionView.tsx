@@ -424,7 +424,7 @@ export function SessionView({
             </div>
             {statusLabel && (
               <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                isValid ? 'bg-emerald-900/30 text-emerald-400' : 'bg-rose-900/30 text-rose-400'
+                isValid ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
               }`}>
                 {statusLabel}
               </span>
@@ -445,15 +445,15 @@ export function SessionView({
 
       {/* Incomplete warning */}
       {isIncomplete && (
-        <div className="flex items-start gap-2 p-3 bg-rose-900/20 rounded-2xl border border-rose-500/20">
-          <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-rose-400">Séance incomplète — vérifie ton matériel et tes blessures.</p>
+        <div className="flex items-start gap-2 p-3 bg-rose-50 rounded-2xl border border-rose-200">
+          <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-rose-600">Séance incomplète — vérifie ton matériel et tes blessures.</p>
         </div>
       )}
 
       {(session.isSafetyAdapted || (session.safetyAdjustments?.length ?? 0) > 0) && (
-        <div className="p-3 bg-amber-900/20 rounded-2xl border border-amber-500/20 space-y-1.5">
-          <p className="text-xs font-black text-amber-400 uppercase tracking-wide">
+        <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 space-y-1.5">
+          <p className="text-xs font-black text-amber-700 uppercase tracking-wide">
             Adaptation sécurité appliquée
           </p>
           {(session.safetyAdjustments ?? []).map((adjustment) => (
@@ -548,9 +548,9 @@ export function SessionView({
 
                 {/* Missing equipment */}
                 {missingEquipment.length > 0 && (
-                  <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/20 rounded-2xl border border-amber-500/20">
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-[11px] text-amber-400">
+                  <div className="flex items-start gap-2 px-3 py-2 bg-amber-50 rounded-2xl border border-amber-200">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-amber-700">
                       <span className="font-bold">Manquant :</span> {missingEquipment.join(', ')}
                     </p>
                   </div>
@@ -918,9 +918,9 @@ export function SessionView({
 
               {/* Saved confirmation */}
               {savedBlockId === block.blockId && (
-                <div className="mt-2 flex items-center gap-2 px-4 py-3 bg-emerald-900/20 border border-emerald-500/20 rounded-2xl">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                  <p className="text-xs text-emerald-400 font-bold">Bloc enregistré !</p>
+                <div className="mt-2 flex items-center gap-2 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-2xl">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <p className="text-xs text-emerald-600 font-bold">Bloc enregistré !</p>
                 </div>
               )}
 
@@ -936,9 +936,9 @@ export function SessionView({
                   .filter((label): label is string => !!label)
                 if (bestLabels.length === 0) return null
                 return (
-                  <div className="mt-2 flex items-center gap-2 px-4 py-2.5 bg-amber-900/20 border border-amber-500/20 rounded-2xl">
-                    <Trophy className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                    <p className="text-[11px] text-amber-400 font-medium">
+                  <div className="mt-2 flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-2xl">
+                    <Trophy className="w-3.5 h-3.5 text-amber-700 flex-shrink-0" />
+                    <p className="text-[11px] text-amber-700 font-medium">
                       Perso : {bestLabels.join(' · ')}
                     </p>
                   </div>

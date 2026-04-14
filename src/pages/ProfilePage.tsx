@@ -627,12 +627,12 @@ export function ProfilePage() {
               bmi < 31 ? (isForward ? 'Morphologie optimale pour un avant' : 'Au-dessus de la norme') :
               (isForward ? 'Gabarit de gros avant' : 'Surcharge à surveiller')
             return (
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-violet-900/20 border border-violet-500/20">
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-violet-50 border border-violet-200">
                 <div>
-                  <p className="text-xs font-bold text-violet-400 uppercase tracking-wide">IMC</p>
+                  <p className="text-xs font-bold text-violet-600 uppercase tracking-wide">IMC</p>
                   <p className="text-sm font-bold text-fg-emphasis mt-0.5">{label}</p>
                 </div>
-                <span className="text-2xl font-black text-violet-400">{bmi.toFixed(1)}</span>
+                <span className="text-2xl font-black text-violet-600">{bmi.toFixed(1)}</span>
               </div>
             )
           })()}
