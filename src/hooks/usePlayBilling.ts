@@ -6,8 +6,8 @@ import { supabase } from '../services/supabase/client'
  * AND the mapping in supabase/functions/_shared/playBilling.ts
  */
 const PLAY_PRODUCTS: Record<string, string> = {
-  premium_monthly: 'fr.rugbyforge.premium.monthly',
-  premium_yearly: 'fr.rugbyforge.premium.yearly',
+  premium_monthly: 'premium.monthly',
+  premium_yearly: 'premium.yearly',
 }
 
 /** True when running inside a TWA or installed PWA */

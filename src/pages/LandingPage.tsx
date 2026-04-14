@@ -268,20 +268,13 @@ const FREE_PLAN_FEATURES = [
   'Chat IA (5 messages/jour)',
 ]
 
-const PREMIUM_MONTHLY_FEATURES = [
+const PREMIUM_FEATURES = [
   'Tout le plan Free',
   'Score de forme du jour',
   'Bilan de ta semaine',
   'Records personnels et courbes de progrès',
   'Suggestions de charge personnalisées',
   'Chat IA illimité',
-]
-
-const PREMIUM_YEARLY_FEATURES = [
-  'Tout le plan Premium',
-  "33% d'économie par rapport au mensuel",
-  'Suivi de progression sur toute la saison',
-  'Le meilleur tarif pour une saison complète',
 ]
 
 // ─── Main Landing Page ───────────────────────────────────────
@@ -681,17 +674,17 @@ export function LandingPage() {
               title="Premium Mensuel"
               price={PREMIUM_MONTHLY_PRICE}
               period="/mois"
-              features={PREMIUM_MONTHLY_FEATURES}
-              highlighted
-              cta="Passer en Premium Mensuel"
+              features={PREMIUM_FEATURES}
+              cta="Passer en Premium"
               ctaLink="/auth/signup?plan=premium&billing=monthly"
             />
             <PricingCard
               title="Premium Annuel"
               price={PREMIUM_YEARLY_PRICE}
               period="/an"
-              features={PREMIUM_YEARLY_FEATURES}
-              cta="Passer en Premium Annuel"
+              features={[...PREMIUM_FEATURES, "Économise 33% par rapport au mensuel"]}
+              highlighted
+              cta="Passer en Premium"
               ctaLink="/auth/signup?plan=premium&billing=annual"
             />
           </div>

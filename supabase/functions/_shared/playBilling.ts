@@ -6,8 +6,8 @@
  */
 
 const PLAY_PRODUCT_CONFIG = {
-  monthly: 'fr.rugbyforge.premium.monthly',
-  yearly: 'fr.rugbyforge.premium.yearly',
+  monthly: 'premium.monthly',
+  yearly: 'premium.yearly',
 } as const
 
 export const getPlayProductIdForPlan = (planId: string): string | null => {
