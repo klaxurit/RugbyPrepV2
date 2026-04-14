@@ -262,18 +262,19 @@ const PREMIUM_YEARLY_PRICE = '47,99€'
 
 const FREE_PLAN_FEATURES = [
   'Programme complet adapté à ta saison',
-  "Séances et suivi d'entraînement",
-  'Calendrier club + suivi de charge',
+  'Séances consultables (exercices + démos)',
+  'Calendrier club',
   'Prévention et mobilité intégrées',
   'Chat IA (3 messages/jour)',
 ]
 
 const PREMIUM_FEATURES = [
   'Tout le plan Free',
-  'Score de forme du jour',
-  'Bilan de ta semaine',
-  'Records personnels et courbes de progrès',
+  'Suivi des charges et séries',
+  'Historique complet des séances',
+  'Score de forme et bilan de semaine',
   'Suggestions de charge personnalisées',
+  'Records personnels et courbes de progrès',
   'Chat IA illimité',
 ]
 
@@ -323,7 +324,7 @@ export function LandingPage() {
     {
       question: 'Quelle différence entre Free et Premium ?',
       answer:
-        "Le Free donne accès au programme complet, aux séances, au calendrier et au suivi de charge. Le Premium ajoute les suggestions de charge personnalisées, les analyses détaillées, les projections de progression et le chat IA illimité.",
+        "Le Free donne accès au programme complet, aux séances consultables, au calendrier et à la prévention. Le Premium débloque le suivi des charges, l'historique complet, le score de forme, les suggestions de charge, les courbes de progression et le chat IA illimité.",
     },
     {
       question: 'Par où commencer si je découvre RugbyForge ?',
@@ -366,8 +367,8 @@ export function LandingPage() {
                 optimisée
               </h1>
               <p className="text-lg text-fg-muted max-w-xl mb-8 leading-relaxed">
-                Un programme complet dès l'inscription. Le Premium ajoute le suivi de charge
-                personnalisé et les projections de progression.
+                Un programme complet dès l'inscription. Le Premium débloque le suivi des charges,
+                l'historique et les courbes de progression.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -457,7 +458,7 @@ export function LandingPage() {
             <FeatureCard
               icon={<Activity className="w-6 h-6 text-brand-tint" />}
               title="Suivi de charge"
-              description="Suis ta charge de travail et repère les semaines à risque. Le Premium ajoute des analyses détaillées."
+              description="Consulte ton score ACWR et repère les semaines à risque. Le Premium débloque le suivi des charges exercice par exercice."
               delay={0.1}
             />
             <FeatureCard
@@ -481,7 +482,7 @@ export function LandingPage() {
             <FeatureCard
               icon={<TrendingUp className="w-6 h-6 text-brand-tint" />}
               title="Tests & progression"
-              description="Suis ta progression en force, en vitesse et en détente. Le Premium ajoute les projections et l'historique complet."
+              description="Mesure ta force, ta vitesse et ta détente. Le Premium débloque l'historique complet et les courbes de progression."
               delay={0.5}
             />
           </div>
