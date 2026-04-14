@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { Activity, Calendar, Plus } from 'lucide-react'
+import { Activity, Calendar, Plus, Lock } from 'lucide-react'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
@@ -510,6 +510,22 @@ export function WeekPage() {
             />
           )
         })()}
+
+        {/* ── Premium CTA for free users ── */}
+        {!weekIsPremium && (
+          <div className="rounded-[24px] border border-brand-border-strong bg-brand-soft p-4 flex items-start gap-3">
+            <div className="p-2 rounded-xl bg-brand/10 flex-shrink-0">
+              <Lock className="w-4 h-4 text-brand-tint" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-fg">Note tes charges après chaque bloc</p>
+              <p className="text-[10px] text-fg-muted mt-0.5">Suis ta progression et reçois des suggestions personnalisées.</p>
+              <Link to="/profile" className="inline-block mt-2 text-[10px] font-black text-brand-tint uppercase tracking-wider">
+                Passer en Premium →
+              </Link>
+            </div>
+          </div>
+        )}
       </main>
 
       <WeekCorrectionToast message={toastMessage} onDismiss={clearToast} />
