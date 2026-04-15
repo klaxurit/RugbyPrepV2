@@ -43,11 +43,17 @@ export function usePremiumCheckout() {
       try {
         const result = await playBilling.purchase(planId)
         if (result) {
-          setState({ loading: false, error: null, message: null })
+          setState({ loading: false, error: null, message: 'Premium activé !' })
           return { ok: true, ready: true } as CheckoutResponse
         }
-        // User cancelled
-        setState({ loading: false, error: null, message: null })
+        // purchase returned null — check if play billing captured an error
+        const playError = playBilling.error
+        if (playError) {
+          setState({ loading: false, error: playError, message: null })
+        } else {
+          // User cancelled — silent reset
+          setState({ loading: false, error: null, message: null })
+        }
         return null
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err)

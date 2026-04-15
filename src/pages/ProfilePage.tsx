@@ -777,8 +777,20 @@ export function ProfilePage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    void startCheckout('premium_monthly')
+                  onClick={async () => {
+                    try {
+                      const result = await startCheckout('premium_monthly')
+                      if (!result) {
+                        // Force show error if purchase returned null but no error was set
+                        setTimeout(() => {
+                          const el = document.getElementById('billing-debug-result')
+                          if (el) el.textContent = 'startCheckout returned: ' + JSON.stringify(result)
+                        }, 100)
+                      }
+                    } catch (err) {
+                      const el = document.getElementById('billing-debug-result')
+                      if (el) el.textContent = 'Caught: ' + String(err)
+                    }
                   }}
                   disabled={billingLoading}
                   className="inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
@@ -807,6 +819,8 @@ export function ProfilePage() {
                   <p className="text-xs text-danger font-medium">{billingError}</p>
                 </div>
               )}
+              {/* DEBUG result */}
+              <p id="billing-debug-result" className="text-[10px] text-amber-500 font-mono break-all" />
               {/* DEBUG — remove after billing is confirmed working */}
               <details className="mt-2">
                 <summary className="text-[10px] text-fg-ghost cursor-pointer">Debug billing</summary>
