@@ -10,16 +10,25 @@ const PLAY_PRODUCTS: Record<string, string> = {
   premium_yearly: 'premium.yearly',
 }
 
-/** True when running inside a TWA or installed PWA */
+/** True when running inside a TWA or installed PWA (evaluated lazily) */
 export const isStandaloneMode =
   typeof window !== 'undefined' &&
-  typeof window.matchMedia === 'function' &&
-  (window.matchMedia('(display-mode: standalone)').matches ||
-   (navigator as unknown as { standalone?: boolean }).standalone === true)
+  (
+    // Standard PWA standalone check
+    (typeof window.matchMedia === 'function' &&
+      (window.matchMedia('(display-mode: standalone)').matches ||
+       window.matchMedia('(display-mode: minimal-ui)').matches)) ||
+    // iOS Safari standalone
+    (navigator as unknown as { standalone?: boolean }).standalone === true ||
+    // TWA: referrer from android-app
+    document.referrer.includes('android-app://') ||
+    // TWA: Digital Goods API present (strongest signal)
+    'getDigitalGoodsService' in window
+  )
 
 /** True when the Digital Goods API is available (TWA with Play Billing enabled) */
 export const isPlayBillingAvailable = (): boolean =>
-  isStandaloneMode && 'getDigitalGoodsService' in window
+  typeof window !== 'undefined' && 'getDigitalGoodsService' in window
 
 type ItemDetails = {
   itemId: string

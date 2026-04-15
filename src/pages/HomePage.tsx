@@ -32,6 +32,7 @@ import { useACWR, ACWR_ZONE_CONFIG } from '../hooks/useACWR'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
+import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { useAthleteTests } from '../hooks/useAthleteTests'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useReadinessScore } from '../hooks/useReadinessScore'
@@ -131,6 +132,7 @@ export function HomePage() {
 
   const acwr = useACWR(logs, structuralEvents)
   const { isPremium, loading: entitlementsLoading } = useFeatureAccess()
+  const { startCheckout, loading: checkoutLoading, error: checkoutError } = usePremiumCheckout()
   // Don't show premium-gated sections until entitlements are resolved
   // This prevents a flash of blurred content for premium users
   const premiumResolved = !entitlementsLoading
@@ -927,12 +929,19 @@ export function HomePage() {
                 <p className="text-[11px] text-fg-muted">Suivi des charges, historique, courbes et coach IA illimité.</p>
               </div>
             </div>
-            <Link
-              to="/profile"
-              className="block w-full py-3 rounded-full bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold text-center transition-colors"
+            <button
+              type="button"
+              onClick={() => void startCheckout('premium_monthly')}
+              disabled={checkoutLoading}
+              className="block w-full py-3 rounded-full bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold text-center transition-colors disabled:opacity-50"
             >
-              Découvrir Premium
-            </Link>
+              {checkoutLoading ? 'Chargement...' : 'Passer en Premium'}
+            </button>
+            {checkoutError && (
+              <div className="p-3 bg-danger-bg border border-danger-bd rounded-2xl">
+                <p className="text-xs text-danger font-medium">{checkoutError}</p>
+              </div>
+            )}
           </section>
         )}
 

@@ -87,8 +87,8 @@ export function usePremiumCheckout() {
 
       setState({
         loading: false,
-        error: null,
-        message: payload?.message ?? 'Le checkout premium est prêt côté app mais pas encore activé côté paiement.',
+        error: 'Le paiement n\'est pas encore disponible sur le web. Utilise l\'app Android pour passer en Premium.',
+        message: null,
       })
       return payload
     } catch (err) {

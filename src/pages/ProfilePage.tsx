@@ -802,7 +802,9 @@ export function ProfilePage() {
                 <p className="text-[11px] leading-relaxed text-brand-tint">{billingMessage}</p>
               )}
               {billingError && (
-                <p className="text-[11px] leading-relaxed text-warn-body">{billingError}</p>
+                <div className="p-3 bg-danger-bg border border-danger-bd rounded-2xl">
+                  <p className="text-xs text-danger font-medium">{billingError}</p>
+                </div>
               )}
             </div>
           )}
