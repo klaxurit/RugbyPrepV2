@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { supabase } from '../services/supabase/client'
-import { isPlayBillingAvailable, usePlayBilling } from './usePlayBilling'
+import { isPlayBillingAvailable, isStandaloneMode, usePlayBilling } from './usePlayBilling'
 
 type CheckoutResponse = {
   ok: boolean
@@ -54,6 +54,17 @@ export function usePremiumCheckout() {
         setState({ loading: false, error: message, message: null })
         return null
       }
+    }
+
+    // In standalone mode (TWA/PWA) but Digital Goods API unavailable
+    // This happens when the app is sideloaded or not installed from Play Store
+    if (isStandaloneMode) {
+      setState({
+        loading: false,
+        error: 'Pour souscrire, installe l\'app depuis le Google Play Store.',
+        message: null,
+      })
+      return null
     }
 
     // Fallback to Stripe checkout for web

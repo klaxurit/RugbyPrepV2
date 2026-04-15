@@ -16,7 +16,7 @@ export function PremiumBlurredPreview({
   label = 'Premium',
   placeholder,
 }: PremiumBlurredPreviewProps) {
-  const { startCheckout, loading } = usePremiumCheckout()
+  const { startCheckout, loading, error } = usePremiumCheckout()
 
   return (
     <div className="relative">
@@ -43,9 +43,14 @@ export function PremiumBlurredPreview({
         disabled={loading}
         className="absolute inset-0 flex items-center justify-center cursor-pointer"
       >
-        <div className="flex items-center gap-2 bg-app/80 border border-brand-border-strong px-4 py-2.5 rounded-full shadow-lg">
-          <Lock className="w-3.5 h-3.5 text-brand-tint" />
-          <span className="text-xs font-black text-brand-tint">{label}</span>
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex items-center gap-2 bg-app/80 border border-brand-border-strong px-4 py-2.5 rounded-full shadow-lg">
+            <Lock className="w-3.5 h-3.5 text-brand-tint" />
+            <span className="text-xs font-black text-brand-tint">{label}</span>
+          </div>
+          {error && (
+            <span className="text-[10px] text-amber-600 bg-app/90 px-3 py-1 rounded-full">{error}</span>
+          )}
         </div>
       </button>
     </div>
