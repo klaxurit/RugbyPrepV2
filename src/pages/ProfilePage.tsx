@@ -11,7 +11,6 @@ import { useProfile } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
-import { getPlayBillingDebugInfo } from '../hooks/usePlayBilling'
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
@@ -777,21 +776,7 @@ export function ProfilePage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={async () => {
-                    try {
-                      const result = await startCheckout('premium_monthly')
-                      if (!result) {
-                        // Force show error if purchase returned null but no error was set
-                        setTimeout(() => {
-                          const el = document.getElementById('billing-debug-result')
-                          if (el) el.textContent = 'startCheckout returned: ' + JSON.stringify(result)
-                        }, 100)
-                      }
-                    } catch (err) {
-                      const el = document.getElementById('billing-debug-result')
-                      if (el) el.textContent = 'Caught: ' + String(err)
-                    }
-                  }}
+                  onClick={() => { void startCheckout('premium_monthly') }}
                   disabled={billingLoading}
                   className="inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
                 >
@@ -819,15 +804,6 @@ export function ProfilePage() {
                   <p className="text-xs text-danger font-medium">{billingError}</p>
                 </div>
               )}
-              {/* DEBUG result */}
-              <p id="billing-debug-result" className="text-[10px] text-amber-500 font-mono break-all" />
-              {/* DEBUG — remove after billing is confirmed working */}
-              <details className="mt-2">
-                <summary className="text-[10px] text-fg-ghost cursor-pointer">Debug billing</summary>
-                <pre className="mt-1 text-[9px] text-fg-faint bg-layer-5 p-2 rounded-lg overflow-x-auto whitespace-pre-wrap">
-                  {JSON.stringify(getPlayBillingDebugInfo(), null, 2)}
-                </pre>
-              </details>
             </div>
           )}
         </section>
