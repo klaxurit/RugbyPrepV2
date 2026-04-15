@@ -235,3 +235,17 @@ export function usePlayBilling() {
     restorePurchases,
   }
 }
+
+/** Debug helper — call from console or render in a debug panel */
+export function getPlayBillingDebugInfo() {
+  return {
+    isStandaloneMode,
+    isPlayBillingAvailable: isPlayBillingAvailable(),
+    hasGetDigitalGoodsService: typeof window !== 'undefined' && 'getDigitalGoodsService' in window,
+    displayModeStandalone: typeof window !== 'undefined' && window.matchMedia?.('(display-mode: standalone)')?.matches,
+    displayModeMinimalUi: typeof window !== 'undefined' && window.matchMedia?.('(display-mode: minimal-ui)')?.matches,
+    referrer: typeof document !== 'undefined' ? document.referrer : '',
+    navigatorStandalone: (navigator as unknown as { standalone?: boolean }).standalone,
+    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+  }
+}

@@ -11,6 +11,7 @@ import { useProfile } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
+import { getPlayBillingDebugInfo } from '../hooks/usePlayBilling'
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
@@ -806,6 +807,13 @@ export function ProfilePage() {
                   <p className="text-xs text-danger font-medium">{billingError}</p>
                 </div>
               )}
+              {/* DEBUG — remove after billing is confirmed working */}
+              <details className="mt-2">
+                <summary className="text-[10px] text-fg-ghost cursor-pointer">Debug billing</summary>
+                <pre className="mt-1 text-[9px] text-fg-faint bg-layer-5 p-2 rounded-lg overflow-x-auto whitespace-pre-wrap">
+                  {JSON.stringify(getPlayBillingDebugInfo(), null, 2)}
+                </pre>
+              </details>
             </div>
           )}
         </section>
