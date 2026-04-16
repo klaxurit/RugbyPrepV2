@@ -151,35 +151,41 @@ export function usePlayBilling() {
 
       const request = new PaymentRequest([paymentMethod], paymentDetails)
       const response = await request.show()
-      const paymentResponseDetails = response.details as { purchaseToken?: string; token?: string }
-      const purchaseToken = paymentResponseDetails.purchaseToken ?? paymentResponseDetails.token
-      if (!purchaseToken) throw new Error('Play purchase token missing from Payment Request response')
 
-      // Verify purchase server-side
-      const { data, error } = await supabase.functions.invoke('verify-play-purchase', {
-        body: { productId, purchaseToken },
-      })
+      // From here, we MUST call response.complete() to dismiss the overlay
+      let purchaseResult: { ok: boolean; error?: string; planId?: string; status?: string } | null = null
+      try {
+        const paymentResponseDetails = response.details as { purchaseToken?: string; token?: string }
+        const purchaseToken = paymentResponseDetails.purchaseToken ?? paymentResponseDetails.token
+        if (!purchaseToken) throw new Error('Play purchase token missing')
 
-      if (error) throw error
+        // Verify purchase server-side
+        const { data, error } = await supabase.functions.invoke('verify-play-purchase', {
+          body: { productId, purchaseToken },
+        })
 
-      const result = data as { ok: boolean; error?: string; planId?: string; status?: string }
+        if (error) throw error
 
-      if (!result.ok) {
-        throw new Error(result.error ?? 'Purchase verification failed')
+        const result = data as { ok: boolean; error?: string; planId?: string; status?: string }
+        if (!result.ok) throw new Error(result.error ?? 'Purchase verification failed')
+
+        // Acknowledge the purchase so Google doesn't refund it
+        await service.acknowledge(purchaseToken, 'repeatable')
+
+        purchaseResult = result
+        await response.complete('success')
+      } catch (verifyErr) {
+        // Always dismiss the payment overlay even on error
+        try { await response.complete('fail') } catch { /* ignore */ }
+        throw verifyErr
       }
 
-      // Acknowledge the purchase so Google doesn't refund it
-      await service.acknowledge(purchaseToken, 'repeatable')
-
-      // Complete the payment
-      await response.complete('success')
-
       setState((prev) => ({ ...prev, loading: false, error: null }))
-      return result
+      return purchaseResult
     } catch (err) {
       // User cancelled or error
       const message = err instanceof Error ? err.message : String(err)
-      const isCancel = message.includes('AbortError') || message.includes('cancelled')
+      const isCancel = message.includes('AbortError') || message.includes('cancelled') || message.includes('NotAllowedError')
       setState((prev) => ({
         ...prev,
         loading: false,

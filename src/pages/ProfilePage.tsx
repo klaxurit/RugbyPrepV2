@@ -98,6 +98,7 @@ export function ProfilePage() {
     restorePurchases,
     isPlayStore,
   } = usePremiumCheckout()
+  const [selectedPlan, setSelectedPlan] = useState<'premium_monthly' | 'premium_yearly'>('premium_yearly')
   const [profileUpsellDismissed, setProfileUpsellDismissed] = useState(() => isDismissed('profile_premium'))
   const {
     status: notifStatus,
@@ -214,7 +215,7 @@ export function ProfilePage() {
         setAvatarError(avatarErrorLabel[result.error])
       }
     } catch {
-      setAvatarError('Impossible de recadrer l’image.')
+      setAvatarError('Impossible de recadrer l\'image.')
     } finally {
       setIsAvatarUploading(false)
       handleCropCancel()
@@ -768,17 +769,47 @@ export function ProfilePage() {
           {!isPremium && (
             <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-3">
               <div>
-                <p className="text-sm font-black text-fg">Gestion de l’abonnement</p>
+                <p className="text-sm font-black text-fg">Passer en Premium</p>
                 <p className="mt-1 text-xs leading-relaxed text-fg-muted">
-                  Active Premium depuis l’app, puis restaure ton achat Google Play ici si tu changes d’appareil ou si l’accès n’apparaît pas encore.
+                  Debloque le suivi des charges, l&apos;historique complet, les courbes de progression et le coach IA illimite.
                 </p>
               </div>
+
+              {/* Plan selector */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedPlan('premium_monthly')}
+                  className={`p-3 rounded-2xl border-2 text-left transition-colors ${
+                    selectedPlan === 'premium_monthly'
+                      ? 'border-brand bg-brand-soft'
+                      : 'border-border-app bg-layer-5'
+                  }`}
+                >
+                  <p className="text-xs font-black text-fg">Mensuel</p>
+                  <p className="text-lg font-black text-brand-tint">5,99&euro;<span className="text-[10px] text-fg-muted font-bold">/mois</span></p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPlan('premium_yearly')}
+                  className={`p-3 rounded-2xl border-2 text-left transition-colors relative ${
+                    selectedPlan === 'premium_yearly'
+                      ? 'border-brand bg-brand-soft'
+                      : 'border-border-app bg-layer-5'
+                  }`}
+                >
+                  <div className="absolute -top-2 right-2 bg-brand text-on-brand text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">-33%</div>
+                  <p className="text-xs font-black text-fg">Annuel</p>
+                  <p className="text-lg font-black text-brand-tint">47,99&euro;<span className="text-[10px] text-fg-muted font-bold">/an</span></p>
+                </button>
+              </div>
+
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => { void startCheckout('premium_monthly') }}
+                  onClick={() => { void startCheckout(selectedPlan) }}
                   disabled={billingLoading}
-                  className="inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
+                  className="flex-1 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-3 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
                 >
                   {billingLoading ? 'Chargement...' : 'Activer Premium'}
                 </button>
