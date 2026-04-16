@@ -23,6 +23,7 @@ export function SignupPage() {
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [ageConfirmed, setAgeConfirmed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -124,6 +125,22 @@ export function SignupPage() {
                 required
               />
             </div>
+
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={ageConfirmed}
+                onChange={(e) => setAgeConfirmed(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-border-app accent-brand"
+                required
+              />
+              <span className="text-[11px] leading-relaxed text-fg-muted">
+                Je confirme avoir au moins 18 ans et j&apos;accepte les{' '}
+                <Link to="/legal" className="text-brand underline">conditions d&apos;utilisation</Link>
+                {' '}et la{' '}
+                <Link to="/legal" className="text-brand underline">politique de confidentialite</Link>.
+              </span>
+            </label>
 
             {error && (
               <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">

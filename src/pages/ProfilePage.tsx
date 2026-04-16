@@ -191,74 +191,6 @@ function ManageSubscriptionCard() {
   )
 }
 
-/** Temporary debug panel — shows Digital Goods API state on device */
-function BillingDebugPanel() {
-  const [info, setInfo] = useState<Record<string, string>>({ status: 'loading...' })
-
-  useEffect(() => {
-    const run = async () => {
-      const result: Record<string, string> = {}
-      result['standalone'] = String(
-        window.matchMedia?.('(display-mode: standalone)')?.matches ||
-        window.matchMedia?.('(display-mode: minimal-ui)')?.matches ||
-        (navigator as unknown as { standalone?: boolean }).standalone === true
-      )
-      result['referrer'] = document.referrer || '(empty)'
-      result['hasGetDGS'] = String('getDigitalGoodsService' in window)
-      result['userAgent'] = navigator.userAgent.slice(0, 100)
-
-      if ('getDigitalGoodsService' in window) {
-        try {
-          const svc = await (window as unknown as { getDigitalGoodsService: (p: string) => Promise<unknown> })
-            .getDigitalGoodsService('https://play.google.com/billing')
-          result['getDGS'] = 'OK — service acquired'
-          try {
-            const details = await (svc as { getDetails: (ids: string[]) => Promise<unknown[]> })
-              .getDetails(['premium.monthly', 'premium.yearly'])
-            result['products'] = JSON.stringify(details).slice(0, 200)
-          } catch (e) {
-            result['getDetails_error'] = String(e)
-          }
-          try {
-            const purchases = await (svc as { listPurchases: () => Promise<unknown[]> })
-              .listPurchases()
-            result['listPurchases'] = JSON.stringify(purchases).slice(0, 200)
-          } catch (e) {
-            result['listPurchases_error'] = String(e)
-          }
-          // Test PaymentRequest availability
-          try {
-            const pr = new PaymentRequest(
-              [{ supportedMethods: 'https://play.google.com/billing', data: { sku: 'premium.monthly' } }],
-              { total: { label: 'Test', amount: { currency: 'EUR', value: '5.99' } } },
-            )
-            const canMake = await pr.canMakePayment()
-            result['canMakePayment'] = String(canMake)
-          } catch (e) {
-            result['canMakePayment_error'] = String(e)
-          }
-        } catch (e) {
-          result['getDGS_error'] = String(e)
-        }
-      }
-
-      setInfo(result)
-    }
-    void run()
-  }, [])
-
-  return (
-    <div className="p-3 bg-gray-900 border border-gray-700 rounded-2xl mt-2 space-y-1">
-      <p className="text-[10px] font-bold text-yellow-400 uppercase">Billing Debug</p>
-      {Object.entries(info).map(([k, v]) => (
-        <p key={k} className="text-[10px] text-gray-300 font-mono break-all">
-          <span className="text-yellow-500">{k}:</span> {v}
-        </p>
-      ))}
-    </div>
-  )
-}
-
 function getVisibleTrainingLevel(level: TrainingLevel | undefined): Exclude<TrainingLevel, 'builder'> {
   if (level === 'starter') return 'starter'
   return 'performance'
@@ -1012,6 +944,12 @@ export function ProfilePage() {
                 </button>
               </div>
 
+              <p className="text-[10px] leading-relaxed text-fg-muted">
+                {selectedPlan === 'premium_monthly'
+                  ? 'Abonnement mensuel a 5,99 \u20AC/mois. Renouvellement automatique. Annulable a tout moment via Google Play.'
+                  : 'Abonnement annuel a 47,99 \u20AC/an. Renouvellement automatique. Annulable a tout moment via Google Play.'}
+              </p>
+
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -1020,7 +958,6 @@ export function ProfilePage() {
                     if (result?.ok) {
                       await refreshEntitlements()
                     }
-                    // billingError is automatically set by usePremiumCheckout if purchase failed
                   }}
                   disabled={billingLoading}
                   className="flex-1 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-3 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
@@ -1048,9 +985,6 @@ export function ProfilePage() {
                 <div className="p-3 bg-danger-bg border border-danger-bd rounded-2xl">
                   <p className="text-xs text-danger font-medium">{billingError}</p>
                 </div>
-              )}
-              {billingError && (
-                <BillingDebugPanel />
               )}
             </div>
           )}

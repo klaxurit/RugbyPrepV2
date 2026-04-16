@@ -1,12 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { PageHeader } from '../components/PageHeader'
 import { useAuth } from '../hooks/useAuth'
+import { supabase } from '../services/supabase/client'
 
 const SUPPORT_EMAIL = 'bonjour@rugbyforge.fr'
-const PLAY_SUBSCRIPTIONS_URL = 'https://play.google.com/store/account/subscriptions'
+const PLAY_SUBSCRIPTIONS_URL = 'https://play.google.com/store/account/subscriptions?package=fr.rugbyforge.app'
 
 export function DeleteAccountPage() {
-  const { authState } = useAuth()
+  const { authState, signOut } = useAuth()
+  const navigate = useNavigate()
+  const [confirmText, setConfirmText] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const currentUser = authState.status === 'authenticated' ? authState.user : null
   const backTo = currentUser ? '/profile' : '/legal'
 
@@ -41,21 +47,69 @@ export function DeleteAccountPage() {
           </p>
         </section>
 
-        <section className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-3">
-          <h2 className="text-sm font-black text-fg">Comment demander la suppression</h2>
-          <p className="text-sm text-fg-secondary leading-relaxed">
-            Envoie la demande depuis l&apos;adresse email liée à ton compte, ou précise cette adresse dans le message si tu n&apos;es pas connecté. Les demandes sont traitées par l&apos;éditeur du service, <span className="font-bold text-fg">Axurit</span>.
-          </p>
-          <a
-            href={deleteAccountMailto}
-            className="inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2.5 text-sm font-black text-on-brand transition-colors hover:bg-brand-hover"
-          >
-            Envoyer la demande par email
-          </a>
-          <p className="text-xs text-fg-muted">
-            Adresse de support Axurit : {SUPPORT_EMAIL}
-          </p>
-        </section>
+        {currentUser ? (
+          <section className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-3">
+            <h2 className="text-sm font-black text-fg">Supprimer mon compte</h2>
+            <p className="text-sm text-fg-secondary leading-relaxed">
+              Tape <span className="font-bold text-danger">SUPPRIMER</span> pour confirmer. Cette action est irreversible.
+            </p>
+            <input
+              type="text"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="Tape SUPPRIMER"
+              className="w-full h-12 rounded-2xl border-2 border-border-app bg-layer-5 px-4 text-sm text-fg placeholder:text-fg-faint rf-focus-ring transition-colors"
+            />
+            {deleteError && (
+              <div className="p-3 bg-danger-bg border border-danger-bd rounded-2xl">
+                <p className="text-xs text-danger font-medium">{deleteError}</p>
+              </div>
+            )}
+            <button
+              type="button"
+              disabled={confirmText !== 'SUPPRIMER' || deleting}
+              onClick={async () => {
+                setDeleting(true)
+                setDeleteError(null)
+                try {
+                  // Delete user data from all tables (cascade handles most via FK)
+                  const userId = currentUser.id
+                  await Promise.all([
+                    supabase.from('user_entitlements').delete().eq('user_id', userId),
+                    supabase.from('user_subscriptions').delete().eq('user_id', userId),
+                    supabase.from('cancel_feedback').delete().eq('user_id', userId),
+                    supabase.from('profiles').delete().eq('id', userId),
+                  ])
+                  // Sign out and redirect
+                  await signOut()
+                  navigate('/', { replace: true })
+                } catch (err) {
+                  setDeleteError(err instanceof Error ? err.message : 'Erreur lors de la suppression.')
+                  setDeleting(false)
+                }
+              }}
+              className="w-full rounded-2xl bg-danger px-4 py-3 text-sm font-black text-white transition-colors hover:bg-danger/90 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {deleting ? 'Suppression en cours...' : 'Supprimer definitivement mon compte'}
+            </button>
+            <p className="text-[10px] text-fg-muted">
+              Tu peux aussi contacter {SUPPORT_EMAIL} pour toute question.
+            </p>
+          </section>
+        ) : (
+          <section className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-3">
+            <h2 className="text-sm font-black text-fg">Comment demander la suppression</h2>
+            <p className="text-sm text-fg-secondary leading-relaxed">
+              Connecte-toi pour supprimer ton compte directement, ou envoie une demande par email a <span className="font-bold text-fg">{SUPPORT_EMAIL}</span>.
+            </p>
+            <a
+              href={deleteAccountMailto}
+              className="inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2.5 text-sm font-black text-on-brand transition-colors hover:bg-brand-hover"
+            >
+              Envoyer la demande par email
+            </a>
+          </section>
+        )}
 
         <section className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-3">
           <h2 className="text-sm font-black text-fg">Abonnements actifs</h2>
