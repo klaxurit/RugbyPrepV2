@@ -11,6 +11,7 @@ type EntitlementRow = {
 type SubscriptionRow = {
   plan_id: string
   status: 'active' | 'trialing' | 'past_due' | 'canceled' | 'inactive' | 'expired'
+  current_period_end: string | null
 }
 
 const PREMIUM_HINTS = new Set([
@@ -52,7 +53,7 @@ export function useEntitlements() {
         .eq('status', 'active'),
       supabase
         .from('user_subscriptions')
-        .select('plan_id, status')
+        .select('plan_id, status, current_period_end')
         .eq('user_id', userId)
         .in('status', ['active', 'trialing'])
         .limit(1)
@@ -73,8 +74,12 @@ export function useEntitlements() {
       .filter((row) => !row.expires_at || new Date(row.expires_at).getTime() > nowMs)
     const subscription = (subscriptionResult.data ?? null) as SubscriptionRow | null
 
+    // Ignore subscription if period has ended (e.g. test subscriptions)
+    const subActive = subscription &&
+      (!subscription.current_period_end || new Date(subscription.current_period_end).getTime() > nowMs)
+
     setKeys(entitlements.map((row) => row.entitlement_key))
-    setPlanId(subscription?.plan_id ?? null)
+    setPlanId(subActive ? subscription.plan_id : null)
     setLoading(false)
   }, [userId])
 
@@ -96,8 +101,13 @@ export function useEntitlements() {
         // Swallow — component may have unmounted
       }
     })()
+
+    // Re-check entitlements periodically to catch expirations
+    const interval = userId ? setInterval(() => { void refresh() }, 5 * 60_000) : undefined
+
     return () => {
       active = false
+      clearInterval(interval)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])

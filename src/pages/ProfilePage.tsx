@@ -26,6 +26,7 @@ import type {
   TrainingLevel,
 } from '../types/training'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
+import { supabase } from '../services/supabase/client'
 
 /** Équipements "rares" qu'une salle peut ne pas avoir — l'utilisateur décoche ce qui manque. */
 const RARE_EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string }[] = [
@@ -63,6 +64,127 @@ const LANGUAGE_OPTIONS = [
   { value: 'fr' as const, label: 'Français', sub: 'Programme affiché en français' },
   { value: 'en' as const, label: 'English', sub: 'Program and exercises in english' },
 ]
+
+const CANCEL_REASONS = [
+  { value: 'too_expensive', label: 'Trop cher' },
+  { value: 'not_useful', label: 'Je n\'utilise pas assez les fonctions premium' },
+  { value: 'missing_features', label: 'Il manque des fonctionnalités' },
+  { value: 'bugs', label: 'Trop de bugs ou problèmes techniques' },
+  { value: 'season_over', label: 'Ma saison est terminée' },
+  { value: 'other', label: 'Autre' },
+] as const
+
+function ManageSubscriptionCard() {
+  const [showForm, setShowForm] = useState(false)
+  const [reason, setReason] = useState('')
+  const [detail, setDetail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleSubmitAndRedirect = async () => {
+    // Save feedback to Supabase (best-effort)
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        await supabase.from('cancel_feedback').insert({
+          user_id: user.id,
+          reason,
+          detail: detail.trim() || null,
+        })
+      }
+    } catch { /* best-effort */ }
+
+    setSubmitted(true)
+
+    // Redirect to Play Store subscription management after a short delay
+    setTimeout(() => {
+      window.open(
+        'https://play.google.com/store/account/subscriptions',
+        '_blank',
+      )
+    }, 1000)
+  }
+
+  if (submitted) {
+    return (
+      <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-2">
+        <p className="text-xs text-fg-muted">
+          Merci pour ton retour. Tu es redirige vers Google Play pour gerer ton abonnement.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-black text-fg">Mon abonnement</p>
+          <p className="text-xs text-fg-muted mt-0.5">Abonnement Premium actif</p>
+        </div>
+      </div>
+
+      {!showForm ? (
+        <button
+          type="button"
+          onClick={() => setShowForm(true)}
+          className="w-full rounded-2xl border border-border-app px-4 py-2.5 text-xs font-bold text-fg-muted transition-colors hover:border-danger-bd hover:text-danger rf-focus-ring"
+        >
+          Gerer ou annuler mon abonnement
+        </button>
+      ) : (
+        <div className="space-y-3">
+          <p className="text-xs font-bold text-fg">
+            Avant de partir, dis-nous pourquoi :
+          </p>
+          <div className="grid gap-1.5">
+            {CANCEL_REASONS.map((r) => (
+              <button
+                key={r.value}
+                type="button"
+                onClick={() => setReason(r.value)}
+                className={`text-left px-3 py-2 rounded-xl border text-xs transition-colors ${
+                  reason === r.value
+                    ? 'border-brand bg-brand-soft font-bold text-fg'
+                    : 'border-border-app bg-layer-5 text-fg-muted hover:border-brand-border'
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+
+          {reason && (
+            <textarea
+              value={detail}
+              onChange={(e) => setDetail(e.target.value)}
+              placeholder="Un detail a partager ? (optionnel)"
+              rows={2}
+              className="w-full rounded-xl border border-border-app bg-layer-5 px-3 py-2 text-xs text-fg placeholder:text-fg-muted/50 focus:border-brand focus:outline-none"
+            />
+          )}
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => { setShowForm(false); setReason(''); setDetail('') }}
+              className="flex-1 rounded-2xl border border-border-app px-4 py-2.5 text-xs font-bold text-fg-muted transition-colors hover:border-brand-border rf-focus-ring"
+            >
+              Annuler
+            </button>
+            <button
+              type="button"
+              disabled={!reason}
+              onClick={() => void handleSubmitAndRedirect()}
+              className="flex-1 rounded-2xl bg-danger px-4 py-2.5 text-xs font-bold text-white transition-colors hover:bg-danger/90 disabled:opacity-50 rf-focus-ring"
+            >
+              Continuer
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 /** Temporary debug panel — shows Digital Goods API state on device */
 function BillingDebugPanel() {
@@ -831,6 +953,10 @@ export function ProfilePage() {
             </div>
           </div>
 
+
+          {isPremium && (
+            <ManageSubscriptionCard />
+          )}
 
           {!isPremium && canShowUpsell && !profileUpsellDismissed && (
             <PremiumUpsellCard
