@@ -46,7 +46,6 @@ type PurchaseDetails = {
 type DigitalGoodsService = {
   getDetails(itemIds: string[]): Promise<ItemDetails[]>
   listPurchases(): Promise<PurchaseDetails[]>
-  acknowledge(purchaseToken: string, type: 'onetime' | 'repeatable'): Promise<void>
 }
 
 declare global {
@@ -197,13 +196,10 @@ export function usePlayBilling() {
         console.log('[PlayBilling] Verification result:', result)
         if (!result.ok) throw new Error(result.error ?? 'Purchase verification failed')
 
-        // Acknowledge the purchase so Google doesn't refund it
-        console.log('[PlayBilling] Acknowledging purchase...')
-        await service.acknowledge(purchaseToken, 'repeatable')
-        console.log('[PlayBilling] Purchase acknowledged')
-
         purchaseResult = result
+        // response.complete('success') acknowledges the purchase in DGAPI v2
         await response.complete('success')
+        console.log('[PlayBilling] Purchase complete')
       } catch (verifyErr) {
         console.error('[PlayBilling] Error in verification/acknowledge:', verifyErr)
         // Always dismiss the payment overlay even on error
@@ -244,14 +240,11 @@ export function usePlayBilling() {
 
         const purchases = await service.listPurchases()
 
-        for (const { itemId, purchaseToken, acknowledged } of purchases) {
+        for (const { itemId, purchaseToken } of purchases) {
           const { data, error } = await supabase.functions.invoke('verify-play-purchase', {
             body: { productId: itemId, purchaseToken },
           })
           if (!error && (data as { ok: boolean }).ok) {
-            if (acknowledged === false) {
-              await service.acknowledge(purchaseToken, 'repeatable')
-            }
             setState((prev) => ({ ...prev, loading: false }))
             return data
           }
