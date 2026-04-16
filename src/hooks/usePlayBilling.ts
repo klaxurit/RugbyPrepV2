@@ -164,7 +164,17 @@ export function usePlayBilling() {
           body: { productId, purchaseToken },
         })
 
-        if (error) throw error
+        if (error) {
+          // Extract the real error message from the edge function response
+          const ctx = (error as { context?: Response }).context
+          if (ctx && typeof ctx.json === 'function') {
+            try {
+              const body = await ctx.json()
+              throw new Error(body?.error ?? error.message)
+            } catch { /* fall through */ }
+          }
+          throw error
+        }
 
         const result = data as { ok: boolean; error?: string; planId?: string; status?: string }
         if (!result.ok) throw new Error(result.error ?? 'Purchase verification failed')

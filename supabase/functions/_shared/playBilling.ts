@@ -26,14 +26,18 @@ export const getPlanIdForPlayProduct = (productId: string): string | null => {
  * Get a Google OAuth2 access token from a service account key.
  * Required scope: https://www.googleapis.com/auth/androidpublisher
  */
+/** Standard base64 → base64url (RFC 4648 §5) */
+const toBase64Url = (s: string): string =>
+  s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+
 const getGoogleAccessToken = async (serviceAccountKey: {
   client_email: string
   private_key: string
   token_uri: string
 }): Promise<string> => {
   const now = Math.floor(Date.now() / 1000)
-  const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }))
-  const payload = btoa(
+  const header = toBase64Url(btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' })))
+  const payload = toBase64Url(btoa(
     JSON.stringify({
       iss: serviceAccountKey.client_email,
       scope: 'https://www.googleapis.com/auth/androidpublisher',
@@ -41,7 +45,7 @@ const getGoogleAccessToken = async (serviceAccountKey: {
       iat: now,
       exp: now + 3600,
     }),
-  )
+  ))
 
   const signingInput = `${header}.${payload}`
 
@@ -65,10 +69,7 @@ const getGoogleAccessToken = async (serviceAccountKey: {
     key,
     new TextEncoder().encode(signingInput),
   )
-  const signature = btoa(String.fromCharCode(...new Uint8Array(signatureBuffer)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '')
+  const signature = toBase64Url(btoa(String.fromCharCode(...new Uint8Array(signatureBuffer))))
 
   const jwt = `${header}.${payload}.${signature}`
 
