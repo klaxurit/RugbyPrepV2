@@ -18,22 +18,31 @@ Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   const { user, serviceClient } = await requireUser(req)
-  if (!user) return json({ error: 'Unauthorized' }, 401)
+  if (!user) {
+    console.error('[verify-play-purchase] No authenticated user')
+    return json({ error: 'Unauthorized' }, 401)
+  }
 
   try {
     const body = (await req.json()) as RequestBody
+    console.log('[verify-play-purchase] Request:', { productId: body.productId, userId: user.id })
 
     if (!body.productId || !body.purchaseToken) {
+      console.error('[verify-play-purchase] Missing fields:', { productId: !!body.productId, purchaseToken: !!body.purchaseToken })
       return json({ error: 'Missing productId or purchaseToken' }, 400)
     }
 
     const planId = getPlanIdForPlayProduct(body.productId)
     if (!planId) {
+      console.error('[verify-play-purchase] Unknown product:', body.productId)
       return json({ error: `Unknown product ID: ${body.productId}` }, 400)
     }
 
+    console.log('[verify-play-purchase] Mapped to plan:', planId)
+
     // Verify the purchase with Google Play Developer API
     const result = await verifyPlayPurchase(PACKAGE_NAME, body.productId, body.purchaseToken)
+    console.log('[verify-play-purchase] Google API result:', { valid: result.valid, error: result.error, expiresAt: result.expiresAt, orderId: result.orderId })
 
     if (!result.valid) {
       return json({
@@ -134,6 +143,7 @@ Deno.serve(async (req: Request) => {
       autoRenewing: result.autoRenewing,
     })
   } catch (error) {
+    console.error('[verify-play-purchase] Uncaught error:', String(error))
     return json({ error: String(error) }, 500)
   }
 })
