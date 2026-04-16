@@ -75,13 +75,11 @@ const CANCEL_REASONS = [
 ] as const
 
 function ManageSubscriptionCard() {
-  const [showForm, setShowForm] = useState(false)
+  const [step, setStep] = useState<'info' | 'reasons' | 'submitted'>('info')
   const [reason, setReason] = useState('')
   const [detail, setDetail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
 
   const handleSubmitAndRedirect = async () => {
-    // Save feedback to Supabase (best-effort)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
@@ -93,22 +91,23 @@ function ManageSubscriptionCard() {
       }
     } catch { /* best-effort */ }
 
-    setSubmitted(true)
+    setStep('submitted')
 
-    // Redirect to Play Store subscription management after a short delay
     setTimeout(() => {
       window.open(
         'https://play.google.com/store/account/subscriptions',
         '_blank',
       )
-    }, 1000)
+    }, 1500)
   }
 
-  if (submitted) {
+  if (step === 'submitted') {
     return (
       <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-2">
+        <p className="text-xs text-fg">Merci pour ton retour.</p>
         <p className="text-xs text-fg-muted">
-          Merci pour ton retour. Tu es redirige vers Google Play pour gerer ton abonnement.
+          Tu vas etre redirige vers Google Play. Appuie sur <span className="font-bold">Annuler l&apos;abonnement</span> pour finaliser.
+          Tu garderas l&apos;acces Premium jusqu&apos;a la fin de ta periode en cours.
         </p>
       </div>
     )
@@ -116,25 +115,27 @@ function ManageSubscriptionCard() {
 
   return (
     <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-black text-fg">Mon abonnement</p>
-          <p className="text-xs text-fg-muted mt-0.5">Abonnement Premium actif</p>
-        </div>
+      <div>
+        <p className="text-sm font-black text-fg">Mon abonnement</p>
+        <p className="text-xs text-fg-muted mt-0.5">
+          Ton abonnement Premium est actif. Le renouvellement est automatique via Google Play.
+        </p>
       </div>
 
-      {!showForm ? (
+      {step === 'info' && (
         <button
           type="button"
-          onClick={() => setShowForm(true)}
+          onClick={() => setStep('reasons')}
           className="w-full rounded-2xl border border-border-app px-4 py-2.5 text-xs font-bold text-fg-muted transition-colors hover:border-danger-bd hover:text-danger rf-focus-ring"
         >
-          Gerer ou annuler mon abonnement
+          Annuler mon abonnement
         </button>
-      ) : (
+      )}
+
+      {step === 'reasons' && (
         <div className="space-y-3">
           <p className="text-xs font-bold text-fg">
-            Avant de partir, dis-nous pourquoi :
+            On est triste de te voir partir. Dis-nous pourquoi :
           </p>
           <div className="grid gap-1.5">
             {CANCEL_REASONS.map((r) => (
@@ -163,13 +164,17 @@ function ManageSubscriptionCard() {
             />
           )}
 
+          <p className="text-[10px] text-fg-muted leading-relaxed">
+            L&apos;annulation se fait via Google Play. Tu garderas l&apos;acces Premium jusqu&apos;a la fin de ta periode en cours.
+          </p>
+
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => { setShowForm(false); setReason(''); setDetail('') }}
+              onClick={() => { setStep('info'); setReason(''); setDetail('') }}
               className="flex-1 rounded-2xl border border-border-app px-4 py-2.5 text-xs font-bold text-fg-muted transition-colors hover:border-brand-border rf-focus-ring"
             >
-              Annuler
+              Rester Premium
             </button>
             <button
               type="button"
@@ -177,7 +182,7 @@ function ManageSubscriptionCard() {
               onClick={() => void handleSubmitAndRedirect()}
               className="flex-1 rounded-2xl bg-danger px-4 py-2.5 text-xs font-bold text-white transition-colors hover:bg-danger/90 disabled:opacity-50 rf-focus-ring"
             >
-              Continuer
+              Aller sur Google Play
             </button>
           </div>
         </div>
