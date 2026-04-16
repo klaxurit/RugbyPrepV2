@@ -123,13 +123,17 @@ export function usePlayBilling() {
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
     try {
+      console.log('[PlayBilling] Starting purchase for', planId, '→ productId:', productId)
+
       const service = await window.getDigitalGoodsService!(
         'https://play.google.com/billing',
       )
+      console.log('[PlayBilling] Digital Goods Service acquired')
 
       // Get current price from Play Store
       const [details] = await service.getDetails([productId])
       if (!details) throw new Error('Product not found in Play Store')
+      console.log('[PlayBilling] Product details:', details.title, details.price)
 
       // Create Payment Request
       const paymentMethod: PaymentMethodData = {
@@ -151,6 +155,7 @@ export function usePlayBilling() {
 
       const request = new PaymentRequest([paymentMethod], paymentDetails)
       const response = await request.show()
+      console.log('[PlayBilling] Payment response received')
 
       // From here, we MUST call response.complete() to dismiss the overlay
       let purchaseResult: { ok: boolean; error?: string; planId?: string; status?: string } | null = null
@@ -158,6 +163,7 @@ export function usePlayBilling() {
         const paymentResponseDetails = response.details as { purchaseToken?: string; token?: string }
         const purchaseToken = paymentResponseDetails.purchaseToken ?? paymentResponseDetails.token
         if (!purchaseToken) throw new Error('Play purchase token missing')
+        console.log('[PlayBilling] Got purchase token, verifying server-side...')
 
         // Verify purchase server-side
         const { data, error } = await supabase.functions.invoke('verify-play-purchase', {
@@ -166,25 +172,31 @@ export function usePlayBilling() {
 
         if (error) {
           // Extract the real error message from the edge function response
+          let errorMessage = error.message
           const ctx = (error as { context?: Response }).context
           if (ctx && typeof ctx.json === 'function') {
             try {
               const body = await ctx.json()
-              throw new Error(body?.error ?? error.message)
-            } catch { /* fall through */ }
+              if (body?.error) errorMessage = body.error
+            } catch { /* body already consumed */ }
           }
-          throw error
+          console.error('[PlayBilling] Verification error:', errorMessage)
+          throw new Error(errorMessage)
         }
 
         const result = data as { ok: boolean; error?: string; planId?: string; status?: string }
+        console.log('[PlayBilling] Verification result:', result)
         if (!result.ok) throw new Error(result.error ?? 'Purchase verification failed')
 
         // Acknowledge the purchase so Google doesn't refund it
+        console.log('[PlayBilling] Acknowledging purchase...')
         await service.acknowledge(purchaseToken, 'repeatable')
+        console.log('[PlayBilling] Purchase acknowledged')
 
         purchaseResult = result
         await response.complete('success')
       } catch (verifyErr) {
+        console.error('[PlayBilling] Error in verification/acknowledge:', verifyErr)
         // Always dismiss the payment overlay even on error
         try { await response.complete('fail') } catch { /* ignore */ }
         throw verifyErr
@@ -195,6 +207,7 @@ export function usePlayBilling() {
     } catch (err) {
       // User cancelled or error
       const message = err instanceof Error ? err.message : String(err)
+      console.error('[PlayBilling] Purchase failed:', message)
       const isCancel = message.includes('AbortError') || message.includes('cancelled') || message.includes('NotAllowedError')
       const errorMsg = isCancel ? null : message
       setState((prev) => ({

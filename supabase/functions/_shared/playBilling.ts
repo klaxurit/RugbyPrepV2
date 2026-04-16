@@ -135,7 +135,9 @@ export const verifyPlayPurchase = async (
     token_uri: string
   }
 
+  console.log('[playBilling] Getting Google access token for', serviceAccountKey.client_email)
   const accessToken = await getGoogleAccessToken(serviceAccountKey)
+  console.log('[playBilling] Got access token, verifying purchase...')
 
   const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/subscriptionsv2/tokens/${purchaseToken}`
   const res = await fetch(url, {
@@ -144,10 +146,12 @@ export const verifyPlayPurchase = async (
 
   if (!res.ok) {
     const text = await res.text()
+    console.error('[playBilling] Google Play API error:', res.status, text)
     return { valid: false, planId: null, expiresAt: null, startedAt: null, autoRenewing: false, orderId: null, error: `Play API ${res.status}: ${text}` }
   }
 
   const sub = (await res.json()) as PlaySubscriptionResource
+  console.log('[playBilling] Subscription response:', JSON.stringify(sub))
   const planId = getPlanIdForPlayProduct(productId)
   const matchingLineItem =
     sub.lineItems?.find((lineItem) => lineItem.productId === productId) ??
