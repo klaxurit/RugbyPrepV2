@@ -117,6 +117,15 @@ export function ProfilePage() {
   const [weightInput, setWeightInput] = useState(profile.weightKg?.toString() ?? '')
   const [equipmentOpen, setEquipmentOpen] = useState(false)
 
+  // Scroll to #premium anchor when navigating from CTA
+  useEffect(() => {
+    if (window.location.hash === '#premium') {
+      setTimeout(() => {
+        document.getElementById('premium')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 300)
+    }
+  }, [])
+
   // Sync inputs quand le profil charge depuis Supabase
   useEffect(() => {
     setHeightInput(profile.heightCm?.toString() ?? '')
@@ -767,7 +776,7 @@ export function ProfilePage() {
           )}
 
           {!isPremium && (
-            <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-3">
+            <div id="premium" className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-3">
               <div>
                 <p className="text-sm font-black text-fg">Passer en Premium</p>
                 <p className="mt-1 text-xs leading-relaxed text-fg-muted">
@@ -809,7 +818,10 @@ export function ProfilePage() {
                   type="button"
                   onClick={async () => {
                     const result = await startCheckout(selectedPlan)
-                    if (result?.ok) await refreshEntitlements()
+                    if (result?.ok) {
+                      await refreshEntitlements()
+                    }
+                    // billingError is automatically set by usePremiumCheckout if purchase failed
                   }}
                   disabled={billingLoading}
                   className="flex-1 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-3 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"

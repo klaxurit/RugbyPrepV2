@@ -300,7 +300,7 @@ export function MotherSessionBlock({
               Note tes charges, reps et séries pour chaque exercice et suis ta progression semaine après semaine.
             </p>
             <a
-              href="/auth/signup?plan=premium"
+              href="/profile#premium"
               className="inline-block mt-2 text-[10px] font-black text-brand-tint uppercase tracking-wider"
             >
               Passer en Premium →

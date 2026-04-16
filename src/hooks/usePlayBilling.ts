@@ -186,12 +186,14 @@ export function usePlayBilling() {
       // User cancelled or error
       const message = err instanceof Error ? err.message : String(err)
       const isCancel = message.includes('AbortError') || message.includes('cancelled') || message.includes('NotAllowedError')
+      const errorMsg = isCancel ? null : message
       setState((prev) => ({
         ...prev,
         loading: false,
-        error: isCancel ? null : message,
+        error: errorMsg,
       }))
-      return null
+      // Return error info so callers can react immediately (React state is async)
+      return isCancel ? null : { ok: false, error: errorMsg } as { ok: false; error: string | null }
     }
   }, [])
 

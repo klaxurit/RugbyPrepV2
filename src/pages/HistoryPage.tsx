@@ -84,7 +84,7 @@ export function HistoryPage() {
               </p>
             </div>
             <Link
-              to="/auth/signup?plan=premium"
+              to="/profile#premium"
               className="px-6 py-3 rounded-full bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold transition-colors"
             >
               Passer en Premium

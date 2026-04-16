@@ -928,7 +928,7 @@ export function HomePage() {
               </div>
             </div>
             <Link
-              to="/profile"
+              to="/profile#premium"
               className="block w-full py-3 rounded-full bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold text-center transition-colors"
             >
               Choisir mon forfait
