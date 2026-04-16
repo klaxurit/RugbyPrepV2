@@ -102,12 +102,15 @@ export function useEntitlements() {
       }
     })()
 
-    // Re-check entitlements periodically to catch expirations
-    const interval = userId ? setInterval(() => { void refresh() }, 5 * 60_000) : undefined
+    // Re-check entitlements when the app returns to foreground
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && userId) void refresh()
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
 
     return () => {
       active = false
-      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])

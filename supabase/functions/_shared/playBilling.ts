@@ -167,6 +167,20 @@ export const verifyPlayPurchase = async (
     (subscriptionState === 'SUBSCRIPTION_STATE_CANCELED' && expiryMs > Date.now())
   const isActive = expiryMs > Date.now() && isEntitledState
 
+  // Acknowledge the subscription if pending (Google refunds after 3 days if not acknowledged)
+  if (isActive && sub.acknowledgementState === 'ACKNOWLEDGEMENT_STATE_PENDING') {
+    const ackUrl = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/subscriptions/${productId}/tokens/${purchaseToken}:acknowledge`
+    const ackRes = await fetch(ackUrl, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+    if (ackRes.ok) {
+      console.log('[playBilling] Subscription acknowledged successfully')
+    } else {
+      console.error('[playBilling] Acknowledge failed:', ackRes.status, await ackRes.text())
+    }
+  }
+
   return {
     valid: isActive,
     planId,
