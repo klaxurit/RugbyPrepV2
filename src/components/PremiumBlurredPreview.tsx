@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Lock } from 'lucide-react'
-import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 
 interface PremiumBlurredPreviewProps {
   /** The actual premium content to render (blurred for free users) */
@@ -16,7 +16,7 @@ export function PremiumBlurredPreview({
   label = 'Premium',
   placeholder,
 }: PremiumBlurredPreviewProps) {
-  const { startCheckout, loading, error } = usePremiumCheckout()
+  const navigate = useNavigate()
 
   return (
     <div className="relative">
@@ -36,21 +36,15 @@ export function PremiumBlurredPreview({
         {children}
       </div>
 
-      {/* Overlay — transparent, just the badge */}
+      {/* Overlay — navigate to plan selector */}
       <button
         type="button"
-        onClick={() => startCheckout('premium_monthly')}
-        disabled={loading}
+        onClick={() => navigate('/profile#premium')}
         className="absolute inset-0 flex items-center justify-center cursor-pointer"
       >
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex items-center gap-2 bg-app/80 border border-brand-border-strong px-4 py-2.5 rounded-full shadow-lg">
-            <Lock className="w-3.5 h-3.5 text-brand-tint" />
-            <span className="text-xs font-black text-brand-tint">{label}</span>
-          </div>
-          {error && (
-            <span className="text-[10px] text-amber-600 bg-app/90 px-3 py-1 rounded-full">{error}</span>
-          )}
+        <div className="flex items-center gap-2 bg-app/80 border border-brand-border-strong px-4 py-2.5 rounded-full shadow-lg">
+          <Lock className="w-3.5 h-3.5 text-brand-tint" />
+          <span className="text-xs font-black text-brand-tint">{label}</span>
         </div>
       </button>
     </div>

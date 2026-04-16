@@ -1,11 +1,10 @@
 import { Lock, X } from 'lucide-react'
-import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
+import { Link } from 'react-router-dom'
 
 interface PremiumUpsellCardProps {
   title: string
   body: string
   ctaLabel?: string
-  planId?: 'premium_monthly' | 'premium_yearly'
   dismissable?: boolean
   onDismiss?: () => void
 }
@@ -14,17 +13,9 @@ export function PremiumUpsellCard({
   title,
   body,
   ctaLabel = 'Passer en Premium',
-  planId = 'premium_monthly',
   dismissable = true,
   onDismiss,
 }: PremiumUpsellCardProps) {
-  const {
-    loading,
-    error,
-    message,
-    startCheckout,
-  } = usePremiumCheckout()
-
   return (
     <div className="rounded-[24px] border border-brand-border bg-brand-soft p-5 relative">
       {dismissable && onDismiss && (
@@ -44,22 +35,12 @@ export function PremiumUpsellCard({
         <div className="min-w-0 flex-1">
           <p className="text-sm font-black text-fg">{title}</p>
           <p className="mt-1 text-xs leading-relaxed text-fg-muted">{body}</p>
-          <button
-            type="button"
-            onClick={() => {
-              void startCheckout(planId)
-            }}
-            disabled={loading}
-            className="mt-3 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
+          <Link
+            to="/profile#premium"
+            className="mt-3 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover"
           >
-            {loading ? 'Chargement...' : ctaLabel}
-          </button>
-          {message && (
-            <p className="mt-2 text-[11px] leading-relaxed text-brand-tint">{message}</p>
-          )}
-          {error && (
-            <p className="mt-2 text-[11px] leading-relaxed text-amber-300">{error}</p>
-          )}
+            {ctaLabel}
+          </Link>
         </div>
       </div>
     </div>
