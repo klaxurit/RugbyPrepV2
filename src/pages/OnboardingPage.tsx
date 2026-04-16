@@ -180,6 +180,7 @@ export function OnboardingPage() {
   const [scSchedule, setScSchedule] = useState<SCSchedule | undefined>(undefined)
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
+  const [submitError, setSubmitError] = useState<string | null>(null)
   // betaCapReached removed — the annual engine supports all profiles now
 
   const STEPS = ['Position', 'Profil', 'Équipement', 'Planning', 'Morphologie', 'Résumé']
@@ -271,7 +272,7 @@ export function OnboardingPage() {
       navigate(destination, { replace: true })
     } catch (err) {
       console.error('[Onboarding] handleFinish error:', err)
-      alert('Une erreur est survenue. Vérifie ta connexion et réessaie.')
+      setSubmitError('Une erreur est survenue. Vérifie ta connexion et réessaie.')
     }
   }
 
@@ -872,6 +873,12 @@ export function OnboardingPage() {
                 </div>
               )}
             </div>
+
+            {submitError && (
+              <div className="p-3 bg-danger-bg border border-danger-bd rounded-2xl">
+                <p className="text-xs text-danger font-medium">{submitError}</p>
+              </div>
+            )}
 
             <button
               type="button"

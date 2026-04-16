@@ -38,6 +38,10 @@ dev-dist
 video/build
 video/out
 
+# Supabase CLI local artifacts
+supabase/.temp/
+supabase/.branches/
+
 # Android TWA (bubblewrap)
 android.keystore
 key.properties

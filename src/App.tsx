@@ -1,28 +1,33 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { RequireAuth } from './components/auth/RequireAuth'
+import { ScrollToTop } from './components/navigation/ScrollToTop'
+import { ErrorBoundary } from './components/ErrorBoundary'
+
+// Eagerly loaded (critical path)
 import { HomePage } from './pages/HomePage'
-import { ProgramPage } from './pages/ProgramPage'
-import { HistoryPage } from './pages/HistoryPage'
-import { ProgressPage } from './pages/ProgressPage'
-import { ProfilePage } from './pages/ProfilePage'
-import { WeekPage } from './pages/WeekPage'
-import { CalendarPage } from './pages/CalendarPage'
-import { SessionDetailPage } from './pages/SessionDetailPage'
-import { ChatPage } from './pages/ChatPage'
-import { MobilityPage } from './pages/MobilityPage'
-import { OnboardingPage } from './pages/OnboardingPage'
 import { LoginPage } from './pages/auth/LoginPage'
 import { SignupPage } from './pages/auth/SignupPage'
-import { CallbackPage } from './pages/auth/CallbackPage'
-import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage'
-import { ResetPasswordPage } from './pages/auth/ResetPasswordPage'
-import { LegalPage } from './pages/LegalPage'
-import { DeleteAccountPage } from './pages/DeleteAccountPage'
 import { LandingPage } from './pages/LandingPage'
-import { StaffPlanningSandboxPage } from './pages/StaffPlanningSandboxPage'
-import { ScrollToTop } from './components/navigation/ScrollToTop'
+
+// Lazy loaded (secondary pages)
+const WeekPage = lazy(() => import('./pages/WeekPage').then(m => ({ default: m.WeekPage })))
+const SessionDetailPage = lazy(() => import('./pages/SessionDetailPage').then(m => ({ default: m.SessionDetailPage })))
+const ProgressPage = lazy(() => import('./pages/ProgressPage').then(m => ({ default: m.ProgressPage })))
+const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })))
+const HistoryPage = lazy(() => import('./pages/HistoryPage').then(m => ({ default: m.HistoryPage })))
+const CalendarPage = lazy(() => import('./pages/CalendarPage').then(m => ({ default: m.CalendarPage })))
+const ChatPage = lazy(() => import('./pages/ChatPage').then(m => ({ default: m.ChatPage })))
+const MobilityPage = lazy(() => import('./pages/MobilityPage').then(m => ({ default: m.MobilityPage })))
+const ProgramPage = lazy(() => import('./pages/ProgramPage').then(m => ({ default: m.ProgramPage })))
+const OnboardingPage = lazy(() => import('./pages/OnboardingPage').then(m => ({ default: m.OnboardingPage })))
+const StaffPlanningSandboxPage = lazy(() => import('./pages/StaffPlanningSandboxPage').then(m => ({ default: m.StaffPlanningSandboxPage })))
+const CallbackPage = lazy(() => import('./pages/auth/CallbackPage').then(m => ({ default: m.CallbackPage })))
+const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })))
+const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })))
+const LegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m.LegalPage })))
+const DeleteAccountPage = lazy(() => import('./pages/DeleteAccountPage').then(m => ({ default: m.DeleteAccountPage })))
 
 const isStandaloneMode =
   typeof window !== 'undefined' &&
@@ -87,9 +92,11 @@ function App() {
   }
 
   return (
+    <ErrorBoundary>
     <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
+        <Suspense fallback={<div className="min-h-screen bg-app flex items-center justify-center"><div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" /></div>}>
         <Routes>
           <Route path="/" element={<RootRoute />} />
           <Route path="/landing" element={<LandingPage />} />
@@ -121,8 +128,10 @@ function App() {
           {/* Catch-all : redirige vers /home (RequireAuth gère le reste) */}
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </AuthProvider>
+    </ErrorBoundary>
   )
 }
 
