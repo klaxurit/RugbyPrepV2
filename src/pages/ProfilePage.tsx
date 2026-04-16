@@ -807,7 +807,10 @@ export function ProfilePage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => { void startCheckout(selectedPlan) }}
+                  onClick={async () => {
+                    const result = await startCheckout(selectedPlan)
+                    if (result?.ok) await refreshEntitlements()
+                  }}
                   disabled={billingLoading}
                   className="flex-1 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-3 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
                 >
