@@ -64,6 +64,56 @@ const LANGUAGE_OPTIONS = [
   { value: 'en' as const, label: 'English', sub: 'Program and exercises in english' },
 ]
 
+/** Temporary debug panel — shows Digital Goods API state on device */
+function BillingDebugPanel() {
+  const [info, setInfo] = useState<Record<string, string>>({ status: 'loading...' })
+
+  useEffect(() => {
+    const run = async () => {
+      const result: Record<string, string> = {}
+      result['standalone'] = String(
+        window.matchMedia?.('(display-mode: standalone)')?.matches ||
+        window.matchMedia?.('(display-mode: minimal-ui)')?.matches ||
+        (navigator as unknown as { standalone?: boolean }).standalone === true
+      )
+      result['referrer'] = document.referrer || '(empty)'
+      result['hasGetDGS'] = String('getDigitalGoodsService' in window)
+      result['userAgent'] = navigator.userAgent.slice(0, 100)
+
+      if ('getDigitalGoodsService' in window) {
+        try {
+          const svc = await (window as unknown as { getDigitalGoodsService: (p: string) => Promise<unknown> })
+            .getDigitalGoodsService('https://play.google.com/billing')
+          result['getDGS'] = 'OK — service acquired'
+          try {
+            const details = await (svc as { getDetails: (ids: string[]) => Promise<unknown[]> })
+              .getDetails(['premium.monthly', 'premium.yearly'])
+            result['products'] = JSON.stringify(details).slice(0, 200)
+          } catch (e) {
+            result['getDetails_error'] = String(e)
+          }
+        } catch (e) {
+          result['getDGS_error'] = String(e)
+        }
+      }
+
+      setInfo(result)
+    }
+    void run()
+  }, [])
+
+  return (
+    <div className="p-3 bg-gray-900 border border-gray-700 rounded-2xl mt-2 space-y-1">
+      <p className="text-[10px] font-bold text-yellow-400 uppercase">Billing Debug</p>
+      {Object.entries(info).map(([k, v]) => (
+        <p key={k} className="text-[10px] text-gray-300 font-mono break-all">
+          <span className="text-yellow-500">{k}:</span> {v}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 function getVisibleTrainingLevel(level: TrainingLevel | undefined): Exclude<TrainingLevel, 'builder'> {
   if (level === 'starter') return 'starter'
   return 'performance'
@@ -849,6 +899,9 @@ export function ProfilePage() {
                 <div className="p-3 bg-danger-bg border border-danger-bd rounded-2xl">
                   <p className="text-xs text-danger font-medium">{billingError}</p>
                 </div>
+              )}
+              {billingError && (
+                <BillingDebugPanel />
               )}
             </div>
           )}
