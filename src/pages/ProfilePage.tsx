@@ -92,6 +92,24 @@ function BillingDebugPanel() {
           } catch (e) {
             result['getDetails_error'] = String(e)
           }
+          try {
+            const purchases = await (svc as { listPurchases: () => Promise<unknown[]> })
+              .listPurchases()
+            result['listPurchases'] = JSON.stringify(purchases).slice(0, 200)
+          } catch (e) {
+            result['listPurchases_error'] = String(e)
+          }
+          // Test PaymentRequest availability
+          try {
+            const pr = new PaymentRequest(
+              [{ supportedMethods: 'https://play.google.com/billing', data: { sku: 'premium.monthly' } }],
+              { total: { label: 'Test', amount: { currency: 'EUR', value: '5.99' } } },
+            )
+            const canMake = await pr.canMakePayment()
+            result['canMakePayment'] = String(canMake)
+          } catch (e) {
+            result['canMakePayment_error'] = String(e)
+          }
         } catch (e) {
           result['getDGS_error'] = String(e)
         }

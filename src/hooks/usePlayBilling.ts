@@ -130,10 +130,22 @@ export function usePlayBilling() {
       )
       console.log('[PlayBilling] Digital Goods Service acquired')
 
-      // Get current price from Play Store
-      const [details] = await service.getDetails([productId])
-      if (!details) throw new Error('Product not found in Play Store')
-      console.log('[PlayBilling] Product details:', details.title, details.price)
+      // Try to get price from Play Store, fall back to hardcoded values
+      let label = planId === 'premium_monthly' ? 'RugbyForge Premium Mensuel' : 'RugbyForge Premium Annuel'
+      let currency = 'EUR'
+      let value = planId === 'premium_monthly' ? '5.99' : '47.99'
+
+      try {
+        const [details] = await service.getDetails([productId])
+        if (details) {
+          label = details.title
+          currency = details.price.currency
+          value = details.price.value
+          console.log('[PlayBilling] Product details from Play Store:', label, currency, value)
+        }
+      } catch (detailsErr) {
+        console.warn('[PlayBilling] getDetails failed, using fallback pricing:', detailsErr)
+      }
 
       // Create Payment Request
       const paymentMethod: PaymentMethodData = {
@@ -145,11 +157,8 @@ export function usePlayBilling() {
 
       const paymentDetails: PaymentDetailsInit = {
         total: {
-          label: details.title,
-          amount: {
-            currency: details.price.currency,
-            value: details.price.value,
-          },
+          label,
+          amount: { currency, value },
         },
       }
 
