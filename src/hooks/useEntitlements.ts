@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 
@@ -32,6 +32,7 @@ export function useEntitlements() {
   const [error, setError] = useState<string | null>(null)
   const [keys, setKeys] = useState<string[]>([])
   const [planId, setPlanId] = useState<string | null>(null)
+  const refreshingRef = useRef(false)
 
   const refresh = useCallback(async () => {
     if (!userId) {
@@ -74,7 +75,27 @@ export function useEntitlements() {
       .filter((row) => !row.expires_at || new Date(row.expires_at).getTime() > nowMs)
     const subscription = (subscriptionResult.data ?? null) as SubscriptionRow | null
 
-    // Ignore subscription if period has ended (e.g. test subscriptions)
+    // If period ended, ask server to re-verify with Google (may have been renewed)
+    const periodExpired = subscription?.current_period_end &&
+      new Date(subscription.current_period_end).getTime() <= nowMs
+
+    if (periodExpired && !refreshingRef.current) {
+      refreshingRef.current = true
+      try {
+        const { data } = await supabase.functions.invoke('refresh-play-subscription', {
+          body: {},
+        })
+        const result = data as { ok?: boolean; renewed?: boolean } | null
+        if (result?.ok && result?.renewed) {
+          // Subscription was renewed — re-fetch from DB
+          refreshingRef.current = false
+          setLoading(false)
+          return refresh()
+        }
+      } catch { /* best-effort */ }
+      refreshingRef.current = false
+    }
+
     const subActive = subscription &&
       (!subscription.current_period_end || new Date(subscription.current_period_end).getTime() > nowMs)
 

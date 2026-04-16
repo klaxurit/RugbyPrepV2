@@ -95,7 +95,7 @@ function ManageSubscriptionCard() {
 
     setTimeout(() => {
       window.open(
-        'https://play.google.com/store/account/subscriptions',
+        'https://play.google.com/store/account/subscriptions?package=fr.rugbyforge.app',
         '_blank',
       )
     }, 1500)
