@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback } from 'react'
-import { ClipboardCheck, Eye } from 'lucide-react'
+import { ClipboardCheck, Eye, Check } from 'lucide-react'
+import { useSessionRun } from '../../contexts/SessionRunContext'
 import type { Block } from '../../types/motherSession'
 import type { BlockLog, ExerciseLogEntry, SessionType, CycleWeek, FatigueStatus } from '../../types/training'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
@@ -44,18 +45,26 @@ function ExerciseRow({
   frName,
   lang,
   onOpenDemo,
+  runMode,
+  isDone,
+  onToggleDone,
 }: {
   exercise: Block['exercises'][0]
   frName?: string
   lang: AppLang
   onOpenDemo?: (exerciseId: string) => void
+  /** Quand true, affiche une case à cocher + style "terminé" quand isDone. */
+  runMode?: boolean
+  isDone?: boolean
+  onToggleDone?: () => void
 }) {
   const displayExerciseId = exercise.exerciseId ?? resolveExerciseId(exercise.name)
   const displayName = displayExerciseId ? getExerciseName(displayExerciseId, lang) : (frName ?? exercise.name)
   const canShowDemo = Boolean(displayExerciseId && hasExerciseDemo(displayExerciseId))
+  const canCheck = runMode && !isDirectiveText(exercise.name)
 
   return (
-    <li className="border-b border-border-app pb-3 last:border-0 last:pb-0">
+    <li className={`border-b border-border-app pb-3 last:border-0 last:pb-0 transition-opacity ${isDone ? 'opacity-50' : ''}`}>
       {exercise.slotLabel ? (
         <div className="mb-1.5">
           <span className="inline-flex rounded-full border border-brand-border-strong bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand-tint">
@@ -64,8 +73,23 @@ function ExerciseRow({
         </div>
       ) : null}
       <div className="flex items-start justify-between gap-3">
+        {canCheck && (
+          <button
+            type="button"
+            onClick={onToggleDone}
+            aria-pressed={isDone}
+            aria-label={isDone ? `Annuler ${displayName}` : `Marquer ${displayName} comme fait`}
+            className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border-2 transition-colors rf-focus-ring ${
+              isDone
+                ? 'bg-ok-strong border-ok-strong text-white'
+                : 'border-border-app bg-layer-5 text-fg-ghost hover:border-brand-border-strong hover:text-brand-tint'
+            }`}
+          >
+            {isDone && <Check className="h-4 w-4" strokeWidth={3} />}
+          </button>
+        )}
         <div className="min-w-0 flex-1 flex flex-col gap-0.5">
-          <span className="text-sm font-medium text-fg">
+          <span className={`text-sm font-medium text-fg ${isDone ? 'line-through' : ''}`}>
             {exercise.role ? (
               <span className="mr-1.5 text-xs font-normal uppercase text-brand-tint">
                 ({exercise.role})
@@ -108,6 +132,8 @@ export function MotherSessionBlock({
   acwr,
   isRehabActive,
 }: MotherSessionBlockProps) {
+  const sessionRun = useSessionRun()
+  const runMode = sessionRun.status === 'running'
   const blockName = frBlock?.name ?? block.name
   const blockFormat = frBlock?.format ?? block.format
   const coachingNotes = frBlock?.coachingNotes ?? block.coachingNotes
@@ -249,15 +275,26 @@ export function MotherSessionBlock({
 
       {block.exercises.length > 0 ? (
         <ul className="mt-4 space-y-3">
-          {block.exercises.map((ex, i) => (
-            <ExerciseRow
-              key={`${block.number}-${i}`}
-              exercise={ex}
-              frName={frBlock?.exercises[i]?.name}
-              lang={lang}
-              onOpenDemo={setDemoExerciseId}
-            />
-          ))}
+          {block.exercises.map((ex, i) => {
+            const exerciseKey = `${block.number}_${i}`
+            const isDone = runMode && sessionRun.completedExercises.has(exerciseKey)
+            return (
+              <ExerciseRow
+                key={`${block.number}-${i}`}
+                exercise={ex}
+                frName={frBlock?.exercises[i]?.name}
+                lang={lang}
+                onOpenDemo={setDemoExerciseId}
+                runMode={runMode}
+                isDone={isDone}
+                onToggleDone={() =>
+                  isDone
+                    ? sessionRun.unmarkExerciseDone(exerciseKey)
+                    : sessionRun.markExerciseDone(exerciseKey)
+                }
+              />
+            )
+          })}
         </ul>
       ) : null}
 

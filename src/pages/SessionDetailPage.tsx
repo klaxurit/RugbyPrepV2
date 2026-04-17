@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
-import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, FileText } from 'lucide-react'
+import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, FileText, Play } from 'lucide-react'
+import { useSessionRun } from '../contexts/SessionRunContext'
+import { SessionRunProgress } from '../components/motherSession/SessionRunProgress'
+import { isDirectiveText } from '../services/motherSession/motherSessionExerciseMap'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
 import { useFatigue } from '../hooks/useFatigue'
@@ -65,6 +68,7 @@ export function SessionDetailPage() {
   const navigate = useNavigate()
   const { addBlockLog, getLastEntryForExercise, getBestForExercise } = useBlockLogs()
   const { isPremium } = useFeatureAccess()
+  const sessionRun = useSessionRun()
   const [prehabbOpen, setPrehabbOpen] = useState(true)
   const [msNotes, setMsNotes] = useState('')
   const [msSaved, setMsSaved] = useState(false)
@@ -174,6 +178,29 @@ export function SessionDetailPage() {
 
   const prehabs = getPrehab(profile.injuries)
 
+  // ── Session Run Mode ─────────────────────────────────────────────────────
+  const sessionRunKey = activeSlot ? `${activeSlot.session.metadata.id}_${today}` : null
+  const isRunning = sessionRunKey != null && sessionRun.isRunningFor(sessionRunKey)
+  const totalExercises = useMemo(() => {
+    if (!activeSlot) return 0
+    return activeSlot.session.blocks.reduce(
+      (sum, b) => sum + b.exercises.filter((e) => !isDirectiveText(e.name)).length,
+      0,
+    )
+  }, [activeSlot])
+
+  const handleStartSession = () => {
+    if (!sessionRunKey) return
+    sessionRun.start(sessionRunKey)
+    posthog.capture('session_started', { index, sessionId: activeSlot?.session.metadata.id })
+  }
+
+  const handleQuitRunningSession = () => {
+    if (window.confirm('Quitter la séance en cours ? Les cases cochées seront perdues.')) {
+      sessionRun.stop()
+    }
+  }
+
   // ── Title ────────────────────────────────────────────────────────────────
   const pageTitle = activeSlot
     ? formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang)
@@ -206,6 +233,8 @@ export function SessionDetailPage() {
       setCompletionOpen(false)
       setMsNotes('')
       setMsSaved(true)
+      // Clean up the running session state once the log is persisted.
+      sessionRun.stop()
       window.setTimeout(() => navigate('/week'), 1200)
     } catch (error) {
       console.error('session_detail_complete_failed', error)
@@ -220,6 +249,15 @@ export function SessionDetailPage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title={pageTitle} backTo="/week" titleSuffix={pageSuffix} />
+
+      {isRunning && sessionRun.startedAt != null && (
+        <SessionRunProgress
+          totalExercises={totalExercises}
+          completedExercises={sessionRun.completedExercises.size}
+          startedAt={sessionRun.startedAt}
+          onQuit={handleQuitRunningSession}
+        />
+      )}
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
@@ -321,7 +359,7 @@ export function SessionDetailPage() {
                   </div>
                 )}
 
-                {/* Complétion mother-session */}
+                {/* Complétion mother-session — bi-mode : Aperçu (Commencer) ou En cours (Terminer) */}
                 <section
                   className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4"
                   data-testid="ms-completion-section"
@@ -330,39 +368,69 @@ export function SessionDetailPage() {
                     <div className="p-1.5 rounded-xl bg-brand-soft text-brand">
                       <FileText className="w-4 h-4" />
                     </div>
-                    <h2 className="text-sm font-black text-fg">Séance terminée ?</h2>
+                    <h2 className="text-sm font-black text-fg">
+                      {isRunning ? 'Séance en cours' : 'Prêt à démarrer ?'}
+                    </h2>
                   </div>
 
                   <p className="text-xs text-fg-soft">
                     {formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang)}
                   </p>
 
-                  <div>
-                    <label className="text-xs font-bold text-fg-muted uppercase tracking-wider block mb-2">
-                      Notes (optionnel)
-                    </label>
-                    <textarea
-                      value={msNotes}
-                      onChange={(e) => setMsNotes(e.target.value)}
-                      rows={2}
-                      placeholder="Comment s'est passée la séance ?"
-                      className="w-full px-4 py-3 rounded-2xl border border-border-app bg-layer-5 text-sm text-fg-secondary placeholder:text-fg-ghost resize-none rf-focus-ring transition-all"
-                    />
-                  </div>
+                  {isRunning && (
+                    <div>
+                      <label className="text-xs font-bold text-fg-muted uppercase tracking-wider block mb-2">
+                        Notes (optionnel)
+                      </label>
+                      <textarea
+                        value={msNotes}
+                        onChange={(e) => setMsNotes(e.target.value)}
+                        rows={2}
+                        placeholder="Comment s'est passée la séance ?"
+                        className="w-full px-4 py-3 rounded-2xl border border-border-app bg-layer-5 text-sm text-fg-secondary placeholder:text-fg-ghost resize-none rf-focus-ring transition-all"
+                      />
+                    </div>
+                  )}
 
-                  <button
-                    type="button"
-                    data-testid="ms-complete-btn"
-                    onClick={() => {
-                      setMsSaved(false)
-                      setMsSaveError(null)
-                      setCompletionOpen(true)
-                    }}
-                    className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
-                  >
-                    <CheckCircle2 className="w-5 h-5" />
-                    Marquer comme faite
-                  </button>
+                  {!isRunning ? (
+                    <div className="space-y-2">
+                      <button
+                        type="button"
+                        data-testid="ms-start-btn"
+                        onClick={handleStartSession}
+                        className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
+                      >
+                        <Play className="w-5 h-5 fill-current" />
+                        Commencer la séance
+                      </button>
+                      <button
+                        type="button"
+                        data-testid="ms-complete-btn"
+                        onClick={() => {
+                          setMsSaved(false)
+                          setMsSaveError(null)
+                          setCompletionOpen(true)
+                        }}
+                        className="w-full py-3 rounded-2xl border border-border-app text-fg-muted font-bold text-sm transition-colors hover:border-brand-border-strong hover:text-brand-tint"
+                      >
+                        Marquer comme faite (sans la lancer)
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      data-testid="ms-complete-btn"
+                      onClick={() => {
+                        setMsSaved(false)
+                        setMsSaveError(null)
+                        setCompletionOpen(true)
+                      }}
+                      className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
+                    >
+                      <CheckCircle2 className="w-5 h-5" />
+                      Terminer la séance
+                    </button>
+                  )}
 
                   {msSaveError && (
                     <div className="px-4 py-3 bg-danger-bg border border-danger-bd rounded-2xl">

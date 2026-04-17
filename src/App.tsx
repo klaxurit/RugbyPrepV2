@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { SessionRunProvider } from './contexts/SessionRunContext'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -94,6 +95,7 @@ function App() {
   return (
     <ErrorBoundary>
     <AuthProvider>
+      <SessionRunProvider>
       <BrowserRouter>
         <ScrollToTop />
         <Suspense fallback={<div className="min-h-screen bg-app flex items-center justify-center"><div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" /></div>}>
@@ -130,6 +132,7 @@ function App() {
         </Routes>
         </Suspense>
       </BrowserRouter>
+      </SessionRunProvider>
     </AuthProvider>
     </ErrorBoundary>
   )
