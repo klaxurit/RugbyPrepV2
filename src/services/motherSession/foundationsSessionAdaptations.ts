@@ -74,6 +74,32 @@ function pickFoundationsReplacementId(
     return undefined
   }
 
+  // Trap Bar / Hex Bar → DB RDL (same hinge pattern, standard equipment)
+  if (name === 'trap bar deadlift' || name === 'hex bar rdl') {
+    if (hasDumbbellPattern) return 'hinge__rdl__dumbbell'
+    return undefined
+  }
+
+  // Football Bar Bench Press → DB Bench Press (same push pattern, no special bar needed)
+  if (name === 'football bar bench press') {
+    if (equipmentSet.has('dumbbell') && equipmentSet.has('bench')) return 'push_horizontal__bench_press__dumbbell'
+    return undefined
+  }
+
+  // Front Squat → Goblet Squat (same front-loaded position, auto-limiting)
+  if (name === 'front squat') {
+    if (hasDumbbellPattern) return 'squat__goblet_squat__dumbbell'
+    if (equipmentSet.has('machine')) return 'squat__leg_press__machine'
+    return undefined
+  }
+
+  // Back Squat → Goblet Squat or Leg Press
+  if (name === 'back squat') {
+    if (hasDumbbellPattern) return 'squat__goblet_squat__dumbbell'
+    if (equipmentSet.has('machine')) return 'squat__leg_press__machine'
+    return undefined
+  }
+
   return undefined
 }
 
