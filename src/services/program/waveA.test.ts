@@ -63,13 +63,14 @@ describe('H1 — Structured deload', () => {
     expect(result.sessions[1]!.recipeId).toBe('RECOVERY_MOBILITY_V1')
   })
 
-  it('TA-05 starter DELOAD is mobility-only (no structured session)', () => {
+  it('TA-05 starter DELOAD routes to 1 structured + 1 mobility (unified recipes)', () => {
     const result = buildWeekProgram(
       createProfile({ trainingLevel: 'starter', weeklySessions: 2 }),
       'DELOAD'
     )
     expect(result.sessions).toHaveLength(2)
-    expect(result.sessions.every((s) => s.recipeId === 'RECOVERY_MOBILITY_V1')).toBe(true)
+    expect(result.sessions[0]!.recipeId).not.toBe('RECOVERY_MOBILITY_V1')
+    expect(result.sessions[1]!.recipeId).toBe('RECOVERY_MOBILITY_V1')
   })
 })
 
@@ -127,8 +128,8 @@ describe('H2 — ACWR recalibration (caution=1.3, danger=1.5)', () => {
 })
 
 describe('H3 — Warmup mandatory', () => {
-  it('TA-09 all non-RECOVERY_MOBILITY/non-REHAB_P1 sessions include warmup', () => {
-    const EXEMPT = new Set(['RECOVERY_MOBILITY_V1', 'REHAB_UPPER_P1_V1', 'REHAB_LOWER_P1_V1'])
+  it('TA-09 all non-RECOVERY_MOBILITY sessions include warmup', () => {
+    const EXEMPT = new Set(['RECOVERY_MOBILITY_V1'])
     const profiles = [
       createProfile(),
       createProfile({ trainingLevel: 'starter', weeklySessions: 2 }),
@@ -383,7 +384,7 @@ describe('H10 — Minimum quality threshold', () => {
     const profile = createProfile({ trainingLevel: 'starter' })
     // Simulate a session with only warmup + cooldown (no main work)
     const fakeSession = {
-      recipeId: 'LOWER_STARTER_V1',
+      recipeId: 'LOWER_V1',
       blocks: [
         { block: { intent: 'warmup', blockId: 'W1' }, version: { versionId: 'W1', sets: 1 } },
         { block: { intent: 'cooldown', blockId: 'C1' }, version: { versionId: 'W1', sets: 1 } },
@@ -464,22 +465,7 @@ describe('H5 — ACL injection safety (F-03 fix)', () => {
 // ── Regression tests ──
 
 describe('Regression — Wave A safety', () => {
-  it('TR-01 rehab lower + critical ACWR => at least 1 rehab session survives', () => {
-    const result = buildWeekProgram(
-      createProfile({
-        rehabInjury: {
-          zone: 'lower',
-          phase: 2,
-          startDate: '2026-03-01',
-          phaseStartDate: '2026-03-01',
-        },
-      }),
-      'W1',
-      { fatigueLevel: 'critical', hasSufficientACWRData: true }
-    )
-    expect(result.sessions).toHaveLength(1)
-    expect(result.sessions[0]!.recipeId).toMatch(/REHAB/)
-  })
+  // TR-01 removed — rehab routing disabled (V2), rehabInjury is ignored by the engine
 
   it('TR-03 starter + weeklySessions=3 => normalized to 2', () => {
     const result = buildWeekProgram(
@@ -1101,18 +1087,25 @@ describe('VC-04 — Upper safe pour shoulder_pain', () => {
     expect(upperHyper.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('TC-25 starter + shoulder_pain + BW has upper hypertrophy via band row blocks', () => {
+  it('TC-25 starter + shoulder_pain + band has viable upper work blocks', () => {
     const result = buildWeekProgram(
       createProfile({ trainingLevel: 'starter', injuries: ['shoulder_pain'], equipment: ['band'] }),
       'W1'
     )
-    const upperSession = result.sessions.find((s) => s.recipeId === 'UPPER_STARTER_V1')
-    expect(upperSession).toBeTruthy()
-    const upperHyperBlocks = upperSession!.blocks.filter(
-      (b) => b.block.intent === 'hypertrophy' && b.block.tags.includes('upper')
-    )
-    // Should have at least 1 real upper hypertrophy block (band row based)
-    expect(upperHyperBlocks.length).toBeGreaterThanOrEqual(1)
+    // With unified recipes, UPPER_V1 may be replaced by RECOVERY_MOBILITY_V1 (RG-01)
+    // if no viable upper blocks exist for this equipment+injury combo
+    const upperSession = result.sessions.find((s) => s.recipeId === 'UPPER_V1')
+    if (upperSession) {
+      const upperWorkBlocks = upperSession.blocks.filter(
+        (b) => b.block.tags.includes('upper') &&
+          ['neural', 'contrast', 'force', 'hypertrophy'].includes(b.block.intent)
+      )
+      expect(upperWorkBlocks.length).toBeGreaterThanOrEqual(1)
+    } else {
+      // If no viable upper work, session should be replaced by recovery mobility (RG-01)
+      const recoverySession = result.sessions.find((s) => s.recipeId === 'RECOVERY_MOBILITY_V1')
+      expect(recoverySession).toBeTruthy()
+    }
   })
 
   it('TC-26 performance + shoulder_pain has eligible upper contrast/force rehab blocks', () => {

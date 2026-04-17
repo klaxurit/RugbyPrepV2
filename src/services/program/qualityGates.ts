@@ -15,8 +15,8 @@ export interface QualityGateResult {
 
 const FULL_OR_COND_PREFIXES = ['FULL_', 'COND_'];
 const MAJOR_FULL_INTENTS = new Set(['neural', 'force', 'contrast', 'hypertrophy']);
-const UPPER_BLUEPRINT_RECIPES = new Set(['UPPER_V1', 'UPPER_HYPER_V1', 'UPPER_BUILDER_V1']);
-const LOWER_BLUEPRINT_RECIPES = new Set(['LOWER_V1', 'LOWER_HYPER_V1', 'LOWER_BUILDER_V1']);
+const UPPER_BLUEPRINT_RECIPES = new Set(['UPPER_V1', 'UPPER_HYPER_V1']);
+const LOWER_BLUEPRINT_RECIPES = new Set(['LOWER_V1', 'LOWER_HYPER_V1']);
 
 const hasMissingRequiredIntent = (session: BuiltSession): boolean =>
   session.warnings.some((warning) => warning.startsWith("Missing required intent '"));
@@ -199,8 +199,6 @@ export const evaluateQualityGates = (
     'COND_OFF_V1',
     'COND_PRE_V1',
     'SPEED_FIELD_PRE_V1',
-    'REHAB_UPPER_P1_V1',
-    'REHAB_LOWER_P1_V1',
   ]);
   sessions.forEach((session, index) => {
     if (MAIN_WORK_EXEMPT.has(session.recipeId)) return;

@@ -10,6 +10,7 @@ import type {
 import { getPositionPreferences } from './positionPreferences.v1';
 import { getBaseWeekVersion, getPhaseForWeek, getPhasePreferences, getPhaseWeekIndex } from './programPhases.v1';
 import { selectEligibleBlocks } from './selectEligibleBlocks';
+import { adaptBlockExercises } from './adaptBlockExercises';
 
 export interface BuiltSessionBlock {
   block: TrainingBlock;
@@ -100,7 +101,7 @@ const isFocusFilteredIntent = (intent: TrainingBlock['intent']) =>
   FOCUS_FILTERED_INTENTS.includes(intent);
 
 const isFullRecipeId = (recipeId: SessionRecipe['id']) =>
-  recipeId === 'FULL_V1' || recipeId === 'FULL_HYPER_V1' || recipeId === 'FULL_BUILDER_V1';
+  recipeId === 'FULL_V1' || recipeId === 'FULL_HYPER_V1';
 
 const pickVersion = (block: TrainingBlock, week: WeekVersion) =>
   block.versions.find((version) => version.versionId === week) ?? null;
@@ -219,8 +220,6 @@ void HIGH_DEMAND_INTENTS;
 // KB injury-prevention.md §9: warmup reduces injuries 20-50% (Emery 2015, evidence level A).
 const WARMUP_EXEMPT_RECIPES = new Set<string>([
   'RECOVERY_MOBILITY_V1',
-  'REHAB_UPPER_P1_V1',
-  'REHAB_LOWER_P1_V1',
 ]);
 
 const shouldIncludeOptionalPrepIntent = (
@@ -519,6 +518,10 @@ export const buildSessionFromRecipe = (
       }
       continue;
     }
+
+    // Adapt exercises for user's equipment (e.g. barbell bench → dumbbell bench)
+    const equipment = Array.isArray(profile.equipment) ? profile.equipment : [];
+    chosenBlock = adaptBlockExercises(chosenBlock, equipment);
 
     const version = pickVersion(chosenBlock, baseWeek);
     if (!version) {

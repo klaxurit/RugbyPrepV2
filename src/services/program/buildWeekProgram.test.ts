@@ -4,7 +4,7 @@ import { createProfile, SIMULATION_PROFILES } from './testHelpers'
 import { validateSession } from './validateSession'
 
 describe('buildWeekProgram', () => {
-  it('TID-ENG-001 falls back to starter recipes and starter blocks for legacy profiles without trainingLevel', () => {
+  it('TID-ENG-001 falls back to starter recipes for legacy profiles without trainingLevel', () => {
     const legacyProfile = createProfile({
       trainingLevel: undefined,
       weeklySessions: 2,
@@ -14,17 +14,11 @@ describe('buildWeekProgram', () => {
     const result = buildWeekProgram(legacyProfile, 'W1')
 
     expect(result.sessions.map((session) => session.recipeId)).toEqual([
-      'LOWER_STARTER_V1',
-      'UPPER_STARTER_V1',
+      'LOWER_V1',
+      'UPPER_V1',
     ])
 
-    const LEVEL_EXEMPT_INTENTS = new Set(['warmup', 'cooldown', 'mobility'])
     for (const session of result.sessions) {
-      for (const builtBlock of session.blocks) {
-        if (!LEVEL_EXEMPT_INTENTS.has(builtBlock.block.intent)) {
-          expect(builtBlock.block.tags).toContain('starter')
-        }
-      }
       expect(validateSession(session).isValid).toBe(true)
     }
   })
@@ -295,8 +289,8 @@ describe('buildWeekProgram', () => {
       weeklySessions: 2,
     }), 'W1')
 
-    // Builder always uses builder recipes regardless of seasonMode
-    expect(result.sessions.map(s => s.recipeId)).toEqual(['LOWER_BUILDER_V1', 'UPPER_BUILDER_V1'])
+    // Builder now uses unified recipes (same as performance)
+    expect(result.sessions.map(s => s.recipeId)).toEqual(['LOWER_V1', 'UPPER_V1'])
     // Intensity should be medium/light, not heavy
     expect(result.sessions[0]!.intensity).toBe('medium')
   })

@@ -9,7 +9,7 @@ const MAX_BLOCKS = 8; // warmup + activation + contrast? + 2-3 main + 1-2 finish
 const MAX_FINISHERS = 1;
 const MAX_FINISHERS_FULL = 2;
 const MAJOR_FULL_INTENTS = new Set(['neural', 'force', 'contrast', 'hypertrophy']);
-const FULL_RECIPES = new Set(['FULL_V1', 'FULL_HYPER_V1', 'FULL_BUILDER_V1']);
+const FULL_RECIPES = new Set(['FULL_V1', 'FULL_HYPER_V1']);
 
 const EXEMPT_FROM_ACTIVATION = new Set([
   'RECOVERY_MOBILITY_V1',
@@ -21,8 +21,6 @@ const EXEMPT_FROM_MAIN_BLOCK = new Set([
   'COND_OFF_V1',
   'COND_PRE_V1',
   'SPEED_FIELD_PRE_V1',
-  'REHAB_UPPER_P1_V1',
-  'REHAB_LOWER_P1_V1',
   'RECOVERY_MOBILITY_V1',
 ]);
 

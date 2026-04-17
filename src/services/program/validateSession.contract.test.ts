@@ -24,10 +24,10 @@ const makeBlock = (blockId: string, intent: string) => ({
 })
 
 describe('validateSession contracts', () => {
-  it('allows two finishers for FULL_BUILDER_V1', () => {
+  it('allows two finishers for FULL_V1', () => {
     const session = {
-      recipeId: 'FULL_BUILDER_V1',
-      title: 'Full Builder',
+      recipeId: 'FULL_V1',
+      title: 'Full',
       week: 'W1',
       blocks: [
         makeBlock('ACT', 'activation'),
@@ -44,8 +44,8 @@ describe('validateSession contracts', () => {
 
   it('still rejects two finishers for non-full recipes', () => {
     const session = {
-      recipeId: 'UPPER_BUILDER_V1',
-      title: 'Upper Builder',
+      recipeId: 'UPPER_V1',
+      title: 'Upper',
       week: 'W1',
       blocks: [
         makeBlock('ACT', 'activation'),

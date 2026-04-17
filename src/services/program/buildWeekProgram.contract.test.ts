@@ -30,8 +30,8 @@ describe('buildWeekProgram contracts', () => {
     )
 
     expect(result.sessions.map((session) => session.recipeId)).toEqual([
-      'LOWER_STARTER_V1',
-      'UPPER_STARTER_V1',
+      'LOWER_V1',
+      'UPPER_V1',
     ])
   })
 
@@ -47,13 +47,14 @@ describe('buildWeekProgram contracts', () => {
     }
   })
 
-  it('routes starter DELOAD to mobility-only (no structured session)', () => {
+  it('routes starter DELOAD to 1 structured + 1 mobility (unified recipes)', () => {
     const result = buildWeekProgram(
       createProfile({ trainingLevel: 'starter', weeklySessions: 2 }),
       'DELOAD'
     )
     expect(result.sessions).toHaveLength(2)
-    expect(result.sessions.every((s) => s.recipeId === 'RECOVERY_MOBILITY_V1')).toBe(true)
+    expect(result.sessions[0]?.recipeId).not.toBe('RECOVERY_MOBILITY_V1')
+    expect(result.sessions[1]?.recipeId).toBe('RECOVERY_MOBILITY_V1')
   })
 
   it('applies U18 hard caps when weekly load context breaches limits', () => {

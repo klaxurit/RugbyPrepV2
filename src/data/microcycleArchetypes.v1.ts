@@ -61,35 +61,5 @@ export const MICROCYCLE_ARCHETYPES_V1: Record<
       3: [{ sessionRole: 'recovery', defaultMatchDayOffset: 'UNKNOWN' }],
     },
   },
-  REHAB_UPPER: {
-    id: 'REHAB_UPPER',
-    slotsByFrequency: {
-      1: [{ sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' }],
-      2: [
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-      ],
-      3: [
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-      ],
-    },
-  },
-  REHAB_LOWER: {
-    id: 'REHAB_LOWER',
-    slotsByFrequency: {
-      1: [{ sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' }],
-      2: [
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-      ],
-      3: [
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-        { sessionRole: 'rehab', defaultMatchDayOffset: 'UNKNOWN' },
-      ],
-    },
-  },
 };
 

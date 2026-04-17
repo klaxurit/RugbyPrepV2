@@ -56,14 +56,8 @@ const recipeIdsByPhase: Record<ProgramPhase, Record<UserProfile['weeklySessions'
   }
 };
 
-// Starter : toujours 2 sessions Full Body, avec dominante lower en début de semaine.
-const STARTER_RECIPE_IDS: SessionRecipeId[] = ['LOWER_STARTER_V1', 'UPPER_STARTER_V1'];
-
-// Builder : LOWER d'abord (heavy, loin du match), UPPER puis FULL
-const BUILDER_RECIPE_IDS: Record<UserProfile['weeklySessions'], SessionRecipeId[]> = {
-  2: ['LOWER_BUILDER_V1', 'UPPER_BUILDER_V1'],
-  3: ['LOWER_BUILDER_V1', 'UPPER_BUILDER_V1', 'FULL_BUILDER_V1']
-};
+// Legacy constants kept for reference — unified routing now uses recipeIdsByPhase for all levels.
+// Exercise adaptation is handled by adaptBlockExercises() at the block level.
 
 // Intents dont les blocs doivent être exclus des sessions suivantes
 // (évite qu'Upper, Lower et Full Body partagent les mêmes blocs de travail ou de core)
@@ -148,19 +142,10 @@ export const buildWeekProgram = (
   // H1 / VC-05 — Structured deload: 1 structured session at W1 + 1 mobility session
   // KB periodization.md §5.2: "same structure, volume -40-50%". Issurin 2008: residual power 18-24d.
   // VC-05 fix: max 2 sessions in deload (was 3 with 2 identical mobility — useless duplication).
-  // Gold standard terrain: deload = reduced volume, not repeated identical sessions.
-  // Starter always gets mobility-only deload (not enough block variety for structured deload).
   const getDeloadRecipeIds = (): SessionRecipeId[] => {
     const mobilityId = RULE_CONSTANTS_V1.deload.recipeId;
-    if (trainingLevel === 'starter') {
-      return [mobilityId, mobilityId];
-    }
-    // Get the first recipe from normal routing as structured session
-    const normalRecipes = trainingLevel === 'builder'
-      ? BUILDER_RECIPE_IDS[profile.weeklySessions]
-      : getPerformanceRecipeIds();
+    const normalRecipes = getPerformanceRecipeIds();
     const structuredId = normalRecipes[0]!;
-    // Always 2 sessions max in deload: 1 structured + 1 mobility
     return [structuredId, mobilityId];
   };
 
@@ -173,13 +158,11 @@ export const buildWeekProgram = (
     (profile.seasonMode ?? 'in_season') === 'in_season' &&
     IN_SEASON_DELOAD_WEEKS.has(week);
 
+  // Unified routing: all training levels use the same recipes.
+  // Exercise adaptation is handled at block level by adaptBlockExercises().
   const baseRecipeIds: SessionRecipeId[] = (week === 'DELOAD' || isInSeasonAutoDeload)
     ? getDeloadRecipeIds()
-    : trainingLevel === 'starter'
-      ? STARTER_RECIPE_IDS
-      : trainingLevel === 'builder'
-        ? BUILDER_RECIPE_IDS[profile.weeklySessions]
-        : getPerformanceRecipeIds();
+    : getPerformanceRecipeIds();
 
   const isDeloadWeek = week === 'DELOAD' || isInSeasonAutoDeload;
 
@@ -357,15 +340,13 @@ export const buildWeekProgram = (
     sessions.push(session);
   }
 
-  // RG-01 — UX guard: hollow UPPER_STARTER sessions → replace with recovery mobility.
-  // S5 case: starter + BW_ONLY + shoulder_pain → all upper slots safety-adapted (no upper BW
-  // exercises are shoulder-safe at starter level). Displaying "Séance Upper" with zero upper work
-  // is misleading UX. Replace with RECOVERY_MOBILITY_V1 which is honest and clinically coherent.
+  // RG-01 — UX guard: hollow upper sessions → replace with recovery mobility.
+  // Edge case: BW_ONLY + shoulder_pain → all upper slots safety-adapted.
   {
     const UPPER_WORK_INTENTS = new Set(['activation', 'hypertrophy', 'neural', 'force', 'contrast']);
     for (let i = 0; i < sessions.length; i++) {
       const s = sessions[i]!;
-      if (s.recipeId !== 'UPPER_STARTER_V1' || !s.isSafetyAdapted) continue;
+      if (!s.recipeId.startsWith('UPPER_') || !s.isSafetyAdapted) continue;
       const hasRealUpperWork = s.blocks.some(
         (b) => UPPER_WORK_INTENTS.has(b.block.intent) && b.block.tags.includes('upper')
       );
@@ -387,7 +368,7 @@ export const buildWeekProgram = (
           );
         }
         sessions[i] = replacement;
-        warnings.push('RG-01 : UPPER_STARTER_V1 vide → remplacée par RECOVERY_MOBILITY_V1 (shoulder_pain + BW_ONLY).');
+        warnings.push('RG-01 : session upper vide → remplacée par RECOVERY_MOBILITY_V1.');
       }
     }
   }

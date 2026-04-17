@@ -26,13 +26,12 @@ export interface ResolvedMicrocyclePlan {
 }
 
 const isLowerRecipe = (recipeId: SessionRecipeId): boolean =>
-  recipeId.startsWith('LOWER_') || recipeId.startsWith('REHAB_LOWER_');
+  recipeId.startsWith('LOWER_');
 
 const isUpperRecipe = (recipeId: SessionRecipeId): boolean =>
-  recipeId.startsWith('UPPER_') || recipeId.startsWith('REHAB_UPPER_');
+  recipeId.startsWith('UPPER_');
 
 const toSessionRole = (recipeId: SessionRecipeId): SessionRole => {
-  if (recipeId.startsWith('REHAB_')) return 'rehab';
   if (recipeId === 'RECOVERY_MOBILITY_V1') return 'recovery';
   if (recipeId === 'SPEED_FIELD_PRE_V1') return 'speed_field';
   if (recipeId.startsWith('COND_')) return 'conditioning';

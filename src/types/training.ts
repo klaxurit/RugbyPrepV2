@@ -78,9 +78,7 @@ export type MicrocycleArchetypeId =
   | 'LEGACY_V1'
   | 'IN_SEASON_2X_STD'
   | 'IN_SEASON_3X_STD'
-  | 'DELOAD_RECOVERY'
-  | 'REHAB_UPPER'
-  | 'REHAB_LOWER';
+  | 'DELOAD_RECOVERY';
 
 export type SessionRole =
   | 'lower_strength'

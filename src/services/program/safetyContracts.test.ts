@@ -30,6 +30,5 @@ describe('safetyContracts', () => {
 
     // Rehab routing is disabled — recipes should pass through unchanged
     expect(result.recipeIds).toEqual(BASE_RECIPES)
-    expect(result.recipeIds).not.toContain('REHAB_LOWER_P3_V1')
   })
 })
