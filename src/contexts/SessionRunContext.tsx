@@ -8,6 +8,13 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 export type SessionRunStatus = 'idle' | 'running'
 
+export interface SetEntry {
+  loadKg?: number
+  reps?: number
+  /** True when user has marked this set as validated. */
+  done: boolean
+}
+
 export interface SessionRunValue {
   status: SessionRunStatus
   /** Unique key for the running session — typically `${motherSessionId}_${dateISO}`. */
@@ -16,6 +23,8 @@ export interface SessionRunValue {
   startedAt: number | null
   /** Set of exercise keys marked as done (format: `${blockIndex}_${exerciseIndex}`). */
   completedExercises: Set<string>
+  /** Per-exercise set-by-set logging. Key = same exerciseKey as completedExercises. */
+  perExerciseSets: Record<string, SetEntry[]>
   start: (sessionKey: string) => void
   stop: () => void
   /** Check if user has a running session matching the given sessionKey. */
@@ -23,6 +32,10 @@ export interface SessionRunValue {
   markExerciseDone: (exerciseKey: string) => void
   unmarkExerciseDone: (exerciseKey: string) => void
   resetCompleted: () => void
+  /** Replace sets for a given exercise. */
+  setExerciseSets: (exerciseKey: string, sets: SetEntry[]) => void
+  /** Update a single set for a given exercise (preserves others). */
+  updateExerciseSet: (exerciseKey: string, setIndex: number, patch: Partial<SetEntry>) => void
 }
 
 const SessionRunContext = createContext<SessionRunValue | null>(null)
@@ -34,6 +47,7 @@ interface PersistedState {
   sessionKey: string
   startedAt: number
   completedExercises: string[]
+  perExerciseSets?: Record<string, SetEntry[]>
 }
 
 function readPersisted(): PersistedState | null {
@@ -71,6 +85,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
   const [sessionKey, setSessionKey] = useState<string | null>(null)
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [completedExercises, setCompletedExercises] = useState<Set<string>>(new Set())
+  const [perExerciseSets, setPerExerciseSets] = useState<Record<string, SetEntry[]>>({})
 
   useEffect(() => {
     const persisted = readPersisted()
@@ -79,11 +94,17 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       setSessionKey(persisted.sessionKey)
       setStartedAt(persisted.startedAt)
       setCompletedExercises(new Set(persisted.completedExercises))
+      setPerExerciseSets(persisted.perExerciseSets ?? {})
     }
   }, [])
 
   const persist = useCallback(
-    (next: { sessionKey: string; startedAt: number; completedExercises: Set<string> } | null) => {
+    (next: {
+      sessionKey: string
+      startedAt: number
+      completedExercises: Set<string>
+      perExerciseSets: Record<string, SetEntry[]>
+    } | null) => {
       if (next == null) {
         writePersisted(null)
       } else {
@@ -91,6 +112,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
           sessionKey: next.sessionKey,
           startedAt: next.startedAt,
           completedExercises: Array.from(next.completedExercises),
+          perExerciseSets: next.perExerciseSets,
         })
       }
     },
@@ -104,7 +126,8 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       setSessionKey(key)
       setStartedAt(now)
       setCompletedExercises(new Set())
-      persist({ sessionKey: key, startedAt: now, completedExercises: new Set() })
+      setPerExerciseSets({})
+      persist({ sessionKey: key, startedAt: now, completedExercises: new Set(), perExerciseSets: {} })
     },
     [persist],
   )
@@ -114,6 +137,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
     setSessionKey(null)
     setStartedAt(null)
     setCompletedExercises(new Set())
+    setPerExerciseSets({})
     persist(null)
   }, [persist])
 
@@ -129,12 +153,12 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
         const next = new Set(prev)
         next.add(exerciseKey)
         if (sessionKey && startedAt != null) {
-          persist({ sessionKey, startedAt, completedExercises: next })
+          persist({ sessionKey, startedAt, completedExercises: next, perExerciseSets })
         }
         return next
       })
     },
-    [persist, sessionKey, startedAt],
+    [persist, sessionKey, startedAt, perExerciseSets],
   )
 
   const unmarkExerciseDone = useCallback(
@@ -144,20 +168,48 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
         const next = new Set(prev)
         next.delete(exerciseKey)
         if (sessionKey && startedAt != null) {
-          persist({ sessionKey, startedAt, completedExercises: next })
+          persist({ sessionKey, startedAt, completedExercises: next, perExerciseSets })
         }
         return next
       })
     },
-    [persist, sessionKey, startedAt],
+    [persist, sessionKey, startedAt, perExerciseSets],
   )
 
   const resetCompleted = useCallback(() => {
     setCompletedExercises(new Set())
     if (sessionKey && startedAt != null) {
-      persist({ sessionKey, startedAt, completedExercises: new Set() })
+      persist({ sessionKey, startedAt, completedExercises: new Set(), perExerciseSets })
     }
-  }, [persist, sessionKey, startedAt])
+  }, [persist, sessionKey, startedAt, perExerciseSets])
+
+  const setExerciseSets = useCallback(
+    (exerciseKey: string, sets: SetEntry[]) => {
+      setPerExerciseSets((prev) => {
+        const next = { ...prev, [exerciseKey]: sets }
+        if (sessionKey && startedAt != null) {
+          persist({ sessionKey, startedAt, completedExercises, perExerciseSets: next })
+        }
+        return next
+      })
+    },
+    [persist, sessionKey, startedAt, completedExercises],
+  )
+
+  const updateExerciseSet = useCallback(
+    (exerciseKey: string, setIndex: number, patch: Partial<SetEntry>) => {
+      setPerExerciseSets((prev) => {
+        const existing = prev[exerciseKey] ?? []
+        const updated = existing.map((s, i) => (i === setIndex ? { ...s, ...patch } : s))
+        const next = { ...prev, [exerciseKey]: updated }
+        if (sessionKey && startedAt != null) {
+          persist({ sessionKey, startedAt, completedExercises, perExerciseSets: next })
+        }
+        return next
+      })
+    },
+    [persist, sessionKey, startedAt, completedExercises],
+  )
 
   const value = useMemo<SessionRunValue>(
     () => ({
@@ -165,14 +217,17 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       sessionKey,
       startedAt,
       completedExercises,
+      perExerciseSets,
       start,
       stop,
       isRunningFor,
       markExerciseDone,
       unmarkExerciseDone,
       resetCompleted,
+      setExerciseSets,
+      updateExerciseSet,
     }),
-    [status, sessionKey, startedAt, completedExercises, start, stop, isRunningFor, markExerciseDone, unmarkExerciseDone, resetCompleted],
+    [status, sessionKey, startedAt, completedExercises, perExerciseSets, start, stop, isRunningFor, markExerciseDone, unmarkExerciseDone, resetCompleted, setExerciseSets, updateExerciseSet],
   )
 
   return <SessionRunContext.Provider value={value}>{children}</SessionRunContext.Provider>
@@ -186,12 +241,15 @@ const NOOP_VALUE: SessionRunValue = {
   sessionKey: null,
   startedAt: null,
   completedExercises: new Set(),
+  perExerciseSets: {},
   start: () => {},
   stop: () => {},
   isRunningFor: () => false,
   markExerciseDone: () => {},
   unmarkExerciseDone: () => {},
   resetCompleted: () => {},
+  setExerciseSets: () => {},
+  updateExerciseSet: () => {},
 }
 
 export function useSessionRun(): SessionRunValue {

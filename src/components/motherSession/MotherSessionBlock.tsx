@@ -18,6 +18,7 @@ import { ExerciseDemoSheet } from './ExerciseDemoSheet'
 import { detectPRs, type DetectedPR } from '../../services/pr/detectPRs'
 import { PRCelebrationOverlay } from '../pr/PRCelebrationOverlay'
 import { PremiumSheet } from '../modals/PremiumSheet'
+import { SessionSetTracker } from './SessionSetTracker'
 
 export type MotherSessionBlockProps = {
   block: Block
@@ -278,6 +279,11 @@ export function MotherSessionBlock({
           {block.exercises.map((ex, i) => {
             const exerciseKey = `${block.number}_${i}`
             const isDone = runMode && sessionRun.completedExercises.has(exerciseKey)
+            // En mode premium running, les exos loggables ont leur SetTracker ci-dessous
+            // qui auto-coche — on masque la checkbox redondante ici pour ces exos.
+            const hasTrackerBelow = Boolean(
+              runMode && isPremium && onSaveBlock && loggableExercises.some((le) => le.idx === i),
+            )
             return (
               <ExerciseRow
                 key={`${block.number}-${i}`}
@@ -285,7 +291,7 @@ export function MotherSessionBlock({
                 frName={frBlock?.exercises[i]?.name}
                 lang={lang}
                 onOpenDemo={setDemoExerciseId}
-                runMode={runMode}
+                runMode={runMode && !hasTrackerBelow}
                 isDone={isDone}
                 onToggleDone={() =>
                   isDone
@@ -343,7 +349,30 @@ export function MotherSessionBlock({
         </div>
       )}
 
-      {hasLoggable && onSaveBlock && isPremium && (
+      {/* ── Mode "En cours" premium : set tracker inline par exercice ── */}
+      {runMode && hasLoggable && onSaveBlock && isPremium && (
+        <div className="mt-4 space-y-2">
+          {loggableExercises.map(({ exerciseId, idx }) => {
+            const exerciseKey = `${block.number}_${idx}`
+            const metricType = getExerciseMetricType({ exerciseId })
+            const lastEntry = getLastEntryForExercise?.(exerciseId)
+            const exercise = block.exercises[idx]
+            return (
+              <SessionSetTracker
+                key={exerciseId}
+                exerciseKey={exerciseKey}
+                exerciseName={getDisplayExerciseName(exerciseId)}
+                prescription={exercise?.prescription}
+                lastEntry={lastEntry}
+                showLoad={metricType === 'load_reps'}
+                showReps={metricType === 'load_reps' || metricType === 'reps'}
+              />
+            )
+          })}
+        </div>
+      )}
+
+      {!runMode && hasLoggable && onSaveBlock && isPremium && (
         <div className="mt-4">
           <button
             type="button"
