@@ -15,6 +15,15 @@ export interface SetEntry {
   done: boolean
 }
 
+export interface RestTimerState {
+  /** Seconds the timer was started with. */
+  totalSeconds: number
+  /** Wall-clock end time (ms since epoch). */
+  endsAt: number
+  /** Optional label (ex. exercise name) shown in the overlay. */
+  label?: string
+}
+
 export interface SessionRunValue {
   status: SessionRunStatus
   /** Unique key for the running session — typically `${motherSessionId}_${dateISO}`. */
@@ -36,6 +45,11 @@ export interface SessionRunValue {
   setExerciseSets: (exerciseKey: string, sets: SetEntry[]) => void
   /** Update a single set for a given exercise (preserves others). */
   updateExerciseSet: (exerciseKey: string, setIndex: number, patch: Partial<SetEntry>) => void
+  /** Rest timer state (runs between sets). null = idle. */
+  restTimer: RestTimerState | null
+  startRestTimer: (seconds: number, label?: string) => void
+  adjustRestTimer: (deltaSeconds: number) => void
+  skipRestTimer: () => void
 }
 
 const SessionRunContext = createContext<SessionRunValue | null>(null)
@@ -86,6 +100,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [completedExercises, setCompletedExercises] = useState<Set<string>>(new Set())
   const [perExerciseSets, setPerExerciseSets] = useState<Record<string, SetEntry[]>>({})
+  const [restTimer, setRestTimer] = useState<RestTimerState | null>(null)
 
   useEffect(() => {
     const persisted = readPersisted()
@@ -138,8 +153,26 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
     setStartedAt(null)
     setCompletedExercises(new Set())
     setPerExerciseSets({})
+    setRestTimer(null)
     persist(null)
   }, [persist])
+
+  const startRestTimer = useCallback((seconds: number, label?: string) => {
+    setRestTimer({ totalSeconds: seconds, endsAt: Date.now() + seconds * 1000, label })
+  }, [])
+
+  const adjustRestTimer = useCallback((delta: number) => {
+    setRestTimer((prev) => {
+      if (!prev) return prev
+      const newEndsAt = prev.endsAt + delta * 1000
+      if (newEndsAt <= Date.now()) return null
+      return { ...prev, endsAt: newEndsAt, totalSeconds: Math.max(prev.totalSeconds + delta, 0) }
+    })
+  }, [])
+
+  const skipRestTimer = useCallback(() => {
+    setRestTimer(null)
+  }, [])
 
   const isRunningFor = useCallback(
     (key: string) => status === 'running' && sessionKey === key,
@@ -226,8 +259,12 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       resetCompleted,
       setExerciseSets,
       updateExerciseSet,
+      restTimer,
+      startRestTimer,
+      adjustRestTimer,
+      skipRestTimer,
     }),
-    [status, sessionKey, startedAt, completedExercises, perExerciseSets, start, stop, isRunningFor, markExerciseDone, unmarkExerciseDone, resetCompleted, setExerciseSets, updateExerciseSet],
+    [status, sessionKey, startedAt, completedExercises, perExerciseSets, start, stop, isRunningFor, markExerciseDone, unmarkExerciseDone, resetCompleted, setExerciseSets, updateExerciseSet, restTimer, startRestTimer, adjustRestTimer, skipRestTimer],
   )
 
   return <SessionRunContext.Provider value={value}>{children}</SessionRunContext.Provider>
@@ -250,6 +287,10 @@ const NOOP_VALUE: SessionRunValue = {
   resetCompleted: () => {},
   setExerciseSets: () => {},
   updateExerciseSet: () => {},
+  restTimer: null,
+  startRestTimer: () => {},
+  adjustRestTimer: () => {},
+  skipRestTimer: () => {},
 }
 
 export function useSessionRun(): SessionRunValue {

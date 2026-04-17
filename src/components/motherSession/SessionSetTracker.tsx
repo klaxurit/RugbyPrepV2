@@ -38,6 +38,27 @@ function parseTargetReps(prescription?: string): number | null {
 }
 
 /**
+ * Parse a rest duration from the prescription if annotated like "@90s", "@2min", "repos 2 min".
+ * Returns null if not detected — caller decides on a default.
+ */
+function parseRestSeconds(prescription?: string): number | null {
+  if (!prescription) return null
+  // "@90s", "@ 90s"
+  const sec = prescription.match(/@\s*(\d+)\s*s/i)
+  if (sec) {
+    const n = Number(sec[1])
+    return Number.isFinite(n) ? n : null
+  }
+  // "@2min", "@ 2 min", "repos 2 min"
+  const min = prescription.match(/(?:@|repos)\s*(\d+)\s*min/i)
+  if (min) {
+    const n = Number(min[1])
+    return Number.isFinite(n) ? n * 60 : null
+  }
+  return null
+}
+
+/**
  * Tracker set-par-set pour une séance en cours.
  * Pré-remplit les kg/reps avec la dernière séance loggée (progression overload).
  * Auto-coche l'exercice parent dans SessionRunContext quand tous les sets sont validés.
@@ -55,6 +76,7 @@ export function SessionSetTracker({
 
   const targetSets = useMemo(() => parseTargetSets(prescription) ?? 3, [prescription])
   const targetReps = useMemo(() => parseTargetReps(prescription), [prescription])
+  const restSeconds = useMemo(() => parseRestSeconds(prescription) ?? 90, [prescription])
 
   // Initialisation : si pas encore de sets, créer `targetSets` lignes pré-remplies.
   const initializedRef = useRef(false)
@@ -128,7 +150,15 @@ export function SessionSetTracker({
             entry={set}
             showLoad={showLoad}
             showReps={showReps}
-            onChange={(patch) => sessionRun.updateExerciseSet(exerciseKey, idx, patch)}
+            onChange={(patch) => {
+              sessionRun.updateExerciseSet(exerciseKey, idx, patch)
+              // Démarrer le chrono de repos quand on valide une série, sauf si c'est la dernière.
+              const justValidated = patch.done === true && !set.done
+              const isLastSet = idx === currentSets.length - 1
+              if (justValidated && !isLastSet) {
+                sessionRun.startRestTimer(restSeconds, exerciseName)
+              }
+            }}
           />
         ))}
       </div>

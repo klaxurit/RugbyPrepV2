@@ -4,6 +4,7 @@ import { posthog } from '../services/analytics/posthog'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, FileText, Play } from 'lucide-react'
 import { useSessionRun } from '../contexts/SessionRunContext'
 import { SessionRunProgress } from '../components/motherSession/SessionRunProgress'
+import { RestTimerOverlay } from '../components/motherSession/RestTimerOverlay'
 import { isDirectiveText } from '../services/motherSession/motherSessionExerciseMap'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
@@ -483,6 +484,7 @@ export function SessionDetailPage() {
         }}
         onConfirm={handleConfirmMotherSession}
       />
+      {isRunning && <RestTimerOverlay />}
       <BottomNav />
     </div>
   )
