@@ -5,7 +5,9 @@ import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, FileText, Play } f
 import { useSessionRun } from '../contexts/SessionRunContext'
 import { SessionRunProgress } from '../components/motherSession/SessionRunProgress'
 import { RestTimerOverlay } from '../components/motherSession/RestTimerOverlay'
+import { SessionCelebration } from '../components/motherSession/SessionCelebration'
 import { isDirectiveText } from '../services/motherSession/motherSessionExerciseMap'
+import { useWakeLock } from '../hooks/useWakeLock'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
 import { useFatigue } from '../hooks/useFatigue'
@@ -74,6 +76,7 @@ export function SessionDetailPage() {
   const [msNotes, setMsNotes] = useState('')
   const [msSaved, setMsSaved] = useState(false)
   const [completionOpen, setCompletionOpen] = useState(false)
+  const [celebrationOpen, setCelebrationOpen] = useState(false)
   const [msSaveError, setMsSaveError] = useState<string | null>(null)
   const [isSavingSession, setIsSavingSession] = useState(false)
   const handleSaveBlock = (log: Parameters<typeof addBlockLog>[0]) => { addBlockLog(log) }
@@ -202,6 +205,34 @@ export function SessionDetailPage() {
     }
   }
 
+  // Keep the screen awake while a session is running. Released on unmount / stop.
+  useWakeLock(isRunning)
+
+  // ── Stats for the celebration screen ─────────────────────────────────────
+  const celebrationStats = useMemo(() => {
+    const startedAt = sessionRun.startedAt
+    const durationMin = startedAt ? Math.max(1, Math.round((Date.now() - startedAt) / 60000)) : 0
+    let totalSets = 0
+    let tonnageKg = 0
+    let hasAnyLoad = false
+    Object.values(sessionRun.perExerciseSets).forEach((sets) => {
+      sets.forEach((s) => {
+        if (s.done) {
+          totalSets += 1
+          if (s.loadKg != null && s.reps != null) {
+            tonnageKg += s.loadKg * s.reps
+            hasAnyLoad = true
+          }
+        }
+      })
+    })
+    return {
+      durationMin,
+      totalSets,
+      tonnageKg: hasAnyLoad ? Math.round(tonnageKg) : null,
+    }
+  }, [sessionRun.perExerciseSets, sessionRun.startedAt])
+
   // ── Title ────────────────────────────────────────────────────────────────
   const pageTitle = activeSlot
     ? formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang)
@@ -212,18 +243,23 @@ export function SessionDetailPage() {
     fatigue: 'OK' | 'FATIGUE'
     rpe: number
     durationMin: number
+    notes?: string
   }) => {
     if (!surface || !activeSlot) return
 
     setIsSavingSession(true)
     setMsSaveError(null)
 
+    // If the caller provided notes (celebration flow), use them; otherwise fall back to the notes textarea.
+    if (payload.notes != null) setMsNotes(payload.notes)
+
     try {
       setFatigue(payload.fatigue)
+      const noteText = (payload.notes != null ? payload.notes : msNotes).trim() || undefined
       const log = buildMotherSessionProgramSessionLog({
         dateISO: new Date().toISOString(),
         fatigue: payload.fatigue,
-        notes: msNotes.trim() || undefined,
+        notes: noteText,
         rpe: payload.rpe,
         durationMin: payload.durationMin,
         slot: activeSlot,
@@ -232,6 +268,7 @@ export function SessionDetailPage() {
 
       await addLog(log)
       setCompletionOpen(false)
+      setCelebrationOpen(false)
       setMsNotes('')
       setMsSaved(true)
       // Clean up the running session state once the log is persisted.
@@ -424,7 +461,7 @@ export function SessionDetailPage() {
                       onClick={() => {
                         setMsSaved(false)
                         setMsSaveError(null)
-                        setCompletionOpen(true)
+                        setCelebrationOpen(true)
                       }}
                       className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
                     >
@@ -485,7 +522,18 @@ export function SessionDetailPage() {
         onConfirm={handleConfirmMotherSession}
       />
       {isRunning && <RestTimerOverlay />}
-      <BottomNav />
+      <SessionCelebration
+        isOpen={celebrationOpen}
+        sessionLabel={pageTitle}
+        stats={celebrationStats}
+        isSubmitting={isSavingSession}
+        onClose={() => {
+          if (isSavingSession) return
+          setCelebrationOpen(false)
+        }}
+        onConfirm={handleConfirmMotherSession}
+      />
+      {!isRunning && <BottomNav />}
     </div>
   )
 }
