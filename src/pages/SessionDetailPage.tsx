@@ -376,6 +376,16 @@ export function SessionDetailPage() {
                       <p className="text-xs text-ok font-bold">Séance enregistrée !</p>
                     </div>
                   )}
+
+                  {/* Unique CTA Premium — discret, en bas de l'aperçu séance uniquement. */}
+                  {!isPremium && (
+                    <Link
+                      to="/profile#premium"
+                      className="block mt-2 text-center text-[11px] font-bold text-fg-muted hover:text-brand-tint transition-colors"
+                    >
+                      Débloque le suivi de charge set-par-set — <span className="underline underline-offset-2">Découvrir Premium</span>
+                    </Link>
+                  )}
                 </section>
               </>
             ) : (

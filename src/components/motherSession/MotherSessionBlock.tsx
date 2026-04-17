@@ -16,7 +16,7 @@ import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import { ExerciseDemoSheet } from './ExerciseDemoSheet'
 import { detectPRs, type DetectedPR } from '../../services/pr/detectPRs'
 import { PRCelebrationOverlay } from '../pr/PRCelebrationOverlay'
-import { Lock } from 'lucide-react'
+import { PremiumSheet } from '../modals/PremiumSheet'
 
 export type MotherSessionBlockProps = {
   block: Block
@@ -139,6 +139,7 @@ export function MotherSessionBlock({
   const [isSaving, setIsSaving] = useState(false)
   const [demoExerciseId, setDemoExerciseId] = useState<string | null>(null)
   const [celebratePRs, setCelebratePRs] = useState<DetectedPR[]>([])
+  const [premiumSheetOpen, setPremiumSheetOpen] = useState(false)
 
   // Pre-fill drafts from lastEntry on first open
   const openLogger = useCallback(() => {
@@ -288,24 +289,20 @@ export function MotherSessionBlock({
         </div>
       ) : null}
 
-      {/* ── Logger toggle — only if at least 1 exercise is loggable ── */}
+      {/* ── Logger toggle — free user : bouton visible qui déclenche une sheet contextuelle (pas d'encart répété par bloc) ── */}
       {hasLoggable && onSaveBlock && !isPremium && (
-        <div className="mt-4 rounded-2xl border border-brand-border bg-brand-soft/50 p-4 flex items-start gap-3">
-          <div className="rounded-xl bg-brand/10 p-2 flex-shrink-0">
-            <Lock className="w-4 h-4 text-brand-tint" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-fg">Suivi des charges</p>
-            <p className="text-[10px] text-fg-muted mt-0.5">
-              Note tes charges, reps et séries pour chaque exercice et suis ta progression semaine après semaine.
-            </p>
-            <a
-              href="/profile#premium"
-              className="inline-block mt-2 text-[10px] font-black text-brand-tint uppercase tracking-wider"
-            >
-              Passer en Premium →
-            </a>
-          </div>
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => setPremiumSheetOpen(true)}
+            className="flex items-center gap-2 text-xs font-bold text-fg-muted hover:text-brand-tint transition-colors rf-focus-ring rounded-lg"
+          >
+            <ClipboardCheck className="w-3.5 h-3.5" />
+            Logger mes perfs
+            <span className="text-[9px] font-black uppercase tracking-wider text-brand-tint bg-brand-soft px-1.5 py-0.5 rounded-full">
+              Premium
+            </span>
+          </button>
         </div>
       )}
 
@@ -392,6 +389,13 @@ export function MotherSessionBlock({
         prs={celebratePRs}
         lang={lang}
         onDone={() => setCelebratePRs([])}
+      />
+
+      <PremiumSheet
+        isOpen={premiumSheetOpen}
+        onClose={() => setPremiumSheetOpen(false)}
+        feature="Suivi des charges"
+        benefit="Note tes charges, reps et séries pour chaque exercice. Visualise ta progression semaine après semaine et reçois des suggestions de charge adaptées à ton niveau."
       />
     </article>
   )
