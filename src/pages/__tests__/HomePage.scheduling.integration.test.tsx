@@ -294,11 +294,11 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
 
   // ── Calendar mode ──
 
-  it('calendar mode: shows "Pas de séance aujourd\'hui" when no today session', () => {
+  it('calendar mode: shows "Pas de séance prévue" when no today session', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    expect(screen.getByText("Pas de séance aujourd'hui")).toBeInTheDocument()
+    expect(screen.getByText('Pas de séance prévue')).toBeInTheDocument()
   })
 
   it('calendar mode: week badge shows cycle week (W1)', () => {
@@ -315,11 +315,11 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
     expect(screen.getByTestId('home-stats-sessions')).toHaveTextContent('0/3')
   })
 
-  it('calendar mode: CTA says "Voir ma semaine" when no today session', () => {
+  it('calendar mode: CTA says "Voir mon plan de la semaine" when no today session', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    expect(screen.getByTestId('home-cta-primary')).toHaveTextContent('Voir ma semaine')
+    expect(screen.getByTestId('home-cta-primary')).toHaveTextContent('Voir mon plan de la semaine')
   })
 
   // ── Sequential mode ──

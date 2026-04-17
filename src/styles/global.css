@@ -66,6 +66,12 @@
   --color-critical-body: var(--color-critical-fg-body);
   --color-critical-bg: var(--color-critical-surface);
   --color-critical-bd: var(--color-critical-border);
+  /* Alerte sémantique — distinct du bordeaux brand, pour toute régression/danger UI. */
+  --color-alert: var(--color-alert-fg);
+  --color-alert-strong: var(--color-alert-fg-strong);
+  --color-alert-bg: var(--color-alert-surface);
+  --color-alert-bg-muted: var(--color-alert-surface-muted);
+  --color-alert-bd: var(--color-alert-border);
   --color-info: var(--color-info-fg);
   --color-info-bg: var(--color-info-surface);
   --color-info-bd: var(--color-info-border);

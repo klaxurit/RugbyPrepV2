@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
+import { Chip } from '../components/ui'
 import { useCalendar } from '../hooks/useCalendar'
 import { useProfile } from '../hooks/useProfile'
 import { useAdaptiveSchedule } from '../hooks/useAdaptiveSchedule'
@@ -264,9 +265,9 @@ function NextMatchCard({ event }: { event: CalendarEvent }) {
         <div className="text-4xl font-black text-fg leading-none">
           {days === 0 ? "Aujourd'hui !" : days === 1 ? 'Demain' : `J−${days}`}
         </div>
-        <div className="text-sm text-fg-muted mt-1 capitalize">{formatDateFR(event.date)}</div>
+        <div className="text-sm font-bold text-fg mt-1.5 capitalize">{formatDateFR(event.date)}</div>
         {event.kickoff_time && (
-          <div className="text-xs text-rose-600 font-bold mt-0.5">Coup d'envoi {event.kickoff_time}</div>
+          <div className="text-sm font-bold text-rose-600 mt-0.5">Coup d'envoi {event.kickoff_time}</div>
         )}
       </div>
 
@@ -493,6 +494,7 @@ function MiniCalendar({
   clubDays,
   scDays,
   onSelectDate,
+  selectedDate,
 }: {
   year: number
   month: number
@@ -500,6 +502,7 @@ function MiniCalendar({
   clubDays: DayOfWeek[]
   scDays: DayOfWeek[]
   onSelectDate: (date: string) => void
+  selectedDate?: string
 }) {
   const firstDay = new Date(year, month, 1)
   const lastDay = new Date(year, month + 1, 0)
@@ -527,15 +530,15 @@ function MiniCalendar({
       {(clubDays.length > 0 || scDays.length > 0) && (
         <div className="flex flex-wrap gap-3 mb-3 pb-3 border-b border-border-app">
           {clubDays.length > 0 && (
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-[10px] font-bold text-fg-muted">Club</span>
+            <div className="flex items-center gap-1.5">
+              <span aria-hidden className="text-[12px] leading-none">🏉</span>
+              <span className="text-[11px] font-bold text-fg-muted">Club</span>
             </div>
           )}
           {scDays.length > 0 && (
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-rose-400" />
-              <span className="text-[10px] font-bold text-fg-muted">Muscu</span>
+            <div className="flex items-center gap-1.5">
+              <span aria-hidden className="text-[12px] leading-none">🏋️</span>
+              <span className="text-[11px] font-bold text-fg-muted">Muscu</span>
             </div>
           )}
         </div>
@@ -550,6 +553,7 @@ function MiniCalendar({
           if (day === null) return <div key={i} />
           const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
           const isToday = dateStr === todayStr
+          const isSelected = dateStr === selectedDate
           const eventType = eventDates.get(dateStr)
 
           // Day-of-week for this cell (0=Sun)
@@ -558,31 +562,61 @@ function MiniCalendar({
           const isClubDay = clubDays.includes(cellDow)
           const isScDay = scDays.includes(cellDow)
 
-          let dotColor = ''
-          if (eventType === 'match') dotColor = 'bg-rose-500'
-          else if (eventType === 'rest') dotColor = 'bg-info'
-          else if (eventType === 'unavailable') dotColor = 'bg-orange-400'
+          // Hiérarchie visuelle : selected (action en cours) > today (repère temporel) > training-day (info)
+          // Fond de case = seul code couleur pour club/muscu ; les icônes en bas règlent l'accessibilité daltoniens.
+          let stateClasses = 'hover:bg-layer-10 text-fg-emphasis'
+          if (isSelected) {
+            stateClasses = 'bg-brand/70 text-on-brand shadow-sm'
+          } else if (isToday) {
+            stateClasses = 'border-2 border-brand bg-brand-soft text-brand-tint font-black'
+          } else if (isClubDay && isScDay) {
+            stateClasses = 'bg-gradient-to-b from-rose-100 to-emerald-100 text-fg-emphasis'
+          } else if (isClubDay) {
+            stateClasses = 'bg-emerald-100 text-fg-emphasis'
+          } else if (isScDay) {
+            stateClasses = 'bg-rose-100 text-fg-emphasis'
+          }
 
-          const isBothDay = isClubDay && isScDay
+          const eventRing = eventType
+            ? 'ring-1 ring-inset ' +
+              (eventType === 'match' ? 'ring-danger-bd' : eventType === 'rest' ? 'ring-info-bd' : 'ring-tone-orange-bd')
+            : ''
+
+          // Icône de type d'entraînement — pictogramme non-couleur pour lisibilité daltonien.
+          let trainingIcon = ''
+          if (isClubDay && isScDay) trainingIcon = '🏉🏋️'
+          else if (isClubDay) trainingIcon = '🏉'
+          else if (isScDay) trainingIcon = '🏋️'
+
+          // Événements calendaires exclusifs (match, repos, indispo) — point réservé aux events ponctuels.
+          let eventDot = ''
+          if (!isClubDay && !isScDay && eventType) {
+            if (eventType === 'match') eventDot = 'bg-rose-500'
+            else if (eventType === 'rest') eventDot = 'bg-info'
+            else if (eventType === 'unavailable') eventDot = 'bg-orange-400'
+          }
+
           return (
             <button
               key={i}
               type="button"
               onClick={() => onSelectDate(dateStr)}
-              className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-bold transition-colors overflow-hidden
-                ${isToday ? 'bg-brand text-on-brand' : 'hover:bg-layer-10 text-fg-emphasis'}
-                ${isClubDay && !isToday && !isBothDay ? 'bg-emerald-50' : ''}
-                ${isScDay && !isClubDay && !isToday ? 'bg-rose-50' : ''}
-                ${isBothDay && !isToday ? 'bg-gradient-to-b from-rose-50 to-emerald-50' : ''}
-                ${eventType ? 'ring-1 ring-inset ' + (eventType === 'match' ? 'ring-danger-bd' : eventType === 'rest' ? 'ring-info-bd' : 'ring-tone-orange-bd') : ''}
-              `}
+              aria-pressed={isSelected}
+              aria-label={`${day}${isToday ? " (aujourd'hui)" : ''}${isSelected ? ' — sélectionné' : ''}${trainingIcon ? ` — ${isClubDay && isScDay ? 'Club + Muscu' : isClubDay ? 'Club' : 'Muscu'}` : ''}`}
+              className={`relative aspect-square flex items-center justify-center rounded-xl text-sm font-bold transition-colors overflow-hidden ${stateClasses} ${eventRing}`}
             >
-              {day}
-              <div className="absolute bottom-1 flex gap-0.5">
-                {isClubDay && <span className="w-1 h-1 rounded-full bg-emerald-400" aria-hidden />}
-                {isScDay && <span className="w-1 h-1 rounded-full bg-rose-400" aria-hidden />}
-                {dotColor && !isClubDay && !isScDay && <span className={`w-1 h-1 rounded-full ${dotColor}`} />}
-              </div>
+              <span className="leading-none">{day}</span>
+              {trainingIcon && (
+                <span
+                  aria-hidden
+                  className={`absolute bottom-1 text-[9px] leading-none tracking-tight ${isSelected ? 'opacity-80' : 'opacity-90'}`}
+                >
+                  {trainingIcon}
+                </span>
+              )}
+              {eventDot && !trainingIcon && (
+                <span aria-hidden className={`absolute bottom-1.5 w-1.5 h-1.5 rounded-full ${eventDot}`} />
+              )}
             </button>
           )
         })}
@@ -1163,7 +1197,7 @@ export function CalendarPage() {
   }
 
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-40 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* ── Header ── */}
@@ -1187,14 +1221,24 @@ export function CalendarPage() {
         {/* ── Calendar Grid ── */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <button type="button" onClick={prevMonth} className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 transition-colors rf-focus-ring">
-              <ChevronLeft className="w-4 h-4" />
+            <button
+              type="button"
+              onClick={prevMonth}
+              aria-label="Mois précédent"
+              className="w-11 h-11 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 transition-colors rf-focus-ring"
+            >
+              <ChevronLeft className="w-5 h-5" />
             </button>
             <h2 className="text-sm font-black uppercase tracking-wider text-fg-emphasis">
               {MONTH_NAMES_FR[calMonth]} {calYear}
             </h2>
-            <button type="button" onClick={nextMonth} className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 transition-colors rf-focus-ring">
-              <ChevronRight className="w-4 h-4" />
+            <button
+              type="button"
+              onClick={nextMonth}
+              aria-label="Mois suivant"
+              className="w-11 h-11 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 transition-colors rf-focus-ring"
+            >
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
           <MiniCalendar
@@ -1204,6 +1248,7 @@ export function CalendarPage() {
             clubDays={clubDays}
             scDays={scDays}
             onSelectDate={handleSelectDate}
+            selectedDate={selectedDate}
           />
         </section>
 
@@ -1275,29 +1320,19 @@ export function CalendarPage() {
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {profile.ffrCompetitionName && (
-                      <span className="px-2.5 py-1 rounded-full border border-info-bd bg-info-bg text-info text-[10px] font-bold">
-                        {profile.ffrCompetitionName}
-                      </span>
+                      <Chip tone="info" variant="soft" size="md">{profile.ffrCompetitionName}</Chip>
                     )}
                     {clubDaysSummary && (
-                      <span className="px-2.5 py-1 rounded-full border border-ok-bd bg-ok-bg-muted text-ok text-[10px] font-bold">
-                        Club {clubDaysSummary}
-                      </span>
+                      <Chip tone="success" variant="soft" size="md">Club {clubDaysSummary}</Chip>
                     )}
                     {matchDaySummary && (
-                      <span className="px-2.5 py-1 rounded-full border border-warn-bd bg-warn-bg-muted text-warn-strong text-[10px] font-bold">
-                        Match {matchDaySummary}
-                      </span>
+                      <Chip tone="warn" variant="soft" size="md">Match {matchDaySummary}</Chip>
                     )}
                     {scDaysSummary && (
-                      <span className="px-2.5 py-1 rounded-full border border-danger-bd bg-danger-bg text-danger text-[10px] font-bold">
-                        Muscu {scDaysSummary}
-                      </span>
+                      <Chip tone="alert" variant="soft" size="md">Muscu {scDaysSummary}</Chip>
                     )}
                     {!profile.ffrCompetitionName && !clubDaysSummary && !matchDaySummary && !scDaysSummary && (
-                      <span className="px-2.5 py-1 rounded-full border border-border-app bg-layer-6 text-fg-muted text-[10px] font-bold">
-                        À configurer
-                      </span>
+                      <Chip tone="neutral" variant="soft" size="md">À configurer</Chip>
                     )}
                   </div>
                 </div>
@@ -1552,15 +1587,16 @@ export function CalendarPage() {
 
       </main>
 
-      {/* ── FAB ── */}
+      {/* ── FAB — extended pour être explicite et éviter la confusion avec les boutons × (annuler) inline ── */}
       <motion.button
         type="button"
         whileTap={{ scale: 0.95 }}
         onClick={() => { setSelectedDate(undefined); setShowDayDetail(false); setShowModal(true) }}
-        className="fixed bottom-24 right-6 w-14 h-14 bg-brand rounded-2xl shadow-brand-float flex items-center justify-center z-40 rf-focus-ring"
+        className="fixed bottom-24 right-6 h-14 pl-4 pr-5 bg-brand rounded-2xl shadow-brand-float flex items-center gap-2 z-40 rf-focus-ring"
         aria-label="Ajouter un événement"
       >
-        <Plus className="w-6 h-6 text-on-brand" />
+        <Plus className="w-5 h-5 text-on-brand" />
+        <span className="text-sm font-black text-on-brand tracking-wide">Ajouter</span>
       </motion.button>
 
       {/* ── Day Detail Modal (S&C + rugby, journée coupée en deux) ── */}

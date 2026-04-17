@@ -22,6 +22,7 @@ import {
   Lock,
 } from 'lucide-react'
 import { PageHeader } from '../components/PageHeader'
+import { Chip, type ChipTone } from '../components/ui'
 import { useProfile } from '../hooks/useProfile'
 import { useFatigue } from '../hooks/useFatigue'
 import { useWeek } from '../hooks/useWeek'
@@ -53,11 +54,11 @@ import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 
 // ─── Helpers ────────────────────────────────────────────────
 
-const seasonPhaseLabel: Record<SeasonPhase, { label: string; color: string; bg: string }> = {
-  'off-season': { label: 'Inter-saison', color: 'text-badge-muted-fg', bg: 'bg-badge-muted-bg' },
-  'pre-season': { label: 'Pré-saison', color: 'text-warn-strong', bg: 'bg-warn-bg' },
-  'in-season': { label: 'En saison', color: 'text-brand-tint', bg: 'bg-brand-soft' },
-  'playoffs': { label: 'Playoffs', color: 'text-danger', bg: 'bg-danger-bg' },
+const seasonPhaseLabel: Record<SeasonPhase, { label: string; tone: ChipTone }> = {
+  'off-season': { label: 'Inter-saison', tone: 'neutral' },
+  'pre-season': { label: 'Pré-saison', tone: 'warn' },
+  'in-season': { label: 'En saison', tone: 'brand' },
+  'playoffs': { label: 'Playoffs', tone: 'alert' },
 }
 
 const diffDays = (dateStr: string): number => {
@@ -181,6 +182,7 @@ export function HomePage() {
   // In calendar mode, find today's active (non-skipped, non-completed) session from the corrected presentation
   let todayDatedSession: import('../types/scheduling').DatedSession | null = null
   let todaySessionIndex: number | null = null
+  let nextDatedSession: import('../types/scheduling').DatedSession | null = null
   if (weekPresentation?.mode === 'calendar') {
     const todayDow = new Date(today + 'T12:00:00').getDay()
     const allDatedRaw = weekPresentation.sessions.filter(
@@ -198,6 +200,16 @@ export function HomePage() {
         todaySessionIndex = i
         break
       }
+    }
+    // Prochaine séance programmée (jour > today, non passée) — sert uniquement quand il n'y a rien aujourd'hui.
+    if (!todayDatedSession) {
+      nextDatedSession =
+        allDated.find(
+          (s) =>
+            s.dayOfWeek > todayDow &&
+            s.completionStatus !== 'skipped' &&
+            s.completionStatus !== 'completed',
+        ) ?? null
     }
   }
 
@@ -287,25 +299,14 @@ export function HomePage() {
               <div className="flex items-center gap-2 flex-wrap">
                 {(() => {
                   const cfg = seasonPhaseLabel[seasonPhase]
-                  return (
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wide ${cfg.bg} ${cfg.color}`}>
-                      <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
-                      {cfg.label}
-                    </span>
-                  )
+                  return <Chip tone={cfg.tone}>{cfg.label}</Chip>
                 })()}
                 {isSequential && blockProgression?.currentBlockLabel ? (
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-medium text-brand-tint">
-                    {blockProgression.currentBlockLabel}
-                  </span>
+                  <Chip tone="brand">{blockProgression.currentBlockLabel}</Chip>
                 ) : (
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-medium text-brand-tint">
-                    {weekLabel(week)}
-                  </span>
+                  <Chip tone="brand">{weekLabel(week)}</Chip>
                 )}
-                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-layer-10 text-fg-soft">
-                  {trainingLevelLabel}
-                </span>
+                <Chip tone="neutral">{trainingLevelLabel}</Chip>
               </div>
             </div>
 
@@ -353,7 +354,17 @@ export function HomePage() {
                   <h3 className="text-xl font-black text-fg">{todaySessionTitle}</h3>
                 </>
               ) : (
-                <h3 className="text-xl font-black text-fg">Pas de séance aujourd'hui</h3>
+                <>
+                  <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider">Repos aujourd'hui</p>
+                  <h3 className="text-xl font-black text-fg">Pas de séance prévue</h3>
+                  {nextDatedSession && (
+                    <p className="text-xs text-fg-soft mt-1">
+                      Prochaine séance : <span className="font-bold text-fg">{nextDatedSession.dayLabel}</span>
+                      {' · '}
+                      {formatTitleFromMotherSessionId(nextDatedSession.sessionSlot.session.metadata.id, lang)}
+                    </p>
+                  )}
+                </>
               )}
               <div className="flex items-center gap-4 mt-1">
                 <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
@@ -390,7 +401,7 @@ export function HomePage() {
                 <span className="font-black text-on-brand text-sm tracking-wide">
                   {isSequential
                     ? 'Voir mes séances'
-                    : (todayDatedSession ? 'Commencer la séance' : 'Voir ma semaine')}
+                    : (todayDatedSession ? 'Commencer la séance' : 'Voir mon plan de la semaine')}
                 </span>
               </motion.button>
             </Link>
@@ -556,18 +567,24 @@ export function HomePage() {
           )
         ) : null}
 
-        {/* ── Readiness Score ── */}
-        <section>
-          {!premiumResolved ? (
-            <ReadinessScoreSkeleton />
-          ) : isPremium ? (
-            <ReadinessScoreCard result={readinessResult} />
-          ) : (
-            <PremiumBlurredPreview label="Score de forme">
-              <ReadinessScoreCard result={readinessResult} />
-            </PremiumBlurredPreview>
-          )}
-        </section>
+        {/* ── Readiness Score — compact quand pas de séance du jour (hiérarchie : CTA > forme) ── */}
+        {(() => {
+          const hasTodaySession = isSequential ? nextSequentialTitle != null : todaySessionTitle != null
+          const compact = !hasTodaySession
+          return (
+            <section>
+              {!premiumResolved ? (
+                <ReadinessScoreSkeleton />
+              ) : isPremium ? (
+                <ReadinessScoreCard result={readinessResult} compact={compact} />
+              ) : (
+                <PremiumBlurredPreview label="Score de forme">
+                  <ReadinessScoreCard result={readinessResult} compact={compact} />
+                </PremiumBlurredPreview>
+              )}
+            </section>
+          )
+        })()}
 
         {/* ── Stats Row ── */}
         <section>
@@ -883,13 +900,9 @@ export function HomePage() {
                         <div className="text-xs text-fg-muted italic">{weekLabel(log.week)} · {formatDate(log.dateISO)}</div>
                       </div>
                     </div>
-                    <div className={`text-[10px] font-black px-2.5 py-1 rounded-full ${
-                      log.fatigue === 'OK'
-                        ? 'bg-ok-bg text-ok-strong'
-                        : 'bg-warn-bg-muted text-warn'
-                    }`}>
+                    <Chip tone={log.fatigue === 'OK' ? 'success' : 'warn'}>
                       {log.fatigue === 'OK' ? 'OK' : 'Fatigue'}
-                    </div>
+                    </Chip>
                   </div>
                 ))}
               </div>

@@ -156,6 +156,9 @@ export function ProgressPage() {
   // ─── Program adherence data ───────────────────────────────────
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const adherenceSummary = useMemo(() => getProgramHistorySummary(sessionLogs, today), [sessionLogs, today])
+  // Objectif hebdo dérivé du niveau — donne du contexte au "3 / target".
+  const weeklyTarget = profile.trainingLevel === 'starter' ? 2 : 3
+  const target28d = weeklyTarget * 4
   const recentSessions = useMemo(() => getRecentProgramSessions(sessionLogs, 8), [sessionLogs])
   const [showAllSessions, setShowAllSessions] = useState(false)
   const [missingOpen, setMissingOpen] = useState(false)
@@ -337,20 +340,50 @@ export function ProgressPage() {
         {/* ─── SESSIONS TAB ─────────────────────────────────────── */}
         {tab === 'sessions' && (
           <>
-            {/* Adhérence programme */}
+            {/* Adhérence programme — chiffres avec objectif + barre de progression */}
             {sessionLogs.length > 0 && (
               <section data-testid="adherence-section">
                 <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Adhérence programme</h2>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
-                    <div className="text-2xl font-black text-fg" data-testid="adherence-7d">{adherenceSummary.sessionsLast7d}</div>
-                    <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Séances 7j</div>
-                  </div>
-                  <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
-                    <div className="text-2xl font-black text-fg" data-testid="adherence-28d">{adherenceSummary.sessionsLast28d}</div>
-                    <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Séances 28j</div>
-                  </div>
+                  {[
+                    {
+                      value: adherenceSummary.sessionsLast7d,
+                      target: weeklyTarget,
+                      label: '7 derniers jours',
+                      testId: 'adherence-7d',
+                    },
+                    {
+                      value: adherenceSummary.sessionsLast28d,
+                      target: target28d,
+                      label: '28 derniers jours',
+                      testId: 'adherence-28d',
+                    },
+                  ].map(({ value, target, label, testId }) => {
+                    const pct = Math.max(0, Math.min(1, value / target))
+                    const onTrack = value >= target
+                    const barColor = onTrack ? 'bg-ok-strong' : pct >= 0.6 ? 'bg-warn-strong' : 'bg-alert'
+                    return (
+                      <div key={testId} className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1.5">
+                        <div className="flex items-baseline gap-1">
+                          <div className="text-2xl font-black text-fg leading-none" data-testid={testId}>{value}</div>
+                          <div className="text-sm font-bold text-fg-muted leading-none">/ {target}</div>
+                        </div>
+                        <div className="h-1.5 bg-layer-10 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${barColor} transition-all`}
+                            style={{ width: `${pct * 100}%` }}
+                          />
+                        </div>
+                        <div className="text-[11px] font-bold text-fg-muted tracking-tight">
+                          {label}
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
+                <p className="text-[11px] text-fg-muted mt-2">
+                  Objectif basé sur ton niveau ({profile.trainingLevel === 'starter' ? 'Fondations' : 'Avancé'}) — {weeklyTarget} séances/semaine.
+                </p>
               </section>
             )}
 
@@ -421,7 +454,7 @@ export function ProgressPage() {
             )}
 
             <section>
-              <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Top progrès (W1 → W4)</h2>
+              <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Top progrès (S1 → S4)</h2>
               {progressRows.length === 0 ? (
                 <div className="bg-layer-5 border border-border-app rounded-[24px] p-6 flex flex-col items-center gap-3 text-center">
                   <div className="w-12 h-12 bg-layer-5 rounded-2xl flex items-center justify-center text-fg-ghost">
@@ -429,7 +462,7 @@ export function ProgressPage() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-fg">Données insuffisantes</p>
-                    <p className="text-xs text-fg-muted mt-0.5">Enregistre des séances en W1 et W4 pour voir ta progression.</p>
+                    <p className="text-xs text-fg-muted mt-0.5">Enregistre des séances en Semaine 1 et Semaine 4 pour voir ta progression.</p>
                   </div>
                   <Link to="/week" className="text-xs font-black text-brand-tint uppercase tracking-wide">
                     Aller s'entraîner →
@@ -480,9 +513,12 @@ export function ProgressPage() {
 
               const curvesContent = rows.length > 0 && (
                 <section>
-                  <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">
+                  <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted">
                     Progression saison
                   </h2>
+                  <p className="text-[11px] text-fg-muted mb-3">
+                    Tonnage hebdomadaire (kg × reps × séries)
+                  </p>
                   <div className="space-y-4">
                     {rows.slice(0, 6).map(({ exerciseId, history }) => {
                       const chartData = history.map((h) => ({ w: h.week, v: h.loadProxy }))
@@ -508,10 +544,17 @@ export function ProgressPage() {
                                 dot={{ r: 3, fill: 'var(--color-brand-tint)', strokeWidth: 0 }}
                               />
                               <XAxis dataKey="w" tick={{ fontSize: 9, fill: 'var(--color-text-faint)' }} axisLine={false} tickLine={false} />
-                              <YAxis domain={['auto', 'auto']} tick={{ fontSize: 9, fill: 'var(--color-text-faint)' }} width={30} axisLine={false} tickLine={false} />
+                              <YAxis
+                                domain={['auto', 'auto']}
+                                tick={{ fontSize: 11, fill: 'var(--color-text-faint)' }}
+                                width={42}
+                                axisLine={false}
+                                tickLine={false}
+                                label={{ value: 'kg (volume)', angle: -90, position: 'insideLeft', offset: 10, style: { fontSize: 10, fill: 'var(--color-text-faint)', textAnchor: 'middle' } }}
+                              />
                               <Tooltip
                                 contentStyle={{ backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 12, fontSize: 11, color: 'var(--color-text-primary)' }}
-                                formatter={(value) => [`${value} kg`, 'Charge']}
+                                formatter={(value) => [`${value} kg`, 'Tonnage']}
                               />
                             </AreaChart>
                           </ResponsiveContainer>
@@ -613,10 +656,12 @@ export function ProgressPage() {
                   (card.type === 'cmj' || card.type === 'sprint_10m') &&
                   (card.higherIsBetter ? variation < -0.10 : variation > 0.10)
 
-                const chartData = [...history].reverse().map((t) => ({
-                  d: t.dateISO.slice(5),
-                  v: t.value,
-                }))
+                const chartData = [...history]
+                  .sort((a, b) => a.dateISO.localeCompare(b.dateISO))
+                  .map((t) => ({
+                    d: t.dateISO.slice(5),
+                    v: t.value,
+                  }))
 
                 return (
                   <div key={card.type} className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden">

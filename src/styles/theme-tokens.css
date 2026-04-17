@@ -101,6 +101,14 @@
   --color-critical-surface: rgb(254 226 226 / 0.98);
   --color-critical-border: rgb(239 68 68 / 0.4);
 
+  /* Alerte = rouge pur, explicitement séparé du bordeaux brand (#7B0D1E)
+     pour que "régression", "alerte", "danger" ne soient jamais confondus avec la marque. */
+  --color-alert-fg: #dc2626;
+  --color-alert-fg-strong: #b91c1c;
+  --color-alert-surface: rgb(254 226 226 / 0.98);
+  --color-alert-surface-muted: rgb(254 226 226 / 0.5);
+  --color-alert-border: rgb(220 38 38 / 0.45);
+
   --color-info-fg: #2563eb;
   --color-info-surface: rgb(219 234 254 / 0.95);
   --color-info-border: rgb(59 130 246 / 0.35);
