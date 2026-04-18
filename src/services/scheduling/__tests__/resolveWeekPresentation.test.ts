@@ -39,111 +39,9 @@ function club(days: number[], matchDay?: number): ClubSchedule {
 // Monday of a test week (2026-04-06 is a Monday)
 const TODAY = '2026-04-06'
 
-// ── Sequential mode ─────────────────────────────────────────────────
-
-describe('resolveWeekPresentation — sequential mode', () => {
-  it('produces SequentialSession[] with 1-based numbering', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A'), slot('B'), slot('C')],
-      schedulingMode: 'sequential',
-      events: [],
-      today: TODAY,
-      corrections: [],
-    })
-
-    expect(result.mode).toBe('sequential')
-    expect(result.sessions).toHaveLength(3)
-
-    for (const s of result.sessions) {
-      expect(s.kind).toBe('sequential')
-    }
-
-    const seq = result.sessions as Array<{ sequenceIndex: number; totalInWeek: number }>
-    expect(seq[0].sequenceIndex).toBe(1)
-    expect(seq[1].sequenceIndex).toBe(2)
-    expect(seq[2].sequenceIndex).toBe(3)
-    expect(seq[0].totalInWeek).toBe(3)
-  })
-
-  it('sets completionStatus to pending for all sessions in Slice 1', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A'), slot('B')],
-      schedulingMode: 'sequential',
-      events: [],
-      today: TODAY,
-      corrections: [],
-    })
-
-    for (const s of result.sessions) {
-      if (s.kind === 'sequential') {
-        expect(s.completionStatus).toBe('pending')
-      }
-    }
-  })
-
-  it('returns empty unavailableDays in sequential mode', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A')],
-      schedulingMode: 'sequential',
-      events: [],
-      today: TODAY,
-      corrections: [],
-    })
-    expect(result.unavailableDays).toEqual([])
-  })
-
-  it('passes through corrections unchanged', () => {
-    const corrections = [
-      { id: '1', type: 'skip' as const, appliedAt: '2026-04-06', reversible: true },
-    ]
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A')],
-      schedulingMode: 'sequential',
-      events: [],
-      today: TODAY,
-      corrections,
-    })
-    expect(result.corrections).toBe(corrections)
-  })
-
-  it('includes matchEvents in sequential mode', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A')],
-      schedulingMode: 'sequential',
-      events: [match('2026-04-11')],
-      today: TODAY,
-      corrections: [],
-    })
-    expect(result.matchEvents).toHaveLength(1)
-  })
-
-  it('filters hidden matches from matchEvents', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A')],
-      schedulingMode: 'sequential',
-      events: [{ date: '2026-04-11', type: 'match', user_hidden: true }],
-      today: TODAY,
-      corrections: [],
-    })
-    expect(result.matchEvents).toHaveLength(0)
-  })
-
-  it('excludes visible matches outside the current ISO week', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A')],
-      schedulingMode: 'sequential',
-      events: [
-        match('2026-04-11'),  // Saturday this week → included
-        match('2026-04-18'),  // Saturday next week → excluded
-        match('2026-03-28'),  // Saturday last week → excluded
-      ],
-      today: TODAY,
-      corrections: [],
-    })
-    expect(result.matchEvents).toHaveLength(1)
-    expect(result.matchEvents[0].date).toBe('2026-04-11')
-  })
-})
+// Note : le mode sequential a été retiré — toutes les semaines sortent désormais en
+// mode calendar (7 jours), y compris off_season et pre_season sans match. Les tests
+// ci-dessous couvrent l'unique mode restant.
 
 // ── Calendar mode — scSchedule priority ─────────────────────────────
 
@@ -411,16 +309,6 @@ describe('resolveWeekPresentation — edge cases', () => {
     expect(result.sessions).toHaveLength(0)
   })
 
-  it('handles empty motherSessions in sequential mode', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [],
-      schedulingMode: 'sequential',
-      events: [],
-      today: TODAY,
-      corrections: [],
-    })
-    expect(result.sessions).toHaveLength(0)
-  })
 })
 
 // ── Corrections — skip ──────────────────────────────────────────────
@@ -449,25 +337,6 @@ describe('resolveWeekPresentation — correction: skip', () => {
     }
   })
 
-  it('sequential: marks skipped session', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A'), slot('B'), slot('C')],
-      schedulingMode: 'sequential',
-      events: [],
-      today: TODAY,
-      corrections: [
-        { id: 'c1', type: 'skip', sessionId: 'B', appliedAt: '2026-04-06', reversible: true },
-      ],
-    })
-
-    expect(result.sessions[0].kind).toBe('sequential')
-    if (result.sessions[1].kind === 'sequential') {
-      expect(result.sessions[1].completionStatus).toBe('skipped')
-    }
-    if (result.sessions[0].kind === 'sequential') {
-      expect(result.sessions[0].completionStatus).toBe('pending')
-    }
-  })
 })
 
 // ── Corrections — reschedule (calendar only) ────────────────────────
@@ -570,23 +439,6 @@ describe('resolveWeekPresentation — correction: reschedule', () => {
     }
   })
 
-  it('sequential: reschedule is a no-op (no day semantics)', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A'), slot('B')],
-      schedulingMode: 'sequential',
-      events: [],
-      today: TODAY,
-      corrections: [
-        { id: 'c1', type: 'reschedule', sessionId: 'A', toDay: 3, appliedAt: '2026-04-06', reversible: true },
-      ],
-    })
-
-    // Sequential mode: session order unchanged, completion unchanged
-    if (result.sessions[0].kind === 'sequential') {
-      expect(result.sessions[0].sequenceIndex).toBe(1)
-      expect(result.sessions[0].completionStatus).toBe('pending')
-    }
-  })
 })
 
 // ── Corrections — unavailable_day (calendar only) ───────────────────
@@ -649,18 +501,6 @@ describe('resolveWeekPresentation — day-state semantics (UX cleanup)', () => {
     const result = resolveWeekPresentation({
       motherSessions: [slot('A')],
       schedulingMode: 'calendar',
-      events: [],
-      today: TODAY,
-      corrections: [],
-    })
-
-    expect(result.clubDays).toEqual([])
-  })
-
-  it('sequential mode has empty clubDays', () => {
-    const result = resolveWeekPresentation({
-      motherSessions: [slot('A')],
-      schedulingMode: 'sequential',
       events: [],
       today: TODAY,
       corrections: [],

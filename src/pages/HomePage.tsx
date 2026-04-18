@@ -48,7 +48,6 @@ import { getToday } from '../services/ui/debugDateOverride'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import type { CycleWeek, SessionType, SeasonPhase, TransitionEntry } from '../types/training'
 import { appendTransitionEntry, computeDeferralExpiry } from '../services/season/transitionJournal'
-import type { SequentialSession } from '../types/scheduling'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 
@@ -240,19 +239,6 @@ export function HomePage() {
     ? formatTitleFromMotherSessionId(todayDatedSession.sessionSlot.session.metadata.id, lang)
     : null
 
-  // ── Sequential mode awareness ────────────────────────────────────────────
-  const isSequential = surface?.schedulingMode === 'sequential'
-  const sequentialSessions: SequentialSession[] = useMemo(() => {
-    if (!isSequential || !weekPresentation) return []
-    return weekPresentation.sessions.filter(
-      (s): s is SequentialSession => s.kind === 'sequential',
-    )
-  }, [isSequential, weekPresentation])
-  const nextSequentialSession = sequentialSessions.length > 0 ? sequentialSessions[0] : null
-  const nextSequentialTitle = nextSequentialSession
-    ? formatTitleFromMotherSessionId(nextSequentialSession.sessionSlot.session.metadata.id, lang)
-    : null
-
   const sessionsThisWeek = logs.filter((l) => l.week === week).length
   const recentLogs = logs.slice(0, 2)
   const injuryAlertNow = useMemo(
@@ -301,7 +287,7 @@ export function HomePage() {
                   const cfg = seasonPhaseLabel[seasonPhase]
                   return <Chip tone={cfg.tone}>{cfg.label}</Chip>
                 })()}
-                {isSequential && blockProgression?.currentBlockLabel ? (
+                {blockProgression?.currentBlockLabel ? (
                   <Chip tone="brand">{blockProgression.currentBlockLabel}</Chip>
                 ) : (
                   <Chip tone="brand">{weekLabel(week)}</Chip>
@@ -336,19 +322,7 @@ export function HomePage() {
 
             {/* Session info */}
             <div className="space-y-1">
-              {isSequential ? (
-                nextSequentialTitle ? (
-                  <>
-                    <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider" data-testid="home-hero-label">Ta prochaine séance</p>
-                    <h3 className="text-xl font-black text-fg">{nextSequentialTitle}</h3>
-                  </>
-                ) : (
-                  <>
-                    <h3 className="text-xl font-black text-fg" data-testid="home-hero-idle">Reprends quand tu veux</h3>
-                    <p className="text-xs text-fg-muted">Ton programme t'attend, à ton rythme.</p>
-                  </>
-                )
-              ) : todaySessionTitle ? (
+              {todaySessionTitle ? (
                 <>
                   <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider" data-testid="home-hero-label">Séance du jour</p>
                   <h3 className="text-xl font-black text-fg">{todaySessionTitle}</h3>
@@ -371,25 +345,16 @@ export function HomePage() {
                   <Clock className="w-3.5 h-3.5 text-fg-faint" />
                   {sessionDuration}
                 </span>
-                {isSequential && nextSequentialSession ? (
-                  <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft" data-testid="home-hero-sequence">
-                    <Activity className="w-3.5 h-3.5 text-fg-faint" />
-                    Séance {nextSequentialSession.sequenceIndex} sur {nextSequentialSession.totalInWeek}
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
-                    <Activity className="w-3.5 h-3.5 text-fg-faint" />
-                    {actualSessionCount} séance{actualSessionCount > 1 ? 's' : ''} cette semaine
-                  </span>
-                )}
+                <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
+                  <Activity className="w-3.5 h-3.5 text-fg-faint" />
+                  {actualSessionCount} séance{actualSessionCount > 1 ? 's' : ''} cette semaine
+                </span>
               </div>
             </div>
 
             {/* CTA */}
             <Link
-              to={isSequential
-                ? '/week'
-                : (todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week')}
+              to={todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week'}
               data-testid="home-cta-primary"
               className="block"
             >
@@ -399,9 +364,7 @@ export function HomePage() {
               >
                 <Play className="w-4 h-4 text-on-brand fill-current" />
                 <span className="font-black text-on-brand text-sm tracking-wide">
-                  {isSequential
-                    ? 'Voir mes séances'
-                    : (todayDatedSession ? 'Commencer la séance' : 'Voir mon plan de la semaine')}
+                  {todayDatedSession ? 'Commencer la séance' : 'Voir mon plan de la semaine'}
                 </span>
               </motion.button>
             </Link>
@@ -569,7 +532,7 @@ export function HomePage() {
 
         {/* ── Readiness Score — compact quand pas de séance du jour (hiérarchie : CTA > forme) ── */}
         {(() => {
-          const hasTodaySession = isSequential ? nextSequentialTitle != null : todaySessionTitle != null
+          const hasTodaySession = todaySessionTitle != null
           const compact = !hasTodaySession
           return (
             <section>
@@ -596,12 +559,12 @@ export function HomePage() {
                 <Calendar className="w-5 h-5" />
               </div>
               <div className="text-lg font-black tracking-tight text-fg leading-none" data-testid="home-stats-cycle">
-                {isSequential
-                  ? `B${(blockProgression?.currentBlockIndex ?? 0) + 1}`
+                {blockProgression
+                  ? `B${(blockProgression.currentBlockIndex ?? 0) + 1}`
                   : (week === 'DELOAD' ? 'DL' : week)}
               </div>
               <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">
-                {isSequential ? 'Bloc' : 'Cycle'}
+                {blockProgression ? 'Bloc' : 'Cycle'}
               </div>
             </div>
 
@@ -625,7 +588,7 @@ export function HomePage() {
                 <TrendingUp className="w-5 h-5" />
               </div>
               <div className="text-lg font-black tracking-tight text-fg leading-none" data-testid="home-stats-sessions">
-                {isSequential && blockProgression
+                {blockProgression
                   ? `${blockProgression.sessionsCompletedInBlock}/${blockProgression.totalSessionsInBlock}`
                   : `${sessionsThisWeek}/${actualSessionCount}`}
               </div>

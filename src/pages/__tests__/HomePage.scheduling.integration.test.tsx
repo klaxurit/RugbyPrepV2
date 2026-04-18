@@ -6,7 +6,7 @@ import { MOTHER_SESSIONS_BY_ID } from '../../data/motherSessions.generated'
 import type { ResolveMotherSessionsForWeekResult } from '../../services/motherSession/resolveMotherSessionsForWeek'
 import type { WeeklyProgramSurfaceResult } from '../../services/program/resolveWeeklyProgramSurface'
 import type { AnnualPlanningContext } from '../../types/annualPlanning'
-import type { SchedulingMode, SchedulingModeResult, WeekPresentation, SequentialSession, BlockProgressionState } from '../../types/scheduling'
+import type { SchedulingMode, SchedulingModeResult, WeekPresentation, BlockProgressionState } from '../../types/scheduling'
 import { HomePage } from '../HomePage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 
@@ -88,34 +88,28 @@ const noop = () => {}
 
 /** Wraps a surface into the full useWeekSnapshot result shape. */
 function hookResult(surface: WeeklyProgramSurfaceResult) {
-  const isSequential = surface.schedulingMode === 'sequential'
   const sessions = surface.motherSession?.sessions ?? []
+  // Présentation calendar unifiée — le mode sequential a été retiré.
+  const presentation: WeekPresentation = {
+    mode: 'calendar',
+    sessions: sessions.map((slot, i) => ({
+      kind: 'dated' as const,
+      sessionSlot: slot,
+      dayOfWeek: ([1, 3, 5] as const)[i % 3], // Lun/Mer/Ven
+      dayLabel: ['Lundi', 'Mercredi', 'Vendredi'][i % 3],
+      matchProximity: null,
+    })),
+    matchEvents: [],
+    unavailableDays: [],
+    clubDays: [],
+    corrections: [],
+  }
 
-  const presentation: WeekPresentation = isSequential
-    ? {
-        mode: 'sequential',
-        sessions: sessions.map((slot, i): SequentialSession => ({
-          kind: 'sequential',
-          sessionSlot: slot,
-          sequenceIndex: i + 1,
-          totalInWeek: sessions.length,
-          completionStatus: 'pending',
-        })),
-        matchEvents: [],
-        unavailableDays: [],
-        clubDays: [],
-        corrections: [],
-      }
-    : {
-        mode: 'calendar',
-        sessions: [],
-        matchEvents: [],
-        unavailableDays: [],
-        clubDays: [],
-        corrections: [],
-      }
-
-  const blockProgression = isSequential ? DEFAULT_BLOCK_PROGRESSION : undefined
+  // blockProgression est présent en off-season (cycle-based phases) pour alimenter
+  // les badges "Inter-saison · Force" et les stats "B2 · 5/12" du Home.
+  const blockProgression = surface.planningContext?.cycle === 'off_season'
+    ? DEFAULT_BLOCK_PROGRESSION
+    : undefined
 
   return {
     snapshot: {
@@ -302,68 +296,48 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
   })
 
   it('calendar mode: week badge shows cycle week (W1)', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-stats-cycle')).toHaveTextContent('W1')
   })
 
   it('calendar mode: sessions stat shows weekly count', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    expect(screen.getByTestId('home-stats-sessions')).toHaveTextContent('0/3')
+    // Fixture a 1 session → compteur "0/1" (aucune loggée encore).
+    expect(screen.getByTestId('home-stats-sessions')).toHaveTextContent('0/1')
   })
 
   it('calendar mode: CTA says "Voir mon plan de la semaine" when no today session', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-cta-primary')).toHaveTextContent('Voir mon plan de la semaine')
   })
 
-  // ── Sequential mode ──
+  // ── Off-season mode (rendu calendrier unifié) ──
 
-  it('sequential mode: shows "Ta prochaine séance" framing', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
-    renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
-
-    expect(screen.getByTestId('home-hero-label')).toHaveTextContent('Ta prochaine séance')
-  })
-
-  it('sequential mode: shows block label badge instead of cycle week', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
+  it('off-season (calendar): shows block label badge in the hero', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'off_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByText('Inter-saison · Force')).toBeInTheDocument()
   })
 
-  it('sequential mode: shows "Séance N sur M" in hero subtitle', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
-    renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
-
-    expect(screen.getByTestId('home-hero-sequence')).toHaveTextContent('Séance 1 sur 1')
-  })
-
-  it('sequential mode: stats show block progression counts', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
+  it('off-season (calendar): stats show block progression counts', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'off_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     expect(screen.getByTestId('home-stats-sessions')).toHaveTextContent('5/12')
     expect(screen.getByTestId('home-stats-cycle')).toHaveTextContent('B2')
   })
 
-  it('sequential mode: CTA says "Voir mes séances" (always routes to /week)', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
-    renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
-
-    expect(screen.getByTestId('home-cta-primary')).toHaveTextContent('Voir mes séances')
-  })
-
   // ── No internal jargon ──
 
   it('no internal engine terminology appears in UI copy', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('sequential')))
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'off_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
     const text = document.body.textContent ?? ''

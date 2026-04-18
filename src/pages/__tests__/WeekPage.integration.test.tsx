@@ -11,7 +11,6 @@ import type {
   SchedulingMode,
   SchedulingModeResult,
   WeekPresentation,
-  SequentialSession,
   WeekSnapshot,
   WeekCorrection,
 } from '../../types/scheduling'
@@ -133,40 +132,31 @@ const noop = () => {}
 
 /** Wraps a surface into the full useWeekSnapshot result shape. */
 function hookResult(surface: WeeklyProgramSurfaceResult) {
-  const isSequential = surface.schedulingMode === 'sequential'
   const sessions = surface.motherSession?.sessions ?? []
 
-  const presentation: WeekPresentation = isSequential
-    ? {
-        mode: 'sequential',
-        sessions: sessions.map((slot, i): SequentialSession => ({
-          kind: 'sequential',
-          sessionSlot: slot,
-          sequenceIndex: i + 1,
-          totalInWeek: sessions.length,
-          completionStatus: 'pending',
-        })),
-        matchEvents: [],
-        unavailableDays: [],
-        clubDays: [],
-        corrections: [],
-      }
-    : {
-        mode: 'calendar',
-        sessions: sessions.map((slot, i) => ({
-          kind: 'dated' as const,
-          sessionSlot: slot,
-          dayOfWeek: ([2, 4, 5] as const)[i % 3],
-          dayLabel: ['Mar', 'Jeu', 'Ven'][i % 3],
-          matchProximity: null,
-        })),
-        matchEvents: [],
-        unavailableDays: [],
-        clubDays: [],
-        corrections: [],
-      }
+  // Présentation calendar unifiée — plus de branche sequential. Les jours
+  // utilisés ici (Mar/Jeu/Ven) restent arbitraires pour les fixtures et
+  // alignés sur les testIds existants (timeline-day-2, etc.). Le placement
+  // réel (Lun/Mer/Ven par défaut) vit dans resolveWeekPresentation.
+  const presentation: WeekPresentation = {
+    mode: 'calendar',
+    sessions: sessions.map((slot, i) => ({
+      kind: 'dated' as const,
+      sessionSlot: slot,
+      dayOfWeek: ([2, 4, 5] as const)[i % 3],
+      dayLabel: ['Mar', 'Jeu', 'Ven'][i % 3],
+      matchProximity: null,
+    })),
+    matchEvents: [],
+    unavailableDays: [],
+    clubDays: [],
+    corrections: [],
+  }
 
-  const blockProgression = isSequential ? DEFAULT_BLOCK_PROGRESSION : undefined
+  // Progression par bloc disponible surtout en off_season (cycles H1..H8).
+  const blockProgression = surface.planningContext?.cycle === 'off_season'
+    ? DEFAULT_BLOCK_PROGRESSION
+    : undefined
 
   const emptyCorrections: WeekCorrection[] = []
 
@@ -491,52 +481,9 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.getByText(/Ma Semaine/)).toBeInTheDocument()
   })
 
-  it('sequential mode : renders sequential session list', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
-
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
-
-    expect(screen.queryByTestId('week-planning-legend')).toBeNull()
-    expect(screen.getByTestId('sequential-session-list')).toBeInTheDocument()
-    expect(screen.queryByTestId('mother-session-week-panel')).toBeNull()
-  })
-
-  it('sequential mode : title is "Mon Programme" not "Ma Semaine"', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
-
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
-
-    expect(screen.getByText(/Mon Programme/)).toBeInTheDocument()
-    expect(screen.queryByText(/Ma Semaine/)).toBeNull()
-  })
-
-  it('sequential mode : shows block progression label and progress', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
-
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
-
-    expect(screen.getByTestId('sequential-progress')).toBeInTheDocument()
-    // Block label appears in both header suffix and progress section
-    expect(screen.getAllByText('Inter-saison · Hypertrophie').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getByText('4/12 séances')).toBeInTheDocument()
-  })
-
-  it('sequential mode : session cards are numbered', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
-
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
-
-    expect(screen.getByTestId('sequential-session-card-0')).toBeInTheDocument()
-  })
-
-  it('sequential mode : fatigue check-in still visible', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
-
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
-
-    expect(screen.getByText('En forme')).toBeInTheDocument()
-    expect(screen.getByText('Fatigué')).toBeInTheDocument()
-  })
+  // Tests retirés : l'ancien mode "sequential" n'existe plus — toute la semaine
+  // (y compris off_season) est rendue via CalendarWeekTimeline avec séances
+  // placées sur Lun/Mer/Ven par défaut.
 
   // ── S2 Slice 3 — PlanningContextCard ──
 
@@ -683,11 +630,11 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.queryByTestId('add-match-cta')).toBeNull()
   })
 
-  it('sequential mode does NOT use calendar timeline', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
+  it('off-season uses the calendar timeline (unified week view)', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'calendar' })))
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    expect(screen.queryByTestId('calendar-week-timeline')).toBeNull()
+    expect(screen.getByTestId('calendar-week-timeline')).toBeInTheDocument()
   })
 
   // U18 hard-block supprimé — app réservée aux adultes, pas de blocage U18
@@ -803,13 +750,7 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.getByTestId('timeline-user-unavailable-1').textContent).toContain('Indisponible')
   })
 
-  it('sequential mode remains unaffected by calendar UX cleanup', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
-
-    expect(screen.getByTestId('sequential-session-list')).toBeInTheDocument()
-    expect(screen.queryByTestId('calendar-week-timeline')).toBeNull()
-  })
+  // Test retiré : le mode sequential n'existe plus (week view unifiée).
 
   it('calendar: existing correction actions (reschedule, skip) still render', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
@@ -966,22 +907,12 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.getByTestId('timeline-undo-unavailable-1')).toBeInTheDocument()
   })
 
-  it('sequential mode remains unaffected by this UX cleanup', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+  // Test retiré : le mode sequential n'existe plus (week view unifiée).
 
-    // Sequential list still renders
-    expect(screen.getByTestId('sequential-session-list')).toBeInTheDocument()
-    // No calendar artifacts
-    expect(screen.queryByTestId('calendar-week-timeline')).toBeNull()
-    // No global undo bar
-    expect(screen.queryByTestId('undo-bar')).toBeNull()
-  })
+  // ── Match bandeau en off-season ────────────────────────────────────
 
-  // ── Match bandeau in off-season sequential ─────────────────────────
-
-  it('off-season sequential: shows match bandeau when structural future match exists', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
+  it('off-season: shows match bandeau when structural future match exists', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'calendar' })))
     calendarState.structuralEvents = [
       { id: 'match-senior', date: '2026-09-12', type: 'match', opponent: 'Rouen' },
     ]
@@ -992,9 +923,8 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.getByText(/Voir calendrier/)).toBeInTheDocument()
   })
 
-  it('off-season sequential: no match bandeau when match is deferred (not in structuralEvents)', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
-    // Match is in visibleEvents but NOT in structuralEvents (deferred)
+  it('off-season: no match bandeau when match is deferred (not in structuralEvents)', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'calendar' })))
     calendarState.visibleEvents = [
       { id: 'match-deferred', date: '2026-09-12', type: 'match', opponent: 'Rouen' },
     ]
@@ -1004,13 +934,12 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.queryByText(/Match prévu le/)).toBeNull()
   })
 
-  it('off-season sequential: two matches, first deferred, bandeau shows structural one', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'sequential' })))
+  it('off-season: two matches, first deferred, bandeau shows structural one', () => {
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season', { schedulingMode: 'calendar' })))
     calendarState.visibleEvents = [
       { id: 'match-reserve', date: '2026-09-12', type: 'match', opponent: 'Réserve' },
       { id: 'match-senior', date: '2026-09-19', type: 'match', opponent: 'Dieppe' },
     ]
-    // First match deferred, second still structural
     calendarState.structuralEvents = [
       { id: 'match-senior', date: '2026-09-19', type: 'match', opponent: 'Dieppe' },
     ]

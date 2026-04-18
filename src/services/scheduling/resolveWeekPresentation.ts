@@ -1,7 +1,8 @@
 /**
- * Transforms resolved mother session slots into a presentation layer:
- * - Calendar mode → DatedSession[] with day placement and match proximity
- * - Sequential mode → SequentialSession[] with 1-based numbering
+ * Transforms resolved mother session slots into a presentation layer :
+ * un calendrier 7 jours (DatedSession[]) avec placement par jour de la semaine
+ * et proximité du match. Les séances sont placées Lun/Mer/Ven par défaut
+ * (quand il n'y a ni scSchedule, ni clubDays, ni matchs à contourner).
  *
  * Pure, synchronous, no side effects.
  */
@@ -18,10 +19,10 @@ import type {
   DatedSession,
   PresentedMatchEvent,
   SchedulingMode,
-  SequentialSession,
   WeekCorrection,
   WeekPresentation,
 } from '../../types/scheduling'
+import type { MotherSessionType } from '../../types/motherSession'
 
 // ── Public interface ────────────────────────────────────────────────
 
@@ -60,53 +61,41 @@ const SLOT_COUNT_DEFAULTS: Record<number, DayOfWeek[]> = {
 
 // ── Entry point ─────────────────────────────────────────────────────
 
+/**
+ * Ordre de tri pour placer les séances de la semaine : Lower d'abord, puis Upper,
+ * puis Full/Full Light, puis speed/power. Cet ordre est canonique quel que soit
+ * le mode de saison (in/off/pre) — les séances sont ensuite placées sur les
+ * jours de la semaine par `buildCalendarPresentation`.
+ */
+const SESSION_TYPE_SORT_ORDER: Record<MotherSessionType, number> = {
+  lower: 0,
+  upper: 1,
+  full: 2,
+  full_light_primer: 3,
+  speed_power: 4,
+}
+
+function sortedByCanonicalOrder(slots: ResolvedMotherSessionSlot[]): ResolvedMotherSessionSlot[] {
+  return [...slots].sort((a, b) => {
+    const ra = SESSION_TYPE_SORT_ORDER[a.session.metadata.sessionType] ?? 99
+    const rb = SESSION_TYPE_SORT_ORDER[b.session.metadata.sessionType] ?? 99
+    return ra - rb
+  })
+}
+
 export function resolveWeekPresentation(
   params: ResolveWeekPresentationParams,
 ): WeekPresentation {
-  const { motherSessions, schedulingMode, events, today, corrections } = params
+  const { motherSessions, events, today, corrections } = params
 
   // Filter to visible matches within the current ISO week only
   const matchEvents = getWeekMatchEvents(events, today)
 
-  if (schedulingMode === 'sequential') {
-    return buildSequentialPresentation(motherSessions, matchEvents, corrections)
-  }
-
-  return buildCalendarPresentation(motherSessions, matchEvents, corrections, params)
-}
-
-// ── Sequential mode ─────────────────────────────────────────────────
-
-function buildSequentialPresentation(
-  slots: ResolvedMotherSessionSlot[],
-  matchEvents: PresentedMatchEvent[],
-  corrections: WeekCorrection[],
-): WeekPresentation {
-  const total = slots.length
-
-  // Index skip corrections by sessionId
-  const skippedIds = new Set(
-    corrections
-      .filter((c) => c.type === 'skip' && c.sessionId)
-      .map((c) => c.sessionId!),
-  )
-
-  const sessions: SequentialSession[] = slots.map((slot, i) => ({
-    kind: 'sequential',
-    sessionSlot: slot,
-    sequenceIndex: i + 1,
-    totalInWeek: total,
-    completionStatus: skippedIds.has(slot.sessionId) ? 'skipped' : 'pending',
-  }))
-
-  return {
-    sessions,
-    matchEvents,
-    unavailableDays: [],
-    clubDays: [],
-    corrections,
-    mode: 'sequential',
-  }
+  // Une seule branche : le calendrier 7 jours est la vue unique, y compris en
+  // off_season / pre_season sans match (pattern par défaut Lun/Mer/Ven via
+  // SLOT_COUNT_DEFAULTS dans resolveCalendarDay).
+  const sortedSlots = sortedByCanonicalOrder(motherSessions)
+  return buildCalendarPresentation(sortedSlots, matchEvents, corrections, params)
 }
 
 // ── Calendar mode ───────────────────────────────────────────────────

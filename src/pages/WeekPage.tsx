@@ -22,12 +22,11 @@ import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
 import { CalendarWeekTimeline } from '../components/scheduling/CalendarWeekTimeline'
 import { WeekPlanningLegend } from '../components/planning'
-import { SequentialSessionList } from '../components/scheduling/SequentialSessionList'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
 import { SchedulingTransitionBanner, SeasonTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
 import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
-import type { DatedSession, SequentialSession } from '../types/scheduling'
+import type { DatedSession } from '../types/scheduling'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
@@ -142,28 +141,19 @@ export function WeekPage() {
   const primarySource = surface?.primarySource ?? 'mother_session'
   const isUnavailable = primarySource === 'unavailable'
   const msResolution = surface?.motherSession ?? null
-  const schedulingMode = surface?.schedulingMode ?? 'calendar'
-  const isSequential = schedulingMode === 'sequential'
+  const isOffSeason = surface?.planningContext?.cycle === 'off_season'
 
   const calendarSessions: DatedSession[] = useMemo(() => {
-    if (isSequential || !weekPresentation) return []
+    if (!weekPresentation) return []
     const dated = weekPresentation.sessions.filter(
       (s): s is DatedSession => s.kind === 'dated',
     )
     return mergeDatedSessionCompletion(dated, logs, today)
-  }, [isSequential, weekPresentation, logs, today])
-
-  const sequentialSessions: SequentialSession[] = useMemo(() => {
-    if (!isSequential || !weekPresentation) return []
-    return weekPresentation.sessions.filter(
-      (s): s is SequentialSession => s.kind === 'sequential',
-    )
-  }, [isSequential, weekPresentation])
+  }, [weekPresentation, logs, today])
 
   const hasWeekMatch = (weekPresentation?.matchEvents.length ?? 0) > 0
   const isRehabP1 = profile.rehabInjury?.phase === 1
-  const arGlobalOk = !isSequential
-    && !isUnavailable
+  const arGlobalOk = !isUnavailable
     && readinessResult.score >= 40
     && acwrResult.zone !== 'critical'
     && !isRehabP1
@@ -201,9 +191,7 @@ export function WeekPage() {
     ? snapshot?.confirmationRequired[0] ?? null
     : null
 
-  const weekPageTitle = isSequential
-    ? (lang === 'fr' ? 'Mon Programme' : 'My Program')
-    : (lang === 'fr' ? 'Ma Semaine' : 'My Week')
+  const weekPageTitle = lang === 'fr' ? 'Ma Semaine' : 'My Week'
 
   if (hasHardBlock) {
     const hardBlockTitle = lang === 'fr' ? 'Ma Semaine' : 'My Week'
@@ -238,9 +226,10 @@ export function WeekPage() {
       <PageHeader
         title={weekPageTitle}
         backTo="/home"
-        titleSuffix={isSequential
-          ? (blockProgression?.currentBlockLabel ?? '')
-          : localizeWeekLabel(surface?.planningContext.weekLabel ?? week, lang)}
+        titleSuffix={
+          blockProgression?.currentBlockLabel ??
+          localizeWeekLabel(surface?.planningContext.weekLabel ?? week, lang)
+        }
       />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
@@ -396,8 +385,7 @@ export function WeekPage() {
             )}
 
             {/* Match visible but not confirmed — informational bandeau */}
-            {surface?.planningContext?.cycle === 'off_season' &&
-             isSequential &&
+            {isOffSeason &&
              !profile.planningAnchors?.returnToTeamTrainingAt &&
              (() => {
                const futureMatch = structuralEvents.find((e) => e.type === 'match' && e.date >= today)
@@ -417,55 +405,42 @@ export function WeekPage() {
                )
              })()}
 
-            {/* Séances de la semaine — navigation vers /session/:id */}
-            {isSequential ? (
-              sequentialSessions.length > 0 ? (
-                <SequentialSessionList
-                  sessions={sequentialSessions}
-                  blockProgression={blockProgression}
-                  lang={lang}
-                  onSessionSelect={(index) => navigate(`/session/${index}`)}
-                  onSkipSession={skipSession}
-                />
-              ) : null
-            ) : (
-              <>
-              <div
-                data-testid="week-planning-legend"
-                className="rounded-2xl border border-border-app bg-layer-5 px-3 py-2.5"
-              >
-                <WeekPlanningLegend />
-              </div>
-              <CalendarWeekTimeline
-                sessions={calendarSessions}
-                matchEvents={weekPresentation?.matchEvents ?? []}
-                unavailableDays={weekPresentation?.unavailableDays ?? []}
-                clubDays={weekPresentation?.clubDays ?? []}
-                corrections={snapshot?.corrections ?? []}
-                activeRecoveryDates={activeRecoveryDates}
-                activeRecoveryEligibleDays={activeRecoveryEligibleDays}
-                isRecoveryDay={isRecoveryDay}
-                onActiveRecoveryComplete={(activityType, durationMin, rpe) => {
-                  addLog({
-                    dateISO: new Date().toISOString(),
-                    week: week as import('../types/training').CycleWeek,
-                    sessionType: 'ACTIVE_RECOVERY',
-                    fatigue,
-                    rpe,
-                    durationMin,
-                    sessionLabel: activityType,
-                  })
-                }}
-                today={today}
-                lang={lang}
-                onSessionSelect={(index) => navigate(`/session/${index}`)}
-                onSkipSession={skipSession}
-                onRescheduleSession={rescheduleSession}
-                onMarkDayUnavailable={markDayUnavailable}
-                onUndoCorrection={undoCorrection}
-              />
-              </>
-            )}
+            {/* Séances de la semaine — vue calendrier 7 jours tout le temps,
+                y compris off_season (séances placées en Lun/Mer/Ven par défaut). */}
+            <div
+              data-testid="week-planning-legend"
+              className="rounded-2xl border border-border-app bg-layer-5 px-3 py-2.5"
+            >
+              <WeekPlanningLegend />
+            </div>
+            <CalendarWeekTimeline
+              sessions={calendarSessions}
+              matchEvents={weekPresentation?.matchEvents ?? []}
+              unavailableDays={weekPresentation?.unavailableDays ?? []}
+              clubDays={weekPresentation?.clubDays ?? []}
+              corrections={snapshot?.corrections ?? []}
+              activeRecoveryDates={activeRecoveryDates}
+              activeRecoveryEligibleDays={activeRecoveryEligibleDays}
+              isRecoveryDay={isRecoveryDay}
+              onActiveRecoveryComplete={(activityType, durationMin, rpe) => {
+                addLog({
+                  dateISO: new Date().toISOString(),
+                  week: week as import('../types/training').CycleWeek,
+                  sessionType: 'ACTIVE_RECOVERY',
+                  fatigue,
+                  rpe,
+                  durationMin,
+                  sessionLabel: activityType,
+                })
+              }}
+              today={today}
+              lang={lang}
+              onSessionSelect={(index) => navigate(`/session/${index}`)}
+              onSkipSession={skipSession}
+              onRescheduleSession={rescheduleSession}
+              onMarkDayUnavailable={markDayUnavailable}
+              onUndoCorrection={undoCorrection}
+            />
           </section>
         )}
 
