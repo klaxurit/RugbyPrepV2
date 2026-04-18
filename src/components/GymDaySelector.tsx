@@ -16,9 +16,16 @@ interface Props {
 }
 
 export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onChange }: Props) {
+  const count = selectedDays.size
+  const atLimit = count >= weeklySessions
+
   const toggle = (day: DayOfWeek) => {
+    const isSelected = selectedDays.has(day)
+    // Hard-cap sur weeklySessions — l'user ne peut pas cocher plus que 2/3 jours.
+    if (!isSelected && atLimit) return
     const next = new Set(selectedDays)
-    if (next.has(day)) { next.delete(day) } else { next.add(day) }
+    if (isSelected) next.delete(day)
+    else next.add(day)
     onChange(next)
   }
 
@@ -35,8 +42,6 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
     return gap < 2
   })
 
-  const count = selectedDays.size
-
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -52,20 +57,23 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
         {WEEK_DAYS.map((day) => {
           const info = getDayInfo(day, clubSchedule)
           const selected = selectedDays.has(day)
+          const disabled = !selected && atLimit
 
-          // Styles selon sélection + risk (dark theme)
+          // Styles selon sélection + risk (semantic tokens, fonds opaques -strong pour contraste).
           let btnClass = ''
           if (selected) {
-            if (info.risk === 'match') btnClass = 'bg-red-900/20 border-red-400/60 text-red-300'
-            else if (info.risk === 'near_match') btnClass = 'bg-orange-900/20 border-orange-400/60 text-orange-300'
-            else if (info.risk === 'recovery') btnClass = 'bg-amber-900/20 border-amber-400/60 text-amber-300'
-            else if (info.risk === 'club') btnClass = 'bg-violet-900/20 border-violet-400/60 text-violet-300'
+            if (info.risk === 'match') btnClass = 'bg-danger-bg-hover border-danger-bd text-danger'
+            else if (info.risk === 'near_match') btnClass = 'bg-warn-bg-strong border-warn-bd-strong text-warn-strong'
+            else if (info.risk === 'recovery') btnClass = 'bg-warn-bg-strong border-warn-bd-strong text-warn-strong'
+            else if (info.risk === 'club') btnClass = 'bg-info-bg border-info-bd text-info'
             else btnClass = 'bg-brand-soft border-brand text-brand-tint'
+          } else if (disabled) {
+            btnClass = 'bg-layer-5 border-border-app text-fg-faint opacity-50 cursor-not-allowed'
           } else {
-            if (info.risk === 'match') btnClass = 'bg-layer-5 border-red-900/40 text-fg-muted hover:border-red-500/40'
-            else if (info.risk === 'near_match') btnClass = 'bg-layer-5 border-orange-900/40 text-fg-muted hover:border-orange-500/40'
-            else if (info.risk === 'club') btnClass = 'bg-layer-5 border-violet-900/40 text-fg-muted hover:border-violet-500/40'
-            else btnClass = 'bg-layer-5 border-border-app text-fg-muted hover:border-border-app'
+            if (info.risk === 'match') btnClass = 'bg-layer-5 border-danger-bd text-fg-muted hover:border-danger'
+            else if (info.risk === 'near_match') btnClass = 'bg-layer-5 border-warn-bd text-fg-muted hover:border-warn'
+            else if (info.risk === 'club') btnClass = 'bg-layer-5 border-info-bd text-fg-muted hover:border-info'
+            else btnClass = 'bg-layer-5 border-border-app text-fg-muted hover:border-layer-20'
           }
 
           return (
@@ -73,19 +81,23 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
               key={day}
               type="button"
               onClick={() => toggle(day)}
+              disabled={disabled}
+              aria-disabled={disabled}
               className={`relative flex flex-col items-center justify-center py-2.5 rounded-2xl border-2 text-xs font-black transition-all ${btnClass}`}
             >
               <span>{LABELS_SHORT[day]}</span>
               <span className="text-[8px] font-bold mt-0.5 opacity-70">{LABELS_FULL[day]}</span>
 
-              {/* Badge informatif sous le bouton */}
+              {/* Badge informatif sous le bouton — fonds opaques (les tokens -bg sont
+                  en rgba 0.95-0.98 et laissent transparaître les contours de la card
+                  derrière, ce qui donne un rendu gris/sale). */}
               {info.risk === 'club' && (
-                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[7px] font-black bg-violet-900/60 text-violet-300 px-1 py-px rounded-full whitespace-nowrap leading-tight">
+                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[7px] font-black bg-blue-100 border border-blue-300 text-blue-700 px-1 py-px rounded-full whitespace-nowrap leading-tight">
                   club
                 </span>
               )}
               {info.risk === 'match' && (
-                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[7px] font-black bg-red-900/60 text-red-300 px-1 py-px rounded-full whitespace-nowrap leading-tight">
+                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[7px] font-black bg-red-100 border border-red-300 text-red-700 px-1 py-px rounded-full whitespace-nowrap leading-tight">
                   match
                 </span>
               )}
@@ -94,7 +106,7 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
         })}
       </div>
 
-      {/* Alertes match uniquement — concises */}
+      {/* Alertes match uniquement — concises, fonds opaques pour lisibilité */}
       {matchAlerts.length > 0 && (
         <div className="space-y-1.5 mt-1">
           {matchAlerts.map(({ day, info }) => (
@@ -102,10 +114,8 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
               key={day}
               className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium ${
                 info.risk === 'match'
-                  ? 'bg-red-900/20 text-red-300 border border-red-500/20'
-                  : info.risk === 'near_match'
-                    ? 'bg-orange-900/20 text-orange-300 border border-orange-500/20'
-                    : 'bg-amber-900/20 text-amber-300 border border-amber-500/20'
+                  ? 'bg-danger-bg-hover text-danger border border-danger-bd'
+                  : 'bg-warn-bg-strong text-warn-strong border border-warn-bd-strong'
               }`}
             >
               <span className="font-black">{LABELS_FULL[day]} —</span>
@@ -117,7 +127,7 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
 
       {/* Alerte séances trop rapprochées */}
       {hasCloseSessions && (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-900/20 border border-amber-500/20 text-xs text-amber-300">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-warn-bg-strong border border-warn-bd-strong text-xs text-warn-strong">
           <span className="font-black">⚠</span>
           <span>Deux séances consécutives — laisse au moins 1 jour de récup entre chaque.</span>
         </div>
@@ -126,6 +136,11 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
       {count < weeklySessions && (
         <p className="text-xs text-fg-muted text-center">
           {weeklySessions - count} jour{weeklySessions - count > 1 ? 's' : ''} restant{weeklySessions - count > 1 ? 's' : ''}
+        </p>
+      )}
+      {count === weeklySessions && (
+        <p className="text-xs text-brand-tint text-center font-bold">
+          Tu as sélectionné {weeklySessions} jour{weeklySessions > 1 ? 's' : ''} — décoche pour en changer.
         </p>
       )}
     </div>
