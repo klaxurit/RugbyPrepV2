@@ -365,7 +365,7 @@ export function SessionDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-44 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-64 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title={pageTitle} backTo="/week" titleSuffix={pageSuffix} />
