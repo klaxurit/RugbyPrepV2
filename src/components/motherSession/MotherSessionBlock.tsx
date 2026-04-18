@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Eye } from 'lucide-react'
+import { Eye, Timer } from 'lucide-react'
 import type { Block } from '../../types/motherSession'
 import type { BlockLog, ExerciseLogEntry, SessionType, CycleWeek, FatigueStatus } from '../../types/training'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
@@ -10,6 +10,8 @@ import { resolveExerciseId, isDirectiveText } from '../../services/motherSession
 import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import { ExerciseDemoSheet } from './ExerciseDemoSheet'
 import { SessionTourTracker } from './SessionTourTracker'
+import { TimedBlockOverlay, type TimedBlockResult } from './TimedBlockOverlay'
+import { parseBlockFormat, isTimedFormat } from '../../services/ui/parseBlockFormat'
 
 export type MotherSessionBlockProps = {
   block: Block
@@ -118,7 +120,19 @@ export function MotherSessionBlock({
     [block.exercises],
   )
 
+  // Format temporel détecté depuis `block.format` ("EMOM 8'", "Tabata 8x 20/10s"…).
+  const parsedFormat = useMemo(() => parseBlockFormat(blockFormat), [blockFormat])
+  const isTimed = isTimedFormat(parsedFormat)
+
   const [demoExerciseId, setDemoExerciseId] = useState<string | null>(null)
+  const [timedOverlayOpen, setTimedOverlayOpen] = useState(false)
+
+  const handleTimedFinish = (_result: TimedBlockResult) => {
+    setTimedOverlayOpen(false)
+    // Notifie le parent que le bloc est considéré terminé.
+    // Le résultat détaillé (temps, tours AMRAP) pourra être persisté plus tard.
+    onBlockCompleted?.()
+  }
 
   return (
     <article className={hideHeader ? '' : 'rounded-2xl border border-border-app bg-layer-5 p-4'}>
@@ -162,8 +176,32 @@ export function MotherSessionBlock({
         </ul>
       ) : null}
 
-      {/* Mode En cours : tracker par TOURS (enchaînement des exos du bloc). */}
-      {runMode && hasLoggable && (
+      {/* Mode En cours — format temporel (EMOM, Tabata, AMRAP, For Time) :
+          bouton "Démarrer le bloc" qui ouvre l'overlay chrono en bas d'écran. */}
+      {runMode && isTimed && (
+        <div className="mt-4 rounded-2xl border border-brand-border bg-brand-soft/40 p-3 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[11px] font-black uppercase tracking-widest text-brand-tint">
+              Bloc chronométré
+            </p>
+            <p className="text-xs text-fg-secondary mt-0.5">
+              Le chrono guide automatiquement chaque intervalle — pose ton téléphone.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setTimedOverlayOpen(true)}
+            disabled={timedOverlayOpen}
+            className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 h-9 rounded-xl bg-brand text-on-brand text-xs font-black uppercase tracking-wide rf-focus-ring disabled:opacity-50"
+          >
+            <Timer className="w-3.5 h-3.5" />
+            Démarrer
+          </button>
+        </div>
+      )}
+
+      {/* Mode En cours — format classique : tracker par TOURS. */}
+      {runMode && !isTimed && hasLoggable && (
         <SessionTourTracker
           block={block}
           lang={lang}
@@ -207,6 +245,17 @@ export function MotherSessionBlock({
         lang={lang}
         onClose={() => setDemoExerciseId(null)}
       />
+
+      {isTimed && (
+        <TimedBlockOverlay
+          block={block}
+          format={parsedFormat}
+          frExerciseNames={frBlock?.exercises.map((e) => e.name)}
+          isOpen={timedOverlayOpen}
+          onFinish={handleTimedFinish}
+          onCancel={() => setTimedOverlayOpen(false)}
+        />
+      )}
     </article>
   )
 }
