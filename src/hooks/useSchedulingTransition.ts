@@ -6,7 +6,7 @@
  *
  * Render-pure: detection is read-only. Baseline updates happen in useEffect.
  */
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { SchedulingMode, SchedulingTransition } from '../types/scheduling'
 import type { SessionLog } from '../types/training'
 
@@ -49,8 +49,12 @@ export function useSchedulingTransition(
   const identity = userId ?? 'anon'
   const dismissKey = `${DISMISS_KEY_PREFIX}.${identity}`
 
+  // Forces useMemo re-eval after dismiss writes to localStorage (which isn't reactive).
+  const [dismissCount, setDismissCount] = useState(0)
+
   // Pure detection — reads only, no writes during render
   const transition = useMemo((): SchedulingTransition | null => {
+    void dismissCount
     if (!schedulingMode) return null
 
     const dismissed = readDismissed(storage, dismissKey)
@@ -99,7 +103,7 @@ export function useSchedulingTransition(
     }
 
     return null
-  }, [schedulingMode, logs, today, identity, storage, dismissKey])
+  }, [schedulingMode, logs, today, identity, storage, dismissKey, dismissCount])
 
   // Commit-phase: persist baseline after detection
   const baselineWrittenRef = useRef<string>('')
@@ -122,6 +126,7 @@ export function useSchedulingTransition(
     d.setDate(d.getDate() + days)
     dismissed[type] = d.toISOString().slice(0, 10)
     writeDismissed(storage, dismissKey, dismissed)
+    setDismissCount((c) => c + 1)
   }, [today, storage, dismissKey])
 
   return { transition, dismiss }

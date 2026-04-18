@@ -59,6 +59,9 @@ export function WeekPage() {
   const { canShowUpsell: weekCanShowUpsell } = useUpsellTiming()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
+  // Local state shadowing `isDismissed('week_match')` so dismiss re-renders immediately.
+  const [weekMatchUpsellDismissed, setWeekMatchUpsellDismissed] = useState(() => isDismissed('week_match'))
+
   useEffect(() => {
     posthog.capture('week_viewed')
     markWeekViewed()
@@ -466,7 +469,7 @@ export function WeekPage() {
         )}
 
         {/* T2.5: Upsell contextuel — match dans les 3 jours */}
-        {!weekIsPremium && weekCanShowUpsell && !isDismissed('week_match') && (() => {
+        {!weekIsPremium && weekCanShowUpsell && !weekMatchUpsellDismissed && (() => {
           const now = new Date()
           now.setHours(0, 0, 0, 0)
           const in3days = new Date(now)
@@ -481,7 +484,10 @@ export function WeekPage() {
             <PremiumUpsellCard
               title="Match dans les prochains jours"
               body="Adapte ta semaine automatiquement en fonction du match — Premium."
-              onDismiss={() => dismissUpsell('week_match')}
+              onDismiss={() => {
+                dismissUpsell('week_match')
+                setWeekMatchUpsellDismissed(true)
+              }}
             />
           )
         })()}

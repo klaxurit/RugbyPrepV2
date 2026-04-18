@@ -943,9 +943,8 @@ export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<string | undefined>()
   const [showHidden, setShowHidden] = useState(false)
   const [showPlayoffExitModal, setShowPlayoffExitModal] = useState(false)
-  const clubContextIncomplete = !profile.clubCode || !profile.ffrCompetitionId
-  const [clubContextExpandedWhenComplete, setClubContextExpandedWhenComplete] = useState(true)
-  const showClubContext = clubContextIncomplete || clubContextExpandedWhenComplete
+  const [clubContextExpanded, setClubContextExpanded] = useState(true)
+  const showClubContext = clubContextExpanded
   const [clubQuery, setClubQuery] = useState(profile.clubName ?? '')
   const [showPlanningEditor, setShowPlanningEditor] = useState(false)
   const [editClubDays, setEditClubDays] = useState<Set<DayOfWeek>>(new Set())
@@ -1341,7 +1340,7 @@ export function CalendarPage() {
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setClubContextExpandedWhenComplete((current) => !current)}
+                onClick={() => setClubContextExpanded((current) => !current)}
                 className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 transition-colors rf-focus-ring"
                 aria-expanded={showClubContext}
                 aria-label={showClubContext ? 'Réduire le contexte club' : 'Afficher le contexte club'}
