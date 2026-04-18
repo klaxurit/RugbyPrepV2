@@ -86,7 +86,7 @@ export function CoachBubble({
             src={open ? compagnonOpen : compagnonClosed}
             alt=""
             aria-hidden
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             draggable={false}
           />
         </button>
