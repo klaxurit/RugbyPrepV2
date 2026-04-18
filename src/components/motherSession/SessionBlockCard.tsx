@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Check } from 'lucide-react'
 import type { Block } from '../../types/motherSession'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import { msLabel } from '../../services/motherSession/motherSessionLabels'
@@ -9,27 +9,33 @@ import {
   estimateBlockMinutes,
   summarizeBlockExercises,
 } from '../../services/ui/blockPresentation'
-import { useSessionRun } from '../../contexts/SessionRunContext'
 
 interface SessionBlockCardProps {
   block: Block
   lang: AppLang
   /** Contenu déplié — typiquement un <MotherSessionBlock hideHeader />. */
   children: ReactNode
-  /** Si true, la carte démarre ouverte. Par défaut : Bloc 1 et échauffement ouverts. */
+  /** Mode Aperçu uniquement : ouvre par défaut le Bloc 1 et les warmups. */
   defaultOpen?: boolean
   /** Nom du bloc depuis frBlock (FR) — fallback sur block.name. */
   displayName?: string
-  /** La séance courante est-elle en cours d'exécution ? Passé explicitement depuis l'hôte
-   *  — on ne se base PAS sur `sessionRun.status` seul pour ne pas forcer l'ouverture
-   *  sur d'autres séances quand un run d'une séance différente traîne en localStorage. */
+  /** Y a-t-il une séance en cours pour CETTE séance spécifiquement ? */
   isRunning?: boolean
+  /** En mode running : ce bloc est-il le bloc actif (déplié, en cours d'exécution) ? */
+  runModeActive?: boolean
+  /** En mode running : tous les tours sont-ils validés ? Affiche "Terminé ✓". */
+  runModeCompleted?: boolean
 }
 
 /**
- * Carte résumé cliquable pour un bloc de séance — mode Aperçu.
- * Fermée : icône + nom + durée + résumé 2-3 exos. Tap pour déplier.
- * Ouverte : rend `children` (MotherSessionBlock sans header).
+ * Carte résumé cliquable pour un bloc de séance.
+ *
+ * Modes :
+ *  - Aperçu : toggle manuel via le chevron, ouvert si `defaultOpen`.
+ *  - En cours (isRunning) : ouverture forcée par l'hôte via `runModeActive`.
+ *    L'utilisateur n'agit PAS sur l'accordéon pendant l'exécution — un seul
+ *    bloc actif à la fois, les autres affichent un header résumé (ou
+ *    "Terminé ✓" s'ils sont bouclés).
  */
 export function SessionBlockCard({
   block,
@@ -38,12 +44,17 @@ export function SessionBlockCard({
   defaultOpen = false,
   displayName,
   isRunning = false,
+  runModeActive = false,
+  runModeCompleted = false,
 }: SessionBlockCardProps) {
   const [open, setOpen] = useState(defaultOpen)
-  const sessionRun = useSessionRun()
 
-  // En mode running (cette séance spécifiquement), toujours ouvert.
-  const isOpen = isRunning || open
+  // Déterminer l'état d'ouverture :
+  //   - Running + actif → forcé ouvert.
+  //   - Running + autre (à venir / terminé) → fermé (pas d'interaction).
+  //   - Aperçu → open state local piloté par le toggle manuel.
+  const isOpen = isRunning ? runModeActive : open
+  const canToggle = !isRunning
 
   const icon = iconForBlock(block)
   const minutes = estimateBlockMinutes(block)
@@ -52,19 +63,22 @@ export function SessionBlockCard({
     id ? getExerciseName(id, lang) : fallback,
   )
 
-  // Progress : combien d'exos de ce bloc sont cochés (mode running).
-  const totalLoggable = block.exercises.filter((ex) => ex.exerciseId || ex.name).length
-  const completedInBlock = Array.from(sessionRun.completedExercises).filter((key) =>
-    key.startsWith(`${block.number}_`),
-  ).length
+  // Ribbon visuel : actif / terminé / à venir / aperçu neutre.
+  const statusClass = isRunning
+    ? runModeCompleted
+      ? 'border-ok-bd'
+      : runModeActive
+        ? 'border-brand-border-strong shadow-sm'
+        : 'border-border-app opacity-75'
+    : 'border-border-app'
 
   return (
-    <article className="rounded-2xl border border-border-app bg-layer-5 overflow-hidden">
+    <article className={`rounded-2xl border overflow-hidden bg-layer-5 ${statusClass}`}>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => canToggle && setOpen((v) => !v)}
         aria-expanded={isOpen}
-        disabled={isRunning}
+        disabled={!canToggle}
         className="w-full text-left px-4 py-3.5 flex items-center gap-3 hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent"
       >
         <span aria-hidden className="text-xl leading-none flex-shrink-0">
@@ -72,15 +86,23 @@ export function SessionBlockCard({
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-sm font-black text-fg leading-tight">{name}</h3>
+            <h3 className={`text-sm font-black leading-tight ${runModeCompleted ? 'text-fg-muted' : 'text-fg'}`}>
+              {name}
+            </h3>
             {block.isOptional && (
               <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">
                 {msLabel('optional', lang)}
               </span>
             )}
-            {isRunning && totalLoggable > 0 && (
-              <span className={`text-[10px] font-black tabular-nums ${completedInBlock === totalLoggable ? 'text-ok-strong' : 'text-fg-muted'}`}>
-                {completedInBlock}/{totalLoggable}
+            {isRunning && runModeCompleted && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-ok-strong text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wide">
+                <Check className="w-3 h-3" strokeWidth={3} />
+                Terminé
+              </span>
+            )}
+            {isRunning && runModeActive && (
+              <span className="inline-flex items-center rounded-full bg-brand text-on-brand px-2 py-0.5 text-[10px] font-black uppercase tracking-wide">
+                En cours
               </span>
             )}
           </div>
@@ -94,7 +116,7 @@ export function SessionBlockCard({
               {minutes} min
             </span>
           )}
-          {!isRunning && (
+          {canToggle && (
             <ChevronDown
               className={`w-4 h-4 text-fg-faint transition-transform ${isOpen ? 'rotate-180' : ''}`}
             />

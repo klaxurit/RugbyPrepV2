@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, Play } from 'lucide-react'
-import { useSessionRun } from '../contexts/SessionRunContext'
+import { useSessionRun, buildExerciseTourKey } from '../contexts/SessionRunContext'
 import { SessionRunProgress } from '../components/motherSession/SessionRunProgress'
 import { RestTimerOverlay } from '../components/motherSession/RestTimerOverlay'
 import { SessionCelebration } from '../components/motherSession/SessionCelebration'
-import { isDirectiveText } from '../services/motherSession/motherSessionExerciseMap'
+import { isDirectiveText, resolveExerciseId } from '../services/motherSession/motherSessionExerciseMap'
+import { parseBlockTourCount } from '../services/ui/blockPresentation'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
@@ -185,13 +186,71 @@ export function SessionDetailPage() {
   // ── Session Run Mode ─────────────────────────────────────────────────────
   const sessionRunKey = activeSlot ? `${activeSlot.session.metadata.id}_${today}` : null
   const isRunning = sessionRunKey != null && sessionRun.isRunningFor(sessionRunKey)
-  const totalExercises = useMemo(() => {
-    if (!activeSlot) return 0
-    return activeSlot.session.blocks.reduce(
-      (sum, b) => sum + b.exercises.filter((e) => !isDirectiveText(e.name)).length,
-      0,
-    )
-  }, [activeSlot])
+
+  // Progression par TOURS (pas par série/exo). Un tour est "validé" quand tous
+  // les exos loggables du bloc sont cochés pour ce tourIndex.
+  const runProgress = useMemo(() => {
+    if (!activeSlot) {
+      return {
+        totalTours: 0,
+        completedTours: 0,
+        activeBlockIndex: 0,
+        totalBlocks: 0,
+        activeBlockName: '',
+        activeTourIndex: null as number | null,
+        activeBlockTourCount: 0,
+      }
+    }
+    const blocks = activeSlot.session.blocks
+    let totalTours = 0
+    let completedTours = 0
+    let activeBlockIndex = 0 // 0 = pas encore trouvé
+    let activeBlockName = ''
+    let activeTourIndex: number | null = null
+    let activeBlockTourCount = 0
+    for (let b = 0; b < blocks.length; b++) {
+      const block = blocks[b]
+      const loggableIdx: number[] = []
+      block.exercises.forEach((ex, i) => {
+        if (isDirectiveText(ex.name)) return
+        if (!(ex.exerciseId || resolveExerciseId(ex.name))) return
+        loggableIdx.push(i)
+      })
+      const tours = parseBlockTourCount(block)
+      if (loggableIdx.length === 0) continue
+      totalTours += tours
+      let blockCompletedTours = 0
+      let blockActiveTour: number | null = null
+      for (let t = 0; t < tours; t++) {
+        const allDone = loggableIdx.every((i) =>
+          sessionRun.completedExercises.has(buildExerciseTourKey(block.number, t, i)),
+        )
+        if (allDone) blockCompletedTours += 1
+        else if (blockActiveTour === null) blockActiveTour = t
+      }
+      completedTours += blockCompletedTours
+      if (activeBlockIndex === 0 && blockActiveTour !== null) {
+        activeBlockIndex = b + 1
+        activeBlockName = block.name
+        activeTourIndex = blockActiveTour + 1
+        activeBlockTourCount = tours
+      }
+    }
+    // Si tout est fini, on garde l'index du dernier bloc pour l'affichage final.
+    if (activeBlockIndex === 0 && blocks.length > 0) {
+      activeBlockIndex = blocks.length
+      activeBlockName = blocks[blocks.length - 1].name
+    }
+    return {
+      totalTours,
+      completedTours,
+      activeBlockIndex,
+      totalBlocks: blocks.length,
+      activeBlockName,
+      activeTourIndex,
+      activeBlockTourCount,
+    }
+  }, [activeSlot, sessionRun.completedExercises])
 
   const handleStartSession = () => {
     if (!sessionRunKey) return
@@ -212,26 +271,23 @@ export function SessionDetailPage() {
   const celebrationStats = useMemo(() => {
     const startedAt = sessionRun.startedAt
     const durationMin = startedAt ? Math.max(1, Math.round((Date.now() - startedAt) / 60000)) : 0
-    let totalSets = 0
+    // "totalSets" = étapes exo-tour validées (1 coche = 1 "série" pour l'affichage).
+    const totalSets = sessionRun.completedExercises.size
     let tonnageKg = 0
     let hasAnyLoad = false
-    Object.values(sessionRun.perExerciseSets).forEach((sets) => {
-      sets.forEach((s) => {
-        if (s.done) {
-          totalSets += 1
-          if (s.loadKg != null && s.reps != null) {
-            tonnageKg += s.loadKg * s.reps
-            hasAnyLoad = true
-          }
-        }
-      })
-    })
+    for (const key of sessionRun.completedExercises) {
+      const load = sessionRun.exerciseTourLoads[key]
+      if (load?.loadKg != null && load?.reps != null) {
+        tonnageKg += load.loadKg * load.reps
+        hasAnyLoad = true
+      }
+    }
     return {
       durationMin,
       totalSets,
       tonnageKg: hasAnyLoad ? Math.round(tonnageKg) : null,
     }
-  }, [sessionRun.perExerciseSets, sessionRun.startedAt])
+  }, [sessionRun.completedExercises, sessionRun.exerciseTourLoads, sessionRun.startedAt])
 
   // ── Title ────────────────────────────────────────────────────────────────
   const pageTitle = activeSlot
@@ -290,9 +346,14 @@ export function SessionDetailPage() {
 
       {isRunning && sessionRun.startedAt != null && (
         <SessionRunProgress
-          totalExercises={totalExercises}
-          completedExercises={sessionRun.completedExercises.size}
+          totalTours={runProgress.totalTours}
+          completedTours={runProgress.completedTours}
           startedAt={sessionRun.startedAt}
+          activeBlockIndex={runProgress.activeBlockIndex}
+          totalBlocks={runProgress.totalBlocks}
+          activeBlockName={runProgress.activeBlockName}
+          activeTourIndex={runProgress.activeTourIndex}
+          activeBlockTourCount={runProgress.activeBlockTourCount}
           onQuit={handleQuitRunningSession}
         />
       )}

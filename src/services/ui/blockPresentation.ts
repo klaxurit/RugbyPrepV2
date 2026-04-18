@@ -79,17 +79,65 @@ function parseSets(prescription: string): number | null {
 }
 
 function parseRestSeconds(prescription: string): number | null {
-  const sec = prescription.match(/@\s*(\d+)\s*s/i)
+  const sec = prescription.match(/(?:@|\()\s*(\d+)\s*s\b/i)
   if (sec) {
     const n = Number(sec[1])
     return Number.isFinite(n) ? n : null
   }
-  const min = prescription.match(/(?:@|repos)\s*(\d+)\s*min/i)
+  const min = prescription.match(/(?:@|repos(?:\s+\w+)?)\s*(\d+)(?:\s*[-–]\s*\d+)?\s*min/i)
   if (min) {
     const n = Number(min[1])
     return Number.isFinite(n) ? n * 60 : null
   }
   return null
+}
+
+/**
+ * Nombre de TOURS à exécuter pour ce bloc (enchaînement des exos).
+ * Stratégie : lire le format ("3 tours", "4 rounds"), sinon le premier exo loggable
+ * (prescription "4×5" → 4 tours), sinon défaut à 3.
+ */
+export function parseBlockTourCount(block: Block): number {
+  if (block.format) {
+    const tourMatch = block.format.match(/(\d+)\s*(?:tour|round)/i)
+    if (tourMatch) {
+      const n = Number(tourMatch[1])
+      if (Number.isFinite(n) && n > 0 && n <= 12) return n
+    }
+  }
+  for (const ex of block.exercises) {
+    if (isDirectiveText(ex.name)) continue
+    const n = parseSets(ex.prescription)
+    if (n != null) return n
+  }
+  return 3
+}
+
+/**
+ * Durée de repos inter-tours en secondes. Lue sur le format d'abord (ex. "Repos 3 min"),
+ * sinon sur la 1ère prescription. Défaut 90s.
+ */
+export function parseBlockRestSeconds(block: Block): number {
+  if (block.format) {
+    const fromFormat = parseRestSeconds(block.format)
+    if (fromFormat != null) return fromFormat
+  }
+  for (const ex of block.exercises) {
+    if (isDirectiveText(ex.name)) continue
+    const fromPrescription = parseRestSeconds(ex.prescription)
+    if (fromPrescription != null) return fromPrescription
+  }
+  return 90
+}
+
+/**
+ * Prescription à exécuter par tour pour un exo — strip le préfixe "N×" qui désigne
+ * le nombre de tours global (repris depuis le bloc), on ne garde que la consigne
+ * par tour (reps, temps, distance, …).
+ */
+export function perTourPrescription(prescription: string): string {
+  const stripped = prescription.replace(/^\s*\d+\s*[x×]\s*/i, '').trim()
+  return stripped.length > 0 ? stripped : prescription
 }
 
 /**

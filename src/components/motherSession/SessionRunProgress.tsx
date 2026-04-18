@@ -2,23 +2,38 @@ import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface SessionRunProgressProps {
-  /** Nombre total d'exercices cochables dans la séance. */
-  totalExercises: number
-  /** Nombre d'exercices déjà cochés. */
-  completedExercises: number
+  /** Nombre total de TOURS à valider sur l'ensemble de la séance. */
+  totalTours: number
+  /** Nombre de tours entièrement validés. */
+  completedTours: number
   /** Timestamp de démarrage (ms). */
   startedAt: number
+  /** Index du bloc actif (1-based) dans la séance (ex. 1 si c'est le 1er bloc). */
+  activeBlockIndex: number
+  /** Nombre total de blocs affichés. */
+  totalBlocks: number
+  /** Nom du bloc actif. */
+  activeBlockName: string
+  /** Tour actif (1-based) dans le bloc actif. null si le bloc est terminé. */
+  activeTourIndex: number | null
+  /** Nombre total de tours dans le bloc actif. */
+  activeBlockTourCount: number
   onQuit: () => void
 }
 
 /**
- * Sticky header affiché en mode "En cours" — progression + timer + quit.
- * Remplace l'aperçu calme par une barre d'action qui donne le rythme.
+ * Sticky header affiché en mode "En cours" — progression globale (tours), timer,
+ * localisation (bloc actif + tour actif), bouton quit.
  */
 export function SessionRunProgress({
-  totalExercises,
-  completedExercises,
+  totalTours,
+  completedTours,
   startedAt,
+  activeBlockIndex,
+  totalBlocks,
+  activeBlockName,
+  activeTourIndex,
+  activeBlockTourCount,
   onQuit,
 }: SessionRunProgressProps) {
   const [elapsedMin, setElapsedMin] = useState(() => Math.floor((Date.now() - startedAt) / 60000))
@@ -30,13 +45,17 @@ export function SessionRunProgress({
     return () => window.clearInterval(id)
   }, [startedAt])
 
-  const pct = totalExercises === 0 ? 0 : Math.min(1, completedExercises / totalExercises)
+  const pct = totalTours === 0 ? 0 : Math.min(1, completedTours / totalTours)
+
+  const subLabel = activeTourIndex != null
+    ? `Bloc ${activeBlockIndex}/${totalBlocks} · ${activeBlockName} · Tour ${activeTourIndex}/${activeBlockTourCount}`
+    : `Bloc ${activeBlockIndex}/${totalBlocks} · ${activeBlockName}`
 
   return (
     <div
       className="sticky top-[72px] z-30 bg-app/95 backdrop-blur border-b border-border-app"
       role="status"
-      aria-label={`Séance en cours — ${completedExercises} sur ${totalExercises} exercices, ${elapsedMin} minutes`}
+      aria-label={`Séance en cours — ${completedTours} sur ${totalTours} tours, ${elapsedMin} minutes`}
     >
       <div className="px-5 py-3 max-w-md mx-auto flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
@@ -54,9 +73,7 @@ export function SessionRunProgress({
               style={{ width: `${pct * 100}%` }}
             />
           </div>
-          <p className="mt-1 text-[11px] font-bold text-fg-muted">
-            {completedExercises} / {totalExercises} exercices
-          </p>
+          <p className="mt-1 text-[11px] font-bold text-fg-muted truncate">{subLabel}</p>
         </div>
         <button
           type="button"

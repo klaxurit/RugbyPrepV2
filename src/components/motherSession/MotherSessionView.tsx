@@ -1,4 +1,4 @@
-import type { MotherSession } from '../../types/motherSession'
+import type { MotherSession, Block } from '../../types/motherSession'
 import type { BlockLog, ExerciseLogEntry, SessionType, CycleWeek, FatigueStatus, Equipment, TrainingLevel } from '../../types/training'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import { msLabel, stripBackticks } from '../../services/motherSession/motherSessionLabels'
@@ -14,13 +14,15 @@ import { MotherSessionHeader } from './MotherSessionHeader'
 import { MotherSessionInjurySubs } from './MotherSessionInjurySubs'
 import { MotherSessionWarmUp } from './MotherSessionWarmUp'
 import { SessionBlockCard } from './SessionBlockCard'
-import { classifyBlock } from '../../services/ui/blockPresentation'
+import { classifyBlock, parseBlockTourCount } from '../../services/ui/blockPresentation'
+import { resolveExerciseId, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
+import { useSessionRun, buildExerciseTourKey } from '../../contexts/SessionRunContext'
+import { useMemo } from 'react'
 
 type MotherSessionViewProps = {
   session: MotherSession
   lang?: AppLang
   injuries?: string[]
-  // Logging props
   sessionType?: SessionType
   week?: CycleWeek
   fatigue?: FatigueStatus
@@ -30,7 +32,6 @@ type MotherSessionViewProps = {
     bestLoadKg?: number; bestReps?: number; bestMeters?: number; bestSeconds?: number
     bestLabel?: string; bestLoadRepsScore?: number
   }
-  // Premium load suggestion
   isPremium?: boolean
   acwr?: number | null
   isRehabActive?: boolean
@@ -38,6 +39,28 @@ type MotherSessionViewProps = {
   equipment?: Equipment[]
   /** Cette séance est-elle en cours ? Passé par l'hôte (vérifié via isRunningFor(sessionKey)). */
   isRunning?: boolean
+}
+
+function collectLoggableIndices(block: Block): number[] {
+  const indices: number[] = []
+  block.exercises.forEach((ex, i) => {
+    if (isDirectiveText(ex.name)) return
+    if (!(ex.exerciseId || resolveExerciseId(ex.name))) return
+    indices.push(i)
+  })
+  return indices
+}
+
+function isBlockRunComplete(block: Block, completed: Set<string>): boolean {
+  const exIdx = collectLoggableIndices(block)
+  if (exIdx.length === 0) return false
+  const tours = parseBlockTourCount(block)
+  for (let t = 0; t < tours; t++) {
+    for (const i of exIdx) {
+      if (!completed.has(buildExerciseTourKey(block.number, t, i))) return false
+    }
+  }
+  return true
 }
 
 export function MotherSessionView({
@@ -73,9 +96,28 @@ export function MotherSessionView({
   const hasProgressionRules = (frContent?.progressionRules ?? adaptedSession.progressionRules).length > 0
   const hasPositionAccent = (frContent?.positionAccent ?? adaptedSession.positionAccent).length > 0
   const showUnderstand = hasProgressionRules || hasPositionAccent
-
-  // Injury subs: only render if player has declared injuries
   const showInjurySubs = injuries != null && injuries.length > 0
+
+  const sessionRun = useSessionRun()
+
+  // Calcule l'état run de chaque bloc (terminé ? actif ?). Actif = premier non-terminé
+  // parmi les blocs loggables. Hors mode running, tous les blocs sont "neutres".
+  const blockRunStates = useMemo(() => {
+    if (!isRunning) {
+      return adaptedSession.blocks.map(() => ({ isCompleted: false, isActive: false }))
+    }
+    let activeAssigned = false
+    return adaptedSession.blocks.map((b) => {
+      const isCompleted = isBlockRunComplete(b, sessionRun.completedExercises)
+      const hasLoggable = collectLoggableIndices(b).length > 0
+      let isActive = false
+      if (!activeAssigned && hasLoggable && !isCompleted) {
+        isActive = true
+        activeAssigned = true
+      }
+      return { isCompleted, isActive }
+    })
+  }, [adaptedSession.blocks, sessionRun.completedExercises, isRunning])
 
   return (
     <div className="min-w-0 max-w-[min(100%,28rem)] space-y-4 p-3 text-fg sm:p-4">
@@ -89,17 +131,21 @@ export function MotherSessionView({
 
       <section className="space-y-3" aria-label="Training blocks">
         {adaptedSession.blocks.map((block, i) => {
-          // Ouverts par défaut : le 1er bloc (toujours utile au démarrage) et les échauffements.
           const kind = classifyBlock(block)
-          const defaultOpen = i === 0 || kind === 'warmup'
+          const runState = blockRunStates[i]
+          // En mode preview : Bloc 1 + warmups ouverts par défaut. En mode running :
+          // SessionBlockCard force l'état via runModeActive (plus de toggle utilisateur).
+          const previewDefaultOpen = i === 0 || kind === 'warmup'
           return (
             <SessionBlockCard
               key={block.number}
               block={block}
               lang={lang}
               displayName={frContent?.blocks[i]?.name ?? block.name}
-              defaultOpen={defaultOpen}
+              defaultOpen={previewDefaultOpen}
               isRunning={isRunning}
+              runModeActive={runState.isActive}
+              runModeCompleted={runState.isCompleted}
             >
               <MotherSessionBlock
                 block={block}
@@ -116,7 +162,7 @@ export function MotherSessionView({
                 acwr={acwr}
                 isRehabActive={isRehabActive}
                 hideHeader
-                expandCoaching={defaultOpen}
+                expandCoaching={previewDefaultOpen || runState.isActive}
                 isRunning={isRunning}
               />
             </SessionBlockCard>
@@ -124,7 +170,6 @@ export function MotherSessionView({
         })}
       </section>
 
-      {/* "Comprendre cette séance" — FIX F4-2: non rendu si les deux sont vides */}
       {showUnderstand && (
         <MotherSessionCollapsible title={msLabel('understand_session', lang)} defaultOpen={false}>
           {hasProgressionRules && (

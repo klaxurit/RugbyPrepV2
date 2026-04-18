@@ -4,15 +4,22 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
  * Session run state machine — tracks the "En cours" mode of a workout session.
  * Persistence: localStorage (single-device, reasonable for MVP).
  * Auto-expires after 24h to avoid resuming stale runs.
+ *
+ * Modélisation : l'unité est le TOUR, pas la série. Un bloc d'entraînement
+ * comporte N tours ; chaque tour enchaîne tous les exos du bloc (sans repos
+ * interne). Le repos se déclenche uniquement à la fin d'un tour.
+ *
+ * Clé d'une étape validée : `${blockNumber}_${tourIndex}_${exerciseIndex}`
+ *   - blockNumber : numéro du bloc (stable, cf. Block.number)
+ *   - tourIndex   : 0-based
+ *   - exerciseIndex : 0-based, position dans block.exercises
  */
 
 export type SessionRunStatus = 'idle' | 'running'
 
-export interface SetEntry {
+export interface ExerciseTourLoad {
   loadKg?: number
   reps?: number
-  /** True when user has marked this set as validated. */
-  done: boolean
 }
 
 export interface RestTimerState {
@@ -30,22 +37,20 @@ export interface SessionRunValue {
   sessionKey: string | null
   /** ms timestamp of start. */
   startedAt: number | null
-  /** Set of exercise keys marked as done (format: `${blockIndex}_${exerciseIndex}`). */
+  /** Étapes validées (format `${blockNumber}_${tourIndex}_${exerciseIndex}`). */
   completedExercises: Set<string>
-  /** Per-exercise set-by-set logging. Key = same exerciseKey as completedExercises. */
-  perExerciseSets: Record<string, SetEntry[]>
+  /** Premium only : charges/reps saisies par étape. */
+  exerciseTourLoads: Record<string, ExerciseTourLoad>
   start: (sessionKey: string) => void
   stop: () => void
   /** Check if user has a running session matching the given sessionKey. */
   isRunningFor: (sessionKey: string) => boolean
-  markExerciseDone: (exerciseKey: string) => void
-  unmarkExerciseDone: (exerciseKey: string) => void
+  markExerciseDone: (key: string) => void
+  unmarkExerciseDone: (key: string) => void
   resetCompleted: () => void
-  /** Replace sets for a given exercise. */
-  setExerciseSets: (exerciseKey: string, sets: SetEntry[]) => void
-  /** Update a single set for a given exercise (preserves others). */
-  updateExerciseSet: (exerciseKey: string, setIndex: number, patch: Partial<SetEntry>) => void
-  /** Rest timer state (runs between sets). null = idle. */
+  /** Met à jour kg/reps pour une étape (premium). */
+  setExerciseTourLoad: (key: string, patch: ExerciseTourLoad) => void
+  /** Rest timer state. null = idle. */
   restTimer: RestTimerState | null
   startRestTimer: (seconds: number, label?: string) => void
   adjustRestTimer: (deltaSeconds: number) => void
@@ -61,7 +66,7 @@ interface PersistedState {
   sessionKey: string
   startedAt: number
   completedExercises: string[]
-  perExerciseSets?: Record<string, SetEntry[]>
+  exerciseTourLoads?: Record<string, ExerciseTourLoad>
 }
 
 function readPersisted(): PersistedState | null {
@@ -99,7 +104,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
   const [sessionKey, setSessionKey] = useState<string | null>(null)
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [completedExercises, setCompletedExercises] = useState<Set<string>>(new Set())
-  const [perExerciseSets, setPerExerciseSets] = useState<Record<string, SetEntry[]>>({})
+  const [exerciseTourLoads, setExerciseTourLoads] = useState<Record<string, ExerciseTourLoad>>({})
   const [restTimer, setRestTimer] = useState<RestTimerState | null>(null)
 
   useEffect(() => {
@@ -109,7 +114,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       setSessionKey(persisted.sessionKey)
       setStartedAt(persisted.startedAt)
       setCompletedExercises(new Set(persisted.completedExercises))
-      setPerExerciseSets(persisted.perExerciseSets ?? {})
+      setExerciseTourLoads(persisted.exerciseTourLoads ?? {})
     }
   }, [])
 
@@ -118,7 +123,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       sessionKey: string
       startedAt: number
       completedExercises: Set<string>
-      perExerciseSets: Record<string, SetEntry[]>
+      exerciseTourLoads: Record<string, ExerciseTourLoad>
     } | null) => {
       if (next == null) {
         writePersisted(null)
@@ -127,7 +132,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
           sessionKey: next.sessionKey,
           startedAt: next.startedAt,
           completedExercises: Array.from(next.completedExercises),
-          perExerciseSets: next.perExerciseSets,
+          exerciseTourLoads: next.exerciseTourLoads,
         })
       }
     },
@@ -141,8 +146,8 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       setSessionKey(key)
       setStartedAt(now)
       setCompletedExercises(new Set())
-      setPerExerciseSets({})
-      persist({ sessionKey: key, startedAt: now, completedExercises: new Set(), perExerciseSets: {} })
+      setExerciseTourLoads({})
+      persist({ sessionKey: key, startedAt: now, completedExercises: new Set(), exerciseTourLoads: {} })
     },
     [persist],
   )
@@ -152,7 +157,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
     setSessionKey(null)
     setStartedAt(null)
     setCompletedExercises(new Set())
-    setPerExerciseSets({})
+    setExerciseTourLoads({})
     setRestTimer(null)
     persist(null)
   }, [persist])
@@ -180,63 +185,49 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
   )
 
   const markExerciseDone = useCallback(
-    (exerciseKey: string) => {
+    (key: string) => {
       setCompletedExercises((prev) => {
-        if (prev.has(exerciseKey)) return prev
+        if (prev.has(key)) return prev
         const next = new Set(prev)
-        next.add(exerciseKey)
+        next.add(key)
         if (sessionKey && startedAt != null) {
-          persist({ sessionKey, startedAt, completedExercises: next, perExerciseSets })
+          persist({ sessionKey, startedAt, completedExercises: next, exerciseTourLoads })
         }
         return next
       })
     },
-    [persist, sessionKey, startedAt, perExerciseSets],
+    [persist, sessionKey, startedAt, exerciseTourLoads],
   )
 
   const unmarkExerciseDone = useCallback(
-    (exerciseKey: string) => {
+    (key: string) => {
       setCompletedExercises((prev) => {
-        if (!prev.has(exerciseKey)) return prev
+        if (!prev.has(key)) return prev
         const next = new Set(prev)
-        next.delete(exerciseKey)
+        next.delete(key)
         if (sessionKey && startedAt != null) {
-          persist({ sessionKey, startedAt, completedExercises: next, perExerciseSets })
+          persist({ sessionKey, startedAt, completedExercises: next, exerciseTourLoads })
         }
         return next
       })
     },
-    [persist, sessionKey, startedAt, perExerciseSets],
+    [persist, sessionKey, startedAt, exerciseTourLoads],
   )
 
   const resetCompleted = useCallback(() => {
     setCompletedExercises(new Set())
     if (sessionKey && startedAt != null) {
-      persist({ sessionKey, startedAt, completedExercises: new Set(), perExerciseSets })
+      persist({ sessionKey, startedAt, completedExercises: new Set(), exerciseTourLoads })
     }
-  }, [persist, sessionKey, startedAt, perExerciseSets])
+  }, [persist, sessionKey, startedAt, exerciseTourLoads])
 
-  const setExerciseSets = useCallback(
-    (exerciseKey: string, sets: SetEntry[]) => {
-      setPerExerciseSets((prev) => {
-        const next = { ...prev, [exerciseKey]: sets }
+  const setExerciseTourLoad = useCallback(
+    (key: string, patch: ExerciseTourLoad) => {
+      setExerciseTourLoads((prev) => {
+        const existing = prev[key] ?? {}
+        const next = { ...prev, [key]: { ...existing, ...patch } }
         if (sessionKey && startedAt != null) {
-          persist({ sessionKey, startedAt, completedExercises, perExerciseSets: next })
-        }
-        return next
-      })
-    },
-    [persist, sessionKey, startedAt, completedExercises],
-  )
-
-  const updateExerciseSet = useCallback(
-    (exerciseKey: string, setIndex: number, patch: Partial<SetEntry>) => {
-      setPerExerciseSets((prev) => {
-        const existing = prev[exerciseKey] ?? []
-        const updated = existing.map((s, i) => (i === setIndex ? { ...s, ...patch } : s))
-        const next = { ...prev, [exerciseKey]: updated }
-        if (sessionKey && startedAt != null) {
-          persist({ sessionKey, startedAt, completedExercises, perExerciseSets: next })
+          persist({ sessionKey, startedAt, completedExercises, exerciseTourLoads: next })
         }
         return next
       })
@@ -250,43 +241,39 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       sessionKey,
       startedAt,
       completedExercises,
-      perExerciseSets,
+      exerciseTourLoads,
       start,
       stop,
       isRunningFor,
       markExerciseDone,
       unmarkExerciseDone,
       resetCompleted,
-      setExerciseSets,
-      updateExerciseSet,
+      setExerciseTourLoad,
       restTimer,
       startRestTimer,
       adjustRestTimer,
       skipRestTimer,
     }),
-    [status, sessionKey, startedAt, completedExercises, perExerciseSets, start, stop, isRunningFor, markExerciseDone, unmarkExerciseDone, resetCompleted, setExerciseSets, updateExerciseSet, restTimer, startRestTimer, adjustRestTimer, skipRestTimer],
+    [status, sessionKey, startedAt, completedExercises, exerciseTourLoads, start, stop, isRunningFor, markExerciseDone, unmarkExerciseDone, resetCompleted, setExerciseTourLoad, restTimer, startRestTimer, adjustRestTimer, skipRestTimer],
   )
 
   return <SessionRunContext.Provider value={value}>{children}</SessionRunContext.Provider>
 }
 
-// Fallback no-op used when a consumer renders outside <SessionRunProvider>
-// (e.g. unit tests that don't need run-mode). Keeps components that just read
-// the status safe to render in isolation.
+// Fallback no-op used when a consumer renders outside <SessionRunProvider>.
 const NOOP_VALUE: SessionRunValue = {
   status: 'idle',
   sessionKey: null,
   startedAt: null,
   completedExercises: new Set(),
-  perExerciseSets: {},
+  exerciseTourLoads: {},
   start: () => {},
   stop: () => {},
   isRunningFor: () => false,
   markExerciseDone: () => {},
   unmarkExerciseDone: () => {},
   resetCompleted: () => {},
-  setExerciseSets: () => {},
-  updateExerciseSet: () => {},
+  setExerciseTourLoad: () => {},
   restTimer: null,
   startRestTimer: () => {},
   adjustRestTimer: () => {},
@@ -296,4 +283,18 @@ const NOOP_VALUE: SessionRunValue = {
 export function useSessionRun(): SessionRunValue {
   const ctx = useContext(SessionRunContext)
   return ctx ?? NOOP_VALUE
+}
+
+// ─── Helpers pour clés "blockNumber_tourIndex_exerciseIndex" ────────────────
+
+export function buildExerciseTourKey(blockNumber: number, tourIndex: number, exerciseIndex: number): string {
+  return `${blockNumber}_${tourIndex}_${exerciseIndex}`
+}
+
+export function parseExerciseTourKey(key: string): { blockNumber: number; tourIndex: number; exerciseIndex: number } | null {
+  const parts = key.split('_')
+  if (parts.length !== 3) return null
+  const [b, t, e] = parts.map(Number)
+  if (!Number.isFinite(b) || !Number.isFinite(t) || !Number.isFinite(e)) return null
+  return { blockNumber: b, tourIndex: t, exerciseIndex: e }
 }

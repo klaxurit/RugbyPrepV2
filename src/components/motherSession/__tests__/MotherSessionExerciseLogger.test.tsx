@@ -15,27 +15,14 @@ beforeEach(() => {
   window.localStorage.clear()
 })
 
-/** Pré-installe un run en cours dans localStorage avant que SessionRunProvider le lise au mount. */
-function seedRunningSession(sessionKey = 'TEST_MS_V1') {
-  window.localStorage.setItem(
-    'rf.sessionRun.v1',
-    JSON.stringify({
-      sessionKey,
-      startedAt: Date.now(),
-      completedExercises: [],
-      perExerciseSets: {},
-    }),
-  )
-}
-
-// Block with known loggable exercises
+// 3 tours × 2 exos = 6 étapes à valider
 const loggableBlock: Block = {
   number: 1,
-  name: 'Strength Block',
-  format: '4×5',
+  name: 'Paire Puissance Lower',
+  format: '3 tours · Repos 3 min',
   exercises: [
-    { name: 'Bench Press', prescription: '4×5 @80%' },
-    { name: 'Pendlay Row', prescription: '4×5' },
+    { name: 'Bench Press', prescription: '3×5 @80%' },
+    { name: 'Pendlay Row', prescription: '3×5' },
   ],
   coachingNotes: [],
 }
@@ -51,6 +38,19 @@ const unloggableBlock: Block = {
   coachingNotes: [],
 }
 
+/** Pré-installe un run en cours dans localStorage. */
+function seedRunningSession(sessionKey = 'TEST_MS_V1') {
+  window.localStorage.setItem(
+    'rf.sessionRun.v1',
+    JSON.stringify({
+      sessionKey,
+      startedAt: Date.now(),
+      completedExercises: [],
+      exerciseTourLoads: {},
+    }),
+  )
+}
+
 const renderRunning = (ui: React.ReactElement) => {
   seedRunningSession()
   return render(
@@ -60,8 +60,8 @@ const renderRunning = (ui: React.ReactElement) => {
   )
 }
 
-describe('MotherSessionBlock — SessionSetTracker exposure', () => {
-  it('running + loggable exos → tracker rendered (free: no kg/reps inputs)', async () => {
+describe('MotherSessionBlock — SessionTourTracker exposure', () => {
+  it('running + 3 tours × 2 exos → le tour 1 actif affiche 2 cases ; tours 2 et 3 collapsés', async () => {
     renderRunning(
       <MotherSessionBlock
         block={loggableBlock}
@@ -69,21 +69,41 @@ describe('MotherSessionBlock — SessionSetTracker exposure', () => {
         sessionType="UPPER"
         week="W1"
         fatigue="OK"
-        getLastEntryForExercise={() => undefined}
         isRunning
         isPremium={false}
       />,
     )
-    // L'init des sets se fait dans un useEffect → attendre que les boutons apparaissent.
-    const validateButtons = await screen.findAllByLabelText(/Valider série/)
-    expect(validateButtons.length).toBeGreaterThanOrEqual(4)
-    // Free : pas d'input kg/reps
-    expect(screen.queryByLabelText(/charge en kg/i)).toBeNull()
-    // Lien paywall contextuel — un par exo loggable
-    expect(screen.getAllByText(/Logger mes kg\/reps/i).length).toBeGreaterThanOrEqual(1)
+
+    // Tour 1 est le tour actif → les deux exos sont visibles avec leur bouton Valider.
+    const validateButtons = await screen.findAllByLabelText(/Valider/)
+    expect(validateButtons.length).toBe(2)
+
+    // Tours 2 et 3 sont collapsés → leur header "Tour N · à venir" est visible.
+    expect(screen.getByText(/Tour 2 · à venir/i)).toBeInTheDocument()
+    expect(screen.getByText(/Tour 3 · à venir/i)).toBeInTheDocument()
+
+    // Le label "Tour actif" affiché dans l'en-tête : Tour 1/3.
+    expect(screen.getByText(/Tour 1\/3/i)).toBeInTheDocument()
   })
 
-  it('running + loggable exos → premium voit les inputs kg/reps pré-remplis', async () => {
+  it('running free → pas d\'inputs kg/reps dans les étapes actives', async () => {
+    renderRunning(
+      <MotherSessionBlock
+        block={loggableBlock}
+        motherSessionId="TEST_MS_V1"
+        sessionType="UPPER"
+        week="W1"
+        fatigue="OK"
+        isRunning
+        isPremium={false}
+      />,
+    )
+    await screen.findAllByLabelText(/Valider/)
+    expect(screen.queryByLabelText(/Charge \(kg\)/i)).toBeNull()
+    expect(screen.queryByLabelText(/^Reps$/i)).toBeNull()
+  })
+
+  it('running premium → inputs kg/reps rendus pour chaque exo actif', async () => {
     renderRunning(
       <MotherSessionBlock
         block={loggableBlock}
@@ -100,14 +120,12 @@ describe('MotherSessionBlock — SessionSetTracker exposure', () => {
         }
       />,
     )
-    const kgInputs = (await screen.findAllByLabelText(/charge en kg/i)) as HTMLInputElement[]
-    expect(kgInputs.length).toBeGreaterThanOrEqual(1)
-    expect(screen.getAllByLabelText(/reps$/i).length).toBeGreaterThanOrEqual(1)
-    // Pré-remplissage depuis la dernière entrée — au moins un input de 80 kg
-    expect(kgInputs.some((el) => el.value === '80')).toBe(true)
+    await screen.findAllByLabelText(/Valider/)
+    expect(screen.getAllByLabelText(/Charge \(kg\)/i).length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByLabelText(/^Reps$/).length).toBeGreaterThanOrEqual(1)
   })
 
-  it('no loggable exos → no tracker rendered', () => {
+  it('no loggable exos → tracker pas rendu', () => {
     renderRunning(
       <MotherSessionBlock
         block={unloggableBlock}
@@ -119,10 +137,10 @@ describe('MotherSessionBlock — SessionSetTracker exposure', () => {
         isPremium
       />,
     )
-    expect(screen.queryByLabelText(/Valider série/)).toBeNull()
+    expect(screen.queryByLabelText(/Valider/)).toBeNull()
   })
 
-  it('not running → tracker not rendered even on a loggable block', () => {
+  it('not running → tracker pas rendu même sur un bloc loggable', () => {
     render(
       <MemoryRouter>
         <SessionRunProvider>
@@ -138,10 +156,10 @@ describe('MotherSessionBlock — SessionSetTracker exposure', () => {
         </SessionRunProvider>
       </MemoryRouter>,
     )
-    expect(screen.queryByLabelText(/Valider série/)).toBeNull()
+    expect(screen.queryByLabelText(/Valider/)).toBeNull()
   })
 
-  it('free user: tap paywall link opens the PremiumSheet', () => {
+  it('valider les 2 exos du tour 1 → tour 2 devient actif', async () => {
     renderRunning(
       <MotherSessionBlock
         block={loggableBlock}
@@ -153,8 +171,33 @@ describe('MotherSessionBlock — SessionSetTracker exposure', () => {
         isPremium={false}
       />,
     )
-    const paywallLink = screen.getAllByText(/Logger mes kg\/reps/i)[0]
-    fireEvent.click(paywallLink)
-    expect(screen.getByRole('dialog', { name: /suivi des charges/i })).toBeTruthy()
+    const tour1Buttons = await screen.findAllByLabelText(/Valider/)
+    expect(tour1Buttons.length).toBe(2)
+    fireEvent.click(tour1Buttons[0])
+    fireEvent.click(tour1Buttons[1])
+
+    // Le tour 2 devient actif : deux nouveaux boutons Valider apparaissent (les exos du tour 2).
+    const tour2Buttons = await screen.findAllByLabelText(/Valider/)
+    expect(tour2Buttons.length).toBe(2)
+    expect(screen.getByText(/Tour 2\/3/i)).toBeInTheDocument()
+    // Le tour 1 est maintenant listé comme "terminé".
+    expect(screen.getByText(/Tour 1 · terminé/i)).toBeInTheDocument()
+  })
+
+  it('aucun CTA Premium "Logger mes kg/reps" n\'apparaît en mode En cours', async () => {
+    renderRunning(
+      <MotherSessionBlock
+        block={loggableBlock}
+        motherSessionId="TEST_MS_V1"
+        sessionType="UPPER"
+        week="W1"
+        fatigue="OK"
+        isRunning
+        isPremium={false}
+      />,
+    )
+    await screen.findAllByLabelText(/Valider/)
+    expect(screen.queryByText(/Logger mes kg\/reps/i)).toBeNull()
+    expect(screen.queryByText(/Passer en Premium/i)).toBeNull()
   })
 })

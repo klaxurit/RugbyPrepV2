@@ -1,6 +1,5 @@
-import { useMemo, useState, useCallback } from 'react'
-import { Eye, Check } from 'lucide-react'
-import { useSessionRun } from '../../contexts/SessionRunContext'
+import { useMemo, useState } from 'react'
+import { Eye } from 'lucide-react'
 import type { Block } from '../../types/motherSession'
 import type { BlockLog, ExerciseLogEntry, SessionType, CycleWeek, FatigueStatus } from '../../types/training'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
@@ -8,16 +7,14 @@ import type { SessionContentFr } from '../../services/motherSession/motherSessio
 import { msLabel, stripBackticks } from '../../services/motherSession/motherSessionLabels'
 import { MotherSessionCollapsible } from './MotherSessionCollapsible'
 import { resolveExerciseId, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
-import { getExerciseMetricType } from '../../services/ui/exerciseMetrics'
 import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import { ExerciseDemoSheet } from './ExerciseDemoSheet'
-import { SessionSetTracker } from './SessionSetTracker'
+import { SessionTourTracker } from './SessionTourTracker'
 
 export type MotherSessionBlockProps = {
   block: Block
   lang?: AppLang
   frBlock?: SessionContentFr['blocks'][0]
-  // Logging
   motherSessionId?: string
   sessionType?: SessionType
   week?: CycleWeek
@@ -28,7 +25,6 @@ export type MotherSessionBlockProps = {
     bestLoadKg?: number; bestReps?: number; bestMeters?: number; bestSeconds?: number
     bestLabel?: string; bestLoadRepsScore?: number
   }
-  // Premium load suggestion
   isPremium?: boolean
   acwr?: number | null
   isRehabActive?: boolean
@@ -39,6 +35,8 @@ export type MotherSessionBlockProps = {
   /** La séance courante est-elle actuellement en cours ? Passé depuis l'hôte qui peut
    *  vérifier le matching sessionKey — évite d'interpréter un run résiduel global. */
   isRunning?: boolean
+  /** Déclenché quand tous les tours du bloc ont été validés en mode running. */
+  onBlockCompleted?: () => void
 }
 
 function ExerciseRow({
@@ -46,26 +44,18 @@ function ExerciseRow({
   frName,
   lang,
   onOpenDemo,
-  runMode,
-  isDone,
-  onToggleDone,
 }: {
   exercise: Block['exercises'][0]
   frName?: string
   lang: AppLang
   onOpenDemo?: (exerciseId: string) => void
-  /** Quand true, affiche une case à cocher + style "terminé" quand isDone. */
-  runMode?: boolean
-  isDone?: boolean
-  onToggleDone?: () => void
 }) {
   const displayExerciseId = exercise.exerciseId ?? resolveExerciseId(exercise.name)
   const displayName = displayExerciseId ? getExerciseName(displayExerciseId, lang) : (frName ?? exercise.name)
   const canShowDemo = Boolean(displayExerciseId && hasExerciseDemo(displayExerciseId))
-  const canCheck = runMode && !isDirectiveText(exercise.name)
 
   return (
-    <li className={`border-b border-border-app pb-3 last:border-0 last:pb-0 transition-opacity ${isDone ? 'opacity-50' : ''}`}>
+    <li className="border-b border-border-app pb-3 last:border-0 last:pb-0">
       {exercise.slotLabel ? (
         <div className="mb-1.5">
           <span className="inline-flex rounded-full border border-brand-border-strong bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand-tint">
@@ -74,23 +64,8 @@ function ExerciseRow({
         </div>
       ) : null}
       <div className="flex items-start justify-between gap-3">
-        {canCheck && (
-          <button
-            type="button"
-            onClick={onToggleDone}
-            aria-pressed={isDone}
-            aria-label={isDone ? `Annuler ${displayName}` : `Marquer ${displayName} comme fait`}
-            className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border-2 transition-colors rf-focus-ring ${
-              isDone
-                ? 'bg-ok-strong border-ok-strong text-white'
-                : 'border-border-app bg-layer-5 text-fg-ghost hover:border-brand-border-strong hover:text-brand-tint'
-            }`}
-          >
-            {isDone && <Check className="h-4 w-4" strokeWidth={3} />}
-          </button>
-        )}
         <div className="min-w-0 flex-1 flex flex-col gap-0.5">
-          <span className={`text-sm font-medium text-fg ${isDone ? 'line-through' : ''}`}>
+          <span className="text-sm font-medium text-fg">
             {exercise.role ? (
               <span className="mr-1.5 text-xs font-normal uppercase text-brand-tint">
                 ({exercise.role})
@@ -127,33 +102,22 @@ export function MotherSessionBlock({
   isRunning,
   isPremium,
   getLastEntryForExercise,
+  onBlockCompleted,
 }: MotherSessionBlockProps) {
-  const sessionRun = useSessionRun()
-  // Ne s'appuie PAS sur `sessionRun.status` seul : un run résiduel d'une autre séance
-  // ne doit pas forcer l'ouverture ici. L'hôte passe la valeur scoped via isRunningFor.
   const runMode = isRunning ?? false
   const blockName = frBlock?.name ?? block.name
   const blockFormat = frBlock?.format ?? block.format
   const coachingNotes = frBlock?.coachingNotes ?? block.coachingNotes
   const fallbackOptions = frBlock?.fallbackOptions ?? block.fallbackOptions
-  const getDisplayExerciseName = useCallback(
-    (exerciseId: string) => getExerciseName(exerciseId, lang),
-    [lang],
+
+  const hasLoggable = useMemo(
+    () =>
+      block.exercises.some(
+        (ex) => !isDirectiveText(ex.name) && (ex.exerciseId || resolveExerciseId(ex.name)),
+      ),
+    [block.exercises],
   )
 
-  // Resolve which exercises are loggable (cochables en mode En cours)
-  const loggableExercises = useMemo(() => {
-    return block.exercises
-      .map((ex, idx) => {
-        if (isDirectiveText(ex.name)) return null
-        const exerciseId = ex.exerciseId ?? resolveExerciseId(ex.name)
-        if (!exerciseId) return null
-        return { exercise: ex, exerciseId, idx }
-      })
-      .filter((x): x is NonNullable<typeof x> => x !== null)
-  }, [block.exercises])
-
-  const hasLoggable = loggableExercises.length > 0
   const [demoExerciseId, setDemoExerciseId] = useState<string | null>(null)
 
   return (
@@ -183,42 +147,32 @@ export function MotherSessionBlock({
         </>
       )}
 
-      {hideHeader && blockFormat ? (
-        <div className="mb-3">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-fg-muted">{msLabel('format', lang)}</p>
-          <p className="mt-1 text-sm text-fg-secondary">{stripBackticks(blockFormat)}</p>
-        </div>
-      ) : null}
-
-      {block.exercises.length > 0 ? (
-        <ul className="mt-4 space-y-3">
-          {block.exercises.map((ex, i) => {
-            const exerciseKey = `${block.number}_${i}`
-            const isDone = runMode && sessionRun.completedExercises.has(exerciseKey)
-            // En mode running, les exos loggables ont leur SessionSetTracker ci-dessous
-            // qui auto-coche — on masque la checkbox redondante ici pour ces exos.
-            const hasTrackerBelow = Boolean(
-              runMode && loggableExercises.some((le) => le.idx === i),
-            )
-            return (
-              <ExerciseRow
-                key={`${block.number}-${i}`}
-                exercise={ex}
-                frName={frBlock?.exercises[i]?.name}
-                lang={lang}
-                onOpenDemo={setDemoExerciseId}
-                runMode={runMode && !hasTrackerBelow}
-                isDone={isDone}
-                onToggleDone={() =>
-                  isDone
-                    ? sessionRun.unmarkExerciseDone(exerciseKey)
-                    : sessionRun.markExerciseDone(exerciseKey)
-                }
-              />
-            )
-          })}
+      {/* Mode Aperçu (pas running) OU bloc non loggable : on affiche la liste simple des exos. */}
+      {(!runMode || !hasLoggable) && block.exercises.length > 0 ? (
+        <ul className={`${hideHeader ? 'mt-2' : 'mt-4'} space-y-3`}>
+          {block.exercises.map((ex, i) => (
+            <ExerciseRow
+              key={`${block.number}-${i}`}
+              exercise={ex}
+              frName={frBlock?.exercises[i]?.name}
+              lang={lang}
+              onOpenDemo={setDemoExerciseId}
+            />
+          ))}
         </ul>
       ) : null}
+
+      {/* Mode En cours : tracker par TOURS (enchaînement des exos du bloc). */}
+      {runMode && hasLoggable && (
+        <SessionTourTracker
+          block={block}
+          lang={lang}
+          frExerciseNames={frBlock?.exercises.map((e) => e.name)}
+          isPremium={isPremium ?? false}
+          getLastEntryForExercise={getLastEntryForExercise}
+          onBlockCompleted={onBlockCompleted}
+        />
+      )}
 
       {coachingNotes.length > 0 ? (
         <div className="mt-4">
@@ -247,32 +201,6 @@ export function MotherSessionBlock({
           </MotherSessionCollapsible>
         </div>
       ) : null}
-
-      {/* ── Mode "En cours" : set tracker inline par exercice, Free comme Premium ──
-          Free = juste les cases ✓ par série (+ CTA "Logger mes kg/reps avec Premium →").
-          Premium = + inputs kg/reps pré-remplis depuis la dernière séance. */}
-      {runMode && hasLoggable && (
-        <div className="mt-4 space-y-2">
-          {loggableExercises.map(({ exerciseId, idx }) => {
-            const exerciseKey = `${block.number}_${idx}`
-            const metricType = getExerciseMetricType({ exerciseId })
-            const lastEntry = getLastEntryForExercise?.(exerciseId)
-            const exercise = block.exercises[idx]
-            return (
-              <SessionSetTracker
-                key={exerciseId}
-                exerciseKey={exerciseKey}
-                exerciseName={getDisplayExerciseName(exerciseId)}
-                prescription={exercise?.prescription}
-                lastEntry={lastEntry}
-                showLoad={metricType === 'load_reps'}
-                showReps={metricType === 'load_reps' || metricType === 'reps'}
-                isPremium={isPremium ?? false}
-              />
-            )
-          })}
-        </div>
-      )}
 
       <ExerciseDemoSheet
         exerciseId={demoExerciseId}
