@@ -84,10 +84,10 @@ export function SessionBlockCard({
         {/* Ligne 1 — icône + titre (truncate) + pill d'état + durée + chevron.
             Tous siblings dans le même flex, min-height constant, chaque élément
             contrôle son propre alignement via flex items-center + leading-none. */}
-        <div className="flex items-center gap-3 min-h-[40px]">
+        <div className="flex items-center gap-2 min-h-[40px]">
           <span
             aria-hidden
-            className="flex-shrink-0 inline-flex items-center justify-center w-9 h-9 text-xl leading-none"
+            className="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 text-base leading-none"
           >
             {icon}
           </span>
