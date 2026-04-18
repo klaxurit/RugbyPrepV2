@@ -166,7 +166,16 @@ function resolveMotherSessionsForWeekCore(
     }
 
     const cfg = taperConfig[taperPhase]
-    resolverWarnings.push(`Playoffs ${taperPhase} — volume ${taperPhase === 'taper_1' ? '-30%' : '-50%'}, intensité maintenue.`)
+    const TAPER_LABEL_FR: Record<PlayoffTaperPhase, string> = {
+      taper_1: 'Phase 1 — Maintien',
+      taper_2: 'Phase 2 — Affûtage',
+      match_week: 'Semaine de match',
+    }
+    const volumeReduction =
+      taperPhase === 'taper_1' ? '−30 %' : taperPhase === 'taper_2' ? '−50 %' : '−50 %'
+    resolverWarnings.push(
+      `Playoffs · ${TAPER_LABEL_FR[taperPhase]} — volume ${volumeReduction}, intensité maintenue.`,
+    )
 
     const tpl = getWeeklyTemplate({
       cycle: 'in_season',
