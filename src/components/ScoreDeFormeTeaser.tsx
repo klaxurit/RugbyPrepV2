@@ -95,8 +95,8 @@ export function ScoreDeFormeTeaser({ ctaHref = '/profile#premium' }: { ctaHref?:
         <span>Aujourd'hui</span>
       </div>
 
-      <p className="mt-4 text-sm text-fg-soft leading-relaxed">
-        Basé sur ta charge et tes RPE post-séance des 7 derniers jours.
+      <p className="mt-4 text-sm text-fg-soft leading-relaxed whitespace-nowrap truncate">
+        Ta charge et tes RPE · 7 derniers jours
       </p>
 
       <Link
