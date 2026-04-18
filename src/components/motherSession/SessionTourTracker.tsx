@@ -95,6 +95,7 @@ export function SessionTourTracker({
   const previousActiveRef = useRef<number | null>(activeTourIndex)
   useEffect(() => {
     if (activeTourIndex !== previousActiveRef.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset manual expansion when auto-active tour changes
       setManualOpenIndex(null)
       previousActiveRef.current = activeTourIndex
     }

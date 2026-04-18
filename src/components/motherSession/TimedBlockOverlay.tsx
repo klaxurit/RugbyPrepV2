@@ -89,7 +89,7 @@ export function TimedBlockOverlay({
   // ── Countdown 3→2→1→GO! avant de lancer le chrono principal ───────────
   useEffect(() => {
     if (!isOpen) {
-      // Reset complet à chaque fermeture.
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset overlay state on close
       setPhase('countdown')
       setCountdown(3)
       if (snapshot.status !== 'idle') stop()

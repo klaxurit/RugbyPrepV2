@@ -162,6 +162,7 @@ export function useBlockTimer({ format, onIntervalBoundary, onComplete }: UseBlo
     if (totalSec == null) return
     if (elapsedSec >= totalSec) {
       vibrate([180, 80, 180])
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: transition to completed when timer reaches total
       setStatus('completed')
       onComplete?.()
     }

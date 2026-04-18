@@ -110,6 +110,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const persisted = readPersisted()
     if (persisted) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: hydrate state from localStorage on mount
       setStatus('running')
       setSessionKey(persisted.sessionKey)
       setStartedAt(persisted.startedAt)
@@ -280,6 +281,7 @@ const NOOP_VALUE: SessionRunValue = {
   skipRestTimer: () => {},
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook colocated with provider
 export function useSessionRun(): SessionRunValue {
   const ctx = useContext(SessionRunContext)
   return ctx ?? NOOP_VALUE
@@ -287,10 +289,12 @@ export function useSessionRun(): SessionRunValue {
 
 // ─── Helpers pour clés "blockNumber_tourIndex_exerciseIndex" ────────────────
 
+// eslint-disable-next-line react-refresh/only-export-components -- helper colocated with provider
 export function buildExerciseTourKey(blockNumber: number, tourIndex: number, exerciseIndex: number): string {
   return `${blockNumber}_${tourIndex}_${exerciseIndex}`
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- helper colocated with provider
 export function parseExerciseTourKey(key: string): { blockNumber: number; tourIndex: number; exerciseIndex: number } | null {
   const parts = key.split('_')
   if (parts.length !== 3) return null

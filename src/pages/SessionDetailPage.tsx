@@ -149,43 +149,7 @@ export function SessionDetailPage() {
     return rawSessions[index] ?? null
   }, [snapshot, msResolution, index])
 
-  if (hasHardBlock) {
-    return (
-      <div className="min-h-screen bg-app font-sans text-fg pb-24">
-        <PageHeader title={sessionPageTitle} backTo="/week" />
-        <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
-          <div className="bg-warn-bg border border-warn-bd-strong rounded-2xl p-5 space-y-3">
-            <p className="font-bold text-warn-strong">Programme temporairement indisponible</p>
-            <ul className="space-y-2">
-              {hardBlockReasons.map((r) => (
-                <li key={r} className="text-sm text-warn-body">
-                  <span className="font-semibold">{BETA_ELIGIBILITY_MESSAGES[r].reason}</span>
-                  <br />{BETA_ELIGIBILITY_MESSAGES[r].detail}
-                </li>
-              ))}
-            </ul>
-            <p className="text-xs text-fg-muted">
-              Ton compte et ton profil sont conservés. Réessaie dans quelques instants.
-            </p>
-          </div>
-        </main>
-        <BottomNav />
-      </div>
-    )
-  }
-
-  // ── Décision moteur ────────────────────────────────────────────────────────
-  const primarySource = surface?.primarySource ?? 'mother_session'
-  const isUnavailable = primarySource === 'unavailable'
-
-  // ── Mother-session path (F2: prefer snapshot-owned sessions) ─────────
-  const msSessionType = activeSlot?.session.metadata.sessionType
-    ? MS_TYPE_TO_SESSION_TYPE[activeSlot.session.metadata.sessionType]
-    : undefined
-
-  const prehabs = getPrehab(profile.injuries)
-
-  // ── Session Run Mode ─────────────────────────────────────────────────────
+  // ── Session Run Mode (hooks must come before any early return) ───────────
   const sessionRunKey = activeSlot ? `${activeSlot.session.metadata.id}_${today}` : null
   const isRunning = sessionRunKey != null && sessionRun.isRunningFor(sessionRunKey)
 
@@ -278,18 +242,6 @@ export function SessionDetailPage() {
     }
   }, [activeSlot, sessionRun.completedExercises])
 
-  const handleStartSession = () => {
-    if (!sessionRunKey) return
-    sessionRun.start(sessionRunKey)
-    posthog.capture('session_started', { index, sessionId: activeSlot?.session.metadata.id })
-  }
-
-  const handleQuitRunningSession = () => {
-    if (window.confirm('Quitter la séance en cours ? Les cases cochées seront perdues.')) {
-      sessionRun.stop()
-    }
-  }
-
   // Keep the screen awake while a session is running. Released on unmount / stop.
   useWakeLock(isRunning)
 
@@ -314,6 +266,54 @@ export function SessionDetailPage() {
       tonnageKg: hasAnyLoad ? Math.round(tonnageKg) : null,
     }
   }, [sessionRun.completedExercises, sessionRun.exerciseTourLoads, sessionRun.startedAt])
+
+  if (hasHardBlock) {
+    return (
+      <div className="min-h-screen bg-app font-sans text-fg pb-24">
+        <PageHeader title={sessionPageTitle} backTo="/week" />
+        <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
+          <div className="bg-warn-bg border border-warn-bd-strong rounded-2xl p-5 space-y-3">
+            <p className="font-bold text-warn-strong">Programme temporairement indisponible</p>
+            <ul className="space-y-2">
+              {hardBlockReasons.map((r) => (
+                <li key={r} className="text-sm text-warn-body">
+                  <span className="font-semibold">{BETA_ELIGIBILITY_MESSAGES[r].reason}</span>
+                  <br />{BETA_ELIGIBILITY_MESSAGES[r].detail}
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs text-fg-muted">
+              Ton compte et ton profil sont conservés. Réessaie dans quelques instants.
+            </p>
+          </div>
+        </main>
+        <BottomNav />
+      </div>
+    )
+  }
+
+  // ── Décision moteur ────────────────────────────────────────────────────────
+  const primarySource = surface?.primarySource ?? 'mother_session'
+  const isUnavailable = primarySource === 'unavailable'
+
+  // ── Mother-session path (F2: prefer snapshot-owned sessions) ─────────
+  const msSessionType = activeSlot?.session.metadata.sessionType
+    ? MS_TYPE_TO_SESSION_TYPE[activeSlot.session.metadata.sessionType]
+    : undefined
+
+  const prehabs = getPrehab(profile.injuries)
+
+  const handleStartSession = () => {
+    if (!sessionRunKey) return
+    sessionRun.start(sessionRunKey)
+    posthog.capture('session_started', { index, sessionId: activeSlot?.session.metadata.id })
+  }
+
+  const handleQuitRunningSession = () => {
+    if (window.confirm('Quitter la séance en cours ? Les cases cochées seront perdues.')) {
+      sessionRun.stop()
+    }
+  }
 
   // ── Title ────────────────────────────────────────────────────────────────
   const pageTitle = activeSlot

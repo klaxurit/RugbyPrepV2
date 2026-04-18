@@ -128,6 +128,7 @@ export function MotherSessionBlock({
   const [timedOverlayOpen, setTimedOverlayOpen] = useState(false)
 
   const handleTimedFinish = (_result: TimedBlockResult) => {
+    void _result
     setTimedOverlayOpen(false)
     // Notifie le parent que le bloc est considéré terminé.
     // Le résultat détaillé (temps, tours AMRAP) pourra être persisté plus tard.

@@ -123,6 +123,7 @@ export function useWeekSnapshot(
   // Profile hash as a stable dependency for the resolve effect
   const profileHash = useMemo(
     () => (params ? computeProfileHash(params.profile) : ''),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: narrow to params.profile, full params would re-hash on any change
     [params?.profile],
   )
 
