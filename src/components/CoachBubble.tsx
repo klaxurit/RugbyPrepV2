@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Info, Sparkles, X, Zap } from 'lucide-react'
+import { Info, X, Zap } from 'lucide-react'
+import compagnonClosed from '../assets/compagnon-mouth-closed.png'
+import compagnonOpen from '../assets/compagnon-mouth-open.png'
 
 /**
  * Bulle coach — pattern "trombone" moderne. Icône sticky top-right, badge
@@ -71,16 +73,22 @@ export function CoachBubble({
     // hauteur ~88px). z-40 pour passer au-dessus des bannières sans couvrir le header.
     <div className="fixed top-24 right-4 z-40">
       <div className="relative">
-        {/* Bubble trigger */}
+        {/* Bubble trigger — mascotte custom (bouche fermée / ouverte selon état). */}
         <button
           type="button"
           onClick={open ? handleClose : handleOpen}
           aria-label={open ? 'Fermer les conseils du coach' : `Voir les conseils du coach${messageCount > 0 ? ` — ${messageCount} message${messageCount > 1 ? 's' : ''}` : ''}`}
           aria-expanded={open}
-          className="w-11 h-11 rounded-full bg-brand text-on-brand shadow-lg flex items-center justify-center hover:bg-brand-hover transition-colors rf-focus-ring"
+          className="w-14 h-14 rounded-full overflow-hidden bg-brand-soft shadow-lg hover:scale-105 active:scale-95 transition-transform rf-focus-ring"
           data-testid="coach-bubble-trigger"
         >
-          <Sparkles className="w-5 h-5" aria-hidden />
+          <img
+            src={open ? compagnonOpen : compagnonClosed}
+            alt=""
+            aria-hidden
+            className="w-full h-full object-cover"
+            draggable={false}
+          />
         </button>
 
         {/* Badge count — only until first open for this week */}
@@ -104,7 +112,7 @@ export function CoachBubble({
               transition={{ duration: 0.18 }}
               role="dialog"
               aria-label="Conseils du coach"
-              className="absolute top-14 right-0 w-[17rem] max-w-[calc(100vw-2rem)] rounded-[20px] border border-border-app bg-panel shadow-xl p-4 space-y-3"
+              className="absolute top-16 right-0 w-[17rem] max-w-[calc(100vw-2rem)] rounded-[20px] border border-border-app bg-panel shadow-xl p-4 space-y-3"
               data-testid="coach-bubble-popover"
             >
               <div className="flex items-start justify-between gap-2">
