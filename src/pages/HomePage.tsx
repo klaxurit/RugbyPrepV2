@@ -1098,8 +1098,10 @@ export function HomePage() {
           >
             <Lock className="w-4 h-4 text-brand-tint flex-shrink-0" aria-hidden />
             <p className="flex-1 min-w-0 text-xs font-bold text-fg leading-tight">
-              Tout RugbyForge en illimité : analytics, historique, coach IA
-              <span className="block text-[11px] font-normal text-fg-muted mt-0.5">Voir les forfaits</span>
+              <span className="block truncate">Tout RugbyForge en illimité</span>
+              <span className="block text-[11px] font-normal text-fg-muted mt-0.5 truncate">
+                Analytics · historique · coach IA
+              </span>
             </p>
             <ChevronRight className="w-4 h-4 text-brand-tint flex-shrink-0" />
           </Link>
