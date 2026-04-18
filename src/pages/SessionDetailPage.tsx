@@ -8,6 +8,7 @@ import { RestTimerOverlay } from '../components/motherSession/RestTimerOverlay'
 import { SessionCelebration } from '../components/motherSession/SessionCelebration'
 import { isDirectiveText, resolveExerciseId } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
+import { parseBlockFormat } from '../services/ui/parseBlockFormat'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
@@ -199,6 +200,7 @@ export function SessionDetailPage() {
         activeBlockName: '',
         activeTourIndex: null as number | null,
         activeBlockTourCount: 0,
+        activeBlockUnitLabel: 'Tour' as 'Tour' | 'Minute' | 'Round' | 'For Time',
       }
     }
     const blocks = activeSlot.session.blocks
@@ -208,6 +210,7 @@ export function SessionDetailPage() {
     let activeBlockName = ''
     let activeTourIndex: number | null = null
     let activeBlockTourCount = 0
+    let activeBlockUnitLabel: 'Tour' | 'Minute' | 'Round' | 'For Time' = 'Tour'
     for (let b = 0; b < blocks.length; b++) {
       const block = blocks[b]
       const loggableIdx: number[] = []
@@ -234,9 +237,18 @@ export function SessionDetailPage() {
         activeBlockName = block.name
         activeTourIndex = blockActiveTour + 1
         activeBlockTourCount = tours
+        // Label contextualisé selon le format du bloc actif.
+        const fmt = parseBlockFormat(block.format)
+        activeBlockUnitLabel =
+          fmt.type === 'emom'
+            ? 'Minute'
+            : fmt.type === 'tabata'
+              ? 'Round'
+              : fmt.type === 'for_time'
+                ? 'For Time'
+                : 'Tour'
       }
     }
-    // Si tout est fini, on garde l'index du dernier bloc pour l'affichage final.
     if (activeBlockIndex === 0 && blocks.length > 0) {
       activeBlockIndex = blocks.length
       activeBlockName = blocks[blocks.length - 1].name
@@ -249,6 +261,7 @@ export function SessionDetailPage() {
       activeBlockName,
       activeTourIndex,
       activeBlockTourCount,
+      activeBlockUnitLabel,
     }
   }, [activeSlot, sessionRun.completedExercises])
 
@@ -354,6 +367,7 @@ export function SessionDetailPage() {
           activeBlockName={runProgress.activeBlockName}
           activeTourIndex={runProgress.activeTourIndex}
           activeBlockTourCount={runProgress.activeBlockTourCount}
+          activeBlockUnitLabel={runProgress.activeBlockUnitLabel}
           onQuit={handleQuitRunningSession}
         />
       )}

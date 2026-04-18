@@ -121,7 +121,7 @@ export function MotherSessionView({
 
   return (
     <div className="min-w-0 max-w-[min(100%,28rem)] space-y-4 p-3 text-fg sm:p-4">
-      <MotherSessionHeader metadata={adaptedSession.metadata} lang={lang} />
+      <MotherSessionHeader metadata={adaptedSession.metadata} lang={lang} compact={isRunning} />
 
       <MotherSessionWarmUp
         warmUp={adaptedSession.warmUp}

@@ -1226,7 +1226,7 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Back Three Upper Power Cluster': 'Cluster puissance haut du corps ligne arrière',
   'Full-Body Force-Projection Pair': 'Force / projection corps complet',
   'Front Row Support': 'Support avants',
-  'Front Row Finisher': 'Finisher avants',
+  'Front Row Finisher': 'Finisher Premières lignes',
   'Back Three Finisher': 'Finisher ligne arrière',
   'Contact Confidence / Pump': 'Confiance contact / pump',
   'Arm Pump / Confidence Block': 'Pump bras / confiance',

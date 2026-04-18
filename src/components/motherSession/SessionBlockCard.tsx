@@ -97,15 +97,24 @@ export function SessionBlockCard({
           >
             {name}
           </h3>
+          {/* Badges compacts icon-only : pulse bordeaux = en cours, ✓ vert = terminé.
+              Libère l'espace horizontal pour que le titre truncate moins sur mobile. */}
           {isRunning && runModeActive && (
-            <span className="flex-shrink-0 inline-flex items-center h-6 rounded-full bg-brand text-on-brand px-2 text-[10px] font-black uppercase tracking-wide leading-none">
-              En cours
+            <span
+              className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand"
+              aria-label="En cours"
+              title="En cours"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
             </span>
           )}
           {isRunning && runModeCompleted && (
-            <span className="flex-shrink-0 inline-flex items-center gap-1 h-6 rounded-full bg-ok-strong text-white px-2 text-[10px] font-black uppercase tracking-wide leading-none">
-              <Check className="w-3 h-3" strokeWidth={3} />
-              Terminé
+            <span
+              className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-ok-strong"
+              aria-label="Terminé"
+              title="Terminé"
+            >
+              <Check className="w-3 h-3 text-white" strokeWidth={3} />
             </span>
           )}
           {minutes > 0 && (

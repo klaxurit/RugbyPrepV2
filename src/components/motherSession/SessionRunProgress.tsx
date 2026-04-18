@@ -18,6 +18,8 @@ interface SessionRunProgressProps {
   activeTourIndex: number | null
   /** Nombre total de tours dans le bloc actif. */
   activeBlockTourCount: number
+  /** Libellé de l'unité courante — Tour pour un bloc rounds, Minute pour EMOM… */
+  activeBlockUnitLabel?: 'Tour' | 'Minute' | 'Round' | 'For Time'
   onQuit: () => void
 }
 
@@ -34,6 +36,7 @@ export function SessionRunProgress({
   activeBlockName,
   activeTourIndex,
   activeBlockTourCount,
+  activeBlockUnitLabel = 'Tour',
   onQuit,
 }: SessionRunProgressProps) {
   const [elapsedMin, setElapsedMin] = useState(() => Math.floor((Date.now() - startedAt) / 60000))
@@ -47,9 +50,12 @@ export function SessionRunProgress({
 
   const pct = totalTours === 0 ? 0 : Math.min(1, completedTours / totalTours)
 
-  const subLabel = activeTourIndex != null
-    ? `Bloc ${activeBlockIndex}/${totalBlocks} · ${activeBlockName} · Tour ${activeTourIndex}/${activeBlockTourCount}`
-    : `Bloc ${activeBlockIndex}/${totalBlocks} · ${activeBlockName}`
+  const subLabel = (() => {
+    const prefix = `Bloc ${activeBlockIndex}/${totalBlocks} · ${activeBlockName}`
+    if (activeTourIndex == null) return prefix
+    if (activeBlockUnitLabel === 'For Time') return `${prefix} · For Time`
+    return `${prefix} · ${activeBlockUnitLabel} ${activeTourIndex}/${activeBlockTourCount}`
+  })()
 
   return (
     <div

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Pause, Play, SkipForward, X, Flag, Plus } from 'lucide-react'
 import type { Block, Exercise } from '../../types/motherSession'
@@ -15,17 +15,20 @@ interface TimedBlockOverlayProps {
   isOpen: boolean
   /** Déclenché au tap "Stop" ou à la fin du timer : marque le bloc terminé. */
   onFinish: (result: TimedBlockResult) => void
-  /** Déclenché au tap "Quitter" pour fermer l'overlay sans valider le bloc. */
+  /** Déclenché au tap "Quitter" (×) pour fermer l'overlay sans valider le bloc. */
   onCancel: () => void
 }
 
 export interface TimedBlockResult {
-  /** Temps écoulé réel (secondes). */
   elapsedSec: number
-  /** Pour For Time : temps final. Pour AMRAP : tours comptés. Pour EMOM/Tabata : undefined. */
   amrapRounds?: number
-  /** True si l'utilisateur a terminé normalement, false s'il a stoppé avant la fin. */
   completed: boolean
+}
+
+function vibrate(pattern: number | number[]) {
+  if (typeof navigator === 'undefined') return
+  const nav = navigator as Navigator & { vibrate?: (p: number | number[]) => boolean }
+  try { nav.vibrate?.(pattern) } catch { /* noop */ }
 }
 
 function fmt(sec: number): string {
@@ -44,7 +47,7 @@ function getFormatTitle(format: TimedBlockFormat): string {
     case 'emom':
       return `EMOM · ${format.rounds} min`
     case 'tabata':
-      return `Tabata · ${format.rounds} rounds ${format.workSeconds}s/${format.restSeconds}s`
+      return `Tabata · ${format.rounds} rounds`
     case 'amrap':
       return `AMRAP · ${Math.round(format.totalSeconds / 60)} min`
     case 'for_time':
@@ -53,6 +56,8 @@ function getFormatTitle(format: TimedBlockFormat): string {
       return 'Bloc'
   }
 }
+
+type OverlayPhase = 'countdown' | 'running'
 
 export function TimedBlockOverlay({
   block,
@@ -65,8 +70,10 @@ export function TimedBlockOverlay({
   const loggable = useMemo(() => pickLoggableExercises(block), [block])
   const resolveName = (i: number): string => frExerciseNames?.[i] ?? loggable[i]?.name ?? '—'
 
-  // Wake lock tant que l'overlay est ouvert (comme le mode En cours).
   useWakeLock(isOpen)
+
+  const [phase, setPhase] = useState<OverlayPhase>('countdown')
+  const [countdown, setCountdown] = useState(3)
 
   const { snapshot, start, pause, stop, skipInterval, incrementAmrapRound } = useBlockTimer({
     format,
@@ -79,14 +86,32 @@ export function TimedBlockOverlay({
     },
   })
 
+  // ── Countdown 3→2→1→GO! avant de lancer le chrono principal ───────────
   useEffect(() => {
-    if (isOpen && snapshot.status === 'idle') {
+    if (!isOpen) {
+      // Reset complet à chaque fermeture.
+      setPhase('countdown')
+      setCountdown(3)
+      if (snapshot.status !== 'idle') stop()
+      return
+    }
+    // Déjà en running : le hook ticke, rien à planifier.
+    if (phase === 'running') return
+
+    // On est en countdown. Tick chaque seconde.
+    if (countdown <= 0) {
+      // GO → démarrage du chrono principal.
+      vibrate([60, 40, 120])
+      setPhase('running')
       start()
+      return
     }
-    if (!isOpen && snapshot.status !== 'idle') {
-      stop()
-    }
-  }, [isOpen, snapshot.status, start, stop])
+    vibrate(80)
+    const id = window.setTimeout(() => {
+      setCountdown((c) => c - 1)
+    }, 1000)
+    return () => window.clearTimeout(id)
+  }, [isOpen, phase, countdown, start, stop, snapshot.status])
 
   const handleStop = () => {
     const result: TimedBlockResult = {
@@ -122,22 +147,63 @@ export function TimedBlockOverlay({
           className="fixed left-0 right-0 bottom-28 z-40 px-4 pointer-events-none"
         >
           <div className="max-w-md mx-auto pointer-events-auto">
-            <OverlayBody
-              format={format}
-              snapshot={snapshot}
-              resolveName={resolveName}
-              loggableCount={loggable.length}
-              onPauseResume={() => (snapshot.status === 'running' ? pause() : start())}
-              onSkip={skipInterval}
-              onStop={handleStop}
-              onIncrementRound={incrementAmrapRound}
-              onFinishForTime={handleFinishForTime}
-              onCancel={onCancel}
-            />
+            {phase === 'countdown' ? (
+              <CountdownBody
+                countdown={countdown}
+                firstExerciseLabel={loggable.length > 0 ? resolveName(0) : null}
+                onCancel={onCancel}
+              />
+            ) : (
+              <OverlayBody
+                format={format}
+                snapshot={snapshot}
+                resolveName={resolveName}
+                loggableCount={loggable.length}
+                onPauseResume={() => (snapshot.status === 'running' ? pause() : start())}
+                onSkip={skipInterval}
+                onStop={handleStop}
+                onIncrementRound={incrementAmrapRound}
+                onFinishForTime={handleFinishForTime}
+                onCancel={onCancel}
+              />
+            )}
           </div>
         </motion.div>
       )}
     </AnimatePresence>
+  )
+}
+
+function CountdownBody({
+  countdown,
+  firstExerciseLabel,
+  onCancel,
+}: {
+  countdown: number
+  firstExerciseLabel: string | null
+  onCancel: () => void
+}) {
+  const label = countdown > 0 ? String(countdown) : 'GO !'
+  return (
+    <div className="relative rounded-[24px] shadow-brand-float border border-brand-border-strong bg-brand text-on-brand p-5">
+      <button
+        type="button"
+        onClick={onCancel}
+        aria-label="Annuler le démarrage"
+        className="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center bg-white/20 text-on-brand hover:bg-white/30 rf-focus-ring"
+      >
+        <X className="w-4 h-4" />
+      </button>
+      <div className="flex flex-col items-center text-center">
+        <p className="text-[10px] font-black uppercase tracking-widest text-on-brand/80">Préparation</p>
+        <p className="font-black text-7xl tabular-nums leading-none mt-2">{label}</p>
+        {firstExerciseLabel && (
+          <p className="text-xs text-on-brand/90 mt-3">
+            Prépare-toi : <span className="font-bold">{firstExerciseLabel}</span>
+          </p>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -170,8 +236,6 @@ function OverlayBody({
   const isAmrap = format.type === 'amrap'
   const isForTime = format.type === 'for_time'
 
-  // Indicateur principal : temps restant dans l'intervalle courant (EMOM/Tabata),
-  // ou temps restant total (AMRAP), ou temps écoulé (For Time).
   const primarySec =
     isEmom || isTabata
       ? snapshot.remainingInIntervalSec ?? 0
@@ -179,7 +243,6 @@ function OverlayBody({
         ? Math.max(0, snapshot.totalSec - snapshot.elapsedSec)
         : snapshot.elapsedSec
 
-  // Barre de progression : remplissage sur la durée attendue.
   const progressPct = (() => {
     if (isEmom && snapshot.remainingInIntervalSec != null) {
       return 1 - snapshot.remainingInIntervalSec / format.intervalSeconds
@@ -194,7 +257,6 @@ function OverlayBody({
     return 0
   })()
 
-  // Exo courant / suivant pour EMOM (cycle sur la liste).
   const emomExerciseLabels = (() => {
     if (!isEmom || loggableCount === 0) return null
     const idx = (snapshot.currentMinute ?? 0) % loggableCount
@@ -202,9 +264,13 @@ function OverlayBody({
     return { current: resolveName(idx), next: resolveName(next) }
   })()
 
+  const totalRemainingSec = snapshot.totalSec != null
+    ? Math.max(0, snapshot.totalSec - snapshot.elapsedSec)
+    : null
+
   const headerLabel = (() => {
     if (isEmom) {
-      return `${getFormatTitle(format)} · Minute ${(snapshot.currentMinute ?? 0) + 1}/${snapshot.totalMinutes ?? 0}`
+      return `EMOM · Minute ${(snapshot.currentMinute ?? 0) + 1}/${snapshot.totalMinutes ?? 0}`
     }
     if (isTabata) {
       const phase = snapshot.tabataPhase === 'work' ? 'EFFORT' : 'REPOS'
@@ -213,49 +279,49 @@ function OverlayBody({
     if (isAmrap) {
       return `AMRAP · ${Math.round(format.totalSeconds / 60)} min`
     }
-    if (isForTime) {
-      return 'For Time · en cours'
-    }
+    if (isForTime) return 'For Time · en cours'
     return 'Bloc chronométré'
   })()
 
-  const tabataPhaseColor = (() => {
-    if (!isTabata) return null
-    return snapshot.tabataPhase === 'work'
+  const tabataPhaseColor = isTabata
+    ? snapshot.tabataPhase === 'work'
       ? 'bg-ok-strong text-white'
       : 'bg-warn-button text-white'
-  })()
+    : null
 
   const bodyBaseClass = isTabata && tabataPhaseColor
-    ? `rounded-[24px] shadow-brand-float border backdrop-blur p-4 ${tabataPhaseColor} border-transparent`
-    : 'rounded-[24px] shadow-brand-float border border-border-app bg-panel p-4'
+    ? `relative rounded-[24px] shadow-brand-float border p-4 ${tabataPhaseColor} border-transparent`
+    : 'relative rounded-[24px] shadow-brand-float border border-border-app bg-panel p-4'
 
   return (
     <div className={bodyBaseClass}>
+      {/* Close en haut-droite — pattern modal standard, séparé des contrôles lecture. */}
+      <button
+        type="button"
+        onClick={onCancel}
+        aria-label="Fermer l'overlay"
+        className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-xl flex items-center justify-center rf-focus-ring transition-colors ${
+          isTabata
+            ? 'bg-white/20 text-white hover:bg-white/30'
+            : 'text-fg-muted hover:bg-layer-10'
+        }`}
+      >
+        <X className="w-4 h-4" />
+      </button>
+
       {/* Header */}
-      <div className="flex items-center justify-between gap-2">
-        <p
-          className={`text-[10px] font-black uppercase tracking-widest ${
-            isTabata ? 'text-white/90' : 'text-brand-tint'
-          }`}
-        >
+      <div className="pr-10">
+        <p className={`text-[10px] font-black uppercase tracking-widest ${isTabata ? 'text-white/90' : 'text-brand-tint'}`}>
           {headerLabel}
         </p>
-        <button
-          type="button"
-          onClick={onCancel}
-          aria-label="Quitter sans valider"
-          className={`w-8 h-8 rounded-xl flex items-center justify-center rf-focus-ring transition-colors ${
-            isTabata
-              ? 'bg-white/20 text-white hover:bg-white/30'
-              : 'text-fg-muted hover:bg-layer-10'
-          }`}
-        >
-          <X className="w-4 h-4" />
-        </button>
+        {totalRemainingSec != null && (
+          <p className={`text-[11px] font-bold mt-0.5 ${isTabata ? 'text-white/80' : 'text-fg-muted'}`}>
+            Temps total restant : <span className="tabular-nums">{fmt(totalRemainingSec)}</span>
+          </p>
+        )}
       </div>
 
-      {/* Chrono + état */}
+      {/* Chrono + indicateur */}
       <div className="mt-2 flex items-baseline gap-3">
         <p className={`font-black tabular-nums leading-none text-5xl ${isTabata ? 'text-white' : 'text-fg'}`}>
           {fmt(primarySec)}
@@ -271,11 +337,34 @@ function OverlayBody({
       {!isForTime && (
         <div className={`mt-3 h-1.5 rounded-full overflow-hidden ${isTabata ? 'bg-white/30' : 'bg-layer-10'}`}>
           <div
-            className={`h-full rounded-full transition-[width] duration-200 ease-linear ${
-              isTabata ? 'bg-white' : 'bg-brand'
-            }`}
+            className={`h-full rounded-full transition-[width] duration-200 ease-linear ${isTabata ? 'bg-white' : 'bg-brand'}`}
             style={{ width: `${progressPct * 100}%` }}
           />
+        </div>
+      )}
+
+      {/* Mini-timeline — dots pour EMOM (1 par minute), pour Tabata (1 par round). */}
+      {(isEmom || isTabata) && (
+        <div className="mt-2 flex items-center gap-1 flex-wrap">
+          {Array.from({
+            length: isEmom ? (snapshot.totalMinutes ?? 0) : format.rounds,
+          }).map((_, i) => {
+            const current = isEmom ? (snapshot.currentMinute ?? 0) : (snapshot.currentRound ?? 0)
+            const state = i < current ? 'past' : i === current ? 'active' : 'future'
+            const base = 'w-2 h-2 rounded-full transition-colors'
+            const cls = isTabata
+              ? state === 'past'
+                ? `${base} bg-white/60`
+                : state === 'active'
+                  ? `${base} bg-white ring-2 ring-white/50`
+                  : `${base} bg-white/20`
+              : state === 'past'
+                ? `${base} bg-brand/80`
+                : state === 'active'
+                  ? `${base} bg-brand ring-2 ring-brand/30`
+                  : `${base} bg-layer-15`
+            return <span key={i} aria-hidden className={cls} />
+          })}
         </div>
       )}
 
@@ -290,7 +379,7 @@ function OverlayBody({
         </div>
       )}
 
-      {/* Contrôles */}
+      {/* Contrôles groupés (Close retiré du groupe — il est en haut-droite). */}
       <div className="mt-4 flex items-center gap-2">
         {isAmrap && (
           <button
@@ -341,14 +430,14 @@ function OverlayBody({
         <button
           type="button"
           onClick={onStop}
-          aria-label="Stopper le bloc"
-          className={`ml-auto w-10 h-10 rounded-xl border flex items-center justify-center rf-focus-ring transition-colors ${
+          className={`ml-auto px-3 h-10 rounded-xl border text-xs font-black uppercase tracking-wide rf-focus-ring transition-colors ${
             isTabata
               ? 'border-white/40 bg-white/20 text-white'
-              : 'border-alert-bd bg-layer-5 text-alert hover:bg-alert-bg-muted'
+              : 'border-alert-bd bg-alert-bg-muted text-alert-strong hover:bg-alert-bg'
           }`}
+          aria-label="Stopper et marquer terminé"
         >
-          <X className="w-4 h-4" />
+          Stop
         </button>
       </div>
     </div>

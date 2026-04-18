@@ -177,27 +177,16 @@ export function MotherSessionBlock({
       ) : null}
 
       {/* Mode En cours — format temporel (EMOM, Tabata, AMRAP, For Time) :
-          bouton "Démarrer le bloc" qui ouvre l'overlay chrono en bas d'écran. */}
+          preview des exercices enchaînés + bouton "Démarrer" qui ouvre l'overlay
+          chrono en bas d'écran (avec compte à rebours 3-2-1 GO). */}
       {runMode && isTimed && (
-        <div className="mt-4 rounded-2xl border border-brand-border bg-brand-soft/40 p-3 flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[11px] font-black uppercase tracking-widest text-brand-tint">
-              Bloc chronométré
-            </p>
-            <p className="text-xs text-fg-secondary mt-0.5">
-              Le chrono guide automatiquement chaque intervalle — pose ton téléphone.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setTimedOverlayOpen(true)}
-            disabled={timedOverlayOpen}
-            className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 h-9 rounded-xl bg-brand text-on-brand text-xs font-black uppercase tracking-wide rf-focus-ring disabled:opacity-50"
-          >
-            <Timer className="w-3.5 h-3.5" />
-            Démarrer
-          </button>
-        </div>
+        <TimedBlockPreview
+          format={parsedFormat}
+          block={block}
+          frExerciseNames={frBlock?.exercises.map((e) => e.name)}
+          disabled={timedOverlayOpen}
+          onStart={() => setTimedOverlayOpen(true)}
+        />
       )}
 
       {/* Mode En cours — format classique : tracker par TOURS. */}
@@ -257,5 +246,125 @@ export function MotherSessionBlock({
         />
       )}
     </article>
+  )
+}
+
+// ── Preview d'un bloc chronométré (avant le tap "Démarrer") ──────────────────
+//
+// Aide l'athlète à anticiper : liste l'enchaînement prévu, fréquence, durée.
+// Format-specific :
+//   - EMOM   : "Min 1, 3, 5…" / "Min 2, 4, 6…" avec chaque exo cyclant.
+//   - Tabata : "N rounds, X s effort / Y s repos" + liste exos.
+//   - AMRAP  : "X min, enchaîne autant de tours que possible" + liste exos.
+//   - For Time : "Termine le plus vite possible" + liste exos.
+
+function TimedBlockPreview({
+  format,
+  block,
+  frExerciseNames,
+  disabled,
+  onStart,
+}: {
+  format: Extract<ReturnType<typeof parseBlockFormat>, { type: 'emom' | 'tabata' | 'amrap' | 'for_time' }>
+  block: Block
+  frExerciseNames?: (string | undefined)[]
+  disabled: boolean
+  onStart: () => void
+}) {
+  const exos = block.exercises
+    .map((ex, i) => (isDirectiveText(ex.name) ? null : { ex, i }))
+    .filter((x): x is { ex: Block['exercises'][0]; i: number } => x !== null)
+
+  const name = (i: number): string =>
+    frExerciseNames?.[i] ?? exos.find((e) => e.i === i)?.ex.name ?? '—'
+
+  const description = (() => {
+    switch (format.type) {
+      case 'emom':
+        return `${format.rounds} minutes — une nouvelle minute = un nouvel exercice.`
+      case 'tabata':
+        return `${format.rounds} rounds de ${format.workSeconds}s effort / ${format.restSeconds}s repos.`
+      case 'amrap':
+        return `${Math.round(format.totalSeconds / 60)} minutes — enchaîne le plus de tours possible.`
+      case 'for_time':
+        return 'Termine le plus vite possible.'
+    }
+  })()
+
+  // Pour EMOM : grouper les minutes par exo (cyclage). Ex. 2 exos sur 8 min →
+  // exo 1 sur min 1,3,5,7 ; exo 2 sur min 2,4,6,8.
+  const emomPlan = (() => {
+    if (format.type !== 'emom' || exos.length === 0) return null
+    const minutesPerExo = new Map<number, number[]>()
+    for (let m = 0; m < format.rounds; m++) {
+      const exoIdxInList = m % exos.length
+      const realIdx = exos[exoIdxInList].i
+      const arr = minutesPerExo.get(realIdx) ?? []
+      arr.push(m + 1)
+      minutesPerExo.set(realIdx, arr)
+    }
+    return Array.from(minutesPerExo.entries()).map(([exoIdx, minutes]) => ({
+      exoIdx,
+      minutes,
+      label: name(exoIdx),
+      prescription: block.exercises[exoIdx]?.prescription,
+    }))
+  })()
+
+  return (
+    <div className="mt-4 rounded-2xl border border-brand-border bg-brand-soft/40 p-3 space-y-3">
+      <div>
+        <p className="text-[11px] font-black uppercase tracking-widest text-brand-tint">
+          Bloc chronométré
+        </p>
+        <p className="text-xs text-fg-secondary mt-0.5">{description}</p>
+      </div>
+
+      {emomPlan && (
+        <ul className="space-y-1.5">
+          {emomPlan.map((entry) => (
+            <li key={entry.exoIdx} className="flex items-start gap-2 text-xs">
+              <span className="flex-shrink-0 font-black text-brand-tint tabular-nums">
+                Min {entry.minutes.join(', ')}
+              </span>
+              <span className="text-fg-muted">·</span>
+              <span className="min-w-0 flex-1">
+                <span className="font-bold text-fg">{entry.label}</span>
+                {entry.prescription && (
+                  <span className="text-fg-secondary"> {stripBackticks(entry.prescription)}</span>
+                )}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {!emomPlan && exos.length > 0 && (
+        <ul className="space-y-1.5">
+          {exos.map(({ ex, i }) => (
+            <li key={i} className="flex items-start gap-2 text-xs">
+              <span className="w-4 flex-shrink-0 font-black text-brand-tint tabular-nums">{exos.indexOf(exos.find((e) => e.i === i)!) + 1}</span>
+              <span className="text-fg-muted">·</span>
+              <span className="min-w-0 flex-1">
+                <span className="font-bold text-fg">{name(i)}</span>
+                {ex.prescription && (
+                  <span className="text-fg-secondary"> {stripBackticks(ex.prescription)}</span>
+                )}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <button
+        type="button"
+        onClick={onStart}
+        disabled={disabled}
+        className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-brand hover:bg-brand-hover text-on-brand text-sm font-black uppercase tracking-wide rf-focus-ring disabled:opacity-50"
+      >
+        <Timer className="w-4 h-4" />
+        Démarrer le chrono
+      </button>
+    </div>
   )
 }
