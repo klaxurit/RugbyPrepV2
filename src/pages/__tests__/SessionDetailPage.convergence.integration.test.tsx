@@ -427,6 +427,10 @@ describe('SessionDetailPage · annual-first', () => {
 
     renderSessionDetail(0)
 
+    // Les blocs sont condensés en mode Aperçu : on ouvre tous ceux qui ne le sont pas
+    // pour vérifier le contenu adapté (Fondations) de chaque bloc.
+    screen.getAllByRole('button', { expanded: false }).forEach((btn) => fireEvent.click(btn))
+
     expect(screen.getByText('Presse à cuisses')).toBeInTheDocument()
     expect(screen.getByText('Curl ischios machine')).toBeInTheDocument()
     expect(screen.queryByText('Pin Back Squat')).toBeNull()

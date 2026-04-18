@@ -39,6 +39,8 @@ export type MotherSessionBlockProps = {
   isPremium?: boolean
   acwr?: number | null
   isRehabActive?: boolean
+  /** Si true, le composant saute son entête (nom / format) — l'hôte le rend lui-même. */
+  hideHeader?: boolean
 }
 
 function ExerciseRow({
@@ -132,6 +134,7 @@ export function MotherSessionBlock({
   isPremium,
   acwr,
   isRehabActive,
+  hideHeader,
 }: MotherSessionBlockProps) {
   const sessionRun = useSessionRun()
   const runMode = sessionRun.status === 'running'
@@ -252,23 +255,34 @@ export function MotherSessionBlock({
   }, [onSaveBlock, motherSessionId, sessionType, week, loggableExercises, drafts, block.number, block.name, getBestForExercise])
 
   return (
-    <article className="rounded-2xl border border-border-app bg-layer-5 p-4">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold text-brand-tint">
-            {msLabel('block', lang)} {block.number}
-            {block.isOptional ? (
-              <span className="ml-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-300">
-                {msLabel('optional', lang)}
-              </span>
-            ) : null}
-          </p>
-          <h2 className="mt-1 text-base font-semibold leading-snug text-fg">{blockName}</h2>
-        </div>
-      </div>
+    <article className={hideHeader ? '' : 'rounded-2xl border border-border-app bg-layer-5 p-4'}>
+      {!hideHeader && (
+        <>
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold text-brand-tint">
+                {msLabel('block', lang)} {block.number}
+                {block.isOptional ? (
+                  <span className="ml-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-300">
+                    {msLabel('optional', lang)}
+                  </span>
+                ) : null}
+              </p>
+              <h2 className="mt-1 text-base font-semibold leading-snug text-fg">{blockName}</h2>
+            </div>
+          </div>
 
-      {blockFormat ? (
-        <div className="mt-3">
+          {blockFormat ? (
+            <div className="mt-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-fg-muted">{msLabel('format', lang)}</p>
+              <p className="mt-1 text-sm text-fg-secondary">{stripBackticks(blockFormat)}</p>
+            </div>
+          ) : null}
+        </>
+      )}
+
+      {hideHeader && blockFormat ? (
+        <div className="mb-3">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-fg-muted">{msLabel('format', lang)}</p>
           <p className="mt-1 text-sm text-fg-secondary">{stripBackticks(blockFormat)}</p>
         </div>

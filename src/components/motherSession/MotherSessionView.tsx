@@ -13,6 +13,8 @@ import { MotherSessionCollapsible } from './MotherSessionCollapsible'
 import { MotherSessionHeader } from './MotherSessionHeader'
 import { MotherSessionInjurySubs } from './MotherSessionInjurySubs'
 import { MotherSessionWarmUp } from './MotherSessionWarmUp'
+import { SessionBlockCard } from './SessionBlockCard'
+import { classifyBlock } from '../../services/ui/blockPresentation'
 
 type MotherSessionViewProps = {
   session: MotherSession
@@ -83,24 +85,37 @@ export function MotherSessionView({
       />
 
       <section className="space-y-3" aria-label="Training blocks">
-        {adaptedSession.blocks.map((block, i) => (
-          <MotherSessionBlock
-            key={block.number}
-            block={block}
-            lang={lang}
-            frBlock={frContent?.blocks[i]}
-            motherSessionId={session.metadata.id}
-            sessionType={sessionType}
-            week={week}
-            fatigue={fatigue}
-            onSaveBlock={onSaveBlock}
-            getLastEntryForExercise={getLastEntryForExercise}
-            getBestForExercise={getBestForExercise}
-            isPremium={isPremium}
-            acwr={acwr}
-            isRehabActive={isRehabActive}
-          />
-        ))}
+        {adaptedSession.blocks.map((block, i) => {
+          // Ouverts par défaut : le 1er bloc (toujours utile au démarrage) et les échauffements.
+          const kind = classifyBlock(block)
+          const defaultOpen = i === 0 || kind === 'warmup'
+          return (
+            <SessionBlockCard
+              key={block.number}
+              block={block}
+              lang={lang}
+              displayName={frContent?.blocks[i]?.name ?? block.name}
+              defaultOpen={defaultOpen}
+            >
+              <MotherSessionBlock
+                block={block}
+                lang={lang}
+                frBlock={frContent?.blocks[i]}
+                motherSessionId={session.metadata.id}
+                sessionType={sessionType}
+                week={week}
+                fatigue={fatigue}
+                onSaveBlock={onSaveBlock}
+                getLastEntryForExercise={getLastEntryForExercise}
+                getBestForExercise={getBestForExercise}
+                isPremium={isPremium}
+                acwr={acwr}
+                isRehabActive={isRehabActive}
+                hideHeader
+              />
+            </SessionBlockCard>
+          )
+        })}
       </section>
 
       {/* "Comprendre cette séance" — FIX F4-2: non rendu si les deux sont vides */}
