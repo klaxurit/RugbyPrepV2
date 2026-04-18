@@ -69,9 +69,10 @@ export function CoachBubble({
   if (!hasContent) return null
 
   return (
-    // Flottant au-dessus du contenu, positionné juste sous le PageHeader (sticky top-0 z-50,
-    // hauteur ~88px). z-40 pour passer au-dessus des bannières sans couvrir le header.
-    <div className="fixed top-24 right-4 z-40">
+    // Flottant au-dessus du contenu, descendu au niveau de la légende Perso/Club/Match
+    // pour ne pas masquer l'info principale (stats + PlanningContextCard) dès l'arrivée.
+    // z-40 pour passer au-dessus des bannières sans couvrir le header (sticky top-0 z-50).
+    <div className="fixed top-52 right-4 z-40">
       <div className="relative">
         {/* Bubble trigger — mascotte custom (bouche fermée / ouverte selon état). */}
         <button
@@ -79,7 +80,7 @@ export function CoachBubble({
           onClick={open ? handleClose : handleOpen}
           aria-label={open ? 'Fermer les conseils du coach' : `Voir les conseils du coach${messageCount > 0 ? ` — ${messageCount} message${messageCount > 1 ? 's' : ''}` : ''}`}
           aria-expanded={open}
-          className="w-14 h-14 rounded-full overflow-hidden bg-brand-soft shadow-lg hover:scale-105 active:scale-95 transition-transform rf-focus-ring"
+          className="w-12 h-12 rounded-full overflow-hidden bg-brand-soft shadow-lg hover:scale-105 active:scale-95 transition-transform rf-focus-ring"
           data-testid="coach-bubble-trigger"
         >
           <img
@@ -112,7 +113,7 @@ export function CoachBubble({
               transition={{ duration: 0.18 }}
               role="dialog"
               aria-label="Conseils du coach"
-              className="absolute top-16 right-0 w-[17rem] max-w-[calc(100vw-2rem)] rounded-[20px] border border-border-app bg-panel shadow-xl p-4 space-y-3"
+              className="absolute top-14 right-0 w-[17rem] max-w-[calc(100vw-2rem)] rounded-[20px] border border-border-app bg-panel shadow-xl p-4 space-y-3"
               data-testid="coach-bubble-popover"
             >
               <div className="flex items-start justify-between gap-2">
