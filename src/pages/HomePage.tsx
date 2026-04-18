@@ -5,19 +5,13 @@ import { posthog } from '../services/analytics/posthog'
 import { motion } from 'framer-motion'
 import {
   Play,
-  Clock,
   Activity,
-  Calendar,
   Zap,
   ChevronRight,
   History,
   AlertTriangle,
-  CheckCircle2,
   Dumbbell,
-  TrendingUp,
   Trophy,
-  ChevronDown,
-  Info,
   MessageSquare,
   Lock,
 } from 'lucide-react'
@@ -29,22 +23,16 @@ import { useWeek } from '../hooks/useWeek'
 import { useHistory } from '../hooks/useHistory'
 import { useAuth } from '../hooks/useAuth'
 import { useCalendar } from '../hooks/useCalendar'
-import { useACWR, ACWR_ZONE_CONFIG } from '../hooks/useACWR'
+import { useACWR } from '../hooks/useACWR'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useAthleteTests } from '../hooks/useAthleteTests'
-import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useReadinessScore } from '../hooks/useReadinessScore'
-import { useWeeklySummary } from '../hooks/useWeeklySummary'
-import { ReadinessScoreCard } from '../components/ReadinessScoreCard'
 import { ScoreDeFormeTeaser } from '../components/ScoreDeFormeTeaser'
-import { WeeklySummaryCard } from '../components/WeeklySummaryCard'
-import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
 import { SeasonTransitionBanner, SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
-import { ReadinessScoreSkeleton, WeeklySummarySkeleton } from '../components/SkeletonCard'
 import { getToday } from '../services/ui/debugDateOverride'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import type { CycleWeek, SessionType, SeasonPhase, TransitionEntry } from '../types/training'
@@ -145,7 +133,6 @@ export function HomePage() {
   }, [])
 
   // Readiness score computed before surface so it can feed into monitoring modulation
-  const { logs: blockLogs } = useBlockLogs()
   const readinessResult = useReadinessScore({
     acwrZone: acwr.hasSufficientData ? acwr.zone : null,
     fatigue,
@@ -215,13 +202,6 @@ export function HomePage() {
 
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
 
-  // ── Premium features: weekly summary ──────────────────────────────────────
-  const weeklySummary = useWeeklySummary({
-    logs,
-    blockLogs,
-    plannedSessionCount: weekPresentation?.sessions.length ?? 0,
-    today,
-  })
   const { transition: seasonTransition, dismiss: dismissSeasonTransition } = useSeasonTransitions({
     planningContext: surface?.planningContext ?? null,
     today,
@@ -359,36 +339,38 @@ export function HomePage() {
 
       <main className="px-6 pt-6 space-y-6 max-w-md mx-auto relative">
 
-        {/* ── Hero Card ── Deux variantes : rest day (refonte) / training day (legacy). */}
-        {isRestDay ? (
-          <section data-testid="home-hero-card">
-            {/* Meta du jour — 1 ligne texte remplace les 3 chips. */}
-            <p className="text-xs text-fg-soft mb-3 text-center">{metaLine}</p>
+        {/* ── Meta-ligne commune (date · saison · semaine · niveau) ─────────── */}
+        <section data-testid="home-hero-card">
+          <p className="text-xs text-fg-soft mb-3 text-center">{metaLine}</p>
 
-            {/* Bandeau match promu — fond warn + icône, sticky visuel au-dessus du hero. */}
-            {(restDayContext === 'match_tomorrow' || restDayContext === 'match_today') && nextMatch && (
-              <Link to="/calendar" className="block mb-3" data-testid="home-match-banner">
-                <div className="flex items-center gap-3 py-3 px-4 bg-warn-bg border border-warn-bd rounded-2xl group min-h-[56px]">
-                  <Trophy className="w-5 h-5 text-warn-strong fill-current flex-shrink-0" aria-hidden />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-black text-warn-strong leading-tight">
-                      {restDayContext === 'match_today'
-                        ? "C'est aujourd'hui !"
-                        : `J-${diffDays(nextMatch.date)} · ${nextMatch.opponent ? `vs ${nextMatch.opponent}` : 'Prochain match'}`}
+          {/* ── Bandeau match conditionnel ──
+              Affiché seulement si un match est programmé dans les 7 prochains
+              jours. En inter-saison sans match, rien n'est rendu. */}
+          {nextMatch != null && daysToMatch != null && daysToMatch >= 0 && daysToMatch <= 7 && (
+            <Link to="/calendar" className="block mb-3" data-testid="home-match-banner">
+              <div className="flex items-center gap-3 py-3 px-4 bg-warn-bg border border-warn-bd rounded-2xl group min-h-[56px]">
+                <Trophy className="w-5 h-5 text-warn-strong fill-current flex-shrink-0" aria-hidden />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-black text-warn-strong leading-tight">
+                    {isMatchDay
+                      ? "C'est aujourd'hui !"
+                      : `J-${daysToMatch} · ${nextMatch.opponent ? `vs ${nextMatch.opponent}` : 'Prochain match'}`}
+                  </p>
+                  {!isMatchDay && nextMatch.kickoff_time && (
+                    <p className="text-[11px] text-warn-body mt-0.5">
+                      {nextMatch.is_home === false ? 'Extérieur · ' : 'Domicile · '}
+                      {nextMatch.kickoff_time}
                     </p>
-                    {restDayContext !== 'match_today' && nextMatch.kickoff_time && (
-                      <p className="text-[11px] text-warn-body mt-0.5">
-                        {nextMatch.is_home === false ? 'Extérieur · ' : 'Domicile · '}
-                        {nextMatch.kickoff_time}
-                      </p>
-                    )}
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-warn-body group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+                  )}
                 </div>
-              </Link>
-            )}
+                <ChevronRight className="w-4 h-4 text-warn-body group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+              </div>
+            </Link>
+          )}
 
-            {/* Hero rest day — eyebrow + H1 affirmatif + prescription récup + CTA secondary. */}
+          {/* ── Hero — variante selon état rest day / training day ─────────── */}
+          {isRestDay ? (
+            // Rest day : eyebrow + H1 affirmatif + prescription récup + CTA secondary.
             <div className="bg-glass border border-border-app rounded-[24px] p-5">
               <p className="text-[11px] font-bold text-fg-muted uppercase tracking-wider" data-testid="home-hero-label">
                 {restDayCopy.eyebrow}
@@ -399,7 +381,6 @@ export function HomePage() {
               <p className="text-sm text-fg-soft mt-3 leading-relaxed whitespace-nowrap truncate">
                 {restDayCopy.body}
               </p>
-
               {nextDatedSession && (
                 <p className="text-xs text-fg-muted mt-3">
                   Prochaine séance : <span className="font-bold text-fg">{nextDatedSession.dayLabel}</span>
@@ -407,7 +388,6 @@ export function HomePage() {
                   {formatTitleFromMotherSessionId(nextDatedSession.sessionSlot.session.metadata.id, lang)}
                 </p>
               )}
-
               <Link
                 to="/week"
                 data-testid="home-cta-primary"
@@ -422,68 +402,24 @@ export function HomePage() {
                 </motion.button>
               </Link>
             </div>
-          </section>
-        ) : (
-          // ── Training day : hero legacy (hors scope de la refonte rest day) ─────
-          <section data-testid="home-hero-card">
-            <div className="bg-glass border border-border-app rounded-[24px] p-5 space-y-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 flex-wrap">
-                  {(() => {
-                    const cfg = seasonPhaseLabel[seasonPhase]
-                    return <Chip tone={cfg.tone}>{cfg.label}</Chip>
-                  })()}
-                  {blockProgression?.currentBlockLabel ? (
-                    <Chip tone="brand">{blockProgression.currentBlockLabel}</Chip>
-                  ) : (
-                    <Chip tone="brand">{weekLabel(week)}</Chip>
-                  )}
-                  <Chip tone="neutral">{trainingLevelLabel}</Chip>
-                </div>
-              </div>
-
-              {isMatchDay && (
-                <div className="flex items-center gap-2 py-2 px-3 bg-warn-bg border border-warn-bd rounded-2xl">
-                  <Trophy className="w-4 h-4 text-warn-strong fill-current" />
-                  <span className="text-xs font-black text-warn-strong uppercase tracking-wide">Jour de match !</span>
-                </div>
-              )}
-              {nextMatch && !isMatchDay && (
-                <Link to="/calendar" className="block">
-                  <div className="flex items-center gap-3 py-2 px-3 bg-layer-5 rounded-2xl group">
-                    <div className="w-8 h-8 rounded-xl bg-warn-bg flex items-center justify-center flex-shrink-0">
-                      <Trophy className="w-3.5 h-3.5 text-warn-strong" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-xs font-bold text-fg">Prochain match — J−{diffDays(nextMatch.date)}</span>
-                      {nextMatch.opponent && (
-                        <span className="text-[10px] text-fg-muted ml-2">vs {nextMatch.opponent}</span>
-                      )}
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-fg-faint group-hover:text-brand-tint transition-colors" />
-                  </div>
-                </Link>
-              )}
-
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider" data-testid="home-hero-label">Séance du jour</p>
-                <h3 className="text-xl font-black text-fg">{todaySessionTitle}</h3>
-                <div className="flex items-center gap-4 mt-1">
-                  <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
-                    <Clock className="w-3.5 h-3.5 text-fg-faint" />
-                    {sessionDuration}
-                  </span>
-                  <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
-                    <Activity className="w-3.5 h-3.5 text-fg-faint" />
-                    {actualSessionCount} séance{actualSessionCount > 1 ? 's' : ''} cette semaine
-                  </span>
-                </div>
-              </div>
-
+          ) : (
+            // Training day : eyebrow SÉANCE DU JOUR + H1 séance + CTA primary + lien skip.
+            <div className="bg-glass border border-border-app rounded-[24px] p-5">
+              <p className="text-[11px] font-bold text-fg-muted uppercase tracking-wider" data-testid="home-hero-label">
+                Séance du jour
+              </p>
+              {/* H1 — séparateur interne `·` remplacé par ` — ` pour éviter la
+                  collision avec le `·` des meta-lignes. */}
+              <h3 className="text-2xl font-black text-fg leading-tight mt-1">
+                {todaySessionTitle!.replace(/\s·\s/g, ' — ')}
+              </h3>
+              <p className="text-sm text-fg-soft mt-2 leading-relaxed">
+                {sessionDuration} · {actualSessionCount} séance{actualSessionCount > 1 ? 's' : ''} cette semaine
+              </p>
               <Link
                 to={todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week'}
                 data-testid="home-cta-primary"
-                className="block"
+                className="block mt-5"
               >
                 <motion.button
                   whileTap={{ scale: 0.97 }}
@@ -495,17 +431,26 @@ export function HomePage() {
                   </span>
                 </motion.button>
               </Link>
+              {/* Action secondaire — skip le lancement, ouvrir la session pour cocher manuellement. */}
+              {todaySessionIndex != null && (
+                <Link
+                  to={`/session/${todaySessionIndex}`}
+                  className="block mt-3 text-center text-sm font-bold text-fg-soft hover:text-brand-tint transition-colors"
+                >
+                  Marquer comme faite (sans la lancer)
+                </Link>
+              )}
             </div>
-          </section>
-        )}
+          )}
+        </section>
 
-        {/* ── Score de forme teaser (rest day + user free) ─────────────────── */}
-        {isRestDay && premiumResolved && !isPremium && (
+        {/* ── Score de forme teaser (training + rest day, user free uniquement) ─ */}
+        {premiumResolved && !isPremium && (
           <ScoreDeFormeTeaser />
         )}
 
-        {/* ── Cette semaine (rest day uniquement) ─────────────────────────────── */}
-        {isRestDay && upcomingWeekSessions.length > 0 && (
+        {/* ── Cette semaine (training + rest day) ────────────────────────────── */}
+        {upcomingWeekSessions.length > 0 && (
           <section data-testid="home-this-week">
             <div className="bg-glass border border-border-app rounded-[24px] p-5 space-y-3">
               <div className="flex items-center justify-between">
@@ -533,16 +478,28 @@ export function HomePage() {
                   const isDone = s.completionStatus === 'completed'
                   const isSkipped = s.completionStatus === 'skipped'
                   const isTodayRow = s.dayOfWeek === todayDow
+                  // Highlight visuel de la séance du jour : point bordeaux + fond doux +
+                  // label en brand-tint. Sinon rendu neutre (gris muted).
                   return (
                     <li key={idx}>
                       <Link
                         to={`/session/${idx}`}
-                        className={`flex items-center gap-3 py-2.5 hover:bg-layer-5 -mx-2 px-2 rounded-xl transition-colors ${(isDone || isSkipped) ? 'opacity-50' : ''}`}
+                        className={`flex items-center gap-3 py-2.5 -mx-2 px-2 rounded-xl transition-colors ${
+                          (isDone || isSkipped)
+                            ? 'opacity-50 hover:bg-layer-5'
+                            : isTodayRow
+                              ? 'bg-brand-soft/50 hover:bg-brand-soft'
+                              : 'hover:bg-layer-5'
+                        }`}
                       >
-                        <span className={`flex-shrink-0 w-16 text-xs font-black uppercase tabular-nums ${isTodayRow ? 'text-brand-tint' : 'text-fg-muted'}`}>
+                        <span
+                          aria-hidden
+                          className={`flex-shrink-0 w-1.5 h-1.5 rounded-full ${isTodayRow ? 'bg-brand' : 'bg-transparent'}`}
+                        />
+                        <span className={`flex-shrink-0 w-14 text-xs font-black uppercase tabular-nums ${isTodayRow ? 'text-brand-tint' : 'text-fg-muted'}`}>
                           {dowShort} {dateNumber}
                         </span>
-                        <span className="flex-1 min-w-0 truncate text-sm font-bold text-fg">
+                        <span className={`flex-1 min-w-0 truncate text-sm font-bold ${isTodayRow ? 'text-brand-tint' : 'text-fg'}`}>
                           {title}
                         </span>
                         <span className="flex-shrink-0 text-[11px] text-fg-muted tabular-nums">
@@ -561,6 +518,18 @@ export function HomePage() {
                   {fatigue === 'OK' ? 'OK' : 'Élevée'}
                 </span>
               </div>
+              {/* Lien bilan complet — remplace la pill flottante "Bilan de semaine".
+                  Verrouillé pour les users free, actif pour les Premium. */}
+              <Link
+                to={isPremium ? '/progress' : '/profile#premium'}
+                className="flex items-center justify-between gap-2 pt-3 border-t border-border-app text-xs font-bold text-fg hover:text-brand-tint transition-colors rf-focus-ring rounded-lg"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  {!isPremium && <Lock className="w-3 h-3 text-brand-tint" aria-hidden />}
+                  Voir le bilan complet de la semaine
+                </span>
+                <ChevronRight className="w-4 h-4 text-fg-faint" />
+              </Link>
             </div>
           </section>
         )}
@@ -724,260 +693,22 @@ export function HomePage() {
           )
         ) : null}
 
-        {/* ── Readiness Score — masqué en rest day (intégré à "Cette semaine").
-            Conservé en training day avec la gauge complète. ── */}
-        {!isRestDay && (
-          <section>
-            {!premiumResolved ? (
-              <ReadinessScoreSkeleton />
-            ) : isPremium ? (
-              <ReadinessScoreCard result={readinessResult} />
-            ) : (
-              <PremiumBlurredPreview label="Score de forme">
-                <ReadinessScoreCard result={readinessResult} />
-              </PremiumBlurredPreview>
-            )}
-          </section>
-        )}
+        {/* Readiness Score full gauge : retiré de la home — remplacé par
+            le ScoreDeFormeTeaser (free) ou une future card Premium (TODO). */}
 
-        {/* ── Stats Row — masqué en rest day (fondu dans "Cette semaine"). ── */}
-        {!isRestDay && (
-        <section>
-          <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Récapitulatif</h2>
-          <div className="grid grid-cols-3 gap-3">
-            {/* Week / Block */}
-            <div className="bg-glass border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-2">
-              <div className="p-2 rounded-2xl bg-layer-10 text-brand-tint">
-                <Calendar className="w-5 h-5" />
-              </div>
-              <div className="text-lg font-black tracking-tight text-fg leading-none" data-testid="home-stats-cycle">
-                {blockProgression
-                  ? `B${(blockProgression.currentBlockIndex ?? 0) + 1}`
-                  : (week === 'DELOAD' ? 'DL' : week)}
-              </div>
-              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">
-                {blockProgression ? 'Bloc' : 'Cycle'}
-              </div>
-            </div>
-
-            {/* Fatigue */}
-            <div className="bg-glass border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-2">
-              <div className={`p-2 rounded-2xl ${fatigue === 'OK' ? 'bg-ok-bg text-ok-strong' : 'bg-warn-bg-muted text-warn-body'}`}>
-                {fatigue === 'OK'
-                  ? <CheckCircle2 className="w-5 h-5" />
-                  : <AlertTriangle className="w-5 h-5" />
-                }
-              </div>
-              <div className={`text-lg font-black tracking-tight leading-none ${fatigue === 'OK' ? 'text-ok-strong' : 'text-warn'}`}>
-                {fatigue === 'OK' ? 'OK' : 'Élevée'}
-              </div>
-              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Fatigue</div>
-            </div>
-
-            {/* Sessions */}
-            <div className="bg-glass border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-2">
-              <div className="p-2 rounded-2xl bg-brand-soft text-brand-tint">
-                <TrendingUp className="w-5 h-5" />
-              </div>
-              <div className="text-lg font-black tracking-tight text-fg leading-none" data-testid="home-stats-sessions">
-                {blockProgression
-                  ? `${blockProgression.sessionsCompletedInBlock}/${blockProgression.totalSessionsInBlock}`
-                  : `${sessionsThisWeek}/${actualSessionCount}`}
-              </div>
-              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Séances</div>
-            </div>
-          </div>
-        </section>
-        )}
+        {/* Stats row 3-up (Week / Fatigue / Séances) : retiré — info fondue
+            dans la meta-ligne (cycle) + section "Cette semaine" (séances +
+            fatigue). */}
 
         {/* Season suggestion removed — planning context is the single source of truth */}
 
-        {/* ── ACWR Widget — masqué en rest day (charge d'entraînement détaillée hors scope rest day). ── */}
-        {!isRestDay && (
-        <section>
-          {acwr.hasSufficientData && acwr.zone ? (() => {
-            const cfg = ACWR_ZONE_CONFIG[acwr.zone]
-            const pct = Math.min((acwr.acwr ?? 0) / 2, 1)
-            const matchPct = acwr.acuteLoad > 0 ? Math.round((acwr.acuteMatchLoad / acwr.acuteLoad) * 100) : 0
-            const trainingPct = 100 - matchPct
+        {/* ACWR widget (Charge d'entraînement) : retiré de la home v1.
+            Les données de charge détaillées vivent dans /progress. La home
+            expose uniquement fatigue + teaser score + lien bilan. */}
 
-            // Build human-readable explanation
-            const explanationParts: string[] = []
-            if (acwr.acuteMatchCount > 0) {
-              explanationParts.push(`${acwr.acuteMatchCount} match${acwr.acuteMatchCount > 1 ? 's' : ''} (${acwr.acuteMatchLoad} pts)`)
-            }
-            if (acwr.acuteTrainingCount > 0) {
-              explanationParts.push(`${acwr.acuteTrainingCount} séance${acwr.acuteTrainingCount > 1 ? 's' : ''} (${acwr.acuteTrainingLoad} pts)`)
-            }
-
-            // Why is the ratio high/low?
-            let ratioExplanation = ''
-            if (acwr.acwr != null) {
-              if (acwr.acwr >= 1.5 && acwr.chronicLoad < 200) {
-                ratioExplanation = 'Ta charge habituelle est basse — un pic ponctuel fait monter le ratio.'
-              } else if (acwr.acwr >= 1.5 && matchPct >= 60) {
-                ratioExplanation = 'Les matchs représentent la majorité de ta charge cette semaine.'
-              } else if (acwr.acwr >= 1.3) {
-                ratioExplanation = 'Tu t\'entraînes plus que d\'habitude ces 7 derniers jours.'
-              } else if (acwr.acwr < 0.8 && acwr.acuteLoad === 0) {
-                ratioExplanation = 'Aucune activité enregistrée cette semaine.'
-              } else if (acwr.acwr < 0.8) {
-                ratioExplanation = 'Volume plus faible que tes semaines précédentes.'
-              }
-            }
-
-            // What the programme does about it
-            let programAction = ''
-            if (acwr.zone === 'critical') {
-              programAction = 'Programme réduit à 1 séance + récupération.'
-            } else if (acwr.zone === 'danger') {
-              programAction = 'Dernière séance remplacée par mobilité.'
-            } else if (acwr.zone === 'caution') {
-              programAction = 'Volume réduit sur la dernière séance.'
-            } else if (acwr.zone === 'optimal') {
-              programAction = 'Programme normal — bon équilibre.'
-            } else if (acwr.zone === 'underload') {
-              programAction = 'Tu peux augmenter le volume progressivement.'
-            }
-
-            return (
-              <div className={`bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-3 ${cfg.border}`}>
-                {/* Header + badge */}
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-fg">Charge d'entraînement</h3>
-                  <span className={`text-[10px] font-black px-2.5 py-1 rounded-full ${cfg.bg} ${cfg.color}`}>
-                    {cfg.label}
-                  </span>
-                </div>
-
-                {/* Gauge bar */}
-                <div className="relative h-2.5 bg-layer-10 rounded-full overflow-hidden">
-                  <div className="absolute top-0 bottom-0 bg-ok-strip rounded-full"
-                    style={{ left: '40%', width: '25%' }} />
-                  <div
-                    className={`absolute top-0 bottom-0 rounded-full transition-all ${
-                      acwr.zone === 'optimal' ? 'bg-meter-optimal'
-                      : acwr.zone === 'underload' ? 'bg-meter-underload'
-                      : acwr.zone === 'caution' ? 'bg-meter-caution'
-                      : 'bg-meter-danger'
-                    }`}
-                    style={{ width: `${pct * 100}%` }}
-                  />
-                </div>
-
-                {/* Explanation + programme action (always visible) */}
-                {ratioExplanation && (
-                  <p className="text-xs text-fg-soft leading-relaxed">{ratioExplanation}</p>
-                )}
-                <div className={`rounded-xl px-3 py-2 ${cfg.bg}`}>
-                  <p className={`text-[11px] font-bold ${cfg.color}`}>{programAction}</p>
-                </div>
-
-                {/* Collapsible details */}
-                <details className="group">
-                  <summary className="flex items-center gap-1.5 cursor-pointer list-none text-[10px] font-bold text-fg-muted hover:text-fg-soft transition-colors [&::-webkit-details-marker]:hidden">
-                    <ChevronDown className="w-3 h-3 transition-transform group-open:rotate-180" />
-                    Comprendre ma charge
-                  </summary>
-                  <div className="mt-3 space-y-3 pt-3 border-t border-border-app">
-                    {/* Source breakdown */}
-                    <div className="space-y-2">
-                      <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider">7 derniers jours — {acwr.acuteLoad} pts</p>
-                      {acwr.acuteLoad > 0 && (
-                        <div className="flex h-2 rounded-full overflow-hidden">
-                          {acwr.acuteMatchLoad > 0 && (
-                            <div className="bg-danger-bg-cta h-full" style={{ width: `${matchPct}%` }} />
-                          )}
-                          {acwr.acuteTrainingLoad > 0 && (
-                            <div className="bg-brand h-full" style={{ width: `${trainingPct}%` }} />
-                          )}
-                        </div>
-                      )}
-                      <div className="flex items-center gap-4 text-[10px] text-fg-muted">
-                        {acwr.acuteMatchCount > 0 && (
-                          <span className="flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-danger-bg-cta inline-block" />
-                            {explanationParts[0]}
-                          </span>
-                        )}
-                        {acwr.acuteTrainingCount > 0 && (
-                          <span className="flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-brand inline-block" />
-                            {explanationParts[acwr.acuteMatchCount > 0 ? 1 : 0]}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Chronic context */}
-                    <div className="flex items-center justify-between text-[10px]">
-                      <span className="text-fg-muted">Charge habituelle</span>
-                      <span className="font-bold text-fg-soft">{Math.round(acwr.chronicLoad)} pts/sem</span>
-                    </div>
-
-                    {/* RPE explainer */}
-                    <div className="flex gap-2 p-2.5 rounded-xl bg-layer-3">
-                      <Info className="w-3.5 h-3.5 text-fg-faint flex-shrink-0 mt-0.5" />
-                      <div className="text-[10px] text-fg-muted leading-relaxed">
-                        <p className="font-bold text-fg-soft mb-1">Comment ça marche ?</p>
-                        <p>Après chaque séance ou match, tu notes ton <span className="font-bold text-fg-soft">effort ressenti (RPE)</span> de 1 (facile) à 10 (maximal).</p>
-                        <p className="mt-1">Ta charge = RPE x durée. On compare ta semaine en cours à ta moyenne des 4 dernières semaines pour détecter les pics de charge.</p>
-                      </div>
-                    </div>
-                  </div>
-                </details>
-              </div>
-            )
-          })() : (
-            <div className="bg-glass border border-border-app rounded-[2rem] p-5 space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-layer-10 flex items-center justify-center flex-shrink-0">
-                  <Activity className="w-5 h-5 text-fg-ghost" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-bold text-fg-emphasis">Charge d'entraînement</p>
-                  <p className="text-xs text-fg-muted">
-                    {acwr.weeksOfData === 0
-                      ? 'Disponible après ta 1re semaine de séances.'
-                      : `Sem. ${acwr.weeksOfData}/2 — encore ${2 - acwr.weeksOfData} sem. pour activer le ratio de charge.`}
-                  </p>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-fg-muted uppercase tracking-wide">
-                    {acwr.weeksOfData === 0 ? 'Étape 1 sur 2' : 'Étape 2 sur 2'}
-                  </span>
-                  <span className="text-[10px] font-bold text-brand-tint">
-                    {acwr.weeksOfData === 0 ? 'Note ton RPE après chaque séance' : 'Continue — presque là !'}
-                  </span>
-                </div>
-                <div className="h-1.5 bg-layer-10 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-brand rounded-full transition-all duration-500"
-                    style={{ width: acwr.weeksOfData === 0 ? '15%' : '60%' }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
-        )}
-
-        {/* ── Weekly Summary — masqué en rest day (hors scope du contexte "quoi faire aujourd'hui"). ── */}
-        {!isRestDay && (
-          <section>
-            {!premiumResolved ? (
-              <WeeklySummarySkeleton />
-            ) : isPremium ? (
-              <WeeklySummaryCard result={weeklySummary} />
-            ) : (
-              <PremiumBlurredPreview label="Bilan de semaine">
-                <WeeklySummaryCard result={weeklySummary} />
-              </PremiumBlurredPreview>
-            )}
-          </section>
-        )}
+        {/* Weekly Summary (ex pill "Bilan de semaine") : retiré de la home.
+            Remplacé par un lien "Voir le bilan complet de la semaine ›" en
+            pied de la card Cette semaine. */}
 
         {/* ── Premium: Injury risk alert (T2.3) ── */}
         {isPremium && !injuryDismissed && (() => {
