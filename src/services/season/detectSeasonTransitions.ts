@@ -66,7 +66,8 @@ export function detectSeasonTransitions(params: {
     (ctx.inSeasonSubMode === 'treve_deep' ||
      ctx.inSeasonSubMode === 'treve_return' ||
      ctx.inSeasonSubMode === 'treve_rampup' ||
-     (ctx.daysUntilNextMatch != null && ctx.daysUntilNextMatch > TREVE_THRESHOLD_DAYS))
+     (ctx.daysUntilNextMatch != null && ctx.daysUntilNextMatch > TREVE_THRESHOLD_DAYS)) &&
+    !isDismissed('treve_detected')
   ) {
     // Compute the real next match date from today + daysUntilNextMatch
     let nextMatchDate = ''

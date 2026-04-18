@@ -30,6 +30,7 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useAthleteTests } from '../hooks/useAthleteTests'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { ScoreDeFormeTeaser } from '../components/ScoreDeFormeTeaser'
+import { ReadinessScoreCard } from '../components/ReadinessScoreCard'
 import { SeasonTransitionBanner, SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
@@ -220,7 +221,6 @@ export function HomePage() {
     ? formatTitleFromMotherSessionId(todayDatedSession.sessionSlot.session.metadata.id, lang)
     : null
 
-  const sessionsThisWeek = logs.filter((l) => l.week === week).length
   const recentLogs = logs.slice(0, 2)
   const injuryAlertNow = useMemo(
     () => new Date(`${today}T12:00:00`).getTime(),
@@ -317,6 +317,11 @@ export function HomePage() {
     })
     return ordered
   }, [weekPresentation, logs, today])
+
+  // Count "faites" depuis la même source que /week (completionStatus via merge),
+  // pas depuis logs.filter(l.week === week) qui peut diverger quand la semaine
+  // cycle change ou si le log n'a pas la même clé de semaine.
+  const sessionsThisWeek = upcomingWeekSessions.filter((s) => s.completionStatus === 'completed').length
 
 
   return (
@@ -444,9 +449,12 @@ export function HomePage() {
           )}
         </section>
 
-        {/* ── Score de forme teaser (training + rest day, user free uniquement) ─ */}
+        {/* ── Score de forme (free → teaser flouté · premium → vraie card compact) ─ */}
         {premiumResolved && !isPremium && (
           <ScoreDeFormeTeaser />
+        )}
+        {premiumResolved && isPremium && (
+          <ReadinessScoreCard result={readinessResult} compact />
         )}
 
         {/* ── Cette semaine (training + rest day) ────────────────────────────── */}
