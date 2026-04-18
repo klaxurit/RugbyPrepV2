@@ -82,9 +82,13 @@ export function SessionBlockCard({
         className="w-full px-4 py-3.5 hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent text-left"
       >
         {/* Ligne 1 — icône + titre (truncate) + pill d'état + durée + chevron.
-            Tous siblings dans le même flex → alignés verticalement sans ambiguïté. */}
-        <div className="flex items-center gap-2.5">
-          <span aria-hidden className="text-xl leading-none flex-shrink-0">
+            Tous siblings dans le même flex, min-height constant, chaque élément
+            contrôle son propre alignement via flex items-center + leading-none. */}
+        <div className="flex items-center gap-3 min-h-[40px]">
+          <span
+            aria-hidden
+            className="flex-shrink-0 inline-flex items-center justify-center w-9 h-9 text-xl leading-none"
+          >
             {icon}
           </span>
           <h3
@@ -94,24 +98,24 @@ export function SessionBlockCard({
             {name}
           </h3>
           {isRunning && runModeActive && (
-            <span className="inline-flex items-center rounded-full bg-brand text-on-brand px-2 py-0.5 text-[10px] font-black uppercase tracking-wide flex-shrink-0">
+            <span className="flex-shrink-0 inline-flex items-center h-6 rounded-full bg-brand text-on-brand px-2 text-[10px] font-black uppercase tracking-wide leading-none">
               En cours
             </span>
           )}
           {isRunning && runModeCompleted && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-ok-strong text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wide flex-shrink-0">
+            <span className="flex-shrink-0 inline-flex items-center gap-1 h-6 rounded-full bg-ok-strong text-white px-2 text-[10px] font-black uppercase tracking-wide leading-none">
               <Check className="w-3 h-3" strokeWidth={3} />
               Terminé
             </span>
           )}
           {minutes > 0 && (
-            <span className="text-[11px] font-bold text-fg-muted tabular-nums flex-shrink-0">
+            <span className="flex-shrink-0 text-sm font-bold text-fg-muted tabular-nums leading-none">
               {minutes} min
             </span>
           )}
           {canToggle && (
             <ChevronDown
-              className={`w-4 h-4 text-fg-faint transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
+              className={`flex-shrink-0 w-5 h-5 text-fg-faint transition-transform ${isOpen ? 'rotate-180' : ''}`}
             />
           )}
         </div>
