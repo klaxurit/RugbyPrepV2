@@ -20,6 +20,7 @@ import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
+import { CoachBubble } from '../components/CoachBubble'
 import { CalendarWeekTimeline } from '../components/scheduling/CalendarWeekTimeline'
 import { WeekPlanningLegend } from '../components/planning'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
@@ -144,6 +145,26 @@ export function WeekPage() {
   const primarySource = surface?.primarySource ?? 'mother_session'
   const isUnavailable = primarySource === 'unavailable'
   const msResolution = surface?.motherSession ?? null
+
+  // ── Coach bubble content (extract from warnings + companion) ──────────────
+  const coachInfoMessages = useMemo(() => {
+    if (!surface || !msResolution) return [] as string[]
+    const internalPatterns = [
+      'recovery override',
+      'repli déterministe',
+      'pas de structure',
+      'pas de mother session',
+      'fréquence.*non prévue',
+      'repli sur',
+    ]
+    const isInternal = (w: string) => internalPatterns.some((p) => new RegExp(p, 'i').test(w))
+    return [...new Set([...surface.planningInputWarnings, ...msResolution.warnings])]
+      .filter((w) => !isInternal(w))
+  }, [surface, msResolution])
+  const coachCompanionMessages = msResolution?.companionRecommendations ?? []
+  const coachPhaseLabel = surface
+    ? localizeWeekLabel(surface.planningContext.weekLabel ?? week, lang)
+    : undefined
   const isOffSeason = surface?.planningContext?.cycle === 'off_season'
 
   const calendarSessions: DatedSession[] = useMemo(() => {
@@ -236,6 +257,16 @@ export function WeekPage() {
       />
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
+
+        {/* Coach bubble — sticky top-right, rend null si pas de message. */}
+        {snapshot && (
+          <CoachBubble
+            weekId={snapshot.weekId ?? today}
+            phaseLabel={coachPhaseLabel}
+            infoMessages={coachInfoMessages}
+            companionMessages={coachCompanionMessages}
+          />
+        )}
 
         {isUnavailable && (
           <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
@@ -355,22 +386,6 @@ export function WeekPage() {
               <PlanningContextCard
                 explanation={snapshot.explanation}
                 hideCorrections
-                companionRecommendations={msResolution.companionRecommendations}
-                warnings={(() => {
-                  // Filter out internal engine warnings that are not user-actionable
-                  const internalPatterns = [
-                    'recovery override',
-                    'repli déterministe',
-                    'pas de structure',
-                    'pas de mother session',
-                    'fréquence.*non prévue',
-                    'repli sur',
-                  ]
-                  const isInternal = (w: string) => internalPatterns.some((p) => new RegExp(p, 'i').test(w))
-                  const merged = [...new Set([...surface.planningInputWarnings, ...msResolution.warnings])]
-                    .filter((w) => !isInternal(w))
-                  return merged.length > 0 ? merged : undefined
-                })()}
               />
             )}
 
