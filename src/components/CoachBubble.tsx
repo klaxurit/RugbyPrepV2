@@ -72,7 +72,7 @@ export function CoachBubble({
     // Flottant au-dessus du contenu, descendu au niveau de la légende Perso/Club/Match
     // pour ne pas masquer l'info principale (stats + PlanningContextCard) dès l'arrivée.
     // z-40 pour passer au-dessus des bannières sans couvrir le header (sticky top-0 z-50).
-    <div className="fixed top-52 right-4 z-40">
+    <div className="fixed top-[198px] right-4 z-40">
       <div className="relative">
         {/* Bubble trigger — mascotte custom (bouche fermée / ouverte selon état). */}
         <button
