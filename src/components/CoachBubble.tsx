@@ -67,8 +67,10 @@ export function CoachBubble({
   if (!hasContent) return null
 
   return (
-    <div className="sticky top-3 z-30 flex justify-end pointer-events-none">
-      <div className="relative pointer-events-auto">
+    // Flottant au-dessus du contenu, positionné juste sous le PageHeader (sticky top-0 z-50,
+    // hauteur ~88px). z-40 pour passer au-dessus des bannières sans couvrir le header.
+    <div className="fixed top-24 right-4 z-40">
+      <div className="relative">
         {/* Bubble trigger */}
         <button
           type="button"
