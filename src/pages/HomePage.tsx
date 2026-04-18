@@ -288,25 +288,25 @@ export function HomePage() {
         return {
           eyebrow: 'REPOS AUJOURD\'HUI',
           title: 'Repos avant le match.',
-          body: 'Si tu veux bouger : 20 min marche ou 10 min mobilité légère.',
+          body: '20 min marche ou 10 min mobilité.',
         }
       case 'post_match':
         return {
           eyebrow: 'REPOS AUJOURD\'HUI',
           title: 'Récup post-match.',
-          body: 'Hydratation, protéines, marche légère. Pas de charge aujourd\'hui.',
+          body: 'Hydrate-toi, protéines, marche légère.',
         }
       case 'match_today':
         return {
           eyebrow: 'JOUR DE MATCH',
           title: "C'est aujourd'hui !",
-          body: 'Mobilité, activation courte, hydratation. Pas de charge lourde.',
+          body: 'Mobilité, activation courte, hydratation.',
         }
       default:
         return {
           eyebrow: 'REPOS AUJOURD\'HUI',
           title: 'Repos programmé.',
-          body: 'Récup active optionnelle : 20 min marche, mobilité, sauna.',
+          body: '20 min marche, mobilité ou sauna.',
         }
     }
   })()
@@ -396,7 +396,7 @@ export function HomePage() {
               <h3 className="text-2xl font-black text-fg leading-tight mt-1">
                 {restDayCopy.title}
               </h3>
-              <p className="text-sm text-fg-soft mt-3 leading-relaxed">
+              <p className="text-sm text-fg-soft mt-3 leading-relaxed whitespace-nowrap truncate">
                 {restDayCopy.body}
               </p>
 
