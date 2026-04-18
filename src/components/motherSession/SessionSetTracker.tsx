@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef } from 'react'
-import { Check, Plus, Minus } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Check, Plus, Minus, Lock } from 'lucide-react'
 import type { SetEntry } from '../../contexts/SessionRunContext'
 import { useSessionRun } from '../../contexts/SessionRunContext'
 import type { ExerciseLogEntry } from '../../types/training'
+import { PremiumSheet } from '../modals/PremiumSheet'
 
 interface SessionSetTrackerProps {
   exerciseKey: string
@@ -15,6 +16,8 @@ interface SessionSetTrackerProps {
   showLoad?: boolean
   /** Affiche les inputs reps. Désactive pour isométriques / distances. */
   showReps?: boolean
+  /** Free = checkboxes uniquement + CTA Premium contextuel. Premium = inputs kg/reps visibles. */
+  isPremium?: boolean
 }
 
 /**
@@ -43,14 +46,14 @@ function parseTargetReps(prescription?: string): number | null {
  */
 function parseRestSeconds(prescription?: string): number | null {
   if (!prescription) return null
-  // "@90s", "@ 90s"
-  const sec = prescription.match(/@\s*(\d+)\s*s/i)
+  // "@90s", "@ 90s", "(90s)"
+  const sec = prescription.match(/(?:@|\()\s*(\d+)\s*s\b/i)
   if (sec) {
     const n = Number(sec[1])
     return Number.isFinite(n) ? n : null
   }
-  // "@2min", "@ 2 min", "repos 2 min"
-  const min = prescription.match(/(?:@|repos)\s*(\d+)\s*min/i)
+  // "@2min", "repos 2 min", "repos complet 3 min", "repos 1-2 min" (prend la borne basse)
+  const min = prescription.match(/(?:@|repos(?:\s+\w+)?)\s*(\d+)(?:\s*[-–]\s*\d+)?\s*min/i)
   if (min) {
     const n = Number(min[1])
     return Number.isFinite(n) ? n * 60 : null
@@ -70,15 +73,32 @@ export function SessionSetTracker({
   lastEntry,
   showLoad = true,
   showReps = true,
+  isPremium = true,
 }: SessionSetTrackerProps) {
   const sessionRun = useSessionRun()
   const sets = sessionRun.perExerciseSets[exerciseKey]
+  const [premiumSheetOpen, setPremiumSheetOpen] = useState(false)
 
   const targetSets = useMemo(() => parseTargetSets(prescription) ?? 3, [prescription])
   const targetReps = useMemo(() => parseTargetReps(prescription), [prescription])
   const restSeconds = useMemo(() => parseRestSeconds(prescription) ?? 90, [prescription])
 
   // Initialisation : si pas encore de sets, créer `targetSets` lignes pré-remplies.
+  // Pour les Free : pas de kg/reps pré-remplis (feature Premium).
+  // On calcule les defaults de manière mémoïsée pour éviter les ré-calculs inutiles et
+  // on s'assure que l'affichage est stable dès le 1er render (pas d'écran vide entre
+  // le mount et l'effet d'init).
+  const defaultSets = useMemo<SetEntry[]>(
+    () =>
+      Array.from({ length: targetSets }, () => ({
+        loadKg: isPremium ? lastEntry?.loadKg : undefined,
+        reps: isPremium ? (lastEntry?.reps ?? targetReps ?? undefined) : undefined,
+        done: false,
+      })),
+    [targetSets, targetReps, lastEntry, isPremium],
+  )
+  const currentSets = sets ?? defaultSets
+
   const initializedRef = useRef(false)
   useEffect(() => {
     if (initializedRef.current) return
@@ -86,16 +106,9 @@ export function SessionSetTracker({
       initializedRef.current = true
       return
     }
-    const initial: SetEntry[] = Array.from({ length: targetSets }, () => ({
-      loadKg: lastEntry?.loadKg,
-      reps: lastEntry?.reps ?? targetReps ?? undefined,
-      done: false,
-    }))
-    sessionRun.setExerciseSets(exerciseKey, initial)
+    sessionRun.setExerciseSets(exerciseKey, defaultSets)
     initializedRef.current = true
-  }, [sets, targetSets, targetReps, lastEntry, exerciseKey, sessionRun])
-
-  const currentSets = sets ?? []
+  }, [sets, defaultSets, exerciseKey, sessionRun])
 
   // Auto-mark exercise as done when every set is validated (once at least 1 set exists)
   useEffect(() => {
@@ -135,7 +148,7 @@ export function SessionSetTracker({
         </span>
       </div>
 
-      {lastEntry && (
+      {isPremium && lastEntry && (
         <p className="text-[10px] text-fg-faint">
           Dernière fois : {lastEntry.loadKg != null ? `${lastEntry.loadKg} kg × ` : ''}
           {lastEntry.reps ?? '—'} reps
@@ -150,6 +163,7 @@ export function SessionSetTracker({
             entry={set}
             showLoad={showLoad}
             showReps={showReps}
+            isPremium={isPremium}
             onChange={(patch) => {
               sessionRun.updateExerciseSet(exerciseKey, idx, patch)
               // Démarrer le chrono de repos quand on valide une série, sauf si c'est la dernière.
@@ -162,6 +176,12 @@ export function SessionSetTracker({
           />
         ))}
       </div>
+
+      {restSeconds > 0 && (
+        <p className="text-[10px] text-fg-muted">
+          Repos prévu : {restSeconds >= 60 ? `${Math.round(restSeconds / 60)} min` : `${restSeconds}s`}
+        </p>
+      )}
 
       <div className="flex items-center gap-2 pt-1">
         <button
@@ -181,6 +201,25 @@ export function SessionSetTracker({
           </button>
         )}
       </div>
+
+      {/* Paywall contextuel — 1 par exo max, sous les cases, uniquement pour Free. */}
+      {!isPremium && showLoad && (
+        <button
+          type="button"
+          onClick={() => setPremiumSheetOpen(true)}
+          className="flex items-center gap-1.5 text-[11px] font-bold text-brand-tint hover:text-brand-hover transition-colors rf-focus-ring rounded-lg"
+        >
+          <Lock className="w-3 h-3" />
+          Logger mes kg/reps avec Premium →
+        </button>
+      )}
+
+      <PremiumSheet
+        isOpen={premiumSheetOpen}
+        onClose={() => setPremiumSheetOpen(false)}
+        feature="Suivi des charges"
+        benefit="Note tes charges (kg) et reps pour chaque série. L'app te suggère ta charge optimale pour la séance suivante et trace ta progression semaine après semaine."
+      />
     </div>
   )
 }
@@ -190,12 +229,14 @@ function SetRow({
   entry,
   showLoad,
   showReps,
+  isPremium,
   onChange,
 }: {
   setNumber: number
   entry: SetEntry
   showLoad: boolean
   showReps: boolean
+  isPremium: boolean
   onChange: (patch: Partial<SetEntry>) => void
 }) {
   return (
@@ -203,7 +244,12 @@ function SetRow({
       <span className={`w-6 text-center text-[11px] font-black ${entry.done ? 'text-ok-strong' : 'text-fg-muted'}`}>
         {setNumber}
       </span>
-      {showLoad && (
+      {!isPremium && (
+        <span className={`text-xs font-medium flex-1 ${entry.done ? 'text-fg-muted line-through' : 'text-fg-secondary'}`}>
+          Série {setNumber}
+        </span>
+      )}
+      {isPremium && showLoad && (
         <div className="flex items-center gap-1 min-w-0">
           <input
             type="number"
@@ -222,7 +268,7 @@ function SetRow({
           <span className="text-[10px] text-fg-muted">kg</span>
         </div>
       )}
-      {showReps && (
+      {isPremium && showReps && (
         <div className="flex items-center gap-1 min-w-0">
           <span className="text-[10px] text-fg-muted">×</span>
           <input

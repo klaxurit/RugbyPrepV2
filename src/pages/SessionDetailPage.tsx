@@ -359,6 +359,7 @@ export function SessionDetailPage() {
                     isPremium={isPremium}
                     acwr={acwrHasData ? acwr : null}
                     isRehabActive={false}
+                    isRunning={isRunning}
                   />
                 </div>
 

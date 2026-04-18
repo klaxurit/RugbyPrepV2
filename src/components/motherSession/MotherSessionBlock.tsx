@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from 'react'
-import { ClipboardCheck, Eye, Check } from 'lucide-react'
+import { Eye, Check } from 'lucide-react'
 import { useSessionRun } from '../../contexts/SessionRunContext'
 import type { Block } from '../../types/motherSession'
 import type { BlockLog, ExerciseLogEntry, SessionType, CycleWeek, FatigueStatus } from '../../types/training'
@@ -7,17 +7,10 @@ import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import type { SessionContentFr } from '../../services/motherSession/motherSessionContentFr'
 import { msLabel, stripBackticks } from '../../services/motherSession/motherSessionLabels'
 import { MotherSessionCollapsible } from './MotherSessionCollapsible'
-import { MotherSessionExerciseLogger, type EntryDraft } from './MotherSessionExerciseLogger'
 import { resolveExerciseId, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
 import { getExerciseMetricType } from '../../services/ui/exerciseMetrics'
-import { getExerciseSuggestion } from '../../services/ui/suggestions'
-import { getLoadSuggestion } from '../../services/loadSuggestion'
-import type { LoadSuggestionContext } from '../../services/loadSuggestion'
 import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import { ExerciseDemoSheet } from './ExerciseDemoSheet'
-import { detectPRs, type DetectedPR } from '../../services/pr/detectPRs'
-import { PRCelebrationOverlay } from '../pr/PRCelebrationOverlay'
-import { PremiumSheet } from '../modals/PremiumSheet'
 import { SessionSetTracker } from './SessionSetTracker'
 
 export type MotherSessionBlockProps = {
@@ -43,6 +36,9 @@ export type MotherSessionBlockProps = {
   hideHeader?: boolean
   /** Si true, ouvre par défaut les "Notes de coaching" du bloc (utile sur le premier bloc). */
   expandCoaching?: boolean
+  /** La séance courante est-elle actuellement en cours ? Passé depuis l'hôte qui peut
+   *  vérifier le matching sessionKey — évite d'interpréter un run résiduel global. */
+  isRunning?: boolean
 }
 
 function ExerciseRow({
@@ -126,21 +122,16 @@ export function MotherSessionBlock({
   block,
   lang = 'fr',
   frBlock,
-  motherSessionId,
-  sessionType,
-  week,
-  fatigue,
-  onSaveBlock,
-  getLastEntryForExercise,
-  getBestForExercise,
-  isPremium,
-  acwr,
-  isRehabActive,
   hideHeader,
   expandCoaching,
+  isRunning,
+  isPremium,
+  getLastEntryForExercise,
 }: MotherSessionBlockProps) {
   const sessionRun = useSessionRun()
-  const runMode = sessionRun.status === 'running'
+  // Ne s'appuie PAS sur `sessionRun.status` seul : un run résiduel d'une autre séance
+  // ne doit pas forcer l'ouverture ici. L'hôte passe la valeur scoped via isRunningFor.
+  const runMode = isRunning ?? false
   const blockName = frBlock?.name ?? block.name
   const blockFormat = frBlock?.format ?? block.format
   const coachingNotes = frBlock?.coachingNotes ?? block.coachingNotes
@@ -150,7 +141,7 @@ export function MotherSessionBlock({
     [lang],
   )
 
-  // Resolve which exercises are loggable
+  // Resolve which exercises are loggable (cochables en mode En cours)
   const loggableExercises = useMemo(() => {
     return block.exercises
       .map((ex, idx) => {
@@ -163,99 +154,7 @@ export function MotherSessionBlock({
   }, [block.exercises])
 
   const hasLoggable = loggableExercises.length > 0
-  const hasUnmapped = hasLoggable && loggableExercises.length < block.exercises.filter(e => !isDirectiveText(e.name)).length
-
-  const [loggerOpen, setLoggerOpen] = useState(false)
-  const [draftsInitialized, setDraftsInitialized] = useState(false)
-  const [drafts, setDrafts] = useState<Record<string, EntryDraft>>({})
-  const [saved, setSaved] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
   const [demoExerciseId, setDemoExerciseId] = useState<string | null>(null)
-  const [celebratePRs, setCelebratePRs] = useState<DetectedPR[]>([])
-  const [premiumSheetOpen, setPremiumSheetOpen] = useState(false)
-
-  // Pre-fill drafts from lastEntry on first open
-  const openLogger = useCallback(() => {
-    setLoggerOpen((prev) => {
-      if (!prev && !draftsInitialized && getLastEntryForExercise) {
-        const initial: Record<string, EntryDraft> = {}
-        for (const { exerciseId } of loggableExercises) {
-          const last = getLastEntryForExercise(exerciseId)
-          if (last) {
-            initial[exerciseId] = {
-              loadKg: last.loadKg,
-              reps: last.reps,
-              seconds: last.seconds,
-              meters: last.meters,
-              setsCompleted: last.setsCompleted,
-              rir: last.rir,
-            }
-          }
-        }
-        setDrafts(initial)
-        setDraftsInitialized(true)
-      }
-      return !prev
-    })
-  }, [draftsInitialized, getLastEntryForExercise, loggableExercises])
-
-  const handleDraftChange = useCallback((exerciseId: string, patch: Partial<EntryDraft>) => {
-    setDrafts((prev) => ({
-      ...prev,
-      [exerciseId]: { ...(prev[exerciseId] ?? {}), ...patch },
-    }))
-  }, [])
-
-  const handleSave = useCallback(() => {
-    if (!onSaveBlock || !motherSessionId || !sessionType || !week) return
-
-    const entries: ExerciseLogEntry[] = loggableExercises
-      .map(({ exerciseId }) => {
-        const d = drafts[exerciseId]
-        if (!d) return null
-        const entry: ExerciseLogEntry = { exerciseId }
-        if (d.loadKg !== undefined) entry.loadKg = d.loadKg
-        if (d.reps !== undefined) entry.reps = d.reps
-        if (d.seconds !== undefined) entry.seconds = d.seconds
-        if (d.meters !== undefined) entry.meters = d.meters
-        if (d.setsCompleted !== undefined) entry.setsCompleted = d.setsCompleted
-        if (d.rir !== undefined) entry.rir = d.rir
-        if (d.note) entry.note = d.note
-        // Only include entries with at least one metric
-        if (entry.loadKg === undefined && entry.reps === undefined && entry.seconds === undefined && entry.meters === undefined) return null
-        return entry
-      })
-      .filter((e): e is ExerciseLogEntry => e !== null)
-
-    if (entries.length === 0) return
-
-    // Detect PRs BEFORE saving (so getBestForExercise still reflects old bests)
-    if (getBestForExercise) {
-      const prInputs = entries.map((entry) => ({
-        exerciseId: entry.exerciseId,
-        metricType: getExerciseMetricType({ exerciseId: entry.exerciseId }),
-        draft: { loadKg: entry.loadKg, reps: entry.reps, seconds: entry.seconds, meters: entry.meters },
-        previousBest: getBestForExercise(entry.exerciseId),
-      }))
-      const prs = detectPRs(prInputs)
-      if (prs.length > 0) setCelebratePRs(prs)
-    }
-
-    setIsSaving(true)
-    const blockId = `${motherSessionId}_B${block.number}`
-    onSaveBlock({
-      dateISO: new Date().toISOString().slice(0, 10),
-      week,
-      sessionType,
-      blockId,
-      blockName: block.name,
-      entries,
-      motherSessionId,
-      programSource: 'mother_session',
-    })
-    setSaved(true)
-    setTimeout(() => { setSaved(false); setIsSaving(false) }, 3000)
-  }, [onSaveBlock, motherSessionId, sessionType, week, loggableExercises, drafts, block.number, block.name, getBestForExercise])
 
   return (
     <article className={hideHeader ? '' : 'rounded-2xl border border-border-app bg-layer-5 p-4'}>
@@ -296,10 +195,10 @@ export function MotherSessionBlock({
           {block.exercises.map((ex, i) => {
             const exerciseKey = `${block.number}_${i}`
             const isDone = runMode && sessionRun.completedExercises.has(exerciseKey)
-            // En mode premium running, les exos loggables ont leur SetTracker ci-dessous
+            // En mode running, les exos loggables ont leur SessionSetTracker ci-dessous
             // qui auto-coche — on masque la checkbox redondante ici pour ces exos.
             const hasTrackerBelow = Boolean(
-              runMode && isPremium && onSaveBlock && loggableExercises.some((le) => le.idx === i),
+              runMode && loggableExercises.some((le) => le.idx === i),
             )
             return (
               <ExerciseRow
@@ -349,12 +248,10 @@ export function MotherSessionBlock({
         </div>
       ) : null}
 
-      {/* Free user : pas de CTA Premium par bloc — l'unique invite est dans le footer sticky.
-          Le paywall se déclenche contextuellement (PremiumSheet) si l'athlète tente
-          d'ouvrir le logger pendant une séance en cours. */}
-
-      {/* ── Mode "En cours" premium : set tracker inline par exercice ── */}
-      {runMode && hasLoggable && onSaveBlock && isPremium && (
+      {/* ── Mode "En cours" : set tracker inline par exercice, Free comme Premium ──
+          Free = juste les cases ✓ par série (+ CTA "Logger mes kg/reps avec Premium →").
+          Premium = + inputs kg/reps pré-remplis depuis la dernière séance. */}
+      {runMode && hasLoggable && (
         <div className="mt-4 space-y-2">
           {loggableExercises.map(({ exerciseId, idx }) => {
             const exerciseKey = `${block.number}_${idx}`
@@ -370,82 +267,10 @@ export function MotherSessionBlock({
                 lastEntry={lastEntry}
                 showLoad={metricType === 'load_reps'}
                 showReps={metricType === 'load_reps' || metricType === 'reps'}
+                isPremium={isPremium ?? false}
               />
             )
           })}
-        </div>
-      )}
-
-      {!runMode && hasLoggable && onSaveBlock && isPremium && (
-        <div className="mt-4">
-          <button
-            type="button"
-            data-testid="block-log-toggle"
-            onClick={openLogger}
-            className="flex items-center gap-2 text-xs font-bold text-brand-tint hover:text-brand-hover transition-colors"
-          >
-            <ClipboardCheck className="w-3.5 h-3.5" />
-            {loggerOpen ? 'Fermer le log' : 'Logger mes perfs'}
-          </button>
-
-          {loggerOpen && (
-            <div className="mt-3 space-y-2">
-              {loggableExercises.map(({ exerciseId }) => {
-                const metricType = getExerciseMetricType({ exerciseId })
-                const lastEntry = getLastEntryForExercise?.(exerciseId)
-                const suggestion = week && fatigue
-                  ? getExerciseSuggestion({ exerciseId, week, fatigue, lastEntry })
-                  : undefined
-
-                // Premium load suggestion
-                const premiumSuggestion = week
-                  ? getLoadSuggestion({
-                      exerciseId,
-                      lastEntry,
-                      week,
-                      acwr: acwr ?? null,
-                      isRehabActive: isRehabActive ?? false,
-                      fatigueLevel: fatigue === 'FATIGUE' ? 'high' : 'normal',
-                    } satisfies LoadSuggestionContext)
-                  : undefined
-
-                return (
-                  <MotherSessionExerciseLogger
-                    key={exerciseId}
-                    exerciseId={exerciseId}
-                    exerciseName={getDisplayExerciseName(exerciseId)}
-                    metricType={metricType}
-                    lastEntry={lastEntry}
-                    suggestion={suggestion}
-                    premiumSuggestion={premiumSuggestion}
-                    showProgressionIndicator
-                    draft={drafts[exerciseId] ?? {}}
-                    onDraftChange={(patch) => handleDraftChange(exerciseId, patch)}
-                  />
-                )
-              })}
-
-              {hasUnmapped && (
-                <p className="text-fg-faint text-[10px]">
-                  Certains exercices de ce bloc ne sont pas encore loggables
-                </p>
-              )}
-
-              <button
-                type="button"
-                data-testid="block-save-btn"
-                onClick={handleSave}
-                disabled={isSaving}
-                className="w-full py-3 rounded-xl bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSaving ? 'Enregistré !' : 'Enregistrer le bloc'}
-              </button>
-
-              {saved && (
-                <p className="text-xs text-emerald-400 font-bold text-center">Bloc enregistré !</p>
-              )}
-            </div>
-          )}
         </div>
       )}
 
@@ -453,19 +278,6 @@ export function MotherSessionBlock({
         exerciseId={demoExerciseId}
         lang={lang}
         onClose={() => setDemoExerciseId(null)}
-      />
-
-      <PRCelebrationOverlay
-        prs={celebratePRs}
-        lang={lang}
-        onDone={() => setCelebratePRs([])}
-      />
-
-      <PremiumSheet
-        isOpen={premiumSheetOpen}
-        onClose={() => setPremiumSheetOpen(false)}
-        feature="Suivi des charges"
-        benefit="Note tes charges, reps et séries pour chaque exercice. Visualise ta progression semaine après semaine et reçois des suggestions de charge adaptées à ton niveau."
       />
     </article>
   )

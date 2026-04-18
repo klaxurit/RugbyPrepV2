@@ -374,7 +374,7 @@ describe('SessionDetailPage · annual-first', () => {
     expect(screen.queryByTestId('mother-session-detail')).toBeNull()
   })
 
-  it('bloc avec exercices loggables affiche le toggle Logger mes perfs', () => {
+  it('bloc avec exercices loggables : l\'entrée au logging se fait via Commencer la séance', () => {
     // Use UPPER_IN_SEASON_FRONT_ROW_V1 which contains Bench Press
     const upperSession = MOTHER_SESSIONS_BY_ID['UPPER_IN_SEASON_FRONT_ROW_V1']
     if (!upperSession) return // skip if not in dataset
@@ -406,9 +406,11 @@ describe('SessionDetailPage · annual-first', () => {
 
     renderSessionDetail(0)
 
-    // The block logger toggles should be present for blocks with loggable exercises
-    const toggles = screen.queryAllByTestId('block-log-toggle')
-    expect(toggles.length).toBeGreaterThanOrEqual(1)
+    // Le logging par bloc n'est plus exposé en mode Aperçu (pas de toggle répété).
+    // L'utilisateur clique "Commencer la séance" pour entrer en mode En cours, où
+    // les SetTrackers apparaissent sous chaque exercice loggable.
+    expect(screen.queryAllByTestId('block-log-toggle').length).toBe(0)
+    expect(screen.getByTestId('ms-start-btn')).toBeInTheDocument()
   })
 
   // U18 hard-block supprimé — app réservée aux adultes, pas de blocage U18

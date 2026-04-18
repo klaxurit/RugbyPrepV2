@@ -20,6 +20,10 @@ interface SessionBlockCardProps {
   defaultOpen?: boolean
   /** Nom du bloc depuis frBlock (FR) — fallback sur block.name. */
   displayName?: string
+  /** La séance courante est-elle en cours d'exécution ? Passé explicitement depuis l'hôte
+   *  — on ne se base PAS sur `sessionRun.status` seul pour ne pas forcer l'ouverture
+   *  sur d'autres séances quand un run d'une séance différente traîne en localStorage. */
+  isRunning?: boolean
 }
 
 /**
@@ -33,13 +37,13 @@ export function SessionBlockCard({
   children,
   defaultOpen = false,
   displayName,
+  isRunning = false,
 }: SessionBlockCardProps) {
   const [open, setOpen] = useState(defaultOpen)
   const sessionRun = useSessionRun()
-  const runMode = sessionRun.status === 'running'
 
-  // En mode running, toujours ouvert — on veut voir tout le détail pour exécuter.
-  const isOpen = runMode || open
+  // En mode running (cette séance spécifiquement), toujours ouvert.
+  const isOpen = isRunning || open
 
   const icon = iconForBlock(block)
   const minutes = estimateBlockMinutes(block)
@@ -60,7 +64,7 @@ export function SessionBlockCard({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={isOpen}
-        disabled={runMode}
+        disabled={isRunning}
         className="w-full text-left px-4 py-3.5 flex items-center gap-3 hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent"
       >
         <span aria-hidden className="text-xl leading-none flex-shrink-0">
@@ -74,7 +78,7 @@ export function SessionBlockCard({
                 {msLabel('optional', lang)}
               </span>
             )}
-            {runMode && totalLoggable > 0 && (
+            {isRunning && totalLoggable > 0 && (
               <span className={`text-[10px] font-black tabular-nums ${completedInBlock === totalLoggable ? 'text-ok-strong' : 'text-fg-muted'}`}>
                 {completedInBlock}/{totalLoggable}
               </span>
@@ -90,7 +94,7 @@ export function SessionBlockCard({
               {minutes} min
             </span>
           )}
-          {!runMode && (
+          {!isRunning && (
             <ChevronDown
               className={`w-4 h-4 text-fg-faint transition-transform ${isOpen ? 'rotate-180' : ''}`}
             />

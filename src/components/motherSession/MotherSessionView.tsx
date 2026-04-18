@@ -36,6 +36,8 @@ type MotherSessionViewProps = {
   isRehabActive?: boolean
   trainingLevel?: TrainingLevel
   equipment?: Equipment[]
+  /** Cette séance est-elle en cours ? Passé par l'hôte (vérifié via isRunningFor(sessionKey)). */
+  isRunning?: boolean
 }
 
 export function MotherSessionView({
@@ -53,6 +55,7 @@ export function MotherSessionView({
   isRehabActive,
   trainingLevel,
   equipment,
+  isRunning,
 }: MotherSessionViewProps) {
   const isFoundations = isFoundationsLevel(trainingLevel)
   const foundationsSession = isFoundations ? adaptMotherSessionForFoundations(session, equipment) : session
@@ -96,6 +99,7 @@ export function MotherSessionView({
               lang={lang}
               displayName={frContent?.blocks[i]?.name ?? block.name}
               defaultOpen={defaultOpen}
+              isRunning={isRunning}
             >
               <MotherSessionBlock
                 block={block}
@@ -113,6 +117,7 @@ export function MotherSessionView({
                 isRehabActive={isRehabActive}
                 hideHeader
                 expandCoaching={defaultOpen}
+                isRunning={isRunning}
               />
             </SessionBlockCard>
           )
