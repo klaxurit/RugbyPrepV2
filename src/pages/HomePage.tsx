@@ -38,6 +38,7 @@ import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { useWeeklySummary } from '../hooks/useWeeklySummary'
 import { ReadinessScoreCard } from '../components/ReadinessScoreCard'
+import { ScoreDeFormeTeaser } from '../components/ScoreDeFormeTeaser'
 import { WeeklySummaryCard } from '../components/WeeklySummaryCard'
 import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
 import { SeasonTransitionBanner, SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
@@ -498,6 +499,11 @@ export function HomePage() {
           </section>
         )}
 
+        {/* ── Score de forme teaser (rest day + user free) ─────────────────── */}
+        {isRestDay && premiumResolved && !isPremium && (
+          <ScoreDeFormeTeaser />
+        )}
+
         {/* ── Cette semaine (rest day uniquement) ─────────────────────────────── */}
         {isRestDay && upcomingWeekSessions.length > 0 && (
           <section data-testid="home-this-week">
@@ -512,8 +518,18 @@ export function HomePage() {
               </div>
               <ul className="divide-y divide-border-app">
                 {upcomingWeekSessions.map((s, idx) => {
-                  const dowLabel = s.dayLabel.slice(0, 3)
-                  const title = formatTitleFromMotherSessionId(s.sessionSlot.session.metadata.id, lang)
+                  // Calcule la date réelle du jour de la semaine planifié, pour
+                  // afficher "LUN 20" plutôt que "LUN" seul.
+                  const todayDate = new Date(today + 'T12:00:00')
+                  const deltaDays = ((s.dayOfWeek + 7 - todayDow) % 7)
+                  const sessionDate = new Date(todayDate)
+                  sessionDate.setDate(todayDate.getDate() + deltaDays)
+                  const dowShort = s.dayLabel.slice(0, 3).toUpperCase()
+                  const dateNumber = sessionDate.getDate()
+                  // Titre séance — on remplace le " · " interne par " — " pour éviter la
+                  // collision avec le séparateur de meta-ligne.
+                  const rawTitle = formatTitleFromMotherSessionId(s.sessionSlot.session.metadata.id, lang)
+                  const title = rawTitle.replace(/\s·\s/g, ' — ')
                   const isDone = s.completionStatus === 'completed'
                   const isSkipped = s.completionStatus === 'skipped'
                   const isTodayRow = s.dayOfWeek === todayDow
@@ -523,8 +539,8 @@ export function HomePage() {
                         to={`/session/${idx}`}
                         className={`flex items-center gap-3 py-2.5 hover:bg-layer-5 -mx-2 px-2 rounded-xl transition-colors ${(isDone || isSkipped) ? 'opacity-50' : ''}`}
                       >
-                        <span className={`flex-shrink-0 w-12 text-xs font-black uppercase ${isTodayRow ? 'text-brand-tint' : 'text-fg-muted'}`}>
-                          {dowLabel}
+                        <span className={`flex-shrink-0 w-16 text-xs font-black uppercase tabular-nums ${isTodayRow ? 'text-brand-tint' : 'text-fg-muted'}`}>
+                          {dowShort} {dateNumber}
                         </span>
                         <span className="flex-1 min-w-0 truncate text-sm font-bold text-fg">
                           {title}
@@ -538,26 +554,11 @@ export function HomePage() {
                   )
                 })}
               </ul>
-              <div className="flex items-center gap-3 pt-2 border-t border-border-app text-[11px]">
-                <span className="flex items-center gap-1.5">
-                  <span className="text-fg-muted">Forme :</span>
-                  {isPremium ? (
-                    <span className="font-bold text-fg">{readinessResult.score}</span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-fg-muted">
-                      <Lock className="w-3 h-3" aria-hidden />
-                      <Link to="/profile#premium" className="underline underline-offset-2 font-bold hover:text-brand-tint">
-                        Premium
-                      </Link>
-                    </span>
-                  )}
-                </span>
-                <span className="text-fg-faint">·</span>
-                <span className="flex items-center gap-1.5">
-                  <span className="text-fg-muted">Fatigue :</span>
-                  <span className={`font-bold ${fatigue === 'OK' ? 'text-ok-strong' : 'text-warn-strong'}`}>
-                    {fatigue === 'OK' ? 'OK' : 'Élevée'}
-                  </span>
+              {/* Forme est désormais dans le teaser dédié (au-dessus). Seule Fatigue reste ici. */}
+              <div className="flex items-center gap-2 pt-2 border-t border-border-app text-[11px]">
+                <span className="text-fg-muted">Fatigue :</span>
+                <span className={`font-bold ${fatigue === 'OK' ? 'text-ok-strong' : 'text-warn-strong'}`}>
+                  {fatigue === 'OK' ? 'OK' : 'Élevée'}
                 </span>
               </div>
             </div>
@@ -1097,7 +1098,7 @@ export function HomePage() {
           >
             <Lock className="w-4 h-4 text-brand-tint flex-shrink-0" aria-hidden />
             <p className="flex-1 min-w-0 text-xs font-bold text-fg leading-tight">
-              Débloque Score de forme, historique et coach IA illimité
+              Débloque historique, courbes et coach IA illimité
               <span className="block text-[11px] font-normal text-fg-muted mt-0.5">Voir les forfaits</span>
             </p>
             <ChevronRight className="w-4 h-4 text-brand-tint flex-shrink-0" />
