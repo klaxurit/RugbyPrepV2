@@ -58,40 +58,55 @@ type SessionLogRow = {
   program_context: Record<string, unknown> | null
 }
 
-const rowToLog = (row: SessionLogRow): SessionLog => ({
-  id: row.id,
-  dateISO: row.date_iso,
-  week: row.week as SessionLog['week'],
-  sessionType: row.session_type as SessionLog['sessionType'],
-  fatigue: row.fatigue as SessionLog['fatigue'],
-  notes: row.notes ?? undefined,
-  rpe: row.rpe ?? undefined,
-  durationMin: row.duration_min ?? undefined,
-  programSource: (row.program_source as SessionLog['programSource']) ?? undefined,
-  legacyRecipeId: row.legacy_recipe_id ?? undefined,
-  motherSessionId: row.mother_session_id ?? undefined,
-  sessionLabel: row.session_label ?? undefined,
-  programContext: row.program_context
-    ? (row.program_context as SessionLogProgramContext)
-    : undefined,
-})
+const rowToLog = (row: SessionLogRow): SessionLog => {
+  // tonnageKg is transported inside program_context JSONB (no dedicated column yet).
+  const ctx = (row.program_context ?? null) as Record<string, unknown> | null
+  const tonnageRaw = ctx?.tonnageKg
+  const tonnageKg = typeof tonnageRaw === 'number' ? tonnageRaw : undefined
+  let programContext: SessionLogProgramContext | undefined
+  if (ctx) {
+    const { tonnageKg: _drop, ...rest } = ctx as Record<string, unknown>
+    void _drop
+    programContext = rest as SessionLogProgramContext
+  }
+  return {
+    id: row.id,
+    dateISO: row.date_iso,
+    week: row.week as SessionLog['week'],
+    sessionType: row.session_type as SessionLog['sessionType'],
+    fatigue: row.fatigue as SessionLog['fatigue'],
+    notes: row.notes ?? undefined,
+    rpe: row.rpe ?? undefined,
+    durationMin: row.duration_min ?? undefined,
+    tonnageKg,
+    programSource: (row.program_source as SessionLog['programSource']) ?? undefined,
+    legacyRecipeId: row.legacy_recipe_id ?? undefined,
+    motherSessionId: row.mother_session_id ?? undefined,
+    sessionLabel: row.session_label ?? undefined,
+    programContext,
+  }
+}
 
-const logToRow = (log: SessionLog, userId: string) => ({
-  id: log.id,
-  user_id: userId,
-  date_iso: log.dateISO,
-  week: log.week,
-  session_type: log.sessionType,
-  fatigue: log.fatigue,
-  notes: log.notes ?? null,
-  rpe: log.rpe ?? null,
-  duration_min: log.durationMin ?? null,
-  program_source: log.programSource ?? null,
-  legacy_recipe_id: log.legacyRecipeId ?? null,
-  mother_session_id: log.motherSessionId ?? null,
-  session_label: log.sessionLabel ?? null,
-  program_context: log.programContext ?? {},
-})
+const logToRow = (log: SessionLog, userId: string) => {
+  const contextOut: Record<string, unknown> = { ...(log.programContext ?? {}) }
+  if (log.tonnageKg != null) contextOut.tonnageKg = log.tonnageKg
+  return {
+    id: log.id,
+    user_id: userId,
+    date_iso: log.dateISO,
+    week: log.week,
+    session_type: log.sessionType,
+    fatigue: log.fatigue,
+    notes: log.notes ?? null,
+    rpe: log.rpe ?? null,
+    duration_min: log.durationMin ?? null,
+    program_source: log.programSource ?? null,
+    legacy_recipe_id: log.legacyRecipeId ?? null,
+    mother_session_id: log.motherSessionId ?? null,
+    session_label: log.sessionLabel ?? null,
+    program_context: contextOut,
+  }
+}
 
 // ─── Hook ────────────────────────────────────────────────────
 

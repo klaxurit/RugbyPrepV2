@@ -1,19 +1,12 @@
 import { Link } from 'react-router-dom'
 import { Lock, ChevronRight } from 'lucide-react'
-import { ScoreDeFormeChart } from './ScoreDeFormeChart'
+import { ScoreDeFormeGauge } from './ScoreDeFormeGauge'
 
 /**
- * Teaser du Score de forme — free uniquement. Mini line chart flouté sur 7
- * derniers jours (pattern paywall Whoop/Strava/Oura/Garmin), échelle Y nette
- * à droite, CTA Premium.
- *
- * Le chart SVG est extrait dans `ScoreDeFormeChart` et partagé avec la card
- * Premium `ScoreDeFormeCard` — même rendu visuel, seul le flou change.
+ * Teaser du Score de forme (free) — jauge demi-cercle floutée avec chiffre masqué.
+ * Même composant visuel que la `ScoreDeFormeCard` premium, seule la clarté diffère.
  */
 export function ScoreDeFormeTeaser({ ctaHref = '/profile#premium' }: { ctaHref?: string }) {
-  // Valeurs d'illustration floues — la data réelle est dans ScoreDeFormeCard (premium).
-  const values = [6, 7, 5, 6, 8, 7, 8]
-
   return (
     <section
       data-testid="home-score-teaser"
@@ -27,25 +20,13 @@ export function ScoreDeFormeTeaser({ ctaHref = '/profile#premium' }: { ctaHref?:
         <Lock aria-hidden="true" className="w-4 h-4 text-brand-tint" />
       </div>
 
-      <div className="mt-4 flex items-stretch gap-2">
-        <ScoreDeFormeChart
-          values={values}
-          blurred
-          ariaLabel="Aperçu du score de forme — valeurs masquées, débloquez avec Premium"
-        />
-        <div className="flex flex-col justify-between text-[10px] font-bold text-fg-faint tabular-nums py-0.5">
-          <span>10</span>
-          <span>5</span>
-          <span>0</span>
-        </div>
+      <div className="mt-3">
+        <ScoreDeFormeGauge score={72} color="green" blurred display="••" />
       </div>
 
-      <div className="mt-1.5 flex items-center justify-between text-[11px] text-fg-muted">
-        <span>7 derniers jours</span>
-        <span>Aujourd'hui</span>
-      </div>
+      <p className="mt-1 text-center text-[11px] font-bold text-fg-muted">Aperçu masqué</p>
 
-      <p className="mt-4 text-sm text-fg-soft leading-relaxed whitespace-nowrap truncate">
+      <p className="mt-3 text-sm text-fg-soft leading-relaxed whitespace-nowrap truncate text-center">
         Ta charge et tes RPE · 7 derniers jours
       </p>
 

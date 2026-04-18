@@ -100,10 +100,11 @@ export function buildMotherSessionProgramSessionLog(params: {
   notes?: string
   rpe?: number
   durationMin?: number
+  tonnageKg?: number
   slot: ResolvedMotherSessionSlot
   planningContext: AnnualPlanningContext
 }): Omit<SessionLog, 'id'> {
-  const { dateISO, fatigue, notes, rpe, durationMin, slot, planningContext } = params
+  const { dateISO, fatigue, notes, rpe, durationMin, tonnageKg, slot, planningContext } = params
   const msType = slot.session.metadata.sessionType
   const sessionType = mapMotherSessionType(msType)
 
@@ -118,6 +119,7 @@ export function buildMotherSessionProgramSessionLog(params: {
     notes,
     rpe,
     durationMin,
+    tonnageKg,
     programSource: 'mother_session',
     motherSessionId: slot.sessionId,
     sessionLabel: formatTitleFromMotherSessionId(slot.session.metadata.id, 'fr'),

@@ -56,8 +56,8 @@ describe('computeWeeklyBilan — empty', () => {
     expect(b.sessionsDelta).toBe(0)
     expect(b.tonnageKg).toBeNull()
     expect(b.tonnageDeltaPct).toBeNull()
-    expect(b.avgRpe).toBeNull()
-    expect(b.avgRpeDelta).toBeNull()
+    expect(b.totalMinutes).toBeNull()
+    expect(b.totalMinutesDelta).toBeNull()
     expect(b.topProgressions).toEqual([])
   })
 })
@@ -88,27 +88,57 @@ describe('computeWeeklyBilan — sessions & RPE', () => {
     expect(b.sessionsDelta).toBe(2)
   })
 
-  it('weighted RPE by durationMin', () => {
+  it('sums durationMin across sessions', () => {
     const sessions: SessionLog[] = [
-      mkSession({ dateISO: '2026-04-13', rpe: 6, durationMin: 60 }),
-      mkSession({ dateISO: '2026-04-15', rpe: 9, durationMin: 30 }),
+      mkSession({ dateISO: '2026-04-13', durationMin: 60 }),
+      mkSession({ dateISO: '2026-04-15', durationMin: 45 }),
     ]
-    // weighted = (6*60 + 9*30) / 90 = (360+270)/90 = 7
     const b = computeWeeklyBilan(sessions, [], '2026-04-15')
-    expect(b.avgRpe).toBe(7)
+    expect(b.totalMinutes).toBe(105)
   })
 
-  it('RPE delta null if no previous-week data', () => {
+  it('computes totalMinutesDelta vs previous week', () => {
     const sessions: SessionLog[] = [
-      mkSession({ dateISO: '2026-04-13', rpe: 7, durationMin: 60 }),
+      mkSession({ dateISO: '2026-04-06', durationMin: 60 }),
+      mkSession({ dateISO: '2026-04-13', durationMin: 75 }),
+      mkSession({ dateISO: '2026-04-15', durationMin: 60 }),
     ]
     const b = computeWeeklyBilan(sessions, [], '2026-04-15')
-    expect(b.avgRpe).toBe(7)
-    expect(b.avgRpeDelta).toBeNull()
+    expect(b.totalMinutes).toBe(135)
+    expect(b.totalMinutesDelta).toBe(75)
+  })
+
+  it('totalMinutes null when no duration data', () => {
+    const sessions: SessionLog[] = [mkSession({ dateISO: '2026-04-13' })]
+    const b = computeWeeklyBilan(sessions, [], '2026-04-15')
+    expect(b.totalMinutes).toBeNull()
+    expect(b.totalMinutesDelta).toBeNull()
   })
 })
 
 describe('computeWeeklyBilan — tonnage', () => {
+  it('picks up tonnageKg stored on SessionLog (mother-session path)', () => {
+    const sessions: SessionLog[] = [
+      mkSession({ dateISO: '2026-04-13', tonnageKg: 800 }),
+      mkSession({ dateISO: '2026-04-15', tonnageKg: 1200 }),
+    ]
+    const b = computeWeeklyBilan(sessions, [], '2026-04-15')
+    expect(b.tonnageKg).toBe(2000)
+  })
+
+  it('combines SessionLog.tonnageKg and BlockLog entries', () => {
+    const sessions: SessionLog[] = [mkSession({ dateISO: '2026-04-13', tonnageKg: 500 })]
+    const blocks: BlockLog[] = [
+      mkBlockLog({
+        dateISO: '2026-04-15',
+        entries: [{ exerciseId: 'squat', loadKg: 100, reps: 5, setsCompleted: 3 }],
+      }),
+    ]
+    const b = computeWeeklyBilan(sessions, blocks, '2026-04-15')
+    // 500 from session + 1500 from block = 2000
+    expect(b.tonnageKg).toBe(2000)
+  })
+
   it('sums loadKg × reps × setsCompleted', () => {
     const blocks: BlockLog[] = [
       mkBlockLog({

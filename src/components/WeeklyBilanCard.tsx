@@ -1,4 +1,4 @@
-import { Activity, BarChart3, Flame, TrendingDown, TrendingUp, Trophy } from 'lucide-react'
+import { Activity, BarChart3, Clock, Flame, TrendingDown, TrendingUp, Trophy } from 'lucide-react'
 import type { WeeklyBilan } from '../services/weeklyBilan/computeWeeklyBilan'
 import type { ACWRResult, ACWRZone } from '../hooks/useACWR'
 import { getExerciseName } from '../data/exercises'
@@ -103,10 +103,10 @@ export function WeeklyBilanCard({ bilan, acwr, lang = 'fr' }: Props) {
           delta={<DeltaChip value={bilan.tonnageDeltaPct} unit="%" positiveIsGood />}
         />
         <StatCell
-          icon={<Activity className="w-3.5 h-3.5" />}
-          label="RPE moyen"
-          value={bilan.avgRpe != null ? `${bilan.avgRpe}/10` : '—'}
-          delta={<DeltaChip value={bilan.avgRpeDelta} positiveIsGood={false} />}
+          icon={<Clock className="w-3.5 h-3.5" />}
+          label="Durée totale"
+          value={bilan.totalMinutes != null ? `${formatDuration(bilan.totalMinutes)}` : '—'}
+          delta={<DeltaChip value={bilan.totalMinutesDelta} unit=" min" positiveIsGood />}
         />
         <StatCell
           icon={<Activity className="w-3.5 h-3.5" />}
@@ -187,4 +187,11 @@ function StatCell({
 function formatKg(kg: number): string {
   if (kg >= 1000) return `${(kg / 1000).toFixed(1).replace(/\.0$/, '')} k`
   return String(kg)
+}
+
+function formatDuration(min: number): string {
+  if (min < 60) return `${min} min`
+  const h = Math.floor(min / 60)
+  const rest = min % 60
+  return rest === 0 ? `${h} h` : `${h} h ${rest}`
 }

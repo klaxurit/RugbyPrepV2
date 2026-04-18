@@ -22,15 +22,17 @@ export interface WeeklyBilan {
   /** Δ vs semaine précédente (positif = plus). */
   sessionsDelta: number
 
-  /** Tonnage total (kg × reps × setsCompleted) — null si aucune donnée de charge. */
+  /** Tonnage total (kg × reps × setsCompleted) — null si aucune donnée de charge.
+   *  Source : SessionLog.tonnageKg (mother-session) + BlockLog entries (legacy).
+   */
   tonnageKg: number | null
   /** Δ% tonnage vs semaine précédente, null si pas comparable. */
   tonnageDeltaPct: number | null
 
-  /** RPE moyen pondéré par durée (ou brut si durée absente) — null si aucun RPE. */
-  avgRpe: number | null
-  /** Δ RPE vs semaine précédente, null si pas comparable. */
-  avgRpeDelta: number | null
+  /** Durée totale d'entraînement (minutes cumulées) — null si aucune donnée. */
+  totalMinutes: number | null
+  /** Δ minutes vs semaine précédente, null si pas comparable. */
+  totalMinutesDelta: number | null
 
   /** Top 3 exercices ayant le plus progressé vs leur dernier log antérieur à cette semaine. */
   topProgressions: WeeklyBilanProgression[]
@@ -87,15 +89,21 @@ export function computeWeeklyBilan(
   const sessionsDone = currentSessions.length
   const sessionsDelta = sessionsDone - prevSessions.length
 
-  const avgRpe = weightedMeanRpe(currentSessions)
-  const prevAvgRpe = weightedMeanRpe(prevSessions)
-  const avgRpeDelta = avgRpe != null && prevAvgRpe != null
-    ? round1(avgRpe - prevAvgRpe)
+  // ── Durée totale (minutes) ─────────────────────────────────────
+  const currentMinutes = sumDuration(currentSessions)
+  const prevMinutes = sumDuration(prevSessions)
+  const totalMinutes = currentMinutes > 0 ? currentMinutes : null
+  const totalMinutesDelta = totalMinutes != null && prevMinutes > 0
+    ? currentMinutes - prevMinutes
     : null
 
-  // ── Tonnage depuis BlockLog ─────────────────────────────────────
-  const currentTonnage = sumTonnage(blockLogs.filter((l) => inRange(l.dateISO, weekStart, weekEnd)))
-  const prevTonnage = sumTonnage(blockLogs.filter((l) => inRange(l.dateISO, prevStart, prevEnd)))
+  // ── Tonnage : additionne SessionLog.tonnageKg (mother-session) + BlockLog (legacy).
+  const currentTonnage =
+    sumSessionTonnage(currentSessions) +
+    sumBlockTonnage(blockLogs.filter((l) => inRange(l.dateISO, weekStart, weekEnd)))
+  const prevTonnage =
+    sumSessionTonnage(prevSessions) +
+    sumBlockTonnage(blockLogs.filter((l) => inRange(l.dateISO, prevStart, prevEnd)))
 
   const tonnageKg = currentTonnage > 0 ? Math.round(currentTonnage) : null
   const tonnageDeltaPct =
@@ -113,28 +121,31 @@ export function computeWeeklyBilan(
     sessionsDelta,
     tonnageKg,
     tonnageDeltaPct,
-    avgRpe,
-    avgRpeDelta,
+    totalMinutes,
+    totalMinutesDelta,
     topProgressions,
   }
 }
 
 // ── Helpers internes ────────────────────────────────────────────────
 
-function weightedMeanRpe(sessions: SessionLog[]): number | null {
-  const withRpe = sessions.filter((s) => typeof s.rpe === 'number')
-  if (withRpe.length === 0) return null
-  let sumWeighted = 0
-  let sumWeights = 0
-  for (const s of withRpe) {
-    const w = s.durationMin && s.durationMin > 0 ? s.durationMin : 1
-    sumWeighted += (s.rpe as number) * w
-    sumWeights += w
+function sumDuration(sessions: SessionLog[]): number {
+  let total = 0
+  for (const s of sessions) {
+    if (typeof s.durationMin === 'number' && s.durationMin > 0) total += s.durationMin
   }
-  return round1(sumWeighted / sumWeights)
+  return total
 }
 
-function sumTonnage(logs: BlockLog[]): number {
+function sumSessionTonnage(sessions: SessionLog[]): number {
+  let total = 0
+  for (const s of sessions) {
+    if (typeof s.tonnageKg === 'number' && s.tonnageKg > 0) total += s.tonnageKg
+  }
+  return total
+}
+
+function sumBlockTonnage(logs: BlockLog[]): number {
   let total = 0
   for (const log of logs) {
     for (const entry of log.entries) {
@@ -187,6 +198,3 @@ function computeTopProgressions(
     .slice(0, 3)
 }
 
-function round1(n: number): number {
-  return Math.round(n * 10) / 10
-}

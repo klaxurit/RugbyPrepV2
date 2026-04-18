@@ -394,6 +394,11 @@ export interface SessionLog {
   rpe?: number;        // 1-10 (effort perçu)
   durationMin?: number; // durée en minutes
 
+  /** Tonnage total de la séance (kg × reps × sets) — calculé à partir des
+   *  exerciseTourLoads lors de la finalisation mother-session. Optionnel car
+   *  absent sur les logs legacy pré-tracking. */
+  tonnageKg?: number;
+
   // ── Convergence legacy / mother-session ────────────────────
   programSource?: ProgramSource;
   legacyRecipeId?: string;

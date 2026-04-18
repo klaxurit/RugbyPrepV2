@@ -344,6 +344,7 @@ export function SessionDetailPage() {
         notes: noteText,
         rpe: payload.rpe,
         durationMin: payload.durationMin,
+        tonnageKg: celebrationStats.tonnageKg ?? undefined,
         slot: activeSlot,
         planningContext: surface.planningContext,
       })
