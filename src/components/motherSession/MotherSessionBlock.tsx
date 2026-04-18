@@ -41,6 +41,8 @@ export type MotherSessionBlockProps = {
   isRehabActive?: boolean
   /** Si true, le composant saute son entête (nom / format) — l'hôte le rend lui-même. */
   hideHeader?: boolean
+  /** Si true, ouvre par défaut les "Notes de coaching" du bloc (utile sur le premier bloc). */
+  expandCoaching?: boolean
 }
 
 function ExerciseRow({
@@ -135,6 +137,7 @@ export function MotherSessionBlock({
   acwr,
   isRehabActive,
   hideHeader,
+  expandCoaching,
 }: MotherSessionBlockProps) {
   const sessionRun = useSessionRun()
   const runMode = sessionRun.status === 'running'
@@ -320,7 +323,7 @@ export function MotherSessionBlock({
 
       {coachingNotes.length > 0 ? (
         <div className="mt-4">
-          <MotherSessionCollapsible title={msLabel('coaching_notes', lang)} defaultOpen={false} variant="nested">
+          <MotherSessionCollapsible title={msLabel('coaching_notes', lang)} defaultOpen={expandCoaching ?? false} variant="nested">
             <ul className="space-y-1.5">
               {coachingNotes.map((note, i) => (
                 <li key={i} className="text-sm text-fg-muted">
@@ -346,22 +349,9 @@ export function MotherSessionBlock({
         </div>
       ) : null}
 
-      {/* ── Logger toggle — free user : bouton visible qui déclenche une sheet contextuelle (pas d'encart répété par bloc) ── */}
-      {hasLoggable && onSaveBlock && !isPremium && (
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={() => setPremiumSheetOpen(true)}
-            className="flex items-center gap-2 text-xs font-bold text-fg-muted hover:text-brand-tint transition-colors rf-focus-ring rounded-lg"
-          >
-            <ClipboardCheck className="w-3.5 h-3.5" />
-            Logger mes perfs
-            <span className="text-[9px] font-black uppercase tracking-wider text-brand-tint bg-brand-soft px-1.5 py-0.5 rounded-full">
-              Premium
-            </span>
-          </button>
-        </div>
-      )}
+      {/* Free user : pas de CTA Premium par bloc — l'unique invite est dans le footer sticky.
+          Le paywall se déclenche contextuellement (PremiumSheet) si l'athlète tente
+          d'ouvrir le logger pendant une séance en cours. */}
 
       {/* ── Mode "En cours" premium : set tracker inline par exercice ── */}
       {runMode && hasLoggable && onSaveBlock && isPremium && (

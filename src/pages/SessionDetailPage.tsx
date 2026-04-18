@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
-import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, FileText, Play } from 'lucide-react'
+import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, Play } from 'lucide-react'
 import { useSessionRun } from '../contexts/SessionRunContext'
 import { SessionRunProgress } from '../components/motherSession/SessionRunProgress'
 import { RestTimerOverlay } from '../components/motherSession/RestTimerOverlay'
@@ -283,7 +283,7 @@ export function SessionDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-44 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title={pageTitle} backTo="/week" titleSuffix={pageSuffix} />
@@ -325,6 +325,24 @@ export function SessionDetailPage() {
           <>
             {activeSlot ? (
               <>
+                {/* Contexte de forme — chip rapide au-dessus du détail séance (aperçu uniquement). */}
+                {!isRunning && isPremium && (
+                  <div className="flex justify-center">
+                    <span
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-black uppercase tracking-wider ${
+                        readinessResult.score >= 60
+                          ? 'border-ok-bd bg-ok-bg-muted text-ok-strong'
+                          : readinessResult.score >= 40
+                            ? 'border-warn-bd bg-warn-bg-muted text-warn-strong'
+                            : 'border-alert-bd bg-alert-bg-muted text-alert-strong'
+                      }`}
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Forme {readinessResult.score} · {readinessResult.label}
+                    </span>
+                  </div>
+                )}
+
                 <div data-testid="mother-session-detail">
                   <MotherSessionView
                     session={activeSlot.session}
@@ -397,102 +415,22 @@ export function SessionDetailPage() {
                   </div>
                 )}
 
-                {/* Complétion mother-session — bi-mode : Aperçu (Commencer) ou En cours (Terminer) */}
-                <section
-                  className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4"
-                  data-testid="ms-completion-section"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-xl bg-brand-soft text-brand">
-                      <FileText className="w-4 h-4" />
-                    </div>
-                    <h2 className="text-sm font-black text-fg">
-                      {isRunning ? 'Séance en cours' : 'Prêt à démarrer ?'}
-                    </h2>
-                  </div>
-
-                  <p className="text-xs text-fg-soft">
-                    {formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang)}
-                  </p>
-
-                  {isRunning && (
-                    <div>
-                      <label className="text-xs font-bold text-fg-muted uppercase tracking-wider block mb-2">
-                        Notes (optionnel)
-                      </label>
-                      <textarea
-                        value={msNotes}
-                        onChange={(e) => setMsNotes(e.target.value)}
-                        rows={2}
-                        placeholder="Comment s'est passée la séance ?"
-                        className="w-full px-4 py-3 rounded-2xl border border-border-app bg-layer-5 text-sm text-fg-secondary placeholder:text-fg-ghost resize-none rf-focus-ring transition-all"
-                      />
-                    </div>
-                  )}
-
-                  {!isRunning ? (
-                    <div className="space-y-2">
-                      <button
-                        type="button"
-                        data-testid="ms-start-btn"
-                        onClick={handleStartSession}
-                        className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
-                      >
-                        <Play className="w-5 h-5 fill-current" />
-                        Commencer la séance
-                      </button>
-                      <button
-                        type="button"
-                        data-testid="ms-complete-btn"
-                        onClick={() => {
-                          setMsSaved(false)
-                          setMsSaveError(null)
-                          setCompletionOpen(true)
-                        }}
-                        className="w-full py-3 rounded-2xl border border-border-app text-fg-muted font-bold text-sm transition-colors hover:border-brand-border-strong hover:text-brand-tint"
-                      >
-                        Marquer comme faite (sans la lancer)
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      data-testid="ms-complete-btn"
-                      onClick={() => {
-                        setMsSaved(false)
-                        setMsSaveError(null)
-                        setCelebrationOpen(true)
-                      }}
-                      className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
-                    >
-                      <CheckCircle2 className="w-5 h-5" />
-                      Terminer la séance
-                    </button>
-                  )}
-
-                  {msSaveError && (
-                    <div className="px-4 py-3 bg-danger-bg border border-danger-bd rounded-2xl">
-                      <p className="text-xs text-danger-soft font-bold">{msSaveError}</p>
-                    </div>
-                  )}
-
-                  {msSaved && (
-                    <div className="flex items-center gap-2 px-4 py-3 bg-ok-bg-muted border border-ok-bd rounded-2xl">
-                      <CheckCircle2 className="w-4 h-4 text-ok flex-shrink-0" />
-                      <p className="text-xs text-ok font-bold">Séance enregistrée !</p>
-                    </div>
-                  )}
-
-                  {/* Unique CTA Premium — discret, en bas de l'aperçu séance uniquement. */}
-                  {!isPremium && (
-                    <Link
-                      to="/profile#premium"
-                      className="block mt-2 text-center text-[11px] font-bold text-fg-muted hover:text-brand-tint transition-colors"
-                    >
-                      Débloque le suivi de charge set-par-set — <span className="underline underline-offset-2">Découvrir Premium</span>
-                    </Link>
-                  )}
-                </section>
+                {/* Messages de statut inline (le CTA principal est en sticky footer ci-dessous). */}
+                {(msSaveError || msSaved) && (
+                  <section data-testid="ms-completion-section" className="space-y-2">
+                    {msSaveError && (
+                      <div className="px-4 py-3 bg-danger-bg border border-danger-bd rounded-2xl">
+                        <p className="text-xs text-danger-soft font-bold">{msSaveError}</p>
+                      </div>
+                    )}
+                    {msSaved && (
+                      <div className="flex items-center gap-2 px-4 py-3 bg-ok-bg-muted border border-ok-bd rounded-2xl">
+                        <CheckCircle2 className="w-4 h-4 text-ok flex-shrink-0" />
+                        <p className="text-xs text-ok font-bold">Séance enregistrée !</p>
+                      </div>
+                    )}
+                  </section>
+                )}
               </>
             ) : (
               <div className="p-8 text-center space-y-3" data-testid="session-not-found">
@@ -510,6 +448,62 @@ export function SessionDetailPage() {
         )}
 
       </main>
+
+      {/* ── Sticky CTA footer — Aperçu (Commencer) ou En cours (Terminer) ───── */}
+      {activeSlot && !isUnavailable && (
+        <div className={`fixed left-0 right-0 z-40 pointer-events-none ${isRunning ? 'bottom-0' : 'bottom-20'}`}>
+          <div className="max-w-md mx-auto px-5 pb-4 pt-2 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-auto">
+            {!isRunning && !isPremium && (
+              <Link
+                to="/profile#premium"
+                className="block mb-2 text-center text-[11px] font-bold text-fg-muted hover:text-brand-tint transition-colors"
+              >
+                Débloque le suivi set-par-set — <span className="underline underline-offset-2">Découvrir Premium</span>
+              </Link>
+            )}
+            {!isRunning ? (
+              <>
+                <button
+                  type="button"
+                  data-testid="ms-start-btn"
+                  onClick={handleStartSession}
+                  className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
+                >
+                  <Play className="w-5 h-5 fill-current" />
+                  Commencer la séance
+                </button>
+                <button
+                  type="button"
+                  data-testid="ms-complete-btn"
+                  onClick={() => {
+                    setMsSaved(false)
+                    setMsSaveError(null)
+                    setCompletionOpen(true)
+                  }}
+                  className="block w-full mt-2 text-center text-[11px] font-bold text-fg-muted hover:text-fg transition-colors"
+                >
+                  Marquer comme faite (sans la lancer)
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                data-testid="ms-complete-btn"
+                onClick={() => {
+                  setMsSaved(false)
+                  setMsSaveError(null)
+                  setCelebrationOpen(true)
+                }}
+                className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
+              >
+                <CheckCircle2 className="w-5 h-5" />
+                Terminer la séance
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       <RPEModal
         isOpen={completionOpen}
         sessionLabel={pageTitle}

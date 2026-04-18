@@ -319,7 +319,8 @@ describe('SessionDetailPage · annual-first', () => {
     expect(screen.getByTestId('mother-session-detail')).toBeInTheDocument()
     // FIX F3-2: orchestrator-fallback-reason supprimé de l'UI joueur
     expect(screen.queryByTestId('orchestrator-fallback-reason')).toBeNull()
-    expect(screen.getByTestId('ms-completion-section')).toBeInTheDocument()
+    // Le CTA primaire est maintenant rendu dans le footer sticky (mode Aperçu).
+    expect(screen.getByTestId('ms-start-btn')).toBeInTheDocument()
   })
 
   it('complétion mother-session → ouvre le modal puis enregistre le log enrichi', async () => {

@@ -112,6 +112,7 @@ export function MotherSessionView({
                 acwr={acwr}
                 isRehabActive={isRehabActive}
                 hideHeader
+                expandCoaching={defaultOpen}
               />
             </SessionBlockCard>
           )
