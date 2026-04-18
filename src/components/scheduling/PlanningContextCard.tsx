@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertTriangle, ChevronDown, ChevronUp, Info, X } from 'lucide-react'
+import { ChevronDown, ChevronUp, Info, X } from 'lucide-react'
 import type { WeekExplanation } from '../../types/scheduling'
 
 const DISMISS_KEY = 'rugbyforge:planning-context-dismissed'
@@ -125,14 +125,16 @@ export function PlanningContextCard({
         </div>
       )}
 
-      {/* Warnings — always visible even after dismiss */}
+      {/* Info programme — always visible even after dismiss. Renommé d'« Avertissements »
+          qui était anxiogène : ces messages sont des adaptations normales du programme
+          (taper playoffs, reprise progressive, deload) plutôt que des alertes critiques. */}
       {hasWarnings && (
-        <div className="rounded-2xl border border-warn-bd bg-warn-bg-muted px-3 py-2.5">
-          <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide text-warn mb-1.5">
-            <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
-            Avertissements
+        <div className="rounded-2xl border border-info-bd bg-info-bg px-3 py-2.5">
+          <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide text-info mb-1.5">
+            <Info className="h-3.5 w-3.5" aria-hidden />
+            Info programme
           </p>
-          <ul className="space-y-1.5 text-xs text-warn-body">
+          <ul className="space-y-1.5 text-xs text-fg-secondary">
             {warnings.map((w) => (
               <li key={w} className="leading-snug">{w}</li>
             ))}
