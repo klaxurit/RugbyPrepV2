@@ -272,7 +272,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Contraste Lower Force-Puissance',
+        name: 'Contraste Lower',
         format: '4 tours, repos complet `3 min` après chaque tour',
         exercises: [
           { name: 'Box Squat', prescription: '4x3 @ 80-85%' },
@@ -371,7 +371,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Contraste Lower Vitesse-Projection',
+        name: 'Contraste Lower',
         format: '4 tours, repos complet `2 min 30 à 3 min` après chaque tour',
         exercises: [
           { name: 'Trap Bar Deadlift', prescription: '4x3 @ 75-80%' },
@@ -467,7 +467,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Contraste Upper Push',
+        name: 'Contraste Upper',
         format: '4 tours, repos complet `3 min` après chaque tour',
         exercises: [
           { name: 'Bench Press', prescription: '4x4 @ 80-85%' },
@@ -577,7 +577,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Contraste Upper Vitesse-Puissance',
+        name: 'Contraste Upper',
         format: '4 tours, repos complet `2 min 30 à 3 min` après chaque tour',
         exercises: [
           { name: 'Bench Press', prescription: '4x3-4 @ 75-80%' },
@@ -1214,12 +1214,12 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Squat / Hinge Re-Entry': 'Reprise squat / hinge',
   'Trunk / Mobility / Tissue Reset': 'Tronc / mobilité / reset tissulaire',
   'Unilateral / Locomotion Reset': 'Unilatéral / locomotion',
-  'Contrast Lower Force-Power': 'Contraste force-puissance bas du corps',
-  'Contrast Lower Force-Projection': 'Contraste force-projection bas du corps',
-  'Contrast Lower Speed-Projection': 'Contraste vitesse-projection bas du corps',
-  'Contrast Upper Force-Speed': 'Contraste force-vitesse haut du corps',
-  'Contrast Upper Push': 'Contraste poussée haut du corps',
-  'Contrast Upper Speed-Power': 'Contraste vitesse-puissance haut du corps',
+  'Contrast Lower Force-Power': 'Contraste Lower',
+  'Contrast Lower Force-Projection': 'Contraste Lower',
+  'Contrast Lower Speed-Projection': 'Contraste Lower',
+  'Contrast Upper Force-Speed': 'Contraste Upper',
+  'Contrast Upper Push': 'Contraste Upper',
+  'Contrast Upper Speed-Power': 'Contraste Upper',
   'Back Three Power Cluster': 'Cluster puissance ligne arrière',
   'Front Row Power Cluster': 'Cluster puissance avants',
   'Front Row Upper Power Cluster': 'Cluster puissance haut du corps avants',
@@ -1428,7 +1428,7 @@ function translateTextToFr(value: string): string {
     .trim()
 }
 
-function translateBlockNameToFr(name: string): string {
+export function translateBlockNameToFr(name: string): string {
   return BLOCK_NAME_FR[name] ?? translateTextToFr(name)
 }
 

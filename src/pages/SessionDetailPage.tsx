@@ -9,6 +9,7 @@ import { SessionCelebration } from '../components/motherSession/SessionCelebrati
 import { isDirectiveText, resolveExerciseId } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
 import { parseBlockFormat } from '../services/ui/parseBlockFormat'
+import { translateBlockNameToFr } from '../services/motherSession/motherSessionContentFr'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
@@ -219,26 +220,38 @@ export function SessionDetailPage() {
         if (!(ex.exerciseId || resolveExerciseId(ex.name))) return
         loggableIdx.push(i)
       })
-      const tours = parseBlockTourCount(block)
+      // Pour le total d'unités : EMOM/Tabata utilisent `format.rounds` (nombre
+      // de minutes/rounds exécutés), pas le compteur "tours" génériques.
+      const fmt = parseBlockFormat(block.format)
+      const unitCount =
+        fmt.type === 'emom' || fmt.type === 'tabata'
+          ? fmt.rounds
+          : parseBlockTourCount(block)
       if (loggableIdx.length === 0) continue
-      totalTours += tours
+      totalTours += unitCount
       let blockCompletedTours = 0
       let blockActiveTour: number | null = null
-      for (let t = 0; t < tours; t++) {
-        const allDone = loggableIdx.every((i) =>
-          sessionRun.completedExercises.has(buildExerciseTourKey(block.number, t, i)),
-        )
-        if (allDone) blockCompletedTours += 1
-        else if (blockActiveTour === null) blockActiveTour = t
+      // Les formats temporels sont considérés "non loggués" — on ne compte pas
+      // de tours validés tant que le chrono n'est pas terminé côté overlay.
+      // Pour l'affichage du header, on reste sur l'unité 0 (premier).
+      if (fmt.type === 'rounds') {
+        for (let t = 0; t < unitCount; t++) {
+          const allDone = loggableIdx.every((i) =>
+            sessionRun.completedExercises.has(buildExerciseTourKey(block.number, t, i)),
+          )
+          if (allDone) blockCompletedTours += 1
+          else if (blockActiveTour === null) blockActiveTour = t
+        }
+      } else {
+        // Bloc temporel : considéré comme "à faire" jusqu'à validation explicite.
+        blockActiveTour = 0
       }
       completedTours += blockCompletedTours
       if (activeBlockIndex === 0 && blockActiveTour !== null) {
         activeBlockIndex = b + 1
-        activeBlockName = block.name
+        activeBlockName = translateBlockNameToFr(block.name)
         activeTourIndex = blockActiveTour + 1
-        activeBlockTourCount = tours
-        // Label contextualisé selon le format du bloc actif.
-        const fmt = parseBlockFormat(block.format)
+        activeBlockTourCount = unitCount
         activeBlockUnitLabel =
           fmt.type === 'emom'
             ? 'Minute'
@@ -251,7 +264,7 @@ export function SessionDetailPage() {
     }
     if (activeBlockIndex === 0 && blocks.length > 0) {
       activeBlockIndex = blocks.length
-      activeBlockName = blocks[blocks.length - 1].name
+      activeBlockName = translateBlockNameToFr(blocks[blocks.length - 1].name)
     }
     return {
       totalTours,
@@ -525,10 +538,13 @@ export function SessionDetailPage() {
 
       </main>
 
-      {/* ── Sticky CTA footer — Aperçu (Commencer) ou En cours (Terminer) ───── */}
+      {/* ── Sticky CTA footer — Aperçu (Commencer) ou En cours (Terminer).
+          Fond opaque + border-top + shadow pour détacher du contenu scrollable
+          et garantir la lisibilité du CTA Premium (sans ça, le gradient rendait
+          le texte illisible en passant sur du contenu). */}
       {activeSlot && !isUnavailable && (
-        <div className={`fixed left-0 right-0 z-40 pointer-events-none ${isRunning ? 'bottom-0' : 'bottom-20'}`}>
-          <div className="max-w-md mx-auto px-5 pb-4 pt-2 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-auto">
+        <div className={`fixed left-0 right-0 z-40 ${isRunning ? 'bottom-0' : 'bottom-20'} bg-app border-t border-border-app shadow-[0_-6px_24px_rgb(44_24_16/0.08)]`}>
+          <div className="max-w-md mx-auto px-5 pt-3 pb-4">
             {!isRunning && !isPremium && (
               <Link
                 to="/profile#premium"

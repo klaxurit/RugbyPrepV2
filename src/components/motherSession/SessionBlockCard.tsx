@@ -64,13 +64,16 @@ export function SessionBlockCard({
   )
 
   // Ribbon visuel : actif / terminé / à venir / aperçu neutre.
+  // Les cartes terminées sont visuellement plus discrètes (opacité + padding réduit).
   const statusClass = isRunning
     ? runModeCompleted
-      ? 'border-ok-bd'
+      ? 'border-ok-bd opacity-60'
       : runModeActive
         ? 'border-brand-border-strong shadow-sm'
         : 'border-border-app opacity-75'
     : 'border-border-app'
+
+  const headerPadding = isRunning && runModeCompleted ? 'py-2' : 'py-3.5'
 
   return (
     <article className={`rounded-2xl border overflow-hidden bg-layer-5 ${statusClass}`}>
@@ -79,7 +82,7 @@ export function SessionBlockCard({
         onClick={() => canToggle && setOpen((v) => !v)}
         aria-expanded={isOpen}
         disabled={!canToggle}
-        className="w-full px-4 py-3.5 hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent text-left"
+        className={`w-full px-4 ${headerPadding} hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent text-left`}
       >
         {/* Ligne 1 — icône + titre (truncate) + pill d'état + durée + chevron.
             Tous siblings dans le même flex, min-height constant, chaque élément
@@ -136,8 +139,9 @@ export function SessionBlockCard({
             </span>
           </div>
         )}
-        {/* Ligne 3 — summary d'exos (mode collapsed seulement). */}
-        {!isOpen && summary && (
+        {/* Ligne 3 — summary d'exos (mode collapsed, hors blocs terminés pour
+            éviter une ligne "2 exos · 3 tours" peu informative et tronquée). */}
+        {!isOpen && summary && !runModeCompleted && (
           <p className="mt-1 text-xs text-fg-muted truncate">{summary}</p>
         )}
       </button>

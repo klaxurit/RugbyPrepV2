@@ -356,15 +356,24 @@ function TimedBlockPreview({
         </ul>
       )}
 
-      <button
-        type="button"
-        onClick={onStart}
-        disabled={disabled}
-        className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-brand hover:bg-brand-hover text-on-brand text-sm font-black uppercase tracking-wide rf-focus-ring disabled:opacity-50"
-      >
-        <Timer className="w-4 h-4" />
-        Démarrer le chrono
-      </button>
+      {disabled ? (
+        <div className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl border border-brand-border bg-layer-5 text-brand-tint text-sm font-black uppercase tracking-wide">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-brand opacity-60 animate-ping" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-brand" />
+          </span>
+          Chrono actif — consulte l'overlay ↓
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={onStart}
+          className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-brand hover:bg-brand-hover text-on-brand text-sm font-black uppercase tracking-wide rf-focus-ring"
+        >
+          <Timer className="w-4 h-4" />
+          Démarrer le chrono
+        </button>
+      )}
     </div>
   )
 }
