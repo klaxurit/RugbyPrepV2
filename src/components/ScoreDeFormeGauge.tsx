@@ -10,6 +10,8 @@ interface Props {
   blurred?: boolean
   /** Chiffre à afficher au centre. Quand `blurred`, on peut afficher un "••" décoratif. */
   display?: string
+  /** `sm` = ~100px (teaser free, compact), `md` = ~180px (card premium). */
+  size?: 'sm' | 'md'
 }
 
 const RING_CLASS: Record<ReadinessResult['color'], string> = {
@@ -26,15 +28,17 @@ const TEXT_CLASS: Record<ReadinessResult['color'], string> = {
   red: 'text-red-500',
 }
 
-export function ScoreDeFormeGauge({ score, color, blurred = false, display }: Props) {
+export function ScoreDeFormeGauge({ score, color, blurred = false, display, size = 'md' }: Props) {
   const pct = Math.max(0, Math.min(100, score))
   // Semi-cercle : r=44, circonférence demi = π·44 ≈ 138.2
   const halfCirc = Math.PI * 44
   const offset = halfCirc - (pct / 100) * halfCirc
   const label = display ?? String(score)
+  const maxW = size === 'sm' ? 'max-w-[110px]' : 'max-w-[180px]'
+  const textSize = size === 'sm' ? 'text-xl' : 'text-3xl'
 
   return (
-    <div className="relative w-full max-w-[180px] mx-auto">
+    <div className={`relative w-full ${maxW} mx-auto`}>
       <svg viewBox="0 0 100 55" className="w-full">
         {/* Arc de fond */}
         <path
@@ -59,7 +63,7 @@ export function ScoreDeFormeGauge({ score, color, blurred = false, display }: Pr
       {/* Chiffre central — flouté en teaser, net en premium */}
       <div className="absolute inset-0 flex flex-col items-center justify-end pb-0.5">
         <span
-          className={`text-3xl font-black ${TEXT_CLASS[color]}`}
+          className={`${textSize} font-black ${TEXT_CLASS[color]}`}
           style={blurred ? { filter: 'blur(10px)' } : undefined}
         >
           {label}
