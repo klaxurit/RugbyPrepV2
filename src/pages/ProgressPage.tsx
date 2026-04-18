@@ -27,6 +27,10 @@ import {
 import { PageHeader } from '../components/PageHeader'
 import { BottomNav } from '../components/BottomNav'
 import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
+import { WeeklyBilanCard } from '../components/WeeklyBilanCard'
+import { computeWeeklyBilan } from '../services/weeklyBilan/computeWeeklyBilan'
+import { useACWR } from '../hooks/useACWR'
+import { useCalendar } from '../hooks/useCalendar'
 import { ProgressCurveSkeleton } from '../components/SkeletonCard'
 import { PRBoard } from '../components/pr/PRBoard'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
@@ -156,6 +160,14 @@ export function ProgressPage() {
   // ─── Program adherence data ───────────────────────────────────
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
   const adherenceSummary = useMemo(() => getProgramHistorySummary(sessionLogs, today), [sessionLogs, today])
+
+  // ─── Bilan de la semaine (Premium) ──────────────────────────
+  const { structuralEvents } = useCalendar()
+  const acwr = useACWR(sessionLogs, structuralEvents)
+  const weeklyBilan = useMemo(
+    () => computeWeeklyBilan(sessionLogs, logs, today),
+    [sessionLogs, logs, today],
+  )
   // Objectif hebdo dérivé du niveau — donne du contexte au "3 / target".
   const weeklyTarget = profile.trainingLevel === 'starter' ? 2 : 3
   const target28d = weeklyTarget * 4
@@ -340,6 +352,11 @@ export function ProgressPage() {
         {/* ─── SESSIONS TAB ─────────────────────────────────────── */}
         {tab === 'sessions' && (
           <>
+            {/* Bilan de la semaine — Premium uniquement (valorisation du lien /home). */}
+            {premiumResolved && isPremium && (
+              <WeeklyBilanCard bilan={weeklyBilan} acwr={acwr} lang={lang} />
+            )}
+
             {/* Adhérence programme — chiffres avec objectif + barre de progression */}
             {sessionLogs.length > 0 && (
               <section data-testid="adherence-section">
