@@ -218,13 +218,21 @@ function resolveCalendarDay(
   // 1. scSchedule (priority)
   if (scSchedule && scSchedule.sessions.length > 0) {
     const sorted = [...scSchedule.sessions].sort((a, b) => a.day - b.day)
+    // Manual scSchedule = user explicitly chose these days → honour them even if
+    // they coincide with clubDays or J-1 match. Still reject hard conflicts:
+    // same-day match (physical impossibility) and usedDays (no duplicate day).
+    const isManual = scSchedule.source === 'manual'
+    const hardBlocked = isManual
+      ? buildHardBlockedSet(matchDays, usedDays, extraBlocked)
+      : blocked
+
     if (index < sorted.length) {
       const candidate = sorted[index].day as DayOfWeek
-      if (!blocked.has(candidate)) return candidate
+      if (!hardBlocked.has(candidate)) return candidate
     }
     // Try any unblocked SC day
     for (const s of sorted) {
-      if (!blocked.has(s.day as DayOfWeek)) return s.day as DayOfWeek
+      if (!hardBlocked.has(s.day as DayOfWeek)) return s.day as DayOfWeek
     }
   }
 
@@ -266,6 +274,23 @@ function findFallbackDay(
     if (after !== 0 && !blocked.has(after)) return after
   }
   return null
+}
+
+/**
+ * Hard blocks only: match days (same-day conflict), used days (doublon),
+ * user-unavailable days. Used when honouring a manual scSchedule choice.
+ * Does NOT block clubDays or J-1 match.
+ */
+function buildHardBlockedSet(
+  matchDays?: DayOfWeek[],
+  usedDays?: Set<DayOfWeek>,
+  extraBlocked?: Set<DayOfWeek>,
+): Set<DayOfWeek> {
+  const blocked = new Set<DayOfWeek>()
+  if (matchDays) for (const d of matchDays) blocked.add(d)
+  if (usedDays) for (const d of usedDays) blocked.add(d)
+  if (extraBlocked) for (const d of extraBlocked) blocked.add(d)
+  return blocked
 }
 
 function buildBlockedSet(

@@ -29,6 +29,13 @@ function sc(...days: number[]): SCSchedule {
   }
 }
 
+function scManual(...days: number[]): SCSchedule {
+  return {
+    sessions: days.map((d, i) => ({ sessionIndex: i as 0 | 1 | 2, day: d as DayOfWeek })),
+    source: 'manual',
+  }
+}
+
 function club(days: number[], matchDay?: number): ClubSchedule {
   return {
     clubDays: days.map((d) => ({ day: d as DayOfWeek })),
@@ -60,6 +67,55 @@ describe('resolveWeekPresentation — calendar mode with scSchedule', () => {
     expect(result.sessions).toHaveLength(2)
     const days = result.sessions.map((s) => s.kind === 'dated' ? s.dayOfWeek : -1)
     expect(days).toEqual([2, 4]) // Mardi, Jeudi
+  })
+
+  it('honours manual scSchedule even when the day is a clubDay', () => {
+    // User explicitly chose Saturday (6) for a session via the manual planning editor,
+    // even though Saturday is also a clubDay. The scheduler must respect this choice.
+    const result = resolveWeekPresentation({
+      motherSessions: [slot('A')],
+      schedulingMode: 'calendar',
+      events: [],
+      today: TODAY,
+      scSchedule: scManual(6), // Samedi, manual
+      clubSchedule: club([6]), // Samedi club day
+      corrections: [],
+    })
+
+    const days = result.sessions.map((s) => s.kind === 'dated' ? s.dayOfWeek : -1)
+    expect(days).toEqual([6])
+  })
+
+  it('honours manual scSchedule even when the day is J-1 of a match', () => {
+    // Match on Sunday (0), J-1 = Saturday (6) — normally blocked for non-light.
+    // User manually placed the session on Saturday → must be honoured.
+    const result = resolveWeekPresentation({
+      motherSessions: [slot('A')],
+      schedulingMode: 'calendar',
+      events: [match('2026-04-12')], // Sunday
+      today: TODAY,
+      scSchedule: scManual(6), // Samedi, manual
+      corrections: [],
+    })
+
+    const days = result.sessions.map((s) => s.kind === 'dated' ? s.dayOfWeek : -1)
+    expect(days).toEqual([6])
+  })
+
+  it('does NOT honour manual scSchedule when it conflicts with a same-day match', () => {
+    // User manually placed Saturday, but Saturday is also a match → physical conflict,
+    // the scheduler must reject and fallback.
+    const result = resolveWeekPresentation({
+      motherSessions: [slot('A')],
+      schedulingMode: 'calendar',
+      events: [match('2026-04-11')], // Saturday
+      today: TODAY,
+      scSchedule: scManual(6), // Samedi, manual — same day as match
+      corrections: [],
+    })
+
+    const days = result.sessions.map((s) => s.kind === 'dated' ? s.dayOfWeek : -1)
+    expect(days[0]).not.toBe(6)
   })
 
   it('produces dayLabel in French', () => {

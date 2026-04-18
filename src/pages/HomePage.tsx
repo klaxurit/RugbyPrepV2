@@ -30,7 +30,8 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useAthleteTests } from '../hooks/useAthleteTests'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { ScoreDeFormeTeaser } from '../components/ScoreDeFormeTeaser'
-import { ReadinessScoreCard } from '../components/ReadinessScoreCard'
+import { ScoreDeFormeCard } from '../components/ScoreDeFormeCard'
+import { computeReadinessTrend } from '../services/readiness/computeReadinessTrend'
 import { SeasonTransitionBanner, SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
@@ -141,6 +142,19 @@ export function HomePage() {
     nextMatchDate: nextStructuralMatch?.date ?? null,
     today,
   })
+
+  // Trend 7j pour la card Premium "Score de forme" — même viz que le teaser free.
+  const readinessTrend = useMemo(
+    () =>
+      computeReadinessTrend({
+        logs,
+        acwrZone: acwr.hasSufficientData ? acwr.zone : null,
+        fatigue,
+        nextMatchDateISO: nextStructuralMatch?.date ?? null,
+        todayISO: today,
+      }),
+    [logs, acwr.hasSufficientData, acwr.zone, fatigue, nextStructuralMatch?.date, today],
+  )
 
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
   const surfaceParams = useMemo(() => ({
@@ -454,7 +468,7 @@ export function HomePage() {
           <ScoreDeFormeTeaser />
         )}
         {premiumResolved && isPremium && (
-          <ReadinessScoreCard result={readinessResult} compact />
+          <ScoreDeFormeCard values={readinessTrend} current={readinessResult} />
         )}
 
         {/* ── Cette semaine (training + rest day) ────────────────────────────── */}

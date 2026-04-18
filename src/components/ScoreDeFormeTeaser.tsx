@@ -1,43 +1,18 @@
 import { Link } from 'react-router-dom'
 import { Lock, ChevronRight } from 'lucide-react'
+import { ScoreDeFormeChart } from './ScoreDeFormeChart'
 
 /**
- * Teaser du Score de forme, visible pour les utilisateurs free.
- * Composant stateless — l'hôte décide de l'afficher ou non selon le statut Premium.
+ * Teaser du Score de forme — free uniquement. Mini line chart flouté sur 7
+ * derniers jours (pattern paywall Whoop/Strava/Oura/Garmin), échelle Y nette
+ * à droite, CTA Premium.
  *
- * Visualisation : mini line chart SVG flouté (pattern paywall canonique :
- * Whoop / Strava / Oura / Garmin). 7 points représentant les 7 derniers jours
- * avec aire sous la courbe + dot "aujourd'hui", le tout flouté. L'échelle Y
- * (`10 / 5 / 0`) et le label `Aujourd'hui` restent nets pour préserver le
- * contexte.
- *
- * Accessibilité :
- *   - `aria-label` explicite sur la card.
- *   - Cadenas `aria-hidden` (le mot "Premium" est dans le texte CTA).
- *   - SVG `role="img"` + `aria-label` descriptif.
+ * Le chart SVG est extrait dans `ScoreDeFormeChart` et partagé avec la card
+ * Premium `ScoreDeFormeCard` — même rendu visuel, seul le flou change.
  */
 export function ScoreDeFormeTeaser({ ctaHref = '/profile#premium' }: { ctaHref?: string }) {
-  // Valeurs d'illustration — 7 points avec légère tendance haussière pour donner
-  // une forme crédible. La data réelle ne sera affichée qu'en mode Premium
-  // (itération future).
+  // Valeurs d'illustration floues — la data réelle est dans ScoreDeFormeCard (premium).
   const values = [6, 7, 5, 6, 8, 7, 8]
-  const W = 200
-  const H = 80
-  const yFor = (v: number) => H - (v / 10) * H
-
-  // Liste de points (x, y) régulièrement espacés sur la largeur.
-  const points = values.map((v, i) => {
-    const x = (i * W) / (values.length - 1)
-    return { x, y: yFor(v) }
-  })
-
-  const linePath = points
-    .map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
-    .join(' ')
-  // Aire sous la courbe : on ferme le path en descendant au coin inférieur droit
-  // puis gauche avant de remonter au point de départ.
-  const areaPath = `${linePath} L${W},${H} L0,${H} Z`
-  const lastPoint = points[points.length - 1]
 
   return (
     <section
@@ -52,36 +27,12 @@ export function ScoreDeFormeTeaser({ ctaHref = '/profile#premium' }: { ctaHref?:
         <Lock aria-hidden="true" className="w-4 h-4 text-brand-tint" />
       </div>
 
-      {/* Chart flouté + échelle Y nette à droite. */}
       <div className="mt-4 flex items-stretch gap-2">
-        {/* Zone chart : overflow-hidden pour contenir le flou, rounded-xl pour le cadre.
-            Le SVG occupe toute la hauteur (~80 px) et s'étire en largeur. */}
-        <div className="relative flex-1 h-20 rounded-xl bg-layer-5 overflow-hidden">
-          <svg
-            role="img"
-            aria-label="Aperçu du score de forme — valeurs masquées, débloquez avec Premium"
-            viewBox={`0 0 ${W} ${H}`}
-            preserveAspectRatio="none"
-            className="w-full h-full"
-          >
-            {/* Groupe flouté : contient l'aire + la ligne + le dot final.
-                Le filter blur s'applique uniquement ici, pas sur le reste. */}
-            <g style={{ filter: 'blur(6px)' }}>
-              <path d={areaPath} fill="rgba(139, 28, 43, 0.12)" />
-              <path
-                d={linePath}
-                fill="none"
-                stroke="#8B1C2B"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                vectorEffect="non-scaling-stroke"
-              />
-              <circle cx={lastPoint.x} cy={lastPoint.y} r="4" fill="#8B1C2B" />
-            </g>
-          </svg>
-        </div>
-        {/* Échelle Y — 3 graduations, non floutées, lisibles. */}
+        <ScoreDeFormeChart
+          values={values}
+          blurred
+          ariaLabel="Aperçu du score de forme — valeurs masquées, débloquez avec Premium"
+        />
         <div className="flex flex-col justify-between text-[10px] font-bold text-fg-faint tabular-nums py-0.5">
           <span>10</span>
           <span>5</span>
@@ -89,7 +40,6 @@ export function ScoreDeFormeTeaser({ ctaHref = '/profile#premium' }: { ctaHref?:
         </div>
       </div>
 
-      {/* Ligne meta sous le chart : contexte temporel à gauche, ancre "Aujourd'hui" à droite. */}
       <div className="mt-1.5 flex items-center justify-between text-[11px] text-fg-muted">
         <span>7 derniers jours</span>
         <span>Aujourd'hui</span>

@@ -449,6 +449,10 @@ export interface SCSessionSlot {
 export interface SCSchedule {
   sessions: SCSessionSlot[]
   suggestedAt?: string  // ISO date de la dernière suggestion
+  /** `manual` = l'user a choisi les jours explicitement → le scheduler doit les respecter
+   *  même s'ils coïncident avec clubDays/J-1 match. `auto` = suggestion algorithmique,
+   *  peut être réécrite si conflit. Défaut : `auto` (compat legacy). */
+  source?: 'auto' | 'manual'
 }
 
 // ─── Calendar ────────────────────────────────────────────────

@@ -144,7 +144,7 @@ export function buildManualSCSchedule(days: DayOfWeek[]): SCSchedule {
     sessionIndex: i as 0 | 1 | 2,
     day,
   }))
-  return { sessions, suggestedAt: new Date().toISOString() }
+  return { sessions, suggestedAt: new Date().toISOString(), source: 'manual' }
 }
 
 function pickWithMinGap(ranked: DayOfWeek[], count: number, minGap: number): DayOfWeek[] {
