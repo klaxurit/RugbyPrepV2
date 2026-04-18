@@ -18,7 +18,7 @@ beforeEach(() => {
 // 3 tours × 2 exos = 6 étapes à valider
 const loggableBlock: Block = {
   number: 1,
-  name: 'Paire Puissance Lower',
+  name: 'Puissance Lower',
   format: '3 tours · Repos 3 min',
   exercises: [
     { name: 'Bench Press', prescription: '3×5 @80%' },

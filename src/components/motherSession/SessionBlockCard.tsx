@@ -79,42 +79,50 @@ export function SessionBlockCard({
         onClick={() => canToggle && setOpen((v) => !v)}
         aria-expanded={isOpen}
         disabled={!canToggle}
-        className="w-full px-4 py-3.5 flex items-center gap-3 hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent"
+        className="w-full px-4 py-3.5 flex items-center gap-3 hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent text-left"
       >
-        <div className="flex-1 min-w-0 flex flex-col items-center gap-1">
-          <div className="flex items-center justify-center gap-2 flex-wrap text-center">
-            <span aria-hidden className="text-xl leading-none">
-              {icon}
-            </span>
-            <h3 className={`text-sm font-black leading-tight ${runModeCompleted ? 'text-fg-muted' : 'text-fg'}`}>
+        <span aria-hidden className="text-xl leading-none flex-shrink-0">
+          {icon}
+        </span>
+        <div className="flex-1 min-w-0 overflow-hidden">
+          {/* Ligne 1 : titre (truncate) + pill d'état inline si assez de place. */}
+          <div className="flex items-center gap-2 min-w-0">
+            <h3
+              className={`text-sm font-black leading-tight truncate ${runModeCompleted ? 'text-fg-muted' : 'text-fg'}`}
+              title={name}
+            >
               {name}
             </h3>
-            {block.isOptional && (
-              <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">
-                {msLabel('optional', lang)}
+            {isRunning && runModeActive && (
+              <span className="inline-flex items-center rounded-full bg-brand text-on-brand px-2 py-0.5 text-[10px] font-black uppercase tracking-wide flex-shrink-0">
+                En cours
               </span>
             )}
             {isRunning && runModeCompleted && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-ok-strong text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wide">
+              <span className="inline-flex items-center gap-1 rounded-full bg-ok-strong text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wide flex-shrink-0">
                 <Check className="w-3 h-3" strokeWidth={3} />
                 Terminé
               </span>
             )}
-            {isRunning && runModeActive && (
-              <span className="inline-flex items-center rounded-full bg-brand text-on-brand px-2 py-0.5 text-[10px] font-black uppercase tracking-wide">
-                En cours
-              </span>
-            )}
-            {minutes > 0 && (
-              <span className="text-[11px] font-bold text-fg-muted tabular-nums">
-                {minutes} min
-              </span>
-            )}
           </div>
+          {/* Ligne 2 dédiée : badge optionnel (dérange peu car peu fréquent). */}
+          {block.isOptional && !isRunning && (
+            <div className="mt-0.5">
+              <span className="inline-flex items-center rounded-full border border-amber-400/40 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">
+                {msLabel('optional', lang)}
+              </span>
+            </div>
+          )}
           {!isOpen && summary && (
-            <p className="text-xs text-fg-muted truncate max-w-full text-center">{summary}</p>
+            <p className="mt-0.5 text-xs text-fg-muted truncate">{summary}</p>
           )}
         </div>
+        {/* Duration + chevron : toujours sur la ligne 1, jamais relégués en dessous. */}
+        {minutes > 0 && (
+          <span className="text-[11px] font-bold text-fg-muted tabular-nums flex-shrink-0">
+            {minutes} min
+          </span>
+        )}
         {canToggle && (
           <ChevronDown
             className={`w-4 h-4 text-fg-faint transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}

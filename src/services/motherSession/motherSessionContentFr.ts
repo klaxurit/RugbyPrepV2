@@ -201,7 +201,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Support Jambes / Adducteurs / Tronc',
+        name: 'Jambes · Adducteurs · Tronc',
         format: '',
         exercises: [
           { name: 'Single-Leg Calf Raise', prescription: '2x10/côté' },
@@ -287,7 +287,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Paire Force Lower',
+        name: 'Force Lower',
         format: '3 tours, `90-120s` de repos après la paire',
         exercises: [
           { name: 'Barbell Romanian Deadlift', prescription: '3x5-6' },
@@ -385,7 +385,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Paire Chaîne Postérieure + Force Unilatérale',
+        name: 'Chaîne post. & Unilatéral',
         format: '3 tours, `75-90s` de repos après la paire',
         exercises: [
           { name: 'Barbell Hip Thrust', prescription: '3x5-6' },
@@ -482,7 +482,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Paire Force Push/Pull',
+        name: 'Force Push/Pull',
         format: '3 tours, `90-120s` de repos après la paire',
         exercises: [
           { name: 'Single-Arm Landmine Press', prescription: '3x6/côté' },
@@ -592,7 +592,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Paire Force Push/Pull',
+        name: 'Force Push/Pull',
         format: '3 tours, `75-90s` de repos après la paire',
         exercises: [
           { name: 'Single-Arm Landmine Press', prescription: '3x5-6/côté' },
@@ -673,7 +673,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Paire Puissance Lower',
+        name: 'Puissance Lower',
         format: '3 tours, repos complet `3 min`',
         exercises: [
           { name: 'Front Squat', prescription: '3x4-5' },
@@ -690,7 +690,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Force Upper Push/Pull',
+        name: 'Force Push/Pull',
         format: '3 tours, `90-120s` de repos après la paire',
         exercises: [
           { name: 'Football Bar Bench Press', prescription: '3x5-6' },
@@ -710,7 +710,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Support Chaîne Postérieure / Tronc',
+        name: 'Chaîne post. & Tronc',
         format: '3 tours, `75-90s` de repos',
         exercises: [
           { name: 'Hex Bar RDL', prescription: '3x6-8' },
@@ -726,7 +726,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Support Premières Lignes',
+        name: 'Premières lignes',
         format: '2-3 tours, `45-60s` de repos',
         exercises: [
           { name: 'Sled Push', prescription: '15-20m' },
@@ -744,7 +744,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Bloc Récompense / Congestion Bras',
+        name: 'Récompense · Bras',
         format: '2-3 tours, `45-60s` de repos',
         exercises: [
           { name: 'Hammer Curl', prescription: '10-12 reps' },
@@ -813,7 +813,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Paire Puissance Lower',
+        name: 'Puissance Lower',
         format: '3 tours, repos complet `3 min`',
         exercises: [
           { name: 'Back Squat', prescription: '3x2-3 @ 75-80%' },
@@ -831,7 +831,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Force Upper Push/Pull',
+        name: 'Force Push/Pull',
         format: '3 tours, `90-120s` de repos après la paire',
         exercises: [
           { name: 'DB Incline Bench Press', prescription: '3x6-8' },
@@ -847,7 +847,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Support Chaîne Postérieure / Rotation',
+        name: 'Chaîne post. & Rotation',
         format: '3 tours, `75-90s` de repos',
         exercises: [
           { name: 'Hex Bar RDL', prescription: '3x6-8' },
@@ -862,7 +862,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Support Jambes / Adducteurs',
+        name: 'Jambes & Adducteurs',
         format: '2-3 tours, `45-60s` de repos',
         exercises: [
           { name: 'Weighted Calf Raise', prescription: '10-12 reps' },
@@ -876,7 +876,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Bloc Récompense / Congestion Bras',
+        name: 'Récompense · Bras',
         format: '2-3 tours, `45-60s` de repos',
         exercises: [
           { name: 'Alternating DB Curl', prescription: '10-12 reps' },
@@ -943,7 +943,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Paire Neurale Lower',
+        name: 'Neural Lower',
         format: '3 tours, repos complet `2-3 min`',
         exercises: [
           { name: 'Banded Anderson Box Squat', prescription: '3x3 @ ~75-80% + tension élastique' },
@@ -1067,7 +1067,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Paire Neurale Lower',
+        name: 'Neural Lower',
         format: '3 tours, repos complet `2-3 min`',
         exercises: [
           { name: 'Trap Bar Deadlift', prescription: '3x2-3 @ ~70-75%' },
@@ -1119,7 +1119,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Bloc Congestion / Confiance Bras',
+        name: 'Congestion · Bras',
         format: '2 tours, `45-60s` de repos',
         exercises: [
           { name: 'Hammer Curl', prescription: '2x10' },
