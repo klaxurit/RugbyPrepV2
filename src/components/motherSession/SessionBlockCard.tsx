@@ -79,13 +79,13 @@ export function SessionBlockCard({
         onClick={() => canToggle && setOpen((v) => !v)}
         aria-expanded={isOpen}
         disabled={!canToggle}
-        className="w-full text-left px-4 py-3.5 flex items-center gap-3 hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent"
+        className="w-full px-4 py-3.5 flex items-center gap-3 hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent"
       >
-        <span aria-hidden className="text-xl leading-none flex-shrink-0">
-          {icon}
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex-1 min-w-0 flex flex-col items-center gap-1">
+          <div className="flex items-center justify-center gap-2 flex-wrap text-center">
+            <span aria-hidden className="text-xl leading-none">
+              {icon}
+            </span>
             <h3 className={`text-sm font-black leading-tight ${runModeCompleted ? 'text-fg-muted' : 'text-fg'}`}>
               {name}
             </h3>
@@ -105,23 +105,21 @@ export function SessionBlockCard({
                 En cours
               </span>
             )}
+            {minutes > 0 && (
+              <span className="text-[11px] font-bold text-fg-muted tabular-nums">
+                {minutes} min
+              </span>
+            )}
           </div>
           {!isOpen && summary && (
-            <p className="mt-0.5 text-xs text-fg-muted truncate">{summary}</p>
+            <p className="text-xs text-fg-muted truncate max-w-full text-center">{summary}</p>
           )}
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {minutes > 0 && (
-            <span className="text-[11px] font-bold text-fg-muted tabular-nums">
-              {minutes} min
-            </span>
-          )}
-          {canToggle && (
-            <ChevronDown
-              className={`w-4 h-4 text-fg-faint transition-transform ${isOpen ? 'rotate-180' : ''}`}
-            />
-          )}
-        </div>
+        {canToggle && (
+          <ChevronDown
+            className={`w-4 h-4 text-fg-faint transition-transform flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
+          />
+        )}
       </button>
       {isOpen && (
         <div className="px-4 pb-4 pt-0 border-t border-border-app">

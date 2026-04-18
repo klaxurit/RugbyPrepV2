@@ -24,9 +24,9 @@ export function MotherSessionHeader({ metadata, lang = 'fr' }: MotherSessionHead
   const title = formatTitleFromMotherSessionId(metadata.id, lang)
 
   return (
-    <header className="rounded-[2rem] border border-border-app bg-layer-5 p-4 sm:p-5">
+    <header className="rounded-[2rem] border border-border-app bg-layer-5 p-4 sm:p-5 text-center">
       <h1 className="text-xl font-bold leading-tight text-fg sm:text-2xl">{title}</h1>
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap justify-center gap-2">
         <Badge>{msCycleLabel(metadata.cycle, lang)}</Badge>
         {metadata.targetDuration ? <Badge>{metadata.targetDuration}</Badge> : null}
         <Badge>{msTargetLevelLabel(metadata.targetLevel, lang)}</Badge>
