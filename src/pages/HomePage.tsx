@@ -256,6 +256,87 @@ export function HomePage() {
   const sessionDuration = isRecoveryWeek ? '~30 min' : LEVEL_DURATION[profile.trainingLevel ?? 'builder']
   const trainingLevelLabel = TRAINING_LEVEL_LABEL[visibleTrainingLevel]
 
+  // ── Rest day context ────────────────────────────────────────────────────
+  // État visé par la refonte du doc design-home-page-restday.md : hero
+  // affirmatif ("Repos avant le match") + nouvelle section "Cette semaine",
+  // stats 3-up + ACWR masqués en rest day.
+  const isRestDay = !todaySessionTitle
+  const todayDow = new Date(today + 'T12:00:00').getDay()
+  const daysToMatch = nextMatch ? diffDays(nextMatch.date) : null
+  // Dernier match passé (pour le cas post-match J+1).
+  const lastPastMatch = useMemo(() => {
+    const past = structuralEvents
+      .filter((e) => e.type === 'match' && e.date < today)
+      .sort((a, b) => b.date.localeCompare(a.date))
+    return past[0] ?? null
+  }, [structuralEvents, today])
+  const daysSinceLastMatch = lastPastMatch ? Math.abs(diffDays(lastPastMatch.date)) : null
+
+  const restDayContext: 'match_tomorrow' | 'post_match' | 'match_today' | 'none' =
+    isMatchDay
+      ? 'match_today'
+      : daysToMatch != null && daysToMatch === 1
+        ? 'match_tomorrow'
+        : daysSinceLastMatch != null && daysSinceLastMatch <= 1
+          ? 'post_match'
+          : 'none'
+
+  const restDayCopy = (() => {
+    switch (restDayContext) {
+      case 'match_tomorrow':
+        return {
+          eyebrow: 'REPOS AUJOURD\'HUI',
+          title: 'Repos avant le match.',
+          body: 'Si tu veux bouger : 20 min marche ou 10 min mobilité légère.',
+        }
+      case 'post_match':
+        return {
+          eyebrow: 'REPOS AUJOURD\'HUI',
+          title: 'Récup post-match.',
+          body: 'Hydratation, protéines, marche légère. Pas de charge aujourd\'hui.',
+        }
+      case 'match_today':
+        return {
+          eyebrow: 'JOUR DE MATCH',
+          title: "C'est aujourd'hui !",
+          body: 'Mobilité, activation courte, hydratation. Pas de charge lourde.',
+        }
+      default:
+        return {
+          eyebrow: 'REPOS AUJOURD\'HUI',
+          title: 'Repos programmé.',
+          body: 'Récup active optionnelle : 20 min marche, mobilité, sauna.',
+        }
+    }
+  })()
+
+  // Ligne meta (date + saison + S1 + niveau) au-dessus du hero en rest day.
+  const metaLine = (() => {
+    const todayDate = new Date(today + 'T12:00:00')
+    const dateLabel = todayDate.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+    const seasonLabel = seasonPhaseLabel[seasonPhase]?.label ?? ''
+    const cycleLabel = blockProgression?.currentBlockLabel ?? weekLabel(week)
+    const levelLabel = trainingLevelLabel
+    return [dateLabel, seasonLabel, cycleLabel, levelLabel].filter(Boolean).join(' · ')
+  })()
+
+  // Planned sessions pour la semaine (liste verticale section "Cette semaine").
+  // Note : on ne veut que les DatedSession non-completed, non-skipped futures ou du jour.
+  const upcomingWeekSessions = useMemo(() => {
+    if (!weekPresentation || weekPresentation.mode !== 'calendar') return []
+    const allDatedRaw = weekPresentation.sessions.filter(
+      (s): s is import('../types/scheduling').DatedSession => s.kind === 'dated',
+    )
+    const allDated = mergeDatedSessionCompletion(allDatedRaw, logs, today)
+    // Trier par dayOfWeek, Lun=1 → Dim=0 (mais on reste semaine ISO Lun→Dim)
+    const ordered = [...allDated].sort((a, b) => {
+      const aOrder = a.dayOfWeek === 0 ? 7 : a.dayOfWeek
+      const bOrder = b.dayOfWeek === 0 ? 7 : b.dayOfWeek
+      return aOrder - bOrder
+    })
+    return ordered
+  }, [weekPresentation, logs, today])
+
 
   return (
     <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
@@ -277,99 +358,211 @@ export function HomePage() {
 
       <main className="px-6 pt-6 space-y-6 max-w-md mx-auto relative">
 
-        {/* ── Hero Card : Saison + Séance + CTA ── */}
-        <section data-testid="home-hero-card">
-          <div className="bg-glass border border-border-app rounded-[24px] p-5 space-y-4">
-            {/* Row 1: Season phase + match info */}
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 flex-wrap">
-                {(() => {
-                  const cfg = seasonPhaseLabel[seasonPhase]
-                  return <Chip tone={cfg.tone}>{cfg.label}</Chip>
-                })()}
-                {blockProgression?.currentBlockLabel ? (
-                  <Chip tone="brand">{blockProgression.currentBlockLabel}</Chip>
-                ) : (
-                  <Chip tone="brand">{weekLabel(week)}</Chip>
-                )}
-                <Chip tone="neutral">{trainingLevelLabel}</Chip>
-              </div>
-            </div>
+        {/* ── Hero Card ── Deux variantes : rest day (refonte) / training day (legacy). */}
+        {isRestDay ? (
+          <section data-testid="home-hero-card">
+            {/* Meta du jour — 1 ligne texte remplace les 3 chips. */}
+            <p className="text-xs text-fg-soft mb-3 text-center">{metaLine}</p>
 
-            {/* Match day or next match inline */}
-            {isMatchDay && (
-              <div className="flex items-center gap-2 py-2 px-3 bg-warn-bg border border-warn-bd rounded-2xl">
-                <Trophy className="w-4 h-4 text-warn-strong fill-current" />
-                <span className="text-xs font-black text-warn-strong uppercase tracking-wide">Jour de match !</span>
-              </div>
-            )}
-            {nextMatch && !isMatchDay && (
-              <Link to="/calendar" className="block">
-                <div className="flex items-center gap-3 py-2 px-3 bg-layer-5 rounded-2xl group">
-                  <div className="w-8 h-8 rounded-xl bg-warn-bg flex items-center justify-center flex-shrink-0">
-                    <Trophy className="w-3.5 h-3.5 text-warn-strong" />
-                  </div>
+            {/* Bandeau match promu — fond warn + icône, sticky visuel au-dessus du hero. */}
+            {(restDayContext === 'match_tomorrow' || restDayContext === 'match_today') && nextMatch && (
+              <Link to="/calendar" className="block mb-3" data-testid="home-match-banner">
+                <div className="flex items-center gap-3 py-3 px-4 bg-warn-bg border border-warn-bd rounded-2xl group min-h-[56px]">
+                  <Trophy className="w-5 h-5 text-warn-strong fill-current flex-shrink-0" aria-hidden />
                   <div className="flex-1 min-w-0">
-                    <span className="text-xs font-bold text-fg">Prochain match — J−{diffDays(nextMatch.date)}</span>
-                    {nextMatch.opponent && (
-                      <span className="text-[10px] text-fg-muted ml-2">vs {nextMatch.opponent}</span>
+                    <p className="text-sm font-black text-warn-strong leading-tight">
+                      {restDayContext === 'match_today'
+                        ? "C'est aujourd'hui !"
+                        : `J-${diffDays(nextMatch.date)} · ${nextMatch.opponent ? `vs ${nextMatch.opponent}` : 'Prochain match'}`}
+                    </p>
+                    {restDayContext !== 'match_today' && nextMatch.kickoff_time && (
+                      <p className="text-[11px] text-warn-body mt-0.5">
+                        {nextMatch.is_home === false ? 'Extérieur · ' : 'Domicile · '}
+                        {nextMatch.kickoff_time}
+                      </p>
                     )}
                   </div>
-                  <ChevronRight className="w-4 h-4 text-fg-faint group-hover:text-brand-tint transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-warn-body group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
                 </div>
               </Link>
             )}
 
-            {/* Session info */}
-            <div className="space-y-1">
-              {todaySessionTitle ? (
-                <>
-                  <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider" data-testid="home-hero-label">Séance du jour</p>
-                  <h3 className="text-xl font-black text-fg">{todaySessionTitle}</h3>
-                </>
-              ) : (
-                <>
-                  <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider">Repos aujourd'hui</p>
-                  <h3 className="text-xl font-black text-fg">Pas de séance prévue</h3>
-                  {nextDatedSession && (
-                    <p className="text-xs text-fg-soft mt-1">
-                      Prochaine séance : <span className="font-bold text-fg">{nextDatedSession.dayLabel}</span>
-                      {' · '}
-                      {formatTitleFromMotherSessionId(nextDatedSession.sessionSlot.session.metadata.id, lang)}
-                    </p>
-                  )}
-                </>
+            {/* Hero rest day — eyebrow + H1 affirmatif + prescription récup + CTA secondary. */}
+            <div className="bg-glass border border-border-app rounded-[24px] p-5">
+              <p className="text-[11px] font-bold text-fg-muted uppercase tracking-wider" data-testid="home-hero-label">
+                {restDayCopy.eyebrow}
+              </p>
+              <h3 className="text-2xl font-black text-fg leading-tight mt-1">
+                {restDayCopy.title}
+              </h3>
+              <p className="text-sm text-fg-soft mt-3 leading-relaxed">
+                {restDayCopy.body}
+              </p>
+
+              {nextDatedSession && (
+                <p className="text-xs text-fg-muted mt-3">
+                  Prochaine séance : <span className="font-bold text-fg">{nextDatedSession.dayLabel}</span>
+                  {' · '}
+                  {formatTitleFromMotherSessionId(nextDatedSession.sessionSlot.session.metadata.id, lang)}
+                </p>
               )}
-              <div className="flex items-center gap-4 mt-1">
-                <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
-                  <Clock className="w-3.5 h-3.5 text-fg-faint" />
-                  {sessionDuration}
+
+              <Link
+                to="/week"
+                data-testid="home-cta-primary"
+                className="block mt-5"
+              >
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full py-3 rounded-2xl border-2 border-brand text-brand-tint hover:bg-brand-soft transition-colors flex items-center justify-center gap-2"
+                >
+                  <span className="text-sm font-black tracking-wide">Voir le plan de la semaine</span>
+                  <ChevronRight className="w-4 h-4" />
+                </motion.button>
+              </Link>
+            </div>
+          </section>
+        ) : (
+          // ── Training day : hero legacy (hors scope de la refonte rest day) ─────
+          <section data-testid="home-hero-card">
+            <div className="bg-glass border border-border-app rounded-[24px] p-5 space-y-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {(() => {
+                    const cfg = seasonPhaseLabel[seasonPhase]
+                    return <Chip tone={cfg.tone}>{cfg.label}</Chip>
+                  })()}
+                  {blockProgression?.currentBlockLabel ? (
+                    <Chip tone="brand">{blockProgression.currentBlockLabel}</Chip>
+                  ) : (
+                    <Chip tone="brand">{weekLabel(week)}</Chip>
+                  )}
+                  <Chip tone="neutral">{trainingLevelLabel}</Chip>
+                </div>
+              </div>
+
+              {isMatchDay && (
+                <div className="flex items-center gap-2 py-2 px-3 bg-warn-bg border border-warn-bd rounded-2xl">
+                  <Trophy className="w-4 h-4 text-warn-strong fill-current" />
+                  <span className="text-xs font-black text-warn-strong uppercase tracking-wide">Jour de match !</span>
+                </div>
+              )}
+              {nextMatch && !isMatchDay && (
+                <Link to="/calendar" className="block">
+                  <div className="flex items-center gap-3 py-2 px-3 bg-layer-5 rounded-2xl group">
+                    <div className="w-8 h-8 rounded-xl bg-warn-bg flex items-center justify-center flex-shrink-0">
+                      <Trophy className="w-3.5 h-3.5 text-warn-strong" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs font-bold text-fg">Prochain match — J−{diffDays(nextMatch.date)}</span>
+                      {nextMatch.opponent && (
+                        <span className="text-[10px] text-fg-muted ml-2">vs {nextMatch.opponent}</span>
+                      )}
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-fg-faint group-hover:text-brand-tint transition-colors" />
+                  </div>
+                </Link>
+              )}
+
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold text-fg-muted uppercase tracking-wider" data-testid="home-hero-label">Séance du jour</p>
+                <h3 className="text-xl font-black text-fg">{todaySessionTitle}</h3>
+                <div className="flex items-center gap-4 mt-1">
+                  <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
+                    <Clock className="w-3.5 h-3.5 text-fg-faint" />
+                    {sessionDuration}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
+                    <Activity className="w-3.5 h-3.5 text-fg-faint" />
+                    {actualSessionCount} séance{actualSessionCount > 1 ? 's' : ''} cette semaine
+                  </span>
+                </div>
+              </div>
+
+              <Link
+                to={todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week'}
+                data-testid="home-cta-primary"
+                className="block"
+              >
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full py-3.5 rounded-2xl flex items-center justify-center gap-2.5 bg-brand hover:bg-brand-hover transition-colors"
+                >
+                  <Play className="w-4 h-4 text-on-brand fill-current" />
+                  <span className="font-black text-on-brand text-sm tracking-wide">
+                    Commencer la séance
+                  </span>
+                </motion.button>
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {/* ── Cette semaine (rest day uniquement) ─────────────────────────────── */}
+        {isRestDay && upcomingWeekSessions.length > 0 && (
+          <section data-testid="home-this-week">
+            <div className="bg-glass border border-border-app rounded-[24px] p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-[11px] font-black uppercase tracking-wider text-fg-muted">
+                  Cette semaine
+                </h2>
+                <span className="text-[11px] font-bold text-fg-muted tabular-nums">
+                  {sessionsThisWeek}/{actualSessionCount} faites
                 </span>
-                <span className="flex items-center gap-1.5 text-xs font-medium text-fg-soft">
-                  <Activity className="w-3.5 h-3.5 text-fg-faint" />
-                  {actualSessionCount} séance{actualSessionCount > 1 ? 's' : ''} cette semaine
+              </div>
+              <ul className="divide-y divide-border-app">
+                {upcomingWeekSessions.map((s, idx) => {
+                  const dowLabel = s.dayLabel.slice(0, 3)
+                  const title = formatTitleFromMotherSessionId(s.sessionSlot.session.metadata.id, lang)
+                  const isDone = s.completionStatus === 'completed'
+                  const isSkipped = s.completionStatus === 'skipped'
+                  const isTodayRow = s.dayOfWeek === todayDow
+                  return (
+                    <li key={idx}>
+                      <Link
+                        to={`/session/${idx}`}
+                        className={`flex items-center gap-3 py-2.5 hover:bg-layer-5 -mx-2 px-2 rounded-xl transition-colors ${(isDone || isSkipped) ? 'opacity-50' : ''}`}
+                      >
+                        <span className={`flex-shrink-0 w-12 text-xs font-black uppercase ${isTodayRow ? 'text-brand-tint' : 'text-fg-muted'}`}>
+                          {dowLabel}
+                        </span>
+                        <span className="flex-1 min-w-0 truncate text-sm font-bold text-fg">
+                          {title}
+                        </span>
+                        <span className="flex-shrink-0 text-[11px] text-fg-muted tabular-nums">
+                          {sessionDuration}
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-fg-faint flex-shrink-0" />
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+              <div className="flex items-center gap-3 pt-2 border-t border-border-app text-[11px]">
+                <span className="flex items-center gap-1.5">
+                  <span className="text-fg-muted">Forme :</span>
+                  {isPremium ? (
+                    <span className="font-bold text-fg">{readinessResult.score}</span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-fg-muted">
+                      <Lock className="w-3 h-3" aria-hidden />
+                      <Link to="/profile#premium" className="underline underline-offset-2 font-bold hover:text-brand-tint">
+                        Premium
+                      </Link>
+                    </span>
+                  )}
+                </span>
+                <span className="text-fg-faint">·</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="text-fg-muted">Fatigue :</span>
+                  <span className={`font-bold ${fatigue === 'OK' ? 'text-ok-strong' : 'text-warn-strong'}`}>
+                    {fatigue === 'OK' ? 'OK' : 'Élevée'}
+                  </span>
                 </span>
               </div>
             </div>
-
-            {/* CTA */}
-            <Link
-              to={todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week'}
-              data-testid="home-cta-primary"
-              className="block"
-            >
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                className="w-full py-3.5 rounded-2xl flex items-center justify-center gap-2.5 bg-brand hover:bg-brand-hover transition-colors"
-              >
-                <Play className="w-4 h-4 text-on-brand fill-current" />
-                <span className="font-black text-on-brand text-sm tracking-wide">
-                  {todayDatedSession ? 'Commencer la séance' : 'Voir mon plan de la semaine'}
-                </span>
-              </motion.button>
-            </Link>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ── Transition Banner (max 1: scheduling > season) ── */}
         {schedulingTransition ? (
@@ -530,26 +723,24 @@ export function HomePage() {
           )
         ) : null}
 
-        {/* ── Readiness Score — compact quand pas de séance du jour (hiérarchie : CTA > forme) ── */}
-        {(() => {
-          const hasTodaySession = todaySessionTitle != null
-          const compact = !hasTodaySession
-          return (
-            <section>
-              {!premiumResolved ? (
-                <ReadinessScoreSkeleton />
-              ) : isPremium ? (
-                <ReadinessScoreCard result={readinessResult} compact={compact} />
-              ) : (
-                <PremiumBlurredPreview label="Score de forme">
-                  <ReadinessScoreCard result={readinessResult} compact={compact} />
-                </PremiumBlurredPreview>
-              )}
-            </section>
-          )
-        })()}
+        {/* ── Readiness Score — masqué en rest day (intégré à "Cette semaine").
+            Conservé en training day avec la gauge complète. ── */}
+        {!isRestDay && (
+          <section>
+            {!premiumResolved ? (
+              <ReadinessScoreSkeleton />
+            ) : isPremium ? (
+              <ReadinessScoreCard result={readinessResult} />
+            ) : (
+              <PremiumBlurredPreview label="Score de forme">
+                <ReadinessScoreCard result={readinessResult} />
+              </PremiumBlurredPreview>
+            )}
+          </section>
+        )}
 
-        {/* ── Stats Row ── */}
+        {/* ── Stats Row — masqué en rest day (fondu dans "Cette semaine"). ── */}
+        {!isRestDay && (
         <section>
           <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Récapitulatif</h2>
           <div className="grid grid-cols-3 gap-3">
@@ -596,10 +787,12 @@ export function HomePage() {
             </div>
           </div>
         </section>
+        )}
 
         {/* Season suggestion removed — planning context is the single source of truth */}
 
-        {/* ── ACWR Widget ── */}
+        {/* ── ACWR Widget — masqué en rest day (charge d'entraînement détaillée hors scope rest day). ── */}
+        {!isRestDay && (
         <section>
           {acwr.hasSufficientData && acwr.zone ? (() => {
             const cfg = ACWR_ZONE_CONFIG[acwr.zone]
@@ -768,19 +961,22 @@ export function HomePage() {
             </div>
           )}
         </section>
+        )}
 
-        {/* ── Weekly Summary ── */}
-        <section>
-          {!premiumResolved ? (
-            <WeeklySummarySkeleton />
-          ) : isPremium ? (
-            <WeeklySummaryCard result={weeklySummary} />
-          ) : (
-            <PremiumBlurredPreview label="Bilan de semaine">
+        {/* ── Weekly Summary — masqué en rest day (hors scope du contexte "quoi faire aujourd'hui"). ── */}
+        {!isRestDay && (
+          <section>
+            {!premiumResolved ? (
+              <WeeklySummarySkeleton />
+            ) : isPremium ? (
               <WeeklySummaryCard result={weeklySummary} />
-            </PremiumBlurredPreview>
-          )}
-        </section>
+            ) : (
+              <PremiumBlurredPreview label="Bilan de semaine">
+                <WeeklySummaryCard result={weeklySummary} />
+              </PremiumBlurredPreview>
+            )}
+          </section>
+        )}
 
         {/* ── Premium: Injury risk alert (T2.3) ── */}
         {isPremium && !injuryDismissed && (() => {
@@ -891,25 +1087,21 @@ export function HomePage() {
           </section>
         )}
 
-        {/* ── Premium CTA for free users ── */}
+        {/* ── Premium CTA for free users — bandeau texte léger (pattern Option A du doc).
+            Visible mais non-commercial : pas de gros bouton bordeaux plein qui duplique
+            le pattern CTA du hero. ── */}
         {premiumResolved && !isPremium && (
-          <section className="rounded-[24px] border border-brand-border-strong bg-brand-soft p-5 space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-2xl bg-brand/10">
-                <Lock className="w-5 h-5 text-brand-tint" />
-              </div>
-              <div>
-                <p className="text-sm font-black text-fg">Passe en Premium</p>
-                <p className="text-[11px] text-fg-muted">Suivi des charges, historique, courbes et coach IA illimité.</p>
-              </div>
-            </div>
-            <Link
-              to="/profile#premium"
-              className="block w-full py-3 rounded-full bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold text-center transition-colors"
-            >
-              Choisir mon forfait
-            </Link>
-          </section>
+          <Link
+            to="/profile#premium"
+            className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-brand-border bg-brand-soft/50 hover:bg-brand-soft transition-colors"
+          >
+            <Lock className="w-4 h-4 text-brand-tint flex-shrink-0" aria-hidden />
+            <p className="flex-1 min-w-0 text-xs font-bold text-fg leading-tight">
+              Débloque Score de forme, historique et coach IA illimité
+              <span className="block text-[11px] font-normal text-fg-muted mt-0.5">Voir les forfaits</span>
+            </p>
+            <ChevronRight className="w-4 h-4 text-brand-tint flex-shrink-0" />
+          </Link>
         )}
 
       </main>

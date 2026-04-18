@@ -286,52 +286,52 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
     cleanup()
   })
 
-  // ── Calendar mode ──
+  // ── Rest day (refonte : hero affirmatif + nouvelle section "Cette semaine") ──
+  //
+  // Dans les tests, il n'y a pas de séance "aujourd'hui" sur le fixture, donc
+  // la page rend l'état rest day. Hors scope : training day (la stats row 3-up
+  // et l'ACWR widget restent ceux du legacy hero).
 
-  it('calendar mode: shows "Pas de séance prévue" when no today session', () => {
+  it('rest day: shows affirmative H1 ("Repos programmé")', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    expect(screen.getByText('Pas de séance prévue')).toBeInTheDocument()
+    expect(screen.getByText(/Repos (programmé|avant le match|post-match)/)).toBeInTheDocument()
+    // L'ancien "Pas de séance prévue" est remplacé par le H1 contextuel.
+    expect(screen.queryByText('Pas de séance prévue')).toBeNull()
   })
 
-  it('calendar mode: week badge shows cycle week (W1)', () => {
+  it('rest day: stats row is hidden (info fondue dans "Cette semaine")', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    expect(screen.getByTestId('home-stats-cycle')).toHaveTextContent('W1')
+    expect(screen.queryByTestId('home-stats-cycle')).toBeNull()
+    expect(screen.queryByTestId('home-stats-sessions')).toBeNull()
   })
 
-  it('calendar mode: sessions stat shows weekly count', () => {
+  it('rest day: CTA says "Voir le plan de la semaine" (secondary outlined)', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    // Fixture a 1 session → compteur "0/1" (aucune loggée encore).
-    expect(screen.getByTestId('home-stats-sessions')).toHaveTextContent('0/1')
-  })
-
-  it('calendar mode: CTA says "Voir mon plan de la semaine" when no today session', () => {
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'in_season')))
-    renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
-
-    expect(screen.getByTestId('home-cta-primary')).toHaveTextContent('Voir mon plan de la semaine')
+    expect(screen.getByTestId('home-cta-primary')).toHaveTextContent('Voir le plan de la semaine')
   })
 
   // ── Off-season mode (rendu calendrier unifié) ──
 
-  it('off-season (calendar): shows block label badge in the hero', () => {
+  it('off-season (calendar): shows block label in the meta line', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'off_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    expect(screen.getByText('Inter-saison · Force')).toBeInTheDocument()
+    // Rest day : le label de bloc est désormais dans la ligne meta textuelle
+    // au-dessus du hero (plus dans un chip).
+    expect(screen.getByText(/Inter-saison · Force/)).toBeInTheDocument()
   })
 
-  it('off-season (calendar): stats show block progression counts', () => {
+  it('off-season (calendar) rest day: "Cette semaine" section rendered', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'off_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    expect(screen.getByTestId('home-stats-sessions')).toHaveTextContent('5/12')
-    expect(screen.getByTestId('home-stats-cycle')).toHaveTextContent('B2')
+    expect(screen.getByTestId('home-this-week')).toBeInTheDocument()
   })
 
   // ── No internal jargon ──
