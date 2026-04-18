@@ -33,6 +33,7 @@ import {
   computeGlobalEventsHash,
   expireCorrections,
   migrateSnapshot,
+  CURRENT_SCHEMA_VERSION,
   type SnapshotStorage,
 } from '../services/scheduling/weekSnapshot'
 import { getBlockProgression, type BlockProgressionStorage } from '../services/scheduling/resolveBlockProgression'
@@ -145,14 +146,16 @@ export function useWeekSnapshot(
 
     // Try to restore from localStorage if userId is available.
     // Skip restore if the profile has changed since the snapshot was saved
-    // (e.g. user changed weeklySessions, trainingLevel, injuries in /profile).
+    // (e.g. user changed weeklySessions, trainingLevel, injuries in /profile),
+    // or if the snapshot schema is older than the current one (breaking shape
+    // changes like dropping sequential-mode sessions require a fresh resolve).
     if (userId) {
       const persisted = loadSnapshot(userId, params.today, snapshotStorage)
       if (
         persisted &&
         persisted.weekId === currentWeekId &&
-        // profileHash absent in old snapshots → always re-resolve (safe migration)
-        persisted.profileHash === profileHash
+        persisted.profileHash === profileHash &&
+        persisted.schemaVersion === CURRENT_SCHEMA_VERSION
       ) {
         // Migrate old snapshots to current schema (explanation, clubDays, schemaVersion)
         const profileClubDays = (params.profile.clubSchedule?.clubDays ?? []).map(
