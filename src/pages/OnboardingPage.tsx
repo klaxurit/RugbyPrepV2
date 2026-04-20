@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
-  ChevronLeft, ChevronRight, CheckCircle2,
-  TrendingUp, Bot, Calendar, Check,
+  ChevronLeft, ChevronRight, CheckCircle2, Check,
 } from 'lucide-react'
-import { RugbyForgeLogo } from '../components/RugbyForgeLogo'
 import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { posthog } from '../services/analytics/posthog'
@@ -16,7 +14,6 @@ import type {
   ClubSchedule,
   SCSchedule,
   TrainingLevel,
-  SeasonMode,
   PopulationSegment,
 } from '../types/training'
 import { computeSCSchedule } from '../services/program/scheduleOptimizer'
@@ -37,22 +34,6 @@ const POSITIONS: { value: PositionValue; label: string; sub: string; emoji: stri
   { value: 'BACK_THREE',  label: 'Arrière / Ailier', sub: '11 · 14 · 15',            emoji: '🚀' },
 ]
 
-const EQUIPMENT_OPTIONS: { value: Equipment; label: string; emoji: string }[] = [
-  { value: 'none',         label: 'Poids du corps',            emoji: '🤸' },
-  { value: 'barbell',      label: 'Barre olympique',           emoji: '🏋️' },
-  { value: 'dumbbell',     label: 'Haltères',                  emoji: '💪' },
-  { value: 'bench',        label: 'Banc de musculation',       emoji: '🪑' },
-  { value: 'pullup_bar',   label: 'Barre de traction',         emoji: '🔝' },
-  { value: 'band',         label: 'Élastiques',                emoji: '🔴' },
-  { value: 'box',          label: 'Box pliométrique',          emoji: '📦' },
-  { value: 'med_ball',     label: 'Médecine Ball',             emoji: '🔵' },
-  { value: 'landmine',     label: 'Landmine',                  emoji: '📐' },
-  { value: 'machine',      label: 'Machines guidées',          emoji: '⚙️' },
-  { value: 'ghd',          label: 'GHD',                       emoji: '🔩' },
-  { value: 'tbar_row',     label: 'T-Bar Row',                 emoji: '🔧' },
-  { value: 'sprint_track', label: 'Piste / Gazon',             emoji: '🏃' },
-  { value: 'ab_wheel',     label: 'Ab Wheel',                  emoji: '⭕' },
-]
 
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
   { day: 1, label: 'Lundi',    short: 'L' },
@@ -81,44 +62,26 @@ const TRAINING_LEVELS: {
 }[] = [
   {
     value: 'starter',
-    label: 'Débutant',
+    label: 'Fondation',
     sub: 'Je découvre la muscu',
-    details: 'Exercices simples, progression guidée',
+    details: 'Exercices guidés : haltères et machines. Variantes sécurisées pour les mouvements à risque.',
     legacyLevel: 'beginner',
   },
   {
     value: 'performance',
-    label: 'Confirmé',
-    sub: 'J\'ai l\'habitude des barres et haltères',
-    details: 'Programme complet avec barres, haltères et explosivité',
+    label: 'Avancée',
+    sub: 'Je suis à l\'aise avec la barre',
+    details: 'Programme complet : barres libres, haltères et travail d\'explosivité.',
     legacyLevel: 'intermediate',
   },
 ]
 
-const CYCLE_HINTS: { value: SeasonMode; label: string; sub: string; emoji: string }[] = [
-  { value: 'in_season',  label: 'En saison',      sub: 'J\'ai des matchs à venir',     emoji: '⚡' },
-  { value: 'off_season', label: 'Inter-saison',    sub: 'Pas de match pour l\'instant',  emoji: '🌿' },
-  { value: 'pre_season', label: 'Pré-saison',      sub: 'Ma reprise approche',           emoji: '🔥' },
-]
-// This seeds the initial cycle for program bootstrap. Once matches are added,
-// the annual context detector auto-detects the real cycle from the calendar.
-
-// App réservée aux adultes — ageBand hardcodé à 'adult', pas de sélecteur U18.
-
+// Tous les profils démarrent avec un équipement "salle complète" — le moteur
+// adapte silencieusement les exercices via les variantes accessibles. Pas de
+// sélection d'équipement à l'onboarding.
 const GYM_PRESET: Equipment[] = [
   'barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box',
   'machine', 'cable', 'landmine', 'tbar_row', 'ghd', 'med_ball', 'ab_wheel', 'sprint_track',
-]
-
-const HOME_EQUIPMENT_OPTIONS: { value: Equipment; label: string; emoji: string }[] = [
-  { value: 'dumbbell',     label: 'Haltères',          emoji: '💪' },
-  { value: 'bench',        label: 'Banc',              emoji: '🪑' },
-  { value: 'pullup_bar',   label: 'Barre de traction', emoji: '🔝' },
-  { value: 'band',         label: 'Élastiques',        emoji: '🔴' },
-  { value: 'box',          label: 'Box pliométrique',   emoji: '📦' },
-  { value: 'med_ball',     label: 'Médecine Ball',     emoji: '🔵' },
-  { value: 'ab_wheel',     label: 'Ab Wheel',          emoji: '⭕' },
-  { value: 'sprint_track', label: 'Piste / Gazon',     emoji: '🏃' },
 ]
 
 // ─── BMI helper ───────────────────────────────────────────────
@@ -165,34 +128,21 @@ export function OnboardingPage() {
 
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  const [showWelcome, setShowWelcome] = useState(true)
   const [step, setStep] = useState(0)
   const [position, setPosition] = useState<PositionValue | null>(null)
   const [trainingLevel, setTrainingLevel] = useState<TrainingLevel | null>(null)
   const ageBand = 'adult' as const
   const [gender, setGender] = useState<'male' | 'female'>('male')
-  const [hasGymAccess, setHasGymAccess] = useState<boolean | null>(null)
-  const [seasonMode, setSeasonMode] = useState<SeasonMode>('in_season')
   const [sessions, setSessions] = useState<2 | 3 | null>(null)
-  const [equipment, setEquipment] = useState<Set<Equipment>>(new Set())
   const [clubDays, setClubDays] = useState<Set<DayOfWeek>>(new Set())
   const [matchDay, setMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
   const [scSchedule, setScSchedule] = useState<SCSchedule | undefined>(undefined)
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
   const [submitError, setSubmitError] = useState<string | null>(null)
-  // betaCapReached removed — the annual engine supports all profiles now
 
-  const STEPS = ['Position', 'Profil', 'Équipement', 'Planning', 'Morphologie', 'Résumé']
+  const STEPS = ['Position', 'Profil', 'Planning', 'Morphologie', 'Résumé']
   const progress = (step / (STEPS.length - 1)) * 100
-
-  const toggleEquipment = (eq: Equipment) => {
-    setEquipment((prev) => {
-      const next = new Set(prev)
-      if (next.has(eq)) { next.delete(eq) } else { next.add(eq) }
-      return next
-    })
-  }
 
   const parsedHeight = parseInt(heightCm, 10)
   const parsedWeight = parseFloat(weightKg.replace(',', '.'))
@@ -202,12 +152,8 @@ export function OnboardingPage() {
 
   const canNext = () => {
     if (step === 0) return position !== null
-    if (step === 1) {
-      if (!trainingLevel || !sessions) return false
-      return true
-    }
-    if (step === 2) return hasGymAccess !== null
-    // Morphologie optionnelle
+    if (step === 1) return Boolean(trainingLevel) && sessions !== null
+    // Planning (2) et Morphologie (3) optionnels
     return true
   }
 
@@ -231,7 +177,6 @@ export function OnboardingPage() {
     try {
       const clubSchedule = buildClubSchedule()
       const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
-      const finalEquipment = equipment.size > 0 ? Array.from(equipment) : ['none' as Equipment]
       const derivedPopulationSegment: PopulationSegment =
         gender === 'female' ? 'female_senior' : 'male_senior'
       const profilePayload = {
@@ -239,12 +184,10 @@ export function OnboardingPage() {
         rugbyPosition: position!,
         level: levelDef.legacyLevel,
         trainingLevel: trainingLevel!,
-        // Dual-write: seasonMode (compatibility) + onboardingCycleHint (source of truth)
-        seasonMode,
-        planningAnchors: { ...(existingProfile?.planningAnchors ?? {}), onboardingCycleHint: seasonMode },
+        planningAnchors: { ...(existingProfile?.planningAnchors ?? {}) },
         performanceFocus: 'balanced' as const,
         weeklySessions: sessions!,
-        equipment: finalEquipment,
+        equipment: GYM_PRESET,
         heightCm: validHeight ? parsedHeight : undefined,
         weightKg: validWeight ? parsedWeight : undefined,
         clubSchedule,
@@ -254,14 +197,13 @@ export function OnboardingPage() {
       }
       updateProfile(profilePayload, { source: 'onboarding' })
 
-      // Semaine initiale selon le mode saison : off_season → H1, sinon W1
-      const initialWeek = seasonMode === 'off_season' ? 'H1' : 'W1'
-      window.localStorage.setItem('rugbyprep.week.v1', initialWeek)
+      // Pas de seasonMode saisi : le moteur annuel déduira la phase depuis le
+      // calendrier de matchs (off-season synthétique par défaut).
+      window.localStorage.setItem('rugbyprep.week.v1', 'W1')
 
-      // ── Tous les profils passent maintenant — le moteur annuel gère tout ──
       if (userId) markOnboardingComplete(userId)
       posthog.capture('onboarding_completed', {
-        position, trainingLevel, seasonMode, ageBand, gender,
+        position, trainingLevel, ageBand, gender,
         populationSegment: derivedPopulationSegment,
         performanceFocus: 'balanced',
         sessions,
@@ -277,82 +219,6 @@ export function OnboardingPage() {
   }
 
   // Moteur annuel gère tous les profils — pas de guard beta/eligibility
-
-  // ─── Écran de bienvenue ───────────────────────────────────────
-
-  if (showWelcome) {
-    return (
-      <div className="min-h-screen bg-app flex flex-col justify-center px-6 relative overflow-hidden">
-        {/* Dot grid déco */}
-        <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
-        {/* Orbe déco */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-brand opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-brand opacity-10 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
-
-        <div className="max-w-sm mx-auto w-full space-y-10 py-12 relative">
-
-          {/* Wordmark */}
-          <div className="space-y-4">
-            <RugbyForgeLogo size="hero" />
-            <p className="text-2xl font-black text-fg leading-tight tracking-tight">
-              Ton coach physique rugby
-            </p>
-            <p className="text-fg-soft text-sm leading-relaxed">
-              Programme personnalisé, suivi de charge, coach IA — tout ce qu'il faut pour performer sur le terrain.
-            </p>
-          </div>
-
-          {/* 3 bénéfices */}
-          <div className="space-y-4">
-            {[
-              {
-                icon: <TrendingUp className="w-5 h-5 text-brand-tint" />,
-                bg: 'bg-layer-5 border border-border-app',
-                title: 'Programme adapté à ton poste',
-                desc: 'Pilier, flanker, arrière — chaque position a ses exigences physiques.',
-              },
-              {
-                icon: <Calendar className="w-5 h-5 text-brand-tint" />,
-                bg: 'bg-layer-5 border border-border-app',
-                title: 'Synchronisé avec ton club',
-                desc: 'Séances S&C placées intelligemment entre entraînements et matchs.',
-              },
-              {
-                icon: <Bot className="w-5 h-5 text-brand-tint" />,
-                bg: 'bg-layer-5 border border-border-app',
-                title: 'Coach IA disponible 24/7',
-                desc: 'Nutrition, récupération, gestion de la fatigue.',
-              },
-            ].map((item, i) => (
-              <div key={i} className="flex items-start gap-4 p-4 rounded-2xl bg-layer-5 border border-bd-muted">
-                <div className="w-9 h-9 rounded-xl bg-layer-7 flex items-center justify-center flex-shrink-0">
-                  {item.icon}
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-fg leading-snug">{item.title}</p>
-                  <p className="text-xs text-fg-soft mt-0.5 leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <div className="space-y-3 pt-2">
-            <button
-              type="button"
-              onClick={() => setShowWelcome(false)}
-              className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
-            >
-              Créer mon programme
-              <ChevronRight className="w-4 h-4" />
-            </button>
-            <p className="text-center text-fg-faint text-xs">Prend 2 minutes · Gratuit</p>
-          </div>
-
-        </div>
-      </div>
-    )
-  }
 
   // ─── Formulaire multi-étapes ──────────────────────────────────
 
@@ -470,38 +336,6 @@ export function OnboardingPage() {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div>
-                <SectionLabel>Ta saison en ce moment</SectionLabel>
-                <p className="text-[10px] text-fg-faint mt-0.5">Ton programme s'adaptera ensuite automatiquement à ton calendrier</p>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {CYCLE_HINTS.map((opt) => {
-                  const selected = seasonMode === opt.value
-                  return (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => setSeasonMode(opt.value)}
-                      className={`flex flex-col items-center gap-1.5 py-3.5 px-2 rounded-2xl border-2 text-center transition-all active:scale-[.97] ${
-                        selected
-                          ? 'border-brand bg-brand-soft'
-                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
-                      }`}
-                    >
-                      <span className="text-xl leading-none">{opt.emoji}</span>
-                      <span className={`text-[10px] font-black leading-tight ${selected ? 'text-brand-tint' : 'text-fg-soft'}`}>
-                        {opt.label}
-                      </span>
-                      <span className={`text-[9px] leading-tight ${selected ? 'text-brand-muted' : 'text-fg-faint'}`}>
-                        {opt.sub}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
             {/* Séances par semaine */}
             <div className="space-y-3">
               <SectionLabel>Séances par semaine</SectionLabel>
@@ -532,8 +366,6 @@ export function OnboardingPage() {
               </div>
             </div>
 
-            {/* App réservée aux adultes — pas de sélecteur d'âge */}
-
             <div className="space-y-3">
               <SectionLabel>Tu es</SectionLabel>
               <div className="grid grid-cols-2 gap-2.5">
@@ -562,112 +394,11 @@ export function OnboardingPage() {
               </div>
             </div>
 
-            {/* Consentement parental supprimé — app réservée aux adultes */}
           </div>
         )}
 
-        {/* ── Step 2 : Équipement ── */}
+        {/* ── Step 2 : Planning club ── */}
         {step === 2 && (
-          <div className="space-y-5">
-            <StepTitle
-              title="Ton équipement"
-              sub="On adapte ton programme à ce que tu as."
-            />
-
-            {/* Question binaire salle */}
-            <div className="space-y-3">
-              <SectionLabel>As-tu accès à une salle de sport ?</SectionLabel>
-              <div className="grid grid-cols-2 gap-2.5">
-                {([
-                  { value: true, label: 'Oui' },
-                  { value: false, label: 'Non' },
-                ] as const).map((opt) => {
-                  const selected = hasGymAccess === opt.value
-                  return (
-                    <button
-                      key={String(opt.value)}
-                      type="button"
-                      onClick={() => {
-                        setHasGymAccess(opt.value)
-                        if (opt.value) {
-                          setEquipment(new Set(GYM_PRESET))
-                        } else {
-                          setEquipment(new Set())
-                        }
-                      }}
-                      className={`flex flex-col items-center gap-1 py-4 rounded-2xl border-2 text-center transition-all active:scale-[.97] ${
-                        selected
-                          ? 'border-brand bg-brand-soft'
-                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
-                      }`}
-                    >
-                      <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
-                        {opt.label}
-                      </p>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Salle : confirmation preset */}
-            {hasGymAccess === true && (
-              <div className="p-4 rounded-2xl bg-ok-bg-muted border border-ok-bd space-y-1">
-                <p className="text-xs font-black text-ok-strong">Tout l&apos;équipement salle activé</p>
-                <p className="text-[10px] text-fg-soft leading-relaxed">
-                  Barre, haltères, machines, câbles, banc, etc. Si ta salle manque de matériel, tu pourras ajuster dans ton profil.
-                </p>
-              </div>
-            )}
-
-            {/* Pas de salle : checklist maison */}
-            {hasGymAccess === false && (
-              <div className="space-y-3">
-                <SectionLabel>Matériel disponible</SectionLabel>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {HOME_EQUIPMENT_OPTIONS.map((eq) => {
-                    const selected = equipment.has(eq.value)
-                    return (
-                      <button
-                        key={eq.value}
-                        type="button"
-                        onClick={() => toggleEquipment(eq.value)}
-                        className={`relative flex items-center gap-3 p-3.5 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
-                          selected
-                            ? 'border-brand bg-brand-soft'
-                            : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
-                        }`}
-                      >
-                        <span className="text-lg flex-shrink-0 leading-none">{eq.emoji}</span>
-                        <span className={`text-sm font-bold leading-tight flex-1 ${selected ? 'text-brand-tint' : 'text-fg-secondary'}`}>
-                          {eq.label}
-                        </span>
-                        {selected && (
-                          <span className="w-4 h-4 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
-                            <Check className="w-2.5 h-2.5 text-on-brand" strokeWidth={3} />
-                          </span>
-                        )}
-                      </button>
-                    )
-                  })}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEquipment(new Set())
-                    setStep((s) => s + 1)
-                  }}
-                  className="w-full py-3 rounded-2xl border border-border-dashed-app text-sm font-bold text-fg-muted hover:border-layer-20 hover:text-fg-soft transition-all"
-                >
-                  Aucun — poids du corps
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Step 3 : Planning club ── */}
-        {step === 3 && (
           <div className="space-y-6">
             <StepTitle
               title="Ton planning club"
@@ -756,8 +487,8 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 4 : Morphologie ── */}
-        {step === 4 && (
+        {/* ── Step 3 : Morphologie ── */}
+        {step === 3 && (
           <div className="space-y-6">
             <StepTitle
               title="Ta morphologie"
@@ -830,8 +561,8 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 5 : Résumé ── */}
-        {step === 5 && (
+        {/* ── Step 4 : Résumé ── */}
+        {step === 4 && (
           <div className="space-y-6">
             <StepTitle
               title="C'est parti !"
@@ -841,21 +572,7 @@ export function OnboardingPage() {
             <div className="bg-layer-5 border border-border-app rounded-[1.75rem] overflow-hidden divide-y divide-border-app">
               <SummaryRow label="Poste" value={POSITIONS.find((p) => p.value === position)?.label ?? '–'} />
               <SummaryRow label="Niveau" value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
-              <SummaryRow label="Période" value={CYCLE_HINTS.find((m) => m.value === seasonMode)?.label ?? '–'} />
               <SummaryRow label="Séances" value={`${sessions} / semaine`} />
-              {/* Consentement U18 supprimé — app réservée aux adultes */}
-              <SummaryRow
-                label="Équipement"
-                value={
-                  hasGymAccess === true
-                    ? 'Salle standard'
-                    : equipment.size > 0
-                      ? Array.from(equipment)
-                          .map((eq) => [...HOME_EQUIPMENT_OPTIONS, ...EQUIPMENT_OPTIONS].find((o) => o.value === eq)?.label ?? eq)
-                          .join(', ')
-                      : 'Poids du corps'
-                }
-              />
               {scSchedule && scSchedule.sessions.length > 0 && (
                 <SummaryRow
                   label="Muscu"
@@ -894,8 +611,8 @@ export function OnboardingPage() {
 
       </main>
 
-      {/* ── CTA flottant principal (steps 0, 1, 2, 4) ── */}
-      {step !== 3 && step !== 5 && (
+      {/* ── CTA flottant principal (steps 0, 1, 3) ── */}
+      {step !== 2 && step !== 4 && (
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto pointer-events-auto">
             <button
@@ -911,8 +628,8 @@ export function OnboardingPage() {
         </div>
       )}
 
-      {/* ── CTA step 3 : Planning ── */}
-      {step === 3 && (
+      {/* ── CTA step 2 : Planning ── */}
+      {step === 2 && (
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto space-y-2 pointer-events-auto">
             <button

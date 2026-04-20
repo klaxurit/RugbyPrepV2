@@ -2,9 +2,11 @@ import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { SessionRunProvider } from './contexts/SessionRunContext'
+import { CoachProvider } from './contexts/CoachContext'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { CoachCompanion } from './components/CoachCompanion'
 
 // Eagerly loaded (critical path)
 import { HomePage } from './pages/HomePage'
@@ -97,6 +99,7 @@ function App() {
     <AuthProvider>
       <SessionRunProvider>
       <BrowserRouter>
+        <CoachProvider>
         <ScrollToTop />
         <Suspense fallback={<div className="min-h-screen bg-app flex items-center justify-center"><div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" /></div>}>
         <Routes>
@@ -131,6 +134,8 @@ function App() {
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
         </Suspense>
+        <CoachCompanion />
+        </CoachProvider>
       </BrowserRouter>
       </SessionRunProvider>
     </AuthProvider>

@@ -32,6 +32,7 @@ export interface ResolveWeekPresentationParams {
   events: Array<Pick<CalendarEvent, 'date' | 'type'> & {
     user_hidden?: boolean
     opponent?: string
+    opponent_code?: string
     is_home?: boolean
     kickoff_time?: string
   }>
@@ -388,6 +389,7 @@ function getWeekMatchEvents(
       date: e.date,
       type: 'match' as const,
       ...(e.opponent ? { opponent: e.opponent } : {}),
+      ...(e.opponent_code ? { opponent_code: e.opponent_code } : {}),
       ...(e.is_home != null ? { is_home: e.is_home } : {}),
       ...(e.kickoff_time ? { kickoff_time: e.kickoff_time } : {}),
     }))

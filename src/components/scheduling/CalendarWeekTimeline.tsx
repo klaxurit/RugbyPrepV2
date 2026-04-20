@@ -7,6 +7,7 @@ import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import { InlineActiveRecovery, ActiveRecoveryBadge } from '../ActiveRecoveryCard'
 import { WeekTimelineRow } from '../planning/WeekTimelineRow'
 import { SessionStatusIndicator } from '../planning/SessionStatusIndicator'
+import { ClubAvatar } from '../match/ClubAvatar'
 
 const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 const DAY_ORDER: DayOfWeek[] = [1, 2, 3, 4, 5, 6, 0] // Mon→Sun
@@ -166,6 +167,11 @@ export function CalendarWeekTimeline({
                   >
                     <WeekTimelineRow planKind="match" layout="embedded" data-testid={`week-timeline-match-${dow}`}>
                       <div className="flex min-w-0 items-center gap-2">
+                        <ClubAvatar
+                          code={matchEvent.opponent_code}
+                          name={matchEvent.opponent}
+                          size="sm"
+                        />
                         <div className="min-w-0 flex-1">
                           <p className="text-[11px] font-black uppercase text-warn-strong">
                             Match{matchEvent.opponent ? ` vs ${matchEvent.opponent}` : ''}

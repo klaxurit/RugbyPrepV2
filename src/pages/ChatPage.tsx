@@ -78,6 +78,21 @@ export function ChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
+  // Pré-remplit l'input quand on arrive via le compagnon (?seed=…)
+  useEffect(() => {
+    const seed = searchParams.get('seed')
+    if (!seed) return
+    if (messages.length === 0 && input.length === 0) {
+      setInput(seed)
+      inputRef.current?.focus()
+    }
+    const next = new URLSearchParams(searchParams)
+    next.delete('seed')
+    setSearchParams(next, { replace: true })
+    // On ne dépend que de searchParams : seed consommé une seule fois.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
   const phase = getPhaseForWeek(week === 'DELOAD' ? week : week)
   const phaseLabel = phase ? PHASE_LABELS[phase] : null
   const isDeload = week === 'DELOAD'

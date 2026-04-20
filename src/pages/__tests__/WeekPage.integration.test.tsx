@@ -918,9 +918,8 @@ describe('WeekPage · convergence moteurs', () => {
     ]
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    expect(screen.getByText(/Match prévu le/)).toBeInTheDocument()
+    expect(screen.getByTestId('week-match-banner')).toBeInTheDocument()
     expect(screen.getByText(/Rouen/)).toBeInTheDocument()
-    expect(screen.getByText(/Voir calendrier/)).toBeInTheDocument()
   })
 
   it('off-season: no match bandeau when match is deferred (not in structuralEvents)', () => {
@@ -931,7 +930,7 @@ describe('WeekPage · convergence moteurs', () => {
     calendarState.structuralEvents = [] // deferred → filtered out
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    expect(screen.queryByText(/Match prévu le/)).toBeNull()
+    expect(screen.queryByTestId('week-match-banner')).toBeNull()
   })
 
   it('off-season: two matches, first deferred, bandeau shows structural one', () => {
@@ -945,7 +944,7 @@ describe('WeekPage · convergence moteurs', () => {
     ]
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    expect(screen.getByText(/Match prévu le/)).toBeInTheDocument()
+    expect(screen.getByTestId('week-match-banner')).toBeInTheDocument()
     expect(screen.getByText(/Dieppe/)).toBeInTheDocument()
     expect(screen.queryByText(/Réserve/)).toBeNull()
   })

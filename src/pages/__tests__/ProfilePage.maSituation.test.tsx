@@ -1,10 +1,19 @@
 // @vitest-environment jsdom
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
-import { cleanup, screen, fireEvent } from '@testing-library/react'
+import { cleanup, screen, fireEvent, within } from '@testing-library/react'
 import { ProfilePage } from '../ProfilePage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 import type { CalendarEvent } from '../../types/training'
+
+// "Ma situation" vit dans la section collapsible "Infos de jeu".
+// Helper : rend la page puis ouvre la section pour exposer son contenu.
+function renderProfileWithMaSituationOpen() {
+  renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+  const playinfoSection = screen.getByTestId('profile-section-playinfo')
+  const toggle = within(playinfoSection).getByRole('button')
+  fireEvent.click(toggle)
+}
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -107,7 +116,7 @@ describe('ProfilePage · Ma situation', () => {
   })
 
   it('renders "Ma situation" section instead of old season selector', () => {
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     expect(screen.getByTestId('ma-situation')).toBeInTheDocument()
     // Old selector should be gone
@@ -116,20 +125,20 @@ describe('ProfilePage · Ma situation', () => {
 
   it('displays detected cycle from real annual context detection', () => {
     mockDetectCtx.mockReturnValue({ cycle: 'in_season' })
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     expect(screen.getByTestId('situation-cycle')).toHaveTextContent('En saison')
   })
 
   it('displays "Phase finale" when annual context detects playoffs', () => {
     mockDetectCtx.mockReturnValue({ cycle: 'playoffs' })
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     expect(screen.getByTestId('situation-cycle')).toHaveTextContent('Phase finale')
   })
 
   it('displays "Aucun match prévu" when no future matches', () => {
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     expect(screen.getByTestId('situation-next-match')).toHaveTextContent('Aucun match prévu')
   })
@@ -138,7 +147,7 @@ describe('ProfilePage · Ma situation', () => {
     mockEvents.push(
       { id: '1', date: '2026-03-15', type: 'match', source: 'manual' },
     )
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     fireEvent.click(screen.getByTestId('situation-season-ended'))
 
@@ -163,7 +172,7 @@ describe('ProfilePage · Ma situation', () => {
       { id: 'hidden', date: '2026-03-22', type: 'match', source: 'ffr_import', user_hidden: true },
       { id: 'visible', date: '2026-03-15', type: 'match', source: 'manual' },
     )
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     expect(mockDetectCtx).toHaveBeenCalled()
     expect(mockDetectCtx.mock.calls[0][0].events).toEqual([
@@ -177,7 +186,7 @@ describe('ProfilePage · Ma situation', () => {
   })
 
   it('"La saison est finie" falls back to today when no past match', () => {
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     fireEvent.click(screen.getByTestId('situation-season-ended'))
 
@@ -188,7 +197,7 @@ describe('ProfilePage · Ma situation', () => {
   })
 
   it('"Je n\'ai plus de match" writes seasonEndedAt = today and clears manualPlayoffs', () => {
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     fireEvent.click(screen.getByTestId('situation-no-match'))
 
@@ -200,7 +209,7 @@ describe('ProfilePage · Ma situation', () => {
   })
 
   it('no internal jargon in the section', () => {
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     const section = screen.getByTestId('ma-situation')
     const text = section.textContent ?? ''
@@ -216,7 +225,7 @@ describe('ProfilePage · Ma situation', () => {
       planningAnchors: { seasonEndedAt: '2026-03-29' },
     }
 
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
 
     expect(screen.getByTestId('situation-confirmed')).toHaveTextContent('Saison terminée')
     expect(screen.getByTestId('situation-resume-season')).toHaveTextContent('En fait, la saison reprend')
@@ -247,7 +256,7 @@ describe('ProfilePage · Ma situation', () => {
       },
     }
 
-    renderWithRouter(<ProfilePage />, { initialEntries: ['/profile'] })
+    renderProfileWithMaSituationOpen()
     fireEvent.click(screen.getByTestId('situation-resume-season'))
 
     expect(mockUpdateProfile).toHaveBeenCalledTimes(1)

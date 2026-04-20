@@ -26,7 +26,7 @@ export const DEFAULT_PROFILE: UserProfile = {
   performanceFocus: 'balanced',
   preferredLanguage: 'fr',
   weeklySessions: 2,
-  equipment: ['dumbbell', 'band', 'bench', 'pullup_bar'],
+  equipment: ['barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box'],
   injuries: [],
   seasonMode: 'in_season',
   position: 'BACK_ROW',

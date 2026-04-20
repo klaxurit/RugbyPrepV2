@@ -35,6 +35,9 @@ import { TRAINING_DAYS_DEFAULT, buildManualSCSchedule, computeSCSchedule } from 
 import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
 import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
+import { NextMatchCard } from '../components/match/NextMatchCard'
+import { ClubAvatar } from '../components/match/ClubAvatar'
+import { diffDays, formatDateFR } from '../components/match/matchDate'
 
 // ─── Club Search Types ────────────────────────────────────────
 
@@ -99,41 +102,6 @@ const eventTypeConfig: Record<CalendarEventType, { label: string; icon: React.El
 // ─── Helpers ─────────────────────────────────────────────────
 
 const toDateStr = (d: Date): string => d.toISOString().split('T')[0]
-
-const formatDateFR = (dateStr: string): string => {
-  const d = new Date(dateStr + 'T12:00:00') // avoid TZ shift
-  return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
-}
-
-const diffDays = (dateStr: string): number => {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const target = new Date(dateStr + 'T00:00:00')
-  return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-}
-
-// ─── Club Logo Avatar ─────────────────────────────────────────
-
-function ClubAvatar({ code, name, size = 'md' }: { code?: string; name?: string; size?: 'sm' | 'md' | 'lg' }) {
-  const logoUrl = code ? getClubLogoUrl(code) : null
-  const monogram = getClubMonogram(name)
-  const sizeClass = size === 'sm' ? 'w-8 h-8 text-[9px]' : size === 'lg' ? 'w-14 h-14 text-sm' : 'w-10 h-10 text-[11px]'
-
-  return (
-    <div className={`${sizeClass} rounded-xl bg-layer-10 flex items-center justify-center overflow-hidden flex-shrink-0`}>
-      {logoUrl ? (
-        <img
-          src={logoUrl}
-          alt={name ?? ''}
-          className="w-full h-full object-contain"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-        />
-      ) : (
-        <span className="font-black text-fg-soft">{monogram}</span>
-      )}
-    </div>
-  )
-}
 
 // ─── Club Search Input ────────────────────────────────────────
 
@@ -238,46 +206,6 @@ function SeasonBadge({ phase }: { phase: SeasonPhase }) {
       <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
       {cfg.label}
     </span>
-  )
-}
-
-function NextMatchCard({ event }: { event: CalendarEvent }) {
-  const days = diffDays(event.date)
-  return (
-    <div className="relative overflow-hidden rounded-[2rem] bg-panel border border-border-app shadow-elevated p-6 space-y-3">
-      <div className="absolute top-0 right-0 w-28 h-28 bg-rose-600 opacity-20 blur-3xl -mr-6 -mt-6" />
-      <div className="flex items-center justify-between">
-        <div className="inline-flex items-center gap-1.5 bg-rose-600 px-3 py-1 rounded-full">
-          <Trophy className="w-3 h-3 text-paper fill-current" />
-          <span className="text-[10px] font-black text-paper uppercase tracking-widest">Prochain match</span>
-        </div>
-        {event.is_home !== undefined && (
-          <div className="flex items-center gap-1 text-fg-muted">
-            {event.is_home
-              ? <><Home className="w-3 h-3" /><span className="text-[10px] font-bold">Domicile</span></>
-              : <><MapPin className="w-3 h-3" /><span className="text-[10px] font-bold">Extérieur</span></>
-            }
-          </div>
-        )}
-      </div>
-
-      <div>
-        <div className="text-4xl font-black text-fg leading-none">
-          {days === 0 ? "Aujourd'hui !" : days === 1 ? 'Demain' : `J−${days}`}
-        </div>
-        <div className="text-sm font-bold text-fg mt-1.5 capitalize">{formatDateFR(event.date)}</div>
-        {event.kickoff_time && (
-          <div className="text-sm font-bold text-rose-600 mt-0.5">Coup d'envoi {event.kickoff_time}</div>
-        )}
-      </div>
-
-      {event.opponent && (
-        <div className="flex items-center gap-2 text-fg">
-          <ClubAvatar code={event.opponent_code} name={event.opponent} size="md" />
-          <span className="font-bold">vs {event.opponent}</span>
-        </div>
-      )}
-    </div>
   )
 }
 
@@ -1200,7 +1128,7 @@ export function CalendarPage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* ── Header ── */}
-      <PageHeader title="Calendrier" backTo="/home" />
+      <PageHeader title="Planning" backTo="/home" />
 
       <main className="px-6 pt-6 space-y-6 max-w-md mx-auto relative">
 

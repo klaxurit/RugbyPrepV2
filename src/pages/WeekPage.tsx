@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { Activity, Calendar, Plus, Lock } from 'lucide-react'
+import { Plus, Lock } from 'lucide-react'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
@@ -20,7 +20,8 @@ import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
-import { CoachBubble } from '../components/CoachBubble'
+import { useRegisterCoachContext } from '../contexts/CoachContext'
+import { NextMatchCard } from '../components/match/NextMatchCard'
 import { CalendarWeekTimeline } from '../components/scheduling/CalendarWeekTimeline'
 import { WeekPlanningLegend } from '../components/planning'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
@@ -167,6 +168,20 @@ export function WeekPage() {
     : undefined
   const isOffSeason = surface?.planningContext?.cycle === 'off_season'
 
+  useRegisterCoachContext(
+    snapshot
+      ? {
+          scopeKey: snapshot.weekId ?? today,
+          phaseLabel: coachPhaseLabel,
+          infoMessages: coachInfoMessages,
+          companionMessages: coachCompanionMessages,
+          chatSeed: coachPhaseLabel
+            ? `Je suis en ${coachPhaseLabel}. `
+            : undefined,
+        }
+      : null,
+  )
+
   const calendarSessions: DatedSession[] = useMemo(() => {
     if (!weekPresentation) return []
     const dated = weekPresentation.sessions.filter(
@@ -258,16 +273,6 @@ export function WeekPage() {
 
       <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
 
-        {/* Coach bubble — sticky top-right, rend null si pas de message. */}
-        {snapshot && (
-          <CoachBubble
-            weekId={snapshot.weekId ?? today}
-            phaseLabel={coachPhaseLabel}
-            infoMessages={coachInfoMessages}
-            companionMessages={coachCompanionMessages}
-          />
-        )}
-
         {isUnavailable && (
           <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
             <p className="text-sm font-bold text-warn">Programme en préparation</p>
@@ -339,21 +344,15 @@ export function WeekPage() {
             data-testid="annual-plan-section"
             aria-label="Programme de la semaine"
           >
-            {/* Bannière match hier sans charge */}
+            {/* Match joué — ligne compacte avec CTA "Enregistrer ma charge" */}
             {unmatchedYesterdayMatch && (
-              <Link
-                to="/calendar"
-                className="flex items-center gap-3 px-4 py-3 bg-warn-bg border border-warn-bd rounded-2xl hover:bg-warn-bg-strong transition-colors"
-              >
-                <div className="p-1.5 rounded-xl bg-warn-bg text-warn-strong flex-shrink-0">
-                  <Activity className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-black text-warn">
-                    Match hier{unmatchedYesterdayMatch.opponent ? ` vs ${unmatchedYesterdayMatch.opponent}` : ''} — enregistre ta charge
-                  </p>
-                  <p className="text-[10px] text-warn-strong mt-0.5">Mise à jour du ratio de charge → Calendrier</p>
-                </div>
+              <Link to="/calendar" className="block">
+                <NextMatchCard
+                  event={unmatchedYesterdayMatch}
+                  variant="past"
+                  size="mini"
+                  ctaLabel="Enregistrer ma charge →"
+                />
               </Link>
             )}
 
@@ -402,34 +401,41 @@ export function WeekPage() {
               </div>
             )}
 
-            {/* Match visible but not confirmed — informational bandeau */}
-            {isOffSeason &&
-             !profile.planningAnchors?.returnToTeamTrainingAt &&
-             (() => {
-               const futureMatch = structuralEvents.find((e) => e.type === 'match' && e.date >= today)
-               if (!futureMatch) return null
-               return (
-                 <div className="rounded-2xl border border-border-app bg-layer-5 px-4 py-3 space-y-1">
-                   <p className="text-xs font-bold text-fg-soft flex items-center gap-1.5">
-                     <Calendar className="w-3.5 h-3.5 text-fg-faint" />
-                     Match prévu le {new Date(`${futureMatch.date}T12:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
-                     {futureMatch.opponent ? ` vs ${futureMatch.opponent}` : ''}
-                   </p>
-                   <p className="text-[10px] text-fg-muted">Ton programme ne change pas tant que tu ne confirmes pas ta reprise.</p>
-                   <Link to="/calendar" className="text-[10px] font-bold text-fg-faint hover:text-fg-soft transition-colors">
-                     Voir calendrier →
-                   </Link>
-                 </div>
-               )
-             })()}
+            {/* Carte match à venir — affichée dès qu'un match est au calendrier,
+                indépendamment du mode saison. Le texte "programme ne change pas"
+                reste conditionné à off-season + pas de reprise confirmée. */}
+            {(() => {
+              const futureMatch = structuralEvents.find((e) => e.type === 'match' && e.date >= today)
+              if (!futureMatch) return null
+              const showFrozenNote =
+                isOffSeason && !profile.planningAnchors?.returnToTeamTrainingAt
+              return (
+                <div className="space-y-2" data-testid="week-match-banner">
+                  <Link to="/calendar" className="block">
+                    <NextMatchCard event={futureMatch} size="mini" />
+                  </Link>
+                  {showFrozenNote && (
+                    <p className="text-[10px] text-fg-muted px-1">
+                      Ton programme ne change pas tant que tu ne confirmes pas ta reprise.
+                    </p>
+                  )}
+                </div>
+              )
+            })()}
 
             {/* Séances de la semaine — vue calendrier 7 jours tout le temps,
                 y compris off_season (séances placées en Lun/Mer/Ven par défaut). */}
             <div
               data-testid="week-planning-legend"
-              className="rounded-2xl border border-border-app bg-layer-5 px-3 py-2.5"
+              className="rounded-2xl border border-border-app bg-layer-5 px-3 py-2.5 flex items-center justify-between gap-3"
             >
               <WeekPlanningLegend />
+              <Link
+                to="/calendar"
+                className="text-[10px] font-bold text-brand-tint hover:text-brand transition-colors whitespace-nowrap flex-shrink-0"
+              >
+                Mon planning →
+              </Link>
             </div>
             <CalendarWeekTimeline
               sessions={calendarSessions}

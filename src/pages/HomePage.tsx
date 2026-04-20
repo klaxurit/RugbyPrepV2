@@ -11,7 +11,6 @@ import {
   History,
   AlertTriangle,
   Dumbbell,
-  Trophy,
   MessageSquare,
   Lock,
 } from 'lucide-react'
@@ -40,6 +39,8 @@ import type { CycleWeek, SessionType, SeasonPhase, TransitionEntry } from '../ty
 import { appendTransitionEntry, computeDeferralExpiry } from '../services/season/transitionJournal'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
+import { useRegisterCoachContext } from '../contexts/CoachContext'
+import { NextMatchCard } from '../components/match/NextMatchCard'
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -292,6 +293,31 @@ export function HomePage() {
     }
   })()
 
+  // Contexte coach du jour (lu par CoachCompanion global)
+  const coachZone = acwr.hasSufficientData ? acwr.zone : null
+  const isHighLoad = coachZone === 'danger' || coachZone === 'critical'
+  useRegisterCoachContext({
+    scopeKey: `home-${today}`,
+    phaseLabel: (() => {
+      const d = new Date(today + 'T12:00:00')
+      const label = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+      return `Aujourd'hui · ${label.charAt(0).toUpperCase()}${label.slice(1)}`
+    })(),
+    infoMessages: [
+      isRestDay
+        ? restDayCopy.title
+        : `Séance du jour : ${todaySessionTitle}`,
+    ],
+    companionMessages: [
+      isHighLoad
+        ? 'Charge élevée détectée : écoute ton corps, allège si besoin.'
+        : readinessResult.score < 50
+          ? 'Forme basse : mobilité + sommeil prioritaires aujourd\'hui.'
+          : 'Énergie OK : exécute ta séance proprement, sans forcer.',
+    ],
+    chatSeed: 'Je regarde ma journée. ',
+  })
+
   // Ligne meta (date + saison + S1 + niveau) au-dessus du hero en rest day.
   const metaLine = (() => {
     const todayDate = new Date(today + 'T12:00:00')
@@ -354,23 +380,7 @@ export function HomePage() {
               jours. En inter-saison sans match, rien n'est rendu. */}
           {nextMatch != null && daysToMatch != null && daysToMatch >= 0 && daysToMatch <= 7 && (
             <Link to="/calendar" className="block mb-3" data-testid="home-match-banner">
-              <div className="flex items-center gap-3 py-3 px-4 bg-warn-bg border border-warn-bd rounded-2xl group min-h-[56px]">
-                <Trophy className="w-5 h-5 text-warn-strong fill-current flex-shrink-0" aria-hidden />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-warn-strong leading-tight">
-                    {isMatchDay
-                      ? "C'est aujourd'hui !"
-                      : `J-${daysToMatch} · ${nextMatch.opponent ? `vs ${nextMatch.opponent}` : 'Prochain match'}`}
-                  </p>
-                  {!isMatchDay && nextMatch.kickoff_time && (
-                    <p className="text-[11px] text-warn-body mt-0.5">
-                      {nextMatch.is_home === false ? 'Extérieur · ' : 'Domicile · '}
-                      {nextMatch.kickoff_time}
-                    </p>
-                  )}
-                </div>
-                <ChevronRight className="w-4 h-4 text-warn-body group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
-              </div>
+              <NextMatchCard event={nextMatch} />
             </Link>
           )}
 

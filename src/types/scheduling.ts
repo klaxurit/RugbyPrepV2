@@ -59,6 +59,7 @@ export interface PresentedMatchEvent {
   date: string
   type: 'match'
   opponent?: string
+  opponent_code?: string
   is_home?: boolean
   kickoff_time?: string
 }

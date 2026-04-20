@@ -4,7 +4,8 @@ import { posthog } from '../services/analytics/posthog'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { Dumbbell, RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, ChevronDown, LogOut } from 'lucide-react'
+import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck } from 'lucide-react'
+import { CollapsibleSection } from '../components/ui'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
@@ -21,24 +22,9 @@ import type { AnnualCycle } from '../types/annualPlanning'
 import type { TransitionEntry } from '../types/training'
 import { appendTransitionEntry, restoreLastTransition, cycleToSeasonMode } from '../services/season/transitionJournal'
 import type { AuthError } from '../types/auth'
-import type {
-  Equipment,
-  TrainingLevel,
-} from '../types/training'
+import type { TrainingLevel } from '../types/training'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { supabase } from '../services/supabase/client'
-
-/** Équipements "rares" qu'une salle peut ne pas avoir — l'utilisateur décoche ce qui manque. */
-const RARE_EQUIPMENT_OPTIONS: { value: Exclude<Equipment, 'none'>; label: string }[] = [
-  { value: 'cable',        label: 'Poulie / Câble' },
-  { value: 'machine',      label: 'Machines guidées' },
-  { value: 'landmine',     label: 'Landmine' },
-  { value: 'tbar_row',     label: 'T-Bar Row' },
-  { value: 'ghd',          label: 'GHD (Glute-Ham)' },
-  { value: 'med_ball',     label: 'Médecine Ball' },
-  { value: 'ab_wheel',     label: 'Ab Wheel' },
-  { value: 'sprint_track', label: 'Piste / Gazon' },
-]
 
 const POSITION_OPTIONS = [
   { value: 'FRONT_ROW', label: 'Première ligne' },
@@ -196,9 +182,6 @@ function getVisibleTrainingLevel(level: TrainingLevel | undefined): Exclude<Trai
   return 'performance'
 }
 
-const toggleValue = <T,>(list: T[], value: T): T[] =>
-  list.includes(value) ? list.filter((entry) => entry !== value) : [...list, value]
-
 const avatarErrorLabel: Record<AuthError, string> = {
   EMAIL_EXISTS: 'Impossible de mettre à jour la photo.',
   INVALID_CREDENTIALS: 'Session invalide. Reconnecte-toi.',
@@ -242,8 +225,6 @@ export function ProfilePage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
   const [heightInput, setHeightInput] = useState(profile.heightCm?.toString() ?? '')
   const [weightInput, setWeightInput] = useState(profile.weightKg?.toString() ?? '')
-  const [equipmentOpen, setEquipmentOpen] = useState(false)
-
   // Scroll to #premium anchor when navigating from CTA
   useEffect(() => {
     if (window.location.hash === '#premium') {
@@ -430,9 +411,13 @@ export function ProfilePage() {
         </section>
 
         {/* Infos de jeu */}
-        <section className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-5">
-          <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted">Infos de jeu</h2>
-
+        <CollapsibleSection
+          title="Infos de jeu"
+          subtitle="Poste, niveau, saison, fréquence"
+          icon={<Flag className="w-4 h-4" />}
+          iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
+          testId="profile-section-playinfo"
+        >
           {/* Poste */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Poste</label>
@@ -700,19 +685,16 @@ export function ProfilePage() {
             </div>
           </div>
 
-        </section>
+        </CollapsibleSection>
 
         {/* Morphologie */}
-        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-5">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-violet-50 text-violet-600 border border-violet-200">
-              <Ruler className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-sm font-black text-fg">Morphologie</h2>
-              <p className="text-xs text-fg-muted">Taille, poids et IMC</p>
-            </div>
-          </div>
+        <CollapsibleSection
+          title="Morphologie"
+          subtitle="Taille, poids et IMC"
+          icon={<Ruler className="w-4 h-4" />}
+          iconClassName="bg-violet-50 text-violet-600 border border-violet-200"
+          testId="profile-section-morphology"
+        >
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
@@ -773,51 +755,27 @@ export function ProfilePage() {
               </div>
             )
           })()}
-        </section>
+        </CollapsibleSection>
 
-        {/* Équipement manquant — collapsible, visible pour tous les niveaux */}
-        <section className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden">
-          <button
-            type="button"
-            onClick={() => setEquipmentOpen((o) => !o)}
-            className="w-full p-6 flex items-center gap-3 text-left"
+
+        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-2xl bg-brand-soft text-brand-tint border border-brand-border">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-fg">Ma progression</h2>
+              <p className="text-xs text-fg-muted">Adhérence, historique de séances, tests physiques et records.</p>
+            </div>
+          </div>
+          <Link
+            to="/progress"
+            data-testid="profile-link-progress"
+            className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
           >
-            <div className="p-2 rounded-2xl bg-info-bg text-info border border-info-bd flex-shrink-0">
-              <Dumbbell className="w-4 h-4" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-sm font-black text-fg">Équipement manquant dans ta salle ?</h2>
-              <p className="text-xs text-fg-muted">Décoche ce que ta salle n&apos;a pas</p>
-            </div>
-            <ChevronDown className={`w-4 h-4 text-fg-muted transition-transform ${equipmentOpen ? 'rotate-180' : ''}`} />
-          </button>
-          {equipmentOpen && (
-            <div className="px-6 pb-6 space-y-3">
-              <p className="text-xs text-fg-soft leading-relaxed">
-                Tout est coché par défaut. Décoche uniquement le matériel que ta salle ne possède pas.
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {RARE_EQUIPMENT_OPTIONS.map(({ value, label }) => {
-                  const active = profile.equipment.includes(value)
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => updateProfile({ equipment: toggleValue(profile.equipment, value) })}
-                      className={`py-2.5 px-3 rounded-xl text-left transition-all flex items-center gap-2 ${
-                        active
-                          ? 'bg-info-bg border border-info-bd text-fg'
-                          : 'bg-layer-5 text-fg-soft border border-border-app line-through opacity-60'
-                      }`}
-                    >
-                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${active ? 'bg-info' : 'bg-layer-20'}`} />
-                      <span className="text-[11px] font-bold leading-tight">{label}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+            <span>Voir ma progression</span>
+            <span className="text-xs text-fg-muted">Ouvrir</span>
+          </Link>
         </section>
 
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-4">
@@ -839,23 +797,26 @@ export function ProfilePage() {
           </Link>
         </section>
 
-        {/* ─── Notifications ───────────────────────────────────────────── */}
-        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-black text-fg">Abonnement & accès</p>
-              <p className="text-xs text-fg-muted mt-0.5">
-                La sécurité et le programme de base restent inclus, quel que soit le plan.
-              </p>
-            </div>
-            <span className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-wide ${
-              isPremium
-                ? 'bg-brand-medium text-brand-tint'
-                : 'bg-layer-10 text-fg-soft'
-            }`}>
+        {/* Abonnement & accès */}
+        <CollapsibleSection
+          title="Abonnement & accès"
+          subtitle="La sécurité et le programme de base restent inclus, quel que soit le plan."
+          icon={<ShieldCheck className="w-4 h-4" />}
+          iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
+          trailing={
+            <span
+              className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-wide ${
+                isPremium
+                  ? 'bg-brand-medium text-brand-tint'
+                  : 'bg-layer-10 text-fg-soft'
+              }`}
+            >
               {isPremium ? 'PREMIUM' : 'FREE'}
             </span>
-          </div>
+          }
+          defaultOpen={!isPremium}
+          testId="profile-section-subscription"
+        >
 
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className={`rounded-2xl border p-3 ${features.programBasic ? 'border-ok-bd bg-ok-bg-muted text-ok' : 'border-border-app bg-layer-5 text-fg-muted'}`}>
@@ -988,7 +949,7 @@ export function ProfilePage() {
               )}
             </div>
           )}
-        </section>
+        </CollapsibleSection>
 
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
           <div>

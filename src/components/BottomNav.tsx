@@ -1,12 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Dumbbell, CalendarDays, TrendingUp, Bot } from 'lucide-react'
+import { Home, Dumbbell, User } from 'lucide-react'
 
 const navItems = [
   { to: '/home', icon: Home, label: 'Accueil', match: ['/home'] },
-  { to: '/calendar', icon: CalendarDays, label: 'Calendrier', match: ['/calendar'] },
-  { to: '/week', icon: Dumbbell, label: 'Séance', match: ['/week'] },
-  { to: '/progress', icon: TrendingUp, label: 'Progrès', match: ['/progress'] },
-  { to: '/chat', icon: Bot, label: 'Coach IA', match: ['/chat'] },
+  { to: '/week', icon: Dumbbell, label: 'Programme', match: ['/week', '/calendar'] },
+  { to: '/profile', icon: User, label: 'Profil', match: ['/profile', '/progress'] },
 ]
 
 export function BottomNav() {

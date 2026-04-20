@@ -35,6 +35,7 @@ import { ProgressCurveSkeleton } from '../components/SkeletonCard'
 import { PRBoard } from '../components/pr/PRBoard'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useUpsellTiming, isDismissed } from '../hooks/useUpsellTiming'
+import { useRegisterCoachContext } from '../contexts/CoachContext'
 import type { TrainingBlock } from '../types/training'
 import type { PhysicalTestType, PhysicalTest } from '../types/athleticTesting'
 
@@ -171,6 +172,21 @@ export function ProgressPage() {
   // Objectif hebdo dérivé du niveau — donne du contexte au "3 / target".
   const weeklyTarget = profile.trainingLevel === 'starter' ? 2 : 3
   const target28d = weeklyTarget * 4
+
+  // Contexte coach (lu par CoachCompanion global)
+  useRegisterCoachContext({
+    scopeKey: `progress-${today}`,
+    phaseLabel: 'Progression · 4 dernières semaines',
+    infoMessages: [
+      adherenceSummary.sessionsLast7d < weeklyTarget
+        ? `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances — rattrapage possible cette semaine.`
+        : `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances, sur cible.`,
+    ],
+    companionMessages: [
+      'Un test 5RM ou CMJ en fin de phase sécurise ton suivi de progression.',
+    ],
+    chatSeed: 'Analyse ma progression : ',
+  })
   const recentSessions = useMemo(() => getRecentProgramSessions(sessionLogs, 8), [sessionLogs])
   const [showAllSessions, setShowAllSessions] = useState(false)
   const [missingOpen, setMissingOpen] = useState(false)
@@ -307,7 +323,7 @@ export function ProgressPage() {
     <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <PageHeader title={lang === 'fr' ? 'Progression' : 'Progress'} backTo="/home" />
+      <PageHeader title={lang === 'fr' ? 'Progression' : 'Progress'} backTo="/profile" />
 
       <main className="relative px-6 pt-5 space-y-6 max-w-md mx-auto">
 
