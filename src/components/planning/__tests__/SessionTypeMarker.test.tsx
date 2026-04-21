@@ -6,9 +6,9 @@ import { SessionTypeMarker } from '../SessionTypeMarker'
 
 describe('SessionTypeMarker', () => {
   it.each([
-    ['personal', 'P', 'Séance personnelle'],
+    ['personal', 'G', 'Séance en salle'],
     ['club', 'C', 'Entraînement club'],
-    ['match', 'J', 'Jour de match'],
+    ['match', 'M', 'Jour de match'],
     ['recovery', 'R', 'Récupération'],
   ] as const)('kind %s shows letter %s and aria', (kind, letter, name) => {
     const { container } = render(<SessionTypeMarker kind={kind} />)
@@ -19,6 +19,6 @@ describe('SessionTypeMarker', () => {
 
   it('compact size still exposes label', () => {
     const { container } = render(<SessionTypeMarker kind="personal" size="compact" />)
-    expect(within(container).getByRole('img', { name: 'Séance personnelle' })).toBeInTheDocument()
+    expect(within(container).getByRole('img', { name: 'Séance en salle' })).toBeInTheDocument()
   })
 })

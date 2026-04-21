@@ -1,17 +1,17 @@
 /**
- * P = perso, C = club, J = match, R = récup — sémantique figée spec UX.
+ * G = gym (perso), C = club, M = match, R = récup — sémantique figée spec UX.
  */
 export type SessionPlanKind = 'personal' | 'club' | 'match' | 'recovery'
 
-const LETTER: Record<SessionPlanKind, 'P' | 'C' | 'J' | 'R'> = {
-  personal: 'P',
+const LETTER: Record<SessionPlanKind, 'G' | 'C' | 'M' | 'R'> = {
+  personal: 'G',
   club: 'C',
-  match: 'J',
+  match: 'M',
   recovery: 'R',
 }
 
 const ARIA_LABEL: Record<SessionPlanKind, string> = {
-  personal: 'Séance personnelle',
+  personal: 'Séance en salle',
   club: 'Entraînement club',
   match: 'Jour de match',
   recovery: 'Récupération',

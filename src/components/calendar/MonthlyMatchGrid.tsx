@@ -125,7 +125,7 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
 
           // Priorité : match > club > muscu (visuel dominant)
           let bgVar: string | null = null
-          let glyph: 'P' | 'C' | 'J' | null = null
+          let glyph: 'G' | 'C' | 'M' | null = null
           let glyphColor: string | null = null
           let numColor: string | null = null
           let fontWeight: number | null = null
@@ -135,7 +135,7 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
             bgVar = 'var(--color-event-match-bg)'
             borderColor = 'var(--color-event-match-border)'
             numColor = 'var(--color-event-match-fg)'
-            glyph = 'J'
+            glyph = 'M'
             glyphColor = 'var(--color-event-match-fg)'
             fontWeight = 700
           } else if (isClubDay) {
@@ -144,7 +144,7 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
             glyphColor = 'var(--color-event-club-fg)'
           } else if (isScDay) {
             bgVar = 'var(--color-event-personal-bg-soft)'
-            glyph = 'P'
+            glyph = 'G'
             glyphColor = 'var(--color-event-personal-fg)'
           }
 
@@ -228,9 +228,9 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
                 color: 'var(--color-event-personal-fg)',
               }}
             >
-              P
+              G
             </span>
-            Programme
+            Gym
           </span>
         )}
         <span className="flex items-center gap-1.5">
@@ -255,7 +255,7 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
               color: 'var(--color-event-match-fg)',
             }}
           >
-            J
+            M
           </span>
           Match
         </span>

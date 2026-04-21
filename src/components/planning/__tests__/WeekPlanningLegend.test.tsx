@@ -8,7 +8,7 @@ describe('WeekPlanningLegend', () => {
   it('renders four entries with text labels (not color-only)', () => {
     const { container } = render(<WeekPlanningLegend />)
     const text = container.textContent ?? ''
-    expect(text).toMatch(/Perso/)
+    expect(text).toMatch(/Gym/)
     expect(text).toMatch(/Club/)
     expect(text).toMatch(/Match/)
     expect(text).toMatch(/Récup/)

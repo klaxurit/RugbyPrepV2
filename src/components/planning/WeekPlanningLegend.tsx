@@ -1,7 +1,7 @@
 import { SessionTypeMarker, type SessionPlanKind } from './SessionTypeMarker'
 
 const ROWS: { kind: SessionPlanKind; label: string }[] = [
-  { kind: 'personal', label: 'Perso' },
+  { kind: 'personal', label: 'Gym' },
   { kind: 'club', label: 'Club' },
   { kind: 'match', label: 'Match' },
   { kind: 'recovery', label: 'Récup' },
@@ -14,7 +14,7 @@ export interface WeekPlanningLegendProps {
 }
 
 /**
- * Légende compacte P/C/J/R : lettre + libellé court (pas seulement la couleur).
+ * Légende compacte G/C/M/R : lettre + libellé court (pas seulement la couleur).
  */
 export function WeekPlanningLegend({
   className = '',
