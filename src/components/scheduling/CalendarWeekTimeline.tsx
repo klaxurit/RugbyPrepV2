@@ -265,7 +265,10 @@ export function CalendarWeekTimeline({
                     data-testid={`timeline-club-${dow}`}
                     className="items-center py-1.5"
                   >
-                    <span className="inline-flex h-5 max-w-full items-center text-[10px] font-bold leading-none text-violet-700">
+                    <span
+                      className="inline-flex h-5 max-w-full items-center text-[10px] font-bold leading-none"
+                      style={{ color: 'var(--color-event-club-fg)' }}
+                    >
                       Entraînement club
                     </span>
                   </WeekTimelineRow>
