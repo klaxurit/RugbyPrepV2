@@ -346,9 +346,23 @@ export function classifyExternalChange(
 /**
  * Compute a global hash of the full event list (not week-scoped).
  * Used by the hook to detect any external event change.
+ *
+ * Inclut les champs affichés dans l'UI (is_home, is_neutral, opponent,
+ * opponent_code, kickoff_time, user_hidden) pour que toute édition
+ * utilisateur invalide le cache snapshot.
  */
 export function computeGlobalEventsHash(
-  events: Array<Pick<CalendarEvent, 'date' | 'type'> & { id?: string }>,
+  events: Array<
+    Pick<CalendarEvent, 'date' | 'type'> & {
+      id?: string
+      is_home?: boolean
+      is_neutral?: boolean
+      opponent?: string
+      opponent_code?: string
+      kickoff_time?: string
+      user_hidden?: boolean
+    }
+  >,
 ): string {
   const sorted = [...events].sort((a, b) => {
     const cmp = a.date.localeCompare(b.date)
@@ -357,7 +371,12 @@ export function computeGlobalEventsHash(
     if (cmp2 !== 0) return cmp2
     return (a.id ?? '').localeCompare(b.id ?? '')
   })
-  const input = sorted.map((e) => `${e.date}:${e.type}:${e.id ?? ''}`).join('|')
+  const input = sorted
+    .map(
+      (e) =>
+        `${e.date}:${e.type}:${e.id ?? ''}:${e.is_home ?? ''}:${e.is_neutral ?? ''}:${e.opponent ?? ''}:${e.opponent_code ?? ''}:${e.kickoff_time ?? ''}:${e.user_hidden ?? ''}`,
+    )
+    .join('|')
   if (!input) return '0'
   let h = 5381
   for (let i = 0; i < input.length; i++) {

@@ -8,7 +8,7 @@ import type { CalendarEvent } from '../types/training'
 
 const STORAGE_KEY = 'rugbyprep.calendar.v1'
 const AUTO_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24h
-const CALENDAR_SELECT = 'id, date, type, kickoff_time, opponent, opponent_code, is_home, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, venue, user_hidden, user_override, synced_at'
+const CALENDAR_SELECT = 'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, venue, user_hidden, user_override, synced_at'
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -211,6 +211,25 @@ export function useCalendar() {
     [userId]
   )
 
+  const setMatchNeutral = useCallback(
+    async (eventId: string, isNeutral: boolean) => {
+      if (userId) {
+        await supabase
+          .from('match_calendar')
+          .update({ is_neutral: isNeutral })
+          .eq('id', eventId)
+      }
+      setEvents((prev) => {
+        const next = prev.map((e) =>
+          e.id === eventId ? { ...e, is_neutral: isNeutral } : e
+        )
+        saveToStorage(next)
+        return next
+      })
+    },
+    [userId]
+  )
+
   const hideImportedEvent = useCallback(
     async (id: string) => {
       if (userId) {
@@ -358,6 +377,7 @@ export function useCalendar() {
     addEvent,
     removeEvent,
     updateMatchLoad,
+    setMatchNeutral,
     hideImportedEvent,
     unhideImportedEvent,
     overrideImportedEvent,

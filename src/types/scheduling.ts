@@ -61,6 +61,7 @@ export interface PresentedMatchEvent {
   opponent?: string
   opponent_code?: string
   is_home?: boolean
+  is_neutral?: boolean
   kickoff_time?: string
 }
 

@@ -473,6 +473,8 @@ export interface CalendarEvent {
   opponent?: string
   opponent_code?: string // Code club FFR (ex: '4207Y') pour résolution logo
   is_home?: boolean
+  /** Terrain neutre (ex: finale playoffs). Si true, prend priorité sur is_home. */
+  is_neutral?: boolean
   notes?: string
   rpe?: number           // RPE 1-10 du match (pour ACWR)
   duration_min?: number  // Durée en minutes (pour ACWR)

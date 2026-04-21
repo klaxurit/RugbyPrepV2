@@ -1,4 +1,4 @@
-import { Home, MapPin, Trophy } from 'lucide-react'
+import { Home, MapPin, Trophy, Flag } from 'lucide-react'
 import type { CalendarEvent } from '../../types/training'
 import { ClubAvatar } from './ClubAvatar'
 import { diffDays, formatDateFR, formatDateFRShort } from './matchDate'
@@ -73,7 +73,15 @@ export function NextMatchCard({
             <p className="text-[10px] font-bold text-brand-tint mt-0.5">{ctaLabel}</p>
           )}
         </div>
-        {event.is_home !== undefined && (
+        {event.is_neutral ? (
+          <div
+            className="flex-shrink-0 text-fg-muted"
+            title="Terrain neutre"
+            aria-label="Terrain neutre"
+          >
+            <Flag className="w-3.5 h-3.5" />
+          </div>
+        ) : event.is_home !== undefined && (
           <div
             className="flex-shrink-0 text-fg-muted"
             title={event.is_home ? 'Domicile' : 'Extérieur'}
@@ -101,7 +109,12 @@ export function NextMatchCard({
             {pillLabel}
           </span>
         </div>
-        {event.is_home !== undefined && (
+        {event.is_neutral ? (
+          <div className="flex items-center gap-1 text-fg-muted">
+            <Flag className="w-3 h-3" />
+            <span className="text-[10px] font-bold">Terrain neutre</span>
+          </div>
+        ) : event.is_home !== undefined && (
           <div className="flex items-center gap-1 text-fg-muted">
             {event.is_home ? (
               <>

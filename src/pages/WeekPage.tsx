@@ -22,6 +22,9 @@ import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
 import { useRegisterCoachContext } from '../contexts/CoachContext'
 import { NextMatchCard } from '../components/match/NextMatchCard'
+import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
+import { AddMatchModal } from '../components/match/AddMatchModal'
+import { MonthlyMatchGrid } from '../components/calendar/MonthlyMatchGrid'
 import { CalendarWeekTimeline } from '../components/scheduling/CalendarWeekTimeline'
 import { WeekPlanningLegend } from '../components/planning'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
@@ -63,6 +66,20 @@ export function WeekPage() {
 
   // Local state shadowing `isDismissed('week_match')` so dismiss re-renders immediately.
   const [weekMatchUpsellDismissed, setWeekMatchUpsellDismissed] = useState(() => isDismissed('week_match'))
+
+  // Match edit drawer + monthly grid toggle + add match modal
+  const [drawerMatch, setDrawerMatch] = useState<typeof visibleEvents[number] | null>(null)
+  const [monthOpen, setMonthOpen] = useState(false)
+  const [addModalOpen, setAddModalOpen] = useState(false)
+  const [addModalDate, setAddModalDate] = useState<string | undefined>(undefined)
+
+  const openMatchByDate = (dateISO: string) => {
+    const match = visibleEvents.find((e) => e.type === 'match' && e.date === dateISO)
+    if (match) setDrawerMatch(match)
+  }
+
+  const clubDaysForGrid = profile.clubSchedule?.clubDays.map((d) => d.day) ?? []
+  const scDaysForGrid = profile.scSchedule?.sessions.map((s) => s.day) ?? []
 
   useEffect(() => {
     posthog.capture('week_viewed')
@@ -346,14 +363,18 @@ export function WeekPage() {
           >
             {/* Match joué — ligne compacte avec CTA "Enregistrer ma charge" */}
             {unmatchedYesterdayMatch && (
-              <Link to="/calendar" className="block">
+              <button
+                type="button"
+                onClick={() => setDrawerMatch(unmatchedYesterdayMatch)}
+                className="block w-full text-left rf-focus-ring"
+              >
                 <NextMatchCard
                   event={unmatchedYesterdayMatch}
                   variant="past"
                   size="mini"
                   ctaLabel="Enregistrer ma charge →"
                 />
-              </Link>
+              </button>
             )}
 
 
@@ -411,9 +432,13 @@ export function WeekPage() {
                 isOffSeason && !profile.planningAnchors?.returnToTeamTrainingAt
               return (
                 <div className="space-y-2" data-testid="week-match-banner">
-                  <Link to="/calendar" className="block">
+                  <button
+                    type="button"
+                    onClick={() => setDrawerMatch(futureMatch)}
+                    className="block w-full text-left rf-focus-ring"
+                  >
                     <NextMatchCard event={futureMatch} size="mini" />
-                  </Link>
+                  </button>
                   {showFrozenNote && (
                     <p className="text-[10px] text-fg-muted px-1">
                       Ton programme ne change pas tant que tu ne confirmes pas ta reprise.
@@ -430,12 +455,14 @@ export function WeekPage() {
               className="rounded-2xl border border-border-app bg-layer-5 px-3 py-2.5 flex items-center justify-between gap-3"
             >
               <WeekPlanningLegend />
-              <Link
-                to="/calendar"
-                className="text-[10px] font-bold text-brand-tint hover:text-brand transition-colors whitespace-nowrap flex-shrink-0"
+              <button
+                type="button"
+                onClick={() => setMonthOpen((o) => !o)}
+                aria-expanded={monthOpen}
+                className="text-[10px] font-bold text-brand-tint hover:text-brand transition-colors whitespace-nowrap flex-shrink-0 rf-focus-ring"
               >
-                Mon planning →
-              </Link>
+                {monthOpen ? 'Masquer le mois' : 'Voir le mois →'}
+              </button>
             </div>
             <CalendarWeekTimeline
               sessions={calendarSessions}
@@ -443,6 +470,7 @@ export function WeekPage() {
               unavailableDays={weekPresentation?.unavailableDays ?? []}
               clubDays={weekPresentation?.clubDays ?? []}
               corrections={snapshot?.corrections ?? []}
+              onSelectMatch={openMatchByDate}
               activeRecoveryDates={activeRecoveryDates}
               activeRecoveryEligibleDays={activeRecoveryEligibleDays}
               isRecoveryDay={isRecoveryDay}
@@ -465,6 +493,21 @@ export function WeekPage() {
               onMarkDayUnavailable={markDayUnavailable}
               onUndoCorrection={undoCorrection}
             />
+
+            {monthOpen && (
+              <div className="pt-3">
+                <MonthlyMatchGrid
+                  events={visibleEvents}
+                  clubDays={clubDaysForGrid}
+                  scDays={scDaysForGrid}
+                  onSelectMatch={(e) => setDrawerMatch(e)}
+                  onAddForDate={(dateISO) => {
+                    setAddModalDate(dateISO)
+                    setAddModalOpen(true)
+                  }}
+                />
+              </div>
+            )}
           </section>
         )}
 
@@ -532,6 +575,21 @@ export function WeekPage() {
 
       <WeekCorrectionToast message={toastMessage} onDismiss={clearToast} />
       <BottomNav />
+
+      <MatchEditDrawer event={drawerMatch} onClose={() => setDrawerMatch(null)} />
+      {addModalOpen && (
+        <AddMatchModal
+          initialDate={addModalDate}
+          existingEvents={visibleEvents}
+          onClose={() => {
+            setAddModalOpen(false)
+            setAddModalDate(undefined)
+          }}
+          onSave={async (payload) => {
+            await addEvent({ ...payload, source: 'manual' })
+          }}
+        />
+      )}
     </div>
   )
 }

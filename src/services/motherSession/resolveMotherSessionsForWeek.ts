@@ -177,18 +177,47 @@ function resolveMotherSessionsForWeekCore(
       `Playoffs · ${TAPER_LABEL_FR[taperPhase]} — volume ${volumeReduction}, intensité maintenue.`,
     )
 
-    const tpl = getWeeklyTemplate({
-      cycle: 'in_season',
-      frequency: cfg.freq,
-      positionGroup,
-      matchContext: cfg.freq === 3 ? 'match_week' : undefined,
-      fatigueLevel,
-    })
-    const taperSlots = tpl.sessions.map((s) => ({
-      ...s,
-      variant: cfg.variant,
-      maxBlocks: cfg.maxBlocks,
-    }))
+    // Match-week playoffs : on s'écarte du template in-season générique
+    // (LOWER+UPPER) pour composer FULL_BODY + FULL_LIGHT_PRIMER.
+    // Sources : Jones et al. 2017 (72 % des équipes pro rugby = full body en
+    // match week), Duthie 2006 (distribution bilatérale > split pour limiter
+    // fatigue localisée pré-match), Argus et al. 2010.
+    let taperSlots: (WeeklySessionSlot & { variant: 'normal' | 'light'; maxBlocks: number })[]
+    let tplWarnings: string[] = []
+
+    if (taperPhase === 'match_week') {
+      const posSuffix = positionGroup === 'front_row' ? 'FRONT_ROW' : 'BACK_THREE'
+      taperSlots = [
+        {
+          sessionId: `FULL_BODY_IN_SEASON_${posSuffix}_V1`,
+          role: 'primary',
+          dayPreference: 'early_week',
+          variant: cfg.variant,
+          maxBlocks: 3,
+        },
+        {
+          sessionId: `FULL_LIGHT_PRIMER_IN_SEASON_${posSuffix}_V1`,
+          role: 'primary',
+          dayPreference: 'pre_match',
+          variant: cfg.variant,
+          maxBlocks: 3,
+        },
+      ]
+    } else {
+      const tpl = getWeeklyTemplate({
+        cycle: 'in_season',
+        frequency: cfg.freq,
+        positionGroup,
+        matchContext: cfg.freq === 3 ? 'match_week' : undefined,
+        fatigueLevel,
+      })
+      taperSlots = tpl.sessions.map((s) => ({
+        ...s,
+        variant: cfg.variant,
+        maxBlocks: cfg.maxBlocks,
+      }))
+      tplWarnings = tpl.warnings
+    }
     const templateContext: ResolvedWeeklyTemplateContext = {
       cycle: 'in_season',
       requestedFrequency: weeklyFrequency,
@@ -201,7 +230,7 @@ function resolveMotherSessionsForWeekCore(
       taperSlots,
       planningContext,
       templateContext,
-      tpl.warnings,
+      tplWarnings,
       ['Maintenir mobilité et activation neuromusculaire. Récupération prioritaire.'],
       resolverWarnings,
       sessionsById

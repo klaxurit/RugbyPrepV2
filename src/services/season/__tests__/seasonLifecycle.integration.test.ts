@@ -279,19 +279,24 @@ describe('Playoffs', () => {
     expect(t?.type).not.toBe('playoffs_suggested')
   })
 
-  it('playoffs resolver caps frequency at 2 with light sessions', () => {
+  it('playoffs match_week resolver: full body + primer (light)', () => {
     const r = resolveMotherSessionsForWeek({
       events,
-      today: '2026-04-20',
+      today: '2026-04-20', // Monday, 5 days before Sat match → match_week
       weeklyFrequency: 3,
       positionGroup: 'front_row',
       planningAnchors: { manualPlayoffs: true },
     })
     expect(r.planningContext.cycle).toBe('playoffs')
+    expect(r.planningContext.playoffTaperPhase).toBe('match_week')
     expect(r.sessions).toHaveLength(2)
+
+    const sessionIds = r.sessions.map((s) => s.session.metadata.id)
+    expect(sessionIds).toContain('FULL_BODY_IN_SEASON_FRONT_ROW_V1')
+    expect(sessionIds).toContain('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1')
+
     for (const s of r.sessions) {
       expect(s.variant).toBe('light')
-      expect(s.maxBlocks).toBe(2)
     }
   })
 })

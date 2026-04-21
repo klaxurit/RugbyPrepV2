@@ -203,7 +203,7 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.templateContext?.effectiveFrequency).toBe(2)
   })
 
-  it('playoffs V2 match_week: light + maxBlocks 2', () => {
+  it('playoffs V2 match_week: full body + primer (light variant)', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH), match('2025-05-04')],
       today: '2025-05-01', // 3 days to next match → match_week
@@ -214,9 +214,15 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.planningContext.cycle).toBe('playoffs')
     expect(r.planningContext.playoffTaperPhase).toBe('match_week')
     expect(r.sessions).toHaveLength(2)
+
+    // Jones 2017 / Duthie 2006 : en match week, full body + primer plutôt que
+    // split LOWER/UPPER — limite la fatigue localisée avant le match.
+    const sessionIds = r.sessions.map((s) => s.session.metadata.id)
+    expect(sessionIds).toContain('FULL_BODY_IN_SEASON_FRONT_ROW_V1')
+    expect(sessionIds).toContain('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1')
+
     for (const s of r.sessions) {
       expect(s.variant).toBe('light')
-      expect(s.maxBlocks).toBe(2)
     }
   })
 

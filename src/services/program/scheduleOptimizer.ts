@@ -78,21 +78,32 @@ export function computeSCSchedule(
   const clubDayNums = clubSchedule.clubDays.map((d) => d.day)
   const matchDay = clubSchedule.matchDay
 
+  // Jours durs bloqués : jamais de séance S&C possible.
+  //   - Le jour de match habituel (matchDay)
+  //   - MD+1 (24h post-match : fenêtre récupération obligatoire, KB recovery.md)
+  //   - Les jours de match spécifiques à venir + leurs MD+1
+  const hardBlocked = new Set<DayOfWeek>()
+  if (matchDay !== undefined) {
+    hardBlocked.add(matchDay)
+    hardBlocked.add(((matchDay + 1) % 7) as DayOfWeek)
+  }
+  if (upcomingMatchDates) {
+    for (const dateStr of upcomingMatchDates) {
+      const matchDow = new Date(dateStr + 'T12:00:00').getDay() as DayOfWeek
+      hardBlocked.add(matchDow)
+      hardBlocked.add(((matchDow + 1) % 7) as DayOfWeek)
+    }
+  }
+
   const scores: Record<number, number> = {}
   for (const day of ALL_DAYS) {
     let score = 0
-
-    // Match day → exclu de la suggestion auto
-    if (matchDay !== undefined && day === matchDay) score -= 15
 
     // Proximité match
     if (matchDay !== undefined && day !== matchDay) {
       const daysUntilMatch = ((matchDay - day + 7) % 7)
       if (daysUntilMatch === 1) score -= 10
       else if (daysUntilMatch === 2) score -= 3
-
-      const dayAfterMatch = ((matchDay + 1) % 7) as DayOfWeek
-      if (day === dayAfterMatch) score -= 6
     }
 
     // Léger bonus lendemain de club (récup active)
@@ -104,12 +115,11 @@ export function computeSCSchedule(
     // Léger malus jour de club (préférer un jour sans club en auto)
     if (clubDayNums.includes(day)) score -= 1
 
-    // Matchs spécifiques à venir
+    // Matchs spécifiques à venir — proximité soft (J-1, J-2)
     if (upcomingMatchDates) {
       for (const dateStr of upcomingMatchDates) {
         const matchDow = new Date(dateStr + 'T12:00:00').getDay() as DayOfWeek
         const daysUntil = ((matchDow - day + 7) % 7)
-        if (daysUntil === 0) { score -= 15; break }
         if (daysUntil === 1) { score -= 10; break }
         if (daysUntil === 2) { score -= 3; break }
       }
@@ -118,11 +128,18 @@ export function computeSCSchedule(
     scores[day] = score
   }
 
-  const rankedDays = ALL_DAYS.slice().sort((a, b) => scores[b] - scores[a])
+  // On écarte les jours hard-blocked AVANT le ranking, pas juste via malus :
+  // sinon, avec minGap=2, un jour MD+1 peut se glisser dans la sélection quand
+  // aucun autre jour n'est disponible (bug observé en match-week).
+  const eligibleDays = ALL_DAYS.filter((d) => !hardBlocked.has(d))
+  const rankedDays = eligibleDays.sort((a, b) => scores[b] - scores[a])
   const selectedDays = pickWithMinGap(rankedDays, weeklySessions, 2)
 
   if (selectedDays.length < weeklySessions) {
-    const defaults = TRAINING_DAYS_DEFAULT[weeklySessions]
+    // Fallback : defaults filtrés pour ne jamais inclure un jour de match ou MD+1.
+    const defaults = TRAINING_DAYS_DEFAULT[weeklySessions].filter(
+      (d) => !hardBlocked.has(d),
+    )
     const sessions: SCSessionSlot[] = defaults.map((day, i) => ({
       sessionIndex: i as 0 | 1 | 2,
       day,

@@ -3,7 +3,7 @@ import { Home, Dumbbell, User } from 'lucide-react'
 
 const navItems = [
   { to: '/home', icon: Home, label: 'Accueil', match: ['/home'] },
-  { to: '/week', icon: Dumbbell, label: 'Programme', match: ['/week', '/calendar'] },
+  { to: '/week', icon: Dumbbell, label: 'Programme', match: ['/week'] },
   { to: '/profile', icon: User, label: 'Profil', match: ['/profile', '/progress'] },
 ]
 

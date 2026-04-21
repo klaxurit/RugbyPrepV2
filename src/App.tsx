@@ -20,7 +20,6 @@ const SessionDetailPage = lazy(() => import('./pages/SessionDetailPage').then(m 
 const ProgressPage = lazy(() => import('./pages/ProgressPage').then(m => ({ default: m.ProgressPage })))
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })))
 const HistoryPage = lazy(() => import('./pages/HistoryPage').then(m => ({ default: m.HistoryPage })))
-const CalendarPage = lazy(() => import('./pages/CalendarPage').then(m => ({ default: m.CalendarPage })))
 const ChatPage = lazy(() => import('./pages/ChatPage').then(m => ({ default: m.ChatPage })))
 const MobilityPage = lazy(() => import('./pages/MobilityPage').then(m => ({ default: m.MobilityPage })))
 const ProgramPage = lazy(() => import('./pages/ProgramPage').then(m => ({ default: m.ProgramPage })))
@@ -123,7 +122,6 @@ function App() {
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/program" element={<ProgramPage />} />
-            <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
             <Route path="/mobility" element={<MobilityPage />} />
             <Route path="/chat" element={<ChatPage />} />

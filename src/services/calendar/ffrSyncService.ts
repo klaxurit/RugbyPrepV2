@@ -210,11 +210,20 @@ export async function syncCalendar(competitionId: string, clubCode: string): Pro
   }
 
   // 2. Send matches to Edge Function for DB sync
-  await supabase.auth.refreshSession()
-  const { data, error } = await supabase.functions.invoke('ffr-sync', {
-    body: { action: 'sync_calendar', competitionId, clubCode, matches },
-  })
-  if (error) return { imported: 0, error: error.message }
-  if (!data?.success) return { imported: 0, error: data?.error ?? 'unknown_error' }
-  return { imported: data.imported ?? 0 }
+  try {
+    await supabase.auth.refreshSession()
+    const { data, error } = await supabase.functions.invoke('ffr-sync', {
+      body: { action: 'sync_calendar', competitionId, clubCode, matches },
+    })
+    if (error) {
+      const msg = error.message || String(error)
+      console.error('[ffrSync] invoke error:', error)
+      return { imported: 0, error: msg }
+    }
+    if (!data?.success) return { imported: 0, error: data?.error ?? 'unknown_error' }
+    return { imported: data.imported ?? 0 }
+  } catch (err) {
+    console.error('[ffrSync] invoke threw:', err)
+    return { imported: 0, error: err instanceof Error ? err.message : 'network_error' }
+  }
 }

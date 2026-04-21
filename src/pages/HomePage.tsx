@@ -41,6 +41,7 @@ import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSe
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 import { useRegisterCoachContext } from '../contexts/CoachContext'
 import { NextMatchCard } from '../components/match/NextMatchCard'
+import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -229,6 +230,7 @@ export function HomePage() {
     [today],
   )
   const [injuryDismissed, setInjuryDismissed] = useState(false)
+  const [drawerMatch, setDrawerMatch] = useState<typeof nextMatch>(null)
 
   const visibleTrainingLevel = getVisibleTrainingLevel(profile.trainingLevel)
   // Adapt duration/frequency to the actual programme (recovery sessions are shorter)
@@ -379,9 +381,14 @@ export function HomePage() {
               Affiché seulement si un match est programmé dans les 7 prochains
               jours. En inter-saison sans match, rien n'est rendu. */}
           {nextMatch != null && daysToMatch != null && daysToMatch >= 0 && daysToMatch <= 7 && (
-            <Link to="/calendar" className="block mb-3" data-testid="home-match-banner">
+            <button
+              type="button"
+              onClick={() => setDrawerMatch(nextMatch)}
+              className="block w-full text-left mb-3 rf-focus-ring"
+              data-testid="home-match-banner"
+            >
               <NextMatchCard event={nextMatch} />
-            </Link>
+            </button>
           )}
 
           {/* ── Hero — variante selon état rest day / training day ─────────── */}
@@ -876,6 +883,8 @@ export function HomePage() {
       </div>
 
       <BottomNav />
+
+      <MatchEditDrawer event={drawerMatch} onClose={() => setDrawerMatch(null)} />
     </div>
   )
 }

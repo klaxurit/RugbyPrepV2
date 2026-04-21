@@ -6,6 +6,7 @@ import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
+import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
@@ -778,24 +779,15 @@ export function ProfilePage() {
           </Link>
         </section>
 
-        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-2xl bg-ok-bg-muted text-ok border border-ok-bd">
-              <Calendar className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-sm font-black text-fg">Club & calendrier</h2>
-              <p className="text-xs text-fg-muted">Le club, la sync FFR, les matchs et le planning collectif se gèrent désormais depuis Calendrier.</p>
-            </div>
-          </div>
-          <Link
-            to="/calendar"
-            className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
-          >
-            <span>Ouvrir le calendrier</span>
-            <span className="text-xs text-fg-muted">Gérer</span>
-          </Link>
-        </section>
+        <CollapsibleSection
+          title="Mon club"
+          subtitle="Club FFR, compétition, planning d'entraînement et jour de match."
+          icon={<Calendar className="w-4 h-4" />}
+          iconClassName="bg-ok-bg-muted text-ok border border-ok-bd"
+          testId="profile-section-club"
+        >
+          <ClubSettingsSection />
+        </CollapsibleSection>
 
         {/* Abonnement & accès */}
         <CollapsibleSection

@@ -2,7 +2,16 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   ChevronLeft, ChevronRight, CheckCircle2, Check,
+  Dumbbell, Trophy, Ruler, Flame,
 } from 'lucide-react'
+
+// Illustrations abstraites des groupes de poste (bordeaux / crème)
+import frontRowImg from '../assets/positions/front-row.png'
+import secondRowImg from '../assets/positions/second-row.png'
+import backRowImg from '../assets/positions/back-row.png'
+import halfBacksImg from '../assets/positions/half-backs.png'
+import centersImg from '../assets/positions/centers.png'
+import backThreeImg from '../assets/positions/back-three.png'
 import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { posthog } from '../services/analytics/posthog'
@@ -25,13 +34,13 @@ type PositionValue = NonNullable<UserProfile['position']>
 
 // ─── Constants ────────────────────────────────────────────────
 
-const POSITIONS: { value: PositionValue; label: string; sub: string; emoji: string }[] = [
-  { value: 'FRONT_ROW',   label: 'Première ligne',   sub: 'Pilier · Talonneur',      emoji: '🐂' },
-  { value: 'SECOND_ROW',  label: 'Deuxième ligne',   sub: 'Verrouilleur',             emoji: '🗼' },
-  { value: 'BACK_ROW',    label: 'Troisième ligne',  sub: 'Flanker · Numéro 8',      emoji: '⚡' },
-  { value: 'HALF_BACKS',  label: 'Demi',             sub: "Mêlée · Ouverture",       emoji: '🎯' },
-  { value: 'CENTERS',     label: 'Centre',           sub: '12 / 13',                  emoji: '🛡️' },
-  { value: 'BACK_THREE',  label: 'Arrière / Ailier', sub: '11 · 14 · 15',            emoji: '🚀' },
+const POSITIONS: { value: PositionValue; label: string; sub: string; illustration: string }[] = [
+  { value: 'FRONT_ROW',   label: 'Première ligne',   sub: 'Pilier · Talonneur',   illustration: frontRowImg  },
+  { value: 'SECOND_ROW',  label: 'Deuxième ligne',   sub: 'Verrouilleur',         illustration: secondRowImg },
+  { value: 'BACK_ROW',    label: 'Troisième ligne',  sub: 'Flanker · Numéro 8',   illustration: backRowImg   },
+  { value: 'HALF_BACKS',  label: 'Demi',             sub: 'Mêlée · Ouverture',    illustration: halfBacksImg },
+  { value: 'CENTERS',     label: 'Centre',           sub: '12 / 13',              illustration: centersImg   },
+  { value: 'BACK_THREE',  label: 'Arrière / Ailier', sub: '11 · 14 · 15',         illustration: backThreeImg },
 ]
 
 
@@ -100,6 +109,13 @@ function bmiLabel(bmi: number, position: PositionValue | null): string {
   return isForward ? 'Gabarit de gros avant' : 'Surcharge à surveiller'
 }
 
+/** Position 0→1 du curseur IMC sur l'échelle rugby [18 → 35]. */
+function bmiGaugePosition(bmi: number): number {
+  const min = 18
+  const max = 35
+  return Math.max(0, Math.min(1, (bmi - min) / (max - min)))
+}
+
 // ─── Shared UI atoms ──────────────────────────────────────────
 
 function StepTitle({ title, sub }: { title: string; sub: string }) {
@@ -114,6 +130,52 @@ function StepTitle({ title, sub }: { title: string; sub: string }) {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-xs font-black text-fg-muted uppercase tracking-widest">{children}</p>
+  )
+}
+
+/** Mini-week visualizer — 7 segments, bordeaux sur les jours actifs. */
+function WeekDots({
+  highlightedDays,
+  tone = 'brand',
+}: {
+  highlightedDays: Set<DayOfWeek>
+  tone?: 'brand' | 'muted'
+}) {
+  const days: DayOfWeek[] = [1, 2, 3, 4, 5, 6, 0]
+  const labels = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
+  return (
+    <div className="flex gap-1">
+      {days.map((d, i) => {
+        const on = highlightedDays.has(d)
+        return (
+          <div
+            key={d}
+            className={`flex-1 h-1.5 rounded-full transition-colors ${
+              on
+                ? tone === 'brand'
+                  ? 'bg-brand'
+                  : 'bg-fg-muted'
+                : 'bg-layer-10'
+            }`}
+            aria-label={`${labels[i]}${on ? ' actif' : ''}`}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+/** 3 points, remplis selon le niveau. */
+function IntensityDots({ level }: { level: 1 | 2 | 3 }) {
+  return (
+    <div className="flex gap-1" aria-label={`Intensité ${level}/3`}>
+      {[1, 2, 3].map((n) => (
+        <span
+          key={n}
+          className={`w-2 h-2 rounded-full ${n <= level ? 'bg-brand' : 'bg-layer-15'}`}
+        />
+      ))}
+    </div>
   )
 }
 
@@ -271,23 +333,33 @@ export function OnboardingPage() {
                     key={pos.value}
                     type="button"
                     onClick={() => setPosition(pos.value)}
-                    className={`relative flex flex-col items-start gap-2 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
+                    className={`relative flex flex-col overflow-hidden rounded-2xl border-2 text-left transition-all active:scale-[.97] rf-focus-ring ${
                       selected
-                        ? 'border-brand bg-brand-soft'
+                        ? 'border-brand bg-brand-soft shadow-[0_0_0_4px_var(--color-accent-glow)]'
                         : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                     }`}
                   >
-                    {selected && (
-                      <span className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full bg-brand flex items-center justify-center">
-                        <Check className="w-2.5 h-2.5 text-on-brand" strokeWidth={3} />
-                      </span>
-                    )}
-                    <span className="text-2xl leading-none">{pos.emoji}</span>
-                    <div>
-                      <p className={`text-sm font-black leading-tight ${selected ? 'text-brand-tint' : 'text-fg'}`}>
+                    <div className="relative w-full aspect-square bg-brand overflow-hidden">
+                      <img
+                        src={pos.illustration}
+                        alt=""
+                        aria-hidden="true"
+                        draggable={false}
+                        className={`w-full h-full object-cover transition-[filter,transform] duration-200 ease-out ${
+                          selected ? 'saturate-100 scale-[1.05]' : 'saturate-[.92]'
+                        }`}
+                      />
+                      {selected && (
+                        <span className="absolute top-2 right-2 w-5 h-5 rounded-full bg-brand flex items-center justify-center shadow-md">
+                          <Check className="w-3 h-3 text-on-brand" strokeWidth={3} />
+                        </span>
+                      )}
+                    </div>
+                    <div className="px-3 pt-2.5 pb-3">
+                      <p className={`text-[13px] font-black leading-tight ${selected ? 'text-brand-tint' : 'text-fg'}`}>
                         {pos.label}
                       </p>
-                      <p className="text-[10px] text-fg-muted mt-0.5 leading-tight">{pos.sub}</p>
+                      <p className="text-[10.5px] text-fg-muted mt-0.5 leading-tight">{pos.sub}</p>
                     </div>
                   </button>
                 )
@@ -296,7 +368,7 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 1 : Niveau + Séances ── */}
+        {/* ── Step 1 : Niveau + Séances + Genre ── */}
         {step === 1 && (
           <div className="space-y-7">
             <StepTitle title="Ton profil" sub="Pour calibrer les charges et les volumes." />
@@ -307,17 +379,25 @@ export function OnboardingPage() {
               <div className="space-y-2.5">
                 {TRAINING_LEVELS.map((opt) => {
                   const selected = trainingLevel === opt.value
+                  const intensity: 1 | 3 = opt.value === 'starter' ? 1 : 3
                   return (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() => setTrainingLevel(opt.value)}
-                      className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] ${
+                      className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] rf-focus-ring ${
                         selected
-                          ? 'border-brand bg-brand-soft'
+                          ? 'border-brand bg-brand-soft shadow-[0_0_0_4px_var(--color-accent-glow)]'
                           : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
+                      <div className="flex-shrink-0 flex flex-col items-center gap-2">
+                        <Dumbbell
+                          className={`w-5 h-5 ${selected ? 'text-brand' : 'text-fg-muted'}`}
+                          strokeWidth={2.25}
+                        />
+                        <IntensityDots level={intensity} />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
                           {opt.label}
@@ -341,31 +421,35 @@ export function OnboardingPage() {
               <SectionLabel>Séances par semaine</SectionLabel>
               <div className="grid grid-cols-2 gap-2.5">
                 {([
-                  { value: 2 as const, label: '2 séances', sub: 'Lundi + Jeudi' },
-                  { value: 3 as const, label: '3 séances', sub: 'Lun + Mer + Ven' },
-                ] as const).map((opt) => {
+                  { value: 2 as const, label: '2 séances', sub: 'Lun · Jeu',           days: new Set<DayOfWeek>([1, 4]) },
+                  { value: 3 as const, label: '3 séances', sub: 'Lun · Mer · Ven',     days: new Set<DayOfWeek>([1, 3, 5]) },
+                ]).map((opt) => {
                   const selected = sessions === opt.value
                   return (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() => setSessions(opt.value)}
-                      className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
+                      className={`flex flex-col gap-3 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] rf-focus-ring ${
                         selected
-                          ? 'border-brand bg-brand-soft'
+                          ? 'border-brand bg-brand-soft shadow-[0_0_0_4px_var(--color-accent-glow)]'
                           : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
-                        {opt.label}
-                      </p>
-                      <p className="text-[10px] text-fg-muted">{opt.sub}</p>
+                      <WeekDots highlightedDays={opt.days} />
+                      <div>
+                        <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
+                          {opt.label}
+                        </p>
+                        <p className="text-[10.5px] text-fg-muted mt-0.5">{opt.sub}</p>
+                      </div>
                     </button>
                   )
                 })}
               </div>
             </div>
 
+            {/* Genre */}
             <div className="space-y-3">
               <SectionLabel>Tu es</SectionLabel>
               <div className="grid grid-cols-2 gap-2.5">
@@ -379,9 +463,9 @@ export function OnboardingPage() {
                       key={opt.value}
                       type="button"
                       onClick={() => setGender(opt.value)}
-                      className={`flex flex-col items-start gap-1 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] ${
+                      className={`flex items-center justify-center gap-2 p-4 rounded-2xl border-2 text-center transition-all active:scale-[.97] rf-focus-ring ${
                         selected
-                          ? 'border-brand bg-brand-soft'
+                          ? 'border-brand bg-brand-soft shadow-[0_0_0_4px_var(--color-accent-glow)]'
                           : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
@@ -411,6 +495,7 @@ export function OnboardingPage() {
               <div className="grid grid-cols-7 gap-1.5">
                 {CLUB_DAYS_OPTIONS.map((opt) => {
                   const selected = clubDays.has(opt.day)
+                  const isMatch = matchDay === opt.day
                   return (
                     <button
                       key={opt.day}
@@ -422,20 +507,26 @@ export function OnboardingPage() {
                           return next
                         })
                       }}
-                      className={`aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all text-center active:scale-[.94] ${
+                      className={`relative aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all text-center active:scale-[.94] rf-focus-ring ${
                         selected
                           ? 'border-brand bg-brand-soft'
                           : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
                       }`}
                     >
-                      <span className={`text-[11px] font-black ${selected ? 'text-brand-tint' : 'text-fg-soft'}`}>
+                      <span className={`text-[12px] font-black ${selected ? 'text-brand-tint' : 'text-fg-soft'}`}>
                         {opt.short}
                       </span>
+                      {isMatch && (
+                        <Trophy
+                          className="absolute bottom-1 right-1 w-2.5 h-2.5 text-brand"
+                          strokeWidth={2.5}
+                          aria-hidden
+                        />
+                      )}
                     </button>
                   )
                 })}
               </div>
-              {/* Horaires ajustables dans le profil après onboarding */}
             </div>
 
             {/* Jour de match */}
@@ -447,43 +538,66 @@ export function OnboardingPage() {
                     key={String(opt.day)}
                     type="button"
                     onClick={() => setMatchDay(opt.day)}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-black border-2 transition-all active:scale-[.97] ${
+                    className={`flex-1 py-2.5 rounded-xl text-xs font-black border-2 transition-all active:scale-[.97] flex items-center justify-center gap-1.5 rf-focus-ring ${
                       matchDay === opt.day
                         ? 'border-brand bg-brand-soft text-brand-tint'
                         : 'border-border-app bg-layer-5 text-fg-soft hover:border-border-dashed-app'
                     }`}
                   >
+                    <Trophy className="w-3 h-3" strokeWidth={2.5} aria-hidden />
                     {opt.label}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Séances muscu — si jours club sélectionnés */}
-            {clubDays.size > 0 && sessions !== null && (
-              <div className="space-y-3 pt-4 border-t border-border-app">
-                <SectionLabel>Tes séances muscu</SectionLabel>
-                <div className="p-3.5 rounded-2xl bg-ok-bg-muted border border-ok-bd">
-                  <p className="text-[10px] font-black text-ok-strong uppercase tracking-wide mb-1">
-                    Jours suggérés
-                  </p>
-                  <p className="text-sm font-black text-fg">
-                    {(() => {
-                      const cs: ClubSchedule = {
-                        clubDays: Array.from(clubDays).map((d) => ({ day: d })),
-                        matchDay: matchDay ?? undefined,
-                      }
-                      return computeSCSchedule(cs, sessions).sessions
-                        .map((s) => DAY_LABELS[s.day])
-                        .join(' · ')
-                    })()}
-                  </p>
-                  <p className="text-[10px] text-fg-muted mt-1">
-                    Placées automatiquement autour de ton club et de tes matchs
-                  </p>
+            {/* Suggestion muscu — visualisée sur la même semaine */}
+            {clubDays.size > 0 && sessions !== null && (() => {
+              const cs: ClubSchedule = {
+                clubDays: Array.from(clubDays).map((d) => ({ day: d })),
+                matchDay: matchDay ?? undefined,
+              }
+              const muscuDays = new Set<DayOfWeek>(
+                computeSCSchedule(cs, sessions).sessions.map((s) => s.day),
+              )
+              return (
+                <div className="space-y-3 pt-4 border-t border-border-app">
+                  <SectionLabel>Tes séances muscu suggérées</SectionLabel>
+                  <div className="p-4 rounded-2xl bg-layer-5 border border-border-app space-y-3">
+                    <div className="grid grid-cols-7 gap-1.5">
+                      {CLUB_DAYS_OPTIONS.map((opt) => {
+                        const isClub = clubDays.has(opt.day)
+                        const isMatch = matchDay === opt.day
+                        const isMuscu = muscuDays.has(opt.day)
+                        let bg = 'bg-layer-5'
+                        let text = 'text-fg-muted'
+                        let tag = ''
+                        if (isMatch) { bg = 'bg-brand'; text = 'text-on-brand'; tag = 'M' }
+                        else if (isClub) { bg = 'bg-brand-soft'; text = 'text-brand-tint'; tag = 'C' }
+                        else if (isMuscu) { bg = 'bg-brand/60'; text = 'text-on-brand'; tag = '💪' }
+                        return (
+                          <div
+                            key={opt.day}
+                            className={`aspect-square rounded-lg flex flex-col items-center justify-center ${bg}`}
+                          >
+                            <span className={`text-[10px] font-black ${text}`}>{opt.short}</span>
+                            {tag && <span className={`text-[9px] ${text}`}>{tag}</span>}
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <div className="flex flex-wrap gap-3 text-[10px] text-fg-muted">
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand" aria-hidden />Match</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand-soft border border-brand/25" aria-hidden />Club</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand/60" aria-hidden />Muscu</span>
+                    </div>
+                    <p className="text-[11px] text-fg-muted leading-relaxed">
+                      Placées automatiquement autour de ton club et de tes matchs.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )
+            })()}
           </div>
         )}
 
@@ -497,39 +611,47 @@ export function OnboardingPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-black text-fg-muted uppercase tracking-wide">
-                  Taille (cm)
+                <label className="text-xs font-black text-fg-muted uppercase tracking-wide flex items-center gap-1.5">
+                  <Ruler className="w-3.5 h-3.5" strokeWidth={2.5} aria-hidden />
+                  Taille
                 </label>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={140}
-                  max={230}
-                  value={heightCm}
-                  onChange={(e) => setHeightCm(e.target.value)}
-                  placeholder="182"
-                  className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-4 text-xl font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand transition-colors rf-focus-ring"
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={140}
+                    max={230}
+                    value={heightCm}
+                    onChange={(e) => setHeightCm(e.target.value)}
+                    placeholder="182"
+                    className="w-full h-16 rounded-2xl border-2 border-border-app bg-layer-5 px-4 pr-12 text-2xl font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand transition-colors rf-focus-ring"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-fg-muted uppercase">cm</span>
+                </div>
                 {heightCm && !validHeight && (
                   <p className="text-[11px] text-danger">Entre 140 et 230 cm</p>
                 )}
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-black text-fg-muted uppercase tracking-wide">
-                  Poids (kg)
+                <label className="text-xs font-black text-fg-muted uppercase tracking-wide flex items-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5" strokeWidth={2.5} aria-hidden />
+                  Poids
                 </label>
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  min={40}
-                  max={200}
-                  step={0.5}
-                  value={weightKg}
-                  onChange={(e) => setWeightKg(e.target.value)}
-                  placeholder="95"
-                  className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-4 text-xl font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand transition-colors rf-focus-ring"
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min={40}
+                    max={200}
+                    step={0.5}
+                    value={weightKg}
+                    onChange={(e) => setWeightKg(e.target.value)}
+                    placeholder="95"
+                    className="w-full h-16 rounded-2xl border-2 border-border-app bg-layer-5 px-4 pr-12 text-2xl font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand transition-colors rf-focus-ring"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-fg-muted uppercase">kg</span>
+                </div>
                 {weightKg && !validWeight && (
                   <p className="text-[11px] text-danger">Entre 40 et 200 kg</p>
                 )}
@@ -537,13 +659,35 @@ export function OnboardingPage() {
             </div>
 
             {bmi && (
-              <div className="bg-layer-5 border border-border-app rounded-2xl p-5 space-y-1">
+              <div className="bg-layer-5 border border-border-app rounded-2xl p-5 space-y-4">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-black text-fg leading-none">{bmi.toFixed(1)}</span>
-                  <span className="text-xs font-bold text-fg-muted uppercase tracking-wide">IMC</span>
+                  <span className="text-4xl font-black text-brand leading-none">{bmi.toFixed(1)}</span>
+                  <span className="text-xs font-bold text-fg-muted uppercase tracking-wide">IMC rugby</span>
                 </div>
+
+                {/* Jauge horizontale : sous-poids → optimal → solide → avant → gros avant */}
+                <div className="space-y-1.5">
+                  <div className="relative h-2.5 rounded-full overflow-hidden bg-layer-10">
+                    <div className="absolute inset-0 flex">
+                      <div className="flex-[2] bg-layer-15" title="Sous-poids" />
+                      <div className="flex-[4] bg-ok-bg-muted" title="Optimal" />
+                      <div className="flex-[3] bg-warn-bg-muted" title="Solide" />
+                      <div className="flex-[4] bg-danger-bg" title="Gabarit d'avant" />
+                      <div className="flex-[4] bg-brand-soft" title="Gros avant" />
+                    </div>
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-brand border-2 border-on-brand shadow-md transition-[left] duration-300"
+                      style={{ left: `calc(${bmiGaugePosition(bmi) * 100}% - 7px)` }}
+                      aria-hidden
+                    />
+                  </div>
+                  <div className="flex justify-between text-[9px] text-fg-muted font-bold">
+                    <span>18</span><span>22</span><span>26</span><span>30</span><span>35</span>
+                  </div>
+                </div>
+
                 <p className="text-sm font-bold text-fg-emphasis">{bmiLabel(bmi, position)}</p>
-                <p className="text-[11px] text-fg-muted mt-1 leading-relaxed">
+                <p className="text-[11px] text-fg-muted leading-relaxed">
                   L'IMC seul ne reflète pas la masse musculaire — indicateur de gabarit uniquement.
                 </p>
               </div>
@@ -564,6 +708,30 @@ export function OnboardingPage() {
         {/* ── Step 4 : Résumé ── */}
         {step === 4 && (
           <div className="space-y-6">
+            {/* Hero : illustration du poste choisi */}
+            {position && (() => {
+              const posData = POSITIONS.find((p) => p.value === position)
+              if (!posData) return null
+              return (
+                <div className="flex flex-col items-center pt-2 pb-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 rounded-full bg-brand/20 blur-2xl" aria-hidden />
+                    <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-brand bg-brand shadow-[0_8px_32px_var(--color-accent-glow)]">
+                      <img
+                        src={posData.illustration}
+                        alt={posData.label}
+                        className="w-full h-full object-cover"
+                        draggable={false}
+                      />
+                    </div>
+                  </div>
+                  <p className="mt-3 text-[10px] font-black tracking-widest text-brand-tint uppercase italic">
+                    {posData.label}
+                  </p>
+                </div>
+              )
+            })()}
+
             <StepTitle
               title="C'est parti !"
               sub="Voici ton profil. Tu pourras le modifier à tout moment dans les réglages."
@@ -580,14 +748,10 @@ export function OnboardingPage() {
                 />
               )}
               {validHeight && validWeight && bmi && (
-                <div className="px-5 py-4 flex items-start gap-4">
-                  <span className="text-xs font-black text-fg-muted uppercase tracking-wide w-24 flex-shrink-0 pt-0.5">
-                    Morpho
-                  </span>
-                  <span className="text-sm font-bold text-fg-muted leading-relaxed flex-1">
-                    {parsedHeight} cm · {parsedWeight} kg · IMC {bmi.toFixed(1)}
-                  </span>
-                </div>
+                <SummaryRow
+                  label="Morpho"
+                  value={`${parsedHeight} cm · ${parsedWeight} kg · IMC ${bmi.toFixed(1)}`}
+                />
               )}
             </div>
 

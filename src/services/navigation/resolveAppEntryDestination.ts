@@ -26,7 +26,6 @@ const VALID_PROTECTED_PREFIXES = [
   '/mobility',
   '/chat',
   '/staff',
-  '/calendar',
 ]
 
 // ── Public API ──────────────────────────────────────────────────────────────

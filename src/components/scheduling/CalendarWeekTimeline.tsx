@@ -36,6 +36,8 @@ interface CalendarWeekTimelineProps {
   onRescheduleSession?: (sessionId: string, toDay: DayOfWeek) => void
   onMarkDayUnavailable?: (day: DayOfWeek) => void
   onUndoCorrection?: (correctionId: string) => void
+  /** Clic sur une row match — ouvre le MatchEditDrawer côté parent. */
+  onSelectMatch?: (matchDateISO: string) => void
 }
 
 export function CalendarWeekTimeline({
@@ -47,6 +49,7 @@ export function CalendarWeekTimeline({
   activeRecoveryDates = [],
   activeRecoveryEligibleDays = [],
   isRecoveryDay = false,
+  onSelectMatch,
   onActiveRecoveryComplete,
   today,
   lang = 'fr',
@@ -160,10 +163,26 @@ export function CalendarWeekTimeline({
                 const addMatchCorrection = corrections.find(
                   (c) => c.type === 'add_match' && c.reversible && c.matchDate === matchEvent.date,
                 )
+                const clickable = onSelectMatch != null
                 return (
                   <div
                     data-testid={`timeline-match-${dow}`}
-                    className="rounded-xl border border-warn-bd bg-warn-bg py-2 px-3"
+                    onClick={clickable ? () => onSelectMatch(matchEvent.date) : undefined}
+                    role={clickable ? 'button' : undefined}
+                    tabIndex={clickable ? 0 : undefined}
+                    onKeyDown={
+                      clickable
+                        ? (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              onSelectMatch(matchEvent.date)
+                            }
+                          }
+                        : undefined
+                    }
+                    className={`rounded-xl border border-warn-bd bg-warn-bg py-2 px-3 ${
+                      clickable ? 'cursor-pointer hover:bg-warn-bg-strong transition-colors rf-focus-ring' : ''
+                    }`}
                   >
                     <WeekTimelineRow planKind="match" layout="embedded" data-testid={`week-timeline-match-${dow}`}>
                       <div className="flex min-w-0 items-center gap-2">
@@ -176,13 +195,20 @@ export function CalendarWeekTimeline({
                           <p className="text-[11px] font-black uppercase text-warn-strong">
                             Match{matchEvent.opponent ? ` vs ${matchEvent.opponent}` : ''}
                           </p>
-                          {(matchEvent.is_home != null || matchEvent.kickoff_time) && (
-                            <p className="mt-0.5 text-[9px] text-warn opacity-80">
-                              {matchEvent.is_home != null && (matchEvent.is_home ? 'Domicile' : 'Extérieur')}
-                              {matchEvent.is_home != null && matchEvent.kickoff_time && ' · '}
-                              {matchEvent.kickoff_time && `${matchEvent.kickoff_time}`}
-                            </p>
-                          )}
+                          {(matchEvent.is_home != null || matchEvent.is_neutral || matchEvent.kickoff_time) && (() => {
+                            const locationLabel = matchEvent.is_neutral
+                              ? 'Terrain neutre'
+                              : matchEvent.is_home != null
+                                ? matchEvent.is_home ? 'Domicile' : 'Extérieur'
+                                : null
+                            return (
+                              <p className="mt-0.5 text-[9px] text-warn opacity-80">
+                                {locationLabel}
+                                {locationLabel && matchEvent.kickoff_time && ' · '}
+                                {matchEvent.kickoff_time && `${matchEvent.kickoff_time}`}
+                              </p>
+                            )
+                          })()}
                         </div>
                         {addMatchCorrection && onUndoCorrection && (
                           <button

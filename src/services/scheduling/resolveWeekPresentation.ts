@@ -23,6 +23,7 @@ import type {
   WeekPresentation,
 } from '../../types/scheduling'
 import type { MotherSessionType } from '../../types/motherSession'
+import { isPostMatchWindow, pickPrimerDay } from './matchWindowPolicy'
 
 // ── Public interface ────────────────────────────────────────────────
 
@@ -34,6 +35,7 @@ export interface ResolveWeekPresentationParams {
     opponent?: string
     opponent_code?: string
     is_home?: boolean
+    is_neutral?: boolean
     kickoff_time?: string
   }>
   today: string
@@ -108,6 +110,7 @@ function buildCalendarPresentation(
   params: ResolveWeekPresentationParams,
 ): WeekPresentation {
   const { clubSchedule, scSchedule } = params
+  const reference = parseLocalDate(params.today)
 
   // Identify blocked days
   const matchDays = getMatchDaysOfWeek(matchEvents)
@@ -133,19 +136,55 @@ function buildCalendarPresentation(
     }
   }
 
+  // Post-match blocking : ne jamais placer une séance S&C dans les 24h
+  // suivant un match (fenêtre récupération obligatoire — KB recovery.md §3).
+  const postMatchBlockedDays = new Set<DayOfWeek>()
+  for (const match of matchEvents) {
+    for (let d = 0 as DayOfWeek; d <= 6; d = (d + 1) as DayOfWeek) {
+      if (isPostMatchWindow(d, match, reference)) postMatchBlockedDays.add(d)
+    }
+  }
+
   // Resolve placement for each slot
-  const allBlockedDays = new Set([...correctionUnavailableDays])
+  const allBlockedDays = new Set<DayOfWeek>([
+    ...correctionUnavailableDays,
+    ...postMatchBlockedDays,
+  ])
   const usedDays = new Set<DayOfWeek>()
   const sessions: DatedSession[] = []
+
+  // Pré-placement PRIMER : si un slot est `full_light_primer` et qu'un match
+  // est présent cette semaine, on réserve MD-1 (fallback MD-2) avant que les
+  // autres slots ne prennent la place — fenêtre 18h-36h avant kickoff.
+  const primerDayByIndex = new Map<number, DayOfWeek>()
+  const reservedPrimerDays = new Set<DayOfWeek>()
+  if (matchEvents.length > 0) {
+    for (let i = 0; i < slots.length; i++) {
+      if (slots[i].session.metadata.sessionType !== 'full_light_primer') continue
+      // On prend le premier match de la semaine comme référence primer.
+      const day = pickPrimerDay(matchEvents[0], reference, (d) =>
+        allBlockedDays.has(d)
+        || clubDays.has(d)
+        || matchDays.includes(d),
+      )
+      if (day !== null) {
+        primerDayByIndex.set(i, day)
+        reservedPrimerDays.add(day)
+      }
+      // Un seul primer par semaine dans la pratique actuelle.
+      break
+    }
+  }
 
   for (let i = 0; i < slots.length; i++) {
     const slot = slots[i]
     const isSkipped = skippedIds.has(slot.sessionId)
 
-    // Determine target day: reschedule override > normal placement
-    // Validate reschedule target against blocked days — reject if invalid
+    // Determine target day: reschedule override > primer reservation > normal placement
     let day: DayOfWeek
     const rescheduledTo = rescheduleMap.get(slot.sessionId)
+    const primerReservedDay = primerDayByIndex.get(i)
+
     if (rescheduledTo !== undefined) {
       // Reschedule validation: honour the user's explicit choice.
       // Only truly immovable conflicts (user-unavailable, already used) reject it.
@@ -155,11 +194,16 @@ function buildCalendarPresentation(
       day = rescheduleBlocked.has(rescheduledTo) ? resolveCalendarDay(
         slot, i, slots.length, scSchedule, matchDays, clubDays, usedDays, allBlockedDays,
       ) : rescheduledTo
+    } else if (primerReservedDay !== undefined) {
+      // Primer slot : jour déjà réservé MD-1/MD-2 via pickPrimerDay.
+      day = primerReservedDay
     } else {
+      // Les jours réservés pour le primer sont bloqués pour les autres slots.
+      const extraWithPrimer = new Set<DayOfWeek>([...allBlockedDays, ...reservedPrimerDays])
       day = resolveCalendarDay(
         slot, i, slots.length,
         scSchedule, matchDays, clubDays, usedDays,
-        allBlockedDays,
+        extraWithPrimer,
       )
     }
 
@@ -391,6 +435,7 @@ function getWeekMatchEvents(
       ...(e.opponent ? { opponent: e.opponent } : {}),
       ...(e.opponent_code ? { opponent_code: e.opponent_code } : {}),
       ...(e.is_home != null ? { is_home: e.is_home } : {}),
+      ...(e.is_neutral ? { is_neutral: e.is_neutral } : {}),
       ...(e.kickoff_time ? { kickoff_time: e.kickoff_time } : {}),
     }))
 }
