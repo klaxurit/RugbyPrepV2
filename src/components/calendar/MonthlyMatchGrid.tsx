@@ -27,9 +27,9 @@ interface MonthlyMatchGridProps {
 }
 
 /**
- * Vue mensuelle 7 colonnes — affiche les matchs sur la grille du mois courant.
- * Navigation prev/next mois locale. Extraite de l'ancienne page `/calendar`
- * pour servir en section repliable sur `/week`.
+ * Vue mensuelle 7 colonnes — Variant D (couleurs alignées sur la vue semaine
+ * via les tokens `--color-event-*`). Affiche club (C), muscu prévisionnelle
+ * (P) et matchs (J) avec glyphe typé.
  */
 export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch, onAddForDate }: MonthlyMatchGridProps) {
   const today = useMemo(() => new Date(), [])
@@ -67,151 +67,212 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
   }
 
   return (
-    <div className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-3">
+    <div className="rounded-[20px] border border-border-app bg-layer-2 shadow-elevated p-5 space-y-3">
       <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={prevMonth}
           aria-label="Mois précédent"
-          className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 rf-focus-ring"
+          className="w-8 h-8 rounded-full border border-edge-hairline bg-layer-7 flex items-center justify-center text-fg-soft hover:bg-brand-soft hover:text-brand transition-colors rf-focus-ring"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
-        <h3 className="text-sm font-black text-fg">
+        <h3 className="text-base font-bold text-fg">
           {MONTHS_FR[month]} {year}
         </h3>
         <button
           type="button"
           onClick={nextMonth}
           aria-label="Mois suivant"
-          className="w-9 h-9 rounded-2xl border border-border-app flex items-center justify-center text-fg-muted hover:text-fg hover:border-layer-15 rf-focus-ring"
+          className="w-8 h-8 rounded-full border border-edge-hairline bg-layer-7 flex items-center justify-center text-fg-soft hover:bg-brand-soft hover:text-brand transition-colors rf-focus-ring"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-3 text-[10px] text-fg-muted">
-        <span className="flex items-center gap-1">
-          <span aria-hidden className="w-2.5 h-2.5 rounded-sm bg-violet-100" />
-          🏉 Club
-        </span>
-        <span className="flex items-center gap-1">
-          <span aria-hidden className="w-2.5 h-2.5 rounded-sm bg-amber-100" />
-          🏆 Match
-        </span>
-        {scDays.length > 0 && (
-          <span className="flex items-center gap-1">
-            <span aria-hidden className="w-2.5 h-2.5 rounded-sm bg-emerald-100" />
-            💪 Muscu
-          </span>
-        )}
-      </div>
-
-      <div className="grid grid-cols-7 gap-1 mb-2">
+      <div className="grid grid-cols-7 gap-[3px]">
         {DAY_NAMES_FR.map((d, i) => (
-          <div key={i} className="text-center text-[10px] font-black text-fg-muted uppercase">{d}</div>
+          <div
+            key={i}
+            className="text-center text-[10px] font-semibold text-fg-faint uppercase tracking-[0.4px] py-1"
+          >
+            {d}
+          </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-[3px]">
         {cells.map((day, i) => {
-          if (day === null) return <div key={i} />
+          if (day === null) {
+            return (
+              <div
+                key={i}
+                aria-hidden
+                className="aspect-square rounded-[10px] pointer-events-none"
+              />
+            )
+          }
+
           const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
           const isToday = dateStr === todayStr
           const cellDate = new Date(year, month, day)
           const cellDow = cellDate.getDay() as DayOfWeek
+          const isWeekend = cellDow === 0 || cellDow === 6
           const isClubDay = clubDays.includes(cellDow)
           const entry = eventsByDate.get(dateStr)
           const isMatchDay = entry?.type === 'match'
           const isScDay = scDays.includes(cellDow)
 
-          // Priorités fond : today > match > club > muscu.
-          let stateClasses = 'hover:bg-layer-10 text-fg-emphasis'
-          if (isToday) {
-            stateClasses = 'border-2 border-brand bg-brand-soft text-brand-tint font-black'
-          } else if (isMatchDay) {
-            stateClasses = 'bg-amber-100 text-amber-900'
+          // Priorité : match > club > muscu (visuel dominant)
+          let bgVar: string | null = null
+          let glyph: 'P' | 'C' | 'J' | null = null
+          let glyphColor: string | null = null
+          let numColor: string | null = null
+          let fontWeight: number | null = null
+          let borderColor: string | null = null
+
+          if (isMatchDay) {
+            bgVar = 'var(--color-event-match-bg)'
+            borderColor = 'var(--color-event-match-border)'
+            numColor = 'var(--color-event-match-fg)'
+            glyph = 'J'
+            glyphColor = 'var(--color-event-match-fg)'
+            fontWeight = 700
           } else if (isClubDay) {
-            stateClasses = 'bg-violet-100 text-violet-900'
+            bgVar = 'var(--color-event-club-bg-soft)'
+            glyph = 'C'
+            glyphColor = 'var(--color-event-club-fg)'
           } else if (isScDay) {
-            stateClasses = 'bg-emerald-100 text-emerald-900'
+            bgVar = 'var(--color-event-personal-bg-soft)'
+            glyph = 'P'
+            glyphColor = 'var(--color-event-personal-fg)'
           }
 
-          const eventRing = entry && !isMatchDay
-            ? 'ring-1 ring-inset ' +
-              (entry.type === 'rest' ? 'ring-info-bd' : 'ring-tone-orange-bd')
-            : ''
-          const icons = [
-            isClubDay ? '🏉' : null,
-            isMatchDay ? '🏆' : null,
-            isScDay && !isClubDay && !isMatchDay ? '💪' : null,
-          ].filter(Boolean).join('')
-
-          let eventDot = ''
-          if (!isMatchDay && !isClubDay && entry) {
-            if (entry.type === 'rest') eventDot = 'bg-info'
-            else if (entry.type === 'unavailable') eventDot = 'bg-orange-400'
-          }
-
-          const handleClick = () => {
-            if (entry?.type === 'match') {
-              onSelectMatch(entry.event)
-            } else if (!entry && onAddForDate) {
-              onAddForDate(dateStr)
-            }
-          }
+          // Aujourd'hui — ring bordeaux par-dessus (prime sur tout)
+          const todayStyles: React.CSSProperties = isToday
+            ? {
+                borderColor: 'var(--color-accent)',
+                boxShadow: '0 0 0 2px var(--color-accent-soft)',
+              }
+            : {}
 
           const descriptors: string[] = []
           if (isClubDay) descriptors.push('Entraînement club')
           if (isMatchDay) {
-            descriptors.push(
-              entry.event.opponent ? `Match vs ${entry.event.opponent}` : 'Match',
-            )
-          } else if (entry) {
+            descriptors.push(entry.event.opponent ? `Match vs ${entry.event.opponent}` : 'Match')
+          } else if (entry && entry.type !== 'match') {
             descriptors.push(entry.type)
           }
           if (isScDay && !isClubDay && !isMatchDay) descriptors.push('Séance muscu prévue')
-          const ariaLabel = descriptors.length > 0
-            ? `${day} — ${descriptors.join(' · ')}${isMatchDay ? ' (toucher pour éditer)' : ''}`
-            : onAddForDate
-              ? `${day} — Ajouter un événement`
-              : `${day}`
+          const ariaLabel =
+            descriptors.length > 0
+              ? `${day} — ${descriptors.join(' · ')}${isMatchDay ? ' (toucher pour éditer)' : ''}`
+              : onAddForDate
+                ? `${day} — Ajouter un événement`
+                : `${day}`
+
+          const handleClick = () => {
+            if (entry?.type === 'match') onSelectMatch(entry.event)
+            else if (!entry && onAddForDate) onAddForDate(dateStr)
+          }
+
+          const clickable = (entry?.type === 'match') || (!entry && !!onAddForDate)
 
           return (
             <button
               key={i}
               type="button"
               onClick={handleClick}
-              disabled={!entry && !onAddForDate}
+              disabled={!clickable}
               aria-label={ariaLabel}
-              className={`relative aspect-square flex items-center justify-center rounded-xl text-sm font-bold transition-colors overflow-hidden ${stateClasses} ${eventRing} disabled:cursor-default`}
+              aria-current={isToday ? 'date' : undefined}
+              className="aspect-square flex flex-col items-center justify-center gap-[3px] rounded-[10px] border border-transparent transition-colors disabled:cursor-default enabled:hover:bg-layer-10 rf-focus-ring"
+              style={{
+                backgroundColor: bgVar ?? undefined,
+                borderColor: (isToday ? todayStyles.borderColor : borderColor) ?? undefined,
+                boxShadow: todayStyles.boxShadow ?? undefined,
+              }}
             >
-              <span className="leading-none">{day}</span>
-              {icons && (
-                <span aria-hidden className="absolute bottom-1 text-[9px] leading-none tracking-tight opacity-95">
-                  {icons}
+              <span
+                className="text-sm leading-none"
+                style={{
+                  color: isToday ? 'var(--color-accent)' : (numColor ?? undefined),
+                  fontWeight: isToday ? 700 : (fontWeight ?? 500),
+                  opacity: !numColor && !isToday && isWeekend ? 0.55 : 1,
+                }}
+              >
+                {day}
+              </span>
+              {glyph && (
+                <span
+                  aria-hidden
+                  className="text-[9px] font-bold leading-none tracking-[0.6px]"
+                  style={{ color: glyphColor ?? undefined }}
+                >
+                  {glyph}
                 </span>
-              )}
-              {eventDot && !icons && (
-                <span aria-hidden className={`absolute bottom-1.5 w-1.5 h-1.5 rounded-full ${eventDot}`} />
               )}
             </button>
           )
         })}
       </div>
 
-      <p className="text-[10px] text-fg-faint italic pt-1">
+      <div className="flex flex-wrap gap-3.5 justify-center pt-2 text-[11px] text-fg-soft">
+        {scDays.length > 0 && (
+          <span className="flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className="w-3.5 h-3.5 rounded-[4px] flex items-center justify-center text-[8px] font-bold"
+              style={{
+                backgroundColor: 'var(--color-event-personal-bg-soft)',
+                color: 'var(--color-event-personal-fg)',
+              }}
+            >
+              P
+            </span>
+            Programme
+          </span>
+        )}
+        <span className="flex items-center gap-1.5">
+          <span
+            aria-hidden
+            className="w-3.5 h-3.5 rounded-[4px] flex items-center justify-center text-[8px] font-bold"
+            style={{
+              backgroundColor: 'var(--color-event-club-bg-soft)',
+              color: 'var(--color-event-club-fg)',
+            }}
+          >
+            C
+          </span>
+          Club
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span
+            aria-hidden
+            className="w-3.5 h-3.5 rounded-[4px] flex items-center justify-center text-[8px] font-bold"
+            style={{
+              backgroundColor: 'var(--color-event-match-bg)',
+              color: 'var(--color-event-match-fg)',
+            }}
+          >
+            J
+          </span>
+          Match
+        </span>
+      </div>
+
+      <p className="text-[11px] text-fg-muted italic pt-1 leading-snug">
         Planning prévisionnel — les séances muscu peuvent être adaptées autour des matchs dans Programme.
       </p>
 
       {onAddForDate && (
-        <div className="pt-1">
+        <div className="pt-3 border-t border-edge-hairline">
           <button
             type="button"
             onClick={() => onAddForDate(todayStr)}
-            className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-tint hover:text-brand transition-colors rf-focus-ring"
+            className="w-full flex items-center justify-center gap-2 py-2 text-sm font-semibold text-brand hover:bg-brand-soft hover:rounded-lg transition-colors rf-focus-ring"
           >
-            <Plus className="w-3 h-3" />
+            <Plus className="w-4 h-4" />
             Ajouter un événement
           </button>
         </div>
