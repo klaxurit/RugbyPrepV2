@@ -117,11 +117,38 @@
   --color-orange-surface: rgb(255 237 213 / 0.95);
   --color-orange-border: rgb(249 115 22 / 0.35);
 
-  /* Match — famille dédiée événement bordeaux */
-  --color-match-fg: #7B0D1E;
-  --color-match-surface: rgb(123 13 30 / 0.06);
-  --color-match-border: rgb(123 13 30 / 0.2);
-  --color-match-accent: #7B0D1E;
+  /* (Anciens tokens --color-match-* bordeaux supprimés : orphelins,
+     remplacés par --color-event-match-* ci-dessous.) */
+
+  /* ── Couleurs d'événement (P · C · J · R) ── source unique de vérité.
+     Personal / match / recovery sont des ALIAS des tokens ok / warn / info
+     existants : la vue semaine (référence visuelle) reste pixel-identique.
+     Club est promu en token avec les valeurs hardcodées historiques
+     (#7C3AED / #F5F3FF / #DDD6FE) de SessionTypeMarker. */
+
+  /* Personal (Programme) — mint (alias ok-*) */
+  --color-event-personal-fg:      var(--color-ok-fg-strong);
+  --color-event-personal-bg:      var(--color-ok-surface);
+  --color-event-personal-bg-soft: var(--color-ok-surface-muted);
+  --color-event-personal-border:  var(--color-ok-border);
+
+  /* Club — violet (valeurs historiques SessionTypeMarker) */
+  --color-event-club-fg:          #7C3AED;
+  --color-event-club-bg:          #F5F3FF;
+  --color-event-club-bg-soft:     rgb(124 58 237 / 0.08);
+  --color-event-club-border:      #DDD6FE;
+
+  /* Match — ambre (alias warn-*) */
+  --color-event-match-fg:         var(--color-warn-fg-strong);
+  --color-event-match-bg:         var(--color-warn-surface-muted);
+  --color-event-match-bg-soft:    var(--color-warn-surface-muted);
+  --color-event-match-border:     var(--color-warn-border);
+
+  /* Recovery — bleu info (alias info-*) */
+  --color-event-recovery-fg:      var(--color-info-fg);
+  --color-event-recovery-bg:      var(--color-info-surface);
+  --color-event-recovery-bg-soft: var(--color-info-bg);
+  --color-event-recovery-border:  var(--color-info-border);
 
   --color-athletic-squat: #4f46e5;
   --color-athletic-deadlift: #7c3aed;

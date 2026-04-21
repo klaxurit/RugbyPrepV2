@@ -78,11 +78,6 @@
   --color-tone-orange: var(--color-orange-fg);
   --color-tone-orange-bg: var(--color-orange-surface);
   --color-tone-orange-bd: var(--color-orange-border);
-  /* Match — événement bordeaux */
-  --color-match: var(--color-match-fg);
-  --color-match-bg: var(--color-match-surface);
-  --color-match-bd: var(--color-match-border);
-  --color-match-bar: var(--color-match-accent);
   /* Logo monochrome */
   --color-logo: var(--color-logo-fg);
   --color-meter-underload: var(--color-acwr-bar-underload);
