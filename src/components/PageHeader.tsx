@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useProfile } from '../hooks/useProfile'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
+import { getPositionIllustration } from '../assets/positions'
 import { useScrollThemeColor } from '../hooks/useScrollThemeColor'
 
 interface PageHeaderProps {
@@ -28,6 +29,7 @@ export function PageHeader({ title, backTo, right }: PageHeaderProps) {
   const { profile } = useProfile()
   const currentUser = authState.status === 'authenticated' ? authState.user : null
   const resolvedAvatarUrl = currentUser?.avatarUrl ?? profile.avatarUrl
+  const positionIllustration = getPositionIllustration(profile.rugbyPosition ?? profile.position)
   const clubLogoUrl = getClubLogoUrl(profile.clubCode)
   const clubMonogram = getClubMonogram(profile.clubName)
   const showProfileAvatar = currentUser != null
@@ -66,6 +68,12 @@ export function PageHeader({ title, backTo, right }: PageHeaderProps) {
                   <img
                     src={resolvedAvatarUrl}
                     alt="Avatar"
+                    className="h-full w-full object-cover"
+                  />
+                ) : positionIllustration ? (
+                  <img
+                    src={positionIllustration}
+                    alt="Avatar poste"
                     className="h-full w-full object-cover"
                   />
                 ) : (

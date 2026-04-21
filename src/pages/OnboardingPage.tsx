@@ -12,6 +12,7 @@ import backRowImg from '../assets/positions/back-row.png'
 import halfBacksImg from '../assets/positions/half-backs.png'
 import centersImg from '../assets/positions/centers.png'
 import backThreeImg from '../assets/positions/back-three.png'
+import rugbyforgeRedLogo from '../assets/rugbyforge-red-full.png'
 import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { posthog } from '../services/analytics/posthog'
@@ -310,8 +311,13 @@ export function OnboardingPage() {
         ) : (
           <div className="w-9 h-9" />
         )}
-        <div className="flex-1 text-center">
-          <p className="text-[10px] font-black tracking-widest text-brand-tint uppercase italic">RugbyForge</p>
+        <div className="flex-1 flex items-center justify-center">
+          <img
+            src={rugbyforgeRedLogo}
+            alt="RugbyForge"
+            className="h-8 w-auto"
+            draggable={false}
+          />
         </div>
         <div className="w-9 text-right">
           <span className="text-[11px] font-bold text-fg-muted">{step + 1}/{STEPS.length}</span>
@@ -713,19 +719,19 @@ export function OnboardingPage() {
               const posData = POSITIONS.find((p) => p.value === position)
               if (!posData) return null
               return (
-                <div className="flex flex-col items-center pt-2 pb-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-brand/20 blur-2xl" aria-hidden />
-                    <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-brand bg-brand shadow-[0_8px_32px_var(--color-accent-glow)]">
-                      <img
-                        src={posData.illustration}
-                        alt={posData.label}
-                        className="w-full h-full object-cover"
-                        draggable={false}
-                      />
-                    </div>
+                <div className="flex flex-col items-center pt-4 pb-4">
+                  <div
+                    className="relative w-40 h-40 rounded-full overflow-hidden border-4 border-brand bg-brand flex items-center justify-center"
+                    style={{ filter: 'drop-shadow(0 8px 24px var(--color-accent-glow))' }}
+                  >
+                    <img
+                      src={posData.illustration}
+                      alt={posData.label}
+                      className="w-full h-full object-contain"
+                      draggable={false}
+                    />
                   </div>
-                  <p className="mt-3 text-[10px] font-black tracking-widest text-brand-tint uppercase italic">
+                  <p className="mt-4 text-[10px] font-black tracking-widest text-brand-tint uppercase italic">
                     {posData.label}
                   </p>
                 </div>

@@ -7,6 +7,7 @@ import type { Area } from 'react-easy-crop'
 import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
 import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
+import { getPositionIllustration } from '../assets/positions'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
@@ -347,6 +348,7 @@ export function ProfilePage() {
     }
   }
   const resolvedAvatarUrl = authState.user?.avatarUrl ?? profile.avatarUrl
+  const positionIllustration = getPositionIllustration(profile.rugbyPosition ?? profile.position)
 
   return (
     <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
@@ -381,6 +383,12 @@ export function ProfilePage() {
                 <img
                   src={resolvedAvatarUrl}
                   alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : positionIllustration ? (
+                <img
+                  src={positionIllustration}
+                  alt="Avatar poste"
                   className="w-full h-full object-cover"
                 />
               ) : (

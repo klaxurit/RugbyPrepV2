@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Info, MessageCircle, X, Zap } from 'lucide-react'
 import { useCoachContext } from '../contexts/CoachContext'
+import { useProfile } from '../hooks/useProfile'
+import { getPositionIllustration } from '../assets/positions'
 import compagnonClosed from '../assets/compagnon-mouth-closed.png'
 import compagnonOpen from '../assets/compagnon-mouth-open.png'
 
@@ -30,10 +32,15 @@ function markSeen(scopeKey: string) {
  */
 export function CoachCompanion() {
   const { ctx } = useCoachContext()
+  const { profile } = useProfile()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [seenCount, setSeenCount] = useState(0)
   void seenCount
+
+  // Illustration du poste en priorité, fallback mascotte si pas encore de profil.
+  const positionIllustration = getPositionIllustration(profile.rugbyPosition ?? profile.position)
+  const avatarSrc = positionIllustration ?? (open ? compagnonOpen : compagnonClosed)
 
   const infoMessages = ctx?.infoMessages ?? []
   const companionMessages = ctx?.companionMessages ?? []
@@ -91,7 +98,7 @@ export function CoachCompanion() {
           data-testid="coach-companion-trigger"
         >
           <img
-            src={open ? compagnonOpen : compagnonClosed}
+            src={avatarSrc}
             alt=""
             aria-hidden
             className="w-full h-full object-contain"
