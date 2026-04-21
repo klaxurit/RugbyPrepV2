@@ -17,27 +17,27 @@ const ARIA_LABEL: Record<SessionPlanKind, string> = {
   recovery: 'Récupération',
 }
 
-/** Couleurs via tokens existants (pas de palette dédiée tant que le contraste reste bon). */
+/** Couleurs via les tokens d'événement — source unique de vérité dans theme-tokens.css. */
 const SURFACE: Record<SessionPlanKind, { fg: string; bg: string; bd: string }> = {
   personal: {
-    fg: 'var(--color-ok-fg-strong)',
-    bg: 'var(--color-ok-surface)',
-    bd: 'var(--color-ok-border)',
+    fg: 'var(--color-event-personal-fg)',
+    bg: 'var(--color-event-personal-bg)',
+    bd: 'var(--color-event-personal-border)',
   },
   club: {
-    fg: '#7C3AED',
-    bg: '#F5F3FF',
-    bd: '#DDD6FE',
+    fg: 'var(--color-event-club-fg)',
+    bg: 'var(--color-event-club-bg)',
+    bd: 'var(--color-event-club-border)',
   },
   match: {
-    fg: 'var(--color-warn-fg-strong)',
-    bg: 'var(--color-warn-surface-muted)',
-    bd: 'var(--color-warn-border)',
+    fg: 'var(--color-event-match-fg)',
+    bg: 'var(--color-event-match-bg)',
+    bd: 'var(--color-event-match-border)',
   },
   recovery: {
-    fg: 'var(--color-info-fg)',
-    bg: 'var(--color-info-surface)',
-    bd: 'var(--color-info-border)',
+    fg: 'var(--color-event-recovery-fg)',
+    bg: 'var(--color-event-recovery-bg)',
+    bd: 'var(--color-event-recovery-border)',
   },
 }
 
