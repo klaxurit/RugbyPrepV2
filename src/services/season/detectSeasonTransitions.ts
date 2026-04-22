@@ -10,6 +10,19 @@ export type SeasonTransition =
 const SEASON_END_THRESHOLD_DAYS = 7
 const TREVE_THRESHOLD_DAYS = 21
 const PLAYOFFS_MONTHS = new Set([4, 5]) // April, May
+/**
+ * Fenêtre post-onboarding pendant laquelle on masque les suggestions passives
+ * (playoffs_suggested, pre_season_suggested, treve_detected, season_ended).
+ * L'utilisateur vient de renseigner sa situation — inutile de la lui redemander.
+ * Les événements externes (match_detected_in_offseason) restent actifs.
+ */
+const ONBOARDING_GRACE_DAYS = 7
+
+function addDays(ymd: string, days: number): string {
+  const d = new Date(`${ymd}T12:00:00`)
+  d.setDate(d.getDate() + days)
+  return d.toISOString().slice(0, 10)
+}
 
 /**
  * Detects season lifecycle transitions from the current planning context.
@@ -31,8 +44,10 @@ export function detectSeasonTransitions(params: {
   hasReturnDate?: boolean
   /** User already confirmed season resume for this calendar event — suppress UC9 repeat. */
   offseasonMatchResumeAckEventId?: string
+  /** YYYY-MM-DD — date à laquelle l'utilisateur a terminé l'onboarding. Active la grace period 7j. */
+  onboardingCompletedAt?: string
 }): SeasonTransition | null {
-  const { planningContext: ctx, today, dismissedUntil } = params
+  const { planningContext: ctx, today, dismissedUntil, onboardingCompletedAt } = params
 
   const isDismissed = (type: string): boolean => {
     const until = dismissedUntil?.[type]
@@ -40,11 +55,18 @@ export function detectSeasonTransitions(params: {
     return today <= until
   }
 
+  // Grace period post-onboarding : suppress passive suggestions pour 7 jours.
+  // match_detected_in_offseason reste actif (événement externe réel, utile).
+  const inGracePeriod = Boolean(
+    onboardingCompletedAt && today <= addDays(onboardingCompletedAt, ONBOARDING_GRACE_DAYS)
+  )
+
   // UC1: Season ended — in_season, no future match, last match > 7 days ago
   // Guard: only trigger if the athlete has a meaningful calendar (firstMatchDate !== lastMatchDate
   // means at least 2 distinct match dates — a single match is likely a manual test, not a real season).
   const hasMultipleMatches = ctx.firstMatchDate != null && ctx.lastMatchDate != null && ctx.firstMatchDate !== ctx.lastMatchDate
   if (
+    !inGracePeriod &&
     ctx.cycle === 'in_season' &&
     ctx.daysUntilNextMatch == null &&
     ctx.daysSinceLastMatch != null &&
@@ -62,6 +84,7 @@ export function detectSeasonTransitions(params: {
 
   // UC2: Treve — in_season, any trêve subMode active OR next match > 3 weeks away
   if (
+    !inGracePeriod &&
     ctx.cycle === 'in_season' &&
     (ctx.inSeasonSubMode === 'treve_deep' ||
      ctx.inSeasonSubMode === 'treve_return' ||
@@ -87,6 +110,7 @@ export function detectSeasonTransitions(params: {
   // UC7: Playoffs suggested — April/May + in_season + future matches
   const month = new Date(`${today}T12:00:00`).getMonth() + 1
   if (
+    !inGracePeriod &&
     PLAYOFFS_MONTHS.has(month) &&
     ctx.cycle === 'in_season' &&
     ctx.daysUntilNextMatch != null &&
@@ -123,6 +147,7 @@ export function detectSeasonTransitions(params: {
   // Two triggers: (a) calendar date July+ or (b) off-season week >= 8
   // Only when no future match exists (FFR sync would auto-trigger pre-season otherwise)
   if (
+    !inGracePeriod &&
     ctx.cycle === 'off_season' &&
     ctx.daysUntilNextMatch == null &&
     !isDismissed('pre_season_suggested')

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import {
   ChevronLeft, ChevronRight, CheckCircle2, Check,
   Dumbbell, Trophy, Ruler, Flame,
+  Leaf, Sparkles, RefreshCw, Activity,
 } from 'lucide-react'
 
 // Illustrations abstraites des groupes de poste (bordeaux / crème)
@@ -25,7 +26,10 @@ import type {
   SCSchedule,
   TrainingLevel,
   PopulationSegment,
+  SeasonMode,
+  TrainingBaseline,
 } from '../types/training'
+import type { AnnualCycle } from '../types/annualPlanning'
 import { computeSCSchedule } from '../services/program/scheduleOptimizer'
 // betaEligibility import removed — all profiles eligible since V2 launch
 
@@ -62,6 +66,37 @@ const MATCH_DAY_OPTIONS: { day: DayOfWeek | null; label: string }[] = [
 ]
 
 const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+
+/**
+ * Choix de situation saison à l'onboarding.
+ * `value` alimente `planningAnchors.onboardingCycleHint` + `seasonMode` (playoffs → in_season + manualPlayoffs).
+ */
+const SEASON_PHASES: {
+  value: AnnualCycle
+  label: string
+  sub: string
+  icon: typeof Leaf
+}[] = [
+  { value: 'in_season',  label: 'En saison',    sub: 'Matchs réguliers en cours',       icon: Trophy },
+  { value: 'playoffs',   label: 'Playoffs',     sub: 'Phases finales, match crucial',   icon: Sparkles },
+  { value: 'off_season', label: 'Inter-saison', sub: 'Pas de match, coupure du club',   icon: Leaf },
+  { value: 'pre_season', label: 'Pré-saison',   sub: 'Reprise club, prépa physique',    icon: Flame },
+]
+
+/**
+ * État de forme à l'onboarding — KB: population-specific.md §3.
+ * Module la rampe de reprise (skip deload si 'peak', protocole retour si 'restart').
+ */
+const TRAINING_BASELINES: {
+  value: TrainingBaseline
+  label: string
+  sub: string
+  icon: typeof RefreshCw
+}[] = [
+  { value: 'restart', label: 'Je reprends',   sub: '≥6 semaines sans entraînement',   icon: RefreshCw },
+  { value: 'active',  label: 'Je suis actif', sub: '1-2 séances/semaine, irrégulier', icon: Activity },
+  { value: 'peak',    label: 'En pleine forme', sub: '3×/sem depuis au moins 1 mois', icon: Flame },
+]
 
 const TRAINING_LEVELS: {
   value: TrainingLevel
@@ -197,6 +232,8 @@ export function OnboardingPage() {
   const ageBand = 'adult' as const
   const [gender, setGender] = useState<'male' | 'female'>('male')
   const [sessions, setSessions] = useState<2 | 3 | null>(null)
+  const [seasonPhase, setSeasonPhase] = useState<AnnualCycle | null>(null)
+  const [trainingBaseline, setTrainingBaseline] = useState<TrainingBaseline | null>(null)
   const [clubDays, setClubDays] = useState<Set<DayOfWeek>>(new Set())
   const [matchDay, setMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
   const [scSchedule, setScSchedule] = useState<SCSchedule | undefined>(undefined)
@@ -204,7 +241,7 @@ export function OnboardingPage() {
   const [weightKg, setWeightKg] = useState<string>('')
   const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const STEPS = ['Position', 'Profil', 'Planning', 'Morphologie', 'Résumé']
+  const STEPS = ['Position', 'Profil', 'Situation', 'Planning', 'Morphologie', 'Résumé']
   const progress = (step / (STEPS.length - 1)) * 100
 
   const parsedHeight = parseInt(heightCm, 10)
@@ -216,7 +253,8 @@ export function OnboardingPage() {
   const canNext = () => {
     if (step === 0) return position !== null
     if (step === 1) return Boolean(trainingLevel) && sessions !== null
-    // Planning (2) et Morphologie (3) optionnels
+    if (step === 2) return seasonPhase !== null && trainingBaseline !== null
+    // Planning (3) et Morphologie (4) optionnels
     return true
   }
 
@@ -242,12 +280,27 @@ export function OnboardingPage() {
       const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
       const derivedPopulationSegment: PopulationSegment =
         gender === 'female' ? 'female_senior' : 'male_senior'
+
+      // seasonPhase → seasonMode + onboardingCycleHint + manualPlayoffs
+      // 'playoffs' n'existe pas en SeasonMode : on écrit in_season + manualPlayoffs.
+      const derivedSeasonMode: SeasonMode =
+        seasonPhase === 'playoffs' ? 'in_season'
+        : (seasonPhase ?? 'in_season')
+      const nextAnchors: NonNullable<UserProfile['planningAnchors']> = {
+        ...(existingProfile?.planningAnchors ?? {}),
+        onboardingCycleHint: seasonPhase ?? undefined,
+      }
+      if (seasonPhase === 'playoffs') nextAnchors.manualPlayoffs = true
+      else delete nextAnchors.manualPlayoffs
+
       const profilePayload = {
         position: position!,
         rugbyPosition: position!,
         level: levelDef.legacyLevel,
         trainingLevel: trainingLevel!,
-        planningAnchors: { ...(existingProfile?.planningAnchors ?? {}) },
+        seasonMode: derivedSeasonMode,
+        trainingBaseline: trainingBaseline ?? undefined,
+        planningAnchors: nextAnchors,
         performanceFocus: 'balanced' as const,
         weeklySessions: sessions!,
         equipment: GYM_PRESET,
@@ -260,9 +313,8 @@ export function OnboardingPage() {
       }
       updateProfile(profilePayload, { source: 'onboarding' })
 
-      // Pas de seasonMode saisi : le moteur annuel déduira la phase depuis le
-      // calendrier de matchs (off-season synthétique par défaut).
       window.localStorage.setItem('rugbyprep.week.v1', 'W1')
+      window.localStorage.setItem('rugbyprep.onboarding.completedAt', new Date().toISOString().slice(0, 10))
 
       if (userId) markOnboardingComplete(userId)
       posthog.capture('onboarding_completed', {
@@ -487,8 +539,89 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 2 : Planning club ── */}
+        {/* ── Step 2 : Situation saison + état de forme (NEW) ── */}
         {step === 2 && (
+          <div className="space-y-7">
+            <StepTitle
+              title="Où en es-tu maintenant ?"
+              sub="Pour calibrer ta rampe de reprise. Tu pourras ajuster à tout moment."
+            />
+
+            <div className="space-y-3">
+              <SectionLabel>Ta saison actuelle</SectionLabel>
+              <div className="grid grid-cols-2 gap-2.5">
+                {SEASON_PHASES.map((opt) => {
+                  const selected = seasonPhase === opt.value
+                  const Icon = opt.icon
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      data-testid={`onboarding-season-${opt.value}`}
+                      onClick={() => setSeasonPhase(opt.value)}
+                      className={`flex flex-col gap-2 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.97] rf-focus-ring ${
+                        selected
+                          ? 'border-brand bg-brand-soft shadow-[0_0_0_4px_var(--color-accent-glow)]'
+                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
+                      }`}
+                    >
+                      <Icon
+                        className={`w-5 h-5 ${selected ? 'text-brand' : 'text-fg-muted'}`}
+                        strokeWidth={2.25}
+                        aria-hidden
+                      />
+                      <div>
+                        <p className={`text-sm font-black leading-tight ${selected ? 'text-brand-tint' : 'text-fg'}`}>
+                          {opt.label}
+                        </p>
+                        <p className="text-[10.5px] text-fg-muted mt-0.5 leading-tight">{opt.sub}</p>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <SectionLabel>Ton état de forme</SectionLabel>
+              <div className="space-y-2.5">
+                {TRAINING_BASELINES.map((opt) => {
+                  const selected = trainingBaseline === opt.value
+                  const Icon = opt.icon
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      data-testid={`onboarding-baseline-${opt.value}`}
+                      onClick={() => setTrainingBaseline(opt.value)}
+                      className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border-2 text-left transition-all active:scale-[.98] rf-focus-ring ${
+                        selected
+                          ? 'border-brand bg-brand-soft shadow-[0_0_0_4px_var(--color-accent-glow)]'
+                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
+                      }`}
+                    >
+                      <Icon
+                        className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-brand' : 'text-fg-muted'}`}
+                        strokeWidth={2.25}
+                        aria-hidden
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
+                          {opt.label}
+                        </p>
+                        <p className="text-[11px] text-fg-muted mt-0.5">{opt.sub}</p>
+                      </div>
+                      {selected && <CheckCircle2 className="w-5 h-5 text-brand-tint flex-shrink-0" />}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Step 3 : Planning club ── */}
+        {step === 3 && (
           <div className="space-y-6">
             <StepTitle
               title="Ton planning club"
@@ -607,8 +740,8 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 3 : Morphologie ── */}
-        {step === 3 && (
+        {/* ── Step 4 : Morphologie ── */}
+        {step === 4 && (
           <div className="space-y-6">
             <StepTitle
               title="Ta morphologie"
@@ -711,8 +844,8 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 4 : Résumé ── */}
-        {step === 4 && (
+        {/* ── Step 5 : Résumé ── */}
+        {step === 5 && (
           <div className="space-y-6">
             {/* Hero : illustration du poste choisi */}
             {position && (() => {
@@ -747,6 +880,13 @@ export function OnboardingPage() {
               <SummaryRow label="Poste" value={POSITIONS.find((p) => p.value === position)?.label ?? '–'} />
               <SummaryRow label="Niveau" value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
               <SummaryRow label="Séances" value={`${sessions} / semaine`} />
+              <SummaryRow
+                label="Saison"
+                value={[
+                  SEASON_PHASES.find((p) => p.value === seasonPhase)?.label ?? '–',
+                  TRAINING_BASELINES.find((b) => b.value === trainingBaseline)?.label ?? '',
+                ].filter(Boolean).join(' · ')}
+              />
               {scSchedule && scSchedule.sessions.length > 0 && (
                 <SummaryRow
                   label="Muscu"
@@ -781,8 +921,8 @@ export function OnboardingPage() {
 
       </main>
 
-      {/* ── CTA flottant principal (steps 0, 1, 3) ── */}
-      {step !== 2 && step !== 4 && (
+      {/* ── CTA flottant principal (steps 0, 1, 2, 4) ── */}
+      {step !== 3 && step !== 5 && (
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto pointer-events-auto">
             <button
@@ -798,8 +938,8 @@ export function OnboardingPage() {
         </div>
       )}
 
-      {/* ── CTA step 2 : Planning ── */}
-      {step === 2 && (
+      {/* ── CTA step 3 : Planning ── */}
+      {step === 3 && (
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto space-y-2 pointer-events-auto">
             <button

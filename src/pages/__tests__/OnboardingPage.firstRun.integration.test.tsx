@@ -65,10 +65,15 @@ function navigateToSummary() {
   fireEvent.click(screen.getByText('2 séances'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
-  // Step 2: Planning club → skip
+  // Step 2: Situation → En saison + Actif
+  fireEvent.click(screen.getByTestId('onboarding-season-in_season'))
+  fireEvent.click(screen.getByTestId('onboarding-baseline-active'))
+  fireEvent.click(screen.getAllByText('Suivant')[0])
+
+  // Step 3: Planning club → skip
   fireEvent.click(screen.getByText(/Pas d'entraînement club/))
 
-  // Step 3: Morphologie → skip
+  // Step 4: Morphologie → skip
   fireEvent.click(screen.getByText('Passer cette étape'))
 }
 
@@ -140,9 +145,14 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Joueuse'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    // Step 2: Planning → skip
+    // Step 2: Situation → Inter-saison + Actif
+    fireEvent.click(screen.getByTestId('onboarding-season-off_season'))
+    fireEvent.click(screen.getByTestId('onboarding-baseline-active'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+
+    // Step 3: Planning → skip
     fireEvent.click(screen.getByText(/Pas d'entraînement club/))
-    // Step 3: Morphologie → skip
+    // Step 4: Morphologie → skip
     fireEvent.click(screen.getByText('Passer cette étape'))
 
     // Finish
@@ -163,15 +173,38 @@ describe('OnboardingPage · first run flow', () => {
     expect(finishBtn).not.toBeDisabled()
   })
 
-  it('onboarding submit ne saisit plus seasonMode ni onboardingCycleHint', () => {
+  it('onboarding submit saisit seasonMode + trainingBaseline + onboardingCycleHint', () => {
     renderOnboarding()
     navigateToSummary()
 
     fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
 
     const call = updateProfileMock.mock.calls[0][0]
-    expect(call.seasonMode).toBeUndefined()
-    expect(call.planningAnchors?.onboardingCycleHint).toBeUndefined()
+    expect(call.seasonMode).toBe('in_season')
+    expect(call.trainingBaseline).toBe('active')
+    expect(call.planningAnchors?.onboardingCycleHint).toBe('in_season')
+  })
+
+  it('playoffs onboarding choice → seasonMode=in_season + manualPlayoffs=true', () => {
+    renderOnboarding()
+
+    fireEvent.click(screen.getByText('Première ligne'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+    fireEvent.click(screen.getByText('Avancée'))
+    fireEvent.click(screen.getByText('2 séances'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+    fireEvent.click(screen.getByTestId('onboarding-season-playoffs'))
+    fireEvent.click(screen.getByTestId('onboarding-baseline-peak'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+    fireEvent.click(screen.getByText(/Pas d'entraînement club/))
+    fireEvent.click(screen.getByText('Passer cette étape'))
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
+
+    const call = updateProfileMock.mock.calls[0][0]
+    expect(call.seasonMode).toBe('in_season')
+    expect(call.trainingBaseline).toBe('peak')
+    expect(call.planningAnchors.onboardingCycleHint).toBe('playoffs')
+    expect(call.planningAnchors.manualPlayoffs).toBe(true)
   })
 
   it('onboarding submit force l\'équipement sur GYM_PRESET complet', () => {

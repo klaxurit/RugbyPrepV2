@@ -146,6 +146,14 @@ export type LevelSafetyCapCode =
   | 'true_beginner_caps_complexity'
   | 'inconsistent_recovery_caps_volume';
 export type SeasonMode = 'in_season' | 'off_season' | 'pre_season';
+/**
+ * État de forme déclaré à l'onboarding — module la rampe de reprise.
+ * - `restart` : ≥6 sem sans entraînement structuré → protocole retour progressif (volume 40-50% W1-W2).
+ *   Source KB : `population-specific.md §3` (Return After Long Break).
+ * - `active` : entraînement irrégulier (1-2×/sem) → ramp-up standard, pas d'override.
+ * - `peak` : ≥3×/sem depuis ≥4 sem → skip hypertrophy intro (H1-H2), attaque direct phase cible.
+ */
+export type TrainingBaseline = 'restart' | 'active' | 'peak';
 export type PerformanceFocus = 'balanced' | 'speed' | 'strength';
 export type PopulationSegment =
   | 'male_senior'
@@ -252,6 +260,7 @@ export interface UserProfile {
   trainingLevel?: TrainingLevel
   levelModifierProfile?: LevelModifierProfileV1
   seasonMode?: SeasonMode
+  trainingBaseline?: TrainingBaseline
   performanceFocus?: PerformanceFocus
   preferredLanguage?: 'fr' | 'en'
   rehabInjury?: RehabInjury

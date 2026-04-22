@@ -307,14 +307,8 @@ vi.mock('../../hooks/useWeekSnapshot', () => ({
 }))
 
 const mockUseSchedulingTransition = vi.fn()
-const mockUseSeasonTransitions = vi.fn()
-
 vi.mock('../../hooks/useSchedulingTransition', () => ({
   useSchedulingTransition: (...args: unknown[]) => mockUseSchedulingTransition(...args),
-}))
-
-vi.mock('../../hooks/useSeasonTransitions', () => ({
-  useSeasonTransitions: (...args: unknown[]) => mockUseSeasonTransitions(...args),
 }))
 
 vi.mock('../../services/program', () => ({
@@ -344,7 +338,6 @@ describe('WeekPage · convergence moteurs', () => {
     calendarState.structuralEvents = []
     calendarState.syncNotification = null
     mockUseSchedulingTransition.mockReturnValue({ transition: null, dismiss: vi.fn() })
-    mockUseSeasonTransitions.mockReturnValue({ transition: null, dismiss: vi.fn() })
   })
 
   afterEach(() => {
@@ -523,19 +516,6 @@ describe('WeekPage · convergence moteurs', () => {
         message: 'Match détecté — ton programme s\'adapte à ton calendrier.',
         cta: 'OK',
       },
-      dismiss: vi.fn(),
-    })
-    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
-
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
-
-    expect(screen.getByTestId('transition-banner')).toBeInTheDocument()
-    expect(screen.queryByTestId('planning-context-banner')).toBeNull()
-  })
-
-  it('PlanningContextBanner masqué si bannière de transition saisonnière visible', () => {
-    mockUseSeasonTransitions.mockReturnValue({
-      transition: { type: 'playoffs_suggested' },
       dismiss: vi.fn(),
     })
     useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))

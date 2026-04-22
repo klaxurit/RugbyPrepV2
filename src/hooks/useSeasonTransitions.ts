@@ -5,6 +5,15 @@ import { detectSeasonTransitions, type SeasonTransition } from '../services/seas
 
 const STORAGE_KEY = 'rugbyforge.season_transition_dismissed'
 const DISMISS_DAYS = 7
+const ONBOARDING_COMPLETED_AT_KEY = 'rugbyprep.onboarding.completedAt'
+
+function readOnboardingCompletedAt(): string | undefined {
+  try {
+    return localStorage.getItem(ONBOARDING_COMPLETED_AT_KEY) ?? undefined
+  } catch {
+    return undefined
+  }
+}
 
 function readDismissed(): Record<string, string> {
   try {
@@ -47,6 +56,7 @@ export function useSeasonTransitions(params: {
       hasActiveDeferral: Boolean(profile?.seasonTransitionState?.activeDeferral),
       hasReturnDate: Boolean(profile?.planningAnchors?.returnToTeamTrainingAt),
       offseasonMatchResumeAckEventId: profile?.seasonTransitionState?.offseasonMatchResumeAckEventId,
+      onboardingCompletedAt: readOnboardingCompletedAt(),
     })
   }, [
     planningContext,

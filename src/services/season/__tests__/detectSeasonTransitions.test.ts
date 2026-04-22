@@ -244,4 +244,54 @@ describe('detectSeasonTransitions', () => {
     expect(r).not.toBeNull()
     expect(r!.type).toBe('pre_season_suggested')
   })
+
+  // ── Grace period post-onboarding ────────────────────────────
+
+  it('grace period suppresses pre_season_suggested within 7d after onboarding', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 4 },
+      today: '2026-07-01',
+      onboardingCompletedAt: '2026-06-28', // 3 days ago
+    })
+    expect(r).toBeNull()
+  })
+
+  it('grace period suppresses playoffs_suggested within 7d after onboarding', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, daysUntilNextMatch: 7 },
+      today: '2026-04-10',
+      onboardingCompletedAt: '2026-04-05',
+    })
+    expect(r).toBeNull()
+  })
+
+  it('grace period suppresses season_ended within 7d after onboarding', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, daysUntilNextMatch: null, daysSinceLastMatch: 10 },
+      today: '2026-03-30',
+      onboardingCompletedAt: '2026-03-28',
+    })
+    expect(r).toBeNull()
+  })
+
+  it('grace period expires after 7 days', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 4 },
+      today: '2026-07-10',
+      onboardingCompletedAt: '2026-07-01', // 9 days ago
+    })
+    expect(r).not.toBeNull()
+    expect(r!.type).toBe('pre_season_suggested')
+  })
+
+  it('grace period does NOT suppress match_detected_in_offseason (external event remains)', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season' },
+      today: '2026-07-01',
+      onboardingCompletedAt: '2026-06-28',
+      visibleEvents: [{ id: 'ev-1', date: '2026-07-15', type: 'match', opponent: 'Villeneuve' }],
+    })
+    expect(r).not.toBeNull()
+    expect(r!.type).toBe('match_detected_in_offseason')
+  })
 })

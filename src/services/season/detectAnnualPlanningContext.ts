@@ -568,6 +568,12 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     acc.bump('onboarding_hint')
     acc.rule('rule:onboarding_cycle_hint')
     const hintCycle = anchors.onboardingCycleHint
+    const baseline = inputs.trainingBaseline
+
+    // KB: population-specific.md §3 + periodization.md §4.2
+    // peak → skip la phase d'intro (général/recovery) ; active/restart/unset → démarrage standard.
+    if (baseline === 'peak') acc.rule('rule:training_baseline_peak')
+    if (baseline === 'restart') acc.rule('rule:training_baseline_restart')
 
     if (hintCycle === 'in_season') {
       const mesoHint = computeInSeasonMesocycle(1)
@@ -585,12 +591,14 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     }
 
     if (hintCycle === 'pre_season') {
+      // peak → démarre phase 2 (force) au lieu de phase 1 (préparation générale).
+      const startPhase: PreSeasonPhase = baseline === 'peak' ? 2 : 1
       const trace = acc.freeze()
       return {
         cycle: 'pre_season',
-        preSeasonPhase: 1,
+        preSeasonPhase: startPhase,
         weekNumber: 1,
-        weekLabel: preSeasonWeekLabel(1, 1),
+        weekLabel: preSeasonWeekLabel(1, startPhase),
         isDeloadWeek: false,
         offSeasonStartAt: null,
         ...baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace),
@@ -598,9 +606,11 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     }
 
     if (hintCycle === 'off_season') {
+      // peak → skip phase 1 (Récupération W1-W2) + phase 2 (Transition W3-W4), démarre W5 (Hypertrophy).
+      const startWeek = baseline === 'peak' ? 5 : 1
       const trace = acc.freeze()
       return buildOffSeasonContext(
-        1,
+        startWeek,
         toIsoDate(todayWeekMonday),
         baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace)
       )

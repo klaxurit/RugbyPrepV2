@@ -8,6 +8,12 @@ export type PreSeasonPhase = 1 | 2 | 3
 export type InSeasonSubMode = 'competition' | 'treve_deep' | 'treve_return' | 'treve_rampup'
 export type PlayoffTaperPhase = 'taper_1' | 'taper_2' | 'match_week'
 
+/**
+ * Fitness baseline déclaré à l'onboarding — KB: src/knowledge/population-specific.md §3.
+ * Module la rampe de reprise via l'onboarding hint.
+ */
+export type TrainingBaselineInput = 'restart' | 'active' | 'peak'
+
 export interface AthleteIdentityContext {
   athleteId?: string
   clubId?: string
@@ -23,6 +29,9 @@ export interface AthletePlanningInputs {
   positionGroup: 'front_row' | 'back_three'
 
   fatigueLevel?: 'normal' | 'high' | 'very_high'
+
+  /** État de forme déclaré à l'onboarding. Module la rampe de reprise (cf. onboardingCycleHint). */
+  trainingBaseline?: TrainingBaselineInput
 
   identity?: AthleteIdentityContext
 

@@ -284,6 +284,7 @@ export function buildAthletePlanningInputs(
     weeklyFrequency,
     positionGroup: resolvedPositionGroup,
     fatigueLevel,
+    trainingBaseline: profile.trainingBaseline,
     identity,
     monitoringSnapshot,
     planningAnchors,

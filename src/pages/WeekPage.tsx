@@ -28,9 +28,8 @@ import { MonthlyMatchGrid } from '../components/calendar/MonthlyMatchGrid'
 import { CalendarWeekTimeline } from '../components/scheduling/CalendarWeekTimeline'
 import { WeekPlanningLegend } from '../components/planning'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
-import { SchedulingTransitionBanner, SeasonTransitionBanner } from '../components/SeasonTransitionBanner'
+import { SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
-import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import type { DatedSession } from '../types/scheduling'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
@@ -142,10 +141,8 @@ export function WeekPage() {
     today,
     userId,
   })
-  const { transition: seasonTransition, dismiss: dismissSeasonTransition } = useSeasonTransitions({
-    planningContext: surface?.planningContext ?? null,
-    today,
-  })
+  // Season transitions = HomePage (single source of truth).
+  // WeekPage only displays scheduling-specific transitions (calendar/block mode changes).
 
   // ── Hard-block global ──────────────────────────────────────────────────────
   const { hasHardBlock, hardBlockReasons } = getGlobalProgramHardBlock(profile)
@@ -319,19 +316,12 @@ export function WeekPage() {
           </section>
         )}
 
-        {/* Transition banner (scheduling > season, max 1) */}
+        {/* Scheduling transition (calendar/block mode changes) — season transitions live on HomePage */}
         {!confirmationItem && schedulingTransition && (
           <SchedulingTransitionBanner
             transition={schedulingTransition}
             onAction={() => dismissSchedulingTransition(schedulingTransition.type)}
             onDismiss={() => dismissSchedulingTransition(schedulingTransition.type)}
-          />
-        )}
-        {!confirmationItem && !schedulingTransition && seasonTransition && (
-          <SeasonTransitionBanner
-            transition={seasonTransition}
-            onAction={() => dismissSeasonTransition(seasonTransition.type)}
-            onDismiss={() => dismissSeasonTransition(seasonTransition.type)}
           />
         )}
 
