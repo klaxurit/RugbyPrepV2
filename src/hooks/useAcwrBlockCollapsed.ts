@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useAuth } from './useAuth'
+import { userScopedKey } from '../services/storage/userScopedStorage'
 
-const STORAGE_KEY = 'rugbyprep.acwrBlockCollapsed.v1'
+const STORAGE_BASE = 'rugbyprep.acwrBlockCollapsed'
 
-const readCollapsed = (): boolean => {
+const readCollapsed = (userId: string | null): boolean => {
   if (typeof window === 'undefined') return false
   try {
-    return window.localStorage.getItem(STORAGE_KEY) === 'true'
+    return window.localStorage.getItem(userScopedKey(STORAGE_BASE, userId)) === 'true'
   } catch {
     return false
   }
@@ -13,14 +15,23 @@ const readCollapsed = (): boolean => {
 
 /**
  * État replié du bloc ACWR (surcharge/décharge).
- * Persisté en localStorage pour garder la préférence entre les pages.
+ * Persisté en localStorage user-scoped pour garder la préférence par utilisateur.
  */
 export const useAcwrBlockCollapsed = () => {
-  const [collapsed, setCollapsed] = useState(readCollapsed)
+  const { authState } = useAuth()
+  const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
+
+  const [collapsed, setCollapsed] = useState<boolean>(() => readCollapsed(userId))
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, String(collapsed))
-  }, [collapsed])
+    setCollapsed(readCollapsed(userId))
+  }, [userId])
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(userScopedKey(STORAGE_BASE, userId), String(collapsed))
+    } catch { /* ignore */ }
+  }, [collapsed, userId])
 
   const toggle = useCallback(() => {
     setCollapsed((c) => !c)

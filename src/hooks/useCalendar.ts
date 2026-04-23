@@ -4,9 +4,10 @@ import { useAuth } from './useAuth'
 import { useProfile } from './useProfile'
 import { syncCalendar } from '../services/calendar/ffrSyncService'
 import { applyDeferralRules } from '../services/season/deferralRules'
+import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 import type { CalendarEvent } from '../types/training'
 
-const STORAGE_KEY = 'rugbyprep.calendar.v1'
+const STORAGE_BASE = 'rugbyprep.calendar'
 const AUTO_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24h
 const CALENDAR_SELECT = 'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, venue, user_hidden, user_override, synced_at'
 
@@ -39,23 +40,14 @@ function normalizeCalendarEvent(event: CalendarEvent): CalendarEvent {
 // detectSeasonPhase removed — season phase is now derived from
 // detectAnnualPlanningContext (single source of truth) at the page level.
 
-function readFromStorage(): CalendarEvent[] {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as unknown
-    return Array.isArray(parsed)
-      ? (parsed as CalendarEvent[]).map(normalizeCalendarEvent)
-      : []
-  } catch {
-    return []
-  }
+function readFromStorage(userId: string | null): CalendarEvent[] {
+  const parsed = readUserScoped<CalendarEvent[]>(STORAGE_BASE, userId)
+  if (!Array.isArray(parsed)) return []
+  return parsed.map(normalizeCalendarEvent)
 }
 
-function saveToStorage(events: CalendarEvent[]) {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(events))
-  } catch { /* ignore */ }
+function saveToStorage(events: CalendarEvent[], userId: string | null) {
+  writeUserScoped(STORAGE_BASE, userId, events)
 }
 
 // ─── Hook ────────────────────────────────────────────────────
@@ -66,7 +58,7 @@ export function useCalendar() {
   const userId =
     authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  const [events, setEvents] = useState<CalendarEvent[]>(readFromStorage)
+  const [events, setEvents] = useState<CalendarEvent[]>(() => readFromStorage(userId))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [syncNotification, setSyncNotification] = useState<string | null>(null)
@@ -76,13 +68,17 @@ export function useCalendar() {
 
   const dismissSyncNotification = useCallback(() => setSyncNotification(null), [])
 
-  // Sync from Supabase when authenticated
+  // Sync from Supabase when authenticated — and re-seed state from the new
+  // user's cache first so the current render doesn't keep the previous user's
+  // events visible between userId change and Supabase response.
   useEffect(() => {
+    setEvents(readFromStorage(userId))
     if (!userId) return
     setLoading(true)
     supabase
       .from('match_calendar')
       .select(CALENDAR_SELECT)
+      .eq('user_id', userId)
       .order('date', { ascending: true })
       .then(({ data, error: err }) => {
         setLoading(false)
@@ -92,7 +88,7 @@ export function useCalendar() {
         }
         const loaded = ((data ?? []) as CalendarEvent[]).map(normalizeCalendarEvent)
         setEvents(loaded)
-        saveToStorage(loaded)
+        saveToStorage(loaded, userId)
       })
   }, [userId])
 
@@ -119,12 +115,13 @@ export function useCalendar() {
       const { data } = await supabase
         .from('match_calendar')
         .select(CALENDAR_SELECT)
+        .eq('user_id', userId)
         .order('date', { ascending: true })
 
       if (data) {
         const loaded = (data as CalendarEvent[]).map(normalizeCalendarEvent)
         setEvents(loaded)
-        saveToStorage(loaded)
+        saveToStorage(loaded, userId)
 
         // Compare to detect new matches
         const afterCount = loaded.filter(e => e.source === 'ffr_import' && !e.user_hidden).length
@@ -152,7 +149,7 @@ export function useCalendar() {
         const newEvent = normalizeCalendarEvent(data as CalendarEvent)
         setEvents((prev) => {
           const next = [...prev, newEvent].sort((a, b) => a.date.localeCompare(b.date))
-          saveToStorage(next)
+          saveToStorage(next, userId)
           return next
         })
         return newEvent
@@ -166,7 +163,7 @@ export function useCalendar() {
         }
         setEvents((prev) => {
           const next = [...prev, newEvent].sort((a, b) => a.date.localeCompare(b.date))
-          saveToStorage(next)
+          saveToStorage(next, userId)
           return next
         })
         return newEvent
@@ -185,7 +182,7 @@ export function useCalendar() {
       }
       setEvents((prev) => {
         const next = prev.filter((e) => e.id !== id)
-        saveToStorage(next)
+        saveToStorage(next, userId)
         return next
       })
     },
@@ -204,7 +201,7 @@ export function useCalendar() {
         const next = prev.map((e) =>
           e.id === eventId ? { ...e, rpe, duration_min: durationMin } : e
         )
-        saveToStorage(next)
+        saveToStorage(next, userId)
         return next
       })
     },
@@ -223,7 +220,7 @@ export function useCalendar() {
         const next = prev.map((e) =>
           e.id === eventId ? { ...e, is_neutral: isNeutral } : e
         )
-        saveToStorage(next)
+        saveToStorage(next, userId)
         return next
       })
     },
@@ -240,7 +237,7 @@ export function useCalendar() {
       }
       setEvents((prev) => {
         const next = prev.map((e) => (e.id === id ? { ...e, user_hidden: true } : e))
-        saveToStorage(next)
+        saveToStorage(next, userId)
         return next
       })
     },
@@ -257,7 +254,7 @@ export function useCalendar() {
       }
       setEvents((prev) => {
         const next = prev.map((e) => (e.id === id ? { ...e, user_hidden: false } : e))
-        saveToStorage(next)
+        saveToStorage(next, userId)
         return next
       })
     },
@@ -288,7 +285,7 @@ export function useCalendar() {
               }
             : e
         )
-        saveToStorage(next)
+        saveToStorage(next, userId)
         return next
       })
     },
@@ -310,11 +307,12 @@ export function useCalendar() {
         const { data, error: err } = await supabase
           .from('match_calendar')
           .select(CALENDAR_SELECT)
+          .eq('user_id', userId)
           .order('date', { ascending: true })
         if (!err && data) {
           const loaded = (data as CalendarEvent[]).map(normalizeCalendarEvent)
           setEvents(loaded)
-          saveToStorage(loaded)
+          saveToStorage(loaded, userId)
         }
       }
       setLoading(false)

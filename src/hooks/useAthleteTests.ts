@@ -2,27 +2,20 @@ import { useCallback, useEffect, useState } from 'react'
 import type { PhysicalTest, PhysicalTestType } from '../types/athleticTesting'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
+import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 
-const STORAGE_KEY = 'rugbyprep.athletictests.v1'
+const STORAGE_BASE = 'rugbyprep.athletictests'
 
-// ─── localStorage helpers ────────────────────────────────────────────────────
+// ─── localStorage helpers (user-scoped) ──────────────────────────────────────
 
-const readFromStorage = (): PhysicalTest[] => {
+const readFromStorage = (userId: string | null): PhysicalTest[] => {
   if (typeof window === 'undefined') return []
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as unknown
-    return Array.isArray(parsed) ? (parsed as PhysicalTest[]) : []
-  } catch {
-    return []
-  }
+  const parsed = readUserScoped<PhysicalTest[]>(STORAGE_BASE, userId)
+  return Array.isArray(parsed) ? parsed : []
 }
 
-const saveToStorage = (tests: PhysicalTest[]) => {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tests))
-  } catch { /* ignore */ }
+const saveToStorage = (tests: PhysicalTest[], userId: string | null) => {
+  writeUserScoped(STORAGE_BASE, userId, tests)
 }
 
 const sortNewestFirst = (tests: PhysicalTest[]) =>
@@ -72,20 +65,24 @@ export const useAthleteTests = () => {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  const [tests, setTests] = useState<PhysicalTest[]>(readFromStorage)
+  const [tests, setTests] = useState<PhysicalTest[]>(() => readFromStorage(userId))
 
-  // Sync from Supabase on auth (skip if demo mode — keep localStorage data)
+  // Sync from Supabase on auth. Re-seed from active user's cache on userId change
+  // so previous user's data never flashes on login / signup.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- required: userId change must reset cache
+    setTests(readFromStorage(userId))
     if (!userId) return
     supabase
       .from('athletic_tests')
       .select('id, date_iso, type, value, estimated_from, notes')
+      .eq('user_id', userId)
       .order('date_iso', { ascending: false })
       .then(({ data, error }) => {
         if (error || !data) return
         const loaded = sortNewestFirst((data as AthleteTestRow[]).map(rowToTest))
         setTests(loaded)
-        saveToStorage(loaded)
+        saveToStorage(loaded, userId)
       })
   }, [userId])
 
@@ -103,7 +100,7 @@ export const useAthleteTests = () => {
           const saved = rowToTest(data as AthleteTestRow)
           setTests((current) => {
             const updated = sortNewestFirst([saved, ...current])
-            saveToStorage(updated)
+            saveToStorage(updated, userId)
             return updated
           })
           return
@@ -113,7 +110,7 @@ export const useAthleteTests = () => {
       // Offline fallback
       setTests((current) => {
         const updated = sortNewestFirst([next, ...current])
-        saveToStorage(updated)
+        saveToStorage(updated, userId)
         return updated
       })
     },
@@ -127,7 +124,7 @@ export const useAthleteTests = () => {
       }
       setTests((current) => {
         const updated = current.filter((t) => t.id !== id)
-        saveToStorage(updated)
+        saveToStorage(updated, userId)
         return updated
       })
     },

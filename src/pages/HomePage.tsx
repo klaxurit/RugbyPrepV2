@@ -38,6 +38,7 @@ import { formatTitleFromMotherSessionId } from '../components/motherSession/form
 import type { CycleWeek, SessionType, SeasonPhase, TransitionEntry } from '../types/training'
 import { appendTransitionEntry, computeDeferralExpiry } from '../services/season/transitionJournal'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
+import { userScopedKey } from '../services/storage/userScopedStorage'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 import { useRegisterCoachContext } from '../contexts/CoachContext'
 import { NextMatchCard } from '../components/match/NextMatchCard'
@@ -751,8 +752,8 @@ export function HomePage() {
           const pctDrop = ((baseline - lastCmj) / baseline) * 100
           if (pctDrop <= 10) return null
 
-          // Check dismiss
-          const dismissKey = 'rugbyforge_injury_alert_dismissed'
+          // Check dismiss (user-scoped)
+          const dismissKey = userScopedKey('rugbyforge_injury_alert_dismissed', userId)
           try {
             const raw = localStorage.getItem(dismissKey)
             if (raw) {

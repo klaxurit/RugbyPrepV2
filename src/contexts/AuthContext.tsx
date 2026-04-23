@@ -17,6 +17,38 @@ import { clearUserStorage } from '../services/storage/clearUserStorage'
 
 const initialAuthState: AuthState = { status: 'anonymous', user: null }
 
+/**
+ * Tracks the userId of the currently "hydrated" session. When the auth state
+ * transitions to a different userId (logout, signup of another account, session
+ * restored with a different user), we must wipe user-scoped local state before
+ * rendering — otherwise cached data from the previous user bleeds into the new
+ * session's initial paint.
+ */
+const LAST_USER_ID_KEY = 'rugbyprep.auth.lastUserId'
+
+function readLastUserId(): string | null {
+  try {
+    return localStorage.getItem(LAST_USER_ID_KEY)
+  } catch {
+    return null
+  }
+}
+
+function writeLastUserId(userId: string | null): void {
+  try {
+    if (userId) localStorage.setItem(LAST_USER_ID_KEY, userId)
+    else localStorage.removeItem(LAST_USER_ID_KEY)
+  } catch { /* ignore */ }
+}
+
+/** Wipes user-scoped storage when the active userId changes. */
+function syncUserStorage(newUserId: string | null): void {
+  const lastUserId = readLastUserId()
+  if (newUserId === lastUserId) return
+  clearUserStorage()
+  writeLastUserId(newUserId)
+}
+
 interface AuthProviderProps {
   children: ReactNode
 }
@@ -32,6 +64,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const sessionUser = await getSessionUser()
       if (!active) return
 
+      syncUserStorage(sessionUser?.id ?? null)
       if (!sessionUser) {
         setAuthState({ status: 'anonymous', user: null })
       } else {
@@ -43,6 +76,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     void restoreSession()
 
     const subscription = onAuthStateChanged((_event, session) => {
+      const newUserId = session?.user?.id ?? null
+      syncUserStorage(newUserId)
       if (!session?.user) {
         setAuthState({ status: 'anonymous', user: null })
       } else {
@@ -61,10 +96,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   const signUp = useCallback<AuthContextValue['signUp']>(async (input) => {
+    // Wipe any residual local state before creating a new account, so the first
+    // paint after authentication never flashes data from a previously logged-in user.
+    clearUserStorage()
     const result = await signUpService(input)
 
     if (!result.ok) return result
 
+    writeLastUserId(result.value.id)
     setAuthState({ status: 'authenticated', user: result.value })
     posthog.identify(result.value.id)
     posthog.capture('signup_completed')
@@ -76,6 +115,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     if (!result.ok) return result
 
+    syncUserStorage(result.value.id)
     setAuthState({ status: 'authenticated', user: result.value })
     posthog.identify(result.value.id)
     return result
@@ -84,6 +124,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signOut = useCallback<AuthContextValue['signOut']>(async () => {
     await signOutService()
     clearUserStorage()
+    writeLastUserId(null)
     setAuthState({ status: 'anonymous', user: null })
     posthog.reset()
   }, [])

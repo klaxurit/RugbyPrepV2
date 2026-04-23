@@ -16,8 +16,9 @@ import type {
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { applyHealthConsentLifecycle } from '../services/privacy/healthConsentLifecycle'
+import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 
-const STORAGE_KEY = 'rugbyprep.profile.v1'
+const STORAGE_BASE = 'rugbyprep.profile'
 
 export const DEFAULT_PROFILE: UserProfile = {
   avatarUrl: undefined,
@@ -138,12 +139,10 @@ export function useOnboardingStatus(userId: string | null) {
   return resolved.status
 }
 
-// ─── LocalStorage helpers ─────────────────────────────────────
+// ─── LocalStorage helpers (user-scoped) ───────────────────────
 
-const saveToStorage = (profile: UserProfile) => {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(profile))
-  } catch { /* ignore */ }
+const saveToStorage = (profile: UserProfile, userId: string | null) => {
+  writeUserScoped(STORAGE_BASE, userId, profile)
 }
 
 const inferNormalizedAgeBand = (
@@ -177,14 +176,10 @@ export const normalizeLegacyProfile = (profile: UserProfile): UserProfile => {
   }
 }
 
-const loadFromStorage = (): UserProfile | null => {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    return normalizeLegacyProfile(JSON.parse(raw) as UserProfile)
-  } catch {
-    return null
-  }
+const loadFromStorage = (userId: string | null): UserProfile | null => {
+  const parsed = readUserScoped<UserProfile>(STORAGE_BASE, userId)
+  if (!parsed) return null
+  return normalizeLegacyProfile(parsed)
 }
 
 // ─── Row ↔ UserProfile mapping ────────────────────────────────
@@ -359,19 +354,17 @@ export const useProfile = () => {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  // Initialise depuis localStorage pour éviter le flash DEFAULT entre navigations
-  const [profile, setProfileState] = useState<UserProfile>(() => loadFromStorage() ?? DEFAULT_PROFILE)
+  // Initialise depuis le cache user-scoped pour éviter le flash DEFAULT entre
+  // navigations de la même session utilisateur. Aucune fuite possible entre
+  // comptes : la clé inclut `userId`, donc un nouvel utilisateur voit DEFAULT_PROFILE.
+  const [profile, setProfileState] = useState<UserProfile>(() => loadFromStorage(userId) ?? DEFAULT_PROFILE)
 
-  // Quand userId change : charge depuis Supabase (source de vérité)
-  // On ne wipe plus localStorage ici — le cache local reste valide entre navigations
+  // Quand userId change : recharge depuis le cache user-scoped ou le défaut,
+  // puis Supabase écrase avec la source de vérité.
   useEffect(() => {
-    if (!userId) {
-      // Pas connecté → reset propre
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setProfileState(DEFAULT_PROFILE)
-      saveToStorage(DEFAULT_PROFILE)
-      return
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- required: userId change must reset cache
+    setProfileState(loadFromStorage(userId) ?? DEFAULT_PROFILE)
+    if (!userId) return
 
     supabase
       .from('profiles')
@@ -387,7 +380,7 @@ export const useProfile = () => {
         }
         const loaded = rowToProfile(data as ProfileRow)
         setProfileState(loaded)
-        saveToStorage(loaded)
+        saveToStorage(loaded, userId)
         // Profil Supabase trouvé avec onboarding complet → marquer localement
         if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {
           localStorage.setItem(onboardingKey(userId), '1')
@@ -398,7 +391,7 @@ export const useProfile = () => {
   // Persist Supabase + localStorage
   const persistProfile = useCallback(
     async (next: UserProfile, uid: string | null) => {
-      saveToStorage(next)
+      saveToStorage(next, uid)
       if (!uid) return
       const { error } = await supabase
         .from('profiles')

@@ -1,12 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
+import { userScopedKey } from '../services/storage/userScopedStorage'
 
 // ─── Constants ──────────────────────────────────────────────
 
 const MIN_ACCOUNT_AGE_DAYS = 7
 const DISMISS_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
-const WEEK_VIEWED_KEY = 'rugbyforge_week_viewed'
+const WEEK_VIEWED_BASE = 'rugbyforge_week_viewed'
+
+function weekViewedKey(userId: string | null): string {
+  return userScopedKey(WEEK_VIEWED_BASE, userId)
+}
 
 function getDismissKey(pageId: string) {
   return `rugbyforge_upsell_dismissed_${pageId}`
@@ -30,14 +35,14 @@ export function useUpsellTiming(): UpsellTiming {
   const [hasLogs, setHasLogs] = useState<boolean | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // Check localStorage signal (week viewed)
+  // Check localStorage signal (week viewed) — scoped per user.
   const hasWeekView = useMemo(() => {
     try {
-      return localStorage.getItem(WEEK_VIEWED_KEY) === 'true'
+      return localStorage.getItem(weekViewedKey(userId)) === 'true'
     } catch {
       return false
     }
-  }, [])
+  }, [userId])
 
   // Fetch Supabase signals
   useEffect(() => {
@@ -140,8 +145,8 @@ export function dismissUpsell(pageId: string): void {
 
 // ─── Mark week as viewed (call from WeekPage) ──────────────
 
-export function markWeekViewed(): void {
+export function markWeekViewed(userId: string | null): void {
   try {
-    localStorage.setItem(WEEK_VIEWED_KEY, 'true')
+    localStorage.setItem(weekViewedKey(userId), 'true')
   } catch { /* ignore */ }
 }

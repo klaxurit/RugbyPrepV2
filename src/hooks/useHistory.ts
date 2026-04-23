@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import type { SessionLog, SessionLogProgramContext } from '../types/training'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
+import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 
-const STORAGE_KEY = 'rugbyprep.history.v1'
+const STORAGE_BASE = 'rugbyprep.history'
 
 const sortNewestFirst = (logs: SessionLog[]): SessionLog[] =>
   [...logs].sort(
@@ -22,22 +23,14 @@ export const mergeLogsById = (...logGroups: SessionLog[][]): SessionLog[] => {
   return sortNewestFirst([...merged.values()])
 }
 
-const readFromStorage = (): SessionLog[] => {
+const readFromStorage = (userId: string | null): SessionLog[] => {
   if (typeof window === 'undefined') return []
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as unknown
-    return Array.isArray(parsed) ? (parsed as SessionLog[]) : []
-  } catch {
-    return []
-  }
+  const parsed = readUserScoped<SessionLog[]>(STORAGE_BASE, userId)
+  return Array.isArray(parsed) ? parsed : []
 }
 
-const saveToStorage = (logs: SessionLog[]) => {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(logs))
-  } catch { /* ignore */ }
+const saveToStorage = (logs: SessionLog[], userId: string | null) => {
+  writeUserScoped(STORAGE_BASE, userId, logs)
 }
 
 // ─── Row ↔ SessionLog mapping ──────────────────────────────────
@@ -114,21 +107,25 @@ export const useHistory = () => {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  const [logs, setLogs] = useState<SessionLog[]>(readFromStorage)
+  const [logs, setLogs] = useState<SessionLog[]>(() => readFromStorage(userId))
 
-  // Sync from Supabase on auth (skip if demo mode — keep localStorage data)
+  // Sync from Supabase on auth. Also re-seed local state from the active user's
+  // cache when userId changes, so a new session doesn't keep the previous user's logs.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- required: userId change must reset cache
+    setLogs(readFromStorage(userId))
     if (!userId) return
     supabase
       .from('session_logs')
       .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context')
+      .eq('user_id', userId)
       .order('date_iso', { ascending: false })
       .then(({ data, error }) => {
         if (error || !data) return
         const loaded = (data as SessionLogRow[]).map(rowToLog)
-        const merged = mergeLogsById(readFromStorage(), loaded)
+        const merged = mergeLogsById(readFromStorage(userId), loaded)
         setLogs(merged)
-        saveToStorage(merged)
+        saveToStorage(merged, userId)
       })
   }, [userId])
 
@@ -147,7 +144,7 @@ export const useHistory = () => {
           const saved = rowToLog(data as SessionLogRow)
           setLogs((current) => {
             const next = mergeLogsById([saved], current)
-            saveToStorage(next)
+            saveToStorage(next, userId)
             return next
           })
           return
@@ -157,7 +154,7 @@ export const useHistory = () => {
       // Offline fallback
       setLogs((current) => {
         const next = mergeLogsById([completeLog], current)
-        saveToStorage(next)
+        saveToStorage(next, userId)
         return next
       })
     },
@@ -169,7 +166,7 @@ export const useHistory = () => {
       await supabase.from('session_logs').delete().eq('user_id', userId)
     }
     setLogs([])
-    saveToStorage([])
+    saveToStorage([], userId)
   }, [userId])
 
   return { logs, addLog, clearLogs }

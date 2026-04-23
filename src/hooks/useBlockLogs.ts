@@ -4,28 +4,21 @@ import type { ExerciseMetricType } from '../types/training'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
+import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 
-const STORAGE_KEY = 'rugbyprep.blocklogs.v1'
+const STORAGE_BASE = 'rugbyprep.blocklogs'
 
 const sortNewestFirst = (logs: BlockLog[]) =>
   [...logs].sort((a, b) => new Date(b.dateISO).getTime() - new Date(a.dateISO).getTime())
 
-const readFromStorage = (): BlockLog[] => {
+const readFromStorage = (userId: string | null): BlockLog[] => {
   if (typeof window === 'undefined') return []
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as unknown
-    return Array.isArray(parsed) ? (parsed as BlockLog[]) : []
-  } catch {
-    return []
-  }
+  const parsed = readUserScoped<BlockLog[]>(STORAGE_BASE, userId)
+  return Array.isArray(parsed) ? parsed : []
 }
 
-const saveToStorage = (logs: BlockLog[]) => {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(logs))
-  } catch { /* ignore */ }
+const saveToStorage = (logs: BlockLog[], userId: string | null) => {
+  writeUserScoped(STORAGE_BASE, userId, logs)
 }
 
 // ─── Row ↔ BlockLog mapping ────────────────────────────────────
@@ -73,10 +66,11 @@ export const useBlockLogs = () => {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  const [logs, setLogs] = useState<BlockLog[]>(readFromStorage)
+  const [logs, setLogs] = useState<BlockLog[]>(() => readFromStorage(userId))
 
-  // Sync from Supabase on auth (skip if demo mode — keep localStorage data)
+  // Sync from Supabase on auth. Re-seed from active user's cache on userId change.
   useEffect(() => {
+    setLogs(readFromStorage(userId))
     if (!userId) return
     supabase
       .from('block_logs')
@@ -87,7 +81,7 @@ export const useBlockLogs = () => {
         if (error || !data) return
         const loaded = sortNewestFirst((data as BlockLogRow[]).map(rowToLog))
         setLogs(loaded)
-        saveToStorage(loaded)
+        saveToStorage(loaded, userId)
       })
   }, [userId])
 
@@ -110,7 +104,7 @@ export const useBlockLogs = () => {
           const saved = rowToLog(data as BlockLogRow)
           setLogs((current) => {
             const updated = sortNewestFirst([saved, ...current])
-            saveToStorage(updated)
+            saveToStorage(updated, userId)
             return updated
           })
           return
@@ -120,7 +114,7 @@ export const useBlockLogs = () => {
       // Offline fallback
       setLogs((current) => {
         const updated = sortNewestFirst([next, ...current])
-        saveToStorage(updated)
+        saveToStorage(updated, userId)
         return updated
       })
     },

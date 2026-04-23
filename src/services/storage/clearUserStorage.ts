@@ -1,11 +1,18 @@
 /**
- * Clears all user-scoped localStorage keys on sign-out.
- * Prevents stale data leaking to the next session / user.
+ * Clears all user-scoped localStorage keys on sign-out OR userId change.
+ * Prevents stale data from leaking to the next session / user.
  *
- * Keys are centralised here so a new cache only needs one addition.
+ * Two classes of keys are purged:
+ *   1. Legacy static keys (`rugbyprep.profile.v1`, etc.) — still present on
+ *      upgraded installs that haven't been wiped yet.
+ *   2. User-scoped keys (`rugbyprep.<base>.v2.<userId>`) — the new per-user
+ *      scheme. All prefixes are enumerated centrally in `userScopedStorage.ts`.
  */
 
-const USER_STORAGE_KEYS = [
+import { userScopedPrefixes } from './userScopedStorage'
+
+/** Legacy static keys from before user-scoping. Kept only for migration cleanup. */
+const LEGACY_STATIC_KEYS = [
   // Profile & program
   'rugbyprep.profile.v1',
   'rugbyprep.week.v1',
@@ -23,11 +30,12 @@ const USER_STORAGE_KEYS = [
   'rugbyforge.season_transition_dismissed',
   'rugbyforge_injury_alert_dismissed',
   'rugbyforge_week_viewed',
+  'rugbyprep.onboarding.completedAt',
   // Demo
   'rugbyprep.demo.active',
 ] as const
 
-/** Prefixes for per-page upsell dismiss keys (rugbyforge_upsell_dismissed_*). */
+/** Per-user key prefixes that clearUserStorage should purge. */
 const DYNAMIC_PREFIXES = [
   'rugbyforge_upsell_dismissed_',
   'rugbyprep.onboarding.',
@@ -36,11 +44,13 @@ const DYNAMIC_PREFIXES = [
   'rugbyprep.blockProgression.v1.',
   'rugbyprep.schedulingMode.baseline.',
   'rugbyprep.schedulingTransition.dismissed.',
+  // New user-scoped prefixes from userScopedStorage.ts
+  ...userScopedPrefixes(),
 ] as const
 
 export function clearUserStorage(): void {
-  // Static keys
-  for (const key of USER_STORAGE_KEYS) {
+  // Legacy static keys (pre-migration installs)
+  for (const key of LEGACY_STATIC_KEYS) {
     localStorage.removeItem(key)
   }
 

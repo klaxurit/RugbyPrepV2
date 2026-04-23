@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useAuth } from './useAuth'
+import { userScopedKey } from '../services/storage/userScopedStorage'
 
-const STORAGE_KEY = 'rugbyprep.acwrOverride.v1'
+const STORAGE_BASE = 'rugbyprep.acwrOverride'
 
-const readOverride = (): boolean => {
+const readOverride = (userId: string | null): boolean => {
   if (typeof window === 'undefined') return false
   try {
-    return window.localStorage.getItem(STORAGE_KEY) === 'true'
+    return window.localStorage.getItem(userScopedKey(STORAGE_BASE, userId)) === 'true'
   } catch {
     return false
   }
@@ -16,11 +18,20 @@ const readOverride = (): boolean => {
  * malgré une surcharge ACWR détectée, s'il ne ressent pas de fatigue.
  */
 export const useAcwrOverride = () => {
-  const [ignoreAcwrOverload, setIgnoreAcwrOverload] = useState(readOverride)
+  const { authState } = useAuth()
+  const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
+
+  const [ignoreAcwrOverload, setIgnoreAcwrOverload] = useState<boolean>(() => readOverride(userId))
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, String(ignoreAcwrOverload))
-  }, [ignoreAcwrOverload])
+    setIgnoreAcwrOverload(readOverride(userId))
+  }, [userId])
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(userScopedKey(STORAGE_BASE, userId), String(ignoreAcwrOverload))
+    } catch { /* ignore */ }
+  }, [ignoreAcwrOverload, userId])
 
   const setOverride = useCallback((value: boolean) => {
     setIgnoreAcwrOverload(value)

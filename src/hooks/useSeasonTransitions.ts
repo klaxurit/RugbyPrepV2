@@ -2,31 +2,33 @@ import { useCallback, useMemo, useState } from 'react'
 import type { AnnualPlanningContext } from '../types/annualPlanning'
 import type { CalendarEvent, UserProfile } from '../types/training'
 import { detectSeasonTransitions, type SeasonTransition } from '../services/season/detectSeasonTransitions'
+import { userScopedKey } from '../services/storage/userScopedStorage'
+import { useAuth } from './useAuth'
 
-const STORAGE_KEY = 'rugbyforge.season_transition_dismissed'
+const DISMISS_STORAGE_BASE = 'rugbyforge.season_transition_dismissed'
+const ONBOARDING_COMPLETED_STORAGE_BASE = 'rugbyprep.onboarding.completedAt'
 const DISMISS_DAYS = 7
-const ONBOARDING_COMPLETED_AT_KEY = 'rugbyprep.onboarding.completedAt'
 
-function readOnboardingCompletedAt(): string | undefined {
+function readOnboardingCompletedAt(userId: string | null): string | undefined {
   try {
-    return localStorage.getItem(ONBOARDING_COMPLETED_AT_KEY) ?? undefined
+    return localStorage.getItem(userScopedKey(ONBOARDING_COMPLETED_STORAGE_BASE, userId)) ?? undefined
   } catch {
     return undefined
   }
 }
 
-function readDismissed(): Record<string, string> {
+function readDismissed(userId: string | null): Record<string, string> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(userScopedKey(DISMISS_STORAGE_BASE, userId))
     return raw ? JSON.parse(raw) : {}
   } catch {
     return {}
   }
 }
 
-function writeDismissed(data: Record<string, string>) {
+function writeDismissed(data: Record<string, string>, userId: string | null) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    localStorage.setItem(userScopedKey(DISMISS_STORAGE_BASE, userId), JSON.stringify(data))
   } catch { /* ignore */ }
 }
 
@@ -37,6 +39,8 @@ export function useSeasonTransitions(params: {
   profile?: UserProfile
 }) {
   const { planningContext, today, visibleEvents, profile } = params
+  const { authState } = useAuth()
+  const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
   const [dismissCount, setDismissCount] = useState(0)
 
   const transition = useMemo((): SeasonTransition | null => {
@@ -46,7 +50,7 @@ export function useSeasonTransitions(params: {
     return detectSeasonTransitions({
       planningContext,
       today,
-      dismissedUntil: readDismissed(),
+      dismissedUntil: readDismissed(userId),
       visibleEvents: visibleEvents?.map((e) => ({
         id: e.id,
         date: e.date,
@@ -56,7 +60,7 @@ export function useSeasonTransitions(params: {
       hasActiveDeferral: Boolean(profile?.seasonTransitionState?.activeDeferral),
       hasReturnDate: Boolean(profile?.planningAnchors?.returnToTeamTrainingAt),
       offseasonMatchResumeAckEventId: profile?.seasonTransitionState?.offseasonMatchResumeAckEventId,
-      onboardingCompletedAt: readOnboardingCompletedAt(),
+      onboardingCompletedAt: readOnboardingCompletedAt(userId),
     })
   }, [
     planningContext,
@@ -66,6 +70,7 @@ export function useSeasonTransitions(params: {
     profile?.seasonTransitionState?.offseasonMatchResumeAckEventId,
     profile?.planningAnchors?.returnToTeamTrainingAt,
     dismissCount,
+    userId,
   ])
 
   const dismiss = useCallback((type: string) => {
@@ -73,11 +78,11 @@ export function useSeasonTransitions(params: {
     if (type === 'match_detected_in_offseason') return
     const d = new Date(`${today}T12:00:00`)
     d.setDate(d.getDate() + DISMISS_DAYS)
-    const current = readDismissed()
+    const current = readDismissed(userId)
     current[type] = d.toISOString().slice(0, 10)
-    writeDismissed(current)
+    writeDismissed(current, userId)
     setDismissCount((c) => c + 1)
-  }, [today])
+  }, [today, userId])
 
   return { transition, dismiss }
 }

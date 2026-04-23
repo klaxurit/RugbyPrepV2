@@ -82,8 +82,8 @@ export function WeekPage() {
 
   useEffect(() => {
     posthog.capture('week_viewed')
-    markWeekViewed()
-  }, [])
+    markWeekViewed(userId)
+  }, [userId])
 
   // Match non chargé hier → bannière rappel + suggestion mobilité
   const yesterday = new Date()
