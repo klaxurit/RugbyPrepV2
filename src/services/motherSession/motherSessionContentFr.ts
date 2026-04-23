@@ -169,17 +169,17 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Reset Unilatéral / Locomotion',
         format: '2-3 tours, `60-75s` de repos après la paire',
         exercises: [
-          { name: 'Reverse Lunge', prescription: '2-3x6/côté' },
+          { name: 'Single-Leg RDL', prescription: '2-3x6/côté' },
           { name: 'Bear Crawl', prescription: '2-3x10-15m' },
         ],
         coachingNotes: [
           'Garder les deux exercices fluides et contrôlés.',
-          'La fente doit restaurer le rythme, l\'équilibre et la tolérance de la hanche, pas challenger la force.',
+          'Le `Single-Leg RDL` restaure la chaîne postérieure unilatérale (hanche/ischio) sans challenger la force — complémentaire à Recovery A qui couvre le squat/hinge bilatéral.',
           'Le crawl doit être coordonné et athlétique, jamais précipité.',
           'Arrêter le tour avant qu\'il commence à ressembler à du conditionnement.',
         ],
         fallbackOptions: [
-          'A : `Split Squat` au poids du corps',
+          'A : `Single-Leg Glute Bridge`',
           'B : `Bird Dog`',
         ],
       },
@@ -287,16 +287,18 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Force Lower',
-        format: '3 tours, `90-120s` de repos après la paire',
+        name: 'Triplet Force Lower',
+        format: '3 tours, `90-120s` de repos après le triplet',
         exercises: [
           { name: 'Barbell Romanian Deadlift', prescription: '3x5-6' },
           { name: 'Rear-Foot Elevated Split Squat or Reverse Lunge', prescription: '3x5/côté' },
+          { name: 'Barbell Hip Thrust', prescription: '3x6-8' },
         ],
         coachingNotes: [
           'Le `RDL` reste strict, gainé et dominé par la chaîne postérieure.',
           'Le pattern unilatéral maintient le contrôle de la hanche et de l\'aine sans transformer la session en jour de volume quadriceps.',
-          'Ce bloc doit sembler fort et utile, pas épuisant.',
+          '`Hip Thrust` ajouté pour équilibrer quad:ham (ratio 2.33 → 1.17). Transfer mêlée direct pour premières lignes (extension hanche lourde).',
+          'Ce triplet doit sembler fort et utile, pas épuisant — garder le repos serré (90-120s) sur les 3 exos.',
         ],
       },
       {
@@ -482,18 +484,16 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Force Push/Pull',
+        name: 'Contraste Traction',
         format: '3 tours, `90-120s` de repos après la paire',
         exercises: [
-          { name: 'Single-Arm Landmine Press', prescription: '3x6/côté' },
+          { name: 'Neutral-Grip Pull-Up', prescription: '3x5' },
           { name: 'Pendlay Row', prescription: '3x5-6' },
         ],
         coachingNotes: [
-          'Le `Landmine Press` doit être assez lourd pour exiger la raideur du tronc, mais jamais bâclé.',
-          'Le `Pendlay Row` part d\'un arrêt complet à chaque répétition.',
-          'Garder le tirage explosif mais techniquement strict.',
-          'Ce bloc remplace un format plus hypertrophie pour rester aligné avec les besoins en saison.',
-          'Si c\'est la seule session upper de la semaine, envisager de remplacer `Single-Arm Landmine Press` par `Neutral-Grip Pull-Up 3x4-5` pour conserver une exposition de traction verticale.',
+          'Pull-up : avec lest si le joueur est fort (ceinture). Traction stricte, pas de kipping.',
+          'Le `Pendlay Row` part d\'un arrêt complet à chaque répétition, explosif mais techniquement strict.',
+          'Premières lignes : volume traction critique pour plaquage et maul counter-push. Le Landmine press reste dans UPPER_PRESEASON_POWER pour l\'axe vertical.',
         ],
       },
       {
@@ -592,17 +592,16 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Force Push/Pull',
+        name: 'Contraste Traction',
         format: '3 tours, `75-90s` de repos après la paire',
         exercises: [
-          { name: 'Single-Arm Landmine Press', prescription: '3x5-6/côté' },
-          { name: 'Chest-Supported Row or T-Bar Row', prescription: '3x6' },
+          { name: 'Neutral-Grip Pull-Up', prescription: '3x5' },
+          { name: 'Pendlay Row', prescription: '3x5-6' },
         ],
         coachingNotes: [
-          'Le `Landmine` reste propre, rapide et contrôlé au niveau du tronc.',
-          'Le tirage reste fort sans devenir un combat du bas du dos.',
-          'Comparé à la version premières lignes, ce bloc doit sembler un peu plus fluide et un peu moins brut.',
-          'Si c\'est la seule session upper de la semaine, envisager de remplacer `Single-Arm Landmine Press` par `Neutral-Grip Pull-Up 3x4-5` pour conserver une exposition de traction verticale.',
+          'Pull-up : traction lourde, avec lest si possible (ceinture).',
+          'Le `Pendlay Row` part d\'un arrêt complet, explosif mais techniquement strict.',
+          'Trois-quarts arrière : pull-up neutre = transfer plaquage / ruck-over direct. Le Landmine press reste dans UPPER_PRESEASON_POWER et UPPER_OFFSEASON_HYPERTROPHY — pas besoin en saison maintenance.',
         ],
       },
       {

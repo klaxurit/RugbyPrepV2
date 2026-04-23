@@ -1471,7 +1471,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "sessionIdentity": [
       "This is a recovery reset session, not a hidden conditioning day and not a reduced hypertrophy workout.",
       "Rugby-specific through simple unilateral movement, light locomotion, trunk control, groin care, and lower-leg support.",
-      "Do not overload this session with strength ambitions, long circuits, or “functional” complexity."
+      "Do not overload this session with strength ambitions, long circuits, or “functional” complexity.",
+      "Complémentaire à Recovery A : le volume hinge/squat est couvert dans Recovery A sur la même semaine ; cette session B reste centrée sur l'unilatéral, locomotion, et la chaîne postérieure via Single-Leg RDL."
     ],
     "warmUp": {
       "exercises": [
@@ -1513,7 +1514,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`2-3 rounds`, `60-75s` rest after the pair",
         "exercises": [
           {
-            "name": "Reverse Lunge",
+            "name": "Single-Leg RDL",
             "prescription": "2-3x6/side"
           },
           {
@@ -2454,12 +2455,16 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 3,
-        "name": "Pull / Posterior Support",
-        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "name": "Pull / Posterior Cluster",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
             "prescription": "3x4-5"
+          },
+          {
+            "name": "Chest-Supported Row",
+            "prescription": "3x5-6"
           },
           {
             "name": "Barbell Hip Thrust",
@@ -2467,10 +2472,10 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Pull-ups should stay clean and forceful, not ugly weighted reps.",
-          "Hip thrust should stay powerful and clean, without exaggerated lumbar extension.",
-          "Hip thrust is the main bilateral hip-extension support exposure of the week, so keep quality high on every set.",
-          "This block should support sprint mechanics and upper support without becoming a second strength session."
+          "Pull-ups : clean and forceful, not ugly weighted reps.",
+          "Chest-supported row : strict, no torso cheating — ajoute le volume pull manquant pour équilibrer le double-push de B2.",
+          "Hip thrust : powerful and clean, no exaggerated lumbar extension. Main bilateral hip-extension exposure of the week.",
+          "Ce triplet miroir le power pair B2 (Push Press + Chest Pass) pour équilibre push/pull rugby back-three (plaquage, ruck-over)."
         ]
       },
       {
@@ -2717,22 +2722,27 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 3,
-        "name": "Pull / Posterior Support",
-        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "name": "Pull / Posterior Cluster",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
             "prescription": "3x4-5"
           },
           {
+            "name": "Chest-Supported Row",
+            "prescription": "3x5-6"
+          },
+          {
             "name": "Hex Bar RDL",
-            "prescription": "2x4-5"
+            "prescription": "3x4-5"
           }
         ],
         "coachingNotes": [
-          "Pull-ups should stay clean and forceful, not ugly weighted reps.",
-          "Hex bar RDL should support posterior-chain maintenance without taking over the session.",
-          "This block should feel useful and robust, not like a second strength workout."
+          "Pull-ups : clean and forceful, not ugly weighted reps.",
+          "Chest-supported row : strict, no torso cheating — ajoute le volume pull manquant pour équilibrer le double-push de B2.",
+          "Hex bar RDL : support posterior-chain — upgrade 2→3 sets pour cohérence triplet.",
+          "Ce triplet miroir le power pair B2 (Push Press + Chest Pass) pour équilibre push/pull rugby front-row (plaquage, maul)."
         ]
       },
       {
@@ -3149,8 +3159,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Lower Strength Pair",
-        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "name": "Lower Strength Triplet",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
         "exercises": [
           {
             "name": "Barbell Romanian Deadlift",
@@ -3159,12 +3169,17 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           {
             "name": "Rear-Foot Elevated Split Squat or Reverse Lunge",
             "prescription": "3x5/side"
+          },
+          {
+            "name": "Barbell Hip Thrust",
+            "prescription": "3x6-8"
           }
         ],
         "coachingNotes": [
           "RDL stays strict, braced, and posterior-chain dominant.",
           "The unilateral pattern keeps hip and groin control without turning the session into a quad-volume day.",
-          "This block should feel strong and useful, not draining."
+          "Hip Thrust : ajouté pour équilibrer quad:ham (ratio 2.33 → 1.17). Transfer scrum direct pour front row (extension hanche lourde).",
+          "This triplet should feel strong and useful, not draining — keep rest tight (90-120s) across the 3 exos."
         ]
       },
       {
@@ -3794,8 +3809,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Hinge + Unilateral Strength Pair",
-        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "name": "Lower Strength Triplet",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
         "exercises": [
           {
             "name": "Barbell Romanian Deadlift",
@@ -3804,12 +3819,17 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           {
             "name": "Rear-Foot Elevated Split Squat or Reverse Lunge",
             "prescription": "3x5/side"
+          },
+          {
+            "name": "Nordic Curl",
+            "prescription": "3x4-5"
           }
         ],
         "coachingNotes": [
           "RDL stays strict, braced, and posterior-chain dominant.",
           "The unilateral lift should still support hip and groin control, not become a quad-burner.",
-          "This block maintains force while the contrast block becomes the session priority."
+          "Nordic Curl : ajouté pour équilibrer quad:ham (ratio 2.33 → 1.17). Eccentric gold-standard prévention ischio (Askling 2003/2013, -70% blessures saison rugby).",
+          "Pré-saison = moment idéal pour bâtir l'excentrique avant matchs. Partner-assisted ou sliders si no partner."
         ]
       },
       {
@@ -5274,23 +5294,23 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Push/Pull Strength Pair",
+        "name": "Pull Contrast Strength",
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "Single-Arm Landmine Press",
-            "prescription": "3x5-6/side"
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5"
           },
           {
-            "name": "Chest-Supported Row or T-Bar Row",
-            "prescription": "3x6"
+            "name": "Pendlay Row",
+            "prescription": "3x5-6"
           }
         ],
         "coachingNotes": [
-          "Landmine stays clean, fast, and trunk-controlled.",
+          "Pull-up : traction lourde, add load if strong enough (ceinture lest).",
+          "Pendlay starts from a dead stop each rep.",
           "Row stays strong without turning into a lower-back fight.",
-          "Compared with the front-row version, this block should feel a little more fluid and a little less brute.",
-          "If this is the only upper session of the week, consider replacing `Single-Arm Landmine Press` with `Neutral-Grip Pull-Up 3x4-5` to preserve one true vertical-pull exposure."
+          "Back three : pull-up neutre = transfer plaquage / ruck-over direct. Landmine press est présent en UPPER_PRESEASON_POWER et UPPER_OFFSEASON_HYPERTROPHY — pas besoin en in-season maintenance."
         ]
       },
       {
@@ -5470,12 +5490,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Push/Pull Strength Pair",
+        "name": "Pull Contrast Strength",
         "format": "`3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "Single-Arm Landmine Press",
-            "prescription": "3x6/side"
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5"
           },
           {
             "name": "Pendlay Row",
@@ -5483,11 +5503,9 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Landmine should be heavy enough to demand trunk stiffness, but never sloppy.",
-          "Pendlay starts from a dead stop each rep.",
-          "Keep the row explosive but technically strict.",
-          "This block replaces a more hypertrophy-style drop format to stay aligned with in-season needs.",
-          "If this is the only upper session of the week, consider replacing `Single-Arm Landmine Press` with `Neutral-Grip Pull-Up 3x4-5` to preserve one true vertical-pull exposure."
+          "Pull-up : weighted if strong (add dip belt). Traction strict, no kipping.",
+          "Pendlay starts from a dead stop each rep, explosive but technically strict.",
+          "Front row : pull volume critique pour plaquage et maul counter-push. Landmine press reste dans UPPER_PRESEASON_POWER pour l'axe vertical."
         ]
       },
       {
@@ -5749,16 +5767,21 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Face Pull",
-            "prescription": "2x12-15"
+            "prescription": "3x12-15"
           },
           {
             "name": "Lateral Raise",
             "prescription": "2x12-15"
+          },
+          {
+            "name": "T-Y-I Incline Bench",
+            "prescription": "2x10 (5s per position: T, Y, I)"
           }
         ],
         "coachingNotes": [
           "`Hammer Curl + Rope Pressdown` is the default arm-support pair.",
-          "`Face Pull + Lateral Raise` is optional and acts as a controlled reward / shoulder-health pair.",
+          "`Face Pull + Lateral Raise + T-Y-I Incline Bench` = bloc santé-épaule complet : 3 têtes deltoïdes (avant via bench, latéral, rear) + trapèze inférieur (via Y).",
+          "T-Y-I : 2 sets de 10 reps par position (T pur rear delt, Y trap inf, I trap sup/cervical). Haltères légers, technique stricte. 2 sets suffisent avec Face Pull 3x déjà présent.",
           "Keep all accessory work short of failure and avoid turning the block into junk volume."
         ]
       }
@@ -6164,11 +6187,16 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           {
             "name": "Banded Neck Isometric",
             "prescription": "15-20s"
+          },
+          {
+            "name": "Face Pull",
+            "prescription": "3x12-15"
           }
         ],
         "coachingNotes": [
           "The med ball throw should stay sharp, violent, and technically clean.",
           "Neck work should stay controlled and never become a fatigue contest.",
+          "Face pull : volume pull + santé épaule, équilibre la session face aux contrast push B1.",
           "Front row can use a slightly heavier throw intent and place more emphasis on the neck.",
           "Back three should keep the throw slightly cleaner and faster.",
           "This block should support upper-body transfer, not flatten the player."
@@ -6560,8 +6588,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Pull Support Pair",
-        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "name": "Upper Pull Cluster",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
@@ -6570,13 +6598,17 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           {
             "name": "Chest-Supported Row",
             "prescription": "3x5-6"
+          },
+          {
+            "name": "Face Pull",
+            "prescription": "3x12-15"
           }
         ],
         "coachingNotes": [
-          "Add load only if the player owns full range and clean body position.",
-          "Row should stay strong, clean, and free from torso compensation.",
-          "This block keeps the session efficient while preserving enough total pull volume for Phase 3 maintenance.",
-          "It should feel athletic and useful, not like a back hypertrophy block."
+          "Pull-up : add load only if the player owns full range and clean body position.",
+          "Row : stay strong, clean, no torso compensation.",
+          "Face Pull : rear delt / rotator — double bénéfice volume pull + santé épaule.",
+          "Ce triplet miroir le power cluster B1 pour équilibre push/pull rugby (plaquage, ruck-over)."
         ]
       },
       {
@@ -6802,38 +6834,31 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Main Upper Pull",
-        "format": "`3 work sets`, `2-3 min` rest between sets",
+        "name": "Upper Pull Cluster",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
             "prescription": "3x4-5"
+          },
+          {
+            "name": "T-Bar Row",
+            "prescription": "3x5-6"
+          },
+          {
+            "name": "Face Pull",
+            "prescription": "3x12-15"
           }
         ],
         "coachingNotes": [
-          "Add load to pull-ups only if the player owns full range and clean body position.",
-          "This block keeps a real upper pulling anchor in the session while Block 1 remains the clear driver.",
-          "It should feel forceful and useful, not like a back hypertrophy circuit."
+          "Pull-up : add load only if the player owns full range and clean body position.",
+          "T-Bar row : strong and strict, no torso cheating.",
+          "Face Pull : rear delt / rotator — double bénéfice volume pull + santé épaule pré-saison.",
+          "Ce triplet miroir le power cluster B1 pour équilibre push/pull rugby front-row (plaquage, maul counter-push)."
         ]
       },
       {
         "number": 3,
-        "name": "Secondary Pull Support",
-        "format": "`2 work sets`, `90-120s` rest between sets",
-        "exercises": [
-          {
-            "name": "T-Bar Row",
-            "prescription": "2x5-6"
-          }
-        ],
-        "coachingNotes": [
-          "T-Bar row should stay strong and strict, without torso cheating.",
-          "This is now a reduced support block, not a second major driver.",
-          "Keep it crisp and useful."
-        ]
-      },
-      {
-        "number": 4,
         "name": "Front Row Finisher",
         "format": "`EMOM 6'`",
         "exercises": [
@@ -6857,7 +6882,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ]
       },
       {
-        "number": 5,
+        "number": 4,
         "name": "Mandatory Shoulder Prehab Micro-Block",
         "format": "`1-2 rounds`, `20-30s` rest between drills",
         "exercises": [
@@ -6886,9 +6911,9 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "`W10`: add `+2.5 kg` on the main press only if bar speed, throw quality, and push-up stiffness all stay high.",
       "`W11`: maintain load and improve execution quality rather than forcing more weight.",
       "`W12`: reduce volume around `-30%` while preserving speed and sharpness.",
-      "Reduce Block 4 first if fatigue rises.",
-      "Reduce Block 3 second.",
-      "Keep Block 5 unless shoulder irritability requires a different rehab emphasis.",
+      "Reduce Block 3 (Finisher) first if fatigue rises.",
+      "Reduce Block 2 (Pull Cluster) secondarily — drop Face Pull before Row.",
+      "Keep Block 4 unless shoulder irritability requires a different rehab emphasis.",
       "Keep Block 1 as the protected priority if the athlete is still moving explosively."
     ],
     "positionAccent": [
@@ -7060,12 +7085,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 3,
-        "name": "Reactive Support / Anti-Rotation",
+        "name": "Upper Pull + Anti-Rotation",
         "format": "`3 rounds`, `75-90s` rest",
         "exercises": [
           {
-            "name": "band-assisted split jump",
-            "prescription": "3x4/side"
+            "name": "neutral-grip pull-up",
+            "prescription": "3x4-5"
           },
           {
             "name": "pallof press hold",
@@ -7073,12 +7098,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Reactive split jump for single-leg power.",
-          "Pallof for anti-rotation endurance.",
-          "This replaces the reverse lunge + pallof of the front-row version."
+          "Pull-up: heavy pull to balance the double-push contrast of B1/B2 (Bench + Plyo, Bench + Rotational Throw).",
+          "Pallof: anti-rotation endurance.",
+          "Back three : neutral-grip = transfer plaquage / ruck-over + moins traumatique épaule que barre droite."
         ],
         "fallbackOptions": [
-          "A: `Reverse Lunge` + `Pallof`"
+          "A: `Assisted Neutral-Grip Pull-Up` if needed",
+          "B: `Chest-Supported Row 3x5-6`"
         ]
       },
       {
@@ -7265,11 +7291,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 3,
-        "name": "Unilateral / Trunk Support",
-        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "name": "Upper Pull Cluster + Anti-Rotation",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
         "exercises": [
           {
-            "name": "reverse lunge",
+            "name": "neutral-grip pull-up",
+            "prescription": "3x4-5"
+          },
+          {
+            "name": "single-arm db row",
             "prescription": "3x5-6/side"
           },
           {
@@ -7278,13 +7308,14 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Lunge: force-grade reps (5-6), stable and controlled.",
+          "Pull-up : vertical heavy pull, add load if strong.",
+          "Single-arm row: force-grade reps (5-6), horizontal heavy pull.",
           "Pallof: anti-rotation endurance to support trunk stability for contrast work.",
-          "This block maintains single-leg balance and trunk integrity."
+          "Rugby : traction lourde essentielle pour plaquage / ruck-over / grip maul. Triplet pour équilibrer les 8 sets push contrast de B1/B2."
         ],
         "fallbackOptions": [
-          "A: `Split Squat` DB",
-          "B: `Dead Bug` if no band"
+          "A: `Assisted Neutral-Grip Pull-Up` if needed",
+          "B: `Pendlay Row` if bench unavailable"
         ]
       },
       {
@@ -7684,7 +7715,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "nordic curl",
-            "prescription": "3x4-5"
+            "prescription": "2x4-5"
           },
           {
             "name": "copenhagen hold",
@@ -7693,7 +7724,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ],
         "coachingNotes": [
           "Sprint-resilience: eccentric hamstring + groin robustness.",
-          "Same structure as front-row version."
+          "Nordic réduit 3x→2x pour respecter MRV ham (10 sets/session vs 11 avant). Trap bar + SL-RDL fournissent déjà la dose posterior lourde ; Nordic en finisher prévention.",
+          "Back three = speed-focused : priorité récupération jambes pour sprint/match."
         ]
       },
       {
@@ -8317,11 +8349,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "face pull",
-            "prescription": "2x10-12"
+            "prescription": "3x12-15"
           }
         ],
         "coachingNotes": [
-          "Same structure as front-row. Cable chop at force-grade reps."
+          "Same structure as front-row. Cable chop at force-grade reps.",
+          "Face pull upgradé 2x→3x pour équilibrer le double-push B1 (Bench + Plyo) et B2 (Pull-Up + Throw rotationnel)."
         ]
       }
     ],
@@ -8517,12 +8550,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "face pull",
-            "prescription": "2x10-12"
+            "prescription": "3x12-15"
           }
         ],
         "coachingNotes": [
           "Cable chop at force-grade reps — controlled, powerful rotation.",
-          "Face pull: light, high-rep, shoulder health priority.",
+          "Face pull : upgradé 2x→3x pour équilibrer le push-dominant contrast (B1 + B3).",
           "Keep this block short and efficient."
         ]
       }

@@ -56,6 +56,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'assisted pull-up machine': 'pull_vertical__pull_up__neutral__assisted',
   'neutral-grip lat pulldown': 'pull_vertical__lat_pulldown__machine',
   'face pull': 'prehab_shoulder__face_pull__band',
+  't-y-i incline bench': 'prehab_shoulder__tyi__incline_bench',
+  'tyi incline bench': 'prehab_shoulder__tyi__incline_bench',
 
   // ── Hinge / Hip ─────────────────────────────────────────────
   'barbell hip thrust': 'hinge__hip_thrust__barbell',
