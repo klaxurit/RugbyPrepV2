@@ -351,7 +351,7 @@ export function ProfilePage() {
   const positionIllustration = getPositionIllustration(profile.rugbyPosition ?? profile.position)
 
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
@@ -788,8 +788,10 @@ export function ProfilePage() {
         </section>
 
         <CollapsibleSection
-          title="Mon club"
-          subtitle="Club FFR, compétition, planning d'entraînement et jour de match."
+          title={profile.seasonMode === 'off_season' ? 'Mes seances' : 'Mon club'}
+          subtitle={profile.seasonMode === 'off_season'
+            ? 'Choisis librement tes jours de muscu en inter-saison.'
+            : 'Club FFR, competition, planning d\'entrainement et jour de match.'}
           icon={<Calendar className="w-4 h-4" />}
           iconClassName="bg-ok-bg-muted text-ok border border-ok-bd"
           testId="profile-section-club"

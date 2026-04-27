@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
-import { RefreshCw, Trophy } from 'lucide-react'
+import { Dumbbell, RefreshCw, Trophy } from 'lucide-react'
 import { useProfile } from '../../hooks/useProfile'
 import { useCalendar } from '../../hooks/useCalendar'
 import { fetchCompetitions } from '../../services/calendar/ffrSyncService'
 import { getClubLogoUrl, getClubMonogram } from '../../services/ui/clubLogos'
 import { ClubSearchInput } from '../match/ClubSearchInput'
 import { GymDaySelector } from '../GymDaySelector'
-import { buildManualSCSchedule, computeSCSchedule } from '../../services/program/scheduleOptimizer'
+import { buildManualSCSchedule, computeSCSchedule, TRAINING_DAYS_DEFAULT } from '../../services/program/scheduleOptimizer'
 import type { ClubSchedule, DayOfWeek, FfrCompetition } from '../../types/training'
 
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
@@ -177,6 +177,61 @@ export function ClubSettingsSection() {
 
   const clubLogoUrl = getClubLogoUrl(profile.clubCode)
   const clubMonogram = getClubMonogram(profile.clubName)
+
+  // ── Off-season: simplified gym-only selector ──
+  if (profile.seasonMode === 'off_season') {
+    const gymDays = new Set<DayOfWeek>(
+      profile.scSchedule?.sessions.map((s) => s.day) ??
+      TRAINING_DAYS_DEFAULT[profile.weeklySessions],
+    )
+
+    const toggleGymDay = (day: DayOfWeek) => {
+      const next = new Set(gymDays)
+      if (next.has(day)) next.delete(day)
+      else next.add(day)
+      updateProfile({
+        scSchedule: buildManualSCSchedule(Array.from(next)),
+        clubSchedule: undefined,
+      })
+    }
+
+    return (
+      <div className="space-y-3">
+        <p className="text-xs font-black text-fg-muted uppercase tracking-wide">
+          {profile.weeklySessions === 3 ? '3 seances par semaine' : '2 seances par semaine'}
+        </p>
+        <div className="grid grid-cols-7 gap-1.5">
+          {CLUB_DAYS_OPTIONS.map((opt) => {
+            const selected = gymDays.has(opt.day)
+            return (
+              <button
+                key={opt.day}
+                type="button"
+                onClick={() => toggleGymDay(opt.day)}
+                className={`aspect-square rounded-xl text-xs font-black border-2 transition-all flex flex-col items-center justify-center relative ${
+                  selected
+                    ? 'border-brand bg-brand-soft text-brand-tint'
+                    : 'border-border-app bg-layer-5 text-fg-muted hover:border-layer-15'
+                }`}
+              >
+                {opt.short}
+                {selected && (
+                  <Dumbbell
+                    className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 text-brand"
+                    strokeWidth={2.5}
+                    aria-hidden
+                  />
+                )}
+              </button>
+            )
+          })}
+        </div>
+        <p className="text-[11px] text-fg-muted leading-relaxed">
+          Inter-saison — pas de contrainte club. Choisis les jours qui t&apos;arrangent.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-5">

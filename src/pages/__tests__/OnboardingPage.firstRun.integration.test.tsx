@@ -42,6 +42,7 @@ vi.mock('react-router-dom', async () => {
 vi.mock('../../services/program/scheduleOptimizer', () => ({
   computeSCSchedule: () => ({ sessions: [] }),
   buildManualSCSchedule: () => ({ sessions: [] }),
+  TRAINING_DAYS_DEFAULT: { 2: [2, 4], 3: [1, 3, 5] },
 }))
 
 function renderOnboarding(state?: Record<string, unknown>) {
@@ -150,8 +151,8 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByTestId('onboarding-baseline-active'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    // Step 3: Planning → skip
-    fireEvent.click(screen.getByText(/Pas d'entraînement club/))
+    // Step 3: Planning (off-season: gym day selector, no skip button)
+    fireEvent.click(screen.getAllByText('Suivant')[0])
     // Step 4: Morphologie → skip
     fireEvent.click(screen.getByText('Passer cette étape'))
 

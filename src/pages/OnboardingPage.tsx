@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   ChevronLeft, ChevronRight, CheckCircle2, Check,
@@ -32,7 +32,7 @@ import type {
   TrainingBaseline,
 } from '../types/training'
 import type { AnnualCycle } from '../types/annualPlanning'
-import { computeSCSchedule } from '../services/program/scheduleOptimizer'
+import { computeSCSchedule, TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
 // betaEligibility import removed — all profiles eligible since V2 launch
 
 // ─── Types ────────────────────────────────────────────────────
@@ -239,9 +239,19 @@ export function OnboardingPage() {
   const [clubDays, setClubDays] = useState<Set<DayOfWeek>>(new Set())
   const [matchDay, setMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
   const [scSchedule, setScSchedule] = useState<SCSchedule | undefined>(undefined)
+  const [offSeasonGymDays, setOffSeasonGymDays] = useState<Set<DayOfWeek>>(new Set())
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
   const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const isOffSeason = seasonPhase === 'off_season'
+
+  // Pre-fill gym days when sessions count is known in off-season
+  useEffect(() => {
+    if (isOffSeason && sessions) {
+      setOffSeasonGymDays(new Set(TRAINING_DAYS_DEFAULT[sessions]))
+    }
+  }, [isOffSeason, sessions])
 
   const STEPS = ['Position', 'Profil', 'Situation', 'Planning', 'Morphologie', 'Résumé']
   const progress = (step / (STEPS.length - 1)) * 100
@@ -269,7 +279,19 @@ export function OnboardingPage() {
   }
 
   const handleClubScheduleNext = () => {
-    if (clubDays.size > 0 && sessions !== null) {
+    if (isOffSeason && sessions !== null) {
+      // Off-season: use freely chosen gym days, no club schedule
+      const gymDays = offSeasonGymDays.size > 0
+        ? [...offSeasonGymDays]
+        : TRAINING_DAYS_DEFAULT[sessions]
+      setScSchedule({
+        sessions: gymDays.sort((a, b) => a - b).map((day, i) => ({
+          sessionIndex: i as 0 | 1 | 2,
+          day,
+        })),
+        source: 'manual',
+      })
+    } else if (clubDays.size > 0 && sessions !== null) {
       const cs = buildClubSchedule()!
       setScSchedule(computeSCSchedule(cs, sessions))
     }
@@ -278,7 +300,7 @@ export function OnboardingPage() {
 
   const handleFinish = async () => {
     try {
-      const clubSchedule = buildClubSchedule()
+      const clubSchedule = isOffSeason ? undefined : buildClubSchedule()
       const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
       const derivedPopulationSegment: PopulationSegment =
         gender === 'female' ? 'female_senior' : 'male_senior'
@@ -625,8 +647,58 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 3 : Planning club ── */}
-        {step === 3 && (
+        {/* ── Step 3 : Planning ── */}
+        {step === 3 && isOffSeason && (
+          <div className="space-y-6">
+            <StepTitle
+              title="Tes jours de muscu"
+              sub="Pas de club en inter-saison — choisis tes jours librement."
+            />
+
+            <div className="space-y-3">
+              <SectionLabel>{sessions === 3 ? '3 séances par semaine' : '2 séances par semaine'}</SectionLabel>
+              <div className="grid grid-cols-7 gap-1.5">
+                {CLUB_DAYS_OPTIONS.map((opt) => {
+                  const selected = offSeasonGymDays.has(opt.day)
+                  return (
+                    <button
+                      key={opt.day}
+                      type="button"
+                      onClick={() => {
+                        setOffSeasonGymDays((prev) => {
+                          const next = new Set(prev)
+                          if (next.has(opt.day)) { next.delete(opt.day) } else { next.add(opt.day) }
+                          return next
+                        })
+                      }}
+                      className={`relative aspect-square flex flex-col items-center justify-center rounded-xl border-2 transition-all text-center active:scale-[.94] rf-focus-ring ${
+                        selected
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
+                      }`}
+                    >
+                      <span className={`text-[12px] font-black ${selected ? 'text-brand-tint' : 'text-fg-soft'}`}>
+                        {opt.short}
+                      </span>
+                      {selected && (
+                        <Dumbbell
+                          className="absolute bottom-1 right-1 w-2.5 h-2.5 text-brand"
+                          strokeWidth={2.5}
+                          aria-hidden
+                        />
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+              <p className="text-[11px] text-fg-muted leading-relaxed">
+                Tu pourras modifier tes jours a tout moment dans ton profil.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {step === 3 && !isOffSeason && (
           <div className="space-y-6">
             <StepTitle
               title="Ton planning club"
@@ -955,13 +1027,15 @@ export function OnboardingPage() {
               Suivant
               <ChevronRight className="w-4 h-4" />
             </button>
-            <button
-              type="button"
-              onClick={() => setStep((s) => s + 1)}
-              className="w-full py-2.5 rounded-2xl text-sm font-bold text-fg-muted hover:text-fg-soft transition-colors text-center"
-            >
-              Pas d'entraînement club — passer
-            </button>
+            {!isOffSeason && (
+              <button
+                type="button"
+                onClick={() => setStep((s) => s + 1)}
+                className="w-full py-2.5 rounded-2xl text-sm font-bold text-fg-muted hover:text-fg-soft transition-colors text-center"
+              >
+                Pas d'entraînement club — passer
+              </button>
+            )}
           </div>
         </div>
       )}
