@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   ChevronLeft, ChevronRight, CheckCircle2, Check,
@@ -239,19 +239,16 @@ export function OnboardingPage() {
   const [clubDays, setClubDays] = useState<Set<DayOfWeek>>(new Set())
   const [matchDay, setMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
   const [scSchedule, setScSchedule] = useState<SCSchedule | undefined>(undefined)
-  const [offSeasonGymDays, setOffSeasonGymDays] = useState<Set<DayOfWeek>>(new Set())
+  const [offSeasonGymDays, setOffSeasonGymDays] = useState<Set<DayOfWeek> | null>(null)
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   const isOffSeason = seasonPhase === 'off_season'
 
-  // Pre-fill gym days when sessions count is known in off-season
-  useEffect(() => {
-    if (isOffSeason && sessions) {
-      setOffSeasonGymDays(new Set(TRAINING_DAYS_DEFAULT[sessions]))
-    }
-  }, [isOffSeason, sessions])
+  // Derive default gym days for off-season (no setState in effect needed)
+  const effectiveOffSeasonGymDays: Set<DayOfWeek> = offSeasonGymDays
+    ?? (sessions ? new Set(TRAINING_DAYS_DEFAULT[sessions]) : new Set())
 
   const STEPS = ['Position', 'Profil', 'Situation', 'Planning', 'Morphologie', 'Résumé']
   const progress = (step / (STEPS.length - 1)) * 100
@@ -281,8 +278,8 @@ export function OnboardingPage() {
   const handleClubScheduleNext = () => {
     if (isOffSeason && sessions !== null) {
       // Off-season: use freely chosen gym days, no club schedule
-      const gymDays = offSeasonGymDays.size > 0
-        ? [...offSeasonGymDays]
+      const gymDays = effectiveOffSeasonGymDays.size > 0
+        ? [...effectiveOffSeasonGymDays]
         : TRAINING_DAYS_DEFAULT[sessions]
       setScSchedule({
         sessions: gymDays.sort((a, b) => a - b).map((day, i) => ({
@@ -659,14 +656,14 @@ export function OnboardingPage() {
               <SectionLabel>{sessions === 3 ? '3 séances par semaine' : '2 séances par semaine'}</SectionLabel>
               <div className="grid grid-cols-7 gap-1.5">
                 {CLUB_DAYS_OPTIONS.map((opt) => {
-                  const selected = offSeasonGymDays.has(opt.day)
+                  const selected = effectiveOffSeasonGymDays.has(opt.day)
                   return (
                     <button
                       key={opt.day}
                       type="button"
                       onClick={() => {
                         setOffSeasonGymDays((prev) => {
-                          const next = new Set(prev)
+                          const next = new Set(prev ?? effectiveOffSeasonGymDays)
                           if (next.has(opt.day)) { next.delete(opt.day) } else { next.add(opt.day) }
                           return next
                         })
