@@ -27,6 +27,7 @@ export function AddMatchModal({ initialDate, existingEvents, onClose, onSave }: 
   const [opponent, setOpponent] = useState('')
   const [opponentCode, setOpponentCode] = useState<string | undefined>()
   const [venueKind, setVenueKind] = useState<'home' | 'away' | 'neutral' | undefined>(undefined)
+  const [venue, setVenue] = useState('')
   const [saving, setSaving] = useState(false)
   const [confirmDuplicate, setConfirmDuplicate] = useState(false)
 
@@ -60,6 +61,7 @@ export function AddMatchModal({ initialDate, existingEvents, onClose, onSave }: 
       ...(venueKind === 'home' ? { is_home: true } : {}),
       ...(venueKind === 'away' ? { is_home: false } : {}),
       ...(venueKind === 'neutral' ? { is_neutral: true } : {}),
+      ...(venue.trim() ? { venue: venue.trim() } : {}),
     })
     setSaving(false)
     onClose()
@@ -141,6 +143,17 @@ export function AddMatchModal({ initialDate, existingEvents, onClose, onSave }: 
               </button>
             ))}
           </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-black text-fg-muted uppercase tracking-wide mb-2 block">Stade / Ville (optionnel)</label>
+          <input
+            type="text"
+            value={venue}
+            onChange={(e) => setVenue(e.target.value)}
+            placeholder="Ex: Stade Marcel Michelin"
+            className="w-full border border-border-app bg-layer-5 rounded-2xl px-4 py-3 text-sm text-fg placeholder:text-fg-faint focus:outline-none focus:border-brand rf-focus-ring"
+          />
         </div>
 
         {confirmDuplicate && duplicateFFR && (

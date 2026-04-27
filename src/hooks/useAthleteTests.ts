@@ -88,12 +88,13 @@ export const useAthleteTests = () => {
 
   const addTest = useCallback(
     async (test: Omit<PhysicalTest, 'id'>) => {
-      const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-      const next: PhysicalTest = { ...test, id }
       if (userId) {
+        // Let Supabase generate UUID — don't send client-side id
+        const { id: _omit, ...rowWithoutId } = testToRow({ ...test, id: '' }, userId)
+        void _omit
         const { data, error } = await supabase
           .from('athletic_tests')
-          .insert(testToRow(next, userId))
+          .insert(rowWithoutId)
           .select('id, date_iso, type, value, estimated_from, notes')
           .single()
         if (!error && data) {
@@ -107,7 +108,9 @@ export const useAthleteTests = () => {
         }
       }
 
-      // Offline fallback
+      // Offline fallback — use local id
+      const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      const next: PhysicalTest = { ...test, id }
       setTests((current) => {
         const updated = sortNewestFirst([next, ...current])
         saveToStorage(updated, userId)

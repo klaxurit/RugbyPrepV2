@@ -24,6 +24,7 @@ import { useRegisterCoachContext } from '../contexts/CoachContext'
 import { NextMatchCard } from '../components/match/NextMatchCard'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 import { AddMatchModal } from '../components/match/AddMatchModal'
+import { ClubSearchInput } from '../components/match/ClubSearchInput'
 import { MonthlyMatchGrid } from '../components/calendar/MonthlyMatchGrid'
 import { CalendarWeekTimeline } from '../components/scheduling/CalendarWeekTimeline'
 import { WeekPlanningLegend } from '../components/planning'
@@ -249,7 +250,7 @@ export function WeekPage() {
   if (hasHardBlock) {
     const hardBlockTitle = lang === 'fr' ? 'Ma Semaine' : 'My Week'
     return (
-      <div className="min-h-screen bg-app font-sans text-fg pb-24">
+      <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav">
         <PageHeader title={hardBlockTitle} backTo="/home" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="bg-warn-bg border border-warn-bd-strong rounded-2xl p-5 space-y-3">
@@ -273,7 +274,7 @@ export function WeekPage() {
   }
 
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
@@ -504,11 +505,12 @@ export function WeekPage() {
         {/* Add match CTA */}
         {!hasWeekMatch && msResolution && surface && (
           <AddMatchInline
-            onAddMatch={async (date, opponent) => {
+            onAddMatch={async (date, opponent, opponentCode) => {
               const matchPayload = {
                 date,
                 type: 'match' as const,
                 opponent: opponent || undefined,
+                opponent_code: opponentCode || undefined,
                 is_home: true,
                 source: 'manual' as const,
               }
@@ -591,19 +593,19 @@ function AddMatchInline({
   lang,
   today,
 }: {
-  onAddMatch: (date: string, opponent: string) => void
+  onAddMatch: (date: string, opponent: string, opponentCode?: string) => void
   lang: 'fr' | 'en'
   today: string
 }) {
   const [open, setOpen] = useState(false)
   const [date, setDate] = useState(() => {
-    // Default to next Saturday
     const d = new Date(today)
     const dow = d.getDay()
     d.setDate(d.getDate() + ((6 - dow + 7) % 7 || 7))
     return d.toISOString().split('T')[0]
   })
   const [opponent, setOpponent] = useState('')
+  const [opponentCode, setOpponentCode] = useState<string | undefined>()
 
   if (!open) {
     return (
@@ -629,19 +631,17 @@ function AddMatchInline({
       <p className="text-xs font-black text-fg">
         {lang === 'fr' ? 'Ajouter un match' : 'Add a match'}
       </p>
-      <div className="flex gap-2">
+      <div className="space-y-2">
         <input
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="flex-1 bg-layer-10 border border-border-app rounded-xl px-3 py-2 text-xs text-fg rf-focus-ring"
+          className="w-full bg-layer-10 border border-border-app rounded-xl px-3 py-2 text-xs text-fg rf-focus-ring"
         />
-        <input
-          type="text"
-          placeholder={lang === 'fr' ? 'Adversaire' : 'Opponent'}
+        <ClubSearchInput
           value={opponent}
-          onChange={(e) => setOpponent(e.target.value)}
-          className="flex-1 bg-layer-10 border border-border-app rounded-xl px-3 py-2 text-xs text-fg placeholder:text-fg-faint rf-focus-ring"
+          clubCode={opponentCode}
+          onChange={(name, code) => { setOpponent(name); setOpponentCode(code) }}
         />
       </div>
       <div className="flex gap-2">
@@ -657,9 +657,10 @@ function AddMatchInline({
           data-testid="add-match-confirm"
           onClick={() => {
             if (date) {
-              onAddMatch(date, opponent)
+              onAddMatch(date, opponent, opponentCode)
               setOpen(false)
               setOpponent('')
+              setOpponentCode(undefined)
             }
           }}
           className="flex-1 py-2 rounded-xl bg-brand text-xs font-black text-on-brand hover:bg-brand-hover transition-colors"
