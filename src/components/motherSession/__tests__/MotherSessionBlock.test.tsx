@@ -70,9 +70,9 @@ describe('MotherSessionBlock', () => {
       format: '2 rounds',
       exercises: [
         {
-          name: 'Farmer carry',
-          exerciseId: 'carry__farmer_walk__dumbbell',
-          prescription: '20m',
+          name: 'Neck isometric',
+          exerciseId: 'neck__isometric__band',
+          prescription: '3x10s',
         },
       ],
       coachingNotes: [],

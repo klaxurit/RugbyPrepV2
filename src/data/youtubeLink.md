@@ -1,131 +1,285 @@
-PRIORITÉ HAUTE (17) — technique complexe, risque blessure
+Exercices utilisés dans les programmes actuels (mother sessions)
 
-┌──────────────────────────────────┬──────────────┐
-│ Exercice │ Lien YouTube │
-├──────────────────────────────────┼──────────────┤
-│ Hang High Pull │ https://www.youtube.com/shorts/e1E6TGWiUac │
-├──────────────────────────────────┼──────────────┤
-│ Clean High Pull │ https://www.youtube.com/shorts/er9Rc2S_kLA │
-├──────────────────────────────────┼──────────────┤
-│ Power clean (hang) │ https://www.youtube.com/shorts/CCZK0ouzd4A │
-├──────────────────────────────────┼──────────────┤
-│ Snatch haltère 1 bras │ https://www.youtube.com/watch?v=3mlhF3dptAo │
-├──────────────────────────────────┼──────────────┤
-│ Hang clean pull │ https://www.youtube.com/shorts/yz4KXzZHAE8 │
-├──────────────────────────────────┼──────────────┤
-│ Nordic hamstring partenaire │ https://www.youtube.com/shorts/GzxNzNRy9T0 │
-├──────────────────────────────────┼──────────────┤
-│ Nordic hamstring élastique │ https://www.youtube.com/shorts/paVZ-Vrm6Z4 │
-├──────────────────────────────────┼──────────────┤
-│ Copenhagen court │ https://www.youtube.com/shorts/Rwap0_j5i5A │
-├──────────────────────────────────┼──────────────┤
-│ Copenhagen long │ https://www.youtube.com/shorts/tgK5r1no_BU │
-├──────────────────────────────────┼──────────────┤
-│ Copenhagen plank lesté │ https://www.youtube.com/shorts/dhw1wsOSA1c │
-├──────────────────────────────────┼──────────────┤
-│ Bulgarian split squat haltères │ https://www.youtube.com/shorts/or1frhkjBDc │
-├──────────────────────────────────┼──────────────┤
-│ Pistol squat sur box │ https://www.youtube.com/shorts/D5Iib9ZEkk8 │
-├──────────────────────────────────┼──────────────┤
-│ RDL unipodal haltère │ https://www.youtube.com/shorts/_C5ySSb9N28 │
-├──────────────────────────────────┼──────────────┤
-│ World's Greatest Stretch │ https://www.youtube.com/watch?v=-CiWQ2IvY34 │
-├──────────────────────────────────┼──────────────┤
-│ Étirement hanche 90/90 │ https://www.youtube.com/shorts/NTV0hCylL-I │
-├──────────────────────────────────┼──────────────┤
-│ Couch Stretch │ https://www.youtube.com/shorts/D2ZzwlSYgeE │
-├──────────────────────────────────┼──────────────┤
-│ Pigeon - rotation externe hanche │ https://www.youtube.com/shorts/pjmR5Kacu1w │
-└──────────────────────────────────┴──────────────┘
+Total : 108 exercices référencés via motherSessionExerciseMap.ts (= seuls exos loggables actuellement)
+Avec vidéo : 68 — À compléter : 40
 
-PRIORITÉ MOYENNE (31) — exécution subtile
+Source : src/services/motherSession/motherSessionExerciseMap.ts
+Catalogue : src/data/exercices.v1.json (champ videoUrl ou EXERCISE_DEMOS)
 
-┌─────────────────────────────────────┬──────────────┐
-│ Exercice │ Lien YouTube │
-├─────────────────────────────────────┼──────────────┤
-│ Dead bug (anti-extension) │ https://www.youtube.com/shorts/DqLL45uk2Tk │
-├─────────────────────────────────────┼──────────────┤
-│ Bird dog │ https://www.youtube.com/shorts/X0FpQEjEA40 │
-├─────────────────────────────────────┼──────────────┤
-│ Gainage creux (hollow hold) │ https://www.youtube.com/shorts/_wBPcny-7Hc │
-├─────────────────────────────────────┼──────────────┤
-│ Pallof press élastique │ https://www.youtube.com/shorts/bnpqMNtaBIA │
-├─────────────────────────────────────┼──────────────┤
-│ Face pull élastique │ https://www.youtube.com/shorts/1s-0WtJMsu8 │
-├─────────────────────────────────────┼──────────────┤
-│ Face pull élastique debout │ https://www.youtube.com/shorts/1s-0WtJMsu8 │
-├─────────────────────────────────────┼──────────────┤
-│ Rowing inversé (pompe australienne) │ https://www.youtube.com/shorts/vZy_Eu_Z0WA │
-├─────────────────────────────────────┼──────────────┤
-│ Good Morning poids du corps │ https://www.youtube.com/shorts/gMaBKExWnFI │
-├─────────────────────────────────────┼──────────────┤
-│ Roue abdominale à genoux │ https://www.youtube.com/shorts/kFv2rLtgc8w │
-├─────────────────────────────────────┼──────────────┤
-│ Serratus reach allongé │ Introuvable │
-├─────────────────────────────────────┼──────────────┤
-│ Box jump │ https://www.youtube.com/shorts/bXgFx93CGow │
-├─────────────────────────────────────┼──────────────┤
-│ Box Squat Jump │ https://www.youtube.com/watch?v=k7dmYdknbac │
-├─────────────────────────────────────┼──────────────┤
-│ Squat jump │ https://www.youtube.com/watch?v=BRfxI2Es2lE │
-├─────────────────────────────────────┼──────────────┤
-│ Fente sautée │ https://www.youtube.com/shorts/x6GB7M7IvQQ │
-├─────────────────────────────────────┼──────────────┤
-│ Bond latéral │ https://www.youtube.com/shorts/ZkYORFHgRTw │
-├─────────────────────────────────────┼──────────────┤
-│ Bounds unilatéraux │ même qu'au dessus no n? │
-├─────────────────────────────────────┼──────────────┤
-│ Pogo hops bas │ https://www.youtube.com/shorts/s_qM8NDHp1k │
-├─────────────────────────────────────┼──────────────┤
-│ Split jump assisté bande │ https://www.youtube.com/shorts/hNqqFIldbeg │
-├─────────────────────────────────────┼──────────────┤
-│ Montée pliométrique sur box │ https://www.youtube.com/shorts/D4iulYo-udo │
-├─────────────────────────────────────┼──────────────┤
-│ Pompes pliométriques │ https://www.youtube.com/shorts/oTfU-qt6cGc │
-├─────────────────────────────────────┼──────────────┤
-│ Landmine press à genoux │ https://www.youtube.com/watch?v=39lH32_Ukos │
-├─────────────────────────────────────┼──────────────┤
-│ Landmine press vitesse │ https://www.youtube.com/watch?v=p-skt3yYHn8 │
-├─────────────────────────────────────┼──────────────┤
-│ Rotation à la landmine │ https://www.youtube.com/watch?v=e5DP6961WEk │
-├─────────────────────────────────────┼──────────────┤
-│ Rowing à la landmine │ https://www.youtube.com/shorts/Sr2q7i-i8X0 │
-├─────────────────────────────────────┼──────────────┤
-│ Seal row barre │ https://www.youtube.com/shorts/YSW2SKoiN1s │
-├─────────────────────────────────────┼──────────────┤
-│ Zercher carry │ https://www.youtube.com/shorts/IU9yYNTON38 │
-├─────────────────────────────────────┼──────────────┤
-│ Box squat barre │ https://www.youtube.com/shorts/2aIgi73HIw8 │
-├─────────────────────────────────────┼──────────────┤
-│ Pin squat barre │ https://www.youtube.com/shorts/-m8qDAVcKn8 │
-├─────────────────────────────────────┼──────────────┤
-│ Squat Anderson box bandé │ https://www.youtube.com/shorts/pD2vnqrApzU │
-├─────────────────────────────────────┼──────────────┤
-│ Gainage anti-extension sur GHD │ https://www.youtube.com/shorts/EjuzZs6JJrE │
-├─────────────────────────────────────┼──────────────┤
-│ Rotations sur GHD │ https://www.youtube.com/watch?v=AItu4tPTM8Y │
-└─────────────────────────────────────┴──────────────┘
+A. Échauffement / Mobilité — 6 exos (4 avec vidéo)
 
-PRIORITÉ BASSE (9) — utile mais moins critique
+┌──────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                     │ Lien YouTube                                               │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ A-Skip                       │ https://www.youtube.com/shorts/5j2QHj5wpr4                 │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Etirement hanche 90/90       │ https://www.youtube.com/shorts/NTV0hCylL-I                 │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Mobilité adducteurs          │                                                            │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Mobilité cheville            │                                                            │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rotation thoracique assis    │ https://www.youtube.com/shorts/l3Ze_9iXL-M                 │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Wall drill march             │ https://www.youtube.com/shorts/yC3Vpiv9InY                 │
+└──────────────────────────────┴────────────────────────────────────────────────────────────┘
 
-┌───────────────────────────────────┬──────────────┐
-│ Exercice │ Lien YouTube │
-├───────────────────────────────────┼──────────────┤
-│ Slam médecine ball │ https://www.youtube.com/shorts/99DLQtHP7jE │
-├───────────────────────────────────┼──────────────┤
-│ Lancer médecine ball poitrine mur │ https://www.youtube.com/shorts/LS75csmzdAE │
-├───────────────────────────────────┼──────────────┤
-│ Lancer rotationnel medball │ https://www.youtube.com/shorts/02c2YLgF8iE │
-├───────────────────────────────────┼──────────────┤
-│ Lancer médecine ball allongé │ https://www.youtube.com/watch?v=setdYqyMRC4 │
-├───────────────────────────────────┼──────────────┤
-│ Cable Slam haut vers bas │ https://www.youtube.com/watch?v=EdFOej2lMMI │
-├───────────────────────────────────┼──────────────┤
-│ Sprint RSA 40m │ │
-├───────────────────────────────────┼──────────────┤
-│ Navette 5-10-5 │ https://www.youtube.com/shorts/AVRhI8bX7ys │
-├───────────────────────────────────┼──────────────┤
-│ Wall drill march │ https://www.youtube.com/shorts/yC3Vpiv9InY │
-├───────────────────────────────────┼──────────────┤
-│ A-Skip │ https://www.youtube.com/shorts/5j2QHj5wpr4 │
-└───────────────────────────────────┴──────────────┘
+B. Prehab / Réhab / Prévention — 11 exos (10 avec vidéo)
+
+┌──────────────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                                     │ Lien YouTube                                               │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Bridge isométrique une jambe                 │ https://www.youtube.com/shorts/VOTe7_T7aSY                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Copenhagen court                             │ https://www.youtube.com/shorts/Rwap0_j5i5A                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Copenhagen plank lesté (ou levier difficile) │ https://www.youtube.com/shorts/dhw1wsOSA1c                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Élévations T-Y-I sur banc incliné            │ https://www.youtube.com/shorts/p6qJlRFmiNA                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Face pull élastique                          │ https://www.youtube.com/shorts/1s-0WtJMsu8                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Nordic hamstring partenaire                  │ https://www.youtube.com/shorts/GzxNzNRy9T0                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Pompes scapulaires                           │ https://www.youtube.com/shorts/SBPRhZI2RkI                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Relevé tibial                                │ https://www.youtube.com/shorts/lMKn73Mh3AI                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rotation externe élastique                   │ https://www.youtube.com/shorts/-iZk7v8eVnU                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Serrage ballon adducteurs                    │ https://www.youtube.com/shorts/xMEQd06Ekxg                 │
+├──────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Serratus reach allongé                       │ Introuvable                                                │
+└──────────────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+
+C. Cou (neck) — 2 exos (0 avec vidéo)
+
+┌─────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                            │ Lien YouTube                                               │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Extension cervicale bande           │                                                            │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Gainage cou isométrique (élastique) │                                                            │
+└─────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+
+D. Bas du corps — Force / Hypertrophie — 22 exos (16 avec vidéo)
+
+┌────────────────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                                       │ Lien YouTube                                               │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Back squat barre                               │ https://www.youtube.com/shorts/dW3zj79xfrc                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Box squat barre                                │ https://www.youtube.com/shorts/2aIgi73HIw8                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Bulgarian split squat haltères                 │ https://www.youtube.com/shorts/or1frhkjBDc                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Curl ischios machine                           │ pour les exos a la machine pas besoin de video il y a des exemple surt la machine meme │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Fente arrière barre                            │ https://www.youtube.com/shorts/hk9BrUY3KYI                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Front squat barre                              │ https://www.youtube.com/watch?v=uYumuL_G_V0                │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Goblet squat haltère                           │ https://www.youtube.com/watch?v=M0zQn0ZCkAU                │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Hack squat machine                             │ https://www.youtube.com/watch?v=rYgNArpwE7E                │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Hip thrust barre                               │ https://www.youtube.com/shorts/-Be-IO1C2JQ                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Leg extension machine                          │                                                            │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Pin squat barre                                │ https://www.youtube.com/shorts/-m8qDAVcKn8                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Pont fessier (poids du corps)                  │ https://www.youtube.com/shorts/LORVjN2bg5o                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ RDL hex bar                                    │     https://www.youtube.com/shorts/ZJPZQklCSLs                                                       │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ RDL unipodal haltère                           │ https://www.youtube.com/shorts/_C5ySSb9N28                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Soulevé de terre jambes tendues barre (RDL)    │ https://www.youtube.com/watch?v=xgusDooVfKU                │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Soulevé de terre jambes tendues haltères (RDL) │ https://www.youtube.com/watch?v=O2dUYS-YYus                │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Soulevé de terre trap bar                      │ https://www.youtube.com/watch?v=FYx76NSijfU                │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Split squat haltères                           │ https://www.youtube.com/shorts/_HukgYk7lTw                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Split squat isométrique                        │  https://www.youtube.com/shorts/Y_XGq28Salk                                                          │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Squat Anderson box bandé                       │ https://www.youtube.com/shorts/pD2vnqrApzU                 │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Squat poids du corps                           │                                                            │
+├────────────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Swing kettlebell bandé                         │    https://www.youtube.com/shorts/UTeTxHUxmaQ                                                        │
+└────────────────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+
+E. Haut du corps — Force / Hypertrophie — 22 exos (14 avec vidéo)
+
+┌─────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                            │ Lien YouTube                                               │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Développé couché barre              │ https://www.youtube.com/watch?v=sRuKSZLcmWM                │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Développé couché football bar       │ https://www.youtube.com/shorts/q6qzuGPp17E                                                           │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Développé couché haltères           │ https://www.youtube.com/shorts/OmMnAhfm5jA                 │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Développé épaules haltères assis    │ https://www.youtube.com/watch?v=NQ-JJYay1TM                │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Développé épaules machine           │                                                            │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Développé incliné haltères          │ https://www.youtube.com/shorts/5dHSefcTxGI                 │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Développé militaire debout barre    │ https://www.youtube.com/shorts/hNGNfSm-3X8                 │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Landmine press à genoux             │ https://www.youtube.com/watch?v=39lH32_Ukos                │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Pendlay row barre                   │ https://www.youtube.com/shorts/tYxEGi7ir4I                 │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Pompes inclinées (mains surélevées) │ inutile de mettre une video pour ça                        │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Pompes pliométriques                │ https://www.youtube.com/shorts/oTfU-qt6cGc                 │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rowing à la landmine                │ https://www.youtube.com/shorts/Sr2q7i-i8X0                 │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rowing câble demi-genou             │ https://www.youtube.com/shorts/IJNHCNaY1vE
+                                                           │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rowing inversé (pompe australienne) │ https://www.youtube.com/shorts/vZy_Eu_Z0WA                 │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rowing machine poitrine appuyée     │  https://www.youtube.com/shorts/yrRHFZ3MDxA                                                          │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rowing poitrine sur banc            │ https://www.youtube.com/shorts/oNsqMW1gPiU                 │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rowing poulie assis                 │ https://www.youtube.com/shorts/ywy47SjQ-_w                                                           │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rowing T-Bar                        │ https://www.youtube.com/watch?v=iO0xxKVTT9E                │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rowing unilatéral haltère           │ https://www.youtube.com/shorts/xFFDWJzQjsI                 │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Tirage vertical (poulie)            │ https://www.youtube.com/shorts/BHQ692ZKMRI                                                           │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Tractions assistées prise neutre    │                                                            │
+├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Tractions prise neutre              │ https://www.youtube.com/shorts/h61PA2CfUFI                 │
+└─────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+
+F. Puissance / Power / Pliométrie — 16 exos (13 avec vidéo)
+
+┌──────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                             │ Lien YouTube                                               │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Band pull-apart au-dessus de la tête │   https://www.youtube.com/shorts/lRsWFG4e-UE                                                         │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Bond latéral                         │ https://www.youtube.com/shorts/ZkYORFHgRTw                 │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Box jump                             │ https://www.youtube.com/shorts/bXgFx93CGow                 │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Cable Press explosif unilatéral      │ https://www.youtube.com/watch?v=CLyqpDS2OpU                │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Cable Slam haut vers bas             │ https://www.youtube.com/watch?v=EdFOej2lMMI                │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Lancer médecine ball allongé         │ https://www.youtube.com/watch?v=setdYqyMRC4                │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Lancer medecine ball poitrine mur    │ https://www.youtube.com/shorts/LS75csmzdAE                 │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Lancer rotationnel medball           │ https://www.youtube.com/shorts/02c2YLgF8iE                 │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Landmine press vitesse               │ https://www.youtube.com/watch?v=p-skt3yYHn8                │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Pogo hops bas                        │ https://www.youtube.com/shorts/s_qM8NDHp1k                 │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Push press barre                     │ https://www.youtube.com/watch?v=HKx22sWywxc                │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Saut en longueur                     │ https://www.youtube.com/watch?v=2t9q0GMQ1IE                                                           │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Saut vertical CMJ                    │ https://www.youtube.com/shorts/zWeR8sNZEF8                                                           │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Slam medecine ball                   │ https://www.youtube.com/shorts/99DLQtHP7jE                 │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Split jump assisté bande             │ https://www.youtube.com/shorts/hNqqFIldbeg                 │
+├──────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Squat jump                           │ https://www.youtube.com/watch?v=BRfxI2Es2lE                │
+└──────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+
+G. Core / Gainage / Anti-rotation — 6 exos (5 avec vidéo)
+
+┌──────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                     │ Lien YouTube                                               │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Cable Rotation explosif      │ https://www.youtube.com/watch?v=d3LM-5X7P7s                │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Chop au câble                │ https://www.youtube.com/watch?v=gcGNypjIQDo                │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Dead bug (anti-extension)    │ https://www.youtube.com/shorts/DqLL45uk2Tk                 │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Pallof press élastique       │ https://www.youtube.com/shorts/bnpqMNtaBIA                 │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Planche latérale             │ https://www.youtube.com/shorts/a7PIP2WHuKw                                                           │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Rotation à la landmine       │ https://www.youtube.com/watch?v=e5DP6961WEk                │
+└──────────────────────────────┴────────────────────────────────────────────────────────────┘
+
+H. Carry / Sled / Loaded carry — 6 exos (4 avec vidéo)
+
+┌──────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                     │ Lien YouTube                                               │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Marche du fermier            │ https://www.youtube.com/shorts/1uOs1hP3u4A                 │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Portage front rack           │ https://www.youtube.com/shorts/UzMU2-uH_Jg                                                           │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Poussée de traîneau          │ https://www.youtube.com/shorts/Qjw94vXFXeU                                                           │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Poussée de traîneau léger    │ https://www.youtube.com/shorts/Z8-mi8Tgza8                 │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Suitcase walk                │ https://www.youtube.com/shorts/Rcb16nYH3dA                 │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Zercher carry                │ https://www.youtube.com/shorts/IU9yYNTON38                 │
+└──────────────────────────────┴────────────────────────────────────────────────────────────┘
+
+I. Isolation / Accessoires — 10 exos (1 avec vidéo)
+
+┌──────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                     │ Lien YouTube                                               │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Curl alterné haltères        │ https://www.youtube.com/shorts/bxyocI5XBoA                                                           │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Curl marteau haltère         │  https://www.youtube.com/shorts/VuEclXR7sZY                                                          │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Élévation latérale haltères  │ https://www.youtube.com/shorts/Kl3LEzQ5Zqs                                                           │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ French press barre EZ        │ https://www.youtube.com/shorts/K3mFeNz4e3w                                                           │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Mollets assis machine        │                                                            │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Mollets debout               │ https://www.youtube.com/shorts/hhu1zJc40Cc                 │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Mollets debout avec charge   │                                                            │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Mollets presse à cuisses     │                                                            │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Pressdown corde câble        │ https://www.youtube.com/shorts/lRaZLjliTnk                                                           │
+├──────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Skull crusher barre EZ       │ https://www.youtube.com/shorts/K3mFeNz4e3w                                                           │
+└──────────────────────────────┴────────────────────────────────────────────────────────────┘
+
+J. Sprint / Agilité / Conditionnement — 7 exos (1 avec vidéo)
+
+┌─────────────────────────────────────────┬────────────────────────────────────────────────────────────┐
+│ Exercice                                │ Lien YouTube                                               │
+├─────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Accélération + shuffle latéral + sprint │                                                            │
+├─────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Accélération résistée                   │                                                            │
+├─────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Départ réactif + coupe 45°              │                                                            │
+├─────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Marche de l'ours                        │  https://www.youtube.com/shorts/iuR17xUXLeA                                                          │
+├─────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Navette 5-10-5                          │ https://www.youtube.com/shorts/AVRhI8bX7ys                 │
+├─────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Sprint accélération courte              │                                                            │
+├─────────────────────────────────────────┼────────────────────────────────────────────────────────────┤
+│ Sprint accélération libre               │                                                            │
+└─────────────────────────────────────────┴────────────────────────────────────────────────────────────┘
+

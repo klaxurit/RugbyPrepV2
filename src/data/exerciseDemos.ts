@@ -241,7 +241,7 @@ export const EXERCISE_DEMOS: Record<string, ExerciseDemoDefinition> = {
     },
   },
   'push_vertical__landmine_press__kneeling': {
-    youtubeUrl: 'https://www.youtube.com/watch?v=8xQQnsjzLhs',
+    youtubeUrl: 'https://www.youtube.com/watch?v=39lH32_Ukos',
     cues: {
       fr: [
         'Serre les fessiers et garde les côtes basses pendant toute la presse.',
@@ -255,7 +255,7 @@ export const EXERCISE_DEMOS: Record<string, ExerciseDemoDefinition> = {
     },
   },
   'power__landmine_press__speed': {
-    youtubeUrl: 'https://www.youtube.com/shorts/HtH9lGv3osk',
+    youtubeUrl: 'https://www.youtube.com/watch?v=p-skt3yYHn8',
     cues: {
       fr: [
         'Installe un appui stable avant de chercher de la vitesse.',

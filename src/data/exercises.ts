@@ -71,6 +71,7 @@ function buildYouTubeEmbedUrl(url: string, startSeconds?: number): string {
   const embed = new URL(`https://www.youtube-nocookie.com/embed/${videoId}`)
   embed.searchParams.set('rel', '0')
   embed.searchParams.set('modestbranding', '1')
+  embed.searchParams.set('mute', '1')
   if (startSeconds && startSeconds > 0) {
     embed.searchParams.set('start', String(startSeconds))
   }

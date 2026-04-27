@@ -21,7 +21,8 @@
       "upper",
       "push"
     ],
-    "defaultNotes": "Base force/puissance haut du corps. Variantes possibles: prise serrée, pause, board press."
+    "defaultNotes": "Base force/puissance haut du corps. Variantes possibles: prise serrée, pause, board press.",
+    "videoUrl": "https://www.youtube.com/watch?v=sRuKSZLcmWM"
   },
   {
     "id": "push_horizontal__bench_press__dumbbell",
@@ -45,7 +46,8 @@
       "upper",
       "push"
     ],
-    "defaultNotes": "Bonne alternative si épaule sensible (amplitude ajustable)."
+    "defaultNotes": "Bonne alternative si épaule sensible (amplitude ajustable).",
+    "videoUrl": "https://www.youtube.com/shorts/OmMnAhfm5jA"
   },
   {
     "id": "push_horizontal__board_press__barbell",
@@ -168,7 +170,8 @@
       "upper",
       "push"
     ],
-    "defaultNotes": "Alternative plus tolérante (trajectoire libre)."
+    "defaultNotes": "Alternative plus tolérante (trajectoire libre).",
+    "videoUrl": "https://www.youtube.com/watch?v=NQ-JJYay1TM"
   },
   {
     "id": "push_vertical__landmine_press__kneeling",
@@ -215,7 +218,8 @@
       "upper",
       "pull"
     ],
-    "defaultNotes": "Prise souvent plus tolérante pour l’épaule."
+    "defaultNotes": "Prise souvent plus tolérante pour l’épaule.",
+    "videoUrl": "https://www.youtube.com/shorts/h61PA2CfUFI"
   },
   {
     "id": "pull_vertical__pull_up__supinated",
@@ -260,7 +264,8 @@
       "upper",
       "pull"
     ],
-    "defaultNotes": "Alternative aux tractions pour débutants / fatigue."
+    "defaultNotes": "Alternative aux tractions pour débutants / fatigue.",
+    "videoUrl": "https://www.youtube.com/shorts/BHQ692ZKMRI"
   },
   {
     "id": "pull_vertical__pull_up__neutral__assisted",
@@ -304,7 +309,8 @@
       "upper",
       "pull"
     ],
-    "defaultNotes": "Row lourd. Contrôle lombaire indispensable."
+    "defaultNotes": "Row lourd. Contrôle lombaire indispensable.",
+    "videoUrl": "https://www.youtube.com/watch?v=iO0xxKVTT9E"
   },
   {
     "id": "pull_horizontal__incline_bench_row__dumbbell",
@@ -350,7 +356,8 @@
       "upper",
       "pull"
     ],
-    "defaultNotes": "Unilatéral = gainage + anti-rotation."
+    "defaultNotes": "Unilatéral = gainage + anti-rotation.",
+    "videoUrl": "https://www.youtube.com/shorts/xFFDWJzQjsI"
   },
   {
     "id": "pull_horizontal__band_row",
@@ -412,7 +419,8 @@
       "prehab",
       "shoulder_health"
     ],
-    "defaultNotes": "Variante plus stricte, très utilisée en rugby."
+    "defaultNotes": "Variante plus stricte, très utilisée en rugby.",
+    "videoUrl": "https://www.youtube.com/shorts/p6qJlRFmiNA"
   },
   {
     "id": "prehab_shoulder__face_pull__band",
@@ -625,7 +633,8 @@
       "lower",
       "squat"
     ],
-    "defaultNotes": "Très bon transfert rugby (gainage + posture)."
+    "defaultNotes": "Très bon transfert rugby (gainage + posture).",
+    "videoUrl": "https://www.youtube.com/watch?v=uYumuL_G_V0"
   },
   {
     "id": "squat__box_squat__barbell",
@@ -671,7 +680,8 @@
       "hinge",
       "posterior_chain"
     ],
-    "defaultNotes": "Chaîne postérieure. Dos neutre indispensable."
+    "defaultNotes": "Chaîne postérieure. Dos neutre indispensable.",
+    "videoUrl": "https://www.youtube.com/watch?v=xgusDooVfKU"
   },
   {
     "id": "hinge__drop_rdl",
@@ -907,7 +917,8 @@
     "tags": [
       "carry"
     ],
-    "defaultNotes": "Grip + gainage + robustesse. Très transférable."
+    "defaultNotes": "Grip + gainage + robustesse. Très transférable.",
+    "videoUrl": "https://www.youtube.com/shorts/1uOs1hP3u4A"
   },
   {
     "exerciseId": "neck__flexion_iso__band",
@@ -1188,7 +1199,8 @@
     "defaultNotes": "Bassin stable.",
     "id": "hamstring__bridge_iso__single_leg",
     "name": "Bridge isométrique une jambe",
-    "notes": "Bassin stable."
+    "notes": "Bassin stable.",
+    "videoUrl": "https://www.youtube.com/shorts/VOTe7_T7aSY"
   },
   {
     "exerciseId": "groin_adductors__ball_squeeze__supine",
@@ -1208,7 +1220,8 @@
     "defaultNotes": "Pression progressive.",
     "id": "groin_adductors__ball_squeeze__supine",
     "name": "Serrage ballon adducteurs",
-    "notes": "Pression progressive."
+    "notes": "Pression progressive.",
+    "videoUrl": "https://www.youtube.com/shorts/xMEQd06Ekxg"
   },
   {
     "exerciseId": "lower_squat__split_squat__dumbbell",
@@ -1228,7 +1241,8 @@
     "defaultNotes": "Genou aligné.",
     "id": "lower_squat__split_squat__dumbbell",
     "name": "Split squat haltères",
-    "notes": "Genou aligné."
+    "notes": "Genou aligné.",
+    "videoUrl": "https://www.youtube.com/shorts/_HukgYk7lTw"
   },
   {
     "exerciseId": "lower_squat__bulgarian_split_squat__dumbbell",
@@ -1269,7 +1283,8 @@
     "defaultNotes": "Pas stable.",
     "id": "lower_lunge__reverse_lunge__barbell",
     "name": "Fente arrière barre",
-    "notes": "Pas stable."
+    "notes": "Pas stable.",
+    "videoUrl": "https://www.youtube.com/shorts/hk9BrUY3KYI"
   },
   {
     "exerciseId": "lower_lunge__reverse_lunge__dumbbell",
@@ -1387,7 +1402,8 @@
     "defaultNotes": "Amplitude complete.",
     "id": "calf__standing_raise__bodyweight",
     "name": "Mollets debout",
-    "notes": "Amplitude complete."
+    "notes": "Amplitude complete.",
+    "videoUrl": "https://www.youtube.com/shorts/hhu1zJc40Cc"
   },
   {
     "exerciseId": "tibialis__raise__bodyweight",
@@ -1406,7 +1422,8 @@
     "defaultNotes": "Controle du pied.",
     "id": "tibialis__raise__bodyweight",
     "name": "Tibialis raise",
-    "notes": "Controle du pied."
+    "notes": "Controle du pied.",
+    "videoUrl": "https://www.youtube.com/shorts/lMKn73Mh3AI"
   },
   {
     "exerciseId": "lower_squat__pistol_box__bodyweight",
@@ -1507,7 +1524,8 @@
     "defaultNotes": "Concentrique maximale, retour contrôlé, travail unilatéral.",
     "id": "power__cable_press__explosive",
     "name": "Cable Press explosif unilatéral",
-    "notes": "Concentrique maximale, retour contrôlé, travail unilatéral."
+    "notes": "Concentrique maximale, retour contrôlé, travail unilatéral.",
+    "videoUrl": "https://www.youtube.com/watch?v=CLyqpDS2OpU"
   },
   {
     "exerciseId": "power__cable_slam__high_to_low",
@@ -1569,7 +1587,8 @@
     "defaultNotes": "Qualite > hauteur.",
     "id": "power__jump__vertical_jump",
     "name": "Saut vertical",
-    "notes": "Qualite > hauteur."
+    "notes": "Qualite > hauteur.",
+    "videoUrl": "https://www.youtube.com/shorts/zWeR8sNZEF8"
   },
   {
     "exerciseId": "power__jump__broad_jump",
@@ -1589,7 +1608,8 @@
     "defaultNotes": "Atterrissage stable.",
     "id": "power__jump__broad_jump",
     "name": "Saut en longueur",
-    "notes": "Atterrissage stable."
+    "notes": "Atterrissage stable.",
+    "videoUrl": "https://www.youtube.com/watch?v=2t9q0GMQ1IE"
   },
   {
     "exerciseId": "power__bound__single_leg",
@@ -1652,7 +1672,8 @@
     "defaultNotes": "Leg drive propre.",
     "id": "power__push_press__barbell",
     "name": "Push press barre",
-    "notes": "Leg drive propre."
+    "notes": "Leg drive propre.",
+    "videoUrl": "https://www.youtube.com/watch?v=HKx22sWywxc"
   },
   {
     "exerciseId": "power__hang_clean_pull__barbell",
@@ -1693,7 +1714,8 @@
     "defaultNotes": "Controle scapulaire.",
     "id": "pull_horizontal__chest_supported_row__dumbbell",
     "name": "Rowing poitrine sur banc",
-    "notes": "Controle scapulaire."
+    "notes": "Controle scapulaire.",
+    "videoUrl": "https://www.youtube.com/shorts/oNsqMW1gPiU"
   },
   {
     "exerciseId": "pull_horizontal__seal_row__barbell",
@@ -1752,7 +1774,8 @@
     "defaultNotes": "Coude colle au corps.",
     "id": "prehab_shoulder__external_rotation__band",
     "name": "Rotation externe élastique",
-    "notes": "Coude colle au corps."
+    "notes": "Coude colle au corps.",
+    "videoUrl": "https://www.youtube.com/shorts/-iZk7v8eVnU"
   },
   {
     "exerciseId": "prehab_shoulder__scap_pushup__bodyweight",
@@ -1772,7 +1795,8 @@
     "defaultNotes": "Amplitude controlee.",
     "id": "prehab_shoulder__scap_pushup__bodyweight",
     "name": "Pompes scapulaires",
-    "notes": "Amplitude controlee."
+    "notes": "Amplitude controlee.",
+    "videoUrl": "https://www.youtube.com/shorts/SBPRhZI2RkI"
   },
   {
     "exerciseId": "prehab_shoulder__prone_y_raise__dumbbell",
@@ -1852,7 +1876,8 @@
     "defaultNotes": "Tronc droit.",
     "id": "carry__suitcase_walk__dumbbell",
     "name": "Suitcase walk",
-    "notes": "Tronc droit."
+    "notes": "Tronc droit.",
+    "videoUrl": "https://www.youtube.com/shorts/Rcb16nYH3dA"
   },
   {
     "exerciseId": "carry__zercher_carry__barbell",
@@ -1909,7 +1934,8 @@
     "defaultNotes": "Pas courts et puissants.",
     "id": "carry__sled_push__light",
     "name": "Poussée de traîneau léger",
-    "notes": "Pas courts et puissants."
+    "notes": "Pas courts et puissants.",
+    "videoUrl": "https://www.youtube.com/shorts/Z8-mi8Tgza8"
   },
   {
     "exerciseId": "carry__sled_drag__backward",
@@ -1966,7 +1992,8 @@
     "defaultNotes": "Alignement complet.",
     "id": "core_anti_rotation__side_plank",
     "name": "Planche latérale",
-    "notes": "Alignement complet."
+    "notes": "Alignement complet.",
+    "videoUrl": "https://www.youtube.com/shorts/a7PIP2WHuKw"
   },
   {
     "exerciseId": "core_anti_extension__ab_wheel__kneeling",
@@ -2269,7 +2296,8 @@
       "posterior_chain",
       "starter"
     ],
-    "defaultNotes": "Pieds à plat largeur hanches. Hanches au plafond. Serrer les fessiers 2 secondes en haut."
+    "defaultNotes": "Pieds à plat largeur hanches. Hanches au plafond. Serrer les fessiers 2 secondes en haut.",
+    "videoUrl": "https://www.youtube.com/shorts/LORVjN2bg5o"
   },
   {
     "id": "pull_horizontal__inverted_row__knees_bent",
@@ -2358,7 +2386,8 @@
       "squat",
       "starter"
     ],
-    "defaultNotes": "Haltère vertical au sternum. Coudes pointés vers le bas. Genoux écartés vers l'extérieur."
+    "defaultNotes": "Haltère vertical au sternum. Coudes pointés vers le bas. Genoux écartés vers l'extérieur.",
+    "videoUrl": "https://www.youtube.com/watch?v=M0zQn0ZCkAU"
   },
   {
     "id": "hinge__rdl__dumbbell",
@@ -2381,7 +2410,8 @@
       "posterior_chain",
       "starter"
     ],
-    "defaultNotes": "Haltères devant les cuisses. Reculer les hanches, dos neutre. Ischios tendus = arrêt. Jamais arrondir le dos."
+    "defaultNotes": "Haltères devant les cuisses. Reculer les hanches, dos neutre. Ischios tendus = arrêt. Jamais arrondir le dos.",
+    "videoUrl": "https://www.youtube.com/watch?v=O2dUYS-YYus"
   },
   {
     "id": "hinge__hip_thrust__bodyweight",
@@ -2427,7 +2457,8 @@
       "push",
       "power"
     ],
-    "defaultNotes": "Dip contrôlé, poussée explosive. Réceptionner la barre en douceur."
+    "defaultNotes": "Dip contrôlé, poussée explosive. Réceptionner la barre en douceur.",
+    "videoUrl": "https://www.youtube.com/watch?v=HKx22sWywxc"
   },
   {
     "id": "push_vertical__overhead_press__barbell",
@@ -2450,7 +2481,8 @@
       "upper",
       "push"
     ],
-    "defaultNotes": "Gainage total pendant la poussée. Coudes légèrement en avant au départ."
+    "defaultNotes": "Gainage total pendant la poussée. Coudes légèrement en avant au départ.",
+    "videoUrl": "https://www.youtube.com/shorts/hNGNfSm-3X8"
   },
   {
     "id": "push_vertical__shoulder_press__machine",
@@ -2495,7 +2527,8 @@
       "upper",
       "pull"
     ],
-    "defaultNotes": "Réinitialiser la position à chaque répétition. Explosif en tirant, lent en descendant."
+    "defaultNotes": "Réinitialiser la position à chaque répétition. Explosif en tirant, lent en descendant.",
+    "videoUrl": "https://www.youtube.com/shorts/tYxEGi7ir4I"
   },
   {
     "id": "hamstring__leg_curl__machine",
@@ -2739,7 +2772,8 @@
       "thoracic",
       "recovery"
     ],
-    "defaultNotes": "Assis les jambes croisees. Rotation du buste en controle, bras tendus."
+    "defaultNotes": "Assis les jambes croisees. Rotation du buste en controle, bras tendus.",
+    "videoUrl": "https://www.youtube.com/shorts/l3Ze_9iXL-M"
   },
   {
     "id": "mobility__cat_camel",
@@ -3117,7 +3151,8 @@
       "force"
     ],
     "notes": "Barre sur les trapèzes. Pieds largeur épaules. Descendre hanches sous les genoux. Dos neutre. Le mouvement roi du rugby S&C.",
-    "defaultNotes": "Barre haute sur les trapèzes. Descendre sous la parallèle. Genoux dans l'axe. Poitrine haute."
+    "defaultNotes": "Barre haute sur les trapèzes. Descendre sous la parallèle. Genoux dans l'axe. Poitrine haute.",
+    "videoUrl": "https://www.youtube.com/shorts/dW3zj79xfrc"
   },
   {
     "id": "lower_lunge__reverse_lunge__bodyweight",
@@ -3209,7 +3244,8 @@
       "shoulder_health"
     ],
     "notes": "Élastique tenu au-dessus de la tête, écarter les mains en contrôlant. Active les rotateurs externes et le trapèze moyen/bas.",
-    "defaultNotes": "Bras tendus au-dessus de la tête. Écarter l'élastique. Contrôle en retour."
+    "defaultNotes": "Bras tendus au-dessus de la tête. Écarter l'élastique. Contrôle en retour.",
+    "videoUrl": "https://www.youtube.com/shorts/lRsWFG4e-UE"
   },
   {
     "id": "activation__bird_dog__bodyweight",
@@ -3366,7 +3402,8 @@
       "hinge",
       "posterior_chain"
     ],
-    "defaultNotes": "Barre sur les hanches (pad). Epaules sur banc. Hanches au plafond. Serrer les fessiers 1s. Dos neutre."
+    "defaultNotes": "Barre sur les hanches (pad). Epaules sur banc. Hanches au plafond. Serrer les fessiers 1s. Dos neutre.",
+    "videoUrl": "https://www.youtube.com/shorts/-Be-IO1C2JQ"
   },
   {
     "id": "hinge__deadlift__trap_bar",
@@ -3388,7 +3425,8 @@
       "hinge",
       "posterior_chain"
     ],
-    "defaultNotes": "Prise neutre, poussée des jambes, dos verrouillé."
+    "defaultNotes": "Prise neutre, poussée des jambes, dos verrouillé.",
+    "videoUrl": "https://www.youtube.com/watch?v=FYx76NSijfU"
   },
   {
     "id": "push_horizontal__bench_press__football_bar",
@@ -3412,7 +3450,8 @@
       "upper",
       "push"
     ],
-    "defaultNotes": "Prise neutre, moins de stress sur l'épaule."
+    "defaultNotes": "Prise neutre, moins de stress sur l'épaule.",
+    "videoUrl": "https://www.youtube.com/shorts/q6qzuGPp17E"
   },
   {
     "id": "push_horizontal__bench_press__incline__dumbbell",
@@ -3435,7 +3474,8 @@
       "upper",
       "push"
     ],
-    "defaultNotes": "Incliné 30-45°. Descente contrôlée, poussée explosive."
+    "defaultNotes": "Incliné 30-45°. Descente contrôlée, poussée explosive.",
+    "videoUrl": "https://www.youtube.com/shorts/5dHSefcTxGI"
   },
   {
     "id": "core_rotation__landmine_rotation",
@@ -3478,7 +3518,8 @@
       "core",
       "rotation"
     ],
-    "defaultNotes": "Tronc gainé, rotation contrôlée."
+    "defaultNotes": "Tronc gainé, rotation contrôlée.",
+    "videoUrl": "https://www.youtube.com/watch?v=gcGNypjIQDo"
   },
   {
     "id": "core_rotation__cable_rotation__explosive",
@@ -3500,7 +3541,8 @@
       "rotation",
       "power"
     ],
-    "defaultNotes": "Intention maximale, rotation propre."
+    "defaultNotes": "Intention maximale, rotation propre.",
+    "videoUrl": "https://www.youtube.com/watch?v=d3LM-5X7P7s"
   },
   {
     "id": "pull_horizontal__landmine_row",
@@ -3541,7 +3583,8 @@
       "upper",
       "pull"
     ],
-    "defaultNotes": "Tronc gainé, tirage contrôlé."
+    "defaultNotes": "Tronc gainé, tirage contrôlé.",
+    "videoUrl": "https://www.youtube.com/shorts/IJNHCNaY1vE"
   },
   {
     "id": "pull_horizontal__cable_row__seated",
@@ -3562,7 +3605,8 @@
       "upper",
       "pull"
     ],
-    "defaultNotes": "Poitrine sortie, tirage vers le bas des côtes, pas d'élan."
+    "defaultNotes": "Poitrine sortie, tirage vers le bas des côtes, pas d'élan.",
+    "videoUrl": "https://www.youtube.com/shorts/ywy47SjQ-_w"
   },
   {
     "id": "pull_horizontal__chest_supported_row__machine",
@@ -3583,7 +3627,8 @@
       "upper",
       "pull"
     ],
-    "defaultNotes": "Buste collé au support, tirage strict, contrôle scapulaire."
+    "defaultNotes": "Buste collé au support, tirage strict, contrôle scapulaire.",
+    "videoUrl": "https://www.youtube.com/shorts/yrRHFZ3MDxA"
   },
   {
     "id": "arm_curl__hammer_curl__dumbbell",
@@ -3606,7 +3651,8 @@
       "pull",
       "assistance"
     ],
-    "defaultNotes": "Progresse par reps d'abord, puis charge."
+    "defaultNotes": "Progresse par reps d'abord, puis charge.",
+    "videoUrl": "https://www.youtube.com/shorts/VuEclXR7sZY"
   },
   {
     "id": "arm_curl__alternating_curl__dumbbell",
@@ -3629,7 +3675,8 @@
       "pull",
       "assistance"
     ],
-    "defaultNotes": "Contrôle la descente, pas de balancier."
+    "defaultNotes": "Contrôle la descente, pas de balancier.",
+    "videoUrl": "https://www.youtube.com/shorts/bxyocI5XBoA"
   },
   {
     "id": "arm_extension__french_press__ez_bar",
@@ -3652,7 +3699,8 @@
       "push",
       "assistance"
     ],
-    "defaultNotes": "Descente contrôlée derrière la tête, coudes fixes."
+    "defaultNotes": "Descente contrôlée derrière la tête, coudes fixes.",
+    "videoUrl": "https://www.youtube.com/shorts/K3mFeNz4e3w"
   },
   {
     "id": "arm_extension__skull_crusher__ez_bar",
@@ -3676,7 +3724,8 @@
       "push",
       "assistance"
     ],
-    "defaultNotes": "Coudes fixes, descente au front."
+    "defaultNotes": "Coudes fixes, descente au front.",
+    "videoUrl": "https://www.youtube.com/shorts/K3mFeNz4e3w"
   },
   {
     "id": "arm_extension__pressdown__cable_rope",
@@ -3698,7 +3747,8 @@
       "push",
       "assistance"
     ],
-    "defaultNotes": "Coudes au corps, extension complète."
+    "defaultNotes": "Coudes au corps, extension complète.",
+    "videoUrl": "https://www.youtube.com/shorts/lRaZLjliTnk"
   },
   {
     "id": "hinge__rdl__single_leg__dumbbell",
@@ -3745,7 +3795,8 @@
       "hinge",
       "posterior_chain"
     ],
-    "defaultNotes": "Prise neutre, dos verrouillé, descente contrôlée."
+    "defaultNotes": "Prise neutre, dos verrouillé, descente contrôlée.",
+    "videoUrl": "https://www.youtube.com/shorts/ZJPZQklCSLs"
   },
   {
     "id": "shoulder_isolation__lateral_raise__dumbbell",
@@ -3767,7 +3818,8 @@
       "push",
       "assistance"
     ],
-    "defaultNotes": "Léger, contrôle, pas de balancier."
+    "defaultNotes": "Léger, contrôle, pas de balancier.",
+    "videoUrl": "https://www.youtube.com/shorts/Kl3LEzQ5Zqs"
   },
   {
     "id": "knee_extension__leg_extension__machine",
@@ -3834,7 +3886,8 @@
       "quad",
       "force"
     ],
-    "defaultNotes": "Dos calé, amplitude contrôlée, pousser fort sans perdre la ligne."
+    "defaultNotes": "Dos calé, amplitude contrôlée, pousser fort sans perdre la ligne.",
+    "videoUrl": "https://www.youtube.com/watch?v=rYgNArpwE7E"
   },
   {
     "id": "calf__seated_raise__machine",
@@ -3958,7 +4011,8 @@
       "warmup",
       "core"
     ],
-    "defaultNotes": "Distance propre, pas de vitesse forcée."
+    "defaultNotes": "Distance propre, pas de vitesse forcée.",
+    "videoUrl": "https://www.youtube.com/shorts/iuR17xUXLeA"
   },
   {
     "id": "squat__anderson_box_squat__banded",
@@ -4007,7 +4061,8 @@
       "hinge",
       "power"
     ],
-    "defaultNotes": "Extension explosive des hanches, bande augmente la résistance en haut."
+    "defaultNotes": "Extension explosive des hanches, bande augmente la résistance en haut.",
+    "videoUrl": "https://www.youtube.com/shorts/UTeTxHUxmaQ"
   },
   {
     "id": "neck__extension__band",
@@ -4097,7 +4152,8 @@
       "core",
       "carry"
     ],
-    "defaultNotes": "Tronc gainé, posture haute."
+    "defaultNotes": "Tronc gainé, posture haute.",
+    "videoUrl": "https://www.youtube.com/shorts/UzMU2-uH_Jg"
   },
   {
     "id": "sprint__short_acceleration",
@@ -4290,7 +4346,8 @@
       "lower",
       "power"
     ],
-    "defaultNotes": "Descente rapide, explosion verticale maximale."
+    "defaultNotes": "Descente rapide, explosion verticale maximale.",
+    "videoUrl": "https://www.youtube.com/shorts/zWeR8sNZEF8"
   },
   {
     "id": "power__lateral_bound",
@@ -4332,7 +4389,8 @@
       "conditioning",
       "lower"
     ],
-    "defaultNotes": "Poussée puissante, posture basse."
+    "defaultNotes": "Poussée puissante, posture basse.",
+    "videoUrl": "https://www.youtube.com/shorts/Qjw94vXFXeU"
   },
   {
     "id": "warmup__wall_drill_march",
@@ -4393,7 +4451,8 @@
       "lower",
       "isometric"
     ],
-    "defaultNotes": "Position basse, genou arrière proche du sol."
+    "defaultNotes": "Position basse, genou arrière proche du sol.",
+    "videoUrl": "https://www.youtube.com/shorts/Y_XGq28Salk"
   },
   {
     "id": "groin_adductors__supine_squeeze",
