@@ -261,6 +261,8 @@ export interface UserProfile {
   levelModifierProfile?: LevelModifierProfileV1
   seasonMode?: SeasonMode
   trainingBaseline?: TrainingBaseline
+  /** ISO timestamp d'activation du baseline. Sert à expirer auto le mode 'restart' après 14j. */
+  trainingBaselineSetAt?: string | null
   performanceFocus?: PerformanceFocus
   preferredLanguage?: 'fr' | 'en'
   rehabInjury?: RehabInjury

@@ -207,6 +207,7 @@ type ProfileRow = {
   level_modifier_profile: LevelModifierProfileV1 | null
   season_mode: string | null
   training_baseline: string | null
+  training_baseline_set_at: string | null
   performance_focus: UserProfile['performanceFocus'] | null
   preferred_language: string | null
   rehab_injury: unknown | null
@@ -269,6 +270,7 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     levelModifierProfile,
     seasonMode: (row.season_mode as SeasonMode | null) ?? undefined,
     trainingBaseline: (row.training_baseline as TrainingBaseline | null) ?? undefined,
+    trainingBaselineSetAt: row.training_baseline_set_at ?? null,
     performanceFocus: (row.performance_focus as PerformanceFocus | null) ?? undefined,
     preferredLanguage: (row.preferred_language as 'fr' | 'en' | null) ?? 'fr',
     rehabInjury: (row.rehab_injury as RehabInjury | null) ?? undefined,
@@ -318,6 +320,7 @@ const profileToRow = (profile: UserProfile, userId: string) => ({
   level_modifier_profile: profile.levelModifierProfile ?? null,
   season_mode: profile.seasonMode ?? null,
   training_baseline: profile.trainingBaseline ?? null,
+  training_baseline_set_at: profile.trainingBaselineSetAt ?? null,
   performance_focus: profile.performanceFocus ?? null,
   preferred_language: profile.preferredLanguage ?? 'fr',
   rehab_injury: profile.rehabInjury ?? null,
@@ -369,7 +372,7 @@ export const useProfile = () => {
     supabase
       .from('profiles')
       .select(
-        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, performance_focus, preferred_language, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state'
+        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state'
       )
       .eq('id', userId)
       .single()
@@ -414,9 +417,18 @@ export const useProfile = () => {
   const updateProfile = useCallback(
     (patch: Partial<UserProfile>, options?: UpdateProfileOptions) => {
       setProfileState((current) => {
+        // Auto-set trainingBaselineSetAt quand le baseline change (sauf override explicite).
+        // Sert à expirer auto le mode 'restart' après 14j (rampe de reprise).
+        const baselineChanged =
+          'trainingBaseline' in patch &&
+          patch.trainingBaseline !== current.trainingBaseline
+        const stampedPatch =
+          baselineChanged && !('trainingBaselineSetAt' in patch)
+            ? { ...patch, trainingBaselineSetAt: new Date().toISOString() }
+            : patch
         const next = applyHealthConsentLifecycle({
           current,
-          patch,
+          patch: stampedPatch,
           source: options?.source ?? 'profile',
         })
         void persistProfile(next, userId)

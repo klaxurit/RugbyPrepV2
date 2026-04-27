@@ -4,6 +4,7 @@
  */
 import type { AthleteIdentityContext, AthletePlanningInputs } from '../../types/annualPlanning'
 import type { CalendarEvent, Contra, RugbyPositionGroup, SessionLog, UserProfile } from '../../types/training'
+import { isRestartRampUpActive } from '../program/restartRampUp'
 
 /** Aligné sur useACWR (évite d’importer le hook depuis un service). */
 export type AcwrZoneInput =
@@ -241,7 +242,16 @@ export function buildAthletePlanningInputs(
   const resolvedPositionGroup = resolvePositionGroup(profile, warnings)
   const weeklyFrequency = clampWeeklyFrequency(profile, warnings)
   const seasonEnded = !!profile.planningAnchors?.seasonEndedAt
-  const fatigueLevel = resolveFatigueLevel(fatigue, acwrZone, { seasonEnded })
+  const baseFatigueLevel = resolveFatigueLevel(fatigue, acwrZone, { seasonEnded })
+  // Rampe de reprise (trainingBaseline = 'restart' < 14j) : bump 'normal' → 'high'
+  // pour réduire le volume sur les 2 premières semaines (KB population-specific.md §3).
+  // Aucune action si fatigue déjà 'high' ou 'very_high' (déjà couvert par ACWR/RPE).
+  const rampUpActive = isRestartRampUpActive(profile, new Date(`${today}T12:00:00`))
+  const fatigueLevel: typeof baseFatigueLevel =
+    rampUpActive && baseFatigueLevel === 'normal' ? 'high' : baseFatigueLevel
+  if (rampUpActive && baseFatigueLevel === 'normal') {
+    warnings.push('Mode reprise actif : volume W1-W2 réduit (-40 à 50%).')
+  }
 
   const completedSessionsLast7d = countCompletedInRollingDays(logs, today, 7)
   const completedSessionsLast28d = countCompletedInRollingDays(logs, today, 28)
