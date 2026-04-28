@@ -103,8 +103,9 @@ export function buildMotherSessionProgramSessionLog(params: {
   tonnageKg?: number
   slot: ResolvedMotherSessionSlot
   planningContext: AnnualPlanningContext
+  slotSignature?: string
 }): Omit<SessionLog, 'id'> {
-  const { dateISO, fatigue, notes, rpe, durationMin, tonnageKg, slot, planningContext } = params
+  const { dateISO, fatigue, notes, rpe, durationMin, tonnageKg, slot, planningContext, slotSignature } = params
   const msType = slot.session.metadata.sessionType
   const sessionType = mapMotherSessionType(msType)
 
@@ -133,5 +134,6 @@ export function buildMotherSessionProgramSessionLog(params: {
       offSeasonPhase: planningContext.offSeasonPhase,
       preSeasonPhase: planningContext.preSeasonPhase,
     },
+    slotSignature,
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, Play } from 'lucide-react'
@@ -23,6 +23,9 @@ import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { useAuth } from '../hooks/useAuth'
 import { useBlockLogs } from '../hooks/useBlockLogs'
+import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
+import { buildSlotSignature, dateYmdFromIso } from '../services/motherSession/slotSignature'
+import { parseExerciseTourKey } from '../contexts/SessionRunContext'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
 import { buildMotherSessionProgramSessionLog } from '../services/program/buildProgramSessionLog'
@@ -73,6 +76,7 @@ export function SessionDetailPage() {
   const { structuralEvents } = useCalendar()
   const navigate = useNavigate()
   const { addBlockLog, getLastEntryForExercise, getBestForExercise } = useBlockLogs()
+  const { upsertSet, linkToSessionLog, getLastSetForExercise } = useExerciseSetLogs()
   const { isPremium } = useFeatureAccess()
   const sessionRun = useSessionRun()
   const [prehabbOpen, setPrehabbOpen] = useState(true)
@@ -267,9 +271,53 @@ export function SessionDetailPage() {
     }
   }, [sessionRun.completedExercises, sessionRun.exerciseTourLoads, sessionRun.startedAt])
 
+  // ── Slot signature : clé idempotente pour persister sets + session_log ──
+  const slotSignature = useMemo(() => {
+    if (!activeSlot || !surface) return null
+    const dateYMD = sessionRun.startedAt
+      ? dateYmdFromIso(new Date(sessionRun.startedAt).toISOString())
+      : today
+    return buildSlotSignature({
+      motherSessionId: activeSlot.session.metadata.id,
+      weekLabel: surface.planningContext.weekLabel ?? 'unknown',
+      sessionIndex: index,
+      dateYMD,
+    })
+  }, [activeSlot, surface, sessionRun.startedAt, today, index])
+
+  // ── Autosave par bloc : déclenché dès que le dernier tour d'un bloc est validé ──
+  const handleBlockCompleted = useCallback((blockNumber: number) => {
+    if (!slotSignature || !activeSlot || !surface) return
+    const block = activeSlot.session.blocks.find((b) => b.number === blockNumber)
+    if (!block) return
+    const weekLabel = surface.planningContext.weekLabel ?? 'unknown'
+    const motherSessionId = activeSlot.session.metadata.id
+
+    for (const [key, load] of Object.entries(sessionRun.exerciseTourLoads)) {
+      const parsed = parseExerciseTourKey(key)
+      if (!parsed || parsed.blockNumber !== blockNumber) continue
+      if (load.loadKg == null && load.reps == null) continue
+      const exercise = block.exercises[parsed.exerciseIndex]
+      if (!exercise || isDirectiveText(exercise.name)) continue
+      const exerciseId = exercise.exerciseId ?? resolveExerciseId(exercise.name)
+      if (!exerciseId) continue
+      void upsertSet({
+        slotSignature,
+        motherSessionId,
+        weekLabel,
+        sessionIndex: index,
+        blockNumber,
+        exerciseId,
+        tourIndex: parsed.tourIndex,
+        loadKg: load.loadKg,
+        reps: load.reps,
+      })
+    }
+  }, [slotSignature, activeSlot, surface, sessionRun.exerciseTourLoads, upsertSet, index])
+
   if (hasHardBlock) {
     return (
-      <div className="min-h-screen bg-app font-sans text-fg pb-24">
+      <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav">
         <PageHeader title={sessionPageTitle} backTo="/week" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="bg-warn-bg border border-warn-bd-strong rounded-2xl p-5 space-y-3">
@@ -347,9 +395,15 @@ export function SessionDetailPage() {
         tonnageKg: celebrationStats.tonnageKg ?? undefined,
         slot: activeSlot,
         planningContext: surface.planningContext,
+        slotSignature: slotSignature ?? undefined,
       })
 
-      await addLog(log)
+      const savedLog = await addLog(log)
+      // Une fois le session_log sauvegardé, on rattache les exercise_set_logs
+      // déjà créés par l'autosave par bloc.
+      if (savedLog?.id && slotSignature) {
+        await linkToSessionLog(slotSignature, savedLog.id)
+      }
       setCompletionOpen(false)
       setCelebrationOpen(false)
       setMsNotes('')
@@ -443,7 +497,20 @@ export function SessionDetailPage() {
                     week={week}
                     fatigue={fatigue}
                     onSaveBlock={handleSaveBlock}
-                    getLastEntryForExercise={getLastEntryForExercise}
+                    onBlockCompleted={handleBlockCompleted}
+                    getLastEntryForExercise={(exerciseId) => {
+                      // Priorité : nouvelles données per-set, puis fallback legacy block_logs
+                      const lastSet = getLastSetForExercise(exerciseId)
+                      if (lastSet?.loadKg != null) {
+                        return {
+                          exerciseId,
+                          loadKg: lastSet.loadKg,
+                          reps: lastSet.reps,
+                          rir: lastSet.rir,
+                        }
+                      }
+                      return getLastEntryForExercise(exerciseId)
+                    }}
                     getBestForExercise={getBestForExercise}
                     isPremium={isPremium}
                     acwr={acwrHasData ? acwr : null}

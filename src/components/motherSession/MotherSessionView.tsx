@@ -39,6 +39,8 @@ type MotherSessionViewProps = {
   equipment?: Equipment[]
   /** Cette séance est-elle en cours ? Passé par l'hôte (vérifié via isRunningFor(sessionKey)). */
   isRunning?: boolean
+  /** Appelé quand tous les tours d'un bloc sont validés. Utilisé pour l'autosave par bloc. */
+  onBlockCompleted?: (blockNumber: number) => void
 }
 
 function collectLoggableIndices(block: Block): number[] {
@@ -79,6 +81,7 @@ export function MotherSessionView({
   trainingLevel,
   equipment,
   isRunning,
+  onBlockCompleted,
 }: MotherSessionViewProps) {
   const isFoundations = isFoundationsLevel(trainingLevel)
   const foundationsSession = isFoundations ? adaptMotherSessionForFoundations(session, equipment) : session
@@ -164,6 +167,7 @@ export function MotherSessionView({
                 hideHeader
                 expandCoaching={previewDefaultOpen || runState.isActive}
                 isRunning={isRunning}
+                onBlockCompleted={onBlockCompleted ? () => onBlockCompleted(block.number) : undefined}
               />
             </SessionBlockCard>
           )

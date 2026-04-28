@@ -416,6 +416,33 @@ export interface SessionLog {
   motherSessionId?: string;
   sessionLabel?: string;
   programContext?: SessionLogProgramContext;
+  /** Identifiant idempotent du créneau "motherSessionId:weekLabel:sessionIndex:dateYMD".
+   *  Permet l'upsert sans dupliquer quand l'utilisateur ré-ouvre une séance. */
+  slotSignature?: string;
+}
+
+/**
+ * Log par série/tour d'exercice. Une ligne = un exercice à un tour donné dans
+ * un bloc d'une séance. Persisté dans `exercise_set_logs` côté Supabase.
+ */
+export interface ExerciseSetLog {
+  id: string;
+  slotSignature: string;
+  motherSessionId?: string;
+  weekLabel: string;
+  sessionIndex: number;
+  blockNumber: number;
+  exerciseId: string;
+  tourIndex: number;
+  sessionLogId?: string;
+  loadKg?: number;
+  reps?: number;
+  seconds?: number;
+  meters?: number;
+  rir?: number;
+  completed?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type MetricType = ExerciseMetricType;

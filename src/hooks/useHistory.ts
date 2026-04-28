@@ -49,6 +49,7 @@ type SessionLogRow = {
   mother_session_id: string | null
   session_label: string | null
   program_context: Record<string, unknown> | null
+  slot_signature: string | null
 }
 
 const rowToLog = (row: SessionLogRow): SessionLog => {
@@ -77,6 +78,7 @@ const rowToLog = (row: SessionLogRow): SessionLog => {
     motherSessionId: row.mother_session_id ?? undefined,
     sessionLabel: row.session_label ?? undefined,
     programContext,
+    slotSignature: row.slot_signature ?? undefined,
   }
 }
 
@@ -98,6 +100,7 @@ const logToRow = (log: SessionLog, userId: string) => {
     mother_session_id: log.motherSessionId ?? null,
     session_label: log.sessionLabel ?? null,
     program_context: contextOut,
+    slot_signature: log.slotSignature ?? null,
   }
 }
 
@@ -117,7 +120,7 @@ export const useHistory = () => {
     if (!userId) return
     supabase
       .from('session_logs')
-      .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context')
+      .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context, slot_signature')
       .eq('user_id', userId)
       .order('date_iso', { ascending: false })
       .then(({ data, error }) => {
@@ -130,24 +133,53 @@ export const useHistory = () => {
   }, [userId])
 
   const addLog = useCallback(
-    async (log: Omit<SessionLog, 'id'>) => {
+    async (log: Omit<SessionLog, 'id'>): Promise<SessionLog | null> => {
+      // Idempotency: si un log existe déjà avec le même slotSignature, on UPDATE
+      // au lieu d'INSERT pour éviter le double-comptage (cas free→premium qui
+      // ré-ouvre une séance pour ajouter ses charges).
+      if (log.slotSignature && userId) {
+        const existing = await supabase
+          .from('session_logs')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('slot_signature', log.slotSignature)
+          .maybeSingle()
+        if (existing.data?.id) {
+          const updated: SessionLog = { ...log, id: existing.data.id }
+          const { data, error } = await supabase
+            .from('session_logs')
+            .update(logToRow(updated, userId))
+            .eq('id', existing.data.id)
+            .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context, slot_signature')
+            .single()
+          if (!error && data) {
+            const saved = rowToLog(data as SessionLogRow)
+            setLogs((current) => {
+              const next = mergeLogsById([saved], current)
+              saveToStorage(next, userId)
+              return next
+            })
+            return saved
+          }
+        }
+      }
+
       const id = crypto.randomUUID()
       const completeLog: SessionLog = { ...log, id }
       if (userId) {
         const { data, error } = await supabase
           .from('session_logs')
           .insert(logToRow(completeLog, userId))
-          .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context')
+          .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context, slot_signature')
           .single()
         if (!error && data) {
-          // Use the server-returned row (same data, server-assigned id if needed)
           const saved = rowToLog(data as SessionLogRow)
           setLogs((current) => {
             const next = mergeLogsById([saved], current)
             saveToStorage(next, userId)
             return next
           })
-          return
+          return saved
         }
       }
 
@@ -157,6 +189,7 @@ export const useHistory = () => {
         saveToStorage(next, userId)
         return next
       })
+      return completeLog
     },
     [userId]
   )
