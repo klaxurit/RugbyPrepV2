@@ -224,11 +224,12 @@ describe('ProfilePage · Ma situation', () => {
       seasonMode: 'off_season',
       planningAnchors: { seasonEndedAt: '2026-03-29' },
     }
+    mockDetectCtx.mockReturnValue({ cycle: 'off_season' })
 
     renderProfileWithMaSituationOpen()
 
-    expect(screen.getByTestId('situation-confirmed')).toHaveTextContent('Saison terminée')
-    expect(screen.getByTestId('situation-resume-season')).toHaveTextContent('En fait, la saison reprend')
+    expect(screen.getByTestId('situation-confirmed')).toHaveTextContent('Inter-saison active')
+    expect(screen.getByTestId('situation-resume-season')).toHaveTextContent('Je rejoue déjà')
 
     fireEvent.click(screen.getByTestId('situation-resume-season'))
 
@@ -255,6 +256,7 @@ describe('ProfilePage · Ma situation', () => {
         }],
       },
     }
+    mockDetectCtx.mockReturnValue({ cycle: 'off_season' })
 
     renderProfileWithMaSituationOpen()
     fireEvent.click(screen.getByTestId('situation-resume-season'))
@@ -267,5 +269,55 @@ describe('ProfilePage · Ma situation', () => {
     expect(call.seasonMode).toBe('in_season')
     // Journal trimmed
     expect(call.seasonTransitionState.transitionJournal).toBeUndefined()
+  })
+
+  it('shows off-season UI right after onboarding (no seasonEndedAt yet)', () => {
+    // Bug fix: a fresh user who picked "Inter-saison" at onboarding has
+    // seasonMode=off_season but no seasonEndedAt. The section must reflect
+    // that state instead of asking again "La saison est finie ?".
+    mockProfileOverrides = {
+      seasonMode: 'off_season',
+      planningAnchors: {},
+    }
+    mockDetectCtx.mockReturnValue({ cycle: 'off_season' })
+
+    renderProfileWithMaSituationOpen()
+
+    expect(screen.getByTestId('situation-confirmed')).toHaveTextContent('Inter-saison active')
+    expect(screen.getByTestId('situation-return-date')).toBeInTheDocument()
+    expect(screen.getByTestId('situation-resume-season')).toHaveTextContent('Je rejoue déjà')
+    expect(screen.queryByTestId('situation-season-ended')).toBeNull()
+    expect(screen.queryByTestId('situation-no-match')).toBeNull()
+  })
+
+  it('shows pre-season UI when user has set a return date', () => {
+    mockProfileOverrides = {
+      seasonMode: 'pre_season',
+      planningAnchors: { returnToTeamTrainingAt: '2026-08-15' },
+    }
+    mockDetectCtx.mockReturnValue({ cycle: 'pre_season' })
+
+    renderProfileWithMaSituationOpen()
+
+    expect(screen.getByTestId('situation-confirmed')).toHaveTextContent('Pré-saison active')
+    expect(screen.getByTestId('situation-return-set')).toHaveTextContent('15 août')
+    expect(screen.getByTestId('situation-season-started')).toHaveTextContent('La saison a commencé')
+  })
+
+  it('"La saison a commencé" clears returnToTeamTrainingAt and seasonEndedAt', () => {
+    mockProfileOverrides = {
+      seasonMode: 'pre_season',
+      planningAnchors: { returnToTeamTrainingAt: '2026-08-15', seasonEndedAt: '2026-05-30' },
+    }
+    mockDetectCtx.mockReturnValue({ cycle: 'pre_season' })
+
+    renderProfileWithMaSituationOpen()
+    fireEvent.click(screen.getByTestId('situation-season-started'))
+
+    expect(mockUpdateProfile).toHaveBeenCalledTimes(1)
+    const call = mockUpdateProfile.mock.calls[0][0]
+    expect(call.seasonMode).toBe('in_season')
+    expect(call.planningAnchors.returnToTeamTrainingAt).toBeUndefined()
+    expect(call.planningAnchors.seasonEndedAt).toBeUndefined()
   })
 })

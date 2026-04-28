@@ -13,6 +13,7 @@ import {
   Dumbbell,
   MessageSquare,
   Lock,
+  Calendar,
 } from 'lucide-react'
 import { PageHeader } from '../components/PageHeader'
 import { Chip, type ChipTone } from '../components/ui'
@@ -355,7 +356,7 @@ export function HomePage() {
 
 
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       {/* ── Header ── */}
@@ -377,6 +378,38 @@ export function HomePage() {
         {/* ── Meta-ligne commune (date · saison · semaine · niveau) ─────────── */}
         <section data-testid="home-hero-card">
           <p className="text-xs text-fg-soft mb-3 text-center">{metaLine}</p>
+
+          {/* ── Bandeau countdown reprise (discret) ──
+              Affiché si une date de reprise au club est fixée et future.
+              Mutuellement exclusif avec le banner pre_season_suggested (qui demande
+              JUSTEMENT à fixer cette date — donc pas de chevauchement). */}
+          {(() => {
+            const returnIso = profile.planningAnchors?.returnToTeamTrainingAt
+            if (!returnIso) return null
+            const returnDate = new Date(`${returnIso}T12:00:00`)
+            const todayDate = new Date(`${today}T12:00:00`)
+            const daysToReturn = Math.ceil(
+              (returnDate.getTime() - todayDate.getTime()) / 86_400_000,
+            )
+            if (daysToReturn < 0) return null
+            const label = daysToReturn === 0
+              ? 'Reprise au club aujourd\'hui'
+              : daysToReturn === 1
+              ? 'Reprise au club demain'
+              : `J-${daysToReturn} avant la reprise au club`
+            const isImminent = daysToReturn <= 7
+            return (
+              <p
+                data-testid="home-return-countdown"
+                className={`-mt-2 mb-3 text-[11px] text-center inline-flex items-center justify-center gap-1 w-full ${
+                  isImminent ? 'text-brand-tint font-bold' : 'text-fg-faint'
+                }`}
+              >
+                <Calendar className="w-3 h-3" />
+                {label}
+              </p>
+            )
+          })()}
 
           {/* ── Bandeau match conditionnel ──
               Affiché seulement si un match est programmé dans les 7 prochains

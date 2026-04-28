@@ -565,151 +565,200 @@ export function ProfilePage() {
               </div>
             </div>
 
-            {profile.planningAnchors?.seasonEndedAt ? (
-              <div className="space-y-2" id="reprise">
-                <div className="flex items-center gap-2 py-2.5 px-3 rounded-2xl bg-ok-bg-muted border border-ok-bd" data-testid="situation-confirmed">
-                  <span className="text-xs font-bold text-ok-strong">Saison terminée — programme inter-saison actif</span>
-                </div>
+            {(() => {
+              const mode = situationData.detectedCycle ?? profile.seasonMode ?? 'in_season'
 
-                {/* Pre-season return date */}
-                {profile.planningAnchors?.returnToTeamTrainingAt ? (
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-brand-soft border border-brand-border" data-testid="situation-return-set">
-                      <span className="text-xs font-bold text-brand-tint">
-                        Reprise le {new Date(profile.planningAnchors.returnToTeamTrainingAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
-                      </span>
-                      <button
-                        type="button"
-                        data-testid="situation-clear-return"
-                        onClick={() => {
-                          const cleanAnchors = { ...profile.planningAnchors }
-                          delete cleanAnchors.returnToTeamTrainingAt
-                          updateProfile({ planningAnchors: cleanAnchors })
-                        }}
-                        className="text-[10px] font-bold text-brand-muted hover:text-brand-tint"
-                      >
-                        Modifier
-                      </button>
+              // ── OFF-SEASON ───────────────────────────────────────────────
+              if (mode === 'off_season') {
+                const goInSeason = () => {
+                  const restored = restoreLastTransition(profile.seasonTransitionState)
+                  if (restored) {
+                    updateProfile({
+                      planningAnchors: restored.restoredAnchors,
+                      seasonMode: cycleToSeasonMode(restored.restoredCycle),
+                      seasonTransitionState: restored.updatedTransitionState,
+                    })
+                  } else {
+                    const cleanAnchors = { ...profile.planningAnchors }
+                    delete cleanAnchors.seasonEndedAt
+                    delete cleanAnchors.seasonEndedSource
+                    delete cleanAnchors.returnToTeamTrainingAt
+                    updateProfile({ planningAnchors: cleanAnchors, seasonMode: 'in_season' })
+                  }
+                }
+                return (
+                  <div className="space-y-2" id="reprise">
+                    <div className="flex items-center gap-2 py-2.5 px-3 rounded-2xl bg-ok-bg-muted border border-ok-bd" data-testid="situation-confirmed">
+                      <span className="text-xs font-bold text-ok-strong">Inter-saison active — programme adapté</span>
                     </div>
+
+                    {profile.planningAnchors?.returnToTeamTrainingAt ? (
+                      <div className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-brand-soft border border-brand-border" data-testid="situation-return-set">
+                        <span className="text-xs font-bold text-brand-tint">
+                          Reprise le {new Date(profile.planningAnchors.returnToTeamTrainingAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                        </span>
+                        <button
+                          type="button"
+                          data-testid="situation-clear-return"
+                          onClick={() => {
+                            const cleanAnchors = { ...profile.planningAnchors }
+                            delete cleanAnchors.returnToTeamTrainingAt
+                            updateProfile({ planningAnchors: cleanAnchors })
+                          }}
+                          className="text-[10px] font-bold text-brand-muted hover:text-brand-tint"
+                        >
+                          Modifier
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] text-fg-faint">La saison reprend bientôt ? Indique ta date de reprise au club.</p>
+                        <input
+                          type="date"
+                          data-testid="situation-return-date"
+                          min={today}
+                          onChange={(e) => {
+                            if (!e.target.value) return
+                            updateProfile({
+                              planningAnchors: {
+                                ...profile.planningAnchors,
+                                returnToTeamTrainingAt: e.target.value,
+                              },
+                              seasonMode: 'pre_season',
+                            })
+                          }}
+                          style={{ colorScheme: 'dark' }}
+                          className="w-full py-2.5 px-3 rounded-2xl text-xs font-bold bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all [&::-webkit-calendar-picker-indicator]:brightness-[0.7] [&::-webkit-calendar-picker-indicator]:invert"
+                        />
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      data-testid="situation-resume-season"
+                      onClick={goInSeason}
+                      className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
+                    >
+                      Je rejoue déjà
+                    </button>
                   </div>
-                ) : (
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] text-fg-faint">Tu connais ta date de reprise au club ?</p>
-                    <input
-                      type="date"
-                      data-testid="situation-return-date"
-                      min={today}
-                      onChange={(e) => {
-                        if (!e.target.value) return
-                        updateProfile({
-                          planningAnchors: {
-                            ...profile.planningAnchors,
-                            returnToTeamTrainingAt: e.target.value,
+                )
+              }
+
+              // ── PRE-SEASON ───────────────────────────────────────────────
+              if (mode === 'pre_season') {
+                return (
+                  <div className="space-y-2" id="reprise">
+                    <div className="flex items-center gap-2 py-2.5 px-3 rounded-2xl bg-brand-soft border border-brand-border" data-testid="situation-confirmed">
+                      <span className="text-xs font-bold text-brand-tint">Pré-saison active — programme de reprise</span>
+                    </div>
+
+                    {profile.planningAnchors?.returnToTeamTrainingAt && (
+                      <div className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-layer-5 border border-border-app" data-testid="situation-return-set">
+                        <span className="text-xs font-bold text-fg-soft">
+                          Reprise prévue le {new Date(profile.planningAnchors.returnToTeamTrainingAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                        </span>
+                        <button
+                          type="button"
+                          data-testid="situation-clear-return"
+                          onClick={() => {
+                            const cleanAnchors = { ...profile.planningAnchors }
+                            delete cleanAnchors.returnToTeamTrainingAt
+                            updateProfile({ planningAnchors: cleanAnchors })
+                          }}
+                          className="text-[10px] font-bold text-fg-muted hover:text-fg"
+                        >
+                          Modifier
+                        </button>
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      data-testid="situation-season-started"
+                      onClick={() => {
+                        const cleanAnchors = { ...profile.planningAnchors }
+                        delete cleanAnchors.seasonEndedAt
+                        delete cleanAnchors.seasonEndedSource
+                        delete cleanAnchors.returnToTeamTrainingAt
+                        updateProfile({ planningAnchors: cleanAnchors, seasonMode: 'in_season' })
+                      }}
+                      className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
+                    >
+                      La saison a commencé
+                    </button>
+                  </div>
+                )
+              }
+
+              // ── IN-SEASON / PLAYOFFS (default) ────────────────────────────
+              return (
+                <>
+                  <p className="text-[10px] text-fg-faint">Quelque chose a changé ?</p>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      type="button"
+                      data-testid="situation-season-ended"
+                      onClick={() => {
+                        const anchor = situationData.lastMatchDate ?? today
+                        const prevAnchors = { ...profile.planningAnchors }
+                        const entry: TransitionEntry = {
+                          id: `t-${Date.now()}`,
+                          at: today,
+                          trigger: 'user_manual',
+                          from: {
+                            cycle: situationData.detectedCycle ?? 'in_season',
+                            weekNumber: 1,
+                            schedulingMode: 'calendar',
                           },
-                          seasonMode: 'pre_season',
+                          anchorsSnapshot: prevAnchors,
+                          to: 'off_season',
+                        }
+                        const cleanAnchors = { ...prevAnchors }
+                        delete cleanAnchors.manualPlayoffs
+                        updateProfile({
+                          planningAnchors: { ...cleanAnchors, seasonEndedAt: anchor, seasonEndedSource: 'manual' },
+                          seasonMode: 'off_season',
+                          seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
                         })
                       }}
-                      style={{ colorScheme: 'dark' }}
-                      className="w-full py-2.5 px-3 rounded-2xl text-xs font-bold bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all [&::-webkit-calendar-picker-indicator]:brightness-[0.7] [&::-webkit-calendar-picker-indicator]:invert"
-                    />
+                      className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
+                    >
+                      La saison est finie
+                    </button>
+                    <button
+                      type="button"
+                      data-testid="situation-no-match"
+                      onClick={() => {
+                        const prevAnchors = { ...profile.planningAnchors }
+                        const entry: TransitionEntry = {
+                          id: `t-${Date.now()}`,
+                          at: today,
+                          trigger: 'user_manual',
+                          from: {
+                            cycle: situationData.detectedCycle ?? 'in_season',
+                            weekNumber: 1,
+                            schedulingMode: 'calendar',
+                          },
+                          anchorsSnapshot: prevAnchors,
+                          to: 'off_season',
+                        }
+                        const cleanAnchors = { ...prevAnchors }
+                        delete cleanAnchors.manualPlayoffs
+                        updateProfile({
+                          planningAnchors: { ...cleanAnchors, seasonEndedAt: today, seasonEndedSource: 'manual' },
+                          seasonMode: 'off_season',
+                          seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
+                        })
+                      }}
+                      className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
+                    >
+                      Je n'ai plus de match pour l'instant
+                    </button>
                   </div>
-                )}
-
-                <button
-                  type="button"
-                  data-testid="situation-resume-season"
-                  onClick={() => {
-                    const restored = restoreLastTransition(profile.seasonTransitionState)
-                    if (restored) {
-                      // Restore via journal — derive seasonMode from the cycle before transition
-                      updateProfile({
-                        planningAnchors: restored.restoredAnchors,
-                        seasonMode: cycleToSeasonMode(restored.restoredCycle),
-                        seasonTransitionState: restored.updatedTransitionState,
-                      })
-                    } else {
-                      // Fallback: simple clear (no journal entry to restore)
-                      const cleanAnchors = { ...profile.planningAnchors }
-                      delete cleanAnchors.seasonEndedAt
-                      delete cleanAnchors.seasonEndedSource
-                      delete cleanAnchors.returnToTeamTrainingAt
-                      updateProfile({
-                        planningAnchors: cleanAnchors,
-                        seasonMode: 'in_season',
-                      })
-                    }
-                  }}
-                  className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
-                >
-                  En fait, la saison reprend
-                </button>
-              </div>
-            ) : (
-              <>
-                <p className="text-[10px] text-fg-faint">Quelque chose a changé ?</p>
-                <div className="flex flex-col gap-2">
-                  <button
-                    type="button"
-                    data-testid="situation-season-ended"
-                    onClick={() => {
-                      const anchor = situationData.lastMatchDate ?? today
-                      const prevAnchors = { ...profile.planningAnchors }
-                      const entry: TransitionEntry = {
-                        id: `t-${Date.now()}`,
-                        at: today,
-                        trigger: 'user_manual',
-                        from: {
-                          cycle: situationData.detectedCycle ?? 'in_season',
-                          weekNumber: 1,
-                          schedulingMode: 'calendar',
-                        },
-                        anchorsSnapshot: prevAnchors,
-                        to: 'off_season',
-                      }
-                      const cleanAnchors = { ...prevAnchors }
-                      delete cleanAnchors.manualPlayoffs
-                      updateProfile({
-                        planningAnchors: { ...cleanAnchors, seasonEndedAt: anchor, seasonEndedSource: 'manual' },
-                        seasonMode: 'off_season',
-                        seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
-                      })
-                    }}
-                    className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
-                  >
-                    La saison est finie
-                  </button>
-                  <button
-                    type="button"
-                    data-testid="situation-no-match"
-                    onClick={() => {
-                      const prevAnchors = { ...profile.planningAnchors }
-                      const entry: TransitionEntry = {
-                        id: `t-${Date.now()}`,
-                        at: today,
-                        trigger: 'user_manual',
-                        from: {
-                          cycle: situationData.detectedCycle ?? 'in_season',
-                          weekNumber: 1,
-                          schedulingMode: 'calendar',
-                        },
-                        anchorsSnapshot: prevAnchors,
-                        to: 'off_season',
-                      }
-                      const cleanAnchors = { ...prevAnchors }
-                      delete cleanAnchors.manualPlayoffs
-                      updateProfile({
-                        planningAnchors: { ...cleanAnchors, seasonEndedAt: today, seasonEndedSource: 'manual' },
-                        seasonMode: 'off_season',
-                        seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
-                      })
-                    }}
-                    className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
-                  >
-                    Je n'ai plus de match pour l'instant
-                  </button>
-                </div>
-              </>
-            )}
+                </>
+              )
+            })()}
           </div>
 
           <div className="space-y-2">
