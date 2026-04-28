@@ -1,6 +1,14 @@
 @import './theme-tokens.css';
 @import 'tailwindcss';
 
+/* Variants plateforme — activés par `initPlatformClass` sur <html>.
+   Permet d'écrire `ios:py-2` pour compresser les chromes iOS uniquement
+   (Apple Dynamic Island bouffe déjà 47-54px de hauteur système, on ne peut
+   pas les récupérer, mais on peut tasser le contenu interne pour compenser
+   visuellement vis-à-vis d'Android / web). */
+@custom-variant ios (&:where(.platform-ios, .platform-ios *));
+@custom-variant android (&:where(.platform-android, .platform-android *));
+
 /* ── Gontserrat — polices locales ── */
 @font-face { font-family: 'Gontserrat'; src: url('../fonts/gontserrat-light.ttf') format('truetype'); font-weight: 300; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Gontserrat'; src: url('../fonts/gontserrat-regular.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
@@ -130,6 +138,13 @@
 
 /* ── Resets dans @layer base pour que les utilities Tailwind gagnent ── */
 @layer base {
+  html {
+    /* Empêche l'elastic/bounce scroll de WKWebView (iOS Capacitor) qui décolle
+       le BottomNav et laisse voir le fond de l'app en dessous quand on arrive
+       en bas de la page. Sans effet notable en browser classique. */
+    overscroll-behavior: none;
+  }
+
   body {
     margin: 0;
     font-family: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -137,6 +152,8 @@
     color: var(--color-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Idem : coupe le rebond iOS sur le body. */
+    overscroll-behavior-y: none;
   }
 
   button,
@@ -170,6 +187,18 @@
 
 #root {
   min-height: 100vh;
+}
+
+/* Espace réservé sous le contenu pour la BottomNav fixe + safe-area iOS.
+   Nav h-20 (80px) web/Android, h-14 (56px) iOS — on prend la valeur la plus
+   haute + safe-area + marge visuelle pour couvrir tous les cas sans couper.
+   Buffer 3rem (au lieu de 1rem) car certaines pages comportaient une dernière
+   carte hors d'atteinte au scroll sur Android. */
+@utility pb-bottom-nav {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom) + 3rem);
+}
+.platform-ios .pb-bottom-nav {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom) + 3rem);
 }
 
 .page {

@@ -339,7 +339,7 @@ export function ProgressPage() {
 
   // ─── Render ────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-x-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title={lang === 'fr' ? 'Progression' : 'Progress'} backTo="/profile" />
