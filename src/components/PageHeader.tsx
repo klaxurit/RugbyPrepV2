@@ -35,7 +35,7 @@ export function PageHeader({ title, backTo, right }: PageHeaderProps) {
   const showProfileAvatar = currentUser != null
   return (
     <header
-      className="px-6 py-4 backdrop-blur flex items-center justify-between sticky top-0 z-50 relative bg-shell shadow-[0_4px_16px_rgb(44_24_16/0.15)]"
+      className="px-6 py-4 ios:py-3 pt-[max(1rem,env(safe-area-inset-top))] ios:pt-[env(safe-area-inset-top)] pl-[max(1.5rem,env(safe-area-inset-left))] pr-[max(1.5rem,env(safe-area-inset-right))] backdrop-blur flex items-center justify-between sticky top-0 z-50 relative bg-shell shadow-[0_4px_16px_rgb(44_24_16/0.15)]"
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
         {backTo && (

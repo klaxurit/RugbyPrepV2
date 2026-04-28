@@ -31,7 +31,7 @@ export function MobilityPage() {
 
   if (hasHardBlock) {
     return (
-      <div className="min-h-screen bg-app font-sans text-fg pb-24">
+      <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav">
         <PageHeader title={mobilityPageTitle} backTo="/week" />
         <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
           <div className="rounded-2xl border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
@@ -60,7 +60,7 @@ export function MobilityPage() {
   const session = buildMobilitySession(profile)
 
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title={mobilityPageTitle} backTo="/week" />

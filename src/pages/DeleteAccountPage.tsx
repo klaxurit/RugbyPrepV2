@@ -31,7 +31,7 @@ export function DeleteAccountPage() {
   const deleteAccountMailto = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('Demande de suppression de compte RugbyForge')}&body=${encodeURIComponent(emailBody)}`
 
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title="Suppression du compte" backTo={backTo} />

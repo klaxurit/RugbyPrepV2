@@ -19,6 +19,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { RugbyForgeLogo } from '../components/RugbyForgeLogo'
+import { SignupOrInstallCTA } from '../components/SignupOrInstallCTA'
 
 // ─── Sub-components ──────────────────────────────────────────
 
@@ -52,9 +53,9 @@ function LandingNavbar() {
   ]
 
   return (
-    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-shell/95 backdrop-blur-xl shadow-[0_4px_16px_rgb(44_24_16/0.15)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-shell/95 backdrop-blur-xl shadow-[0_4px_16px_rgb(44_24_16/0.15)] pt-[env(safe-area-inset-top)]">
+      <div className="max-w-7xl mx-auto px-[max(1rem,env(safe-area-inset-left))] sm:px-[max(1.5rem,env(safe-area-inset-left))] lg:px-[max(2rem,env(safe-area-inset-left))]">
+        <div className="flex items-center justify-between h-16 ios:h-12">
           <Link to="/">
             <RugbyForgeLogo size="md" />
           </Link>
@@ -76,12 +77,9 @@ function LandingNavbar() {
             >
               Connexion
             </Link>
-            <Link
-              to="/auth/signup"
-              className="bg-on-brand hover:bg-white text-brand text-sm font-semibold px-5 py-2 rounded-xl transition-colors"
-            >
-              Commencer gratuitement
-            </Link>
+            <SignupOrInstallCTA
+              className="bg-on-brand hover:bg-white text-brand text-sm font-semibold px-5 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
+            />
           </div>
 
           {/* Mobile hamburger */}
@@ -120,13 +118,10 @@ function LandingNavbar() {
           >
             Connexion
           </Link>
-          <Link
-            to="/auth/signup"
-            onClick={() => setMobileOpen(false)}
-            className="block mt-2 bg-on-brand hover:bg-white text-brand text-sm font-semibold px-5 py-3 rounded-xl text-center transition-colors"
-          >
-            Commencer gratuitement
-          </Link>
+          <SignupOrInstallCTA
+            className="mt-2 bg-on-brand hover:bg-white text-brand text-sm font-semibold px-5 py-3 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 w-full"
+            onSignupClick={() => setMobileOpen(false)}
+          />
         </motion.div>
       )}
     </nav>
@@ -371,13 +366,10 @@ export function LandingPage() {
                 l'historique et les courbes de progression.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/auth/signup"
+                <SignupOrInstallCTA
+                  withArrow
                   className="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors shadow-[0_4px_16px_rgb(123_13_30/0.2)]"
-                >
-                  Commencer gratuitement
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
+                />
                 <a
                   href="#features"
                   className="inline-flex items-center gap-2 bg-layer-10 hover:bg-layer-15 text-fg font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
@@ -788,13 +780,10 @@ export function LandingPage() {
               Rejoins les joueurs qui utilisent RugbyForge pour progresser sur le terrain.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-                <Link
-                  to="/auth/signup"
+                <SignupOrInstallCTA
+                  withArrow
                   className="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
-                >
-                  Commencer gratuitement
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
+                />
                 <Link
                   to="/auth/login"
                   className="inline-flex items-center gap-2 bg-layer-10 hover:bg-layer-15 text-fg font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
