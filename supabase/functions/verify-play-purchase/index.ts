@@ -14,6 +14,8 @@ type BillingStatus = 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled
 const ACTIVE_STATUSES = new Set<BillingStatus>(['active', 'trialing'])
 
 Deno.serve(async (req: Request) => {
+  console.log('[verify-play-purchase] Received request:', req.method, req.url)
+
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 

@@ -142,7 +142,6 @@ E. Haut du corps — Force / Hypertrophie — 22 exos (14 avec vidéo)
 │ Rowing à la landmine                │ https://www.youtube.com/shorts/Sr2q7i-i8X0                 │
 ├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
 │ Rowing câble demi-genou             │ https://www.youtube.com/shorts/IJNHCNaY1vE
-                                                           │
 ├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤
 │ Rowing inversé (pompe australienne) │ https://www.youtube.com/shorts/vZy_Eu_Z0WA                 │
 ├─────────────────────────────────────┼────────────────────────────────────────────────────────────┤

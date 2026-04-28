@@ -227,7 +227,10 @@ export function ChatPage() {
         },
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('[ai-coach] invoke error:', error)
+        throw error
+      }
 
       // Handle rate limiting
       if (data?.error === 'rate_limited' || data?.limited === true) {
@@ -251,7 +254,8 @@ export function ChatPage() {
         ...prev,
         { id: Date.now() + 1, role: 'assistant', content: responseText, error: !!data?.error },
       ])
-    } catch {
+    } catch (err) {
+      console.error('[ai-coach] threw:', err)
       setMessages((prev) => [
         ...prev,
         { id: Date.now() + 1, role: 'assistant', content: 'Erreur réseau — réessaie.', error: true },
