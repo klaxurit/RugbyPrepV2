@@ -3,8 +3,9 @@ import { Check, ChevronDown, Eye } from 'lucide-react'
 import type { Block } from '../../types/motherSession'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import type { ExerciseLogEntry } from '../../types/training'
+import type { LoadSuggestion } from '../../services/loadSuggestion'
 import { useSessionRun, buildExerciseTourKey, type ExerciseTourLoad } from '../../contexts/SessionRunContext'
-import { isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
+import { isDirectiveText, resolveExerciseId } from '../../services/motherSession/motherSessionExerciseMap'
 import { getExerciseMetricType } from '../../services/ui/exerciseMetrics'
 import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import {
@@ -25,6 +26,8 @@ interface SessionTourTrackerProps {
   onBlockCompleted?: () => void
   /** Callback pour ouvrir la démo vidéo d'un exercice — utilisé pendant la séance active. */
   onOpenDemo?: (exerciseId: string) => void
+  /** Premium uniquement — suggestion de surcharge progressive par exercice. */
+  getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
 }
 
 /**
@@ -45,6 +48,7 @@ export function SessionTourTracker({
   getLastEntryForExercise,
   onBlockCompleted,
   onOpenDemo,
+  getLoadSuggestion,
 }: SessionTourTrackerProps) {
   const sessionRun = useSessionRun()
 
@@ -52,11 +56,13 @@ export function SessionTourTracker({
   const restSeconds = useMemo(() => parseBlockRestSeconds(block), [block])
 
   // Liste des exos loggables du bloc (les directives type "3 tours" sont filtrées).
+  // exerciseId est résolu depuis le nom anglais via le map MS si non fourni explicitement
+  // — sans ça, hasExerciseDemo() reçoit une chaîne vide et l'œil disparaît.
   const loggableExercises = useMemo(() => {
     return block.exercises
       .map((ex, idx) => {
         if (isDirectiveText(ex.name)) return null
-        const exerciseId = ex.exerciseId ?? ''
+        const exerciseId = ex.exerciseId ?? resolveExerciseId(ex.name) ?? ''
         return { ex, idx, exerciseId }
       })
       .filter((x): x is NonNullable<typeof x> => x !== null)
@@ -183,6 +189,13 @@ export function SessionTourTracker({
                   const metric = exerciseId ? getExerciseMetricType({ exerciseId }) : 'load_reps'
                   const showLoadInputs = isPremium && metric === 'load_reps'
                   const canShowDemo = Boolean(exerciseId && hasExerciseDemo(exerciseId))
+                  const isFirstTour = tourIndex === 0
+                  const suggestion = isFirstTour && exerciseId && getLoadSuggestion
+                    ? getLoadSuggestion(exerciseId)
+                    : undefined
+                  const showSuggestionBadge = !!suggestion
+                    && suggestion.decision !== 'no_suggestion'
+                    && suggestion.decision !== 'no_data'
                   return (
                     <li
                       key={`${tourIndex}-${idx}`}
@@ -228,6 +241,9 @@ export function SessionTourTracker({
                             </button>
                           )}
                         </div>
+                        {showSuggestionBadge && suggestion && (
+                          <SuggestionBadge suggestion={suggestion} />
+                        )}
                         {showLoadInputs && (
                           <div className="pl-13 flex justify-end">
                             <ExerciseTourInputs
@@ -375,6 +391,40 @@ function ExerciseTourInputs({
         className="w-12 rounded-lg border border-border-app bg-layer-5 px-1.5 py-1 text-sm text-fg text-center focus:border-brand focus:outline-none disabled:opacity-60"
         aria-label="Reps"
       />
+    </div>
+  )
+}
+
+/**
+ * Premium uniquement — badge "↑ +5 kg" affiché sur le tour 1 d'un exercice.
+ * Lecture des suggestions venant du moteur loadSuggestion (KB rugby).
+ */
+function SuggestionBadge({ suggestion }: { suggestion: LoadSuggestion }) {
+  const decisionStyle: Record<LoadSuggestion['decision'], { icon: string; cls: string }> = {
+    increase:      { icon: '↑', cls: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300' },
+    decrease:      { icon: '↓', cls: 'border-red-400/40 bg-red-400/10 text-red-300' },
+    maintain:      { icon: '→', cls: 'border-border-app bg-layer-5 text-fg-muted' },
+    bodyweight:    { icon: '●', cls: 'border-blue-400/40 bg-blue-400/10 text-blue-300' },
+    no_data:       { icon: '○', cls: 'border-border-app bg-layer-5 text-fg-faint' },
+    no_suggestion: { icon: '',  cls: '' },
+  }
+  const style = decisionStyle[suggestion.decision]
+  const target =
+    suggestion.suggestedWeight !== null
+      ? `${suggestion.suggestedWeight} kg`
+      : suggestion.suggestedReps !== null
+        ? `${suggestion.suggestedReps} reps`
+        : ''
+  return (
+    <div
+      className={`pl-13 flex items-start gap-2 rounded-lg border px-2.5 py-1.5 ${style.cls}`}
+      data-testid="suggestion-badge"
+    >
+      <span className="text-sm font-bold leading-none">{style.icon}</span>
+      <div className="min-w-0 flex-1">
+        {target && <p className="text-[11px] font-bold leading-tight">{target}</p>}
+        <p className="text-[10px] leading-tight opacity-80">{suggestion.justification}</p>
+      </div>
     </div>
   )
 }

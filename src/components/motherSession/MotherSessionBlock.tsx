@@ -39,6 +39,8 @@ export type MotherSessionBlockProps = {
   isRunning?: boolean
   /** Déclenché quand tous les tours du bloc ont été validés en mode running. */
   onBlockCompleted?: () => void
+  /** Premium uniquement — suggestion de charge par exercice (via loadSuggestion). */
+  getLoadSuggestion?: (exerciseId: string) => import('../../services/loadSuggestion').LoadSuggestion | undefined
 }
 
 function ExerciseRow({
@@ -105,6 +107,7 @@ export function MotherSessionBlock({
   isPremium,
   getLastEntryForExercise,
   onBlockCompleted,
+  getLoadSuggestion,
 }: MotherSessionBlockProps) {
   const runMode = isRunning ?? false
   const blockName = frBlock?.name ?? block.name
@@ -200,6 +203,7 @@ export function MotherSessionBlock({
           getLastEntryForExercise={getLastEntryForExercise}
           onBlockCompleted={onBlockCompleted}
           onOpenDemo={setDemoExerciseId}
+          getLoadSuggestion={getLoadSuggestion}
         />
       )}
 

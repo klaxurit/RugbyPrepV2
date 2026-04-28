@@ -41,6 +41,8 @@ type MotherSessionViewProps = {
   isRunning?: boolean
   /** Appelé quand tous les tours d'un bloc sont validés. Utilisé pour l'autosave par bloc. */
   onBlockCompleted?: (blockNumber: number) => void
+  /** Premium uniquement — suggestion de charge par exercice (loadSuggestion service). */
+  getLoadSuggestion?: (exerciseId: string) => import('../../services/loadSuggestion').LoadSuggestion | undefined
 }
 
 function collectLoggableIndices(block: Block): number[] {
@@ -82,6 +84,7 @@ export function MotherSessionView({
   equipment,
   isRunning,
   onBlockCompleted,
+  getLoadSuggestion,
 }: MotherSessionViewProps) {
   const isFoundations = isFoundationsLevel(trainingLevel)
   const foundationsSession = isFoundations ? adaptMotherSessionForFoundations(session, equipment) : session
@@ -168,6 +171,7 @@ export function MotherSessionView({
                 expandCoaching={previewDefaultOpen || runState.isActive}
                 isRunning={isRunning}
                 onBlockCompleted={onBlockCompleted ? () => onBlockCompleted(block.number) : undefined}
+                getLoadSuggestion={getLoadSuggestion}
               />
             </SessionBlockCard>
           )

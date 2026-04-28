@@ -25,7 +25,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
 import { buildSlotSignature, dateYmdFromIso } from '../services/motherSession/slotSignature'
-import { parseExerciseTourKey } from '../contexts/SessionRunContext'
+import { getLoadSuggestion as computeLoadSuggestion, type LoadSuggestion } from '../services/loadSuggestion'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
 import { buildMotherSessionProgramSessionLog } from '../services/program/buildProgramSessionLog'
@@ -286,34 +286,78 @@ export function SessionDetailPage() {
   }, [activeSlot, surface, sessionRun.startedAt, today, index])
 
   // ── Autosave par bloc : déclenché dès que le dernier tour d'un bloc est validé ──
+  // Autofill : si l'utilisateur n'a saisi que le tour 1, on hérite de ses valeurs
+  // pour les tours suivants validés mais vides. La règle : "tour validé sans saisie
+  // = même charge/reps que la première saisie de ce même exercice".
   const handleBlockCompleted = useCallback((blockNumber: number) => {
     if (!slotSignature || !activeSlot || !surface) return
     const block = activeSlot.session.blocks.find((b) => b.number === blockNumber)
     if (!block) return
     const weekLabel = surface.planningContext.weekLabel ?? 'unknown'
     const motherSessionId = activeSlot.session.metadata.id
+    const tourCount = parseBlockTourCount(block)
 
-    for (const [key, load] of Object.entries(sessionRun.exerciseTourLoads)) {
-      const parsed = parseExerciseTourKey(key)
-      if (!parsed || parsed.blockNumber !== blockNumber) continue
-      if (load.loadKg == null && load.reps == null) continue
-      const exercise = block.exercises[parsed.exerciseIndex]
-      if (!exercise || isDirectiveText(exercise.name)) continue
+    block.exercises.forEach((exercise, exerciseIndex) => {
+      if (!exercise || isDirectiveText(exercise.name)) return
       const exerciseId = exercise.exerciseId ?? resolveExerciseId(exercise.name)
-      if (!exerciseId) continue
-      void upsertSet({
-        slotSignature,
-        motherSessionId,
-        weekLabel,
-        sessionIndex: index,
-        blockNumber,
-        exerciseId,
-        tourIndex: parsed.tourIndex,
-        loadKg: load.loadKg,
-        reps: load.reps,
-      })
+      if (!exerciseId) return
+
+      // Trouve les valeurs de chaque tour pour cet exercice et la 1re saisie non vide.
+      const valuesPerTour: ({ loadKg?: number; reps?: number } | undefined)[] = []
+      let firstFilled: { loadKg?: number; reps?: number } | undefined
+      for (let tour = 0; tour < tourCount; tour++) {
+        const k = buildExerciseTourKey(blockNumber, tour, exerciseIndex)
+        const v = sessionRun.exerciseTourLoads[k]
+        valuesPerTour.push(v)
+        if (!firstFilled && v && (v.loadKg != null || v.reps != null)) firstFilled = v
+      }
+      if (!firstFilled) return
+
+      // Pour chaque tour validé (coché ou avec une saisie), on persiste — en
+      // héritant de firstFilled si aucune saisie propre.
+      for (let tour = 0; tour < tourCount; tour++) {
+        const k = buildExerciseTourKey(blockNumber, tour, exerciseIndex)
+        const isValidated = sessionRun.completedExercises.has(k)
+        const own = valuesPerTour[tour]
+        const ownHasData = own && (own.loadKg != null || own.reps != null)
+        if (!isValidated && !ownHasData) continue
+        const effective = ownHasData ? own! : firstFilled
+        void upsertSet({
+          slotSignature,
+          motherSessionId,
+          weekLabel,
+          sessionIndex: index,
+          blockNumber,
+          exerciseId,
+          tourIndex: tour,
+          loadKg: effective.loadKg,
+          reps: effective.reps,
+        })
+      }
+    })
+  }, [slotSignature, activeSlot, surface, sessionRun.exerciseTourLoads, sessionRun.completedExercises, upsertSet, index])
+
+  // ── Suggestion de charge premium par exercice (KB rugby + RPE) ──
+  const buildLoadSuggestion = useCallback((exerciseId: string): LoadSuggestion | undefined => {
+    if (!isPremium) return undefined
+    const lastSet = getLastSetForExercise(exerciseId)
+    const lastEntry = lastSet?.loadKg != null
+      ? { exerciseId, loadKg: lastSet.loadKg, reps: lastSet.reps, rir: lastSet.rir }
+      : getLastEntryForExercise(exerciseId)
+    if (!lastEntry) {
+      return { decision: 'no_data', suggestedWeight: null, suggestedReps: null, justification: '', nextTarget: null, confidence: 'low' }
     }
-  }, [slotSignature, activeSlot, surface, sessionRun.exerciseTourLoads, upsertSet, index])
+    const fatigueForSuggestion: 'normal' | 'high' | 'critical' =
+      acwrZone === 'critical' || acwrZone === 'danger' ? 'high' : 'normal'
+    return computeLoadSuggestion({
+      exerciseId,
+      lastEntry,
+      week,
+      acwr: acwrHasData ? acwr : null,
+      isRehabActive: Boolean(profile.rehabInjury),
+      fatigueLevel: fatigueForSuggestion,
+    })
+  }, [isPremium, getLastSetForExercise, getLastEntryForExercise, acwr, acwrZone, acwrHasData, week, profile.rehabInjury])
 
   if (hasHardBlock) {
     return (
@@ -498,6 +542,7 @@ export function SessionDetailPage() {
                     fatigue={fatigue}
                     onSaveBlock={handleSaveBlock}
                     onBlockCompleted={handleBlockCompleted}
+                    getLoadSuggestion={buildLoadSuggestion}
                     getLastEntryForExercise={(exerciseId) => {
                       // Priorité : nouvelles données per-set, puis fallback legacy block_logs
                       const lastSet = getLastSetForExercise(exerciseId)
