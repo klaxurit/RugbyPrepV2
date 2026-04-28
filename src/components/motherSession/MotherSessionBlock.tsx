@@ -76,6 +76,11 @@ function ExerciseRow({
               </span>
             ) : null}
             {displayName}
+            {exercise.isOptional ? (
+              <span className="ml-2 inline-flex rounded-full border border-amber-400/40 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-300 align-middle">
+                {msLabel('optional', lang)}
+              </span>
+            ) : null}
           </span>
           {exercise.prescription ? (
             <span className="text-sm text-fg-secondary">{stripBackticks(exercise.prescription)}</span>

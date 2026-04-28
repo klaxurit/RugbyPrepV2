@@ -245,6 +245,11 @@ export function SessionTourTracker({
                           <div className="min-w-0 flex-1">
                             <p className={`text-sm font-bold ${isDone ? 'text-fg-muted line-through' : 'text-fg'}`}>
                               {displayName}
+                              {ex.isOptional ? (
+                                <span className="ml-2 inline-flex rounded-full border border-amber-400/40 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-300 align-middle">
+                                  Optionnel
+                                </span>
+                              ) : null}
                             </p>
                             <p className="text-xs text-fg-secondary">{tourPrescription}</p>
                           </div>

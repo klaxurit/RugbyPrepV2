@@ -40,6 +40,8 @@ export interface Exercise {
   role?: 'prime' | 'contrast' | 'support'
   /** Ex. minute 1, minute 2 (EMOM) */
   slotLabel?: string
+  /** Skippable en cas de fatigue accumulée. La session reste valide sans cet exo. */
+  isOptional?: boolean
 }
 
 export interface Block {

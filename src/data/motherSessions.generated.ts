@@ -5771,17 +5771,20 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Lateral Raise",
-            "prescription": "2x12-15"
+            "prescription": "2x12-15",
+            "isOptional": true
           },
           {
             "name": "T-Y-I Incline Bench",
-            "prescription": "2x10 (5s per position: T, Y, I)"
+            "prescription": "2x10 (5s per position: T, Y, I)",
+            "isOptional": true
           }
         ],
         "coachingNotes": [
-          "`Hammer Curl + Rope Pressdown` is the default arm-support pair.",
+          "`Hammer Curl + Rope Pressdown` est la paire de base — toujours faite.",
           "`Face Pull + Lateral Raise + T-Y-I Incline Bench` = bloc santé-épaule complet : 3 têtes deltoïdes (avant via bench, latéral, rear) + trapèze inférieur (via Y).",
-          "T-Y-I : 2 sets de 10 reps par position (T pur rear delt, Y trap inf, I trap sup/cervical). Haltères légers, technique stricte. 2 sets suffisent avec Face Pull 3x déjà présent.",
+          "T-Y-I : 2 sets de 10 reps par position (T pur rear delt, Y trap inf, I trap sup/cervical). Haltères légers, technique stricte.",
+          "Lateral Raise et T-Y-I sont marqués `optional` : skipper en cas de fatigue accumulée pour rester sous 13 sets. Face Pull 3x reste prioritaire pour la santé d'épaule rugby (KB injury-prevention).",
           "Keep all accessory work short of failure and avoid turning the block into junk volume."
         ]
       }

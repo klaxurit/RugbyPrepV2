@@ -72,11 +72,14 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 4 - Arms / Shoulder Support
 - Exercise A: `Hammer Curl` `3x10-12`
 - Exercise B: `Rope Pressdown` `3x10-12`
-- Exercise C: `Face Pull` `2x12-15`
-- Exercise D: `Lateral Raise` `2x12-15`
+- Exercise C: `Face Pull` `3x12-15`
+- Exercise D: `Lateral Raise` `2x12-15` *(optional)*
+- Exercise E: `T-Y-I Incline Bench` `2x10 (5s per position: T, Y, I)` *(optional)*
 - Coaching notes:
-  - `Hammer Curl + Rope Pressdown` is the default arm-support pair.
-  - `Face Pull + Lateral Raise` is optional and acts as a controlled reward / shoulder-health pair.
+  - `Hammer Curl + Rope Pressdown` est la paire de base — toujours faite.
+  - `Face Pull + Lateral Raise + T-Y-I Incline Bench` = bloc santé-épaule complet : 3 têtes deltoïdes (avant via bench, latéral, rear) + trapèze inférieur (via Y).
+  - T-Y-I : 2 sets de 10 reps par position (T pur rear delt, Y trap inf, I trap sup/cervical). Haltères légers, technique stricte.
+  - Lateral Raise et T-Y-I sont marqués `optional` : skipper en cas de fatigue accumulée pour rester sous 13 sets. Face Pull 3x reste prioritaire pour la santé d'épaule rugby (KB injury-prevention).
   - Keep all accessory work short of failure and avoid turning the block into junk volume.
 
 ## Progression Rules
@@ -85,7 +88,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - `H3`: this is the highest volume week; allow hard but clean sets with `1-2 RIR`.
 - `H3`: progress `Incline DB Bench Press` to `4 sets` only if recovery supports it.
 - `H4`: reduce total volume around `-25 to -30%` while keeping useful load.
-- Reduce optional Pair 2 of Block 4 first if fatigue rises.
+- Reduce optional exercises of Block 4 first (Lateral Raise + T-Y-I) if fatigue rises.
 - Reduce one round from Block 3 second.
 - Keep Blocks 1 and 2 as the structural priorities of the session.
 
