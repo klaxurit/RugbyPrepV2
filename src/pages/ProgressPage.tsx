@@ -10,6 +10,7 @@ import { LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveCont
 import blocksData from '../data/blocks.v1.json'
 import { getExerciseName } from '../data/exercises'
 import { useBlockLogs } from '../hooks/useBlockLogs'
+import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
 import { useHistory } from '../hooks/useHistory'
 import { useAthleteTests } from '../hooks/useAthleteTests'
 import { useProfile } from '../hooks/useProfile'
@@ -140,8 +141,26 @@ function formatVariation(delta: number, higherIsBetter: boolean): { text: string
 
 export function ProgressPage() {
   const [tab, setTab] = useState<'sessions' | 'tests' | 'records'>('sessions')
-  const { logs, getLastEntryForExercise, allPRsWithDates } = useBlockLogs()
+  const { logs, getLastEntryForExercise, allPRsWithDates: legacyPRs } = useBlockLogs()
+  const { allPRsWithDates: setLogPRs } = useExerciseSetLogs()
   const { logs: sessionLogs } = useHistory()
+
+  // Merge des records : nouveau pipeline mother sessions (per-set) prioritaire,
+  // legacy block_logs en fallback pour les exercices non couverts.
+  const allPRsWithDates = useMemo(() => {
+    type PR = NonNullable<typeof legacyPRs>[number]
+    const safeLegacy: PR[] = legacyPRs ?? []
+    const safeSetLog: PR[] = setLogPRs ?? []
+    const byExerciseId = new Map<string, PR>()
+    for (const pr of safeLegacy) byExerciseId.set(pr.exerciseId, pr)
+    for (const pr of safeSetLog) {
+      const existing = byExerciseId.get(pr.exerciseId)
+      if (!existing || pr.bestValue > existing.bestValue) {
+        byExerciseId.set(pr.exerciseId, pr)
+      }
+    }
+    return Array.from(byExerciseId.values()).sort((a, b) => b.dateISO.localeCompare(a.dateISO))
+  }, [legacyPRs, setLogPRs])
   const { addTest, getHistoryFor, getBestFor } = useAthleteTests()
   const { profile } = useProfile()
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
@@ -325,7 +344,7 @@ export function ProgressPage() {
 
       <PageHeader title={lang === 'fr' ? 'Progression' : 'Progress'} backTo="/profile" />
 
-      <main className="relative px-6 pt-5 space-y-6 max-w-md mx-auto">
+      <main className="relative px-6 pt-5 pb-12 sm:pb-16 space-y-6 max-w-md mx-auto">
 
 
         {/* Tabs */}
