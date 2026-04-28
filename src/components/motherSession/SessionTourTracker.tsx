@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronDown } from 'lucide-react'
+import { Check, ChevronDown, Eye } from 'lucide-react'
 import type { Block } from '../../types/motherSession'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import type { ExerciseLogEntry } from '../../types/training'
 import { useSessionRun, buildExerciseTourKey, type ExerciseTourLoad } from '../../contexts/SessionRunContext'
 import { isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
 import { getExerciseMetricType } from '../../services/ui/exerciseMetrics'
-import { getExerciseName } from '../../data/exercises'
+import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import {
   parseBlockTourCount,
   parseBlockRestSeconds,
@@ -23,6 +23,8 @@ interface SessionTourTrackerProps {
   getLastEntryForExercise?: (exerciseId: string) => ExerciseLogEntry | undefined
   /** Callback déclenché quand tous les tours du bloc sont complétés. */
   onBlockCompleted?: () => void
+  /** Callback pour ouvrir la démo vidéo d'un exercice — utilisé pendant la séance active. */
+  onOpenDemo?: (exerciseId: string) => void
 }
 
 /**
@@ -42,6 +44,7 @@ export function SessionTourTracker({
   isPremium,
   getLastEntryForExercise,
   onBlockCompleted,
+  onOpenDemo,
 }: SessionTourTrackerProps) {
   const sessionRun = useSessionRun()
 
@@ -179,6 +182,7 @@ export function SessionTourTracker({
                   const tourPrescription = perTourPrescription(ex.prescription)
                   const metric = exerciseId ? getExerciseMetricType({ exerciseId }) : 'load_reps'
                   const showLoadInputs = isPremium && metric === 'load_reps'
+                  const canShowDemo = Boolean(exerciseId && hasExerciseDemo(exerciseId))
                   return (
                     <li
                       key={`${tourIndex}-${idx}`}
@@ -190,34 +194,48 @@ export function SessionTourTracker({
                             : 'bg-layer-2 border-border-app'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => handleToggleExercise(tourIndex, idx, displayName)}
-                          aria-pressed={isDone}
-                          aria-label={isDone ? `Annuler ${displayName}` : `Valider ${displayName}`}
-                          className={`flex-shrink-0 w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all rf-focus-ring ${
-                            isDone
-                              ? 'bg-ok-strong border-ok-strong text-white scale-100'
-                              : isCurrent
-                                ? 'border-brand bg-brand-soft text-brand hover:bg-brand hover:text-on-brand'
-                                : 'border-border-app bg-layer-5 text-fg-ghost hover:border-brand-border-strong'
-                          }`}
-                        >
-                          {isDone && <Check className="w-5 h-5" strokeWidth={3} />}
-                        </button>
-                        <div className="min-w-0 flex-1">
-                          <p className={`text-sm font-bold ${isDone ? 'text-fg-muted line-through' : 'text-fg'}`}>
-                            {displayName}
-                          </p>
-                          <p className="text-xs text-fg-secondary">{tourPrescription}</p>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleExercise(tourIndex, idx, displayName)}
+                            aria-pressed={isDone}
+                            aria-label={isDone ? `Annuler ${displayName}` : `Valider ${displayName}`}
+                            className={`flex-shrink-0 w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all rf-focus-ring ${
+                              isDone
+                                ? 'bg-ok-strong border-ok-strong text-white scale-100'
+                                : isCurrent
+                                  ? 'border-brand bg-brand-soft text-brand hover:bg-brand hover:text-on-brand'
+                                  : 'border-border-app bg-layer-5 text-fg-ghost hover:border-brand-border-strong'
+                            }`}
+                          >
+                            {isDone && <Check className="w-5 h-5" strokeWidth={3} />}
+                          </button>
+                          <div className="min-w-0 flex-1">
+                            <p className={`text-sm font-bold ${isDone ? 'text-fg-muted line-through' : 'text-fg'}`}>
+                              {displayName}
+                            </p>
+                            <p className="text-xs text-fg-secondary">{tourPrescription}</p>
+                          </div>
+                          {canShowDemo && exerciseId && onOpenDemo && (
+                            <button
+                              type="button"
+                              onClick={() => onOpenDemo(exerciseId)}
+                              aria-label={`Voir l'exécution de ${displayName}`}
+                              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-border-app bg-layer-5 text-fg-muted transition-colors hover:border-brand-border-strong hover:text-brand-tint"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                          )}
                         </div>
                         {showLoadInputs && (
-                          <ExerciseTourInputs
-                            tourKey={key}
-                            lastEntry={getLastEntryForExercise?.(exerciseId)}
-                            disabled={isDone}
-                          />
+                          <div className="pl-13 flex justify-end">
+                            <ExerciseTourInputs
+                              tourKey={key}
+                              lastEntry={getLastEntryForExercise?.(exerciseId)}
+                              disabled={isDone}
+                            />
+                          </div>
                         )}
                       </div>
                     </li>

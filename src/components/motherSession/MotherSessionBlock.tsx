@@ -199,6 +199,7 @@ export function MotherSessionBlock({
           isPremium={isPremium ?? false}
           getLastEntryForExercise={getLastEntryForExercise}
           onBlockCompleted={onBlockCompleted}
+          onOpenDemo={setDemoExerciseId}
         />
       )}
 

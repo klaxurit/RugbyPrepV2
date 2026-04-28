@@ -320,7 +320,7 @@ export function ProgressPage() {
 
   // ─── Render ────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-app font-sans text-fg pb-24 relative overflow-hidden">
+    <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader title={lang === 'fr' ? 'Progression' : 'Progress'} backTo="/profile" />
@@ -951,7 +951,13 @@ export function ProgressPage() {
                       inputMode="decimal"
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
-                      placeholder={modal.unit === 's' ? '1.75' : modal.unit === 'cm' ? '42' : '1200'}
+                      placeholder={
+                        modal.unit === 's' ? '1.75'
+                        : modal.unit === 'cm' ? '42'
+                        : modal.unit === 'kg' ? '120'
+                        : modal.unit === 'm' ? '1200'
+                        : '0'
+                      }
                       className="w-full rounded-[16px] border border-border-app bg-app px-4 py-3 text-lg font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand rf-focus-ring sm:text-xl"
                     />
                   </section>
