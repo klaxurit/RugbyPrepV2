@@ -142,6 +142,24 @@ export function SessionTourTracker({
     void exerciseName
   }
 
+  // Pour chaque exercice du bloc : 1re saisie non vide à travers tous les tours.
+  // Sert à afficher la valeur du tour 1 comme placeholder dans les tours suivants
+  // tant qu'ils sont vides, pour éviter à l'utilisateur de retaper la même chose.
+  const firstFilledByExercise = useMemo(() => {
+    const map = new Map<number, ExerciseTourLoad>()
+    for (const { idx } of loggableExercises) {
+      for (let t = 0; t < tourCount; t++) {
+        const k = buildExerciseTourKey(block.number, t, idx)
+        const v = sessionRun.exerciseTourLoads[k]
+        if (v && (v.loadKg != null || v.reps != null)) {
+          map.set(idx, v)
+          break
+        }
+      }
+    }
+    return map
+  }, [loggableExercises, tourCount, block.number, sessionRun.exerciseTourLoads])
+
   return (
     <div className="mt-4 space-y-2">
       <div className="flex items-center justify-between text-[11px] font-bold text-fg-muted">
@@ -249,6 +267,9 @@ export function SessionTourTracker({
                             <ExerciseTourInputs
                               tourKey={key}
                               lastEntry={getLastEntryForExercise?.(exerciseId)}
+                              inheritedValue={
+                                tourIndex > 0 ? firstFilledByExercise.get(idx) : undefined
+                              }
                               disabled={isDone}
                             />
                           </div>
@@ -340,16 +361,23 @@ function TourPanel({
 
 /**
  * Premium uniquement — mini inputs kg/reps pour une étape d'exercice-tour.
- * Pas de pré-remplissage par lignes : on se base sur `lastEntry` en placeholder
- * (pas envahissant, et laisse l'athlète ajuster rapidement).
+ *
+ * Priorité du placeholder :
+ *   1. `inheritedValue` (saisie tour 1 du même exercice, vue dès qu'on tape) →
+ *      permet à l'athlète de visualiser la valeur héritée, modifiable à la volée.
+ *      L'inheritance "réelle" se fait au save dans handleBlockCompleted —
+ *      ici c'est purement visuel pour confirmer/ajuster.
+ *   2. `lastEntry` (séance précédente) en fallback.
  */
 function ExerciseTourInputs({
   tourKey,
   lastEntry,
+  inheritedValue,
   disabled,
 }: {
   tourKey: string
   lastEntry: ExerciseLogEntry | undefined
+  inheritedValue?: { loadKg?: number; reps?: number }
   disabled: boolean
 }) {
   const sessionRun = useSessionRun()
@@ -358,6 +386,13 @@ function ExerciseTourInputs({
   const update = (patch: ExerciseTourLoad) => {
     sessionRun.setExerciseTourLoad(tourKey, patch)
   }
+
+  const loadPlaceholder = inheritedValue?.loadKg?.toString()
+    ?? lastEntry?.loadKg?.toString()
+    ?? 'kg'
+  const repsPlaceholder = inheritedValue?.reps?.toString()
+    ?? lastEntry?.reps?.toString()
+    ?? 'reps'
 
   return (
     <div className="flex items-center gap-1 flex-shrink-0">
@@ -372,7 +407,7 @@ function ExerciseTourInputs({
           update({ loadKg: raw === '' ? undefined : Math.max(0, Number(raw)) })
         }}
         disabled={disabled}
-        placeholder={lastEntry?.loadKg?.toString() ?? 'kg'}
+        placeholder={loadPlaceholder}
         className="w-14 rounded-lg border border-border-app bg-layer-5 px-1.5 py-1 text-sm text-fg text-center focus:border-brand focus:outline-none disabled:opacity-60"
         aria-label="Charge (kg)"
       />
@@ -387,7 +422,7 @@ function ExerciseTourInputs({
           update({ reps: raw === '' ? undefined : Math.max(0, Number(raw)) })
         }}
         disabled={disabled}
-        placeholder={lastEntry?.reps?.toString() ?? 'reps'}
+        placeholder={repsPlaceholder}
         className="w-12 rounded-lg border border-border-app bg-layer-5 px-1.5 py-1 text-sm text-fg text-center focus:border-brand focus:outline-none disabled:opacity-60"
         aria-label="Reps"
       />
