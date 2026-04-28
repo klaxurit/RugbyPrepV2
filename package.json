@@ -16,9 +16,15 @@
     "fetch:club-logos": "node scripts/fetchClubLogos.mjs",
     "fetch:ffr-ids:ligue": "node scripts/fetchLeagueClubFfrIds.mjs",
     "validate:club-logos:manual": "node scripts/validateClubLogosManual.mjs",
-    "validate:club-logos:manual:remote": "node scripts/validateClubLogosManual.mjs --check-remote"
+    "validate:club-logos:manual:remote": "node scripts/validateClubLogosManual.mjs --check-remote",
+    "cap:sync": "npm run build && npx cap sync ios",
+    "cap:ios": "npx cap open ios"
   },
   "dependencies": {
+    "@capacitor/cli": "^7.6.2",
+    "@capacitor/core": "^7.6.2",
+    "@capacitor/ios": "^7.6.2",
+    "@capacitor/status-bar": "^7.0.6",
     "@supabase/supabase-js": "^2.97.0",
     "@tailwindcss/vite": "^4.1.18",
     "canvas-confetti": "^1.9.4",
@@ -27,6 +33,7 @@
     "lucide-react": "^0.574.0",
     "pdf-parse": "^2.4.5",
     "posthog-js": "^1.357.1",
+    "qrcode.react": "^4.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-easy-crop": "^5.5.6",

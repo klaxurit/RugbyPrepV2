@@ -44,6 +44,18 @@ supabase/.branches/
 
 # Android TWA (bubblewrap)
 android.keystore
+
+# iOS Capacitor — natif généré, on commit la config et le scaffolding,
+# mais pas les builds/cache locaux
+ios/App/build
+ios/App/Pods
+ios/App/output
+ios/App/App/public
+ios/DerivedData
+ios/xcuserdata
+ios/capacitor-cordova-ios-plugins
+ios/**/xcuserdata
+ios/App/App/capacitor.config.json
 key.properties
 local.properties
 *.apk
