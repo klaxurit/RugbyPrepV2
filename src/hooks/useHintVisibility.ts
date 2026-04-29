@@ -10,23 +10,23 @@ import { useHistory } from './useHistory'
  * messages que l'app pousse à l'utilisateur (bannières, mascotte, CTA).
  *
  * Sources de masquage :
- *  1. Dismiss explicite — persisté dans Supabase (table user_dismissed_hints)
- *  2. Cooldown (`cooldownDays`) — réapparaît après N jours
- *  3. Expiration usage (`expireAfterSessions`) — masqué une fois N séances loggées
+ *  1. Dismiss explicite — persisté localement (localStorage) + Supabase pour
+ *     sync cross-device best-effort.
+ *  2. Cooldown (`cooldownDays`) — réapparaît après N jours.
+ *  3. Expiration usage (`expireAfterSessions`) — masqué une fois N séances loggées.
  *  4. Context hash — si le contexte du hint change (ex : nouvelle phase),
  *     le dismiss précédent est invalidé et le hint réapparaît.
  *
- * Optimistic local state pour éviter les flashs au mount.
+ * Architecture : localStorage est la SOURCE DE VÉRITÉ. Supabase est un sync
+ * best-effort pour propager les dismiss entre appareils. Une erreur réseau ou
+ * un échec d'upsert n'empêche jamais le dismiss d'être respecté localement.
  */
 
 const TABLE = 'user_dismissed_hints'
 
 export interface UseHintVisibilityOptions {
-  /** Nombre de jours après dismiss avant que le hint puisse réapparaître. Défaut : permanent. */
   cooldownDays?: number
-  /** Nombre de séances loggées au-delà duquel le hint expire automatiquement. */
   expireAfterSessions?: number
-  /** Hash du contenu/contexte. Si change vs valeur stockée → on ré-affiche. */
   contextHash?: string
 }
 
@@ -39,26 +39,29 @@ export interface UseHintVisibilityResult {
 interface DismissRecord {
   dismissed_at: string
   context_hash: string | null
-  loggedSessionsAtDismiss: number
 }
 
 const LOCAL_CACHE_PREFIX = 'rugbyforge.hintvis.'
 
+function cacheKey(userId: string | null, hintId: string): string {
+  return `${LOCAL_CACHE_PREFIX}${userId ?? 'anon'}.${hintId}`
+}
+
 function readLocalCache(userId: string | null, hintId: string): DismissRecord | null {
-  if (!userId) return null
   try {
-    const raw = localStorage.getItem(`${LOCAL_CACHE_PREFIX}${userId}.${hintId}`)
+    const raw = localStorage.getItem(cacheKey(userId, hintId))
     if (!raw) return null
-    return JSON.parse(raw) as DismissRecord
+    const parsed = JSON.parse(raw) as DismissRecord
+    if (!parsed.dismissed_at) return null
+    return parsed
   } catch {
     return null
   }
 }
 
 function writeLocalCache(userId: string | null, hintId: string, record: DismissRecord) {
-  if (!userId) return
   try {
-    localStorage.setItem(`${LOCAL_CACHE_PREFIX}${userId}.${hintId}`, JSON.stringify(record))
+    localStorage.setItem(cacheKey(userId, hintId), JSON.stringify(record))
   } catch { /* ignore */ }
 }
 
@@ -66,24 +69,16 @@ function isStillHidden(
   record: DismissRecord,
   now: number,
   opts: UseHintVisibilityOptions,
-  loggedSessionsNow: number,
 ): boolean {
-  // Context changed → invalidate dismiss.
   if (opts.contextHash && opts.contextHash !== (record.context_hash ?? '')) {
     return false
   }
-  // Cooldown elapsed → re-show.
   if (opts.cooldownDays != null) {
     const elapsedMs = now - new Date(record.dismissed_at).getTime()
     if (elapsedMs > opts.cooldownDays * 24 * 60 * 60 * 1000) {
       return false
     }
   }
-  // Hint already explicitly dismissed → keep hidden until cooldown/context change above
-  // overrides. Only relevant when no cooldown and no context change.
-  // expireAfterSessions is independent (handled in main hook): if user has logged enough
-  // sessions, the hint should auto-hide regardless of dismiss state.
-  void loggedSessionsNow
   return true
 }
 
@@ -96,10 +91,18 @@ export function useHintVisibility(
   const { logs } = useHistory()
   const loggedSessions = logs.length
 
+  // Source de vérité = localStorage. Re-lue quand userId change (sinon un userId
+  // null au premier render ne lirait jamais le cache une fois auth hydratée).
   const [record, setRecord] = useState<DismissRecord | null>(() => readLocalCache(userId, hintId))
   const [loading, setLoading] = useState(true)
 
-  // Sync from Supabase on mount / userId change.
+  // Re-sync depuis localStorage quand userId / hintId change.
+  useEffect(() => {
+    setRecord(readLocalCache(userId, hintId))
+  }, [userId, hintId])
+
+  // Sync best-effort depuis Supabase (cross-device). N'écrase jamais l'état
+  // local avec null si la DB renvoie vide — le local reste la vérité.
   useEffect(() => {
     if (!userId) {
       setLoading(false)
@@ -115,17 +118,25 @@ export function useHintVisibility(
           .eq('hint_id', hintId)
           .maybeSingle()
         if (cancelled) return
-        if (!error && data) {
+        if (error) {
+          console.warn(`[useHintVisibility] fetch error for ${hintId}:`, error.message)
+          return
+        }
+        if (data) {
           const next: DismissRecord = {
             dismissed_at: data.dismissed_at,
             context_hash: data.context_hash,
-            loggedSessionsAtDismiss: 0,
           }
-          setRecord(next)
-          writeLocalCache(userId, hintId, next)
-        } else if (!error && !data) {
-          setRecord(null)
+          // Garde la trace la plus récente (Supabase OU local).
+          const local = readLocalCache(userId, hintId)
+          const localTs = local ? new Date(local.dismissed_at).getTime() : 0
+          const remoteTs = new Date(next.dismissed_at).getTime()
+          if (remoteTs >= localTs) {
+            setRecord(next)
+            writeLocalCache(userId, hintId, next)
+          }
         }
+        // !data → ne rien faire : le local cache fait foi.
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -134,7 +145,6 @@ export function useHintVisibility(
   }, [userId, hintId])
 
   const visible = useMemo(() => {
-    // Auto-expire après N séances loggées (indépendant du dismiss explicite).
     if (
       options.expireAfterSessions != null &&
       loggedSessions >= options.expireAfterSessions
@@ -142,40 +152,39 @@ export function useHintVisibility(
       return false
     }
     if (!record) return true
-    return !isStillHidden(record, Date.now(), options, loggedSessions)
+    return !isStillHidden(record, Date.now(), options)
   }, [record, options, loggedSessions])
 
   const dismiss = useCallback(() => {
-    if (!userId) {
-      // Anonymous : optimistic only, no persistence.
-      const next: DismissRecord = {
-        dismissed_at: new Date().toISOString(),
-        context_hash: options.contextHash ?? null,
-        loggedSessionsAtDismiss: loggedSessions,
-      }
-      setRecord(next)
-      return
-    }
     const next: DismissRecord = {
       dismissed_at: new Date().toISOString(),
       context_hash: options.contextHash ?? null,
-      loggedSessionsAtDismiss: loggedSessions,
     }
-    setRecord(next)
+    // 1. Persiste IMMÉDIATEMENT en local (vérité).
     writeLocalCache(userId, hintId, next)
-    // Fire-and-forget upsert.
-    void supabase
-      .from(TABLE)
-      .upsert(
-        {
-          user_id: userId,
-          hint_id: hintId,
-          dismissed_at: next.dismissed_at,
-          context_hash: next.context_hash,
-        },
-        { onConflict: 'user_id,hint_id' },
-      )
-  }, [userId, hintId, options.contextHash, loggedSessions])
+    setRecord(next)
+
+    // 2. Sync best-effort vers Supabase (cross-device). Logue les erreurs
+    // pour qu'on les voie pendant le dev — mais n'affecte jamais le local.
+    if (userId) {
+      void supabase
+        .from(TABLE)
+        .upsert(
+          {
+            user_id: userId,
+            hint_id: hintId,
+            dismissed_at: next.dismissed_at,
+            context_hash: next.context_hash,
+          },
+          { onConflict: 'user_id,hint_id' },
+        )
+        .then(({ error }) => {
+          if (error) {
+            console.warn(`[useHintVisibility] dismiss persist error for ${hintId}:`, error.message)
+          }
+        })
+    }
+  }, [userId, hintId, options.contextHash])
 
   return { visible, dismiss, loading }
 }
