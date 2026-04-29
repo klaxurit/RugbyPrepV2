@@ -1,6 +1,7 @@
-import { Info } from 'lucide-react'
+import { Info, X } from 'lucide-react'
 import type { WeekExplanation } from '../../types/scheduling'
 import { useOpenCompanion } from '../../contexts/CoachContext'
+import { useHintVisibility } from '../../hooks/useHintVisibility'
 
 interface PlanningContextCardProps {
   explanation: WeekExplanation
@@ -10,22 +11,33 @@ interface PlanningContextCardProps {
   companionRecommendations?: string[]
   warnings?: string[]
   hideCorrections?: boolean
+  /** Hash de contexte (cycle + phase) — permet de ré-afficher quand le contexte change. */
+  contextHash?: string
 }
 
 /**
- * Indicateur structurel de contexte hebdo — 1 ligne, non-dismissable.
- * Tous les détails (`detailLines`, `warnings`, `companionRecommendations`,
- * `corrections`) sont désormais affichés dans le `CoachCompanion` (mascotte
- * en bas à droite). Le bouton « Pourquoi ? » ouvre la mascotte directement.
+ * Indicateur structurel de contexte hebdo — 1 ligne. Dismissable avec
+ * re-affichage automatique quand la phase change (via `contextHash`).
+ *
+ * Détails (`detailLines`, `warnings`, `companionRecommendations`,
+ * `corrections`) sont affichés dans le `CoachCompanion`. Le bouton
+ * « Pourquoi ? » ouvre la mascotte directement.
  */
 export function PlanningContextCard({
   explanation,
   weekLabel,
   hideCorrections = false,
+  contextHash,
 }: PlanningContextCardProps) {
   const openCompanion = useOpenCompanion()
+  const { visible, dismiss } = useHintVisibility('planning_context_card', {
+    cooldownDays: 14,
+    contextHash,
+  })
   const visibleCorrections = hideCorrections ? [] : explanation.corrections
   const hasDetails = explanation.detailLines.length > 0 || visibleCorrections.length > 0
+
+  if (!visible) return null
 
   return (
     <div
@@ -56,6 +68,16 @@ export function PlanningContextCard({
           Pourquoi ?
         </button>
       )}
+      <button
+        type="button"
+        onClick={dismiss}
+        className="p-1 rounded-lg text-fg-faint hover:text-fg-muted hover:bg-layer-10 transition-colors flex-shrink-0"
+        aria-label="Masquer cette information"
+        title="Ne plus afficher (réapparaît au prochain changement de phase ou dans 14 jours)"
+        data-testid="planning-context-dismiss"
+      >
+        <X className="w-3.5 h-3.5" />
+      </button>
     </div>
   )
 }

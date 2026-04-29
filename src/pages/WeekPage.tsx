@@ -451,6 +451,7 @@ export function WeekPage() {
               <PlanningContextCard
                 explanation={snapshot.explanation}
                 hideCorrections
+                contextHash={planningCtxHash}
               />
             )}
 
