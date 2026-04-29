@@ -636,8 +636,11 @@ export function migrateSnapshot(
   let s = snapshot
   let changed = false
 
-  // Migration 1: Missing explanation (pre-Slice 3 snapshots)
-  if (!s.explanation && s.surface && s.presentation) {
+  // Migration 1: Missing explanation (pre-Slice 3 snapshots) OR missing
+  // detailItems (pre-hint-unification snapshots) → rebuild from current source.
+  const needsExplanationRebuild =
+    s.surface && s.presentation && (!s.explanation || !s.explanation.detailItems)
+  if (needsExplanationRebuild && s.surface && s.presentation) {
     s = {
       ...s,
       explanation: buildExplanation({
