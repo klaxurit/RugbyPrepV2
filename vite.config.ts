@@ -9,16 +9,17 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        // Découpe les gros vendors pour qu'ils soient cachables séparément.
-        // Le main chunk (index-*.js) ne contient plus que la logique d'app.
+        // Split prudent : on n'isole QUE recharts (uniquement /progress) et
+        // supabase (utilisé partout mais lourd). React, react-router,
+        // framer-motion, lucide-react restent groupés dans le chunk vendor
+        // par défaut — les séparer en chunks distincts a déclenché un TDZ
+        // ("Cannot access 'Te' before initialization") en prod sur certains
+        // ordres d'évaluation, donc on garde la chaîne d'init naturelle.
         manualChunks(id) {
           if (!id.includes('node_modules')) return undefined
           if (id.includes('recharts') || id.includes('d3-')) return 'vendor-recharts'
-          if (id.includes('framer-motion')) return 'vendor-motion'
           if (id.includes('@supabase')) return 'vendor-supabase'
-          if (id.includes('lucide-react')) return 'vendor-lucide'
-          if (id.includes('react-router') || id.includes('react-dom') || id.includes('/react/')) return 'vendor-react'
-          return 'vendor'
+          return undefined
         },
       },
     },
