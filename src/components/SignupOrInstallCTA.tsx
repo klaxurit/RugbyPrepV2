@@ -472,16 +472,15 @@ function SheetHeader({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <div
+      <img
+        src="/icons/icon-192.png"
+        alt=""
         aria-hidden
-        className="flex-none w-12 h-12 rounded-2xl grid place-items-center text-white font-bold text-base tracking-tight"
-        style={{
-          background: 'linear-gradient(135deg, #7B0D1E 0%, #5E0A17 100%)',
-          boxShadow: '0 4px 12px rgb(123 13 30 / 0.25)',
-        }}
-      >
-        RF
-      </div>
+        width={48}
+        height={48}
+        className="flex-none w-12 h-12 rounded-2xl"
+        style={{ boxShadow: '0 4px 12px rgb(123 13 30 / 0.25)' }}
+      />
       <div className="flex-1 min-w-0">
         <p
           className="text-base font-bold leading-tight tracking-tight"
