@@ -318,7 +318,11 @@ export function HomePage() {
         ? 'Charge élevée détectée : écoute ton corps, allège si besoin.'
         : readinessResult.score < 50
           ? 'Forme basse : mobilité + sommeil prioritaires aujourd\'hui.'
-          : 'Énergie OK : exécute ta séance proprement, sans forcer.',
+          : isMatchDay
+            ? 'Jour de match : activation courte, hydratation, mental.'
+            : isRestDay
+              ? 'Profite du repos : sommeil, hydratation, mobilité légère.'
+              : 'Énergie OK : exécute ta séance proprement, sans forcer.',
     ],
     chatSeed: 'Je regarde ma journée. ',
   })
