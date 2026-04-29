@@ -46,6 +46,7 @@ function RootRoute() {
 }
 
 const DEV_STATIC_PAGES = new Set([
+  '/about',
   '/blog',
   '/preparation-physique-rugby',
   '/programme-musculation-rugby',
