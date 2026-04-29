@@ -308,9 +308,10 @@ export function HomePage() {
       return `Aujourd'hui · ${label.charAt(0).toUpperCase()}${label.slice(1)}`
     })(),
     infoMessages: [
-      isRestDay
-        ? restDayCopy.title
-        : `Séance du jour : ${todaySessionTitle}`,
+      {
+        id: isRestDay ? 'home:rest_day' : 'home:today_session',
+        text: isRestDay ? restDayCopy.title : `Séance du jour : ${todaySessionTitle}`,
+      },
     ],
     companionMessages: [
       isHighLoad

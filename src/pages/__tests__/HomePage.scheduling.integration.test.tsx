@@ -126,6 +126,7 @@ function hookResult(surface: WeeklyProgramSurfaceResult) {
       explanation: {
         summaryLine: '0 séance prévue cette semaine',
         detailLines: [],
+        detailItems: [],
         corrections: [],
       },
       schemaVersion: 1,

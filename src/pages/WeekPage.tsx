@@ -20,7 +20,8 @@ import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
-import { useRegisterCoachContext } from '../contexts/CoachContext'
+import { useRegisterCoachContext, type CoachInfoMessage } from '../contexts/CoachContext'
+import { useHintVisibility } from '../hooks/useHintVisibility'
 import { NextMatchCard } from '../components/match/NextMatchCard'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 import { AddMatchModal } from '../components/match/AddMatchModal'
@@ -162,9 +163,38 @@ export function WeekPage() {
   const isUnavailable = primarySource === 'unavailable'
   const msResolution = surface?.motherSession ?? null
 
-  // ── Coach bubble content (extract from warnings + companion) ──────────────
-  const coachInfoMessages = useMemo(() => {
-    if (!surface || !msResolution) return [] as string[]
+  // ── Hint visibility (dismiss persistant Supabase + cooldown + expiration) ──
+  // Contexte hash = cycle + phase courante : si l'utilisateur change de phase,
+  // un dismiss précédent est invalidé et le hint réapparaît dans la mascotte.
+  const planningCtxHash = surface?.planningContext
+    ? `${surface.planningContext.cycle}:${surface.planningContext.offSeasonPhase ?? ''}:${surface.planningContext.preSeasonPhase ?? ''}`
+    : ''
+  const onboardingHint = useHintVisibility('rule:onboarding_cycle_hint', {
+    cooldownDays: 14,
+    expireAfterSessions: 5,
+    contextHash: planningCtxHash,
+  })
+  const noMatchHint = useHintVisibility('rule:no_first_match_calendar', {
+    cooldownDays: 14,
+    expireAfterSessions: 5,
+    contextHash: planningCtxHash,
+  })
+  const phase5CtaHint = useHintVisibility('offseason_phase5_cta', {
+    cooldownDays: 30,
+    contextHash: planningCtxHash,
+  })
+
+  const hintVisibilityById = useMemo<Record<string, { visible: boolean; dismiss: () => void } | undefined>>(
+    () => ({
+      'rule:onboarding_cycle_hint': onboardingHint,
+      'rule:no_first_match_calendar': noMatchHint,
+    }),
+    [onboardingHint, noMatchHint],
+  )
+
+  // ── Coach bubble content (extract from warnings + companion + detail items)
+  const coachInfoMessages = useMemo<CoachInfoMessage[]>(() => {
+    if (!surface || !msResolution) return []
     const internalPatterns = [
       'recovery override',
       'repli déterministe',
@@ -174,9 +204,33 @@ export function WeekPage() {
       'repli sur',
     ]
     const isInternal = (w: string) => internalPatterns.some((p) => new RegExp(p, 'i').test(w))
-    return [...new Set([...surface.planningInputWarnings, ...msResolution.warnings])]
-      .filter((w) => !isInternal(w))
-  }, [surface, msResolution])
+    const out: CoachInfoMessage[] = []
+    const seenText = new Set<string>()
+
+    // 1. Detail items from buildExplanation (rule-tagged → dismissable per id).
+    for (const item of snapshot?.explanation?.detailItems ?? []) {
+      const vis = hintVisibilityById[item.ruleId]
+      if (vis && !vis.visible) continue
+      if (seenText.has(item.text)) continue
+      seenText.add(item.text)
+      out.push({
+        id: item.ruleId,
+        text: item.text,
+        contextHash: planningCtxHash,
+        onDismiss: vis?.dismiss,
+      })
+    }
+
+    // 2. Free-form warnings (planning + mother session).
+    for (const w of [...surface.planningInputWarnings, ...msResolution.warnings]) {
+      if (isInternal(w)) continue
+      if (seenText.has(w)) continue
+      seenText.add(w)
+      out.push({ id: `warning:${w.slice(0, 40)}`, text: w })
+    }
+    return out
+  }, [surface, msResolution, snapshot?.explanation, hintVisibilityById, planningCtxHash])
+
   const coachCompanionMessages = msResolution?.companionRecommendations ?? []
   const coachPhaseLabel = surface
     ? localizeWeekLabel(surface.planningContext.weekLabel ?? week, lang)
@@ -400,16 +454,27 @@ export function WeekPage() {
               />
             )}
 
-            {/* Maintenance CTA — permanent until returnDate is set */}
+            {/* Maintenance CTA — dismissable, réapparaît après 30j ou si phase change */}
             {surface?.planningContext?.cycle === 'off_season' &&
              surface?.planningContext?.offSeasonPhase === 5 &&
-             !profile.planningAnchors?.returnToTeamTrainingAt && (
-              <div className="rounded-2xl border border-brand-border bg-brand-soft px-4 py-3 space-y-1.5">
-                <p className="text-xs font-bold text-brand-tint">Ton programme d&apos;inter-saison est terminé.</p>
-                <p className="text-[10px] text-brand-tint">Indique ta date de reprise pour lancer ta pré-saison.</p>
-                <Link to="/profile#reprise" className="inline-flex items-center gap-1 text-[10px] font-black text-brand hover:text-brand-hover transition-colors">
-                  Indiquer ma date de reprise →
-                </Link>
+             !profile.planningAnchors?.returnToTeamTrainingAt &&
+             phase5CtaHint.visible && (
+              <div className="rounded-2xl border border-brand-border bg-brand-soft px-4 py-3 flex items-start gap-3">
+                <div className="flex-1 space-y-1.5">
+                  <p className="text-xs font-bold text-brand-tint">Ton programme d&apos;inter-saison est terminé.</p>
+                  <p className="text-[10px] text-brand-tint">Indique ta date de reprise pour lancer ta pré-saison.</p>
+                  <Link to="/profile#reprise" className="inline-flex items-center gap-1 text-[10px] font-black text-brand hover:text-brand-hover transition-colors">
+                    Indiquer ma date de reprise →
+                  </Link>
+                </div>
+                <button
+                  type="button"
+                  onClick={phase5CtaHint.dismiss}
+                  aria-label="Masquer cette suggestion"
+                  className="flex-shrink-0 p-1 rounded-lg text-brand-tint/60 hover:text-brand-tint hover:bg-brand/10 transition-colors"
+                >
+                  <span aria-hidden className="text-sm leading-none">×</span>
+                </button>
               </div>
             )}
 

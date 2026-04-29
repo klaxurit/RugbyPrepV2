@@ -197,9 +197,13 @@ export function ProgressPage() {
     scopeKey: `progress-${today}`,
     phaseLabel: 'Progression · 4 dernières semaines',
     infoMessages: [
-      adherenceSummary.sessionsLast7d < weeklyTarget
-        ? `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances — rattrapage possible cette semaine.`
-        : `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances, sur cible.`,
+      {
+        id: 'progress:adherence_7d',
+        text:
+          adherenceSummary.sessionsLast7d < weeklyTarget
+            ? `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances — rattrapage possible cette semaine.`
+            : `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances, sur cible.`,
+      },
     ],
     companionMessages: [
       'Un test 5RM ou CMJ en fin de phase sécurise ton suivi de progression.',

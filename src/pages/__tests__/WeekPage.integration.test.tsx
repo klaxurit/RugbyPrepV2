@@ -174,6 +174,7 @@ function hookResult(surface: WeeklyProgramSurfaceResult) {
     explanation: {
       summaryLine: 'Programme de test',
       detailLines: ['Détail de test'],
+      detailItems: [{ ruleId: 'context:test', text: 'Détail de test' }],
       corrections: [],
     },
   }
@@ -770,6 +771,7 @@ describe('WeekPage · convergence moteurs', () => {
     result.snapshot!.explanation = {
       summaryLine: 'Programme adapté',
       detailLines: ['Détail plan'],
+      detailItems: [{ ruleId: 'context:test', text: 'Détail plan' }],
       corrections: ['Séance reportée à Mercredi', 'Jour marqué indisponible'],
     }
     useWeekSnapshotMock.mockReturnValue(result)
@@ -784,25 +786,26 @@ describe('WeekPage · convergence moteurs', () => {
     expect(card.textContent).not.toContain('Jour marqué indisponible')
   })
 
-  it('PlanningContextCard detail lines (non-correction) still visible via toggle', () => {
+  it('PlanningContextCard exposes a "Pourquoi ?" toggle when details exist (details are routed to the coach companion)', () => {
     const surface = makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })
     const result = hookResult(surface)
     result.snapshot!.explanation = {
       summaryLine: 'Programme adapté',
       detailLines: ['Vrai détail explicatif'],
+      detailItems: [{ ruleId: 'rule:in_season_from_calendar', text: 'Vrai détail explicatif' }],
       corrections: ['Séance reportée'],
     }
     useWeekSnapshotMock.mockReturnValue(result)
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    // Toggle open
-    fireEvent.click(screen.getByTestId('planning-context-toggle'))
+    // Toggle button is rendered (opens the coach companion popover)
+    expect(screen.getByTestId('planning-context-toggle')).toBeInTheDocument()
 
-    const details = screen.getByTestId('planning-context-details')
-    expect(details.textContent).toContain('Vrai détail explicatif')
-    // Corrections still hidden
-    expect(details.textContent).not.toContain('Séance reportée')
+    // Detail text is no longer rendered inline — it now lives in the coach companion.
+    const card = screen.getByTestId('planning-context-card')
+    expect(card.textContent).not.toContain('Vrai détail explicatif')
+    expect(card.textContent).not.toContain('Séance reportée')
   })
 
   it('Indispo. button opens inline confirmation, does not fire directly', () => {

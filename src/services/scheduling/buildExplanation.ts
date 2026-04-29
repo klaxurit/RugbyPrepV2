@@ -15,6 +15,7 @@ import type {
   SchedulingMode,
   WeekCorrection,
   WeekExplanation,
+  WeekExplanationDetail,
   WeekPresentation,
 } from '../../types/scheduling'
 
@@ -36,8 +37,9 @@ export function buildExplanation(params: BuildExplanationParams): WeekExplanatio
   // 2. Build summary from dominant explanation or sequential fallback
   const summaryLine = buildSummaryLine(explanations, ctx, schedulingMode, params.presentation)
 
-  // 3. Build detail lines from remaining explanations + warnings
-  const detailLines = buildDetailLines(explanations, ctx)
+  // 3. Build detail items (structured) + plain text lines (back-compat)
+  const detailItems = buildDetailItems(explanations, ctx)
+  const detailLines = detailItems.map((d) => d.text)
 
   // 4. Map corrections to human descriptions
   const correctionLines = corrections.map(formatCorrection)
@@ -45,6 +47,7 @@ export function buildExplanation(params: BuildExplanationParams): WeekExplanatio
   return {
     summaryLine,
     detailLines,
+    detailItems,
     corrections: correctionLines,
   }
 }
@@ -224,6 +227,8 @@ const RULE_COPY: Record<string, RuleCopy> = {
 interface Explanation {
   summary: string
   detail?: string
+  /** Rule id qui a produit l'explication (ex : 'rule:onboarding_cycle_hint', 'context:match_week'). */
+  ruleId: string
   priority: number
   overridesSequential: boolean
 }
@@ -257,6 +262,7 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
     result.push({
       summary,
       detail: copy.detail?.(ctx),
+      ruleId,
       priority: i,
       overridesSequential: copy.overridesSequential ?? false,
     })
@@ -274,6 +280,7 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
         detail: ctx.daysUntilNextMatch <= 2
           ? 'Séance légère pour arriver frais au match.'
           : 'Les séances s\'adaptent à la proximité du match.',
+        ruleId: 'context:match_week',
         priority: basePriority,
         overridesSequential: false,
       })
@@ -285,6 +292,7 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
     result.push({
       summary: 'Semaine de récupération',
       detail: 'Après 3 semaines d\'entraînement, une semaine plus légère permet à ton corps de s\'adapter.',
+      ruleId: 'context:deload',
       priority: basePriority + 1,
       overridesSequential: true,
     })
@@ -295,6 +303,7 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
     result.push({
       summary: 'Volume réduit — fatigue élevée',
       detail: 'Quand la fatigue est élevée, on réduit le volume pour protéger ta récupération.',
+      ruleId: 'context:fatigue_high',
       priority: basePriority + 2,
       overridesSequential: true,
     })
@@ -307,6 +316,7 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
       result.push({
         summary: s,
         detail: 'Le programme passe en mode récupération pour cette semaine.',
+        ruleId: 'context:recovery_override',
         priority: basePriority + 3,
         overridesSequential: true,
       })
@@ -325,7 +335,8 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
       result.push({
         summary: s,
         detail: 'Après une pause, on reprend progressivement pour que tes muscles et tendons se réadaptent en sécurité.',
-        priority: -1, // strictly before any rule-based (0+) or contextual explanation
+        ruleId: 'context:return_after_break',
+        priority: -1,
         overridesSequential: true,
       })
     }
@@ -393,26 +404,30 @@ function getQualityLabel(ctx: AnnualPlanningContext): string | null {
 
 // ── Detail Lines ────────────────────────────────────────────────────
 
-function buildDetailLines(
+function buildDetailItems(
   explanations: Explanation[],
   ctx: AnnualPlanningContext,
-): string[] {
-  const lines: string[] = []
+): WeekExplanationDetail[] {
+  const items: WeekExplanationDetail[] = []
+  const seen = new Set<string>()
 
-  // From explanations (up to 3 detail lines)
   for (const exp of explanations) {
-    if (lines.length >= 3) break
-    if (exp.detail) lines.push(exp.detail)
+    if (items.length >= 3) break
+    if (exp.detail && !seen.has(exp.detail)) {
+      seen.add(exp.detail)
+      items.push({ ruleId: exp.ruleId, text: exp.detail })
+    }
   }
 
-  // From warnings (free-form human strings, append if room and human-safe)
   for (const warning of ctx.planningTrace.warnings) {
-    if (lines.length >= 3) break
+    if (items.length >= 3) break
     if (!isHumanFriendlyWarning(warning)) continue
-    if (!lines.includes(warning)) lines.push(warning)
+    if (seen.has(warning)) continue
+    seen.add(warning)
+    items.push({ ruleId: 'warning', text: warning })
   }
 
-  return lines
+  return items
 }
 
 /** Patterns that indicate a warning is too technical for user-facing display. */

@@ -148,11 +148,20 @@ export interface SchedulingTransition {
 
 // ─── Week Explanation (Slice 3) ────────────────────────────────────
 
+export interface WeekExplanationDetail {
+  /** Rule id qui a produit cette ligne (ex : 'rule:onboarding_cycle_hint'), ou 'warning' / 'context'. */
+  ruleId: string
+  /** Texte affiché à l'utilisateur. */
+  text: string
+}
+
 export interface WeekExplanation {
   /** Always visible — 1 line, dominant reason. */
   summaryLine: string
   /** 2-3 lines in disclosure ("Pourquoi ce plan ?"). */
   detailLines: string[]
+  /** Same details, structured with the rule id that produced each line. */
+  detailItems: WeekExplanationDetail[]
   /** Human descriptions of applied corrections. */
   corrections: string[]
 }

@@ -93,6 +93,7 @@ describe('resolvePlanningContextBannerModel', () => {
   const expl = (summary: string): WeekExplanation => ({
     summaryLine: summary,
     detailLines: [],
+    detailItems: [],
     corrections: [],
   })
 
