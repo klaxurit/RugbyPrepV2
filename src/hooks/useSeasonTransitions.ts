@@ -4,10 +4,12 @@ import type { CalendarEvent, UserProfile } from '../types/training'
 import { detectSeasonTransitions, type SeasonTransition } from '../services/season/detectSeasonTransitions'
 import { userScopedKey } from '../services/storage/userScopedStorage'
 import { useAuth } from './useAuth'
+import { syncDismissToSupabase, useMergeRemoteDismisses } from './useDismissedUntilSync'
 
 const DISMISS_STORAGE_BASE = 'rugbyforge.season_transition_dismissed'
 const ONBOARDING_COMPLETED_STORAGE_BASE = 'rugbyprep.onboarding.completedAt'
 const DISMISS_DAYS = 7
+const HINT_PREFIX = 'season_transition:'
 
 function readOnboardingCompletedAt(userId: string | null): string | undefined {
   try {
@@ -42,6 +44,18 @@ export function useSeasonTransitions(params: {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
   const [dismissCount, setDismissCount] = useState(0)
+
+  // Cross-device sync best-effort : merge dismisses Supabase dans le store local.
+  useMergeRemoteDismisses({
+    userId,
+    hintPrefix: HINT_PREFIX,
+    readLocal: () => readDismissed(userId),
+    writeLocal: (data) => {
+      writeDismissed(data, userId)
+      setDismissCount((c) => c + 1)
+    },
+    defaultCooldownDays: DISMISS_DAYS,
+  })
 
   const transition = useMemo((): SeasonTransition | null => {
     // dismissCount dependency forces re-evaluation after dismiss
@@ -82,6 +96,8 @@ export function useSeasonTransitions(params: {
     current[type] = d.toISOString().slice(0, 10)
     writeDismissed(current, userId)
     setDismissCount((c) => c + 1)
+    // Cross-device sync best-effort.
+    syncDismissToSupabase(userId, `${HINT_PREFIX}${type}`)
   }, [today, userId])
 
   return { transition, dismiss }

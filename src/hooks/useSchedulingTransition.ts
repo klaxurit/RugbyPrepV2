@@ -9,6 +9,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { SchedulingMode, SchedulingTransition } from '../types/scheduling'
 import type { SessionLog } from '../types/training'
+import { syncDismissToSupabase, useMergeRemoteDismisses } from './useDismissedUntilSync'
+
+const HINT_PREFIX = 'scheduling_transition:'
 
 // ── Constants ───────────────────────────────────────────────────────
 
@@ -51,6 +54,19 @@ export function useSchedulingTransition(
 
   // Forces useMemo re-eval after dismiss writes to localStorage (which isn't reactive).
   const [dismissCount, setDismissCount] = useState(0)
+
+  // Cross-device sync best-effort : merge Supabase dismisses dans le store
+  // local au mount. Le store local reste la source primaire (rapide, offline).
+  useMergeRemoteDismisses({
+    userId: userId ?? null,
+    hintPrefix: HINT_PREFIX,
+    readLocal: () => readDismissed(storage, dismissKey),
+    writeLocal: (data) => {
+      writeDismissed(storage, dismissKey, data)
+      setDismissCount((c) => c + 1)
+    },
+    defaultCooldownDays: DEFAULT_DISMISS_DAYS,
+  })
 
   // Pure detection — reads only, no writes during render
   const transition = useMemo((): SchedulingTransition | null => {
@@ -127,7 +143,9 @@ export function useSchedulingTransition(
     dismissed[type] = d.toISOString().slice(0, 10)
     writeDismissed(storage, dismissKey, dismissed)
     setDismissCount((c) => c + 1)
-  }, [today, storage, dismissKey])
+    // Cross-device sync best-effort.
+    syncDismissToSupabase(userId ?? null, `${HINT_PREFIX}${type}`)
+  }, [today, storage, dismissKey, userId])
 
   return { transition, dismiss }
 }
