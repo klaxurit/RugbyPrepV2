@@ -903,9 +903,9 @@ export function ProfilePage() {
         </section>
 
         <CollapsibleSection
-          title={profile.seasonMode === 'off_season' ? 'Mes seances' : 'Mon club'}
+          title={profile.seasonMode === 'off_season' ? 'Mes séances, mon club' : 'Mon club'}
           subtitle={profile.seasonMode === 'off_season'
-            ? 'Choisis librement tes jours de muscu en inter-saison.'
+            ? 'Ton club + jours de muscu librement choisis en inter-saison.'
             : 'Club FFR, competition, planning d\'entrainement et jour de match.'}
           icon={<Calendar className="w-4 h-4" />}
           iconClassName="bg-ok-bg-muted text-ok border border-ok-bd"
