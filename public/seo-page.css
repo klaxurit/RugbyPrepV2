@@ -94,8 +94,8 @@ a {
   height: 36px;
   text-decoration: none;
   background-color: #F5F2EE;
-  -webkit-mask-image: url('/images/rugbyforge-full.png');
-  mask-image: url('/images/rugbyforge-full.png');
+  -webkit-mask-image: url('/icons/icon-512.png');
+  mask-image: url('/icons/icon-512.png');
   -webkit-mask-size: contain;
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
@@ -947,4 +947,25 @@ article h3 {
   .article-shell {
     padding-top: 1.25rem;
   }
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.footer-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-nav a:hover {
+  color: var(--orange);
+  text-decoration: underline;
 }
