@@ -50,6 +50,7 @@ function LandingNavbar() {
     { label: 'La Science', href: '#science' },
     { label: 'Tarifs', href: '#pricing' },
     { label: 'Blog', href: '/blog/' },
+    { label: 'À propos', href: '/about/' },
   ]
 
   return (
@@ -834,6 +835,11 @@ export function LandingPage() {
                 <li>
                   <a href="/preparation-physique-rugby/" className="text-sm text-fg-ghost hover:text-fg transition-colors">
                     Guide preparation rugby
+                  </a>
+                </li>
+                <li>
+                  <a href="/about/" className="text-sm text-fg-ghost hover:text-fg transition-colors">
+                    À propos
                   </a>
                 </li>
               </ul>
