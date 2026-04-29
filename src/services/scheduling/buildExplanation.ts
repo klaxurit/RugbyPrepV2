@@ -56,7 +56,8 @@ export function buildExplanation(params: BuildExplanationParams): WeekExplanatio
 
 interface RuleCopy {
   summary: (ctx: AnnualPlanningContext) => string
-  detail?: (ctx: AnnualPlanningContext) => string
+  /** Returning `undefined` skips the detail line for this rule (ex: hint inadapté en off-season). */
+  detail?: (ctx: AnnualPlanningContext) => string | undefined
   /** If true, this rule's summary overrides the generic sequential count wording. */
   overridesSequential?: boolean
 }
@@ -152,12 +153,24 @@ const RULE_COPY: Record<string, RuleCopy> = {
 
   'rule:onboarding_cycle_hint': {
     summary: () => 'Programme basé sur la période choisie à l\'inscription',
-    detail: () => 'Ajoute tes matchs pour un programme plus précis.',
+    // En off-season : pas de détail → la saison est terminée, rien à ajouter,
+    // le programme est correct (hypertrophie/transition selon la phase).
+    // En pre-season : pousser la date de reprise plutôt que les matchs.
+    // En in-season : pousser les matchs pour caler la préparation.
+    detail: (ctx) => {
+      if (ctx.cycle === 'off_season') return undefined
+      if (ctx.cycle === 'pre_season') return 'Renseigne ta date de reprise au club pour caler ton programme.'
+      return 'Ajoute tes matchs pour un programme plus précis.'
+    },
   },
 
   'rule:no_first_match_calendar': {
     summary: () => 'Aucun match renseigné — programme progressif',
-    detail: () => 'Ajoute tes matchs dans le calendrier pour adapter ton programme automatiquement.',
+    detail: (ctx) => {
+      if (ctx.cycle === 'off_season') return undefined
+      if (ctx.cycle === 'pre_season') return 'Renseigne ta date de reprise au club pour caler ton programme.'
+      return 'Ajoute tes matchs dans le calendrier pour adapter ton programme automatiquement.'
+    },
   },
 
   'rule:manual_off_season': {
