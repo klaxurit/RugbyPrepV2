@@ -90,12 +90,12 @@ a {
 
 .brand {
   display: inline-block;
-  width: 140px;
+  width: 160px;
   height: 36px;
   text-decoration: none;
   background-color: #F5F2EE;
-  -webkit-mask-image: url('/icons/icon-512.png');
-  mask-image: url('/icons/icon-512.png');
+  -webkit-mask-image: url('/icons/rugbyforge-wordmark.png');
+  mask-image: url('/icons/rugbyforge-wordmark.png');
   -webkit-mask-size: contain;
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
