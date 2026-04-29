@@ -7,12 +7,12 @@ import {
 } from 'lucide-react'
 
 // Illustrations abstraites des groupes de poste (bordeaux / crème)
-import frontRowImg from '../assets/positions/front-row.png'
-import secondRowImg from '../assets/positions/second-row.png'
-import backRowImg from '../assets/positions/back-row.png'
-import halfBacksImg from '../assets/positions/half-backs.png'
-import centersImg from '../assets/positions/centers.png'
-import backThreeImg from '../assets/positions/back-three.png'
+import frontRowImg from '../assets/positions/front-row.webp'
+import secondRowImg from '../assets/positions/second-row.webp'
+import backRowImg from '../assets/positions/back-row.webp'
+import halfBacksImg from '../assets/positions/half-backs.webp'
+import centersImg from '../assets/positions/centers.webp'
+import backThreeImg from '../assets/positions/back-three.webp'
 import rugbyforgeRedLogo from '../assets/rugbyforge-red-full.png'
 import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'

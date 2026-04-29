@@ -8,13 +8,13 @@ import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { CoachCompanion } from './components/CoachCompanion'
 
-// Eagerly loaded (critical path)
+// Eager : seulement HomePage (default after login, évite un flash sur l'écran principal)
 import { HomePage } from './pages/HomePage'
-import { LoginPage } from './pages/auth/LoginPage'
-import { SignupPage } from './pages/auth/SignupPage'
-import { LandingPage } from './pages/LandingPage'
 
-// Lazy loaded (secondary pages)
+// Lazy : tout le reste, y compris la landing et l'auth
+const LoginPage = lazy(() => import('./pages/auth/LoginPage').then(m => ({ default: m.LoginPage })))
+const SignupPage = lazy(() => import('./pages/auth/SignupPage').then(m => ({ default: m.SignupPage })))
+const LandingPage = lazy(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })))
 const WeekPage = lazy(() => import('./pages/WeekPage').then(m => ({ default: m.WeekPage })))
 const SessionDetailPage = lazy(() => import('./pages/SessionDetailPage').then(m => ({ default: m.SessionDetailPage })))
 const ProgressPage = lazy(() => import('./pages/ProgressPage').then(m => ({ default: m.ProgressPage })))

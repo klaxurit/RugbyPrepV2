@@ -5,8 +5,8 @@ import { Info, MessageCircle, X, Zap } from 'lucide-react'
 import { useCoachContext } from '../contexts/CoachContext'
 import { useProfile } from '../hooks/useProfile'
 import { getPositionIllustration } from '../assets/positions'
-import compagnonClosed from '../assets/compagnon-mouth-closed.png'
-import compagnonOpen from '../assets/compagnon-mouth-open.png'
+import compagnonClosed from '../assets/compagnon-mouth-closed.webp'
+import compagnonOpen from '../assets/compagnon-mouth-open.webp'
 
 const STORAGE_PREFIX = 'rugbyforge.coachcompanion.seen'
 

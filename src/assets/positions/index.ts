@@ -1,9 +1,9 @@
-import frontRow from './front-row.png'
-import secondRow from './second-row.png'
-import backRow from './back-row.png'
-import halfBacks from './half-backs.png'
-import centers from './centers.png'
-import backThree from './back-three.png'
+import frontRow from './front-row.webp'
+import secondRow from './second-row.webp'
+import backRow from './back-row.webp'
+import halfBacks from './half-backs.webp'
+import centers from './centers.webp'
+import backThree from './back-three.webp'
 import type { UserProfile } from '../../types/training'
 
 type PositionValue = NonNullable<UserProfile['position']>
