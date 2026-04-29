@@ -55,7 +55,13 @@
               "width": 512,
               "height": 512
             },
-            "description": "Application française de préparation physique personnalisée pour le rugby."
+            "description": "Application française de préparation physique personnalisée pour le rugby.",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "email": "bonjour@rugbyforge.fr",
+              "contactType": "customer support",
+              "availableLanguage": ["fr"]
+            }
           },
           {
             "@type": "WebSite",
@@ -66,6 +72,14 @@
             "inLanguage": "fr",
             "publisher": {
               "@id": "https://rugbyforge.fr/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://rugbyforge.fr/blog/?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
             }
           },
           {
@@ -142,18 +156,6 @@
                   "@type": "Answer",
                   "text": "Le site publie un blog avec des guides dédiés à la préparation physique rugby, à l'ACWR, à la périodisation, aux tests physiques et au programme de musculation rugby."
                 }
-              }
-            ]
-          },
-          {
-            "@type": "BreadcrumbList",
-            "@id": "https://rugbyforge.fr/#breadcrumbs",
-            "itemListElement": [
-              {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Accueil",
-                "item": "https://rugbyforge.fr/"
               }
             ]
           }

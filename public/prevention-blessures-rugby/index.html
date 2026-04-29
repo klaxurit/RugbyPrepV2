@@ -39,14 +39,26 @@
         "@context": "https://schema.org",
         "@graph": [
           {
-            "@type": "Article",
-            "@id": "https://rugbyforge.fr/prevention-blessures-rugby/#article",
-            "headline": "Prévention blessures rugby : comment réduire les risques sur une saison",
+            "@type": "MedicalWebPage",
+            "@id": "https://rugbyforge.fr/prevention-blessures-rugby/#medicalpage",
+            "name": "Prévention blessures rugby : comment réduire les risques sur une saison",
             "description": "Guide RugbyForge sur la charge, les facteurs de risque, le prehab et la prévention des blessures au rugby.",
-            "author": {
-              "@type": "Organization",
-              "name": "RugbyForge"
+            "url": "https://rugbyforge.fr/prevention-blessures-rugby/",
+            "inLanguage": "fr",
+            "datePublished": "2026-03-23",
+            "dateModified": "2026-04-29",
+            "lastReviewed": "2026-04-29",
+            "audience": {
+              "@type": "PeopleAudience",
+              "audienceType": "Joueurs de rugby, coachs et préparateurs physiques"
             },
+            "specialty": "https://schema.org/PhysicalTherapy",
+            "about": [
+              { "@type": "MedicalCondition", "name": "Lésion ischio-jambiers" },
+              { "@type": "MedicalCondition", "name": "Commotion cérébrale" },
+              { "@type": "MedicalCondition", "name": "Entorse de cheville" },
+              { "@type": "MedicalCondition", "name": "Tendinopathie rotulienne" }
+            ],
             "publisher": {
               "@type": "Organization",
               "name": "RugbyForge",
@@ -55,10 +67,6 @@
                 "url": "https://rugbyforge.fr/icons/icon-512.png"
               }
             },
-            "datePublished": "2026-03-23",
-            "dateModified": "2026-03-23",
-            "inLanguage": "fr",
-            "mainEntityOfPage": "https://rugbyforge.fr/prevention-blessures-rugby/",
             "image": {
               "@type": "ImageObject",
               "url": "https://rugbyforge.fr/og-rugbyforge.png",
