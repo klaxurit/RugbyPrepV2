@@ -178,7 +178,10 @@ export function ClubSettingsSection() {
   const clubLogoUrl = getClubLogoUrl(profile.clubCode)
   const clubMonogram = getClubMonogram(profile.clubName)
 
-  // ── Off-season: simplified gym-only selector ──
+  // ── Off-season: club selector (kept) + gym days. FFR competition / club
+  // days / match day are skipped — pas de matchs ni d'entraînement club hors
+  // saison. Le club lui-même reste éditable car il fait partie de l'identité
+  // du joueur et sera réutilisé dès le retour en saison.
   if (profile.seasonMode === 'off_season') {
     const gymDays = new Set<DayOfWeek>(
       profile.scSchedule?.sessions.map((s) => s.day) ??
@@ -196,39 +199,77 @@ export function ClubSettingsSection() {
     }
 
     return (
-      <div className="space-y-3">
-        <p className="text-xs font-black text-fg-muted uppercase tracking-wide">
-          {profile.weeklySessions === 3 ? '3 seances par semaine' : '2 seances par semaine'}
-        </p>
-        <div className="grid grid-cols-7 gap-1.5">
-          {CLUB_DAYS_OPTIONS.map((opt) => {
-            const selected = gymDays.has(opt.day)
-            return (
+      <div className="space-y-5">
+        {/* Club (toujours éditable) */}
+        <div className="space-y-2">
+          <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Club</p>
+          {profile.clubName ? (
+            <div className="p-3 rounded-2xl border border-border-app bg-layer-5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-11 h-11 rounded-2xl bg-layer-10 border border-border-app flex items-center justify-center overflow-hidden flex-shrink-0">
+                  {clubLogoUrl ? (
+                    <img src={clubLogoUrl} alt={profile.clubName} className="w-full h-full object-contain" />
+                  ) : (
+                    <span className="text-xs font-black text-fg-soft">{clubMonogram}</span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-fg truncate">{profile.clubName}</p>
+                  <p className="text-xs text-fg-muted truncate">
+                    {profile.clubCode}
+                    {profile.clubLigue ? ` · ${profile.clubLigue}` : ''}
+                    {profile.clubDepartmentCode ? ` · CD ${profile.clubDepartmentCode}` : ''}
+                  </p>
+                </div>
+              </div>
               <button
-                key={opt.day}
                 type="button"
-                onClick={() => toggleGymDay(opt.day)}
-                className={`aspect-square rounded-xl text-xs font-black border-2 transition-all flex flex-col items-center justify-center relative ${
-                  selected
-                    ? 'border-brand bg-brand-soft text-brand-tint'
-                    : 'border-border-app bg-layer-5 text-fg-muted hover:border-layer-15'
-                }`}
+                onClick={handleRemoveClub}
+                className="text-[11px] font-bold text-fg-muted hover:text-brand transition-colors"
               >
-                {opt.short}
-                {selected && (
-                  <Dumbbell
-                    className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 text-brand"
-                    strokeWidth={2.5}
-                    aria-hidden
-                  />
-                )}
+                Retirer
               </button>
-            )
-          })}
+            </div>
+          ) : (
+            <ClubSearchInput value={clubQuery} clubCode={profile.clubCode} onChange={handleClubSearchChange} />
+          )}
+          <p className="text-[10px] text-fg-faint">
+            Pas de matchs ni de planning club en inter-saison — ces réglages reviendront à la reprise.
+          </p>
         </div>
-        <p className="text-[11px] text-fg-muted leading-relaxed">
-          Inter-saison — pas de contrainte club. Choisis les jours qui t&apos;arrangent.
-        </p>
+
+        {/* Jours muscu */}
+        <div className="space-y-3 pt-1 border-t border-border-app">
+          <p className="text-xs font-black text-fg-muted uppercase tracking-wide">
+            Jours muscu — {profile.weeklySessions === 3 ? '3 seances par semaine' : '2 seances par semaine'}
+          </p>
+          <div className="grid grid-cols-7 gap-1.5">
+            {CLUB_DAYS_OPTIONS.map((opt) => {
+              const selected = gymDays.has(opt.day)
+              return (
+                <button
+                  key={opt.day}
+                  type="button"
+                  onClick={() => toggleGymDay(opt.day)}
+                  className={`aspect-square rounded-xl text-xs font-black border-2 transition-all flex flex-col items-center justify-center relative ${
+                    selected
+                      ? 'border-brand bg-brand-soft text-brand-tint'
+                      : 'border-border-app bg-layer-5 text-fg-muted hover:border-layer-15'
+                  }`}
+                >
+                  {opt.short}
+                  {selected && (
+                    <Dumbbell
+                      className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 text-brand"
+                      strokeWidth={2.5}
+                      aria-hidden
+                    />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
       </div>
     )
   }
