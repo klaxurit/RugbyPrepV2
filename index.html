@@ -18,6 +18,12 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <!-- Preload Gontserrat regular (poids critique du first paint) — évite FOUT -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/gontserrat-regular.woff2" crossorigin="anonymous" />
+    <!-- Réserve la zone du hero React pour limiter le CLS pendant l'hydration -->
+    <style>
+      #root { min-height: 100vh; background-color: #F5F2EE; }
+    </style>
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="RugbyForge" />
     <meta property="og:locale" content="fr_FR" />
