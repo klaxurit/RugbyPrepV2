@@ -390,7 +390,7 @@ export function LandingPage() {
               <div className="absolute w-80 h-80 bg-brand rounded-full blur-[80px] opacity-[0.08] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
               <div className="absolute w-48 h-48 bg-brand rounded-full blur-[60px] opacity-[0.06] top-0 right-0" />
               <PhoneMockup
-                src="/images/landing/rufo_home.png"
+                src="/images/landing/rufo_home.webp"
                 alt="RugbyForge — accueil et programme"
                 loading="eager"
                 fetchPriority="high"
@@ -509,7 +509,7 @@ export function LandingPage() {
               className="flex flex-col items-center"
             >
               <PhoneMockup
-                src="/images/landing/rufo_datas.png"
+                src="/images/landing/rufo_datas.webp"
                 alt="Suivi de progression et données"
               />
               <p className="text-sm text-fg-muted text-center mt-5">
@@ -525,7 +525,7 @@ export function LandingPage() {
               className="flex flex-col items-center"
             >
               <PhoneMockup
-                src="/images/landing/rufo_calendar.png"
+                src="/images/landing/rufo_calendar.webp"
                 alt="Calendrier et planification"
               />
               <p className="text-sm text-fg-muted text-center mt-5">
@@ -541,7 +541,7 @@ export function LandingPage() {
               className="flex flex-col items-center"
             >
               <PhoneMockup
-                src="/images/landing/rufo_data2.png"
+                src="/images/landing/rufo_data2.webp"
                 alt="Monitoring ACWR et charge"
               />
               <p className="text-sm text-fg-muted text-center mt-5">

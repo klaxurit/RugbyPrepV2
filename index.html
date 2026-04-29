@@ -20,6 +20,8 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <!-- Preload Gontserrat regular (poids critique du first paint) — évite FOUT -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/gontserrat-regular.woff2" crossorigin="anonymous" />
+    <!-- Preload du LCP hero (mockup téléphone "rufo_home") — gain ~1.5s LCP mobile -->
+    <link rel="preload" as="image" type="image/webp" href="/images/landing/rufo_home.webp" fetchpriority="high" />
     <!-- Réserve la zone du hero React pour limiter le CLS pendant l'hydration -->
     <style>
       #root { min-height: 100vh; background-color: #F5F2EE; }
@@ -108,7 +110,7 @@
             },
             "primaryImageOfPage": {
               "@type": "ImageObject",
-              "url": "https://rugbyforge.fr/images/landing/app-week.png"
+              "url": "https://rugbyforge.fr/images/landing/app-week.webp"
             }
           },
           {
@@ -120,7 +122,7 @@
             "operatingSystem": "Web",
             "inLanguage": "fr",
             "description": "Application web progressive de préparation physique rugby avec programmes personnalisés par poste et niveau, suivi ACWR, tests physiques et prévention blessures.",
-            "screenshot": "https://rugbyforge.fr/images/landing/app-week.png",
+            "screenshot": "https://rugbyforge.fr/images/landing/app-week.webp",
             "featureList": "Programmes personnalisés par poste, Périodisation DUP en saison, Suivi de charge ACWR, Tests physiques (CMJ sprint 1RM), Prévention blessures, Coaching IA",
             "offers": {
               "@type": "Offer",
@@ -220,11 +222,11 @@
           </p>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
             <figure style="margin: 0; border: 1px solid #e5e7eb; border-radius: 20px; overflow: hidden;">
-              <img src="https://rugbyforge.fr/images/landing/app-week.png" alt="Capture RugbyForge du programme de la semaine" style="display: block; width: 100%; height: auto;" />
+              <img src="https://rugbyforge.fr/images/landing/app-week.webp" alt="Capture RugbyForge du programme de la semaine" style="display: block; width: 100%; height: auto;" />
               <figcaption style="padding: 0.9rem 1rem; color: #4b5563; line-height: 1.6;">Vue hebdomadaire du programme de préparation physique rugby dans l'application.</figcaption>
             </figure>
             <figure style="margin: 0; border: 1px solid #e5e7eb; border-radius: 20px; overflow: hidden;">
-              <img src="https://rugbyforge.fr/images/landing/acwr-monitoring.png" alt="Capture RugbyForge du suivi ACWR et du monitoring de charge" style="display: block; width: 100%; height: auto;" />
+              <img src="https://rugbyforge.fr/images/landing/acwr-monitoring.webp" alt="Capture RugbyForge du suivi ACWR et du monitoring de charge" style="display: block; width: 100%; height: auto;" />
               <figcaption style="padding: 0.9rem 1rem; color: #4b5563; line-height: 1.6;">Monitoring de charge et ratio charge aiguë / charge chronique pour mieux lire la fatigue.</figcaption>
             </figure>
           </div>
