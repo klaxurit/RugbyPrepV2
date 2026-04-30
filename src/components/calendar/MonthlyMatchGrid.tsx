@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import type { CalendarEvent, CalendarEventType, DayOfWeek } from '../../types/training'
+import { getClubLogoUrl } from '../../services/ui/clubLogos'
 
 const DAY_NAMES_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 const MONTHS_FR = [
@@ -131,6 +132,12 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
           let fontWeight: number | null = null
           let borderColor: string | null = null
 
+          // Logo opponent (si code FFR connu) — affiché en lieu et place du
+          // glyphe 'M' pour rendre le match identifiable d'un coup d'œil.
+          const opponentLogoUrl = isMatchDay
+            ? getClubLogoUrl(entry?.event.opponent_code)
+            : null
+
           if (isMatchDay) {
             bgVar = 'var(--color-event-match-bg)'
             borderColor = 'var(--color-event-match-border)'
@@ -203,7 +210,16 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
               >
                 {day}
               </span>
-              {glyph && (
+              {opponentLogoUrl ? (
+                <img
+                  src={opponentLogoUrl}
+                  alt=""
+                  aria-hidden
+                  loading="lazy"
+                  className="w-3.5 h-3.5 object-contain"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                />
+              ) : glyph ? (
                 <span
                   aria-hidden
                   className="text-[9px] font-bold leading-none tracking-[0.6px]"
@@ -211,7 +227,7 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
                 >
                   {glyph}
                 </span>
-              )}
+              ) : null}
             </button>
           )
         })}

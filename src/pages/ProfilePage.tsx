@@ -11,6 +11,7 @@ import { getPositionIllustration } from '../assets/positions'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { useProfile } from '../hooks/useProfile'
+import { useHistory } from '../hooks/useHistory'
 import { useAuth } from '../hooks/useAuth'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
@@ -210,6 +211,7 @@ const avatarErrorLabel: Record<AuthError, string> = {
 
 export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
+  const { logs } = useHistory()
   const { authState, updateAvatar, signOut } = useAuth()
   const { features, isPremium, refresh: refreshEntitlements } = useFeatureAccess()
   const { visibleEvents, structuralEvents } = useCalendar()
@@ -431,59 +433,13 @@ export function ProfilePage() {
           )}
         </section>
 
-        {/* Forme du moment — pilote la rampe de reprise (volume W1-W2) */}
-        <section
-          className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-3"
-          data-testid="profile-section-baseline"
-        >
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h2 className="text-sm font-black text-fg">Forme du moment</h2>
-              <p className="text-xs text-fg-muted">Module la charge des 2 premières semaines selon ton état de reprise.</p>
-            </div>
-            {isRestartRampUpActive(profile) && (
-              <span className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-brand-soft border border-brand-border text-[10px] font-black text-brand-tint">
-                <RefreshCw className="w-3 h-3" />
-                Rampe active
-              </span>
-            )}
-          </div>
-          <div className="flex flex-col gap-2">
-            {TRAINING_BASELINES.map((opt) => {
-              const active = profile.trainingBaseline === opt.value
-              const Icon = opt.icon
-              return (
-                <button
-                  key={opt.value}
-                  type="button"
-                  data-testid={`profile-baseline-${opt.value}`}
-                  onClick={() => updateProfile({ trainingBaseline: opt.value })}
-                  className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
-                    active
-                      ? 'bg-brand text-on-brand shadow-sm'
-                      : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
-                  }`}
-                >
-                  <Icon className="w-4 h-4 flex-shrink-0" />
-                  <div>
-                    <p className="font-black">{opt.label}</p>
-                    <p className={`text-[10px] font-normal ${active ? 'text-on-brand/80' : 'text-fg-muted'}`}>{opt.sub}</p>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-          {profile.trainingBaseline === 'restart' && isRestartRampUpActive(profile) && profile.trainingBaselineSetAt && (
-            <p className="text-[11px] text-fg-muted">
-              Volume réduit jusqu'au{' '}
-              <span className="font-black text-fg-soft">
-                {new Date(new Date(profile.trainingBaselineSetAt).getTime() + RESTART_RAMP_UP_DAYS * 86_400_000)
-                  .toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
-              </span>
-              , puis retour automatique au programme normal.
-            </p>
-          )}
-        </section>
+        {/* Forme du moment — auto-masqué après 14j ou ≥3 séances loggées (sauf rampe restart active).
+            Lien "Modifier ma forme actuelle" pour le révéler à la demande (cas blessure / coupure). */}
+        <FormeDuMomentSection
+          profile={profile}
+          loggedSessions={logs.length}
+          onUpdateBaseline={(value) => updateProfile({ trainingBaseline: value })}
+        />
 
         {/* Infos de jeu */}
         <CollapsibleSection
@@ -1234,5 +1190,116 @@ export function ProfilePage() {
 
       <BottomNav />
     </div>
+  )
+}
+
+// ── Forme du moment — auto-hidden after settle ──────────────────────
+
+const FORME_AUTO_HIDE_DAYS = 14
+const FORME_AUTO_HIDE_SESSIONS = 3
+
+function FormeDuMomentSection({
+  profile,
+  loggedSessions,
+  onUpdateBaseline,
+}: {
+  profile: import('../types/training').UserProfile
+  loggedSessions: number
+  onUpdateBaseline: (value: TrainingBaseline) => void
+}) {
+  const [forceOpen, setForceOpen] = useState(false)
+  // Date.now() capturé une fois au mount via useState init (autorisé impur).
+  // Settled est une décision one-shot par session — pas besoin de re-évaluer en live.
+  const [mountedAt] = useState(() => Date.now())
+  const restartActive = isRestartRampUpActive(profile)
+
+  let settled = false
+  if (profile.trainingBaselineSetAt) {
+    const ageDays = (mountedAt - new Date(profile.trainingBaselineSetAt).getTime()) / 86_400_000
+    settled = ageDays >= FORME_AUTO_HIDE_DAYS || loggedSessions >= FORME_AUTO_HIDE_SESSIONS
+  }
+
+  // La rampe restart active doit rester visible — c'est sa raison d'être.
+  const shouldShow = forceOpen || !settled || restartActive
+
+  if (!shouldShow) {
+    const currentLabel = TRAINING_BASELINES.find((o) => o.value === profile.trainingBaseline)?.label ?? '—'
+    return (
+      <button
+        type="button"
+        onClick={() => setForceOpen(true)}
+        data-testid="profile-baseline-reveal"
+        className="w-full flex items-center justify-between gap-3 py-2.5 px-4 rounded-2xl bg-layer-5 border border-border-app text-fg-soft hover:border-layer-20 transition-colors"
+      >
+        <span className="text-xs font-bold">
+          Forme du moment — <span className="text-fg-muted font-normal">{currentLabel}</span>
+        </span>
+        <span className="text-[10px] font-black text-brand-tint uppercase tracking-wide">Modifier</span>
+      </button>
+    )
+  }
+
+  return (
+    <section
+      className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-3"
+      data-testid="profile-section-baseline"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-sm font-black text-fg">Forme du moment</h2>
+          <p className="text-xs text-fg-muted">Module la charge des 2 premières semaines selon ton état de reprise.</p>
+        </div>
+        {restartActive && (
+          <span className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-brand-soft border border-brand-border text-[10px] font-black text-brand-tint">
+            <RefreshCw className="w-3 h-3" />
+            Rampe active
+          </span>
+        )}
+      </div>
+      <div className="flex flex-col gap-2">
+        {TRAINING_BASELINES.map((opt) => {
+          const active = profile.trainingBaseline === opt.value
+          const Icon = opt.icon
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              data-testid={`profile-baseline-${opt.value}`}
+              onClick={() => onUpdateBaseline(opt.value)}
+              className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
+                active
+                  ? 'bg-brand text-on-brand shadow-sm'
+                  : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
+              }`}
+            >
+              <Icon className="w-4 h-4 flex-shrink-0" />
+              <div>
+                <p className="font-black">{opt.label}</p>
+                <p className={`text-[10px] font-normal ${active ? 'text-on-brand/80' : 'text-fg-muted'}`}>{opt.sub}</p>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+      {profile.trainingBaseline === 'restart' && restartActive && profile.trainingBaselineSetAt && (
+        <p className="text-[11px] text-fg-muted">
+          Volume réduit jusqu'au{' '}
+          <span className="font-black text-fg-soft">
+            {new Date(new Date(profile.trainingBaselineSetAt).getTime() + RESTART_RAMP_UP_DAYS * 86_400_000)
+              .toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
+          </span>
+          , puis retour automatique au programme normal.
+        </p>
+      )}
+      {settled && forceOpen && (
+        <button
+          type="button"
+          onClick={() => setForceOpen(false)}
+          className="text-[10px] font-bold text-fg-faint hover:text-fg-soft transition-colors"
+        >
+          Replier
+        </button>
+      )}
+    </section>
   )
 }

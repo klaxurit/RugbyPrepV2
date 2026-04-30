@@ -83,6 +83,10 @@ vi.mock('../../hooks/useUpsellTiming', () => ({
   markWeekViewed: vi.fn(),
 }))
 
+vi.mock('../../hooks/useHistory', () => ({
+  useHistory: () => ({ logs: [], addLog: vi.fn(), clearLogs: vi.fn() }),
+}))
+
 vi.mock('../../hooks/useNotifications', () => ({
   useNotifications: () => ({
     status: 'default',
