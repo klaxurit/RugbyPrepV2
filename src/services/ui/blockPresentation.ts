@@ -71,12 +71,18 @@ export function iconForBlock(block: Block): string {
 
 // ── Duration estimation ─────────────────────────────────────────────────────
 
-function parseSets(prescription: string): number | null {
+/**
+ * Number of sets/tours this exercise expects (e.g. "3×10-12" → 3, "2x10" → 2).
+ * Returns null when the prescription has no leading set count.
+ */
+export function parseExerciseSets(prescription: string): number | null {
   const match = prescription.match(/^\s*(\d+)\s*[x×]/i)
   if (!match) return null
   const n = Number(match[1])
   return Number.isFinite(n) && n > 0 && n <= 12 ? n : null
 }
+
+const parseSets = parseExerciseSets
 
 /**
  * Extract inter-tour rest from a prescription/format string.
@@ -131,8 +137,11 @@ function parseRestSeconds(prescription: string): number | null {
 
 /**
  * Nombre de TOURS à exécuter pour ce bloc (enchaînement des exos).
- * Stratégie : lire le format ("3 tours", "4 rounds"), sinon le premier exo loggable
- * (prescription "4×5" → 4 tours), sinon défaut à 3.
+ * Stratégie : lire le format ("3 tours", "4 rounds"), sinon prendre le MAX
+ * des compteurs encodés sur les exos (prescription "4×5" → 4), sinon défaut à 3.
+ *
+ * On prend le max (et non le 1er exo) pour rester correct quand des exos
+ * optionnels avec moins de séries (ex. "2×12-15") sont placés en fin de bloc.
  */
 export function parseBlockTourCount(block: Block): number {
   if (block.format) {
@@ -142,11 +151,13 @@ export function parseBlockTourCount(block: Block): number {
       if (Number.isFinite(n) && n > 0 && n <= 12) return n
     }
   }
+  let max = 0
   for (const ex of block.exercises) {
     if (isDirectiveText(ex.name)) continue
     const n = parseSets(ex.prescription)
-    if (n != null) return n
+    if (n != null && n > max) max = n
   }
+  if (max > 0) return max
   return 3
 }
 

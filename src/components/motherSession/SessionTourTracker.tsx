@@ -11,6 +11,7 @@ import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import {
   parseBlockTourCount,
   parseBlockRestSeconds,
+  parseExerciseSets,
   perTourPrescription,
 } from '../../services/ui/blockPresentation'
 
@@ -63,10 +64,17 @@ export function SessionTourTracker({
       .map((ex, idx) => {
         if (isDirectiveText(ex.name)) return null
         const exerciseId = ex.exerciseId ?? resolveExerciseId(ex.name) ?? ''
-        return { ex, idx, exerciseId }
+        // Per-exo tour count: an exo prescribed "2×12-15" runs only 2 tours,
+        // even if the block runs 3. When unspecified, fall back to the block total.
+        const exoTours = parseExerciseSets(ex.prescription) ?? tourCount
+        return { ex, idx, exerciseId, exoTours }
       })
       .filter((x): x is NonNullable<typeof x> => x !== null)
-  }, [block.exercises])
+  }, [block.exercises, tourCount])
+
+  /** Subset of loggable exos that should appear in the given tour. */
+  const exercisesForTour = (tourIndex: number) =>
+    loggableExercises.filter(({ exoTours }) => tourIndex < exoTours)
 
   const resolveName = (exerciseId: string, fallback: string, idx: number): string => {
     if (exerciseId) {
@@ -75,6 +83,17 @@ export function SessionTourTracker({
     }
     return frExerciseNames?.[idx] ?? fallback
   }
+
+  // Total d'exos attendus pour chaque tour (tient compte des exos avec moins de séries).
+  const totalByTour = useMemo(() => {
+    const totals = Array<number>(tourCount).fill(0)
+    for (const { exoTours } of loggableExercises) {
+      for (let t = 0; t < tourCount; t++) {
+        if (t < exoTours) totals[t] += 1
+      }
+    }
+    return totals
+  }, [loggableExercises, tourCount])
 
   // Nombre d'exos validés par tour (pour afficher progress "X/Y" par tour).
   const doneByTour = useMemo(() => {
@@ -91,12 +110,11 @@ export function SessionTourTracker({
 
   // Tour actif = premier tour non complet. Si tous complets → null (bloc terminé).
   const activeTourIndex = useMemo(() => {
-    const perTourTotal = loggableExercises.length
     for (let t = 0; t < tourCount; t++) {
-      if (doneByTour[t] < perTourTotal) return t
+      if (doneByTour[t] < totalByTour[t]) return t
     }
     return null
-  }, [doneByTour, tourCount, loggableExercises.length])
+  }, [doneByTour, totalByTour, tourCount])
 
   // Toggle manuel : l'user peut déplier un tour précédent/suivant pour consulter.
   const [manualOpenIndex, setManualOpenIndex] = useState<number | null>(null)
@@ -133,7 +151,8 @@ export function SessionTourTracker({
     sessionRun.markExerciseDone(key)
     // Si cet exo était le dernier restant du tour → déclencher le chrono de repos,
     // sauf si c'est le dernier tour du bloc (plus rien après).
-    const remaining = loggableExercises.length - (doneByTour[tourIndex] + 1)
+    const tourTotal = totalByTour[tourIndex] ?? loggableExercises.length
+    const remaining = tourTotal - (doneByTour[tourIndex] + 1)
     const isLastTour = tourIndex >= tourCount - 1
     if (remaining === 0 && !isLastTour) {
       sessionRun.startRestTimer(restSeconds, `Fin du tour ${tourIndex + 1}`)
@@ -181,13 +200,15 @@ export function SessionTourTracker({
           const isActive = tourIndex === activeTourIndex
           const isOpen = isActive || manualOpenIndex === tourIndex
           const doneCount = doneByTour[tourIndex]
-          const isCompleted = doneCount >= loggableExercises.length && loggableExercises.length > 0
+          const tourExercises = exercisesForTour(tourIndex)
+          const tourTotal = tourExercises.length
+          const isCompleted = doneCount >= tourTotal && tourTotal > 0
 
           return (
             <TourPanel
               key={tourIndex}
               tourIndex={tourIndex}
-              totalExercises={loggableExercises.length}
+              totalExercises={tourTotal}
               doneCount={doneCount}
               isActive={isActive}
               isOpen={isOpen}
@@ -198,7 +219,7 @@ export function SessionTourTracker({
               }}
             >
               <ul className="mt-2 space-y-1.5">
-                {loggableExercises.map(({ ex, idx, exerciseId }, orderInTour) => {
+                {tourExercises.map(({ ex, idx, exerciseId }, orderInTour) => {
                   const key = buildExerciseTourKey(block.number, tourIndex, idx)
                   const isDone = sessionRun.completedExercises.has(key)
                   const isCurrent = isActive && !isDone && doneCount === orderInTour
