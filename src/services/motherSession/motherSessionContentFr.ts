@@ -1158,6 +1158,692 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
       'Le joueur doit quitter la session en se sentant plus activé que fatigué.',
     ],
   },
+
+  // ---------------------------------------------------------------------------
+  // OFF-SEASON HYPERTROPHIE — Bas du corps (commun)
+  // ---------------------------------------------------------------------------
+  LOWER_OFFSEASON_HYPERTROPHY_V1: {
+    goals: [
+      'Reconstruire de la masse musculaire utile sur le bas du corps pendant le bloc principal d\'hypertrophie inter-saison.',
+      'Accumuler du volume sur squat, hinge, unilatéral et soutien jambe/aine sans tomber dans la fatigue inutile.',
+      'Sentir que tu construis quelque chose, sans perdre la pertinence rugby.',
+    ],
+    sessionIdentity: [
+      'Séance d\'hypertrophie bas du corps en inter-saison — ni transition ni jour de force pré-saison.',
+      'Spécifique rugby par le travail utile sur squat, hinge, unilatéral, aine et chaîne basse.',
+      'Ne pas en faire un jour de jambes bodybuilding rempli de machines au hasard ou une chasse aux courbatures.',
+    ],
+    warmUpExercises: [
+      { name: 'ankle rocks', prescription: '1x8/côté' },
+      { name: 'adductor rock-back', prescription: '1x8/côté' },
+      { name: 'glute bridge', prescription: '1x8' },
+      { name: 'bodyweight split squat', prescription: '1x6/côté' },
+      { name: '2 séries progressives de montée en charge', prescription: '' },
+    ],
+    warmUpNotes: [
+      'Garde l\'échauffement court et concret.',
+      'Tu dois te sentir prêt pour du volume, pas déjà fatigué.',
+      'Si tu as déjà ton propre échauffement bas du corps, tu peux le garder.',
+    ],
+    blocks: [
+      {
+        name: 'Hypertrophie squat principal',
+        format: '`4 séries de travail`, `2 min` de repos entre les séries',
+        exercises: [
+          { name: 'Back Squat', prescription: '4x8' },
+        ],
+        coachingNotes: [
+          'Garde un effort modéré sur tout le bloc — environ `RPE 6-8` (2-3 reps en réserve).',
+          'L\'objectif : du volume utile pour le bas du corps. Pas forcer en grimaçant ni soulever lourd pour l\'image.',
+          'La profondeur et le contrôle comptent plus que la charge absolue.',
+        ],
+        fallbackOptions: [
+          'A : `Front Squat`',
+          'B : `Hack Squat`',
+        ],
+      },
+      {
+        name: 'Hinge principal / unilatéral',
+        format: '`4 tours`, `90-120s` de repos après la paire',
+        exercises: [
+          { name: 'Barbell Romanian Deadlift', prescription: '4x8' },
+          { name: 'Rear-Foot Elevated Split Squat', prescription: '3-4x8/côté' },
+        ],
+        coachingNotes: [
+          'C\'est le bloc structurel principal de la séance.',
+          'Le hinge construit la chaîne postérieure — pas un test de force max.',
+          'L\'unilatéral doit être stable et complet sur l\'amplitude, pas bâclé.',
+        ],
+        fallbackOptions: [
+          'A : `DB Romanian Deadlift`',
+          'B : `Reverse Lunge`',
+        ],
+      },
+      {
+        name: 'Chaîne postérieure / support adducteurs',
+        format: '`3 tours`, `60-75s` de repos après la paire',
+        exercises: [
+          { name: 'Lying Leg Curl', prescription: '3x10-12' },
+          { name: 'Copenhagen Hold', prescription: '2-3x20-30s/côté' },
+        ],
+        coachingNotes: [
+          'Ce bloc soutient le volume ischios et la robustesse des adducteurs.',
+          'Le leg curl reste contrôlé et honnête.',
+          'Le Copenhagen est une vraie progression depuis les phases récup et transition.',
+        ],
+        fallbackOptions: [
+          'A : `Seated Leg Curl`',
+          'B : `Supine Adductor Squeeze`',
+        ],
+      },
+      {
+        name: 'Bas de jambe / récompense optionnelle',
+        format: '',
+        exercises: [
+          { name: 'Seated Calf Raise', prescription: '2-3x10-12' },
+          { name: 'Wall Tibialis Raise', prescription: '2-3x12-15' },
+          { name: 'Leg Extension', prescription: '2x12-15' },
+          { name: 'Leg Press Calf Press', prescription: '2x12-15' },
+        ],
+        coachingNotes: [
+          '`Calf + Tibialis` = la paire de soutien tissulaire par défaut.',
+          '`Leg Extension + Calf Press` est optionnel — un bloc bonus contrôlé si la récup est bonne.',
+          'Garde la paire bonus loin de l\'échec et évite de traîner des courbatures dans la semaine.',
+        ],
+      },
+    ],
+    progressionRules: [
+      '`H1` : démarre en bas de fourchette de charge pour valider la tolérance au volume.',
+      '`H2` : monte la charge seulement si la récup est bonne, en gardant l\'unilatéral à `3 séries`.',
+      '`H3` : semaine la plus volumineuse — séries dures autorisées (`1-2 reps en réserve`) en gardant la qualité.',
+      '`H3` : passe l\'unilatéral à `4 séries` uniquement si la récup le permet.',
+      '`H4` : réduis le volume total d\'environ `-25 à -30%` en gardant une charge utile.',
+      'Si la fatigue monte, retire en premier la paire 2 optionnelle du Bloc 4.',
+      'Puis retire un tour du Bloc 3.',
+      'Garde les Blocs 1 et 2 comme priorités structurelles.',
+    ],
+    positionAccent: [
+      'Cette séance reste majoritairement commune.',
+      'Accent `Front_row` :',
+      'un peu plus de gainage volontaire sur squat et RDL',
+      'un peu plus de patience et de contrôle sur l\'unilatéral',
+      'Accent `Back_three` :',
+      'un peu plus de fluidité et d\'amplitude sur l\'unilatéral',
+      'un peu plus d\'attention à la qualité chaîne basse au Bloc 4',
+      'La structure reste identique pour les deux groupes.',
+    ],
+    coachingWarnings: [
+      'Cette séance doit être constructive, pas brutale.',
+      'Ne laisse pas le squat ET le RDL devenir tous les deux pénibles le même jour.',
+      'Ne transforme pas les blocs de soutien en pump volume sans réflexion.',
+      'La paire bonus est là pour le plaisir, pas pour justifier de la fatigue inutile.',
+    ],
+  },
+
+  // ---------------------------------------------------------------------------
+  // OFF-SEASON HYPERTROPHIE — Haut du corps (commun)
+  // ---------------------------------------------------------------------------
+  UPPER_OFFSEASON_HYPERTROPHY_V1: {
+    goals: [
+      'Reconstruire de la masse musculaire utile sur le haut du corps pendant le bloc principal d\'hypertrophie inter-saison.',
+      'Accumuler du volume sur poussée, tirage, support vertical et bras/épaule sans perdre la pertinence rugby.',
+      'Une séance qui te fait sentir que tu construis, sans virer au festival d\'isolation bodybuilding.',
+    ],
+    sessionIdentity: [
+      'Séance d\'hypertrophie haut du corps en inter-saison — ni transition ni jour de force pré-saison.',
+      'Spécifique rugby par le travail utile sur poussée, tirage, support épaule, tronc et volume bras contrôlé.',
+      'Ne pas en faire une séance bench-only pour l\'image ni un défilé d\'accessoires sans fin.',
+    ],
+    warmUpExercises: [
+      { name: 'thoracic rotation', prescription: '1x6-8/côté' },
+      { name: 'scap push-up', prescription: '1x8' },
+      { name: 'band pull-apart', prescription: '1x10' },
+      { name: '2 séries progressives de montée en charge', prescription: '' },
+    ],
+    warmUpNotes: [
+      'Garde l\'échauffement court et concret.',
+      'Tu dois te sentir prêt pour du volume, pas déjà fatigué.',
+      'Si tu as déjà ton propre échauffement haut du corps, tu peux le garder.',
+    ],
+    blocks: [
+      {
+        name: 'Hypertrophie poussée principale haut du corps',
+        format: '`4 séries de travail`, `2 min` de repos entre les séries',
+        exercises: [
+          { name: 'Bench Press', prescription: '4x8' },
+        ],
+        coachingNotes: [
+          'Garde un effort modéré sur tout le bloc — environ `RPE 6-8` (2-3 reps en réserve).',
+          'C\'est le mouvement principal de la séance.',
+          'Les reps doivent rester contrôlées et reproductibles, pas pénibles.',
+        ],
+        fallbackOptions: [
+          'A : `Neutral-Grip DB Bench Press`',
+        ],
+      },
+      {
+        name: 'Tirage principal / poussée secondaire',
+        format: '`4 tours`, `90-120s` de repos après la paire',
+        exercises: [
+          { name: 'Chest-Supported Row', prescription: '4x8-10' },
+          { name: 'Incline DB Bench Press', prescription: '3-4x8-10' },
+        ],
+        coachingNotes: [
+          'C\'est le bloc de volume structurel principal de la séance.',
+          'Le row reste strict et sur l\'amplitude complète.',
+          'L\'incliné doit te sembler être un soutien utile pour le haut de pectoraux et l\'épaule, pas un second développé pour l\'image.',
+        ],
+        fallbackOptions: [
+          'A : `Single-Arm DB Row`',
+          'B : `Machine Chest Press`',
+        ],
+      },
+      {
+        name: 'Support vertical',
+        format: '`3 tours`, `75-90s` de repos après la paire',
+        exercises: [
+          { name: 'Seated DB Overhead Press', prescription: '3x8' },
+          { name: 'Neutral-Grip Lat Pulldown', prescription: '3x10' },
+        ],
+        coachingNotes: [
+          'Ce bloc restaure le push/pull vertical sans en faire l\'événement principal.',
+          'Garde les deux mouvements contrôlés et honnêtes.',
+          'C\'est du volume de soutien, pas un test d\'épaule.',
+        ],
+        fallbackOptions: [
+          'A : `Half-Kneeling Landmine Press`',
+          'B : `Assisted Neutral-Grip Pull-Up`',
+        ],
+      },
+      {
+        name: 'Support bras / épaule',
+        format: '',
+        exercises: [
+          { name: 'Hammer Curl', prescription: '3x10-12' },
+          { name: 'Rope Pressdown', prescription: '3x10-12' },
+          { name: 'Face Pull', prescription: '3x12-15' },
+          { name: 'Lateral Raise', prescription: '2x12-15 (optionnel)' },
+          { name: 'T-Y-I Incline Bench', prescription: '2x10 (5s par position : T, Y, I) (optionnel)' },
+        ],
+        coachingNotes: [
+          '`Hammer Curl + Rope Pressdown` = paire de base, toujours faite.',
+          '`Face Pull + Lateral Raise + T-Y-I Incline Bench` = bloc santé-épaule complet : 3 têtes de deltoïde + trapèze inférieur via le Y.',
+          'T-Y-I : 2 séries de 10 reps par position (T = rear delt pur, Y = trap inf, I = trap sup/cervical). Haltères légers, technique stricte.',
+          'Lateral Raise et T-Y-I sont optionnels : à zapper si la fatigue est haute, pour rester sous 13 séries. Face Pull 3x reste prioritaire pour la santé d\'épaule rugby.',
+          'Garde tout le travail accessoire loin de l\'échec et évite de transformer le bloc en volume inutile.',
+        ],
+      },
+    ],
+    progressionRules: [
+      '`H1` : démarre en bas de fourchette de charge pour valider la tolérance au volume.',
+      '`H2` : monte la charge seulement si poussée et tirage récupèrent bien, en gardant la poussée secondaire à `3 séries`.',
+      '`H3` : semaine la plus volumineuse — séries dures mais propres autorisées (`1-2 reps en réserve`).',
+      '`H3` : passe `Incline DB Bench Press` à `4 séries` uniquement si la récup le permet.',
+      '`H4` : réduis le volume total d\'environ `-25 à -30%` en gardant une charge utile.',
+      'Si la fatigue monte, retire en premier la paire 2 optionnelle du Bloc 4.',
+      'Puis retire un tour du Bloc 3.',
+      'Garde les Blocs 1 et 2 comme priorités structurelles.',
+    ],
+    positionAccent: [
+      'Cette séance reste majoritairement commune.',
+      'Accent `Front_row` :',
+      'un peu plus de gainage et de contrôle sur bench et développé',
+      'un peu plus d\'intérêt pour l\'épaisseur bras/support',
+      'Accent `Back_three` :',
+      'un peu plus de fluidité dans le rythme poussée/tirage',
+      'un peu plus d\'attention à la liberté d\'épaule et la posture',
+      'La structure reste identique pour les deux groupes.',
+    ],
+    coachingWarnings: [
+      'Cette séance doit construire du muscle, pas prouver ta force.',
+      'Ne laisse pas le bench ET l\'incliné devenir tous les deux pénibles.',
+      'Ne laisse pas le bloc accessoire devenir une excuse pour du volume inutile.',
+      'La paire d\'épaule optionnelle est là pour la qualité, pas pour démolir les deltoïdes.',
+    ],
+  },
+
+  // ---------------------------------------------------------------------------
+  // OFF-SEASON HYPERTROPHIE — Corps complet (commun)
+  // ---------------------------------------------------------------------------
+  FULL_OFFSEASON_HYPERTROPHY_V1: {
+    goals: [
+      'Compléter la semaine d\'hypertrophie inter-saison avec une séance corps complet qui ajoute du muscle utile, sans répéter le Lower et l\'Upper.',
+      'Un ancrage hinge full-body, un bloc support push/pull haut, un bloc support bas, et une finition optionnelle pour le plaisir.',
+      'Une semaine qui te semble complète, pas surchargée.',
+    ],
+    sessionIdentity: [
+      'Séance d\'hypertrophie corps complet en inter-saison — ni jour de récup ni quatrième séance lower lourde.',
+      'Spécifique rugby par le hinge utile, le support push/pull, l\'unilatéral bas, le tronc, et des accessoires d\'adhésion optionnels.',
+      'Ne pas en faire un marathon de gym ni une checklist « je touche tous les muscles ».',
+    ],
+    warmUpExercises: [
+      { name: 'ankle rocks', prescription: '1x8/côté' },
+      { name: 'adductor rock-back', prescription: '1x8/côté' },
+      { name: 'thoracic rotation', prescription: '1x6/côté' },
+      { name: 'scap push-up', prescription: '1x8' },
+      { name: '2 séries progressives de montée en charge', prescription: '' },
+    ],
+    warmUpNotes: [
+      'Garde l\'échauffement court et concret.',
+      'Tu dois te sentir prêt pour une séance dense mais contrôlée.',
+      'Si tu as déjà ton propre échauffement full-body, tu peux le garder.',
+    ],
+    blocks: [
+      {
+        name: 'Hypertrophie hinge principal corps complet',
+        format: '`4 séries de travail`, `2 min` de repos entre les séries',
+        exercises: [
+          { name: 'Trap Bar Deadlift', prescription: '4x6' },
+        ],
+        coachingNotes: [
+          'Garde le trap bar à environ `RPE 6-8`.',
+          'C\'est le mouvement principal de la séance, mais clairement orienté hypertrophie — pas force max.',
+          'Le mouvement doit te sembler puissant et productif, pas comme un test.',
+        ],
+        fallbackOptions: [
+          'A : `Barbell Romanian Deadlift`',
+        ],
+      },
+      {
+        name: 'Support poussée / tirage haut du corps',
+        format: '`4 tours`, `90-120s` de repos après la paire',
+        exercises: [
+          { name: 'DB Incline Bench Press', prescription: '4x8-10' },
+          { name: 'Single-Arm DB Row', prescription: '4x8/côté' },
+        ],
+        coachingNotes: [
+          'Ce bloc construit du volume haut du corps sans copier la structure de l\'Upper Hypertrophy.',
+          'Garde les deux mouvements fluides, contrôlés et sur l\'amplitude complète.',
+          'Doit te sembler dense et utile, pas brouillon.',
+        ],
+        fallbackOptions: [
+          'A : `Neutral-Grip DB Bench Press`',
+          'B : `Chest-Supported Row`',
+        ],
+      },
+      {
+        name: 'Support bas du corps / tronc',
+        format: '`3 tours`, `75-90s` de repos après la paire',
+        exercises: [
+          { name: 'Reverse Lunge', prescription: '3x8/côté' },
+          { name: 'Pallof Press Hold', prescription: '3x15-20s/côté' },
+        ],
+        coachingNotes: [
+          'Ce bloc apporte une exposition unilatérale supplémentaire dans la semaine sans faire un autre jour lower.',
+          'Garde la fente contrôlée et stable.',
+          'Le Pallof reste net et orienté posture.',
+        ],
+        fallbackOptions: [
+          'A : `Split Squat`',
+          'B : `Side Plank`',
+        ],
+      },
+      {
+        name: 'Continuité bas de jambe / adducteurs',
+        format: '`2 tours`, repos minimal',
+        exercises: [
+          { name: 'Copenhagen Hold', prescription: '2x20-30s/côté' },
+          { name: 'Single-Leg Calf Raise', prescription: '2x10/côté' },
+          { name: 'Wall Tibialis Raise', prescription: '2x12-15' },
+        ],
+        coachingNotes: [
+          'Ce bloc préserve la qualité tissulaire des adducteurs et du bas de jambe sur la semaine.',
+          'Reste propre et sous-maximal.',
+          'Tu dois finir ce bloc en te sentant soutenu, pas démoli.',
+        ],
+      },
+      {
+        name: 'Bloc récompense',
+        format: '`2 tours`, `45-60s` de repos',
+        exercises: [
+          { name: 'Hammer Curl', prescription: '2x10-12' },
+          { name: 'Rope Pressdown', prescription: '2x10-12' },
+        ],
+        coachingNotes: [
+          'Optionnel uniquement.',
+          'Ce bloc existe pour le plaisir et la satisfaction de séance, pas parce que le programme a besoin de plus de stress.',
+          'Reste loin de l\'échec et évite de traîner des courbatures sur la semaine suivante.',
+        ],
+      },
+    ],
+    progressionRules: [
+      '`H1` : démarre en bas de fourchette de charge pour valider la tolérance hebdomadaire.',
+      '`H2` : monte la charge seulement si le hinge principal et le support haut récupèrent bien.',
+      '`H3` : semaine la plus dense — séries dures mais propres autorisées (`1-2 reps en réserve`).',
+      '`H4` : réduis le volume total d\'environ `-25 à -30%` en gardant une charge utile.',
+      'Si la fatigue monte, retire en premier le Bloc 5 optionnel.',
+      'Puis retire un tour du Bloc 4.',
+      'Garde les Blocs 1 et 2 comme priorités structurelles.',
+    ],
+    positionAccent: [
+      'Cette séance reste majoritairement commune.',
+      'Accent `Front_row` :',
+      'un peu plus de gainage et de posture sur trap bar et fente',
+      'un peu plus d\'intérêt pour le travail support/tronc',
+      'Accent `Back_three` :',
+      'un peu plus de fluidité et d\'amplitude sur fente et bas de jambe',
+      'un peu plus d\'attention à la qualité de mouvement qu\'à la charge brute',
+      'La structure reste identique pour les deux groupes.',
+    ],
+    coachingWarnings: [
+      'Cette séance doit compléter la semaine d\'hypertrophie, pas t\'enterrer.',
+      'Ne laisse pas le trap bar devenir un test lourd après la séance Lower Hypertrophy.',
+      'Ne laisse pas les blocs de soutien dériver en circuit de conditionnement.',
+      'Le bloc récompense optionnel est là pour soutenir l\'adhésion, pas pour justifier de la fatigue supplémentaire.',
+    ],
+  },
+
+  // ---------------------------------------------------------------------------
+  // OFF-SEASON HYPERTROPHIE — Bas du corps (back three)
+  // ---------------------------------------------------------------------------
+  LOWER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1: {
+    goals: [
+      'Reconstruire la masse bas du corps avec un biais ligne arrière : patterns unilatéraux, résilience au sprint, raideur du bas de jambe.',
+      'Garder le squat bilatéral comme ancrage de force absolue, en orientant les accessoires vers single-leg et qualités réactives.',
+      'Préparer la chaîne postérieure et le complexe cheville aux exigences d\'accélération de la pré-saison.',
+    ],
+    sessionIdentity: [
+      'Séance d\'hypertrophie bas du corps inter-saison, biais back-three.',
+      'Le squat bilatéral reste — mais l\'accent passe sur hinge unilatéral, stabilité single-leg et qualité du bas de jambe.',
+      'Ne supprime pas le squat ; n\'en fais pas une séance de réhab. C\'est de l\'hypertrophie avec une lentille positionnelle.',
+    ],
+    warmUpExercises: [
+      { name: 'ankle rocks', prescription: '1x8/côté' },
+      { name: 'adductor rock-back', prescription: '1x8/côté' },
+      { name: 'glute bridge', prescription: '1x8' },
+      { name: 'bodyweight split squat', prescription: '1x6/côté' },
+      { name: '2 séries progressives de montée en charge', prescription: '' },
+    ],
+    warmUpNotes: [
+      'Même structure d\'échauffement que la version front-row.',
+      'Tu dois te sentir prêt pour du volume, pas déjà fatigué.',
+    ],
+    blocks: [
+      {
+        name: 'Hypertrophie squat principal',
+        format: '`4 séries de travail`, `2 min` de repos entre les séries',
+        exercises: [
+          { name: 'Back Squat', prescription: '4x8' },
+        ],
+        coachingNotes: [
+          'Ancrage bilatéral préservé. Effort modéré (`RPE 6-8`).',
+          'La profondeur et le contrôle comptent plus que la charge.',
+        ],
+        fallbackOptions: [
+          'A : `Front Squat`',
+          'B : `Hack Squat`',
+        ],
+      },
+      {
+        name: 'Hinge unilatéral / quadriceps',
+        format: '`4 tours`, `90-120s` de repos après la paire',
+        exercises: [
+          { name: 'Single-Leg Romanian Deadlift', prescription: '4x8/côté' },
+          { name: 'Reverse Lunge', prescription: '3-4x8/côté' },
+        ],
+        coachingNotes: [
+          'C\'est le bloc principal de l\'accent positionnel.',
+          'Le single-leg RDL construit la chaîne postérieure unilatérale — clé pour l\'accélération en sprint.',
+          'La fente arrière développe la force quadriceps single-leg avec contrôle de la décélération.',
+          'Garde les deux exercices sur l\'amplitude complète et stables.',
+        ],
+        fallbackOptions: [
+          'A : `DB Romanian Deadlift` bilatéral si l\'équilibre pose problème',
+          'B : `Split Squat`',
+        ],
+      },
+      {
+        name: 'Chaîne postérieure / support adducteurs',
+        format: '`3 tours`, `60-75s` de repos après la paire',
+        exercises: [
+          { name: 'Nordic Curl', prescription: '3x4-5' },
+          { name: 'Copenhagen Hold', prescription: '2-3x20-30s/côté' },
+        ],
+        coachingNotes: [
+          'Nordic curl pour la résilience au sprint : la force excentrique des ischios protège des blessures en course rapide.',
+          'Copenhagen pour la robustesse des adducteurs.',
+          'Ce bloc remplace le leg curl couché de la version front-row.',
+        ],
+        fallbackOptions: [
+          'A : `Lying Leg Curl` 3x8 si le nordic est trop exigeant',
+        ],
+      },
+      {
+        name: 'Bas de jambe / prep raideur',
+        format: '`2 tours`, repos minimal',
+        exercises: [
+          { name: 'Single-Leg Calf Raise', prescription: '2-3x10/côté' },
+          { name: 'Wall Tibialis Raise', prescription: '2-3x12' },
+          { name: 'Low Pogo Hops', prescription: '2x8' },
+        ],
+        coachingNotes: [
+          'Calf single-leg pour la raideur de cheville et l\'équilibre unilatéral.',
+          'Pogo hops bas introduisent une raideur réactive très légère — préparation à la pliométrie de pré-saison.',
+          'Garde les pogo hops légers et bondissants, pas en force.',
+        ],
+      },
+    ],
+    progressionRules: [
+      '`H1` : valide une tolérance au volume propre sur tous les exercices.',
+      '`H2` : monte la charge si la récup est bonne ; garde le nordic à 4-5 reps.',
+      '`H3` : semaine la plus volumineuse ; effort `RPE 7-8` autorisé sur les mouvements principaux.',
+      '`H4` : réduis le volume `-25 à -30%` en gardant la charge. Réduis le Bloc 4 en premier, le Bloc 3 ensuite.',
+    ],
+    positionAccent: [
+      'Séance back-three : emphase unilatérale au Bloc 2, résilience sprint au Bloc 3, prep raideur au Bloc 4.',
+      'L\'ancrage squat reste bilatéral et identique à la version front-row.',
+    ],
+    coachingWarnings: [
+      'Ne supprime pas le squat bilatéral — c\'est l\'ancrage de force.',
+      'Le travail unilatéral doit être stable et complet sur l\'amplitude, pas bâclé.',
+      'Le nordic curl est exigeant ; assiste la phase concentrique si besoin.',
+    ],
+  },
+
+  // ---------------------------------------------------------------------------
+  // OFF-SEASON HYPERTROPHIE — Haut du corps (back three)
+  // ---------------------------------------------------------------------------
+  UPPER_OFFSEASON_HYPERTROPHY_BACK_THREE_V1: {
+    goals: [
+      'Construire la masse haut du corps avec un biais ligne arrière : tirage unilatéral, poussée rotationnelle, transfert via le tronc.',
+      'Garder le bench bilatéral comme ancrage de poussée.',
+      'Préparer la ceinture scapulaire et le tronc aux exigences rotationnelles et terrain ouvert de la pré-saison.',
+    ],
+    sessionIdentity: [
+      'Séance d\'hypertrophie haut du corps inter-saison, biais back-three.',
+      'L\'ancrage bench reste. L\'accent passe sur tirage unilatéral, poussée rotationnelle, tronc anti-rotation et préparation médecine ball.',
+      'Ne supprime pas le bench ; n\'ajoute pas d\'isolation excessive.',
+    ],
+    warmUpExercises: [
+      { name: 'band pull-apart', prescription: '1x12' },
+      { name: 'push-up', prescription: '1x8' },
+      { name: '2 séries progressives de montée en charge sur bench', prescription: '' },
+    ],
+    warmUpNotes: [
+      'Activation épaule et thoracique avant la poussée.',
+    ],
+    blocks: [
+      {
+        name: 'Poussée principale haut du corps',
+        format: '`4 séries de travail`, `2 min` de repos',
+        exercises: [
+          { name: 'Bench Press', prescription: '4x8' },
+        ],
+        coachingNotes: [
+          'Ancrage bilatéral. Effort modéré (`RPE 6-8`), contrôlé et reproductible.',
+        ],
+        fallbackOptions: [
+          'A : `Neutral-Grip DB Bench Press`',
+        ],
+      },
+      {
+        name: 'Tirage unilatéral / poussée rotationnelle',
+        format: '`4 tours`, `90-120s` de repos après la paire',
+        exercises: [
+          { name: 'Single-Arm DB Row', prescription: '4x8/côté' },
+          { name: 'Half-Kneeling Landmine Press', prescription: '3-4x8/côté' },
+        ],
+        coachingNotes: [
+          'C\'est le bloc principal de l\'accent positionnel.',
+          'Le single-arm row développe le tirage unilatéral et la demande anti-rotation.',
+          'Le landmine press introduit un pattern de poussée rotationnel — clé pour la manipulation de balle terrain ouvert.',
+          'Les deux exercices challengent la stabilité du tronc en unilatéral.',
+        ],
+        fallbackOptions: [
+          'A : `Chest-Supported Row` bilatéral',
+          'B : `Seated DB Overhead Press`',
+        ],
+      },
+      {
+        name: 'Anti-rotation / tirage vertical',
+        format: '`3 tours`, `75-90s` de repos après la paire',
+        exercises: [
+          { name: 'Pallof Press Hold', prescription: '3x15-20s/côté' },
+          { name: 'Neutral-Grip Pull-Up', prescription: '3x6-8' },
+        ],
+        coachingNotes: [
+          'Pallof construit l\'endurance anti-rotation pour les changements de direction.',
+          'Pull-up : amplitude complète, du dead hang au menton au-dessus.',
+        ],
+        fallbackOptions: [
+          'A : `Lat Pulldown`',
+        ],
+      },
+      {
+        name: 'Bras / prep rotationnelle',
+        format: '`2-3 tours`, `45-60s` de repos',
+        exercises: [
+          { name: 'Hammer Curl', prescription: '3x10-12' },
+          { name: 'Rope Pressdown', prescription: '3x10-12' },
+          { name: 'Face Pull', prescription: '2x12-15' },
+          { name: 'Med Ball Rotational Throw', prescription: '2x4/côté' },
+        ],
+        coachingNotes: [
+          'Bras commun. Face pull pour la santé d\'épaule.',
+          'Lancer rotationnel médecine ball à faible volume introduit un pattern de puissance rotationnelle.',
+          'Garde les lancers contrôlés — c\'est de la prep, pas un pic de puissance.',
+        ],
+      },
+    ],
+    progressionRules: [
+      '`H1` : établis la forme sur landmine press et single-arm row.',
+      '`H2` : monte les charges si la forme est propre.',
+      '`H3` : volume max ; `RPE 7-8` autorisé.',
+      '`H4` : réduis `-25 à -30%`. Retire med ball throws et face pull en premier.',
+    ],
+    positionAccent: [
+      'Séance back-three : tirage unilatéral + poussée rotationnelle au Bloc 2, anti-rotation au Bloc 3, prep médecine ball au Bloc 4.',
+    ],
+    coachingWarnings: [
+      'Ne supprime pas l\'ancrage bench.',
+      'Les lancers rotationnels sont une prep faible volume, pas un bloc de puissance.',
+      'Le tirage unilatéral et le landmine press exigent un contrôle du tronc — ne te précipite pas.',
+    ],
+  },
+
+  // ---------------------------------------------------------------------------
+  // OFF-SEASON HYPERTROPHIE — Corps complet (back three)
+  // ---------------------------------------------------------------------------
+  FULL_OFFSEASON_HYPERTROPHY_BACK_THREE_V1: {
+    goals: [
+      'Hypertrophie corps complet avec biais ligne arrière : patterns rotationnels, support unilatéral, qualité tissulaire bas de jambe.',
+      'Garder le trap bar comme ancrage hinge bilatéral.',
+      'Préparer le transfert via le tronc et la capacité multidirectionnelle pour la pré-saison.',
+    ],
+    sessionIdentity: [
+      'Séance d\'hypertrophie corps complet back-three.',
+      'L\'ancrage trap bar reste. L\'accent passe sur poussée rotationnelle, support unilatéral et qualité bas de jambe.',
+    ],
+    warmUpExercises: [
+      { name: 'ankle rocks', prescription: '1x8/côté' },
+      { name: 'glute bridge', prescription: '1x8' },
+      { name: 'push-up', prescription: '1x8' },
+      { name: '2 séries progressives de montée en charge sur trap bar', prescription: '' },
+    ],
+    warmUpNotes: [
+      'Échauffement corps complet couvrant hanche, cheville, épaule.',
+    ],
+    blocks: [
+      {
+        name: 'Hinge principal corps complet',
+        format: '`4 séries de travail`, `2 min` de repos',
+        exercises: [
+          { name: 'Trap Bar Deadlift', prescription: '4x6' },
+        ],
+        coachingNotes: [
+          'Ancrage bilatéral. Effort modéré (`RPE 6-8`), puissant mais contrôlé.',
+        ],
+        fallbackOptions: [
+          'A : `Barbell Romanian Deadlift`',
+        ],
+      },
+      {
+        name: 'Poussée rotationnelle / tirage unilatéral',
+        format: '`4 tours`, `90-120s` de repos après la paire',
+        exercises: [
+          { name: 'Half-Kneeling Landmine Press', prescription: '4x8/côté' },
+          { name: 'Single-Arm DB Row', prescription: '4x8/côté' },
+        ],
+        coachingNotes: [
+          'Poussée rotationnelle + tirage unilatéral : emphase transfert via le tronc.',
+          'Les deux exercices challengent l\'anti-rotation à travers le tronc.',
+        ],
+      },
+      {
+        name: 'Bas du corps unilatéral / rotation',
+        format: '`3 tours`, `75-90s` de repos après la paire',
+        exercises: [
+          { name: 'Reverse Lunge', prescription: '3x8/côté' },
+          { name: 'Med Ball Rotational Throw', prescription: '3x4/côté' },
+        ],
+        coachingNotes: [
+          'Fente pour le travail structurel single-leg.',
+          'Lancer rotationnel à volume modéré — construction du pattern, pas pic de puissance.',
+        ],
+        fallbackOptions: [
+          'A : `Split Squat`',
+          'B : `Pallof Press Hold`',
+        ],
+      },
+      {
+        name: 'Bas de jambe / adducteurs',
+        format: '`2 tours`, repos minimal',
+        exercises: [
+          { name: 'Copenhagen Hold', prescription: '2x20-30s/côté' },
+          { name: 'Single-Leg Calf Raise', prescription: '2x10/côté' },
+          { name: 'Wall Tibialis Raise', prescription: '2x12' },
+        ],
+        coachingNotes: [
+          'Emphase qualité bas de jambe pour la prep d\'accélération.',
+        ],
+      },
+      {
+        name: 'Bloc récompense',
+        format: '`2 tours`, `45-60s` de repos',
+        exercises: [
+          { name: 'Hammer Curl', prescription: '2x10-12' },
+          { name: 'Rope Pressdown', prescription: '2x10-12' },
+        ],
+        coachingNotes: [
+          'Optionnel. Identique à la version front-row.',
+        ],
+      },
+    ],
+    progressionRules: [
+      '`H1` : établis la forme sur landmine et lancers rotationnels.',
+      '`H2` : monte les charges ; garde les lancers à 4/côté.',
+      '`H3` : volume max. `RPE 7-8`.',
+      '`H4` : réduis `-25 à -30%`. Retire le Bloc 5 en premier, réduis les lancers du Bloc 3 ensuite.',
+    ],
+    positionAccent: [
+      'Séance back-three : poussée rotationnelle au Bloc 2, lancer rotationnel au Bloc 3, bas de jambe au Bloc 4.',
+    ],
+    coachingWarnings: [
+      'Garde les lancers rotationnels contrôlés en phase d\'hypertrophie.',
+      'N\'ajoute pas de séries au-delà de la prescription.',
+      'L\'ancrage bilatéral (trap bar) reste non négociable.',
+    ],
+  },
 }
 
 const BLOCK_NAME_FR: Record<string, string> = {
@@ -1531,6 +2217,58 @@ const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
   [/\bwith marked accents\b/gi, 'avec accents marqués'],
   [/\bphase 1\b/gi, 'phase 1'],
   [/\bphase 2\b/gi, 'phase 2'],
+
+  // ── Patterns ajoutés (2026-04-30) — corrige les fragments anglais résiduels
+  // dans les sessions non encore traduites manuellement.
+  // Phrases multi-mots (ordre important : longues d'abord, sinon les patterns
+  // courts grignotent les longs).
+  [/\bacross the block\b/gi, 'tout au long du bloc'],
+  [/\bacross the session\b/gi, 'tout au long de la séance'],
+  [/\bacross the week\b/gi, 'tout au long de la semaine'],
+  [/\bthroughout the block\b/gi, 'tout au long du bloc'],
+  [/\bthroughout the session\b/gi, 'tout au long de la séance'],
+  [/\bduring the block\b/gi, 'pendant le bloc'],
+  [/\bduring the session\b/gi, 'pendant la séance'],
+  [/\bover the block\b/gi, 'sur le bloc'],
+  [/\bover the session\b/gi, 'sur la séance'],
+  [/\bover the week\b/gi, 'sur la semaine'],
+  [/\bgrinding\b/gi, 'forcer en grimaçant'],
+  [/\bego loading\b/gi, 'soulever lourd pour l\'image'],
+  [/\bjunk volume\b/gi, 'volume inutile'],
+  [/\bjunk fatigue\b/gi, 'fatigue inutile'],
+  [/\bgrindy\b/gi, 'pénible'],
+  [/\bgrinder(s)?\b/gi, 'mouvements pénibles'],
+  [/\bsoreness-chasing\b/gi, 'course aux courbatures'],
+  [/\bbodybuilding fluff\b/gi, 'remplissage bodybuilding'],
+  [/\bmindless pump volume\b/gi, 'pump volume sans réflexion'],
+  [/\bmax-strength\b/gi, 'force max'],
+  [/\bmax effort\b/gi, 'effort max'],
+  [/\baccessory festival\b/gi, 'défilé d\'accessoires'],
+  [/\bbench-only\b/gi, 'bench-only'],
+  [/\b(?:approximately|roughly)\b/gi, 'environ'],
+  [/\baround\b/gi, 'autour de'],
+  [/\bRPE 6-8\b/gi, 'effort modéré (`RPE 6-8` — 2-3 reps en réserve)'],
+  [/\bRPE 5-6\b/gi, 'effort modéré (`RPE 5-6` — 3-4 reps en réserve)'],
+  [/\bRPE 7-8\b/gi, 'effort élevé (`RPE 7-8` — 1-2 reps en réserve)'],
+  [/\bRPE 8-9\b/gi, 'effort très élevé (`RPE 8-9` — 0-1 rep en réserve)'],
+  [/\bRPE 4-5\b/gi, 'effort léger (`RPE 4-5`)'],
+  [/\bThe player should\b/g, 'Tu dois'],
+  [/\bthe player should\b/g, 'tu dois'],
+  [/\bThe player\b/g, 'Tu'],
+  [/\bthe player\b/g, 'tu'],
+  // Articles "the" résiduels devant un mot français isolé (ex: "the squat" → "squat").
+  // On retire seulement quand le mot suivant n'est PAS déjà précédé d'un déterminant.
+  [/\bthe (squat|bench|deadlift|hinge|press|pull|row|lift|block|session|player|movement|exercise)\b/gi, '$1'],
+  [/\bThe (Squat|Bench|Deadlift|Hinge|Press|Pull|Row|Lift|Block|Session|Player|Movement|Exercise)\b/g, '$1'],
+  // Verbes communs souvent ratés.
+  [/\bshould feel\b/gi, 'doit te sembler'],
+  [/\bshould stay\b/gi, 'doit rester'],
+  [/\bshould build\b/gi, 'doit construire'],
+  [/\bshould complete\b/gi, 'doit compléter'],
+  [/\bshould support\b/gi, 'doit soutenir'],
+  [/\bshould preserve\b/gi, 'doit préserver'],
+  [/\bshould restore\b/gi, 'doit restaurer'],
+  [/\bshould give\b/gi, 'doit donner'],
   [/\bphase 3\b/gi, 'phase 3'],
   [/\b\/side\b/gi, '/côté'],
 ]
