@@ -1,8 +1,105 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ACWRZone } from './useACWR'
 import type { CalendarEvent, UserProfile } from '../types/training'
-import type { VisibleProgramChangeNotice } from '../types/programChange'
+import type { ProgramChangeNotice, VisibleProgramChangeNotice } from '../types/programChange'
 import { detectProgramChange } from '../services/program/detectProgramChange'
+
+const PREVIEW_KEY = 'rf.programNotice.preview.v1'
+
+/**
+ * Dev-only preview hook: read a synthetic notice from localStorage so the
+ * modal can be exercised without driving the real detector. Set via:
+ *   localStorage.setItem('rf.programNotice.preview.v1', 'cycle' | 'phase' | 'acwr-critical' | 'acwr-danger' | 'match')
+ * and reload. Clear with `localStorage.removeItem('rf.programNotice.preview.v1')`.
+ */
+function readPreviewNotice(): ProgramChangeNotice | null {
+  if (typeof window === 'undefined') return null
+  if (!import.meta.env.DEV) return null
+  try {
+    const flavor = window.localStorage.getItem(PREVIEW_KEY)
+    switch (flavor) {
+      case 'cycle':
+        return {
+          id: 'preview:cycle',
+          type: 'cycle',
+          severity: 'warning',
+          title: 'Tu démarres la pré-saison lundi',
+          summary: 'Ton programme change de cycle : inter-saison → pré-saison.',
+          bullets: [
+            'Travail de force et de puissance plus intense',
+            'Volume légèrement réduit, charge plus lourde (4–5 reps)',
+            'Première semaine = adaptation progressive',
+          ],
+          postponable: true,
+          effectiveDate: '2099-01-01',
+        }
+      case 'phase':
+        return {
+          id: 'preview:phase',
+          type: 'phase',
+          severity: 'info',
+          title: 'Nouvelle phase d\'inter-saison',
+          summary: 'Tu passes de la phase Récupération à Transition.',
+          bullets: [
+            'Réintroduction progressive du tonnage',
+            'Mouvements composés à charge modérée',
+            'Préparation pour l\'hypertrophie',
+          ],
+          postponable: true,
+          effectiveDate: '2099-01-01',
+        }
+      case 'acwr-critical':
+        return {
+          id: 'preview:acwr-critical',
+          type: 'acwr',
+          severity: 'critical',
+          title: 'Charge d\'entraînement très élevée',
+          summary: 'Ton ratio aigu/chronique est en zone critique. Le programme va réduire la charge cette semaine.',
+          bullets: [
+            '1 séance maximum cette semaine',
+            'Privilégie mobilité et sommeil',
+            'Reprise progressive la semaine prochaine',
+          ],
+          postponable: false,
+          effectiveDate: '2099-01-01',
+        }
+      case 'acwr-danger':
+        return {
+          id: 'preview:acwr-danger',
+          type: 'acwr',
+          severity: 'warning',
+          title: 'Charge d\'entraînement élevée',
+          summary: 'Ton ratio aigu/chronique est en zone à risque. On retire une séance cette semaine.',
+          bullets: [
+            '−1 séance par rapport au programme prévu',
+            'Garde de l\'intensité mais réduit le volume',
+            'Surveille ton sommeil et tes courbatures',
+          ],
+          postponable: false,
+          effectiveDate: '2099-01-01',
+        }
+      case 'match':
+        return {
+          id: 'preview:match',
+          type: 'match',
+          severity: 'info',
+          title: 'Semaine de match',
+          summary: 'Match prévu samedi — la semaine est calée pour arriver frais.',
+          bullets: [
+            'Charge réduite à mesure qu\'on approche du match',
+            'Dernière séance au moins 48h avant',
+            'Mobilité et activation ajoutées',
+          ],
+          postponable: false,
+          effectiveDate: '2099-01-01',
+        }
+      default:
+        return null
+    }
+  } catch {
+    return null
+  }
+}
 
 const STORAGE_KEY = 'rf.programNotice.v1'
 const POSTPONE_DAYS = 7
@@ -85,6 +182,8 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
   }, [])
 
   const detected = useMemo(() => {
+    const preview = readPreviewNotice()
+    if (preview) return preview
     if (!profile) return null
     if (!profile.weeklySessions || !profile.position) return null
     try {
