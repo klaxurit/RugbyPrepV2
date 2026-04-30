@@ -78,18 +78,55 @@ function parseSets(prescription: string): number | null {
   return Number.isFinite(n) && n > 0 && n <= 12 ? n : null
 }
 
+/**
+ * Extract inter-tour rest from a prescription/format string.
+ *
+ * Handles the full range of mother-session format conventions:
+ *   - "`90-120s` rest after the pair"          → 120
+ *   - "`75-90s` rest"                          → 90
+ *   - "full rest `3 min` after each round"     → 180
+ *   - "`2-3 min` rest between sets"            → 180
+ *   - "`4 rounds`, `10-15s` between exercises, full rest `3-4 min` after each round"
+ *                                              → 240 (takes the longer rest = inter-round)
+ *   - "@ 90s" / "(60s)" / "repos 3 min"        → legacy patterns
+ *
+ * Rationale (KB strength-methods.md): when a range is given, prefer the upper
+ * bound so the chrono guarantees adequate recovery — the user can always
+ * shorten via the −10s / Skip controls.
+ */
 function parseRestSeconds(prescription: string): number | null {
-  const sec = prescription.match(/(?:@|\()\s*(\d+)\s*s\b/i)
-  if (sec) {
-    const n = Number(sec[1])
-    return Number.isFinite(n) ? n : null
+  const text = prescription.replace(/`/g, ' ').replace(/\s+/g, ' ')
+  const candidates: number[] = []
+
+  const restQualifier =
+    '(?:rest|between\\s+(?:rounds?|sets?|reps?|pairs?|triplets?|drills?|exercises)|after\\s+(?:each|the|every)\\s+(?:rounds?|sets?|pairs?|triplets?|reps?))'
+  const patterns = [
+    // "<num>[-<num>] (s|min) ... rest|between rounds|after each round" — number BEFORE qualifier
+    new RegExp(
+      `(\\d+)(?:\\s*[-–]\\s*(\\d+))?\\s*(min|sec|s)\\b[^,;]{0,30}?\\b${restQualifier}\\b`,
+      'gi',
+    ),
+    // "rest <num>[-<num>] (s|min)"              — number AFTER rest (incl. "full rest")
+    /\brest\s+(\d+)(?:\s*[-–]\s*(\d+))?\s*(min|sec|s)\b/gi,
+    // "@<num> (s|min)" or "(<num>s)"            — legacy compact prescriptions
+    /[@(]\s*(\d+)(?:\s*[-–]\s*(\d+))?\s*(min|sec|s)\b/gi,
+    // "repos [...] <num> min"                   — legacy French
+    /\brepos(?:\s+\w+)?\s*(\d+)(?:\s*[-–]\s*(\d+))?\s*(min|sec|s)\b/gi,
+  ]
+
+  for (const pattern of patterns) {
+    let m: RegExpExecArray | null
+    while ((m = pattern.exec(text)) !== null) {
+      const upper = m[2] ?? m[1]
+      const unit = m[3].toLowerCase()
+      const value = Number(upper)
+      if (!Number.isFinite(value)) continue
+      candidates.push(unit === 'min' ? value * 60 : value)
+    }
   }
-  const min = prescription.match(/(?:@|repos(?:\s+\w+)?)\s*(\d+)(?:\s*[-–]\s*\d+)?\s*min/i)
-  if (min) {
-    const n = Number(min[1])
-    return Number.isFinite(n) ? n * 60 : null
-  }
-  return null
+
+  if (candidates.length === 0) return null
+  return Math.max(...candidates)
 }
 
 /**

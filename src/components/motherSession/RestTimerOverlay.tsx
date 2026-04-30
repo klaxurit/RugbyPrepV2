@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Minus, SkipForward } from 'lucide-react'
 import { useSessionRun } from '../../contexts/SessionRunContext'
+import { useRestBeepPref } from '../../hooks/useRestBeepPref'
+import { playRestEndBeep } from '../../utils/audioBeep'
 
 function vibrate(pattern: number | number[]) {
   if (typeof navigator === 'undefined') return
@@ -19,6 +21,7 @@ function vibrate(pattern: number | number[]) {
  */
 export function RestTimerOverlay() {
   const { restTimer, adjustRestTimer, skipRestTimer } = useSessionRun()
+  const { enabled: beepEnabled } = useRestBeepPref()
   const [now, setNow] = useState(() => Date.now())
   const expiredRef = useRef(false)
 
@@ -39,11 +42,12 @@ export function RestTimerOverlay() {
     if (remainingMs === 0 && !expiredRef.current) {
       expiredRef.current = true
       vibrate([120, 80, 120])
+      if (beepEnabled) playRestEndBeep()
       // Dismiss after a short delay to let the user see "0" briefly.
       const id = window.setTimeout(() => skipRestTimer(), 800)
       return () => window.clearTimeout(id)
     }
-  }, [remainingMs, restTimer, skipRestTimer])
+  }, [remainingMs, restTimer, skipRestTimer, beepEnabled])
 
   const pct =
     restTimer && restTimer.totalSeconds > 0
