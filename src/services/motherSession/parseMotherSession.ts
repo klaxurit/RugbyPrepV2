@@ -189,16 +189,27 @@ export function parseExerciseLine(rawLine: string): Exercise | null {
     rest = rest.slice(minM[0].length).trim()
   }
 
+  // Strip and remember a trailing "*(optional)*" or "(optional)" marker.
+  let isOptional = false
+  const optionalM = rest.match(/\s*\*?\(\s*optional\s*\)\*?\s*$/i)
+  if (optionalM) {
+    isOptional = true
+    rest = rest.slice(0, optionalM.index).trim()
+  }
+
   const segments = [...rest.matchAll(/`([^`]+)`/g)].map((r) => r[1])
+  let result: Exercise
   if (segments.length === 0) {
-    return { name: rest, prescription: '', role, slotLabel }
+    result = { name: rest, prescription: '', role, slotLabel }
+  } else if (segments.length === 1) {
+    result = { name: segments[0], prescription: '', role, slotLabel }
+  } else {
+    const prescription = segments[segments.length - 1]
+    const name = segments.slice(0, -1).join(' or ')
+    result = { name, prescription, role, slotLabel }
   }
-  if (segments.length === 1) {
-    return { name: segments[0], prescription: '', role, slotLabel }
-  }
-  const prescription = segments[segments.length - 1]
-  const name = segments.slice(0, -1).join(' or ')
-  return { name, prescription, role, slotLabel }
+  if (isOptional) result.isOptional = true
+  return result
 }
 
 function splitFallbackFromCoaching(

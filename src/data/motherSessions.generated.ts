@@ -1471,8 +1471,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "sessionIdentity": [
       "This is a recovery reset session, not a hidden conditioning day and not a reduced hypertrophy workout.",
       "Rugby-specific through simple unilateral movement, light locomotion, trunk control, groin care, and lower-leg support.",
-      "Do not overload this session with strength ambitions, long circuits, or “functional” complexity.",
-      "Complémentaire à Recovery A : le volume hinge/squat est couvert dans Recovery A sur la même semaine ; cette session B reste centrée sur l'unilatéral, locomotion, et la chaîne postérieure via Single-Leg RDL."
+      "Do not overload this session with strength ambitions, long circuits, or “functional” complexity."
     ],
     "warmUp": {
       "exercises": [
@@ -1514,7 +1513,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`2-3 rounds`, `60-75s` rest after the pair",
         "exercises": [
           {
-            "name": "Single-Leg RDL",
+            "name": "Reverse Lunge",
             "prescription": "2-3x6/side"
           },
           {
@@ -5754,8 +5753,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 4,
-        "name": "Arms / Shoulder Support",
-        "format": "",
+        "name": "Arms (Curl + Pressdown)",
+        "format": "`3 rounds`, `60-75s` rest after the pair",
         "exercises": [
           {
             "name": "Hammer Curl",
@@ -5764,7 +5763,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           {
             "name": "Rope Pressdown",
             "prescription": "3x10-12"
-          },
+          }
+        ],
+        "coachingNotes": [
+          "Paire de base bras — toujours faite.",
+          "Charge sous-maximale, technique stricte, pas de triche."
+        ]
+      },
+      {
+        "number": 5,
+        "name": "Shoulder Health",
+        "format": "`3 rounds`, `45-60s` rest after the round",
+        "exercises": [
           {
             "name": "Face Pull",
             "prescription": "3x12-15"
@@ -5776,16 +5786,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "T-Y-I Incline Bench",
-            "prescription": "2x10 (5s per position: T, Y, I)",
+            "prescription": "2x5 (5s per position: T, Y, I)",
             "isOptional": true
           }
         ],
         "coachingNotes": [
-          "`Hammer Curl + Rope Pressdown` est la paire de base — toujours faite.",
-          "`Face Pull + Lateral Raise + T-Y-I Incline Bench` = bloc santé-épaule complet : 3 têtes deltoïdes (avant via bench, latéral, rear) + trapèze inférieur (via Y).",
-          "T-Y-I : 2 sets de 10 reps par position (T pur rear delt, Y trap inf, I trap sup/cervical). Haltères légers, technique stricte.",
-          "Lateral Raise et T-Y-I sont marqués `optional` : skipper en cas de fatigue accumulée pour rester sous 13 sets. Face Pull 3x reste prioritaire pour la santé d'épaule rugby (KB injury-prevention).",
-          "Keep all accessory work short of failure and avoid turning the block into junk volume."
+          "Bloc santé épaule rugby — 3 têtes du deltoïde + trapèze inférieur (via le Y du T-Y-I).",
+          "Face Pull 3x reste prioritaire (KB injury-prevention) — Lateral Raise et T-Y-I optionnels en cas de fatigue accumulée pour rester sous 13 sets sur la séance.",
+          "T-Y-I : 5 reps par position avec 5s de tenue en position haute (T = rear delt pur, Y = trap inf, I = trap sup/cervical). Haltères légers, technique stricte.",
+          "Loin de l'échec — c'est de la qualité, pas du volume inutile."
         ]
       }
     ],
@@ -5795,7 +5804,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "`H3`: this is the highest volume week; allow hard but clean sets with `1-2 RIR`.",
       "`H3`: progress `Incline DB Bench Press` to `4 sets` only if recovery supports it.",
       "`H4`: reduce total volume around `-25 to -30%` while keeping useful load.",
-      "Reduce optional Pair 2 of Block 4 first if fatigue rises.",
+      "Reduce optional exercises of Block 5 first (Lateral Raise + T-Y-I) if fatigue rises.",
       "Reduce one round from Block 3 second.",
       "Keep Blocks 1 and 2 as the structural priorities of the session."
     ],
@@ -5822,7 +5831,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           "`Neutral-Grip DB Bench Press`",
           "`Machine Chest Press`",
           "`Half-Kneeling Landmine Press`",
-          "skip optional Pair 2 if needed"
+          "skip Block 5 optional exercises (Lateral Raise + T-Y-I) if needed"
         ],
         "rehabFinisher": [
           "`band external rotation`",
@@ -7088,12 +7097,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 3,
-        "name": "Upper Pull + Anti-Rotation",
+        "name": "Reactive Support / Anti-Rotation",
         "format": "`3 rounds`, `75-90s` rest",
         "exercises": [
           {
-            "name": "neutral-grip pull-up",
-            "prescription": "3x4-5"
+            "name": "band-assisted split jump",
+            "prescription": "3x4/side"
           },
           {
             "name": "pallof press hold",
@@ -7101,13 +7110,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Pull-up: heavy pull to balance the double-push contrast of B1/B2 (Bench + Plyo, Bench + Rotational Throw).",
-          "Pallof: anti-rotation endurance.",
-          "Back three : neutral-grip = transfer plaquage / ruck-over + moins traumatique épaule que barre droite."
+          "Reactive split jump for single-leg power.",
+          "Pallof for anti-rotation endurance.",
+          "This replaces the reverse lunge + pallof of the front-row version."
         ],
         "fallbackOptions": [
-          "A: `Assisted Neutral-Grip Pull-Up` if needed",
-          "B: `Chest-Supported Row 3x5-6`"
+          "A: `Reverse Lunge` + `Pallof`"
         ]
       },
       {
@@ -7294,15 +7302,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 3,
-        "name": "Upper Pull Cluster + Anti-Rotation",
-        "format": "`3 rounds`, `90-120s` rest after the triplet",
+        "name": "Unilateral / Trunk Support",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "neutral-grip pull-up",
-            "prescription": "3x4-5"
-          },
-          {
-            "name": "single-arm db row",
+            "name": "reverse lunge",
             "prescription": "3x5-6/side"
           },
           {
@@ -7311,14 +7315,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Pull-up : vertical heavy pull, add load if strong.",
-          "Single-arm row: force-grade reps (5-6), horizontal heavy pull.",
+          "Lunge: force-grade reps (5-6), stable and controlled.",
           "Pallof: anti-rotation endurance to support trunk stability for contrast work.",
-          "Rugby : traction lourde essentielle pour plaquage / ruck-over / grip maul. Triplet pour équilibrer les 8 sets push contrast de B1/B2."
+          "This block maintains single-leg balance and trunk integrity."
         ],
         "fallbackOptions": [
-          "A: `Assisted Neutral-Grip Pull-Up` if needed",
-          "B: `Pendlay Row` if bench unavailable"
+          "A: `Split Squat` DB",
+          "B: `Dead Bug` if no band"
         ]
       },
       {
@@ -7718,7 +7721,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "nordic curl",
-            "prescription": "2x4-5"
+            "prescription": "3x4-5"
           },
           {
             "name": "copenhagen hold",
@@ -7727,8 +7730,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ],
         "coachingNotes": [
           "Sprint-resilience: eccentric hamstring + groin robustness.",
-          "Nordic réduit 3x→2x pour respecter MRV ham (10 sets/session vs 11 avant). Trap bar + SL-RDL fournissent déjà la dose posterior lourde ; Nordic en finisher prévention.",
-          "Back three = speed-focused : priorité récupération jambes pour sprint/match."
+          "Same structure as front-row version."
         ]
       },
       {
@@ -8352,12 +8354,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "face pull",
-            "prescription": "3x12-15"
+            "prescription": "2x10-12"
           }
         ],
         "coachingNotes": [
-          "Same structure as front-row. Cable chop at force-grade reps.",
-          "Face pull upgradé 2x→3x pour équilibrer le double-push B1 (Bench + Plyo) et B2 (Pull-Up + Throw rotationnel)."
+          "Same structure as front-row. Cable chop at force-grade reps."
         ]
       }
     ],
@@ -8553,12 +8554,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "face pull",
-            "prescription": "3x12-15"
+            "prescription": "2x10-12"
           }
         ],
         "coachingNotes": [
           "Cable chop at force-grade reps — controlled, powerful rotation.",
-          "Face pull : upgradé 2x→3x pour équilibrer le push-dominant contrast (B1 + B3).",
+          "Face pull: light, high-rep, shoulder health priority.",
           "Keep this block short and efficient."
         ]
       }

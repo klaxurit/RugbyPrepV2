@@ -55,7 +55,10 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'assisted neutral grip pull-up': 'pull_vertical__pull_up__neutral__assisted',
   'assisted pull-up machine': 'pull_vertical__pull_up__neutral__assisted',
   'neutral-grip lat pulldown': 'pull_vertical__lat_pulldown__machine',
-  'face pull': 'prehab_shoulder__face_pull__band',
+  'face pull': 'prehab_shoulder__face_pull__cable',
+  'face pull cable': 'prehab_shoulder__face_pull__cable',
+  'face pull band': 'prehab_shoulder__face_pull__band',
+  'face pull élastique': 'prehab_shoulder__face_pull__band',
   't-y-i incline bench': 'prehab_shoulder__tyi__incline_bench',
   'tyi incline bench': 'prehab_shoulder__tyi__incline_bench',
 

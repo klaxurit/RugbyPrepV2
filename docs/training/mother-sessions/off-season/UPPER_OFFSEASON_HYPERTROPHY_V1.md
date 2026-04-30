@@ -69,18 +69,24 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - A: `Half-Kneeling Landmine Press`
     - B: `Assisted Neutral-Grip Pull-Up`
 
-### Block 4 - Arms / Shoulder Support
+### Block 4 - Arms (Curl + Pressdown)
+- Format: `3 rounds`, `60-75s` rest after the pair
 - Exercise A: `Hammer Curl` `3x10-12`
 - Exercise B: `Rope Pressdown` `3x10-12`
-- Exercise C: `Face Pull` `3x12-15`
-- Exercise D: `Lateral Raise` `2x12-15` *(optional)*
-- Exercise E: `T-Y-I Incline Bench` `2x10 (5s per position: T, Y, I)` *(optional)*
 - Coaching notes:
-  - `Hammer Curl + Rope Pressdown` est la paire de base — toujours faite.
-  - `Face Pull + Lateral Raise + T-Y-I Incline Bench` = bloc santé-épaule complet : 3 têtes deltoïdes (avant via bench, latéral, rear) + trapèze inférieur (via Y).
-  - T-Y-I : 2 sets de 10 reps par position (T pur rear delt, Y trap inf, I trap sup/cervical). Haltères légers, technique stricte.
-  - Lateral Raise et T-Y-I sont marqués `optional` : skipper en cas de fatigue accumulée pour rester sous 13 sets. Face Pull 3x reste prioritaire pour la santé d'épaule rugby (KB injury-prevention).
-  - Keep all accessory work short of failure and avoid turning the block into junk volume.
+  - Paire de base bras — toujours faite.
+  - Charge sous-maximale, technique stricte, pas de triche.
+
+### Block 5 - Shoulder Health
+- Format: `3 rounds`, `45-60s` rest after the round
+- Exercise A: `Face Pull` `3x12-15`
+- Exercise B: `Lateral Raise` `2x12-15` *(optional)*
+- Exercise C: `T-Y-I Incline Bench` `2x5 (5s per position: T, Y, I)` *(optional)*
+- Coaching notes:
+  - Bloc santé épaule rugby — 3 têtes du deltoïde + trapèze inférieur (via le Y du T-Y-I).
+  - Face Pull 3x reste prioritaire (KB injury-prevention) — Lateral Raise et T-Y-I optionnels en cas de fatigue accumulée pour rester sous 13 sets sur la séance.
+  - T-Y-I : 5 reps par position avec 5s de tenue en position haute (T = rear delt pur, Y = trap inf, I = trap sup/cervical). Haltères légers, technique stricte.
+  - Loin de l'échec — c'est de la qualité, pas du volume inutile.
 
 ## Progression Rules
 - `H1`: start at the lower end of the load range and establish clean volume tolerance.
@@ -88,7 +94,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - `H3`: this is the highest volume week; allow hard but clean sets with `1-2 RIR`.
 - `H3`: progress `Incline DB Bench Press` to `4 sets` only if recovery supports it.
 - `H4`: reduce total volume around `-25 to -30%` while keeping useful load.
-- Reduce optional exercises of Block 4 first (Lateral Raise + T-Y-I) if fatigue rises.
+- Reduce optional exercises of Block 5 first (Lateral Raise + T-Y-I) if fatigue rises.
 - Reduce one round from Block 3 second.
 - Keep Blocks 1 and 2 as the structural priorities of the session.
 
@@ -114,7 +120,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - `Neutral-Grip DB Bench Press`
   - `Machine Chest Press`
   - `Half-Kneeling Landmine Press`
-  - skip optional Pair 2 if needed
+  - skip Block 5 optional exercises (Lateral Raise + T-Y-I) if needed
 - Rehab finisher:
   - `band external rotation`
   - `serratus reach`

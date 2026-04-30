@@ -445,6 +445,28 @@
     "videoUrl": "https://www.youtube.com/shorts/1s-0WtJMsu8"
   },
   {
+    "id": "prehab_shoulder__face_pull__cable",
+    "name": "Face pull poulie corde",
+    "pattern": "prehab_shoulder",
+    "equipment": [
+      "cable"
+    ],
+    "contraindications": [
+      "shoulder_pain"
+    ],
+    "level": "beginner",
+    "notes": "Hauteur de poulie au visage, coudes hauts. Travail arrière d'épaule + trap inf.",
+    "exerciseId": "prehab_shoulder__face_pull__cable",
+    "nameFr": "Face pull poulie corde",
+    "metricType": "reps",
+    "tags": [
+      "prehab",
+      "shoulder_health"
+    ],
+    "defaultNotes": "Hauteur de poulie au visage, coudes hauts. Travail arrière d'épaule + trap inf.",
+    "videoUrl": "https://www.youtube.com/shorts/1s-0WtJMsu8"
+  },
+  {
     "id": "olympic_variant__hang_high_pull",
     "name": "Hang High Pull",
     "pattern": "olympic_variant",
