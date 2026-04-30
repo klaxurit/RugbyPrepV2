@@ -7,6 +7,7 @@ import { RequireAuth } from './components/auth/RequireAuth'
 import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { CoachCompanion } from './components/CoachCompanion'
+import { ProgramChangeMount } from './components/ProgramChangeMount'
 
 // Eager : seulement HomePage (default after login, évite un flash sur l'écran principal)
 import { HomePage } from './pages/HomePage'
@@ -134,6 +135,7 @@ function App() {
         </Routes>
         </Suspense>
         <CoachCompanion />
+        <ProgramChangeMount />
         </CoachProvider>
       </BrowserRouter>
       </SessionRunProvider>
