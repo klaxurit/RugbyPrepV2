@@ -216,7 +216,7 @@ export function MonthlyMatchGrid({ events, clubDays, scDays = [], onSelectMatch,
                   alt=""
                   aria-hidden
                   loading="lazy"
-                  className="w-3.5 h-3.5 object-contain"
+                  className="w-3.5 h-3.5 object-contain rounded-[3px]"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
                 />
               ) : glyph ? (
