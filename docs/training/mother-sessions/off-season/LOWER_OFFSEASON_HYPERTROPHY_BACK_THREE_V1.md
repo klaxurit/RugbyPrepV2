@@ -80,10 +80,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Keep pogo hops light and bouncy, not forceful.
 
 ## Progression Rules
-- `H1`: establish clean volume tolerance on all exercises.
-- `H2`: increase load if recovery is good; keep nordic at 4-5 reps.
-- `H3`: highest volume week; allow RPE 7-8 on main lifts.
-- `H4`: reduce volume -25-30% while keeping load. Reduce Block 4 first, Block 3 second.
+- `Semaine 1`: establish clean volume tolerance on all exercises.
+- `Semaine 2`: increase load if recovery is good; keep nordic at 4-5 reps.
+- `Semaine 3`: highest volume week; allow RPE 7-8 on main lifts.
+- `Semaine 4 (décharge)`: reduce volume -25-30% while keeping load. Reduce Block 4 first, Block 3 second.
 
 ## Position Accent
 - Back-three session: unilateral emphasis in Block 2, sprint-resilience in Block 3, stiffness prep in Block 4.

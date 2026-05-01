@@ -62,14 +62,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Fallback options:
     - A: `Reverse Lunge` + `Pallof`
 
-### Block 4 - Lower-Leg / Reactive Stiffness
-- Format: `2 rounds`, `45-60s` rest
-- Exercise A: `copenhagen hold` `2x20-30s/side`
-- Exercise B: `single-leg calf raise` `2x8/side`
-- Exercise C: `low pogo hops` `2x8`
+### Block 4 - Finisher Rugby
+- Format: `2 rounds`, `45-60s` rest after the round
+- Exercise A: `Farmer Carry` `2x30s`
+- Exercise B: `Copenhagen Plank` `2x20-30s/side`
+- Exercise C: `Banded Neck Isometric` `2x10s/direction`
 - Coaching notes:
-  - Lower-leg stiffness and reactive quality.
-  - Pogo hops: bouncy and quick.
+  - Finisher court orienté rugby : porter (grip + posture), protéger les adducteurs (Copenhagen), renforcer le cou.
+  - Volume modéré, qualité prioritaire — pas un test physique.
+  - Constance prioritaire sur tout le bloc force.
 
 ## Progression Rules
 - `FB1`: establish both contrast pairs at 85%.

@@ -14,6 +14,7 @@ import { MotherSessionHeader } from './MotherSessionHeader'
 import { MotherSessionInjurySubs } from './MotherSessionInjurySubs'
 import { MotherSessionWarmUp } from './MotherSessionWarmUp'
 import { SessionBlockCard } from './SessionBlockCard'
+import { SessionGlossary } from './SessionGlossary'
 import { classifyBlock, parseBlockTourCount } from '../../services/ui/blockPresentation'
 import { resolveExerciseId, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
 import { useSessionRun, buildExerciseTourKey } from '../../contexts/SessionRunContext'
@@ -210,6 +211,8 @@ export function MotherSessionView({
           )}
         </MotherSessionCollapsible>
       )}
+
+      <SessionGlossary lang={lang} />
 
       {showInjurySubs && (
         <MotherSessionInjurySubs injurySubstitutions={adaptedSession.injurySubstitutions} lang={lang} />

@@ -70,31 +70,22 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - A: `Split Squat`
     - B: `Side Plank`
 
-### Block 4 - Lower-Leg / Groin Continuity
-- Format: `2 rounds`, minimal rest
-- Exercise A: `Copenhagen Hold` `2x20-30s/side`
-- Exercise B: `Single-Leg Calf Raise` `2x10/side`
-- Exercise C: `Wall Tibialis Raise` `2x12-15`
+### Block 4 - Finisher Rugby
+- Format: `2 rounds`, `45-60s` rest after the round
+- Exercise A: `Farmer Carry` `2x30s`
+- Exercise B: `Copenhagen Plank` `2x20-30s/side`
+- Exercise C: `Banded Neck Isometric` `2x10s/direction`
 - Coaching notes:
-  - This block preserves groin and lower-leg tissue continuity across the week.
-  - Keep it clean and submaximal.
-  - The player should finish this block feeling supported, not battered.
-
-### Optional Block 5 - Reward Block
-- Format: `2 rounds`, `45-60s` rest
-- Exercise A: `Hammer Curl` `2x10-12`
-- Exercise B: `Rope Pressdown` `2x10-12`
-- Coaching notes:
-  - Optional only.
-  - This block exists for adherence and session satisfaction, not because the program needs more stress.
-  - Stop short of failure and avoid carrying soreness into the next week.
+  - Finisher court orienté rugby : porter (grip + posture), protéger les adducteurs (Copenhagen), renforcer le cou.
+  - Volume modéré, qualité prioritaire — pas un test physique.
+  - Termine la séance soutenu, pas vidé.
 
 ## Progression Rules
-- `H1`: start at the lower end of the load range and establish weekly tolerance.
-- `H2`: increase load only if the main hinge and upper support work are recovering well.
-- `H3`: this is the densest week; allow hard but clean sets with `1-2 RIR`.
-- `H4`: reduce total volume around `-25 to -30%` while keeping useful load.
-- Remove optional Block 5 first if fatigue rises.
+- `Semaine 1`: start at the lower end of the load range and establish weekly tolerance.
+- `Semaine 2`: increase load only if the main hinge and upper support work are recovering well.
+- `Semaine 3`: this is the densest week; allow hard but clean sets with `1-2 RIR`.
+- `Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.
+- Reduce one round of Block 4 first if fatigue rises (carry + Copenhagen still pertinent).
 - Reduce one round from Block 4 second.
 - Keep Blocks 1 and 2 as the structural priorities of the session.
 

@@ -75,10 +75,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Keep throws controlled — this is prep, not peak power.
 
 ## Progression Rules
-- `H1`: establish form on landmine press and single-arm row.
-- `H2`: increase loads if form is clean.
-- `H3`: highest volume; RPE 7-8 allowed.
-- `H4`: reduce -25-30%. Drop med ball throws and face pull first.
+- `Semaine 1`: establish form on landmine press and single-arm row.
+- `Semaine 2`: increase loads if form is clean.
+- `Semaine 3`: highest volume; RPE 7-8 allowed.
+- `Semaine 4 (décharge)`: reduce -25-30%. Drop med ball throws and face pull first.
 
 ## Position Accent
 - Back-three session: unilateral row + rotational press in Block 2, anti-rotation in Block 3, med ball prep in Block 4.

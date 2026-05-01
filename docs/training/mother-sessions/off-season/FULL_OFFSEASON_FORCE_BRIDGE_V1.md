@@ -70,14 +70,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - A: `Split Squat` DB
     - B: `Dead Bug` if no band
 
-### Block 4 - Lower-Leg / Groin Prevention
-- Format: `2 rounds`, `45-60s` rest
-- Exercise A: `copenhagen hold` `2x20-30s/side`
-- Exercise B: `single-leg calf raise` `2x10/side`
-- Exercise C: `wall tibialis raise` `2x12`
+### Block 4 - Finisher Rugby
+- Format: `2 rounds`, `45-60s` rest after the round
+- Exercise A: `Farmer Carry` `2x30s`
+- Exercise B: `Copenhagen Plank` `2x20-30s/side`
+- Exercise C: `Banded Neck Isometric` `2x10s/direction`
 - Coaching notes:
-  - Consistent prevention work across all off-season phases.
-  - Keep this efficient — do not extend into extra volume.
+  - Finisher court orienté rugby : porter (grip + posture), adducteurs (Copenhagen), cou (iso).
+  - Travail de prévention efficace — ne pas étendre en volume supplémentaire.
+  - Constance prioritaire à travers toutes les phases du bloc force.
 
 ## Progression Rules
 - `FB1`: establish both contrast pairs at 85%; confirm jump and push-up quality.

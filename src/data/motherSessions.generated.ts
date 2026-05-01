@@ -1109,56 +1109,35 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 4,
-        "name": "Lower-Leg / Groin Continuity",
-        "format": "`2 rounds`, minimal rest",
+        "name": "Finisher Rugby",
+        "format": "`2 rounds`, `45-60s` rest after the round",
         "exercises": [
           {
-            "name": "Copenhagen Hold",
+            "name": "Farmer Carry",
+            "prescription": "2x30s"
+          },
+          {
+            "name": "Copenhagen Plank",
             "prescription": "2x20-30s/side"
           },
           {
-            "name": "Single-Leg Calf Raise",
-            "prescription": "2x10/side"
-          },
-          {
-            "name": "Wall Tibialis Raise",
-            "prescription": "2x12-15"
+            "name": "Banded Neck Isometric",
+            "prescription": "2x10s/direction"
           }
         ],
         "coachingNotes": [
-          "This block preserves groin and lower-leg tissue continuity across the week.",
-          "Keep it clean and submaximal.",
-          "The player should finish this block feeling supported, not battered."
+          "Finisher court orienté rugby : porter (grip + posture), protéger les adducteurs (Copenhagen), renforcer le cou.",
+          "Volume modéré, qualité prioritaire — pas un test physique.",
+          "Termine la séance soutenu, pas vidé."
         ]
-      },
-      {
-        "number": 5,
-        "name": "Reward Block",
-        "format": "`2 rounds`, `45-60s` rest",
-        "exercises": [
-          {
-            "name": "Hammer Curl",
-            "prescription": "2x10-12"
-          },
-          {
-            "name": "Rope Pressdown",
-            "prescription": "2x10-12"
-          }
-        ],
-        "coachingNotes": [
-          "Optional only.",
-          "This block exists for adherence and session satisfaction, not because the program needs more stress.",
-          "Stop short of failure and avoid carrying soreness into the next week."
-        ],
-        "isOptional": true
       }
     ],
     "progressionRules": [
-      "`H1`: start at the lower end of the load range and establish weekly tolerance.",
-      "`H2`: increase load only if the main hinge and upper support work are recovering well.",
-      "`H3`: this is the densest week; allow hard but clean sets with `1-2 RIR`.",
-      "`H4`: reduce total volume around `-25 to -30%` while keeping useful load.",
-      "Remove optional Block 5 first if fatigue rises.",
+      "`Semaine 1`: start at the lower end of the load range and establish weekly tolerance.",
+      "`Semaine 2`: increase load only if the main hinge and upper support work are recovering well.",
+      "`Semaine 3`: this is the densest week; allow hard but clean sets with `1-2 RIR`.",
+      "`Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.",
+      "Reduce one round of Block 4 first if fatigue rises (carry + Copenhagen still pertinent).",
       "Reduce one round from Block 4 second.",
       "Keep Blocks 1 and 2 as the structural priorities of the session."
     ],
@@ -1788,26 +1767,26 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 4,
-        "name": "Groin / Lower-Leg Continuity",
-        "format": "`2 rounds`, minimal rest",
+        "name": "Finisher Rugby",
+        "format": "`2 rounds`, `45-60s` rest after the round",
         "exercises": [
           {
-            "name": "Supine Adductor Squeeze",
+            "name": "Farmer Carry",
             "prescription": "2x20s"
           },
           {
-            "name": "Single-Leg Calf Raise",
-            "prescription": "2x10/side"
+            "name": "Copenhagen Plank",
+            "prescription": "2x15-20s/side"
           },
           {
-            "name": "Wall Tibialis Raise",
-            "prescription": "2x12"
+            "name": "Banded Neck Isometric",
+            "prescription": "2x8s/direction"
           }
         ],
         "coachingNotes": [
-          "This block keeps tissue continuity from Recovery and Lower Transition.",
-          "Keep everything easy, clean, and submaximal.",
-          "The player should leave this block feeling supported, not “finished off”."
+          "Finisher court orienté rugby : porter, protéger les adducteurs, renforcer le cou.",
+          "Volume bas (transition) — qualité avant tout, pas de fatigue résiduelle.",
+          "Le joueur doit finir soutenu, jamais \"achevé\"."
         ]
       }
     ],
@@ -3438,11 +3417,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       }
     ],
     "progressionRules": [
-      "`H1`: start at the lower end of the load range and establish clean volume tolerance.",
-      "`H2`: increase load only if recovery is good while keeping unilateral work at `3 sets`.",
-      "`H3`: this is the highest volume week; keep quality but allow hard sets with `1-2 RIR`.",
-      "`H3`: progress unilateral work to `4 sets` only if recovery supports it.",
-      "`H4`: reduce total volume around `-25 to -30%` while keeping useful load.",
+      "`Semaine 1`: start at the lower end of the load range and establish clean volume tolerance.",
+      "`Semaine 2`: increase load only if recovery is good while keeping unilateral work at `3 sets`.",
+      "`Semaine 3`: this is the highest volume week; keep quality but allow hard sets with `1-2 RIR`.",
+      "`Semaine 3`: progress unilateral work to `4 sets` only if recovery supports it.",
+      "`Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.",
       "Reduce optional Pair 2 of Block 4 first if fatigue rises.",
       "Reduce one round from Block 3 second.",
       "Keep Blocks 1 and 2 as the structural priorities of the session."
@@ -5799,11 +5778,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       }
     ],
     "progressionRules": [
-      "`H1`: start at the lower end of the load range and establish clean volume tolerance.",
-      "`H2`: increase load only if pressing and pulling are recovering well while keeping secondary push work at `3 sets`.",
-      "`H3`: this is the highest volume week; allow hard but clean sets with `1-2 RIR`.",
-      "`H3`: progress `Incline DB Bench Press` to `4 sets` only if recovery supports it.",
-      "`H4`: reduce total volume around `-25 to -30%` while keeping useful load.",
+      "`Semaine 1`: start at the lower end of the load range and establish clean volume tolerance.",
+      "`Semaine 2`: increase load only if pressing and pulling are recovering well while keeping secondary push work at `3 sets`.",
+      "`Semaine 3`: this is the highest volume week; allow hard but clean sets with `1-2 RIR`.",
+      "`Semaine 3`: progress `Incline DB Bench Press` to `4 sets` only if recovery supports it.",
+      "`Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.",
       "Reduce optional exercises of Block 5 first (Lateral Raise + T-Y-I) if fatigue rises.",
       "Reduce one round from Block 3 second.",
       "Keep Blocks 1 and 2 as the structural priorities of the session."
@@ -7120,25 +7099,26 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 4,
-        "name": "Lower-Leg / Reactive Stiffness",
-        "format": "`2 rounds`, `45-60s` rest",
+        "name": "Finisher Rugby",
+        "format": "`2 rounds`, `45-60s` rest after the round",
         "exercises": [
           {
-            "name": "copenhagen hold",
+            "name": "Farmer Carry",
+            "prescription": "2x30s"
+          },
+          {
+            "name": "Copenhagen Plank",
             "prescription": "2x20-30s/side"
           },
           {
-            "name": "single-leg calf raise",
-            "prescription": "2x8/side"
-          },
-          {
-            "name": "low pogo hops",
-            "prescription": "2x8"
+            "name": "Banded Neck Isometric",
+            "prescription": "2x10s/direction"
           }
         ],
         "coachingNotes": [
-          "Lower-leg stiffness and reactive quality.",
-          "Pogo hops: bouncy and quick."
+          "Finisher court orienté rugby : porter (grip + posture), protéger les adducteurs (Copenhagen), renforcer le cou.",
+          "Volume modéré, qualité prioritaire — pas un test physique.",
+          "Constance prioritaire sur tout le bloc force."
         ]
       }
     ],
@@ -7326,25 +7306,26 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 4,
-        "name": "Lower-Leg / Groin Prevention",
-        "format": "`2 rounds`, `45-60s` rest",
+        "name": "Finisher Rugby",
+        "format": "`2 rounds`, `45-60s` rest after the round",
         "exercises": [
           {
-            "name": "copenhagen hold",
+            "name": "Farmer Carry",
+            "prescription": "2x30s"
+          },
+          {
+            "name": "Copenhagen Plank",
             "prescription": "2x20-30s/side"
           },
           {
-            "name": "single-leg calf raise",
-            "prescription": "2x10/side"
-          },
-          {
-            "name": "wall tibialis raise",
-            "prescription": "2x12"
+            "name": "Banded Neck Isometric",
+            "prescription": "2x10s/direction"
           }
         ],
         "coachingNotes": [
-          "Consistent prevention work across all off-season phases.",
-          "Keep this efficient — do not extend into extra volume."
+          "Finisher court orienté rugby : porter (grip + posture), adducteurs (Copenhagen), cou (iso).",
+          "Travail de prévention efficace — ne pas étendre en volume supplémentaire.",
+          "Constance prioritaire à travers toutes les phases du bloc force."
         ]
       }
     ],
@@ -7521,51 +7502,34 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 4,
-        "name": "Lower-Leg / Groin",
-        "format": "`2 rounds`, minimal rest",
+        "name": "Finisher Rugby",
+        "format": "`2 rounds`, `45-60s` rest after the round",
         "exercises": [
           {
-            "name": "copenhagen hold",
+            "name": "Farmer Carry",
+            "prescription": "2x30s"
+          },
+          {
+            "name": "Copenhagen Plank",
             "prescription": "2x20-30s/side"
           },
           {
-            "name": "single-leg calf raise",
-            "prescription": "2x10/side"
-          },
-          {
-            "name": "wall tibialis raise",
-            "prescription": "2x12"
+            "name": "Banded Neck Isometric",
+            "prescription": "2x10s/direction"
           }
         ],
         "coachingNotes": [
-          "Lower-leg quality emphasis for acceleration prep."
+          "Finisher court orienté rugby : porter (grip + posture), protéger les adducteurs (Copenhagen), renforcer le cou.",
+          "Volume modéré, qualité prioritaire — pas un test physique.",
+          "Termine la séance soutenu, pas vidé."
         ]
-      },
-      {
-        "number": 5,
-        "name": "Reward Block",
-        "format": "`2 rounds`, `45-60s` rest",
-        "exercises": [
-          {
-            "name": "hammer curl",
-            "prescription": "2x10-12"
-          },
-          {
-            "name": "rope pressdown",
-            "prescription": "2x10-12"
-          }
-        ],
-        "coachingNotes": [
-          "Optional. Same as front-row version."
-        ],
-        "isOptional": true
       }
     ],
     "progressionRules": [
-      "`H1`: establish form on landmine and rotational throws.",
-      "`H2`: increase loads; keep throws at 4/side.",
-      "`H3`: peak volume. RPE 7-8.",
-      "`H4`: reduce -25-30%. Drop B5 first, reduce B3 throws second."
+      "`Semaine 1`: establish form on landmine and rotational throws.",
+      "`Semaine 2`: increase loads; keep throws at 4/side.",
+      "`Semaine 3`: peak volume. RPE 7-8.",
+      "`Semaine 4 (décharge)`: reduce -25-30%. Reduce one round of Block 4 first, reduce B3 throws second."
     ],
     "positionAccent": [
       "Back-three session: rotational pressing in B2, rotational throwing in B3, lower-leg in B4."
@@ -8167,10 +8131,10 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       }
     ],
     "progressionRules": [
-      "`H1`: establish clean volume tolerance on all exercises.",
-      "`H2`: increase load if recovery is good; keep nordic at 4-5 reps.",
-      "`H3`: highest volume week; allow RPE 7-8 on main lifts.",
-      "`H4`: reduce volume -25-30% while keeping load. Reduce Block 4 first, Block 3 second."
+      "`Semaine 1`: establish clean volume tolerance on all exercises.",
+      "`Semaine 2`: increase load if recovery is good; keep nordic at 4-5 reps.",
+      "`Semaine 3`: highest volume week; allow RPE 7-8 on main lifts.",
+      "`Semaine 4 (décharge)`: reduce volume -25-30% while keeping load. Reduce Block 4 first, Block 3 second."
     ],
     "positionAccent": [
       "Back-three session: unilateral emphasis in Block 2, sprint-resilience in Block 3, stiffness prep in Block 4.",
@@ -8762,10 +8726,10 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       }
     ],
     "progressionRules": [
-      "`H1`: establish form on landmine press and single-arm row.",
-      "`H2`: increase loads if form is clean.",
-      "`H3`: highest volume; RPE 7-8 allowed.",
-      "`H4`: reduce -25-30%. Drop med ball throws and face pull first."
+      "`Semaine 1`: establish form on landmine press and single-arm row.",
+      "`Semaine 2`: increase loads if form is clean.",
+      "`Semaine 3`: highest volume; RPE 7-8 allowed.",
+      "`Semaine 4 (décharge)`: reduce -25-30%. Drop med ball throws and face pull first."
     ],
     "positionAccent": [
       "Back-three session: unilateral row + rotational press in Block 2, anti-rotation in Block 3, med ball prep in Block 4."

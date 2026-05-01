@@ -70,15 +70,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - A: `Split Squat`
     - B: `Side Plank`
 
-### Block 4 - Groin / Lower-Leg Continuity
-- Format: `2 rounds`, minimal rest
-- Exercise A: `Supine Adductor Squeeze` `2x20s`
-- Exercise B: `Single-Leg Calf Raise` `2x10/side`
-- Exercise C: `Wall Tibialis Raise` `2x12`
+### Block 4 - Finisher Rugby
+- Format: `2 rounds`, `45-60s` rest after the round
+- Exercise A: `Farmer Carry` `2x20s`
+- Exercise B: `Copenhagen Plank` `2x15-20s/side`
+- Exercise C: `Banded Neck Isometric` `2x8s/direction`
 - Coaching notes:
-  - This block keeps tissue continuity from Recovery and Lower Transition.
-  - Keep everything easy, clean, and submaximal.
-  - The player should leave this block feeling supported, not “finished off”.
+  - Finisher court orienté rugby : porter, protéger les adducteurs, renforcer le cou.
+  - Volume bas (transition) — qualité avant tout, pas de fatigue résiduelle.
+  - Le joueur doit finir soutenu, jamais "achevé".
 
 ## Progression Rules
 - `S3`: establish moderate, comfortable reference loads.

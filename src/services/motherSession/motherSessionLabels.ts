@@ -37,6 +37,7 @@ const MS_LABELS: Record<string, Record<AppLang, string>> = {
   recovery_why_body:     { fr: 'Ton ACWR indique une charge très élevée. Le programme est allégé pour favoriser ta récupération et éviter le surmenage.', en: 'Your ACWR indicates very high load. The program is lighter to support recovery and prevent overtraining.' },
   understand_session:    { fr: 'Comprendre cette séance', en: 'Understand this session' },
   sessions_unavailable:  { fr: 'Séances indisponibles',   en: 'Sessions unavailable' },
+  glossary_title:        { fr: 'Lexique',                  en: 'Glossary' },
 }
 
 export function msLabel(key: string, lang: AppLang): string {

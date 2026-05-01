@@ -82,11 +82,11 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Keep the optional pair short of failure and avoid carrying soreness into the rest of the week.
 
 ## Progression Rules
-- `H1`: start at the lower end of the load range and establish clean volume tolerance.
-- `H2`: increase load only if recovery is good while keeping unilateral work at `3 sets`.
-- `H3`: this is the highest volume week; keep quality but allow hard sets with `1-2 RIR`.
-- `H3`: progress unilateral work to `4 sets` only if recovery supports it.
-- `H4`: reduce total volume around `-25 to -30%` while keeping useful load.
+- `Semaine 1`: start at the lower end of the load range and establish clean volume tolerance.
+- `Semaine 2`: increase load only if recovery is good while keeping unilateral work at `3 sets`.
+- `Semaine 3`: this is the highest volume week; keep quality but allow hard sets with `1-2 RIR`.
+- `Semaine 3`: progress unilateral work to `4 sets` only if recovery supports it.
+- `Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.
 - Reduce optional Pair 2 of Block 4 first if fatigue rises.
 - Reduce one round from Block 3 second.
 - Keep Blocks 1 and 2 as the structural priorities of the session.

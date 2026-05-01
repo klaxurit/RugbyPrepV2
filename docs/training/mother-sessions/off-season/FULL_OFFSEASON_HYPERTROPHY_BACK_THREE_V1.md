@@ -59,26 +59,21 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - A: `Split Squat`
     - B: `Pallof Press Hold`
 
-### Block 4 - Lower-Leg / Groin
-- Format: `2 rounds`, minimal rest
-- Exercise A: `copenhagen hold` `2x20-30s/side`
-- Exercise B: `single-leg calf raise` `2x10/side`
-- Exercise C: `wall tibialis raise` `2x12`
+### Block 4 - Finisher Rugby
+- Format: `2 rounds`, `45-60s` rest after the round
+- Exercise A: `Farmer Carry` `2x30s`
+- Exercise B: `Copenhagen Plank` `2x20-30s/side`
+- Exercise C: `Banded Neck Isometric` `2x10s/direction`
 - Coaching notes:
-  - Lower-leg quality emphasis for acceleration prep.
-
-### Optional Block 5 - Reward Block
-- Format: `2 rounds`, `45-60s` rest
-- Exercise A: `hammer curl` `2x10-12`
-- Exercise B: `rope pressdown` `2x10-12`
-- Coaching notes:
-  - Optional. Same as front-row version.
+  - Finisher court orienté rugby : porter (grip + posture), protéger les adducteurs (Copenhagen), renforcer le cou.
+  - Volume modéré, qualité prioritaire — pas un test physique.
+  - Termine la séance soutenu, pas vidé.
 
 ## Progression Rules
-- `H1`: establish form on landmine and rotational throws.
-- `H2`: increase loads; keep throws at 4/side.
-- `H3`: peak volume. RPE 7-8.
-- `H4`: reduce -25-30%. Drop B5 first, reduce B3 throws second.
+- `Semaine 1`: establish form on landmine and rotational throws.
+- `Semaine 2`: increase loads; keep throws at 4/side.
+- `Semaine 3`: peak volume. RPE 7-8.
+- `Semaine 4 (décharge)`: reduce -25-30%. Reduce one round of Block 4 first, reduce B3 throws second.
 
 ## Position Accent
 - Back-three session: rotational pressing in B2, rotational throwing in B3, lower-leg in B4.

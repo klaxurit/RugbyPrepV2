@@ -89,11 +89,11 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Loin de l'échec — c'est de la qualité, pas du volume inutile.
 
 ## Progression Rules
-- `H1`: start at the lower end of the load range and establish clean volume tolerance.
-- `H2`: increase load only if pressing and pulling are recovering well while keeping secondary push work at `3 sets`.
-- `H3`: this is the highest volume week; allow hard but clean sets with `1-2 RIR`.
-- `H3`: progress `Incline DB Bench Press` to `4 sets` only if recovery supports it.
-- `H4`: reduce total volume around `-25 to -30%` while keeping useful load.
+- `Semaine 1`: start at the lower end of the load range and establish clean volume tolerance.
+- `Semaine 2`: increase load only if pressing and pulling are recovering well while keeping secondary push work at `3 sets`.
+- `Semaine 3`: this is the highest volume week; allow hard but clean sets with `1-2 RIR`.
+- `Semaine 3`: progress `Incline DB Bench Press` to `4 sets` only if recovery supports it.
+- `Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.
 - Reduce optional exercises of Block 5 first (Lateral Raise + T-Y-I) if fatigue rises.
 - Reduce one round from Block 3 second.
 - Keep Blocks 1 and 2 as the structural priorities of the session.
