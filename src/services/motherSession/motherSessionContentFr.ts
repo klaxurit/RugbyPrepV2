@@ -1409,12 +1409,12 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
   FULL_OFFSEASON_HYPERTROPHY_V1: {
     goals: [
       'Compléter la semaine d\'hypertrophie inter-saison avec une séance corps complet qui ajoute du muscle utile, sans répéter le Lower et l\'Upper.',
-      'Un ancrage hinge full-body, un bloc support push/pull haut, un bloc support bas, et une finition optionnelle pour le plaisir.',
+      'Un ancrage hinge full-body, un bloc support push/pull haut, un bloc support bas/tronc, et un finisher court orienté rugby (port + adducteurs + cou).',
       'Une semaine qui te semble complète, pas surchargée.',
     ],
     sessionIdentity: [
       'Séance d\'hypertrophie corps complet en inter-saison — ni jour de récup ni quatrième séance lower lourde.',
-      'Spécifique rugby par le hinge utile, le support push/pull, l\'unilatéral bas, le tronc, et des accessoires d\'adhésion optionnels.',
+      'Spécifique rugby par le hinge utile, le support push/pull, l\'unilatéral bas, le tronc, et un finisher court (port, Copenhagen, cou).',
       'Ne pas en faire un marathon de gym ni une checklist « je touche tous les muscles ».',
     ],
     warmUpExercises: [
@@ -1499,8 +1499,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
       '`Semaine 2` : monte la charge seulement si le hinge principal et le support haut récupèrent bien.',
       '`Semaine 3` : semaine la plus dense — séries dures mais propres autorisées (`1-2 reps en réserve`).',
       '`Semaine 4 (décharge)` : réduis le volume total de `25 à 30%` en gardant une charge utile.',
-      'Si la fatigue monte, retire en premier le Bloc 5 (récompense optionnelle).',
-      'Puis retire un tour du Bloc 4.',
+      'Si la fatigue monte, retire d\'abord un tour du Bloc 4 (Finisher rugby) — le port et le Copenhagen restent pertinents.',
       'Garde les Blocs 1 et 2 comme priorités structurelles.',
     ],
     positionAccent: [
@@ -1513,7 +1512,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
       'Cette séance doit compléter la semaine d\'hypertrophie, pas t\'enterrer.',
       'Ne laisse pas le trap bar devenir un test lourd après la séance Lower Hypertrophy.',
       'Ne laisse pas les blocs de soutien dériver en circuit de conditionnement.',
-      'Le bloc récompense optionnel est là pour soutenir l\'adhésion, pas pour justifier de la fatigue supplémentaire.',
+      'Le Finisher rugby reste court : port + adducteurs + cou, pas un test physique.',
     ],
   },
 
@@ -1811,7 +1810,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
       '`Semaine 4 (décharge)` : réduis `25 à 30%`. Réduis un tour du Bloc 4 en premier, puis les lancers du Bloc 3.',
     ],
     positionAccent: [
-      'Séance back-three : poussée rotationnelle au Bloc 2, lancer rotationnel au Bloc 3, bas de jambe au Bloc 4.',
+      'Séance back-three : poussée rotationnelle au Bloc 2, lancer rotationnel au Bloc 3, finisher rugby au Bloc 4 (port + adducteurs + cou).',
     ],
     coachingWarnings: [
       'Garde les lancers rotationnels contrôlés en phase d\'hypertrophie.',

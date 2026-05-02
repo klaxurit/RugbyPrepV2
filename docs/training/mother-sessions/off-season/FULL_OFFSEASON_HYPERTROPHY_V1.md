@@ -11,12 +11,12 @@
 
 ## Goal
 - Complete the main off-season hypertrophy week with a full-body session that adds useful muscle without simply repeating the Lower and Upper hypertrophy days.
-- Provide one hinge-led full-body anchor, one upper push/pull support block, one lower support block, and one optional adherence/reward finish.
+- Provide one hinge-led full-body anchor, one upper push/pull support block, one lower support / trunk block, and a short rugby finisher (carry + adductors + neck).
 - Keep the player feeling like the week is complete, not overbuilt.
 
 ## Session Identity
 - This is an off-season hypertrophy full-body session, not a recovery day and not a fourth heavy lower session.
-- Rugby-specific through useful hinge, push/pull support, unilateral lower work, trunk support, and optional adherence-driven accessories.
+- Rugby-specific through useful hinge, push/pull support, unilateral lower work, trunk support, and a short rugby finisher (carry, Copenhagen, neck).
 - Do not turn this into a marathon gym day or a random “hit every muscle” checklist.
 
 ## Warm-Up
@@ -139,7 +139,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - This session should complete the hypertrophy week, not bury the player.
 - Do not let the trap bar become a heavy test after the Lower Hypertrophy session.
 - Do not let the support blocks drift into a conditioning circuit.
-- The optional reward block is there to support adherence, not to justify extra fatigue.
+- The Finisher Rugby block is short on purpose: carry + Copenhagen + neck, not a test session.
 
 ## Source References
 - [tech-spec-off-season-rugbyprep-2026-03-20.md](/Users/junca/Projets/RugbyPrepV2/_bmad-output/planning-artifacts/tech-spec-off-season-rugbyprep-2026-03-20.md)
