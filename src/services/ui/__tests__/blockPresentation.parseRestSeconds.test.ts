@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { parseBlockRestSeconds } from '../blockPresentation'
-import type { Block } from '../../../types/training'
+import type { Block } from '../../../types/motherSession'
 
 function block(format: string, exercises: Array<{ name: string; prescription: string }> = []): Block {
   return {

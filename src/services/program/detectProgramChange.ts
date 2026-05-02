@@ -52,7 +52,7 @@ const PRE_SEASON_PHASE_LABEL: Record<PreSeasonPhase, string> = {
   3: 'Affûtage',
 }
 
-export type DetectProgramChangeInputs = Omit<AthletePlanningInputs, 'today'> & {
+export type DetectProgramChangeInputs = Omit<AthletePlanningInputs, 'today' | 'events'> & {
   today: string
   acwrZone: ACWRZone | null
   /** Visible (non-hidden) calendar events. */

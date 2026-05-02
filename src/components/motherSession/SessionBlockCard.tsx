@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { ChevronDown, Check } from 'lucide-react'
+import { ChevronDown, Check, Clock } from 'lucide-react'
 import type { Block } from '../../types/motherSession'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import { msLabel } from '../../services/motherSession/motherSessionLabels'
@@ -73,8 +73,6 @@ export function SessionBlockCard({
         : 'border-border-app opacity-75'
     : 'border-border-app'
 
-  const headerPadding = isRunning && runModeCompleted ? 'py-2' : 'py-3.5'
-
   return (
     <article className={`rounded-2xl border overflow-hidden bg-layer-5 ${statusClass}`}>
       <button
@@ -82,67 +80,72 @@ export function SessionBlockCard({
         onClick={() => canToggle && setOpen((v) => !v)}
         aria-expanded={isOpen}
         disabled={!canToggle}
-        className={`w-full px-4 ${headerPadding} hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent text-left`}
+        className="relative w-full p-4 flex flex-col items-center gap-2 text-center hover:bg-layer-7 transition-colors rf-focus-ring disabled:cursor-default disabled:hover:bg-transparent"
       >
-        {/* Ligne 1 — icône + titre (truncate) + pill d'état + durée + chevron.
-            Tous siblings dans le même flex, min-height constant, chaque élément
-            contrôle son propre alignement via flex items-center + leading-none. */}
-        <div className="flex items-center gap-2 min-h-[40px]">
+        {/* Indicateur d'état top-right en mode running uniquement (le temps
+            ne va plus dans un coin — il descend en métadonnée centrée). */}
+        {isRunning && runModeActive && (
           <span
-            aria-hidden
-            className="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 text-base leading-none"
+            className="absolute top-3 right-3 inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand"
+            aria-label="En cours"
+            title="En cours"
           >
-            {icon}
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
           </span>
-          <h3
-            className={`flex-1 min-w-0 text-sm font-black leading-none truncate ${runModeCompleted ? 'text-fg-muted' : 'text-fg'}`}
-            title={name}
+        )}
+        {isRunning && runModeCompleted && (
+          <span
+            className="absolute top-3 right-3 inline-flex items-center justify-center w-5 h-5 rounded-full bg-ok-strong"
+            aria-label="Terminé"
+            title="Terminé"
           >
-            {name}
-          </h3>
-          {/* Badges compacts icon-only : pulse bordeaux = en cours, ✓ vert = terminé.
-              Libère l'espace horizontal pour que le titre truncate moins sur mobile. */}
-          {isRunning && runModeActive && (
-            <span
-              className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand"
-              aria-label="En cours"
-              title="En cours"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-            </span>
-          )}
-          {isRunning && runModeCompleted && (
-            <span
-              className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-full bg-ok-strong"
-              aria-label="Terminé"
-              title="Terminé"
-            >
-              <Check className="w-3 h-3 text-white" strokeWidth={3} />
-            </span>
-          )}
-          {minutes > 0 && (
-            <span className="flex-shrink-0 text-sm font-bold text-fg-muted tabular-nums leading-none">
-              {minutes} min
-            </span>
-          )}
-          {canToggle && (
-            <ChevronDown
-              className={`flex-shrink-0 w-5 h-5 text-fg-faint transition-transform ${isOpen ? 'rotate-180' : ''}`}
-            />
-          )}
-        </div>
-        {/* Ligne 2 — badge optionnel (mode Aperçu seulement, rare). */}
-        {block.isOptional && !isRunning && (
-          <div className="mt-1.5">
-            <span className="inline-flex items-center rounded-full border border-amber-400/40 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">
-              {msLabel('optional', lang)}
-            </span>
+            <Check className="w-3 h-3 text-white" strokeWidth={3} />
+          </span>
+        )}
+
+        {/* Emoji centré, taille discrète (~chip catégorie). */}
+        <span
+          aria-hidden
+          className="text-2xl leading-none"
+        >
+          {icon}
+        </span>
+
+        {/* Titre centré — peut wrapper sur 2 lignes, casse normale. */}
+        <h3
+          className={`max-w-full text-base font-extrabold italic leading-snug tracking-tight px-2 ${runModeCompleted ? 'text-fg-muted' : 'text-fg'}`}
+          title={name}
+        >
+          {name}
+        </h3>
+
+        {/* Métadonnée temps — petit chip neutre, centré, façon Hevy / Caliber.
+            Reste visible en running mode (l'info durée est utile pendant la
+            séance) car le badge d'état utilise un coin différent. */}
+        {minutes > 0 && (
+          <div className="inline-flex items-center gap-1 rounded-full bg-layer-10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-fg-muted tabular-nums">
+            <Clock className="w-3 h-3" strokeWidth={2.5} />
+            <span>{minutes} min</span>
           </div>
         )}
-        {/* Ligne 3 — summary d'exos (mode collapsed, hors blocs terminés pour
-            éviter une ligne "2 exos · 3 tours" peu informative et tronquée). */}
+
+        {/* Badge optionnel (mode Aperçu seulement, rare). */}
+        {block.isOptional && !isRunning && (
+          <span className="inline-flex items-center rounded-full border border-amber-400/40 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">
+            {msLabel('optional', lang)}
+          </span>
+        )}
+
+        {/* Summary d'exos (mode collapsed, hors blocs terminés). */}
         {!isOpen && summary && !runModeCompleted && (
-          <p className="mt-1 text-xs text-fg-muted truncate">{summary}</p>
+          <p className="max-w-full text-xs text-fg-faint line-clamp-1 px-2">{summary}</p>
+        )}
+
+        {/* Caret centré, bas de la zone header — rotate 180° quand ouvert. */}
+        {canToggle && (
+          <ChevronDown
+            className={`w-5 h-5 text-fg-faint transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          />
         )}
       </button>
       {isOpen && (

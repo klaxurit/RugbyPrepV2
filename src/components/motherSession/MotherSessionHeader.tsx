@@ -35,7 +35,7 @@ export function MotherSessionHeader({ metadata, lang = 'fr', compact = false }: 
 
   return (
     <header className="rounded-[2rem] border border-border-app bg-layer-5 p-4 sm:p-5 text-center">
-      <h1 className="text-xl font-bold leading-tight text-fg sm:text-2xl">{title}</h1>
+      <h1 className="text-2xl font-black italic tracking-tight leading-[1.1] text-fg sm:text-3xl">{title}</h1>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <Badge>{msCycleLabel(metadata.cycle, lang)}</Badge>
         {metadata.targetDuration ? <Badge>{metadata.targetDuration}</Badge> : null}
