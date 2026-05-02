@@ -5,10 +5,10 @@
     <color name="backgroundColor">#7B0D1E</color>
     <color name="colorPrimary">#7B0D1E</color>
     <color name="colorPrimaryDark">#7B0D1E</color>
-    <color name="navigationColor">#7B0D1E</color>
-    <color name="navigationColorDark">#7B0D1E</color>
-    <color name="navigationDividerColor">#7B0D1E</color>
-    <color name="navigationDividerColorDark">#7B0D1E</color>
+    <color name="navigationColor">#F5F2EE</color>
+    <color name="navigationColorDark">#F5F2EE</color>
+    <color name="navigationDividerColor">#F5F2EE</color>
+    <color name="navigationDividerColorDark">#F5F2EE</color>
     <color name="shortcut_background">#F5F5F5</color>
     <integer name="splashScreenFadeOutDuration">300</integer>
     <string name="appName" translatable="false">RugbyForge</string>
