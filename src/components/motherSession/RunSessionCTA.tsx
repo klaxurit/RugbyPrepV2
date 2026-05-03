@@ -207,7 +207,7 @@ function CurrentSetCard({
     : cursor.exerciseName
   const blockLabel = translateBlockNameToFr(cursor.blockName)
 
-  if (cursor.spec.kind === 'time' && !cursor.spec.perDirection) {
+  if (cursor.spec.kind === 'time') {
     return (
       <div className="rounded-2xl border border-brand-border-strong bg-panel shadow-brand-float p-4">
         <p className="text-[10px] font-black uppercase tracking-widest text-fg-muted text-center">
@@ -220,6 +220,7 @@ function CurrentSetCard({
           durationLow={cursor.spec.durationLow}
           durationHigh={cursor.spec.durationHigh}
           perSide={cursor.spec.perSide}
+          perDirection={cursor.spec.perDirection}
           label={displayName}
           onCompleted={onValidate}
         />
@@ -227,7 +228,7 @@ function CurrentSetCard({
     )
   }
 
-  // Reps (or unknown / direction) → simple validate button.
+  // Reps (or unknown) → simple validate button.
   return (
     <button
       type="button"
