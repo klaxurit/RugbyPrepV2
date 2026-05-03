@@ -8,6 +8,7 @@ import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { CoachCompanion } from './components/CoachCompanion'
 import { ProgramChangeMount } from './components/ProgramChangeMount'
+import { UpdatePrompt } from './components/UpdatePrompt'
 
 // Eager : seulement HomePage (default after login, évite un flash sur l'écran principal)
 import { HomePage } from './pages/HomePage'
@@ -136,6 +137,7 @@ function App() {
         </Suspense>
         <CoachCompanion />
         <ProgramChangeMount />
+        <UpdatePrompt />
         </CoachProvider>
       </BrowserRouter>
       </SessionRunProvider>

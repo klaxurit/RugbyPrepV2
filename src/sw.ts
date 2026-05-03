@@ -6,6 +6,32 @@ declare let self: ServiceWorkerGlobalScope
 cleanupOutdatedCaches()
 precacheAndRoute(self.__WB_MANIFEST)
 
+// ─── Update lifecycle ───────────────────────────────────────────────────────
+//
+// En mode `injectManifest` (SW custom), VitePWA n'injecte PAS automatiquement
+// `self.skipWaiting()` ni `self.clients.claim()` — il faut les coder ici.
+// Sans ça, un nouveau SW reste indéfiniment en `waiting` tant qu'un onglet
+// de l'ancienne version reste ouvert. Sur un TWA Android, l'onglet ne se
+// ferme jamais → l'utilisateur ne voit jamais les nouvelles versions sauf à
+// désinstaller l'app.
+//
+// Pattern utilisé : "user-prompted update". On n'auto-skip pas (risque de
+// casser une séance en cours si le SW bascule pendant un upload de log).
+// L'app affiche un toast "Nouvelle version dispo · Recharger" via
+// useRegisterSW() ; au tap, elle envoie un message SKIP_WAITING qu'on
+// traite ici, puis le SW prend le contrôle des clients via clients.claim().
+
+self.addEventListener('message', (event: ExtendableMessageEvent) => {
+  const data = event.data as { type?: string } | undefined
+  if (data?.type === 'SKIP_WAITING') {
+    void self.skipWaiting()
+  }
+})
+
+self.addEventListener('activate', (event: ExtendableEvent) => {
+  event.waitUntil(self.clients.claim())
+})
+
 // ─── Push Notifications ────────────────────────────────────────────────────
 
 interface PushPayload {
