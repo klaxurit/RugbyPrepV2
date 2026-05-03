@@ -1190,7 +1190,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Hypertrophie squat principal',
         format: '`4 séries de travail`, `2 min` de repos entre les séries',
         exercises: [
-          { name: 'Back Squat', prescription: '4x8' },
+          { name: 'Back Squat', prescription: '4x8-10' },
         ],
         coachingNotes: [
           'Garde un effort modéré sur tout le bloc — environ `RPE 6-8` (2-3 reps en réserve).',
@@ -1206,8 +1206,8 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Hinge principal / unilatéral',
         format: '`4 tours`, `90-120s` de repos après la paire',
         exercises: [
-          { name: 'Barbell Romanian Deadlift', prescription: '4x8' },
-          { name: 'Rear-Foot Elevated Split Squat', prescription: '3-4x8/côté' },
+          { name: 'Barbell Romanian Deadlift', prescription: '4x8-10' },
+          { name: 'Rear-Foot Elevated Split Squat', prescription: '3-4x8-10/côté' },
         ],
         coachingNotes: [
           'C\'est le bloc structurel principal de la séance.',
@@ -1306,7 +1306,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Hypertrophie poussée principale haut du corps',
         format: '`4 séries de travail`, `2 min` de repos entre les séries',
         exercises: [
-          { name: 'Bench Press', prescription: '4x8' },
+          { name: 'Bench Press', prescription: '4x8-10' },
         ],
         coachingNotes: [
           'Garde un effort modéré sur tout le bloc — environ `RPE 6-8` (2-3 reps en réserve).',
@@ -1338,8 +1338,8 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Support vertical',
         format: '`3 tours`, `75-90s` de repos après la paire',
         exercises: [
-          { name: 'Seated DB Overhead Press', prescription: '3x8' },
-          { name: 'Neutral-Grip Lat Pulldown', prescription: '3x10' },
+          { name: 'Seated DB Overhead Press', prescription: '3x8-10' },
+          { name: 'Neutral-Grip Lat Pulldown', prescription: '3x10-12' },
         ],
         coachingNotes: [
           'Ce bloc restaure le push/pull vertical sans en faire l\'événement principal.',
@@ -1434,7 +1434,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Hypertrophie hinge principal corps complet',
         format: '`4 séries de travail`, `2 min` de repos entre les séries',
         exercises: [
-          { name: 'Trap Bar Deadlift', prescription: '4x6' },
+          { name: 'Trap Bar Deadlift', prescription: '4x6-8' },
         ],
         coachingNotes: [
           'Garde le trap bar à environ `RPE 6-8`.',
@@ -1450,7 +1450,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         format: '`4 tours`, `90-120s` de repos après la paire',
         exercises: [
           { name: 'DB Incline Bench Press', prescription: '4x8-10' },
-          { name: 'Single-Arm DB Row', prescription: '4x8/côté' },
+          { name: 'Single-Arm DB Row', prescription: '4x8-10/côté' },
         ],
         coachingNotes: [
           'Ce bloc construit du volume haut du corps sans copier la structure de l\'Upper Hypertrophy.',
@@ -1466,7 +1466,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Support bas du corps / tronc',
         format: '`3 tours`, `75-90s` de repos après la paire',
         exercises: [
-          { name: 'Reverse Lunge', prescription: '3x8/côté' },
+          { name: 'Reverse Lunge', prescription: '3x8-10/côté' },
           { name: 'Pallof Press Hold', prescription: '3x15-20s/côté' },
         ],
         coachingNotes: [
@@ -1546,7 +1546,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Hypertrophie squat principal',
         format: '`4 séries de travail`, `2 min` de repos entre les séries',
         exercises: [
-          { name: 'Back Squat', prescription: '4x8' },
+          { name: 'Back Squat', prescription: '4x8-10' },
         ],
         coachingNotes: [
           'Ancrage bilatéral préservé. Effort modéré (`RPE 6-8`).',
@@ -1561,8 +1561,8 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Hinge unilatéral / quadriceps',
         format: '`4 tours`, `90-120s` de repos après la paire',
         exercises: [
-          { name: 'Single-Leg Romanian Deadlift', prescription: '4x8/côté' },
-          { name: 'Reverse Lunge', prescription: '3-4x8/côté' },
+          { name: 'Single-Leg Romanian Deadlift', prescription: '4x8-10/côté' },
+          { name: 'Reverse Lunge', prescription: '3-4x8-10/côté' },
         ],
         coachingNotes: [
           'C\'est le bloc principal de l\'accent positionnel.',
@@ -1595,8 +1595,8 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Bas de jambe / prep raideur',
         format: '`2 tours`, repos minimal',
         exercises: [
-          { name: 'Single-Leg Calf Raise', prescription: '2-3x10/côté' },
-          { name: 'Wall Tibialis Raise', prescription: '2-3x12' },
+          { name: 'Single-Leg Calf Raise', prescription: '2-3x10-12/côté' },
+          { name: 'Wall Tibialis Raise', prescription: '2-3x12-15' },
           { name: 'Low Pogo Hops', prescription: '2x8' },
         ],
         coachingNotes: [
@@ -1650,7 +1650,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Poussée principale haut du corps',
         format: '`4 séries de travail`, `2 min` de repos',
         exercises: [
-          { name: 'Bench Press', prescription: '4x8' },
+          { name: 'Bench Press', prescription: '4x8-10' },
         ],
         coachingNotes: [
           'Ancrage bilatéral. Effort modéré (`RPE 6-8`), contrôlé et reproductible.',
@@ -1663,8 +1663,8 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Tirage unilatéral / poussée rotationnelle',
         format: '`4 tours`, `90-120s` de repos après la paire',
         exercises: [
-          { name: 'Single-Arm DB Row', prescription: '4x8/côté' },
-          { name: 'Half-Kneeling Landmine Press', prescription: '3-4x8/côté' },
+          { name: 'Single-Arm DB Row', prescription: '4x8-10/côté' },
+          { name: 'Half-Kneeling Landmine Press', prescription: '3-4x8-10/côté' },
         ],
         coachingNotes: [
           'C\'est le bloc principal de l\'accent positionnel.',
@@ -1751,7 +1751,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Hinge principal corps complet',
         format: '`4 séries de travail`, `2 min` de repos',
         exercises: [
-          { name: 'Trap Bar Deadlift', prescription: '4x6' },
+          { name: 'Trap Bar Deadlift', prescription: '4x6-8' },
         ],
         coachingNotes: [
           'Ancrage bilatéral. Effort modéré (`RPE 6-8`), puissant mais contrôlé.',
@@ -1764,8 +1764,8 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Poussée rotationnelle / tirage unilatéral',
         format: '`4 tours`, `90-120s` de repos après la paire',
         exercises: [
-          { name: 'Half-Kneeling Landmine Press', prescription: '4x8/côté' },
-          { name: 'Single-Arm DB Row', prescription: '4x8/côté' },
+          { name: 'Half-Kneeling Landmine Press', prescription: '4x8-10/côté' },
+          { name: 'Single-Arm DB Row', prescription: '4x8-10/côté' },
         ],
         coachingNotes: [
           'Poussée rotationnelle + tirage unilatéral : emphase transfert via le tronc.',
@@ -1776,7 +1776,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         name: 'Bas du corps unilatéral / rotation',
         format: '`3 tours`, `75-90s` de repos après la paire',
         exercises: [
-          { name: 'Reverse Lunge', prescription: '3x8/côté' },
+          { name: 'Reverse Lunge', prescription: '3x8-10/côté' },
           { name: 'Med Ball Rotational Throw', prescription: '3x4/côté' },
         ],
         coachingNotes: [

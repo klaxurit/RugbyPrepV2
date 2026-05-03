@@ -34,7 +34,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge
 - Format: `4 work sets`, `2 min` rest
-- Exercise A: `trap bar deadlift` `4x6`
+- Exercise A: `trap bar deadlift` `4x6-8`
 - Coaching notes:
   - Bilateral anchor. RPE 6-8, powerful but controlled.
   - Fallback options:
@@ -42,15 +42,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Rotational Press / Unilateral Pull
 - Format: `4 rounds`, `90-120s` rest after pair
-- Exercise A: `half-kneeling landmine press` `4x8/side`
-- Exercise B: `single-arm db row` `4x8/side`
+- Exercise A: `half-kneeling landmine press` `4x8-10/side`
+- Exercise B: `single-arm db row` `4x8-10/side`
 - Coaching notes:
   - Rotational pressing + unilateral pulling: trunk transfer emphasis.
   - Both exercises challenge anti-rotation through the trunk.
 
 ### Block 3 - Unilateral Lower / Rotation
 - Format: `3 rounds`, `75-90s` rest after pair
-- Exercise A: `reverse lunge` `3x8/side`
+- Exercise A: `reverse lunge` `3x8-10/side`
 - Exercise B: `med ball rotational throw` `3x4/side`
 - Coaching notes:
   - Lunge for single-leg structural work.

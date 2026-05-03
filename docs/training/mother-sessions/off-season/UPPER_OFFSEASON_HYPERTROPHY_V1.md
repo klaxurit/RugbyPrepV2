@@ -37,7 +37,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Upper Push Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Bench Press` `4x8`
+- Exercise A: `Bench Press` `4x8-10`
 - Coaching notes:
   - Keep the press around `RPE 6-8` across the block.
   - This is the anchor press of the session.
@@ -59,8 +59,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Vertical Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Seated DB Overhead Press` `3x8`
-- Exercise B: `Neutral-Grip Lat Pulldown` `3x10`
+- Exercise A: `Seated DB Overhead Press` `3x8-10`
+- Exercise B: `Neutral-Grip Lat Pulldown` `3x10-12`
 - Coaching notes:
   - This block restores vertical push/pull support without making it the main event.
   - Keep both movements controlled and honest.

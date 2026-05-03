@@ -1047,7 +1047,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Trap Bar Deadlift",
-            "prescription": "4x6"
+            "prescription": "4x6-8"
           }
         ],
         "coachingNotes": [
@@ -1070,7 +1070,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Single-Arm DB Row",
-            "prescription": "4x8/side"
+            "prescription": "4x8-10/side"
           }
         ],
         "coachingNotes": [
@@ -1090,7 +1090,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Reverse Lunge",
-            "prescription": "3x8/side"
+            "prescription": "3x8-10/side"
           },
           {
             "name": "Pallof Press Hold",
@@ -1724,11 +1724,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "DB Incline Bench Press",
-            "prescription": "3x8"
+            "prescription": "3x8-10"
           },
           {
             "name": "Single-Arm DB Row",
-            "prescription": "3x8/side"
+            "prescription": "3x8-10/side"
           }
         ],
         "coachingNotes": [
@@ -1748,7 +1748,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Reverse Lunge",
-            "prescription": "3x6/side"
+            "prescription": "3x6-8/side"
           },
           {
             "name": "Pallof Press Hold",
@@ -3326,7 +3326,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Back Squat",
-            "prescription": "4x8"
+            "prescription": "4x8-10"
           }
         ],
         "coachingNotes": [
@@ -3346,11 +3346,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Romanian Deadlift",
-            "prescription": "4x8"
+            "prescription": "4x8-10"
           },
           {
             "name": "Rear-Foot Elevated Split Squat",
-            "prescription": "3-4x8/side"
+            "prescription": "3-4x8-10/side"
           }
         ],
         "coachingNotes": [
@@ -3560,11 +3560,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Front Squat",
-            "prescription": "3x6"
+            "prescription": "3x6-8"
           },
           {
             "name": "Barbell Romanian Deadlift",
-            "prescription": "3x6"
+            "prescription": "3x6-8"
           }
         ],
         "coachingNotes": [
@@ -3585,11 +3585,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Reverse Lunge",
-            "prescription": "3x6/side"
+            "prescription": "3x6-8/side"
           },
           {
             "name": "Single-Leg RDL",
-            "prescription": "3x6/side"
+            "prescription": "3x6-8/side"
           }
         ],
         "coachingNotes": [
@@ -3617,11 +3617,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Single-Leg Calf Raise",
-            "prescription": "2x10/side"
+            "prescription": "2x10-12/side"
           },
           {
             "name": "Wall Tibialis Raise",
-            "prescription": "2x12"
+            "prescription": "2x12-15"
           }
         ],
         "coachingNotes": [
@@ -5670,7 +5670,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bench Press",
-            "prescription": "4x8"
+            "prescription": "4x8-10"
           }
         ],
         "coachingNotes": [
@@ -5713,11 +5713,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Seated DB Overhead Press",
-            "prescription": "3x8"
+            "prescription": "3x8-10"
           },
           {
             "name": "Neutral-Grip Lat Pulldown",
-            "prescription": "3x10"
+            "prescription": "3x10-12"
           }
         ],
         "coachingNotes": [
@@ -5917,11 +5917,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bench Press",
-            "prescription": "3x6"
+            "prescription": "3x6-8"
           },
           {
             "name": "Chest-Supported Row",
-            "prescription": "3x8"
+            "prescription": "3x8-10"
           }
         ],
         "coachingNotes": [
@@ -5942,11 +5942,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Half-Kneeling Landmine Press",
-            "prescription": "3x6/side"
+            "prescription": "3x6-8/side"
           },
           {
             "name": "Neutral-Grip Lat Pulldown",
-            "prescription": "3x8"
+            "prescription": "3x8-10"
           }
         ],
         "coachingNotes": [
@@ -7448,7 +7448,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "trap bar deadlift",
-            "prescription": "4x6"
+            "prescription": "4x6-8"
           }
         ],
         "coachingNotes": [
@@ -7465,11 +7465,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "half-kneeling landmine press",
-            "prescription": "4x8/side"
+            "prescription": "4x8-10/side"
           },
           {
             "name": "single-arm db row",
-            "prescription": "4x8/side"
+            "prescription": "4x8-10/side"
           }
         ],
         "coachingNotes": [
@@ -7484,7 +7484,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "reverse lunge",
-            "prescription": "3x8/side"
+            "prescription": "3x8-10/side"
           },
           {
             "name": "med ball rotational throw",
@@ -8045,7 +8045,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "back squat",
-            "prescription": "4x8"
+            "prescription": "4x8-10"
           }
         ],
         "coachingNotes": [
@@ -8064,11 +8064,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "single-leg romanian deadlift",
-            "prescription": "4x8/side"
+            "prescription": "4x8-10/side"
           },
           {
             "name": "reverse lunge",
-            "prescription": "3-4x8/side"
+            "prescription": "3-4x8-10/side"
           }
         ],
         "coachingNotes": [
@@ -8112,11 +8112,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "single-leg calf raise",
-            "prescription": "2-3x10/side"
+            "prescription": "2-3x10-12/side"
           },
           {
             "name": "wall tibialis raise",
-            "prescription": "2-3x12"
+            "prescription": "2-3x12-15"
           },
           {
             "name": "low pogo hops",
@@ -8639,7 +8639,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "bench press",
-            "prescription": "4x8"
+            "prescription": "4x8-10"
           }
         ],
         "coachingNotes": [
@@ -8656,11 +8656,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "single-arm db row",
-            "prescription": "4x8/side"
+            "prescription": "4x8-10/side"
           },
           {
             "name": "half-kneeling landmine press",
-            "prescription": "3-4x8/side"
+            "prescription": "3-4x8-10/side"
           }
         ],
         "coachingNotes": [

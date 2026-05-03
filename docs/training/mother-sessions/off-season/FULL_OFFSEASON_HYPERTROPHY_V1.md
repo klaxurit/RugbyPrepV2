@@ -38,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Trap Bar Deadlift` `4x6`
+- Exercise A: `Trap Bar Deadlift` `4x6-8`
 - Coaching notes:
   - Keep the trap bar around `RPE 6-8`.
   - This is the anchor lift of the session, but it should stay clearly hypertrophy-oriented rather than max-strength oriented.
@@ -49,7 +49,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 2 - Upper Push / Pull Support
 - Format: `4 rounds`, `90-120s` rest after the pair
 - Exercise A: `DB Incline Bench Press` `4x8-10`
-- Exercise B: `Single-Arm DB Row` `4x8/side`
+- Exercise B: `Single-Arm DB Row` `4x8-10/side`
 - Coaching notes:
   - This block builds upper volume without copying the exact Upper Hypertrophy structure.
   - Keep both exercises smooth, controlled, and full-range.
@@ -60,7 +60,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Lower Support / Trunk Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Reverse Lunge` `3x8/side`
+- Exercise A: `Reverse Lunge` `3x8-10/side`
 - Exercise B: `Pallof Press Hold` `3x15-20s/side`
 - Coaching notes:
   - This block gives the week one more unilateral lower exposure without turning it into another lower day.

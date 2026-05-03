@@ -39,8 +39,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Squat / Hinge Base Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Front Squat` `3x6`
-- Exercise B: `Barbell Romanian Deadlift` `3x6`
+- Exercise A: `Front Squat` `3x6-8`
+- Exercise B: `Barbell Romanian Deadlift` `3x6-8`
 - Coaching notes:
   - Keep both lifts around `RPE 5-6`.
   - This is the first real reintroduction of bilateral lower loading after Recovery.
@@ -52,8 +52,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Unilateral Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Reverse Lunge` `3x6/side`
-- Exercise B: `Single-Leg RDL` `3x6/side`
+- Exercise A: `Reverse Lunge` `3x6-8/side`
+- Exercise B: `Single-Leg RDL` `3x6-8/side`
 - Coaching notes:
   - This block restores unilateral rhythm, balance, and hip control.
   - Keep both exercises smooth and symmetrical.
@@ -65,8 +65,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 3 - Groin / Trunk / Lower-Leg Support
 - Exercise A: `Side Plank` `2x20-30s/side`
 - Exercise B: `Supine Adductor Squeeze` `2x20s`
-- Exercise C: `Single-Leg Calf Raise` `2x10/side`
-- Exercise D: `Wall Tibialis Raise` `2x12`
+- Exercise C: `Single-Leg Calf Raise` `2x10-12/side`
+- Exercise D: `Wall Tibialis Raise` `2x12-15`
 - Coaching notes:
   - This block reintroduces trunk stiffness, groin tolerance, and lower-leg support without jumping to a harder Copenhagen yet.
   - Keep the holds clean and submaximal.

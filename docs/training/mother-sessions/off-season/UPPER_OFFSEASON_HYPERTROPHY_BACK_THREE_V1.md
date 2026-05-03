@@ -34,7 +34,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Upper Press
 - Format: `4 work sets`, `2 min` rest
-- Exercise A: `bench press` `4x8`
+- Exercise A: `bench press` `4x8-10`
 - Coaching notes:
   - Bilateral anchor. RPE 6-8, controlled and repeatable.
   - Fallback options:
@@ -42,8 +42,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Unilateral Pull / Rotational Press
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `single-arm db row` `4x8/side`
-- Exercise B: `half-kneeling landmine press` `3-4x8/side`
+- Exercise A: `single-arm db row` `4x8-10/side`
+- Exercise B: `half-kneeling landmine press` `3-4x8-10/side`
 - Coaching notes:
   - This is the main positional accent block.
   - Single-arm row develops unilateral pulling strength and anti-rotation demand.

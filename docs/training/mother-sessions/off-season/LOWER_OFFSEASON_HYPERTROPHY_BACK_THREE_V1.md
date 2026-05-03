@@ -37,7 +37,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Squat Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `back squat` `4x8`
+- Exercise A: `back squat` `4x8-10`
 - Coaching notes:
   - Bilateral anchor preserved. RPE 6-8.
   - Depth and control matter more than load.
@@ -47,8 +47,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Unilateral Hinge / Quad Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `single-leg romanian deadlift` `4x8/side`
-- Exercise B: `reverse lunge` `3-4x8/side`
+- Exercise A: `single-leg romanian deadlift` `4x8-10/side`
+- Exercise B: `reverse lunge` `3-4x8-10/side`
 - Coaching notes:
   - This is the main positional accent block.
   - Single-leg RDL builds unilateral posterior chain — key for sprint acceleration.
@@ -71,8 +71,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 4 - Lower-Leg / Stiffness Prep
 - Format: `2 rounds`, minimal rest
-- Exercise A: `single-leg calf raise` `2-3x10/side`
-- Exercise B: `wall tibialis raise` `2-3x12`
+- Exercise A: `single-leg calf raise` `2-3x10-12/side`
+- Exercise B: `wall tibialis raise` `2-3x12-15`
 - Exercise C: `low pogo hops` `2x8`
 - Coaching notes:
   - Single-leg calf for ankle stiffness and unilateral balance.

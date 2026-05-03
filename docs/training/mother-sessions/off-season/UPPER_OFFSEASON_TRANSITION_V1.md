@@ -37,8 +37,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Press / Pull Base Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Bench Press` `3x6`
-- Exercise B: `Chest-Supported Row` `3x8`
+- Exercise A: `Bench Press` `3x6-8`
+- Exercise B: `Chest-Supported Row` `3x8-10`
 - Coaching notes:
   - Keep both lifts around `RPE 5-6`.
   - This is the first real bilateral upper loading block after Recovery.
@@ -50,8 +50,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Vertical Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Half-Kneeling Landmine Press` `3x6/side`
-- Exercise B: `Neutral-Grip Lat Pulldown` `3x8`
+- Exercise A: `Half-Kneeling Landmine Press` `3x6-8/side`
+- Exercise B: `Neutral-Grip Lat Pulldown` `3x8-10`
 - Coaching notes:
   - This block reintroduces vertical-ish upper work without pushing intensity too fast.
   - Landmine press should feel stacked, smooth, and shoulder-friendly.

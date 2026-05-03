@@ -38,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Squat Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Back Squat` `4x8`
+- Exercise A: `Back Squat` `4x8-10`
 - Coaching notes:
   - Keep the squat around `RPE 6-8` across the block.
   - The goal is productive lower-body volume, not grinding or ego loading.
@@ -49,8 +49,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Main Hinge / Unilateral Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Barbell Romanian Deadlift` `4x8`
-- Exercise B: `Rear-Foot Elevated Split Squat` `3-4x8/side`
+- Exercise A: `Barbell Romanian Deadlift` `4x8-10`
+- Exercise B: `Rear-Foot Elevated Split Squat` `3-4x8-10/side`
 - Coaching notes:
   - This is the main structural block of the session.
   - The hinge should build posterior chain mass without turning into a max-strength pull.

@@ -48,8 +48,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push / Pull Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `DB Incline Bench Press` `3x8`
-- Exercise B: `Single-Arm DB Row` `3x8/side`
+- Exercise A: `DB Incline Bench Press` `3x8-10`
+- Exercise B: `Single-Arm DB Row` `3x8-10/side`
 - Coaching notes:
   - This block supports upper volume without repeating the exact structure of the Upper Transition session.
   - Keep both movements smooth, controlled, and technically clean.
@@ -60,7 +60,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Lower Support / Trunk Pair
 - Format: `3 rounds`, `60-75s` rest after the pair
-- Exercise A: `Reverse Lunge` `3x6/side`
+- Exercise A: `Reverse Lunge` `3x6-8/side`
 - Exercise B: `Pallof Press Hold` `3x15-20s/side`
 - Coaching notes:
   - The lunge restores unilateral support without loading it as hard as the Lower Transition session.
