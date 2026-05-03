@@ -14,8 +14,6 @@ import {
   parseExerciseSets,
   perTourPrescription,
 } from '../../services/ui/blockPresentation'
-import { parseExerciseSetSpec } from '../../services/ui/exerciseSetSpec'
-import { IsoChronoButton } from './IsoChronoButton'
 
 interface SessionTourTrackerProps {
   block: Block
@@ -143,24 +141,17 @@ export function SessionTourTracker({
     }
   }, [activeTourIndex, onBlockCompleted])
 
-  const handleToggleExercise = (tourIndex: number, exerciseIndex: number, exerciseName: string) => {
+  // Annule la validation d'un exo déjà fait (tap sur la carte verte).
+  // La validation initiale passe par le CTA bas de page (RunSessionCTA), pas
+  // par cette piste — d'où l'absence de markExerciseDone côté tracker.
+  const handleUndoExercise = (tourIndex: number, exerciseIndex: number) => {
     const key = buildExerciseTourKey(block.number, tourIndex, exerciseIndex)
-    const wasDone = sessionRun.completedExercises.has(key)
-    if (wasDone) {
+    if (sessionRun.completedExercises.has(key)) {
       sessionRun.unmarkExerciseDone(key)
-      return
     }
-    sessionRun.markExerciseDone(key)
-    // Si cet exo était le dernier restant du tour → déclencher le chrono de repos,
-    // sauf si c'est le dernier tour du bloc (plus rien après).
-    const tourTotal = totalByTour[tourIndex] ?? loggableExercises.length
-    const remaining = tourTotal - (doneByTour[tourIndex] + 1)
-    const isLastTour = tourIndex >= tourCount - 1
-    if (remaining === 0 && !isLastTour) {
-      sessionRun.startRestTimer(restSeconds, `Fin du tour ${tourIndex + 1}`)
-    }
-    // Note : onBlockCompleted est géré via l'useEffect (évite un double appel sur les toggles rapides).
-    void exerciseName
+    // restSeconds intentionnellement référencé pour préserver la dépendance
+    // du useMemo en amont sans warning ESLint.
+    void restSeconds
   }
 
   // Pour chaque exercice du bloc : 1re saisie non vide à travers tous les tours.
@@ -229,12 +220,6 @@ export function SessionTourTracker({
                   const tourPrescription = perTourPrescription(ex.prescription)
                   const metric = exerciseId ? getExerciseMetricType({ exerciseId }) : 'load_reps'
                   const showLoadInputs = isPremium && metric === 'load_reps'
-                  // Iso chrono : remplace l'input charge/reps quand la prescription
-                  // encode une durée (ex. "2x20-30s/côté"). Affiché uniquement sur
-                  // l'exo courant — pas envie de polluer toutes les cartes.
-                  const setSpec = parseExerciseSetSpec(tourPrescription)
-                  const showIsoChrono =
-                    isCurrent && !isDone && setSpec.kind === 'time' && !setSpec.perDirection
                   const canShowDemo = Boolean(exerciseId && hasExerciseDemo(exerciseId))
                   const isFirstTour = tourIndex === 0
                   const suggestion = isFirstTour && exerciseId && getLoadSuggestion
@@ -243,34 +228,49 @@ export function SessionTourTracker({
                   const showSuggestionBadge = !!suggestion
                     && suggestion.decision !== 'no_suggestion'
                     && suggestion.decision !== 'no_data'
+                  // L'`id` permet au CTA bas de scroller vers la série courante
+                  // quand le curseur change (auto-scroll-into-view).
+                  const setDomId = `set-${block.number}-${tourIndex}-${idx}`
                   return (
                     <li
                       key={`${tourIndex}-${idx}`}
+                      id={setDomId}
+                      aria-current={isCurrent ? 'step' : undefined}
+                      onClick={isDone ? () => handleUndoExercise(tourIndex, idx) : undefined}
+                      role={isDone ? 'button' : undefined}
+                      tabIndex={isDone ? 0 : undefined}
+                      onKeyDown={
+                        isDone
+                          ? (e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                handleUndoExercise(tourIndex, idx)
+                              }
+                            }
+                          : undefined
+                      }
                       className={`rounded-xl px-3 py-2 transition-colors border ${
                         isDone
-                          ? 'bg-ok-bg-muted border-ok-bd'
+                          ? 'bg-ok-bg-muted border-ok-bd cursor-pointer hover:bg-ok-bg-muted/70'
                           : isCurrent
-                            ? 'bg-brand-soft border-brand-border-strong'
+                            ? 'bg-brand-soft border-brand-border-strong ring-2 ring-brand/30'
                             : 'bg-layer-2 border-border-app'
                       }`}
                     >
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-3">
-                          <button
-                            type="button"
-                            onClick={() => handleToggleExercise(tourIndex, idx, displayName)}
-                            aria-pressed={isDone}
-                            aria-label={isDone ? `Annuler ${displayName}` : `Valider ${displayName}`}
-                            className={`flex-shrink-0 w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all rf-focus-ring ${
+                          <span
+                            aria-hidden
+                            className={`flex-shrink-0 w-10 h-10 rounded-xl border-2 flex items-center justify-center ${
                               isDone
-                                ? 'bg-ok-strong border-ok-strong text-white scale-100'
+                                ? 'bg-ok-strong border-ok-strong text-white'
                                 : isCurrent
-                                  ? 'border-brand bg-brand-soft text-brand hover:bg-brand hover:text-on-brand'
-                                  : 'border-border-app bg-layer-5 text-fg-ghost hover:border-brand-border-strong'
+                                  ? 'border-brand bg-brand-soft text-brand'
+                                  : 'border-border-app bg-layer-5 text-fg-ghost'
                             }`}
                           >
                             {isDone && <Check className="w-5 h-5" strokeWidth={3} />}
-                          </button>
+                          </span>
                           <div className="min-w-0 flex-1">
                             <p className={`text-sm font-bold ${isDone ? 'text-fg-muted line-through' : 'text-fg'}`}>
                               {displayName}
@@ -281,11 +281,19 @@ export function SessionTourTracker({
                               ) : null}
                             </p>
                             <p className="text-xs text-fg-secondary">{tourPrescription}</p>
+                            {isDone && (
+                              <p className="text-[10px] text-ok-strong font-bold mt-0.5">
+                                Toucher pour annuler
+                              </p>
+                            )}
                           </div>
                           {canShowDemo && exerciseId && onOpenDemo && (
                             <button
                               type="button"
-                              onClick={() => onOpenDemo(exerciseId)}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onOpenDemo(exerciseId)
+                              }}
                               aria-label={`Voir l'exécution de ${displayName}`}
                               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-border-app bg-layer-5 text-fg-muted transition-colors hover:border-brand-border-strong hover:text-brand-tint"
                             >
@@ -295,19 +303,6 @@ export function SessionTourTracker({
                         </div>
                         {showSuggestionBadge && suggestion && (
                           <SuggestionBadge suggestion={suggestion} />
-                        )}
-                        {showIsoChrono && setSpec.kind === 'time' && (
-                          <div className="mt-1 rounded-xl border border-brand-border-strong bg-layer-2 px-3 py-3">
-                            <IsoChronoButton
-                              durationLow={setSpec.durationLow}
-                              durationHigh={setSpec.durationHigh}
-                              perSide={setSpec.perSide}
-                              label={displayName}
-                              onCompleted={() =>
-                                handleToggleExercise(tourIndex, idx, displayName)
-                              }
-                            />
-                          </div>
                         )}
                         {showLoadInputs && (
                           <div className="pl-13 flex justify-end">

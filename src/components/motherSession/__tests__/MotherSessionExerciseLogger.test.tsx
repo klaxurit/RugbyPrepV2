@@ -39,20 +39,27 @@ const unloggableBlock: Block = {
 }
 
 /** Pré-installe un run en cours dans localStorage. */
-function seedRunningSession(sessionKey = 'TEST_MS_V1') {
+function seedRunningSession(opts?: {
+  sessionKey?: string
+  completedExercises?: string[]
+}) {
+  const sessionKey = opts?.sessionKey ?? 'TEST_MS_V1'
   window.localStorage.setItem(
     'rf.sessionRun.v1',
     JSON.stringify({
       sessionKey,
       startedAt: Date.now(),
-      completedExercises: [],
+      completedExercises: opts?.completedExercises ?? [],
       exerciseTourLoads: {},
     }),
   )
 }
 
-const renderRunning = (ui: React.ReactElement) => {
-  seedRunningSession()
+const renderRunning = (
+  ui: React.ReactElement,
+  seedOpts?: Parameters<typeof seedRunningSession>[0],
+) => {
+  seedRunningSession(seedOpts)
   return render(
     <MemoryRouter>
       <SessionRunProvider>{ui}</SessionRunProvider>
@@ -61,7 +68,7 @@ const renderRunning = (ui: React.ReactElement) => {
 }
 
 describe('MotherSessionBlock — SessionTourTracker exposure', () => {
-  it('running + 3 tours × 2 exos → le tour 1 actif affiche 2 cases ; tours 2 et 3 collapsés', async () => {
+  it('running + 3 tours × 2 exos → le tour 1 actif rend les 2 exos visibles', async () => {
     renderRunning(
       <MotherSessionBlock
         block={loggableBlock}
@@ -74,9 +81,10 @@ describe('MotherSessionBlock — SessionTourTracker exposure', () => {
       />,
     )
 
-    // Tour 1 est le tour actif → les deux exos sont visibles avec leur bouton Valider.
-    const validateButtons = await screen.findAllByLabelText(/Valider/)
-    expect(validateButtons.length).toBe(2)
+    // Tour 1 actif : les deux exos rendus comme <li>.
+    await screen.findByText(/Tour 1\/3/i)
+    const items = screen.getAllByRole('listitem')
+    expect(items.length).toBe(2)
 
     // Tours 2 et 3 sont collapsés → leur header "Tour N · à venir" est visible.
     expect(screen.getByText(/Tour 2 · à venir/i)).toBeInTheDocument()
@@ -98,7 +106,7 @@ describe('MotherSessionBlock — SessionTourTracker exposure', () => {
         isPremium={false}
       />,
     )
-    await screen.findAllByLabelText(/Valider/)
+    await screen.findByText(/Tour 1\/3/i)
     expect(screen.queryByLabelText(/Charge \(kg\)/i)).toBeNull()
     expect(screen.queryByLabelText(/^Reps$/i)).toBeNull()
   })
@@ -120,7 +128,7 @@ describe('MotherSessionBlock — SessionTourTracker exposure', () => {
         }
       />,
     )
-    await screen.findAllByLabelText(/Valider/)
+    await screen.findByText(/Tour 1\/3/i)
     expect(screen.getAllByLabelText(/Charge \(kg\)/i).length).toBeGreaterThanOrEqual(1)
     expect(screen.getAllByLabelText(/^Reps$/).length).toBeGreaterThanOrEqual(1)
   })
@@ -137,7 +145,8 @@ describe('MotherSessionBlock — SessionTourTracker exposure', () => {
         isPremium
       />,
     )
-    expect(screen.queryByLabelText(/Valider/)).toBeNull()
+    // Header "Tour X/Y" du tracker absent → tracker pas rendu.
+    expect(screen.queryByText(/Tour 1\/3/i)).toBeNull()
   })
 
   it('not running → tracker pas rendu même sur un bloc loggable', () => {
@@ -156,10 +165,12 @@ describe('MotherSessionBlock — SessionTourTracker exposure', () => {
         </SessionRunProvider>
       </MemoryRouter>,
     )
-    expect(screen.queryByLabelText(/Valider/)).toBeNull()
+    // Hors run mode, le tracker n'est pas rendu — pas de header "Tour X/Y".
+    expect(screen.queryByText(/Tour 1\/3/i)).toBeNull()
   })
 
-  it('valider les 2 exos du tour 1 → tour 2 devient actif', async () => {
+  it('tour 1 entièrement validé (state seed) → tour 2 devient actif', async () => {
+    // On seed les deux exos du tour 1 comme déjà cochés (block.number=1, tour=0).
     renderRunning(
       <MotherSessionBlock
         block={loggableBlock}
@@ -170,18 +181,15 @@ describe('MotherSessionBlock — SessionTourTracker exposure', () => {
         isRunning
         isPremium={false}
       />,
+      { completedExercises: ['1_0_0', '1_0_1'] },
     )
-    const tour1Buttons = await screen.findAllByLabelText(/Valider/)
-    expect(tour1Buttons.length).toBe(2)
-    fireEvent.click(tour1Buttons[0])
-    fireEvent.click(tour1Buttons[1])
 
-    // Le tour 2 devient actif : deux nouveaux boutons Valider apparaissent (les exos du tour 2).
-    const tour2Buttons = await screen.findAllByLabelText(/Valider/)
-    expect(tour2Buttons.length).toBe(2)
-    expect(screen.getByText(/Tour 2\/3/i)).toBeInTheDocument()
-    // Le tour 1 est maintenant listé comme "terminé".
+    // Tour 2 est maintenant actif : ses 2 exos sont rendus.
+    expect(await screen.findByText(/Tour 2\/3/i)).toBeInTheDocument()
+    // Tour 1 est marqué terminé.
     expect(screen.getByText(/Tour 1 · terminé/i)).toBeInTheDocument()
+    // Tour 3 reste collapsé.
+    expect(screen.getByText(/Tour 3 · à venir/i)).toBeInTheDocument()
   })
 
   it('aucun CTA Premium "Logger mes kg/reps" n\'apparaît en mode En cours', async () => {
@@ -196,8 +204,33 @@ describe('MotherSessionBlock — SessionTourTracker exposure', () => {
         isPremium={false}
       />,
     )
-    await screen.findAllByLabelText(/Valider/)
+    await screen.findByText(/Tour 1\/3/i)
     expect(screen.queryByText(/Logger mes kg\/reps/i)).toBeNull()
     expect(screen.queryByText(/Passer en Premium/i)).toBeNull()
+  })
+
+  it('série validée → la carte est cliquable pour annuler (role=button)', async () => {
+    renderRunning(
+      <MotherSessionBlock
+        block={loggableBlock}
+        motherSessionId="TEST_MS_V1"
+        sessionType="UPPER"
+        week="W1"
+        fatigue="OK"
+        isRunning
+        isPremium={false}
+      />,
+      { completedExercises: ['1_0_0'] }, // tour 1, premier exo validé
+    )
+
+    // La carte de l'exo validé est rendue avec role="button" + le hint "Toucher pour annuler".
+    const undoHint = await screen.findByText(/Toucher pour annuler/i)
+    expect(undoHint).toBeInTheDocument()
+
+    // On peut la cliquer pour annuler — après le clic, le hint disparaît.
+    const card = undoHint.closest('li')
+    expect(card).not.toBeNull()
+    if (card) fireEvent.click(card)
+    expect(screen.queryByText(/Toucher pour annuler/i)).toBeNull()
   })
 })

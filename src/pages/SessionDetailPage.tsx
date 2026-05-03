@@ -4,7 +4,8 @@ import { posthog } from '../services/analytics/posthog'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, Play } from 'lucide-react'
 import { useSessionRun, buildExerciseTourKey } from '../contexts/SessionRunContext'
 import { SessionRunProgress } from '../components/motherSession/SessionRunProgress'
-import { RestTimerOverlay } from '../components/motherSession/RestTimerOverlay'
+import { RunSessionCTA } from '../components/motherSession/RunSessionCTA'
+import type { PendingCursor } from '../services/motherSession/findCurrentPending'
 import { SessionCelebration } from '../components/motherSession/SessionCelebration'
 import { isDirectiveText, resolveExerciseId } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
@@ -245,6 +246,21 @@ export function SessionDetailPage() {
       activeBlockUnitLabel,
     }
   }, [activeSlot, sessionRun.completedExercises])
+
+  // Auto-scroll : quand le CTA bas signale un changement de série courante,
+  // on amène la `<li>` correspondante dans le viewport (centre vertical).
+  // L'id DOM est posé par SessionTourTracker — pas de ref nécessaire.
+  const handleCursorChange = useCallback((cursor: PendingCursor | null) => {
+    if (!cursor) return
+    const id = `set-${cursor.blockNumber}-${cursor.tourIndex}-${cursor.exerciseIndex}`
+    if (typeof window === 'undefined') return
+    // Petit délai pour laisser React peindre l'état "validé" sur la série
+    // précédente avant le scroll — moins disorienting visuellement.
+    window.setTimeout(() => {
+      const el = document.getElementById(id)
+      el?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    }, 80)
+  }, [])
 
   // Keep the screen awake while a session is running. Released on unmount / stop.
   useWakeLock(isRunning)
@@ -651,14 +667,14 @@ export function SessionDetailPage() {
 
       </main>
 
-      {/* ── Sticky CTA footer — Aperçu (Commencer) ou En cours (Terminer).
-          Fond opaque + border-top + shadow pour détacher du contenu scrollable
-          et garantir la lisibilité du CTA Premium (sans ça, le gradient rendait
-          le texte illisible en passant sur du contenu). */}
-      {activeSlot && !isUnavailable && (
-        <div className={`fixed left-0 right-0 z-40 ${isRunning ? 'bottom-0' : 'bottom-20'} bg-app border-t border-border-app shadow-[0_-6px_24px_rgb(44_24_16/0.08)]`}>
+      {/* ── CTA bas de page.
+          - Mode Aperçu : footer sticky classique (Commencer + Marquer comme faite + lien Premium).
+          - Mode En cours : RunSessionCTA prend le relai (CTA orchestrant repos / chrono iso /
+            valider série / terminer séance) — voir RunSessionCTA.tsx. */}
+      {activeSlot && !isUnavailable && !isRunning && (
+        <div className="fixed left-0 right-0 z-40 bottom-20 bg-app border-t border-border-app shadow-[0_-6px_24px_rgb(44_24_16/0.08)]">
           <div className="max-w-md mx-auto px-5 pt-3 pb-4">
-            {!isRunning && !isPremium && (
+            {!isPremium && (
               <Link
                 to="/profile#premium"
                 className="block mb-2 text-center text-[11px] font-bold text-fg-muted hover:text-brand-tint transition-colors"
@@ -666,47 +682,41 @@ export function SessionDetailPage() {
                 Débloque le suivi set-par-set — <span className="underline underline-offset-2">Découvrir Premium</span>
               </Link>
             )}
-            {!isRunning ? (
-              <>
-                <button
-                  type="button"
-                  data-testid="ms-start-btn"
-                  onClick={handleStartSession}
-                  className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
-                >
-                  <Play className="w-5 h-5 fill-current" />
-                  Commencer la séance
-                </button>
-                <button
-                  type="button"
-                  data-testid="ms-complete-btn"
-                  onClick={() => {
-                    setMsSaved(false)
-                    setMsSaveError(null)
-                    setCompletionOpen(true)
-                  }}
-                  className="block w-full mt-2 text-center text-[11px] font-bold text-fg-muted hover:text-fg transition-colors"
-                >
-                  Marquer comme faite (sans la lancer)
-                </button>
-              </>
-            ) : (
-              <button
-                type="button"
-                data-testid="ms-complete-btn"
-                onClick={() => {
-                  setMsSaved(false)
-                  setMsSaveError(null)
-                  setCelebrationOpen(true)
-                }}
-                className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
-              >
-                <CheckCircle2 className="w-5 h-5" />
-                Terminer la séance
-              </button>
-            )}
+            <button
+              type="button"
+              data-testid="ms-start-btn"
+              onClick={handleStartSession}
+              className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-lg shadow-brand-float flex items-center justify-center gap-2"
+            >
+              <Play className="w-5 h-5 fill-current" />
+              Commencer la séance
+            </button>
+            <button
+              type="button"
+              data-testid="ms-complete-btn"
+              onClick={() => {
+                setMsSaved(false)
+                setMsSaveError(null)
+                setCompletionOpen(true)
+              }}
+              className="block w-full mt-2 text-center text-[11px] font-bold text-fg-muted hover:text-fg transition-colors"
+            >
+              Marquer comme faite (sans la lancer)
+            </button>
           </div>
         </div>
+      )}
+      {activeSlot && !isUnavailable && isRunning && (
+        <RunSessionCTA
+          session={activeSlot.session}
+          lang={lang}
+          onCursorChange={handleCursorChange}
+          onFinish={() => {
+            setMsSaved(false)
+            setMsSaveError(null)
+            setCelebrationOpen(true)
+          }}
+        />
       )}
 
       <RPEModal
@@ -720,7 +730,6 @@ export function SessionDetailPage() {
         }}
         onConfirm={handleConfirmMotherSession}
       />
-      {isRunning && <RestTimerOverlay />}
       <SessionCelebration
         isOpen={celebrationOpen}
         sessionLabel={pageTitle}
