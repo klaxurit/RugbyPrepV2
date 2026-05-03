@@ -45,6 +45,38 @@ export function playRestEndBeep() {
   }
 }
 
+/**
+ * Single short low tone (~150ms) — halfway signal during a per-side iso
+ * countdown ("switch sides"). Distinct from the end-of-rest pattern so
+ * the user can tell them apart without looking at the screen.
+ */
+export function playSideSwitchBeep() {
+  const ctx = getCtx()
+  if (!ctx) return
+  try {
+    playTone(ctx, 660, ctx.currentTime, 0.15)
+  } catch {
+    // ignore
+  }
+}
+
+/**
+ * Triple ascending beep (~480ms) — signals end of an iso set ("done"),
+ * distinct from end-of-rest so the user knows the set itself is over.
+ */
+export function playSetEndBeep() {
+  const ctx = getCtx()
+  if (!ctx) return
+  try {
+    const now = ctx.currentTime
+    playTone(ctx, 660, now, 0.12)
+    playTone(ctx, 880, now + 0.16, 0.12)
+    playTone(ctx, 1175, now + 0.32, 0.18)
+  } catch {
+    // ignore
+  }
+}
+
 function playTone(ctx: AudioContext, frequency: number, startAt: number, durationSec: number) {
   const osc = ctx.createOscillator()
   const gain = ctx.createGain()

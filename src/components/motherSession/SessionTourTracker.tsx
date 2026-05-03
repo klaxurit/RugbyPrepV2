@@ -14,6 +14,8 @@ import {
   parseExerciseSets,
   perTourPrescription,
 } from '../../services/ui/blockPresentation'
+import { parseExerciseSetSpec } from '../../services/ui/exerciseSetSpec'
+import { IsoChronoButton } from './IsoChronoButton'
 
 interface SessionTourTrackerProps {
   block: Block
@@ -227,6 +229,12 @@ export function SessionTourTracker({
                   const tourPrescription = perTourPrescription(ex.prescription)
                   const metric = exerciseId ? getExerciseMetricType({ exerciseId }) : 'load_reps'
                   const showLoadInputs = isPremium && metric === 'load_reps'
+                  // Iso chrono : remplace l'input charge/reps quand la prescription
+                  // encode une durée (ex. "2x20-30s/côté"). Affiché uniquement sur
+                  // l'exo courant — pas envie de polluer toutes les cartes.
+                  const setSpec = parseExerciseSetSpec(tourPrescription)
+                  const showIsoChrono =
+                    isCurrent && !isDone && setSpec.kind === 'time' && !setSpec.perDirection
                   const canShowDemo = Boolean(exerciseId && hasExerciseDemo(exerciseId))
                   const isFirstTour = tourIndex === 0
                   const suggestion = isFirstTour && exerciseId && getLoadSuggestion
@@ -287,6 +295,19 @@ export function SessionTourTracker({
                         </div>
                         {showSuggestionBadge && suggestion && (
                           <SuggestionBadge suggestion={suggestion} />
+                        )}
+                        {showIsoChrono && setSpec.kind === 'time' && (
+                          <div className="mt-1 rounded-xl border border-brand-border-strong bg-layer-2 px-3 py-3">
+                            <IsoChronoButton
+                              durationLow={setSpec.durationLow}
+                              durationHigh={setSpec.durationHigh}
+                              perSide={setSpec.perSide}
+                              label={displayName}
+                              onCompleted={() =>
+                                handleToggleExercise(tourIndex, idx, displayName)
+                              }
+                            />
+                          </div>
                         )}
                         {showLoadInputs && (
                           <div className="pl-13 flex justify-end">
