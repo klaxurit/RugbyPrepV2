@@ -1,6 +1,8 @@
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { RefreshCcw, X } from 'lucide-react'
 
+// Test build #2 — vérifie que le toast d'update apparaît bien en haut.
+
 /**
  * Toast haut-de-page (sous la PageHeader) qui apparaît quand un nouveau
  * Service Worker est en `waiting`. Au tap sur "Recharger", on envoie
