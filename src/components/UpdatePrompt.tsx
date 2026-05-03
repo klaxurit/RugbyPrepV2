@@ -2,10 +2,14 @@ import { useRegisterSW } from 'virtual:pwa-register/react'
 import { RefreshCcw, X } from 'lucide-react'
 
 /**
- * Toast bas-de-page qui apparaît quand un nouveau Service Worker est en
- * `waiting`. Au tap sur "Recharger", on envoie SKIP_WAITING au SW (que
- * `src/sw.ts` traite en appelant `self.skipWaiting()`) puis la page se
- * recharge avec le nouveau bundle.
+ * Toast haut-de-page (sous la PageHeader) qui apparaît quand un nouveau
+ * Service Worker est en `waiting`. Au tap sur "Recharger", on envoie
+ * SKIP_WAITING au SW (que `src/sw.ts` traite en appelant
+ * `self.skipWaiting()`) puis la page se recharge avec le nouveau bundle.
+ *
+ * Position : `top` + safe-area-inset + 4rem (~hauteur PageHeader). Évite
+ * de chevaucher avec le bottom CTA des séances en cours et reste visible
+ * sans cacher le contenu principal (juste sous la barre de nav).
  *
  * Polling : toutes les heures, on demande au SW de vérifier si une nouvelle
  * version est dispo côté serveur. C'est utile pour les sessions longues
@@ -42,7 +46,8 @@ export function UpdatePrompt() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-24 left-4 right-4 z-50 max-w-md mx-auto rounded-2xl border border-brand-border-strong bg-panel shadow-brand-float p-3 flex items-center gap-2"
+      style={{ top: 'calc(env(safe-area-inset-top, 0px) + 4rem)' }}
+      className="fixed left-4 right-4 z-[60] max-w-md mx-auto rounded-2xl border border-brand-border-strong bg-panel shadow-brand-float p-3 flex items-center gap-2"
     >
       <div className="flex-1 min-w-0">
         <p className="text-[10px] font-black uppercase tracking-widest text-fg-muted">
