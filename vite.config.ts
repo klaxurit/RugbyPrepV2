@@ -37,7 +37,11 @@ export default defineConfig({
         // keep chunking work as a separate optimization task.
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
       },
-      registerType: 'autoUpdate',
+      // 'prompt' (vs 'autoUpdate') : on ne skipWaiting pas silencieusement.
+      // Le toast UpdatePrompt + useRegisterSW driven le flow → l'utilisateur
+      // tap "Recharger" pour activer la nouvelle version. Évite qu'un SW
+      // bascule en plein milieu d'une séance et écrase un upload de log.
+      registerType: 'prompt',
       injectRegister: 'auto',
       manifest: {
         name: 'RugbyForge',

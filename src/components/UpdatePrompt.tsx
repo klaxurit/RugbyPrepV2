@@ -17,7 +17,8 @@ export function UpdatePrompt() {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
-    onRegisteredSW(_swUrl, registration) {
+    onRegisteredSW(swUrl, registration) {
+      console.info('[pwa] SW registered', { swUrl, hasRegistration: !!registration })
       if (!registration) return
       // Poll horaire pour détecter les nouveaux déploiements sur les
       // sessions ouvertes en continu (cas TWA / pinned tab).
@@ -26,6 +27,12 @@ export function UpdatePrompt() {
           // ignore network errors — on retentera dans 1h
         })
       }, 60 * 60 * 1000)
+    },
+    onNeedRefresh() {
+      console.info('[pwa] update available — toast will show')
+    },
+    onOfflineReady() {
+      console.info('[pwa] offline-ready (first install)')
     },
   })
 
