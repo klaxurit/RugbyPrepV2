@@ -6,6 +6,7 @@ import { msLabel } from '../../services/motherSession/motherSessionLabels'
 import { getExerciseName } from '../../data/exercises'
 import {
   iconForBlock,
+  iconAssetForBlock,
   estimateBlockMinutes,
   summarizeBlockExercises,
 } from '../../services/ui/blockPresentation'
@@ -57,6 +58,7 @@ export function SessionBlockCard({
   const canToggle = !isRunning
 
   const icon = iconForBlock(block)
+  const iconAsset = iconAssetForBlock(block)
   const minutes = estimateBlockMinutes(block)
   const name = displayName ?? block.name
   const summary = summarizeBlockExercises(block, (id, fallback) =>
@@ -103,13 +105,20 @@ export function SessionBlockCard({
           </span>
         )}
 
-        {/* Emoji centré, taille discrète (~chip catégorie). */}
-        <span
-          aria-hidden
-          className="text-2xl leading-none"
-        >
-          {icon}
-        </span>
+        {/* Icône centrée — illustration DA si dispo, sinon emoji fallback. */}
+        {iconAsset ? (
+          <img
+            src={iconAsset}
+            alt=""
+            aria-hidden
+            className="w-[70px] h-[70px] object-contain"
+            draggable={false}
+          />
+        ) : (
+          <span aria-hidden className="text-2xl leading-none">
+            {icon}
+          </span>
+        )}
 
         {/* Titre centré — peut wrapper sur 2 lignes, casse normale. */}
         <h3

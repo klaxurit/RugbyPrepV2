@@ -1,5 +1,14 @@
 import type { Block } from '../../types/motherSession'
 import { isDirectiveText } from '../motherSession/motherSessionExerciseMap'
+import warmupAsset from '../../assets/echauffement_rufo.png'
+import powerAsset from '../../assets/puissance_rufo.png'
+import forceAsset from '../../assets/force_rufo.png'
+import finisherAsset from '../../assets/finisher_rufo.png'
+import cooldownAsset from '../../assets/calme_rufo.png'
+import posteriorChainAsset from '../../assets/chaine_rufo.png'
+import conditioningAsset from '../../assets/conditionnement_rufo.png'
+import rewardAsset from '../../assets/recompense_rufo.png'
+import defaultAsset from '../../assets/support_rufo.png'
 
 export type BlockKind =
   | 'warmup'
@@ -22,6 +31,25 @@ const ICON: Record<BlockKind, string> = {
   cooldown: '🧘',
   conditioning: '💨',
   default: '🏋️',
+}
+
+// Illustrations DA "rufo" générées via ChatGPT — sérigraphie rugby zine.
+// Les catégories sans entrée gardent leur emoji jusqu'à ce qu'une
+// illustration soit générée et validée.
+const ICON_ASSET: Record<BlockKind, string> = {
+  warmup: warmupAsset,
+  power: powerAsset,
+  force: forceAsset,
+  finisher: finisherAsset,
+  cooldown: cooldownAsset,
+  posterior_chain: posteriorChainAsset,
+  conditioning: conditioningAsset,
+  reward: rewardAsset,
+  default: defaultAsset,
+}
+
+export function iconAssetForBlock(block: Block): string | null {
+  return ICON_ASSET[classifyBlock(block)] ?? null
 }
 
 function hasAny(text: string, needles: string[]): boolean {
