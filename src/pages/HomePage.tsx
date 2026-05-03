@@ -327,14 +327,20 @@ export function HomePage() {
     chatSeed: 'Je regarde ma journée. ',
   })
 
-  // Ligne meta (date + saison + S1 + niveau) au-dessus du hero en rest day.
+  // Ligne meta (date + cycle/phase + niveau) au-dessus du hero en rest day.
+  // `blockProgression?.currentBlockLabel` contient déjà cycle + phase
+  // (`Inter-saison · Force`) — on ne ré-ajoute pas `seasonLabel` à côté
+  // sinon on duplique le cycle. Fallback : si pas de blockProgression
+  // (cas onboarding / surface dégradée), on compose à la main.
   const metaLine = (() => {
     const todayDate = new Date(today + 'T12:00:00')
     const dateLabel = todayDate.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
     const seasonLabel = seasonPhaseLabel[seasonPhase]?.label ?? ''
-    const cycleLabel = blockProgression?.currentBlockLabel ?? weekLabel(week)
+    const cycleAndPhaseLabel =
+      blockProgression?.currentBlockLabel ??
+      [seasonLabel, weekLabel(week)].filter(Boolean).join(' · ')
     const levelLabel = trainingLevelLabel
-    return [dateLabel, seasonLabel, cycleLabel, levelLabel].filter(Boolean).join(' · ')
+    return [dateLabel, cycleAndPhaseLabel, levelLabel].filter(Boolean).join(' · ')
   })()
 
   // Planned sessions pour la semaine (liste verticale section "Cette semaine").
