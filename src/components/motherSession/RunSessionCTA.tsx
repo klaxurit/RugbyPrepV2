@@ -89,28 +89,47 @@ function RestTimerCard() {
   const { restTimer, skipRestTimer } = useSessionRun()
   const { enabled: beepEnabled } = useRestBeepPref()
   const [now, setNow] = useState(() => Date.now())
-  const expiredRef = useRef(false)
 
+  // Captured via refs to keep the expiry effect dependencies tight — we want
+  // it to run exactly once per `restTimer` reference, not on every tick.
+  const skipRef = useRef(skipRestTimer)
+  const beepRef = useRef(beepEnabled)
   useEffect(() => {
-    if (!restTimer) {
-      expiredRef.current = false
-      return
-    }
+    skipRef.current = skipRestTimer
+  }, [skipRestTimer])
+  useEffect(() => {
+    beepRef.current = beepEnabled
+  }, [beepEnabled])
+
+  // Display ticker — refresh `now` every 200ms while the timer runs.
+  useEffect(() => {
+    if (!restTimer) return
     const id = window.setInterval(() => setNow(Date.now()), 200)
     return () => window.clearInterval(id)
   }, [restTimer])
 
-  // Side effect on expiry — vibrate + beep + auto-dismiss.
+  // Auto-dismiss : on schedule deux setTimeout absolus (un pour le beep
+  // à endsAt, un pour le skipRestTimer à endsAt+800ms) au moment où
+  // `restTimer` change. Précédemment, l'effet dépendait de `now` (pour
+  // checker `endsAt - now <= 0`), ce qui faisait que le ticker à 200ms
+  // déclenchait le cleanup et annulait le setTimeout de skip avant
+  // qu'il ne fire — la modal restait collée à 0:00 jusqu'au tap manuel.
   useEffect(() => {
     if (!restTimer) return
-    const remaining = restTimer.endsAt - now
-    if (remaining > 0 || expiredRef.current) return
-    expiredRef.current = true
-    vibrate([120, 80, 120])
-    if (beepEnabled) playRestEndBeep()
-    const id = window.setTimeout(() => skipRestTimer(), 800)
-    return () => window.clearTimeout(id)
-  }, [restTimer, now, beepEnabled, skipRestTimer])
+    const beepDelay = Math.max(0, restTimer.endsAt - Date.now())
+    const dismissDelay = beepDelay + 800
+    const beepId = window.setTimeout(() => {
+      vibrate([120, 80, 120])
+      if (beepRef.current) playRestEndBeep()
+    }, beepDelay)
+    const dismissId = window.setTimeout(() => {
+      skipRef.current()
+    }, dismissDelay)
+    return () => {
+      window.clearTimeout(beepId)
+      window.clearTimeout(dismissId)
+    }
+  }, [restTimer])
 
   if (!restTimer) return null
 
