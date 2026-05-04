@@ -509,7 +509,7 @@ export function WeekPage() {
                 y compris off_season (séances placées en Lun/Mer/Ven par défaut). */}
             <div
               data-testid="week-planning-legend"
-              className="rounded-2xl border border-border-app bg-layer-5 px-3 py-2.5 flex items-center justify-between gap-3"
+              className="flex items-center justify-between gap-3"
             >
               <WeekPlanningLegend />
               <button
