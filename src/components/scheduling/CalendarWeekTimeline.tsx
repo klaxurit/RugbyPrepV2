@@ -10,6 +10,7 @@ import { SessionStatusIndicator } from '../planning/SessionStatusIndicator'
 import { ClubAvatar } from '../match/ClubAvatar'
 
 const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+const DAY_LABELS_FULL = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
 const DAY_ORDER: DayOfWeek[] = [1, 2, 3, 4, 5, 6, 0] // Mon→Sun
 
 interface CalendarWeekTimelineProps {
@@ -101,7 +102,7 @@ export function CalendarWeekTimeline({
 
       <div className="space-y-3.5">
       {DAY_ORDER.map((dow) => {
-        const dayLabel = DAY_LABELS[dow]
+        const dayLabel = DAY_LABELS_FULL[dow]
         const daySessions = sessionsByDay.get(dow) ?? []
         const matchEvent = matchByDay.get(dow)
         const hasMatch = matchEvent != null
@@ -117,30 +118,30 @@ export function CalendarWeekTimeline({
           return 'text-fg-soft'
         })()
 
+        const stateLabel = (() => {
+          if (isToday) return { text: 'Aujourd\'hui', color: 'text-brand-tint' }
+          if (isUserUnavailable) return { text: 'Indispo', color: 'text-fg-muted' }
+          if (isEmpty) return { text: 'Repos', color: 'text-fg-ghost' }
+          return null
+        })()
+
         const rowInner = (
           <>
-            {/* Header de jour — texte simple (LUN/MAR/...) avec annotations
-                inline pour Aujourd'hui / Repos / Indispo. Pas de pill ni de
-                bordure : le jour est juste un label, le contenu prime. */}
-            <div className="flex items-baseline gap-2">
+            {/* Header de jour centré : nom complet du jour (LUNDI...) en
+                top, état (Aujourd'hui / Repos / Indispo) en sous-ligne.
+                Pas de pill ni de bordure : le jour est juste un titre, le
+                contenu en dessous prime. */}
+            <div className="flex flex-col items-center gap-0.5 text-center">
               <span
-                className={`text-[11px] font-black uppercase tracking-wider leading-none ${dayLabelColor}`}
+                className={`text-xs font-black uppercase tracking-wider leading-none ${dayLabelColor}`}
               >
                 {dayLabel}
               </span>
-              {isToday && (
-                <span className="text-[9px] font-bold uppercase tracking-wider text-brand-tint leading-none">
-                  Aujourd'hui
-                </span>
-              )}
-              {!isToday && isEmpty && (
-                <span className="text-[9px] font-bold uppercase tracking-wider text-fg-ghost leading-none">
-                  Repos
-                </span>
-              )}
-              {isUserUnavailable && (
-                <span className="text-[9px] font-bold uppercase tracking-wider text-fg-muted leading-none">
-                  Indispo
+              {stateLabel && (
+                <span
+                  className={`text-[9px] font-bold uppercase tracking-wider leading-none ${stateLabel.color}`}
+                >
+                  {stateLabel.text}
                 </span>
               )}
             </div>
