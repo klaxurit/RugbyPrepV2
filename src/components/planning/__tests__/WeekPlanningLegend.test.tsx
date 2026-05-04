@@ -21,7 +21,7 @@ describe('WeekPlanningLegend', () => {
     ).toBeInTheDocument()
   })
 
-  it('lists one marker per kind', () => {
+  it('lists one pill per kind tagged via data-session-kind', () => {
     const { container } = render(<WeekPlanningLegend />)
     expect(container.querySelector('[data-session-kind="personal"]')).toBeInTheDocument()
     expect(container.querySelector('[data-session-kind="club"]')).toBeInTheDocument()
@@ -29,18 +29,19 @@ describe('WeekPlanningLegend', () => {
     expect(container.querySelector('[data-session-kind="recovery"]')).toBeInTheDocument()
   })
 
-  it('aligne marqueur et libellé sur une ligne (flex + leading-none)', () => {
+  it('renders the label inside the colored pill (single atom per entry)', () => {
     const { container } = render(<WeekPlanningLegend />)
     const items = container.querySelectorAll('li')
     expect(items.length).toBe(4)
     items.forEach((li) => {
-      expect(li.className).toMatch(/items-center/)
-      expect(li.className).toMatch(/gap-1\.5/)
+      // chaque li contient un seul span pill (vs marker + label séparés avant)
+      const pills = li.querySelectorAll('span[data-session-kind]')
+      expect(pills.length).toBe(1)
     })
-    const labels = container.querySelectorAll('li > span:last-child')
-    labels.forEach((el) => {
-      expect(el.className).toMatch(/leading-none/)
-    })
+    // les pills portent le libellé directement, leading-none pour densité.
+    const personalPill = container.querySelector('[data-session-kind="personal"]')
+    expect(personalPill?.textContent).toBe('Gym')
+    expect(personalPill?.className).toMatch(/leading-none/)
   })
 
   it('allows custom aria-label', () => {

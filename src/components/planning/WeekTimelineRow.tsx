@@ -45,7 +45,11 @@ export function WeekTimelineRow({
       data-week-row-layout={layout}
       className={`flex min-w-0 items-center gap-2 ${frame} ${className}`.trim()}
     >
-      <SessionTypeMarker kind={planKind} data-testid={`${dataTestId}-marker`} />
+      <SessionTypeMarker
+        kind={planKind}
+        showLetter={false}
+        data-testid={`${dataTestId}-marker`}
+      />
       <div className="flex min-w-0 flex-1 items-center">{children}</div>
       {statusSlot != null ? (
         <div className="flex shrink-0 flex-col items-end gap-1">{statusSlot}</div>
