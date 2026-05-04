@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowRight, CalendarOff, Play, SkipForward, Undo2, X } from 'lucide-react'
+import { MoreVertical, Undo2, X } from 'lucide-react'
 import type { DatedSession, DayOfWeek, PresentedMatchEvent, WeekCorrection } from '../../types/scheduling'
 import { formatTitleFromMotherSessionId } from '../motherSession/formatMotherSessionTitle'
 import { parseLocalDate } from '../../services/scheduling/parseLocalDate'
@@ -8,8 +8,8 @@ import { InlineActiveRecovery, ActiveRecoveryBadge } from '../ActiveRecoveryCard
 import { WeekTimelineRow } from '../planning/WeekTimelineRow'
 import { SessionStatusIndicator } from '../planning/SessionStatusIndicator'
 import { ClubAvatar } from '../match/ClubAvatar'
+import { SessionActionsSheet } from './SessionActionsSheet'
 
-const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
 const DAY_LABELS_FULL = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
 const DAY_ORDER: DayOfWeek[] = [1, 2, 3, 4, 5, 6, 0] // Mon→Sun
 
@@ -355,9 +355,7 @@ function SessionRow({
   onUndoCorrection?: (correctionId: string) => void
   sessionDayOfWeek: DayOfWeek
 }) {
-  const [showReschedule, setShowReschedule] = useState(false)
-  const [showSkipConfirm, setShowSkipConfirm] = useState(false)
-  const [showUnavailableConfirm, setShowUnavailableConfirm] = useState(false)
+  const [actionsSheetOpen, setActionsSheetOpen] = useState(false)
   const title = formatTitleFromMotherSessionId(s.sessionSlot.session.metadata.id, lang)
   const isSkipped = s.completionStatus === 'skipped'
   const isCompleted = s.completionStatus === 'completed'
@@ -449,136 +447,44 @@ function SessionRow({
               </p>
             </button>
 
-            {!isSkipped && !isCompleted && (
-              <div className="flex flex-shrink-0 items-center gap-1">
-                {onRescheduleSession && (
-                  <button
-                    type="button"
-                    data-testid={`timeline-reschedule-${globalIndex}`}
-                    onClick={() => {
-                      setShowReschedule(!showReschedule)
-                      setShowSkipConfirm(false)
-                      setShowUnavailableConfirm(false)
-                    }}
-                    className="rounded-lg border border-bd-soft bg-tl-pool p-1.5 text-fg-muted transition-colors hover:border-layer-15 hover:text-fg-secondary"
-                    title="Reporter"
-                  >
-                    <ArrowRight className="h-3 w-3" />
-                  </button>
-                )}
-                {onSkipSession && (
-                  <button
-                    type="button"
-                    data-testid={`timeline-skip-${globalIndex}`}
-                    onClick={() => {
-                      setShowSkipConfirm(!showSkipConfirm)
-                      setShowReschedule(false)
-                      setShowUnavailableConfirm(false)
-                    }}
-                    className="rounded-lg border border-bd-soft bg-tl-pool p-1.5 text-fg-muted transition-colors hover:border-layer-15 hover:text-fg-secondary"
-                    title="Passer"
-                  >
-                    <SkipForward className="h-3 w-3" />
-                  </button>
-                )}
-                {onMarkDayUnavailable && (
-                  <button
-                    type="button"
-                    data-testid={`timeline-unavailable-${globalIndex}`}
-                    onClick={() => {
-                      setShowUnavailableConfirm(!showUnavailableConfirm)
-                      setShowSkipConfirm(false)
-                      setShowReschedule(false)
-                    }}
-                    className="rounded-lg border border-bd-soft bg-tl-pool p-1.5 text-fg-muted transition-colors hover:border-layer-15 hover:text-fg-secondary"
-                    title="Jour indisponible"
-                  >
-                    <CalendarOff className="h-3 w-3" />
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => onSessionSelect?.(globalIndex)}
-                  className="rounded-lg bg-brand-soft p-1.5 text-brand-tint transition-colors hover:bg-brand-border"
-                >
-                  <Play className="h-3 w-3" />
-                </button>
-              </div>
+            {!isSkipped && !isCompleted && (onRescheduleSession || onSkipSession || onMarkDayUnavailable) && (
+              <button
+                type="button"
+                data-testid={`timeline-actions-${globalIndex}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setActionsSheetOpen(true)
+                }}
+                aria-label="Plus d'actions"
+                title="Plus d'actions"
+                className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-fg-muted transition-colors hover:bg-layer-7 hover:text-fg-secondary rf-focus-ring"
+              >
+                <MoreVertical className="h-5 w-5" />
+              </button>
             )}
           </div>
         </WeekTimelineRow>
       </div>
 
-      {/* Inline skip confirmation */}
-      {showSkipConfirm && onSkipSession && (
-        <div className="flex items-center gap-2 pt-1 pl-3" data-testid={`timeline-skip-confirm-${globalIndex}`}>
-          <span className="text-[9px] text-fg-muted flex-1">
-            Tu es sûr ? Cette séance ne sera pas rattrapée.
-          </span>
-          <button
-            type="button"
-            data-testid={`timeline-skip-confirm-yes-${globalIndex}`}
-            onClick={() => { onSkipSession(s.sessionSlot.sessionId); setShowSkipConfirm(false) }}
-            className="px-2 py-1 rounded-lg text-[9px] font-bold bg-danger-bg-cta text-danger-soft hover:bg-danger-bg-hover transition-colors"
-          >
-            Confirmer
-          </button>
-          <button
-            type="button"
-            data-testid={`timeline-skip-confirm-no-${globalIndex}`}
-            onClick={() => setShowSkipConfirm(false)}
-            className="px-2 py-1 rounded-lg text-[9px] font-bold bg-layer-10 text-fg-soft hover:bg-layer-15 transition-colors"
-          >
-            Annuler
-          </button>
-        </div>
-      )}
-
-      {/* Inline reschedule day picker — club days remain eligible */}
-      {showReschedule && onRescheduleSession && (
-        <div className="flex gap-1 pt-1 pl-3 flex-wrap" data-testid={`timeline-reschedule-picker-${globalIndex}`}>
-          {(DAY_ORDER as DayOfWeek[])
-            .filter((d) => d !== s.dayOfWeek && !allUnavailableDays.includes(d))
-            .map((d) => (
-              <button
-                key={d}
-                type="button"
-                onClick={() => {
-                  onRescheduleSession(s.sessionSlot.sessionId, d)
-                  setShowReschedule(false)
-                }}
-                className="px-2 py-1 rounded-lg text-[9px] font-bold bg-layer-10 text-fg-secondary hover:bg-brand-border hover:text-brand-tint transition-colors"
-              >
-                {DAY_LABELS[d]}
-              </button>
-            ))}
-        </div>
-      )}
-
-      {/* Inline unavailable confirmation */}
-      {showUnavailableConfirm && onMarkDayUnavailable && (
-        <div className="flex items-center gap-2 pt-1 pl-3" data-testid={`timeline-unavailable-confirm-${globalIndex}`}>
-          <span className="text-[9px] text-fg-muted flex-1">
-            Marquer ce jour indisponible ?
-          </span>
-          <button
-            type="button"
-            data-testid={`timeline-unavailable-confirm-yes-${globalIndex}`}
-            onClick={() => { onMarkDayUnavailable(sessionDayOfWeek); setShowUnavailableConfirm(false) }}
-            className="px-2 py-1 rounded-lg text-[9px] font-bold bg-warn-bg-strong text-warn hover:bg-warn-bg transition-colors"
-          >
-            Confirmer
-          </button>
-          <button
-            type="button"
-            data-testid={`timeline-unavailable-confirm-no-${globalIndex}`}
-            onClick={() => setShowUnavailableConfirm(false)}
-            className="px-2 py-1 rounded-lg text-[9px] font-bold bg-layer-10 text-fg-soft hover:bg-layer-15 transition-colors"
-          >
-            Annuler
-          </button>
-        </div>
-      )}
+      {/* Bottom sheet d'actions — Replanifier / Passer / Indispo. */}
+      <SessionActionsSheet
+        open={actionsSheetOpen}
+        onClose={() => setActionsSheetOpen(false)}
+        sessionTitle={title}
+        currentDay={s.dayOfWeek}
+        unavailableDays={allUnavailableDays}
+        onReschedule={
+          onRescheduleSession
+            ? (toDay) => onRescheduleSession(s.sessionSlot.sessionId, toDay)
+            : undefined
+        }
+        onSkip={
+          onSkipSession ? () => onSkipSession(s.sessionSlot.sessionId) : undefined
+        }
+        onMarkDayUnavailable={
+          onMarkDayUnavailable ? () => onMarkDayUnavailable(sessionDayOfWeek) : undefined
+        }
+      />
 
       {/* Local undo for rescheduled session */}
       {!isSkipped && (() => {

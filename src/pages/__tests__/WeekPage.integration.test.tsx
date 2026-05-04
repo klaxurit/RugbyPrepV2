@@ -576,29 +576,30 @@ describe('WeekPage · convergence moteurs', () => {
     expect(restDay).toBeInTheDocument()
   })
 
-  it('calendar timeline exposes reschedule action on session', () => {
+  it('calendar timeline exposes an actions kebab on each session', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    // Session on day 2 should have a reschedule button
-    expect(screen.getByTestId('timeline-reschedule-0')).toBeInTheDocument()
+    // Session at globalIndex 0 has a single kebab opening the bottom sheet
+    // (replaces the cluster of inline reschedule/skip/unavailable/play buttons).
+    expect(screen.getByTestId('timeline-actions-0')).toBeInTheDocument()
   })
 
-  it('calendar timeline: empty rest day shows Repos, no Indispo action', () => {
+  it('calendar timeline: empty rest day shows Repos, no actions kebab', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    // Day 1 (Mon) is empty — shows rest label, no unavailable button
+    // Day 1 (Mon) is empty — shows rest label, no actions kebab.
     expect(screen.getByTestId('timeline-rest-1')).toBeInTheDocument()
-    expect(screen.queryByTestId('timeline-unavailable-1')).toBeNull()
+    expect(screen.queryByTestId('timeline-actions-1')).toBeNull()
   })
 
-  it('calendar timeline: session day exposes unavailable action in action cluster', () => {
+  it('calendar timeline: session day exposes the actions kebab', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    // Day 2 (Mardi) has session at globalIndex=0 — unavailable action is in session row
-    expect(screen.getByTestId('timeline-unavailable-0')).toBeInTheDocument()
+    // Day 2 (Mardi) has session at globalIndex=0 — actions kebab is on the session row.
+    expect(screen.getByTestId('timeline-actions-0')).toBeInTheDocument()
   })
 
   it('calendar mode hides add-match CTA when a match is already present this week', () => {
@@ -733,13 +734,15 @@ describe('WeekPage · convergence moteurs', () => {
 
   // Test retiré : le mode sequential n'existe plus (week view unifiée).
 
-  it('calendar: existing correction actions (reschedule, skip) still render', () => {
+  it('calendar: opening the actions sheet exposes Reschedule + Skip + Unavailable', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    // Session at index 0 should have reschedule and skip buttons
-    expect(screen.getByTestId('timeline-reschedule-0')).toBeInTheDocument()
-    expect(screen.getByTestId('timeline-skip-0')).toBeInTheDocument()
+    // Tap the kebab → bottom sheet opens with the 3 actions.
+    fireEvent.click(screen.getByTestId('timeline-actions-0'))
+    expect(screen.getByTestId('sheet-action-reschedule')).toBeInTheDocument()
+    expect(screen.getByTestId('sheet-action-skip')).toBeInTheDocument()
+    expect(screen.getByTestId('sheet-action-unavailable')).toBeInTheDocument()
   })
 
   it('calendar: session card stays text-first without session illustration', () => {
@@ -808,7 +811,7 @@ describe('WeekPage · convergence moteurs', () => {
     expect(card.textContent).not.toContain('Séance reportée')
   })
 
-  it('Indispo. button opens inline confirmation, does not fire directly', () => {
+  it('Indispo. opens confirmation in the sheet, does not fire directly', () => {
     const markDayUnavailable = vi.fn()
     const surface = makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })
     const result = hookResult(surface)
@@ -817,15 +820,15 @@ describe('WeekPage · convergence moteurs', () => {
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    // Click the unavailable button on session 0
-    fireEvent.click(screen.getByTestId('timeline-unavailable-0'))
+    // Open sheet → tap "Marquer ce jour indisponible" → confirmation appears.
+    fireEvent.click(screen.getByTestId('timeline-actions-0'))
+    fireEvent.click(screen.getByTestId('sheet-action-unavailable'))
 
-    // Confirmation should appear, action should NOT have fired
-    expect(screen.getByTestId('timeline-unavailable-confirm-0')).toBeInTheDocument()
+    expect(screen.getByTestId('sheet-unavailable-confirm')).toBeInTheDocument()
     expect(markDayUnavailable).not.toHaveBeenCalled()
   })
 
-  it('Indispo. confirmation cancel does nothing', () => {
+  it('Indispo. confirmation cancel returns to the sheet menu without firing', () => {
     const markDayUnavailable = vi.fn()
     const surface = makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })
     const result = hookResult(surface)
@@ -834,11 +837,12 @@ describe('WeekPage · convergence moteurs', () => {
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    fireEvent.click(screen.getByTestId('timeline-unavailable-0'))
-    fireEvent.click(screen.getByTestId('timeline-unavailable-confirm-no-0'))
+    fireEvent.click(screen.getByTestId('timeline-actions-0'))
+    fireEvent.click(screen.getByTestId('sheet-action-unavailable'))
+    fireEvent.click(screen.getByTestId('sheet-unavailable-cancel'))
 
-    // Confirmation gone, action never fired
-    expect(screen.queryByTestId('timeline-unavailable-confirm-0')).toBeNull()
+    // Back to menu — action menu re-rendered, action never fired.
+    expect(screen.getByTestId('sheet-action-unavailable')).toBeInTheDocument()
     expect(markDayUnavailable).not.toHaveBeenCalled()
   })
 
@@ -851,14 +855,14 @@ describe('WeekPage · convergence moteurs', () => {
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    fireEvent.click(screen.getByTestId('timeline-unavailable-0'))
-    fireEvent.click(screen.getByTestId('timeline-unavailable-confirm-yes-0'))
+    fireEvent.click(screen.getByTestId('timeline-actions-0'))
+    fireEvent.click(screen.getByTestId('sheet-action-unavailable'))
+    fireEvent.click(screen.getByTestId('sheet-unavailable-confirm'))
 
     expect(markDayUnavailable).toHaveBeenCalled()
-    expect(screen.queryByTestId('timeline-unavailable-confirm-0')).toBeNull()
   })
 
-  it('existing skip confirmation still works', () => {
+  it('Skip confirmation still works through the sheet', () => {
     const skipSession = vi.fn()
     const surface = makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })
     const result = hookResult(surface)
@@ -867,12 +871,10 @@ describe('WeekPage · convergence moteurs', () => {
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    // Open skip confirm
-    fireEvent.click(screen.getByTestId('timeline-skip-0'))
-    expect(screen.getByTestId('timeline-skip-confirm-0')).toBeInTheDocument()
+    fireEvent.click(screen.getByTestId('timeline-actions-0'))
+    fireEvent.click(screen.getByTestId('sheet-action-skip'))
+    fireEvent.click(screen.getByTestId('sheet-skip-confirm'))
 
-    // Confirm skip
-    fireEvent.click(screen.getByTestId('timeline-skip-confirm-yes-0'))
     expect(skipSession).toHaveBeenCalled()
   })
 
