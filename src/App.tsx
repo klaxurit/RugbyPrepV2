@@ -39,7 +39,37 @@ const isStandaloneMode =
   (window.matchMedia('(display-mode: standalone)').matches ||
    (navigator as unknown as { standalone?: boolean }).standalone === true)
 
+/**
+ * Détecte si l'URL courante contient des paramètres d'auth callback —
+ * couvre le cas où Supabase retombe sur la Site URL (au lieu de
+ * `redirectTo`) parce que `/auth/callback` n'est pas dans les
+ * Redirect URLs whitelistées du dashboard. Dans ce cas, l'utilisateur
+ * arrive sur `/?code=...` et serait servi la LandingPage au lieu d'être
+ * connecté.
+ *
+ * - PKCE flow (par défaut récent) : `?code=...`
+ * - Email confirmation hash flow : `?token_hash=...&type=signup`
+ * - Recovery / OAuth implicit : `#access_token=...&refresh_token=...`
+ */
+function hasAuthCallbackParams(): boolean {
+  if (typeof window === 'undefined') return false
+  const url = new URL(window.location.href)
+  if (url.searchParams.has('code')) return true
+  if (url.searchParams.has('token_hash')) return true
+  if (url.hash.includes('access_token=')) return true
+  return false
+}
+
 function RootRoute() {
+  // Email confirmation / OAuth callback landed on `/` (Supabase fallback
+  // sur Site URL). Forward vers /auth/callback en préservant query+hash
+  // pour que le CallbackPage finalise la session puis route vers la bonne
+  // destination (/onboarding ou /program).
+  if (hasAuthCallbackParams()) {
+    const { search, hash } = window.location
+    return <Navigate to={`/auth/callback${search}${hash}`} replace />
+  }
+
   if (!isStandaloneMode) return <LandingPage />
 
   // TWA / installed PWA: skip the landing page, go straight to /home
