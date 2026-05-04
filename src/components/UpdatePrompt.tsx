@@ -26,13 +26,31 @@ export function UpdatePrompt() {
     onRegisteredSW(swUrl, registration) {
       console.info('[pwa] SW registered', { swUrl, hasRegistration: !!registration })
       if (!registration) return
-      // Poll horaire pour détecter les nouveaux déploiements sur les
-      // sessions ouvertes en continu (cas TWA / pinned tab).
-      setInterval(() => {
+
+      // Poll toutes les 5 min : compromis prod-acceptable entre détection
+      // rapide pendant une séance ouverte (40-75 min) et bruit réseau.
+      // 1h précédemment était trop long : un user qui pousse un commit puis
+      // garde l'app ouverte ne voyait jamais le toast pendant sa session.
+      const pollMs = 5 * 60 * 1000
+      const intervalId = window.setInterval(() => {
         registration.update().catch(() => {
-          // ignore network errors — on retentera dans 1h
+          // ignore — on retentera au prochain tick / au prochain visibilitychange
         })
-      }, 60 * 60 * 1000)
+      }, pollMs)
+
+      // Check immédiat au retour de background (Instagram → app, écran
+      // verrouillé → app, etc.). Couvre le cas TWA Android laissé en
+      // background plusieurs heures sans cold-start.
+      const onVisibilityChange = () => {
+        if (document.visibilityState === 'visible') {
+          registration.update().catch(() => {})
+        }
+      }
+      document.addEventListener('visibilitychange', onVisibilityChange)
+
+      // Pas de cleanup nécessaire — le composant UpdatePrompt vit la durée
+      // entière de l'app (monté dans App.tsx, jamais démonté).
+      void intervalId
     },
     onNeedRefresh() {
       console.info('[pwa] update available — toast will show')
