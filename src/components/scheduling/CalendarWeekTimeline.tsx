@@ -400,7 +400,7 @@ function SessionRow({
           layout="embedded"
           statusSlot={statusSlot}
           data-testid={`week-timeline-session-${globalIndex}`}
-          className="py-2 px-3"
+          className="py-2 pl-3 pr-1"
         >
           <div className="flex min-w-0 items-center gap-2.5">
             <button

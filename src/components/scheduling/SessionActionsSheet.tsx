@@ -73,7 +73,7 @@ export function SessionActionsSheet({
             transition={{ duration: 0.2 }}
             onClick={closeAndReset}
             aria-hidden
-            className="fixed inset-0 z-40 bg-black/40"
+            className="fixed inset-0 z-[55] bg-black/40"
           />
 
           {/* Sheet panel. */}
@@ -92,7 +92,7 @@ export function SessionActionsSheet({
             role="dialog"
             aria-modal="true"
             aria-label={`Actions pour ${sessionTitle}`}
-            className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md rounded-t-3xl border-t border-x border-border-app bg-panel pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 shadow-elevated"
+            className="fixed bottom-0 left-0 right-0 z-[60] mx-auto max-w-md rounded-t-3xl border-t border-x border-border-app bg-panel pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 shadow-elevated"
           >
             {/* Drag handle. */}
             <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-layer-15" />
