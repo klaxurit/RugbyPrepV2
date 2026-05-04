@@ -1,7 +1,7 @@
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { RefreshCcw, X } from 'lucide-react'
 
-// Test build #3 — vérifie que le toast d'update apparaît bien en haut.
+// Test build #4 — toast attendu sous 5 min app ouverte (poll 5min + visibilitychange).
 
 /**
  * Toast haut-de-page (sous la PageHeader) qui apparaît quand un nouveau
