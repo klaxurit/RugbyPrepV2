@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react'
-import { SessionTypeMarker, type SessionPlanKind } from './SessionTypeMarker'
+import type { SessionPlanKind } from './SessionTypeMarker'
 
 export interface WeekTimelineRowProps {
   planKind: SessionPlanKind
   children: ReactNode
   statusSlot?: ReactNode
   /**
-   * `standalone` — léger cadre + fond selon le type (ligne seule).
-   * `embedded` — marqueur + flux uniquement (carte parente déjà stylée).
+   * `standalone` — cadre + fond colorés selon le type (la ligne porte
+   *   elle-même le code couleur du planning).
+   * `embedded` — pas de cadre — la carte parente est déjà colorée
+   *   (cas des SessionRow dans CalendarWeekTimeline).
    */
   layout?: 'standalone' | 'embedded'
   className?: string
@@ -23,7 +25,16 @@ const STANDALONE_SURFACE: Record<SessionPlanKind, string> = {
 }
 
 /**
- * Ligne timeline semaine : `SessionTypeMarker` + contenu + slot (ex. `SessionStatusIndicator`).
+ * Ligne timeline semaine — fond/bordure coloré (standalone) + contenu +
+ * slot statut optionnel (`SessionStatusIndicator`).
+ *
+ * L'ancien `SessionTypeMarker` (pastille colorée) a été retiré : la
+ * couleur du fond/bordure de la row porte déjà le code couleur du type
+ * de séance, le marker dupliquait juste l'info en prenant 16px de
+ * largeur — du bruit visuel sur les écrans denses.
+ *
+ * `data-week-row-kind` reste exposé sur la racine pour les tests + la
+ * sémantique structurée.
  */
 export function WeekTimelineRow({
   planKind,
@@ -45,11 +56,6 @@ export function WeekTimelineRow({
       data-week-row-layout={layout}
       className={`flex min-w-0 items-center gap-2 ${frame} ${className}`.trim()}
     >
-      <SessionTypeMarker
-        kind={planKind}
-        showLetter={false}
-        data-testid={`${dataTestId}-marker`}
-      />
       <div className="flex min-w-0 flex-1 items-center">{children}</div>
       {statusSlot != null ? (
         <div className="flex shrink-0 flex-col items-end gap-1">{statusSlot}</div>

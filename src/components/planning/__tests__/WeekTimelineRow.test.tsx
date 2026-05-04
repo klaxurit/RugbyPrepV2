@@ -10,13 +10,12 @@ import { WeekTimelineRow } from '../WeekTimelineRow'
 import { SessionStatusIndicator } from '../SessionStatusIndicator'
 
 describe('WeekTimelineRow', () => {
-  it('renders marker, content and optional status slot', () => {
+  it('renders content + tags row with planKind', () => {
     render(
       <WeekTimelineRow planKind="personal">
         <span data-testid="row-body">Corps</span>
       </WeekTimelineRow>,
     )
-    expect(screen.getByTestId('week-timeline-row-marker')).toBeInTheDocument()
     expect(screen.getByTestId('row-body')).toHaveTextContent('Corps')
     expect(screen.getByTestId('week-timeline-row')).toHaveAttribute('data-week-row-kind', 'personal')
   })
@@ -42,15 +41,15 @@ describe('WeekTimelineRow', () => {
     expect(container.textContent).toContain('C')
   })
 
-  it('aligne verticalement le contenu avec le marqueur (slot flex items-center)', () => {
+  it('aligne le contenu verticalement (slot flex items-center)', () => {
     render(
       <WeekTimelineRow planKind="club">
         <span className="inline-flex h-5 items-center leading-none">Entraînement club</span>
       </WeekTimelineRow>,
     )
     const row = screen.getByTestId('week-timeline-row')
-    const marker = screen.getByTestId('week-timeline-row-marker')
-    const contentSlot = marker.nextElementSibling
+    // Le slot de contenu est le 1er enfant (le marker pastille a été retiré)
+    const contentSlot = row.firstElementChild
     expect(contentSlot).not.toBeNull()
     expect(contentSlot?.className).toMatch(/items-center/)
     expect(within(row).getByText('Entraînement club')).toBeInTheDocument()
