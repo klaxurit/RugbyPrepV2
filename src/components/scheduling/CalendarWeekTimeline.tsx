@@ -99,7 +99,7 @@ export function CalendarWeekTimeline({
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3.5">
       {DAY_ORDER.map((dow) => {
         const dayLabel = DAY_LABELS[dow]
         const daySessions = sessionsByDay.get(dow) ?? []
@@ -111,53 +111,42 @@ export function CalendarWeekTimeline({
         const hasSessions = daySessions.length > 0
         const isEmpty = !hasSessions && !hasMatch && !isUserUnavailable && !isClubDay
 
-        const dayRowClasses = (() => {
-          if (isToday) {
-            return 'border-2 border-brand-border-strong bg-tl-today shadow-sm'
-          }
-          if (isUserUnavailable) {
-            return 'border border-bd-muted bg-layer-2'
-          }
-          if (isClubDay) {
-            return 'border border-bd-soft bg-tl-pool'
-          }
-          return 'border border-bd-soft bg-tl-day'
-        })()
-
-        const dayPillClasses = (() => {
-          if (isToday) {
-            return 'border-brand-border bg-brand-soft text-brand-tint'
-          }
-          if (isUserUnavailable) {
-            return 'border-bd-muted bg-layer-5 text-fg-muted'
-          }
-          if (isClubDay) {
-            return 'border-bd-soft bg-layer-7 text-fg-soft'
-          }
-          return 'border-bd-soft bg-tl-pool text-fg-soft'
+        const dayLabelColor = (() => {
+          if (isToday) return 'text-brand-tint'
+          if (isUserUnavailable) return 'text-fg-muted'
+          return 'text-fg-soft'
         })()
 
         const rowInner = (
           <>
-            {/* Day label — vertically centered, REPOS above, AUJ. below */}
-            <div className={`flex-shrink-0 w-12 rounded-2xl border px-2 py-2 flex flex-col items-center justify-center ${dayPillClasses}`}>
-              {isEmpty && (
-                <span className="text-[7px] font-bold uppercase tracking-wider text-fg-ghost leading-none">
-                  Repos
-                </span>
-              )}
-              <span className="text-[10px] font-black uppercase tracking-wider leading-none">
+            {/* Header de jour — texte simple (LUN/MAR/...) avec annotations
+                inline pour Aujourd'hui / Repos / Indispo. Pas de pill ni de
+                bordure : le jour est juste un label, le contenu prime. */}
+            <div className="flex items-baseline gap-2">
+              <span
+                className={`text-[11px] font-black uppercase tracking-wider leading-none ${dayLabelColor}`}
+              >
                 {dayLabel}
               </span>
               {isToday && (
-                <span className="text-[7px] font-bold uppercase text-brand-tint leading-none">
-                  Auj.
+                <span className="text-[9px] font-bold uppercase tracking-wider text-brand-tint leading-none">
+                  Aujourd'hui
+                </span>
+              )}
+              {!isToday && isEmpty && (
+                <span className="text-[9px] font-bold uppercase tracking-wider text-fg-ghost leading-none">
+                  Repos
+                </span>
+              )}
+              {isUserUnavailable && (
+                <span className="text-[9px] font-bold uppercase tracking-wider text-fg-muted leading-none">
+                  Indispo
                 </span>
               )}
             </div>
 
-            {/* Day content */}
-            <div className="flex-1 min-w-0 space-y-1.5">
+            {/* Day content (column layout : sous le label de jour) */}
+            <div className="min-w-0 space-y-1.5">
               {/* Match card (enriched) */}
               {hasMatch && (() => {
                 const addMatchCorrection = corrections.find(
@@ -324,7 +313,10 @@ export function CalendarWeekTimeline({
           <div
             key={dow}
             data-testid={`timeline-day-${dow}`}
-            className={`flex gap-3 rounded-2xl p-3 transition-colors ${dayRowClasses}`}
+            data-today={isToday || undefined}
+            data-empty={isEmpty || undefined}
+            data-unavailable={isUserUnavailable || undefined}
+            className="flex flex-col gap-1.5"
           >
             {rowInner}
           </div>
