@@ -52,7 +52,14 @@ function saveToStorage(events: CalendarEvent[], userId: string | null) {
 
 // ─── Hook ────────────────────────────────────────────────────
 
-export function useCalendar() {
+/**
+ * Implémentation interne — appelée UNE SEULE FOIS par CalendarProvider.
+ * Les composants consomment via `useCalendar()` (ré-exporté plus bas)
+ * qui lit le context partagé. Sans ça, chaque caller avait sa propre
+ * copie de state et les mutations (ex. removeEvent depuis MatchEditDrawer)
+ * ne propageaient pas vers les pages parentes.
+ */
+export function useCalendarSource() {
   const { authState } = useAuth()
   const { profile, updateProfile } = useProfile()
   const userId =
@@ -185,8 +192,36 @@ export function useCalendar() {
         saveToStorage(next, userId)
         return next
       })
+      // Nettoyage des références au match supprimé dans le profil :
+      //   - `activeDeferral` : sera de toute façon purgé par applyDeferralRules
+      //     (rule 'match_removed_or_hidden') au prochain render, mais on
+      //     évite un round-trip en le faisant ici.
+      //   - `offseasonMatchResumeAckEventId` : reste sinon stale à pointer
+      //     un eventId qui n'existe plus → l'utilisateur reverrait le
+      //     banner `match_detected_in_offseason` s'il rajoutait un match
+      //     plus tard, mais le moteur garderait la résolution in_season
+      //     pour rien. Bonus : si c'était le seul match du calendrier, le
+      //     cycle re-bascule naturellement en off-season au prochain
+      //     resolve (le moteur ne voit plus de match), ce qui répond
+      //     directement au "propose à l'utilisateur de revenir à son
+      //     ancien programme" — pas besoin d'une popup supplémentaire.
+      const st = profileRef.current.seasonTransitionState
+      if (
+        st?.offseasonMatchResumeAckEventId === id ||
+        st?.activeDeferral?.eventId === id
+      ) {
+        updateProfile({
+          seasonTransitionState: {
+            ...st,
+            ...(st.offseasonMatchResumeAckEventId === id
+              ? { offseasonMatchResumeAckEventId: undefined }
+              : {}),
+            ...(st.activeDeferral?.eventId === id ? { activeDeferral: undefined } : {}),
+          },
+        })
+      }
     },
-    [userId]
+    [userId, updateProfile]
   )
 
   const updateMatchLoad = useCallback(
@@ -390,3 +425,11 @@ export function useCalendar() {
     dismissSyncNotification,
   }
 }
+
+// Re-export du hook public consommé par les composants — il lit le
+// context CalendarContext alimenté par CalendarProvider (App.tsx).
+// Source unique de vérité pour les events calendrier dans toute l'app :
+// une mutation depuis n'importe quel sous-composant (MatchEditDrawer,
+// ProfilePage, etc.) propage vers tous les consommateurs sans
+// re-fetch ni cache désynchronisé.
+export { useCalendar } from '../contexts/calendarContextValue'

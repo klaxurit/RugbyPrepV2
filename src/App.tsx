@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { SessionRunProvider } from './contexts/SessionRunContext'
 import { CoachProvider } from './contexts/CoachContext'
+import { CalendarProvider } from './contexts/CalendarContext'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -129,6 +130,7 @@ function App() {
   return (
     <ErrorBoundary>
     <AuthProvider>
+      <CalendarProvider>
       <SessionRunProvider>
       <BrowserRouter>
         <CoachProvider>
@@ -171,6 +173,7 @@ function App() {
         </CoachProvider>
       </BrowserRouter>
       </SessionRunProvider>
+      </CalendarProvider>
     </AuthProvider>
     </ErrorBoundary>
   )

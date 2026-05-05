@@ -135,6 +135,35 @@ function writePersisted(state: PersistedState): void {
   }
 }
 
+/**
+ * Vrai quand l'utilisateur est en off-season ET a un match futur
+ * non hidden dans son calendrier qu'il n'a NI accepté
+ * (`offseasonMatchResumeAckEventId`) NI déféré (`activeDeferral`).
+ *
+ * Quand c'est vrai, c'est le `SeasonTransitionBanner` (variant
+ * `match_detected_in_offseason`, monté sur `/home`) qui doit
+ * gérer la décision : il a 3 boutons (Oui/Non/Pas mon équipe) et
+ * écrit le bon état dans `seasonTransitionState`. Faire pop-up le
+ * `ProgramChangeModal` en parallèle = 2 surfaces concurrentes pour
+ * la même décision, et son "Plus tard" ne pose pas d'override de
+ * cycle → l'utilisateur refuse mais le programme bascule quand même.
+ */
+function hasPendingOffseasonMatchTransition(
+  profile: UserProfile,
+  events: CalendarEvent[],
+  today: string,
+): boolean {
+  if (profile.seasonMode !== 'off_season') return false
+  const futureMatch = events.find(
+    (e) => e.type === 'match' && e.date >= today && !e.user_hidden,
+  )
+  if (!futureMatch?.id) return false
+  const st = profile.seasonTransitionState
+  if (st?.offseasonMatchResumeAckEventId === futureMatch.id) return false
+  if (st?.activeDeferral?.eventId === futureMatch.id) return false
+  return true
+}
+
 function daysBetween(a: string, b: string): number {
   const parse = (iso: string) => {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)
@@ -206,6 +235,22 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
 
     if (persisted.acknowledged[detected.id]) return null
 
+    // Dédup avec SeasonTransitionBanner (HomePage) : si l'utilisateur est
+    // en off-season ET un match futur non ack/déféré existe, le banner
+    // `match_detected_in_offseason` est la surface canonique (3 actions
+    // claires + écrit `activeDeferral` côté profil pour que le moteur
+    // respecte le "Non, pas maintenant"). On supprime ici les notices
+    // `cycle` et `match` pour ne pas empiler 2 popups sur le même
+    // événement et pour ne pas exposer un "Plus tard" qui ne pose pas
+    // d'override de cycle.
+    if (
+      profile &&
+      (detected.type === 'cycle' || detected.type === 'match') &&
+      hasPendingOffseasonMatchTransition(profile, calendarEvents, today)
+    ) {
+      return null
+    }
+
     const postponedAt = persisted.postponed[detected.id]
     if (postponedAt) {
       const elapsed = daysBetween(postponedAt, today)
@@ -215,7 +260,7 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
     }
 
     return { ...detected, canPostponeNow: detected.postponable }
-  }, [detected, persisted, today])
+  }, [detected, persisted, today, profile, calendarEvents])
 
   const acknowledge = useCallback(() => {
     if (!visible) return

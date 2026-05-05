@@ -2,6 +2,8 @@ import { useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { Plus, Lock } from 'lucide-react'
+import { WeekViewToggle, WeekMonthView, WeekDailyPlanner } from '../components/week'
+import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
@@ -26,9 +28,6 @@ import { NextMatchCard } from '../components/match/NextMatchCard'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 import { AddMatchModal } from '../components/match/AddMatchModal'
 import { ClubSearchInput } from '../components/match/ClubSearchInput'
-import { MonthlyMatchGrid } from '../components/calendar/MonthlyMatchGrid'
-import { CalendarWeekTimeline } from '../components/scheduling/CalendarWeekTimeline'
-import { WeekPlanningLegend } from '../components/planning'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
 import { SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
@@ -55,7 +54,7 @@ export function WeekPage() {
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
   const { week, lastNonDeloadWeek } = useWeek()
-  const { fatigue, setFatigue } = useFatigue()
+  const { fatigue } = useFatigue()
   const { logs, addLog } = useHistory()
   const { visibleEvents, structuralEvents, addEvent, syncNotification, dismissSyncNotification } = useCalendar()
   const navigate = useNavigate()
@@ -94,7 +93,8 @@ export function WeekPage() {
   const unmatchedYesterdayMatch = visibleEvents.find(
     (e) => e.type === 'match' && e.date === yesterdayStr && !e.rpe
   ) ?? null
-  const isRecoveryDay = visibleEvents.some((e) => e.type === 'match' && e.date === yesterdayStr)
+  // (isRecoveryDay supprimé : la nouvelle WeekDailyPlanner détermine la récup
+  // jour par jour via activeRecoveryEligibleDays + activeRecoveryDates.)
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
@@ -126,9 +126,8 @@ export function WeekPage() {
   }), [profile, structuralEvents, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId])
   const {
     surface, blockProgression, snapshot,
-    skipSession, rescheduleSession, markDayUnavailable,
-    undoCorrection, confirmPendingUpdate,
-    setFatigue: snapshotSetFatigue, addMatch,
+    confirmPendingUpdate,
+    addMatch,
     hasConfirmationRequired,
     toastMessage, clearToast,
   } = useWeekSnapshot(surfaceParams)
@@ -143,6 +142,23 @@ export function WeekPage() {
     today,
     userId,
   })
+
+  // Coordination cross-page : si un match futur en off-season attend
+  // la décision de l'utilisateur (Oui/Non/Pas mon équipe sur le banner
+  // SeasonTransitionBanner de /home), on supprime ici le scheduling
+  // banner — il ne sert à rien de plus, son trigger est le même
+  // événement (calendar mode activated = match détecté).
+  const hasPendingOffseasonMatch = (() => {
+    if (profile.seasonMode !== 'off_season') return false
+    const futureMatch = visibleEvents.find(
+      (e) => e.type === 'match' && e.date >= today && !e.user_hidden,
+    )
+    if (!futureMatch?.id) return false
+    const st = profile.seasonTransitionState
+    if (st?.offseasonMatchResumeAckEventId === futureMatch.id) return false
+    if (st?.activeDeferral?.eventId === futureMatch.id) return false
+    return true
+  })()
   // Season transitions = HomePage (single source of truth).
   // WeekPage only displays scheduling-specific transitions (calendar/block mode changes).
 
@@ -235,7 +251,8 @@ export function WeekPage() {
   const coachPhaseLabel = surface
     ? localizeWeekLabel(surface.planningContext.weekLabel ?? week, lang)
     : undefined
-  const isOffSeason = surface?.planningContext?.cycle === 'off_season'
+  // (isOffSeason déclaration retirée : utilisée uniquement pour la frozen note du
+  // bandeau J-X qui a été supprimé. Re-déclarer si nouveau besoin.)
 
   useRegisterCoachContext(
     snapshot
@@ -340,7 +357,31 @@ export function WeekPage() {
         }
       />
 
-      <main className="px-6 pt-6 space-y-5 max-w-md mx-auto relative">
+      {/* Bandeau éditorial : eyebrow phase + H1 italic + toggle Semaine/Mois.
+          Refonte UI mai 2026 — donne l'identité "magazine" à la page sans
+          casser PageHeader (cohérence inter-pages). */}
+      <div className="px-[22px] pt-5 max-w-md mx-auto">
+        <div className="flex items-center gap-2 mb-1.5">
+          <div className="h-[1.5px] w-6 bg-brand" />
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brand">
+            {localizeWeekLabel(surface?.planningContext.weekLabel ?? week, lang)}
+          </p>
+        </div>
+        <h1
+          className="font-serif italic text-[34px] font-extrabold leading-[0.95] text-fg [text-wrap:balance]"
+          style={{ letterSpacing: '-1.2px' }}
+        >
+          Cette<br />semaine.
+        </h1>
+        <div className="mt-4">
+          <WeekViewToggle
+            value={monthOpen ? 'month' : 'week'}
+            onChange={(next) => setMonthOpen(next === 'month')}
+          />
+        </div>
+      </div>
+
+      <main className="px-6 pt-5 space-y-5 max-w-md mx-auto relative">
 
         {isUnavailable && (
           <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
@@ -371,8 +412,13 @@ export function WeekPage() {
           </section>
         )}
 
-        {/* Scheduling transition (calendar/block mode changes) — season transitions live on HomePage */}
-        {!confirmationItem && schedulingTransition && (
+        {/* Scheduling transition (calendar/block mode changes) — season
+            transitions live on HomePage. Supprimé quand un match en
+            attente de décision (`match_detected_in_offseason`) existe :
+            le banner SeasonTransitionBanner sur /home est la surface
+            unique pour cette décision, on évite d'empiler 2 popups sur
+            le même événement. */}
+        {!confirmationItem && schedulingTransition && !hasPendingOffseasonMatch && (
           <SchedulingTransitionBanner
             transition={schedulingTransition}
             onAction={() => dismissSchedulingTransition(schedulingTransition.type)}
@@ -422,30 +468,9 @@ export function WeekPage() {
               </button>
             )}
 
-
-
-            {/* Fatigue check-in discret */}
-            <div className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-5 px-4 py-2.5">
-              <span className="text-[11px] font-bold text-fg-soft">Ta forme du jour</span>
-              <div className="flex gap-1.5 bg-layer-10 rounded-xl p-0.5">
-                {(['OK', 'FATIGUE'] as const).map((f) => (
-                  <button
-                    key={f}
-                    type="button"
-                    data-testid={`fatigue-btn-${f}`}
-                    onClick={() => {
-                      setFatigue(f) // persist locally
-                      snapshotSetFatigue(f) // heavy correction: re-run engine
-                    }}
-                    className={`px-3 py-1 rounded-[10px] text-[10px] font-black transition-all ${
-                      fatigue === f ? 'bg-layer-20 text-fg shadow-sm' : 'text-fg-muted'
-                    }`}
-                  >
-                    {f === 'OK' ? 'En forme' : 'Fatigué'}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Fatigue check-in retiré — désormais inline dans le HeroNormal côté HomePage.
+                La fatigue persiste via useFatigue (localStorage) et est consommée par
+                surfaceParams ici → useWeekSnapshot re-résout le programme automatiquement. */}
 
             {snapshot?.explanation && (
               <PlanningContextCard
@@ -479,84 +504,45 @@ export function WeekPage() {
               </div>
             )}
 
-            {/* Carte match à venir — affichée dès qu'un match est au calendrier,
-                indépendamment du mode saison. Le texte "programme ne change pas"
-                reste conditionné à off-season + pas de reprise confirmée. */}
-            {(() => {
-              const futureMatch = structuralEvents.find((e) => e.type === 'match' && e.date >= today)
-              if (!futureMatch) return null
-              const showFrozenNote =
-                isOffSeason && !profile.planningAnchors?.returnToTeamTrainingAt
-              return (
-                <div className="space-y-2" data-testid="week-match-banner">
-                  <button
-                    type="button"
-                    onClick={() => setDrawerMatch(futureMatch)}
-                    className="block w-full text-left rf-focus-ring"
-                  >
-                    <NextMatchCard event={futureMatch} size="mini" />
-                  </button>
-                  {showFrozenNote && (
-                    <p className="text-[10px] text-fg-muted px-1">
-                      Ton programme ne change pas tant que tu ne confirmes pas ta reprise.
-                    </p>
-                  )}
-                </div>
-              )
-            })()}
+            {/* Bandeau J-X retiré — le match apparaît déjà sur Home (NextMatchEditorialCard),
+                dans la grille du mois, et dans l'IndexLine de la semaine. Pas besoin
+                d'une 4e occurrence. */}
 
-            {/* Séances de la semaine — vue calendrier 7 jours tout le temps,
-                y compris off_season (séances placées en Lun/Mer/Ven par défaut). */}
-            <div
-              data-testid="week-planning-legend"
-              className="flex items-center justify-between gap-3"
-            >
-              <WeekPlanningLegend />
-              <button
-                type="button"
-                onClick={() => setMonthOpen((o) => !o)}
-                aria-expanded={monthOpen}
-                className="text-[10px] font-bold text-brand-tint hover:text-brand transition-colors whitespace-nowrap flex-shrink-0 rf-focus-ring"
-              >
-                {monthOpen ? 'Masquer le mois' : 'Voir le mois →'}
-              </button>
-            </div>
-            <CalendarWeekTimeline
-              sessions={calendarSessions}
-              matchEvents={weekPresentation?.matchEvents ?? []}
-              unavailableDays={weekPresentation?.unavailableDays ?? []}
-              clubDays={weekPresentation?.clubDays ?? []}
-              corrections={snapshot?.corrections ?? []}
-              onSelectMatch={openMatchByDate}
-              activeRecoveryDates={activeRecoveryDates}
-              activeRecoveryEligibleDays={activeRecoveryEligibleDays}
-              isRecoveryDay={isRecoveryDay}
-              onActiveRecoveryComplete={(activityType, durationMin, rpe) => {
-                addLog({
-                  dateISO: new Date().toISOString(),
-                  week: week as import('../types/training').CycleWeek,
-                  sessionType: 'ACTIVE_RECOVERY',
-                  fatigue,
-                  rpe,
-                  durationMin,
-                  sessionLabel: activityType,
-                })
-              }}
-              today={today}
-              lang={lang}
-              onSessionSelect={(index) => navigate(`/session/${index}`)}
-              onSkipSession={skipSession}
-              onRescheduleSession={rescheduleSession}
-              onMarkDayUnavailable={markDayUnavailable}
-              onUndoCorrection={undoCorrection}
-            />
-
-            {monthOpen && (
-              <div className="pt-3">
-                <MonthlyMatchGrid
+            {/* Vue Semaine : DayStrip + FeatureCard + IndexLine (refonte UI mai 2026).
+                Vue Mois : extras éditoriaux + grille mensuelle. */}
+            {!monthOpen ? (
+              <WeekDailyPlanner
+                sessions={calendarSessions}
+                matchEvents={weekPresentation?.matchEvents ?? []}
+                unavailableDays={weekPresentation?.unavailableDays ?? []}
+                clubDays={weekPresentation?.clubDays ?? []}
+                activeRecoveryDates={activeRecoveryDates}
+                activeRecoveryEligibleDays={activeRecoveryEligibleDays}
+                todayISO={today}
+                lang={lang}
+                formatSessionTitle={(id) => formatTitleFromMotherSessionId(id, lang)}
+                onSessionSelect={(index) => navigate(`/session/${index}`)}
+                onSelectMatchByDate={openMatchByDate}
+                onActiveRecoveryQuick={(activity, dateISO) => {
+                  addLog({
+                    dateISO: `${dateISO}T12:00:00.000Z`,
+                    week: week as import('../types/training').CycleWeek,
+                    sessionType: 'ACTIVE_RECOVERY',
+                    fatigue,
+                    rpe: 3,
+                    durationMin: 20,
+                    sessionLabel: activity,
+                  })
+                }}
+              />
+            ) : (
+              <div className="animate-rf-fade">
+                <WeekMonthView
                   events={visibleEvents}
+                  logs={logs}
                   clubDays={clubDaysForGrid}
                   scDays={scDaysForGrid}
+                  todayISO={today}
                   onSelectMatch={(e) => setDrawerMatch(e)}
                   onAddForDate={(dateISO) => {
                     setAddModalDate(dateISO)
