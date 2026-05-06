@@ -4,13 +4,16 @@
  */
 
 import type { OffSeasonPhase } from '../types/annualPlanning'
+import type { FatigueLevel } from '../types/training'
 
 export type Cycle = 'pre_season' | 'in_season'
 export type PreSeasonPhase = 1 | 2 | 3
 export type Frequency = 2 | 3 | 4
 export type PositionGroup = 'front_row' | 'back_three'
 export type MatchContext = 'match_week' | 'no_match_week'
-export type FatigueLevel = 'normal' | 'high' | 'very_high'
+// Type ré-exporté depuis `types/training.ts` (source canonical) pour préserver
+// les imports historiques `import type { FatigueLevel } from '../data/weeklyTemplates'`.
+export type { FatigueLevel } from '../types/training'
 
 /** Cycle pris en charge par getWeeklyTemplate (pas de playoffs : géré dans le resolver). */
 export type WeeklyTemplateCycle = Cycle | 'off_season'

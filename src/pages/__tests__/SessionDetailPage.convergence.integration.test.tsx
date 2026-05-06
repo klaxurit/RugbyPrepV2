@@ -337,13 +337,12 @@ describe('SessionDetailPage · annual-first', () => {
     const completeBtn = screen.getByTestId('ms-complete-btn')
     fireEvent.click(completeBtn)
 
-    expect(screen.getByTestId('completion-confirm-btn')).toBeInTheDocument()
+    expect(screen.getByTestId('finish-confirm-btn')).toBeInTheDocument()
     expect(addLogMock).not.toHaveBeenCalled()
 
-    fireEvent.click(screen.getByTestId('completion-fatigue-fatigue'))
-    fireEvent.click(screen.getByTestId('completion-rpe-7'))
-    fireEvent.click(screen.getByTestId('completion-duration-45'))
-    fireEvent.click(screen.getByTestId('completion-confirm-btn'))
+    fireEvent.click(screen.getByTestId('finish-fatigue-fatigue'))
+    fireEvent.change(screen.getByTestId('finish-rpe-slider'), { target: { value: '7' } })
+    fireEvent.click(screen.getByTestId('finish-confirm-btn'))
 
     await waitFor(() => expect(addLogMock).toHaveBeenCalledTimes(1))
 
@@ -354,7 +353,9 @@ describe('SessionDetailPage · annual-first', () => {
     expect(log.programContext.annualWeekCode).toBeDefined()
     expect(log.fatigue).toBe('FATIGUE')
     expect(log.rpe).toBe(7)
-    expect(log.durationMin).toBe(45)
+    // durationMin vient désormais du chronomètre auto (0 si la séance n'a pas
+    // été lancée — cas "Marquer comme faite" sans run).
+    expect(typeof log.durationMin).toBe('number')
     expect(setFatigueMock).toHaveBeenCalledWith('FATIGUE')
   })
 
@@ -438,6 +439,9 @@ describe('SessionDetailPage · annual-first', () => {
     expect(screen.getByText('Curl ischios machine')).toBeInTheDocument()
     expect(screen.queryByText('Pin Back Squat')).toBeNull()
     expect(screen.queryByText('Nordic Curl')).toBeNull()
-    expect(screen.getByText('Fondations')).toBeInTheDocument()
+    // Refonte UI mai 2026 : "Fondations" apparaît à la fois en tag du HeroIdle
+    // (identité éditoriale) ET dans le header MotherSessionView (validation niveau).
+    // Les deux occurrences sont attendues.
+    expect(screen.getAllByText('Fondations').length).toBeGreaterThan(0)
   })
 })

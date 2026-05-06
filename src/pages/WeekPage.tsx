@@ -16,6 +16,8 @@ import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { markWeekViewed, useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
+import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
+import { computeMonthlyTonnage } from '../services/home/computeMonthlyTonnage'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
@@ -61,6 +63,7 @@ export function WeekPage() {
 
   const acwrResult = useACWR(logs, structuralEvents)
   const { isPremium: weekIsPremium } = useFeatureAccess()
+  const { logs: exerciseSetLogs } = useExerciseSetLogs()
   const { canShowUpsell: weekCanShowUpsell } = useUpsellTiming()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
 
@@ -98,6 +101,19 @@ export function WeekPage() {
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
+
+  // Charge totale soulevée du mois courant — alimente la 4e stat de WeekMonthView.
+  // Le calcul tourne pour tous (le filtre Premium est dans WeekMonthView via blur+lock).
+  const monthlyTonnageKg = useMemo(
+    () =>
+      computeMonthlyTonnage({
+        sets: exerciseSetLogs,
+        yearMonth: today.slice(0, 7),
+        bodyweightKg: profile.weightKg,
+      }),
+    [exerciseSetLogs, today, profile.weightKg],
+  )
+
   const nextMatchDate = useMemo(() => {
     const fm = visibleEvents.filter((e) => e.type === 'match' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))
     return fm.length > 0 ? fm[0].date : null
@@ -518,6 +534,7 @@ export function WeekPage() {
                 clubDays={weekPresentation?.clubDays ?? []}
                 activeRecoveryDates={activeRecoveryDates}
                 activeRecoveryEligibleDays={activeRecoveryEligibleDays}
+                logs={logs}
                 todayISO={today}
                 lang={lang}
                 formatSessionTitle={(id) => formatTitleFromMotherSessionId(id, lang)}
@@ -543,6 +560,8 @@ export function WeekPage() {
                   clubDays={clubDaysForGrid}
                   scDays={scDaysForGrid}
                   todayISO={today}
+                  monthlyTonnageKg={monthlyTonnageKg}
+                  isPremium={weekIsPremium}
                   onSelectMatch={(e) => setDrawerMatch(e)}
                   onAddForDate={(dateISO) => {
                     setAddModalDate(dateISO)

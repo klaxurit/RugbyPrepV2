@@ -11,6 +11,7 @@ import type {
   TrainingBlock,
   UserProfile
 } from '../../types/training';
+import type { ACWRZone } from '../../hooks/useACWR';
 import { buildSessionFromRecipe, type BuiltSession } from './buildSessionFromRecipe';
 import { resolveProgramFeatureFlags, type ProgramFeatureFlags } from './policies/featureFlags';
 import { normalizeProfileInput } from './policies/normalizeProfile';
@@ -65,7 +66,9 @@ const CROSS_SESSION_EXCLUSION_INTENTS: TrainingBlock['intent'][] = [
   'hypertrophy', 'force', 'contrast', 'neural', 'core'
 ];
 
-export type FatigueLevel = 'underload' | 'optimal' | 'caution' | 'danger' | 'critical'
+// (Anciennement `FatigueLevel` 5-niveaux exporté ici — c'était un alias pour
+//  `ACWRZone` (cf. `src/hooks/useACWR.ts`). Le type a été retiré, les call
+//  sites importent désormais ACWRZone directement.)
 
 export interface WeekProgramResult {
   week: CycleWeek;
@@ -81,7 +84,7 @@ const allBlocks = blocksData as TrainingBlock[];
 const VALID_WEEKS: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD'];
 
 interface BuildWeekProgramOptions {
-  fatigueLevel?: FatigueLevel
+  acwrZone?: ACWRZone
   hasSufficientACWRData?: boolean
   ignoreAcwrOverload?: boolean
   featureFlags?: Partial<ProgramFeatureFlags>
@@ -174,14 +177,14 @@ export const buildWeekProgram = (
   // ENH-1 — ACWR fatigue budget: adjust session count based on workload zone
   // Ne s'applique que si on a assez de données ACWR (2+ semaines)
   // ignoreAcwrOverload : le joueur choisit de garder le programme complet malgré la surcharge détectée
-  const fatigueLevel = options?.fatigueLevel;
+  const acwrZone = options?.acwrZone;
   const hasSufficientACWRData = options?.hasSufficientACWRData ?? false;
   const ignoreAcwrOverload = options?.ignoreAcwrOverload ?? false;
   const safety = applySafetyContracts({
     recipeIds: baseRecipeIds,
     profile,
     population,
-    fatigueLevel,
+    acwrZone,
     hasSufficientACWRData,
     ignoreAcwrOverload,
     featureFlags,
@@ -455,7 +458,7 @@ export const buildWeekProgram = (
   let gateResult = EMPTY_GATE_RESULT;
   if (featureFlags.qualityGatesV2) {
     gateResult = evaluateQualityGates(profile, sessions, {
-      fatigueLevel,
+      acwrZone,
       enforceMatchProximity:
         featureFlags.enforceMatchProximityGateV2 && hasReliableMatchContext,
     });
@@ -489,7 +492,7 @@ export const buildWeekProgram = (
     const scoreInput = featureFlags.qualityGatesV2
       ? gateResult
       : evaluateQualityGates(profile, sessions, {
-          fatigueLevel,
+          acwrZone,
           enforceMatchProximity:
             featureFlags.enforceMatchProximityGateV2 && hasReliableMatchContext,
         });

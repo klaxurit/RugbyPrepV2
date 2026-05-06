@@ -22,7 +22,7 @@ describe('safetyContracts', () => {
       recipeIds: BASE_RECIPES,
       profile,
       population: resolvePopulationContext(profile),
-      fatigueLevel: 'optimal',
+      acwrZone: 'optimal',
       hasSufficientACWRData: false,
       ignoreAcwrOverload: false,
       featureFlags: resolveProgramFeatureFlags(),

@@ -4,7 +4,7 @@ import { posthog } from '../services/analytics/posthog'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Flame, Volume2, VolumeX } from 'lucide-react'
+import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Flame } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
 import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
 import { getPositionIllustration } from '../assets/positions'
@@ -17,8 +17,6 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
-import { useRestBeepPref } from '../hooks/useRestBeepPref'
-import { playRestEndBeep } from '../utils/audioBeep'
 import { BottomNav } from '../components/BottomNav'
 import { useCalendar } from '../hooks/useCalendar'
 import { getToday } from '../services/ui/debugDateOverride'
@@ -234,7 +232,6 @@ export function ProfilePage() {
     subscribe: notifSubscribe,
     unsubscribe: notifUnsubscribe,
   } = useNotifications(profile)
-  const { enabled: restBeepEnabled, setEnabled: setRestBeepEnabled } = useRestBeepPref()
   const [avatarError, setAvatarError] = useState<string | null>(null)
   const [isAvatarUploading, setIsAvatarUploading] = useState(false)
   const [cropImageSrc, setCropImageSrc] = useState<string | null>(null)
@@ -1098,50 +1095,6 @@ export function ProfilePage() {
               ) : notifStatus === 'loading' ? (
                 <span className="text-xs text-fg-muted animate-pulse">...</span>
               ) : null}
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4" data-testid="profile-section-rest-beep">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-xl ${restBeepEnabled ? 'bg-ok-bg-muted text-ok border border-ok-bd' : 'bg-layer-10 text-fg-muted'}`}>
-                {restBeepEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              </div>
-              <div>
-                <p className="text-sm font-black text-fg">Bip de fin de repos</p>
-                <p className="text-xs text-fg-muted mt-0.5">
-                  Signal sonore à la fin du chrono entre les tours.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {restBeepEnabled && (
-                <button
-                  type="button"
-                  onClick={() => playRestEndBeep()}
-                  className="px-3 py-2 rounded-2xl border border-border-app text-xs font-bold text-fg-muted hover:border-brand-border-strong hover:text-brand-tint transition-colors rf-focus-ring"
-                  aria-label="Tester le bip"
-                >
-                  Tester
-                </button>
-              )}
-              <button
-                type="button"
-                role="switch"
-                aria-checked={restBeepEnabled}
-                onClick={() => setRestBeepEnabled(!restBeepEnabled)}
-                className={`relative w-12 h-7 rounded-full transition-colors rf-focus-ring ${
-                  restBeepEnabled ? 'bg-brand' : 'bg-layer-20'
-                }`}
-              >
-                <span
-                  className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform ${
-                    restBeepEnabled ? 'translate-x-[22px]' : 'translate-x-0.5'
-                  }`}
-                />
-              </button>
             </div>
           </div>
         </section>

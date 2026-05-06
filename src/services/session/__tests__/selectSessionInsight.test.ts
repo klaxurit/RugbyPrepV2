@@ -1,0 +1,64 @@
+import { describe, expect, it } from 'vitest'
+import { selectSessionInsight } from '../selectSessionInsight'
+
+describe('selectSessionInsight', () => {
+  it('priorise un PR battu sur tout le reste', () => {
+    const insight = selectSessionInsight({
+      rpe: 9,
+      completedRatio: 0.5,
+      prs: [{ exerciseId: 'back_squat', previousBest: 90, newBest: 100 }],
+    })
+    expect(insight?.tone).toBe('success')
+    expect(insight?.message).toMatch(/100/)
+  })
+
+  it('mention plurielle si plusieurs PRs', () => {
+    const insight = selectSessionInsight({
+      rpe: 7,
+      completedRatio: 1,
+      prs: [
+        { exerciseId: 'a', previousBest: 1, newBest: 2 },
+        { exerciseId: 'b', previousBest: 1, newBest: 2 },
+      ],
+    })
+    expect(insight?.message).toMatch(/2 nouveaux records/)
+  })
+
+  it('suggère un deload si RPE 9+ et reps incomplètes', () => {
+    const insight = selectSessionInsight({
+      rpe: 9,
+      completedRatio: 0.6,
+      prs: [],
+    })
+    expect(insight?.tone).toBe('warn')
+    expect(insight?.message).toMatch(/deload/i)
+  })
+
+  it('insight info "limite atteinte" si RPE 9+ avec complétion totale', () => {
+    const insight = selectSessionInsight({
+      rpe: 9,
+      completedRatio: 1,
+      prs: [],
+    })
+    expect(insight?.tone).toBe('info')
+    expect(insight?.message).toMatch(/limite/i)
+  })
+
+  it('insight "trop facile" si RPE ≤ 5 + complétion totale', () => {
+    const insight = selectSessionInsight({
+      rpe: 4,
+      completedRatio: 1,
+      prs: [],
+    })
+    expect(insight?.tone).toBe('info')
+    expect(insight?.message).toMatch(/confortable|augmentera/i)
+  })
+
+  it('renvoie null si rien de notable', () => {
+    expect(selectSessionInsight({ rpe: 7, completedRatio: 1, prs: [] })).toBeNull()
+  })
+
+  it('renvoie null si rpe non noté et pas de PR', () => {
+    expect(selectSessionInsight({ rpe: null, completedRatio: 0.5, prs: [] })).toBeNull()
+  })
+})

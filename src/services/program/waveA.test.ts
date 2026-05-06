@@ -84,7 +84,7 @@ describe('H2 — ACWR recalibration (caution=1.3, danger=1.5)', () => {
       recipeIds: BASE_RECIPES,
       profile,
       population: resolvePopulationContext(profile),
-      fatigueLevel: 'caution',
+      acwrZone: 'caution',
       hasSufficientACWRData: true,
       ignoreAcwrOverload: false,
       featureFlags: flags,
@@ -103,7 +103,7 @@ describe('H2 — ACWR recalibration (caution=1.3, danger=1.5)', () => {
       recipeIds: BASE_RECIPES,
       profile,
       population: resolvePopulationContext(profile),
-      fatigueLevel: 'danger',
+      acwrZone: 'danger',
       hasSufficientACWRData: true,
       ignoreAcwrOverload: false,
       featureFlags: flags,
@@ -118,7 +118,7 @@ describe('H2 — ACWR recalibration (caution=1.3, danger=1.5)', () => {
       recipeIds: BASE_RECIPES,
       profile,
       population: resolvePopulationContext(profile),
-      fatigueLevel: 'critical',
+      acwrZone: 'critical',
       hasSufficientACWRData: true,
       ignoreAcwrOverload: false,
       featureFlags: flags,
@@ -600,7 +600,7 @@ describe('H9 — In-season 3:1 deload', () => {
     const result = buildWeekProgram(
       createProfile({ seasonMode: 'in_season', trainingLevel: 'performance' }),
       'W3',
-      { fatigueLevel: 'caution', hasSufficientACWRData: true }
+      { acwrZone: 'caution', hasSufficientACWRData: true }
     )
     // Auto-deload fires
     expect(result.hardConstraintEvents).toContain('info:in-season-3-1-deload:W3')
@@ -763,7 +763,7 @@ describe('H12 — ACWR caution version downgrade', () => {
     const result = buildWeekProgram(
       createProfile({ seasonMode: 'off_season' }),
       'W2',
-      { fatigueLevel: 'caution', hasSufficientACWRData: true }
+      { acwrZone: 'caution', hasSufficientACWRData: true }
     )
     // All 3 sessions should be real recipes, none replaced by mobility
     expect(result.sessions).toHaveLength(3)
@@ -777,7 +777,7 @@ describe('H12 — ACWR caution version downgrade', () => {
     const result = buildWeekProgram(
       createProfile({ seasonMode: 'off_season' }),
       'W2',
-      { fatigueLevel: 'caution', hasSufficientACWRData: true }
+      { acwrZone: 'caution', hasSufficientACWRData: true }
     )
     expect(result.sessions).toHaveLength(3)
     // Last session should have W1 versions (downgraded from W2)
@@ -802,7 +802,7 @@ describe('H12 — ACWR caution version downgrade', () => {
       recipeIds: ['LOWER_V1'] as SessionRecipeId[],
       profile,
       population: resolvePopulationContext(profile),
-      fatigueLevel: 'caution',
+      acwrZone: 'caution',
       hasSufficientACWRData: true,
       ignoreAcwrOverload: false,
       featureFlags: resolveProgramFeatureFlags(),

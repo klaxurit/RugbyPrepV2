@@ -376,6 +376,22 @@ export interface RehabInjury {
 }
 export type FatigueStatus = 'OK' | 'FATIGUE';
 
+/**
+ * Niveau de fatigue résolu — combine le ressenti utilisateur (`FatigueStatus`)
+ * et la zone ACWR (charge accumulée) pour piloter la modulation du programme.
+ *
+ * - `normal`     : programme nominal, charges normales
+ * - `high`       : volume réduit, charges suggérées allégées
+ * - `very_high`  : peut forcer une session récup. Réservé aux cas critiques
+ *                  (ACWR danger/critical) où la sécurité prime.
+ *
+ * Source unique de vérité — utilisé par `buildAthletePlanningInputs`,
+ * `loadSuggestion`, `resolveMotherSessionsForWeek`, etc. L'agrégation
+ * `(fatigue, acwrZone) → FatigueLevel` vit dans
+ * `src/services/program/resolveFatigueLevel.ts`.
+ */
+export type FatigueLevel = 'normal' | 'high' | 'very_high';
+
 export type ProgramSource = 'legacy' | 'mother_session'
 
 export interface SessionLogProgramContext {

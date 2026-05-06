@@ -1,6 +1,11 @@
 @import './theme-tokens.css';
 @import 'tailwindcss';
 
+/* Playfair Display italic — signature éditoriale des accroches (refonte UI mai 2026).
+   Réservé aux citations et titres "manifeste" (jamais data ni labels).
+   Italic-only (les poids 500/700/800 italic suffisent). swap pour ne pas bloquer le rendu. */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500;1,700;1,800&display=swap');
+
 /* Variants plateforme — activés par `initPlatformClass` sur <html>.
    Permet d'écrire `ios:py-2` pour compresser les chromes iOS uniquement
    (Apple Dynamic Island bouffe déjà 47-54px de hauteur système, on ne peut
@@ -20,14 +25,27 @@
 /* Pont Tailwind v4 → tokens sémantiques (évite bg-[#…] / récursion --color-* ) */
 @theme {
   --font-family-sans: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  /* Tokens Tailwind v4 standard (`--font-sans` / `--font-serif`) — alimentent
-     les utilities `font-sans` / `font-serif`. On reroute `font-serif` sur
-     Gontserrat (police du logo) au lieu de la stack ui-serif/Georgia par
-     défaut, qui faisait éditorial/littéraire et pas assez "sport". */
+  /* `font-serif` rerouté sur Gontserrat (police du logo) — rendu plus "sport"
+     que la stack par défaut Tailwind (ui-serif/Georgia), qui faisait éditorial.
+     Tailles, poids, italiques et couleurs préservés sur les ~27 usages existants.
+     Tailwind v4 lit `--font-serif` (sans `-family-`) pour générer la classe. */
   --font-sans: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-serif: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-serif: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --color-app: var(--color-bg-app);
+  /* Crème éditoriale (cards subtiles + séparateurs) — bg-paper-soft / bg-paper-deep */
+  --color-paper-soft: var(--color-cream-soft);
+  --color-paper-deep: var(--color-cream-deep);
+  /* Gold (Pro tease + jalons gold) — bg-pro / text-pro / bg-pro-soft */
+  --color-pro: var(--color-gold);
+  --color-pro-light: var(--color-gold-light);
+  --color-pro-soft: var(--color-gold-soft);
+  /* Milestone green (victoires + jalons green) — bg-win / text-win / bg-win-soft */
+  --color-win: var(--color-milestone-green);
+  --color-win-soft: var(--color-milestone-green-soft);
+  /* Badge wine soft (jalons tone wine) — bg-badge-wine */
+  --color-badge-wine: var(--color-milestone-wine-soft);
   /* Shell (header/footer) — bordeaux + crème */
   --color-shell: var(--color-shell-bg);
   --color-shell-text: var(--color-shell-fg);
@@ -289,4 +307,49 @@ textarea {
 input[type='time']::-webkit-calendar-picker-indicator,
 input[type='date']::-webkit-calendar-picker-indicator {
   filter: invert(1) brightness(0.8);
+}
+
+/* ── Animations éditoriales (refonte UI mai 2026) ──
+   rfPulse  : pastilles vivantes (live, lendemain de match, glow flame)
+   rfSlideUp: entrée des grosses cartes feature (jour actif Programme)
+   rfFade   : transitions Semaine ↔ Mois
+   rfPop    : confirmation tap (DoneBtn check)
+   Easing recommandé : cubic-bezier(0.2, 0.8, 0.2, 1) (snappy out) */
+@keyframes rfPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.15); opacity: 0.7; }
+}
+@keyframes rfSlideUp {
+  from { transform: translateY(14px) scale(0.985); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+@keyframes rfFade {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes rfPop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* Utilities pour Tailwind v4 (animate-rf-*) */
+@utility animate-rf-pulse {
+  animation: rfPulse 2s ease-in-out infinite;
+}
+@utility animate-rf-slide-up {
+  animation: rfSlideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@utility animate-rf-fade {
+  animation: rfFade 0.35s ease-out both;
+}
+@utility animate-rf-pop {
+  animation: rfPop 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Scrollbars cachées pour les strips horizontaux (badges, days) */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
 }

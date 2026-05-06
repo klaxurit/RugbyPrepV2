@@ -1,16 +1,18 @@
 import type { SessionRecipeId } from '../../../data/sessionRecipes.v1'
 import type { RehabInjury, UserProfile } from '../../../types/training'
+import type { ACWRZone } from '../../../hooks/useACWR'
 import type { ProgramFeatureFlags } from './featureFlags'
 import type { PopulationContext } from './populationRules'
 import { RULE_CONSTANTS_V1 } from './ruleConstants.v1'
 
-type FatigueLevel = 'underload' | 'optimal' | 'caution' | 'danger' | 'critical'
+// (Anciennement `FatigueLevel` 5-niveaux dans ce fichier — c'était un alias
+//  pour `ACWRZone`. Renommé pour clarifier la sémantique.)
 
 export interface ApplySafetyContractsInput {
   recipeIds: SessionRecipeId[]
   profile: UserProfile
   population: PopulationContext
-  fatigueLevel?: FatigueLevel
+  acwrZone?: ACWRZone
   hasSufficientACWRData: boolean
   ignoreAcwrOverload: boolean
   featureFlags: ProgramFeatureFlags
@@ -92,7 +94,7 @@ export const applySafetyContracts = ({
   recipeIds: initialRecipeIds,
   profile,
   population,
-  fatigueLevel,
+  acwrZone,
   hasSufficientACWRData,
   ignoreAcwrOverload,
   featureFlags,
@@ -124,7 +126,7 @@ export const applySafetyContracts = ({
     featureFlags.safetyContractsV1 &&
     !ignoreAcwrOverload &&
     hasSufficientACWRData &&
-    fatigueLevel === 'critical' &&
+    acwrZone === 'critical' &&
     recipeIds.length > 1
   ) {
     if (profile.rehabInjury) {
@@ -141,7 +143,7 @@ export const applySafetyContracts = ({
     featureFlags.safetyContractsV1 &&
     !ignoreAcwrOverload &&
     hasSufficientACWRData &&
-    fatigueLevel === 'danger' &&
+    acwrZone === 'danger' &&
     recipeIds.length > 1
   ) {
     recipeIds = [...recipeIds.slice(0, recipeIds.length - 1), RULE_CONSTANTS_V1.deload.recipeId]
@@ -151,7 +153,7 @@ export const applySafetyContracts = ({
     featureFlags.safetyContractsV1 &&
     !ignoreAcwrOverload &&
     hasSufficientACWRData &&
-    fatigueLevel === 'caution'
+    acwrZone === 'caution'
   ) {
     // H12 (P1): ACWR caution (1.3–1.5) — reduce volume on last session via W1 version override.
     // KB load-budgeting.md §2: caution = "reduce training load magnitude" (not replace session).

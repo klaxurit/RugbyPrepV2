@@ -180,6 +180,48 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
     setRestTimer(null)
   }, [])
 
+  // ── Notif locale fin de repos via Service Worker ───────────────────────
+  // Quand un rest timer est actif ET que l'app passe en background, on
+  // demande au SW de programmer une notif système à la fin du décompte.
+  // Quand l'app revient au premier plan, on annule (la card RestTimerCard
+  // + le bip in-app suffisent). Si pas de rest timer, on annule aussi.
+  // Robuste à la mise en background ≥1-2 min sur Chrome Android (TWA).
+  // iOS Safari PWA non supporté en V1 — fix futur via push différé.
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return
+    const sw = navigator.serviceWorker
+    if (!sw) return
+
+    const post = (msg: unknown) => {
+      sw.controller?.postMessage(msg)
+    }
+
+    const apply = () => {
+      if (!restTimer) {
+        post({ type: 'CANCEL_REST_END' })
+        return
+      }
+      if (document.visibilityState === 'hidden') {
+        const remaining = Math.max(0, Math.round((restTimer.endsAt - Date.now()) / 1000))
+        if (remaining <= 0) {
+          post({ type: 'CANCEL_REST_END' })
+          return
+        }
+        post({
+          type: 'SCHEDULE_REST_END',
+          seconds: remaining,
+          label: restTimer.label ?? 'Repos terminé',
+        })
+      } else {
+        post({ type: 'CANCEL_REST_END' })
+      }
+    }
+
+    apply()
+    document.addEventListener('visibilitychange', apply)
+    return () => document.removeEventListener('visibilitychange', apply)
+  }, [restTimer])
+
   const isRunningFor = useCallback(
     (key: string) => status === 'running' && sessionKey === key,
     [status, sessionKey],

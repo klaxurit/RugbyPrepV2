@@ -21,10 +21,55 @@ precacheAndRoute(self.__WB_MANIFEST)
 // useRegisterSW() ; au tap, elle envoie un message SKIP_WAITING qu'on
 // traite ici, puis le SW prend le contrôle des clients via clients.claim().
 
+// ─── Rest-timer notification (local, déclenchée par le client) ─────────────
+//
+// Quand l'utilisateur lance un temps de repos pendant une séance et qu'il
+// quitte l'onglet/l'app, le client envoie un message SCHEDULE_REST_END avec
+// la durée restante. Le SW programme un setTimeout — robuste à la mise en
+// background sur Chrome Android (TWA) ≥ 1-2 min, suffisant pour un repos
+// rugby (60-180s). Si l'utilisateur revient ou skip le timer, on reçoit
+// CANCEL_REST_END et on annule.
+//
+// Limite connue : iOS Safari PWA ne fait pas survivre les setTimeout SW en
+// background. On accepte cette limitation pour la V1 — fix futur via push
+// serveur différé si besoin.
+let restTimerHandle: ReturnType<typeof setTimeout> | null = null
+
+const cancelRestTimer = () => {
+  if (restTimerHandle != null) {
+    clearTimeout(restTimerHandle)
+    restTimerHandle = null
+  }
+}
+
 self.addEventListener('message', (event: ExtendableMessageEvent) => {
-  const data = event.data as { type?: string } | undefined
+  const data = event.data as
+    | { type?: string; seconds?: number; label?: string }
+    | undefined
   if (data?.type === 'SKIP_WAITING') {
     void self.skipWaiting()
+    return
+  }
+  if (data?.type === 'SCHEDULE_REST_END') {
+    cancelRestTimer()
+    const seconds = typeof data.seconds === 'number' ? data.seconds : 0
+    if (seconds <= 0) return
+    const label = data.label ?? 'Repos terminé'
+    restTimerHandle = setTimeout(() => {
+      restTimerHandle = null
+      void self.registration.showNotification(`${label} 💪`, {
+        body: 'Prêt pour le prochain set.',
+        tag: 'rugbyforge-rest-end',
+        icon: '/icons/icon-192.png',
+        badge: '/icons/icon-192.png',
+        vibrate: [200, 100, 200],
+        data: { url: '/week' },
+      } as NotificationOptions)
+    }, seconds * 1000)
+    return
+  }
+  if (data?.type === 'CANCEL_REST_END') {
+    cancelRestTimer()
   }
 })
 

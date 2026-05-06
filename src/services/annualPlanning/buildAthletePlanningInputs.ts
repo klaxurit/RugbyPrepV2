@@ -3,25 +3,29 @@
  * Aucune horloge implicite : `today` doit être fourni (YYYY-MM-DD).
  */
 import type { AthleteIdentityContext, AthletePlanningInputs } from '../../types/annualPlanning'
-import type { CalendarEvent, Contra, RugbyPositionGroup, SessionLog, UserProfile } from '../../types/training'
+import type {
+  CalendarEvent,
+  Contra,
+  FatigueLevel,
+  FatigueStatus,
+  RugbyPositionGroup,
+  SessionLog,
+  UserProfile,
+} from '../../types/training'
+import type { ACWRZone } from '../../hooks/useACWR'
 import { isRestartRampUpActive } from '../program/restartRampUp'
+import { resolveFatigueLevel } from '../program/resolveFatigueLevel'
 
-/** Aligné sur useACWR (évite d’importer le hook depuis un service). */
-export type AcwrZoneInput =
-  | 'underload'
-  | 'optimal'
-  | 'caution'
-  | 'danger'
-  | 'critical'
-  | null
-  | undefined
+// (`AcwrZoneInput` retiré — on utilise directement `ACWRZone | null | undefined`
+//  depuis le hook canonical `useACWR`.)
+export type AcwrZoneInput = ACWRZone | null | undefined
 
 export interface BuildAthletePlanningInputsParams {
   profile: UserProfile
   events: CalendarEvent[]
   logs: SessionLog[]
   today: string
-  fatigue: 'OK' | 'FATIGUE'
+  fatigue: FatigueStatus
   acwrZone?: AcwrZoneInput
   athleteIdentity?: AthleteIdentityContext
   readinessScore?: number
@@ -33,7 +37,7 @@ export interface BuildAthletePlanningInputsResult {
   warnings: string[]
   derived: {
     resolvedPositionGroup: 'front_row' | 'back_three'
-    fatigueLevel: 'normal' | 'high' | 'very_high'
+    fatigueLevel: FatigueLevel
   }
 }
 
@@ -103,23 +107,8 @@ function clampWeeklyFrequency(
   return 2
 }
 
-function resolveFatigueLevel(
-  fatigue: 'OK' | 'FATIGUE',
-  acwrZone: AcwrZoneInput,
-  options?: { seasonEnded?: boolean }
-): 'normal' | 'high' | 'very_high' {
-  // When the season is explicitly over, ACWR spikes from recent match loads
-  // are expected and transient — don't lock the off-season programme into
-  // recovery mode. Cap at 'high' so the engine still reduces volume but
-  // doesn't replace the entire week with recovery sessions.
-  if (options?.seasonEnded) {
-    if (fatigue === 'FATIGUE') return 'high'
-    return 'normal'
-  }
-  if (acwrZone === 'critical' || acwrZone === 'danger') return 'very_high'
-  if (fatigue === 'FATIGUE' || acwrZone === 'caution') return 'high'
-  return 'normal'
-}
+// (Logique extraite vers `src/services/program/resolveFatigueLevel.ts` —
+//  source unique de vérité partagée. Tests unitaires dédiés.)
 
 function dayDiffToFrom(logDayYmd: string, todayYmd: string): number {
   const a = new Date(`${logDayYmd}T12:00:00`)

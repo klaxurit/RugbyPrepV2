@@ -36,7 +36,7 @@ describe('qualityGates', () => {
     })
     const session = makeSession({ recipeId: 'UPPER_V1' })
 
-    const result = evaluateQualityGates(profile, [session], { fatigueLevel: 'critical' })
+    const result = evaluateQualityGates(profile, [session], { acwrZone: 'critical' })
 
     expect(result.events).toContain('quality:critical-rehab-missing')
     expect(result.invalidSessionIndexes).toEqual([0])

@@ -1,3 +1,7 @@
 export { InlineNotice, type InlineNoticeProps, type InlineNoticeTone } from './InlineNotice'
 export { Chip, type ChipProps, type ChipTone, type ChipVariant, type ChipSize } from './Chip'
 export { CollapsibleSection } from './CollapsibleSection'
+export { Icon, type IconName, type IconProps } from './Icon'
+export { SectionLabel, type SectionLabelProps } from './SectionLabel'
+export { Pill, type PillProps, type PillTone, type PillSize } from './Pill'
+export { BottomSheet, type BottomSheetProps } from './BottomSheet'

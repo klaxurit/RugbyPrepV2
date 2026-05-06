@@ -321,16 +321,19 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
 
   // ── Off-season mode (rendu calendrier unifié) ──
 
-  it('off-season (calendar): shows block label in the meta line', () => {
+  it('off-season (calendar): shows season + week-of-season in the meta line', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'off_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    // Rest day : le label de bloc est désormais dans la ligne meta textuelle
-    // au-dessus du hero (plus dans un chip).
-    expect(screen.getByText(/Inter-saison · Force/)).toBeInTheDocument()
+    // FIX 7 (mai 2026) : la métaligne expose la semaine ABSOLUE de saison
+    // (ancrée au 1er sept), pas le mésocycle moteur. Format attendu :
+    // "<date> · Inter-saison · Semaine N · <niveau>".
+    expect(screen.getByText(/Inter-saison · Semaine \d+/)).toBeInTheDocument()
   })
 
-  it('off-season (calendar) rest day: "Cette semaine" section rendered', () => {
+  // Refonte UI mai 2026 : section "Cette semaine" retirée de /home pour
+  // alléger le hub motivationnel — le détail vit désormais sur /week.
+  it.skip('off-season (calendar) rest day: "Cette semaine" section rendered (déplacé vers /week)', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'off_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 

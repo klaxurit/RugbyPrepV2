@@ -27,7 +27,7 @@ describe('buildWeekProgram', () => {
 
   it('TID-ENG-003 replaces the last session with recovery mobility in ACWR danger and keeps it valid', () => {
     const result = buildWeekProgram(createProfile(), 'W1', {
-      fatigueLevel: 'danger',
+      acwrZone: 'danger',
       hasSufficientACWRData: true,
     })
 
@@ -42,7 +42,7 @@ describe('buildWeekProgram', () => {
 
   it('TID-ENG-004 reduces the week to one session in ACWR critical', () => {
     const result = buildWeekProgram(createProfile(), 'W1', {
-      fatigueLevel: 'critical',
+      acwrZone: 'critical',
       hasSufficientACWRData: true,
     })
 

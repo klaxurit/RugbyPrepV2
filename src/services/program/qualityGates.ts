@@ -1,8 +1,10 @@
 import { sessionRecipesV1 } from '../../data/sessionRecipes.v1';
 import type { UserProfile } from '../../types/training';
+import type { ACWRZone } from '../../hooks/useACWR';
 import type { BuiltSession } from './buildSessionFromRecipe';
 
-type FatigueLevel = 'underload' | 'optimal' | 'caution' | 'danger' | 'critical';
+// (Anciennement `FatigueLevel` 5-niveaux dans ce fichier — c'était en réalité
+//  un alias pour ACWRZone. Renommé pour clarifier la sémantique.)
 
 export interface QualityGateResult {
   events: string[];
@@ -46,7 +48,7 @@ export const evaluateQualityGates = (
   profile: UserProfile,
   sessions: BuiltSession[],
   options?: {
-    fatigueLevel?: FatigueLevel;
+    acwrZone?: ACWRZone;
     enforceMatchProximity?: boolean;
   }
 ): QualityGateResult => {
@@ -232,7 +234,7 @@ export const evaluateQualityGates = (
       }
     });
 
-    if (options?.fatigueLevel === 'critical' && !sessions.some((session) => isRehabRecipe(session.recipeId))) {
+    if (options?.acwrZone === 'critical' && !sessions.some((session) => isRehabRecipe(session.recipeId))) {
       events.push('quality:critical-rehab-missing');
       warnings.push('Fatigue critique + rehab: aucune séance rehab détectée.');
       if (sessions.length > 0) {

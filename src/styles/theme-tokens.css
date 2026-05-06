@@ -61,6 +61,20 @@
   --color-badge-neutral-fg: #6E5E4E;
   --color-badge-neutral-bg: rgb(44 24 16 / 0.05);
 
+  /* ── Surfaces crème éditoriales (refonte UI mai 2026) ──
+     Hiérarchie : bg-app (#F5F2EE) → cream-soft (cards subtiles)
+                  → cream-deep (séparateurs / chips chip-creamDeep) */
+  --color-cream-soft: #FAF6EE;
+  --color-cream-deep: #E8DFD0;
+
+  /* ── Accents éditoriaux (gold pour Pro/jalons, milestone-green pour victoires) ── */
+  --color-gold: #B8893A;
+  --color-gold-light: #E8C547;
+  --color-gold-soft: #FAF1DD;
+  --color-milestone-green: #3F6B4A;
+  --color-milestone-green-soft: #E5EFE7;
+  --color-milestone-wine-soft: #F8E8EA;
+
   /* ── Shell (header, footer) : bordeaux + crème ── */
   --color-shell-bg: #7B0D1E;
   --color-shell-fg: #F5F2EE;
