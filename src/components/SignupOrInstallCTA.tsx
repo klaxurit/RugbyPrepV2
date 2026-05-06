@@ -132,8 +132,8 @@ function IosInstallSheet({ open, onClose }: SheetProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-[70] backdrop-blur-sm"
-            style={{ background: 'rgb(44 24 16 / 0.4)' }}
+            className="fixed inset-0 z-[100] backdrop-blur-md"
+            style={{ background: 'rgb(44 24 16 / 0.6)' }}
           />
           <motion.div
             role="dialog"
@@ -143,7 +143,7 @@ function IosInstallSheet({ open, onClose }: SheetProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
             transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-            className="fixed left-3 right-3 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:max-w-md bottom-[calc(12px+env(safe-area-inset-bottom))] z-[80] rounded-3xl p-5"
+            className="fixed left-3 right-3 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:max-w-md bottom-[calc(12px+env(safe-area-inset-bottom))] z-[110] rounded-3xl p-5"
             style={{
               background: '#FFFFFF',
               border: '1px solid rgb(44 24 16 / 0.08)',
@@ -279,25 +279,38 @@ function DesktopHandoffSheet({ open, onClose }: SheetProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-[70] backdrop-blur-sm"
-            style={{ background: 'rgb(44 24 16 / 0.4)' }}
+            className="fixed inset-0 z-[100] backdrop-blur-md"
+            style={{ background: 'rgb(44 24 16 / 0.6)' }}
           />
-          <motion.div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Continuer sur mobile"
-            initial={{ opacity: 0, scale: 0.95, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 12 }}
-            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[80] w-[min(440px,calc(100vw-32px))] max-h-[90vh] overflow-y-auto rounded-3xl p-6"
-            style={{
-              background: '#FFFFFF',
-              border: '1px solid rgb(44 24 16 / 0.08)',
-              boxShadow:
-                '0 24px 60px rgb(44 24 16 / 0.18), 0 8px 16px rgb(123 13 30 / 0.08)',
-            }}
-          >
+          {/* Wrapper de centrage flex — évite le conflit entre Tailwind
+              `top-1/2 -translate-y-1/2` et l'animation framer-motion
+              (`y: 12 → 0`) qui écrasait le translate CSS et faisait
+              flotter la modal au-dessus du viewport. Le wrapper porte
+              le centrage, la motion.div n'a plus que la taille +
+              animations transformables.
+              z-[100]/[110] pour passer au-dessus de la navbar landing
+              (z-50) et de tout autre fixed-positioned element — sinon
+              la navbar flouterait son propre backdrop-blur-xl par-dessus
+              notre overlay et donnait l'impression que "seule la navbar
+              est floutée". */}
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 pointer-events-none">
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Continuer sur mobile"
+              initial={{ opacity: 0, scale: 0.95, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+              onClick={(e) => e.stopPropagation()}
+              className="pointer-events-auto w-full max-w-[440px] max-h-[90vh] overflow-y-auto rounded-3xl p-6"
+              style={{
+                background: '#FFFFFF',
+                border: '1px solid rgb(44 24 16 / 0.08)',
+                boxShadow:
+                  '0 24px 60px rgb(44 24 16 / 0.18), 0 8px 16px rgb(123 13 30 / 0.08)',
+              }}
+            >
             <SheetHeader
               title="RugbyForge est conçu pour le terrain"
               subtitle="Scanne le QR code ou reçois le lien par email — l'app s'installe en 10 secondes sur ton téléphone."
@@ -439,7 +452,8 @@ function DesktopHandoffSheet({ open, onClose }: SheetProps) {
                 )}
               </form>
             )}
-          </motion.div>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
