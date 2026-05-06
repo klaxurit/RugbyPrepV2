@@ -168,7 +168,7 @@ async function sendWebPush(
   vapidPublicKey: string,
   vapidPrivateKey: string,
   vapidContact: string,
-): Promise<{ status: number }> {
+): Promise<{ status: number; body: string; endpoint: string }> {
   const vapidPublicKeyBytes = fromB64url(vapidPublicKey)
   const vapidPrivateKeyBytes = fromB64url(vapidPrivateKey)
 
@@ -194,7 +194,8 @@ async function sendWebPush(
     body,
   })
 
-  return { status: response.status }
+  const responseBody = response.status >= 300 ? await response.text() : ''
+  return { status: response.status, body: responseBody, endpoint: endpoint.slice(0, 80) }
 }
 
 // ─── Handler ───────────────────────────────────────────────────
@@ -277,6 +278,19 @@ Deno.serve(async (req: Request) => {
     ).length
     const failed = results.filter((r) => r.status === 'rejected').length
 
+    const errors = results
+      .map((r, i) => {
+        if (r.status === 'rejected') {
+          return { index: i, kind: 'rejected', reason: String(r.reason) }
+        }
+        const v = r.value as { status: number; body: string; endpoint: string }
+        if (v.status >= 300) {
+          return { index: i, kind: 'http_error', status: v.status, body: v.body, endpoint: v.endpoint }
+        }
+        return null
+      })
+      .filter(Boolean)
+
     // Supprime les abonnements expirés (410 Gone)
     const expiredEndpoints = subscriptions
       .filter((_, i) => {
@@ -303,7 +317,7 @@ Deno.serve(async (req: Request) => {
     }
 
     return new Response(
-      JSON.stringify({ sent, failed, expired_removed: expiredEndpoints.length, total: subscriptions.length }),
+      JSON.stringify({ sent, failed, expired_removed: expiredEndpoints.length, total: subscriptions.length, errors }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     )
   } catch (error) {

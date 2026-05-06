@@ -61,7 +61,6 @@ self.addEventListener('message', (event: ExtendableMessageEvent) => {
         body: 'Prêt pour le prochain set.',
         tag: 'rugbyforge-rest-end',
         icon: '/icons/icon-192.png',
-        badge: '/icons/icon-192.png',
         vibrate: [200, 100, 200],
         data: { url: '/week' },
       } as NotificationOptions)
@@ -100,7 +99,6 @@ self.addEventListener('push', (event: PushEvent) => {
   const options = {
     body: data.body ?? '',
     icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
     tag: data.tag ?? 'rugbyprep',
     data: { url: data.url ?? '/week' },
     vibrate: [200, 100, 200],
