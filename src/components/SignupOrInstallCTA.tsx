@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowRight,
@@ -123,7 +124,14 @@ interface SheetProps {
 function IosInstallSheet({ open, onClose }: SheetProps) {
   useEscapeAndScrollLock(open, onClose)
 
-  return (
+  // Portal vers document.body : sinon le `position: fixed` de la modale
+  // est ancré dans le containing block de la navbar landing (qui a
+  // `backdrop-filter: blur()` → containing block des fixed descendants
+  // par CSS spec). Résultat sans portal : la modale est positionnée
+  // dans la bandeau navbar (~80px), tronquée en haut du viewport.
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <>
@@ -217,7 +225,8 @@ function IosInstallSheet({ open, onClose }: SheetProps) {
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }
 
@@ -270,7 +279,14 @@ function DesktopHandoffSheet({ open, onClose }: SheetProps) {
     }
   }
 
-  return (
+  // Portal vers document.body : la navbar landing a `backdrop-filter`
+  // ce qui en fait le containing block des fixed descendants. Sans
+  // portal, la modale est positionnée dans la bandeau navbar et
+  // tronquée. Le portal la sort du sub-tree navbar pour qu'elle soit
+  // ancrée au viewport.
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <>
@@ -456,7 +472,8 @@ function DesktopHandoffSheet({ open, onClose }: SheetProps) {
           </div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }
 
