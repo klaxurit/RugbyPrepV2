@@ -20,6 +20,12 @@
 /* Pont Tailwind v4 → tokens sémantiques (évite bg-[#…] / récursion --color-* ) */
 @theme {
   --font-family-sans: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Tokens Tailwind v4 standard (`--font-sans` / `--font-serif`) — alimentent
+     les utilities `font-sans` / `font-serif`. On reroute `font-serif` sur
+     Gontserrat (police du logo) au lieu de la stack ui-serif/Georgia par
+     défaut, qui faisait éditorial/littéraire et pas assez "sport". */
+  --font-sans: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'Gontserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --color-app: var(--color-bg-app);
   /* Shell (header/footer) — bordeaux + crème */
