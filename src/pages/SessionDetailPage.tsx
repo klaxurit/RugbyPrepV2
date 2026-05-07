@@ -40,6 +40,8 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 
 import { SessionRunProgressBar, SessionStickyCTA, SessionBlocks } from '../components/session'
 import { HeroIdle } from '../components/session/blocks'
+import { ExerciseDemoSheet } from '../components/motherSession/ExerciseDemoSheet'
+import { hasExerciseDemo } from '../data/exercises'
 import {
   RestOverlay,
   EmomOverlay,
@@ -116,6 +118,8 @@ export function SessionDetailPage() {
   const [celebrationOpen, setCelebrationOpen] = useState(false)
   const [msSaveError, setMsSaveError] = useState<string | null>(null)
   const [isSavingSession, setIsSavingSession] = useState(false)
+  // B3 — exercise demo sheet (eye button on exercise rows in ToursBlock)
+  const [demoExerciseId, setDemoExerciseId] = useState<string | null>(null)
   // Note : depuis le passage à SessionBlocks, les sets sont persistés via
   // `upsertSet` (table exercise_set_logs). Le hook `useBlockLogs` ne sert plus
   // sur cette page — il sera ré-introduit en D5/D6 pour la suggestion de charge
@@ -623,6 +627,22 @@ export function SessionDetailPage() {
     setEmomBlockNumber(null)
   }
 
+  // B3 — open the exercise demo video sheet from the eye button in ToursBlock.
+  // Mirrors MotherSessionBlock.tsx:57 resolution: prefer exercise.exerciseId,
+  // fall back to resolveExerciseId(name) because tour-block exercises often
+  // ship with the English session name and no direct exerciseId — the name→id
+  // map bridges to the French ID space used by hasExerciseDemo / getExerciseDemo.
+  const handlePlayDemo = (blockNumber: number, exerciseIndex: number) => {
+    if (!adaptedSession) return
+    const exercise = adaptedSession.blocks
+      .find((b) => b.number === blockNumber)
+      ?.exercises[exerciseIndex]
+    if (!exercise) return
+    const exoId = exercise.exerciseId ?? resolveExerciseId(exercise.name ?? '')
+    if (!exoId || !hasExerciseDemo(exoId)) return
+    setDemoExerciseId(exoId)
+  }
+
   const handleStartIsoTimer = (
     blockNumber: number,
     exerciseIndex: number,
@@ -879,6 +899,7 @@ export function SessionDetailPage() {
                   onBlockCompleted={handleBlockCompleted}
                   onStartEmomTimer={handleStartEmomTimer}
                   onStartIsoTimer={handleStartIsoTimer}
+                  onPlayDemo={handlePlayDemo}
                   getLoadSuggestion={getLoadSuggestion}
                 />
               </div>
@@ -912,6 +933,7 @@ export function SessionDetailPage() {
               onBlockCompleted={handleBlockCompleted}
               onStartEmomTimer={handleStartEmomTimer}
               onStartIsoTimer={handleStartIsoTimer}
+              onPlayDemo={handlePlayDemo}
               getLoadSuggestion={getLoadSuggestion}
             />
           </div>
@@ -927,6 +949,7 @@ export function SessionDetailPage() {
               session={adaptedSession}
               phase="completed"
               isPremium={isPremium}
+              onPlayDemo={handlePlayDemo}
             />
           </div>
         )}
@@ -1044,6 +1067,15 @@ export function SessionDetailPage() {
           Quitter
         </button>
       )}
+
+      {/* B3 — exercise demo sheet (eye button on exercise rows). Rendered at
+          page root so it overlays the entire content. Self-renders nothing
+          when demoExerciseId is null. */}
+      <ExerciseDemoSheet
+        exerciseId={demoExerciseId}
+        lang={lang}
+        onClose={() => setDemoExerciseId(null)}
+      />
     </div>
   )
 }

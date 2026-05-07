@@ -5,6 +5,20 @@ import { BlockHeader } from '../BlockHeader'
 import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
 import type { LoadSuggestion } from '../../../services/loadSuggestion'
+import { hasExerciseDemo } from '../../../data/exercises'
+import { resolveExerciseId } from '../../../services/motherSession/motherSessionExerciseMap'
+
+/**
+ * Per-exo gate for the eye/demo button. Tour-block exercises sometimes ship
+ * with the English session name and no direct exerciseId — fall back to the
+ * name→id map (same pattern as MotherSessionBlock.tsx:57). Only ~115/208
+ * exos in exercices.v1.json have a videoUrl, so without this gate the eye
+ * button would render dead on the rest.
+ */
+const exerciseHasDemo = (exo: Exercise): boolean => {
+  const exoId = exo.exerciseId ?? resolveExerciseId(exo.name ?? '')
+  return Boolean(exoId && hasExerciseDemo(exoId))
+}
 
 export interface ExoTourData {
   kg?: string
@@ -122,7 +136,7 @@ export function ToursBlock(props: ToursBlockProps) {
                 <PreviewExerciseRow
                   key={i}
                   exo={exo}
-                  onPlayDemo={onPlayDemo ? () => onPlayDemo(i) : undefined}
+                  onPlayDemo={onPlayDemo && exerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined}
                 />
               ))}
             </div>
@@ -289,7 +303,7 @@ function TourGroup({
                 onValidate={() => onValidateExo(i)}
                 onSetKg={onSetExoData ? (v) => onSetExoData(i, { kg: v }) : undefined}
                 onSetReps={onSetExoData ? (v) => onSetExoData(i, { reps: v }) : undefined}
-                onPlayDemo={onPlayDemo ? () => onPlayDemo(i) : undefined}
+                onPlayDemo={onPlayDemo && exerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined}
                 onStartIso={onStartIso ? (sec) => onStartIso(i, sec) : undefined}
               />
             )
