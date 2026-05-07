@@ -31,16 +31,96 @@ This cleanup also addresses the medical content concern — the legacy stack car
 
 **Commit** : `Decision #47 phase 0: cleanup plan + tracking doc`
 
-### Phase A — Caller audit + classification (0.5 d)
+### Phase A — Caller audit + classification (0.5 d) — DONE
 
-For each file under `src/services/program/`, `src/services/ui/`, `src/data/`, list exports and their production callers (excluding tests, dev-checks, knowledge MD).
+#### Methodology
 
-**Output** : a classification table in this doc, one row per file/function:
-- `LEGACY` — zero production callers, safe to delete
-- `ACTIVE` — used by motherSession path or other live UI, KEEP
-- `BRIDGE-MIXED` — file mixes legacy and active exports, requires per-export decision
+Reverse-import scan across `src/` (excluding `__tests__/`, `__devChecks__/`, `*.test.*`, knowledge `*.md`). For each candidate file, classify by transitive caller chain.
 
-Refine effort estimate per phase based on actual surface area.
+#### Classification table
+
+**LEGACY — zero production caller or transitively legacy chain (delete in Phase B)**
+
+| File | Reason |
+|---|---|
+| `services/program/buildWeekProgram.ts` | Only re-exported by `index.ts` which has no production caller |
+| `services/program/index.ts` | Zero production caller; just re-exports legacy |
+| `services/program/qualityGates.ts` | Only used by buildWeekProgram + qualityScorecard (also legacy) |
+| `services/program/qualityScorecard.ts` | Only used by buildWeekProgram |
+| `services/program/selectEligibleBlocks.ts` | Used by buildSessionFromRecipe + buildWeekProgram + index — all legacy |
+| `services/program/buildSessionFromRecipe.ts` | Zero non-legacy callers (only buildMobilitySession + buildProgramSessionLog legacy func + buildWeekProgram) |
+| `services/program/buildMobilitySession.ts` | Only used by MobilityPage (legacy chain — see D2 below) |
+| `services/program/sessionIntensity.ts` | Only used by buildWeekProgram |
+| `services/program/validateSession.ts` | Only used by buildWeekProgram + index |
+| `services/program/positionPreferences.v1.ts` | Only used by buildSessionFromRecipe + index |
+| `services/program/adaptBlockExercises.ts` | Only used by buildSessionFromRecipe + selectEligibleBlocks |
+| `services/program/resolveMicrocycleArchetype.ts` | Only used by buildWeekProgram |
+| `services/program/policies/normalizeProfile.ts` | Only used by buildWeekProgram |
+| `services/program/policies/safetyContracts.ts` | Only used by buildWeekProgram |
+| `services/program/policies/populationRules.ts` | Only used by buildWeekProgram + safetyContracts (legacy) |
+| `services/program/__devChecks__/*` | Dev-only diagnostics |
+| `services/program/testHelpers.ts` | Only test files reference it (none in production) |
+| `data/blocks.v1.json` | Production caller is ProgressPage line 240 ONLY (exercise frequency stats — easy migrate or drop visualization) |
+| `data/sessionRecipes.v1.ts` | All callers are legacy `services/program/*` files |
+| `data/microcycleArchetypes.v1.ts` | Only `resolveMicrocycleArchetype.ts` (legacy) |
+| `data/exerciseVariants.v1.ts` | Only `adaptBlockExercises.ts` (legacy chain) |
+
+**ACTIVE — used by motherSession path or live UI (DO NOT TOUCH in #47)**
+
+| File | Active callers |
+|---|---|
+| `data/motherSessions.generated.ts` | services/motherSession/*, services/scheduling/* |
+| `data/weeklyTemplates.ts` | services/motherSession/resolveMotherSessionsForWeek.ts |
+| `data/exercises.ts` | 17 active components/pages |
+| `data/exerciseDemos.ts` | data/exercises.ts |
+| `data/exercices.v1.json` | data/exercises.ts |
+| `data/exerciseMetricOverrides.v1.ts` | services/loadSuggestion, services/ui/exerciseMetrics, services/ui/suggestions |
+| `data/prehab.v1.json` | services/ui/getPrehab.ts → SessionDetailPage |
+| `services/ui/getPrehab.ts` | SessionDetailPage |
+| `services/ui/blockPresentation.ts` | motherSession components (6 callers) |
+| `services/ui/exerciseMetrics.ts` | SessionTourTracker, useBlockLogs, ProgressPage… |
+| `services/ui/exerciseSetSpec.ts` | session/blocks/PrehabBlock, ToursBlock, motherSession/findCurrentPending |
+| `services/ui/parseBlockFormat.ts` | 7 callers (motherSession + session components) |
+| `services/ui/clubLogos.ts` | 4 callers (club logo UI) |
+| `services/ui/debugDateOverride.ts` | 5 active callers |
+| `services/ui/imageCrop.ts` | ProfilePage |
+| `services/ui/progression.ts` | ProgressPage |
+| `services/ui/suggestions.ts` | ProgressPage |
+| `services/program/hasGlobalProgramHardBlock.ts` | MobilityPage, SessionDetailPage, WeekPage |
+| `services/program/detectProgramChange.ts` | hooks/useProgramChangeNotice |
+| `services/program/programHistoryAnalytics.ts` | HistoryPage, ProgressPage |
+| `services/program/resolveFatigueLevel.ts` | HomePage, SessionDetailPage, services/annualPlanning/* |
+| `services/program/resolveWeeklyProgramSurface.ts` | planning components, useWeekSnapshot, useWeeklyProgramSurface |
+| `services/program/restartRampUp.ts` | ProfilePage, services/annualPlanning/* |
+| `services/program/scheduleOptimizer.ts` | GymDaySelector, ClubSettingsSection, OnboardingPage, hooks |
+| `services/program/sessionLogPresentation.ts` | HistoryPage, ProgressPage |
+
+**BRIDGE-MIXED — mix legacy + active exports, split during Phase C**
+
+| File | Active export | Legacy export |
+|---|---|---|
+| `services/program/buildProgramSessionLog.ts` | `mapMotherSessionType`, `buildAnnualWeekCode`, `buildMotherSessionProgramSessionLog` (used by SessionDetailPage) | `buildLegacyProgramSessionLog` (legacy chain via BuiltSession type) |
+| `services/program/programPhases.v1.ts` | exports used by ChatPage (verify which) | exports used by buildSessionFromRecipe + buildWeekProgram |
+| `services/program/policies/featureFlags.ts` | exports used by hooks/useProgramFeatureFlags + useWeeklyProgramSurface | exports used by buildWeekProgram |
+| `services/program/policies/ruleConstants.v1.ts` | exports used by hooks/useACWR | exports used by buildWeekProgram + safetyContracts |
+| `services/ui/getTodaySessionIndex.ts` + `services/ui/mapSlotsToScheduleDays.ts` | TBD — getTodaySessionIndex has 0 reported callers; verify it's not unused entirely | possibly fully legacy |
+
+#### MobilityPage decision (D2 → resolved by audit)
+
+`pages/MobilityPage.tsx` imports `buildMobilitySession` (legacy) + `getGlobalProgramHardBlock` (active). The page is reachable via `/mobility` route in `App.tsx`. Path is **LEGACY-DEPENDENT** — if Phase B deletes `buildMobilitySession`, MobilityPage breaks.
+
+**Recommendation** : delete the route + page during Phase D. Mobility content (light recovery sessions) can be reintroduced V1.1 via motherSession path if needed. The current MobilityPage is not core to the V1 prepa/inter-saison/saison loop.
+
+#### Refined effort estimate
+
+| Phase | Original | Revised | Note |
+|---|---|---|---|
+| B — delete pure legacy | 1 d | **0.5 d** | Clean delete + ProgressPage line 240 migration |
+| C — split bridges | 1.5 d | **1 d** | Bridges smaller than feared (5 files, mostly type-import surgery) |
+| D — types + UI rehab + ACL rename + MobilityPage | 1 d | **1 d** | Confirmed MobilityPage delete |
+| E — DB migration + tests | 0.5 d | **0.5 d** | Unchanged |
+| F — docs | 0.5 d | **0.5 d** | Unchanged |
+| **Total** | 5 d | **3.5 d** | -1.5 d |
 
 **Commit** : `Decision #47 phase A: caller audit + classification table`
 
