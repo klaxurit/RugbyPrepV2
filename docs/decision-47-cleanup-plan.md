@@ -2,8 +2,9 @@
 
 **Branch** : `chore/decision-47-cleanup`
 **Started** : 2026-05-07
-**Estimated effort** : ~5 days (1 commit per phase, 6 phases A-F)
-**Status** : Phase 0 in progress
+**Completed** : 2026-05-07 (single session)
+**Actual effort** : ~3h conversation (vs 3.5d estimate)
+**Status** : ✅ ALL PHASES SHIPPED — net **-17 426 lines**, 1127 tests green, typecheck clean. Pending: `supabase db push` to apply migration 20260507200000.
 
 ## Context
 
