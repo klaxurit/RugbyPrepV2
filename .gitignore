@@ -44,6 +44,7 @@ supabase/.branches/
 
 # Android TWA (bubblewrap)
 android.keystore
+app/build/
 
 # iOS Capacitor — natif généré, on commit la config et le scaffolding,
 # mais pas les builds/cache locaux
@@ -83,5 +84,7 @@ _bmad-output/
 .claude/
 docs/*
 !docs/testing/
+!docs/training/
 !docs/google-play-launch-checklist.md
 !docs/google-play-store-listing.md
+!docs/release-v1-plan.md
