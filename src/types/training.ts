@@ -265,7 +265,6 @@ export interface UserProfile {
   trainingBaselineSetAt?: string | null
   performanceFocus?: PerformanceFocus
   preferredLanguage?: 'fr' | 'en'
-  rehabInjury?: RehabInjury
   populationSegment?: PopulationSegment
   ageBand?: AgeBand
   parentalConsentHealthData?: boolean
@@ -364,16 +363,6 @@ export interface Exercise {
 
 export type SessionType = 'UPPER' | 'LOWER' | 'FULL' | 'CONDITIONING' | 'RECOVERY' | 'ACTIVE_RECOVERY';
 
-export type RehabZone = 'upper' | 'lower'
-export type RehabPhase = 1 | 2 | 3
-
-export interface RehabInjury {
-  type?: Contra
-  zone: RehabZone
-  phase: RehabPhase
-  startDate: string
-  phaseStartDate: string
-}
 export type FatigueStatus = 'OK' | 'FATIGUE';
 
 /**

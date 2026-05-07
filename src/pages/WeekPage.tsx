@@ -293,11 +293,9 @@ export function WeekPage() {
   }, [weekPresentation, logs, today])
 
   const hasWeekMatch = (weekPresentation?.matchEvents.length ?? 0) > 0
-  const isRehabP1 = profile.rehabInjury?.phase === 1
   const arGlobalOk = !isUnavailable
     && readinessResult.score >= 40
     && acwrResult.zone !== 'critical'
-    && !isRehabP1
     && msResolution != null
 
   const activeRecoveryEligibleDays = useMemo(() => {

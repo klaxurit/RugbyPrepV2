@@ -404,7 +404,6 @@ export function SessionDetailPage() {
       currentSlotSignature: slotSignature,
       week,
       acwr: null, // ratio brut non disponible ici, l'override ACWR>1.3 transite via fatigueLevel
-      isRehabActive: profile.rehabInjury != null,
       fatigueLevel,
       trainingLevel: profile.trainingLevel ?? 'performance',
       daysToMatch: surface.planningContext.daysUntilNextMatch ?? null,
@@ -418,7 +417,6 @@ export function SessionDetailPage() {
     week,
     acwrZone,
     fatigue,
-    profile.rehabInjury,
     profile.trainingLevel,
   ])
 

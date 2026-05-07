@@ -16,7 +16,6 @@ const baseCtx = (overrides: Partial<LoadSuggestionContext> = {}): LoadSuggestion
   lastEntry: baseEntry(),
   week: 'W1',
   acwr: null,
-  isRehabActive: false,
   fatigueLevel: 'normal',
   trainingLevel: 'performance',
   historicalEntries: [baseEntry(), baseEntry()],

@@ -67,7 +67,6 @@ export const applyHealthConsentLifecycle = ({
     next.healthConsentRevokedAt = now
     next.healthDataRetentionState = 'pending_purge'
     // Minimize retained health data when consent is revoked.
-    next.rehabInjury = undefined
     next.injuries = []
     next.cycleTrackingOptIn = false
     next.cycleSymptomScoreToday = undefined

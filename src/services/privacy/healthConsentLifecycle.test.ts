@@ -33,12 +33,6 @@ describe('applyHealthConsentLifecycle', () => {
       parentalConsentHealthData: true,
       cycleTrackingOptIn: true,
       cycleSymptomScoreToday: 2,
-      rehabInjury: {
-        zone: 'lower',
-        phase: 2,
-        startDate: '2026-03-01',
-        phaseStartDate: '2026-03-08',
-      },
       weeklyLoadContext: {
         contactHighMinutesWeek: 10,
       },
@@ -55,7 +49,6 @@ describe('applyHealthConsentLifecycle', () => {
     expect(next.healthConsentStatus).toBe('revoked')
     expect(next.healthDataRetentionState).toBe('pending_purge')
     expect(next.injuries).toEqual([])
-    expect(next.rehabInjury).toBeUndefined()
     expect(next.cycleTrackingOptIn).toBe(false)
     expect(next.weeklyLoadContext).toBeUndefined()
     expect(next.healthConsentAuditTrail?.at(-1)?.action).toBe('revoked')

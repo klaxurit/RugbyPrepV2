@@ -72,15 +72,6 @@ describe('getGlobalProgramHardBlock', () => {
     expect(result.hardBlockReasons).toEqual([])
   })
 
-  it('rehab active → pas de hard-block', () => {
-    const result = getGlobalProgramHardBlock({
-      ...BASE_PROFILE,
-      rehabInjury: { zone: 'lower', phase: 1, startDate: '2025-01-01', phaseStartDate: '2025-01-01' },
-    })
-    expect(result.hasHardBlock).toBe(false)
-    expect(result.hardBlockReasons).toEqual([])
-  })
-
   it('U18-related fields → pas de hard-block (app adultes uniquement)', () => {
     const result = getGlobalProgramHardBlock({
       ...BASE_PROFILE,

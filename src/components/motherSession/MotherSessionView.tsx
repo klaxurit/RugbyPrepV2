@@ -35,7 +35,6 @@ type MotherSessionViewProps = {
   }
   isPremium?: boolean
   acwr?: number | null
-  isRehabActive?: boolean
   trainingLevel?: TrainingLevel
   equipment?: Equipment[]
   /** Cette séance est-elle en cours ? Passé par l'hôte (vérifié via isRunningFor(sessionKey)). */
@@ -80,7 +79,6 @@ export function MotherSessionView({
   getBestForExercise,
   isPremium,
   acwr,
-  isRehabActive,
   trainingLevel,
   equipment,
   isRunning,
@@ -167,7 +165,6 @@ export function MotherSessionView({
                 getBestForExercise={getBestForExercise}
                 isPremium={isPremium}
                 acwr={acwr}
-                isRehabActive={isRehabActive}
                 hideHeader
                 expandCoaching={previewDefaultOpen || runState.isActive}
                 isRunning={isRunning}

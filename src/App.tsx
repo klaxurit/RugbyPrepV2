@@ -24,7 +24,6 @@ const ProgressPage = lazy(() => import('./pages/ProgressPage').then(m => ({ defa
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })))
 const HistoryPage = lazy(() => import('./pages/HistoryPage').then(m => ({ default: m.HistoryPage })))
 const ChatPage = lazy(() => import('./pages/ChatPage').then(m => ({ default: m.ChatPage })))
-const MobilityPage = lazy(() => import('./pages/MobilityPage').then(m => ({ default: m.MobilityPage })))
 const ProgramPage = lazy(() => import('./pages/ProgramPage').then(m => ({ default: m.ProgramPage })))
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage').then(m => ({ default: m.OnboardingPage })))
 const StaffPlanningSandboxPage = lazy(() => import('./pages/StaffPlanningSandboxPage').then(m => ({ default: m.StaffPlanningSandboxPage })))
@@ -158,7 +157,6 @@ function App() {
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/program" element={<ProgramPage />} />
             <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
-            <Route path="/mobility" element={<MobilityPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/staff-sandbox" element={<StaffPlanningSandboxPage />} />
           </Route>

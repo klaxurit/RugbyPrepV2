@@ -29,7 +29,6 @@ export type MotherSessionBlockProps = {
   }
   isPremium?: boolean
   acwr?: number | null
-  isRehabActive?: boolean
   /** Si true, le composant saute son entête (nom / format) — l'hôte le rend lui-même. */
   hideHeader?: boolean
   /** Si true, ouvre par défaut les "Notes de coaching" du bloc (utile sur le premier bloc). */

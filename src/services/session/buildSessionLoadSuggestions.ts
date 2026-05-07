@@ -23,7 +23,6 @@ export interface BuildSessionLoadSuggestionsInputs {
   currentSlotSignature: string | null
   week: CycleWeek
   acwr: number | null
-  isRehabActive: boolean
   fatigueLevel: FatigueLevel
   trainingLevel: TrainingLevel
   daysToMatch: number | null
@@ -52,7 +51,6 @@ export function buildSessionLoadSuggestions({
   currentSlotSignature,
   week,
   acwr,
-  isRehabActive,
   fatigueLevel,
   trainingLevel,
   daysToMatch,
@@ -89,7 +87,6 @@ export function buildSessionLoadSuggestions({
           lastEntry: undefined,
           week,
           acwr,
-          isRehabActive,
           fatigueLevel,
           trainingLevel,
           historicalEntries: [],
@@ -147,7 +144,6 @@ export function buildSessionLoadSuggestions({
         lastEntry,
         week,
         acwr,
-        isRehabActive,
         fatigueLevel,
         trainingLevel,
         historicalEntries,

@@ -33,7 +33,6 @@ export interface LoadSuggestionContext {
   lastEntry: ExerciseLogEntry | undefined
   week: CycleWeek
   acwr: number | null
-  isRehabActive: boolean
   fatigueLevel: FatigueLevel
   daysSinceLastLog?: number
   /** Niveau d'entraînement (G5). Starter → jamais de suggestion. */
@@ -116,7 +115,6 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
     lastEntry,
     week,
     acwr,
-    isRehabActive,
     fatigueLevel,
     daysSinceLastLog,
     trainingLevel,
@@ -174,8 +172,6 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
       justification = 'Semaine de deload — volume reduit.'
     } else if (acwr !== null && acwr > 1.3) {
       justification = 'Charge elevee — maintien des reps.'
-    } else if (isRehabActive) {
-      justification = 'Protocole rehab actif — reps stables.'
     } else if (fatigueLevel === 'high' || fatigueLevel === 'very_high') {
       justification = 'Fatigue elevee — reps stables.'
     } else if (rpe !== undefined) {
@@ -248,19 +244,7 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
     }
   }
 
-  // 3. Rehab active
-  if (isRehabActive) {
-    return {
-      decision: 'maintain',
-      suggestedWeight: lastWeight,
-      suggestedReps: lastEntry.reps ?? null,
-      justification: 'Protocole rehab actif — charge stable.',
-      nextTarget: null,
-      confidence: 'high',
-    }
-  }
-
-  // 4. High fatigue
+  // 3. High fatigue
   if (fatigueLevel === 'high' || fatigueLevel === 'very_high') {
     return {
       decision: 'maintain',
