@@ -270,11 +270,12 @@ features débloquées immédiatement, et ses droits reflétés côté backend.
 - **Contrast/Neural** : intra-pair 0s + inter-pair 2-3min (réclame nouveau champ data)
 
 **Travail réel** :
-1. ✅ **Décision data model tranchée (option b)** : pas de nouveau champ `restBetweenRounds`. `restSeconds` reste au niveau `versions[]` (rest entre séries). Inter-pair / inter-superset / work:rest conditioning **inféré par convention sur `intent`** :
-   - `intent: contrast` → inter-pair = 2-3min implicite (le test contractuel l'asserte sans avoir besoin du champ)
-   - `intent: neural` (jumps, throws) → idem 2-3min entre séries vraies
-   - `intent: conditioning` → ratio work:rest dérivé du tag de protocole (HIIT, lactate, aérobie) — tag à enrichir si absent
-   - `intent: force/hypertrophy/etc.` → `restSeconds` = rest entre séries telle quelle
+1. ✅ **Décision data model tranchée (Décision #40 v2 — révisée 2026-05-07 J1)** : pas de nouveau champ. `restSeconds` au niveau `versions[]` = **rest entre vraies séries** (entre exécutions complètes du contenu de `scheme`). La structure intra-pair / intra-triplet / intra-superset est encodée par `scheme.kind` (`emom` pour time-bound) ou par la notation composite dans `scheme.reps` (`"5 / 5 / 6"`, `"5 + 5"`). Convention canonique `(intent × scheme.kind) → range` documentée dans [`src/data/README-rest-times.md`](../src/data/README-rest-times.md).
+   - `intent: contrast` reps → `restSeconds` 120-180s = rest **après triplet complet** (heavy + plyo + accessoire). Aucune entry à 0s — la v1 du #40 était fondée sur lecture théorique fausse, corrigée à J1.
+   - `intent: neural` emom → `restSeconds = 0` strict (EMOM gère son timing)
+   - `intent: neural` reps → 60-150s (dynamic effort + tolérance olympic complex)
+   - `intent: conditioning` → ratio work:rest dérivé du tag protocole (`hiit`, `aerobic`, `vo2max`, `lactate`, `rsa`) — tous les blocs actuels ont déjà ce tag, audit J1 confirmé
+   - `intent: force/hypertrophy/etc.` → `restSeconds` = rest entre séries selon table KB
 2. Tableau version-level : 548 entries × 13 intents → audit par paire (intent, restSeconds)
 3. Identifier mistags suspects : prehab 180s (force-zone numbers), conditioning sans tag de protocole clair
 4. Test contractuel : `src/data/__tests__/restTimes.contract.test.ts` qui assert restSeconds in range par `(intent × scheme.kind)`. Pour contrast/neural, valider que `restSeconds === 0` (intra-pair) → la convention dit qu'on sait déjà que le 2-3min inter-pair est implicite.
@@ -348,7 +349,7 @@ features débloquées immédiatement, et ses droits reflétés côté backend.
 |---|---|---|---:|---:|---|
 | B1 valid Android + iOS V1.1 séparé | P1 | **P2** | 1-2j | **0.5j** | Week 6 |
 | B2 audit rest times | P0 | **P0** | 2-3j | **3-4j** | Week 1-2 |
-| B3 vidéos demo restore | P1 | **P1** | 0.5-1j | **1-1.5j** | Week 4-5 |
+| B3 vidéos demo restore | P1 | **P1** | 0.5-1j | **1-1.5j** | Week 4-5 → ✅ DONE 2026-05-07 |
 | B4 transitions hardening | P1 | **P1** | 2-3j | **1.5j** | Week 3 |
 | **Total** | | | **7-10j** | **6.5-7.5j** | **+1 sem max** |
 
@@ -360,7 +361,8 @@ features débloquées immédiatement, et ses droits reflétés côté backend.
 |---|---|---|---|---|
 | 38 | B1 review | Reclassifier B1 P1 → P2 (validation seulement V1) ; iOS V1.1 nécessite server-scheduled push (3-5j séparé) | Mechanical | P5 explicit |
 | 39 | B2 review | Conserver 45-60s pour activation (KB-supported), drop la règle "0-30s" inventée | Mechanical | P1 KB truth |
-| 40 | B2 review | **TRANCHÉ (b)** : pas de nouveau champ. Garder `restSeconds` au niveau `versions[]` + inférer inter-pair via convention `intent` (contrast/neural → 2-3min implicite, conditioning → protocole-specific via tag) | Mechanical | P5 explicit |
+| 40 | B2 review | **TRANCHÉ (b) — révisé v2 2026-05-07 J1** : pas de nouveau champ. `restSeconds` = rest entre vraies séries ; structure intra-pair encodée par `scheme.kind=emom` ou notation composite `scheme.reps`. v1 ("intra-pair=0, inter-pair 2-3min implicite") corrigée — aucune entry contrast à 0s, le triplet est exécuté en série. Voir [`src/data/README-rest-times.md`](../src/data/README-rest-times.md) | Mechanical | P5 explicit + P1 KB truth |
+| 46 | B2 J1 audit | Retag à J3 : `BLK_FORCE_UPPER_REHAB_BAND_STRENGTH_01` (4 versions) + `BLK_FORCE_LOWER_REHAB_STABILITY_01` (4 versions) → `intent: force → hypertrophy` ou `prehab` (charge band sub-maximale, pas du force max). `BLK_PREHAB_COPENHAGEN_01` (4 versions) → réduire 180→60-90s. Allowlist : `BLK_FORCE_UPPER_OHP_PENDLAY_01` (3 versions, superset antagoniste OHP+Pendlay row, légitime). Impact routing `selectEligibleBlocks` à vérifier pour les retags. | Mechanical | P1 KB truth |
 | 41 | B3 review | Réutiliser `motherSession/ExerciseDemoSheet.tsx` au lieu d'en créer un nouveau (DRY) | Mechanical | P4 |
 | 42 | B3 review | Per-exercise gating obligatoire (115/208 vidéos seulement) | Mechanical | P5 |
 | 43 | B4 review | Corriger noms fonctions plan : `getSessionPhase`, `getPhaseForWeek`, `getNextWeekForProfile`, `resolveMicrocycleArchetype` | Mechanical | P5 |
