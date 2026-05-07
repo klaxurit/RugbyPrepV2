@@ -1,5 +1,5 @@
 /**
- * Helpers purs pour construire un SessionLog enrichi à partir d'une séance legacy ou mother-session.
+ * Helpers purs pour construire un SessionLog enrichi à partir d'une mother-session.
  * Aucun side-effect — retourne un Omit<SessionLog, 'id'> prêt à être passé à addLog().
  */
 import type {
@@ -10,7 +10,6 @@ import type {
 } from '../../types/training'
 import { formatTitleFromMotherSessionId } from '../../components/motherSession/formatMotherSessionTitle'
 import type { AnnualPlanningContext } from '../../types/annualPlanning'
-import type { BuiltSession } from './buildSessionFromRecipe'
 import type { ResolvedMotherSessionSlot } from '../motherSession/resolveMotherSessionsForWeek'
 import type { MotherSessionType } from '../../types/motherSession'
 
@@ -27,33 +26,6 @@ const MOTHER_SESSION_TYPE_MAP: Record<MotherSessionType, SessionType> = {
 
 export function mapMotherSessionType(msType: MotherSessionType): SessionType {
   return MOTHER_SESSION_TYPE_MAP[msType] ?? 'FULL'
-}
-
-// ── Builder legacy ───────────────────────────────────────────────────────────
-
-export function buildLegacyProgramSessionLog(params: {
-  dateISO: string
-  week: CycleWeek
-  fatigue: FatigueStatus
-  notes?: string
-  rpe?: number
-  durationMin?: number
-  sessionType: SessionType
-  session: BuiltSession
-}): Omit<SessionLog, 'id'> {
-  const { dateISO, week, fatigue, notes, rpe, durationMin, sessionType, session } = params
-  return {
-    dateISO,
-    week,
-    sessionType,
-    fatigue,
-    notes,
-    rpe,
-    durationMin,
-    programSource: 'legacy',
-    legacyRecipeId: session.recipeId,
-    sessionLabel: session.title,
-  }
 }
 
 // ── annualWeekCode helper ─────────────────────────────────────────────────────

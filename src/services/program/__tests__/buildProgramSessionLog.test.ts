@@ -1,29 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildAnnualWeekCode,
-  buildLegacyProgramSessionLog,
   buildMotherSessionProgramSessionLog,
   mapMotherSessionType,
 } from '../buildProgramSessionLog'
-import type { BuiltSession } from '../buildSessionFromRecipe'
 import type { ResolvedMotherSessionSlot } from '../../motherSession/resolveMotherSessionsForWeek'
 import type { AnnualPlanningContext } from '../../../types/annualPlanning'
 import type { MotherSession } from '../../../types/motherSession'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-
-function makeFakeBuiltSession(recipeId = 'UPPER_V1', title = 'Upper Force'): BuiltSession {
-  return {
-    recipeId,
-    title,
-    week: 'W1',
-    intensity: 'heavy',
-    blocks: [],
-    warnings: [],
-    isSafetyAdapted: false,
-    safetyAdjustments: [],
-  } as unknown as BuiltSession
-}
 
 function makeFakeMotherSession(id: string, sessionType: MotherSession['metadata']['sessionType']): MotherSession {
   return {
@@ -89,43 +74,6 @@ describe('mapMotherSessionType', () => {
   it('full → FULL', () => expect(mapMotherSessionType('full')).toBe('FULL'))
   it('full_light_primer → FULL', () => expect(mapMotherSessionType('full_light_primer')).toBe('FULL'))
   it('speed_power → CONDITIONING', () => expect(mapMotherSessionType('speed_power')).toBe('CONDITIONING'))
-})
-
-// ── Tests buildLegacyProgramSessionLog ───────────────────────────────────────
-
-describe('buildLegacyProgramSessionLog', () => {
-  it('produit un log enrichi avec programSource=legacy', () => {
-    const session = makeFakeBuiltSession('LOWER_V1', 'Lower Force')
-    const log = buildLegacyProgramSessionLog({
-      dateISO: '2026-03-21T10:00:00Z',
-      week: 'W2',
-      fatigue: 'OK',
-      notes: 'RAS',
-      sessionType: 'LOWER',
-      session,
-    })
-
-    expect(log.programSource).toBe('legacy')
-    expect(log.legacyRecipeId).toBe('LOWER_V1')
-    expect(log.sessionLabel).toBe('Lower Force')
-    expect(log.motherSessionId).toBeUndefined()
-    expect(log.week).toBe('W2')
-    expect(log.sessionType).toBe('LOWER')
-    expect(log.fatigue).toBe('OK')
-    expect(log.notes).toBe('RAS')
-  })
-
-  it('n\'inclut pas de programContext', () => {
-    const session = makeFakeBuiltSession()
-    const log = buildLegacyProgramSessionLog({
-      dateISO: '2026-03-21T10:00:00Z',
-      week: 'W1',
-      fatigue: 'FATIGUE',
-      sessionType: 'UPPER',
-      session,
-    })
-    expect(log.programContext).toBeUndefined()
-  })
 })
 
 // ── Tests buildMotherSessionProgramSessionLog ────────────────────────────────

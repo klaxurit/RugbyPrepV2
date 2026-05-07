@@ -1,5 +1,3 @@
-import type { SessionRecipeId } from '../../../data/sessionRecipes.v1'
-
 export const RULE_CONSTANTS_V1 = {
   acwr: {
     // Hulin 2016 (BJSM): 0.8–1.3 optimal, 1.3–1.5 caution, ≥1.5 danger (×2.12 risk), ≥2.0 critical
@@ -9,7 +7,7 @@ export const RULE_CONSTANTS_V1 = {
     criticalThreshold: 2.0,
   },
   deload: {
-    recipeId: 'RECOVERY_MOBILITY_V1' as SessionRecipeId,
+    recipeId: 'RECOVERY_MOBILITY_V1' as const,
     maxSessions: 1,
   },
   u18: {
