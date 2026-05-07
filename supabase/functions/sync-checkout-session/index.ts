@@ -3,7 +3,6 @@ import { requireUser } from '../_shared/supabase.ts'
 import { getPlanIdForStripePrice, stripeRequest } from '../_shared/stripe.ts'
 
 type BillingStatus = 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled' | 'expired'
-type BillingProvider = 'manual' | 'stripe' | 'app_store' | 'play_store'
 
 type SyncBody = {
   sessionId?: string
@@ -56,100 +55,17 @@ const mapStripeStatus = (status: string | undefined, paymentStatus?: string): Bi
   return 'inactive'
 }
 
-const syncSubscriptionAndEntitlements = async (
-  serviceClient: Awaited<ReturnType<typeof requireUser>>['serviceClient'],
-  payload: {
-    userId: string
-    planId: string
-    provider: BillingProvider
-    providerCustomerId?: string | null
-    providerSubscriptionId?: string | null
-    status: BillingStatus
-    currentPeriodStart?: string | null
-    currentPeriodEnd?: string | null
-    cancelAtPeriodEnd?: boolean
-    metadata?: Record<string, unknown>
-  },
-) => {
-  const { data: plan, error: planError } = await serviceClient
-    .from('plans')
-    .select('id')
-    .eq('id', payload.planId)
-    .maybeSingle()
-
-  if (planError) return { error: planError.message, code: 400 as const }
-  if (!plan) return { error: `Unknown plan '${payload.planId}'`, code: 404 as const }
-
-  const onConflict = 'user_id,provider'
-
-  const { error: subscriptionError } = await serviceClient
-    .from('user_subscriptions')
-    .upsert(
-      {
-        user_id: payload.userId,
-        plan_id: payload.planId,
-        provider: payload.provider,
-        provider_customer_id: payload.providerCustomerId ?? null,
-        provider_subscription_id: payload.providerSubscriptionId ?? null,
-        status: payload.status,
-        current_period_start: payload.currentPeriodStart ?? null,
-        current_period_end: payload.currentPeriodEnd ?? null,
-        cancel_at_period_end: payload.cancelAtPeriodEnd ?? false,
-        metadata: payload.metadata ?? {},
-      },
-      { onConflict },
-    )
-
-  if (subscriptionError) return { error: subscriptionError.message, code: 400 as const }
-
-  const { error: deleteError } = await serviceClient
-    .from('user_entitlements')
-    .delete()
-    .eq('user_id', payload.userId)
-    .eq('source', 'billing')
-
-  if (deleteError) return { error: deleteError.message, code: 400 as const }
-
-  if (ACTIVE_STATUSES.has(payload.status)) {
-    const { data: planEntitlements, error: entitlementsError } = await serviceClient
-      .from('plan_entitlements')
-      .select('entitlement_key')
-      .eq('plan_id', payload.planId)
-
-    if (entitlementsError) return { error: entitlementsError.message, code: 400 as const }
-
-    if ((planEntitlements ?? []).length > 0) {
-      const rows = planEntitlements!.map((row) => ({
-        user_id: payload.userId,
-        entitlement_key: row.entitlement_key,
-        source: 'billing',
-        status: 'active',
-        expires_at: payload.currentPeriodEnd ?? null,
-        metadata: {
-          plan_id: payload.planId,
-          provider: payload.provider,
-          ...(payload.metadata ?? {}),
-        },
-      }))
-
-      const { error: insertError } = await serviceClient
-        .from('user_entitlements')
-        .upsert(rows, { onConflict: 'user_id,entitlement_key' })
-
-      if (insertError) return { error: insertError.message, code: 400 as const }
-    }
-  } else {
-    const { error: restoreFreeError } = await serviceClient
-      .rpc('grant_default_free_entitlements', { target_user_id: payload.userId })
-    if (restoreFreeError) return { error: restoreFreeError.message, code: 400 as const }
+const mapRpcError = (rpcError: { code?: string; message?: string }): { status: number; body: Record<string, unknown> } => {
+  if (rpcError.code === '23505') {
+    return { status: 409, body: { error: 'Purchase already linked to another account.', code: 'token_already_bound' } }
   }
-
-  return {
-    ok: true as const,
-    userId: payload.userId,
-    planId: payload.planId,
-    status: payload.status,
+  if (rpcError.code === '23514') {
+    return { status: 400, body: { error: rpcError.message ?? 'Invalid billing payload', code: 'check_violation' } }
   }
+  if (rpcError.code === '23503') {
+    return { status: 404, body: { error: rpcError.message ?? 'Unknown plan', code: 'unknown_plan' } }
+  }
+  return { status: 500, body: { error: rpcError.message ?? 'RPC error', code: rpcError.code } }
 }
 
 Deno.serve(async (req: Request) => {
@@ -207,35 +123,87 @@ Deno.serve(async (req: Request) => {
       }, 422)
     }
 
-    const status = mapStripeStatus(subscription?.status, session.payment_status)
+    // Race case: Stripe says session is paid but subscription propagation
+    // hasn't finished yet. Frontend should retry. Better than granting an
+    // active subscription with null period_end (Decision #25 anti-pattern).
+    if (!subscription) {
+      if (session.payment_status === 'paid') {
+        return json({
+          ok: false,
+          pending: true,
+          reason: 'subscription_not_yet_propagated',
+          retryAfterMs: 2000,
+        }, 202)
+      }
+      // Not paid yet, nothing to sync.
+      return json({ ok: true, synced: false, reason: 'session_not_paid' })
+    }
 
-    const syncResult = await syncSubscriptionAndEntitlements(serviceClient, {
-      userId: user.id,
-      planId,
-      provider: 'stripe',
-      providerCustomerId: session.customer ?? null,
-      providerSubscriptionId: subscription?.id ?? null,
-      status,
-      currentPeriodStart: fromUnixSecondsToIso(subscription?.current_period_start),
-      currentPeriodEnd: fromUnixSecondsToIso(subscription?.current_period_end),
-      cancelAtPeriodEnd: subscription?.cancel_at_period_end ?? false,
-      metadata: {
+    const status = mapStripeStatus(subscription.status, session.payment_status)
+    const currentPeriodEnd = fromUnixSecondsToIso(subscription.current_period_end)
+
+    // Same defense-in-depth as billing-webhook: refuse active without period_end.
+    if (ACTIVE_STATUSES.has(status) && !currentPeriodEnd) {
+      return json({
+        ok: false,
+        pending: true,
+        reason: 'subscription_period_end_missing',
+        retryAfterMs: 2000,
+      }, 202)
+    }
+
+    // Synthetic event_id keyed on subscription identity. The Stripe webhook
+    // uses Stripe's `evt_*` event ids; this `sync_*` namespace cannot collide
+    // with webhook events. The ledger will dedupe sync calls vs each other
+    // (e.g., user reloads /checkout/success page) and the stale-event guard
+    // protects against this sync racing the webhook for the same subscription.
+    const syntheticEventId = `sync_session_${session.id}_${currentPeriodEnd ?? 'unbound'}`
+
+    const { data: rpc, error: rpcError } = await serviceClient.rpc('grant_billing_entitlements', {
+      p_provider: 'stripe',
+      p_event_id: syntheticEventId,
+      p_event_created_at: new Date().toISOString(),
+      p_user_id: user.id,
+      p_plan_id: planId,
+      p_provider_subscription_id: subscription.id,
+      p_provider_purchase_token: null,
+      p_status: status,
+      p_current_period_start: fromUnixSecondsToIso(subscription.current_period_start),
+      p_current_period_end: currentPeriodEnd,
+      p_provider_customer_id: session.customer ?? null,
+      p_cancel_at_period_end: subscription.cancel_at_period_end ?? false,
+      p_metadata: {
         source: 'sync_checkout_session',
         stripe_checkout_session_id: session.id,
         stripe_price_id: stripePriceIdFromSubscription ?? stripePriceIdFromSession,
       },
     })
 
-    if ('error' in syncResult) return json({ error: syncResult.error }, syncResult.code)
+    if (rpcError) {
+      console.error('[sync-checkout-session] RPC error:', rpcError)
+      const mapped = mapRpcError(rpcError)
+      return json(mapped.body, mapped.status)
+    }
+
+    const rpcResult = rpc as {
+      result: 'granted' | 'already_processed' | 'stale_event_rejected'
+      event_id?: string
+      plan_id?: string
+      status?: string
+      expires_at?: string | null
+    }
 
     return json({
       ok: true,
-      synced: true,
-      userId: syncResult.userId,
-      planId: syncResult.planId,
-      status: syncResult.status,
+      synced: rpcResult.result === 'granted',
+      idempotenceResult: rpcResult.result,
+      userId: user.id,
+      planId,
+      status,
+      expiresAt: currentPeriodEnd,
     })
   } catch (error) {
+    console.error('[sync-checkout-session] Uncaught error:', String(error))
     return json({ error: String(error) }, 500)
   }
 })

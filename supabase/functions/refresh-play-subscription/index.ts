@@ -4,9 +4,26 @@ import { verifyPlayPurchase, getPlanIdForPlayProduct } from '../_shared/playBill
 
 const PACKAGE_NAME = 'fr.rugbyforge.app'
 
+const mapRpcError = (rpcError: { code?: string; message?: string }): { status: number; body: Record<string, unknown> } => {
+  if (rpcError.code === '23505') {
+    return { status: 409, body: { error: 'Purchase already linked to another account.', code: 'token_already_bound' } }
+  }
+  if (rpcError.code === '23514') {
+    return { status: 400, body: { error: rpcError.message ?? 'Invalid billing payload', code: 'check_violation' } }
+  }
+  if (rpcError.code === '23503') {
+    return { status: 404, body: { error: rpcError.message ?? 'Unknown plan', code: 'unknown_plan' } }
+  }
+  return { status: 500, body: { error: rpcError.message ?? 'RPC error', code: rpcError.code } }
+}
+
 /**
  * Re-verifies the user's Play Store subscription using the stored purchase token.
  * Called by the frontend when current_period_end has passed to check if Google renewed.
+ *
+ * Decision #23: state mutations go through grant_billing_entitlements RPC
+ * (idempotent on (provider, event_id), per-subscription advisory lock,
+ * stale-event rejection, plan_id-driven entitlement reconciliation).
  */
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
@@ -16,10 +33,12 @@ Deno.serve(async (req: Request) => {
   if (!user) return json({ error: 'Unauthorized' }, 401)
 
   try {
-    // Get the user's play_store subscription with stored purchase token
+    // Get the user's play_store subscription with stored purchase token.
+    // Read provider_purchase_token (column, post-migration) with fallback to
+    // metadata.purchase_token to gracefully handle any pre-backfill rows.
     const { data: sub, error: subError } = await serviceClient
       .from('user_subscriptions')
-      .select('plan_id, metadata, current_period_end')
+      .select('plan_id, metadata, provider_purchase_token, provider_subscription_id, current_period_end')
       .eq('user_id', user.id)
       .eq('provider', 'play_store')
       .maybeSingle()
@@ -28,74 +47,118 @@ Deno.serve(async (req: Request) => {
       return json({ ok: false, reason: 'no_play_subscription' })
     }
 
-    const purchaseToken = (sub.metadata as { purchase_token?: string })?.purchase_token
-    const productId = (sub.metadata as { product_id?: string })?.product_id
+    const purchaseToken =
+      (sub as { provider_purchase_token?: string }).provider_purchase_token
+      ?? (sub.metadata as { purchase_token?: string })?.purchase_token
+      ?? null
+
+    const productId = (sub.metadata as { product_id?: string })?.product_id ?? null
+
     if (!purchaseToken || !productId) {
       return json({ ok: false, reason: 'no_stored_token' })
     }
 
-    // Re-verify with Google
+    // Re-verify with Google Play Developer API
     const result = await verifyPlayPurchase(PACKAGE_NAME, productId, purchaseToken)
+    console.log('[refresh-play-subscription] Google API result:', {
+      valid: result.valid, expiresAt: result.expiresAt, orderId: result.orderId,
+    })
 
-    if (!result.valid) {
-      // Subscription truly expired — update status
-      await serviceClient
-        .from('user_subscriptions')
-        .update({ status: 'expired' })
-        .eq('user_id', user.id)
-        .eq('provider', 'play_store')
-
-      // Revoke billing entitlements
-      await serviceClient
-        .from('user_entitlements')
-        .update({ status: 'expired' })
-        .eq('user_id', user.id)
-        .eq('source', 'billing')
-
-      return json({ ok: true, renewed: false, status: 'expired' })
+    const planId = getPlanIdForPlayProduct(productId)
+    if (!planId) {
+      return json({ error: `Unknown product ID mapping: ${productId}` }, 400)
     }
 
-    // Subscription still active (Google renewed) — update period
-    const planId = getPlanIdForPlayProduct(productId)
+    if (!result.valid) {
+      // Google says the subscription is no longer valid (expired, refunded,
+      // canceled, paused). Use the existing subscription_id so the RPC can
+      // resolve the row even though Google didn't return a fresh orderId.
+      const subscriptionIdForExpiry =
+        (sub as { provider_subscription_id?: string | null }).provider_subscription_id
+        ?? `play_refresh_expire_${user.id}`
 
-    await serviceClient
-      .from('user_subscriptions')
-      .update({
-        status: 'active',
-        current_period_start: result.startedAt,
-        current_period_end: result.expiresAt,
-        cancel_at_period_end: !result.autoRenewing,
+      const { data: rpc, error: rpcError } = await serviceClient.rpc('grant_billing_entitlements', {
+        p_provider: 'play_store',
+        // Synthetic event_id for the expiry path. `play_refresh_expire_*`
+        // namespace cannot collide with Google order IDs (which start with
+        // `GPA.`). Includes timestamp to allow re-runs after partial failure.
+        p_event_id: `play_refresh_expire_${subscriptionIdForExpiry}_${Date.now()}`,
+        p_event_created_at: new Date().toISOString(),
+        p_user_id: user.id,
+        p_plan_id: planId,
+        p_provider_subscription_id: subscriptionIdForExpiry,
+        p_provider_purchase_token: purchaseToken,
+        p_status: 'expired',
+        p_current_period_start: null,
+        p_current_period_end: null,
+        p_provider_customer_id: null,
+        p_cancel_at_period_end: false,
+        p_metadata: {
+          source: 'refresh_play_subscription_expiry',
+          product_id: productId,
+          google_error: result.error ?? null,
+        },
       })
-      .eq('user_id', user.id)
-      .eq('provider', 'play_store')
 
-    // Refresh entitlements expiry
-    if (planId) {
-      const { data: planEntitlements } = await serviceClient
-        .from('plan_entitlements')
-        .select('entitlement_key')
-        .eq('plan_id', planId)
-
-      if (planEntitlements?.length) {
-        const rows = planEntitlements.map((row) => ({
-          user_id: user.id,
-          entitlement_key: row.entitlement_key,
-          source: 'billing',
-          status: 'active',
-          expires_at: result.expiresAt,
-          metadata: { plan_id: planId, provider: 'play_store', product_id: productId },
-        }))
-        await serviceClient
-          .from('user_entitlements')
-          .upsert(rows, { onConflict: 'user_id,entitlement_key' })
+      if (rpcError) {
+        console.error('[refresh-play-subscription] RPC error (expiry path):', rpcError)
+        const mapped = mapRpcError(rpcError)
+        return json(mapped.body, mapped.status)
       }
+
+      const rpcResult = rpc as { result: string }
+      return json({
+        ok: true,
+        renewed: false,
+        status: 'expired',
+        idempotenceResult: rpcResult.result,
+      })
+    }
+
+    if (!result.orderId) {
+      return json({ error: 'Google API returned no orderId on valid purchase' }, 502)
+    }
+
+    // Subscription still valid — Google may have renewed (new period dates)
+    // or not. Either way, the RPC reconciles via the same idempotent path
+    // as verify-play-purchase. orderId is monotonic across renewals so the
+    // event_id is unique per Google billing event.
+    const { data: rpc, error: rpcError } = await serviceClient.rpc('grant_billing_entitlements', {
+      p_provider: 'play_store',
+      p_event_id: result.orderId,
+      p_event_created_at: result.startedAt,
+      p_user_id: user.id,
+      p_plan_id: planId,
+      p_provider_subscription_id: result.orderId,
+      p_provider_purchase_token: purchaseToken,
+      p_status: 'active',
+      p_current_period_start: result.startedAt,
+      p_current_period_end: result.expiresAt,
+      p_provider_customer_id: null,
+      p_cancel_at_period_end: !result.autoRenewing,
+      p_metadata: {
+        source: 'refresh_play_subscription',
+        product_id: productId,
+      },
+    })
+
+    if (rpcError) {
+      console.error('[refresh-play-subscription] RPC error (renewal path):', rpcError)
+      const mapped = mapRpcError(rpcError)
+      return json(mapped.body, mapped.status)
+    }
+
+    const rpcResult = rpc as {
+      result: 'granted' | 'already_processed' | 'stale_event_rejected'
     }
 
     return json({
       ok: true,
-      renewed: true,
+      renewed: rpcResult.result === 'granted',
       status: 'active',
       expiresAt: result.expiresAt,
+      autoRenewing: result.autoRenewing,
+      idempotenceResult: rpcResult.result,
     })
   } catch (error) {
     console.error('[refresh-play-subscription] Error:', String(error))

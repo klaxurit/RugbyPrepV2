@@ -1,0 +1,83 @@
+# Supabase project config (hosted project: iplrydnzbevicilulmsy)
+#
+# This file is the source of truth for per-function deploy flags. The
+# Supabase CLI reads it on `supabase functions deploy <name>` and applies
+# the verify_jwt setting automatically — no more "did I remember to pass
+# --no-verify-jwt?" operator-memory bugs (autoplan Decision #27).
+#
+# Auth matrix:
+#   verify_jwt = true   → caller must present a valid Supabase user JWT
+#                          (Authorization: Bearer <token>). Function code
+#                          typically calls requireUser() to scope to that user.
+#   verify_jwt = false  → no JWT check at the gateway. Function MUST enforce
+#                          its own auth (cron-secret header, webhook signature,
+#                          or service-role-only) — otherwise it's public.
+#
+# When updating a function's auth model, update this file FIRST, then
+# `supabase functions deploy <name>` will apply the change.
+
+project_id = "iplrydnzbevicilulmsy"
+
+# ─── Stripe webhook receiver ──────────────────────────────────────────
+# Stripe sends webhook events with their own HMAC signature in the
+# `Stripe-Signature` header. No user JWT — must be JWT-off at the gateway,
+# with verifyStripeWebhookSignature() enforcing auth in the function body.
+[functions.billing-webhook]
+verify_jwt = false
+
+# ─── Cron-target functions (called by pg_cron via pg_net.http_post) ──
+# pg_cron does not present a Supabase user JWT. Auth is enforced in code
+# via the `x-cron-secret` header check against CRON_SHARED_SECRET.
+[functions.send-training-reminders]
+verify_jwt = false
+
+[functions.dispatch-push-queue]
+verify_jwt = false
+
+# ─── User-initiated functions (require Supabase user JWT) ─────────────
+# These are called from the React client with the signed-in user's JWT.
+# The function calls requireUser(req) to extract user_id and scope writes.
+
+[functions.verify-play-purchase]
+verify_jwt = true
+
+[functions.sync-checkout-session]
+verify_jwt = true
+
+[functions.create-checkout-session]
+verify_jwt = true
+
+[functions.refresh-play-subscription]
+verify_jwt = true
+
+[functions.register-push-subscription]
+verify_jwt = true
+
+[functions.unsubscribe-push]
+verify_jwt = true
+
+[functions.ai-coach]
+verify_jwt = true
+
+[functions.ffr-sync]
+verify_jwt = true
+
+# RGPD account erasure (Decision #26 fix). Caller must be the user being
+# deleted — the function reads user_id from the JWT (never from a parameter).
+[functions.delete-account]
+verify_jwt = true
+
+# ─── notify-training — REMOVED (Decision #24 fix, 2026-05-07) ─────────
+# This function was deleted because:
+#  1. No callers — neither client, cron, nor other Edge Functions invoked it.
+#  2. Critical auth gap — used SUPABASE_SERVICE_ROLE_KEY without any auth
+#     check (no requireUser, no x-cron-secret), so any caller (or any
+#     authenticated user with verify_jwt=true) could broadcast push
+#     notifications to all subscribers.
+#  3. Fully redundant with dispatch-push-queue, which uses _shared/webPush.ts
+#     for the same RFC 8030/8188/8291/8292 protocol AND enforces
+#     x-cron-secret at the gateway.
+#
+# All training reminders flow: pg_cron → send-training-reminders →
+# dispatch-push-queue → FCM. notify-training was a relic of an earlier
+# design replaced by the queue-based pipeline.

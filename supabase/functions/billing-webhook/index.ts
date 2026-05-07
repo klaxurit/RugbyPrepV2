@@ -19,6 +19,13 @@ interface BillingWebhookBody {
 type BillingStatus = 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled' | 'expired'
 type BillingProvider = 'manual' | 'stripe' | 'app_store' | 'play_store'
 
+type StripeWebhookEvent = {
+  id?: string
+  type?: string
+  created?: number
+  data?: { object?: unknown }
+}
+
 type StripeSubscriptionEvent = {
   id: string
   customer?: string
@@ -60,7 +67,30 @@ const mapStripeStatus = (status: string | undefined): BillingStatus => {
   return 'inactive'
 }
 
-const syncSubscriptionAndEntitlements = async (
+// Map Postgres SQLSTATE codes from RPC errors to HTTP responses.
+const mapRpcError = (rpcError: { code?: string; message?: string }): { status: number; body: Record<string, unknown> } => {
+  if (rpcError.code === '23505') {
+    // unique_violation — token already bound to another user
+    return { status: 409, body: { error: 'Purchase already linked to another account.', code: 'token_already_bound' } }
+  }
+  if (rpcError.code === '23514') {
+    // check_violation — e.g., active + null period_end
+    return { status: 400, body: { error: rpcError.message ?? 'Invalid billing payload', code: 'check_violation' } }
+  }
+  if (rpcError.code === '23503') {
+    // foreign_key_violation — unknown plan_id
+    return { status: 404, body: { error: rpcError.message ?? 'Unknown plan', code: 'unknown_plan' } }
+  }
+  return { status: 500, body: { error: rpcError.message ?? 'RPC error', code: rpcError.code } }
+}
+
+/**
+ * DEPRECATED for stripe/play_store paths — use grant_billing_entitlements RPC.
+ * Kept ONLY for the internal manual webhook path (admin/tester promotions),
+ * which has no provider event_id and runs at single-actor concurrency.
+ * Migrate to RPC if/when manual path needs idempotence guarantees.
+ */
+const syncSubscriptionAndEntitlements_legacyManual = async (
   serviceClient: ReturnType<typeof createClients>['serviceClient'],
   payload: {
     userId: string
@@ -84,8 +114,6 @@ const syncSubscriptionAndEntitlements = async (
   if (planError) return { error: planError.message, code: 400 }
   if (!plan) return { error: `Unknown plan '${payload.planId}'`, code: 404 }
 
-  const onConflict = 'user_id,provider'
-
   const { error: subscriptionError } = await serviceClient
     .from('user_subscriptions')
     .upsert(
@@ -101,7 +129,7 @@ const syncSubscriptionAndEntitlements = async (
         cancel_at_period_end: payload.cancelAtPeriodEnd ?? false,
         metadata: payload.metadata ?? {},
       },
-      { onConflict },
+      { onConflict: 'user_id,provider' },
     )
 
   if (subscriptionError) return { error: subscriptionError.message, code: 400 }
@@ -156,23 +184,6 @@ const syncSubscriptionAndEntitlements = async (
   }
 }
 
-const findUserIdByStripeCustomer = async (
-  serviceClient: ReturnType<typeof createClients>['serviceClient'],
-  customerId: string,
-): Promise<string | null> => {
-  const { data, error } = await serviceClient
-    .from('user_subscriptions')
-    .select('user_id')
-    .eq('provider', 'stripe')
-    .eq('provider_customer_id', customerId)
-    .order('updated_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  if (error) return null
-  return (data?.user_id as string | undefined) ?? null
-}
-
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
@@ -198,14 +209,21 @@ Deno.serve(async (req: Request) => {
         return json({ error: 'Invalid Stripe signature' }, 401)
       }
 
-      const event = JSON.parse(rawBody) as {
-        id?: string
-        type?: string
-        data?: { object?: unknown }
-      }
+      const event = JSON.parse(rawBody) as StripeWebhookEvent
       const eventType = event.type ?? ''
+      const eventId = event.id ?? null
+      const eventCreatedIso = fromUnixSecondsToIso(event.created)
       const object = event.data?.object
 
+      if (!eventId) {
+        return json({ error: 'Stripe event missing id (cannot dedupe)' }, 400)
+      }
+
+      // ─── checkout.session.completed: customer→user linkage ONLY ──────
+      // Decision #25 fix: do NOT grant entitlements here. The session may
+      // arrive before customer.subscription.created carries the period
+      // end, which would create an infinite-Premium row. Record only the
+      // customer linkage so the subscription event can resolve user_id.
       if (eventType === 'checkout.session.completed') {
         const session = (object ?? {}) as StripeCheckoutSessionEvent
         const userId = session.metadata?.supabase_user_id ?? session.client_reference_id ?? null
@@ -215,32 +233,48 @@ Deno.serve(async (req: Request) => {
           return json({ ok: true, ignored: true, reason: 'missing_user_or_plan_metadata' })
         }
 
-        const result = await syncSubscriptionAndEntitlements(serviceClient, {
-          userId,
-          planId,
-          provider: 'stripe',
-          providerCustomerId: session.customer ?? null,
-          providerSubscriptionId: session.subscription ?? null,
-          status: 'active',
-          metadata: {
-            stripe_event_id: event.id ?? null,
-            stripe_event_type: eventType,
-          },
-        })
+        // Upsert a placeholder subscription row tagged inactive — entitlements
+        // will be granted later by the customer.subscription.* event via the RPC.
+        const { error: linkageError } = await serviceClient
+          .from('user_subscriptions')
+          .upsert(
+            {
+              user_id: userId,
+              plan_id: planId,
+              provider: 'stripe',
+              provider_customer_id: session.customer ?? null,
+              provider_subscription_id: session.subscription ?? null,
+              status: 'inactive',
+              current_period_start: null,
+              current_period_end: null,
+              cancel_at_period_end: false,
+              metadata: {
+                stripe_event_id: eventId,
+                stripe_event_type: eventType,
+                stripe_session_id: session.id,
+                checkout_completed_at: eventCreatedIso,
+              },
+            },
+            { onConflict: 'user_id,provider' },
+          )
 
-        if ('error' in result) return json({ error: result.error }, result.code)
+        if (linkageError) {
+          console.error('[billing-webhook] checkout linkage error:', linkageError)
+          return json({ error: linkageError.message }, 400)
+        }
 
         return json({
           ok: true,
-          synced: true,
+          synced: false,
           source: 'stripe',
           eventType,
-          userId: result.userId,
-          planId: result.planId,
-          status: result.status,
+          reason: 'linkage_only_awaiting_subscription_event',
+          userId,
+          planId,
         })
       }
 
+      // ─── customer.subscription.* events: full RPC grant via Decision #23 ─
       if (
         eventType !== 'customer.subscription.created' &&
         eventType !== 'customer.subscription.updated' &&
@@ -268,7 +302,16 @@ Deno.serve(async (req: Request) => {
 
       let userId = subscription.metadata?.supabase_user_id ?? null
       if (!userId && subscription.customer) {
-        userId = await findUserIdByStripeCustomer(serviceClient, subscription.customer)
+        // Look up via the user_subscriptions row created at checkout.session.completed.
+        const { data: linkRow } = await serviceClient
+          .from('user_subscriptions')
+          .select('user_id')
+          .eq('provider', 'stripe')
+          .eq('provider_customer_id', subscription.customer)
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+        userId = (linkRow?.user_id as string | undefined) ?? null
       }
       if (!userId) {
         return json({
@@ -279,36 +322,76 @@ Deno.serve(async (req: Request) => {
         })
       }
 
-      const result = await syncSubscriptionAndEntitlements(serviceClient, {
-        userId,
-        planId,
-        provider: 'stripe',
-        providerCustomerId: subscription.customer ?? null,
-        providerSubscriptionId: subscription.id ?? null,
-        status: mapStripeStatus(subscription.status),
-        currentPeriodStart: fromUnixSecondsToIso(subscription.current_period_start),
-        currentPeriodEnd: fromUnixSecondsToIso(subscription.current_period_end),
-        cancelAtPeriodEnd: subscription.cancel_at_period_end ?? false,
-        metadata: {
-          stripe_event_id: event.id ?? null,
+      const status = mapStripeStatus(subscription.status)
+      const currentPeriodEnd = fromUnixSecondsToIso(subscription.current_period_end)
+
+      // Defense-in-depth: if Stripe sent us active without a period end,
+      // refuse before the RPC raises check_violation. Surfaces Stripe API
+      // contract weirdness rather than dressing it up as an internal error.
+      if (ACTIVE_STATUSES.has(status) && !currentPeriodEnd) {
+        return json({
+          ok: false,
+          error: 'Stripe subscription event has active status but no current_period_end',
+          eventType,
+          subscriptionId: subscription.id,
+        }, 422)
+      }
+
+      const { data: rpc, error: rpcError } = await serviceClient.rpc('grant_billing_entitlements', {
+        p_provider: 'stripe',
+        p_event_id: eventId,
+        p_event_created_at: eventCreatedIso,
+        p_user_id: userId,
+        p_plan_id: planId,
+        p_provider_subscription_id: subscription.id,
+        p_provider_purchase_token: null,
+        p_status: status,
+        p_current_period_start: fromUnixSecondsToIso(subscription.current_period_start),
+        p_current_period_end: currentPeriodEnd,
+        p_provider_customer_id: subscription.customer ?? null,
+        p_cancel_at_period_end: subscription.cancel_at_period_end ?? false,
+        p_metadata: {
+          stripe_event_id: eventId,
           stripe_event_type: eventType,
           stripe_price_id: stripePriceId,
         },
       })
 
-      if ('error' in result) return json({ error: result.error }, result.code)
+      if (rpcError) {
+        console.error('[billing-webhook] RPC error:', rpcError)
+        const mapped = mapRpcError(rpcError)
+        return json(mapped.body, mapped.status)
+      }
+
+      const rpcResult = rpc as {
+        result: 'granted' | 'already_processed' | 'stale_event_rejected'
+        event_id?: string
+        plan_id?: string
+        status?: string
+        expires_at?: string | null
+      }
+
+      console.log('[billing-webhook] RPC result:', rpcResult.result, {
+        eventType, eventId, subscriptionId: subscription.id,
+      })
 
       return json({
         ok: true,
-        synced: true,
+        synced: rpcResult.result === 'granted',
+        idempotenceResult: rpcResult.result,
         source: 'stripe',
         eventType,
-        userId: result.userId,
-        planId: result.planId,
-        status: result.status,
+        userId,
+        planId,
+        status,
       })
     }
 
+    // ─── Manual / non-Stripe webhook (admin promotions, app_store, etc) ──
+    // Uses x-webhook-secret. Keeps the legacy direct-mutation helper because
+    // the manual path has no provider event_id (no idempotence ledger key)
+    // and runs at single-actor admin concurrency. Race risk is essentially
+    // nil here. Migrate when/if app_store flow ships.
     const webhookSecret = Deno.env.get('BILLING_WEBHOOK_SHARED_SECRET')
     if (!webhookSecret) {
       return json({ error: 'BILLING_WEBHOOK_SHARED_SECRET is not configured' }, 500)
@@ -328,7 +411,7 @@ Deno.serve(async (req: Request) => {
         : body.status ?? 'active'
     const provider = body.provider ?? 'manual'
 
-    const result = await syncSubscriptionAndEntitlements(serviceClient, {
+    const result = await syncSubscriptionAndEntitlements_legacyManual(serviceClient, {
       userId: body.userId,
       planId: body.planId,
       provider,
@@ -352,6 +435,7 @@ Deno.serve(async (req: Request) => {
       status: result.status,
     })
   } catch (error) {
+    console.error('[billing-webhook] Uncaught error:', String(error))
     return json({ error: String(error) }, 500)
   }
 })

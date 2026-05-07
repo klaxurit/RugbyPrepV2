@@ -9,10 +9,6 @@ type RequestBody = {
   purchaseToken: string
 }
 
-type BillingStatus = 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled' | 'expired'
-
-const ACTIVE_STATUSES = new Set<BillingStatus>(['active', 'trialing'])
-
 Deno.serve(async (req: Request) => {
   console.log('[verify-play-purchase] Received request:', req.method, req.url)
 
@@ -30,119 +26,98 @@ Deno.serve(async (req: Request) => {
     console.log('[verify-play-purchase] Request:', { productId: body.productId, userId: user.id })
 
     if (!body.productId || !body.purchaseToken) {
-      console.error('[verify-play-purchase] Missing fields:', { productId: !!body.productId, purchaseToken: !!body.purchaseToken })
       return json({ error: 'Missing productId or purchaseToken' }, 400)
     }
 
     const planId = getPlanIdForPlayProduct(body.productId)
     if (!planId) {
-      console.error('[verify-play-purchase] Unknown product:', body.productId)
       return json({ error: `Unknown product ID: ${body.productId}` }, 400)
     }
 
-    console.log('[verify-play-purchase] Mapped to plan:', planId)
-
     // Verify the purchase with Google Play Developer API
     const result = await verifyPlayPurchase(PACKAGE_NAME, body.productId, body.purchaseToken)
-    console.log('[verify-play-purchase] Google API result:', { valid: result.valid, error: result.error, expiresAt: result.expiresAt, orderId: result.orderId })
+    console.log('[verify-play-purchase] Google API result:', {
+      valid: result.valid, error: result.error, expiresAt: result.expiresAt, orderId: result.orderId,
+    })
 
     if (!result.valid) {
-      return json({
-        ok: false,
-        error: result.error ?? 'Purchase is not valid or expired',
-      }, 400)
+      return json({ ok: false, error: result.error ?? 'Purchase is not valid or expired' }, 400)
     }
 
-    // Verify plan exists
-    const { data: plan, error: planError } = await serviceClient
-      .from('plans')
-      .select('id')
-      .eq('id', planId)
-      .maybeSingle()
-
-    if (planError || !plan) {
-      return json({ error: `Unknown plan '${planId}'` }, 404)
+    if (!result.orderId) {
+      // Google should always return orderId for a valid purchase. Without it we
+      // cannot make the RPC idempotent on event_id.
+      return json({ error: 'Google API returned no orderId' }, 502)
     }
 
-    // Upsert subscription
-    const status: BillingStatus = 'active'
+    // Single source-of-truth mutation via RPC (Decision #23).
+    // - Idempotent on (provider, event_id) where event_id = Google orderId
+    // - Stale-event rejection on event_created_at vs same subscription
+    // - Token binding: rejects if purchaseToken already bound to another user
+    // - Entitlement set derived from plan_id (NOT caller-supplied)
+    const { data: rpc, error: rpcError } = await serviceClient.rpc('grant_billing_entitlements', {
+      p_provider: 'play_store',
+      p_event_id: result.orderId,
+      p_event_created_at: result.startedAt,
+      p_user_id: user.id,
+      p_plan_id: planId,
+      p_provider_subscription_id: result.orderId,
+      p_provider_purchase_token: body.purchaseToken,
+      p_status: 'active',
+      p_current_period_start: result.startedAt,
+      p_current_period_end: result.expiresAt,
+      p_provider_customer_id: null,
+      p_cancel_at_period_end: !result.autoRenewing,
+      p_metadata: {
+        product_id: body.productId,
+      },
+    })
 
-    const { error: subscriptionError } = await serviceClient
-      .from('user_subscriptions')
-      .upsert(
-        {
-          user_id: user.id,
-          plan_id: planId,
-          provider: 'play_store',
-          provider_customer_id: null,
-          provider_subscription_id: result.orderId,
-          status,
-          current_period_start: result.startedAt,
-          current_period_end: result.expiresAt,
-          cancel_at_period_end: !result.autoRenewing,
-          metadata: {
-            product_id: body.productId,
-            purchase_token: body.purchaseToken,
-          },
-        },
-        { onConflict: 'user_id,provider' },
-      )
-
-    if (subscriptionError) {
-      return json({ error: subscriptionError.message }, 400)
-    }
-
-    // Clear existing billing entitlements and grant new ones
-    const { error: deleteError } = await serviceClient
-      .from('user_entitlements')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('source', 'billing')
-
-    if (deleteError) {
-      return json({ error: deleteError.message }, 400)
-    }
-
-    if (ACTIVE_STATUSES.has(status)) {
-      const { data: planEntitlements, error: entitlementsError } = await serviceClient
-        .from('plan_entitlements')
-        .select('entitlement_key')
-        .eq('plan_id', planId)
-
-      if (entitlementsError) {
-        return json({ error: entitlementsError.message }, 400)
+    if (rpcError) {
+      // Distinguish auth/binding violations from other errors.
+      // Postgres unique_violation = SQLSTATE 23505
+      if (rpcError.code === '23505') {
+        console.warn('[verify-play-purchase] Token bound to another user:', { userId: user.id })
+        return json({
+          ok: false,
+          error: 'This purchase is already linked to another account.',
+          code: 'token_already_bound',
+        }, 409)
       }
-
-      if ((planEntitlements ?? []).length > 0) {
-        const rows = planEntitlements!.map((row) => ({
-          user_id: user.id,
-          entitlement_key: row.entitlement_key,
-          source: 'billing',
-          status: 'active',
-          expires_at: result.expiresAt,
-          metadata: {
-            plan_id: planId,
-            provider: 'play_store',
-            product_id: body.productId,
-          },
-        }))
-
-        const { error: insertError } = await serviceClient
-          .from('user_entitlements')
-          .upsert(rows, { onConflict: 'user_id,entitlement_key' })
-
-        if (insertError) {
-          return json({ error: insertError.message }, 400)
-        }
+      // Postgres check_violation = 23514 (e.g., active + null period_end)
+      if (rpcError.code === '23514') {
+        console.error('[verify-play-purchase] Check violation:', rpcError.message)
+        return json({ error: rpcError.message }, 400)
       }
+      console.error('[verify-play-purchase] RPC error:', rpcError)
+      return json({ error: rpcError.message }, 500)
     }
 
+    const rpcResult = rpc as {
+      result: 'granted' | 'already_processed' | 'stale_event_rejected'
+      event_id?: string
+      plan_id?: string
+      status?: string
+      expires_at?: string | null
+      granted_keys?: string[]
+      max_processed_at?: string
+    }
+
+    console.log('[verify-play-purchase] RPC result:', rpcResult.result, {
+      event_id: rpcResult.event_id, expires_at: rpcResult.expires_at,
+    })
+
+    // All three RPC outcomes are 200-success from the client's perspective:
+    // granted = first time we see this event, state mutated
+    // already_processed = replay, state already in correct shape
+    // stale_event_rejected = older event, state already fresher (safe no-op)
     return json({
       ok: true,
       planId,
-      status,
+      status: 'active',
       expiresAt: result.expiresAt,
       autoRenewing: result.autoRenewing,
+      idempotenceResult: rpcResult.result,
     })
   } catch (error) {
     console.error('[verify-play-purchase] Uncaught error:', String(error))

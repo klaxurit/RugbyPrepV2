@@ -72,15 +72,19 @@ export function DeleteAccountPage() {
                 setDeleting(true)
                 setDeleteError(null)
                 try {
-                  // Delete user data from all tables (cascade handles most via FK)
-                  const userId = currentUser.id
-                  await Promise.all([
-                    supabase.from('user_entitlements').delete().eq('user_id', userId),
-                    supabase.from('user_subscriptions').delete().eq('user_id', userId),
-                    supabase.from('cancel_feedback').delete().eq('user_id', userId),
-                    supabase.from('profiles').delete().eq('id', userId),
-                  ])
-                  // Sign out and redirect
+                  // Server-side erasure via service-role Edge Function.
+                  // Client-side DELETEs would silently fail (RLS SELECT-only
+                  // on user_subscriptions / user_entitlements) and leave the
+                  // auth.users row alive — RGPD violation.
+                  const { data, error } = await supabase.functions.invoke<{ ok?: boolean; error?: string }>(
+                    'delete-account',
+                    { method: 'POST' },
+                  )
+                  if (error || !data?.ok) {
+                    throw new Error(data?.error ?? error?.message ?? 'Suppression refusée par le serveur.')
+                  }
+                  // The auth.users row is gone — local session is now stale.
+                  // signOut() clears localStorage even if the refresh fails.
                   await signOut()
                   navigate('/', { replace: true })
                 } catch (err) {
