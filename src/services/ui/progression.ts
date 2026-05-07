@@ -1,5 +1,4 @@
-import type { BuiltSession } from '../program'
-import type { BlockLog, CycleWeek, ExerciseLogEntry, SessionType } from '../../types/training'
+import type { BlockLog, CycleWeek, ExerciseLogEntry } from '../../types/training'
 
 interface ExerciseWeekBest {
   kind: 'load_reps' | 'distance' | 'time' | 'none'
@@ -170,42 +169,3 @@ export const getExerciseRecentHistory = (
   return entries.reverse()
 }
 
-export const getSessionRecap = (
-  logs: BlockLog[],
-  session: BuiltSession,
-  sessionType: SessionType,
-  week: CycleWeek
-): { loggedExercises: number; totalExercises: number; loadProxy: number } => {
-  const sessionExerciseIds = session.blocks.flatMap((block) =>
-    block.block.exercises.map((exercise) => exercise.exerciseId)
-  )
-  const uniqueExerciseIds = new Set(sessionExerciseIds)
-  const totalExercises = uniqueExerciseIds.size
-
-  const logsForSession = logs.filter(
-    (log) => log.week === week && log.sessionType === sessionType
-  )
-
-  const loggedIds = new Set<string>()
-  let loadProxy = 0
-  for (const block of session.blocks) {
-    for (const exercise of block.block.exercises) {
-      const entry = logsForSession
-        .find((log) => log.blockId === block.block.blockId)
-        ?.entries.find((candidate) => candidate.exerciseId === exercise.exerciseId)
-
-      if (!entry) continue
-      loggedIds.add(exercise.exerciseId)
-
-      if (entry.loadKg !== undefined && entry.reps !== undefined) {
-        loadProxy += entry.loadKg * entry.reps * block.version.sets
-      }
-    }
-  }
-
-  return {
-    loggedExercises: loggedIds.size,
-    totalExercises,
-    loadProxy: Math.round(loadProxy)
-  }
-}

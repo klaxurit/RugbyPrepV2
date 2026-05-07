@@ -7,7 +7,6 @@ import {
 } from 'lucide-react'
 import type { SessionType } from '../types/training'
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
-import blocksData from '../data/blocks.v1.json'
 import { getExerciseName } from '../data/exercises'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
@@ -37,7 +36,6 @@ import { PRBoard } from '../components/pr/PRBoard'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useUpsellTiming, isDismissed } from '../hooks/useUpsellTiming'
 import { useRegisterCoachContext } from '../contexts/CoachContext'
-import type { TrainingBlock } from '../types/training'
 import type { PhysicalTestType, PhysicalTest } from '../types/athleticTesting'
 
 // ─── Session type styles (aligned with HistoryPage) ────────────────────────
@@ -212,7 +210,6 @@ export function ProgressPage() {
   })
   const recentSessions = useMemo(() => getRecentProgramSessions(sessionLogs, 8), [sessionLogs])
   const [showAllSessions, setShowAllSessions] = useState(false)
-  const [missingOpen, setMissingOpen] = useState(false)
 
   // ─── Modal state ────────────────────────────────────────────
   const [modal, setModal] = useState<ModalState | null>(null)
@@ -236,21 +233,6 @@ export function ProgressPage() {
     .filter((row) => row.delta.status !== 'unknown')
     .sort((a, b) => b.delta.deltaValue - a.delta.deltaValue)
     .slice(0, 10)
-
-  const exerciseFrequency = (blocksData as TrainingBlock[]).flatMap((block) =>
-    block.exercises.map((exercise) => exercise.exerciseId)
-  )
-  const frequencyMap = exerciseFrequency.reduce<Record<string, number>>((acc, exerciseId) => {
-    acc[exerciseId] = (acc[exerciseId] ?? 0) + 1
-    return acc
-  }, {})
-  const loggedExerciseIds = new Set(
-    logs.flatMap((log) => log.entries.map((entry) => entry.exerciseId))
-  )
-  const missingRows = Object.entries(frequencyMap)
-    .filter(([exerciseId]) => !loggedExerciseIds.has(exerciseId))
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 12)
 
   const progressCount = progressRows.filter((r) => r.delta.status === 'up').length
   const regressionCount = progressRows.filter((r) => r.delta.status === 'down').length
@@ -632,34 +614,6 @@ export function ProgressPage() {
                 </PremiumBlurredPreview>
               ) : null
             })()}
-
-            {features.premiumAnalytics && missingRows.length > 0 && (
-              <section>
-                <button
-                  type="button"
-                  onClick={() => setMissingOpen((o) => !o)}
-                  className="flex items-center justify-between w-full mb-2"
-                >
-                  <div>
-                    <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted text-left">Exercices non loggés ({missingRows.length})</h2>
-                    <p className="text-[10px] text-fg-faint text-left mt-0.5">Logge-les pendant tes séances pour suivre ta progression</p>
-                  </div>
-                  <ChevronDown className={`w-4 h-4 text-fg-muted transition-transform flex-shrink-0 ${missingOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {missingOpen && (
-                  <div className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-2">
-                    {missingRows.map(([exerciseId, count]) => (
-                      <div key={exerciseId} className="flex items-center justify-between py-1.5 border-b border-border-app last:border-0">
-                        <span className="text-sm font-medium text-fg">{getExerciseName(exerciseId, lang)}</span>
-                        <span className="text-[10px] font-bold text-fg-muted bg-layer-10 px-2 py-1 rounded-full">
-                          dans {count} séances
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-            )}
 
             <section>
               <div className="bg-ok-bg-muted border border-ok-bd rounded-[24px] p-5 space-y-2">
