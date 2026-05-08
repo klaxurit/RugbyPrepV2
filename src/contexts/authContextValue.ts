@@ -6,6 +6,8 @@ interface SignUpInput {
   email: string
   displayName: string
   password: string
+  /** ISO timestamp captured when the user ticked the medical disclaimer checkbox. */
+  medicalConsentAcceptedAt: string
 }
 
 interface SignInInput {

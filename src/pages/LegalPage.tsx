@@ -97,8 +97,8 @@ export function LegalPage() {
 
       <main className="max-w-md mx-auto px-6 py-6 space-y-6 relative">
 
-        {/* Disclaimer santé */}
-        <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-2">
+        {/* Disclaimer santé — anchor target for SignupPage hard-gate "Lire le détail" link */}
+        <section id="disclaimer" className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-2 scroll-mt-20">
           <p className="text-xs font-black uppercase tracking-wider text-warn-strong">Avertissement important</p>
           <p className="text-sm text-warn-body leading-relaxed">
             Les programmes d&apos;entraînement générés par RugbyForge sont fournis à titre indicatif et ne remplacent pas l&apos;avis d&apos;un médecin, kinésithérapeute ou préparateur physique certifié.

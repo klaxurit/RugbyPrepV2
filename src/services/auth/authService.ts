@@ -7,6 +7,8 @@ interface SignUpInput {
   email: string
   displayName: string
   password: string
+  /** ISO timestamp captured when the user ticked the medical disclaimer checkbox at signup. */
+  medicalConsentAcceptedAt: string
 }
 
 interface SignInInput {
@@ -94,7 +96,7 @@ export const onAuthStateChanged = (
   return data.subscription
 }
 
-export const signUp = async ({ email, displayName, password }: SignUpInput): Promise<Result<AuthUser, AuthError>> => {
+export const signUp = async ({ email, displayName, password, medicalConsentAcceptedAt }: SignUpInput): Promise<Result<AuthUser, AuthError>> => {
   const normalizedEmail = normalizeEmail(email)
   const cleanDisplayName = displayName.trim()
 
@@ -112,6 +114,9 @@ export const signUp = async ({ email, displayName, password }: SignUpInput): Pro
     options: {
       data: {
         display_name: cleanDisplayName || normalizedEmail.split('@')[0] || 'Joueur',
+        // WS9 — mirrors into raw_user_meta_data so the timestamp survives the
+        // email-confirmation roundtrip even when no session is available yet.
+        medical_consent_accepted_at: medicalConsentAcceptedAt,
       },
       emailRedirectTo: `${window.location.origin}/auth/callback`,
     },
@@ -132,6 +137,16 @@ export const signUp = async ({ email, displayName, password }: SignUpInput): Pro
   if (!data.session?.user) {
     return { ok: false, error: 'EMAIL_CONFIRMATION_REQUIRED' }
   }
+
+  // WS9 — persist consent timestamp into profiles when we have an immediate
+  // session (auto-confirm). For email-confirmation flow, the timestamp lives
+  // in raw_user_meta_data and is mirrored on first authenticated session.
+  void supabase
+    .from('profiles')
+    .upsert(
+      { id: data.session.user.id, medical_consent_accepted_at: medicalConsentAcceptedAt },
+      { onConflict: 'id' },
+    )
 
   return { ok: true, value: mapSupabaseUserToAuthUser(data.session.user) }
 }

@@ -24,6 +24,7 @@ export function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [ageConfirmed, setAgeConfirmed] = useState(false)
+  const [medicalConsent, setMedicalConsent] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -38,7 +39,18 @@ export function SignupPage() {
     setInfo(null)
     setIsSubmitting(true)
 
-    const result = await signUp({ displayName, email, password })
+    if (!medicalConsent || !ageConfirmed) {
+      setError('Merci d\'accepter les deux engagements ci-dessous pour continuer.')
+      setIsSubmitting(false)
+      return
+    }
+
+    const result = await signUp({
+      displayName,
+      email,
+      password,
+      medicalConsentAcceptedAt: new Date().toISOString(),
+    })
 
     if (!result.ok) {
       if (result.error === 'EMAIL_CONFIRMATION_REQUIRED') {
@@ -139,6 +151,21 @@ export function SignupPage() {
                 <Link to="/legal" className="text-brand underline">conditions d&apos;utilisation</Link>
                 {' '}et la{' '}
                 <Link to="/legal" className="text-brand underline">politique de confidentialite</Link>.
+              </span>
+            </label>
+
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={medicalConsent}
+                onChange={(e) => setMedicalConsent(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-border-app accent-brand"
+                required
+                aria-describedby="medical-consent-text"
+              />
+              <span id="medical-consent-text" className="text-[11px] leading-relaxed text-fg-muted">
+                Je comprends que RugbyForge propose des programmes basés sur des règles générales et ne remplace pas l&apos;avis d&apos;un médecin ou d&apos;un kinésithérapeute. Je m&apos;engage à arrêter en cas de douleur.{' '}
+                <Link to="/legal#disclaimer" className="text-brand underline">Lire le détail</Link>
               </span>
             </label>
 
