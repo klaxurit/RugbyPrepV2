@@ -92,6 +92,20 @@ Pour chaque counter-example fast-check :
 - **Property trop stricte** : relâcher la property (documenter pourquoi).
 - **Edge case voulu** : ajouter assertion ciblée dans test classique, retirer du periodique.
 
+### Findings (2026-05-08)
+
+**Aucun bug code détecté.** Deux counter-examples sur P6 (monotonie +7d), tous deux comportements intentionnels :
+
+1. **No-firstMatch fallback** — `today=2025-01-01, events=[]` → `detectAnnualPlanningContext` route au fallback line 622-633 qui ancre l'off-season sur `todayWeekMonday`. L'anchor "glisse" avec `today` donc `weekNumber=1` reste constant. Comportement voulu pour les profils sans calendrier (UX : "tu es en semaine 1 d'inter-saison" plutôt qu'une semaine arbitraire).
+   - **Action** : property scopée pour ne s'appliquer que quand `ctxA.offSeasonStartAt === ctxB.offSeasonStartAt`.
+
+2. **Lower clamp avant offSeasonStart** — `today=2025-01-01, match=2025-06-09` → backfill calcule `offSeasonStart=2025-01-06`, mais today (2025-01-01) est *avant* l'anchor. Le code line 745-747 clamp `rawOffWeek=0` à 1. Après +7d, today=2025-01-08 ≥ anchor → W1 réel. Les deux contextes reportent W1.
+   - **Action** : property scopée pour skip `if (inputs.today < ctxA.offSeasonStartAt)`.
+
+**Stress-test à 1000 runs/property** : 13/13 vert, aucun nouveau counter-example. Production tourne à 250 runs/property pour rester rapide en CI (~80ms vs 270ms à 1000).
+
+**Verdict B4 P0 escalation (Décision #45)** : non déclenché. B4 reste P1.
+
 ## Phase F — Close
 
 - Décision #49 dans `docs/release-v1-plan.md` (B4-redux post-#47, scope final, commits)
