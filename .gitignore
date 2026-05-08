@@ -91,3 +91,4 @@ docs/*
 !docs/decision-47-cleanup-plan.md
 !docs/b2-*.md
 !docs/b4-*.md
+!docs/ws9-*.md
