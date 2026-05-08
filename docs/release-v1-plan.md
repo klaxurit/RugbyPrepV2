@@ -311,7 +311,9 @@ features débloquées immédiatement, et ses droits reflétés côté backend.
 **Effort CC** : **1-1.5 jour** (review +0.5 : migration sheet + per-exo gating, pas juste wire-up)
 **Slot timeline** : Week 4-5 (WS4 states + a11y)
 
-### B4 — Hardening transitions programme annuel (P1, RE-SIZED 1.5 jour)
+### B4 — Hardening transitions programme annuel (P1, SHIPPED 2026-05-08 — voir Décision #49)
+
+**Status** : ✅ SHIPPED 2026-05-08. Cible originale supprimée par #47 → re-scopée sur `src/services/season/*`. Voir [`docs/b4-transitions-hardening-plan.md`](b4-transitions-hardening-plan.md) et Décision #49 ci-dessous.
 
 **Verdict review** : noms de fonctions corrigés, scope ramené à du test-hardening ciblé sur invariants manquants. **Pas un bug prod reproduit** — c'est du test-hardening, donc reste P1 (escalade P0 si l'audit révèle un défaut concret).
 
@@ -350,7 +352,7 @@ features débloquées immédiatement, et ses droits reflétés côté backend.
 | B1 valid Android + iOS V1.1 séparé | P1 | **P2** | 1-2j | **0.5j** | Week 6 |
 | B2 audit rest times | P0 | **P0** | 2-3j | **3-4j** | Week 1-2 → ✅ DONE 2026-05-08 |
 | B3 vidéos demo restore | P1 | **P1** | 0.5-1j | **1-1.5j** | Week 4-5 → ✅ DONE 2026-05-07 |
-| B4 transitions hardening | P1 | **P1** | 2-3j | **1.5j** | Week 3 |
+| B4 transitions hardening | P1 | **P1** | 2-3j | **1.5j** | Week 3 → ✅ DONE 2026-05-08 |
 | **Total** | | | **7-10j** | **6.5-7.5j** | **+1 sem max** |
 
 **Net effort** : v2 économise 0.5-2.5 jours sur v1 (B4 -1 à -1.5j, B1 -0.5 à -1.5j) tout en ajoutant 0.5-1j sur B2/B3 mieux scopés. Timeline V1 trim reste **~9 semaines** (June 30 anchor tenable, départ lundi 11 mai).
@@ -370,6 +372,7 @@ features débloquées immédiatement, et ses droits reflétés côté backend.
 | 45 | B4 review | B4 reste P1 sauf découverte d'un bug concret pendant l'audit | TASTE | — |
 | 47 | B2 audit findings | **SHIPPED 2026-05-07** — Cleanup legacy stack + medical content (branch `chore/decision-47-cleanup`, 6 phases A-F, **-17 426 lignes nettes**). Supprimé : `buildWeekProgram` + `blocks.v1.json` (548 entries) + `qualityGates` rehab + `sessionRecipes.v1` + `microcycleArchetypes.v1` + `buildMobilitySession` + `MobilityPage` (route `/mobility`) + chaîne `buildSessionFromRecipe` + types `RehabZone`/`Phase`/`Injury` + `UserProfile.rehabInjury` + DB column drop migration. Active stack inchangé (motherSessions). #24 Mobilité et #25 Rehab obsolètes. ACL prevention femmes : routing supprimé avec buildWeekProgram (V1.1 si réintroduction voulue, claim athlétique pas médical). Plan détaillé : `docs/decision-47-cleanup-plan.md`. Audit trail commits : fd18e03 → 7d7812e. | TASTE | P3+P5 |
 | 48 | B2 audit rest times | **SHIPPED 2026-05-08** — Audit rest times motherSessions vs KB (7 phases A-F, ~4.5j ; main commits ba819c8 → 337edf1). Pipeline : `parseRestSeconds` (free-text → range, qualifier precedence Décision #40 v2) + `inferBlockIntent` (11 règles spécifique→générique, hypertrophy-before-force) + `auditBlock` + `kbRanges` (sources strength-methods.md/periodization.md). Dry-run sur 155 blocks : 138 PASS / 16 SKIP / 1 FAIL → triage révèle "Pull Contrast Strength" est un misnomer (pair force lourde, pas un vrai contrast) → renommé en "Pull Strength Pair" dans 2 MDs in-season → audit clean **139 PASS / 16 SKIP / 0 FAIL**. Phase B' : 22 sessions inline (in-season + pre-season) migrées vers MD → MD = single source of truth pour les 39 sessions. Strict contract test CI gate `restTimes.contract.test.ts` (62 tests audit total : 42 parser + 14 heuristique + 6 contract). Plan : `docs/b2-rest-times-audit-plan.md` ; findings : `docs/b2-rest-times-findings.md` ; corrections triage : `docs/b2-rest-times-corrections.md`. | TASTE | P1 KB truth |
+| 49 | B4 transitions hardening | **SHIPPED 2026-05-08** — B4-redux post-#47. Cible originale (`buildWeekProgram` + `waveA` + `resolveMicrocycleArchetype`) supprimée par #47 → re-scope sur `src/services/season/*` (854 LOC source, dont `detectAnnualPlanningContext` 847 LOC, le module non trivial le plus complexe du repo). 6 phases A-F, ~1j (vs 1.5j initial). Phase A discovery : carto invariants ; Phase B : `npm i -D fast-check@4.7.0` + scaffold ; Phase C : 13 property tests à 250 runs/property dans `seasonInvariants.property.test.ts` (P1-P12, P12 splittée a/b) couvrant `detectAnnualPlanningContext` (never-throws, well-formed, mesocycle 4·(b-1)+w, pre-season deload, off-season never-deload, monotonie +7d avec filtre anchor stable, playoffs month guard, firstMatchOverride priority), `deferralRules` (pass-through, purge no-filter, eventId filter), `transitionJournal` (cap 3, restore left-inverse) ; Phase D : 15 fixtures hand-picked dans `seasonBoundaries.fixtures.test.ts` aux frontières off/pre/in-season + treve subModes + auto season-end + onboarding grace ; Phase E : 2 counter-examples sur P6 documentés (no-match fallback + lower-clamp avant offSeasonStart, comportements intentionnels, properties scopées) — aucun bug code, Décision #45 P0-escalation non déclenchée. Stress 1000 runs/property vert. Suite : 1217 PASS / 28 SKIP. Commits main : d203f9d → 32765bb → b0587b7 → 4f768dc → 468d389. Plan : `docs/b4-transitions-hardening-plan.md`. | TASTE | P1 |
 
 **Section 8 review terminée**. Subagent : 4 critiques + corrections fichiers/fonctions. Codex : 3 high + corroboration spécifique avec citations KB. Convergence quasi-totale (B1/B2/B3/B4 specs corrigées). Discordance unique : B4 priority (Codex P1, Subagent P0). Décision : reste P1 par défaut, escalade P0 si l'audit révèle un bug.
 
