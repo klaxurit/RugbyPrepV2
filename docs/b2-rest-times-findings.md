@@ -1,6 +1,6 @@
 # B2 — Rest times audit findings (Phase B dry-run)
 
-**Generated:** 2026-05-08T07:25:32.753Z
+**Generated:** 2026-05-08T07:39:10.552Z
 **Total blocks:** 155
 
 ## Status breakdown
@@ -23,9 +23,9 @@
 | reward | 5 | 5 | 0 | 0 |
 | core | 12 | 10 | 0 | 2 |
 | conditioning | 9 | 0 | 0 | 9 |
+| activation | 2 | 1 | 0 | 1 |
 | sprint | 4 | 3 | 0 | 1 |
 | dynamic | 2 | 2 | 0 | 0 |
-| activation | 2 | 1 | 0 | 1 |
 
 ## FAIL findings
 

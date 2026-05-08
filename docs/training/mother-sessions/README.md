@@ -1,55 +1,44 @@
 # Mother Sessions — Source & Regeneration
 
-## Current State
+## Single source of truth
 
-The generated dataset `src/data/motherSessions.generated.ts` contains sessions from multiple cycles. Not all cycles have markdown source files yet:
+All mother sessions live as Markdown source files under `docs/training/mother-sessions/<cycle>/`. The TypeScript dataset `src/data/motherSessions.generated.ts` is generated from these MDs and **must not be edited by hand**.
 
-| Cycle | Markdown source | Count | Status |
-|-------|----------------|-------|--------|
-| Off-season | `off-season/*.md` | 17 | **Source of truth** |
-| Pre-season | — | ~9 | Inline in generated.ts |
-| In-season | — | ~13 | Inline in generated.ts |
+| Cycle | Markdown source | Count |
+|-------|-----------------|------:|
+| Off-season | `off-season/*.md` | 17 |
+| Pre-season | `pre-season/*.md` | 14 |
+| In-season | `in-season/*.md` | 8 |
+| **Total** | | **39** |
 
-## Safe Regeneration Workflow
+Migration to MD-as-single-source-of-truth was completed during B2 Phase B' (2026-05-08).
 
-### For off-season changes
+## Regeneration
 
-Edit the markdown files in `docs/training/mother-sessions/off-season/`, then run:
-
-```bash
-node scripts/mergeOffSeasonIntoDataset.mjs
-```
-
-This script:
-- Parses all off-season `.md` files
-- **Replaces** existing off-season sessions in place with the parsed version
-- **Appends** genuinely new off-season sessions
-- **Preserves** all non-off-season sessions untouched
-- Prints a summary (replaced / added / unchanged / total)
-
-### For pre-season or in-season changes
-
-Currently, edit `src/data/motherSessions.generated.ts` directly. This is temporary until those cycles are migrated to markdown.
-
-### Full regeneration (NOT safe yet)
+After editing any `.md`, run:
 
 ```bash
-# ⚠ DO NOT run this until ALL cycles have markdown sources
 node scripts/generateMotherSessionsDataset.mjs
 ```
 
-This script **overwrites the entire generated file** with only the sessions found in markdown. Running it now would delete all pre-season and in-season sessions.
+This:
+- Walks all `.md` files under `docs/training/mother-sessions/<cycle>/`
+- Parses each via `src/services/motherSession/parseMotherSession.ts`
+- Emits a fresh `src/data/motherSessions.generated.ts` with sessions sorted alphabetically by `metadata.id`
+- Sessions are also indexed in `MOTHER_SESSIONS_BY_ID` for O(1) lookup
 
-## Migration Plan
+## Inverse extraction (TS → MD)
 
-To complete the migration to a single-source-of-truth workflow:
-1. Export pre-season sessions to `docs/training/mother-sessions/pre-season/*.md`
-2. Export in-season sessions to `docs/training/mother-sessions/in-season/*.md`
-3. Once all cycles have markdown sources, `generateMotherSessionsDataset.mjs` becomes safe to use as the sole generation command
+Useful when bootstrapping a new MD from existing inline data, or when validating the round-trip:
 
-## Markdown Format
+```bash
+node scripts/extractMotherSessionsToMd.mjs                      # all cycles
+node scripts/extractMotherSessionsToMd.mjs --cycle off_season   # filter
+```
 
-See the fixture in `src/services/motherSession/__tests__/motherSessionFixtures.ts` for the exact format. Key structure:
+The MD format produced is the same one parsed by `parseMotherSession`. Round-trip is loss-less (verified during Phase B' migration).
+
+## Markdown format
 
 ```markdown
 # SESSION_ID
@@ -88,3 +77,5 @@ See the fixture in `src/services/motherSession/__tests__/motherSessionFixtures.t
 ## Coaching Warnings
 ## Source References
 ```
+
+See `src/services/motherSession/__tests__/motherSessionFixtures.ts` for a full reference.
