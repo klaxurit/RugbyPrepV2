@@ -10,6 +10,7 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { CoachCompanion } from './components/CoachCompanion'
 import { ProgramChangeMount } from './components/ProgramChangeMount'
 import { UpdatePrompt } from './components/UpdatePrompt'
+import { CookieConsentBanner } from './components/CookieConsentBanner'
 
 // Eager : seulement HomePage (default after login, évite un flash sur l'écran principal)
 import { HomePage } from './pages/HomePage'
@@ -168,6 +169,7 @@ function App() {
         <CoachCompanion />
         <ProgramChangeMount />
         <UpdatePrompt />
+        <CookieConsentBanner />
         </CoachProvider>
       </BrowserRouter>
       </SessionRunProvider>
