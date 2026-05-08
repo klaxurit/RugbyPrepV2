@@ -348,7 +348,7 @@ features débloquées immédiatement, et ses droits reflétés côté backend.
 | Bug | Priorité v1 | Priorité v2 | Effort v1 | Effort v2 (review) | Slot |
 |---|---|---|---:|---:|---|
 | B1 valid Android + iOS V1.1 séparé | P1 | **P2** | 1-2j | **0.5j** | Week 6 |
-| B2 audit rest times | P0 | **P0** | 2-3j | **3-4j** | Week 1-2 |
+| B2 audit rest times | P0 | **P0** | 2-3j | **3-4j** | Week 1-2 → ✅ DONE 2026-05-08 |
 | B3 vidéos demo restore | P1 | **P1** | 0.5-1j | **1-1.5j** | Week 4-5 → ✅ DONE 2026-05-07 |
 | B4 transitions hardening | P1 | **P1** | 2-3j | **1.5j** | Week 3 |
 | **Total** | | | **7-10j** | **6.5-7.5j** | **+1 sem max** |
@@ -369,6 +369,7 @@ features débloquées immédiatement, et ses droits reflétés côté backend.
 | 44 | B4 review | Cible 50-80 fixtures (pas 900), property-based via fast-check sur invariants | Mechanical | P3 |
 | 45 | B4 review | B4 reste P1 sauf découverte d'un bug concret pendant l'audit | TASTE | — |
 | 47 | B2 audit findings | **SHIPPED 2026-05-07** — Cleanup legacy stack + medical content (branch `chore/decision-47-cleanup`, 6 phases A-F, **-17 426 lignes nettes**). Supprimé : `buildWeekProgram` + `blocks.v1.json` (548 entries) + `qualityGates` rehab + `sessionRecipes.v1` + `microcycleArchetypes.v1` + `buildMobilitySession` + `MobilityPage` (route `/mobility`) + chaîne `buildSessionFromRecipe` + types `RehabZone`/`Phase`/`Injury` + `UserProfile.rehabInjury` + DB column drop migration. Active stack inchangé (motherSessions). #24 Mobilité et #25 Rehab obsolètes. ACL prevention femmes : routing supprimé avec buildWeekProgram (V1.1 si réintroduction voulue, claim athlétique pas médical). Plan détaillé : `docs/decision-47-cleanup-plan.md`. Audit trail commits : fd18e03 → 7d7812e. | TASTE | P3+P5 |
+| 48 | B2 audit rest times | **SHIPPED 2026-05-08** — Audit rest times motherSessions vs KB (7 phases A-F, ~4.5j ; main commits ba819c8 → 337edf1). Pipeline : `parseRestSeconds` (free-text → range, qualifier precedence Décision #40 v2) + `inferBlockIntent` (11 règles spécifique→générique, hypertrophy-before-force) + `auditBlock` + `kbRanges` (sources strength-methods.md/periodization.md). Dry-run sur 155 blocks : 138 PASS / 16 SKIP / 1 FAIL → triage révèle "Pull Contrast Strength" est un misnomer (pair force lourde, pas un vrai contrast) → renommé en "Pull Strength Pair" dans 2 MDs in-season → audit clean **139 PASS / 16 SKIP / 0 FAIL**. Phase B' : 22 sessions inline (in-season + pre-season) migrées vers MD → MD = single source of truth pour les 39 sessions. Strict contract test CI gate `restTimes.contract.test.ts` (62 tests audit total : 42 parser + 14 heuristique + 6 contract). Plan : `docs/b2-rest-times-audit-plan.md` ; findings : `docs/b2-rest-times-findings.md` ; corrections triage : `docs/b2-rest-times-corrections.md`. | TASTE | P1 KB truth |
 
 **Section 8 review terminée**. Subagent : 4 critiques + corrections fichiers/fonctions. Codex : 3 high + corroboration spécifique avec citations KB. Convergence quasi-totale (B1/B2/B3/B4 specs corrigées). Discordance unique : B4 priority (Codex P1, Subagent P0). Décision : reste P1 par défaut, escalade P0 si l'audit révèle un bug.
 

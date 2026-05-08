@@ -1,7 +1,8 @@
 # B2 — Audit rest times motherSessions vs KB
 
-**Statut** : Phase A en cours
-**Décision parente** : #48 (à ouvrir post-#47)
+**Statut** : ✅ SHIPPED 2026-05-08 (toutes phases A→F mergées sur main, commits ba819c8 → 337edf1)
+**Décision parente** : #48 (voir `docs/release-v1-plan.md` audit-trail)
+**Convention canonique** : `src/data/__audits__/restTimes/README.md`
 **Source spec** : `docs/release-v1-plan.md` Section 8 B2 (v2 review-validated)
 **Re-scope** : `docs/decision-47-cleanup-plan.md` ligne 194-201 (B2 reset sur motherSessions après #47)
 
