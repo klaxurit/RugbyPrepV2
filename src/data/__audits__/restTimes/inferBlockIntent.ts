@@ -220,7 +220,7 @@ const RULES: IntentRule[] = [
 
 export function inferBlockIntent(block: Block, session: MotherSession): Intent {
   const name = (block.name ?? '').toLowerCase()
-  const format = (block.format ?? '').toLowerCase()
+  const format = (block.format ?? '').replace(/`/g, '').toLowerCase()
 
   for (const rule of RULES) {
     const nameMatch = rule.namePatterns?.some((rx) => rx.test(name)) ?? false
