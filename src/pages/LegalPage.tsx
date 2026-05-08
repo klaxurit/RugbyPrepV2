@@ -54,6 +54,16 @@ const CGU_SECTIONS: Section[] = [
       `RugbyForge se réserve le droit de modifier les présentes CGU à tout moment. Les modifications entrent en vigueur dès leur publication dans l'application. L'utilisation continuée du service vaut acceptation des nouvelles CGU.`,
     ],
   },
+  {
+    title: '6. Abonnements et paiements',
+    content: [
+      `Sur Android, les abonnements RugbyForge Premium sont encaissés exclusivement via Google Play Billing (Google Payments). Les conditions de paiement, de renouvellement automatique et de remboursement sont régies par le Contrat Google Play que vous acceptez à l'inscription au Play Store.`,
+      `Sur le web (PWA), les abonnements sont encaissés via Stripe Payments Europe Ltd. Les conditions de Stripe s'appliquent au traitement de la transaction.`,
+      `Droit de rétractation : conformément à l'article L221-28 du Code de la consommation, vous disposez d'un délai de rétractation de 14 jours à compter de l'achat de l'abonnement. Pour exercer ce droit, contactez Google Play (Android) ou Stripe (web) selon le canal d'achat. RugbyForge ne traite pas directement les remboursements.`,
+      `Les abonnements souscrits via Play Store sont gérés exclusivement depuis votre compte Google (paramètres Play Store → Paiements et abonnements). Les abonnements Stripe sont gérés depuis votre espace utilisateur RugbyForge.`,
+      `En cas de litige paiement, RugbyForge vous oriente vers le canal de paiement concerné (Google Play ou Stripe) qui assume la responsabilité de la transaction.`,
+    ],
+  },
 ]
 
 const PRIVACY_SECTIONS: Section[] = [
