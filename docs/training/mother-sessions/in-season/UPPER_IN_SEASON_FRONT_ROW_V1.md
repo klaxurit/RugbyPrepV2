@@ -47,7 +47,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Plyo push-ups stop as soon as height or stiffness clearly drops.
   - This is a clean contrast block, not a circuit.
 
-### Block 2 - Pull Contrast Strength
+### Block 2 - Pull Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
 - Exercise A: `Neutral-Grip Pull-Up` `3x5`
 - Exercise B: `Pendlay Row` `3x5-6`

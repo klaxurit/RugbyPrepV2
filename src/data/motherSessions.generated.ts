@@ -6472,7 +6472,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Pull Contrast Strength",
+        "name": "Pull Strength Pair",
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
@@ -6668,7 +6668,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Pull Contrast Strength",
+        "name": "Pull Strength Pair",
         "format": "`3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {

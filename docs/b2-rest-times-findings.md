@@ -1,15 +1,15 @@
 # B2 — Rest times audit findings (Phase B dry-run)
 
-**Generated:** 2026-05-08T07:42:51.334Z
+**Generated:** 2026-05-08T07:55:43.261Z
 **Total blocks:** 155
 
 ## Status breakdown
 
 | Status | Count |
 |---|---:|
-| PASS | 138 |
+| PASS | 139 |
 | SKIP | 16 |
-| FAIL_RANGE | 1 |
+| FAIL_RANGE | 0 |
 | FAIL_INTENT_UNKNOWN | 0 |
 | FAIL_PARSE | 0 |
 
@@ -17,8 +17,8 @@
 
 | Intent | Total | Pass | Fail | Skip |
 |---|---:|---:|---:|---:|
-| power_contrast | 39 | 38 | 1 | 0 |
-| hypertrophy | 62 | 62 | 0 | 0 |
+| power_contrast | 37 | 37 | 0 | 0 |
+| hypertrophy | 64 | 64 | 0 | 0 |
 | prehab | 20 | 17 | 0 | 3 |
 | reward | 5 | 5 | 0 | 0 |
 | core | 12 | 10 | 0 | 2 |
@@ -26,12 +26,6 @@
 | activation | 2 | 1 | 0 | 1 |
 | sprint | 4 | 3 | 0 | 1 |
 | dynamic | 2 | 2 | 0 | 0 |
-
-## FAIL findings
-
-| Session | # | Block name | Intent | Parsed | KB | Status | Reason |
-|---|--:|---|---|---|---|---|---|
-| `UPPER_IN_SEASON_BACK_THREE_V1` | 2 | Pull Contrast Strength | power_contrast | 75-90s | 120-180s ±0 | FAIL_RANGE | parsed 75-90s too-low vs KB 120-180s (Décision #40 v2 (rest after contrast triplet/cluster)) |
 
 ## Skipped (allowlist)
 

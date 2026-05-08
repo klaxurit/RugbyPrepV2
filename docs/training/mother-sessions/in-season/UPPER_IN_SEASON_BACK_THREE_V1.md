@@ -47,7 +47,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - The med ball throw should feel sharp and ballistic, not heavy.
   - This is a speed-biased contrast, not a max-strength cluster.
 
-### Block 2 - Pull Contrast Strength
+### Block 2 - Pull Strength Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
 - Exercise A: `Neutral-Grip Pull-Up` `3x5`
 - Exercise B: `Pendlay Row` `3x5-6`
