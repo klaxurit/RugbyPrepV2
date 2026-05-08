@@ -1,7 +1,7 @@
 # B4 — Hardening transitions (B4-redux post-#47)
 
 **Status** : ✅ SHIPPED 2026-05-08 — Décision #49 dans `docs/release-v1-plan.md`.
-**Commits main** : d203f9d (A) → 32765bb (B) → b0587b7 (C) → 4f768dc (D) → 468d389 (E) → [F].
+**Commits main** : d203f9d (A) → 32765bb (B) → b0587b7 (C) → 4f768dc (D) → 468d389 (E) → 93b638a (F).
 
 ## Contexte
 
