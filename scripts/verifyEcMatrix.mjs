@@ -17,9 +17,10 @@ const matrixContent = fs.readFileSync(matrixPath, 'utf8')
 const lines = matrixContent.split('\n')
 const edgeRows = lines.filter((line) => /^\|\s*EC-\d{2}\s*\|/.test(line))
 
-const requiredIds = Array.from({ length: 12 }, (_, index) =>
-  `EC-${String(index + 1).padStart(2, '0')}`
-)
+// EC-01 to EC-10 retired with Decision #47 cleanup — they validated
+// buildWeekProgram-era invariants that no longer exist (active stack
+// is motherSession resolver). Only scheduleOptimizer ECs remain.
+const requiredIds = ['EC-11', 'EC-12']
 
 const foundIds = new Set()
 const errors = []
