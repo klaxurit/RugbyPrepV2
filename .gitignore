@@ -89,3 +89,4 @@ docs/*
 !docs/google-play-store-listing.md
 !docs/release-v1-plan.md
 !docs/decision-47-cleanup-plan.md
+!docs/b2-*.md
