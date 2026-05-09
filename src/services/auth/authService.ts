@@ -9,11 +9,15 @@ interface SignUpInput {
   password: string
   /** ISO timestamp captured when the user ticked the medical disclaimer checkbox at signup. */
   medicalConsentAcceptedAt: string
+  /** WS2 — hCaptcha token; required when the dashboard captcha gate is active. */
+  captchaToken?: string
 }
 
 interface SignInInput {
   email: string
   password: string
+  /** WS2 — hCaptcha token; required when the dashboard captcha gate is active. */
+  captchaToken?: string
 }
 
 const AVATAR_BUCKET = 'avatars'
@@ -96,7 +100,7 @@ export const onAuthStateChanged = (
   return data.subscription
 }
 
-export const signUp = async ({ email, displayName, password, medicalConsentAcceptedAt }: SignUpInput): Promise<Result<AuthUser, AuthError>> => {
+export const signUp = async ({ email, displayName, password, medicalConsentAcceptedAt, captchaToken }: SignUpInput): Promise<Result<AuthUser, AuthError>> => {
   const normalizedEmail = normalizeEmail(email)
   const cleanDisplayName = displayName.trim()
 
@@ -119,6 +123,7 @@ export const signUp = async ({ email, displayName, password, medicalConsentAccep
         medical_consent_accepted_at: medicalConsentAcceptedAt,
       },
       emailRedirectTo: `${window.location.origin}/auth/callback`,
+      captchaToken,
     },
   })
 
@@ -151,7 +156,7 @@ export const signUp = async ({ email, displayName, password, medicalConsentAccep
   return { ok: true, value: mapSupabaseUserToAuthUser(data.session.user) }
 }
 
-export const signIn = async ({ email, password }: SignInInput): Promise<Result<AuthUser, AuthError>> => {
+export const signIn = async ({ email, password, captchaToken }: SignInInput): Promise<Result<AuthUser, AuthError>> => {
   const normalizedEmail = normalizeEmail(email)
 
   if (!normalizedEmail.includes('@')) {
@@ -161,6 +166,7 @@ export const signIn = async ({ email, password }: SignInInput): Promise<Result<A
   const { data, error } = await supabase.auth.signInWithPassword({
     email: normalizedEmail,
     password,
+    options: { captchaToken },
   })
 
   if (error || !data.user) {

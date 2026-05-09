@@ -3,6 +3,7 @@ import { useState } from 'react'
 import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import { useAuth } from '../../hooks/useAuth'
 import { supabase } from '../../services/supabase/client'
+import { CaptchaGate, captchaIsRequired } from '../../components/auth/CaptchaGate'
 
 interface ForgotPasswordLocationState {
   email?: string
@@ -16,6 +17,7 @@ export function ForgotPasswordPage() {
   const [email, setEmail] = useState(
     typeof state?.email === 'string' ? state.email : '',
   )
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -34,10 +36,16 @@ export function ForgotPasswordPage() {
       return
     }
 
+    if (captchaIsRequired && !captchaToken) {
+      setError('Merci de valider le captcha pour continuer.')
+      return
+    }
+
     setIsSubmitting(true)
 
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
+      captchaToken: captchaToken ?? undefined,
     })
 
     if (resetError) {
@@ -85,6 +93,11 @@ export function ForgotPasswordPage() {
                 required
               />
             </div>
+
+            <CaptchaGate
+              onVerify={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
+            />
 
             {error && (
               <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">

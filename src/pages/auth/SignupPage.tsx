@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
+import { CaptchaGate, captchaIsRequired } from '../../components/auth/CaptchaGate'
 
 const authErrorLabel: Record<AuthError, string> = {
   EMAIL_EXISTS: 'Cet email existe déjà.',
@@ -25,6 +26,7 @@ export function SignupPage() {
   const [password, setPassword] = useState('')
   const [ageConfirmed, setAgeConfirmed] = useState(false)
   const [medicalConsent, setMedicalConsent] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -45,11 +47,18 @@ export function SignupPage() {
       return
     }
 
+    if (captchaIsRequired && !captchaToken) {
+      setError('Merci de valider le captcha pour continuer.')
+      setIsSubmitting(false)
+      return
+    }
+
     const result = await signUp({
       displayName,
       email,
       password,
       medicalConsentAcceptedAt: new Date().toISOString(),
+      captchaToken: captchaToken ?? undefined,
     })
 
     if (!result.ok) {
@@ -168,6 +177,11 @@ export function SignupPage() {
                 <Link to="/legal#disclaimer" className="text-brand underline">Lire le détail</Link>
               </span>
             </label>
+
+            <CaptchaGate
+              onVerify={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
+            />
 
             {error && (
               <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">

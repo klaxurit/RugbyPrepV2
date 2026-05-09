@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { sanitizeRequestedAppPath } from '../../services/navigation/resolveAppEntryDestination'
 import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
+import { CaptchaGate, captchaIsRequired } from '../../components/auth/CaptchaGate'
 
 interface RedirectState {
   from?: {
@@ -32,6 +33,7 @@ export function LoginPage() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -49,9 +51,14 @@ export function LoginPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError(null)
+    if (captchaIsRequired && !captchaToken) {
+      setError('Merci de valider le captcha pour continuer.')
+      return
+    }
+
     setIsSubmitting(true)
 
-    const result = await signIn({ email, password })
+    const result = await signIn({ email, password, captchaToken: captchaToken ?? undefined })
 
     if (!result.ok) {
       setError(authErrorLabel[result.error])
@@ -113,6 +120,11 @@ export function LoginPage() {
                 required
               />
             </div>
+
+            <CaptchaGate
+              onVerify={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
+            />
 
             {error && (
               <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">

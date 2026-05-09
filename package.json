@@ -25,6 +25,7 @@
     "@capacitor/core": "^7.6.2",
     "@capacitor/ios": "^7.6.2",
     "@capacitor/status-bar": "^7.0.6",
+    "@hcaptcha/react-hcaptcha": "^2.0.2",
     "@supabase/supabase-js": "^2.97.0",
     "@tailwindcss/vite": "^4.1.18",
     "canvas-confetti": "^1.9.4",

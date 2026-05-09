@@ -8,11 +8,15 @@ interface SignUpInput {
   password: string
   /** ISO timestamp captured when the user ticked the medical disclaimer checkbox. */
   medicalConsentAcceptedAt: string
+  /** WS2 — hCaptcha token; required when VITE_HCAPTCHA_SITEKEY is set. */
+  captchaToken?: string
 }
 
 interface SignInInput {
   email: string
   password: string
+  /** WS2 — hCaptcha token; required when VITE_HCAPTCHA_SITEKEY is set. */
+  captchaToken?: string
 }
 
 export interface AuthContextValue {
