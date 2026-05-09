@@ -37,7 +37,7 @@ export function CaptchaGate({ onVerify, onExpire }: CaptchaGateProps) {
         onExpire={() => {
           onExpire?.()
         }}
-        theme="dark"
+        theme="light"
       />
     </div>
   )
