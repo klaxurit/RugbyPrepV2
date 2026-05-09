@@ -144,9 +144,15 @@ export function useEntitlements() {
   const isPremium = useMemo(
     () => Boolean(
       planId?.startsWith('premium') ||
+      planId?.startsWith('founding') ||
       keys.some((key) => PREMIUM_HINTS.has(key)),
     ),
     [keys, planId],
+  )
+
+  const isFounding = useMemo(
+    () => Boolean(planId?.startsWith('founding')),
+    [planId],
   )
 
   return {
@@ -155,6 +161,7 @@ export function useEntitlements() {
     keys,
     planId,
     isPremium,
+    isFounding,
     hasEntitlement,
     refresh,
   }

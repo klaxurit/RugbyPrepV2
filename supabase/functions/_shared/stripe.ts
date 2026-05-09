@@ -3,11 +3,16 @@ const STRIPE_API_BASE_URL = 'https://api.stripe.com'
 type StripePriceConfig = {
   monthly: string
   yearly: string
+  founding_yearly: string | null
 }
 
 const DEFAULT_PRICE_CONFIG: StripePriceConfig = {
   monthly: 'price_1T7d7SA0Tj8d0YU9wdm1h3pO',
   yearly: 'price_1T7d8uA0Tj8d0YU9R2xW5ZcG',
+  // WS0 — must be set via STRIPE_PRICE_FOUNDING_YEARLY secret. Defaults null
+  // so a misconfigured env returns a clear "not configured" error rather than
+  // billing the wrong amount.
+  founding_yearly: null,
 }
 
 const toHex = (bytes: Uint8Array): string =>
@@ -26,12 +31,14 @@ const timingSafeEqual = (a: string, b: string): boolean => {
 const getPriceConfig = (): StripePriceConfig => ({
   monthly: Deno.env.get('STRIPE_PRICE_PREMIUM_MONTHLY') ?? DEFAULT_PRICE_CONFIG.monthly,
   yearly: Deno.env.get('STRIPE_PRICE_PREMIUM_YEARLY') ?? DEFAULT_PRICE_CONFIG.yearly,
+  founding_yearly: Deno.env.get('STRIPE_PRICE_FOUNDING_YEARLY') ?? DEFAULT_PRICE_CONFIG.founding_yearly,
 })
 
 export const getStripePriceIdForPlan = (planId: string): string | null => {
   const config = getPriceConfig()
   if (planId === 'premium_monthly') return config.monthly
   if (planId === 'premium_yearly') return config.yearly
+  if (planId === 'founding_yearly') return config.founding_yearly
   return null
 }
 
@@ -40,6 +47,7 @@ export const getPlanIdForStripePrice = (priceId: string | null | undefined): str
   const config = getPriceConfig()
   if (priceId === config.monthly) return 'premium_monthly'
   if (priceId === config.yearly) return 'premium_yearly'
+  if (config.founding_yearly && priceId === config.founding_yearly) return 'founding_yearly'
   return null
 }
 

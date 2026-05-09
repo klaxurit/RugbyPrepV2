@@ -11,6 +11,7 @@ import { CoachCompanion } from './components/CoachCompanion'
 import { ProgramChangeMount } from './components/ProgramChangeMount'
 import { UpdatePrompt } from './components/UpdatePrompt'
 import { CookieConsentBanner } from './components/CookieConsentBanner'
+import { FoundingOffer } from './components/FoundingOffer'
 
 // Eager : seulement HomePage (default after login, évite un flash sur l'écran principal)
 import { HomePage } from './pages/HomePage'
@@ -170,6 +171,7 @@ function App() {
         <ProgramChangeMount />
         <UpdatePrompt />
         <CookieConsentBanner />
+        <FoundingOffer />
         </CoachProvider>
       </BrowserRouter>
       </SessionRunProvider>

@@ -8,6 +8,9 @@ import { supabase } from '../services/supabase/client'
 const PLAY_PRODUCTS: Record<string, string> = {
   premium_monthly: 'premium.monthly',
   premium_yearly: 'premium.yearly',
+  // WS0 Décision #52 — Founding 49€/an à vie. Le SKU correspondant doit être
+  // créé côté Play Console (Subscription, base plan annual, prix 49€ EUR).
+  founding_yearly: 'founding.yearly',
 }
 
 /** True when running inside a TWA or installed PWA (evaluated lazily) */
@@ -112,7 +115,7 @@ export function usePlayBilling() {
    * Initiate a purchase via the Payment Request API + Digital Goods API.
    * On success, verifies the purchase server-side and grants entitlements.
    */
-  const purchase = useCallback(async (planId: 'premium_monthly' | 'premium_yearly' = 'premium_monthly') => {
+  const purchase = useCallback(async (planId: 'premium_monthly' | 'premium_yearly' | 'founding_yearly' = 'premium_monthly') => {
     const productId = PLAY_PRODUCTS[planId]
     if (!productId) {
       setState((prev) => ({ ...prev, error: `Unknown plan: ${planId}` }))
@@ -130,9 +133,17 @@ export function usePlayBilling() {
       console.log('[PlayBilling] Digital Goods Service acquired')
 
       // Try to get price from Play Store, fall back to hardcoded values
-      let label = planId === 'premium_monthly' ? 'RugbyForge Premium Mensuel' : 'RugbyForge Premium Annuel'
+      let label = planId === 'premium_monthly'
+        ? 'RugbyForge Premium Mensuel'
+        : planId === 'founding_yearly'
+          ? 'RugbyForge Founding (49€/an à vie)'
+          : 'RugbyForge Premium Annuel'
       let currency = 'EUR'
-      let value = planId === 'premium_monthly' ? '5.99' : '47.99'
+      let value = planId === 'premium_monthly'
+        ? '5.99'
+        : planId === 'founding_yearly'
+          ? '49.00'
+          : '47.99'
 
       try {
         const [details] = await service.getDetails([productId])

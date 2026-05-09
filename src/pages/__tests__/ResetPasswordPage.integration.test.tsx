@@ -24,6 +24,14 @@ vi.mock('../../services/supabase/client', () => ({
   },
 }))
 
+// hCaptcha gating depends on VITE_HCAPTCHA_SITEKEY which may be set in the
+// developer's .env.local — neutralise it for these tests so they only exercise
+// the reset-flow logic.
+vi.mock('../../components/auth/CaptchaGate', () => ({
+  CaptchaGate: () => null,
+  captchaIsRequired: false,
+}))
+
 describe('Reset password flow', () => {
   beforeEach(() => {
     vi.clearAllMocks()

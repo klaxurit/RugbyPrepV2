@@ -35,7 +35,7 @@ export function usePremiumCheckout() {
 
   const playBilling = usePlayBilling()
 
-  const startCheckout = useCallback(async (planId: 'premium_monthly' | 'premium_yearly' = 'premium_monthly') => {
+  const startCheckout = useCallback(async (planId: 'premium_monthly' | 'premium_yearly' | 'founding_yearly' = 'premium_monthly') => {
     setState({ loading: true, error: null, message: null })
 
     // Route to Google Play Billing when inside the TWA
