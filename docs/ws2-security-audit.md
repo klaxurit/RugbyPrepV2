@@ -1,7 +1,20 @@
 # WS2 — Security audit V1 (RLS + headers + auth)
 
-**Status** : Phase A en cours — 2026-05-09
-**Décision pivot** : #51 (à créer en clôture).
+**Status** : ✅ SHIPPED 2026-05-09 — Décision #51 dans `docs/release-v1-plan.md`.
+**Commits main** : c1604c1 (A) → 64e4b74 (C+D) → [E+F].
+
+## Wall-clock pending pour clore intégralement WS2
+
+**Action user (dashboard Supabase)** :
+1. Vérifier les rate limits Auth (Project Settings → Auth → Rate limits) :
+   - Magic Link : ≤ 10 / heure / IP recommandé
+   - OTP : ≤ 60 / heure / IP recommandé
+   - Signup : ≤ 30 / heure / IP recommandé
+2. **Activer hCaptcha** sur Auth (Project Settings → Auth → CAPTCHA) — limite spam signup ; couvre aussi le risque mobile_install_leads si on l'étend en V1.1.
+3. **Vérifier bucket `avatars`** existe (Storage → Buckets) avec public bucket = ON. Les policies viennent de la migration 20260509110000.
+4. `npx supabase db push` pour appliquer la migration storage avatars.
+
+
 
 ## Périmètre
 
