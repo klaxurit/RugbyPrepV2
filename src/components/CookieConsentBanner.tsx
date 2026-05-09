@@ -33,7 +33,7 @@ export function CookieConsentBanner() {
     <div
       role="dialog"
       aria-label="Préférences cookies"
-      className="fixed bottom-bottom-nav left-0 right-0 z-50 px-4 pb-3"
+      className="fixed bottom-4 left-0 right-0 z-50 px-4 pb-[env(safe-area-inset-bottom)]"
     >
       <div className="max-w-md mx-auto bg-layer-5 border border-border-app rounded-[20px] p-4 shadow-2xl space-y-3">
         <p className="text-xs text-fg leading-relaxed">
