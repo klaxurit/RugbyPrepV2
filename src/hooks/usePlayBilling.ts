@@ -143,7 +143,7 @@ export function usePlayBilling() {
         ? '5.99'
         : planId === 'founding_yearly'
           ? '49.00'
-          : '47.99'
+          : '64.99'
 
       try {
         const [details] = await service.getDetails([productId])
