@@ -627,7 +627,7 @@ export function WeekPage() {
               <p className="text-xs font-bold text-fg">Note tes charges après chaque bloc</p>
               <p className="text-[10px] text-fg-muted mt-0.5">Suis ta progression et reçois des suggestions personnalisées.</p>
               <Link to="/profile#premium" className="inline-block mt-2 text-[10px] font-black text-brand-tint uppercase tracking-wider">
-                Passer en Premium →
+                Activer Premium →
               </Link>
             </div>
           </div>

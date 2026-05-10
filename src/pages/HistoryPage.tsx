@@ -87,7 +87,7 @@ export function HistoryPage() {
               to="/profile#premium"
               className="px-6 py-3 rounded-full bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold transition-colors"
             >
-              Passer en Premium
+              Activer Premium
             </Link>
           </div>
         )}

@@ -367,13 +367,12 @@ export function LandingPage() {
                 </span>
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.05] mb-6 text-fg">
-                Ta prépa physique,{' '}
-                <span className="text-brand">scientifiquement</span>{' '}
-                optimisée
+                <span className="text-brand">Forge</span> ton physique<br />
+                pour le rugby
               </h1>
               <p className="text-lg text-fg-muted max-w-xl mb-8 leading-relaxed">
-                Un programme complet dès l'inscription. Le Premium débloque le suivi des charges,
-                l'historique et les courbes de progression.
+                Programme hebdo qui s'adapte à ton calendrier club, ton niveau et ton matériel.
+                Gratuit pour démarrer, illimité dès la première séance.
               </p>
               <div className="flex flex-wrap gap-4">
                 <SignupOrInstallCTA
@@ -678,7 +677,7 @@ export function LandingPage() {
               price={PREMIUM_MONTHLY_PRICE}
               period="/mois"
               features={PREMIUM_FEATURES}
-              cta="Passer en Premium"
+              cta="Activer Premium"
               ctaLink="/auth/signup?plan=premium&billing=monthly"
             />
             <PricingCard
@@ -686,7 +685,7 @@ export function LandingPage() {
               price={PREMIUM_YEARLY_PRICE}
               period="/an"
               features={[...PREMIUM_FEATURES, 'Économise ~10% par rapport au mensuel']}
-              cta="Passer en Premium"
+              cta="Activer Premium"
               ctaLink="/auth/signup?plan=premium&billing=annual"
             />
             <PricingCard
