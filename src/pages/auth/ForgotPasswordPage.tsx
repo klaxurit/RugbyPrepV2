@@ -3,7 +3,8 @@ import { useState } from 'react'
 import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import { useAuth } from '../../hooks/useAuth'
 import { supabase } from '../../services/supabase/client'
-import { CaptchaGate, captchaIsRequired } from '../../components/auth/CaptchaGate'
+import { CaptchaGate } from '../../components/auth/CaptchaGate'
+import { captchaIsRequired } from '../../components/auth/captchaConfig'
 
 interface ForgotPasswordLocationState {
   email?: string

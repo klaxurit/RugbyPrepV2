@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { posthog } from '../services/analytics/posthog'
 import { useFoundingOfferEligibility, FOUNDING_OFFER_HINT_ID, consumeFoundingForceShow } from '../hooks/useFoundingOfferEligibility'
 import { useHintVisibility } from '../hooks/useHintVisibility'
@@ -10,25 +10,22 @@ import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
  * Mounted globally (App.tsx). Shows a one-time modal sheet when the eligibility
  * trigger fires (Day 2+ since signup, ≥1 session completed, not paying, not
  * dismissed). Routing checkout (Play vs Stripe) handled by usePremiumCheckout.
+ *
+ * Visibility is fully derived from the `eligible` flag — when the user clicks
+ * "Plus tard" the dismiss persists, the hook re-evaluates eligible to false
+ * on next render, and the modal unmounts.
  */
 export function FoundingOffer() {
   const { eligible } = useFoundingOfferEligibility()
   const { dismiss } = useHintVisibility(FOUNDING_OFFER_HINT_ID)
   const { startCheckout, loading: checkoutLoading, error: checkoutError } = usePremiumCheckout()
   const trackedRef = useRef(false)
-  const [open, setOpen] = useState(false)
 
+  // Fire founding_offer_shown once per session when the modal first becomes
+  // visible. Also consume the /founding force-show flag (one-shot) so the
+  // subsequent renders fall back to the normal eligibility gates.
   useEffect(() => {
-    if (eligible && !open) {
-      setOpen(true)
-    }
-  }, [eligible, open])
-
-  // Fire founding_offer_shown once per session when the modal first becomes visible.
-  // Also consume the /founding force-show flag (one-shot) so subsequent renders
-  // fall back to the normal eligibility gates.
-  useEffect(() => {
-    if (open && !trackedRef.current) {
+    if (eligible && !trackedRef.current) {
       trackedRef.current = true
       consumeFoundingForceShow()
       try {
@@ -37,9 +34,9 @@ export function FoundingOffer() {
         /* posthog might be disabled (no consent) */
       }
     }
-  }, [open])
+  }, [eligible])
 
-  if (!open) return null
+  if (!eligible) return null
 
   const handleAccept = async () => {
     try {
@@ -47,7 +44,7 @@ export function FoundingOffer() {
     } catch { /* ignore */ }
     await startCheckout('founding_yearly')
     // startCheckout redirects to provider on success → modal stays mounted
-    // until navigation. On Play success path, no redirect — close modal.
+    // until navigation.
   }
 
   const handleDismiss = () => {
@@ -55,7 +52,7 @@ export function FoundingOffer() {
       posthog.capture?.('founding_offer_dismissed')
     } catch { /* ignore */ }
     dismiss()
-    setOpen(false)
+    // dismiss persists → next render eligible becomes false → unmount.
   }
 
   return (

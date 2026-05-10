@@ -1,7 +1,6 @@
 import { useRef } from 'react'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
-
-const SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITEKEY as string | undefined
+import { captchaSiteKey } from './captchaConfig'
 
 interface CaptchaGateProps {
   onVerify: (token: string) => void
@@ -26,13 +25,13 @@ export interface CaptchaGateHandle {
 export function CaptchaGate({ onVerify, onExpire }: CaptchaGateProps) {
   const ref = useRef<HCaptcha>(null)
 
-  if (!SITE_KEY) return null
+  if (!captchaSiteKey) return null
 
   return (
     <div className="flex justify-center">
       <HCaptcha
         ref={ref}
-        sitekey={SITE_KEY}
+        sitekey={captchaSiteKey}
         onVerify={(token) => onVerify(token)}
         onExpire={() => {
           onExpire?.()
@@ -42,5 +41,3 @@ export function CaptchaGate({ onVerify, onExpire }: CaptchaGateProps) {
     </div>
   )
 }
-
-export const captchaIsRequired: boolean = Boolean(SITE_KEY)

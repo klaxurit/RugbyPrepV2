@@ -29,6 +29,9 @@ vi.mock('../../services/supabase/client', () => ({
 // the reset-flow logic.
 vi.mock('../../components/auth/CaptchaGate', () => ({
   CaptchaGate: () => null,
+}))
+vi.mock('../../components/auth/captchaConfig', () => ({
+  captchaSiteKey: undefined,
   captchaIsRequired: false,
 }))
 

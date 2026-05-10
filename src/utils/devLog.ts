@@ -9,14 +9,12 @@ const isDev = import.meta.env.DEV
 
 export function devLog(...args: unknown[]): void {
   if (isDev) {
-    // eslint-disable-next-line no-console -- intentional dev logging
     console.log(...args)
   }
 }
 
 export function devInfo(...args: unknown[]): void {
   if (isDev) {
-    // eslint-disable-next-line no-console -- intentional dev logging
     console.info(...args)
   }
 }

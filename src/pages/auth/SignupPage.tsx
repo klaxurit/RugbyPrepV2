@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { useAuth } from '../../hooks/useAuth'
 import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
-import { CaptchaGate, captchaIsRequired } from '../../components/auth/CaptchaGate'
+import { CaptchaGate } from '../../components/auth/CaptchaGate'
+import { captchaIsRequired } from '../../components/auth/captchaConfig'
 
 const authErrorLabel: Record<AuthError, string> = {
   EMAIL_EXISTS: 'Cet email existe déjà.',

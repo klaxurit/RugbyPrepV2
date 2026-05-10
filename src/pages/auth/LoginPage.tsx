@@ -4,7 +4,8 @@ import { useAuth } from '../../hooks/useAuth'
 import { sanitizeRequestedAppPath } from '../../services/navigation/resolveAppEntryDestination'
 import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
-import { CaptchaGate, captchaIsRequired } from '../../components/auth/CaptchaGate'
+import { CaptchaGate } from '../../components/auth/CaptchaGate'
+import { captchaIsRequired } from '../../components/auth/captchaConfig'
 
 interface RedirectState {
   from?: {

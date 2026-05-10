@@ -26,6 +26,9 @@ vi.mock('../../services/analytics/posthog', () => ({
 // the medical-consent gate.
 vi.mock('../../components/auth/CaptchaGate', () => ({
   CaptchaGate: () => null,
+}))
+vi.mock('../../components/auth/captchaConfig', () => ({
+  captchaSiteKey: undefined,
   captchaIsRequired: false,
 }))
 

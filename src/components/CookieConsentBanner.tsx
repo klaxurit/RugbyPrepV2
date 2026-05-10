@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { acceptCookies, declineCookies, readCookieConsent } from '../services/analytics/cookieConsent'
 
@@ -10,12 +10,8 @@ import { acceptCookies, declineCookies, readCookieConsent } from '../services/an
  * (PostHog) gated par "Accepter".
  */
 export function CookieConsentBanner() {
-  // Mounted state evite le flash si le user a déjà choisi (lecture sync localStorage)
+  // Lazy init from localStorage : suffit (single source of truth, sync read).
   const [hasChoice, setHasChoice] = useState<boolean>(() => readCookieConsent() !== null)
-
-  useEffect(() => {
-    if (readCookieConsent() !== null) setHasChoice(true)
-  }, [])
 
   if (hasChoice) return null
 
