@@ -972,16 +972,16 @@ export function ProfilePage() {
                       : 'border-border-app bg-layer-5'
                   }`}
                 >
-                  <div className="absolute -top-2 right-2 bg-brand text-on-brand text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">-33%</div>
+                  <div className="absolute -top-2 right-2 bg-brand text-on-brand text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">-10%</div>
                   <p className="text-xs font-black text-fg">Annuel</p>
-                  <p className="text-lg font-black text-brand-tint">47,99&euro;<span className="text-[10px] text-fg-muted font-bold">/an</span></p>
+                  <p className="text-lg font-black text-brand-tint">64,99&euro;<span className="text-[10px] text-fg-muted font-bold">/an</span></p>
                 </button>
               </div>
 
               <p className="text-[10px] leading-relaxed text-fg-muted">
                 {selectedPlan === 'premium_monthly'
                   ? 'Abonnement mensuel a 5,99 \u20AC/mois. Renouvellement automatique. Annulable a tout moment via Google Play.'
-                  : 'Abonnement annuel a 47,99 \u20AC/an. Renouvellement automatique. Annulable a tout moment via Google Play.'}
+                  : 'Abonnement annuel a 64,99 \u20AC/an. Renouvellement automatique. Annulable a tout moment via Google Play.'}
               </p>
 
               <div className="flex flex-wrap gap-2">

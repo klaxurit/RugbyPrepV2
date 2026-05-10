@@ -60,4 +60,28 @@ describe('evaluateFoundingEligibility', () => {
       evaluateFoundingEligibility({ ...eligibleInputs, dismissed: true, hasSession: true }),
     ).toBe(false)
   })
+
+  it('forceShow bypasses dismissed + D2 + session gates (used by /founding route)', () => {
+    expect(
+      evaluateFoundingEligibility({
+        ...eligibleInputs,
+        dismissed: true,
+        hasSession: false,
+        userCreatedAt: NOW,
+        forceShow: true,
+      }),
+    ).toBe(true)
+  })
+
+  it('forceShow does NOT bypass isPremium (already paying users never see the offer)', () => {
+    expect(
+      evaluateFoundingEligibility({ ...eligibleInputs, isPremium: true, forceShow: true }),
+    ).toBe(false)
+  })
+
+  it('forceShow does NOT bypass loading (UX coherence : wait for upstream signals)', () => {
+    expect(
+      evaluateFoundingEligibility({ ...eligibleInputs, loading: true, forceShow: true }),
+    ).toBe(false)
+  })
 })

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { posthog } from '../services/analytics/posthog'
-import { useFoundingOfferEligibility, FOUNDING_OFFER_HINT_ID } from '../hooks/useFoundingOfferEligibility'
+import { useFoundingOfferEligibility, FOUNDING_OFFER_HINT_ID, consumeFoundingForceShow } from '../hooks/useFoundingOfferEligibility'
 import { useHintVisibility } from '../hooks/useHintVisibility'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 
@@ -25,9 +25,12 @@ export function FoundingOffer() {
   }, [eligible, open])
 
   // Fire founding_offer_shown once per session when the modal first becomes visible.
+  // Also consume the /founding force-show flag (one-shot) so subsequent renders
+  // fall back to the normal eligibility gates.
   useEffect(() => {
     if (open && !trackedRef.current) {
       trackedRef.current = true
+      consumeFoundingForceShow()
       try {
         posthog.capture?.('founding_offer_shown')
       } catch {
@@ -61,12 +64,8 @@ export function FoundingOffer() {
       aria-modal="true"
       aria-labelledby="founding-offer-title"
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-      onClick={handleDismiss}
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-app border-2 border-brand rounded-[28px] p-6 space-y-4 shadow-2xl"
-      >
+      <div className="w-full max-w-md bg-app border-2 border-brand rounded-[28px] p-6 space-y-4 shadow-2xl">
         <div className="space-y-1">
           <p className="text-[10px] font-black uppercase tracking-[0.25em] text-brand">Offre Founding</p>
           <h2 id="founding-offer-title" className="text-2xl font-black text-fg leading-tight">

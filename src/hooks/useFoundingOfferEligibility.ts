@@ -6,6 +6,38 @@ import { useHintVisibility } from './useHintVisibility'
 
 export const D2_DELAY_MS = 24 * 60 * 60 * 1000 // 24h
 export const FOUNDING_OFFER_HINT_ID = 'founding_offer_2026'
+const FORCE_SHOW_KEY = 'founding_offer_force_show'
+
+/**
+ * Used by /founding route to force-display the modal even if the user has
+ * dismissed it before (e.g. user clicked an email/DM link). Cleared by the
+ * modal itself once it surfaces.
+ */
+export function markFoundingForceShow(): void {
+  try {
+    sessionStorage.setItem(FORCE_SHOW_KEY, '1')
+  } catch {
+    /* ignore (storage disabled) */
+  }
+}
+
+export function consumeFoundingForceShow(): boolean {
+  try {
+    const flag = sessionStorage.getItem(FORCE_SHOW_KEY) === '1'
+    if (flag) sessionStorage.removeItem(FORCE_SHOW_KEY)
+    return flag
+  } catch {
+    return false
+  }
+}
+
+function readFoundingForceShow(): boolean {
+  try {
+    return sessionStorage.getItem(FORCE_SHOW_KEY) === '1'
+  } catch {
+    return false
+  }
+}
 
 interface FoundingOfferEligibility {
   /** True iff the user matches the trigger : Day 2+ AND ≥1 session AND not paying AND not dismissed. */
@@ -29,11 +61,15 @@ interface EligibilityInputs {
 /**
  * Pure decision function used by the hook AND covered by unit tests.
  * Keep this side-effect-free so it stays testable in isolation.
+ *
+ * `forceShow` (set via /founding route) bypasses the dismissed + D2 + session
+ * checks. It still respects the no-userId, loading, and isPremium gates.
  */
-export function evaluateFoundingEligibility(inputs: EligibilityInputs): boolean {
+export function evaluateFoundingEligibility(inputs: EligibilityInputs & { forceShow?: boolean }): boolean {
   if (!inputs.userId) return false
   if (inputs.loading) return false
   if (inputs.isPremium) return false
+  if (inputs.forceShow) return true
   if (inputs.dismissed) return false
   if (inputs.userCreatedAt == null) return false
   const now = inputs.now ?? Date.now()
@@ -91,6 +127,7 @@ export function useFoundingOfferEligibility(): FoundingOfferEligibility {
   }, [userId])
 
   const loading = entitlementsLoading || hintLoading || hasSession === null
+  const forceShow = readFoundingForceShow()
 
   const eligible = evaluateFoundingEligibility({
     userId,
@@ -99,6 +136,7 @@ export function useFoundingOfferEligibility(): FoundingOfferEligibility {
     hasSession: hasSession === true,
     dismissed,
     loading,
+    forceShow,
   })
 
   return { eligible, loading, dismissed }
