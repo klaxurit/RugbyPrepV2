@@ -34,6 +34,7 @@ const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage').
 const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })))
 const LegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m.LegalPage })))
 const DeleteAccountPage = lazy(() => import('./pages/DeleteAccountPage').then(m => ({ default: m.DeleteAccountPage })))
+const FeedbackPage = lazy(() => import('./pages/FeedbackPage').then(m => ({ default: m.FeedbackPage })))
 
 const isStandaloneMode =
   typeof window !== 'undefined' &&
@@ -149,6 +150,7 @@ function App() {
           <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
           <Route path="/legal" element={<LegalPage />} />
           <Route path="/delete-account" element={<DeleteAccountPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
 
           <Route element={<RequireAuth />}>
             <Route path="/home" element={<HomePage />} />

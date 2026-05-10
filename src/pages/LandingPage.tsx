@@ -254,7 +254,8 @@ function PhoneMockup({
 }
 
 const PREMIUM_MONTHLY_PRICE = '5,99€'
-const PREMIUM_YEARLY_PRICE = '47,99€'
+const PREMIUM_YEARLY_PRICE = '64,99€'
+const FOUNDING_PRICE = '49€'
 
 const FREE_PLAN_FEATURES = [
   'Programme complet adapté à ta saison',
@@ -272,6 +273,14 @@ const PREMIUM_FEATURES = [
   'Suggestions de charge personnalisées',
   'Records personnels et courbes de progrès',
   'Chat IA illimité',
+]
+
+const FOUNDING_FEATURES = [
+  'Tout le plan Premium, à vie',
+  'Tarif Founding bloqué : 49€/an même quand on monte les prix',
+  'Réservé aux 100 premiers utilisateurs',
+  'Badge Founding dans ton profil',
+  'Accès prioritaire aux nouvelles fonctionnalités',
 ]
 
 // ─── Main Landing Page ───────────────────────────────────────
@@ -656,7 +665,7 @@ export function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6 items-start">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
             <PricingCard
               title="Free"
               price="0€"
@@ -676,12 +685,24 @@ export function LandingPage() {
               title="Premium Annuel"
               price={PREMIUM_YEARLY_PRICE}
               period="/an"
-              features={[...PREMIUM_FEATURES, "Économise 33% par rapport au mensuel"]}
-              highlighted
+              features={[...PREMIUM_FEATURES, 'Économise ~10% par rapport au mensuel']}
               cta="Passer en Premium"
               ctaLink="/auth/signup?plan=premium&billing=annual"
             />
+            <PricingCard
+              title="Founding"
+              price={FOUNDING_PRICE}
+              period="/an à vie"
+              features={FOUNDING_FEATURES}
+              highlighted
+              cta="Devenir Founding"
+              ctaLink="/auth/signup?plan=founding"
+            />
           </div>
+          <p className="text-center text-xs text-fg-muted mt-6">
+            Le tarif Founding est réservé aux 100 premiers utilisateurs ayant complété leur première
+            séance. L'offre apparaît automatiquement dans ton tableau de bord après ton signup.
+          </p>
         </div>
       </section>
 

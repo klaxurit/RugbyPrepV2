@@ -1041,6 +1041,13 @@ export function ProfilePage() {
               <span className="text-xs text-fg-muted">Ouvrir</span>
             </Link>
             <Link
+              to="/feedback"
+              className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
+            >
+              <span>Envoyer un feedback</span>
+              <span className="text-xs text-fg-muted">Ouvrir</span>
+            </Link>
+            <Link
               to="/delete-account"
               className="flex items-center justify-between rounded-2xl border border-warn-bd bg-warn-bg-muted px-4 py-3 text-sm font-semibold text-warn-body transition-colors hover:border-warn-strong rf-focus-ring"
             >
