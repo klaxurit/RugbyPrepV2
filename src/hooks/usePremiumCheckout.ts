@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { supabase } from '../services/supabase/client'
 import { isPlayBillingAvailable, isStandaloneMode, usePlayBilling } from './usePlayBilling'
+import { isUserCancelledError, mapCheckoutError } from './checkoutErrorMessages'
 
 type CheckoutResponse = {
   ok: boolean
@@ -43,36 +44,45 @@ export function usePremiumCheckout() {
       try {
         const result = await playBilling.purchase(planId)
         if (result && 'ok' in result && result.ok === false) {
-          // Purchase returned an error object
-          setState({ loading: false, error: (result as { error: string | null }).error ?? 'Erreur lors du paiement', message: null })
+          const rawErr = (result as { error: string | null }).error
+          if (isUserCancelledError(rawErr)) {
+            setState({ loading: false, error: null, message: null })
+            return null
+          }
+          if (rawErr) console.error('[usePremiumCheckout] Play purchase error:', rawErr)
+          setState({ loading: false, error: mapCheckoutError(rawErr), message: null })
           return null
         }
         if (result && result.ok !== false) {
-          setState({ loading: false, error: null, message: 'Premium active !' })
+          setState({ loading: false, error: null, message: 'Premium activé ! Tes nouveaux accès sont déjà déverrouillés.' })
           return { ok: true, ready: true } as CheckoutResponse
         }
         // User cancelled — silent reset
         setState({ loading: false, error: null, message: null })
         return null
       } catch (err) {
-        const message = err instanceof Error ? err.message : String(err)
-        setState({ loading: false, error: message, message: null })
+        if (isUserCancelledError(err)) {
+          setState({ loading: false, error: null, message: null })
+          return null
+        }
+        console.error('[usePremiumCheckout] Play purchase threw:', err)
+        setState({ loading: false, error: mapCheckoutError(err), message: null })
         return null
       }
     }
 
-    // In standalone mode (TWA/PWA) but Digital Goods API unavailable
-    // This happens when the app is sideloaded or not installed from Play Store
+    // In standalone mode (TWA/PWA) but Digital Goods API unavailable :
+    // app sideloaded ou pas installée depuis le Play Store.
     if (isStandaloneMode) {
       setState({
         loading: false,
-        error: 'Pour souscrire, installe l\'app depuis le Google Play Store.',
+        error: 'Pour souscrire depuis cette installation, ouvre l\'application via le Play Store ou utilise rugbyforge.fr dans ton navigateur.',
         message: null,
       })
       return null
     }
 
-    // Fallback to Stripe checkout for web
+    // Fallback to Stripe checkout for web (iOS PWA + desktop)
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
@@ -90,17 +100,18 @@ export function usePremiumCheckout() {
         return payload
       }
 
-      setState({
-        loading: false,
-        error: 'Le paiement n\'est pas encore disponible sur le web. Utilise l\'app Android pour passer en Premium.',
-        message: null,
-      })
+      // Edge Function returned ready=false → provider not yet configured.
+      const reason = payload?.reason
+      const userMessage = reason
+        ? mapCheckoutError(reason)
+        : 'Le paiement web n\'est pas encore configuré. Sur Android, utilise l\'app installée via le Play Store. Sur iOS / desktop, écris-nous à bonjour@rugbyforge.fr.'
+      setState({ loading: false, error: userMessage, message: null })
       return payload
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err)
+      console.error('[usePremiumCheckout] Stripe checkout threw:', err)
       setState({
         loading: false,
-        error: message,
+        error: mapCheckoutError(err),
         message: null,
       })
       return null
@@ -125,7 +136,7 @@ export function usePremiumCheckout() {
         setState({
           loading: false,
           error: null,
-          message: 'Achat Google Play restauré.',
+          message: 'Achat Google Play restauré — tes accès Premium sont actifs.',
         })
         return result
       }
@@ -133,14 +144,14 @@ export function usePremiumCheckout() {
       setState({
         loading: false,
         error: null,
-        message: 'Aucun achat Google Play actif n’a été retrouvé pour ce compte.',
+        message: 'Aucun abonnement actif n\'a été retrouvé sur ce compte Google. Vérifie que tu utilises le même compte que lors de l\'achat.',
       })
       return null
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err)
+      console.error('[usePremiumCheckout] restorePurchases threw:', err)
       setState({
         loading: false,
-        error: message,
+        error: mapCheckoutError(err),
         message: null,
       })
       return null
