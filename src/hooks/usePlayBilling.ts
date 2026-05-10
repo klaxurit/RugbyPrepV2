@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../services/supabase/client'
+import { devLog } from '../utils/devLog'
 
 /**
  * Product IDs — must match Google Play Console subscriptions
@@ -125,12 +126,12 @@ export function usePlayBilling() {
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
     try {
-      console.log('[PlayBilling] Starting purchase for', planId, '→ productId:', productId)
+      devLog('[PlayBilling] Starting purchase for', planId, '→ productId:', productId)
 
       const service = await window.getDigitalGoodsService!(
         'https://play.google.com/billing',
       )
-      console.log('[PlayBilling] Digital Goods Service acquired')
+      devLog('[PlayBilling] Digital Goods Service acquired')
 
       // Try to get price from Play Store, fall back to hardcoded values
       let label = planId === 'premium_monthly'
@@ -151,7 +152,7 @@ export function usePlayBilling() {
           label = details.title
           currency = details.price.currency
           value = details.price.value
-          console.log('[PlayBilling] Product details from Play Store:', label, currency, value)
+          devLog('[PlayBilling] Product details from Play Store:', label, currency, value)
         }
       } catch (detailsErr) {
         console.warn('[PlayBilling] getDetails failed, using fallback pricing:', detailsErr)
@@ -174,7 +175,7 @@ export function usePlayBilling() {
 
       const request = new PaymentRequest([paymentMethod], paymentDetails)
       const response = await request.show()
-      console.log('[PlayBilling] Payment response received')
+      devLog('[PlayBilling] Payment response received')
 
       // From here, we MUST call response.complete() to dismiss the overlay
       let purchaseResult: { ok: boolean; error?: string; planId?: string; status?: string } | null = null
@@ -182,7 +183,7 @@ export function usePlayBilling() {
         const paymentResponseDetails = response.details as { purchaseToken?: string; token?: string }
         const purchaseToken = paymentResponseDetails.purchaseToken ?? paymentResponseDetails.token
         if (!purchaseToken) throw new Error('Play purchase token missing')
-        console.log('[PlayBilling] Got purchase token, verifying server-side...')
+        devLog('[PlayBilling] Got purchase token, verifying server-side...')
 
         // Verify purchase server-side
         const { data, error } = await supabase.functions.invoke('verify-play-purchase', {
@@ -204,13 +205,13 @@ export function usePlayBilling() {
         }
 
         const result = data as { ok: boolean; error?: string; planId?: string; status?: string }
-        console.log('[PlayBilling] Verification result:', result)
+        devLog('[PlayBilling] Verification result:', result)
         if (!result.ok) throw new Error(result.error ?? 'Purchase verification failed')
 
         purchaseResult = result
         // response.complete('success') acknowledges the purchase in DGAPI v2
         await response.complete('success')
-        console.log('[PlayBilling] Purchase complete')
+        devLog('[PlayBilling] Purchase complete')
       } catch (verifyErr) {
         console.error('[PlayBilling] Error in verification/acknowledge:', verifyErr)
         // Always dismiss the payment overlay even on error
