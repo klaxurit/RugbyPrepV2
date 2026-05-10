@@ -996,7 +996,7 @@ export function ProfilePage() {
                   disabled={billingLoading}
                   className="flex-1 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-3 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
                 >
-                  {billingLoading ? 'Chargement...' : 'Activer Premium'}
+                  {billingLoading ? 'Préparation…' : 'Activer Premium'}
                 </button>
                 {isPlayStore && (
                   <button

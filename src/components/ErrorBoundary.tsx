@@ -30,10 +30,10 @@ export class ErrorBoundary extends Component<Props, State> {
             <span className="text-2xl">!</span>
           </div>
           <h1 className="text-lg font-black text-[#1a100c] mb-2">
-            Une erreur est survenue
+            Quelque chose a coincé
           </h1>
           <p className="text-sm text-[#1a100c]/60 mb-6 max-w-xs">
-            L'application a rencontre un probleme. Recharge la page pour continuer.
+            Recharge la page pour repartir. Si le problème persiste, écris-nous à bonjour@rugbyforge.fr.
           </p>
           <button
             type="button"

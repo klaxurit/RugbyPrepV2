@@ -270,7 +270,7 @@ const PREMIUM_FEATURES = [
   'Suivi des charges et séries',
   'Historique complet des séances',
   'Score de forme et bilan de semaine',
-  'Suggestions de charge personnalisées',
+  'Suggestions de charge calibrées sur tes derniers logs',
   'Records personnels et courbes de progrès',
   'Chat IA illimité',
 ]

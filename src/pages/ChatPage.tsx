@@ -366,7 +366,7 @@ export function ChatPage() {
                         className="mt-3 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
                       >
                         {checkoutLoading
-                          ? 'Chargement...'
+                          ? 'Préparation…'
                           : isCheckoutSuccess
                             ? 'Vérifier mon statut Premium'
                             : 'Activer Premium'}
