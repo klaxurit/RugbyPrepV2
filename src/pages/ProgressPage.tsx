@@ -37,6 +37,7 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useUpsellTiming, isDismissed } from '../hooks/useUpsellTiming'
 import { useRegisterCoachContext } from '../contexts/CoachContext'
 import type { PhysicalTestType, PhysicalTest } from '../types/athleticTesting'
+import { tr, positionShortLabel, trainingLevelLabel, type Lang, type AppLabelKey } from '../i18n/appLabels'
 
 // ─── Session type styles (aligned with HistoryPage) ────────────────────────
 
@@ -60,34 +61,42 @@ const recentSessionStyles: Record<SessionType, string> = {
 
 // ─── Sessions tab — existing config ─────────────────────────────────────────
 
-const statusConfig = {
+type StatusKey = 'up' | 'down' | 'same' | 'unknown'
+interface StatusEntry {
+  icon: React.ReactNode
+  bg: string
+  text: string
+  badge: string
+  labelKey: AppLabelKey
+}
+const statusConfig: Record<StatusKey, StatusEntry> = {
   up: {
     icon: <TrendingUp className="w-4 h-4" />,
     bg: 'bg-ok-bg',
     text: 'text-ok-strong',
     badge: 'bg-ok-bg text-ok-strong',
-    label: 'Progression',
+    labelKey: 'progress_trend_up',
   },
   down: {
     icon: <TrendingDown className="w-4 h-4" />,
     bg: 'bg-brand-soft',
     text: 'text-brand-tint',
     badge: 'bg-brand-soft text-brand-tint',
-    label: 'Régression',
+    labelKey: 'progress_trend_down',
   },
   same: {
     icon: <Minus className="w-4 h-4" />,
     bg: 'bg-layer-5',
     text: 'text-fg-soft',
     badge: 'bg-layer-10 text-fg-soft',
-    label: 'Stable',
+    labelKey: 'progress_trend_same',
   },
   unknown: {
     icon: <AlertCircle className="w-4 h-4" />,
     bg: 'bg-layer-5',
     text: 'text-fg-soft',
     badge: 'bg-layer-10 text-fg-soft',
-    label: '–',
+    labelKey: 'progress_trend_unknown',
   },
 }
 
@@ -102,13 +111,15 @@ type TestCardConfig = {
   is1RM?: boolean
 }
 
-const TEST_CARDS: TestCardConfig[] = [
-  { type: 'cmj',              label: 'Counter-Movement Jump', unit: 'cm',  higherIsBetter: true,  color: 'var(--color-danger-fg)' },
-  { type: 'sprint_10m',       label: 'Sprint 10m',            unit: 's',   higherIsBetter: false, color: 'var(--color-orange-fg)' },
-  { type: 'one_rm_squat',     label: '1RM Squat',             unit: 'kg',  higherIsBetter: true,  color: 'var(--color-athletic-squat)', is1RM: true },
-  { type: 'one_rm_deadlift',  label: '1RM Soulevé de terre',  unit: 'kg',  higherIsBetter: true,  color: 'var(--color-athletic-deadlift)', is1RM: true },
-  { type: 'yyir1',            label: 'Yo-Yo IR1',             unit: 'm',   higherIsBetter: true,  color: 'var(--color-athletic-yoyo)' },
-]
+function getTestCards(lang: Lang): TestCardConfig[] {
+  return [
+    { type: 'cmj',              label: tr('progress_test_card_cmj', lang),       unit: 'cm', higherIsBetter: true,  color: 'var(--color-danger-fg)' },
+    { type: 'sprint_10m',       label: tr('progress_test_card_sprint', lang),    unit: 's',  higherIsBetter: false, color: 'var(--color-orange-fg)' },
+    { type: 'one_rm_squat',     label: tr('progress_test_card_squat', lang),     unit: 'kg', higherIsBetter: true,  color: 'var(--color-athletic-squat)',    is1RM: true },
+    { type: 'one_rm_deadlift',  label: tr('progress_test_card_deadlift', lang),  unit: 'kg', higherIsBetter: true,  color: 'var(--color-athletic-deadlift)', is1RM: true },
+    { type: 'yyir1',            label: tr('progress_test_card_yyir1', lang),     unit: 'm',  higherIsBetter: true,  color: 'var(--color-athletic-yoyo)' },
+  ]
+}
 
 type TestTypeGroup = 'direct' | 'oneRM'
 type OneRMFormula = 'brzycki' | 'epley'
@@ -161,7 +172,8 @@ export function ProgressPage() {
   }, [legacyPRs, setLogPRs])
   const { addTest, getHistoryFor, getBestFor } = useAthleteTests()
   const { profile } = useProfile()
-  const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
+  const lang: Lang = (profile.preferredLanguage as Lang | undefined) ?? 'fr'
+  const TEST_CARDS = useMemo(() => getTestCards(lang), [lang])
   const { features, isPremium, loading: entitlementsLoading } = useFeatureAccess()
   const premiumResolved = !entitlementsLoading
   const { canShowUpsell } = useUpsellTiming()
@@ -193,20 +205,25 @@ export function ProgressPage() {
   // Contexte coach (lu par CoachCompanion global)
   useRegisterCoachContext({
     scopeKey: `progress-${today}`,
-    phaseLabel: 'Progression · 4 dernières semaines',
+    phaseLabel: lang === 'fr' ? 'Progression · 4 dernières semaines' : 'Progress · last 4 weeks',
     infoMessages: [
       {
         id: 'progress:adherence_7d',
-        text:
-          adherenceSummary.sessionsLast7d < weeklyTarget
-            ? `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances — rattrapage possible cette semaine.`
-            : `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances, sur cible.`,
+        text: lang === 'fr'
+          ? (adherenceSummary.sessionsLast7d < weeklyTarget
+              ? `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances — rattrapage possible cette semaine.`
+              : `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances, sur cible.`)
+          : (adherenceSummary.sessionsLast7d < weeklyTarget
+              ? `7d adherence: ${adherenceSummary.sessionsLast7d}/${weeklyTarget} sessions — catch-up possible this week.`
+              : `7d adherence: ${adherenceSummary.sessionsLast7d}/${weeklyTarget} sessions, on target.`),
       },
     ],
     companionMessages: [
-      'Un test 5RM ou CMJ en fin de phase sécurise ton suivi de progression.',
+      lang === 'fr'
+        ? 'Un test 5RM ou CMJ en fin de phase sécurise ton suivi de progression.'
+        : 'A 5RM or CMJ test at the end of the phase secures your progress tracking.',
     ],
-    chatSeed: 'Analyse ma progression : ',
+    chatSeed: lang === 'fr' ? 'Analyse ma progression : ' : 'Analyze my progress: ',
   })
   const recentSessions = useMemo(() => getRecentProgramSessions(sessionLogs, 8), [sessionLogs])
   const [showAllSessions, setShowAllSessions] = useState(false)
@@ -328,7 +345,7 @@ export function ProgressPage() {
     <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-x-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <PageHeader title={lang === 'fr' ? 'Progression' : 'Progress'} backTo="/profile" />
+      <PageHeader title={tr('progress_page_title', lang)} backTo="/profile" />
 
       <main className="relative px-6 pt-5 pb-12 sm:pb-16 space-y-6 max-w-md mx-auto">
 
@@ -343,7 +360,7 @@ export function ProgressPage() {
                 : 'text-fg-muted hover:text-fg'
             }`}
           >
-            Séances
+            {tr('progress_tab_sessions', lang)}
           </button>
           <button
             onClick={() => setTab('tests')}
@@ -354,7 +371,7 @@ export function ProgressPage() {
             }`}
           >
             <FlaskConical className="w-3.5 h-3.5" />
-            Tests
+            {tr('progress_tab_tests', lang)}
             {!features.premiumAnalytics && <Lock className="w-3 h-3 text-fg-faint" />}
           </button>
           <button
@@ -366,7 +383,7 @@ export function ProgressPage() {
             }`}
           >
             <Trophy className="w-3.5 h-3.5" />
-            Records
+            {tr('progress_tab_records', lang)}
           </button>
         </div>
 
@@ -381,19 +398,19 @@ export function ProgressPage() {
             {/* Adhérence programme — chiffres avec objectif + barre de progression */}
             {sessionLogs.length > 0 && (
               <section data-testid="adherence-section">
-                <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Adhérence programme</h2>
+                <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">{tr('progress_adherence_section', lang)}</h2>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     {
                       value: adherenceSummary.sessionsLast7d,
                       target: weeklyTarget,
-                      label: '7 derniers jours',
+                      label: tr('progress_window_7d', lang),
                       testId: 'adherence-7d',
                     },
                     {
                       value: adherenceSummary.sessionsLast28d,
                       target: target28d,
-                      label: '28 derniers jours',
+                      label: tr('progress_window_28d', lang),
                       testId: 'adherence-28d',
                     },
                   ].map(({ value, target, label, testId }) => {
@@ -420,7 +437,7 @@ export function ProgressPage() {
                   })}
                 </div>
                 <p className="text-[11px] text-fg-muted mt-2">
-                  Objectif basé sur ton niveau ({profile.trainingLevel === 'starter' ? 'Fondations' : 'Avancé'}) — {weeklyTarget} séances/semaine.
+                  {tr('progress_goal_basis_pre', lang)} ({trainingLevelLabel(profile.trainingLevel ?? 'builder', lang)}) — {weeklyTarget} {tr('progress_goal_basis_suffix', lang)}
                 </p>
               </section>
             )}
@@ -428,12 +445,12 @@ export function ProgressPage() {
             {/* Activité récente programme */}
             {recentSessions.length > 0 && (
               <section data-testid="recent-activity-section">
-                <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Dernières séances</h2>
+                <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">{tr('progress_recent_sessions', lang)}</h2>
                 <div className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden divide-y divide-edge-hairline">
                   {(showAllSessions ? recentSessions : recentSessions.slice(0, 3)).map((log) => {
                     const title = getSessionLogDisplayTitle(log)
                     const cyclePart = getSessionLogCycleLabel(log)
-                    const datePart = new Date(log.dateISO).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+                    const datePart = new Date(log.dateISO).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { day: 'numeric', month: 'short' })
 
                     return (
                       <div key={log.id} className="px-4 py-3 flex items-center justify-between gap-2" data-testid="recent-session-entry">
@@ -458,7 +475,7 @@ export function ProgressPage() {
                       onClick={() => setShowAllSessions(true)}
                       className="w-full px-4 py-3 text-xs font-bold text-brand-tint hover:bg-layer-5 transition-colors text-center"
                     >
-                      Voir {recentSessions.length - 3} séances précédentes
+                      {tr('progress_view_prev_pre', lang)} {recentSessions.length - 3} {recentSessions.length - 3 > 1 ? tr('progress_view_prev_suffix_plural', lang) : tr('progress_view_prev_suffix_single', lang)}
                     </button>
                   )}
                 </div>
@@ -472,38 +489,38 @@ export function ProgressPage() {
                     <TrendingUp className="w-5 h-5" />
                   </div>
                   <div className="text-xl font-black text-ok-strong">{progressCount}</div>
-                  <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter text-center">En hausse</div>
+                  <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter text-center">{tr('progress_stat_up', lang)}</div>
                 </div>
                 <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-1.5">
                   <div className="p-2 rounded-2xl bg-brand-soft text-brand-tint">
                     <TrendingDown className="w-5 h-5" />
                   </div>
                   <div className="text-xl font-black text-brand-tint">{regressionCount}</div>
-                  <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter text-center">En baisse</div>
+                  <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter text-center">{tr('progress_stat_down', lang)}</div>
                 </div>
                 <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col items-center gap-1.5">
                   <div className="p-2 rounded-2xl bg-layer-5 text-fg-soft">
                     <BarChart2 className="w-5 h-5" />
                   </div>
                   <div className="text-xl font-black text-fg">{progressRows.length}</div>
-                  <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter text-center">Suivis</div>
+                  <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter text-center">{tr('progress_stat_tracked', lang)}</div>
                 </div>
               </div>
             )}
 
             <section>
-              <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">Top progrès (S1 → S4)</h2>
+              <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">{tr('progress_top_section', lang)}</h2>
               {progressRows.length === 0 ? (
                 <div className="bg-layer-5 border border-border-app rounded-[24px] p-6 flex flex-col items-center gap-3 text-center">
                   <div className="w-12 h-12 bg-layer-5 rounded-2xl flex items-center justify-center text-fg-ghost">
                     <BarChart2 className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-fg">Données insuffisantes</p>
-                    <p className="text-xs text-fg-muted mt-0.5">Enregistre des séances en Semaine 1 et Semaine 4 pour voir ta progression.</p>
+                    <p className="text-sm font-bold text-fg">{tr('progress_no_data', lang)}</p>
+                    <p className="text-xs text-fg-muted mt-0.5">{tr('progress_no_data_sub', lang)}</p>
                   </div>
                   <Link to="/week" className="text-xs font-black text-brand-tint uppercase tracking-wide">
-                    Aller s'entraîner →
+                    {tr('progress_go_train', lang)}
                   </Link>
                 </div>
               ) : (
@@ -552,10 +569,10 @@ export function ProgressPage() {
               const curvesContent = rows.length > 0 && (
                 <section>
                   <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted">
-                    Progression saison
+                    {tr('progress_season', lang)}
                   </h2>
                   <p className="text-[11px] text-fg-muted mb-3">
-                    Tonnage hebdomadaire (kg × reps × séries)
+                    {tr('progress_season_sub', lang)}
                   </p>
                   <div className="space-y-4">
                     {rows.slice(0, 6).map(({ exerciseId, history }) => {
@@ -592,7 +609,7 @@ export function ProgressPage() {
                               />
                               <Tooltip
                                 contentStyle={{ backgroundColor: 'var(--color-bg-app)', border: '1px solid var(--color-border)', borderRadius: 12, fontSize: 11, color: 'var(--color-text-primary)' }}
-                                formatter={(value) => [`${value} kg`, 'Tonnage']}
+                                formatter={(value) => [`${value} kg`, tr('progress_tonnage', lang)]}
                               />
                             </AreaChart>
                           </ResponsiveContainer>
@@ -609,7 +626,7 @@ export function ProgressPage() {
               if (features.premiumAnalytics) return curvesContent
               if (!premiumResolved) return <ProgressCurveSkeleton />
               return curvesContent ? (
-                <PremiumBlurredPreview label="Courbes de progression">
+                <PremiumBlurredPreview label={tr('progress_curves_label', lang)}>
                   {curvesContent}
                 </PremiumBlurredPreview>
               ) : null
@@ -617,10 +634,9 @@ export function ProgressPage() {
 
             <section>
               <div className="bg-ok-bg-muted border border-ok-bd rounded-[24px] p-5 space-y-2">
-                <p className="text-xs font-black uppercase tracking-wider text-ok-strong">Méthode double progression</p>
+                <p className="text-xs font-black uppercase tracking-wider text-ok-strong">{tr('progress_method_title', lang)}</p>
                 <p className="text-xs text-fg-soft leading-relaxed">
-                  Remplis d'abord ta plage de reps cible (ex: 4×8-12), puis ajoute +2.5kg.
-                  La force max se maintient jusqu'à 25-35j sans stimulation — régularité &gt; intensité.
+                  {tr('progress_method_body', lang)}
                 </p>
                 <p className="text-[10px] text-fg-faint italic">Rippetoe (2011), Issurin (2008)</p>
               </div>
@@ -632,7 +648,7 @@ export function ProgressPage() {
         {tab === 'tests' && (
           <>
             <p className="text-xs text-fg-muted -mt-2">
-              Mesure tes performances athlétiques et suis leur évolution dans le temps.
+              {tr('progress_tests_intro', lang)}
             </p>
 
             {/* Les charts et baselines sont maintenant visibles en version floutée pour les free users */}
@@ -650,9 +666,7 @@ export function ProgressPage() {
                 )
                 const baselineValue = baseline ? getBaselineForLevel(baseline, profile?.trainingLevel) : null
                 const baselineLabel = getBaselineLevelLabel(profile?.trainingLevel)
-                const positionLabel = profile?.position
-                  ? { FRONT_ROW: '1ère ligne', SECOND_ROW: '2ème ligne', BACK_ROW: '3ème ligne', HALF_BACKS: 'Demis', CENTERS: 'Centres', BACK_THREE: 'Arrières' }[profile.position]
-                  : null
+                const positionLabel = positionShortLabel(profile?.position, lang)
 
                 // Variation vs record
                 const variation = last && best !== null && best !== last.value
@@ -686,7 +700,7 @@ export function ProgressPage() {
                           <p className="text-sm font-bold text-fg">{card.label}</p>
                           {isRegressing && (
                             <span className="text-[10px] font-bold text-warn bg-warn-bg-muted border border-warn-bd px-2 py-0.5 rounded-full">
-                              ⚠️ Régression &gt;10%
+                              {tr('progress_regression_warn', lang)}
                             </span>
                           )}
                         </div>
@@ -695,7 +709,7 @@ export function ProgressPage() {
                         onClick={() => openModal(card)}
                         className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-layer-10 transition-colors"
                         style={{ color: card.color }}
-                        title="Ajouter un test"
+                        title={tr('progress_modal_title', lang)}
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -720,14 +734,14 @@ export function ProgressPage() {
                           <p className="text-[10px] text-fg-muted mt-0.5">
                             {last.dateISO.split('-').reverse().join('/')}
                             {best !== null && best !== last.value && (
-                              <> · Record : <span className="font-bold text-fg-soft">{formatValue(best, card.type)} {card.unit}</span></>
+                              <> · {tr('progress_test_record', lang)} : <span className="font-bold text-fg-soft">{formatValue(best, card.type)} {card.unit}</span></>
                             )}
                           </p>
                         </div>
                         {baselineValue !== null && positionLabel && (
                           features.premiumAnalytics ? (
                             <div className="text-right flex-shrink-0">
-                              <p className="text-[10px] text-fg-muted">Baseline {positionLabel}</p>
+                              <p className="text-[10px] text-fg-muted">{tr('progress_test_baseline', lang)} {positionLabel}</p>
                               <p className="text-xs font-bold text-fg-soft">
                                 {formatValue(baselineValue, card.type)} {card.unit}
                                 <span className="text-[9px] text-fg-faint ml-1">({baselineLabel})</span>
@@ -735,7 +749,7 @@ export function ProgressPage() {
                             </div>
                           ) : (
                             <div className="text-right flex-shrink-0 blur-[4px] opacity-50" aria-hidden>
-                              <p className="text-[10px] text-fg-muted">Baseline {positionLabel}</p>
+                              <p className="text-[10px] text-fg-muted">{tr('progress_test_baseline', lang)} {positionLabel}</p>
                               <p className="text-xs font-bold text-fg-soft">
                                 {formatValue(baselineValue, card.type)} {card.unit}
                               </p>
@@ -745,10 +759,10 @@ export function ProgressPage() {
                       </div>
                     ) : (
                       <div className="px-4 pb-3">
-                        <p className="text-sm text-fg-muted italic">Aucun test enregistré</p>
+                        <p className="text-sm text-fg-muted italic">{tr('progress_test_none', lang)}</p>
                         {features.premiumAnalytics && baselineValue !== null && positionLabel && (
                           <p className="text-[10px] text-fg-muted mt-1">
-                            Baseline {positionLabel} ({baselineLabel}) : <span className="font-bold">{formatValue(baselineValue, card.type)} {card.unit}</span>
+                            {tr('progress_test_baseline', lang)} {positionLabel} ({baselineLabel}) : <span className="font-bold">{formatValue(baselineValue, card.type)} {card.unit}</span>
                           </p>
                         )}
                       </div>
@@ -799,7 +813,7 @@ export function ProgressPage() {
                       return (
                         <div className={`px-4 pb-3 ${!features.premiumAnalytics ? 'blur-[4px] opacity-50' : ''}`}>
                           <p className="text-[10px] text-brand-muted">
-                            A ce rythme, {nextTarget} kg dans ~{weeksToTarget} semaine{weeksToTarget > 1 ? 's' : ''}
+                            {tr('progress_rate_at_this', lang)} {nextTarget} kg {tr('progress_rate_in', lang)} ~{weeksToTarget} {weeksToTarget > 1 ? tr('progress_rate_week_plural', lang) : tr('progress_rate_week_single', lang)}
                           </p>
                         </div>
                       )
@@ -812,10 +826,9 @@ export function ProgressPage() {
             {/* Science card */}
             <section>
               <div className={`${isPremium ? 'bg-danger-bg border-danger-bd' : 'bg-layer-5 border-border-app'} border rounded-[24px] p-5 space-y-2`}>
-                <p className="text-xs font-black uppercase tracking-wider text-danger">Règle clinique CMJ</p>
+                <p className="text-xs font-black uppercase tracking-wider text-danger">{tr('progress_cmj_rule_title', lang)}</p>
                 <p className="text-xs text-fg-soft leading-relaxed">
-                  ↓ CMJ ≥ 10% vs baseline = fatigue neuromusculaire non résolue → ne pas augmenter la charge cette semaine.
-                  Mesure idéalement le lundi matin à jeun.
+                  {tr('progress_cmj_rule_body', lang)}
                 </p>
                 <p className="text-[10px] text-fg-faint italic">Duthie et al. 2003, Cahill et al. 2013</p>
               </div>
@@ -862,20 +875,20 @@ export function ProgressPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-[11px] font-black uppercase tracking-[0.22em] text-brand-tint">
-                      Nouveau test
+                      {tr('progress_modal_new_test', lang)}
                     </p>
                     <h3 id="progress-test-modal-title" className="mt-1 text-base font-black tracking-tight text-fg sm:text-lg">
                       {modal.label}
                     </h3>
                     <p className="mt-1 text-[11px] text-fg-soft sm:text-xs">
-                      Enregistre une mesure propre pour suivre ta progression semaine après semaine.
+                      {tr('progress_modal_sub', lang)}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={closeModal}
                   className="rounded-2xl border border-border-app bg-layer-5 p-2 text-fg-soft transition-colors hover:border-border-dashed-app hover:text-fg rf-focus-ring"
-                  aria-label="Fermer"
+                  aria-label={tr('progress_modal_close', lang)}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -895,8 +908,8 @@ export function ProgressPage() {
                             : 'bg-layer-5 text-fg-soft hover:text-fg'
                         }`}
                       >
-                        Direct
-                        <span className="block text-[10px] font-bold uppercase tracking-wider opacity-80">Valeur testée</span>
+                        {tr('progress_modal_direct', lang)}
+                        <span className="block text-[10px] font-bold uppercase tracking-wider opacity-80">{tr('progress_modal_direct_sub', lang)}</span>
                       </button>
                       <button
                         onClick={() => setInputMode('oneRM')}
@@ -906,8 +919,8 @@ export function ProgressPage() {
                             : 'bg-layer-5 text-fg-soft hover:text-fg'
                         }`}
                       >
-                        Estimation
-                        <span className="block text-[10px] font-bold uppercase tracking-wider opacity-80">Charge + reps</span>
+                        {tr('progress_modal_estim', lang)}
+                        <span className="block text-[10px] font-bold uppercase tracking-wider opacity-80">{tr('progress_modal_estim_sub', lang)}</span>
                       </button>
                     </div>
                   </div>
@@ -917,10 +930,10 @@ export function ProgressPage() {
                   <section className="space-y-2.5 rounded-[20px] border border-border-app bg-layer-2 p-3.5 sm:space-y-3 sm:p-4">
                     <div>
                       <label className="text-[11px] font-black uppercase tracking-[0.18em] text-fg-soft">
-                        Valeur ({modal.unit})
+                        {tr('progress_modal_value_pre', lang)} ({modal.unit})
                       </label>
                       <p className="mt-1 text-xs text-fg-faint">
-                        Entre ta mesure directement si tu as déjà le résultat.
+                        {tr('progress_modal_value_help', lang)}
                       </p>
                     </div>
                     <input
@@ -944,17 +957,17 @@ export function ProgressPage() {
                   <section className="space-y-3.5 rounded-[20px] border border-border-app bg-layer-2 p-3.5 sm:space-y-4 sm:p-4">
                     <div>
                       <label className="text-[11px] font-black uppercase tracking-[0.18em] text-fg-soft">
-                        Estimation du 1RM
+                        {tr('progress_modal_estim_title', lang)}
                       </label>
                       <p className="mt-1 text-[11px] text-fg-faint sm:text-xs">
-                        Charge + reps pour estimer ton niveau du moment.
+                        {tr('progress_modal_estim_help', lang)}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                       <div className="space-y-2">
                         <label className="text-[11px] font-black uppercase tracking-[0.18em] text-fg-soft">
-                          Poids (kg)
+                          {tr('progress_modal_weight', lang)}
                         </label>
                         <input
                           type="number"
@@ -967,7 +980,7 @@ export function ProgressPage() {
                       </div>
                       <div className="space-y-2">
                         <label className="text-[11px] font-black uppercase tracking-[0.18em] text-fg-soft">
-                          Reps
+                          {tr('progress_modal_reps', lang)}
                         </label>
                         <input
                           type="number"
@@ -982,7 +995,7 @@ export function ProgressPage() {
 
                     <div className="space-y-2">
                       <label className="text-[11px] font-black uppercase tracking-[0.18em] text-fg-soft">
-                        Formule
+                        {tr('progress_modal_formula', lang)}
                       </label>
                       <div className="relative">
                         <select
@@ -990,8 +1003,8 @@ export function ProgressPage() {
                           onChange={(e) => setInputFormula(e.target.value as OneRMFormula)}
                           className="w-full appearance-none rounded-[16px] border border-border-app bg-app px-3.5 py-2.5 pr-10 text-sm font-bold text-fg focus:outline-none focus:border-brand rf-focus-ring"
                         >
-                          <option value="brzycki">Brzycki — recommandé pour 3 à 6 reps</option>
-                          <option value="epley">Epley — utile sur des reps plus hautes</option>
+                          <option value="brzycki">{tr('progress_modal_formula_brzycki', lang)}</option>
+                          <option value="epley">{tr('progress_modal_formula_epley', lang)}</option>
                         </select>
                         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-fg-faint pointer-events-none" />
                       </div>
@@ -1000,10 +1013,10 @@ export function ProgressPage() {
                     {estimatedLive !== null && (
                       <div className="rounded-[18px] border border-ok-bd bg-ok-bg px-4 py-3">
                         <p className="text-[11px] font-black uppercase tracking-[0.18em] text-ok-strong">
-                          Estimation instantanée
+                          {tr('progress_modal_instant_estim', lang)}
                         </p>
                         <div className="mt-2 flex items-end justify-between gap-3">
-                          <span className="text-xs text-ok">1RM estimé avec {inputFormula}</span>
+                          <span className="text-xs text-ok">{tr('progress_modal_estimated_with_pre', lang)} {inputFormula}</span>
                           <span className="text-xl font-black text-ok-strong sm:text-2xl">{estimatedLive} kg</span>
                         </div>
                       </div>
@@ -1014,17 +1027,17 @@ export function ProgressPage() {
                 <section className="space-y-2.5 rounded-[20px] border border-border-app bg-layer-2 p-3.5 sm:space-y-3 sm:p-4">
                   <div>
                     <label className="text-[11px] font-black uppercase tracking-[0.18em] text-fg-soft">
-                      Notes
+                      {tr('progress_modal_notes', lang)}
                     </label>
                     <p className="mt-1 text-xs text-fg-faint">
-                      Optionnel. Exemple : fatigue, surface, contexte match, sensation.
+                      {tr('progress_modal_notes_help', lang)}
                     </p>
                   </div>
                   <input
                     type="text"
                     value={inputNotes}
                     onChange={(e) => setInputNotes(e.target.value)}
-                    placeholder="Ex : après entraînement, jambes lourdes, terrain humide..."
+                    placeholder={tr('progress_modal_notes_placeholder', lang)}
                     className="w-full rounded-[16px] border border-border-app bg-app px-4 py-2.5 text-sm text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand rf-focus-ring"
                   />
                 </section>
@@ -1037,13 +1050,13 @@ export function ProgressPage() {
                   onClick={closeModal}
                   className="flex-1 rounded-[16px] border border-border-app bg-layer-5 px-4 py-2.5 text-sm font-black text-fg-soft transition-colors hover:border-border-dashed-app hover:text-fg rf-focus-ring"
                 >
-                  Annuler
+                  {tr('progress_modal_cancel', lang)}
                 </button>
                 <button
                   onClick={handleSave}
                   className="flex-1 rounded-[16px] bg-brand px-4 py-2.5 text-sm font-black uppercase tracking-wider text-on-brand transition-all hover:bg-brand-hover active:scale-[0.98] shadow-brand-float rf-focus-ring"
                 >
-                  Enregistrer
+                  {tr('progress_modal_save', lang)}
                 </button>
               </div>
             </div>

@@ -15,6 +15,7 @@ import { getPhaseForWeek } from '../services/program/programPhases.v1'
 import { supabase } from '../services/supabase/client'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { BottomNav } from '../components/BottomNav'
+import { tr, type Lang } from '../i18n/appLabels'
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -25,29 +26,31 @@ interface ChatMessage {
   error?: boolean
 }
 
-const PHASE_LABELS: Record<string, string> = {
-  HYPERTROPHY: 'Hypertrophie',
-  FORCE: 'Force',
-  POWER: 'Puissance',
+function phaseLabelFor(phase: string | null | undefined, lang: Lang): string | null {
+  switch (phase) {
+    case 'HYPERTROPHY':
+      return tr('chat_phase_hypertrophy', lang)
+    case 'FORCE':
+      return tr('chat_phase_force', lang)
+    case 'POWER':
+      return tr('chat_phase_power', lang)
+    default:
+      return null
+  }
 }
 
-// ─── Quick prompts ────────────────────────────────────────────
-
-const QUICK_PROMPTS_BASE = [
-  'Nutrition avant la séance',
-  'Récupération post-match',
-  'Sommeil et performance',
-  'Prévenir les blessures rugby',
-]
-
-const QUICK_PROMPTS_BY_PHASE: Record<string, string> = {
-  HYPERTROPHY: 'Conseils nutrition en phase volume',
-  FORCE: 'Récupération entre séances lourdes',
-  POWER: 'Activation neuromusculaire pré-séance',
+function quickPromptForPhase(phase: string | null | undefined, lang: Lang): string | null {
+  switch (phase) {
+    case 'HYPERTROPHY':
+      return tr('chat_qp_phase_hyper', lang)
+    case 'FORCE':
+      return tr('chat_qp_phase_force', lang)
+    case 'POWER':
+      return tr('chat_qp_phase_power', lang)
+    default:
+      return null
+  }
 }
-
-const QUICK_PROMPT_DELOAD = 'Que faire concrètement en semaine de décharge ?'
-const QUICK_PROMPT_PREMATCH = 'Prépare mon match : plan 48h nutrition, récup, activation'
 
 // ─── Component ───────────────────────────────────────────────
 
@@ -93,8 +96,9 @@ export function ChatPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
+  const lang: Lang = (profile.preferredLanguage as Lang | undefined) ?? 'fr'
   const phase = getPhaseForWeek(week === 'DELOAD' ? week : week)
-  const phaseLabel = phase ? PHASE_LABELS[phase] : null
+  const phaseLabel = phaseLabelFor(phase, lang)
   const isDeload = week === 'DELOAD'
   const hasPremiumInsights = hasEntitlement('premium_analytics') || hasEntitlement('premium_program_adaptations')
   const checkoutStatus = searchParams.get('checkout')
@@ -136,14 +140,23 @@ export function ChatPage() {
   }, [chatNextMatch])
 
   const quickPrompts = useMemo(() => {
-    const prompts = [...QUICK_PROMPTS_BASE]
+    const base = [
+      tr('chat_qp_nutrition', lang),
+      tr('chat_qp_recovery', lang),
+      tr('chat_qp_sleep', lang),
+      tr('chat_qp_injury', lang),
+    ]
+    const prompts = [...base]
     if (hasPremiumInsights) {
-      if (hasMatchSoon) prompts.unshift(QUICK_PROMPT_PREMATCH)
-      if (isDeload) prompts.unshift(QUICK_PROMPT_DELOAD)
-      else if (phase && QUICK_PROMPTS_BY_PHASE[phase]) prompts.unshift(QUICK_PROMPTS_BY_PHASE[phase])
+      if (hasMatchSoon) prompts.unshift(tr('chat_qp_prematch', lang))
+      if (isDeload) prompts.unshift(tr('chat_qp_deload', lang))
+      else {
+        const phaseQp = quickPromptForPhase(phase, lang)
+        if (phaseQp) prompts.unshift(phaseQp)
+      }
     }
     return prompts.slice(0, 5)
-  }, [hasPremiumInsights, phase, isDeload, hasMatchSoon])
+  }, [hasPremiumInsights, phase, isDeload, hasMatchSoon, lang])
 
   // Auto-scroll uniquement quand une conversation est réellement en cours.
   // Sinon, au premier rendu, on arrive artificiellement en bas de page.
@@ -247,8 +260,8 @@ export function ChatPage() {
       }
 
       const responseText: string = data?.error
-        ? `Erreur : ${data.error}`
-        : (data?.message ?? 'Pas de réponse.')
+        ? `${tr('chat_error_prefix', lang)} : ${data.error}`
+        : (data?.message ?? tr('chat_no_response', lang))
 
       setMessages((prev) => [
         ...prev,
@@ -258,7 +271,7 @@ export function ChatPage() {
       console.error('[ai-coach] threw:', err)
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, role: 'assistant', content: 'Erreur réseau — réessaie.', error: true },
+        { id: Date.now() + 1, role: 'assistant', content: tr('chat_network_error', lang), error: true },
       ])
     } finally {
       setLoading(false)
@@ -277,7 +290,7 @@ export function ChatPage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
-        title="Coach IA"
+        title={tr('chat_page_title', lang)}
         backTo="/home"
       />
 
@@ -296,19 +309,19 @@ export function ChatPage() {
               </div>
               <div className="bg-layer-5 border border-border-app rounded-[1.5rem] rounded-tl-md px-4 py-3 max-w-[85%]">
                 <p className="text-sm text-fg-secondary leading-relaxed">
-                  Salut ! Je suis ton coach IA RugbyForge 🏉
+                  {tr('chat_welcome_greeting', lang)}
                 </p>
                 <p className="text-sm text-fg-secondary leading-relaxed mt-1.5">
-                  Pose-moi n'importe quelle question sur l'entraînement, la nutrition, la récupération ou le sommeil. Je connais ton profil et ta semaine en cours.
+                  {tr('chat_welcome_body', lang)}
                 </p>
                 {premiumResolved && !hasPremiumInsights && (
                   <p className="text-xs text-fg-soft mt-2 leading-relaxed">
-                    Mode Free: le coach reste disponible, mais les suggestions contextuelles avancées sont réservées au Premium.
+                    {tr('chat_free_note', lang)}
                   </p>
                 )}
                 {context.week && (
                   <p className="text-xs text-fg-muted mt-2">
-                    Semaine {context.week}{phaseLabel ? ` · Phase ${phaseLabel}` : ''}{context.fatigue ? ` · Fatigue : ${context.fatigue}` : ''}
+                    {tr('chat_week_prefix', lang)} {context.week}{phaseLabel ? ` · ${tr('chat_phase_prefix', lang)} ${phaseLabel}` : ''}{context.fatigue ? ` · ${tr('chat_fatigue_prefix', lang)} : ${context.fatigue}` : ''}
                   </p>
                 )}
               </div>
@@ -316,7 +329,7 @@ export function ChatPage() {
 
             {/* Quick prompts */}
             <div className="space-y-2 pl-11">
-              <p className="text-[10px] font-black text-fg-muted uppercase tracking-widest">Suggestions</p>
+              <p className="text-[10px] font-black text-fg-muted uppercase tracking-widest">{tr('chat_suggestions', lang)}</p>
               <div className="flex flex-col gap-2">
                 {quickPrompts.map((prompt) => (
                   <button
@@ -340,17 +353,17 @@ export function ChatPage() {
                       <Lock className="h-4 w-4 text-brand" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-black text-fg">Passe en Premium</p>
+                      <p className="text-sm font-black text-fg">{tr('chat_upsell_title', lang)}</p>
                       <p className="mt-1 text-xs leading-relaxed text-fg-emphasis">
-                        Débloque les suggestions avancées liées à ta phase, à ta charge et à tes adaptations de programme.
+                        {tr('chat_upsell_body', lang)}
                       </p>
                       {isCheckoutSuccess && (
                         <p className="mt-2 text-[11px] leading-relaxed text-brand-tint">
                           {activationSyncing
-                            ? 'Paiement confirmé. Activation Premium en cours...'
+                            ? tr('chat_payment_confirmed', lang)
                             : activationSyncTimeout
-                              ? 'Activation encore en attente. Clique sur vérifier ou consulte les logs webhook Stripe.'
-                              : 'Retour de paiement détecté.'}
+                              ? tr('chat_activation_pending', lang)
+                              : tr('chat_payment_detected', lang)}
                         </p>
                       )}
                       <button
@@ -366,10 +379,10 @@ export function ChatPage() {
                         className="mt-3 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-2 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
                       >
                         {checkoutLoading
-                          ? 'Préparation…'
+                          ? tr('chat_loading', lang)
                           : isCheckoutSuccess
-                            ? 'Vérifier mon statut Premium'
-                            : 'Activer Premium'}
+                            ? tr('chat_verify_premium', lang)
+                            : tr('chat_activate_premium', lang)}
                       </button>
                       {checkoutMessage && (
                         <p className="mt-2 text-[11px] leading-relaxed text-brand-tint">
@@ -434,9 +447,9 @@ export function ChatPage() {
         {rateLimited && !isPremium && (
           <div className="pl-11">
             <PremiumUpsellCard
-              title="Tu as utilisé tes 3 messages du jour"
-              body="Le coach Premium te connaît — il sait ton poste, ta charge, tes blessures, et adapte chaque réponse. Messages illimités."
-              ctaLabel="Activer Premium"
+              title={tr('chat_rate_limit_title', lang)}
+              body={tr('chat_rate_limit_body', lang)}
+              ctaLabel={tr('chat_activate_premium', lang)}
               dismissable={false}
             />
           </div>
@@ -446,7 +459,7 @@ export function ChatPage() {
         {!isPremium && !rateLimited && remaining !== null && remaining <= 2 && remaining > 0 && (
           <div className="pl-11">
             <p className="text-[11px] text-warn bg-warn-bg-muted border border-warn-bd rounded-2xl px-4 py-2">
-              {remaining === 1 ? 'Dernier message gratuit du jour.' : `${remaining} messages restants aujourd'hui.`}
+              {remaining === 1 ? tr('chat_last_free_message', lang) : `${remaining} ${tr('chat_remaining_suffix', lang)}`}
             </p>
           </div>
         )}
@@ -462,7 +475,7 @@ export function ChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Pose ta question..."
+            placeholder={tr('chat_input_placeholder', lang)}
             rows={1}
             className="flex-1 resize-none bg-layer-5 border border-border-app rounded-2xl px-4 py-2.5 text-sm text-fg placeholder:text-fg-faint focus:outline-none focus:border-brand rf-focus-ring max-h-28 leading-relaxed"
             style={{ overflow: 'auto' }}
@@ -478,7 +491,7 @@ export function ChatPage() {
           </button>
         </div>
         <p className="text-center text-[10px] text-fg-ghost mt-2">
-          Conseils sportifs uniquement — pas un avis médical
+          {tr('chat_disclaimer', lang)}
         </p>
       </div>
 
