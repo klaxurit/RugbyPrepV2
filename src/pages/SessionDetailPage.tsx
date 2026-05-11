@@ -54,17 +54,15 @@ import {
 //  est utilisé en aval directement dans buildMotherSessionProgramSessionLog.)
 
 import { getToday } from '../services/ui/debugDateOverride'
+import { cyclePhaseLabel, trainingLevelLabel } from '../i18n/appLabels'
 
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
-  if (lang !== 'fr') return label
-  return label
-    .replace(/\bOff-season\b/gi, 'Inter-saison')
-    .replace(/\boff_season\b/gi, 'Inter-saison')
-    .replace(/\bPre-season\b/gi, 'Pré-saison')
-    .replace(/\bpre_season\b/gi, 'Pré-saison')
-    .replace(/\bIn-season\b/gi, 'En saison')
-    .replace(/\bin_season\b/gi, 'En saison')
-    .replace(/ - W(\d)/, ' - S$1')
+  let out = label
+    .replace(/\bOff[-_]season\b/gi, cyclePhaseLabel('off_season', lang))
+    .replace(/\bPre[-_]season\b/gi, cyclePhaseLabel('pre_season', lang))
+    .replace(/\bIn[-_]season\b/gi, cyclePhaseLabel('in_season', lang))
+  if (lang === 'fr') out = out.replace(/ - W(\d)/, ' - S$1')
+  return out
 }
 
 /** Date courte UPPERCASE pour l'eyebrow (ex: "VEN. 8 MAI"). */
@@ -90,8 +88,11 @@ function buildHeroTags(args: {
     if (phaseOnly) tags.push(phaseOnly)
   }
   if (targetDuration) tags.push(targetDuration)
-  if (trainingLevel === 'performance' || trainingLevel === 'builder') tags.push('Avancé')
-  else if (trainingLevel === 'starter') tags.push('Fondations')
+  if (trainingLevel === 'performance' || trainingLevel === 'builder') {
+    tags.push(trainingLevelLabel('builder', lang))
+  } else if (trainingLevel === 'starter') {
+    tags.push(trainingLevelLabel('starter', lang))
+  }
   return tags
 }
 
@@ -899,6 +900,7 @@ export function SessionDetailPage() {
                   onStartIsoTimer={handleStartIsoTimer}
                   onPlayDemo={handlePlayDemo}
                   getLoadSuggestion={getLoadSuggestion}
+                  lang={lang}
                 />
               </div>
             )}
@@ -933,6 +935,7 @@ export function SessionDetailPage() {
               onStartIsoTimer={handleStartIsoTimer}
               onPlayDemo={handlePlayDemo}
               getLoadSuggestion={getLoadSuggestion}
+              lang={lang}
             />
           </div>
         )}
@@ -948,6 +951,7 @@ export function SessionDetailPage() {
               phase="completed"
               isPremium={isPremium}
               onPlayDemo={handlePlayDemo}
+              lang={lang}
             />
           </div>
         )}

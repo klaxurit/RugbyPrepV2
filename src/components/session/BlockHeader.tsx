@@ -1,5 +1,6 @@
 import { Icon, type IconName } from '../ui'
 import { BlockStateChip, type BlockState } from './BlockStateChip'
+import { tr, type Lang } from '../../i18n/appLabels'
 
 interface BlockHeaderProps {
   /** Numéro affiché en eyebrow + ghost (ex: 02). */
@@ -12,6 +13,7 @@ interface BlockHeaderProps {
   state: BlockState
   expanded: boolean
   onToggle: () => void
+  lang?: Lang
 }
 
 const STATE_BG: Record<BlockState, string> = {
@@ -48,6 +50,7 @@ export function BlockHeader({
   state,
   expanded,
   onToggle,
+  lang = 'fr',
 }: BlockHeaderProps) {
   const numStr = String(number).padStart(2, '0')
   const isDone = state === 'done'
@@ -92,13 +95,13 @@ export function BlockHeader({
                 state === 'pending' ? 'opacity-60' : ''
               }`}
             >
-              Bloc {numStr}
+              {tr('block_eyebrow', lang)} {numStr}
             </span>
             <button
               type="button"
               onClick={onToggle}
               aria-expanded={expanded}
-              aria-label={expanded ? 'Replier le bloc' : 'Déplier le bloc'}
+              aria-label={tr(expanded ? 'block_collapse' : 'block_expand', lang)}
               className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-app transition-transform rf-focus-ring"
               style={{ transform: expanded ? 'rotate(180deg)' : undefined }}
             >
@@ -123,7 +126,7 @@ export function BlockHeader({
 
         {/* Meta : chip d'état + durée */}
         <div className="mt-3 flex flex-wrap items-center gap-2 gap-y-1.5">
-          <BlockStateChip state={state} />
+          <BlockStateChip state={state} lang={lang} />
           {durationMin != null && (
             <span className="text-[10px] font-bold tabular-nums tracking-wide text-fg/55">
               {durationMin} MIN

@@ -33,6 +33,7 @@ import type {
 } from '../types/training'
 import type { AnnualCycle } from '../types/annualPlanning'
 import { computeSCSchedule, TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
+import { tr, dayAbbrArray, type Lang } from '../i18n/appLabels'
 // betaEligibility import removed — all profiles eligible since V2 launch
 
 // ─── Types ────────────────────────────────────────────────────
@@ -41,87 +42,98 @@ type PositionValue = NonNullable<UserProfile['position']>
 
 // ─── Constants ────────────────────────────────────────────────
 
-const POSITIONS: { value: PositionValue; label: string; sub: string; illustration: string }[] = [
-  { value: 'FRONT_ROW',   label: 'Première ligne',   sub: 'Pilier · Talonneur',   illustration: frontRowImg  },
-  { value: 'SECOND_ROW',  label: 'Deuxième ligne',   sub: 'Verrouilleur',         illustration: secondRowImg },
-  { value: 'BACK_ROW',    label: 'Troisième ligne',  sub: 'Flanker · Numéro 8',   illustration: backRowImg   },
-  { value: 'HALF_BACKS',  label: 'Demi',             sub: 'Mêlée · Ouverture',    illustration: halfBacksImg },
-  { value: 'CENTERS',     label: 'Centre',           sub: '12 / 13',              illustration: centersImg   },
-  { value: 'BACK_THREE',  label: 'Arrière / Ailier', sub: '11 · 14 · 15',         illustration: backThreeImg },
-]
+type PositionDef = { value: PositionValue; label: string; sub: string; illustration: string }
+function getPositions(lang: Lang): PositionDef[] {
+  return [
+    { value: 'FRONT_ROW',   label: tr('pos_front_row', lang),    sub: tr('pos_front_row_sub', lang),    illustration: frontRowImg  },
+    { value: 'SECOND_ROW',  label: tr('pos_second_row', lang),   sub: tr('pos_second_row_sub', lang),   illustration: secondRowImg },
+    { value: 'BACK_ROW',    label: tr('pos_back_row', lang),     sub: tr('pos_back_row_sub', lang),     illustration: backRowImg   },
+    { value: 'HALF_BACKS',  label: tr('pos_half_backs', lang),   sub: tr('pos_half_backs_sub', lang),   illustration: halfBacksImg },
+    { value: 'CENTERS',     label: tr('pos_centers', lang),      sub: tr('pos_centers_sub', lang),      illustration: centersImg   },
+    { value: 'BACK_THREE',  label: tr('pos_back_three', lang),   sub: tr('pos_back_three_sub', lang),   illustration: backThreeImg },
+  ]
+}
 
+type DayOption = { day: DayOfWeek; label: string; short: string }
+function getClubDayOptions(lang: Lang): DayOption[] {
+  return [1, 2, 3, 4, 5, 6, 0].map((d) => ({
+    day: d as DayOfWeek,
+    label: tr((['day_sunday','day_monday','day_tuesday','day_wednesday','day_thursday','day_friday','day_saturday'] as const)[d], lang),
+    short: tr((['day_sunday_short','day_monday_short','day_tuesday_short','day_wednesday_short','day_thursday_short','day_friday_short','day_saturday_short'] as const)[d], lang),
+  }))
+}
 
-const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
-  { day: 1, label: 'Lundi',    short: 'L' },
-  { day: 2, label: 'Mardi',    short: 'M' },
-  { day: 3, label: 'Mercredi', short: 'M' },
-  { day: 4, label: 'Jeudi',    short: 'J' },
-  { day: 5, label: 'Vendredi', short: 'V' },
-  { day: 6, label: 'Samedi',   short: 'S' },
-  { day: 0, label: 'Dimanche', short: 'D' },
-]
-
-const MATCH_DAY_OPTIONS: { day: DayOfWeek | null; label: string }[] = [
-  { day: 6,    label: 'Samedi' },
-  { day: 0,    label: 'Dimanche' },
-  { day: null, label: 'Variable' },
-]
-
-const DAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam']
+type MatchDayOption = { day: DayOfWeek | null; label: string }
+function getMatchDayOptions(lang: Lang): MatchDayOption[] {
+  return [
+    { day: 6,    label: tr('day_saturday', lang) },
+    { day: 0,    label: tr('day_sunday', lang) },
+    { day: null, label: tr('match_day_variable', lang) },
+  ]
+}
 
 /**
  * Choix de situation saison à l'onboarding.
  * `value` alimente `planningAnchors.onboardingCycleHint` + `seasonMode` (playoffs → in_season + manualPlayoffs).
  */
-const SEASON_PHASES: {
+type SeasonPhaseDef = {
   value: AnnualCycle
   label: string
   sub: string
   icon: typeof Leaf
-}[] = [
-  { value: 'in_season',  label: 'En saison',    sub: 'Matchs réguliers en cours',       icon: Trophy },
-  { value: 'playoffs',   label: 'Playoffs',     sub: 'Phases finales, match crucial',   icon: Sparkles },
-  { value: 'off_season', label: 'Inter-saison', sub: 'Pas de match, coupure du club',   icon: Leaf },
-  { value: 'pre_season', label: 'Pré-saison',   sub: 'Reprise club, prépa physique',    icon: Flame },
-]
+}
+function getSeasonPhases(lang: Lang): SeasonPhaseDef[] {
+  return [
+    { value: 'in_season',  label: tr('cycle_in_season', lang),  sub: tr('cycle_in_season_sub', lang),  icon: Trophy },
+    { value: 'playoffs',   label: tr('cycle_playoffs', lang),   sub: tr('cycle_playoffs_sub', lang),   icon: Sparkles },
+    { value: 'off_season', label: tr('cycle_off_season', lang), sub: tr('cycle_off_season_sub', lang), icon: Leaf },
+    { value: 'pre_season', label: tr('cycle_pre_season', lang), sub: tr('cycle_pre_season_sub', lang), icon: Flame },
+  ]
+}
 
 /**
  * État de forme à l'onboarding — KB: population-specific.md §3.
  * Module la rampe de reprise (skip deload si 'peak', protocole retour si 'restart').
  */
-const TRAINING_BASELINES: {
+type TrainingBaselineDef = {
   value: TrainingBaseline
   label: string
   sub: string
   icon: typeof RefreshCw
-}[] = [
-  { value: 'restart', label: 'Je reprends',   sub: '≥6 semaines sans entraînement',   icon: RefreshCw },
-  { value: 'active',  label: 'Je suis actif', sub: '1-2 séances/semaine, irrégulier', icon: Activity },
-  { value: 'peak',    label: 'En pleine forme', sub: '3×/sem depuis au moins 1 mois', icon: Flame },
-]
+}
+function getTrainingBaselines(lang: Lang): TrainingBaselineDef[] {
+  return [
+    { value: 'restart', label: tr('baseline_restart', lang), sub: tr('baseline_restart_sub', lang), icon: RefreshCw },
+    { value: 'active',  label: tr('baseline_active', lang),  sub: tr('baseline_active_sub', lang),  icon: Activity },
+    { value: 'peak',    label: tr('baseline_peak', lang),    sub: tr('baseline_peak_sub', lang),    icon: Flame },
+  ]
+}
 
-const TRAINING_LEVELS: {
+type TrainingLevelDef = {
   value: TrainingLevel
   label: string
   sub: string
   details: string
   legacyLevel: UserProfile['level']
-}[] = [
-  {
-    value: 'starter',
-    label: 'Fondation',
-    sub: 'Je découvre la muscu',
-    details: 'Exercices guidés : haltères et machines. Variantes sécurisées pour les mouvements à risque.',
-    legacyLevel: 'beginner',
-  },
-  {
-    value: 'performance',
-    label: 'Avancée',
-    sub: 'Je suis à l\'aise avec la barre',
-    details: 'Programme complet : barres libres, haltères et travail d\'explosivité.',
-    legacyLevel: 'intermediate',
-  },
-]
+}
+function getTrainingLevels(lang: Lang): TrainingLevelDef[] {
+  return [
+    {
+      value: 'starter',
+      label: tr('level_starter', lang),
+      sub: tr('level_starter_sub', lang),
+      details: tr('level_starter_details', lang),
+      legacyLevel: 'beginner',
+    },
+    {
+      value: 'performance',
+      label: tr('level_performance', lang),
+      sub: tr('level_performance_sub', lang),
+      details: tr('level_performance_details', lang),
+      legacyLevel: 'intermediate',
+    },
+  ]
+}
 
 // Tous les profils démarrent avec un équipement "salle complète" — le moteur
 // adapte silencieusement les exercices via les variantes accessibles. Pas de
@@ -138,13 +150,13 @@ function calcBmi(heightCm: number, weightKg: number): number {
   return weightKg / (h * h)
 }
 
-function bmiLabel(bmi: number, position: PositionValue | null): string {
+function bmiLabel(bmi: number, position: PositionValue | null, lang: Lang): string {
   const isForward = position === 'FRONT_ROW' || position === 'SECOND_ROW' || position === 'BACK_ROW'
-  if (bmi < 20) return 'Sous le poids de forme'
-  if (bmi < 24) return isForward ? 'Plutôt léger pour ton poste' : 'Morphologie optimale'
-  if (bmi < 27) return isForward ? 'Morphologie adéquate' : 'Légèrement au-dessus'
-  if (bmi < 31) return isForward ? 'Morphologie optimale pour un avant' : 'Au-dessus de la norme'
-  return isForward ? 'Gabarit de gros avant' : 'Surcharge à surveiller'
+  if (bmi < 20) return tr('bmi_underweight', lang)
+  if (bmi < 24) return tr(isForward ? 'bmi_light_forward' : 'bmi_optimal_back', lang)
+  if (bmi < 27) return tr(isForward ? 'bmi_adequate_forward' : 'bmi_above_back', lang)
+  if (bmi < 31) return tr(isForward ? 'bmi_optimal_forward' : 'bmi_above_norm', lang)
+  return tr(isForward ? 'bmi_big_forward' : 'bmi_surcharge_back', lang)
 }
 
 /** Position 0→1 du curseur IMC sur l'échelle rugby [18 → 35]. */
@@ -250,7 +262,23 @@ export function OnboardingPage() {
   const effectiveOffSeasonGymDays: Set<DayOfWeek> = offSeasonGymDays
     ?? (sessions ? new Set(TRAINING_DAYS_DEFAULT[sessions]) : new Set())
 
-  const STEPS = ['Position', 'Profil', 'Situation', 'Planning', 'Morphologie', 'Résumé']
+  const lang: Lang = ((existingProfile?.preferredLanguage as Lang | undefined) ?? 'fr')
+  const POSITIONS = getPositions(lang)
+  const CLUB_DAYS_OPTIONS = getClubDayOptions(lang)
+  const MATCH_DAY_OPTIONS = getMatchDayOptions(lang)
+  const SEASON_PHASES = getSeasonPhases(lang)
+  const TRAINING_BASELINES = getTrainingBaselines(lang)
+  const TRAINING_LEVELS = getTrainingLevels(lang)
+  const DAY_LABELS = dayAbbrArray(lang)
+
+  const STEPS = [
+    tr('step_position', lang),
+    tr('step_profile', lang),
+    tr('step_situation', lang),
+    tr('step_planning', lang),
+    tr('step_morphology', lang),
+    tr('step_summary', lang),
+  ]
   const progress = (step / (STEPS.length - 1)) * 100
 
   const parsedHeight = parseInt(heightCm, 10)
@@ -353,7 +381,7 @@ export function OnboardingPage() {
       navigate(destination, { replace: true })
     } catch (err) {
       console.error('[Onboarding] handleFinish error:', err)
-      setSubmitError('Une erreur est survenue. Vérifie ta connexion et réessaie.')
+      setSubmitError(tr('onboarding_error', lang))
     }
   }
 
@@ -406,7 +434,7 @@ export function OnboardingPage() {
         {/* ── Step 0 : Position ── */}
         {step === 0 && (
           <div className="space-y-6">
-            <StepTitle title="Tu joues où ?" sub="Ton programme est calibré selon ton poste." />
+            <StepTitle title={tr('step0_title', lang)} sub={tr('step0_sub', lang)} />
             <div className="grid grid-cols-2 gap-2.5">
               {POSITIONS.map((pos) => {
                 const selected = position === pos.value
@@ -453,11 +481,11 @@ export function OnboardingPage() {
         {/* ── Step 1 : Niveau + Séances + Genre ── */}
         {step === 1 && (
           <div className="space-y-7">
-            <StepTitle title="Ton profil" sub="Pour calibrer les charges et les volumes." />
+            <StepTitle title={tr('step1_title', lang)} sub={tr('step1_sub', lang)} />
 
             {/* Niveau */}
             <div className="space-y-3">
-              <SectionLabel>Niveau en salle</SectionLabel>
+              <SectionLabel>{tr('step1_section_level', lang)}</SectionLabel>
               <div className="space-y-2.5">
                 {TRAINING_LEVELS.map((opt) => {
                   const selected = trainingLevel === opt.value
@@ -500,11 +528,11 @@ export function OnboardingPage() {
 
             {/* Séances par semaine */}
             <div className="space-y-3">
-              <SectionLabel>Séances par semaine</SectionLabel>
+              <SectionLabel>{tr('step1_section_sessions', lang)}</SectionLabel>
               <div className="grid grid-cols-2 gap-2.5">
                 {([
-                  { value: 2 as const, label: '2 séances', sub: 'Lun · Jeu',           days: new Set<DayOfWeek>([1, 4]) },
-                  { value: 3 as const, label: '3 séances', sub: 'Lun · Mer · Ven',     days: new Set<DayOfWeek>([1, 3, 5]) },
+                  { value: 2 as const, label: tr('sessions_2_label', lang), sub: tr('sessions_2_sub', lang), days: new Set<DayOfWeek>([1, 4]) },
+                  { value: 3 as const, label: tr('sessions_3_label', lang), sub: tr('sessions_3_sub', lang), days: new Set<DayOfWeek>([1, 3, 5]) },
                 ]).map((opt) => {
                   const selected = sessions === opt.value
                   return (
@@ -533,11 +561,11 @@ export function OnboardingPage() {
 
             {/* Genre */}
             <div className="space-y-3">
-              <SectionLabel>Tu es</SectionLabel>
+              <SectionLabel>{tr('step1_section_gender', lang)}</SectionLabel>
               <div className="grid grid-cols-2 gap-2.5">
                 {([
-                  { value: 'male' as const, label: 'Joueur' },
-                  { value: 'female' as const, label: 'Joueuse' },
+                  { value: 'male' as const, label: tr('gender_male', lang) },
+                  { value: 'female' as const, label: tr('gender_female', lang) },
                 ]).map((opt) => {
                   const selected = gender === opt.value
                   return (
@@ -567,12 +595,12 @@ export function OnboardingPage() {
         {step === 2 && (
           <div className="space-y-7">
             <StepTitle
-              title="Où en es-tu maintenant ?"
-              sub="Pour calibrer ta rampe de reprise. Tu pourras ajuster à tout moment."
+              title={tr('step2_title', lang)}
+              sub={tr('step2_sub', lang)}
             />
 
             <div className="space-y-3">
-              <SectionLabel>Ta saison actuelle</SectionLabel>
+              <SectionLabel>{tr('step2_section_season', lang)}</SectionLabel>
               <div className="grid grid-cols-2 gap-2.5">
                 {SEASON_PHASES.map((opt) => {
                   const selected = seasonPhase === opt.value
@@ -607,7 +635,7 @@ export function OnboardingPage() {
             </div>
 
             <div className="space-y-3">
-              <SectionLabel>Ton état de forme</SectionLabel>
+              <SectionLabel>{tr('step2_section_baseline', lang)}</SectionLabel>
               <div className="space-y-2.5">
                 {TRAINING_BASELINES.map((opt) => {
                   const selected = trainingBaseline === opt.value
@@ -648,12 +676,12 @@ export function OnboardingPage() {
         {step === 3 && isOffSeason && (
           <div className="space-y-6">
             <StepTitle
-              title="Tes jours de muscu"
-              sub="Pas de club en inter-saison — choisis tes jours librement."
+              title={tr('step3_offseason_title', lang)}
+              sub={tr('step3_offseason_sub', lang)}
             />
 
             <div className="space-y-3">
-              <SectionLabel>{sessions === 3 ? '3 séances par semaine' : '2 séances par semaine'}</SectionLabel>
+              <SectionLabel>{sessions === 3 ? `3 ${tr('step3_sessions_per_week', lang)}` : `2 ${tr('step3_sessions_per_week', lang)}`}</SectionLabel>
               <div className="grid grid-cols-7 gap-1.5">
                 {CLUB_DAYS_OPTIONS.map((opt) => {
                   const selected = effectiveOffSeasonGymDays.has(opt.day)
@@ -689,7 +717,7 @@ export function OnboardingPage() {
                 })}
               </div>
               <p className="text-[11px] text-fg-muted leading-relaxed">
-                Tu pourras modifier tes jours a tout moment dans ton profil.
+                {tr('step3_offseason_sub_note', lang)}
               </p>
             </div>
           </div>
@@ -698,13 +726,13 @@ export function OnboardingPage() {
         {step === 3 && !isOffSeason && (
           <div className="space-y-6">
             <StepTitle
-              title="Ton planning club"
-              sub="On adapte tes séances muscu à ton agenda. Optionnel."
+              title={tr('step3_club_title', lang)}
+              sub={tr('step3_club_sub', lang)}
             />
 
             {/* Jours club */}
             <div className="space-y-3">
-              <SectionLabel>Jours d'entraînement club</SectionLabel>
+              <SectionLabel>{tr('step3_section_club_days', lang)}</SectionLabel>
               <div className="grid grid-cols-7 gap-1.5">
                 {CLUB_DAYS_OPTIONS.map((opt) => {
                   const selected = clubDays.has(opt.day)
@@ -744,7 +772,7 @@ export function OnboardingPage() {
 
             {/* Jour de match */}
             <div className="space-y-3">
-              <SectionLabel>Jour de match habituel</SectionLabel>
+              <SectionLabel>{tr('step3_section_match_day', lang)}</SectionLabel>
               <div className="flex gap-2">
                 {MATCH_DAY_OPTIONS.map((opt) => (
                   <button
@@ -775,7 +803,7 @@ export function OnboardingPage() {
               )
               return (
                 <div className="space-y-3 pt-4 border-t border-border-app">
-                  <SectionLabel>Tes séances muscu suggérées</SectionLabel>
+                  <SectionLabel>{tr('step3_section_suggested', lang)}</SectionLabel>
                   <div className="p-4 rounded-2xl bg-layer-5 border border-border-app space-y-3">
                     <div className="grid grid-cols-7 gap-1.5">
                       {CLUB_DAYS_OPTIONS.map((opt) => {
@@ -800,12 +828,12 @@ export function OnboardingPage() {
                       })}
                     </div>
                     <div className="flex flex-wrap gap-3 text-[10px] text-fg-muted">
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand" aria-hidden />Match</span>
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand-soft border border-brand/25" aria-hidden />Club</span>
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand/60" aria-hidden />Muscu</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand" aria-hidden />{tr('step3_legend_match', lang)}</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand-soft border border-brand/25" aria-hidden />{tr('step3_legend_club', lang)}</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand/60" aria-hidden />{tr('step3_legend_muscu', lang)}</span>
                     </div>
                     <p className="text-[11px] text-fg-muted leading-relaxed">
-                      Placées automatiquement autour de ton club et de tes matchs.
+                      {tr('step3_auto_placed', lang)}
                     </p>
                   </div>
                 </div>
@@ -818,15 +846,15 @@ export function OnboardingPage() {
         {step === 4 && (
           <div className="space-y-6">
             <StepTitle
-              title="Ta morphologie"
-              sub="Optionnel — utilisé pour les baselines 1RM et l'IMC rugby."
+              title={tr('step4_title', lang)}
+              sub={tr('step4_sub', lang)}
             />
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <label className="text-xs font-black text-fg-muted uppercase tracking-wide flex items-center gap-1.5">
                   <Ruler className="w-3.5 h-3.5" strokeWidth={2.5} aria-hidden />
-                  Taille
+                  {tr('step4_height', lang)}
                 </label>
                 <div className="relative">
                   <input
@@ -842,14 +870,14 @@ export function OnboardingPage() {
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-fg-muted uppercase">cm</span>
                 </div>
                 {heightCm && !validHeight && (
-                  <p className="text-[11px] text-danger">Entre 140 et 230 cm</p>
+                  <p className="text-[11px] text-danger">{tr('step4_height_range_error', lang)}</p>
                 )}
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs font-black text-fg-muted uppercase tracking-wide flex items-center gap-1.5">
                   <Flame className="w-3.5 h-3.5" strokeWidth={2.5} aria-hidden />
-                  Poids
+                  {tr('step4_weight', lang)}
                 </label>
                 <div className="relative">
                   <input
@@ -866,7 +894,7 @@ export function OnboardingPage() {
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-fg-muted uppercase">kg</span>
                 </div>
                 {weightKg && !validWeight && (
-                  <p className="text-[11px] text-danger">Entre 40 et 200 kg</p>
+                  <p className="text-[11px] text-danger">{tr('step4_weight_range_error', lang)}</p>
                 )}
               </div>
             </div>
@@ -875,18 +903,18 @@ export function OnboardingPage() {
               <div className="bg-layer-5 border border-border-app rounded-2xl p-5 space-y-4">
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-black text-brand leading-none">{bmi.toFixed(1)}</span>
-                  <span className="text-xs font-bold text-fg-muted uppercase tracking-wide">IMC rugby</span>
+                  <span className="text-xs font-bold text-fg-muted uppercase tracking-wide">{tr('bmi_imc_rugby', lang)}</span>
                 </div>
 
                 {/* Jauge horizontale : sous-poids → optimal → solide → avant → gros avant */}
                 <div className="space-y-1.5">
                   <div className="relative h-2.5 rounded-full overflow-hidden bg-layer-10">
                     <div className="absolute inset-0 flex">
-                      <div className="flex-[2] bg-layer-15" title="Sous-poids" />
-                      <div className="flex-[4] bg-ok-bg-muted" title="Optimal" />
-                      <div className="flex-[3] bg-warn-bg-muted" title="Solide" />
-                      <div className="flex-[4] bg-danger-bg" title="Gabarit d'avant" />
-                      <div className="flex-[4] bg-brand-soft" title="Gros avant" />
+                      <div className="flex-[2] bg-layer-15" title={tr('bmi_tick_underweight', lang)} />
+                      <div className="flex-[4] bg-ok-bg-muted" title={tr('bmi_tick_optimal', lang)} />
+                      <div className="flex-[3] bg-warn-bg-muted" title={tr('bmi_tick_solid', lang)} />
+                      <div className="flex-[4] bg-danger-bg" title={tr('bmi_tick_forward', lang)} />
+                      <div className="flex-[4] bg-brand-soft" title={tr('bmi_tick_big_forward', lang)} />
                     </div>
                     <div
                       className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-brand border-2 border-on-brand shadow-md transition-[left] duration-300"
@@ -899,9 +927,9 @@ export function OnboardingPage() {
                   </div>
                 </div>
 
-                <p className="text-sm font-bold text-fg-emphasis">{bmiLabel(bmi, position)}</p>
+                <p className="text-sm font-bold text-fg-emphasis">{bmiLabel(bmi, position, lang)}</p>
                 <p className="text-[11px] text-fg-muted leading-relaxed">
-                  L'IMC seul ne reflète pas la masse musculaire — indicateur de gabarit uniquement.
+                  {tr('bmi_disclaimer', lang)}
                 </p>
               </div>
             )}
@@ -912,7 +940,7 @@ export function OnboardingPage() {
                 onClick={() => setStep((s) => s + 1)}
                 className="w-full py-3 rounded-2xl border border-border-dashed-app text-sm font-bold text-fg-muted hover:border-layer-20 hover:text-fg-soft transition-all"
               >
-                Passer cette étape
+                {tr('step4_skip', lang)}
               </button>
             )}
           </div>
@@ -946,16 +974,16 @@ export function OnboardingPage() {
             })()}
 
             <StepTitle
-              title="C'est parti !"
-              sub="Voici ton profil. Tu pourras le modifier à tout moment dans les réglages."
+              title={tr('step5_title', lang)}
+              sub={tr('step5_sub', lang)}
             />
 
             <div className="bg-layer-5 border border-border-app rounded-[1.75rem] overflow-hidden divide-y divide-border-app">
-              <SummaryRow label="Poste" value={POSITIONS.find((p) => p.value === position)?.label ?? '–'} />
-              <SummaryRow label="Niveau" value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
-              <SummaryRow label="Séances" value={`${sessions} / semaine`} />
+              <SummaryRow label={tr('step5_row_position', lang)} value={POSITIONS.find((p) => p.value === position)?.label ?? '–'} />
+              <SummaryRow label={tr('step5_row_level', lang)} value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
+              <SummaryRow label={tr('step5_row_sessions', lang)} value={`${sessions} ${tr('step5_sessions_per_week', lang)}`} />
               <SummaryRow
-                label="Saison"
+                label={tr('step5_row_season', lang)}
                 value={[
                   SEASON_PHASES.find((p) => p.value === seasonPhase)?.label ?? '–',
                   TRAINING_BASELINES.find((b) => b.value === trainingBaseline)?.label ?? '',
@@ -963,14 +991,14 @@ export function OnboardingPage() {
               />
               {scSchedule && scSchedule.sessions.length > 0 && (
                 <SummaryRow
-                  label="Muscu"
+                  label={tr('step5_row_gym', lang)}
                   value={scSchedule.sessions.map((s) => DAY_LABELS[s.day]).join(' · ')}
                 />
               )}
               {validHeight && validWeight && bmi && (
                 <SummaryRow
-                  label="Morpho"
-                  value={`${parsedHeight} cm · ${parsedWeight} kg · IMC ${bmi.toFixed(1)}`}
+                  label={tr('step5_row_morpho', lang)}
+                  value={`${parsedHeight} cm · ${parsedWeight} kg · ${tr('bmi_imc_rugby', lang)} ${bmi.toFixed(1)}`}
                 />
               )}
             </div>
@@ -988,7 +1016,7 @@ export function OnboardingPage() {
               className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
             >
               <CheckCircle2 className="w-5 h-5" />
-              Voir mon programme
+              {tr('step5_cta', lang)}
             </button>
           </div>
         )}
@@ -1005,7 +1033,7 @@ export function OnboardingPage() {
               disabled={!canNext()}
               className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover disabled:opacity-30 disabled:cursor-not-allowed text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
             >
-              Suivant
+              {tr('onboarding_next', lang)}
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -1021,7 +1049,7 @@ export function OnboardingPage() {
               onClick={handleClubScheduleNext}
               className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold flex items-center justify-center gap-2 transition-all shadow-brand-float active:scale-[.98] rf-focus-ring"
             >
-              Suivant
+              {tr('onboarding_next', lang)}
               <ChevronRight className="w-4 h-4" />
             </button>
             {!isOffSeason && (
@@ -1030,7 +1058,7 @@ export function OnboardingPage() {
                 onClick={() => setStep((s) => s + 1)}
                 className="w-full py-2.5 rounded-2xl text-sm font-bold text-fg-muted hover:text-fg-soft transition-colors text-center"
               >
-                Pas d'entraînement club — passer
+                {tr('step3_skip_club', lang)}
               </button>
             )}
           </div>

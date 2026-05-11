@@ -3,6 +3,7 @@ import { Icon } from '../../ui'
 import { BlockHeader } from '../BlockHeader'
 import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
+import type { Lang } from '../../../i18n/appLabels'
 
 interface EmomBlockProps {
   block: Block
@@ -16,6 +17,7 @@ interface EmomBlockProps {
   timerActive: boolean
   onStartTimer: () => void
   notes?: readonly string[]
+  lang?: Lang
 }
 
 /**
@@ -33,6 +35,7 @@ export function EmomBlock({
   timerActive,
   onStartTimer,
   notes,
+  lang = 'fr',
 }: EmomBlockProps) {
   const pattern = buildEmomPattern(block.exercises)
 
@@ -45,6 +48,7 @@ export function EmomBlock({
         state={state}
         expanded={expanded}
         onToggle={onToggle}
+        lang={lang}
       />
 
       {expanded && (

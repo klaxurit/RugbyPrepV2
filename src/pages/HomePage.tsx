@@ -50,21 +50,9 @@ import { computePillars } from '../services/home/computePillars'
 import { computeScoreHistory7d } from '../services/home/computeScoreHistory7d'
 import { detectHomeState, type HomeHeroState } from '../services/home/detectHomeState'
 import { getRugbySeasonWeek } from '../services/home/rugbySeasonWeek'
+import { tr, cyclePhaseLabel, trainingLevelLabel, type Lang } from '../i18n/appLabels'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-const seasonPhaseLabel: Record<SeasonPhase, string> = {
-  'off-season': 'Inter-saison',
-  'pre-season': 'Pré-saison',
-  'in-season': 'En saison',
-  'playoffs': 'Playoffs',
-}
-
-const TRAINING_LEVEL_LABEL: Record<string, string> = {
-  starter: 'Fondations',
-  builder: 'Avancé',
-  performance: 'Avancé',
-}
 
 
 function diffDaysFromTodayISO(target: string, todayISO: string): number {
@@ -91,46 +79,71 @@ function buildNormalHero(
   todaySessionTitle: string | null,
   todaySessionIndex: number | null,
   nextSessionLabel: string | null,
+  lang: Lang,
 ): NormalHeroCopy {
   switch (state) {
     case 'match_today':
       return {
-        eyebrow: "Aujourd'hui · Match",
-        title: (
-          <>
-            C&apos;est aujourd&apos;hui.
-            <br />
-            <span className="opacity-55">Donne tout.</span>
-          </>
-        ),
-        subtitle: <>Mobilité légère, activation courte, hydratation.</>,
-        cta: { label: 'Voir le match', to: '/week', icon: 'calendar' },
+        eyebrow: tr('hero_match_today_eyebrow', lang),
+        title:
+          lang === 'fr' ? (
+            <>
+              C&apos;est aujourd&apos;hui.
+              <br />
+              <span className="opacity-55">Donne tout.</span>
+            </>
+          ) : (
+            <>
+              It&apos;s today.
+              <br />
+              <span className="opacity-55">Give it all.</span>
+            </>
+          ),
+        subtitle:
+          lang === 'fr' ? (
+            <>Mobilité légère, activation courte, hydratation.</>
+          ) : (
+            <>Light mobility, short activation, hydration.</>
+          ),
+        cta: { label: tr('hero_match_today_cta', lang), to: '/week', icon: 'calendar' },
         showMood: false,
       }
     case 'match_tomorrow':
       return {
-        eyebrow: "Aujourd'hui · Repos avant match",
-        title: (
-          <>
-            On range les outils.
-            <br />
-            <span className="opacity-55">Demain, c&apos;est terrain.</span>
-          </>
-        ),
-        subtitle: <>20 min marche ou 10 min mobilité.</>,
-        cta: { label: 'Voir le plan de la semaine', to: '/week', icon: 'calendar' },
+        eyebrow: tr('hero_match_tomorrow_eyebrow', lang),
+        title:
+          lang === 'fr' ? (
+            <>
+              On range les outils.
+              <br />
+              <span className="opacity-55">Demain, c&apos;est terrain.</span>
+            </>
+          ) : (
+            <>
+              Tools down.
+              <br />
+              <span className="opacity-55">Tomorrow it&apos;s the field.</span>
+            </>
+          ),
+        subtitle:
+          lang === 'fr' ? (
+            <>20 min marche ou 10 min mobilité.</>
+          ) : (
+            <>20 min walk or 10 min mobility.</>
+          ),
+        cta: { label: tr('hero_match_tomorrow_cta', lang), to: '/week', icon: 'calendar' },
         showMood: true,
       }
     case 'training_day':
       return {
-        eyebrow: "Aujourd'hui · Séance",
+        eyebrow: tr('hero_training_day_eyebrow', lang),
         title: todaySessionTitle ? (
           <>{todaySessionTitle.replace(/\s·\s/g, ' — ')}</>
         ) : (
-          <>Séance du jour</>
+          <>{lang === 'fr' ? 'Séance du jour' : "Today's session"}</>
         ),
         cta: {
-          label: 'Démarrer la séance',
+          label: tr('hero_training_day_cta', lang),
           to: todaySessionIndex != null ? `/session/${todaySessionIndex}` : '/week',
           icon: 'play',
         },
@@ -139,25 +152,43 @@ function buildNormalHero(
     case 'rest_day':
     default:
       return {
-        eyebrow: "Aujourd'hui · Repos",
-        title: (
-          <>
-            Repos
-            <br />
-            <span className="opacity-55">programmé.</span>
-          </>
-        ),
+        eyebrow: tr('hero_rest_day_eyebrow', lang),
+        title:
+          lang === 'fr' ? (
+            <>
+              Repos
+              <br />
+              <span className="opacity-55">programmé.</span>
+            </>
+          ) : (
+            <>
+              Scheduled
+              <br />
+              <span className="opacity-55">rest.</span>
+            </>
+          ),
         subtitle: nextSessionLabel ? (
-          <>
-            L&apos;autre moitié du travail.
-            <br />
-            Prochaine séance :{' '}
-            <span className="font-extrabold text-fg">{nextSessionLabel}</span>
-          </>
-        ) : (
+          lang === 'fr' ? (
+            <>
+              L&apos;autre moitié du travail.
+              <br />
+              Prochaine séance :{' '}
+              <span className="font-extrabold text-fg">{nextSessionLabel}</span>
+            </>
+          ) : (
+            <>
+              The other half of the work.
+              <br />
+              Next session:{' '}
+              <span className="font-extrabold text-fg">{nextSessionLabel}</span>
+            </>
+          )
+        ) : lang === 'fr' ? (
           <>L&apos;autre moitié du travail. Sommeil · hydratation · mobilité légère.</>
+        ) : (
+          <>The other half of the work. Sleep · hydration · light mobility.</>
         ),
-        cta: { label: 'Voir le plan de la semaine', to: '/week', icon: 'calendar' },
+        cta: { label: tr('hero_rest_day_cta', lang), to: '/week', icon: 'calendar' },
         showMood: true,
       }
   }
@@ -401,16 +432,18 @@ export function HomePage() {
   // en mai on lirait "Semaine 1" alors qu'on est largement entamé dans la saison.
   const metaLine = useMemo(() => {
     const todayDate = new Date(today + 'T12:00:00')
-    const dateLabel = todayDate.toLocaleDateString('fr-FR', {
+    const dateLabel = todayDate.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {
       weekday: 'short',
       day: 'numeric',
       month: 'short',
     })
-    const seasonLabel = seasonPhaseLabel[seasonPhase] ?? ''
-    const seasonWeek = `Semaine ${getRugbySeasonWeek(today)}`
-    const levelLabel = TRAINING_LEVEL_LABEL[profile.trainingLevel ?? 'builder']
+    const seasonLabel = cyclePhaseLabel(seasonPhase, lang)
+    const seasonWeek = lang === 'fr'
+      ? `Semaine ${getRugbySeasonWeek(today)}`
+      : `Week ${getRugbySeasonWeek(today)}`
+    const levelLabel = trainingLevelLabel(profile.trainingLevel ?? 'builder', lang)
     return [dateLabel, seasonLabel, seasonWeek, levelLabel].filter(Boolean).join(' · ')
-  }, [today, seasonPhase, profile.trainingLevel])
+  }, [today, seasonPhase, profile.trainingLevel, lang])
 
   // ── Hero copy (uniquement pour HeroNormal — HeroDayAfter est géré séparément) ──
   const normalHeroCopy = useMemo(
@@ -421,8 +454,9 @@ export function HomePage() {
         todaySessionTitle,
         todaySessionIndex,
         nextSessionLabel,
+        lang,
       ),
-    [heroState, todaySessionTitle, todaySessionIndex, nextSessionLabel],
+    [heroState, todaySessionTitle, todaySessionIndex, nextSessionLabel, lang],
   )
 
   // ── Mood inline (HeroNormal) ──

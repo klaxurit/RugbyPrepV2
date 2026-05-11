@@ -2,21 +2,25 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { PageHeader } from '../components/PageHeader'
 import { useAuth } from '../hooks/useAuth'
+import { useProfile } from '../hooks/useProfile'
 import { supabase } from '../services/supabase/client'
 import { posthog } from '../services/analytics/posthog'
+import { tr, type Lang } from '../i18n/appLabels'
 
 type FeedbackKind = 'bug' | 'feature' | 'usability' | 'other'
 
-const KIND_LABELS: Record<FeedbackKind, string> = {
-  bug: 'Bug / dysfonctionnement',
-  feature: 'Nouvelle fonctionnalité',
-  usability: 'Ergonomie / lisibilité',
-  other: 'Autre retour',
+const KIND_LABEL_KEYS: Record<FeedbackKind, 'feedback_kind_bug' | 'feedback_kind_feature' | 'feedback_kind_ux' | 'feedback_kind_other'> = {
+  bug: 'feedback_kind_bug',
+  feature: 'feedback_kind_feature',
+  usability: 'feedback_kind_ux',
+  other: 'feedback_kind_other',
 }
 
 export function FeedbackPage() {
   const { authState } = useAuth()
+  const { profile } = useProfile()
   const navigate = useNavigate()
+  const lang: Lang = (profile.preferredLanguage as Lang | undefined) ?? 'fr'
 
   const [kind, setKind] = useState<FeedbackKind>('bug')
   const [message, setMessage] = useState('')
@@ -33,11 +37,11 @@ export function FeedbackPage() {
     setError(null)
 
     if (message.trim().length < 5) {
-      setError('Message trop court (5 caractères minimum).')
+      setError(lang === 'fr' ? 'Message trop court (5 caractères minimum).' : 'Message too short (5 characters minimum).')
       return
     }
     if (message.length > 4000) {
-      setError('Message trop long (4000 caractères maximum).')
+      setError(lang === 'fr' ? 'Message trop long (4000 caractères maximum).' : 'Message too long (4000 characters maximum).')
       return
     }
 
@@ -55,7 +59,11 @@ export function FeedbackPage() {
 
     if (insertError) {
       setSubmitting(false)
-      setError("Échec de l'envoi. Réessaye dans quelques secondes ou écris-moi à bonjour@rugbyforge.fr.")
+      setError(
+        lang === 'fr'
+          ? "Échec de l'envoi. Réessaye dans quelques secondes ou écris-moi à bonjour@rugbyforge.fr."
+          : 'Send failed. Try again in a few seconds or email bonjour@rugbyforge.fr.',
+      )
       return
     }
 
@@ -92,8 +100,8 @@ export function FeedbackPage() {
               onChange={(e) => setKind(e.target.value as FeedbackKind)}
               className="w-full h-12 rounded-2xl border-2 border-border-app bg-layer-5 px-4 text-sm text-fg rf-focus-ring"
             >
-              {(Object.entries(KIND_LABELS) as [FeedbackKind, string][]).map(([k, label]) => (
-                <option key={k} value={k}>{label}</option>
+              {(Object.entries(KIND_LABEL_KEYS) as [FeedbackKind, typeof KIND_LABEL_KEYS[FeedbackKind]][]).map(([k, labelKey]) => (
+                <option key={k} value={k}>{tr(labelKey, lang)}</option>
               ))}
             </select>
           </div>
@@ -122,7 +130,9 @@ export function FeedbackPage() {
           )}
           {success && (
             <div className="p-3.5 bg-ok-bg-muted border border-ok-bd rounded-2xl">
-              <p className="text-xs text-ok font-medium">Merci, ton retour est bien arrivé. Redirection…</p>
+              <p className="text-xs text-ok font-medium">
+                {lang === 'fr' ? 'Merci, ton retour est bien arrivé. Redirection…' : 'Thanks, your feedback was received. Redirecting…'}
+              </p>
             </div>
           )}
 

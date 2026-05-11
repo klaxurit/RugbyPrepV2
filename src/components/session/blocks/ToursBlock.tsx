@@ -7,6 +7,10 @@ import { SessionNotes } from '../SessionNotes'
 import type { LoadSuggestion } from '../../../services/loadSuggestion'
 import { hasExerciseDemo } from '../../../data/exercises'
 import { resolveExerciseId } from '../../../services/motherSession/motherSessionExerciseMap'
+import {
+  localizeMotherSessionExerciseName,
+  type Lang,
+} from '../../../services/motherSession/localizeMotherSessionExerciseName'
 
 /**
  * Per-exo gate for the eye/demo button. Tour-block exercises sometimes ship
@@ -59,6 +63,8 @@ interface ToursBlockProps {
   notes?: readonly string[]
   /** Suggestion de charge Premium par exerciseId (optionnel). */
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
+  /** Langue d'affichage des noms d'exercices. Défaut: 'fr'. */
+  lang?: Lang
 }
 
 const TOUR_STATE_FROM_BLOCK = (
@@ -102,6 +108,7 @@ export function ToursBlock(props: ToursBlockProps) {
     onStartIso,
     notes,
     getLoadSuggestion,
+    lang = 'fr',
   } = props
 
   const displayTour = state === 'done' ? totalTours : Math.min(currentTourIdx + 1, totalTours)
@@ -115,6 +122,7 @@ export function ToursBlock(props: ToursBlockProps) {
         state={state}
         expanded={expanded}
         onToggle={onToggle}
+        lang={lang}
       />
 
       {expanded && (
@@ -137,6 +145,7 @@ export function ToursBlock(props: ToursBlockProps) {
                   key={i}
                   exo={exo}
                   onPlayDemo={onPlayDemo && exerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined}
+                  lang={lang}
                 />
               ))}
             </div>
@@ -164,6 +173,7 @@ export function ToursBlock(props: ToursBlockProps) {
                     onPlayDemo={onPlayDemo}
                     onStartIso={onStartIso}
                     getLoadSuggestion={getLoadSuggestion}
+                    lang={lang}
                   />
                 )
               })}
@@ -196,6 +206,7 @@ interface TourGroupProps {
   onPlayDemo?: (exoIdx: number) => void
   onStartIso?: (exoIdx: number, durationSec: number) => void
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
+  lang: Lang
 }
 
 const TOUR_HEADER_CLASS: Record<BlockState, string> = {
@@ -225,6 +236,7 @@ function TourGroup({
   onPlayDemo,
   onStartIso,
   getLoadSuggestion,
+  lang,
 }: TourGroupProps) {
   const validatedCount = Object.values(exoData).filter((d) => d.validated).length
   const headerLabel = state === 'active' ? 'En cours' : state === 'done' ? 'Terminé' : 'À venir'
@@ -305,6 +317,7 @@ function TourGroup({
                 onSetReps={onSetExoData ? (v) => onSetExoData(i, { reps: v }) : undefined}
                 onPlayDemo={onPlayDemo && exerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined}
                 onStartIso={onStartIso ? (sec) => onStartIso(i, sec) : undefined}
+                lang={lang}
               />
             )
           })}
@@ -354,6 +367,7 @@ interface ExerciseRowProps {
   onSetReps?: (next: string) => void
   onPlayDemo?: () => void
   onStartIso?: (durationSec: number) => void
+  lang: Lang
 }
 
 function ExerciseRow({
@@ -371,6 +385,7 @@ function ExerciseRow({
   onSetReps,
   onPlayDemo,
   onStartIso,
+  lang,
 }: ExerciseRowProps) {
   // Inputs Premium n'apparaissent que si l'exo a une CHARGE (sets×reps).
   // Pour les exos en temps (iso, planks), pas d'inputs kg/reps — un bouton iso
@@ -411,7 +426,7 @@ function ExerciseRow({
               opacity: validated ? 0.6 : 1,
             }}
           >
-            <span className="truncate">{exo.name}</span>
+            <span className="truncate">{localizeMotherSessionExerciseName(exo.name, lang)}</span>
             {premium && suggestion && isCurrent && !validated && (
               <SuggestionBadge suggestion={suggestion} />
             )}
@@ -487,13 +502,14 @@ function ExerciseRow({
 interface PreviewExerciseRowProps {
   exo: Exercise
   onPlayDemo?: () => void
+  lang: Lang
 }
 
 /**
  * Variante "preview" d'un exo (mode pending/idle) — pas de checkbox de validation,
  * pas d'inputs Premium ; juste le nom + prescription + bouton démo optionnel.
  */
-function PreviewExerciseRow({ exo, onPlayDemo }: PreviewExerciseRowProps) {
+function PreviewExerciseRow({ exo, onPlayDemo, lang }: PreviewExerciseRowProps) {
   return (
     <div className="flex items-center gap-2.5 rounded-[14px] border border-paper-deep bg-app px-3 py-3">
       <div className="min-w-0 flex-1">
@@ -501,7 +517,7 @@ function PreviewExerciseRow({ exo, onPlayDemo }: PreviewExerciseRowProps) {
           className="text-[14px] font-bold leading-[1.25] text-fg"
           style={{ letterSpacing: '-0.2px' }}
         >
-          {exo.name}
+          {localizeMotherSessionExerciseName(exo.name, lang)}
         </div>
         <div className="mt-0.5 text-[12px] tabular-nums text-fg/55">{exo.prescription}</div>
       </div>

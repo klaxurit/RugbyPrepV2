@@ -4,6 +4,10 @@ import { parseExerciseSetSpec } from '../../../services/ui/exerciseSetSpec'
 import { BlockHeader } from '../BlockHeader'
 import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
+import {
+  localizeMotherSessionExerciseName,
+  type Lang,
+} from '../../../services/motherSession/localizeMotherSessionExerciseName'
 
 interface PrehabBlockProps {
   block: Block
@@ -19,6 +23,7 @@ interface PrehabBlockProps {
   /** Lance le mini-chrono iso (ouvre l'overlay côté page). Passé à chaque exo iso. */
   onStartIso?: (exoIdx: number, durationSec: number) => void
   notes?: readonly string[]
+  lang?: Lang
 }
 
 /**
@@ -37,6 +42,7 @@ export function PrehabBlock({
   onValidateExo,
   onStartIso,
   notes,
+  lang = 'fr',
 }: PrehabBlockProps) {
   return (
     <div className="flex flex-col gap-2.5">
@@ -47,6 +53,7 @@ export function PrehabBlock({
         state={state}
         expanded={expanded}
         onToggle={onToggle}
+        lang={lang}
       />
 
       {expanded && (
@@ -59,6 +66,7 @@ export function PrehabBlock({
               validated={validatedByIdx?.[i] ?? false}
               onValidate={() => onValidateExo(i)}
               onStartIso={onStartIso ? (sec) => onStartIso(i, sec) : undefined}
+              lang={lang}
             />
           ))}
 
@@ -75,9 +83,10 @@ interface PrehabRowProps {
   validated: boolean
   onValidate: () => void
   onStartIso?: (durationSec: number) => void
+  lang: Lang
 }
 
-function PrehabRow({ exo, isCurrent, validated, onValidate, onStartIso }: PrehabRowProps) {
+function PrehabRow({ exo, isCurrent, validated, onValidate, onStartIso, lang }: PrehabRowProps) {
   // Détecte une prescription temps (ex: "2x15-20s/side") → propose un bouton iso.
   const spec = parseExerciseSetSpec(exo.prescription)
   const isoSeconds = spec.kind === 'time' ? spec.durationLow : null
@@ -109,7 +118,7 @@ function PrehabRow({ exo, isCurrent, validated, onValidate, onStartIso }: Prehab
             opacity: validated ? 0.55 : 1,
           }}
         >
-          {exo.name}
+          {localizeMotherSessionExerciseName(exo.name, lang)}
         </div>
         <div className="mt-0.5 text-[11px] tabular-nums text-fg-muted">{exo.prescription}</div>
       </div>

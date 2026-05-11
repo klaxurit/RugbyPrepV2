@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import type { MotherSession } from '../../types/motherSession'
+import type { Block, MotherSession } from '../../types/motherSession'
+import { tr } from '../../i18n/appLabels'
 import { buildExerciseTourKey, useSessionRun } from '../../contexts/SessionRunContext'
 import { detectBlockKind } from '../../services/session/detectBlockKind'
 import { findCurrentPending } from '../../services/motherSession/findCurrentPending'
@@ -19,6 +20,7 @@ import {
 } from './blocks'
 import type { BlockState } from './BlockStateChip'
 import type { LoadSuggestion } from '../../services/loadSuggestion'
+import type { Lang } from '../../services/motherSession/localizeMotherSessionExerciseName'
 
 export type SessionPhase = 'idle' | 'running' | 'completed'
 
@@ -37,6 +39,8 @@ interface SessionBlocksProps {
   onPlayDemo?: (blockNumber: number, exerciseIndex: number) => void
   /** Suggestion de charge Premium par exerciseId (undefined si non Premium ou no_data). */
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
+  /** Langue d'affichage des noms d'exercices (UserProfile.preferredLanguage). Défaut: 'fr'. */
+  lang?: Lang
 }
 
 /**
@@ -61,9 +65,25 @@ export function SessionBlocks({
   onStartIsoTimer,
   onPlayDemo,
   getLoadSuggestion,
+  lang = 'fr',
 }: SessionBlocksProps) {
   const sessionRun = useSessionRun()
   const blocks = session.blocks
+
+  // ── Warm-up : synthétisé depuis session.warmUp (champ séparé des blocks). ─
+  // Rendu en tête de séance, jamais "active" (pas de validation set-par-set).
+  // Reste invisible pour findCurrentPending (qui n'itère que session.blocks).
+  const warmupBlock: Block | null = useMemo(() => {
+    const wu = session.warmUp
+    if (!wu || wu.exercises.length === 0) return null
+    return {
+      number: 0,
+      name: tr('warmup_block_title', lang),
+      format: '',
+      exercises: wu.exercises.map((e) => ({ name: e.name, prescription: e.prescription })),
+      coachingNotes: wu.notes,
+    }
+  }, [session.warmUp, lang])
 
   // ── Curseur pendant : où en est le user ? ──────────────────────────────
   const cursor = useMemo(
@@ -84,8 +104,22 @@ export function SessionBlocks({
     }))
   }
 
+  const warmupExpanded = isExpanded(0, phase === 'idle')
+  const onWarmupToggle = () => toggleExpand(0, phase === 'idle')
+
   return (
     <div className="flex flex-col gap-3.5">
+      {warmupBlock && (
+        <WarmupBlock
+          key="warmup-synthetic"
+          block={warmupBlock}
+          number={0}
+          state="pending"
+          expanded={warmupExpanded}
+          onToggle={onWarmupToggle}
+          lang={lang}
+        />
+      )}
       {blocks.map((block, i) => {
         const number = i + 1
         const blockState = computeBlockState({
@@ -110,6 +144,7 @@ export function SessionBlocks({
               state={blockState}
               expanded={expanded}
               onToggle={onToggle}
+              lang={lang}
             />
           )
         }
@@ -130,6 +165,7 @@ export function SessionBlocks({
               timerActive={false}
               onStartTimer={() => onStartEmomTimer?.(block.number)}
               notes={notes}
+              lang={lang}
             />
           )
         }
@@ -147,6 +183,7 @@ export function SessionBlocks({
               onToggle={onToggle}
               currentExoIdx={currentExoIdx}
               validatedByIdx={validatedByIdx}
+              lang={lang}
               onValidateExo={(exoIdx) => {
                 handleValidateExoFromBlock({
                   blockNumber: block.number,
@@ -183,6 +220,7 @@ export function SessionBlocks({
             state={blockState}
             expanded={expanded}
             onToggle={onToggle}
+            lang={lang}
             totalTours={totalTours}
             restMin={restMin}
             currentTourIdx={currentTourIdx}

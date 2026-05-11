@@ -4,7 +4,7 @@ import { posthog } from '../services/analytics/posthog'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Flame } from 'lucide-react'
+import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Flame, Languages } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
 import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
 import { getPositionIllustration } from '../assets/positions'
@@ -717,30 +717,6 @@ export function ProfilePage() {
             })()}
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Langue du programme</label>
-            <div className="grid grid-cols-2 gap-2">
-              {LANGUAGE_OPTIONS.map((opt) => {
-                const active = (profile.preferredLanguage ?? 'fr') === opt.value
-                return (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => updateProfile({ preferredLanguage: opt.value })}
-                    className={`py-2.5 px-3 rounded-2xl text-left transition-all ${
-                      active
-                        ? 'bg-brand text-on-brand shadow-sm'
-                        : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
-                    }`}
-                  >
-                    <p className="text-xs font-black">{opt.label}</p>
-                    <p className={`mt-0.5 text-[10px] ${active ? 'text-on-brand/80' : 'text-fg-muted'}`}>{opt.sub}</p>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
           {/* Séances / semaine */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Séances / semaine</label>
@@ -765,6 +741,36 @@ export function ProfilePage() {
             </div>
           </div>
 
+        </CollapsibleSection>
+
+        {/* Langue */}
+        <CollapsibleSection
+          title="Langue"
+          subtitle="Français ou English pour les noms d'exercices"
+          icon={<Languages className="w-4 h-4" />}
+          iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
+          testId="profile-section-language"
+        >
+          <div className="grid grid-cols-2 gap-2">
+            {LANGUAGE_OPTIONS.map((opt) => {
+              const active = (profile.preferredLanguage ?? 'fr') === opt.value
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => updateProfile({ preferredLanguage: opt.value })}
+                  className={`py-2.5 px-3 rounded-2xl text-left transition-all ${
+                    active
+                      ? 'bg-brand text-on-brand shadow-sm'
+                      : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
+                  }`}
+                >
+                  <p className="text-xs font-black">{opt.label}</p>
+                  <p className={`mt-0.5 text-[10px] ${active ? 'text-on-brand/80' : 'text-fg-muted'}`}>{opt.sub}</p>
+                </button>
+              )
+            })}
+          </div>
         </CollapsibleSection>
 
         {/* Morphologie */}
@@ -1169,13 +1175,6 @@ export function ProfilePage() {
 
       {/* Footer */}
       <footer className="px-4 py-6 flex flex-col items-center gap-3 text-center relative">
-        <a
-          href="mailto:support@rugbyforge.fr?subject=Feedback%20RugbyForge"
-          onClick={() => posthog.capture('feedback_clicked')}
-          className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-brand text-on-brand text-xs font-black uppercase tracking-wide opacity-95 hover:opacity-100 transition-opacity shadow-elevated rf-focus-ring"
-        >
-          Envoyer un feedback
-        </a>
         <Link
           to="/legal"
           className="text-xs text-fg-muted hover:text-brand-tint transition-colors"

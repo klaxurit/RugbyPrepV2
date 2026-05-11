@@ -37,17 +37,15 @@ import type { DatedSession } from '../types/scheduling'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
+import { cyclePhaseLabel } from '../i18n/appLabels'
 
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
-  if (lang !== 'fr') return label
-  return label
-    .replace(/\bOff-season\b/gi, 'Inter-saison')
-    .replace(/\boff_season\b/gi, 'Inter-saison')
-    .replace(/\bPre-season\b/gi, 'Pré-saison')
-    .replace(/\bpre_season\b/gi, 'Pré-saison')
-    .replace(/\bIn-season\b/gi, 'En saison')
-    .replace(/\bin_season\b/gi, 'En saison')
-    .replace(/ - W(\d)/, ' - S$1')
+  let out = label
+    .replace(/\bOff[-_]season\b/gi, cyclePhaseLabel('off_season', lang))
+    .replace(/\bPre[-_]season\b/gi, cyclePhaseLabel('pre_season', lang))
+    .replace(/\bIn[-_]season\b/gi, cyclePhaseLabel('in_season', lang))
+  if (lang === 'fr') out = out.replace(/ - W(\d)/, ' - S$1')
+  return out
 }
 
 export function WeekPage() {
