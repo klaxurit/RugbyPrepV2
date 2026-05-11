@@ -3,7 +3,8 @@ import { Icon } from '../../ui'
 import { BlockHeader } from '../BlockHeader'
 import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
-import type { Lang } from '../../../i18n/appLabels'
+import { tr, type Lang } from '../../../i18n/appLabels'
+import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
 
 interface EmomBlockProps {
   block: Block
@@ -44,7 +45,7 @@ export function EmomBlock({
       <BlockHeader
         number={number}
         icon="circle"
-        title={block.name}
+        title={localizeBlockName(block.name, lang)}
         state={state}
         expanded={expanded}
         onToggle={onToggle}
@@ -56,10 +57,10 @@ export function EmomBlock({
           <div className="rounded-[14px] border-[1.5px] border-brand/35 bg-app px-4 py-3.5">
             <div className="mb-2 inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand">
               <Icon name="circle" size={10} color="var(--color-accent)" strokeWidth={2} />
-              Bloc chronométré · EMOM
+              {tr('emom_chrono_block', lang)}
             </div>
             <p className="mb-3 text-[12px] leading-[1.5] text-fg-secondary">
-              {totalMinutes} minutes — une nouvelle minute = un nouvel exercice.
+              {totalMinutes} {tr('emom_minutes_intro_pre', lang)}
             </p>
             <ul className="mb-3.5 flex flex-col gap-2">
               {pattern.map((p, i) => (
@@ -87,7 +88,7 @@ export function EmomBlock({
                 style={{ boxShadow: '0 8px 20px rgba(123, 13, 30, 0.4)' }}
               >
                 <Icon name="play" size={12} strokeWidth={2.4} />
-                Démarrer le chrono
+                {tr('emom_start_chrono', lang)}
               </button>
             )}
 
@@ -98,7 +99,7 @@ export function EmomBlock({
               >
                 <span aria-hidden className="h-2 w-2 rounded-full bg-brand" />
                 <span className="flex-1 text-[11px] font-extrabold uppercase tracking-[0.12em] text-brand">
-                  Chrono actif — consulte l&apos;overlay
+                  {tr('emom_chrono_active', lang)}
                 </span>
               </div>
             )}
@@ -107,7 +108,7 @@ export function EmomBlock({
               <div className="flex w-full items-center gap-2.5 rounded-xl bg-win-soft text-win px-4 py-3">
                 <Icon name="check" size={16} color="var(--color-milestone-green)" strokeWidth={2.6} />
                 <span className="text-[11px] font-extrabold uppercase tracking-[0.1em]">
-                  Bloc terminé
+                  {tr('emom_block_done', lang)}
                 </span>
               </div>
             )}

@@ -8,6 +8,8 @@ import {
   localizeMotherSessionExerciseName,
   type Lang,
 } from '../../../services/motherSession/localizeMotherSessionExerciseName'
+import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
+import { tr } from '../../../i18n/appLabels'
 
 interface PrehabBlockProps {
   block: Block
@@ -49,7 +51,7 @@ export function PrehabBlock({
       <BlockHeader
         number={number}
         icon="sparkle"
-        title={block.name}
+        title={localizeBlockName(block.name, lang)}
         state={state}
         expanded={expanded}
         onToggle={onToggle}
@@ -100,7 +102,7 @@ function PrehabRow({ exo, isCurrent, validated, onValidate, onStartIso, lang }: 
       <button
         type="button"
         onClick={onValidate}
-        aria-label={validated ? 'Marquer non fait' : 'Valider'}
+        aria-label={validated ? tr('exercise_aria_unvalidate', lang) : tr('exercise_aria_validate', lang)}
         className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full rf-focus-ring transition-colors ${
           validated
             ? 'bg-win'

@@ -317,6 +317,24 @@ export const APP_LABELS = {
   progress_rate_week_plural: { fr: 'semaines', en: 'weeks' },
   progress_cmj_rule_title: { fr: 'Règle clinique CMJ', en: 'CMJ clinical rule' },
   progress_cmj_rule_body: { fr: '↓ CMJ ≥ 10% vs baseline = fatigue neuromusculaire non résolue → ne pas augmenter la charge cette semaine. Mesure idéalement le lundi matin à jeun.', en: '↓ CMJ ≥ 10% vs baseline = unresolved neuromuscular fatigue → do not raise load this week. Ideally measure Monday morning fasted.' },
+
+  // ── Tours block (meta + ExerciseRow + PreviewExerciseRow) ───────────────
+  tours_meta_round_single: { fr: 'tour', en: 'round' },
+  tours_meta_round_plural: { fr: 'tours', en: 'rounds' },
+  tours_meta_rest_prefix: { fr: 'Repos', en: 'Rest' },
+  tours_tour_label: { fr: 'Tour', en: 'Round' },
+  exercise_aria_validate: { fr: 'Valider', en: 'Validate' },
+  exercise_aria_unvalidate: { fr: 'Marquer non fait', en: 'Mark not done' },
+  exercise_aria_demo: { fr: 'Voir la démo', en: 'View demo' },
+  exercise_validate_set: { fr: 'Valider set', en: 'Validate set' },
+  exercise_premium_tracking_pre: { fr: 'Suivi set-par-set', en: 'Set-by-set tracking' },
+
+  // ── EMOM block ──────────────────────────────────────────────────────────
+  emom_chrono_block: { fr: 'Bloc chronométré · EMOM', en: 'Timed block · EMOM' },
+  emom_minutes_intro_pre: { fr: 'minutes — une nouvelle minute = un nouvel exercice.', en: 'minutes — a new minute = a new exercise.' },
+  emom_start_chrono: { fr: 'Démarrer le chrono', en: 'Start chrono' },
+  emom_chrono_active: { fr: "Chrono actif — consulte l'overlay", en: 'Chrono active — see overlay' },
+  emom_block_done: { fr: 'Bloc terminé', en: 'Block done' },
 } as const satisfies Record<string, LabelEntry>
 
 export type AppLabelKey = keyof typeof APP_LABELS

@@ -11,6 +11,8 @@ import {
   localizeMotherSessionExerciseName,
   type Lang,
 } from '../../../services/motherSession/localizeMotherSessionExerciseName'
+import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
+import { tr } from '../../../i18n/appLabels'
 
 /**
  * Per-exo gate for the eye/demo button. Tour-block exercises sometimes ship
@@ -118,7 +120,7 @@ export function ToursBlock(props: ToursBlockProps) {
       <BlockHeader
         number={number}
         icon="bolt"
-        title={block.name}
+        title={localizeBlockName(block.name, lang)}
         state={state}
         expanded={expanded}
         onToggle={onToggle}
@@ -129,11 +131,11 @@ export function ToursBlock(props: ToursBlockProps) {
         <div className="flex flex-col gap-3 px-1">
           <div className="flex items-center justify-between px-1.5">
             <span className="text-[11px] font-medium text-fg/60">
-              {totalTours} tour{totalTours > 1 ? 's' : ''}
-              {restMin != null && ` · Repos ${restMin} min`}
+              {totalTours} {totalTours > 1 ? tr('tours_meta_round_plural', lang) : tr('tours_meta_round_single', lang)}
+              {restMin != null && ` · ${tr('tours_meta_rest_prefix', lang)} ${restMin} min`}
             </span>
             <span className="text-[10px] font-extrabold uppercase tabular-nums tracking-[0.12em] text-brand">
-              Tour {displayTour}/{totalTours}
+              {tr('tours_tour_label', lang)} {displayTour}/{totalTours}
             </span>
           </div>
 
@@ -239,7 +241,11 @@ function TourGroup({
   lang,
 }: TourGroupProps) {
   const validatedCount = Object.values(exoData).filter((d) => d.validated).length
-  const headerLabel = state === 'active' ? 'En cours' : state === 'done' ? 'Terminé' : 'À venir'
+  const headerLabel = state === 'active'
+    ? tr('block_state_active', lang)
+    : state === 'done'
+      ? tr('block_state_done', lang)
+      : tr('block_state_pending', lang)
 
   return (
     <div className="mb-2">
@@ -250,7 +256,7 @@ function TourGroup({
         <span
           className={`text-[11px] font-extrabold uppercase tracking-[0.12em] ${TOUR_HEADER_FG[state]}`}
         >
-          Tour {tourNum}
+          {tr('tours_tour_label', lang)} {tourNum}
         </span>
         <span aria-hidden className={`h-[3px] w-[3px] rounded-full opacity-50 ${TOUR_HEADER_FG[state]} bg-current`} />
         <span
@@ -406,7 +412,7 @@ function ExerciseRow({
         <button
           type="button"
           onClick={onValidate}
-          aria-label={validated ? 'Marquer non fait' : 'Valider'}
+          aria-label={validated ? tr('exercise_aria_unvalidate', lang) : tr('exercise_aria_validate', lang)}
           className={`mt-0.5 flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-[7px] rf-focus-ring transition-colors ${
             validated
               ? 'bg-win'
@@ -449,7 +455,7 @@ function ExerciseRow({
           <button
             type="button"
             onClick={onPlayDemo}
-            aria-label="Voir la démo"
+            aria-label={tr('exercise_aria_demo', lang)}
             className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-app rf-focus-ring"
           >
             <Icon name="eye" size={14} color="var(--color-text-primary)" strokeWidth={1.6} />
@@ -481,7 +487,7 @@ function ExerciseRow({
               onClick={onValidate}
               className="ml-auto h-9 rounded-[10px] bg-brand text-app px-3.5 text-[11px] font-extrabold uppercase tracking-[0.06em] active:scale-[0.97] transition-transform rf-focus-ring"
             >
-              Valider set
+              {tr('exercise_validate_set', lang)}
             </button>
           </div>
         </>
@@ -491,7 +497,7 @@ function ExerciseRow({
         <div className="flex items-center gap-2 border-t border-dashed border-brand/25 pt-2.5 text-[11px] text-fg-muted italic">
           <Icon name="lock" size={12} color="var(--color-accent)" strokeWidth={1.8} />
           <span>
-            Suivi set-par-set <strong className="not-italic text-brand">Premium</strong>
+            {tr('exercise_premium_tracking_pre', lang)} <strong className="not-italic text-brand">Premium</strong>
           </span>
         </div>
       )}
@@ -525,7 +531,7 @@ function PreviewExerciseRow({ exo, onPlayDemo, lang }: PreviewExerciseRowProps) 
         <button
           type="button"
           onClick={onPlayDemo}
-          aria-label="Voir la démo"
+          aria-label={tr('exercise_aria_demo', lang)}
           className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-app rf-focus-ring"
         >
           <Icon name="eye" size={14} color="var(--color-text-primary)" strokeWidth={1.6} />

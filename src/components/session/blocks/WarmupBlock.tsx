@@ -5,6 +5,7 @@ import {
   localizeMotherSessionExerciseName,
   type Lang,
 } from '../../../services/motherSession/localizeMotherSessionExerciseName'
+import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
 
 interface WarmupBlockProps {
   block: Block
@@ -26,7 +27,7 @@ export function WarmupBlock({ block, number, state, expanded, onToggle, lang = '
       <BlockHeader
         number={number}
         icon="flame"
-        title={block.name}
+        title={localizeBlockName(block.name, lang)}
         state={state}
         expanded={expanded}
         onToggle={onToggle}
