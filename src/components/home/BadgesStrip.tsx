@@ -1,5 +1,7 @@
 import { Icon, SectionLabel } from '../ui'
 import type { Milestone, MilestoneTone } from '../../services/home/computeMilestones'
+import { useProfile } from '../../hooks/useProfile'
+import { tr, type Lang } from '../../i18n/appLabels'
 
 interface BadgesStripProps {
   milestones: Milestone[]
@@ -24,13 +26,15 @@ const TONE_ICON_COLOR: Record<MilestoneTone, string> = {
  * Affiche un tag "Nouveau" sur les jalons obtenus dans les 7 derniers jours.
  */
 export function BadgesStrip({ milestones, showAllHref }: BadgesStripProps) {
+  const { profile } = useProfile()
+  const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   if (milestones.length === 0) return null
 
   return (
     <section className="pt-6">
       <div className="px-[22px]">
         <SectionLabel
-          label="Tes jalons"
+          label={tr('badges_eyebrow', lang)}
           bare
           trailing={
             showAllHref ? (
@@ -38,7 +42,7 @@ export function BadgesStrip({ milestones, showAllHref }: BadgesStripProps) {
                 href={showAllHref}
                 className="text-[11px] font-bold tracking-wide text-brand hover:text-brand-hover transition-colors"
               >
-                Tout voir
+                {tr('badges_view_all', lang)}
               </a>
             ) : undefined
           }
@@ -58,7 +62,7 @@ export function BadgesStrip({ milestones, showAllHref }: BadgesStripProps) {
             >
               {m.isNew && !isLocked && (
                 <span className="absolute -top-1 -right-1 rounded bg-brand px-1.5 py-0.5 text-[8px] font-extrabold uppercase tracking-[0.08em] text-app">
-                  Nouveau
+                  {tr('badges_new', lang)}
                 </span>
               )}
               {isLocked && (

@@ -1,5 +1,7 @@
 import { Icon, SectionLabel } from '../ui'
 import type { StreakResult } from '../../services/home/computeStreak'
+import { useProfile } from '../../hooks/useProfile'
+import { tr, type Lang } from '../../i18n/appLabels'
 
 interface StreakCardProps {
   streak: StreakResult
@@ -10,9 +12,11 @@ interface StreakCardProps {
  * + mini-barres semaine (14 derniers jours).
  */
 export function StreakCard({ streak }: StreakCardProps) {
+  const { profile } = useProfile()
+  const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   return (
     <section className="px-[22px] pt-6">
-      <SectionLabel label="Ta cadence" />
+      <SectionLabel label={tr('streak_eyebrow', lang)} />
 
       <div className="mt-3 flex items-center gap-[18px] rounded-[20px] border border-paper-deep bg-paper-soft px-[22px] py-5">
         {/* Flamme géante avec glow doré pulsant */}
@@ -39,7 +43,7 @@ export function StreakCard({ streak }: StreakCardProps) {
               {streak.count}
             </div>
             <div className="text-[13px] font-bold text-fg/60">
-              séance{streak.count > 1 ? 's' : ''}
+              {streak.count > 1 ? tr('streak_session_plural', lang) : tr('streak_session_single', lang)}
             </div>
           </div>
 

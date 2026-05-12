@@ -7,6 +7,7 @@ import { useProfile } from '../hooks/useProfile'
 import { getClubLogoUrl, getClubMonogram } from '../services/ui/clubLogos'
 import { getPositionIllustration } from '../assets/positions'
 import { useScrollThemeColor } from '../hooks/useScrollThemeColor'
+import { tr, type Lang } from '../i18n/appLabels'
 
 interface PageHeaderProps {
   /** Titre de la page affiché sous le logo */
@@ -27,6 +28,7 @@ export function PageHeader({ title, backTo, right }: PageHeaderProps) {
   useScrollThemeColor()
   const { authState } = useAuth()
   const { profile } = useProfile()
+  const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   const currentUser = authState.status === 'authenticated' ? authState.user : null
   const resolvedAvatarUrl = currentUser?.avatarUrl ?? profile.avatarUrl
   const positionIllustration = getPositionIllustration(profile.rugbyPosition ?? profile.position)
@@ -42,7 +44,7 @@ export function PageHeader({ title, backTo, right }: PageHeaderProps) {
           <Link
             to={backTo}
             className="p-2 -ml-2 rounded-xl flex-shrink-0 transition-colors hover:bg-white/20 text-shell-text-muted hover:text-shell-text"
-            aria-label="Retour"
+            aria-label={tr('page_header_back', lang)}
           >
             <ChevronLeft className="w-5 h-5" />
           </Link>
@@ -58,7 +60,7 @@ export function PageHeader({ title, backTo, right }: PageHeaderProps) {
               {showProfileAvatar ? (
           <Link
             to="/profile"
-            aria-label="Voir mon profil"
+            aria-label={tr('page_header_profile', lang)}
             className="block rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-shell-text focus-visible:ring-offset-2 focus-visible:ring-offset-shell"
           >
             <div className="relative h-14 w-14">

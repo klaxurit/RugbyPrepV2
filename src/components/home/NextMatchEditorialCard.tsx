@@ -1,6 +1,8 @@
 import { Icon, SectionLabel, Pill } from '../ui'
 import { ClubAvatar } from '../match/ClubAvatar'
 import type { CalendarEvent } from '../../types/training'
+import { useProfile } from '../../hooks/useProfile'
+import { tr, type Lang } from '../../i18n/appLabels'
 
 interface NextMatchEditorialCardProps {
   event: CalendarEvent
@@ -12,9 +14,9 @@ interface NextMatchEditorialCardProps {
 
 const KICKOFF_FALLBACK = '—'
 
-function formatKickoff(event: CalendarEvent): string {
+function formatKickoff(event: CalendarEvent, lang: Lang): string {
   const d = new Date(`${event.date}T12:00:00`)
-  const day = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+  const day = d.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { weekday: 'short', day: 'numeric', month: 'short' })
   if (!event.kickoff_time) return day
   // Ex: "Sam. 9 mai · 16h"
   const [hh] = event.kickoff_time.split(':')
@@ -31,14 +33,16 @@ export function NextMatchEditorialCard({
   daysUntil,
   onClick,
 }: NextMatchEditorialCardProps) {
+  const { profile } = useProfile()
+  const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   const isHome = event.is_home === true
-  const venueLabel = event.is_neutral ? 'Neutre' : isHome ? 'Domicile' : 'Extérieur'
+  const venueLabel = event.is_neutral ? tr('match_venue_neutral', lang) : isHome ? tr('match_venue_home', lang) : tr('match_venue_away', lang)
   const venueIcon = isHome ? 'home' : 'arrow-right'
-  const opponentLabel = event.opponent ?? 'Adversaire à confirmer'
+  const opponentLabel = event.opponent ?? tr('match_opponent_tbd', lang)
 
   return (
     <section className="px-[22px] pt-6">
-      <SectionLabel label="Prochain match" />
+      <SectionLabel label={lang === 'fr' ? 'Prochain match' : 'Next match'} />
 
       <button
         type="button"
@@ -48,7 +52,7 @@ export function NextMatchEditorialCard({
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-brand mb-1">
-              Dans
+              {tr('match_in', lang)}
             </div>
             <div
               className="text-[64px] font-extrabold leading-[0.85] tabular-nums text-fg"
@@ -72,7 +76,7 @@ export function NextMatchEditorialCard({
               {venueLabel}
             </Pill>
             <div className="mt-2 text-[11px] font-bold text-fg/55 tabular-nums">
-              {formatKickoff(event) || KICKOFF_FALLBACK}
+              {formatKickoff(event, lang) || KICKOFF_FALLBACK}
             </div>
           </div>
         </div>
@@ -81,7 +85,7 @@ export function NextMatchEditorialCard({
           <ClubAvatar code={event.opponent_code} name={event.opponent} size="md" />
           <div className="min-w-0 flex-1">
             <div className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-fg/50">
-              vs.
+              {tr('match_vs', lang)}
             </div>
             <div
               className="mt-0.5 truncate text-[15px] font-bold text-fg"

@@ -1,4 +1,6 @@
 import { Icon } from '../ui'
+import { useProfile } from '../../hooks/useProfile'
+import { tr, type Lang } from '../../i18n/appLabels'
 
 interface PlayoffsThinBannerProps {
   /** Click → action métier (active le mode Playoffs côté profil). */
@@ -14,6 +16,8 @@ interface PlayoffsThinBannerProps {
  * trophée à gauche, 2 lignes de texte, chevron à droite.
  */
 export function PlayoffsThinBanner({ onActivate, onDismiss }: PlayoffsThinBannerProps) {
+  const { profile } = useProfile()
+  const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   return (
     <div
       className="flex items-center gap-3 rounded-xl px-4 py-3 transition-colors"
@@ -26,7 +30,7 @@ export function PlayoffsThinBanner({ onActivate, onDismiss }: PlayoffsThinBanner
           type="button"
           onClick={onActivate}
           className="flex flex-1 items-center gap-3 text-left rf-focus-ring rounded-lg active:scale-[0.99] transition-transform"
-          aria-label="Activer le mode Playoffs"
+          aria-label={tr('playoffs_aria', lang)}
         >
           <Icon
             name="trophy"
@@ -39,10 +43,10 @@ export function PlayoffsThinBanner({ onActivate, onDismiss }: PlayoffsThinBanner
               className="text-[11px] font-bold leading-[1.3] text-brand"
               style={{ letterSpacing: '0.2px' }}
             >
-              Phase finale ?
+              {tr('playoffs_title', lang)}
             </div>
             <div className="mt-px text-[10px] font-medium text-fg/60">
-              Active le mode Playoffs · programme d&apos;affûtage
+              {tr('playoffs_body', lang)}
             </div>
           </div>
           <Icon
@@ -56,7 +60,7 @@ export function PlayoffsThinBanner({ onActivate, onDismiss }: PlayoffsThinBanner
           <button
             type="button"
             onClick={onDismiss}
-            aria-label="Masquer cette suggestion"
+            aria-label={lang === 'fr' ? 'Masquer cette suggestion' : 'Hide this suggestion'}
             className="flex h-6 w-6 items-center justify-center rounded text-brand/60 hover:text-brand hover:bg-brand-soft transition-colors rf-focus-ring"
           >
             <span aria-hidden className="text-base leading-none">×</span>

@@ -46,7 +46,7 @@ export function FeedbackPage() {
     }
 
     if (!authState.user) {
-      setError(lang === 'fr' ? 'Tu dois être connecté pour envoyer un feedback.' : 'You must be signed in to send feedback.')
+      setError(tr('feedback_must_be_logged', lang))
       return
     }
 
@@ -83,21 +83,20 @@ export function FeedbackPage() {
 
   return (
     <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-hidden">
-      <PageHeader title="Envoyer un feedback" backTo="/profile" />
+      <PageHeader title={tr('feedback_page_title', lang)} backTo="/profile" />
 
       <main className="max-w-md mx-auto px-6 py-6 space-y-6 relative">
         <section className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-2">
-          <h1 className="text-base font-black text-fg">Aide-nous à améliorer RugbyForge</h1>
+          <h1 className="text-base font-black text-fg">{tr('feedback_intro_title', lang)}</h1>
           <p className="text-sm text-fg-secondary leading-relaxed">
-            Décris en quelques mots ce qui ne marche pas, ce qui manque, ou ce qui te dérange.
-            Tous les retours sont lus pendant la phase bêta.
+            {tr('feedback_intro_body', lang)}
           </p>
         </section>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-soft uppercase tracking-wider" htmlFor="kind">
-              Type de retour
+              {tr('feedback_kind_label', lang)}
             </label>
             <select
               id="kind"
@@ -113,7 +112,7 @@ export function FeedbackPage() {
 
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-soft uppercase tracking-wider" htmlFor="message">
-              Ton message
+              {tr('feedback_message_label', lang)}
             </label>
             <textarea
               id="message"
@@ -123,7 +122,7 @@ export function FeedbackPage() {
               rows={6}
               maxLength={4000}
               className="w-full rounded-2xl border-2 border-border-app bg-layer-5 px-4 py-3 text-sm text-fg placeholder:text-fg-faint rf-focus-ring resize-y"
-              placeholder="Ex : sur l'écran Semaine, la carte du match disparaît si je passe en mode avion puis reviens…"
+              placeholder={tr('feedback_message_placeholder', lang)}
             />
             <p className="text-[11px] text-fg-muted text-right">{message.length} / 4000</p>
           </div>
@@ -146,14 +145,14 @@ export function FeedbackPage() {
             disabled={submitting || success}
             className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-brand-float disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? 'Envoi…' : success ? 'Envoyé' : 'Envoyer le feedback'}
+            {submitting ? tr('feedback_sending', lang) : success ? tr('feedback_sent', lang) : tr('feedback_send', lang)}
           </button>
         </form>
 
         <p className="text-xs text-fg-muted text-center">
-          Tu peux aussi écrire directement à{' '}
+          {tr('feedback_footer_pre', lang)}{' '}
           <a href="mailto:bonjour@rugbyforge.fr" className="text-brand underline">bonjour@rugbyforge.fr</a>{' '}
-          ou retourner à <Link to="/profile" className="text-brand underline">ton profil</Link>.
+          {tr('feedback_footer_or', lang)} <Link to="/profile" className="text-brand underline">{tr('feedback_footer_profile', lang)}</Link>.
         </p>
       </main>
     </div>

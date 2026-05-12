@@ -3,6 +3,8 @@ import { posthog } from '../services/analytics/posthog'
 import { useFoundingOfferEligibility, FOUNDING_OFFER_HINT_ID, consumeFoundingForceShow } from '../hooks/useFoundingOfferEligibility'
 import { useHintVisibility } from '../hooks/useHintVisibility'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
+import { useProfile } from '../hooks/useProfile'
+import { tr, type Lang } from '../i18n/appLabels'
 
 /**
  * WS0 — Founding 49€/an offer modal.
@@ -19,6 +21,8 @@ export function FoundingOffer() {
   const { eligible } = useFoundingOfferEligibility()
   const { dismiss } = useHintVisibility(FOUNDING_OFFER_HINT_ID)
   const { startCheckout, loading: checkoutLoading, error: checkoutError } = usePremiumCheckout()
+  const { profile } = useProfile()
+  const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   const trackedRef = useRef(false)
 
   // Fire founding_offer_shown once per session when the modal first becomes
@@ -64,22 +68,15 @@ export function FoundingOffer() {
     >
       <div className="w-full max-w-md bg-app border-2 border-brand rounded-[28px] p-6 space-y-4 shadow-2xl">
         <div className="space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-brand">Offre Founding</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-brand">{tr('founding_eyebrow', lang)}</p>
           <h2 id="founding-offer-title" className="text-2xl font-black text-fg leading-tight">
-            Bloque ton tarif Founding<br />à <span className="text-brand">49€/an à vie</span>
+            {tr('founding_title_pre', lang)}<br />{lang === 'fr' ? 'à' : 'at'} <span className="text-brand">49€/an {tr('founding_title_suffix', lang)}</span>
           </h2>
         </div>
 
         <div className="space-y-3 text-sm text-fg-secondary">
-          <p>
-            Tu as commencé ton préparation, tu sens que c'est sérieux. Cette offre est réservée aux
-            premiers utilisateurs : <span className="font-bold text-fg">49€/an, à vie</span>, même quand
-            on monte les prix.
-          </p>
-          <p className="text-xs text-fg-muted">
-            Inclut tout l'abonnement Premium : adaptations programme, analyses avancées, mode coach,
-            support prioritaire. Annulable à tout moment.
-          </p>
+          <p>{tr('founding_body_1', lang)}</p>
+          <p className="text-xs text-fg-muted">{tr('founding_body_2', lang)}</p>
         </div>
 
         {checkoutError && (
@@ -95,14 +92,14 @@ export function FoundingOffer() {
             disabled={checkoutLoading}
             className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-black text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-brand-float disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {checkoutLoading ? 'Redirection…' : 'Devenir Founding — 49€/an à vie'}
+            {checkoutLoading ? tr('founding_redirecting', lang) : tr('founding_become', lang)}
           </button>
           <button
             type="button"
             onClick={handleDismiss}
             className="w-full h-12 rounded-full border border-border-app text-xs font-bold text-fg-secondary hover:bg-layer-4 transition-colors"
           >
-            Plus tard
+            {tr('founding_later', lang)}
           </button>
         </div>
       </div>

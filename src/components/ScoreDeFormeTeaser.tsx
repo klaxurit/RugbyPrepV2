@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Icon } from './ui'
+import { useProfile } from '../hooks/useProfile'
+import { tr, type Lang } from '../i18n/appLabels'
 
 interface ScoreDeFormeTeaserProps {
   ctaHref?: string
@@ -26,6 +28,8 @@ export function ScoreDeFormeTeaser({
   ctaHref = '/profile#premium',
   teaseScore = 74,
 }: ScoreDeFormeTeaserProps) {
+  const { profile } = useProfile()
+  const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   // Cercle de progression : circumference = 2π × 38 ≈ 238.76. On affiche ~75% rempli
   // (offset 60) pour suggérer une "bonne forme" sans révéler la vraie valeur.
   const dashOffset = Math.round(238 - (teaseScore / 100) * 238)
@@ -34,7 +38,7 @@ export function ScoreDeFormeTeaser({
     <Link
       to={ctaHref}
       data-testid="home-score-teaser"
-      aria-label="Score de forme — débloquer Premium"
+      aria-label={tr('score_teaser_aria', lang)}
       className="block relative overflow-hidden rounded-[20px] text-app rf-focus-ring"
       style={{
         background: 'linear-gradient(135deg, var(--color-text-primary) 0%, #2A1820 100%)',
@@ -125,18 +129,18 @@ export function ScoreDeFormeTeaser({
               style={{ background: 'var(--color-gold)' }}
             >
               <Icon name="sparkle" size={9} color="var(--color-text-primary)" strokeWidth={2.4} />
-              Pro
+              {tr('score_teaser_pro', lang)}
             </span>
             <div
               className="mt-2.5 font-serif italic font-medium leading-[1.2] [text-wrap:balance]"
               style={{ fontSize: 18, letterSpacing: '-0.3px' }}
             >
-              Mesure ta forme,
+              {tr('score_teaser_title_1', lang)}
               <br />
-              <span className="opacity-70">jour après jour.</span>
+              <span className="opacity-70">{tr('score_teaser_title_2', lang)}</span>
             </div>
             <div className="mt-1.5 text-[11px] font-semibold leading-[1.4] opacity-55">
-              Charge · sommeil · récup · IA coach
+              {tr('score_teaser_subtext', lang)}
             </div>
           </div>
         </div>
@@ -147,7 +151,7 @@ export function ScoreDeFormeTeaser({
           style={{ borderTop: '1px solid rgb(245 242 238 / 0.15)' }}
         >
           <span className="text-[12px] font-bold tracking-[0.02em] text-pro">
-            Débloquer Pro
+            {tr('score_teaser_cta', lang)}
           </span>
           <Icon name="arrow-right" size={14} color="var(--color-gold)" strokeWidth={2.4} />
         </div>

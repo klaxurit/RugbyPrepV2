@@ -438,6 +438,99 @@ export const APP_LABELS = {
   // ── ProfilePage · footer ─────────────────────────────────────────────────
   profile_situation_resume: { fr: 'Je rejoue déjà', en: "I'm playing again" },
   profile_situation_no_match_now: { fr: "Je n'ai plus de match pour l'instant", en: 'No upcoming matches for now' },
+
+  // ── BottomNav ───────────────────────────────────────────────────────────
+  nav_home: { fr: 'Accueil', en: 'Home' },
+  nav_program: { fr: 'Programme', en: 'Program' },
+  nav_profile: { fr: 'Profil', en: 'Profile' },
+
+  // ── PageHeader (aria-labels) ────────────────────────────────────────────
+  page_header_back: { fr: 'Retour', en: 'Back' },
+  page_header_profile: { fr: 'Voir mon profil', en: 'View my profile' },
+
+  // ── FoundingOffer modal ─────────────────────────────────────────────────
+  founding_eyebrow: { fr: 'Offre Founding', en: 'Founding Offer' },
+  founding_title_pre: { fr: 'Bloque ton tarif Founding', en: 'Lock your Founding rate' },
+  founding_title_suffix: { fr: 'à vie', en: 'for life' },
+  founding_body_1: { fr: "Tu as commencé ta préparation, tu sens que c'est sérieux. Cette offre est réservée aux premiers utilisateurs : 49€/an, à vie, même quand on monte les prix.", en: "You've started your prep — it's getting serious. This offer is for early users only: €49/year, for life, even when we raise prices later." },
+  founding_body_2: { fr: "Inclut tout l'abonnement Premium : adaptations programme, analyses avancées, mode coach, support prioritaire. Annulable à tout moment.", en: 'Includes full Premium: program adaptations, advanced analytics, coach mode, priority support. Cancel anytime.' },
+  founding_redirecting: { fr: 'Redirection…', en: 'Redirecting…' },
+  founding_become: { fr: 'Devenir Founding — 49€/an à vie', en: 'Become Founding — €49/year for life' },
+  founding_later: { fr: 'Plus tard', en: 'Later' },
+
+  // ── CookieConsentBanner (CNIL) ──────────────────────────────────────────
+  cookie_aria: { fr: 'Préférences cookies', en: 'Cookie preferences' },
+  cookie_body: { fr: "Nous utilisons des cookies techniques (toujours actifs) pour faire fonctionner l'application. Avec ton accord, nous mesurons aussi son usage via PostHog (UE) pour l'améliorer.", en: 'We use technical cookies (always on) to run the app. With your consent, we also measure usage via PostHog (EU) to improve it.' },
+  cookie_learn_more: { fr: 'En savoir plus', en: 'Learn more' },
+  cookie_decline: { fr: 'Refuser', en: 'Decline' },
+  cookie_accept: { fr: 'Accepter', en: 'Accept' },
+
+  // ── FeedbackPage remaining ──────────────────────────────────────────────
+  feedback_page_title: { fr: 'Envoyer un feedback', en: 'Send feedback' },
+  feedback_intro_title: { fr: 'Aide-nous à améliorer RugbyForge', en: 'Help us improve RugbyForge' },
+  feedback_intro_body: { fr: 'Décris en quelques mots ce qui ne marche pas, ce qui manque, ou ce qui te dérange. Tous les retours sont lus pendant la phase bêta.', en: "Tell us in a few words what doesn't work, what's missing, or what bothers you. All feedback is read during the beta phase." },
+  feedback_kind_label: { fr: 'Type de retour', en: 'Feedback type' },
+  feedback_message_label: { fr: 'Ton message', en: 'Your message' },
+  feedback_message_placeholder: { fr: "Ex : sur l'écran Semaine, la carte du match disparaît si je passe en mode avion puis reviens…", en: 'Ex: on the Week screen, the match card disappears if I switch to airplane mode then back…' },
+  feedback_send: { fr: 'Envoyer le feedback', en: 'Send feedback' },
+  feedback_sending: { fr: 'Envoi…', en: 'Sending…' },
+  feedback_sent: { fr: 'Envoyé', en: 'Sent' },
+  feedback_footer_pre: { fr: 'Tu peux aussi écrire directement à', en: 'You can also email' },
+  feedback_footer_or: { fr: 'ou retourner à', en: 'or go back to' },
+  feedback_footer_profile: { fr: 'ton profil', en: 'your profile' },
+  feedback_must_be_logged: { fr: 'Tu dois être connecté pour envoyer un feedback.', en: 'You must be signed in to send feedback.' },
+
+  // ── BadgesStrip ─────────────────────────────────────────────────────────
+  badges_eyebrow: { fr: 'Tes jalons', en: 'Your milestones' },
+  badges_view_all: { fr: 'Tout voir', en: 'View all' },
+  badges_new: { fr: 'Nouveau', en: 'New' },
+
+  // ── StreakCard ──────────────────────────────────────────────────────────
+  streak_eyebrow: { fr: 'Ta cadence', en: 'Your streak' },
+  streak_session_single: { fr: 'séance', en: 'session' },
+  streak_session_plural: { fr: 'séances', en: 'sessions' },
+
+  // ── NextMatchEditorialCard ─────────────────────────────────────────────
+  match_venue_neutral: { fr: 'Neutre', en: 'Neutral' },
+  match_venue_home: { fr: 'Domicile', en: 'Home' },
+  match_venue_away: { fr: 'Extérieur', en: 'Away' },
+  match_opponent_tbd: { fr: 'Adversaire à confirmer', en: 'Opponent TBD' },
+  match_in: { fr: 'Dans', en: 'In' },
+  match_vs: { fr: 'vs.', en: 'vs.' },
+
+  // ── PlayoffsThinBanner ──────────────────────────────────────────────────
+  playoffs_aria: { fr: 'Activer le mode Playoffs', en: 'Enable Playoffs mode' },
+  playoffs_title: { fr: 'Phase finale ?', en: 'Knockouts?' },
+  playoffs_body: { fr: "Active le mode Playoffs · programme d'affûtage", en: 'Enable Playoffs mode · taper program' },
+
+  // ── ScoreDeFormeTeaser ──────────────────────────────────────────────────
+  score_teaser_aria: { fr: 'Score de forme — débloquer Premium', en: 'Fitness score — unlock Premium' },
+  score_teaser_pro: { fr: 'Pro', en: 'Pro' },
+  score_teaser_title_1: { fr: 'Mesure ta forme,', en: 'Track your fitness,' },
+  score_teaser_title_2: { fr: 'jour après jour.', en: 'day after day.' },
+  score_teaser_subtext: { fr: 'Charge · sommeil · récup · IA coach', en: 'Load · sleep · recovery · AI coach' },
+  score_teaser_cta: { fr: 'Débloquer Pro', en: 'Unlock Pro' },
+
+  // ── ClubSettingsSection (extras non couverts par les keys déjà existantes) ─
+  club_no_fixed_day: { fr: 'Pas de jour fixe', en: 'No fixed day' },
+  club_offseason_note: { fr: 'Pas de matchs ni de planning club en inter-saison — ces réglages reviendront à la reprise.', en: 'No matches or club schedule during off-season — these settings return at season restart.' },
+  club_sessions_per_week_3: { fr: 'Jours muscu — 3 séances par semaine', en: 'Gym days — 3 sessions per week' },
+  club_sessions_per_week_2: { fr: 'Jours muscu — 2 séances par semaine', en: 'Gym days — 2 sessions per week' },
+  club_remove: { fr: 'Retirer', en: 'Remove' },
+  club_label: { fr: 'Club', en: 'Club' },
+  club_ffr_competition: { fr: 'Compétition FFR', en: 'FFR competition' },
+  club_import_unavailable: { fr: 'Import auto non disponible pour ce club.', en: 'Auto-import unavailable for this club.' },
+  club_sync_auto: { fr: 'Synchronisation automatique activée', en: 'Auto-sync enabled' },
+  club_refresh_ffr: { fr: 'Actualiser FFR', en: 'Refresh FFR' },
+  club_change_competition: { fr: 'Changer de compétition', en: 'Change competition' },
+  club_training_days: { fr: "Jours d'entraînement club", en: 'Club training days' },
+  club_match_day: { fr: 'Jour de match habituel', en: 'Usual match day' },
+  club_gym_sessions: { fr: 'Séances muscu', en: 'Gym sessions' },
+  club_toggle_auto: { fr: 'Auto', en: 'Auto' },
+  club_toggle_manual: { fr: 'Manuel', en: 'Manual' },
+  club_suggestion: { fr: 'Suggestion calculée', en: 'Computed suggestion' },
+  club_suggestion_hint: { fr: 'Basé sur ton planning club et les règles de récup.', en: 'Based on your club schedule and recovery rules.' },
+  club_no_suggestion: { fr: "Sélectionne tes jours d'entraînement club pour obtenir une suggestion.", en: 'Select your club training days to get a suggestion.' },
 } as const satisfies Record<string, LabelEntry>
 
 export type AppLabelKey = keyof typeof APP_LABELS
