@@ -29,56 +29,70 @@ import type { TrainingLevel, TrainingBaseline } from '../types/training'
 import { isRestartRampUpActive, RESTART_RAMP_UP_DAYS } from '../services/program/restartRampUp'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { supabase } from '../services/supabase/client'
+import { tr, type Lang } from '../i18n/appLabels'
 
-const POSITION_OPTIONS = [
-  { value: 'FRONT_ROW', label: 'Première ligne' },
-  { value: 'SECOND_ROW', label: 'Deuxième ligne' },
-  { value: 'BACK_ROW', label: 'Troisième ligne' },
-  { value: 'HALF_BACKS', label: 'Demi (9/10)' },
-  { value: 'CENTERS', label: 'Centre' },
-  { value: 'BACK_THREE', label: 'Ailier / Arrière' },
-] as const
+type PositionOption = { value: 'FRONT_ROW' | 'SECOND_ROW' | 'BACK_ROW' | 'HALF_BACKS' | 'CENTERS' | 'BACK_THREE'; label: string }
+function getPositionOptions(lang: Lang): readonly PositionOption[] {
+  return [
+    { value: 'FRONT_ROW',  label: tr('pos_front_row', lang) },
+    { value: 'SECOND_ROW', label: tr('pos_second_row', lang) },
+    { value: 'BACK_ROW',   label: tr('pos_back_row', lang) },
+    { value: 'HALF_BACKS', label: tr('pos_half_backs', lang) },
+    { value: 'CENTERS',    label: tr('pos_centers', lang) },
+    { value: 'BACK_THREE', label: tr('pos_back_three', lang) },
+  ]
+}
 
-const TRAINING_BASELINES: {
+type TrainingBaselineDef = {
   value: TrainingBaseline
   label: string
   sub: string
   icon: typeof RefreshCw
-}[] = [
-  { value: 'restart', label: 'Je reprends',     sub: '≥6 sem sans entraînement — rampe douce 2 sem',  icon: RefreshCw },
-  { value: 'active',  label: 'Je suis actif',   sub: '1-2 séances/sem, irrégulier',                   icon: Activity },
-  { value: 'peak',    label: 'En pleine forme', sub: '3×/sem depuis ≥1 mois',                         icon: Flame },
-]
+}
+function getTrainingBaselinesProfile(lang: Lang): TrainingBaselineDef[] {
+  return [
+    { value: 'restart', label: tr('baseline_restart', lang), sub: tr('baseline_restart_sub', lang), icon: RefreshCw },
+    { value: 'active',  label: tr('baseline_active', lang),  sub: tr('baseline_active_sub', lang),  icon: Activity },
+    { value: 'peak',    label: tr('baseline_peak', lang),    sub: tr('baseline_peak_sub', lang),    icon: Flame },
+  ]
+}
 
-const TRAINING_LEVELS: {
+type TrainingLevelProfileDef = {
   value: TrainingLevel
   label: string
   sub: string
   emoji: string
   legacyLevel: 'beginner' | 'intermediate'
-}[] = [
-  { value: 'starter',     label: 'Fondations',    sub: 'Machines guidées & bases techniques', emoji: '🌱', legacyLevel: 'beginner' },
-  { value: 'performance', label: 'Avancé',         sub: 'Barre + blocs de contraste',       emoji: '🏆', legacyLevel: 'intermediate' },
-]
+}
+function getTrainingLevelsProfile(lang: Lang): TrainingLevelProfileDef[] {
+  return [
+    { value: 'starter',     label: tr('level_starter', lang),     sub: tr('level_starter_sub', lang),     emoji: '🌱', legacyLevel: 'beginner' },
+    { value: 'performance', label: tr('level_performance', lang), sub: tr('level_performance_sub', lang), emoji: '🏆', legacyLevel: 'intermediate' },
+  ]
+}
 
 const LANGUAGE_OPTIONS = [
   { value: 'fr' as const, label: 'Français', sub: 'Programme affiché en français' },
   { value: 'en' as const, label: 'English', sub: 'Program and exercises in english' },
 ]
 
-const CANCEL_REASONS = [
-  { value: 'too_expensive', label: 'Trop cher' },
-  { value: 'not_useful', label: 'Je n\'utilise pas assez les fonctions premium' },
-  { value: 'missing_features', label: 'Il manque des fonctionnalités' },
-  { value: 'bugs', label: 'Trop de bugs ou problèmes techniques' },
-  { value: 'season_over', label: 'Ma saison est terminée' },
-  { value: 'other', label: 'Autre' },
-] as const
+type CancelReason = 'too_expensive' | 'not_useful' | 'missing_features' | 'bugs' | 'season_over' | 'other'
+function getCancelReasons(lang: Lang): { value: CancelReason; label: string }[] {
+  return [
+    { value: 'too_expensive',     label: tr('profile_cancel_too_expensive', lang) },
+    { value: 'not_useful',        label: tr('profile_cancel_not_useful', lang) },
+    { value: 'missing_features',  label: tr('profile_cancel_missing_features', lang) },
+    { value: 'bugs',              label: tr('profile_cancel_bugs', lang) },
+    { value: 'season_over',       label: tr('profile_cancel_season_over', lang) },
+    { value: 'other',             label: tr('profile_cancel_other', lang) },
+  ]
+}
 
-function ManageSubscriptionCard() {
+function ManageSubscriptionCard({ lang }: { lang: Lang }) {
   const [step, setStep] = useState<'info' | 'reasons' | 'submitted'>('info')
   const [reason, setReason] = useState('')
   const [detail, setDetail] = useState('')
+  const CANCEL_REASONS = getCancelReasons(lang)
 
   const handleSubmitAndRedirect = async () => {
     try {
@@ -105,10 +119,9 @@ function ManageSubscriptionCard() {
   if (step === 'submitted') {
     return (
       <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-2">
-        <p className="text-xs text-fg">Merci pour ton retour.</p>
+        <p className="text-xs text-fg">{tr('profile_cancel_thanks', lang)}</p>
         <p className="text-xs text-fg-muted">
-          Tu vas etre redirige vers Google Play. Appuie sur <span className="font-bold">Annuler l&apos;abonnement</span> pour finaliser.
-          Tu garderas l&apos;acces Premium jusqu&apos;a la fin de ta periode en cours.
+          {tr('profile_cancel_redirect_play_pre', lang)} <span className="font-bold">{tr('profile_cancel_redirect_play_btn', lang)}</span> {tr('profile_cancel_redirect_play_suffix', lang)}
         </p>
       </div>
     )
@@ -117,9 +130,11 @@ function ManageSubscriptionCard() {
   return (
     <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-3">
       <div>
-        <p className="text-sm font-black text-fg">Mon abonnement</p>
+        <p className="text-sm font-black text-fg">{tr('profile_section_subscription', lang)}</p>
         <p className="text-xs text-fg-muted mt-0.5">
-          Ton abonnement Premium est actif. Le renouvellement est automatique via Google Play.
+          {lang === 'fr'
+            ? 'Ton abonnement Premium est actif. Le renouvellement est automatique via Google Play.'
+            : 'Your Premium subscription is active. Auto-renews via Google Play.'}
         </p>
       </div>
 
@@ -129,14 +144,16 @@ function ManageSubscriptionCard() {
           onClick={() => setStep('reasons')}
           className="w-full rounded-2xl border border-border-app px-4 py-2.5 text-xs font-bold text-fg-muted transition-colors hover:border-danger-bd hover:text-danger rf-focus-ring"
         >
-          Annuler mon abonnement
+          {lang === 'fr' ? 'Annuler mon abonnement' : 'Cancel my subscription'}
         </button>
       )}
 
       {step === 'reasons' && (
         <div className="space-y-3">
           <p className="text-xs font-bold text-fg">
-            On est triste de te voir partir. Dis-nous pourquoi :
+            {lang === 'fr'
+              ? 'On est triste de te voir partir. Dis-nous pourquoi :'
+              : 'Sorry to see you leave. Tell us why:'}
           </p>
           <div className="grid gap-1.5">
             {CANCEL_REASONS.map((r) => (
@@ -159,14 +176,16 @@ function ManageSubscriptionCard() {
             <textarea
               value={detail}
               onChange={(e) => setDetail(e.target.value)}
-              placeholder="Un detail a partager ? (optionnel)"
+              placeholder={tr('profile_cancel_placeholder', lang)}
               rows={2}
               className="w-full rounded-xl border border-border-app bg-layer-5 px-3 py-2 text-xs text-fg placeholder:text-fg-muted/50 focus:border-brand focus:outline-none"
             />
           )}
 
           <p className="text-[10px] text-fg-muted leading-relaxed">
-            L&apos;annulation se fait via Google Play. Tu garderas l&apos;acces Premium jusqu&apos;a la fin de ta periode en cours.
+            {lang === 'fr'
+              ? "L'annulation se fait via Google Play. Tu garderas l'accès Premium jusqu'à la fin de ta période en cours."
+              : 'Cancellation happens via Google Play. You keep Premium access until the end of your current period.'}
           </p>
 
           <div className="flex gap-2">
@@ -175,7 +194,7 @@ function ManageSubscriptionCard() {
               onClick={() => { setStep('info'); setReason(''); setDetail('') }}
               className="flex-1 rounded-2xl border border-border-app px-4 py-2.5 text-xs font-bold text-fg-muted transition-colors hover:border-brand-border rf-focus-ring"
             >
-              Rester Premium
+              {lang === 'fr' ? 'Rester Premium' : 'Stay Premium'}
             </button>
             <button
               type="button"
@@ -183,7 +202,7 @@ function ManageSubscriptionCard() {
               onClick={() => void handleSubmitAndRedirect()}
               className="flex-1 rounded-2xl bg-danger px-4 py-2.5 text-xs font-bold text-white transition-colors hover:bg-danger/90 disabled:opacity-50 rf-focus-ring"
             >
-              Aller sur Google Play
+              {lang === 'fr' ? 'Aller sur Google Play' : 'Go to Google Play'}
             </button>
           </div>
         </div>
@@ -197,20 +216,35 @@ function getVisibleTrainingLevel(level: TrainingLevel | undefined): Exclude<Trai
   return 'performance'
 }
 
-const avatarErrorLabel: Record<AuthError, string> = {
-  EMAIL_EXISTS: 'Impossible de mettre à jour la photo.',
-  INVALID_CREDENTIALS: 'Session invalide. Reconnecte-toi.',
-  WEAK_PASSWORD: 'Impossible de mettre à jour la photo.',
-  INVALID_EMAIL: 'Impossible de mettre à jour la photo.',
-  RATE_LIMIT: 'Trop de tentatives. Réessaie dans 1 à 2 minutes.',
-  EMAIL_CONFIRMATION_REQUIRED: 'Confirme ton email pour continuer.',
-  INVALID_FILE_TYPE: 'Format invalide. Utilise une image JPG, PNG ou WEBP.',
-  FILE_TOO_LARGE: 'Image trop lourde. Taille max: 5 MB.',
-  UPLOAD_FAILED: 'Upload impossible pour le moment.',
+function getAvatarErrorLabel(error: AuthError, lang: Lang): string {
+  switch (error) {
+    case 'EMAIL_EXISTS':
+    case 'WEAK_PASSWORD':
+    case 'INVALID_EMAIL':
+      return tr('profile_avatar_err_update', lang)
+    case 'INVALID_CREDENTIALS':
+      return tr('profile_avatar_err_session', lang)
+    case 'RATE_LIMIT':
+      return tr('profile_avatar_err_rate', lang)
+    case 'EMAIL_CONFIRMATION_REQUIRED':
+      return tr('profile_avatar_err_email_conf', lang)
+    case 'INVALID_FILE_TYPE':
+      return tr('profile_avatar_err_file_type', lang)
+    case 'FILE_TOO_LARGE':
+      return tr('profile_avatar_err_file_size', lang)
+    case 'UPLOAD_FAILED':
+      return tr('profile_avatar_err_upload', lang)
+    default:
+      return tr('profile_avatar_err_update', lang)
+  }
 }
 
 export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
+  const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
+  const POSITION_OPTIONS = getPositionOptions(lang)
+  const TRAINING_BASELINES = getTrainingBaselinesProfile(lang)
+  const TRAINING_LEVELS = getTrainingLevelsProfile(lang)
   const { logs } = useHistory()
   const { authState, updateAvatar, signOut } = useAuth()
   const { features, isPremium, refresh: refreshEntitlements } = useFeatureAccess()
@@ -260,10 +294,10 @@ export function ProfilePage() {
   const today = useMemo(() => getToday(), [])
   const situationData = useMemo(() => {
     const CYCLE_LABELS: Record<AnnualCycle, string> = {
-      in_season: 'En saison',
-      off_season: 'Inter-saison',
-      pre_season: 'Pré-saison',
-      playoffs: 'Phase finale',
+      in_season: tr('cycle_in_season', lang),
+      off_season: tr('cycle_off_season', lang),
+      pre_season: tr('cycle_pre_season', lang),
+      playoffs: tr('profile_cycle_playoffs', lang),
     }
 
     // Derive cycle from real annual context detection (lightweight call)
@@ -280,7 +314,7 @@ export function ProfilePage() {
     } catch {
       // Fallback to profile.seasonMode if detection fails
     }
-    const cycleLabel = CYCLE_LABELS[detectedCycle] ?? 'En saison'
+    const cycleLabel = CYCLE_LABELS[detectedCycle] ?? tr('cycle_in_season', lang)
 
     // Next match
     const futureMatches = visibleEvents
@@ -289,7 +323,7 @@ export function ProfilePage() {
     const nextMatch = futureMatches.length > 0 ? futureMatches[0] : null
     const nextMatchLabel = nextMatch
       ? new Date(nextMatch.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
-      : 'Aucun match prévu'
+      : tr('profile_label_no_match', lang)
 
     // Last known match date (for "La saison est finie")
     const pastMatches = visibleEvents
@@ -345,10 +379,10 @@ export function ProfilePage() {
       const result = await updateAvatar(croppedFile)
 
       if (!result.ok) {
-        setAvatarError(avatarErrorLabel[result.error])
+        setAvatarError(getAvatarErrorLabel(result.error, lang))
       }
     } catch {
-      setAvatarError('Impossible de recadrer l\'image.')
+      setAvatarError(tr('profile_avatar_err_crop', lang))
     } finally {
       setIsAvatarUploading(false)
       handleCropCancel()
@@ -369,7 +403,7 @@ export function ProfilePage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
-        title="Mon Profil"
+        title={tr('profile_page_title', lang)}
         backTo="/home"
         right={
           <button
@@ -391,7 +425,7 @@ export function ProfilePage() {
               onClick={handleAvatarClick}
               disabled={isAvatarUploading}
               className="relative w-24 h-24 rounded-3xl border border-border-app bg-layer-10 flex items-center justify-center overflow-hidden disabled:opacity-60"
-              aria-label="Changer la photo de profil"
+              aria-label={tr('profile_avatar_aria', lang)}
             >
               {resolvedAvatarUrl ? (
                 <img
@@ -413,9 +447,9 @@ export function ProfilePage() {
               </span>
             </button>
             <div>
-              <h2 className="text-sm font-black text-fg">Photo de profil</h2>
+              <h2 className="text-sm font-black text-fg">{tr('profile_section_photo', lang)}</h2>
               <p className="text-xs text-fg-muted">
-                {isAvatarUploading ? 'Upload en cours...' : 'Ajoute ta photo pour personnaliser ton compte.'}
+                {isAvatarUploading ? tr('profile_section_photo_uploading', lang) : tr('profile_section_photo_sub', lang)}
               </p>
             </div>
           </div>
@@ -439,19 +473,20 @@ export function ProfilePage() {
           profile={profile}
           loggedSessions={logs.length}
           onUpdateBaseline={(value) => updateProfile({ trainingBaseline: value })}
+          lang={lang}
         />
 
         {/* Infos de jeu */}
         <CollapsibleSection
-          title="Infos de jeu"
-          subtitle="Poste, niveau, saison, fréquence"
+          title={tr('profile_section_play', lang)}
+          subtitle={tr('profile_section_play_sub', lang)}
           icon={<Flag className="w-4 h-4" />}
           iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
           testId="profile-section-playinfo"
         >
           {/* Poste */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Poste</label>
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_position', lang)}</label>
             <div className="grid grid-cols-2 gap-2">
               {POSITION_OPTIONS.map((opt) => {
                 const active = (profile.rugbyPosition ?? profile.position) === opt.value
@@ -475,7 +510,7 @@ export function ProfilePage() {
 
           {/* Niveau d'entraînement */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Niveau d'entraînement</label>
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_training_level', lang)}</label>
             <div className="flex flex-col gap-2">
               {TRAINING_LEVELS.map((opt) => {
                 const active = getVisibleTrainingLevel(profile.trainingLevel) === opt.value
@@ -508,15 +543,15 @@ export function ProfilePage() {
 
           {/* Ma situation */}
           <div className="space-y-3" data-testid="ma-situation">
-            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Ma situation</label>
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_situation', lang)}</label>
 
             <div className="rounded-2xl border border-border-app bg-layer-5 p-4 space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-fg-muted">Saison détectée</span>
+                <span className="text-[10px] font-bold text-fg-muted">{tr('profile_label_season_detected', lang)}</span>
                 <span className="text-xs font-black text-fg" data-testid="situation-cycle">{situationData.cycleLabel}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-fg-muted">Prochain match</span>
+                <span className="text-[10px] font-bold text-fg-muted">{tr('profile_label_next_match', lang)}</span>
                 <span className="text-xs font-bold text-fg-emphasis" data-testid="situation-next-match">{situationData.nextMatchLabel}</span>
               </div>
             </div>
@@ -545,7 +580,7 @@ export function ProfilePage() {
                 return (
                   <div className="space-y-2" id="reprise">
                     <div className="flex items-center gap-2 py-2.5 px-3 rounded-2xl bg-ok-bg-muted border border-ok-bd" data-testid="situation-confirmed">
-                      <span className="text-xs font-bold text-ok-strong">Inter-saison active — programme adapté</span>
+                      <span className="text-xs font-bold text-ok-strong">{tr('profile_situation_offseason_active', lang)}</span>
                     </div>
 
                     {profile.planningAnchors?.returnToTeamTrainingAt ? (
@@ -563,12 +598,12 @@ export function ProfilePage() {
                           }}
                           className="text-[10px] font-bold text-brand-muted hover:text-brand-tint"
                         >
-                          Modifier
+                          {tr('profile_situation_modify', lang)}
                         </button>
                       </div>
                     ) : (
                       <div className="space-y-1.5">
-                        <p className="text-[10px] text-fg-faint">La saison reprend bientôt ? Indique ta date de reprise au club.</p>
+                        <p className="text-[10px] text-fg-faint">{tr('profile_situation_return_hint', lang)}</p>
                         <input
                           type="date"
                           data-testid="situation-return-date"
@@ -595,7 +630,7 @@ export function ProfilePage() {
                       onClick={goInSeason}
                       className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
                     >
-                      Je rejoue déjà
+                      {tr('profile_situation_resume', lang)}
                     </button>
                   </div>
                 )
@@ -606,7 +641,7 @@ export function ProfilePage() {
                 return (
                   <div className="space-y-2" id="reprise">
                     <div className="flex items-center gap-2 py-2.5 px-3 rounded-2xl bg-brand-soft border border-brand-border" data-testid="situation-confirmed">
-                      <span className="text-xs font-bold text-brand-tint">Pré-saison active — programme de reprise</span>
+                      <span className="text-xs font-bold text-brand-tint">{tr('profile_situation_preseason_active', lang)}</span>
                     </div>
 
                     {profile.planningAnchors?.returnToTeamTrainingAt && (
@@ -624,7 +659,7 @@ export function ProfilePage() {
                           }}
                           className="text-[10px] font-bold text-fg-muted hover:text-fg"
                         >
-                          Modifier
+                          {tr('profile_situation_modify', lang)}
                         </button>
                       </div>
                     )}
@@ -650,7 +685,7 @@ export function ProfilePage() {
               // ── IN-SEASON / PLAYOFFS (default) ────────────────────────────
               return (
                 <>
-                  <p className="text-[10px] text-fg-faint">Quelque chose a changé ?</p>
+                  <p className="text-[10px] text-fg-faint">{tr('profile_label_situation_change_q', lang)}</p>
                   <div className="flex flex-col gap-2">
                     <button
                       type="button"
@@ -709,7 +744,7 @@ export function ProfilePage() {
                       }}
                       className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
                     >
-                      Je n'ai plus de match pour l'instant
+                      {tr('profile_situation_no_match_now', lang)}
                     </button>
                   </div>
                 </>
@@ -719,7 +754,7 @@ export function ProfilePage() {
 
           {/* Séances / semaine */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Séances / semaine</label>
+            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_sessions_per_week', lang)}</label>
             <div className="grid grid-cols-2 gap-2">
               {[2, 3].map((n) => {
                 const active = profile.weeklySessions === n
@@ -745,8 +780,8 @@ export function ProfilePage() {
 
         {/* Langue */}
         <CollapsibleSection
-          title="Langue"
-          subtitle="Français ou English pour les noms d'exercices"
+          title={tr('profile_section_lang', lang)}
+          subtitle={tr('profile_section_lang_sub', lang)}
           icon={<Languages className="w-4 h-4" />}
           iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
           testId="profile-section-language"
@@ -775,8 +810,8 @@ export function ProfilePage() {
 
         {/* Morphologie */}
         <CollapsibleSection
-          title="Morphologie"
-          subtitle="Taille, poids et IMC"
+          title={tr('profile_section_morpho', lang)}
+          subtitle={tr('profile_section_morpho_sub', lang)}
           icon={<Ruler className="w-4 h-4" />}
           iconClassName="bg-violet-50 text-violet-600 border border-violet-200"
           testId="profile-section-morphology"
@@ -784,7 +819,7 @@ export function ProfilePage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Taille (cm)</label>
+              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_height', lang)}</label>
               <input
                 type="number"
                 inputMode="numeric"
@@ -802,7 +837,7 @@ export function ProfilePage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">Poids (kg)</label>
+              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_weight', lang)}</label>
               <input
                 type="number"
                 inputMode="decimal"
@@ -826,11 +861,11 @@ export function ProfilePage() {
             const bmi = profile.weightKg / (h * h)
             const isForward = profile.rugbyPosition === 'FRONT_ROW' || profile.rugbyPosition === 'SECOND_ROW' || profile.rugbyPosition === 'BACK_ROW'
             const label =
-              bmi < 20 ? 'Sous le poids de forme' :
-              bmi < 24 ? (isForward ? 'Plutôt léger pour un avant' : 'Morphologie optimale') :
-              bmi < 27 ? (isForward ? 'Morphologie adéquate' : 'Légèrement au-dessus') :
-              bmi < 31 ? (isForward ? 'Morphologie optimale pour un avant' : 'Au-dessus de la norme') :
-              (isForward ? 'Gabarit de gros avant' : 'Surcharge à surveiller')
+              bmi < 20 ? tr('bmi_underweight', lang) :
+              bmi < 24 ? tr(isForward ? 'profile_bmi_light_forward' : 'bmi_optimal_back', lang) :
+              bmi < 27 ? tr(isForward ? 'bmi_adequate_forward' : 'bmi_above_back', lang) :
+              bmi < 31 ? tr(isForward ? 'bmi_optimal_forward' : 'bmi_above_norm', lang) :
+              tr(isForward ? 'bmi_big_forward' : 'bmi_surcharge_back', lang)
             return (
               <div className="flex items-center justify-between p-4 rounded-2xl bg-violet-50 border border-violet-200">
                 <div>
@@ -850,8 +885,8 @@ export function ProfilePage() {
               <TrendingUp className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-fg">Ma progression</h2>
-              <p className="text-xs text-fg-muted">Adhérence, historique de séances, tests physiques et records.</p>
+              <h2 className="text-sm font-black text-fg">{tr('profile_section_progress', lang)}</h2>
+              <p className="text-xs text-fg-muted">{tr('profile_section_progress_sub', lang)}</p>
             </div>
           </div>
           <Link
@@ -859,16 +894,16 @@ export function ProfilePage() {
             data-testid="profile-link-progress"
             className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
           >
-            <span>Voir ma progression</span>
-            <span className="text-xs text-fg-muted">Ouvrir</span>
+            <span>{tr('profile_section_progress_cta', lang)}</span>
+            <span className="text-xs text-fg-muted">{tr('profile_section_open', lang)}</span>
           </Link>
         </section>
 
         <CollapsibleSection
-          title={profile.seasonMode === 'off_season' ? 'Mes séances, mon club' : 'Mon club'}
+          title={profile.seasonMode === 'off_season' ? tr('profile_section_club_off', lang) : tr('profile_section_club_in', lang)}
           subtitle={profile.seasonMode === 'off_season'
-            ? 'Ton club + jours de muscu librement choisis en inter-saison.'
-            : 'Club FFR, competition, planning d\'entrainement et jour de match.'}
+            ? tr('profile_section_club_off_sub', lang)
+            : tr('profile_section_club_in_sub', lang)}
           icon={<Calendar className="w-4 h-4" />}
           iconClassName="bg-ok-bg-muted text-ok border border-ok-bd"
           testId="profile-section-club"
@@ -878,8 +913,8 @@ export function ProfilePage() {
 
         {/* Abonnement & accès */}
         <CollapsibleSection
-          title="Abonnement & accès"
-          subtitle="La sécurité et le programme de base restent inclus, quel que soit le plan."
+          title={tr('profile_section_billing', lang)}
+          subtitle={tr('profile_section_billing_sub', lang)}
           icon={<ShieldCheck className="w-4 h-4" />}
           iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
           trailing={
@@ -932,13 +967,13 @@ export function ProfilePage() {
 
 
           {isPremium && (
-            <ManageSubscriptionCard />
+            <ManageSubscriptionCard lang={lang} />
           )}
 
           {!isPremium && canShowUpsell && !profileUpsellDismissed && (
             <PremiumUpsellCard
-              title="Débloque les fonctionnalités avancées"
-              body="Score de forme, bilan de semaine, records personnels, suggestions de charge, analytics détaillées et chat IA illimité."
+              title={tr('profile_premium_upsell_title', lang)}
+              body={tr('profile_premium_upsell_body', lang)}
               onDismiss={() => {
                 dismissUpsell('profile_premium')
                 setProfileUpsellDismissed(true)
@@ -949,9 +984,11 @@ export function ProfilePage() {
           {!isPremium && (
             <div id="premium" className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-3">
               <div>
-                <p className="text-sm font-black text-fg">Passer en Premium</p>
+                <p className="text-sm font-black text-fg">{tr('profile_premium_go', lang)}</p>
                 <p className="mt-1 text-xs leading-relaxed text-fg-muted">
-                  Debloque le suivi des charges, l&apos;historique complet, les courbes de progression et le coach IA illimite.
+                  {lang === 'fr'
+                    ? "Débloque le suivi des charges, l'historique complet, les courbes de progression et le coach IA illimité."
+                    : 'Unlock load tracking, full history, progress curves, and unlimited AI coach.'}
                 </p>
               </div>
 
@@ -966,8 +1003,8 @@ export function ProfilePage() {
                       : 'border-border-app bg-layer-5'
                   }`}
                 >
-                  <p className="text-xs font-black text-fg">Mensuel</p>
-                  <p className="text-lg font-black text-brand-tint">5,99&euro;<span className="text-[10px] text-fg-muted font-bold">/mois</span></p>
+                  <p className="text-xs font-black text-fg">{tr('profile_plan_monthly', lang)}</p>
+                  <p className="text-lg font-black text-brand-tint">5,99&euro;<span className="text-[10px] text-fg-muted font-bold">{lang === 'fr' ? '/mois' : '/mo'}</span></p>
                 </button>
                 <button
                   type="button"
@@ -979,15 +1016,15 @@ export function ProfilePage() {
                   }`}
                 >
                   <div className="absolute -top-2 right-2 bg-brand text-on-brand text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">-10%</div>
-                  <p className="text-xs font-black text-fg">Annuel</p>
-                  <p className="text-lg font-black text-brand-tint">64,99&euro;<span className="text-[10px] text-fg-muted font-bold">/an</span></p>
+                  <p className="text-xs font-black text-fg">{tr('profile_plan_yearly', lang)}</p>
+                  <p className="text-lg font-black text-brand-tint">64,99&euro;<span className="text-[10px] text-fg-muted font-bold">{lang === 'fr' ? '/an' : '/yr'}</span></p>
                 </button>
               </div>
 
               <p className="text-[10px] leading-relaxed text-fg-muted">
                 {selectedPlan === 'premium_monthly'
-                  ? 'Abonnement mensuel a 5,99 \u20AC/mois. Renouvellement automatique. Annulable a tout moment via Google Play.'
-                  : 'Abonnement annuel a 64,99 \u20AC/an. Renouvellement automatique. Annulable a tout moment via Google Play.'}
+                  ? tr('profile_plan_monthly_legal', lang)
+                  : tr('profile_plan_yearly_legal', lang)}
               </p>
 
               <div className="flex flex-wrap gap-2">
@@ -1002,7 +1039,7 @@ export function ProfilePage() {
                   disabled={billingLoading}
                   className="flex-1 inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-3 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring"
                 >
-                  {billingLoading ? 'Préparation…' : 'Activer Premium'}
+                  {billingLoading ? tr('profile_premium_preparing', lang) : tr('profile_premium_activate', lang)}
                 </button>
                 {isPlayStore && (
                   <button
@@ -1032,9 +1069,9 @@ export function ProfilePage() {
 
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
           <div>
-            <p className="text-sm font-black text-fg">Compte & données</p>
+            <p className="text-sm font-black text-fg">{tr('profile_section_account', lang)}</p>
             <p className="text-xs text-fg-muted mt-0.5">
-              Gère tes informations légales, la confidentialité et la suppression de compte.
+              {tr('profile_section_account_sub', lang)}
             </p>
           </div>
 
@@ -1043,22 +1080,22 @@ export function ProfilePage() {
               to="/legal"
               className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
             >
-              <span>Mentions légales et confidentialité</span>
-              <span className="text-xs text-fg-muted">Ouvrir</span>
+              <span>{tr('profile_legal_link', lang)}</span>
+              <span className="text-xs text-fg-muted">{tr('profile_section_open', lang)}</span>
             </Link>
             <Link
               to="/feedback"
               className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
             >
-              <span>Envoyer un feedback</span>
-              <span className="text-xs text-fg-muted">Ouvrir</span>
+              <span>{tr('profile_feedback_link', lang)}</span>
+              <span className="text-xs text-fg-muted">{tr('profile_section_open', lang)}</span>
             </Link>
             <Link
               to="/delete-account"
               className="flex items-center justify-between rounded-2xl border border-warn-bd bg-warn-bg-muted px-4 py-3 text-sm font-semibold text-warn-body transition-colors hover:border-warn-strong rf-focus-ring"
             >
-              <span>Demander la suppression du compte</span>
-              <span className="text-xs text-warn-strong">Ouvrir</span>
+              <span>{tr('profile_delete_link', lang)}</span>
+              <span className="text-xs text-warn-strong">{tr('profile_section_open', lang)}</span>
             </Link>
           </div>
         </section>
@@ -1070,13 +1107,13 @@ export function ProfilePage() {
                 {notifStatus === 'subscribed' ? <BellRing className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
               </div>
               <div>
-                <p className="text-sm font-black text-fg">Rappels d'entraînement</p>
+                <p className="text-sm font-black text-fg">{tr('profile_section_notifs', lang)}</p>
                 <p className="text-xs text-fg-muted mt-0.5">
-                  {notifStatus === 'subscribed' && 'Activés — notification chaque jour de séance'}
-                  {notifStatus === 'denied' && 'Bloqués — autorise les notifs dans les réglages'}
-                  {notifStatus === 'unsupported' && 'Non supporté par ce navigateur'}
-                  {notifStatus === 'no_vapid' && 'Configuration manquante (VAPID)'}
-                  {(notifStatus === 'idle' || notifStatus === 'loading') && 'Reçois un push chaque jour de séance'}
+                  {notifStatus === 'subscribed' && tr('profile_notif_subscribed', lang)}
+                  {notifStatus === 'denied' && tr('profile_notif_denied', lang)}
+                  {notifStatus === 'unsupported' && tr('profile_notif_unsupported', lang)}
+                  {notifStatus === 'no_vapid' && tr('profile_notif_no_vapid', lang)}
+                  {(notifStatus === 'idle' || notifStatus === 'loading') && tr('profile_notif_idle', lang)}
                 </p>
                 {notifErrorMessage && (
                   <p className="mt-1 text-[11px] text-danger-soft">
@@ -1118,8 +1155,8 @@ export function ProfilePage() {
         <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center">
           <section className="w-full sm:max-w-md bg-app border border-border-app rounded-t-[24px] sm:rounded-[24px] p-5 space-y-4">
             <div>
-              <h3 className="text-sm font-black text-fg">Recadrer la photo</h3>
-              <p className="text-xs text-fg-muted">Centre ton visage puis ajuste le zoom.</p>
+              <h3 className="text-sm font-black text-fg">{tr('profile_avatar_crop_title', lang)}</h3>
+              <p className="text-xs text-fg-muted">{tr('profile_avatar_crop_sub', lang)}</p>
             </div>
 
             <div className="relative h-72 bg-layer-10 rounded-2xl overflow-hidden">
@@ -1166,7 +1203,7 @@ export function ProfilePage() {
                 disabled={isAvatarUploading}
                 className="py-3 rounded-2xl bg-brand text-on-brand text-xs font-black uppercase tracking-wide opacity-95 hover:opacity-100 transition-opacity disabled:opacity-60 rf-focus-ring"
               >
-                {isAvatarUploading ? 'Upload...' : 'Valider'}
+                {isAvatarUploading ? tr('profile_avatar_uploading', lang) : tr('profile_avatar_validate', lang)}
               </button>
             </div>
           </section>
@@ -1179,7 +1216,7 @@ export function ProfilePage() {
           to="/legal"
           className="text-xs text-fg-muted hover:text-brand-tint transition-colors"
         >
-          Mentions légales & Confidentialité
+          {tr('profile_legal_link', lang)}
         </Link>
         {authState.status === 'authenticated' && (
           <button
@@ -1188,7 +1225,7 @@ export function ProfilePage() {
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-danger-bd bg-danger-bg text-xs font-bold text-danger hover:bg-danger-bg-hover transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
-            Se déconnecter
+            {lang === 'fr' ? 'Se déconnecter' : 'Sign out'}
           </button>
         )}
         <p className="text-[10px] text-fg-ghost">RugbyForge v1.0</p>
@@ -1208,11 +1245,14 @@ function FormeDuMomentSection({
   profile,
   loggedSessions,
   onUpdateBaseline,
+  lang,
 }: {
   profile: import('../types/training').UserProfile
   loggedSessions: number
   onUpdateBaseline: (value: TrainingBaseline) => void
+  lang: Lang
 }) {
+  const TRAINING_BASELINES = getTrainingBaselinesProfile(lang)
   const [forceOpen, setForceOpen] = useState(false)
   // Date.now() capturé une fois au mount via useState init (autorisé impur).
   // Settled est une décision one-shot par session — pas besoin de re-évaluer en live.
@@ -1238,9 +1278,9 @@ function FormeDuMomentSection({
         className="w-full flex items-center justify-between gap-3 py-2.5 px-4 rounded-2xl bg-layer-5 border border-border-app text-fg-soft hover:border-layer-20 transition-colors"
       >
         <span className="text-xs font-bold">
-          Forme du moment — <span className="text-fg-muted font-normal">{currentLabel}</span>
+          {lang === 'fr' ? 'Forme du moment' : 'Current shape'} — <span className="text-fg-muted font-normal">{currentLabel}</span>
         </span>
-        <span className="text-[10px] font-black text-brand-tint uppercase tracking-wide">Modifier</span>
+        <span className="text-[10px] font-black text-brand-tint uppercase tracking-wide">{tr('profile_situation_modify', lang)}</span>
       </button>
     )
   }
@@ -1252,13 +1292,13 @@ function FormeDuMomentSection({
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-sm font-black text-fg">Forme du moment</h2>
-          <p className="text-xs text-fg-muted">Module la charge des 2 premières semaines selon ton état de reprise.</p>
+          <h2 className="text-sm font-black text-fg">{lang === 'fr' ? 'Forme du moment' : 'Current shape'}</h2>
+          <p className="text-xs text-fg-muted">{lang === 'fr' ? 'Module la charge des 2 premières semaines selon ton état de reprise.' : 'Adjusts the load of the first 2 weeks based on your return state.'}</p>
         </div>
         {restartActive && (
           <span className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-brand-soft border border-brand-border text-[10px] font-black text-brand-tint">
             <RefreshCw className="w-3 h-3" />
-            Rampe active
+            {lang === 'fr' ? 'Rampe active' : 'Ramp active'}
           </span>
         )}
       </div>

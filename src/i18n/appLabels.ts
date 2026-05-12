@@ -335,6 +335,109 @@ export const APP_LABELS = {
   emom_start_chrono: { fr: 'Démarrer le chrono', en: 'Start chrono' },
   emom_chrono_active: { fr: "Chrono actif — consulte l'overlay", en: 'Chrono active — see overlay' },
   emom_block_done: { fr: 'Bloc terminé', en: 'Block done' },
+
+  // ── ProfilePage · sections ──────────────────────────────────────────────
+  profile_page_title: { fr: 'Mon Profil', en: 'My Profile' },
+  profile_section_subscription: { fr: 'Mon abonnement', en: 'My subscription' },
+  profile_section_photo: { fr: 'Photo de profil', en: 'Profile picture' },
+  profile_section_photo_sub: { fr: 'Ajoute ta photo pour personnaliser ton compte.', en: 'Add your photo to personalize your account.' },
+  profile_section_photo_uploading: { fr: 'Upload en cours...', en: 'Uploading...' },
+  profile_section_play: { fr: 'Infos de jeu', en: 'Game info' },
+  profile_section_play_sub: { fr: 'Poste, niveau, saison, fréquence', en: 'Position, level, season, frequency' },
+  profile_section_lang: { fr: 'Langue', en: 'Language' },
+  profile_section_lang_sub: { fr: "Français ou English pour les noms d'exercices", en: 'French or English for exercise names' },
+  profile_section_morpho: { fr: 'Morphologie', en: 'Morphology' },
+  profile_section_morpho_sub: { fr: 'Taille, poids et IMC', en: 'Height, weight and BMI' },
+  profile_section_progress: { fr: 'Ma progression', en: 'My progress' },
+  profile_section_progress_sub: { fr: 'Adhérence, historique de séances, tests physiques et records.', en: 'Adherence, session history, physical tests and records.' },
+  profile_section_progress_cta: { fr: 'Voir ma progression', en: 'View my progress' },
+  profile_section_open: { fr: 'Ouvrir', en: 'Open' },
+  profile_section_club_off: { fr: 'Mes séances, mon club', en: 'My sessions, my club' },
+  profile_section_club_in: { fr: 'Mon club', en: 'My club' },
+  profile_section_club_off_sub: { fr: 'Ton club + jours de muscu librement choisis en inter-saison.', en: 'Your club + freely chosen gym days during off-season.' },
+  profile_section_club_in_sub: { fr: "Club FFR, compétition, planning d'entraînement et jour de match.", en: 'FFR club, competition, training schedule, and match day.' },
+  profile_section_billing: { fr: 'Abonnement & accès', en: 'Subscription & access' },
+  profile_section_billing_sub: { fr: 'La sécurité et le programme de base restent inclus, quel que soit le plan.', en: 'Security and the core program stay included, regardless of plan.' },
+  profile_section_account: { fr: 'Compte & données', en: 'Account & data' },
+  profile_section_account_sub: { fr: 'Gère tes informations légales, la confidentialité et la suppression de compte.', en: 'Manage your legal info, privacy and account deletion.' },
+  profile_section_notifs: { fr: "Rappels d'entraînement", en: 'Training reminders' },
+
+  // ── ProfilePage · form labels & helpers ─────────────────────────────────
+  profile_label_position: { fr: 'Poste', en: 'Position' },
+  profile_label_training_level: { fr: "Niveau d'entraînement", en: 'Training level' },
+  profile_label_situation: { fr: 'Ma situation', en: 'My situation' },
+  profile_label_situation_change_q: { fr: 'Quelque chose a changé ?', en: 'Anything changed?' },
+  profile_label_season_detected: { fr: 'Saison détectée', en: 'Detected season' },
+  profile_label_next_match: { fr: 'Prochain match', en: 'Next match' },
+  profile_label_no_match: { fr: 'Aucun match prévu', en: 'No match scheduled' },
+  profile_label_sessions_per_week: { fr: 'Séances / semaine', en: 'Sessions / week' },
+  profile_label_height: { fr: 'Taille (cm)', en: 'Height (cm)' },
+  profile_label_weight: { fr: 'Poids (kg)', en: 'Weight (kg)' },
+  profile_situation_offseason_active: { fr: 'Inter-saison active — programme adapté', en: 'Off-season active — program adapted' },
+  profile_situation_preseason_active: { fr: 'Pré-saison active — programme de reprise', en: 'Pre-season active — return-to-training program' },
+  profile_situation_return_hint: { fr: 'La saison reprend bientôt ? Indique ta date de reprise au club.', en: 'Season starts soon? Enter your club return date.' },
+  profile_situation_modify: { fr: 'Modifier', en: 'Edit' },
+
+  // ── ProfilePage · BMI variants (Profile uses slightly different copy than Onboarding) ─
+  profile_bmi_light_forward: { fr: 'Plutôt léger pour un avant', en: 'A bit light for a forward' },
+
+  // ── ProfilePage · CYCLE_LABELS (situation card) ────────────────────────
+  profile_cycle_playoffs: { fr: 'Phase finale', en: 'Knockouts' },
+
+  // ── ProfilePage · cancel reasons (Stripe/Play cancellation) ────────────
+  profile_cancel_too_expensive: { fr: 'Trop cher', en: 'Too expensive' },
+  profile_cancel_not_useful: { fr: "Je n'utilise pas assez les fonctions premium", en: "I don't use Premium features enough" },
+  profile_cancel_missing_features: { fr: 'Il manque des fonctionnalités', en: 'Missing features' },
+  profile_cancel_bugs: { fr: 'Trop de bugs ou problèmes techniques', en: 'Too many bugs or technical issues' },
+  profile_cancel_season_over: { fr: 'Ma saison est terminée', en: 'My season is over' },
+  profile_cancel_other: { fr: 'Autre', en: 'Other' },
+  profile_cancel_thanks: { fr: 'Merci pour ton retour.', en: 'Thanks for your feedback.' },
+  profile_cancel_redirect_play_pre: { fr: 'Tu vas être redirigé vers Google Play. Appuie sur', en: 'You will be redirected to Google Play. Tap' },
+  profile_cancel_redirect_play_btn: { fr: "Annuler l'abonnement", en: 'Cancel subscription' },
+  profile_cancel_redirect_play_suffix: { fr: 'pour finaliser.', en: 'to finalize.' },
+  profile_cancel_placeholder: { fr: 'Un détail à partager ? (optionnel)', en: 'Anything to share? (optional)' },
+
+  // ── ProfilePage · Premium upsell ────────────────────────────────────────
+  profile_premium_upsell_title: { fr: 'Débloque les fonctionnalités avancées', en: 'Unlock advanced features' },
+  profile_premium_upsell_body: { fr: 'Score de forme, bilan de semaine, records personnels, suggestions de charge, analytics détaillées et chat IA illimité.', en: 'Fitness score, weekly summary, personal records, load suggestions, detailed analytics and unlimited AI chat.' },
+  profile_premium_go: { fr: 'Passer en Premium', en: 'Upgrade to Premium' },
+  profile_plan_monthly: { fr: 'Mensuel', en: 'Monthly' },
+  profile_plan_yearly: { fr: 'Annuel', en: 'Yearly' },
+  profile_plan_monthly_legal: { fr: "Abonnement mensuel à 5,99 €/mois. Renouvellement automatique. Annulable à tout moment via Google Play.", en: 'Monthly subscription at €5.99/month. Auto-renewing. Cancel anytime via Google Play.' },
+  profile_plan_yearly_legal: { fr: "Abonnement annuel à 64,99 €/an. Renouvellement automatique. Annulable à tout moment via Google Play.", en: 'Yearly subscription at €64.99/year. Auto-renewing. Cancel anytime via Google Play.' },
+  profile_premium_activate: { fr: 'Activer Premium', en: 'Activate Premium' },
+  profile_premium_preparing: { fr: 'Préparation…', en: 'Preparing…' },
+
+  // ── ProfilePage · Account & data links ─────────────────────────────────
+  profile_legal_link: { fr: 'Mentions légales et confidentialité', en: 'Legal & privacy' },
+  profile_feedback_link: { fr: 'Envoyer un feedback', en: 'Send feedback' },
+  profile_delete_link: { fr: 'Demander la suppression du compte', en: 'Request account deletion' },
+
+  // ── ProfilePage · Notifications status ─────────────────────────────────
+  profile_notif_subscribed: { fr: 'Activés — notification chaque jour de séance', en: 'On — notification each training day' },
+  profile_notif_denied: { fr: 'Bloqués — autorise les notifs dans les réglages', en: 'Blocked — enable notifications in settings' },
+  profile_notif_unsupported: { fr: 'Non supporté par ce navigateur', en: 'Not supported by this browser' },
+  profile_notif_no_vapid: { fr: 'Configuration manquante (VAPID)', en: 'Missing configuration (VAPID)' },
+  profile_notif_idle: { fr: 'Reçois un push chaque jour de séance', en: 'Get a push each training day' },
+
+  // ── ProfilePage · Avatar errors & UI ────────────────────────────────────
+  profile_avatar_aria: { fr: 'Changer la photo de profil', en: 'Change profile picture' },
+  profile_avatar_crop_title: { fr: 'Recadrer la photo', en: 'Crop photo' },
+  profile_avatar_crop_sub: { fr: 'Centre ton visage puis ajuste le zoom.', en: 'Center your face then adjust zoom.' },
+  profile_avatar_uploading: { fr: 'Upload...', en: 'Uploading...' },
+  profile_avatar_validate: { fr: 'Valider', en: 'Confirm' },
+  profile_avatar_err_crop: { fr: "Impossible de recadrer l'image.", en: 'Unable to crop image.' },
+  profile_avatar_err_update: { fr: 'Impossible de mettre à jour la photo.', en: 'Unable to update photo.' },
+  profile_avatar_err_session: { fr: 'Session invalide. Reconnecte-toi.', en: 'Invalid session. Please sign in again.' },
+  profile_avatar_err_rate: { fr: 'Trop de tentatives. Réessaie dans 1 à 2 minutes.', en: 'Too many attempts. Try again in 1-2 minutes.' },
+  profile_avatar_err_email_conf: { fr: 'Confirme ton email pour continuer.', en: 'Confirm your email to continue.' },
+  profile_avatar_err_file_type: { fr: 'Format invalide. Utilise une image JPG, PNG ou WEBP.', en: 'Invalid format. Use a JPG, PNG or WEBP image.' },
+  profile_avatar_err_file_size: { fr: 'Image trop lourde. Taille max: 5 MB.', en: 'Image too large. Max size: 5 MB.' },
+  profile_avatar_err_upload: { fr: 'Upload impossible pour le moment.', en: 'Upload failed for now.' },
+
+  // ── ProfilePage · footer ─────────────────────────────────────────────────
+  profile_situation_resume: { fr: 'Je rejoue déjà', en: "I'm playing again" },
+  profile_situation_no_match_now: { fr: "Je n'ai plus de match pour l'instant", en: 'No upcoming matches for now' },
 } as const satisfies Record<string, LabelEntry>
 
 export type AppLabelKey = keyof typeof APP_LABELS
