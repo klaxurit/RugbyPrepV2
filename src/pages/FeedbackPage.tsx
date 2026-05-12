@@ -45,6 +45,11 @@ export function FeedbackPage() {
       return
     }
 
+    if (!authState.user) {
+      setError(lang === 'fr' ? 'Tu dois être connecté pour envoyer un feedback.' : 'You must be signed in to send feedback.')
+      return
+    }
+
     setSubmitting(true)
     const appVersion = (import.meta.env.VITE_APP_VERSION as string | undefined) ?? null
     const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : null

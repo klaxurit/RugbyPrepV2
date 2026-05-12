@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { useMemo, useRef, useState, useEffect } from 'react'
-import { posthog } from '../services/analytics/posthog'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
@@ -243,7 +242,6 @@ export function ProfilePage() {
   const { profile, updateProfile, resetProfile } = useProfile()
   const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   const POSITION_OPTIONS = getPositionOptions(lang)
-  const TRAINING_BASELINES = getTrainingBaselinesProfile(lang)
   const TRAINING_LEVELS = getTrainingLevelsProfile(lang)
   const { logs } = useHistory()
   const { authState, updateAvatar, signOut } = useAuth()

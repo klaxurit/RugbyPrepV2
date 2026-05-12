@@ -130,7 +130,7 @@ const arbTransitionEntry: fc.Arbitrary<TransitionEntry> = fc
     at,
     trigger,
     from: { cycle: fromCycle, weekNumber: fromWeek, schedulingMode: 'calendar' as const },
-    anchorsSnapshot: { manualCycleOverride: fromCycle },
+    anchorsSnapshot: { onboardingCycleHint: fromCycle },
     to: toCycle,
   }))
 
@@ -206,7 +206,7 @@ describe('B4 — detectAnnualPlanningContext invariants', () => {
     fc.assert(
       fc.property(arbInputs, (inputs) => {
         const ctxA = detectAnnualPlanningContext(inputs)
-        const ctxB = detectAnnualPlanningContext({ ...inputs, today: addDays(inputs.today, 7) })
+        const ctxB = detectAnnualPlanningContext({ ...inputs, today: addDays(inputs.today as string, 7) })
         // Property only applies when the temporal anchor is stable across both calls.
         // The no-match fallback (line 622-633) and auto-season-end (line 808-822)
         // anchor off-season on todayWeekMonday → anchor slides with today → weekNumber stays 1.
@@ -245,7 +245,7 @@ describe('B4 — detectAnnualPlanningContext invariants', () => {
   it('P7 — playoffs month guard: month > 5 + manualPlayoffs ⟹ cycle ≠ playoffs', () => {
     fc.assert(
       fc.property(arbInputs, (inputs) => {
-        const month = parseInt(inputs.today.slice(5, 7), 10)
+        const month = parseInt((inputs.today as string).slice(5, 7), 10)
         if (month <= 5) return // guard not engaged
 
         const ctx = detectAnnualPlanningContext({
