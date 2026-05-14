@@ -275,7 +275,15 @@ export function buildAthletePlanningInputs(
     (e) => e.type === 'match' && e.date >= weekMonIso && e.date <= weekSunIso,
   )
 
-  const planningAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar, hasFutureMatch, hasMatchThisWeek)
+  const resolvedAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar, hasFutureMatch, hasMatchThisWeek)
+  const skipRecoveryIntro = profile.planningAnchors?.skipOffSeasonRecoveryIntro === true
+  const planningAnchors: AthletePlanningInputs['planningAnchors'] =
+    resolvedAnchors || skipRecoveryIntro
+      ? {
+          ...(resolvedAnchors ?? {}),
+          ...(skipRecoveryIntro ? { skipOffSeasonRecoveryIntro: true as const } : {}),
+        }
+      : undefined
 
   const inputs: AthletePlanningInputs = {
     events: visibleEvents.map((e) => ({ date: e.date, type: e.type })),

@@ -164,7 +164,9 @@ function App() {
             <Route path="/program" element={<ProgramPage />} />
             <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
             <Route path="/chat" element={<ChatPage />} />
-            <Route path="/staff-sandbox" element={<StaffPlanningSandboxPage />} />
+            {import.meta.env.DEV && (
+              <Route path="/staff-sandbox" element={<StaffPlanningSandboxPage />} />
+            )}
           </Route>
 
           {/* Catch-all : redirige vers /home (RequireAuth gère le reste) */}

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { CoachProvider } from '../../../contexts/CoachContext'
 import { PlanningContextCard } from '../PlanningContextCard'
 import type { WeekExplanation } from '../../../types/scheduling'
@@ -63,10 +63,13 @@ describe('PlanningContextCard', () => {
     expect(screen.queryByText(/Ajoute tes matchs/)).toBeNull()
   })
 
-  it('hides immediately on dismiss click and stays hidden after a remount (same contextHash)', () => {
+  it('hides on dismiss click and stays hidden after a remount (same contextHash)', async () => {
     const { unmount } = renderCard({ explanation: baseExplanation, contextHash: 'off_season:3:' })
     fireEvent.click(screen.getByTestId('planning-context-dismiss'))
-    expect(screen.queryByTestId('planning-context-card')).toBeNull()
+    await waitFor(() => {
+      expect(screen.queryByTestId('planning-context-card')).toBeNull()
+    })
+
     unmount()
 
     // Remount = page refresh
@@ -74,10 +77,12 @@ describe('PlanningContextCard', () => {
     expect(screen.queryByTestId('planning-context-card')).toBeNull()
   })
 
-  it('reappears after remount when contextHash changes (new phase)', () => {
+  it('reappears after remount when contextHash changes (new phase)', async () => {
     const { unmount } = renderCard({ explanation: baseExplanation, contextHash: 'off_season:3:' })
     fireEvent.click(screen.getByTestId('planning-context-dismiss'))
-    expect(screen.queryByTestId('planning-context-card')).toBeNull()
+    await waitFor(() => {
+      expect(screen.queryByTestId('planning-context-card')).toBeNull()
+    })
     unmount()
 
     // Phase 4 → different contextHash → dismiss invalidated
@@ -91,5 +96,16 @@ describe('PlanningContextCard', () => {
       contextHash: 'in_season::',
     })
     expect(screen.queryByTestId('planning-context-toggle')).toBeNull()
+  })
+
+  it('renders summaryFooterAction when provided', () => {
+    const onClick = vi.fn()
+    renderCard({
+      explanation: baseExplanation,
+      contextHash: 'off_season:1:',
+      summaryFooterAction: { label: 'Passer la récup', onClick, testId: 'footer-skip' },
+    })
+    fireEvent.click(screen.getByTestId('footer-skip'))
+    expect(onClick).toHaveBeenCalledTimes(1)
   })
 })

@@ -101,24 +101,23 @@ async function checkPremium(admin: ReturnType<typeof getAdminClient>, userId: st
 async function checkAndIncrementUsage(
   admin: ReturnType<typeof getAdminClient>,
   userId: string
-): Promise<{ allowed: boolean; messageCount: number }> {
+): Promise<{ allowed: boolean; messageCount: number; limiterUnavailable?: boolean }> {
   try {
     const { data, error } = await admin.rpc('increment_ai_coach_usage', {
       p_user_id: userId,
     })
 
     if (error) {
-      // Table or function might not exist — fail-open
-      console.error('ai_coach_usage RPC failed (fail-open):', error.message)
-      return { allowed: true, messageCount: 0 }
+      // Fail-closed : sans compteur fiable, on refuse plutôt que d’ouvrir un appel Anthropic illimité (coût / abus).
+      console.error('ai_coach_usage RPC failed (fail-closed):', error.message)
+      return { allowed: false, messageCount: 0, limiterUnavailable: true }
     }
 
     const count = Math.max(0, typeof data === 'number' ? data : 0)
     return { allowed: count <= FREE_DAILY_LIMIT, messageCount: count }
   } catch (err) {
-    // Fail-open: if anything goes wrong, allow the request
-    console.error('Rate limit check failed (fail-open):', err)
-    return { allowed: true, messageCount: 0 }
+    console.error('Rate limit check failed (fail-closed):', err)
+    return { allowed: false, messageCount: 0, limiterUnavailable: true }
   }
 }
 
@@ -348,6 +347,12 @@ serve(async (req) => {
     if (!isPremium) {
       const usage = await checkAndIncrementUsage(admin, userId)
       if (!usage.allowed) {
+        if (usage.limiterUnavailable) {
+          return jsonResponse(
+            { error: 'usage_counter_unavailable', limited: false },
+            503,
+          )
+        }
         return jsonResponse({ error: 'rate_limited', limited: true, remaining: 0 }, 429)
       }
       remaining = Math.max(0, FREE_DAILY_LIMIT - usage.messageCount)

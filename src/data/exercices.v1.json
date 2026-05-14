@@ -397,7 +397,8 @@
       "prehab",
       "shoulder_health"
     ],
-    "defaultNotes": "Stabilité scapulaire. Qualité et contrôle."
+    "defaultNotes": "Stabilité scapulaire. Qualité et contrôle.",
+    "videoUrl": "https://www.youtube.com/shorts/QGlv9Qi0dmE"
   },
   {
     "id": "prehab_shoulder__tyi__incline_bench",
@@ -3991,7 +3992,8 @@
       "warmup",
       "mobility"
     ],
-    "defaultNotes": "Lent et contrôlé, chercher l'amplitude."
+    "defaultNotes": "Lent et contrôlé, chercher l'amplitude.",
+    "videoUrl": "https://www.youtube.com/shorts/I-Hgtc2e2fU"
   },
   {
     "id": "mobility__adductor_rock_back",
@@ -4012,7 +4014,8 @@
       "warmup",
       "mobility"
     ],
-    "defaultNotes": "Doux, progressif, sans douleur."
+    "defaultNotes": "Doux, progressif, sans douleur.",
+    "videoUrl": "https://www.youtube.com/watch?v=uZyLZDxcD38"
   },
   {
     "id": "locomotion__bear_crawl",

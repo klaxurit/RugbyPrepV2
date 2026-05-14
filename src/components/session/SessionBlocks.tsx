@@ -118,6 +118,7 @@ export function SessionBlocks({
           expanded={warmupExpanded}
           onToggle={onWarmupToggle}
           lang={lang}
+          onPlayDemo={onPlayDemo ? (i) => onPlayDemo(0, i) : undefined}
         />
       )}
       {blocks.map((block, i) => {
@@ -145,6 +146,7 @@ export function SessionBlocks({
               expanded={expanded}
               onToggle={onToggle}
               lang={lang}
+              onPlayDemo={onPlayDemo ? (i) => onPlayDemo(block.number, i) : undefined}
             />
           )
         }

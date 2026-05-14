@@ -46,6 +46,12 @@ interface FoundingOfferEligibility {
   loading: boolean
   /** Whether the user has dismissed the offer at least once. Used to gate re-prompts. */
   dismissed: boolean
+  /**
+   * Persiste le refus de l’offre (local + Supabase). Doit être la même fonction que celle
+   * utilisée pour calculer `eligible` — ne pas appeler `useHintVisibility` en parallèle ailleurs
+   * pour le même `FOUNDING_OFFER_HINT_ID`, sinon le dismiss ne met pas à jour `eligible`.
+   */
+  dismiss: () => void
 }
 
 interface EligibilityInputs {
@@ -93,7 +99,7 @@ export function useFoundingOfferEligibility(): FoundingOfferEligibility {
   const userCreatedAt = authState.status === 'authenticated' ? authState.user?.createdAt ?? null : null
 
   const { isPremium, loading: entitlementsLoading } = useEntitlements()
-  const { visible: hintVisible, loading: hintLoading } = useHintVisibility(FOUNDING_OFFER_HINT_ID)
+  const { visible: hintVisible, loading: hintLoading, dismiss } = useHintVisibility(FOUNDING_OFFER_HINT_ID)
   const dismissed = !hintVisible && !hintLoading
 
   const [hasSession, setHasSession] = useState<boolean | null>(null)
@@ -139,5 +145,5 @@ export function useFoundingOfferEligibility(): FoundingOfferEligibility {
     forceShow,
   })
 
-  return { eligible, loading, dismissed }
+  return { eligible, loading, dismissed, dismiss }
 }

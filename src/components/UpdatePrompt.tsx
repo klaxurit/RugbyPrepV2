@@ -1,5 +1,24 @@
 import { useRegisterSW } from 'virtual:pwa-register/react'
+import { messageSW } from 'workbox-window'
 import { RefreshCcw, X } from 'lucide-react'
+
+/**
+ * Double envoi SKIP_WAITING : workbox-window (via virtual:pwa-register) appelle
+ * `registration.waiting.postMessage` depuis l'état interne du Workbox. Sur
+ * certains parcours (TWA, retour foreground), cet état peut être vide alors que
+ * `navigator.serviceWorker.getRegistration()?.waiting` existe encore — au clic
+ * « Recharger », rien ne se passait. On renvoie donc le message depuis l'API
+ * navigateur en complément (répétition sans effet pour skipWaiting).
+ */
+function postSkipWaitingToBrowserWaitingWorker(): void {
+  if (!('serviceWorker' in navigator)) return
+  void navigator.serviceWorker.getRegistration().then((reg) => {
+    const waiting = reg?.waiting
+    if (!waiting) return
+    // Ne pas await messageSW : le SW ne répond pas sur le MessageChannel pour SKIP_WAITING.
+    void messageSW(waiting, { type: 'SKIP_WAITING' })
+  })
+}
 
 // Test build #4 — toast attendu sous 5 min app ouverte (poll 5min + visibilitychange).
 
@@ -67,7 +86,7 @@ export function UpdatePrompt() {
       role="status"
       aria-live="polite"
       style={{ top: 'calc(env(safe-area-inset-top, 0px) + 4rem)' }}
-      className="fixed left-4 right-4 z-[60] max-w-md mx-auto rounded-2xl border border-brand-border-strong bg-panel shadow-brand-float p-3 flex items-center gap-2"
+      className="fixed left-4 right-4 z-[120] max-w-md mx-auto rounded-2xl border border-brand-border-strong bg-panel shadow-brand-float p-3 flex items-center gap-2"
     >
       <div className="flex-1 min-w-0">
         <p className="text-[10px] font-black uppercase tracking-widest text-fg-muted">
@@ -79,7 +98,10 @@ export function UpdatePrompt() {
       </div>
       <button
         type="button"
-        onClick={() => updateServiceWorker(true)}
+        onClick={() => {
+          void updateServiceWorker(true)
+          postSkipWaitingToBrowserWaitingWorker()
+        }}
         className="inline-flex items-center gap-1.5 rounded-xl bg-brand text-on-brand px-3 py-2 text-xs font-black uppercase italic tracking-wide rf-focus-ring"
       >
         <RefreshCcw className="w-3.5 h-3.5" strokeWidth={3} />

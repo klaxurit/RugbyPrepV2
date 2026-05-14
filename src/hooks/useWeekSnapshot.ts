@@ -92,6 +92,7 @@ function computeProfileHash(profile: import('../types/training').UserProfile): s
     profile.seasonMode,
     profile.planningAnchors?.seasonEndedAt ?? '',
     profile.planningAnchors?.returnToTeamTrainingAt ?? '',
+    profile.planningAnchors?.skipOffSeasonRecoveryIntro ? '1' : '',
     (profile.injuries ?? []).join(','),
     deferral ? `${deferral.eventId}:${deferral.expiresAt}` : '',
     ack ?? '',

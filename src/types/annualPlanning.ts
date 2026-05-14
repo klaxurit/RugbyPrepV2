@@ -50,6 +50,11 @@ export interface AthletePlanningInputs {
      * Priorité inférieure au calendrier et aux ancres explicites.
      */
     onboardingCycleHint?: AnnualCycle
+    /**
+     * Si true : pour les semaines calendaires S1–S2 (phase Récupération), le programme
+     * démarre comme S3–S4 (Transition). Ignoré si manualOffSeasonWeekOverride est défini.
+     */
+    skipOffSeasonRecoveryIntro?: boolean
   }
 
   monitoringSnapshot?: {

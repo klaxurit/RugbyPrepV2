@@ -294,6 +294,8 @@ export interface UserProfile {
      */
     onboardingCycleHint?: 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
     seasonEndedSource?: 'manual' | 'derived'
+    /** Passer les 2 semaines gym « Récupération » en début d'inter-saison (voir planning annuel). */
+    skipOffSeasonRecoveryIntro?: boolean
   }
   seasonTransitionState?: SeasonTransitionState
 }

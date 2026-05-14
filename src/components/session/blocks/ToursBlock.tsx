@@ -6,7 +6,7 @@ import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
 import type { LoadSuggestion } from '../../../services/loadSuggestion'
 import { hasExerciseDemo } from '../../../data/exercises'
-import { resolveExerciseId } from '../../../services/motherSession/motherSessionExerciseMap'
+import { resolveExerciseIdForDemo } from '../../../services/motherSession/motherSessionExerciseMap'
 import {
   localizeMotherSessionExerciseName,
   type Lang,
@@ -22,7 +22,7 @@ import { tr } from '../../../i18n/appLabels'
  * button would render dead on the rest.
  */
 const exerciseHasDemo = (exo: Exercise): boolean => {
-  const exoId = exo.exerciseId ?? resolveExerciseId(exo.name ?? '')
+  const exoId = exo.exerciseId ?? resolveExerciseIdForDemo(exo.name ?? '')
   return Boolean(exoId && hasExerciseDemo(exoId))
 }
 

@@ -6,7 +6,7 @@ import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import type { SessionContentFr } from '../../services/motherSession/motherSessionContentFr'
 import { msLabel, stripBackticks } from '../../services/motherSession/motherSessionLabels'
 import { MotherSessionCollapsible } from './MotherSessionCollapsible'
-import { resolveExerciseId, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
+import { resolveExerciseId, resolveExerciseIdForDemo, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
 import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import { ExerciseDemoSheet } from './ExerciseDemoSheet'
 import { SessionTourTracker } from './SessionTourTracker'
@@ -54,8 +54,9 @@ function ExerciseRow({
   onOpenDemo?: (exerciseId: string) => void
 }) {
   const displayExerciseId = exercise.exerciseId ?? resolveExerciseId(exercise.name)
+  const demoExerciseResolvedId = exercise.exerciseId ?? resolveExerciseIdForDemo(exercise.name)
   const displayName = displayExerciseId ? getExerciseName(displayExerciseId, lang) : (frName ?? exercise.name)
-  const canShowDemo = Boolean(displayExerciseId && hasExerciseDemo(displayExerciseId))
+  const canShowDemo = Boolean(demoExerciseResolvedId && hasExerciseDemo(demoExerciseResolvedId))
 
   return (
     <li className="border-b border-border-app pb-3 last:border-0 last:pb-0">
@@ -86,10 +87,10 @@ function ExerciseRow({
           ) : null}
         </div>
 
-        {canShowDemo && displayExerciseId ? (
+        {canShowDemo && demoExerciseResolvedId ? (
           <button
             type="button"
-            onClick={() => onOpenDemo?.(displayExerciseId)}
+            onClick={() => onOpenDemo?.(demoExerciseResolvedId)}
             aria-label={lang === 'fr' ? `Voir l'exécution de ${displayName}` : `View execution for ${displayName}`}
             className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-border-app bg-layer-5 text-fg-muted transition-colors hover:border-brand-border-strong hover:text-brand-tint"
           >

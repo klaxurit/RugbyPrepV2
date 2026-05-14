@@ -4,7 +4,7 @@ import { posthog } from '../services/analytics/posthog'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2 } from 'lucide-react'
 import { useSessionRun, buildExerciseTourKey } from '../contexts/SessionRunContext'
 import { findCurrentPending } from '../services/motherSession/findCurrentPending'
-import { isDirectiveText, resolveExerciseId } from '../services/motherSession/motherSessionExerciseMap'
+import { isDirectiveText, resolveExerciseId, resolveExerciseIdForDemo } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
 import { parseBlockFormat } from '../services/ui/parseBlockFormat'
 import { translateBlockNameToFr } from '../services/motherSession/motherSessionContentFr'
@@ -626,18 +626,18 @@ export function SessionDetailPage() {
     setEmomBlockNumber(null)
   }
 
-  // B3 — open the exercise demo video sheet from the eye button in ToursBlock.
-  // Mirrors MotherSessionBlock.tsx:57 resolution: prefer exercise.exerciseId,
-  // fall back to resolveExerciseId(name) because tour-block exercises often
-  // ship with the English session name and no direct exerciseId — the name→id
-  // map bridges to the French ID space used by hasExerciseDemo / getExerciseDemo.
+  // B3 — démo depuis le bouton œil (ToursBlock + WarmupBlock, bloc synthétique #0).
+  // Préfère exercise.exerciseId, sinon resolveExerciseIdForDemo (dont variantes « X or Y »).
   const handlePlayDemo = (blockNumber: number, exerciseIndex: number) => {
     if (!adaptedSession) return
-    const exercise = adaptedSession.blocks
-      .find((b) => b.number === blockNumber)
-      ?.exercises[exerciseIndex]
+    const exercise =
+      blockNumber === 0
+        ? adaptedSession.warmUp.exercises[exerciseIndex]
+        : adaptedSession.blocks.find((b) => b.number === blockNumber)?.exercises[exerciseIndex]
     if (!exercise) return
-    const exoId = exercise.exerciseId ?? resolveExerciseId(exercise.name ?? '')
+    const rawExerciseId =
+      'exerciseId' in exercise ? (exercise as { exerciseId?: string }).exerciseId : undefined
+    const exoId = rawExerciseId ?? resolveExerciseIdForDemo(exercise.name ?? '')
     if (!exoId || !hasExerciseDemo(exoId)) return
     setDemoExerciseId(exoId)
   }

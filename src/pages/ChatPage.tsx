@@ -13,6 +13,7 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { getPhaseForWeek } from '../services/program/programPhases.v1'
 import { supabase } from '../services/supabase/client'
+import { FunctionsHttpError } from '@supabase/functions-js'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { BottomNav } from '../components/BottomNav'
 import { tr, type Lang } from '../i18n/appLabels'
@@ -240,32 +241,59 @@ export function ChatPage() {
         },
       })
 
+      /** Corps JSON même si le relay renvoie 4xx/5xx (invoke met alors `error` mais pas `data`). */
+      let payload = data as Record<string, unknown> | null
+      if (error instanceof FunctionsHttpError) {
+        try {
+          const res = error.context as Response
+          const ct = res.headers.get('content-type') ?? ''
+          if (ct.includes('application/json')) {
+            payload = (await res.json()) as Record<string, unknown>
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+
+      if (payload?.error === 'rate_limited' || payload?.limited === true) {
+        setRateLimited(true)
+        setRemaining(0)
+        setMessages((prev) => prev.filter((m) => m.id !== userMsg.id))
+        return
+      }
+
+      if (payload?.error === 'usage_counter_unavailable') {
+        setMessages((prev) => [
+          ...prev.filter((m) => m.id !== userMsg.id),
+          {
+            id: Date.now() + 1,
+            role: 'assistant',
+            content: tr('chat_usage_counter_unavailable', lang),
+            error: true,
+          },
+        ])
+        return
+      }
+
       if (error) {
         console.error('[ai-coach] invoke error:', error)
         throw error
       }
 
-      // Handle rate limiting
-      if (data?.error === 'rate_limited' || data?.limited === true) {
-        setRateLimited(true)
-        setRemaining(0)
-        // Remove the user message we just added (it didn't go through)
-        setMessages((prev) => prev.filter((m) => m.id !== userMsg.id))
-        return
-      }
-
       // Update remaining count
-      if (typeof data?.remaining === 'number') {
-        setRemaining(data.remaining)
+      if (typeof payload?.remaining === 'number') {
+        setRemaining(payload.remaining)
       }
 
-      const responseText: string = data?.error
-        ? `${tr('chat_error_prefix', lang)} : ${data.error}`
-        : (data?.message ?? tr('chat_no_response', lang))
+      const responseText: string = payload?.error
+        ? `${tr('chat_error_prefix', lang)} : ${String(payload.error)}`
+        : (typeof payload?.message === 'string'
+          ? payload.message
+          : tr('chat_no_response', lang))
 
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, role: 'assistant', content: responseText, error: !!data?.error },
+        { id: Date.now() + 1, role: 'assistant', content: responseText, error: !!payload?.error },
       ])
     } catch (err) {
       console.error('[ai-coach] threw:', err)

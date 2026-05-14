@@ -23,6 +23,24 @@ const MAX_PRE_SEASON_WEEKS = 12
 const MIN_OFF_SEASON_WEEKS = 6
 const MAX_OFF_SEASON_WEEKS = 12
 
+/**
+ * Option joueur : ne pas suivre les 2 semaines « Récupération » (S1–S2) — passer au bloc Transition (à partir de S3).
+ * Ignoré si une semaine manuelle est imposée.
+ */
+function bumpOffSeasonWeekSkipRecoveryIntro(
+  calendarWeek: number,
+  effectiveMaxWeeks: number,
+  anchors: NonNullable<AthletePlanningInputs['planningAnchors']>,
+): number {
+  const capped = Math.min(effectiveMaxWeeks, Math.max(1, calendarWeek))
+  if (anchors.manualOffSeasonWeekOverride !== undefined) return capped
+  // Sans « skip récup », ne pas borner au max du bloc planifié : au-delà → phase Entretien (5).
+  if (!anchors.skipOffSeasonRecoveryIntro) return Math.max(1, calendarWeek)
+  const w = capped
+  if (w > 2) return w
+  return Math.min(effectiveMaxWeeks, w + 2)
+}
+
 const MODE_RANK: Record<TraceMode, number> = {
   manual_override: 5,
   explicit_anchors: 4,
@@ -409,6 +427,7 @@ function resolveManualCycle(
     let wn = anchors.manualOffSeasonWeekOverride ??
       Math.max(1, Math.floor(wholeDaysBetween(offStartMonday, todayWeekMonday) / DAYS_PER_WEEK) + 1)
     wn = Math.min(OFF_SEASON_WEEKS_V1, Math.max(1, wn))
+    wn = bumpOffSeasonWeekSkipRecoveryIntro(wn, OFF_SEASON_WEEKS_V1, anchors)
     return buildOffSeasonContext(wn, toIsoDate(offStartMonday), base(acc.freeze()))
   }
 
@@ -607,7 +626,8 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
 
     if (hintCycle === 'off_season') {
       // peak → skip phase 1 (Récupération W1-W2) + phase 2 (Transition W3-W4), démarre W5 (Hypertrophy).
-      const startWeek = baseline === 'peak' ? 5 : 1
+      const startWeekBase = baseline === 'peak' ? 5 : 1
+      const startWeek = bumpOffSeasonWeekSkipRecoveryIntro(startWeekBase, OFF_SEASON_WEEKS_V1, anchors)
       const trace = acc.freeze()
       return buildOffSeasonContext(
         startWeek,
@@ -627,7 +647,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     )
     const trace = acc.freeze()
     return buildOffSeasonContext(
-      1,
+      bumpOffSeasonWeekSkipRecoveryIntro(1, OFF_SEASON_WEEKS_V1, anchors),
       toIsoDate(todayWeekMonday),
       baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace)
     )
@@ -723,7 +743,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     acc.rule('rule:season_ended_force_off_season')
     const trace = acc.freeze()
     return buildOffSeasonContext(
-      wn,
+      bumpOffSeasonWeekSkipRecoveryIntro(wn, MAX_OFF_SEASON_WEEKS, anchors),
       offSeasonStartIso,
       baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace),
       MAX_OFF_SEASON_WEEKS
@@ -765,7 +785,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     }
     const trace = acc.freeze()
     return buildOffSeasonContext(
-      rawOffWeek,
+      bumpOffSeasonWeekSkipRecoveryIntro(rawOffWeek, effectiveOffSeasonWeeks, anchors),
       offSeasonStartIso,
       baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, trace),
       effectiveOffSeasonWeeks
@@ -815,7 +835,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     acc.warn('Aucun match futur et dernier match > 28j : basculement automatique en off-season.')
     const autoTrace = acc.freeze()
     return buildOffSeasonContext(
-      1,
+      bumpOffSeasonWeekSkipRecoveryIntro(1, OFF_SEASON_WEEKS_V1, anchors),
       toIsoDate(todayWeekMonday),
       baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, autoTrace)
     )

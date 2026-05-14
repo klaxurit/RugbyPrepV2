@@ -94,6 +94,34 @@ describe('detectAnnualPlanningContext', () => {
     expect(r.planningTrace.rulesApplied).toContain('rule:off_season_start_at')
   })
 
+  it('off-season Recovery S1 + skipOffSeasonRecoveryIntro → Transition S3', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match(FIRST_MATCH)],
+      today: '2024-10-08',
+      planningAnchors: { offSeasonStartAt: '2024-10-07', skipOffSeasonRecoveryIntro: true },
+    })
+    expect(r.cycle).toBe('off_season')
+    expect(r.weekNumber).toBe(3)
+    expect(r.offSeasonPhase).toBe(2)
+    expect(r.weekLabel).toBe('Inter-saison Transition - S3')
+  })
+
+  it('skipOffSeasonRecoveryIntro ignoré si manualOffSeasonWeekOverride est défini', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match(FIRST_MATCH)],
+      today: '2024-10-08',
+      planningAnchors: {
+        offSeasonStartAt: '2024-10-07',
+        skipOffSeasonRecoveryIntro: true,
+        manualOffSeasonWeekOverride: 1,
+      },
+    })
+    expect(r.weekNumber).toBe(1)
+    expect(r.offSeasonPhase).toBe(1)
+  })
+
   it('off-season Hypertrophy S6 via offSeasonStartAt', () => {
     const r = detectAnnualPlanningContext({
       ...baseParams,

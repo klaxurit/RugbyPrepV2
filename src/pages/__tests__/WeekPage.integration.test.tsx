@@ -333,7 +333,7 @@ vi.mock('../../services/ui/safetyMessaging', () => ({
 describe('WeekPage · convergence moteurs', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    useProfileMock.mockReturnValue({ profile: { ...BASE_PROFILE } })
+    useProfileMock.mockReturnValue({ profile: { ...BASE_PROFILE }, updateProfile: vi.fn() })
     calendarState.events = []
     calendarState.visibleEvents = []
     calendarState.structuralEvents = []
@@ -487,6 +487,39 @@ describe('WeekPage · convergence moteurs', () => {
   // placées sur Lun/Mer/Ven par défaut.
 
   // ── S2 Slice 3 — PlanningContextCard ──
+
+  it('inter-saison phase récup : CTA « passer la récup guidée » dans PlanningContextCard', () => {
+    const updateProfile = vi.fn()
+    useProfileMock.mockReturnValue({
+      profile: { ...BASE_PROFILE, seasonMode: 'off_season', planningAnchors: {} },
+      updateProfile,
+    })
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season')))
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.getByTestId('week-skip-recovery-intro')).toBeInTheDocument()
+    fireEvent.click(screen.getByTestId('week-skip-recovery-intro'))
+    expect(updateProfile).toHaveBeenCalledWith({
+      planningAnchors: { skipOffSeasonRecoveryIntro: true },
+    })
+  })
+
+  it('PlanningContextCard sans CTA passer récup si skipOffSeasonRecoveryIntro déjà actif', () => {
+    useProfileMock.mockReturnValue({
+      profile: {
+        ...BASE_PROFILE,
+        seasonMode: 'off_season',
+        planningAnchors: { skipOffSeasonRecoveryIntro: true },
+      },
+      updateProfile: vi.fn(),
+    })
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('off_season')))
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.queryByTestId('week-skip-recovery-intro')).toBeNull()
+  })
 
   it('PlanningContextCard renders summaryLine from snapshot.explanation', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season')))

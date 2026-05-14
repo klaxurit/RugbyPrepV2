@@ -217,6 +217,10 @@ export const APP_LABELS = {
   chat_qp_prematch: { fr: 'Prépare mon match : plan 48h nutrition, récup, activation', en: 'Prepare my match: 48h plan nutrition, recovery, activation' },
   chat_no_response: { fr: 'Pas de réponse.', en: 'No response.' },
   chat_network_error: { fr: 'Erreur réseau — réessaie.', en: 'Network error — retry.' },
+  chat_usage_counter_unavailable: {
+    fr: 'Le suivi du quota coach est temporairement indisponible. Réessaie dans quelques minutes.',
+    en: 'Usage tracking is temporarily unavailable. Please try again in a few minutes.',
+  },
   chat_error_prefix: { fr: 'Erreur', en: 'Error' },
   chat_welcome_greeting: { fr: 'Salut ! Je suis ton coach IA RugbyForge 🏉', en: 'Hi! I am your RugbyForge AI coach 🏉' },
   chat_welcome_body: { fr: "Pose-moi n'importe quelle question sur l'entraînement, la nutrition, la récupération ou le sommeil. Je connais ton profil et ta semaine en cours.", en: 'Ask me any question about training, nutrition, recovery or sleep. I know your profile and your current week.' },
@@ -377,6 +381,12 @@ export const APP_LABELS = {
   profile_situation_preseason_active: { fr: 'Pré-saison active — programme de reprise', en: 'Pre-season active — return-to-training program' },
   profile_situation_return_hint: { fr: 'La saison reprend bientôt ? Indique ta date de reprise au club.', en: 'Season starts soon? Enter your club return date.' },
   profile_situation_modify: { fr: 'Modifier', en: 'Edit' },
+  profile_skip_recovery_intro_hint: {
+    fr: "Les 2 premières semaines d'inter-saison sont dédiées à la récupération (2 séances gym guidées). Tu peux les sauter si tu préfères enchaîner directement sur la phase Transition.",
+    en: 'The first 2 off-season weeks focus on recovery (2 guided gym sessions). You can skip them if you prefer to jump straight into the Transition phase.',
+  },
+  profile_skip_recovery_intro_btn: { fr: 'Passer la récup guidée — passer à la Transition', en: 'Skip guided recovery — go to Transition' },
+  profile_skip_recovery_intro_undo: { fr: 'Réactiver les semaines récupération du début', en: 'Bring back the opening recovery weeks' },
 
   // ── ProfilePage · BMI variants (Profile uses slightly different copy than Onboarding) ─
   profile_bmi_light_forward: { fr: 'Plutôt léger pour un avant', en: 'A bit light for a forward' },
@@ -457,6 +467,12 @@ export const APP_LABELS = {
   founding_redirecting: { fr: 'Redirection…', en: 'Redirecting…' },
   founding_become: { fr: 'Devenir Founding — 49€/an à vie', en: 'Become Founding — €49/year for life' },
   founding_later: { fr: 'Plus tard', en: 'Later' },
+  profile_founding_card_title: { fr: 'Offre Founding (premiers utilisateurs)', en: 'Founding offer (early users)' },
+  profile_founding_card_body: {
+    fr: '49€/an à vie tant que l’offre est disponible — tout Premium inclus. Tu peux aussi rouvrir la fenêtre depuis le lien ci-dessous.',
+    en: '€49/year for life while the offer lasts — full Premium included. You can reopen the offer sheet via the link below.',
+  },
+  profile_founding_reopen: { fr: 'Rouvrir la fenêtre Founding', en: 'Re-open Founding sheet' },
 
   // ── CookieConsentBanner (CNIL) ──────────────────────────────────────────
   cookie_aria: { fr: 'Préférences cookies', en: 'Cookie preferences' },

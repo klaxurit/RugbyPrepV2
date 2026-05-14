@@ -18,9 +18,12 @@ import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellT
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
 import { useCalendar } from '../hooks/useCalendar'
+import { useFatigue } from '../hooks/useFatigue'
+import { useACWR } from '../hooks/useACWR'
 import { getToday } from '../services/ui/debugDateOverride'
+import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
 import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
-import type { AnnualCycle } from '../types/annualPlanning'
+import type { AnnualCycle, AnnualPlanningContext } from '../types/annualPlanning'
 import type { TransitionEntry } from '../types/training'
 import { appendTransitionEntry, restoreLastTransition, cycleToSeasonMode } from '../services/season/transitionJournal'
 import type { AuthError } from '../types/auth'
@@ -245,8 +248,10 @@ export function ProfilePage() {
   const TRAINING_LEVELS = getTrainingLevelsProfile(lang)
   const { logs } = useHistory()
   const { authState, updateAvatar, signOut } = useAuth()
-  const { features, isPremium, refresh: refreshEntitlements } = useFeatureAccess()
+  const { features, isPremium, isFounding, loading: entitlementsLoading, refresh: refreshEntitlements } = useFeatureAccess()
   const { visibleEvents, structuralEvents } = useCalendar()
+  const { fatigue } = useFatigue()
+  const acwrResult = useACWR(logs, structuralEvents)
   const { canShowUpsell } = useUpsellTiming()
   const {
     loading: billingLoading,
@@ -298,21 +303,31 @@ export function ProfilePage() {
       playoffs: tr('profile_cycle_playoffs', lang),
     }
 
-    // Derive cycle from real annual context detection (lightweight call)
+    // Même pipeline que /week et /home : buildAthletePlanningInputs normalise les ancres
+    // (ex. onboardingCycleHint retiré si match structurel au calendrier), puis détection annuelle.
     let detectedCycle: AnnualCycle = profile.seasonMode ?? 'in_season'
+    let annualPlanningPreview: AnnualPlanningContext | null = null
     try {
-      const ctx = detectAnnualPlanningContext({
-        events: structuralEvents.map((e) => ({ date: e.date, type: e.type })),
+      const { inputs } = buildAthletePlanningInputs({
+        profile,
+        events: structuralEvents,
+        logs,
         today,
-        weeklyFrequency: (profile.weeklySessions ?? 3) as 2 | 3 | 4,
-        positionGroup: 'back_three',
-        planningAnchors: profile.planningAnchors,
+        fatigue,
+        acwrZone: acwrResult.hasSufficientData ? acwrResult.zone : undefined,
       })
-      detectedCycle = ctx.cycle
+      annualPlanningPreview = detectAnnualPlanningContext(inputs)
+      detectedCycle = annualPlanningPreview.cycle
     } catch {
-      // Fallback to profile.seasonMode if detection fails
+      // Ancres invalides ou données insuffisantes : compat lecture seasonMode
     }
     const cycleLabel = CYCLE_LABELS[detectedCycle] ?? tr('cycle_in_season', lang)
+
+    const showSkipOffSeasonRecovery =
+      detectedCycle === 'off_season' &&
+      annualPlanningPreview != null &&
+      annualPlanningPreview.offSeasonPhase === 1 &&
+      profile.planningAnchors?.skipOffSeasonRecoveryIntro !== true
 
     // Next match
     const futureMatches = visibleEvents
@@ -329,8 +344,25 @@ export function ProfilePage() {
       .sort((a, b) => b.date.localeCompare(a.date))
     const lastMatchDate = pastMatches.length > 0 ? pastMatches[0].date : null
 
-    return { cycleLabel, nextMatchLabel, lastMatchDate, nextMatch, detectedCycle }
-  }, [profile.seasonMode, profile.weeklySessions, profile.planningAnchors, visibleEvents, structuralEvents, today])
+    return {
+      cycleLabel,
+      nextMatchLabel,
+      lastMatchDate,
+      nextMatch,
+      detectedCycle,
+      showSkipOffSeasonRecovery,
+    }
+  }, [
+    profile,
+    logs,
+    fatigue,
+    acwrResult.hasSufficientData,
+    acwrResult.zone,
+    visibleEvents,
+    structuralEvents,
+    today,
+    lang,
+  ])
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -572,6 +604,7 @@ export function ProfilePage() {
                     delete cleanAnchors.seasonEndedAt
                     delete cleanAnchors.seasonEndedSource
                     delete cleanAnchors.returnToTeamTrainingAt
+                    delete cleanAnchors.skipOffSeasonRecoveryIntro
                     updateProfile({ planningAnchors: cleanAnchors, seasonMode: 'in_season' })
                   }
                 }
@@ -581,6 +614,41 @@ export function ProfilePage() {
                       <span className="text-xs font-bold text-ok-strong">{tr('profile_situation_offseason_active', lang)}</span>
                     </div>
 
+                    {situationData.showSkipOffSeasonRecovery && (
+                      <div className="rounded-2xl border border-border-app bg-layer-5 p-3 space-y-2" data-testid="situation-skip-recovery-card">
+                        <p className="text-[10px] text-fg-muted leading-relaxed">{tr('profile_skip_recovery_intro_hint', lang)}</p>
+                        <button
+                          type="button"
+                          data-testid="situation-skip-recovery-intro"
+                          onClick={() =>
+                            updateProfile({
+                              planningAnchors: {
+                                ...profile.planningAnchors,
+                                skipOffSeasonRecoveryIntro: true,
+                              },
+                            })
+                          }
+                          className="w-full rounded-xl border border-brand-border bg-brand-soft px-3 py-2 text-[11px] font-bold text-brand-tint hover:bg-brand-soft/80 rf-focus-ring"
+                        >
+                          {tr('profile_skip_recovery_intro_btn', lang)}
+                        </button>
+                      </div>
+                    )}
+
+                    {profile.planningAnchors?.skipOffSeasonRecoveryIntro && (
+                      <button
+                        type="button"
+                        data-testid="situation-undo-skip-recovery"
+                        onClick={() => {
+                          const clean = { ...profile.planningAnchors }
+                          delete clean.skipOffSeasonRecoveryIntro
+                          updateProfile({ planningAnchors: clean })
+                        }}
+                        className="w-full text-center text-[10px] font-bold text-fg-muted hover:text-fg-soft underline-offset-2 hover:underline rf-focus-ring py-1"
+                      >
+                        {tr('profile_skip_recovery_intro_undo', lang)}
+                      </button>
+                    )}
                     {profile.planningAnchors?.returnToTeamTrainingAt ? (
                       <div className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-brand-soft border border-brand-border" data-testid="situation-return-set">
                         <span className="text-xs font-bold text-brand-tint">
@@ -670,6 +738,7 @@ export function ProfilePage() {
                         delete cleanAnchors.seasonEndedAt
                         delete cleanAnchors.seasonEndedSource
                         delete cleanAnchors.returnToTeamTrainingAt
+                        delete cleanAnchors.skipOffSeasonRecoveryIntro
                         updateProfile({ planningAnchors: cleanAnchors, seasonMode: 'in_season' })
                       }}
                       className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
@@ -966,6 +1035,33 @@ export function ProfilePage() {
 
           {isPremium && (
             <ManageSubscriptionCard lang={lang} />
+          )}
+
+          {!isPremium && !isFounding && !entitlementsLoading && (
+            <div className="rounded-[24px] border-2 border-brand bg-brand-soft/80 p-4 space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand">{tr('founding_eyebrow', lang)}</p>
+              <p className="text-sm font-black text-fg">{tr('profile_founding_card_title', lang)}</p>
+              <p className="text-xs leading-relaxed text-fg-secondary">{tr('profile_founding_card_body', lang)}</p>
+              <div className="flex flex-col gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const result = await startCheckout('founding_yearly')
+                    if (result?.ok) await refreshEntitlements()
+                  }}
+                  disabled={billingLoading}
+                  className="w-full inline-flex items-center justify-center rounded-2xl bg-brand px-4 py-3 text-xs font-black text-on-brand transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 rf-focus-ring [touch-action:manipulation]"
+                >
+                  {billingLoading ? tr('founding_redirecting', lang) : tr('founding_become', lang)}
+                </button>
+                <Link
+                  to="/founding"
+                  className="text-center text-[11px] font-bold text-brand-tint underline underline-offset-2 [touch-action:manipulation]"
+                >
+                  {tr('profile_founding_reopen', lang)}
+                </Link>
+              </div>
+            </div>
           )}
 
           {!isPremium && canShowUpsell && !profileUpsellDismissed && (

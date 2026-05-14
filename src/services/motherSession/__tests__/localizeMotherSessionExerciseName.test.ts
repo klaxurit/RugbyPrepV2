@@ -11,10 +11,18 @@ describe('localizeMotherSessionExerciseName', () => {
       expect(localizeMotherSessionExerciseName('BENCH PRESS', 'fr')).toBe('Développé couché')
     })
     it('défaut lang = fr', () => {
-      expect(localizeMotherSessionExerciseName('thoracic rotation')).toBe('rotation thoracique')
+      expect(localizeMotherSessionExerciseName('thoracic rotation')).toBe('Rotation thoracique')
     })
     it('traduit un warmup hors catalogue (uniquement lexique)', () => {
       expect(localizeMotherSessionExerciseName('Ab Wheel', 'fr')).toBe('Roue abdominale')
+    })
+    it('traduit les directives montée en charge (FR)', () => {
+      expect(localizeMotherSessionExerciseName('2 progressive ramp-up sets', 'fr')).toBe(
+        '2 séries progressives de mise en charge',
+      )
+      expect(localizeMotherSessionExerciseName('2-3 progressive ramp-up sets', 'fr')).toBe(
+        '2 à 3 séries progressives de mise en charge',
+      )
     })
     it('renvoie le brut quand pas de traduction lexique', () => {
       expect(localizeMotherSessionExerciseName('Exo Inconnu Z42', 'fr')).toBe('Exo Inconnu Z42')
@@ -30,6 +38,11 @@ describe('localizeMotherSessionExerciseName', () => {
       // Les MD ont parfois des noms en lowercase (ankle rocks, thoracic rotation) ;
       // le helper ne re-cápitalise pas — il les renvoie comme dans la source.
       expect(localizeMotherSessionExerciseName('thoracic rotation', 'en')).toBe('thoracic rotation')
+    })
+    it('directives ramp-up : EN reste source MD', () => {
+      expect(localizeMotherSessionExerciseName('2 progressive ramp-up sets', 'en')).toBe(
+        '2 progressive ramp-up sets',
+      )
     })
     it('renvoie le brut pour un exo inconnu', () => {
       expect(localizeMotherSessionExerciseName('Exo Inconnu Z42', 'en')).toBe('Exo Inconnu Z42')

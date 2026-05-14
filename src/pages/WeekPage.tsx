@@ -37,7 +37,7 @@ import type { DatedSession } from '../types/scheduling'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
-import { cyclePhaseLabel } from '../i18n/appLabels'
+import { cyclePhaseLabel, tr } from '../i18n/appLabels'
 
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
   let out = label
@@ -49,7 +49,7 @@ function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
 }
 
 export function WeekPage() {
-  const { profile } = useProfile()
+  const { profile, updateProfile } = useProfile()
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
@@ -199,6 +199,16 @@ export function WeekPage() {
   const planningCtxHash = surface?.planningContext
     ? `${surface.planningContext.cycle}:${surface.planningContext.offSeasonPhase ?? ''}:${surface.planningContext.preSeasonPhase ?? ''}`
     : ''
+
+  const showWeekSkipRecoveryIntro = useMemo(() => {
+    const ctx = surface?.planningContext
+    if (!ctx) return false
+    return (
+      ctx.cycle === 'off_season' &&
+      ctx.offSeasonPhase === 1 &&
+      profile.planningAnchors?.skipOffSeasonRecoveryIntro !== true
+    )
+  }, [surface?.planningContext, profile.planningAnchors?.skipOffSeasonRecoveryIntro])
   const onboardingHint = useHintVisibility('rule:onboarding_cycle_hint', {
     cooldownDays: 14,
     expireAfterSessions: 5,
@@ -489,6 +499,27 @@ export function WeekPage() {
                 explanation={snapshot.explanation}
                 hideCorrections
                 contextHash={planningCtxHash}
+                weekLabel={
+                  surface?.planningContext?.weekLabel
+                    ? localizeWeekLabel(surface.planningContext.weekLabel, lang)
+                    : undefined
+                }
+                summaryFooterAction={
+                  showWeekSkipRecoveryIntro
+                    ? {
+                        label: tr('profile_skip_recovery_intro_btn', lang),
+                        testId: 'week-skip-recovery-intro',
+                        onClick: () => {
+                          updateProfile({
+                            planningAnchors: {
+                              ...profile.planningAnchors,
+                              skipOffSeasonRecoveryIntro: true,
+                            },
+                          })
+                        },
+                      }
+                    : undefined
+                }
               />
             )}
 

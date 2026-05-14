@@ -172,6 +172,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   '90/90 hip switch': 'mobility__hip_90_90',
   "world's greatest stretch": 'mobility__worlds_greatest_stretch',
   'thoracic rotation': 'mobility__thoracic_rotation_seated',
+  /* Échauffement : synonyme « TYI light » catalogue prehab band. */
+  'tyi light': 'prehab_shoulder__band_tyi',
 
   // ── Sprint / Agility ────────────────────────────────────────
   'short acceleration sprint': 'sprint__short_acceleration',
@@ -193,6 +195,29 @@ export function resolveExerciseId(msExerciseName: string): string | undefined {
   // Exercices "or" = non-loggable en V1
   if (msExerciseName.includes(' or ')) return undefined
   return MS_EXERCISE_MAP[normalizeExerciseName(msExerciseName)]
+}
+
+/**
+ * Résolution pour démos vidéo : accepte les intitulés composites « X or Y »
+ * en prenant le premier segment mappé (ex. band pull-apart + TYI light).
+ * Ne doit pas être utilisé pour la log de séries (voir `resolveExerciseId`).
+ */
+export function resolveExerciseIdForDemo(msExerciseName: string): string | undefined {
+  const trimmed = msExerciseName.trim()
+  const direct = resolveExerciseId(trimmed)
+  if (direct) return direct
+
+  const orParts = trimmed
+    .split(/\s+or\s+/i)
+    .map((p) => p.trim())
+    .filter(Boolean)
+  if (orParts.length < 2) return undefined
+
+  for (const part of orParts) {
+    const id = resolveExerciseId(part)
+    if (id) return id
+  }
+  return undefined
 }
 
 /** Vérifie si un nom est une directive textuelle (pas un exercice loggable).

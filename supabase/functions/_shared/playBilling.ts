@@ -8,17 +8,21 @@
 const PLAY_PRODUCT_CONFIG = {
   monthly: 'premium.monthly',
   yearly: 'premium.yearly',
+  /** Aligné sur `usePlayBilling.ts` — doit matcher Play Console à l’identique */
+  founding: 'founding.yearly',
 } as const
 
 export const getPlayProductIdForPlan = (planId: string): string | null => {
   if (planId === 'premium_monthly') return PLAY_PRODUCT_CONFIG.monthly
   if (planId === 'premium_yearly') return PLAY_PRODUCT_CONFIG.yearly
+  if (planId === 'founding_yearly') return PLAY_PRODUCT_CONFIG.founding
   return null
 }
 
 export const getPlanIdForPlayProduct = (productId: string): string | null => {
   if (productId === PLAY_PRODUCT_CONFIG.monthly) return 'premium_monthly'
   if (productId === PLAY_PRODUCT_CONFIG.yearly) return 'premium_yearly'
+  if (productId === PLAY_PRODUCT_CONFIG.founding) return 'founding_yearly'
   return null
 }
 
@@ -135,9 +139,7 @@ export const verifyPlayPurchase = async (
     token_uri: string
   }
 
-  console.log('[playBilling] Getting Google access token for', serviceAccountKey.client_email)
   const accessToken = await getGoogleAccessToken(serviceAccountKey)
-  console.log('[playBilling] Got access token, verifying purchase...')
 
   const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/subscriptionsv2/tokens/${purchaseToken}`
   const res = await fetch(url, {
@@ -151,7 +153,6 @@ export const verifyPlayPurchase = async (
   }
 
   const sub = (await res.json()) as PlaySubscriptionResource
-  console.log('[playBilling] Subscription response:', JSON.stringify(sub))
   const planId = getPlanIdForPlayProduct(productId)
   const matchingLineItem =
     sub.lineItems?.find((lineItem) => lineItem.productId === productId) ??
@@ -174,9 +175,7 @@ export const verifyPlayPurchase = async (
       method: 'POST',
       headers: { Authorization: `Bearer ${accessToken}` },
     })
-    if (ackRes.ok) {
-      console.log('[playBilling] Subscription acknowledged successfully')
-    } else {
+    if (!ackRes.ok) {
       console.error('[playBilling] Acknowledge failed:', ackRes.status, await ackRes.text())
     }
   }

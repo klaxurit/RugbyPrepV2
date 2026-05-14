@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { resolveExerciseId, normalizeExerciseName, isDirectiveText, getAllMapEntries } from '../motherSessionExerciseMap'
+import {
+  resolveExerciseId,
+  normalizeExerciseName,
+  isDirectiveText,
+  getAllMapEntries,
+  resolveExerciseIdForDemo,
+} from '../motherSessionExerciseMap'
 import { getExerciseById } from '../../../data/exercises'
 import { MOTHER_SESSIONS } from '../../../data/motherSessions.generated'
 
@@ -51,6 +57,18 @@ describe('resolveExerciseId — unknown / "or"', () => {
     expect(resolveExerciseId('Chest-Supported Row or T-Bar Row')).toBeUndefined()
     expect(resolveExerciseId('Farmer Carry or Zercher Carry')).toBeUndefined()
     expect(resolveExerciseId('Rear-Foot Elevated Split Squat or Reverse Lunge')).toBeUndefined()
+  })
+})
+
+describe('resolveExerciseIdForDemo — variantes « or »', () => {
+  it('résout le premier segment démo quand le libellé composite est non loggable', () => {
+    expect(resolveExerciseIdForDemo('band pull-apart or TYI light')).toBe(
+      'activation__band_pull_apart__overhead',
+    )
+  })
+  it('se comporte comme resolveExerciseId sans « or »', () => {
+    expect(resolveExerciseIdForDemo('thoracic rotation')).toBe('mobility__thoracic_rotation_seated')
+    expect(resolveExerciseIdForDemo('TYI light')).toBe('prehab_shoulder__band_tyi')
   })
 })
 

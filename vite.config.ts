@@ -1,11 +1,32 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
 
+function supabasePreconnectPlugin(origin: string | null) {
+  return {
+    name: 'inject-supabase-preconnect',
+    transformIndexHtml(html: string) {
+      if (!origin) return html
+      const tag = `<link rel="preconnect" href="${origin}" crossorigin />`
+      return html.replace('<!--INJECT_SUPABASE_PRECONNECT-->', tag)
+    },
+  }
+}
+
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  let supabaseOrigin: string | null = null
+  try {
+    const raw = env.VITE_SUPABASE_URL?.trim()
+    if (raw) supabaseOrigin = new URL(raw).origin
+  } catch {
+    /* URL invalide — pas de preconnect */
+  }
+
+  return {
   build: {
     rollupOptions: {
       output: {
@@ -27,6 +48,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    supabasePreconnectPlugin(supabaseOrigin),
     VitePWA({
       strategies: 'injectManifest',
       srcDir: 'src',
@@ -83,5 +105,6 @@ export default defineConfig({
       brotliSize: true,
       open: false,
     }),
-  ],
+  ].filter(Boolean),
+  }
 })

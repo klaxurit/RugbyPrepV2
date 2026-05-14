@@ -39,7 +39,8 @@
     "react-easy-crop": "^5.5.6",
     "react-router-dom": "^7.13.0",
     "recharts": "^3.7.0",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "workbox-window": "^7.4.0"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
@@ -67,7 +68,6 @@
     "vite": "^7.2.4",
     "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.0.18",
-    "workbox-precaching": "^7.4.0",
-    "workbox-window": "^7.4.0"
+    "workbox-precaching": "^7.4.0"
   }
 }

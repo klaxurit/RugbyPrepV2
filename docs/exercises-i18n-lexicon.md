@@ -9,22 +9,23 @@
 
 ---
 
-## 1. Échauffements (12)
+## 1. Échauffements (13)
 
 | # | Nom EN | Source | Cycle(s) | Traduction FR | Vidéo |
 |---|--------|--------|----------|---------------|-------|
-| 1 | 90/90 hip switch | warm-up | off | changement de hanche | [lien](https://www.youtube.com/shorts/GC7YJ217uoU) |
+| 1 | 90/90 hip switch | warm-up | off | Changement de hanche (90/90) | [lien](https://www.youtube.com/shorts/GC7YJ217uoU) |
 | 2 | A-skip | warm-up | pre | A-skip | [lien](https://www.youtube.com/shorts/6qSYlrN4XO4) |
-| 3 | ankle rocks | warm-up | in/off/pre | balancement cheville | [lien](https://www.youtube.com/shorts/I-Hgtc2e2fU) |
-| 4 | band pull-apart | warm-up | in/off/pre | tirage écarté avec élastique | _à compléter_ |
-| 5 | bodyweight split squat | warm-up | off | fente poids du corps | [lien](https://www.youtube.com/shorts/YuLqw3kHPaw) |
-| 6 | bodyweight squat | warm-up | in/off/pre | squat poids du corps | _à compléter_ |
-| 7 | pogo hops | warm-up | pre | pogo hops | [lien](https://www.youtube.com/shorts/PIWPFyZd0iw) |
+| 3 | ankle rocks | warm-up | in/off/pre | Balancements de chevilles | [lien](https://www.youtube.com/shorts/I-Hgtc2e2fU) |
+| 4 | band pull-apart | warm-up | in/off/pre | Tirage à l'élastique (écarté) | [lien](https://www.youtube.com/shorts/lRsWFG4e-UE) |
+| 5 | bodyweight split squat | warm-up | off | Fente bulgare au poids du corps | [lien](https://www.youtube.com/shorts/YuLqw3kHPaw) |
+| 6 | bodyweight squat | warm-up | in/off/pre | Squat au poids du corps | [lien](https://youtu.be/br-hhhnJotk) |
+| 7 | pogo hops | warm-up | pre | Petits bonds sur pointes | [lien](https://www.youtube.com/shorts/PIWPFyZd0iw) |
 | 8 | single-leg glute bridge | warm-up | in/pre | Pont fessier unilatéral | [lien](https://www.youtube.com/watch?v=AVAXhy6pl7o) |
-| 9 | split squat isometric hold | warm-up | pre | maintien en fente iso | [lien](https://www.youtube.com/shorts/egByzktIWZo) |
-| 10 | thoracic rotation | warm-up | in/off/pre | rotation thoracique | [lien](https://www.youtube.com/shorts/Lfn-Fv_xmmQ) |
-| 11 | TYI light | warm-up | in/pre | élévation TYI légère | [lien](https://www.youtube.com/shorts/QGlv9Qi0dmE) |
-| 12 | wall drill march | warm-up | pre | marche contre mur | [lien](https://www.youtube.com/shorts/ukTV2Yj38-k) |
+| 9 | split squat isometric hold | warm-up | pre | Maintien isométrique en fente | [lien](https://www.youtube.com/shorts/egByzktIWZo) |
+| 10 | thoracic rotation | warm-up | in/off/pre | Rotation thoracique | [lien](https://www.youtube.com/shorts/Lfn-Fv_xmmQ) |
+| 11 | TYI light | warm-up | in/pre | Élévation T-Y-I légère à l'élastique | [lien](https://www.youtube.com/shorts/QGlv9Qi0dmE) |
+| 12 | wall drill march | warm-up | pre | Montées de genoux contre le mur | [lien](https://www.youtube.com/shorts/ukTV2Yj38-k) |
+| 13 | band pull-apart or TYI light | warm-up | in/pre | Tirage à l'élastique ou Élévation T-Y-I légère | |
 
 ---
 
@@ -185,7 +186,7 @@
 - Total : **157 entrées uniques** extraites depuis `src/data/motherSessions.generated.ts` (parser : `/tmp/extract_exercises.mjs`).
 - La dédup est insensible à la casse (`Back Squat` = `back squat`) ; la forme retenue est la plus capitalisée présente dans la source.
 - Les options composées du type `A or B` (ex. `Zercher Carry or Farmer Carry`) ont été éclatées en deux entrées distinctes.
-- Les directives non-exercices (`2 progressive ramp-up sets`, `3x6 @ 75%`, etc.) sont filtrées.
+- Les directives non-exercices affichées dans l’UI (ex. `2 progressive ramp-up sets`) ont leurs équivalences FR dans `src/services/motherSession/motherSessionDirectiveFr.ts` (`localizeMotherSessionExerciseName`, avant le lexique exercices).
 - Quelques entrées peuvent rester très génériques (`Carry`, `Landmine`, `Drop to Stick`) — à arbitrer pendant la traduction.
 - 5 corrections d'incohérences appliquées (relecture 2026-05-11) :
   - §1.8 `single-leg glute bridge` → `Pont fessier unilatéral` (cohérence avec `Glute Bridge` → `Pont fessier`).
