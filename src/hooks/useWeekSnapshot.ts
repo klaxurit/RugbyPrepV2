@@ -36,6 +36,7 @@ import {
   CURRENT_SCHEMA_VERSION,
   type SnapshotStorage,
 } from '../services/scheduling/weekSnapshot'
+import { PROGRAM_NOTICE_UPDATED_EVENT } from '../services/program/programNoticeAck'
 import { getBlockProgression, type BlockProgressionStorage } from '../services/scheduling/resolveBlockProgression'
 
 // ── Public interface ────────────────────────────────────────────────
@@ -394,42 +395,65 @@ export function useWeekSnapshot(
   }, [])
 
   // ── Confirm pending update (Category C) ──
-  const confirmUpdate = useCallback((updateId: string) => {
-    const snap = snapshotRef.current
-    const p = paramsRef.current
-    if (!snap || !p || !upstream.surface) return
+  const resolveWeekAfterConfirmationChange = useCallback(
+    (remaining: WeekSnapshot['confirmationRequired'], options?: { silentToast?: boolean }) => {
+      const snap = snapshotRef.current
+      const p = paramsRef.current
+      if (!snap || !p || !upstream.surface) return
 
-    // Remove the confirmation item
-    const remaining = snap.confirmationRequired.filter((c) => c.id !== updateId)
+      const userId = p.userId ?? null
+      let blockProg: BlockProgressionState | undefined
+      if (upstream.surface.schedulingMode === 'sequential' && userId) {
+        blockProg = getBlockProgression(
+          userId,
+          p.today,
+          upstream.surface.planningContext,
+          p.blockProgressionStorage,
+        )
+      }
 
-    // Compute fresh block progression
-    const userId = p.userId ?? null
-    let blockProg: BlockProgressionState | undefined
-    if (upstream.surface.schedulingMode === 'sequential' && userId) {
-      blockProg = getBlockProgression(
-        userId,
-        p.today,
-        upstream.surface.planningContext,
-        p.blockProgressionStorage,
-      )
+      const fresh = resolveWeek({
+        surface: upstream.surface,
+        events: p.events,
+        today: p.today,
+        clubSchedule: p.profile.clubSchedule,
+        scSchedule: p.profile.scSchedule,
+        previousSnapshot: { ...snap, confirmationRequired: remaining },
+        blockProgression: blockProg,
+      })
+
+      if (userId) saveSnapshot(userId, fresh, p.snapshotStorage)
+      setSnapshot(fresh)
+      resolvedWeekRef.current = `${userId ?? 'anon'}:${fresh.weekId}`
+      if (!options?.silentToast) setToastMessage('Programme mis à jour')
+    },
+    [upstream.surface],
+  )
+
+  const confirmUpdate = useCallback(
+    (updateId: string) => {
+      const snap = snapshotRef.current
+      if (!snap) return
+      const remaining = snap.confirmationRequired.filter((c) => c.id !== updateId)
+      resolveWeekAfterConfirmationChange(remaining)
+    },
+    [resolveWeekAfterConfirmationChange],
+  )
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const ce = event as CustomEvent<{ noticeId?: string }>
+      const noticeId = ce.detail?.noticeId
+      if (!noticeId?.startsWith('match:')) return
+      const snap = snapshotRef.current
+      if (!snap?.confirmationRequired.some((c) => c.type === 'match_changed')) return
+      const remaining = snap.confirmationRequired.filter((c) => c.type !== 'match_changed')
+      if (remaining.length === snap.confirmationRequired.length) return
+      resolveWeekAfterConfirmationChange(remaining, { silentToast: true })
     }
-
-    // Full resolve with current upstream surface
-    const fresh = resolveWeek({
-      surface: upstream.surface,
-      events: p.events,
-      today: p.today,
-      clubSchedule: p.profile.clubSchedule,
-      scSchedule: p.profile.scSchedule,
-      previousSnapshot: { ...snap, confirmationRequired: remaining },
-      blockProgression: blockProg,
-    })
-
-    if (userId) saveSnapshot(userId, fresh, p.snapshotStorage)
-    setSnapshot(fresh)
-    resolvedWeekRef.current = `${userId ?? 'anon'}:${fresh.weekId}`
-    setToastMessage('Programme mis à jour')
-  }, [upstream.surface])
+    window.addEventListener(PROGRAM_NOTICE_UPDATED_EVENT, handler)
+    return () => window.removeEventListener(PROGRAM_NOTICE_UPDATED_EVENT, handler)
+  }, [resolveWeekAfterConfirmationChange])
 
   // ── Heavy correction helper: full re-resolution ──
   const applyHeavyCorrection = useCallback((
@@ -515,7 +539,7 @@ export function useWeekSnapshot(
     setSnapshot(withCorrection)
     resolvedWeekRef.current = `${userId ?? 'anon'}:${withCorrection.weekId}`
     lastGlobalHashRef.current = computeGlobalEventsHash(modifiedEvents)
-    setToastMessage(toast)
+    if (toast) setToastMessage(toast)
   }, [])
 
   // ── Heavy correction: setFatigue ──
@@ -543,7 +567,7 @@ export function useWeekSnapshot(
       'add_match',
       updatedEvents,
       p.fatigue,
-      'Match ajouté · Programme mis à jour',
+      '',
       createdEvent.id,
       createdEvent.date,
     )

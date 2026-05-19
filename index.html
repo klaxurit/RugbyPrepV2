@@ -20,6 +20,13 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <!-- Preconnect Supabase : injecté au build par Vite si VITE_SUPABASE_URL est défini (voir vite.config.ts) -->
     <!--INJECT_SUPABASE_PRECONNECT-->
+    <!-- Playfair Display (italics seulement) — chargée ici pour éviter @import tardif dans CSS bundlé (PostCSS / Tailwind v4). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500;1,700;1,800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="preconnect" href="https://eu.i.posthog.com" crossorigin />
     <link rel="preconnect" href="https://eu-assets.i.posthog.com" crossorigin />
     <!-- Preload Gontserrat regular (poids critique du first paint) — évite FOUT -->

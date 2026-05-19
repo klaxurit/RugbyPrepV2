@@ -692,6 +692,9 @@ describe('useWeekSnapshot lifecycle', () => {
 
     const originalResolvedAt = result.current.snapshot?.resolvedAt
 
+    // Ensure the next re-resolution can get a distinct `resolvedAt` (ms granularity).
+    await new Promise((r) => setTimeout(r, 2))
+
     act(() => {
       result.current.setFatigue('FATIGUE')
     })

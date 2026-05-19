@@ -5,6 +5,14 @@ import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
 import { tr, type Lang } from '../../../i18n/appLabels'
 import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
+import { localizeMotherSessionExerciseName } from '../../../services/motherSession/localizeMotherSessionExerciseName'
+import { resolveExerciseIdForSessionRun } from '../../../services/motherSession/motherSessionExerciseMap'
+import { hasExerciseDemo } from '../../../data/exercises'
+
+function emomExerciseHasDemo(exo: Pick<Exercise, 'name' | 'exerciseId'>): boolean {
+  const exoId = resolveExerciseIdForSessionRun(exo.name ?? '', exo.exerciseId)
+  return Boolean(exoId && hasExerciseDemo(exoId))
+}
 
 interface EmomBlockProps {
   block: Block
@@ -19,6 +27,8 @@ interface EmomBlockProps {
   onStartTimer: () => void
   notes?: readonly string[]
   lang?: Lang
+  /** Fiche vidéo démo (même résolution que WarmupBlock / ToursBlock). */
+  onPlayDemo?: (exerciseIndex: number) => void
 }
 
 /**
@@ -37,6 +47,7 @@ export function EmomBlock({
   onStartTimer,
   notes,
   lang = 'fr',
+  onPlayDemo,
 }: EmomBlockProps) {
   const pattern = buildEmomPattern(block.exercises)
 
@@ -63,8 +74,8 @@ export function EmomBlock({
               {totalMinutes} {tr('emom_minutes_intro_pre', lang)}
             </p>
             <ul className="mb-3.5 flex flex-col gap-2">
-              {pattern.map((p, i) => (
-                <li key={i} className="flex items-start gap-2.5">
+              {pattern.map((p) => (
+                <li key={p.exerciseIndex} className="flex items-start gap-2.5">
                   <span className="min-w-[88px] text-[12px] font-extrabold tabular-nums text-brand">
                     {p.label}
                   </span>
@@ -72,10 +83,22 @@ export function EmomBlock({
                     aria-hidden
                     className="mt-2 h-[3px] w-[3px] flex-shrink-0 rounded-full bg-brand opacity-50"
                   />
-                  <span className="flex-1 text-[13px] text-fg">
-                    <strong>{p.exo}</strong>
-                    {p.detail && <span className="ml-1 font-medium text-fg-muted">{p.detail}</span>}
+                  <span className="min-w-0 flex-1 text-[13px] text-fg">
+                    <strong>{localizeMotherSessionExerciseName(p.exercise.name, lang)}</strong>
+                    {p.detail && (
+                      <span className="ml-1 font-medium text-fg-muted">{p.detail}</span>
+                    )}
                   </span>
+                  {onPlayDemo && emomExerciseHasDemo(p.exercise) ? (
+                    <button
+                      type="button"
+                      onClick={() => onPlayDemo(p.exerciseIndex)}
+                      aria-label={tr('exercise_aria_demo', lang)}
+                      className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-app rf-focus-ring"
+                    >
+                      <Icon name="eye" size={14} color="var(--color-text-primary)" strokeWidth={1.6} />
+                    </button>
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -123,7 +146,8 @@ export function EmomBlock({
 
 interface EmomPatternEntry {
   label: string
-  exo: string
+  exerciseIndex: number
+  exercise: Exercise
   detail?: string
 }
 
@@ -137,16 +161,22 @@ function buildEmomPattern(exercises: readonly Exercise[]): EmomPatternEntry[] {
   const hasSlots = exercises.some((e) => e.slotLabel)
   if (hasSlots) {
     return exercises
-      .filter((e) => e.slotLabel)
-      .map((e) => ({
-        label: e.slotLabel ?? '',
-        exo: e.name,
-        detail: e.prescription,
-      }))
+      .map((e, exerciseIndex): EmomPatternEntry | null =>
+        e.slotLabel
+          ? {
+              label: e.slotLabel,
+              exerciseIndex,
+              exercise: e,
+              detail: e.prescription,
+            }
+          : null,
+      )
+      .filter((x): x is EmomPatternEntry => x !== null)
   }
   return exercises.map((e, i) => ({
     label: `Min ${i + 1}`,
-    exo: e.name,
+    exerciseIndex: i,
+    exercise: e,
     detail: e.prescription,
   }))
 }

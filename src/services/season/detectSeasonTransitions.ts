@@ -1,4 +1,5 @@
 import type { AnnualPlanningContext, InSeasonSubMode } from '../../types/annualPlanning'
+import type { MatchKind } from '../../types/training'
 
 export type SeasonTransition =
   | { type: 'season_ended'; lastMatchDate: string; daysSinceLastMatch: number }
@@ -37,7 +38,13 @@ export function detectSeasonTransitions(params: {
   today: string
   dismissedUntil?: Record<string, string>
   /** Visible (non-hidden) events — needed for match_detected_in_offseason. */
-  visibleEvents?: Array<{ id?: string; date: string; type: string; opponent?: string }>
+  visibleEvents?: Array<{
+    id?: string
+    date: string
+    type: string
+    opponent?: string
+    match_kind?: MatchKind | null
+  }>
   /** Active deferral — if set, suppresses match_detected_in_offseason. */
   hasActiveDeferral?: boolean
   /** If returnToTeamTrainingAt is already set, no need to suggest. */
@@ -129,16 +136,19 @@ export function detectSeasonTransitions(params: {
     const futureMatches = (params.visibleEvents ?? [])
       .filter((e) => e.type === 'match' && e.date >= today)
       .sort((a, b) => a.date.localeCompare(b.date))
-    const first = futureMatches[0]
+    /** Ignorer les matchs explicitement marqués amical ; les autres (dont kind absent) déclenchent UC9. */
+    const candidate = futureMatches.find((e) => e.match_kind !== 'friendly')
     const ackId = params.offseasonMatchResumeAckEventId
-    if (first?.id && ackId === first.id) {
+    if (!candidate?.id) {
+      // Uniquement des amicaux à venir — pas de bannière « saison reprend ».
+    } else if (ackId === candidate.id) {
       // Bannière déjà confirmée pour ce match — ne pas boucler UC9
-    } else if (first?.id) {
+    } else {
       return {
         type: 'match_detected_in_offseason',
-        matchEventId: first.id,
-        matchDate: first.date,
-        opponent: first.opponent,
+        matchEventId: candidate.id,
+        matchDate: candidate.date,
+        opponent: candidate.opponent,
       }
     }
   }

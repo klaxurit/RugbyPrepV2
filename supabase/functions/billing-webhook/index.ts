@@ -1,3 +1,5 @@
+import { captureEdgeException } from '../_shared/sentry.ts'
+import { isFoundingCohortFullError } from '../_shared/billingRpcErrors.ts'
 import { corsHeaders, json } from '../_shared/http.ts'
 import { createClients } from '../_shared/supabase.ts'
 import { getPlanIdForStripePrice, verifyStripeWebhookSignature } from '../_shared/stripe.ts'
@@ -69,6 +71,18 @@ const mapStripeStatus = (status: string | undefined): BillingStatus => {
 
 // Map Postgres SQLSTATE codes from RPC errors to HTTP responses.
 const mapRpcError = (rpcError: { code?: string; message?: string }): { status: number; body: Record<string, unknown> } => {
+  if (isFoundingCohortFullError(rpcError)) {
+    // 200 avoids Stripe webhook retry storms — payment may need manual refund if checkout slipped through.
+    return {
+      status: 200,
+      body: {
+        ok: true,
+        ignored: true,
+        reason: 'founding_cohort_full',
+        code: 'founding_cohort_full',
+      },
+    }
+  }
   if (rpcError.code === '23505') {
     // unique_violation — token already bound to another user
     return { status: 409, body: { error: 'Purchase already linked to another account.', code: 'token_already_bound' } }
@@ -436,6 +450,7 @@ Deno.serve(async (req: Request) => {
     })
   } catch (error) {
     console.error('[billing-webhook] Uncaught error:', String(error))
+    await captureEdgeException(error, { function: 'billing-webhook' })
     return json({ error: String(error) }, 500)
   }
 })

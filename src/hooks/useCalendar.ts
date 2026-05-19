@@ -5,11 +5,14 @@ import { useProfile } from './useProfile'
 import { syncCalendar } from '../services/calendar/ffrSyncService'
 import { applyDeferralRules } from '../services/season/deferralRules'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
-import type { CalendarEvent } from '../types/training'
+import type { CalendarEvent, MatchKind } from '../types/training'
+import { useProgramEvolutionSheet } from '../contexts/ProgramEvolutionSheetContext'
+import { getToday } from '../services/ui/debugDateOverride'
 
 const STORAGE_BASE = 'rugbyprep.calendar'
 const AUTO_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24h
-const CALENDAR_SELECT = 'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, venue, user_hidden, user_override, synced_at'
+const CALENDAR_SELECT =
+  'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, venue, user_hidden, user_override, synced_at, match_kind'
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -62,18 +65,16 @@ function saveToStorage(events: CalendarEvent[], userId: string | null) {
 export function useCalendarSource() {
   const { authState } = useAuth()
   const { profile, updateProfile } = useProfile()
+  const { openProgramEvolution } = useProgramEvolutionSheet()
   const userId =
     authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
   const [events, setEvents] = useState<CalendarEvent[]>(() => readFromStorage(userId))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [syncNotification, setSyncNotification] = useState<string | null>(null)
   const autoSyncRanRef = useRef(false)
   const profileRef: MutableRefObject<typeof profile> = useRef(profile)
   profileRef.current = profile
-
-  const dismissSyncNotification = useCallback(() => setSyncNotification(null), [])
 
   // Sync from Supabase when authenticated — and re-seed state from the new
   // user's cache first so the current render doesn't keep the previous user's
@@ -134,7 +135,14 @@ export function useCalendarSource() {
         const afterCount = loaded.filter(e => e.source === 'ffr_import' && !e.user_hidden).length
         const diff = afterCount - beforeCount
         if (diff > 0) {
-          setSyncNotification(`${diff} nouveau${diff > 1 ? 'x' : ''} match${diff > 1 ? 's' : ''} détecté${diff > 1 ? 's' : ''}`)
+          const todayStr = getToday()
+          const nextMatch = loaded.find(
+            (e) => e.type === 'match' && !e.user_hidden && e.date >= todayStr,
+          )
+          openProgramEvolution({
+            matchDateISO: nextMatch?.date,
+            programNoticeId: nextMatch ? undefined : null,
+          })
         }
       }
 
@@ -222,6 +230,20 @@ export function useCalendarSource() {
       }
     },
     [userId, updateProfile]
+  )
+
+  const updateMatchKind = useCallback(
+    async (eventId: string, match_kind: MatchKind) => {
+      if (userId) {
+        await supabase.from('match_calendar').update({ match_kind }).eq('id', eventId)
+      }
+      setEvents((prev) => {
+        const next = prev.map((e) => (e.id === eventId ? { ...e, match_kind } : e))
+        saveToStorage(next, userId)
+        return next
+      })
+    },
+    [userId],
   )
 
   const updateMatchLoad = useCallback(
@@ -348,12 +370,22 @@ export function useCalendarSource() {
           const loaded = (data as CalendarEvent[]).map(normalizeCalendarEvent)
           setEvents(loaded)
           saveToStorage(loaded, userId)
+          if (result.imported > 0) {
+            const todayStr = getToday()
+            const nextMatch = loaded.find(
+              (e) => e.type === 'match' && !e.user_hidden && e.date >= todayStr,
+            )
+            openProgramEvolution({
+              matchDateISO: nextMatch?.date,
+              programNoticeId: nextMatch ? undefined : null,
+            })
+          }
         }
       }
       setLoading(false)
       return result
     },
-    [userId]
+    [userId, openProgramEvolution],
   )
 
   const today = new Date()
@@ -409,6 +441,7 @@ export function useCalendarSource() {
     thisWeekEvents,
     addEvent,
     removeEvent,
+    updateMatchKind,
     updateMatchLoad,
     setMatchNeutral,
     hideImportedEvent,
@@ -420,9 +453,6 @@ export function useCalendarSource() {
     manualCount,
     loading,
     error,
-    /** Non-null when auto-sync detected new matches. Dismiss after showing to user. */
-    syncNotification,
-    dismissSyncNotification,
   }
 }
 

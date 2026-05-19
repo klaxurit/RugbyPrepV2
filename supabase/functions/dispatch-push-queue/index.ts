@@ -1,4 +1,5 @@
 import { corsHeaders, json } from '../_shared/http.ts'
+import { captureEdgeException } from '../_shared/sentry.ts'
 import { createClients } from '../_shared/supabase.ts'
 import { getWebPushConfig, sendWebPush, type WebPushPayload } from '../_shared/webPush.ts'
 
@@ -216,6 +217,10 @@ Deno.serve(async (req: Request) => {
         })
       } catch (error) {
         failed += 1
+        await captureEdgeException(error, {
+          function: 'dispatch-push-queue',
+          extraTags: { scope: 'per_delivery' },
+        })
         await updateDeliveryStatus(serviceClient, row.id, {
           status: 'failed',
           error_message: String(error),
@@ -231,6 +236,7 @@ Deno.serve(async (req: Request) => {
       expired,
     })
   } catch (error) {
+    await captureEdgeException(error, { function: 'dispatch-push-queue' })
     return json({ error: String(error) }, 500)
   }
 })

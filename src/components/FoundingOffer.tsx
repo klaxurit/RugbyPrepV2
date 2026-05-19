@@ -20,7 +20,7 @@ import { tr, type Lang } from '../i18n/appLabels'
  * instance de `useHintVisibility` pour ce hint) — sinon la modale reste affichée.
  */
 export function FoundingOffer() {
-  const { eligible, dismiss } = useFoundingOfferEligibility()
+  const { eligible, dismiss, cohortFull } = useFoundingOfferEligibility()
   const { startCheckout, loading: checkoutLoading, error: checkoutError } = usePremiumCheckout()
   const { profile } = useProfile()
   const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
@@ -44,6 +44,7 @@ export function FoundingOffer() {
   if (!eligible) return null
 
   const handleAccept = async () => {
+    if (cohortFull) return
     try {
       posthog.capture?.('founding_offer_clicked')
     } catch { /* ignore */ }
@@ -82,8 +83,18 @@ export function FoundingOffer() {
         </div>
 
         <div className="space-y-3 text-sm text-fg-secondary">
-          <p>{tr('founding_body_1', lang)}</p>
-          <p className="text-xs text-fg-muted">{tr('founding_body_2', lang)}</p>
+          {cohortFull ? (
+            <>
+              <p className="font-bold text-fg">{tr('founding_cohort_sold_out_title', lang)}</p>
+              <p>{tr('founding_cohort_sold_out_body', lang)}</p>
+              <p className="text-xs text-fg-muted">{tr('founding_cohort_sold_out_note', lang)}</p>
+            </>
+          ) : (
+            <>
+              <p>{tr('founding_body_1', lang)}</p>
+              <p className="text-xs text-fg-muted">{tr('founding_body_2', lang)}</p>
+            </>
+          )}
         </div>
 
         {checkoutError && (
@@ -93,21 +104,33 @@ export function FoundingOffer() {
         )}
 
         <div className="space-y-2 pt-2">
-          <button
-            type="button"
-            onClick={handleAccept}
-            disabled={checkoutLoading}
-            className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-black text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-brand-float disabled:opacity-50 disabled:cursor-not-allowed [touch-action:manipulation]"
-          >
-            {checkoutLoading ? tr('founding_redirecting', lang) : tr('founding_become', lang)}
-          </button>
-          <button
-            type="button"
-            onClick={handleDismiss}
-            className="w-full h-12 rounded-full border border-border-app text-xs font-bold text-fg-secondary hover:bg-layer-4 transition-colors [touch-action:manipulation]"
-          >
-            {tr('founding_later', lang)}
-          </button>
+          {cohortFull ? (
+            <button
+              type="button"
+              onClick={handleDismiss}
+              className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-black text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-brand-float [touch-action:manipulation]"
+            >
+              {tr('founding_later', lang)}
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={handleAccept}
+                disabled={checkoutLoading}
+                className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-black text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-brand-float disabled:opacity-50 disabled:cursor-not-allowed [touch-action:manipulation]"
+              >
+                {checkoutLoading ? tr('founding_redirecting', lang) : tr('founding_become', lang)}
+              </button>
+              <button
+                type="button"
+                onClick={handleDismiss}
+                className="w-full h-12 rounded-full border border-border-app text-xs font-bold text-fg-secondary hover:bg-layer-4 transition-colors [touch-action:manipulation]"
+              >
+                {tr('founding_later', lang)}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

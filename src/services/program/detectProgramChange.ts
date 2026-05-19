@@ -24,6 +24,7 @@ import type { CalendarEvent } from '../../types/training'
 import type { ACWRZone } from '../../hooks/useACWR'
 import type { ProgramChangeNotice, ProgramChangeSeverity } from '../../types/programChange'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
+import { formatMatchDateFr } from './formatMatchDateFr'
 
 const SEVERITY_RANK: Record<ProgramChangeSeverity, number> = {
   info: 1,
@@ -315,7 +316,7 @@ function buildMatchNotice(events: CalendarEvent[], today: string): ProgramChange
     type: 'match',
     severity: 'info',
     title: 'Semaine de match',
-    summary: `Match prévu le ${formatMatchDate(upcomingMatch.date)} — la semaine est calée pour arriver frais.`,
+    summary: `Match prévu le ${formatMatchDateFr(upcomingMatch.date)} — la semaine est calée pour arriver frais.`,
     bullets: [
       'Charge réduite à mesure qu\'on approche du match',
       'Dernière séance au moins 48h avant',
@@ -338,13 +339,6 @@ function isoWeekKey(iso: string): string {
   const mo = String(date.getMonth() + 1).padStart(2, '0')
   const d = String(date.getDate()).padStart(2, '0')
   return `${y}-${mo}-${d}`
-}
-
-function formatMatchDate(iso: string): string {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)
-  if (!m) return iso
-  const date = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12)
-  return date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
 }
 
 /**

@@ -26,10 +26,12 @@ describe('sessionLogPresentation', () => {
 
     it('fallback sur sessionType si pas de sessionLabel', () => {
       expect(getSessionLogDisplayTitle(BASE_LOG)).toBe('Bas du Corps')
+      expect(getSessionLogDisplayTitle(BASE_LOG, 'en')).toBe('Lower Body')
     })
 
     it('sessionType UPPER → Haut du Corps', () => {
       expect(getSessionLogDisplayTitle({ ...BASE_LOG, sessionType: 'UPPER' })).toBe('Haut du Corps')
+      expect(getSessionLogDisplayTitle({ ...BASE_LOG, sessionType: 'UPPER' }, 'en')).toBe('Upper Body')
     })
   })
 
@@ -44,6 +46,13 @@ describe('sessionLogPresentation', () => {
 
     it('mother_session', () => {
       expect(getSessionLogSourceLabel({ ...BASE_LOG, programSource: 'mother_session' })).toBe('Programme annuel')
+    })
+
+    it('en: legacy + mother_session', () => {
+      expect(getSessionLogSourceLabel(BASE_LOG, 'en')).toBe('Legacy program')
+      expect(
+        getSessionLogSourceLabel({ ...BASE_LOG, programSource: 'mother_session' }, 'en'),
+      ).toBe('Annual program')
     })
   })
 
@@ -60,10 +69,12 @@ describe('sessionLogPresentation', () => {
   describe('getSessionLogPrimaryWeekLabel', () => {
     it('legacy → label classique S2', () => {
       expect(getSessionLogPrimaryWeekLabel(BASE_LOG)).toBe('S2')
+      expect(getSessionLogPrimaryWeekLabel(BASE_LOG, 'en')).toBe('Week 2')
     })
 
     it('DELOAD → Semaine légère', () => {
       expect(getSessionLogPrimaryWeekLabel({ ...BASE_LOG, week: 'DELOAD' })).toBe('Semaine légère')
+      expect(getSessionLogPrimaryWeekLabel({ ...BASE_LOG, week: 'DELOAD' }, 'en')).toBe('Deload week')
     })
 
     it('mother_session → priorité à annualWeekCode', () => {
@@ -82,10 +93,12 @@ describe('sessionLogPresentation', () => {
         programContext: { cycle: 'off_season' },
       }
       expect(getSessionLogPrimaryWeekLabel(log)).toBe('S2')
+      expect(getSessionLogPrimaryWeekLabel(log, 'en')).toBe('Week 2')
     })
 
     it('H3 → S3', () => {
       expect(getSessionLogPrimaryWeekLabel({ ...BASE_LOG, week: 'H3' })).toBe('S3')
+      expect(getSessionLogPrimaryWeekLabel({ ...BASE_LOG, week: 'H3' }, 'en')).toBe('Week 3')
     })
   })
 
@@ -108,6 +121,13 @@ describe('sessionLogPresentation', () => {
 
     it('playoffs → Playoffs', () => {
       expect(getSessionLogCycleLabel({ ...BASE_LOG, programContext: { cycle: 'playoffs' } })).toBe('Playoffs')
+      expect(getSessionLogCycleLabel({ ...BASE_LOG, programContext: { cycle: 'playoffs' } }, 'en')).toBe('Playoffs')
+    })
+
+    it('off_season en', () => {
+      expect(
+        getSessionLogCycleLabel({ ...BASE_LOG, programContext: { cycle: 'off_season' } }, 'en'),
+      ).toBe('Off-season')
     })
   })
 
@@ -127,6 +147,9 @@ describe('sessionLogPresentation', () => {
       const subtitle = getSessionLogDisplaySubtitle(log)
       expect(subtitle).toContain('OFF_S03')
       expect(subtitle).toContain('Inter-saison')
+      const subtitleEn = getSessionLogDisplaySubtitle(log, 'en')
+      expect(subtitleEn).toContain('OFF_S03')
+      expect(subtitleEn).toContain('Off-season')
     })
   })
 })

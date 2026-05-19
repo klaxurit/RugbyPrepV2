@@ -1,5 +1,5 @@
 import type { Block, MotherSession } from '../../types/motherSession'
-import { isDirectiveText, resolveExerciseId } from './motherSessionExerciseMap'
+import { isDirectiveText, resolveExerciseIdForSessionRun } from './motherSessionExerciseMap'
 import { buildExerciseTourKey } from '../../contexts/SessionRunContext'
 import {
   parseBlockTourCount,
@@ -96,7 +96,8 @@ function collectLoggableExercises(block: Block): LoggableExercise[] {
   const out: LoggableExercise[] = []
   block.exercises.forEach((ex, idx) => {
     if (isDirectiveText(ex.name)) return
-    const exerciseId = ex.exerciseId ?? resolveExerciseId(ex.name) ?? ''
+    const exerciseId =
+      resolveExerciseIdForSessionRun(ex.name, ex.exerciseId) ?? ''
     if (!exerciseId) return
     const exoTours = parseExerciseSets(ex.prescription) ?? tourCount
     out.push({ ex, originalIndex: idx, exerciseId, exoTours })

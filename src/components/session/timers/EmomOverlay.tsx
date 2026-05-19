@@ -1,5 +1,9 @@
 import { useEffect, useMemo } from 'react'
 import type { Block, Exercise } from '../../../types/motherSession'
+import {
+  localizeMotherSessionExerciseName,
+  type Lang,
+} from '../../../services/motherSession/localizeMotherSessionExerciseName'
 import { parseBlockFormat } from '../../../services/ui/parseBlockFormat'
 import { useBlockTimer } from '../../../hooks/useBlockTimer'
 import { useRestBeepPref } from '../../../hooks/useRestBeepPref'
@@ -14,6 +18,8 @@ interface EmomOverlayProps {
   onComplete: () => void
   /** Appelée quand l'utilisateur ferme l'overlay (croix ou Stop). */
   onClose: () => void
+  /** Aligné sur `UserProfile.preferredLanguage` — lexique mother session. */
+  lang?: Lang
 }
 
 /**
@@ -25,7 +31,7 @@ interface EmomOverlayProps {
  * Design éditorial v4-pro : countdown 64px italic + dots minutes + exo en cours +
  * contrôles play/skip/stop.
  */
-export function EmomOverlay({ block, onComplete, onClose }: EmomOverlayProps) {
+export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOverlayProps) {
   const format = useMemo(() => (block ? parseBlockFormat(block.format) : null), [block])
   const { enabled: beepEnabled } = useRestBeepPref()
 
@@ -152,12 +158,12 @@ export function EmomOverlay({ block, onComplete, onClose }: EmomOverlayProps) {
               className="mt-0.5 font-serif italic font-extrabold text-fg"
               style={{ fontSize: 17, letterSpacing: '-0.4px' }}
             >
-              {currentExo.name}
+              {localizeMotherSessionExerciseName(currentExo.name, lang)}
             </div>
             {nextExo && (
               <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-fg-muted">
                 <span className="font-bold opacity-60 text-fg">Ensuite :</span>
-                <span>{nextExo.name}</span>
+                <span>{localizeMotherSessionExerciseName(nextExo.name, lang)}</span>
               </div>
             )}
           </div>

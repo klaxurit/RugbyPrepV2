@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../services/supabase/client'
 import { devLog } from '../utils/devLog'
+import { fetchFoundingCohortStats } from '../services/billing/foundingCohortStats'
 
 /**
  * Product IDs — must match Google Play Console subscriptions
@@ -126,6 +127,18 @@ export function usePlayBilling() {
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
     try {
+      if (planId === 'founding_yearly') {
+        const stats = await fetchFoundingCohortStats()
+        if (stats && !stats.accepting_new) {
+          setState((prev) => ({
+            ...prev,
+            loading: false,
+            error: 'founding_cohort_full',
+          }))
+          return { ok: false, error: 'founding_cohort_full' }
+        }
+      }
+
       devLog('[PlayBilling] Starting purchase for', planId, '→ productId:', productId)
 
       const service = await window.getDigitalGoodsService!(

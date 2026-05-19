@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { Plus, Lock } from 'lucide-react'
@@ -25,11 +25,14 @@ import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
 import { useRegisterCoachContext, type CoachInfoMessage } from '../contexts/CoachContext'
+import { useProgramEvolutionSheet } from '../contexts/ProgramEvolutionSheetContext'
+import { useWeekSnapshotConfirmationSheet } from '../hooks/useWeekSnapshotConfirmationSheet'
 import { useHintVisibility } from '../hooks/useHintVisibility'
 import { NextMatchCard } from '../components/match/NextMatchCard'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 import { AddMatchModal } from '../components/match/AddMatchModal'
-import { ClubSearchInput } from '../components/match/ClubSearchInput'
+import { MatchKindFollowUpSheet } from '../components/match/MatchKindFollowUpSheet'
+import { suggestedMatchSaturdayISO } from '../components/match/matchDate'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
 import { SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
@@ -38,6 +41,10 @@ import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
 import { cyclePhaseLabel, tr } from '../i18n/appLabels'
+import type { CalendarEvent, MatchKind } from '../types/training'
+import { buildProfileUpdatesForManualMatchKind } from '../services/season/buildProfileUpdatesForManualMatchKind'
+import { hasPendingOffseasonMatchDecision } from '../services/season/hasPendingOffseasonMatchDecision'
+import { planProgramEvolutionAfterManualMatch } from '../services/calendar/planProgramEvolutionAfterManualMatch'
 
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
   let out = label
@@ -56,7 +63,7 @@ export function WeekPage() {
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue } = useFatigue()
   const { logs, addLog } = useHistory()
-  const { visibleEvents, structuralEvents, addEvent, syncNotification, dismissSyncNotification } = useCalendar()
+  const { visibleEvents, structuralEvents, addEvent, updateMatchKind } = useCalendar()
   const navigate = useNavigate()
 
   const acwrResult = useACWR(logs, structuralEvents)
@@ -73,6 +80,7 @@ export function WeekPage() {
   const [monthOpen, setMonthOpen] = useState(false)
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [addModalDate, setAddModalDate] = useState<string | undefined>(undefined)
+  const [pendingManualMatch, setPendingManualMatch] = useState<CalendarEvent | null>(null)
 
   const openMatchByDate = (dateISO: string) => {
     const match = visibleEvents.find((e) => e.type === 'match' && e.date === dateISO)
@@ -139,13 +147,22 @@ export function WeekPage() {
     userId,
   }), [profile, structuralEvents, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId])
   const {
-    surface, blockProgression, snapshot,
+    surface, snapshot,
     confirmPendingUpdate,
     addMatch,
     hasConfirmationRequired,
     toastMessage, clearToast,
   } = useWeekSnapshot(surfaceParams)
   const weekPresentation = snapshot?.presentation ?? null
+
+  const confirmationItem = hasConfirmationRequired ? snapshot?.confirmationRequired[0] ?? null : null
+  useWeekSnapshotConfirmationSheet({
+    hasConfirmationRequired,
+    confirmationItem,
+    confirmPendingUpdate,
+    visibleEvents,
+    today,
+  })
 
   // ── Transition banners (scheduling > season, max 1) ────────────────────────
   // Use snapshot-visible mode, not raw upstream, to respect snapshot ownership
@@ -157,22 +174,81 @@ export function WeekPage() {
     userId,
   })
 
+  const { openProgramEvolution } = useProgramEvolutionSheet()
+
+  const dismissCalendarSchedulingIfNeeded = useCallback(() => {
+    if (schedulingTransition?.type === 'calendar_mode_activated') {
+      dismissSchedulingTransition('calendar_mode_activated')
+    }
+  }, [schedulingTransition?.type, dismissSchedulingTransition])
+
+  const onMatchAddedProgramEvolution = useCallback(
+    (matchDateISO: string) => {
+      openProgramEvolution({
+        matchDateISO,
+        onAcknowledged: dismissCalendarSchedulingIfNeeded,
+      })
+    },
+    [openProgramEvolution, dismissCalendarSchedulingIfNeeded],
+  )
+
+  const planningCtxForMatchKind = surface?.planningContext
+  const schedulingModeForMatchKind = surface?.schedulingMode ?? 'calendar'
+
+  const finalizeManualMatchKind = useCallback(
+    async (kind: MatchKind, created: CalendarEvent) => {
+      if (!created.id) return
+      await updateMatchKind(created.id, kind)
+      const merged: CalendarEvent = { ...created, match_kind: kind }
+      if (planningCtxForMatchKind) {
+        updateProfile(
+          buildProfileUpdatesForManualMatchKind({
+            kind,
+            eventId: created.id,
+            profile,
+            today,
+            planningContext: planningCtxForMatchKind,
+            schedulingMode: schedulingModeForMatchKind,
+          }),
+        )
+      }
+      addMatch(merged)
+      setPendingManualMatch(null)
+      const evolutionPlan = planProgramEvolutionAfterManualMatch({
+        matchDate: merged.date,
+        today,
+        kind,
+        snapshotWeekId: snapshot?.weekId,
+      })
+      if (evolutionPlan.action === 'open_sheet') {
+        onMatchAddedProgramEvolution(evolutionPlan.matchDateISO)
+      } else if (evolutionPlan.dismissSchedulingBanner) {
+        dismissCalendarSchedulingIfNeeded()
+      }
+    },
+    [
+      updateMatchKind,
+      planningCtxForMatchKind,
+      schedulingModeForMatchKind,
+      profile,
+      today,
+      updateProfile,
+      addMatch,
+      snapshot?.weekId,
+      onMatchAddedProgramEvolution,
+      dismissCalendarSchedulingIfNeeded,
+    ],
+  )
+
   // Coordination cross-page : si un match futur en off-season attend
   // la décision de l'utilisateur (Oui/Non/Pas mon équipe sur le banner
   // SeasonTransitionBanner de /home), on supprime ici le scheduling
   // banner — il ne sert à rien de plus, son trigger est le même
   // événement (calendar mode activated = match détecté).
-  const hasPendingOffseasonMatch = (() => {
-    if (profile.seasonMode !== 'off_season') return false
-    const futureMatch = visibleEvents.find(
-      (e) => e.type === 'match' && e.date >= today && !e.user_hidden,
-    )
-    if (!futureMatch?.id) return false
-    const st = profile.seasonTransitionState
-    if (st?.offseasonMatchResumeAckEventId === futureMatch.id) return false
-    if (st?.activeDeferral?.eventId === futureMatch.id) return false
-    return true
-  })()
+  const hasPendingOffseasonMatch = useMemo(
+    () => hasPendingOffseasonMatchDecision(profile, visibleEvents, today),
+    [profile, visibleEvents, today],
+  )
   // Season transitions = HomePage (single source of truth).
   // WeekPage only displays scheduling-specific transitions (calendar/block mode changes).
 
@@ -334,10 +410,6 @@ export function WeekPage() {
     [logs],
   )
 
-  const confirmationItem = hasConfirmationRequired
-    ? snapshot?.confirmationRequired[0] ?? null
-    : null
-
   const weekPageTitle = lang === 'fr' ? 'Ma Semaine' : 'My Week'
 
   if (hasHardBlock) {
@@ -370,14 +442,7 @@ export function WeekPage() {
     <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-x-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <PageHeader
-        title={weekPageTitle}
-        backTo="/home"
-        titleSuffix={
-          blockProgression?.currentBlockLabel ??
-          localizeWeekLabel(surface?.planningContext.weekLabel ?? week, lang)
-        }
-      />
+      <PageHeader title={weekPageTitle} backTo="/home" />
 
       {/* Bandeau éditorial : eyebrow phase + H1 italic + toggle Semaine/Mois.
           Refonte UI mai 2026 — donne l'identité "magazine" à la page sans
@@ -414,25 +479,7 @@ export function WeekPage() {
           </section>
         )}
 
-        {/* Confirmation banner (Category C) */}
-        {confirmationItem && (
-          <section
-            data-testid="confirmation-banner"
-            className="flex items-center gap-3 px-4 py-3 bg-warn-bg border border-warn-bd rounded-2xl"
-          >
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-black text-warn">{confirmationItem.message}</p>
-            </div>
-            <button
-              type="button"
-              data-testid="confirmation-banner-cta"
-              onClick={() => confirmPendingUpdate(confirmationItem.id)}
-              className="flex-shrink-0 px-3 py-2 rounded-2xl bg-warn-button text-on-brand text-[10px] font-black uppercase tracking-wide hover:bg-warn-button-hover transition-colors"
-            >
-              {confirmationItem.cta}
-            </button>
-          </section>
-        )}
+        {/* Cat. C : confirmation snapshot → {@link useWeekSnapshotConfirmationSheet} (bottom sheet). */}
 
         {/* Scheduling transition (calendar/block mode changes) — season
             transitions live on HomePage. Supprimé quand un match en
@@ -440,32 +487,15 @@ export function WeekPage() {
             le banner SeasonTransitionBanner sur /home est la surface
             unique pour cette décision, on évite d'empiler 2 popups sur
             le même événement. */}
-        {!confirmationItem && schedulingTransition && !hasPendingOffseasonMatch && (
+        {!hasConfirmationRequired &&
+          schedulingTransition &&
+          !hasPendingOffseasonMatch &&
+          schedulingTransition.type !== 'calendar_mode_activated' && (
           <SchedulingTransitionBanner
             transition={schedulingTransition}
             onAction={() => dismissSchedulingTransition(schedulingTransition.type)}
             onDismiss={() => dismissSchedulingTransition(schedulingTransition.type)}
           />
-        )}
-
-        {/* FFR auto-sync notification */}
-        {syncNotification && (
-          <section
-            data-testid="ffr-sync-notification"
-            className="flex items-center gap-3 px-4 py-3 bg-info-bg border border-info-bd rounded-2xl"
-          >
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-bold text-info">{syncNotification}</p>
-              <p className="text-[10px] text-fg-muted mt-0.5">Calendrier mis à jour automatiquement</p>
-            </div>
-            <button
-              type="button"
-              onClick={dismissSyncNotification}
-              className="text-[10px] font-bold text-info hover:text-info/80 transition-colors"
-            >
-              OK
-            </button>
-          </section>
         )}
 
         {msResolution && surface && (
@@ -603,22 +633,11 @@ export function WeekPage() {
         {/* Add match CTA */}
         {!hasWeekMatch && msResolution && surface && (
           <AddMatchInline
-            onAddMatch={async (date, opponent, opponentCode) => {
-              const matchPayload = {
-                date,
-                type: 'match' as const,
-                opponent: opponent || undefined,
-                opponent_code: opponentCode || undefined,
-                is_home: true,
-                source: 'manual' as const,
-              }
-              // Persist to Supabase — returns the canonical event with real id
-              const createdEvent = await addEvent(matchPayload)
-              // Heavy correction with the canonical event
-              if (createdEvent) addMatch(createdEvent)
-            }}
             lang={lang}
-            today={today}
+            onOpen={() => {
+              setAddModalDate(suggestedMatchSaturdayISO(today))
+              setAddModalOpen(true)
+            }}
           />
         )}
 
@@ -666,20 +685,50 @@ export function WeekPage() {
       <WeekCorrectionToast message={toastMessage} onDismiss={clearToast} />
       <BottomNav />
 
-      <MatchEditDrawer event={drawerMatch} onClose={() => setDrawerMatch(null)} />
-      {addModalOpen && (
-        <AddMatchModal
-          initialDate={addModalDate}
-          existingEvents={visibleEvents}
-          onClose={() => {
-            setAddModalOpen(false)
-            setAddModalDate(undefined)
-          }}
-          onSave={async (payload) => {
-            await addEvent({ ...payload, source: 'manual' })
-          }}
-        />
-      )}
+      <MatchEditDrawer
+        event={drawerMatch}
+        onClose={() => setDrawerMatch(null)}
+        matchKindProfileContext={
+          surface?.planningContext
+            ? {
+                planningContext: surface.planningContext,
+                schedulingMode: surface.schedulingMode ?? 'calendar',
+                today,
+              }
+            : undefined
+        }
+      />
+      <AddMatchModal
+        open={addModalOpen}
+        todayISO={today}
+        initialDate={addModalDate}
+        existingEvents={visibleEvents}
+        onClose={() => {
+          setAddModalOpen(false)
+          setAddModalDate(undefined)
+        }}
+        onSave={async (payload) => {
+          const created = await addEvent({ ...payload, source: 'manual' })
+          if (!created) return
+          if (created.type === 'match') {
+            setPendingManualMatch(created)
+          } else {
+            addMatch(created)
+          }
+        }}
+      />
+
+      <MatchKindFollowUpSheet
+        open={pendingManualMatch != null}
+        lang={lang}
+        matchDateISO={pendingManualMatch?.date}
+        opponent={pendingManualMatch?.opponent}
+        onSelect={(kind) => {
+          const ev = pendingManualMatch
+          if (!ev) return
+          void finalizeManualMatchKind(kind, ev)
+        }}
+      />
     </div>
   )
 }
@@ -687,85 +736,23 @@ export function WeekPage() {
 // ── Inline add-match component ──────────────────────────────────────
 
 function AddMatchInline({
-  onAddMatch,
+  onOpen,
   lang,
-  today,
 }: {
-  onAddMatch: (date: string, opponent: string, opponentCode?: string) => void
+  onOpen: () => void
   lang: 'fr' | 'en'
-  today: string
 }) {
-  const [open, setOpen] = useState(false)
-  const [date, setDate] = useState(() => {
-    const d = new Date(today)
-    const dow = d.getDay()
-    d.setDate(d.getDate() + ((6 - dow + 7) % 7 || 7))
-    return d.toISOString().split('T')[0]
-  })
-  const [opponent, setOpponent] = useState('')
-  const [opponentCode, setOpponentCode] = useState<string | undefined>()
-
-  if (!open) {
-    return (
-      <button
-        type="button"
-        data-testid="add-match-cta"
-        onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-border-dashed-app text-fg-muted hover:text-brand-tint hover:border-brand-border-strong transition-colors"
-      >
-        <Plus className="w-4 h-4" />
-        <span className="text-xs font-bold">
-          {lang === 'fr' ? 'J\'ai un match cette semaine' : 'I have a match this week'}
-        </span>
-      </button>
-    )
-  }
-
   return (
-    <div
-      data-testid="add-match-form"
-      className="bg-glass border border-border-app rounded-2xl p-4 space-y-3"
+    <button
+      type="button"
+      data-testid="add-match-cta"
+      onClick={onOpen}
+      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-dashed border-border-dashed-app text-fg-muted hover:text-brand-tint hover:border-brand-border-strong transition-colors"
     >
-      <p className="text-xs font-black text-fg">
-        {lang === 'fr' ? 'Ajouter un match' : 'Add a match'}
-      </p>
-      <div className="space-y-2">
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="w-full bg-layer-10 border border-border-app rounded-xl px-3 py-2 text-xs text-fg rf-focus-ring"
-        />
-        <ClubSearchInput
-          value={opponent}
-          clubCode={opponentCode}
-          onChange={(name, code) => { setOpponent(name); setOpponentCode(code) }}
-        />
-      </div>
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="flex-1 py-2 rounded-xl text-xs font-bold text-fg-muted hover:text-fg-secondary transition-colors"
-        >
-          {lang === 'fr' ? 'Annuler' : 'Cancel'}
-        </button>
-        <button
-          type="button"
-          data-testid="add-match-confirm"
-          onClick={() => {
-            if (date) {
-              onAddMatch(date, opponent, opponentCode)
-              setOpen(false)
-              setOpponent('')
-              setOpponentCode(undefined)
-            }
-          }}
-          className="flex-1 py-2 rounded-xl bg-brand text-xs font-black text-on-brand hover:bg-brand-hover transition-colors"
-        >
-          {lang === 'fr' ? 'Ajouter' : 'Add'}
-        </button>
-      </div>
-    </div>
+      <Plus className="w-4 h-4" />
+      <span className="text-xs font-bold">
+        {lang === 'fr' ? 'J\'ai un match cette semaine' : 'I have a match this week'}
+      </span>
+    </button>
   )
 }

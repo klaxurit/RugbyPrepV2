@@ -212,6 +212,15 @@ function getISOWeekInfo(dateStr: string): { year: number; week: number } {
 /**
  * Compute ISO week bounds (Monday 00:00 → Sunday 23:59:59.999) for a weekId.
  */
+export function isDateInISOWeek(date: string, weekId: string): boolean {
+  const bounds = getISOWeekBounds(weekId)
+  if (!bounds) return false
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date)
+  if (!m) return false
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12)
+  return d >= bounds.weekStart && d <= bounds.weekEnd
+}
+
 function getISOWeekBounds(weekId: string): { weekStart: Date; weekEnd: Date } | null {
   const match = weekId.match(/^W(\d+)-(\d+)$/)
   if (!match) return null

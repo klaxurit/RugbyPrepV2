@@ -310,7 +310,15 @@ export interface ActiveDeferral {
 export interface TransitionEntry {
   id: string
   at: string
-  trigger: 'user_manual' | 'banner_action' | 'auto_56d' | 'ffr_match' | 'profile_change'
+  trigger:
+    | 'user_manual'
+    | 'banner_action'
+    | 'auto_56d'
+    | 'ffr_match'
+    | 'profile_change'
+    | 'match_kind_league'
+    | 'match_kind_playoffs'
+    | 'match_kind_friendly'
   from: {
     cycle: 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
     weekNumber: number
@@ -510,10 +518,15 @@ export interface SCSchedule {
 export type CalendarEventType = 'match' | 'rest' | 'unavailable'
 export type SeasonPhase = 'off-season' | 'pre-season' | 'in-season' | 'playoffs'
 
+/** Après ajout manuel : pilote reprise saison / play-offs / statu quo (amical). */
+export type MatchKind = 'league' | 'friendly' | 'cup_final'
+
 export interface CalendarEvent {
   id: string
   date: string           // YYYY-MM-DD
   type: CalendarEventType
+  /** Présent pour les matchs classés après création (ou sync métier). */
+  match_kind?: MatchKind | null
   kickoff_time?: string  // HH:MM
   opponent?: string
   opponent_code?: string // Code club FFR (ex: '4207Y') pour résolution logo

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useMemo, useRef, useState, useEffect } from 'react'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
@@ -14,6 +14,8 @@ import { useHistory } from '../hooks/useHistory'
 import { useAuth } from '../hooks/useAuth'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
+import { useStripeCheckoutReturn } from '../hooks/useStripeCheckoutReturn'
+import { useFoundingCohortAvailability } from '../hooks/useFoundingCohortAvailability'
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
 import { BottomNav } from '../components/BottomNav'
@@ -242,6 +244,8 @@ function getAvatarErrorLabel(error: AuthError, lang: Lang): string {
 }
 
 export function ProfilePage() {
+  const [searchParams] = useSearchParams()
+  const checkoutCanceled = searchParams.get('checkout') === 'cancel'
   const { profile, updateProfile, resetProfile } = useProfile()
   const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   const POSITION_OPTIONS = getPositionOptions(lang)
@@ -249,6 +253,11 @@ export function ProfilePage() {
   const { logs } = useHistory()
   const { authState, updateAvatar, signOut } = useAuth()
   const { features, isPremium, isFounding, loading: entitlementsLoading, refresh: refreshEntitlements } = useFeatureAccess()
+  const {
+    isCheckoutSuccess,
+    activationSyncing,
+    activationSyncTimeout,
+  } = useStripeCheckoutReturn(isPremium, refreshEntitlements)
   const { visibleEvents, structuralEvents } = useCalendar()
   const { fatigue } = useFatigue()
   const acwrResult = useACWR(logs, structuralEvents)
@@ -261,6 +270,7 @@ export function ProfilePage() {
     restorePurchases,
     isPlayStore,
   } = usePremiumCheckout()
+  const { cohortFull: foundingCohortFull, loading: foundingCohortLoading } = useFoundingCohortAvailability()
   const [selectedPlan, setSelectedPlan] = useState<'premium_monthly' | 'premium_yearly'>('premium_yearly')
   const [profileUpsellDismissed, setProfileUpsellDismissed] = useState(() => isDismissed('profile_premium'))
   const {
@@ -278,13 +288,17 @@ export function ProfilePage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
   const [heightInput, setHeightInput] = useState(profile.heightCm?.toString() ?? '')
   const [weightInput, setWeightInput] = useState(profile.weightKg?.toString() ?? '')
-  // Scroll to #premium anchor when navigating from CTA
+  // Scroll vers la zone Premium (#premium ou retour Stripe)
   useEffect(() => {
-    if (window.location.hash === '#premium') {
-      setTimeout(() => {
-        document.getElementById('premium')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }, 300)
-    }
+    const q = new URLSearchParams(window.location.search)
+    const needsPremiumScroll =
+      window.location.hash === '#premium' ||
+      q.get('checkout') === 'success' ||
+      q.get('checkout') === 'cancel'
+    if (!needsPremiumScroll) return
+    setTimeout(() => {
+      document.getElementById('premium')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 300)
   }, [])
 
   // Sync inputs quand le profil charge depuis Supabase
@@ -967,15 +981,19 @@ export function ProfilePage() {
         </section>
 
         <CollapsibleSection
-          title={profile.seasonMode === 'off_season' ? tr('profile_section_club_off', lang) : tr('profile_section_club_in', lang)}
-          subtitle={profile.seasonMode === 'off_season'
+          title={cycleToSeasonMode(situationData.detectedCycle) === 'off_season' ? tr('profile_section_club_off', lang) : tr('profile_section_club_in', lang)}
+          subtitle={cycleToSeasonMode(situationData.detectedCycle) === 'off_season'
             ? tr('profile_section_club_off_sub', lang)
             : tr('profile_section_club_in_sub', lang)}
           icon={<Calendar className="w-4 h-4" />}
           iconClassName="bg-ok-bg-muted text-ok border border-ok-bd"
           testId="profile-section-club"
         >
-          <ClubSettingsSection />
+          <ClubSettingsSection
+            profile={profile}
+            updateProfile={updateProfile}
+            effectiveSeasonMode={cycleToSeasonMode(situationData.detectedCycle)}
+          />
         </CollapsibleSection>
 
         {/* Abonnement & accès */}
@@ -1037,7 +1055,7 @@ export function ProfilePage() {
             <ManageSubscriptionCard lang={lang} />
           )}
 
-          {!isPremium && !isFounding && !entitlementsLoading && (
+          {!isPremium && !isFounding && !entitlementsLoading && !foundingCohortLoading && !foundingCohortFull && (
             <div className="rounded-[24px] border-2 border-brand bg-brand-soft/80 p-4 space-y-2">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand">{tr('founding_eyebrow', lang)}</p>
               <p className="text-sm font-black text-fg">{tr('profile_founding_card_title', lang)}</p>
@@ -1064,6 +1082,14 @@ export function ProfilePage() {
             </div>
           )}
 
+          {!isPremium && !isFounding && !entitlementsLoading && !foundingCohortLoading && foundingCohortFull && (
+            <div className="rounded-[24px] border border-border-app bg-layer-6 p-4 space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-fg-muted">{tr('founding_eyebrow', lang)}</p>
+              <p className="text-sm font-black text-fg">{tr('founding_cohort_sold_out_title', lang)}</p>
+              <p className="text-xs leading-relaxed text-fg-secondary">{tr('founding_cohort_sold_out_body', lang)}</p>
+            </div>
+          )}
+
           {!isPremium && canShowUpsell && !profileUpsellDismissed && (
             <PremiumUpsellCard
               title={tr('profile_premium_upsell_title', lang)}
@@ -1084,6 +1110,22 @@ export function ProfilePage() {
                     ? "Débloque le suivi des charges, l'historique complet, les courbes de progression et le coach IA illimité."
                     : 'Unlock load tracking, full history, progress curves, and unlimited AI coach.'}
                 </p>
+                {checkoutCanceled && (
+                  <p className="mt-2 text-[11px] leading-relaxed text-fg-muted">
+                    {lang === 'fr'
+                      ? 'Paiement annulé. Tu peux réessayer quand tu veux.'
+                      : 'Payment cancelled. You can try again whenever you like.'}
+                  </p>
+                )}
+                {isCheckoutSuccess && !isPremium && (
+                  <p className="mt-2 text-[11px] leading-relaxed text-brand-tint">
+                    {activationSyncing
+                      ? tr('chat_payment_confirmed', lang)
+                      : activationSyncTimeout
+                        ? tr('chat_activation_pending', lang)
+                        : tr('chat_payment_detected', lang)}
+                  </p>
+                )}
               </div>
 
               {/* Plan selector */}

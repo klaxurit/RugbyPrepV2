@@ -18,6 +18,7 @@ export default defineConfig([
   ]),
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['playwright.config.ts', 'e2e/**'],
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
@@ -27,6 +28,14 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+    },
+  },
+  {
+    files: ['playwright.config.ts', 'e2e/**/*.{ts,tsx}'],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.node,
     },
   },
   eslintConfigPrettier,

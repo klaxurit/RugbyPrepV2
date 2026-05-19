@@ -1,18 +1,25 @@
 const STRIPE_API_BASE_URL = 'https://api.stripe.com'
 
+/** Edge Functions run on Deno; IDE TS uses browser/node libs → avoid naming global `Deno`. */
+function edgeEnv(key: string): string | undefined {
+  const deno = (globalThis as { Deno?: { env: { get(k: string): string | undefined } } }).Deno
+  return deno?.env.get(key)
+}
+
 type StripePriceConfig = {
   monthly: string
   yearly: string
   founding_yearly: string | null
 }
 
+/** Fallback price IDs (Stripe **Price**, `price_…`) — override via Supabase Edge secrets en prod. */
 const DEFAULT_PRICE_CONFIG: StripePriceConfig = {
-  monthly: 'price_1T7d7SA0Tj8d0YU9wdm1h3pO',
-  yearly: 'price_1T7d8uA0Tj8d0YU9R2xW5ZcG',
+  monthly: 'price_1TXH8jAFlfRVQSqAJ8oNMUIe',
+  yearly: 'price_1TXHABAFlfRVQSqABB9wVTCu',
   // WS0 — must be set via STRIPE_PRICE_FOUNDING_YEARLY secret. Defaults null
   // so a misconfigured env returns a clear "not configured" error rather than
   // billing the wrong amount.
-  founding_yearly: null,
+  founding_yearly: 'price_1TXHB0AFlfRVQSqAV80BPNhD',
 }
 
 const toHex = (bytes: Uint8Array): string =>
@@ -29,9 +36,9 @@ const timingSafeEqual = (a: string, b: string): boolean => {
 }
 
 const getPriceConfig = (): StripePriceConfig => ({
-  monthly: Deno.env.get('STRIPE_PRICE_PREMIUM_MONTHLY') ?? DEFAULT_PRICE_CONFIG.monthly,
-  yearly: Deno.env.get('STRIPE_PRICE_PREMIUM_YEARLY') ?? DEFAULT_PRICE_CONFIG.yearly,
-  founding_yearly: Deno.env.get('STRIPE_PRICE_FOUNDING_YEARLY') ?? DEFAULT_PRICE_CONFIG.founding_yearly,
+  monthly: edgeEnv('STRIPE_PRICE_PREMIUM_MONTHLY') ?? DEFAULT_PRICE_CONFIG.monthly,
+  yearly: edgeEnv('STRIPE_PRICE_PREMIUM_YEARLY') ?? DEFAULT_PRICE_CONFIG.yearly,
+  founding_yearly: edgeEnv('STRIPE_PRICE_FOUNDING_YEARLY') ?? DEFAULT_PRICE_CONFIG.founding_yearly,
 })
 
 export const getStripePriceIdForPlan = (planId: string): string | null => {

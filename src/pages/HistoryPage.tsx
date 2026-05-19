@@ -1,9 +1,13 @@
 import { Link } from 'react-router-dom'
 import { Trash2, Calendar, Activity, Dumbbell, Zap, ChevronDown, Lock } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { tr, type Lang } from '../i18n/appLabels'
 import { useBlockLogs } from '../hooks/useBlockLogs'
 import { useHistory } from '../hooks/useHistory'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
+import { useProfile } from '../hooks/useProfile'
+import { getExerciseName } from '../data/exercises'
+import { localizeBlockName } from '../services/motherSession/motherSessionBlockLabels'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { getProgramHistorySummary } from '../services/program/programHistoryAnalytics'
@@ -31,17 +35,33 @@ const sessionTypeIcon: Record<SessionType, React.ReactNode> = {
   ACTIVE_RECOVERY: <Activity className="w-4 h-4" />,
 }
 
-const weekLabel = (w: CycleWeek) => (w === 'DELOAD' ? 'Semaine légère' : `Semaine ${w.replace('W', '')}`)
+const weekLabel = (w: CycleWeek, lang: Lang) =>
+  w === 'DELOAD'
+    ? lang === 'en'
+      ? 'Deload week'
+      : 'Semaine légère'
+    : lang === 'en'
+      ? `Week ${w.replace('W', '')}`
+      : `Semaine ${w.replace('W', '')}`
 
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+const formatDate = (iso: string, lang: Lang) =>
+  new Date(iso).toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  })
 
-const formatDateTime = (iso: string) =>
-  new Date(iso).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })
+const formatDateTime = (iso: string, lang: Lang) =>
+  new Date(iso).toLocaleString(lang === 'en' ? 'en-GB' : 'fr-FR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  })
 
 export function HistoryPage() {
   const { logs, clearLogs } = useHistory()
   const { logs: blockLogs } = useBlockLogs()
+  const { profile } = useProfile()
+  const lang = (profile.preferredLanguage as Lang | undefined) ?? 'fr'
   const { isPremium } = useFeatureAccess()
   const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null)
 
@@ -53,7 +73,7 @@ export function HistoryPage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
       <PageHeader
-        title="Historique"
+        title={tr('history_page_title', lang)}
         backTo="/home"
         right={
           isPremium && logs.length > 0 ? (
@@ -63,7 +83,7 @@ export function HistoryPage() {
               className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/20 bg-white/15 text-xs font-bold text-shell-text-muted hover:bg-white/30 hover:text-shell-text transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              Effacer
+              {tr('history_clear_logs', lang)}
             </button>
           ) : undefined
         }
@@ -78,16 +98,16 @@ export function HistoryPage() {
               <Lock className="w-6 h-6 text-brand-tint" />
             </div>
             <div>
-              <p className="text-sm font-bold text-fg">Historique complet</p>
+              <p className="text-sm font-bold text-fg">{tr('history_upsell_title', lang)}</p>
               <p className="text-xs text-fg-muted mt-1 leading-relaxed">
-                Retrouve toutes tes seances, charges et exercices. Suis ta progression semaine apres semaine.
+                {tr('history_upsell_body', lang)}
               </p>
             </div>
             <Link
               to="/profile#premium"
               className="px-6 py-3 rounded-full bg-brand hover:bg-brand-hover text-on-brand text-sm font-bold transition-colors"
             >
-              Activer Premium
+              {tr('profile_premium_activate', lang)}
             </Link>
           </div>
         )}
@@ -97,15 +117,15 @@ export function HistoryPage() {
           <div className="grid grid-cols-2 gap-3" data-testid="history-stats">
             <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
               <div className="text-2xl font-black text-fg" data-testid="stat-total">{summary.totalSessions}</div>
-              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Séances totales</div>
+              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">{tr('history_stat_total', lang)}</div>
             </div>
             <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
               <div className="text-2xl font-black text-fg" data-testid="stat-7d">{summary.sessionsLast7d}</div>
-              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">7 derniers jours</div>
+              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">{tr('history_stat_7d', lang)}</div>
             </div>
             <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
               <div className="text-2xl font-black text-fg" data-testid="stat-28d">{summary.sessionsLast28d}</div>
-              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">28 derniers jours</div>
+              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">{tr('history_stat_28d', lang)}</div>
             </div>
             <div className="bg-layer-5 border border-border-app p-4 rounded-[24px] flex flex-col gap-1">
               <div className="text-xs font-black text-fg-secondary flex items-center gap-2">
@@ -113,14 +133,14 @@ export function HistoryPage() {
                 <span className="text-fg-ghost">/</span>
                 <span className="text-blue-400" data-testid="stat-legacy">{summary.legacySessions}</span>
               </div>
-              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">Annuel / Legacy</div>
+              <div className="text-[10px] font-bold text-fg-muted uppercase tracking-tighter">{tr('history_stat_split', lang)}</div>
             </div>
           </div>
         )}
 
         {/* Séances */}
         {isPremium && <section>
-          <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">Séances</h2>
+          <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">{tr('progress_tab_sessions', lang)}</h2>
 
           {logs.length === 0 ? (
             <div className="bg-layer-5 border border-border-app rounded-[24px] p-6 flex flex-col items-center gap-3 text-center">
@@ -128,18 +148,18 @@ export function HistoryPage() {
                 <Calendar className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-sm font-bold text-fg">Aucune séance</p>
-                <p className="text-xs text-fg-muted mt-0.5">Lance ta première séance depuis la page Semaine.</p>
+                <p className="text-sm font-bold text-fg">{tr('history_empty_title', lang)}</p>
+                <p className="text-xs text-fg-muted mt-0.5">{tr('history_empty_body', lang)}</p>
               </div>
               <Link to="/week" className="text-xs font-black text-brand-tint uppercase tracking-wide">
-                Voir la semaine →
+                {tr('history_empty_cta', lang)}
               </Link>
             </div>
           ) : (
             <div className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden divide-y divide-border-app">
               {logs.map((log) => {
-                const title = getSessionLogDisplayTitle(log)
-                const cyclePart = getSessionLogCycleLabel(log)
+                const title = getSessionLogDisplayTitle(log, lang)
+                const cyclePart = getSessionLogCycleLabel(log, lang)
 
                 return (
                   <div key={log.id} className="p-4 flex items-start justify-between gap-2" data-testid="history-log-entry">
@@ -151,7 +171,7 @@ export function HistoryPage() {
                         <span className="text-sm font-bold text-fg truncate block" data-testid="log-title">{title}</span>
                         <div className="text-xs text-fg-muted mt-0.5">
                           {cyclePart && <><span data-testid="log-cycle-label">{cyclePart}</span> · </>}
-                          {formatDate(log.dateISO)}
+                          {formatDate(log.dateISO, lang)}
                         </div>
                         {log.notes && (
                           <div className="text-xs text-fg-faint mt-0.5 italic">&quot;{log.notes}&quot;</div>
@@ -161,7 +181,7 @@ export function HistoryPage() {
                     <div className={`text-[10px] font-black px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5 ${
                       log.fatigue === 'OK' ? 'bg-ok-bg text-ok-strong' : 'bg-warn-bg text-warn-strong'
                     }`}>
-                      {log.fatigue === 'OK' ? 'OK' : 'Fatigue'}
+                      {log.fatigue === 'OK' ? 'OK' : tr('history_fatigue_tired', lang)}
                     </div>
                   </div>
                 )
@@ -173,7 +193,7 @@ export function HistoryPage() {
         {/* Blocs enregistrés */}
         {isPremium && blockLogs.length > 0 && (
           <section>
-            <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">Détail des exercices</h2>
+            <h2 className="text-xs font-black uppercase tracking-wider text-fg-muted mb-3">{tr('history_section_blocks', lang)}</h2>
             <div className="space-y-2">
               {blockLogs.map((log) => (
                 <div key={log.id} className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden">
@@ -187,9 +207,9 @@ export function HistoryPage() {
                         {sessionTypeIcon[log.sessionType]}
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-fg">{log.blockName}</div>
+                        <div className="text-sm font-bold text-fg">{localizeBlockName(log.blockName, lang)}</div>
                         <div className="text-xs text-fg-muted italic">
-                          {weekLabel(log.week)} · {formatDateTime(log.dateISO)}
+                          {weekLabel(log.week, lang)} · {formatDateTime(log.dateISO, lang)}
                         </div>
                       </div>
                     </div>
@@ -200,11 +220,13 @@ export function HistoryPage() {
                     <div className="px-4 pb-4 space-y-2 border-t border-border-app pt-3">
                       {log.entries.map((entry, i) => (
                         <div key={`${entry.exerciseId}-${i}`} className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-fg">{entry.exerciseId}</span>
+                          <span className="text-xs font-bold text-fg">
+                            {getExerciseName(entry.exerciseId, lang)}
+                          </span>
                           <span className="text-xs text-fg-muted">
                             {[
                               entry.loadKg !== undefined ? `${entry.loadKg}kg` : null,
-                              entry.reps !== undefined ? `${entry.reps} reps` : null,
+                              entry.reps !== undefined ? `${entry.reps} ${tr('history_unit_reps', lang)}` : null,
                               entry.seconds !== undefined ? `${entry.seconds}s` : null,
                               entry.meters !== undefined ? `${entry.meters}m` : null,
                             ]

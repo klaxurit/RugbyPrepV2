@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
-import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2 } from 'lucide-react'
+import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, X } from 'lucide-react'
 import { useSessionRun, buildExerciseTourKey } from '../contexts/SessionRunContext'
 import { findCurrentPending } from '../services/motherSession/findCurrentPending'
-import { isDirectiveText, resolveExerciseId, resolveExerciseIdForDemo } from '../services/motherSession/motherSessionExerciseMap'
+import { isDirectiveText, resolveExerciseIdForSessionRun } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
 import { parseBlockFormat } from '../services/ui/parseBlockFormat'
-import { translateBlockNameToFr } from '../services/motherSession/motherSessionContentFr'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { useProfile } from '../hooks/useProfile'
 import { useWeek } from '../hooks/useWeek'
@@ -19,6 +18,7 @@ import { useAcwrOverride } from '../hooks/useAcwrOverride'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
+import { useWeekSnapshotConfirmationSheet } from '../hooks/useWeekSnapshotConfirmationSheet'
 import { useAuth } from '../hooks/useAuth'
 import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
 import { buildSlotSignature } from '../services/motherSession/slotSignature'
@@ -28,6 +28,9 @@ import { buildMotherSessionProgramSessionLog } from '../services/program/buildPr
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { prepareSessionForRender } from '../services/session/prepareSessionForRender'
+import { localizeMotherSessionExerciseName } from '../services/motherSession/localizeMotherSessionExerciseName'
+import { localizeBlockName } from '../services/motherSession/motherSessionBlockLabels'
+import { restTimerAfterTourLine } from '../i18n/sessionRunUi'
 import { SessionFinishedSheet } from '../components/session/SessionFinishedSheet'
 import { computeSessionTonnage } from '../services/session/computeSessionTonnage'
 import { detectSessionPRs } from '../services/session/detectSessionPRs'
@@ -54,7 +57,7 @@ import {
 //  est utilisé en aval directement dans buildMotherSessionProgramSessionLog.)
 
 import { getToday } from '../services/ui/debugDateOverride'
-import { cyclePhaseLabel, trainingLevelLabel } from '../i18n/appLabels'
+import { cyclePhaseLabel, trainingLevelLabel, tr } from '../i18n/appLabels'
 
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
   let out = label
@@ -107,7 +110,7 @@ export function SessionDetailPage() {
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue, setFatigue } = useFatigue()
   const { addLog, logs } = useHistory()
-  const { structuralEvents } = useCalendar()
+  const { structuralEvents, visibleEvents } = useCalendar()
   const navigate = useNavigate()
   const { upsertSet, linkToSessionLog, logs: setLogs } = useExerciseSetLogs()
   const { isPremium } = useFeatureAccess()
@@ -184,8 +187,22 @@ export function SessionDetailPage() {
     ],
   )
   const { surface: rawSurface } = useWeeklyProgramSurface(surfaceParams)
-  const { surface: snapshotSurface, snapshot } = useWeekSnapshot(surfaceParams)
+  const {
+    surface: snapshotSurface,
+    snapshot,
+    confirmPendingUpdate,
+    hasConfirmationRequired,
+  } = useWeekSnapshot(surfaceParams)
   const surface = snapshotSurface ?? rawSurface
+
+  const confirmationItem = hasConfirmationRequired ? snapshot?.confirmationRequired[0] ?? null : null
+  useWeekSnapshotConfirmationSheet({
+    hasConfirmationRequired,
+    confirmationItem,
+    confirmPendingUpdate,
+    visibleEvents,
+    today,
+  })
 
   // ── Hard-block global ──────────────────────────────────────────────────────
   const { hasHardBlock, hardBlockReasons } = getGlobalProgramHardBlock(profile)
@@ -242,7 +259,7 @@ export function SessionDetailPage() {
       const loggableIdx: number[] = []
       block.exercises.forEach((ex, i) => {
         if (isDirectiveText(ex.name)) return
-        if (!(ex.exerciseId || resolveExerciseId(ex.name))) return
+        if (!(resolveExerciseIdForSessionRun(ex.name, ex.exerciseId))) return
         loggableIdx.push(i)
       })
       const fmt = parseBlockFormat(block.format)
@@ -266,7 +283,7 @@ export function SessionDetailPage() {
       completedTours += blockCompletedTours
       if (activeBlockIndex === 0 && blockActiveTour !== null) {
         activeBlockIndex = b + 1
-        activeBlockName = translateBlockNameToFr(block.name)
+        activeBlockName = localizeBlockName(block.name, lang)
         activeTourIndex = blockActiveTour + 1
         activeBlockTourCount = unitCount
         activeBlockUnitLabel =
@@ -281,7 +298,7 @@ export function SessionDetailPage() {
     }
     if (activeBlockIndex === 0 && blocks.length > 0) {
       activeBlockIndex = blocks.length
-      activeBlockName = translateBlockNameToFr(blocks[blocks.length - 1].name)
+      activeBlockName = localizeBlockName(blocks[blocks.length - 1].name, lang)
     }
     return {
       totalTours,
@@ -293,7 +310,7 @@ export function SessionDetailPage() {
       activeBlockTourCount,
       activeBlockUnitLabel,
     }
-  }, [activeSlot, sessionRun.completedExercises])
+  }, [activeSlot, sessionRun.completedExercises, lang])
 
   // (handleCursorChange retiré : l'auto-scroll vers la série courante sera
   //  réintégré en D6 via le sticky CTA contextuel `validate-exo`.)
@@ -393,7 +410,7 @@ export function SessionDetailPage() {
     for (const block of activeSlot.session.blocks) {
       for (const exercise of block.exercises) {
         if (!exercise || isDirectiveText(exercise.name)) continue
-        const exerciseId = exercise.exerciseId ?? resolveExerciseId(exercise.name)
+        const exerciseId = resolveExerciseIdForSessionRun(exercise.name, exercise.exerciseId)
         if (!exerciseId) continue
         exercises.push({ exerciseId, prescription: exercise.prescription })
       }
@@ -440,7 +457,7 @@ export function SessionDetailPage() {
 
       block.exercises.forEach((exercise, exerciseIndex) => {
         if (!exercise || isDirectiveText(exercise.name)) return
-        const exerciseId = exercise.exerciseId ?? resolveExerciseId(exercise.name)
+        const exerciseId = resolveExerciseIdForSessionRun(exercise.name, exercise.exerciseId)
         if (!exerciseId) return
 
         const valuesPerTour: ({ loadKg?: number; reps?: number } | undefined)[] = []
@@ -626,8 +643,8 @@ export function SessionDetailPage() {
     setEmomBlockNumber(null)
   }
 
-  // B3 — démo depuis le bouton œil (ToursBlock + WarmupBlock, bloc synthétique #0).
-  // Préfère exercise.exerciseId, sinon resolveExerciseIdForDemo (dont variantes « X or Y »).
+  // B3 — démo depuis le bouton œil (ToursBlock + WarmupBlock + Emom/Prehab, bloc #0).
+  // Même résolution que le moteur de séance (`resolveExerciseIdForSessionRun`).
   const handlePlayDemo = (blockNumber: number, exerciseIndex: number) => {
     if (!adaptedSession) return
     const exercise =
@@ -637,7 +654,7 @@ export function SessionDetailPage() {
     if (!exercise) return
     const rawExerciseId =
       'exerciseId' in exercise ? (exercise as { exerciseId?: string }).exerciseId : undefined
-    const exoId = rawExerciseId ?? resolveExerciseIdForDemo(exercise.name ?? '')
+    const exoId = resolveExerciseIdForSessionRun(exercise.name ?? '', rawExerciseId)
     if (!exoId || !hasExerciseDemo(exoId)) return
     setDemoExerciseId(exoId)
   }
@@ -719,7 +736,6 @@ export function SessionDetailPage() {
   const pageTitle = activeSlot
     ? formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang)
     : sessionPageTitle
-  const pageSuffix = localizeWeekLabel(surface?.planningContext.weekLabel ?? week, lang)
 
   // (`adaptedSession` + `phase` + `runningCursor` + auto-scroll : déplacés au-dessus
   //  du early-return `hasHardBlock` pour respecter rules-of-hooks. Voir plus haut.)
@@ -759,7 +775,7 @@ export function SessionDetailPage() {
     if (runningCursor.isLastOfTour && !(runningCursor.isLastTour && runningCursor.isLastBlock)) {
       sessionRun.startRestTimer(
         runningCursor.restSeconds,
-        `Fin du tour ${runningCursor.tourIndex + 1}`,
+        restTimerAfterTourLine(runningCursor.tourIndex + 1, lang),
       )
     }
     handleBlockCompleted(runningCursor.blockNumber)
@@ -769,7 +785,23 @@ export function SessionDetailPage() {
     <div className="min-h-screen bg-app font-sans text-fg pb-64 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none opacity-[0.025] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:20px_20px]" />
 
-      <PageHeader title={pageTitle} backTo="/week" titleSuffix={pageSuffix} />
+      <PageHeader
+        title={pageTitle}
+        backTo="/week"
+        suppressProfileLink={phase === 'running'}
+        right={
+          phase === 'running' ? (
+            <button
+              type="button"
+              onClick={handleQuitRunningSession}
+              className="p-2 -mr-1 rounded-xl transition-colors hover:bg-white/20 text-shell-text-muted hover:text-shell-text rf-focus-ring"
+              aria-label={tr('session_quit_workout_aria', lang)}
+            >
+              <X className="w-5 h-5" strokeWidth={2.25} aria-hidden />
+            </button>
+          ) : undefined
+        }
+      />
 
       {phase === 'running' && (
         <div className="bg-brand text-app px-[18px] py-3.5">
@@ -981,12 +1013,14 @@ export function SessionDetailPage() {
               block={adaptedSession.blocks.find((b) => b.number === emomBlockNumber) ?? null}
               onComplete={handleEmomComplete}
               onClose={() => setEmomBlockNumber(null)}
+              lang={lang}
             />
           )}
           <IsoOverlay
             state={isoTrigger?.overlayState ?? null}
             onComplete={handleIsoComplete}
             onClose={() => setIsoTrigger(null)}
+            lang={lang}
           />
         </div>
       )}
@@ -1001,7 +1035,7 @@ export function SessionDetailPage() {
               variant={{
                 kind: 'validate-exo',
                 eyebrow: `${runningCursor.blockName} · Tour ${runningCursor.tourIndex + 1}`,
-                label: `Valider · ${runningCursor.exerciseName}`,
+                label: `Valider · ${localizeMotherSessionExerciseName(runningCursor.exerciseName, lang)}`,
                 onValidate: handleValidateFromStickyCTA,
               }}
             />
@@ -1057,22 +1091,7 @@ export function SessionDetailPage() {
         onConfirm={handleConfirmMotherSession}
       />
 
-      {/* Bouton "Quitter" discret en mode running — la flèche back du PageHeader
-          navigue vers /week sans confirmation. Ce bouton expose une sortie
-          explicite avec confirmation. */}
-      {phase === 'running' && (
-        <button
-          type="button"
-          onClick={handleQuitRunningSession}
-          className="fixed bottom-32 right-4 z-30 rounded-full border border-app/30 bg-brand/80 backdrop-blur px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-app shadow-lg rf-focus-ring"
-        >
-          Quitter
-        </button>
-      )}
-
-      {/* B3 — exercise demo sheet (eye button on exercise rows). Rendered at
-          page root so it overlays the entire content. Self-renders nothing
-          when demoExerciseId is null. */}
+      {/* B3 — exercise demo sheet (bouton œil). Rendu à la racine pour overlay plein écran. */}
       <ExerciseDemoSheet
         exerciseId={demoExerciseId}
         lang={lang}

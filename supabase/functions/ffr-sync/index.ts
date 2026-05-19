@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { corsHeaders, json } from '../_shared/http.ts'
+import { captureEdgeException } from '../_shared/sentry.ts'
 import { requireUser } from '../_shared/supabase.ts'
 
 // ─── Types ───
@@ -41,6 +42,7 @@ serve(async (req: Request) => {
     return json({ success: false, error: 'unknown_action' }, 400)
   } catch (err) {
     console.error('ffr-sync error:', err)
+    await captureEdgeException(err, { function: 'ffr-sync', extraTags: { scope: 'handler' } })
     return json({ success: false, error: 'internal_error', message: String(err) }, 500)
   }
 })
@@ -75,6 +77,7 @@ async function handleSyncCalendar(req: Request, body: RequestBody) {
     return json({ success: true, imported })
   } catch (err) {
     console.error('sync_calendar failed:', err)
+    await captureEdgeException(err, { function: 'ffr-sync', extraTags: { scope: 'sync_calendar' } })
     const msg = err instanceof Error ? err.message : String(err)
     return json({ success: false, error: 'sync_failed', detail: msg, imported: 0 })
   }

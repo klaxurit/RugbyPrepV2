@@ -3,6 +3,7 @@ import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { useEntitlements } from './useEntitlements'
 import { useHintVisibility } from './useHintVisibility'
+import { useFoundingCohortAvailability } from './useFoundingCohortAvailability'
 
 export const D2_DELAY_MS = 24 * 60 * 60 * 1000 // 24h
 export const FOUNDING_OFFER_HINT_ID = 'founding_offer_2026'
@@ -40,12 +41,14 @@ function readFoundingForceShow(): boolean {
 }
 
 interface FoundingOfferEligibility {
-  /** True iff the user matches the trigger : Day 2+ AND ≥1 session AND not paying AND not dismissed. */
+  /** True iff the user matches the trigger : Day 2+ AND ≥1 session AND not paying AND not dismissed AND cohort not full (unless forceShow). */
   eligible: boolean
   /** Loading any of the upstream signals. */
   loading: boolean
   /** Whether the user has dismissed the offer at least once. Used to gate re-prompts. */
   dismissed: boolean
+  /** Server says founding cohort reached cap (successful RPC only). */
+  cohortFull: boolean
   /**
    * Persiste le refus de l’offre (local + Supabase). Doit être la même fonction que celle
    * utilisée pour calculer `eligible` — ne pas appeler `useHintVisibility` en parallèle ailleurs
@@ -61,6 +64,8 @@ interface EligibilityInputs {
   hasSession: boolean
   dismissed: boolean
   loading: boolean
+  /** When true (server-loaded), hide offer unless forceShow explains sold-out messaging. */
+  cohortFull?: boolean
   now?: number
 }
 
@@ -70,11 +75,14 @@ interface EligibilityInputs {
  *
  * `forceShow` (set via /founding route) bypasses the dismissed + D2 + session
  * checks. It still respects the no-userId, loading, and isPremium gates.
+ * When `cohortFull` is true it still blocks unless `forceShow` — so /
+ * founding can explain that the cohort is complete.
  */
 export function evaluateFoundingEligibility(inputs: EligibilityInputs & { forceShow?: boolean }): boolean {
   if (!inputs.userId) return false
   if (inputs.loading) return false
   if (inputs.isPremium) return false
+  if (inputs.cohortFull && !inputs.forceShow) return false
   if (inputs.forceShow) return true
   if (inputs.dismissed) return false
   if (inputs.userCreatedAt == null) return false
@@ -101,6 +109,7 @@ export function useFoundingOfferEligibility(): FoundingOfferEligibility {
   const { isPremium, loading: entitlementsLoading } = useEntitlements()
   const { visible: hintVisible, loading: hintLoading, dismiss } = useHintVisibility(FOUNDING_OFFER_HINT_ID)
   const dismissed = !hintVisible && !hintLoading
+  const { loading: cohortLoading, cohortFull } = useFoundingCohortAvailability()
 
   const [hasSession, setHasSession] = useState<boolean | null>(null)
 
@@ -132,7 +141,7 @@ export function useFoundingOfferEligibility(): FoundingOfferEligibility {
     }
   }, [userId])
 
-  const loading = entitlementsLoading || hintLoading || hasSession === null
+  const loading = entitlementsLoading || hintLoading || hasSession === null || cohortLoading
   const forceShow = readFoundingForceShow()
 
   const eligible = evaluateFoundingEligibility({
@@ -143,7 +152,8 @@ export function useFoundingOfferEligibility(): FoundingOfferEligibility {
     dismissed,
     loading,
     forceShow,
+    cohortFull,
   })
 
-  return { eligible, loading, dismissed, dismiss }
+  return { eligible, loading, dismissed, dismiss, cohortFull }
 }

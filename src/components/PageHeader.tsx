@@ -18,13 +18,15 @@ interface PageHeaderProps {
   titleSuffix?: ReactNode
   /** Contenu à droite du header (boutons, badges...) */
   right?: ReactNode
+  /** Séance / plein écran : masquer le lien profil pour prioriser une action à droite (ex. fermer la séance). */
+  suppressProfileLink?: boolean
 }
 
 /**
  * Header de page harmonisé : [chevron] + RugbyForgeLogo (full) + titre en dessous.
  * Thème clair par défaut (crème + bordeaux). Suit les tokens sémantiques.
  */
-export function PageHeader({ title, backTo, right }: PageHeaderProps) {
+export function PageHeader({ title, backTo, titleSuffix, right, suppressProfileLink }: PageHeaderProps) {
   useScrollThemeColor()
   const { authState } = useAuth()
   const { profile } = useProfile()
@@ -51,13 +53,18 @@ export function PageHeader({ title, backTo, right }: PageHeaderProps) {
         )}
         <div className="min-w-0 flex-1">
           <RugbyForgeLogo size="md" />
+          {titleSuffix ? (
+            <p className="mt-2 text-[11px] font-bold uppercase tracking-wide text-shell-text-muted text-center sm:text-left">
+              {titleSuffix}
+            </p>
+          ) : null}
           <span className="sr-only">{title}</span>
         </div>
       </div>
-      {(right || showProfileAvatar) && (
+      {(right || (showProfileAvatar && !suppressProfileLink)) && (
         <div className="flex items-center gap-2 flex-shrink-0">
           {right}
-              {showProfileAvatar ? (
+              {showProfileAvatar && !suppressProfileLink ? (
           <Link
             to="/profile"
             aria-label={tr('page_header_profile', lang)}

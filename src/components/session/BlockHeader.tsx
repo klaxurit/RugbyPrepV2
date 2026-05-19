@@ -14,6 +14,8 @@ interface BlockHeaderProps {
   expanded: boolean
   onToggle: () => void
   lang?: Lang
+  /** Si false, masque la pastille À venir / En cours / Terminé (bloc hors flux ex. échauffement global). */
+  showStateChip?: boolean
 }
 
 const STATE_BG: Record<BlockState, string> = {
@@ -51,6 +53,7 @@ export function BlockHeader({
   expanded,
   onToggle,
   lang = 'fr',
+  showStateChip = true,
 }: BlockHeaderProps) {
   const numStr = String(number).padStart(2, '0')
   const isDone = state === 'done'
@@ -126,7 +129,7 @@ export function BlockHeader({
 
         {/* Meta : chip d'état + durée */}
         <div className="mt-3 flex flex-wrap items-center gap-2 gap-y-1.5">
-          <BlockStateChip state={state} lang={lang} />
+          {showStateChip ? <BlockStateChip state={state} lang={lang} /> : null}
           {durationMin != null && (
             <span className="text-[10px] font-bold tabular-nums tracking-wide text-fg/55">
               {durationMin} MIN

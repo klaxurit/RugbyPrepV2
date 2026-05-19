@@ -49,6 +49,12 @@ const NOT_CONFIGURED_PATTERNS = [
   /provider_not_wired/i,
 ]
 
+const FOUNDING_COHORT_FULL_PATTERNS = [
+  /founding_cohort_full/i,
+  /100\s+places/i,
+  /offre\s+founding\s+est\s+complète/i,
+]
+
 /** Maps a raw error string into a user-readable French sentence. */
 export function mapCheckoutError(raw: unknown): string {
   if (!raw) return 'Le paiement a échoué. Réessaie dans quelques instants.'
@@ -73,6 +79,9 @@ export function mapCheckoutError(raw: unknown): string {
   }
   if (NOT_CONFIGURED_PATTERNS.some((p) => p.test(message))) {
     return 'Le paiement n\'est pas encore disponible. Reviens d\'ici quelques heures ou écris-nous à bonjour@rugbyforge.fr.'
+  }
+  if (FOUNDING_COHORT_FULL_PATTERNS.some((p) => p.test(message))) {
+    return 'L\'offre Founding est complète (100 places). Tu peux toujours choisir l\'abonnement Premium standard.'
   }
 
   // Default fallback — generic but invites retry + contact.

@@ -22,7 +22,7 @@ export interface AthleteIdentityContext {
 }
 
 export interface AthletePlanningInputs {
-  events: Array<Pick<CalendarEvent, 'date' | 'type'>>
+  events: Array<Pick<CalendarEvent, 'date' | 'type' | 'match_kind'>>
   today: Date | string
 
   weeklyFrequency: 2 | 3 | 4

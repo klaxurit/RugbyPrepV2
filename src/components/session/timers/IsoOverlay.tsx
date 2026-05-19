@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { localizeMotherSessionExerciseName, type Lang } from '../../../services/motherSession/localizeMotherSessionExerciseName'
 import { useRestBeepPref } from '../../../hooks/useRestBeepPref'
 import { playRestEndBeep } from '../../../utils/audioBeep'
 import { vibrate } from '../../../utils/vibrate'
@@ -19,6 +20,7 @@ interface IsoOverlayProps {
   onComplete: () => void
   /** Click bouton fermer (annule sans valider). */
   onClose: () => void
+  lang?: Lang
 }
 
 /**
@@ -32,7 +34,7 @@ interface IsoOverlayProps {
  * Mode single-phase pour l'instant (pas de perSide/perDirection — Banded Neck
  * Iso Multi reste sur l'IsoChronoButton existant si réintroduit en D7).
  */
-export function IsoOverlay({ state, onComplete, onClose }: IsoOverlayProps) {
+export function IsoOverlay({ state, onComplete, onClose, lang = 'fr' }: IsoOverlayProps) {
   const { enabled: beepEnabled } = useRestBeepPref()
   const beepRef = useRef(beepEnabled)
   useEffect(() => {
@@ -107,7 +109,7 @@ export function IsoOverlay({ state, onComplete, onClose }: IsoOverlayProps) {
               className="mt-0.5 font-serif italic font-extrabold leading-tight text-fg"
               style={{ fontSize: 18, letterSpacing: '-0.4px' }}
             >
-              {state.exerciseName}
+              {localizeMotherSessionExerciseName(state.exerciseName, lang)}
             </div>
           </div>
           <button

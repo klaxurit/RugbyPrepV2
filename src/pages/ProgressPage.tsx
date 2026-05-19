@@ -448,8 +448,8 @@ export function ProgressPage() {
                 <h2 className="text-sm font-black uppercase tracking-wider text-fg-muted mb-3">{tr('progress_recent_sessions', lang)}</h2>
                 <div className="bg-layer-5 border border-border-app rounded-[24px] overflow-hidden divide-y divide-edge-hairline">
                   {(showAllSessions ? recentSessions : recentSessions.slice(0, 3)).map((log) => {
-                    const title = getSessionLogDisplayTitle(log)
-                    const cyclePart = getSessionLogCycleLabel(log)
+                    const title = getSessionLogDisplayTitle(log, lang)
+                    const cyclePart = getSessionLogCycleLabel(log, lang)
                     const datePart = new Date(log.dateISO).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { day: 'numeric', month: 'short' })
 
                     return (

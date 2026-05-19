@@ -3,6 +3,14 @@ import type { ACWRZone } from './useACWR'
 import type { CalendarEvent, UserProfile } from '../types/training'
 import type { ProgramChangeNotice, VisibleProgramChangeNotice } from '../types/programChange'
 import { detectProgramChange } from '../services/program/detectProgramChange'
+import {
+  PROGRAM_NOTICE_STORAGE_KEY,
+  PROGRAM_NOTICE_UPDATED_EVENT,
+  readProgramNoticePersisted,
+  writeProgramNoticePersisted,
+  type PersistedProgramNoticeState,
+} from '../services/program/programNoticeAck'
+import { hasPendingOffseasonMatchDecision } from '../services/season/hasPendingOffseasonMatchDecision'
 
 const PREVIEW_KEY = 'rf.programNotice.preview.v1'
 
@@ -101,39 +109,8 @@ function readPreviewNotice(): ProgramChangeNotice | null {
   }
 }
 
-const STORAGE_KEY = 'rf.programNotice.v1'
+const EMPTY: PersistedProgramNoticeState = { acknowledged: {}, postponed: {} }
 const POSTPONE_DAYS = 7
-
-interface PersistedState {
-  acknowledged: Record<string, string>
-  postponed: Record<string, string>
-}
-
-const EMPTY: PersistedState = { acknowledged: {}, postponed: {} }
-
-function readPersisted(): PersistedState {
-  if (typeof window === 'undefined') return EMPTY
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return EMPTY
-    const parsed = JSON.parse(raw) as Partial<PersistedState>
-    return {
-      acknowledged: { ...(parsed.acknowledged ?? {}) },
-      postponed: { ...(parsed.postponed ?? {}) },
-    }
-  } catch {
-    return EMPTY
-  }
-}
-
-function writePersisted(state: PersistedState): void {
-  if (typeof window === 'undefined') return
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-  } catch {
-    // ignore quota
-  }
-}
 
 /**
  * Vrai quand l'utilisateur est en off-season ET a un match futur
@@ -148,22 +125,6 @@ function writePersisted(state: PersistedState): void {
  * la même décision, et son "Plus tard" ne pose pas d'override de
  * cycle → l'utilisateur refuse mais le programme bascule quand même.
  */
-function hasPendingOffseasonMatchTransition(
-  profile: UserProfile,
-  events: CalendarEvent[],
-  today: string,
-): boolean {
-  if (profile.seasonMode !== 'off_season') return false
-  const futureMatch = events.find(
-    (e) => e.type === 'match' && e.date >= today && !e.user_hidden,
-  )
-  if (!futureMatch?.id) return false
-  const st = profile.seasonTransitionState
-  if (st?.offseasonMatchResumeAckEventId === futureMatch.id) return false
-  if (st?.activeDeferral?.eventId === futureMatch.id) return false
-  return true
-}
-
 function daysBetween(a: string, b: string): number {
   const parse = (iso: string) => {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)
@@ -199,15 +160,22 @@ export interface UseProgramChangeNoticeResult {
  */
 export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UseProgramChangeNoticeResult {
   const { profile, calendarEvents, acwrZone, today } = args
-  const [persisted, setPersisted] = useState<PersistedState>(() => readPersisted())
+  const [persisted, setPersisted] = useState<PersistedProgramNoticeState>(() =>
+    typeof window === 'undefined' ? EMPTY : readProgramNoticePersisted(),
+  )
 
   useEffect(() => {
     if (typeof window === 'undefined') return
     const onStorage = (event: StorageEvent) => {
-      if (event.key === STORAGE_KEY) setPersisted(readPersisted())
+      if (event.key === PROGRAM_NOTICE_STORAGE_KEY) setPersisted(readProgramNoticePersisted())
     }
+    const onLocalBump = () => setPersisted(readProgramNoticePersisted())
     window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
+    window.addEventListener(PROGRAM_NOTICE_UPDATED_EVENT, onLocalBump)
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener(PROGRAM_NOTICE_UPDATED_EVENT, onLocalBump)
+    }
   }, [])
 
   const detected = useMemo(() => {
@@ -246,7 +214,7 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
     if (
       profile &&
       (detected.type === 'cycle' || detected.type === 'match') &&
-      hasPendingOffseasonMatchTransition(profile, calendarEvents, today)
+      hasPendingOffseasonMatchDecision(profile, calendarEvents, today)
     ) {
       return null
     }
@@ -265,12 +233,12 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
   const acknowledge = useCallback(() => {
     if (!visible) return
     setPersisted((prev) => {
-      const next: PersistedState = {
+      const next: PersistedProgramNoticeState = {
         acknowledged: { ...prev.acknowledged, [visible.id]: today },
         postponed: { ...prev.postponed },
       }
       delete next.postponed[visible.id]
-      writePersisted(next)
+      writeProgramNoticePersisted(next, { noticeId: visible.id })
       return next
     })
   }, [visible, today])
@@ -278,11 +246,11 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
   const postpone = useCallback(() => {
     if (!visible || !visible.canPostponeNow) return
     setPersisted((prev) => {
-      const next: PersistedState = {
+      const next: PersistedProgramNoticeState = {
         acknowledged: { ...prev.acknowledged },
         postponed: { ...prev.postponed, [visible.id]: today },
       }
-      writePersisted(next)
+      writeProgramNoticePersisted(next, {})
       return next
     })
   }, [visible, today])

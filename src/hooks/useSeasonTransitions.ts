@@ -70,6 +70,7 @@ export function useSeasonTransitions(params: {
         date: e.date,
         type: e.type,
         opponent: e.opponent,
+        match_kind: e.match_kind,
       })),
       hasActiveDeferral: Boolean(profile?.seasonTransitionState?.activeDeferral),
       hasReturnDate: Boolean(profile?.planningAnchors?.returnToTeamTrainingAt),

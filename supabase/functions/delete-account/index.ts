@@ -1,4 +1,5 @@
 import { corsHeaders, json } from '../_shared/http.ts'
+import { captureEdgeException } from '../_shared/sentry.ts'
 import { requireUser } from '../_shared/supabase.ts'
 
 /**
@@ -84,6 +85,7 @@ Deno.serve(async (req: Request) => {
     })
   } catch (error) {
     console.error('[delete-account] Uncaught error:', String(error))
+    await captureEdgeException(error, { function: 'delete-account' })
     return json({ error: String(error) }, 500)
   }
 })

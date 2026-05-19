@@ -12,15 +12,15 @@
 | **WS4** Design polish | State matrix par page (loading/empty/error/partial/offline/cross-state), anti-pattern banlist codifiée, 3 layouts responsive (phone / TWA / tablet 2-pane), a11y coverage matrix | 3-5j | Post bêta feedback design |
 | **WS5** Wording / Copy | Audit complet onboarding step headers + empty states. Voice/tone guidelines `docs/voice-and-tone.md`. **Trivial fixes V1 déjà shipped** (cf. `docs/v1-1-wording-audit.md`). Hero + CTA "Activer Premium" déjà décidés et appliqués. | 1-2j | Post bêta feedback wording |
 | **WS6** Performance | Au-delà du Lighthouse pass V1 — bundle splitting fin, lazy loading images, Core Web Vitals optim (INP < 200ms target) | 2-3j | Si perf flags PostHog |
-| **WS7** Observabilité | **Sentry** frontend + Edge Functions, alerting Slack (compte Sentry gratuit jusqu'à 5k events/mois) | 1-2j | Dès V1 release |
-| **WS8** Tests E2E | Playwright/Cypress : signup → onboarding → 1ère séance → checkout Premium/Founding → restore | 3-4j | Post WS7 (Sentry détecte les régressions) |
+| **WS7** Observabilité | **Sentry** : front optionnel `VITE_SENTRY_DSN` (`@sentry/react`) ✓ · **Edge Functions** : `npm:@sentry/deno`, `_shared/sentry.ts`, secrets `SENTRY_DSN` / `SENTRY_ENVIRONMENT` ✓ · Slack **backlog** | ~0j restant côté Sentry (reste alerting) |
+| **WS8** Tests E2E | Playwright : smoke landing + **routes publiques** (login/signup/legal) ✓ · **Parcours auth** → `/session/0` si `E2E_TEST_*` + `VITE_SUPABASE_*` en CI ✓ (skip sinon) · Checkout / restore **backlog** | En cours |
 
 ## 2. Items techniques déférés des Décisions V1
 
 | Item | Provenance | Effort | Trigger |
 |---|---|---:|---|
 | **iOS PWA push différé** : Server-scheduled push (Edge Function + cron table) pour rest-end notif iOS PWA | #38 / B1 review | 3-5j | Si iOS testeurs réclament |
-| **Cap 100 founding hard enforce** | WS0 follow-up | 0.5-1j | **Spec §2.1** — déclencher avant vente massive ; pas seulement « si conversion ~80 » si promesse légale « 100 premiers » |
+| **Cap 100 founding hard enforce** | WS0 follow-up | **SHIP** §2.1 (`20260512143000_founding_cohort_cap.sql`) | Op : désactiver SKU Play + prix Stripe quand cohort pleine (ceinture) |
 | **Email transactionnel Founding** : Resend wire-up + Edge Function `send-founding-offer` + template + DM auto | #50 / WS9 phase E | 0.5-1j | Si volume bêta > 30 testeurs |
 | **hCaptcha sur `mobile_install_leads`** | F2 / WS2 watchlist | 0.5j | Si spam observé |
 | **CSP `'unsafe-inline'` → nonces** : refactor build process Vite | F3 / WS2 watchlist | 1-2j | Audit sécu V1.1 |
@@ -31,9 +31,9 @@
 
 ### 2.1 Founding « 100 premiers » — spec d’implémentation (référence)
 
-**État V1 (avant ce hardening)** : la promesse marketing « 100 premiers » / tarif Founding n’est **pas** appliquée côté serveur. Ni la **création de compte** ni la **seule apparition de la modale** ne consomment une place. Le plan `founding_yearly` existe en base (`plans` + `plan_entitlements`) ; `grant_billing_entitlements` accorde tout abonnement founding payant qui arrive, sans plafond.
+**État (post §2.1 impl.)** : plafond **100** distincts `user_id` avec ligne `plan_id = founding_yearly` (sans recyclage après annulation : la ligne peut rester en `canceled` et conserve la « place » au compte). Nouveaux payants **refusés** dans `grant_billing_entitlements` (`founding_cohort_full`, SQLSTATE `P0001`) sauf si l’utilisateur est **déjà** founding. **Stats** : `get_founding_cohort_stats()` (anon + authentifié). **Stripe webhook** : réponse 200 `ignored` pour éviter retries infinies (remboursement manuel si edge). **Voir aussi** fichier migration et tests `supabase/tests/grant_billing_entitlements.test.sql` S9/S10.
 
-**Définition métier recommandée (à figer avant code)** :
+**Définition métier recommandée (réf ; alignée avec l’impl.)** :
 
 - Les **100 Founding** = les **100 premiers abonnements founding effectivement accordés** après paiement reconnu (entrée idempotente dans le ledger + upsert subscription / entitlements), **pas** les 100 premiers comptes créés **ni** les 100 premiers utilisateurs ayant vu la modale.
 - Un panier Stripe / un clic Play **sans** événement billing aboutissant à un `grant` réussi **ne compte pas**.
@@ -69,12 +69,12 @@
 
 **Contexte** : `docs/exercises-i18n-lexicon.md` compile la table EN→FR des exos mother sessions. Le champ `profiles.preferred_language: 'en' | 'fr'` existe déjà côté DB.
 
-**Déjà partiellement ship (pré-V1.1)** : génération `motherSessionExerciseFr.ts`, helper `localizeMotherSessionExerciseName`, fichier `motherSessionDirectiveFr.ts` pour les **directives** warm-up (ramp-up, prep sets, etc.), démos vidéo via `resolveExerciseIdForDemo` + `WarmupBlock` / fiche séance — voir lexique § Notes.
+**Déjà partiellement ship (pré-V1.1)** : génération `motherSessionExerciseFr.ts`, helper `localizeMotherSessionExerciseName`, fichier `motherSessionDirectiveFr.ts` pour les **directives** warm-up (ramp-up, prep sets, etc.), démos vidéo via `resolveExerciseIdForDemo` + `WarmupBlock` / fiche séance — voir lexique § Notes. **Overlays séance** : `EmomOverlay`, `IsoOverlay` et le sticky « Valider » (`SessionDetailPage`) repassent par le même helper pour FR/EN (`preferred_language`).
 
 **Reste V1.1 (backlog)** :
-1. Parser `.md` → artefact typed unique (si on unifie lexique + overrides) ou garder le pipeline actuel documenté
-2. Couverture complète des renders d’exercices hors mother session si besoin
-3. Toggle / persistance UX langue (déjà champ profile — vérifier tous les flux)
+1. Unifier parser `.md` + génération (optionnel — pipeline actuel documenté dans le lexique § Notes).
+2. ~~Couverture des renders hors mother session~~ : historique, progression, `RunSessionCTA`, `MotherSessionBlock` ; **`RestOverlay`** + **`sessionLogPresentation`** ; **wording History** (`tr` / `appLabels`) — titres, stats, empty state, fatigue, détail exos ; reste **audit mappings** lexique.
+3. ~~Toggle / persistance~~ : champ profil déjà câblé ; vérifier toute nouvelle surface.
 4. Audit qualité des mappings (cas ambigus listés dans le `.md`)
 
 **Effort** : ~1-1.5j (réduit vs plan initial si on considère le pipeline actuel comme base).
@@ -113,7 +113,7 @@ Pattern Spotify/YouTube Music : SW affiche une notif silencieuse "Repos: Xs left
 
 ## 6. Dependencies externes V1.1
 
-- **Sentry** account gratuit (5k events/mois). DSN à provisionner.
+- **Sentry** gratuit (DSN → `VITE_SENTRY_DSN`) ; alerting / Edge à provisionner encore.
 - **Resend** account (10k emails/mois gratuit) pour email transactionnel founding.
 - **Playwright** setup CI (GitHub Actions ou équivalent).
 
@@ -121,10 +121,10 @@ Pattern Spotify/YouTube Music : SW affiche une notif silencieuse "Repos: Xs left
 
 **Si V1 atteint kill criteria positif** (≥10 paying, 0 P0) :
 
-1. **WS7 Sentry** (1-2j) — observabilité prod ASAP
+1. **WS7 Sentry** restant (~0.5-1j) — DSN prod, éventuellement traces / Edge Functions
 2. **i18n exercices EN/FR** (~1-1.5j restant, cf. §3.1) — différenciateur amateur FR
 3. **WS3 code cleanup léger** (0.5j) — réduire dette technique
-4. **Founding cap 100 hard enforce + counter UI** (0.5-1j) — **§2.1** ; prioriser dès que la promesse « 100 » est contractualisée ou que le volume approche le plafond, pas uniquement au signal « ~80 conversions »
+4. **Ops Founding** — désactiver SKU Play + prix Stripe lorsque la cohorte est pleine (`get_founding_cohort_stats`), cf. §2.1 livrable 3
 5. **B1 follow-up** selon résultats test empirique (0.5-1.5j variable)
 
 **Total sprint 1** : ~4-7j focal. Tout le reste = sprint 2-3 ou drop.
@@ -139,6 +139,9 @@ Pattern Spotify/YouTube Music : SW affiche une notif silencieuse "Repos: Xs left
 
 - **Founding modal** : correctif bug « Plus tard » — une seule instance de `useHintVisibility` pour le hint founding (sinon `eligible` ne se mettait pas à jour) ; garde-fous tactile / safe-area / backdrop. CTA recovery : **Profil** (carte Founding) + route **`/founding`** (force-show session).
 - **PlanningContextCard** : effet sync `visible` → panneau sans `setState` synchrone lint-interdit (réouverture seulement sur transition `visible` false→true).
+- **Cap cohorte fondateurs (100)** : RPC `get_founding_cohort_stats`, verrouillage dans `grant_billing_entitlements`, webhook Stripe **200** `{ ignored: true, reason: 'founding_cohort_full' }`, autres flux **403** ; front `useFoundingCohortAvailability` + UX « cohorte pleine ».
+- **Sentry front** : `Sentry.init` si `VITE_SENTRY_DSN` (optionnel prod).
+- **i18n** : overlays séance, `RunSessionCTA`, `MotherSessionBlock`, `SessionDetailPage`, titres/logs **History** & **Progress**, **`RestOverlay`**, **`sessionLogPresentation`** ; **History** copy via `history_*` dans `appLabels` (+ CTA `profile_premium_activate`, onglet séances `progress_tab_sessions`).
 
 ## 10. Références
 

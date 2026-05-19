@@ -1,4 +1,5 @@
 import { corsHeaders, json } from '../_shared/http.ts'
+import { captureEdgeException } from '../_shared/sentry.ts'
 import { createClients } from '../_shared/supabase.ts'
 
 type PushSubscriptionRow = {
@@ -271,6 +272,7 @@ Deno.serve(async (req: Request) => {
       dispatch: dispatchResult,
     })
   } catch (error) {
+    await captureEdgeException(error, { function: 'send-training-reminders' })
     return json({ error: String(error) }, 500)
   }
 })

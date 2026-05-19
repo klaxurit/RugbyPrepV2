@@ -5,10 +5,19 @@ import { useRestBeepPref } from '../../hooks/useRestBeepPref'
 import { playRestEndBeep } from '../../utils/audioBeep'
 import { findCurrentPending, type PendingCursor } from '../../services/motherSession/findCurrentPending'
 import type { MotherSession } from '../../types/motherSession'
-import { translateBlockNameToFr } from '../../services/motherSession/motherSessionContentFr'
 import { getExerciseName } from '../../data/exercises'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import { IsoChronoButton } from './IsoChronoButton'
+import { localizeMotherSessionExerciseName } from '../../services/motherSession/localizeMotherSessionExerciseName'
+import { localizeBlockName } from '../../services/motherSession/motherSessionBlockLabels'
+import {
+  finishSessionCtaLabel,
+  restTimerAfterTourLine,
+  sessionRestWord,
+  sessionSkipRestLabel,
+  sessionTourWord,
+  validateExerciseCtaLine,
+} from '../../i18n/sessionRunUi'
 
 export interface RunSessionCTAProps {
   session: MotherSession
@@ -62,7 +71,7 @@ export function RunSessionCTA({ session, lang, onFinish, onCursorChange }: RunSe
     if (cursor.isLastOfTour && !(cursor.isLastTour && cursor.isLastBlock)) {
       sessionRun.startRestTimer(
         cursor.restSeconds,
-        `Fin du tour ${cursor.tourIndex + 1}`,
+        restTimerAfterTourLine(cursor.tourIndex + 1, lang),
       )
     }
   }
@@ -71,11 +80,11 @@ export function RunSessionCTA({ session, lang, onFinish, onCursorChange }: RunSe
     <div className="fixed bottom-0 inset-x-0 z-30 px-4 pb-4 pt-2 bg-gradient-to-t from-bg via-bg/95 to-bg/0 pointer-events-none">
       <div className="max-w-md mx-auto pointer-events-auto">
         {sessionRun.restTimer ? (
-          <RestTimerCard />
+          <RestTimerCard lang={lang} />
         ) : cursor ? (
           <CurrentSetCard cursor={cursor} lang={lang} onValidate={validateCurrent} />
         ) : (
-          <FinishCard onFinish={onFinish} />
+          <FinishCard lang={lang} onFinish={onFinish} />
         )}
       </div>
     </div>
@@ -85,7 +94,7 @@ export function RunSessionCTA({ session, lang, onFinish, onCursorChange }: RunSe
 // ─────────────────────────────────────────────────────────────────────────
 // Rest mode
 
-function RestTimerCard() {
+function RestTimerCard({ lang }: { lang: AppLang }) {
   const { restTimer, skipRestTimer } = useSessionRun()
   const { enabled: beepEnabled } = useRestBeepPref()
   const [now, setNow] = useState(() => Date.now())
@@ -145,7 +154,11 @@ function RestTimerCard() {
     <button
       type="button"
       onClick={skipRestTimer}
-      aria-label={`Repos · ${remainingSec} secondes restantes — toucher pour passer`}
+      aria-label={
+        lang === 'en'
+          ? `${sessionRestWord(lang)} · ${remainingSec}s left — tap to skip`
+          : `${sessionRestWord(lang)} · ${remainingSec} secondes restantes — toucher pour passer`
+      }
       className={`w-full rounded-2xl border shadow-brand-float transition-colors ${
         isExpiring
           ? 'bg-brand text-on-brand border-brand'
@@ -159,7 +172,7 @@ function RestTimerCard() {
               isExpiring ? 'text-on-brand' : 'text-fg-muted'
             }`}
           >
-            Repos {restTimer.label ? `· ${restTimer.label}` : ''}
+            {sessionRestWord(lang)} {restTimer.label ? `· ${restTimer.label}` : ''}
           </p>
           <p
             className={`font-black tabular-nums leading-none ${
@@ -175,7 +188,7 @@ function RestTimerCard() {
           }`}
         >
           <SkipForward className="w-3.5 h-3.5" strokeWidth={2.5} />
-          Passer
+          {sessionSkipRestLabel(lang)}
         </span>
       </div>
       <div className="mx-4 mt-3 mb-3 h-1.5 bg-layer-10 rounded-full overflow-hidden">
@@ -202,16 +215,19 @@ function CurrentSetCard({
   lang: AppLang
   onValidate: () => void
 }) {
-  const displayName = cursor.exerciseId
-    ? getExerciseName(cursor.exerciseId, lang) || cursor.exerciseName
-    : cursor.exerciseName
-  const blockLabel = translateBlockNameToFr(cursor.blockName)
+  const rawCatalog = cursor.exerciseId ? getExerciseName(cursor.exerciseId, lang) : ''
+  const resolvedCatalog =
+    cursor.exerciseId && rawCatalog !== cursor.exerciseId ? rawCatalog : ''
+  const displayName =
+    resolvedCatalog || localizeMotherSessionExerciseName(cursor.exerciseName, lang)
+  const blockLabel = localizeBlockName(cursor.blockName, lang)
+  const tourWord = sessionTourWord(lang)
 
   if (cursor.spec.kind === 'time') {
     return (
       <div className="rounded-2xl border border-brand-border-strong bg-panel shadow-brand-float p-4">
         <p className="text-[10px] font-black uppercase tracking-widest text-fg-muted text-center">
-          {blockLabel} · Tour {cursor.tourIndex + 1}
+          {blockLabel} · {tourWord} {cursor.tourIndex + 1}
         </p>
         <p className="text-sm font-extrabold italic tracking-tight text-fg text-center mt-1 mb-3">
           {displayName}
@@ -240,10 +256,10 @@ function CurrentSetCard({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[10px] font-black uppercase tracking-widest opacity-80">
-          {blockLabel} · Tour {cursor.tourIndex + 1}
+          {blockLabel} · {tourWord} {cursor.tourIndex + 1}
         </span>
         <span className="block font-black uppercase italic tracking-wide truncate">
-          Valider · {displayName}
+          {validateExerciseCtaLine(displayName, lang)}
         </span>
       </span>
     </button>
@@ -253,7 +269,7 @@ function CurrentSetCard({
 // ─────────────────────────────────────────────────────────────────────────
 // Finish mode
 
-function FinishCard({ onFinish }: { onFinish: () => void }) {
+function FinishCard({ lang, onFinish }: { lang: AppLang; onFinish: () => void }) {
   return (
     <button
       type="button"
@@ -262,7 +278,7 @@ function FinishCard({ onFinish }: { onFinish: () => void }) {
       className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-all shadow-brand-float flex items-center justify-center gap-2"
     >
       <CheckCircle2 className="w-5 h-5" />
-      Terminer la séance
+      {finishSessionCtaLabel(lang)}
     </button>
   )
 }

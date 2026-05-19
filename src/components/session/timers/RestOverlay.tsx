@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import type { Lang } from '../../../i18n/appLabels'
+import { restOverlaySkipAriaLabel, sessionRestWord, sessionSkipRestLabel } from '../../../i18n/sessionRunUi'
 import { useSessionRun } from '../../../contexts/SessionRunContext'
+import { useProfile } from '../../../hooks/useProfile'
 import { useRestBeepPref } from '../../../hooks/useRestBeepPref'
 import { playRestEndBeep } from '../../../utils/audioBeep'
 import { vibrate } from '../../../utils/vibrate'
@@ -21,6 +24,8 @@ import { Icon } from '../../ui'
  */
 export function RestOverlay() {
   const { restTimer, skipRestTimer } = useSessionRun()
+  const { profile } = useProfile()
+  const lang: Lang = (profile.preferredLanguage as Lang | undefined) ?? 'fr'
   const { enabled: beepEnabled } = useRestBeepPref()
   const [now, setNow] = useState(() => Date.now())
 
@@ -82,7 +87,8 @@ export function RestOverlay() {
         <div className="flex items-center gap-4">
           <div className="min-w-0 flex-1">
             <div className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-brand">
-              Repos{restTimer.label ? ` · ${restTimer.label}` : ''}
+              {sessionRestWord(lang)}
+              {restTimer.label ? ` · ${restTimer.label}` : ''}
             </div>
             <div
               className="mt-0.5 font-serif italic font-extrabold leading-none tabular-nums text-fg"
@@ -94,11 +100,11 @@ export function RestOverlay() {
           <button
             type="button"
             onClick={skipRestTimer}
-            aria-label="Passer le repos"
+            aria-label={restOverlaySkipAriaLabel(lang)}
             className="flex h-10 items-center gap-1.5 rounded-[10px] bg-transparent px-3.5 text-[12px] font-bold tracking-[0.04em] text-fg transition-colors hover:bg-paper-soft rf-focus-ring"
           >
             <Icon name="play" size={14} color="var(--color-text-primary)" strokeWidth={2} />
-            Passer
+            {sessionSkipRestLabel(lang)}
           </button>
         </div>
         <div className="mt-2.5 h-1 overflow-hidden rounded-sm bg-paper-deep">

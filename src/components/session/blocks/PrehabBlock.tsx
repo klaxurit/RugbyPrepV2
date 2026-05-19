@@ -10,6 +10,13 @@ import {
 } from '../../../services/motherSession/localizeMotherSessionExerciseName'
 import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
 import { tr } from '../../../i18n/appLabels'
+import { resolveExerciseIdForSessionRun } from '../../../services/motherSession/motherSessionExerciseMap'
+import { hasExerciseDemo } from '../../../data/exercises'
+
+function prehabExerciseHasDemo(exo: Pick<Exercise, 'name' | 'exerciseId'>): boolean {
+  const exoId = resolveExerciseIdForSessionRun(exo.name ?? '', exo.exerciseId)
+  return Boolean(exoId && hasExerciseDemo(exoId))
+}
 
 interface PrehabBlockProps {
   block: Block
@@ -24,6 +31,8 @@ interface PrehabBlockProps {
   onValidateExo: (exoIdx: number) => void
   /** Lance le mini-chrono iso (ouvre l'overlay côté page). Passé à chaque exo iso. */
   onStartIso?: (exoIdx: number, durationSec: number) => void
+  /** Fiche vidéo démo quand disponible dans le catalogue. */
+  onPlayDemo?: (exoIdx: number) => void
   notes?: readonly string[]
   lang?: Lang
 }
@@ -43,6 +52,7 @@ export function PrehabBlock({
   validatedByIdx,
   onValidateExo,
   onStartIso,
+  onPlayDemo,
   notes,
   lang = 'fr',
 }: PrehabBlockProps) {
@@ -68,6 +78,9 @@ export function PrehabBlock({
               validated={validatedByIdx?.[i] ?? false}
               onValidate={() => onValidateExo(i)}
               onStartIso={onStartIso ? (sec) => onStartIso(i, sec) : undefined}
+              onPlayDemo={
+                onPlayDemo && prehabExerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined
+              }
               lang={lang}
             />
           ))}
@@ -85,10 +98,19 @@ interface PrehabRowProps {
   validated: boolean
   onValidate: () => void
   onStartIso?: (durationSec: number) => void
+  onPlayDemo?: () => void
   lang: Lang
 }
 
-function PrehabRow({ exo, isCurrent, validated, onValidate, onStartIso, lang }: PrehabRowProps) {
+function PrehabRow({
+  exo,
+  isCurrent,
+  validated,
+  onValidate,
+  onStartIso,
+  onPlayDemo,
+  lang,
+}: PrehabRowProps) {
   // Détecte une prescription temps (ex: "2x15-20s/side") → propose un bouton iso.
   const spec = parseExerciseSetSpec(exo.prescription)
   const isoSeconds = spec.kind === 'time' ? spec.durationLow : null
@@ -124,6 +146,17 @@ function PrehabRow({ exo, isCurrent, validated, onValidate, onStartIso, lang }: 
         </div>
         <div className="mt-0.5 text-[11px] tabular-nums text-fg-muted">{exo.prescription}</div>
       </div>
+
+      {onPlayDemo && (
+        <button
+          type="button"
+          onClick={onPlayDemo}
+          aria-label={tr('exercise_aria_demo', lang)}
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-app rf-focus-ring"
+        >
+          <Icon name="eye" size={14} color="var(--color-text-primary)" strokeWidth={1.6} />
+        </button>
+      )}
 
       {isoSeconds != null && isCurrent && !validated && onStartIso && (
         <button

@@ -181,8 +181,8 @@ export function LegalPage() {
           ))}
         </section>
 
-        {/* Confidentialité */}
-        <section className="space-y-4">
+        {/* Confidentialité — ancre pour Play Store / stores (#privacy) */}
+        <section id="privacy" className="space-y-4 scroll-mt-20">
           <h1 className="text-lg font-black text-fg">Politique de Confidentialité</h1>
           <p className="text-xs text-fg-muted">Conformément au RGPD (UE 2016/679)</p>
           {PRIVACY_SECTIONS.map((s) => (

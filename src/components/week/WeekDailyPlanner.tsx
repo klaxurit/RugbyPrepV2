@@ -35,6 +35,15 @@ const DAY_LONG: Record<DayOfWeek, string> = {
   5: 'Vendredi',
   6: 'Samedi',
 }
+const DAY_LONG_EN: Record<DayOfWeek, string> = {
+  0: 'Sunday',
+  1: 'Monday',
+  2: 'Tuesday',
+  3: 'Wednesday',
+  4: 'Thursday',
+  5: 'Friday',
+  6: 'Saturday',
+}
 const DAY_SHORT: Record<DayOfWeek, string> = {
   0: 'Dim',
   1: 'Lun',
@@ -55,6 +64,8 @@ interface ResolvedDay {
   dateNum: string
   isToday: boolean
   type: DayType
+  hasGym: boolean
+  isClubDay: boolean
   /** Pour gym */
   sessionIndex?: number
   sessionLabel?: string
@@ -167,11 +178,13 @@ export function WeekDailyPlanner({
       const match = matchByDate.get(dateISO) ?? null
       const dowSessions = sessionsByDow.get(dow) ?? []
       const session = dowSessions[0] // 1ère session non-skipped en priorité
-      const isUnavailable = unavailableDays.includes(dow) || clubDays.includes(dow)
+      const hasGym = Boolean(session && session.completionStatus !== 'skipped')
+      const isClubDay = clubDays.includes(dow)
+      const isUnavailable = unavailableDays.includes(dow) || isClubDay
 
       let type: DayType
       if (match) type = 'match'
-      else if (session && session.completionStatus !== 'skipped') type = 'gym'
+      else if (hasGym) type = 'gym'
       else if (arDoneByDate.has(dateISO) || activeRecoveryEligibleDays.includes(dow)) type = 'recovery'
       else if (isUnavailable) type = 'unavailable'
       else type = 'rest'
@@ -196,6 +209,8 @@ export function WeekDailyPlanner({
         dateNum: String(dateObj.getDate()),
         isToday,
         type,
+        hasGym,
+        isClubDay,
         sessionIndex: session ? sessionIndexByDow.get(dow) : undefined,
         sessionLabel: session
           ? formatTitle(formatSessionTitle(session.sessionSlot.session.metadata.id))
@@ -232,7 +247,7 @@ export function WeekDailyPlanner({
 
   return (
     <div className="space-y-4">
-      <DayStrip days={days} activeIdx={active} onSelect={setActive} />
+      <DayStrip days={days} activeIdx={active} onSelect={setActive} lang={lang} />
 
       <FeatureCardSwitch
         day={activeDay}
@@ -268,25 +283,72 @@ interface DayStripProps {
   days: ResolvedDay[]
   activeIdx: number
   onSelect: (idx: number) => void
+  lang: 'fr' | 'en'
 }
 
-function DayStrip({ days, activeIdx, onSelect }: DayStripProps) {
+// Icônes posées directement sur la bordure haute du jour.
+const MATCH_DAY_STRIP_ICON = '🏉'
+const GYM_DAY_STRIP_ICON = '🏋️'
+const CLUB_DAY_STRIP_ICON = '🏟️'
+
+function DayStrip({ days, activeIdx, onSelect, lang }: DayStripProps) {
+  const tablistNeedsBadgeRoom = days.some((d) => d.type === 'match' || d.hasGym || d.isClubDay)
+
   return (
-    <div role="tablist" className="flex gap-1">
+    <div role="tablist" className={tablistNeedsBadgeRoom ? 'flex gap-1 pt-2' : 'flex gap-1'}>
       {days.map((d, i) => {
         const isActive = i === activeIdx
         const hasMatch = d.type === 'match'
+        const dayMarkers = [
+          hasMatch ? { icon: MATCH_DAY_STRIP_ICON, labelFr: 'jour de match', labelEn: 'match day' } : null,
+          d.hasGym ? { icon: GYM_DAY_STRIP_ICON, labelFr: 'gym', labelEn: 'gym day' } : null,
+          d.isClubDay ? { icon: CLUB_DAY_STRIP_ICON, labelFr: 'entraînement club', labelEn: 'club training' } : null,
+        ].filter(Boolean) as Array<{ icon: string; labelFr: string; labelEn: string }>
+        const ariaDayLong = lang === 'fr' ? DAY_LONG[d.dow] : DAY_LONG_EN[d.dow]
+        const ariaMarkers = dayMarkers.length
+          ? `, ${dayMarkers.map((marker) => (lang === 'fr' ? marker.labelFr : marker.labelEn)).join(', ')}`
+          : ''
+        const ariaToday = d.isToday ? (lang === 'fr' ? ', aujourd’hui' : ', today') : ''
+        const tooltip = dayMarkers.length
+          ? dayMarkers.map((marker) => (lang === 'fr' ? marker.labelFr : marker.labelEn)).join(' + ')
+          : undefined
+
+        const cellClass = (() => {
+          if (isActive) {
+            return 'bg-brand text-app border-transparent'
+          }
+          if (hasMatch) {
+            return 'bg-brand-soft text-fg border-brand'
+          }
+          if (dayMarkers.length) {
+            return 'bg-brand-soft/30 text-fg border-brand-border'
+          }
+          return 'bg-transparent text-fg border-transparent'
+        })()
+
         return (
           <button
             key={d.dow}
             role="tab"
             type="button"
             aria-selected={isActive}
+            aria-label={`${ariaDayLong} ${d.dateNum}${ariaMarkers}${ariaToday}`}
+            title={tooltip}
             onClick={() => onSelect(i)}
-            className={`relative flex-1 rounded-[10px] py-2 text-center transition-colors rf-focus-ring ${
-              isActive ? 'bg-brand text-app' : 'bg-transparent text-fg'
-            }`}
+            className={`relative flex-1 rounded-[10px] border-[1.5px] py-2 text-center transition-colors rf-focus-ring ${cellClass}`}
           >
+            {dayMarkers.length > 0 && (
+              <span
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-0 z-[1] flex -translate-x-1/2 -translate-y-1/2 items-center gap-[2px] leading-none drop-shadow-[0_1px_0_var(--color-bg-app)] select-none"
+              >
+                {dayMarkers.map((marker) => (
+                  <span key={marker.icon} className="text-[15px]">
+                    {marker.icon}
+                  </span>
+                ))}
+              </span>
+            )}
             <div
               className={`text-[8px] font-bold uppercase tracking-[0.1em] ${isActive ? 'opacity-70' : 'opacity-50'}`}
             >
@@ -302,12 +364,6 @@ function DayStrip({ days, activeIdx, onSelect }: DayStripProps) {
               <span
                 aria-hidden
                 className="absolute bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-brand"
-              />
-            )}
-            {hasMatch && !isActive && (
-              <span
-                aria-hidden
-                className="absolute top-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-brand"
               />
             )}
           </button>

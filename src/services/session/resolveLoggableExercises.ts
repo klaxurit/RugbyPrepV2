@@ -1,7 +1,7 @@
 import type { Block, Exercise } from '../../types/motherSession'
 import {
   isDirectiveText,
-  resolveExerciseId,
+  resolveExerciseIdForSessionRun,
 } from '../motherSession/motherSessionExerciseMap'
 
 export interface ResolvedExercise {
@@ -34,7 +34,9 @@ export interface ResolvedExercise {
 export function resolveLoggableExercises(block: Block): ResolvedExercise[] {
   return block.exercises.map((exo, index) => {
     const directive = isDirectiveText(exo.name)
-    const exerciseId = directive ? null : (exo.exerciseId ?? resolveExerciseId(exo.name) ?? null)
+    const exerciseId = directive
+      ? null
+      : resolveExerciseIdForSessionRun(exo.name, exo.exerciseId) ?? null
     return {
       exo,
       index,

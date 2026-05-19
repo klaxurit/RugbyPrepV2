@@ -16,6 +16,8 @@ import type {
 } from '../../types/scheduling'
 import { planningContextBannerCopyForMode } from '../../components/planning/planningContextBannerModel'
 import { WeekPage } from '../WeekPage'
+import { ProgramEvolutionSheetProvider } from '../../contexts/ProgramEvolutionSheetContext'
+import { resetWeekSnapshotConfirmationDedupForTests } from '../../hooks/useWeekSnapshotConfirmationSheet'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 
 const useProfileMock = vi.fn()
@@ -25,8 +27,7 @@ const calendarState = {
   visibleEvents: [] as Array<Record<string, unknown>>,
   structuralEvents: [] as Array<Record<string, unknown>>,
   addEvent: vi.fn(),
-  syncNotification: null as string | null,
-  dismissSyncNotification: vi.fn(),
+  updateMatchKind: vi.fn(),
 }
 
 function makePlanningContext(cycle: AnnualPlanningContext['cycle']): AnnualPlanningContext {
@@ -333,11 +334,11 @@ vi.mock('../../services/ui/safetyMessaging', () => ({
 describe('WeekPage · convergence moteurs', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    resetWeekSnapshotConfirmationDedupForTests()
     useProfileMock.mockReturnValue({ profile: { ...BASE_PROFILE }, updateProfile: vi.fn() })
     calendarState.events = []
     calendarState.visibleEvents = []
     calendarState.structuralEvents = []
-    calendarState.syncNotification = null
     mockUseSchedulingTransition.mockReturnValue({ transition: null, dismiss: vi.fn() })
   })
 
@@ -553,8 +554,8 @@ describe('WeekPage · convergence moteurs', () => {
   it('PlanningContextBanner masqué si bannière de transition scheduling visible', () => {
     mockUseSchedulingTransition.mockReturnValue({
       transition: {
-        type: 'calendar_mode_activated',
-        message: 'Match détecté — ton programme s\'adapte à ton calendrier.',
+        type: 'block_mode_activated',
+        message: 'Plus de match prévu — ton programme continue en mode progression.',
         cta: 'OK',
       },
       dismiss: vi.fn(),
@@ -567,7 +568,7 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.queryByTestId('planning-context-banner')).toBeNull()
   })
 
-  it('PlanningContextBanner masqué si bannière de confirmation prioritaire visible', () => {
+  it('PlanningContextBanner masqué si confirmation snapshot prioritaire (bottom sheet)', () => {
     const result = hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' }))
     result.hasConfirmationRequired = true
     result.snapshot!.confirmationRequired = [{
@@ -579,10 +580,17 @@ describe('WeekPage · convergence moteurs', () => {
     }]
     useWeekSnapshotMock.mockReturnValue(result)
 
-    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+    renderWithRouter(
+      <ProgramEvolutionSheetProvider>
+        <WeekPage />
+      </ProgramEvolutionSheetProvider>,
+      { initialEntries: ['/week'] },
+    )
 
-    expect(screen.getByTestId('confirmation-banner')).toBeInTheDocument()
+    expect(screen.queryByTestId('confirmation-banner')).toBeNull()
     expect(screen.queryByTestId('planning-context-banner')).toBeNull()
+    expect(screen.getByTestId('program-evolution-summary')).toHaveTextContent('Une confirmation est requise.')
+    expect(screen.getByTestId('program-evolution-cta')).toHaveTextContent('Confirmer')
   })
 
   // ── S4 Slice 4: Calendar week timeline ──

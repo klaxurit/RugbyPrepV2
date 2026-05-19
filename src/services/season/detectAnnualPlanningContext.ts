@@ -9,7 +9,7 @@ import type {
 } from '../../types/annualPlanning'
 import type { CalendarEvent } from '../../types/training'
 
-type MatchInput = Pick<CalendarEvent, 'date' | 'type'>
+type MatchInput = Pick<CalendarEvent, 'date' | 'type' | 'match_kind'>
 type TraceMode = AnnualPlanningContext['planningTrace']['resolutionMode']
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000
@@ -248,6 +248,15 @@ function collectMatchDates(events: MatchInput[]): string[] {
   }
   out.sort()
   return out
+}
+
+function hasFutureCupFinalMatch(events: MatchInput[], todayIso: string): boolean {
+  return events.some(
+    (e) =>
+      e.type === 'match' &&
+      e.match_kind === 'cup_final' &&
+      e.date >= todayIso,
+  )
 }
 
 function lastMatchDateOverall(dates: string[]): string | null {
@@ -530,8 +539,9 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   // Playoffs : only honour the flag during April-May (FFR season).
   // After June the flag is stale — fall through to normal cycle detection.
   const playoffsMonthGuard = todayDate.getMonth() + 1 <= 5 // Jan–May
+  const cupFinalBypass = hasFutureCupFinalMatch(inputs.events, todayIso)
   if (
-    playoffsMonthGuard &&
+    (playoffsMonthGuard || cupFinalBypass) &&
     (anchors.manualPlayoffs === true || anchors.manualCycleOverride === 'playoffs')
   ) {
     acc.bump('manual_override')

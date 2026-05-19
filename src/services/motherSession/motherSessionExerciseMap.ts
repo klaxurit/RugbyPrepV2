@@ -220,6 +220,21 @@ export function resolveExerciseIdForDemo(msExerciseName: string): string | undef
   return undefined
 }
 
+/**
+ * Identifiant catalogue pour le moteur de séance (`sessionRun`, sticky « Valider »,
+ * autosave séries). On applique d'abord la résolution stricte (`resolveExerciseId`),
+ * puis le même recul que les démos (`resolveExerciseIdForDemo`) pour les intitulés
+ * composites « X or Y », afin que le curseur ne tombe pas à `null` au démarrage.
+ */
+export function resolveExerciseIdForSessionRun(
+  msExerciseName: string,
+  explicitId?: string | null,
+): string | undefined {
+  const trimmed = explicitId?.trim()
+  if (trimmed) return trimmed
+  return resolveExerciseId(msExerciseName) ?? resolveExerciseIdForDemo(msExerciseName)
+}
+
 /** Vérifie si un nom est une directive textuelle (pas un exercice loggable).
  *  Patterns: "2 progressive prep sets", "1 easy prep round", "2-3 progressive ramp-up sets"
  *  NOT matched: "1-arm landmine press", "5-10-5 Shuttle"

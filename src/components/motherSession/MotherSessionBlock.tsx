@@ -6,8 +6,14 @@ import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import type { SessionContentFr } from '../../services/motherSession/motherSessionContentFr'
 import { msLabel, stripBackticks } from '../../services/motherSession/motherSessionLabels'
 import { MotherSessionCollapsible } from './MotherSessionCollapsible'
-import { resolveExerciseId, resolveExerciseIdForDemo, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
+import {
+  resolveExerciseId,
+  resolveExerciseIdForDemo,
+  resolveExerciseIdForSessionRun,
+  isDirectiveText,
+} from '../../services/motherSession/motherSessionExerciseMap'
 import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
+import { localizeMotherSessionExerciseName } from '../../services/motherSession/localizeMotherSessionExerciseName'
 import { ExerciseDemoSheet } from './ExerciseDemoSheet'
 import { SessionTourTracker } from './SessionTourTracker'
 import { TimedBlockOverlay, type TimedBlockResult } from './TimedBlockOverlay'
@@ -55,7 +61,13 @@ function ExerciseRow({
 }) {
   const displayExerciseId = exercise.exerciseId ?? resolveExerciseId(exercise.name)
   const demoExerciseResolvedId = exercise.exerciseId ?? resolveExerciseIdForDemo(exercise.name)
-  const displayName = displayExerciseId ? getExerciseName(displayExerciseId, lang) : (frName ?? exercise.name)
+  const rawCatalog = displayExerciseId ? getExerciseName(displayExerciseId, lang) : ''
+  const resolvedCatalog =
+    displayExerciseId && rawCatalog !== displayExerciseId ? rawCatalog : ''
+  const displayName =
+    lang === 'fr' && frName
+      ? frName
+      : resolvedCatalog || localizeMotherSessionExerciseName(exercise.name, lang)
   const canShowDemo = Boolean(demoExerciseResolvedId && hasExerciseDemo(demoExerciseResolvedId))
 
   return (
@@ -123,7 +135,7 @@ export function MotherSessionBlock({
   const hasLoggable = useMemo(
     () =>
       block.exercises.some(
-        (ex) => !isDirectiveText(ex.name) && (ex.exerciseId || resolveExerciseId(ex.name)),
+        (ex) => !isDirectiveText(ex.name) && resolveExerciseIdForSessionRun(ex.name, ex.exerciseId),
       ),
     [block.exercises],
   )

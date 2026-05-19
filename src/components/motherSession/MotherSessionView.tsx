@@ -16,7 +16,7 @@ import { MotherSessionWarmUp } from './MotherSessionWarmUp'
 import { SessionBlockCard } from './SessionBlockCard'
 import { SessionGlossary } from './SessionGlossary'
 import { classifyBlock, parseBlockTourCount } from '../../services/ui/blockPresentation'
-import { resolveExerciseId, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
+import { resolveExerciseIdForSessionRun, isDirectiveText } from '../../services/motherSession/motherSessionExerciseMap'
 import { useSessionRun, buildExerciseTourKey } from '../../contexts/SessionRunContext'
 import { useMemo } from 'react'
 
@@ -49,7 +49,7 @@ function collectLoggableIndices(block: Block): number[] {
   const indices: number[] = []
   block.exercises.forEach((ex, i) => {
     if (isDirectiveText(ex.name)) return
-    if (!(ex.exerciseId || resolveExerciseId(ex.name))) return
+    if (!resolveExerciseIdForSessionRun(ex.name, ex.exerciseId)) return
     indices.push(i)
   })
   return indices

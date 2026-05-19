@@ -42,6 +42,63 @@
 - Completer App access si certaines fonctions exigent un login
 - Completer les declarations Health / Fitness si Play Console les demande pour le type de donnees traitees
 
+### App access - quoi declarer pour RugbyForge
+
+RugbyForge ne doit PAS etre declare comme "all functionality available without restrictions":
+
+- l'app principale exige un compte et une connexion
+- la plupart des routes app sont protegees apres login / onboarding
+- certaines fonctionnalites sont Premium et Google Play ne peut pas acheter ni demarrer un essai librement pendant la review
+
+Conclusion pratique: dans Play Console, choisir l'option indiquant que l'acces est limite pour tout ou partie de l'app, puis fournir un compte de review dedie avec acces complet.
+
+#### Compte de review recommande
+
+- creer un compte email dedie et stable, en anglais si possible
+- confirmer l'email avant soumission
+- terminer l'onboarding sur ce compte
+- accorder Premium a ce compte pour que les reviewers puissent voir toutes les fonctionnalites sans achat
+- ne pas fournir un compte personnel
+- ne pas fournir un mot de passe temporaire / expirable
+
+#### Helper SQL deja present dans le repo pour accorder Premium
+
+La migration `supabase/migrations/20260504100000_tester_premium_helpers.sql` expose:
+
+```sql
+select public.grant_premium_to_tester(id)
+from auth.users
+where email = 'reviewer@example.com';
+```
+
+Cette fonction donne les entitlements Premium sans abonnement Play/Stripe, ce qui est ideal pour la review Play Store.
+
+#### Texte pret a coller dans Play Console
+
+Instruction name:
+
+```text
+Review account - full access
+```
+
+Any other information required for access:
+
+```text
+Use the email address and password provided above on the login screen.
+
+This review account is pre-configured and already has full Premium access. No separate purchase, invitation code, 2-step verification, or location-based access is required.
+
+If a CAPTCHA is shown on the login screen, complete it and continue with the same credentials.
+
+Onboarding is already completed on this review account. After sign-in, all main sections are available from the in-app navigation.
+```
+
+#### Notes utiles pour la soumission
+
+- cocher l'autorisation permettant a Android d'utiliser ces identifiants pour les tests de compatibilite est OK si le compte est dedie a la review
+- garder ces identifiants a jour pour chaque mise a jour soumise
+- si le mot de passe change, mettre immediatement a jour Play Console
+
 ## Store listing
 
 - Nom public

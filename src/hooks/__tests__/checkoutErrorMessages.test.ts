@@ -35,6 +35,11 @@ describe('mapCheckoutError', () => {
     expect(mapCheckoutError('provider_not_configured')).toMatch(/bonjour@rugbyforge/i)
   })
 
+  it('maps founding cohort full to Premium fallback message', () => {
+    expect(mapCheckoutError('founding_cohort_full')).toMatch(/complète|100\s+places/i)
+    expect(mapCheckoutError('reason founding_cohort_full')).toMatch(/Premium/i)
+  })
+
   it('falls back to generic retry+contact for unknown errors', () => {
     const result = mapCheckoutError('Some random error xyz123')
     expect(result).toMatch(/réessaie/i)

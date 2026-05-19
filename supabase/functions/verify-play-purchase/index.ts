@@ -1,4 +1,6 @@
+import { isFoundingCohortFullError } from '../_shared/billingRpcErrors.ts'
 import { corsHeaders, json } from '../_shared/http.ts'
+import { captureEdgeException } from '../_shared/sentry.ts'
 import { requireUser } from '../_shared/supabase.ts'
 import { verifyPlayPurchase, getPlanIdForPlayProduct } from '../_shared/playBilling.ts'
 
@@ -74,6 +76,14 @@ Deno.serve(async (req: Request) => {
     })
 
     if (rpcError) {
+      if (isFoundingCohortFullError(rpcError)) {
+        console.warn('[verify-play-purchase] Founding cohort full:', { userId: user.id })
+        return json({
+          ok: false,
+          error: 'L’offre Founding est complète (100 places).',
+          code: 'founding_cohort_full',
+        }, 403)
+      }
       // Distinguish auth/binding violations from other errors.
       // Postgres unique_violation = SQLSTATE 23505
       if (rpcError.code === '23505') {
@@ -121,6 +131,7 @@ Deno.serve(async (req: Request) => {
     })
   } catch (error) {
     console.error('[verify-play-purchase] Uncaught error:', String(error))
+    await captureEdgeException(error, { function: 'verify-play-purchase' })
     return json({ error: String(error) }, 500)
   }
 })

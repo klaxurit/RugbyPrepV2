@@ -1,4 +1,6 @@
+import { isFoundingCohortFullError } from '../_shared/billingRpcErrors.ts'
 import { corsHeaders, json } from '../_shared/http.ts'
+import { captureEdgeException } from '../_shared/sentry.ts'
 import { requireUser } from '../_shared/supabase.ts'
 import { getPlanIdForStripePrice, stripeRequest } from '../_shared/stripe.ts'
 
@@ -56,6 +58,17 @@ const mapStripeStatus = (status: string | undefined, paymentStatus?: string): Bi
 }
 
 const mapRpcError = (rpcError: { code?: string; message?: string }): { status: number; body: Record<string, unknown> } => {
+  if (isFoundingCohortFullError(rpcError)) {
+    return {
+      status: 403,
+      body: {
+        ok: false,
+        reason: 'founding_cohort_full',
+        code: 'founding_cohort_full',
+        message: 'L’offre Founding est complète (100 places).',
+      },
+    }
+  }
   if (rpcError.code === '23505') {
     return { status: 409, body: { error: 'Purchase already linked to another account.', code: 'token_already_bound' } }
   }
@@ -204,6 +217,7 @@ Deno.serve(async (req: Request) => {
     })
   } catch (error) {
     console.error('[sync-checkout-session] Uncaught error:', String(error))
+    await captureEdgeException(error, { function: 'sync-checkout-session' })
     return json({ error: String(error) }, 500)
   }
 })

@@ -187,6 +187,8 @@
 - La dédup est insensible à la casse (`Back Squat` = `back squat`) ; la forme retenue est la plus capitalisée présente dans la source.
 - Les options composées du type `A or B` (ex. `Zercher Carry or Farmer Carry`) ont été éclatées en deux entrées distinctes.
 - Les directives non-exercices affichées dans l’UI (ex. `2 progressive ramp-up sets`) ont leurs équivalences FR dans `src/services/motherSession/motherSessionDirectiveFr.ts` (`localizeMotherSessionExerciseName`, avant le lexique exercices).
+- **Pipeline** : éditer ce fichier → `node scripts/generateMotherSessionExerciseFr.mjs` régénère `motherSessionExerciseFr.ts` (voir en-tête du fichier généré).
+- **Affichage** : `localizeMotherSessionExerciseName` est aussi utilisé pour les trous hors catalogue (MotherSessionBlock, `RunSessionCTA`, overlays EMOM/Iso, sticky Profil séance, historique détail blocs via `getExerciseName` pour les IDs catalogués).
 - Quelques entrées peuvent rester très génériques (`Carry`, `Landmine`, `Drop to Stick`) — à arbitrer pendant la traduction.
 - 5 corrections d'incohérences appliquées (relecture 2026-05-11) :
   - §1.8 `single-leg glute bridge` → `Pont fessier unilatéral` (cohérence avec `Glute Bridge` → `Pont fessier`).

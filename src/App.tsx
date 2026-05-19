@@ -4,9 +4,11 @@ import { AuthProvider } from './contexts/AuthContext'
 import { SessionRunProvider } from './contexts/SessionRunContext'
 import { CoachProvider } from './contexts/CoachContext'
 import { CalendarProvider } from './contexts/CalendarContext'
+import { ProgramEvolutionSheetProvider } from './contexts/ProgramEvolutionSheetContext'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { useAuth } from './hooks/useAuth'
 import { CoachCompanion } from './components/CoachCompanion'
 import { ProgramChangeMount } from './components/ProgramChangeMount'
 import { UpdatePrompt } from './components/UpdatePrompt'
@@ -64,6 +66,29 @@ function hasAuthCallbackParams(): boolean {
   return false
 }
 
+function rootRouteSpinner() {
+  return (
+    <div className="min-h-screen bg-app flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+}
+
+function RootRouteBody() {
+  const { authState, isInitializing } = useAuth()
+
+  if (isInitializing) return rootRouteSpinner()
+
+  if (authState.status === 'authenticated' && authState.user) {
+    return <Navigate to="/home" replace />
+  }
+
+  if (!isStandaloneMode) return <LandingPage />
+
+  // TWA / installed PWA: pas de landing, entrée app — RequireAuth sur /home gère l’anonyme
+  return <Navigate to="/home" replace />
+}
+
 function RootRoute() {
   // Email confirmation / OAuth callback landed on `/` (Supabase fallback
   // sur Site URL). Forward vers /auth/callback en préservant query+hash
@@ -74,11 +99,7 @@ function RootRoute() {
     return <Navigate to={`/auth/callback${search}${hash}`} replace />
   }
 
-  if (!isStandaloneMode) return <LandingPage />
-
-  // TWA / installed PWA: skip the landing page, go straight to /home
-  // RequireAuth on /home will redirect to /login if not authenticated
-  return <Navigate to="/home" replace />
+  return <RootRouteBody />
 }
 
 const DEV_STATIC_PAGES = new Set([
@@ -133,6 +154,7 @@ function App() {
   return (
     <ErrorBoundary>
     <AuthProvider>
+      <ProgramEvolutionSheetProvider>
       <CalendarProvider>
       <SessionRunProvider>
       <BrowserRouter>
@@ -182,6 +204,7 @@ function App() {
       </BrowserRouter>
       </SessionRunProvider>
       </CalendarProvider>
+      </ProgramEvolutionSheetProvider>
     </AuthProvider>
     </ErrorBoundary>
   )

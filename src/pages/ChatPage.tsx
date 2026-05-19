@@ -11,6 +11,7 @@ import { useACWR } from '../hooks/useACWR'
 import { useCalendar } from '../hooks/useCalendar'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
+import { useStripeCheckoutReturn } from '../hooks/useStripeCheckoutReturn'
 import { getPhaseForWeek } from '../services/program/programPhases.v1'
 import { supabase } from '../services/supabase/client'
 import { FunctionsHttpError } from '@supabase/functions-js'
@@ -72,13 +73,17 @@ export function ChatPage() {
     startCheckout,
   } = usePremiumCheckout()
 
+  const {
+    isCheckoutSuccess,
+    activationSyncing,
+    activationSyncTimeout,
+  } = useStripeCheckoutReturn(isPremium, refreshEntitlements)
+
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [rateLimited, setRateLimited] = useState(false)
   const [remaining, setRemaining] = useState<number | null>(null)
-  const [activationSyncing, setActivationSyncing] = useState(false)
-  const [activationSyncTimeout, setActivationSyncTimeout] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -102,10 +107,6 @@ export function ChatPage() {
   const phaseLabel = phaseLabelFor(phase, lang)
   const isDeload = week === 'DELOAD'
   const hasPremiumInsights = hasEntitlement('premium_analytics') || hasEntitlement('premium_program_adaptations')
-  const checkoutStatus = searchParams.get('checkout')
-  const checkoutSessionId = searchParams.get('session_id')
-  const isCheckoutSuccess = checkoutStatus === 'success'
-
   // Build coach context from current state
   const context = useMemo(() => ({
     week,
@@ -165,58 +166,6 @@ export function ChatPage() {
     if (messages.length === 0 && !loading) return
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages.length, loading])
-
-  // Après un retour checkout=success, on synchronise les droits côté serveur
-  // quelques secondes (le webhook Stripe peut arriver après la redirection client).
-  useEffect(() => {
-    if (!isCheckoutSuccess || isPremium) return
-
-    let cancelled = false
-    setActivationSyncing(true)
-    setActivationSyncTimeout(false)
-
-    let attempts = 0
-    const maxAttempts = 12
-    let timer: number | null = null
-
-    const tick = async () => {
-      if (checkoutSessionId) {
-        await supabase.functions.invoke('sync-checkout-session', {
-          body: { sessionId: checkoutSessionId },
-        })
-      }
-      await refreshEntitlements()
-      attempts += 1
-      if (cancelled) return
-      if (attempts >= maxAttempts) {
-        setActivationSyncing(false)
-        setActivationSyncTimeout(true)
-        return
-      }
-      timer = window.setTimeout(() => {
-        void tick()
-      }, 2500)
-    }
-
-    void tick()
-
-    return () => {
-      cancelled = true
-      if (timer !== null) window.clearTimeout(timer)
-    }
-  }, [checkoutSessionId, isCheckoutSuccess, isPremium, refreshEntitlements])
-
-  useEffect(() => {
-    if (!isCheckoutSuccess || !isPremium) return
-
-    setActivationSyncing(false)
-    setActivationSyncTimeout(false)
-
-    const next = new URLSearchParams(searchParams)
-    next.delete('checkout')
-    next.delete('session_id')
-    setSearchParams(next, { replace: true })
-  }, [isCheckoutSuccess, isPremium, searchParams, setSearchParams])
 
   const sendMessage = async (text: string) => {
     const trimmed = text.trim()

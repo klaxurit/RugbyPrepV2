@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1'
+import { captureEdgeException } from '../_shared/sentry.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -384,6 +385,7 @@ serve(async (req) => {
 
     return jsonResponse(responseBody)
   } catch (error) {
+    await captureEdgeException(error, { function: 'ai-coach' })
     return jsonResponse({ error: String(error) }, 500)
   }
 })

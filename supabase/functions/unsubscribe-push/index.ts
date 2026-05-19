@@ -1,4 +1,5 @@
 import { corsHeaders, json } from '../_shared/http.ts'
+import { captureEdgeException } from '../_shared/sentry.ts'
 import { requireUser } from '../_shared/supabase.ts'
 
 interface UnsubscribeBody {
@@ -42,6 +43,7 @@ Deno.serve(async (req: Request) => {
 
     return json({ ok: true })
   } catch (error) {
+    await captureEdgeException(error, { function: 'unsubscribe-push' })
     return json({ error: String(error) }, 500)
   }
 })

@@ -31,6 +31,12 @@ export const APP_LABELS = {
   // ── Synthetic warmup block title ────────────────────────────────────────
   warmup_block_title: { fr: 'Échauffement', en: 'Warm-Up' },
 
+  /** Header — quitter la séance en cours (même action que l'ancien bouton flottant). */
+  session_quit_workout_aria: {
+    fr: 'Quitter la séance en cours',
+    en: 'Leave current workout',
+  },
+
   // ── Cycle / season phases ───────────────────────────────────────────────
   cycle_off_season: { fr: 'Inter-saison', en: 'Off-Season' },
   cycle_pre_season: { fr: 'Pré-saison', en: 'Pre-Season' },
@@ -285,6 +291,29 @@ export const APP_LABELS = {
   progress_test_baseline: { fr: 'Baseline', en: 'Baseline' },
   progress_test_record: { fr: 'Record', en: 'Record' },
   progress_test_none: { fr: 'Aucun test enregistré', en: 'No test recorded' },
+
+  // ── HistoryPage ─────────────────────────────────────────────────────────
+  history_page_title: { fr: 'Historique', en: 'History' },
+  history_clear_logs: { fr: 'Effacer', en: 'Clear' },
+  history_upsell_title: { fr: 'Historique complet', en: 'Full history' },
+  history_upsell_body: {
+    fr: 'Retrouve toutes tes séances, charges et exercices. Suis ta progression semaine après semaine.',
+    en: 'See all your sessions, loads and exercises. Track your progress week after week.',
+  },
+  history_stat_total: { fr: 'Séances totales', en: 'Total sessions' },
+  history_stat_7d: { fr: '7 derniers jours', en: 'Last 7 days' },
+  history_stat_28d: { fr: '28 derniers jours', en: 'Last 28 days' },
+  history_stat_split: { fr: 'Annuel / Legacy', en: 'Annual / Legacy' },
+  history_empty_title: { fr: 'Aucune séance', en: 'No sessions yet' },
+  history_empty_body: {
+    fr: 'Lance ta première séance depuis la page Semaine.',
+    en: 'Start your first session from the Week page.',
+  },
+  history_empty_cta: { fr: 'Voir la semaine →', en: 'View week →' },
+  history_fatigue_tired: { fr: 'Fatigue', en: 'Tired' },
+  history_section_blocks: { fr: 'Détail des exercices', en: 'Exercise details' },
+  history_unit_reps: { fr: 'rép.', en: 'reps' },
+
   progress_pos_front_row: { fr: '1ère ligne', en: 'Front row' },
   progress_pos_second_row: { fr: '2ème ligne', en: 'Second row' },
   progress_pos_back_row: { fr: '3ème ligne', en: 'Back row' },
@@ -467,6 +496,15 @@ export const APP_LABELS = {
   founding_redirecting: { fr: 'Redirection…', en: 'Redirecting…' },
   founding_become: { fr: 'Devenir Founding — 49€/an à vie', en: 'Become Founding — €49/year for life' },
   founding_later: { fr: 'Plus tard', en: 'Later' },
+  founding_cohort_sold_out_title: { fr: 'Offre Founding complète', en: 'Founding offer is full' },
+  founding_cohort_sold_out_body: {
+    fr: 'Les 100 premières places ont été attribuées. Tu peux toujours passer sur Premium depuis ton profil.',
+    en: 'All 100 Founding spots are taken. You can still subscribe to Premium from your profile.',
+  },
+  founding_cohort_sold_out_note: {
+    fr: 'Merci pour ton intérêt — on te prévient lors des prochaines ouvertures.',
+    en: 'Thanks for your interest—we will share news on future openings.',
+  },
   profile_founding_card_title: { fr: 'Offre Founding (premiers utilisateurs)', en: 'Founding offer (early users)' },
   profile_founding_card_body: {
     fr: '49€/an à vie tant que l’offre est disponible — tout Premium inclus. Tu peux aussi rouvrir la fenêtre depuis le lien ci-dessous.',

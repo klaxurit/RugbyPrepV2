@@ -114,7 +114,8 @@ export function SessionBlocks({
           key="warmup-synthetic"
           block={warmupBlock}
           number={0}
-          state="pending"
+          state={phase === 'completed' ? 'done' : 'pending'}
+          showStateChip={phase === 'idle'}
           expanded={warmupExpanded}
           onToggle={onWarmupToggle}
           lang={lang}
@@ -168,6 +169,7 @@ export function SessionBlocks({
               onStartTimer={() => onStartEmomTimer?.(block.number)}
               notes={notes}
               lang={lang}
+              onPlayDemo={onPlayDemo ? (i) => onPlayDemo(block.number, i) : undefined}
             />
           )
         }
@@ -186,6 +188,7 @@ export function SessionBlocks({
               currentExoIdx={currentExoIdx}
               validatedByIdx={validatedByIdx}
               lang={lang}
+              onPlayDemo={onPlayDemo ? (i) => onPlayDemo(block.number, i) : undefined}
               onValidateExo={(exoIdx) => {
                 handleValidateExoFromBlock({
                   blockNumber: block.number,

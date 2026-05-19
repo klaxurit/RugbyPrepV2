@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import { RugbyForgeLogo } from '../components/RugbyForgeLogo'
 import { SignupOrInstallCTA } from '../components/SignupOrInstallCTA'
+import { AnnualCycleDiagram } from '../components/landing/AnnualCycleDiagram'
 
 // ─── Sub-components ──────────────────────────────────────────
 
@@ -47,6 +48,7 @@ function LandingNavbar() {
 
   const navLinks = [
     { label: 'Fonctionnalités', href: '#features' },
+    { label: 'Ta saison', href: '#annual-cycle' },
     { label: 'La Science', href: '#science' },
     { label: 'Tarifs', href: '#pricing' },
     { label: 'Blog', href: '/blog/' },
@@ -489,6 +491,8 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
+      <AnnualCycleDiagram />
 
       {/* ── Progression ──────────────────────────────────── */}
       <section className="py-20 px-4 bg-layer-2">

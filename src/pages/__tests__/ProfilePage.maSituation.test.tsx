@@ -97,7 +97,13 @@ vi.mock('../../hooks/useNotifications', () => ({
 }))
 
 vi.mock('../../services/supabase/client', () => ({
-  supabase: { from: () => ({ select: () => ({ eq: () => ({ data: [], error: null }) }) }) },
+  supabase: {
+    from: () => ({ select: () => ({ eq: () => ({ data: [], error: null }) }) }),
+    rpc: vi.fn().mockResolvedValue({
+      data: { cap: 100, issued: 0, accepting_new: true },
+      error: null,
+    }),
+  },
 }))
 
 vi.mock('../../services/calendar/ffrSyncService', () => ({

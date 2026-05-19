@@ -146,6 +146,15 @@ describe('detectSeasonTransitions', () => {
     }
   })
 
+  it('no match_detected_in_offseason when future match is classified friendly', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 5 },
+      today: '2026-06-01',
+      visibleEvents: [{ id: 'm-amical', date: '2026-09-12', type: 'match', match_kind: 'friendly' }],
+    })
+    expect(r?.type).not.toBe('match_detected_in_offseason')
+  })
+
   it('picks the correct match when two matches share the same date', () => {
     const r = detectSeasonTransitions({
       planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 5 },
@@ -215,6 +224,21 @@ describe('detectSeasonTransitions', () => {
       visibleEvents: [{ id: 'm1', date: '2026-09-12', type: 'match' }],
     })
     expect(r!.type).toBe('match_detected_in_offseason')
+  })
+
+  it('UC9 uses first non-friendly future match when an earlier friendly exists', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 5 },
+      today: '2026-06-01',
+      visibleEvents: [
+        { id: 'm-amical', date: '2026-09-05', type: 'match', match_kind: 'friendly' },
+        { id: 'm-ligue', date: '2026-09-12', type: 'match', opponent: 'Bayonne' },
+      ],
+    })
+    expect(r!.type).toBe('match_detected_in_offseason')
+    if (r!.type === 'match_detected_in_offseason') {
+      expect(r!.matchEventId).toBe('m-ligue')
+    }
   })
 
   // ── Off-season / pre-season: no transitions ────────────────

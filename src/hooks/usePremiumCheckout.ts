@@ -17,7 +17,7 @@ type CheckoutResponse = {
   entitlements?: string[]
   checkoutUrl?: string
   message?: string
-  reason?: 'provider_not_configured' | 'provider_not_wired'
+  reason?: 'provider_not_configured' | 'provider_not_wired' | 'founding_cohort_full'
   nextStep?: string
 }
 
@@ -87,14 +87,22 @@ export function usePremiumCheckout() {
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
           planId,
-          successUrl: `${window.location.origin}/chat?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: `${window.location.origin}/chat?checkout=cancel`,
+          successUrl: `${window.location.origin}/profile?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${window.location.origin}/profile?checkout=cancel`,
         },
       })
 
       if (error) throw error
 
       const payload = (data ?? null) as CheckoutResponse | null
+      if (payload?.reason === 'founding_cohort_full') {
+        setState({
+          loading: false,
+          error: mapCheckoutError('founding_cohort_full'),
+          message: null,
+        })
+        return payload
+      }
       if (payload?.ready && payload.checkoutUrl) {
         window.location.assign(payload.checkoutUrl)
         return payload

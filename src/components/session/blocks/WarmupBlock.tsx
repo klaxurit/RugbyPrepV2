@@ -8,11 +8,11 @@ import {
 } from '../../../services/motherSession/localizeMotherSessionExerciseName'
 import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
 import { hasExerciseDemo } from '../../../data/exercises'
-import { resolveExerciseIdForDemo } from '../../../services/motherSession/motherSessionExerciseMap'
+import { resolveExerciseIdForSessionRun } from '../../../services/motherSession/motherSessionExerciseMap'
 import { tr } from '../../../i18n/appLabels'
 
 function warmupExerciseHasDemo(exo: Pick<Exercise, 'name' | 'exerciseId'>): boolean {
-  const exoId = exo.exerciseId ?? resolveExerciseIdForDemo(exo.name ?? '')
+  const exoId = resolveExerciseIdForSessionRun(exo.name ?? '', exo.exerciseId)
   return Boolean(exoId && hasExerciseDemo(exoId))
 }
 
@@ -26,6 +26,8 @@ interface WarmupBlockProps {
   lang?: Lang
   /** Ouvre la fiche vidéo (même résolution catalogue que ToursBlock). */
   onPlayDemo?: (exerciseIndex: number) => void
+  /** Si faux, masque la pastille d'état (échauffement global hors suivi série par série). */
+  showStateChip?: boolean
 }
 
 /**
@@ -40,6 +42,7 @@ export function WarmupBlock({
   onToggle,
   lang = 'fr',
   onPlayDemo,
+  showStateChip = true,
 }: WarmupBlockProps) {
   return (
     <div className="flex flex-col gap-2.5">
@@ -51,6 +54,7 @@ export function WarmupBlock({
         expanded={expanded}
         onToggle={onToggle}
         lang={lang}
+        showStateChip={showStateChip}
       />
       {expanded && block.exercises.length > 0 && (
         <ul className="flex flex-col gap-2 px-1">

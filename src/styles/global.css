@@ -1,11 +1,6 @@
 @import './theme-tokens.css';
 @import 'tailwindcss';
 
-/* Playfair Display italic — signature éditoriale des accroches (refonte UI mai 2026).
-   Réservé aux citations et titres "manifeste" (jamais data ni labels).
-   Italic-only (les poids 500/700/800 italic suffisent). swap pour ne pas bloquer le rendu. */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500;1,700;1,800&display=swap');
-
 /* Variants plateforme — activés par `initPlatformClass` sur <html>.
    Permet d'écrire `ios:py-2` pour compresser les chromes iOS uniquement
    (Apple Dynamic Island bouffe déjà 47-54px de hauteur système, on ne peut

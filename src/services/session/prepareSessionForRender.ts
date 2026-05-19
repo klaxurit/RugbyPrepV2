@@ -10,6 +10,7 @@ import {
   adaptSessionContentFrForEquipmentAlternatives,
 } from '../motherSession/equipmentAlternativeAdaptations'
 import { getSessionFrOrFallback } from '../motherSession/motherSessionContentFr'
+import { resolveExerciseIdForSessionRun } from '../motherSession/motherSessionExerciseMap'
 
 interface PrepareInputs {
   session: MotherSession
@@ -58,6 +59,10 @@ export function prepareSessionForRender({
 
   // Merge des noms FR sur les blocs et exos. Format/coachingNotes/fallbackOptions
   // restent ceux de l'EN si pas surchargés en FR.
+  //
+  // ⚠️ Toujours résoudre `exerciseId` depuis le nom EN *avant* d'appliquer le libellé FR :
+  // le catalogue / MS_EXERCISE_MAP est anglophone ; sans ça, lang=fr casse le moteur
+  // (`findCurrentPending` → pas de « Valider ») et les démos (bouton œil).
   const blocks = adaptedEn.blocks.map((block, blockIndex) => {
     const frBlock = finalFr.blocks[blockIndex]
     if (!frBlock) return block
@@ -66,12 +71,16 @@ export function prepareSessionForRender({
       name: frBlock.name || block.name,
       format: frBlock.format || block.format,
       exercises: block.exercises.map((exo, exoIndex) => {
+        const catalogId = resolveExerciseIdForSessionRun(exo.name, exo.exerciseId)
         const frExo = frBlock.exercises[exoIndex]
-        if (!frExo) return exo
+        if (!frExo) {
+          return catalogId ? { ...exo, exerciseId: catalogId } : exo
+        }
         return {
           ...exo,
           name: frExo.name || exo.name,
           prescription: frExo.prescription || exo.prescription,
+          ...(catalogId ? { exerciseId: catalogId } : {}),
         }
       }),
       coachingNotes: frBlock.coachingNotes ?? block.coachingNotes,

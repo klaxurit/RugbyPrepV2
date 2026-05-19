@@ -23,6 +23,7 @@ const EMPTY_CALENDAR: CalendarContextValue = {
   thisWeekEvents: [],
   addEvent: async () => undefined,
   removeEvent: async () => undefined,
+  updateMatchKind: async () => undefined,
   updateMatchLoad: async () => undefined,
   setMatchNeutral: async () => undefined,
   hideImportedEvent: async () => undefined,
@@ -34,8 +35,6 @@ const EMPTY_CALENDAR: CalendarContextValue = {
   manualCount: 0,
   loading: false,
   error: null,
-  syncNotification: null,
-  dismissSyncNotification: () => {},
 }
 
 export const CalendarContext = createContext<CalendarContextValue | null>(null)

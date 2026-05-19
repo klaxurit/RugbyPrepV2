@@ -286,7 +286,11 @@ export function buildAthletePlanningInputs(
       : undefined
 
   const inputs: AthletePlanningInputs = {
-    events: visibleEvents.map((e) => ({ date: e.date, type: e.type })),
+    events: visibleEvents.map((e) => ({
+      date: e.date,
+      type: e.type,
+      ...(e.match_kind ? { match_kind: e.match_kind } : {}),
+    })),
     today,
     weeklyFrequency,
     positionGroup: resolvedPositionGroup,

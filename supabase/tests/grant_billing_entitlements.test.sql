@@ -460,13 +460,157 @@ begin
 end $$;
 rollback to savepoint s8;
 
+-- ─── Scenario 9 — founding cap: 99 strangers + newcomer #100 OK, user_b rejected as #101 ─
+
+savepoint s9;
+do $$
+declare
+  i int;
+  v_uid uuid;
+  v_result jsonb;
+  v_user_b uuid := '00000000-0000-0000-0000-00000000000b';
+  v_caught boolean := false;
+begin
+  for i in 1..99 loop
+    v_uid := gen_random_uuid();
+    insert into auth.users (id, instance_id, email, aud, role, raw_user_meta_data, created_at, updated_at)
+    values (
+      v_uid, '00000000-0000-0000-0000-000000000000',
+      'founding_cap_' || i::text || '_' || replace(v_uid::text, '-', '') || '@test.local',
+      'authenticated', 'authenticated', '{}'::jsonb, now(), now()
+    );
+    insert into public.profiles (id) values (v_uid);
+    v_result := public.grant_billing_entitlements(
+      p_provider := 'stripe',
+      p_event_id := 'evt_fcap_' || i::text,
+      p_event_created_at := now(),
+      p_user_id := v_uid,
+      p_plan_id := 'founding_yearly',
+      p_provider_subscription_id := 'sub_fcap_' || i::text,
+      p_provider_purchase_token := null,
+      p_status := 'active',
+      p_current_period_start := now(),
+      p_current_period_end := now() + interval '1 year'
+    );
+    if v_result->>'result' != 'granted' then
+      raise exception 'S9 seed %: expected granted, got %', i, v_result;
+    end if;
+  end loop;
+
+  v_result := public.grant_billing_entitlements(
+    p_provider := 'stripe',
+    p_event_id := 'evt_fcap_user_a_100',
+    p_event_created_at := now(),
+    p_user_id := '00000000-0000-0000-0000-00000000000a',
+    p_plan_id := 'founding_yearly',
+    p_provider_subscription_id := 'sub_fcap_user_a',
+    p_provider_purchase_token := null,
+    p_status := 'active',
+    p_current_period_start := now(),
+    p_current_period_end := now() + interval '1 year'
+  );
+  if v_result->>'result' != 'granted' then
+    raise exception 'S9 user_a 100th: expected granted, got %', v_result;
+  end if;
+
+  begin
+    perform public.grant_billing_entitlements(
+      p_provider := 'stripe',
+      p_event_id := 'evt_fcap_user_b_101',
+      p_event_created_at := now(),
+      p_user_id := v_user_b,
+      p_plan_id := 'founding_yearly',
+      p_provider_subscription_id := 'sub_fcap_user_b',
+      p_provider_purchase_token := null,
+      p_status := 'active',
+      p_current_period_start := now(),
+      p_current_period_end := now() + interval '1 year'
+    );
+  exception
+    when sqlstate 'P0001' then
+      v_caught := true;
+  end;
+  if not v_caught then
+    raise exception 'S9: expected P0001 founding_cohort_full for 101st founder';
+  end if;
+
+  raise notice 'S9 PASS — founding cap rejects 101st distinct user';
+end $$;
+rollback to savepoint s9;
+
+-- ─── Scenario 10 — founding cap: existing founder renews (new event) while cohort full ─
+
+savepoint s10;
+do $$
+declare
+  i int;
+  v_uid uuid;
+  v_result jsonb;
+  v_user_a uuid := '00000000-0000-0000-0000-00000000000a';
+begin
+  for i in 1..99 loop
+    v_uid := gen_random_uuid();
+    insert into auth.users (id, instance_id, email, aud, role, raw_user_meta_data, created_at, updated_at)
+    values (
+      v_uid, '00000000-0000-4000-8000-000000000000',
+      'founding_cap10_' || i::text || '_' || replace(v_uid::text, '-', '') || '@test.local',
+      'authenticated', 'authenticated', '{}'::jsonb, now(), now()
+    );
+    insert into public.profiles (id) values (v_uid);
+    perform public.grant_billing_entitlements(
+      p_provider := 'stripe',
+      p_event_id := 'evt_fcap10_' || i::text,
+      p_event_created_at := now(),
+      p_user_id := v_uid,
+      p_plan_id := 'founding_yearly',
+      p_provider_subscription_id := 'sub_fcap10_' || i::text,
+      p_provider_purchase_token := null,
+      p_status := 'active',
+      p_current_period_start := now(),
+      p_current_period_end := now() + interval '1 year'
+    );
+  end loop;
+
+  perform public.grant_billing_entitlements(
+    p_provider := 'stripe',
+    p_event_id := 'evt_fcap10_user_a_first',
+    p_event_created_at := now(),
+    p_user_id := v_user_a,
+    p_plan_id := 'founding_yearly',
+    p_provider_subscription_id := 'sub_fcap10_user_a',
+    p_provider_purchase_token := null,
+    p_status := 'active',
+    p_current_period_start := now(),
+    p_current_period_end := now() + interval '1 year'
+  );
+
+  v_result := public.grant_billing_entitlements(
+    p_provider := 'stripe',
+    p_event_id := 'evt_fcap10_user_a_renew',
+    p_event_created_at := now() + interval '1 second',
+    p_user_id := v_user_a,
+    p_plan_id := 'founding_yearly',
+    p_provider_subscription_id := 'sub_fcap10_user_a',
+    p_provider_purchase_token := null,
+    p_status := 'active',
+    p_current_period_start := now(),
+    p_current_period_end := now() + interval '2 year'
+  );
+  if v_result->>'result' != 'granted' then
+    raise exception 'S10 renewal: expected granted, got %', v_result;
+  end if;
+
+  raise notice 'S10 PASS — existing founder renewal not blocked by cap';
+end $$;
+rollback to savepoint s10;
+
 -- ─── Done ─────────────────────────────────────────────────────────────
 
 do $$
 begin
   raise notice '';
-  raise notice 'All 8 scenarios passed (S1-S8).';
-  raise notice 'Migration: 20260507130000_billing_idempotence_ledger.sql';
+  raise notice 'All scenarios passed (S1-S8, S9 founding cap, S10 founder renewal).';
+  raise notice 'Migrations: 20260507130000_billing_idempotence_ledger.sql + 20260512143000_founding_cohort_cap.sql';
   raise notice 'RPC: public.grant_billing_entitlements';
 end $$;
 

@@ -129,7 +129,7 @@ export function GymDaySelector({ clubSchedule, selectedDays, weeklySessions, onC
       {hasCloseSessions && (
         <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-warn-bg-strong border border-warn-bd-strong text-xs text-warn-strong">
           <span className="font-black">⚠</span>
-          <span>Deux séances consécutives — laisse au moins 1 jour de récup entre chaque.</span>
+          <span>Deux séances consécutives — si possible, laisse au moins 1 jour de récup entre chaque.</span>
         </div>
       )}
 

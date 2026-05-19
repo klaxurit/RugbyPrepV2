@@ -6,7 +6,7 @@ import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
 import type { LoadSuggestion } from '../../../services/loadSuggestion'
 import { hasExerciseDemo } from '../../../data/exercises'
-import { resolveExerciseIdForDemo } from '../../../services/motherSession/motherSessionExerciseMap'
+import { resolveExerciseIdForSessionRun } from '../../../services/motherSession/motherSessionExerciseMap'
 import {
   localizeMotherSessionExerciseName,
   type Lang,
@@ -15,14 +15,11 @@ import { localizeBlockName } from '../../../services/motherSession/motherSession
 import { tr } from '../../../i18n/appLabels'
 
 /**
- * Per-exo gate for the eye/demo button. Tour-block exercises sometimes ship
- * with the English session name and no direct exerciseId — fall back to the
- * name→id map (same pattern as MotherSessionBlock.tsx:57). Only ~115/208
- * exos in exercices.v1.json have a videoUrl, so without this gate the eye
- * button would render dead on the rest.
+ * Per-exo gate for the eye/demo button. Aligné sur `resolveExerciseIdForSessionRun`
+ * (moteur sticky + sessionRun). N'affiche l'œil que si le catalogue a une `videoUrl`.
  */
 const exerciseHasDemo = (exo: Exercise): boolean => {
-  const exoId = exo.exerciseId ?? resolveExerciseIdForDemo(exo.name ?? '')
+  const exoId = resolveExerciseIdForSessionRun(exo.name ?? '', exo.exerciseId)
   return Boolean(exoId && hasExerciseDemo(exoId))
 }
 

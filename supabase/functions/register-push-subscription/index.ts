@@ -1,4 +1,5 @@
 import { corsHeaders, json } from '../_shared/http.ts'
+import { captureEdgeException } from '../_shared/sentry.ts'
 import { requireUser } from '../_shared/supabase.ts'
 
 interface RegisterPushBody {
@@ -71,6 +72,7 @@ Deno.serve(async (req: Request) => {
       subscription: data,
     })
   } catch (error) {
+    await captureEdgeException(error, { function: 'register-push-subscription' })
     return json({ error: String(error) }, 500)
   }
 })

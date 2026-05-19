@@ -33,6 +33,22 @@ describe('evaluateFoundingEligibility', () => {
     expect(evaluateFoundingEligibility({ ...eligibleInputs, isPremium: true })).toBe(false)
   })
 
+  it('returns false when founding cohort is full (unless forceShow)', () => {
+    expect(evaluateFoundingEligibility({ ...eligibleInputs, cohortFull: true })).toBe(false)
+  })
+
+  it('forceShow still shows when cohort is full (deep link / email recovery)', () => {
+    expect(
+      evaluateFoundingEligibility({
+        ...eligibleInputs,
+        dismissed: true,
+        hasSession: false,
+        cohortFull: true,
+        forceShow: true,
+      }),
+    ).toBe(true)
+  })
+
   it('returns false when user has dismissed the offer', () => {
     expect(evaluateFoundingEligibility({ ...eligibleInputs, dismissed: true })).toBe(false)
   })

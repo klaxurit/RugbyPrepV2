@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Dumbbell, RefreshCw, Trophy } from 'lucide-react'
-import { useProfile } from '../../hooks/useProfile'
+import { useProfile, type UpdateProfileOptions } from '../../hooks/useProfile'
 import { useCalendar } from '../../hooks/useCalendar'
 import { fetchCompetitions } from '../../services/calendar/ffrSyncService'
 import { getClubLogoUrl, getClubMonogram } from '../../services/ui/clubLogos'
 import { ClubSearchInput } from '../match/ClubSearchInput'
 import { GymDaySelector } from '../GymDaySelector'
 import { buildManualSCSchedule, computeSCSchedule, TRAINING_DAYS_DEFAULT } from '../../services/program/scheduleOptimizer'
-import type { ClubSchedule, DayOfWeek, FfrCompetition } from '../../types/training'
+import type { ClubSchedule, DayOfWeek, FfrCompetition, SeasonMode, UserProfile } from '../../types/training'
 
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
   { day: 1, label: 'Lundi', short: 'L' },
@@ -41,13 +41,26 @@ function humanizeFfrSyncError(raw: string): string {
   return 'Synchronisation impossible. Réessaie.'
 }
 
+interface ClubSettingsSectionProps {
+  profile?: UserProfile
+  updateProfile?: (patch: Partial<UserProfile>, options?: UpdateProfileOptions) => void
+  effectiveSeasonMode?: SeasonMode
+}
+
 /**
  * Section "Mon club" — sélection du club FFR, compétition, resync, jours
  * d'entraînement club, jour de match habituel, sélecteur jours muscu.
  * Extrait de l'ancienne page `/calendar` (qui est dissoute).
  */
-export function ClubSettingsSection() {
-  const { profile, updateProfile } = useProfile()
+export function ClubSettingsSection({
+  profile: profileProp,
+  updateProfile: updateProfileProp,
+  effectiveSeasonMode,
+}: ClubSettingsSectionProps = {}) {
+  const profileState = useProfile()
+  const profile = profileProp ?? profileState.profile
+  const updateProfile = updateProfileProp ?? profileState.updateProfile
+  const seasonMode = effectiveSeasonMode ?? profile.seasonMode
   const { refreshFromFFR } = useCalendar()
 
   const [clubQuery, setClubQuery] = useState(profile.clubName ?? '')
@@ -182,7 +195,7 @@ export function ClubSettingsSection() {
   // days / match day are skipped — pas de matchs ni d'entraînement club hors
   // saison. Le club lui-même reste éditable car il fait partie de l'identité
   // du joueur et sera réutilisé dès le retour en saison.
-  if (profile.seasonMode === 'off_season') {
+  if (seasonMode === 'off_season') {
     const gymDays = new Set<DayOfWeek>(
       profile.scSchedule?.sessions.map((s) => s.day) ??
       TRAINING_DAYS_DEFAULT[profile.weeklySessions],

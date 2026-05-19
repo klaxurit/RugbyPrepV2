@@ -1,4 +1,5 @@
 import { corsHeaders, json } from '../_shared/http.ts'
+import { captureEdgeException } from '../_shared/sentry.ts'
 import { requireUser } from '../_shared/supabase.ts'
 import { getStripePriceIdForPlan, stripeRequest } from '../_shared/stripe.ts'
 
@@ -22,7 +23,7 @@ interface CheckoutResponse {
   entitlements?: string[]
   checkoutUrl?: string
   message?: string
-  reason?: 'provider_not_configured' | 'provider_not_wired'
+  reason?: 'provider_not_configured' | 'provider_not_wired' | 'founding_cohort_full'
   nextStep?: string
   sessionId?: string
 }
@@ -65,6 +66,28 @@ Deno.serve(async (req: Request) => {
       ready: false,
       plan,
       entitlements: (entitlements ?? []).map((row) => row.entitlement_key),
+    }
+
+    if (body.planId === 'founding_yearly') {
+      const { data: foundingStats, error: foundingStatsError } = await serviceClient.rpc(
+        'get_founding_cohort_stats',
+      )
+      if (foundingStatsError) {
+        console.error('[create-checkout-session] get_founding_cohort_stats:', foundingStatsError)
+        return json({
+          ...responseBase,
+          reason: 'provider_not_wired',
+          message: 'Impossible de vérifier la disponibilité de l’offre Founding.',
+        }, 503)
+      }
+      const stats = foundingStats as { accepting_new?: boolean } | null
+      if (!stats?.accepting_new) {
+        return json({
+          ...responseBase,
+          reason: 'founding_cohort_full',
+          message: 'L’offre Founding est complète (100 places).',
+        }, 403)
+      }
     }
 
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')
@@ -173,6 +196,7 @@ Deno.serve(async (req: Request) => {
       message: 'Checkout session created.',
     } satisfies CheckoutResponse)
   } catch (error) {
+    await captureEdgeException(error, { function: 'create-checkout-session' })
     return json({ error: String(error) }, 500)
   }
 })

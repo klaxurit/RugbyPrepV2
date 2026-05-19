@@ -24,6 +24,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
+import { useWeekSnapshotConfirmationSheet } from '../hooks/useWeekSnapshotConfirmationSheet'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useAthleteTests } from '../hooks/useAthleteTests'
@@ -37,6 +38,7 @@ import { getToday } from '../services/ui/debugDateOverride'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import type { TransitionEntry } from '../types/training'
 import { appendTransitionEntry, computeDeferralExpiry } from '../services/season/transitionJournal'
+import { hasPendingOffseasonMatchDecision } from '../services/season/hasPendingOffseasonMatchDecision'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
 import { userScopedKey } from '../services/storage/userScopedStorage'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
@@ -49,7 +51,6 @@ import { resolveFatigueLevel } from '../services/program/resolveFatigueLevel'
 import { computePillars } from '../services/home/computePillars'
 import { computeScoreHistory7d } from '../services/home/computeScoreHistory7d'
 import { detectHomeState, type HomeHeroState } from '../services/home/detectHomeState'
-import { getRugbySeasonWeek } from '../services/home/rugbySeasonWeek'
 import { tr, cyclePhaseLabel, trainingLevelLabel, type Lang } from '../i18n/appLabels'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -258,7 +259,20 @@ export function HomePage() {
       userId,
     ],
   )
-  const { surface, snapshot } = useWeekSnapshot(surfaceParams)
+  const {
+    surface,
+    snapshot,
+    confirmPendingUpdate,
+    hasConfirmationRequired,
+  } = useWeekSnapshot(surfaceParams)
+  const confirmationItem = hasConfirmationRequired ? snapshot?.confirmationRequired[0] ?? null : null
+  useWeekSnapshotConfirmationSheet({
+    hasConfirmationRequired,
+    confirmationItem,
+    confirmPendingUpdate,
+    visibleEvents,
+    today,
+  })
   const seasonPhase = cycleToSeasonPhase(surface?.planningContext?.cycle)
   const weekPresentation = snapshot?.presentation ?? null
 
@@ -310,6 +324,11 @@ export function HomePage() {
       today,
       userId,
     })
+
+  const hasPendingOffseasonMatch = useMemo(
+    () => hasPendingOffseasonMatchDecision(profile, visibleEvents ?? [], today),
+    [profile, visibleEvents, today],
+  )
 
   const todaySessionTitle = todayDatedSession
     ? formatTitleFromMotherSessionId(todayDatedSession.sessionSlot.session.metadata.id, lang)
@@ -426,10 +445,7 @@ export function HomePage() {
     chatSeed: 'Je regarde ma journée. ',
   })
 
-  // ── Meta-line (date · saison · semaine de saison · niveau) ──
-  // FIX 7 : la "Semaine N" affichée est désormais la semaine absolue de saison
-  // rugby (ancrée au 1er septembre), pas le mésocycle interne du moteur — sinon
-  // en mai on lirait "Semaine 1" alors qu'on est largement entamé dans la saison.
+  // ── Meta-line (date · saison · niveau) ──
   const metaLine = useMemo(() => {
     const todayDate = new Date(today + 'T12:00:00')
     const dateLabel = todayDate.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {
@@ -438,11 +454,8 @@ export function HomePage() {
       month: 'short',
     })
     const seasonLabel = cyclePhaseLabel(seasonPhase, lang)
-    const seasonWeek = lang === 'fr'
-      ? `Semaine ${getRugbySeasonWeek(today)}`
-      : `Week ${getRugbySeasonWeek(today)}`
     const levelLabel = trainingLevelLabel(profile.trainingLevel ?? 'builder', lang)
-    return [dateLabel, seasonLabel, seasonWeek, levelLabel].filter(Boolean).join(' · ')
+    return [dateLabel, seasonLabel, levelLabel].filter(Boolean).join(' · ')
   }, [today, seasonPhase, profile.trainingLevel, lang])
 
   // ── Hero copy (uniquement pour HeroNormal — HeroDayAfter est géré séparément) ──
@@ -577,7 +590,9 @@ export function HomePage() {
 
         {/* ─── Transition Banners (max 1 : scheduling > season) ─── */}
         <div className="px-[22px] pt-4 space-y-3">
-          {schedulingTransition ? (
+          {schedulingTransition &&
+          !hasPendingOffseasonMatch &&
+          schedulingTransition.type !== 'calendar_mode_activated' ? (
             <SchedulingTransitionBanner
               transition={schedulingTransition}
               onAction={() => dismissSchedulingTransition(schedulingTransition.type)}
@@ -827,7 +842,19 @@ export function HomePage() {
       </main>
 
       <BottomNav />
-      <MatchEditDrawer event={drawerMatch} onClose={() => setDrawerMatch(null)} />
+      <MatchEditDrawer
+        event={drawerMatch}
+        onClose={() => setDrawerMatch(null)}
+        matchKindProfileContext={
+          surface?.planningContext
+            ? {
+                planningContext: surface.planningContext,
+                schedulingMode: surface.schedulingMode ?? 'calendar',
+                today,
+              }
+            : undefined
+        }
+      />
     </div>
   )
 }

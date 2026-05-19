@@ -5,7 +5,7 @@ import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import type { ExerciseLogEntry } from '../../types/training'
 import type { LoadSuggestion } from '../../services/loadSuggestion'
 import { useSessionRun, buildExerciseTourKey, type ExerciseTourLoad } from '../../contexts/SessionRunContext'
-import { isDirectiveText, resolveExerciseId } from '../../services/motherSession/motherSessionExerciseMap'
+import { isDirectiveText, resolveExerciseIdForSessionRun } from '../../services/motherSession/motherSessionExerciseMap'
 import { getExerciseMetricType } from '../../services/ui/exerciseMetrics'
 import { getExerciseName, hasExerciseDemo } from '../../data/exercises'
 import {
@@ -63,7 +63,7 @@ export function SessionTourTracker({
     return block.exercises
       .map((ex, idx) => {
         if (isDirectiveText(ex.name)) return null
-        const exerciseId = ex.exerciseId ?? resolveExerciseId(ex.name) ?? ''
+        const exerciseId = resolveExerciseIdForSessionRun(ex.name, ex.exerciseId) ?? ''
         // Per-exo tour count: an exo prescribed "2×12-15" runs only 2 tours,
         // even if the block runs 3. When unspecified, fall back to the block total.
         const exoTours = parseExerciseSets(ex.prescription) ?? tourCount

@@ -8,6 +8,7 @@ import type { SessionLog } from '../../types/training'
 
 const useHistoryMock = vi.fn()
 const useBlockLogsMock = vi.fn()
+const useProfileMock = vi.fn()
 
 vi.mock('../../services/analytics/posthog', () => ({
   posthog: { capture: vi.fn() },
@@ -39,6 +40,10 @@ vi.mock('../../hooks/useFeatureAccess', () => ({
     loading: false,
     hasEntitlement: () => true,
   }),
+}))
+
+vi.mock('../../hooks/useProfile', () => ({
+  useProfile: () => useProfileMock(),
 }))
 
 const LEGACY_LOG: SessionLog = {
@@ -73,6 +78,11 @@ describe('HistoryPage · enriched logs', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     useBlockLogsMock.mockReturnValue({ logs: [] })
+    useProfileMock.mockReturnValue({
+      profile: { preferredLanguage: 'fr' as const },
+      updateProfile: vi.fn(),
+      resetProfile: vi.fn(),
+    })
   })
 
   afterEach(() => {
@@ -137,5 +147,21 @@ describe('HistoryPage · enriched logs', () => {
 
     expect(screen.queryByTestId('history-stats')).toBeNull()
     expect(screen.getByText('Aucune séance')).toBeInTheDocument()
+  })
+
+  it('wording EN lorsque preferredLanguage = en', () => {
+    useProfileMock.mockReturnValue({
+      profile: { preferredLanguage: 'en' as const },
+      updateProfile: vi.fn(),
+      resetProfile: vi.fn(),
+    })
+    useHistoryMock.mockReturnValue({
+      logs: [],
+      clearLogs: vi.fn(),
+    })
+
+    renderWithRouter(<HistoryPage />, { initialEntries: ['/history'] })
+
+    expect(screen.getByText('No sessions yet')).toBeInTheDocument()
   })
 })
