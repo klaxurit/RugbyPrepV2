@@ -28,6 +28,8 @@ import {
   loadSnapshot,
   toISOWeekId,
   classifyExternalChange,
+  currentWeekMatchPresentationChanged,
+  patchSnapshotMatchPresentation,
   rebuildWithoutCorrection,
   rebuildWithRemainingCorrections,
   computeGlobalEventsHash,
@@ -36,6 +38,12 @@ import {
   CURRENT_SCHEMA_VERSION,
   type SnapshotStorage,
 } from '../services/scheduling/weekSnapshot'
+import type { Lang } from '../i18n/appLabels'
+import {
+  dayOfWeekLabel,
+  weekSnapshotLabel,
+  weekSnapshotRescheduleToast,
+} from '../i18n/programSurfaces'
 import { PROGRAM_NOTICE_UPDATED_EVENT } from '../services/program/programNoticeAck'
 import { getBlockProgression, type BlockProgressionStorage } from '../services/scheduling/resolveBlockProgression'
 
@@ -74,9 +82,11 @@ export interface UseWeekSnapshotResult {
   confirmPendingUpdate: (updateId: string) => void
 }
 
-const DAY_LABELS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
-
 let correctionCounter = 0
+
+function profileLang(profile: import('../types/training').UserProfile): Lang {
+  return profile.preferredLanguage === 'en' ? 'en' : 'fr'
+}
 function nextCorrectionId(): string {
   return `c-${Date.now()}-${++correctionCounter}`
 }
@@ -252,23 +262,29 @@ export function useWeekSnapshot(
 
   // ── Category A light corrections ──
   const rescheduleSession = useCallback((sessionId: string, toDay: DayOfWeek) => {
+    const p = paramsRef.current
+    const lang = p ? profileLang(p.profile) : 'fr'
     applyCorrection(
       { id: nextCorrectionId(), type: 'reschedule', sessionId, toDay, appliedAt: new Date().toISOString(), reversible: true },
-      `Séance reportée à ${DAY_LABELS[toDay]}`,
+      weekSnapshotRescheduleToast(dayOfWeekLabel(toDay, lang), lang),
     )
   }, [applyCorrection])
 
   const skipSession = useCallback((sessionId: string) => {
+    const p = paramsRef.current
+    const lang = p ? profileLang(p.profile) : 'fr'
     applyCorrection(
       { id: nextCorrectionId(), type: 'skip', sessionId, appliedAt: new Date().toISOString(), reversible: true },
-      'Séance passée',
+      weekSnapshotLabel('toast_skip', lang),
     )
   }, [applyCorrection])
 
   const markDayUnavailable = useCallback((day: DayOfWeek) => {
+    const p = paramsRef.current
+    const lang = p ? profileLang(p.profile) : 'fr'
     applyCorrection(
       { id: nextCorrectionId(), type: 'unavailable_day', toDay: day, appliedAt: new Date().toISOString(), reversible: true },
-      `Jour indisponible · Séance déplacée`,
+      weekSnapshotLabel('toast_unavailable', lang),
     )
   }, [applyCorrection])
 
@@ -299,8 +315,8 @@ export function useWeekSnapshot(
             {
               id: `conf-${Date.now()}`,
               type: 'match_changed',
-              message: 'Un match de cette semaine a changé.',
-              cta: 'Mettre à jour mon programme',
+              message: weekSnapshotLabel('confirm_match_changed', profileLang(params.profile)),
+              cta: weekSnapshotLabel('confirm_cta', profileLang(params.profile)),
               data: { fingerprint: result.currentFingerprint },
             },
           ],
@@ -309,7 +325,20 @@ export function useWeekSnapshot(
         if (userId) saveSnapshot(userId, updated, params.snapshotStorage)
       }
     } else if (result.category === 'B') {
-      // Category B: queue as pending — consumed on next resolveWeek
+      // Lieu / adversaire / coup d'envoi : rafraîchir la carte match sans re-résoudre tout le programme.
+      if (currentWeekMatchPresentationChanged(snapshot, params.events, params.today)) {
+        const patched = patchSnapshotMatchPresentation(
+          snapshot,
+          params.events,
+          params.today,
+          globalHash,
+        )
+        setSnapshot(patched)
+        if (userId) saveSnapshot(userId, patched, params.snapshotStorage)
+        return
+      }
+
+      // Autres changements B (hors semaine courante) : file d'attente pour le prochain resolveWeek.
       const updated: WeekSnapshot = {
         ...snapshot,
         pendingUpdates: [
@@ -317,7 +346,7 @@ export function useWeekSnapshot(
           {
             id: `pending-${Date.now()}`,
             source: 'ffr_sync' as const,
-            description: 'Calendrier mis à jour',
+            description: weekSnapshotLabel('pending_calendar', profileLang(params.profile)),
             affectsCurrentWeek: false,
             data: { fingerprint: result.currentFingerprint },
             detectedAt: new Date().toISOString(),
@@ -378,7 +407,7 @@ export function useWeekSnapshot(
       if (userId) saveSnapshot(userId, rebuilt, p.snapshotStorage)
       resolvedWeekRef.current = `${userId ?? 'anon'}:${rebuilt.weekId}`
       lastGlobalHashRef.current = computeGlobalEventsHash(eventsWithout)
-      setToastMessage('Match retiré · Programme mis à jour')
+      setToastMessage(weekSnapshotLabel('toast_match_removed', profileLang(p.profile)))
       return
     }
 
@@ -391,7 +420,8 @@ export function useWeekSnapshot(
     setSnapshot(rebuilt)
     const userId = p.userId ?? null
     if (userId) saveSnapshot(userId, rebuilt, p.snapshotStorage)
-    setToastMessage('Correction annulée')
+    const lang = profileLang(p.profile)
+    setToastMessage(weekSnapshotLabel('toast_undo', lang))
   }, [])
 
   // ── Confirm pending update (Category C) ──
@@ -425,7 +455,8 @@ export function useWeekSnapshot(
       if (userId) saveSnapshot(userId, fresh, p.snapshotStorage)
       setSnapshot(fresh)
       resolvedWeekRef.current = `${userId ?? 'anon'}:${fresh.weekId}`
-      if (!options?.silentToast) setToastMessage('Programme mis à jour')
+      const lang = p ? profileLang(p.profile) : 'fr'
+      if (!options?.silentToast) setToastMessage(weekSnapshotLabel('toast_updated', lang))
     },
     [upstream.surface],
   )

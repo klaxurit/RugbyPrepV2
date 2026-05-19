@@ -56,6 +56,7 @@ export function MatchEditDrawer({
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
   const ui = MATCH_KIND_UI[lang]
   const {
+    events: calendarEvents,
     setMatchNeutral,
     hideImportedEvent,
     unhideImportedEvent,
@@ -64,7 +65,11 @@ export function MatchEditDrawer({
     removeEvent,
   } = useCalendar()
 
-  const match = event?.type === 'match' ? event : null
+  /** État live du calendrier — évite un drawer figé sur la copie passée par le parent. */
+  const match =
+    event?.type === 'match'
+      ? (calendarEvents.find((e) => e.id === event.id && e.type === 'match') ?? event)
+      : null
   const open = match !== null
 
   const [rpeInput, setRpeInput] = useState<number>(7)
@@ -179,7 +184,8 @@ export function MatchEditDrawer({
       showClose={!blocking}
     >
       {match ? (
-        <div className="px-5 pb-4 pt-1" data-testid="match-edit-drawer">
+        <div className="px-5 pb-[max(2.75rem,env(safe-area-inset-bottom))] pt-1"
+          data-testid="match-edit-drawer">
           <div className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-tint">
             <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-brand text-on-brand">
               <Calendar className="h-2.5 w-2.5" strokeWidth={3} />

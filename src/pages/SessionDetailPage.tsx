@@ -92,7 +92,7 @@ function buildHeroTags(args: {
   }
   if (targetDuration) tags.push(targetDuration)
   if (trainingLevel === 'performance' || trainingLevel === 'builder') {
-    tags.push(trainingLevelLabel('builder', lang))
+    tags.push(trainingLevelLabel('performance', lang))
   } else if (trainingLevel === 'starter') {
     tags.push(trainingLevelLabel('starter', lang))
   }
@@ -202,6 +202,7 @@ export function SessionDetailPage() {
     confirmPendingUpdate,
     visibleEvents,
     today,
+    lang,
   })
 
   // ── Hard-block global ──────────────────────────────────────────────────────

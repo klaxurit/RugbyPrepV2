@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
-import {
-  DEFAULT_PROGRAM_EVOLUTION_BULLETS,
-} from '../components/program/ProgramEvolutionSheet'
 import { useProgramEvolutionSheet } from '../contexts/ProgramEvolutionSheetContext'
+import type { Lang } from '../i18n/appLabels'
+import {
+  defaultProgramEvolutionBullets,
+  programEvolutionSectionTitle,
+} from '../i18n/programSurfaces'
 import type { ConfirmationRequired } from '../types/scheduling'
 import type { CalendarEvent } from '../types/training'
 
@@ -12,14 +14,6 @@ let lastOpenedConfirmationId: string | null = null
 /** Tests uniquement — réinitialise la dédup entre cas. */
 export function resetWeekSnapshotConfirmationDedupForTests(): void {
   lastOpenedConfirmationId = null
-}
-
-const DEFAULT_PROGRAM_EVOLUTION_BULLETS_FALLBACK = [...DEFAULT_PROGRAM_EVOLUTION_BULLETS]
-
-const SECTION_TITLE: Record<ConfirmationRequired['type'], string> = {
-  match_changed: 'Semaine de match',
-  season_ended: 'Fin de saison',
-  playoffs_suggested: 'Play-offs',
 }
 
 /**
@@ -32,10 +26,17 @@ export function useWeekSnapshotConfirmationSheet(args: {
   confirmPendingUpdate: (id: string) => void
   visibleEvents: CalendarEvent[]
   today: string
+  lang?: Lang
 }): void {
   const { openProgramEvolution } = useProgramEvolutionSheet()
-  const { hasConfirmationRequired, confirmationItem, confirmPendingUpdate, visibleEvents, today } =
-    args
+  const {
+    hasConfirmationRequired,
+    confirmationItem,
+    confirmPendingUpdate,
+    visibleEvents,
+    today,
+    lang = 'fr',
+  } = args
 
   useEffect(() => {
     if (!hasConfirmationRequired) {
@@ -54,9 +55,9 @@ export function useWeekSnapshotConfirmationSheet(args: {
 
     openProgramEvolution({
       matchDateISO,
-      sectionTitle: SECTION_TITLE[item.type],
+      sectionTitle: programEvolutionSectionTitle(item.type, lang),
       summary: item.message,
-      bullets: item.type === 'match_changed' ? undefined : DEFAULT_PROGRAM_EVOLUTION_BULLETS_FALLBACK,
+      bullets: item.type === 'match_changed' ? undefined : defaultProgramEvolutionBullets(lang),
       primaryCtaLabel: item.cta,
       programNoticeId: matchDateISO ? `match:${matchDateISO}` : null,
       primaryAction: () => {
@@ -70,5 +71,6 @@ export function useWeekSnapshotConfirmationSheet(args: {
     openProgramEvolution,
     visibleEvents,
     today,
+    lang,
   ])
 }

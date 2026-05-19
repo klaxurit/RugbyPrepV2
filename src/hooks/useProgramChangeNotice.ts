@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { Lang } from '../i18n/appLabels'
 import type { ACWRZone } from './useACWR'
 import type { CalendarEvent, UserProfile } from '../types/training'
 import type { ProgramChangeNotice, VisibleProgramChangeNotice } from '../types/programChange'
@@ -184,6 +185,7 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
     if (!profile) return null
     if (!profile.weeklySessions || !profile.position) return null
     try {
+      const lang = (profile.preferredLanguage === 'en' ? 'en' : 'fr') satisfies Lang
       return detectProgramChange({
         today,
         weeklyFrequency: (profile.weeklySessions ?? 3) as 2 | 3 | 4,
@@ -192,6 +194,7 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
         trainingBaseline: profile.trainingBaseline,
         acwrZone,
         calendarEvents,
+        lang,
       })
     } catch {
       return null

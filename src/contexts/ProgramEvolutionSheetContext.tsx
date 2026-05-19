@@ -12,7 +12,13 @@ import {
   ProgramEvolutionSheet,
   DEFAULT_PROGRAM_EVOLUTION_BULLETS,
 } from '../components/program/ProgramEvolutionSheet'
-import { formatMatchDateFr } from '../services/program/formatMatchDateFr'
+import { useProfile } from '../hooks/useProfile'
+import type { Lang } from '../i18n/appLabels'
+import {
+  defaultProgramEvolutionBullets,
+  programEvolutionDefaults,
+  programNoticeMatchSummary,
+} from '../i18n/programSurfaces'
 import { acknowledgeProgramNoticeById } from '../services/program/programNoticeAck'
 import { getToday } from '../services/ui/debugDateOverride'
 
@@ -62,6 +68,8 @@ const ProgramEvolutionSheetContext = createContext<ProgramEvolutionSheetContextV
 )
 
 export function ProgramEvolutionSheetProvider({ children }: { children: ReactNode }) {
+  const { profile } = useProfile()
+  const lang: Lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'
   const [payload, setPayload] = useState<ResolvedPayload | null>(null)
   const [primaryBusy, setPrimaryBusy] = useState(false)
   const payloadRef = useRef<ResolvedPayload | null>(null)
@@ -79,10 +87,10 @@ export function ProgramEvolutionSheetProvider({ children }: { children: ReactNod
       const resolvedSummary =
         args.summary ??
         (args.matchDateISO
-          ? `Match prévu le ${formatMatchDateFr(args.matchDateISO)} — la semaine est calée pour arriver frais.`
-          : 'Ton calendrier a été mis à jour — la semaine est calée pour arriver frais.')
+          ? programNoticeMatchSummary(args.matchDateISO, lang)
+          : programEvolutionDefaults.summary_calendar[lang])
 
-      const resolvedBullets = args.bullets ?? DEFAULT_PROGRAM_EVOLUTION_BULLETS
+      const resolvedBullets = args.bullets ?? defaultProgramEvolutionBullets(lang)
 
       const chainAck = () => {
         prev?.onAcknowledged?.()
@@ -137,11 +145,11 @@ export function ProgramEvolutionSheetProvider({ children }: { children: ReactNod
         onCtaPress={handleCtaPress}
         blockFlexibleDismiss={blockFlexibleDismiss}
         primaryBusy={primaryBusy}
-        eyebrow={payload?.eyebrow}
-        sectionTitle={payload?.sectionTitle}
+        eyebrow={payload?.eyebrow ?? programEvolutionDefaults.eyebrow[lang]}
+        sectionTitle={payload?.sectionTitle ?? programEvolutionDefaults.section_match[lang]}
         summary={payload?.resolvedSummary ?? ''}
-        bullets={payload?.resolvedBullets}
-        ctaLabel={payload?.primaryCtaLabel}
+        bullets={payload?.resolvedBullets ?? DEFAULT_PROGRAM_EVOLUTION_BULLETS}
+        ctaLabel={payload?.primaryCtaLabel ?? programEvolutionDefaults.cta_default[lang]}
       />
     </ProgramEvolutionSheetContext.Provider>
   )

@@ -7,6 +7,8 @@
  * Render-pure: detection is read-only. Baseline updates happen in useEffect.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { Lang } from '../i18n/appLabels'
+import { schedulingTransitionLabel } from '../i18n/programSurfaces'
 import type { SchedulingMode, SchedulingTransition } from '../types/scheduling'
 import type { SessionLog } from '../types/training'
 import { syncDismissToSupabase, useMergeRemoteDismisses } from './useDismissedUntilSync'
@@ -35,6 +37,7 @@ export interface UseSchedulingTransitionParams {
   logs: SessionLog[]
   today: string
   userId?: string | null
+  lang?: Lang
   storage?: TransitionStorage
 }
 
@@ -48,7 +51,7 @@ export interface UseSchedulingTransitionResult {
 export function useSchedulingTransition(
   params: UseSchedulingTransitionParams,
 ): UseSchedulingTransitionResult {
-  const { schedulingMode, logs, today, userId, storage = localStorage } = params
+  const { schedulingMode, logs, today, userId, lang = 'fr', storage = localStorage } = params
   const identity = userId ?? 'anon'
   const dismissKey = `${DISMISS_KEY_PREFIX}.${identity}`
 
@@ -86,8 +89,8 @@ export function useSchedulingTransition(
         if (!isDismissed(dismissed, 'calendar_mode_activated', today)) {
           return {
             type: 'calendar_mode_activated',
-            message: 'Match détecté — ton programme s\'adapte à ton calendrier.',
-            cta: 'OK',
+            message: schedulingTransitionLabel('calendar_mode', lang),
+            cta: schedulingTransitionLabel('cta_ok', lang),
           }
         }
       }
@@ -96,8 +99,8 @@ export function useSchedulingTransition(
         if (!isDismissed(dismissed, 'block_mode_activated', today)) {
           return {
             type: 'block_mode_activated',
-            message: 'Plus de match prévu — ton programme continue en mode progression.',
-            cta: 'OK',
+            message: schedulingTransitionLabel('block_mode', lang),
+            cta: schedulingTransitionLabel('cta_ok', lang),
           }
         }
       }
@@ -111,15 +114,15 @@ export function useSchedulingTransition(
         if (daysSince > RETURN_AFTER_BREAK_THRESHOLD_DAYS) {
           return {
             type: 'return_after_break',
-            message: 'Content de te revoir ! Semaine de reprise progressive.',
-            cta: 'C\'est parti',
+            message: schedulingTransitionLabel('return_break', lang),
+            cta: schedulingTransitionLabel('cta_go', lang),
           }
         }
       }
     }
 
     return null
-  }, [schedulingMode, logs, today, identity, storage, dismissKey, dismissCount])
+  }, [schedulingMode, logs, today, identity, lang, storage, dismissKey, dismissCount])
 
   // Commit-phase: persist baseline after detection
   const baselineWrittenRef = useRef<string>('')

@@ -71,8 +71,8 @@ export function msSessionTypeLabel(type: string, lang: AppLang): string {
 
 const TARGET_LEVEL_LABELS: Record<string, Record<AppLang, string>> = {
   starter:     { fr: 'Fondations',     en: 'Foundations' },
-  builder:     { fr: 'Avancé',         en: 'Advanced' },
-  performance: { fr: 'Avancé',         en: 'Performance' },
+  builder:     { fr: 'Intermédiaire',  en: 'Intermediate' },
+  performance: { fr: 'Performance',    en: 'Performance' },
 }
 
 export function msTargetLevelLabel(level: string, lang: AppLang): string {

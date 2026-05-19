@@ -418,7 +418,7 @@ function getISOWeekBounds(today: string): { weekStart: Date; weekEnd: Date } {
  * Filter events to visible match events within the current ISO week.
  * Returns rich match events for timeline display.
  */
-function getWeekMatchEvents(
+export function getWeekMatchEvents(
   events: ResolveWeekPresentationParams['events'],
   today: string,
 ): PresentedMatchEvent[] {

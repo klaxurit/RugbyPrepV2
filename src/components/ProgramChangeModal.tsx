@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { AlertTriangle, ArrowRight, Info, Sparkles, X } from 'lucide-react'
+import type { Lang } from '../i18n/appLabels'
+import { programModalLabel } from '../i18n/programSurfaces'
 import type { VisibleProgramChangeNotice } from '../types/programChange'
 
 const ICON_BY_TYPE = {
@@ -29,11 +31,17 @@ const ACCENT_BY_SEVERITY = {
 
 interface ProgramChangeModalProps {
   notice: VisibleProgramChangeNotice
+  lang?: Lang
   onAcknowledge: () => void
   onPostpone: () => void
 }
 
-export function ProgramChangeModal({ notice, onAcknowledge, onPostpone }: ProgramChangeModalProps) {
+export function ProgramChangeModal({
+  notice,
+  lang = 'fr',
+  onAcknowledge,
+  onPostpone,
+}: ProgramChangeModalProps) {
   const Icon = ICON_BY_TYPE[notice.type]
   const accent = ACCENT_BY_SEVERITY[notice.severity]
 
@@ -63,7 +71,7 @@ export function ProgramChangeModal({ notice, onAcknowledge, onPostpone }: Progra
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-black uppercase tracking-widest text-fg-muted">
-                Ton programme évolue
+                {programModalLabel('eyebrow', lang)}
               </p>
               <h2 id="program-change-title" className="text-lg font-black text-fg leading-tight mt-0.5">
                 {notice.title}
@@ -91,7 +99,7 @@ export function ProgramChangeModal({ notice, onAcknowledge, onPostpone }: Progra
               data-testid="program-change-acknowledge"
               className="py-3 rounded-2xl bg-brand text-on-brand text-sm font-black uppercase tracking-wide hover:bg-brand-hover transition-colors rf-focus-ring"
             >
-              C'est compris, on y va
+              {programModalLabel('cta_ack', lang)}
             </button>
             {notice.canPostponeNow && (
               <button
@@ -101,12 +109,12 @@ export function ProgramChangeModal({ notice, onAcknowledge, onPostpone }: Progra
                 className="py-3 rounded-2xl border border-border-app bg-layer-5 text-xs font-bold text-fg-soft hover:border-layer-20 transition-colors rf-focus-ring inline-flex items-center justify-center gap-1.5"
               >
                 <X className="w-3.5 h-3.5" />
-                Reporter d'une semaine
+                {programModalLabel('cta_postpone', lang)}
               </button>
             )}
             {!notice.canPostponeNow && notice.postponable && (
               <p className="text-[11px] text-fg-muted text-center">
-                Tu as déjà reporté ce changement la semaine dernière.
+                {programModalLabel('already_postponed', lang)}
               </p>
             )}
           </div>

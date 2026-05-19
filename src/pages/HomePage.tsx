@@ -259,6 +259,7 @@ export function HomePage() {
       userId,
     ],
   )
+  const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
   const {
     surface,
     snapshot,
@@ -272,6 +273,7 @@ export function HomePage() {
     confirmPendingUpdate,
     visibleEvents,
     today,
+    lang,
   })
   const seasonPhase = cycleToSeasonPhase(surface?.planningContext?.cycle)
   const weekPresentation = snapshot?.presentation ?? null
@@ -309,8 +311,6 @@ export function HomePage() {
     }
   }
 
-  const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
-
   const { transition: seasonTransition, dismiss: dismissSeasonTransition } = useSeasonTransitions({
     planningContext: surface?.planningContext ?? null,
     today,
@@ -323,6 +323,7 @@ export function HomePage() {
       logs,
       today,
       userId,
+      lang,
     })
 
   const hasPendingOffseasonMatch = useMemo(
@@ -373,6 +374,7 @@ export function HomePage() {
   const coachInsight = useMemo(
     () =>
       selectCoachInsight({
+        lang,
         score: readinessResult.score,
         acwr: acwr.acwr,
         acwrZone: acwr.hasSufficientData ? acwr.zone : null,
@@ -595,6 +597,7 @@ export function HomePage() {
           schedulingTransition.type !== 'calendar_mode_activated' ? (
             <SchedulingTransitionBanner
               transition={schedulingTransition}
+              lang={lang}
               onAction={() => dismissSchedulingTransition(schedulingTransition.type)}
               onDismiss={() => dismissSchedulingTransition(schedulingTransition.type)}
             />
@@ -631,6 +634,7 @@ export function HomePage() {
             seasonTransition.type === 'match_detected_in_offseason' ? (
               <SeasonTransitionBanner
                 transition={seasonTransition}
+                lang={lang}
                 onConfirmResume={() => {
                   const prevAnchors = { ...profile.planningAnchors }
                   const entry: TransitionEntry = {
@@ -719,6 +723,7 @@ export function HomePage() {
             ) : (
               <SeasonTransitionBanner
                 transition={seasonTransition}
+                lang={lang}
                 onAction={() => {
                   if (seasonTransition.type === 'season_ended') {
                     const prevAnchors = { ...profile.planningAnchors }

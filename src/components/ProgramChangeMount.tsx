@@ -73,5 +73,13 @@ export function ProgramChangeMount() {
 
   if (notice.type === 'match') return null
 
-  return <ProgramChangeModal notice={notice} onAcknowledge={acknowledge} onPostpone={postpone} />
+  const lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'
+  return (
+    <ProgramChangeModal
+      notice={notice}
+      lang={lang}
+      onAcknowledge={acknowledge}
+      onPostpone={postpone}
+    />
+  )
 }

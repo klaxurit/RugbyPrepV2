@@ -162,6 +162,7 @@ export function WeekPage() {
     confirmPendingUpdate,
     visibleEvents,
     today,
+    lang,
   })
 
   // ── Transition banners (scheduling > season, max 1) ────────────────────────
@@ -172,6 +173,7 @@ export function WeekPage() {
     logs,
     today,
     userId,
+    lang,
   })
 
   const { openProgramEvolution } = useProgramEvolutionSheet()
@@ -493,6 +495,7 @@ export function WeekPage() {
           schedulingTransition.type !== 'calendar_mode_activated' && (
           <SchedulingTransitionBanner
             transition={schedulingTransition}
+            lang={lang}
             onAction={() => dismissSchedulingTransition(schedulingTransition.type)}
             onDismiss={() => dismissSchedulingTransition(schedulingTransition.type)}
           />
@@ -655,8 +658,8 @@ export function WeekPage() {
           if (!hasMatchSoon) return null
           return (
             <PremiumUpsellCard
-              title="Match dans les prochains jours"
-              body="Adapte ta semaine automatiquement en fonction du match — Premium."
+              title={tr('week_upsell_match_title', lang)}
+              body={tr('week_upsell_match_body', lang)}
               onDismiss={() => {
                 dismissUpsell('week_match')
                 setWeekMatchUpsellDismissed(true)

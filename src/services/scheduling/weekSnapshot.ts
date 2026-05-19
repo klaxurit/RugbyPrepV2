@@ -15,7 +15,7 @@ import type {
   WeekSnapshot,
 } from '../../types/scheduling'
 import type { WeeklyProgramSurfaceResult } from '../program/resolveWeeklyProgramSurface'
-import { resolveWeekPresentation } from './resolveWeekPresentation'
+import { getWeekMatchEvents, resolveWeekPresentation } from './resolveWeekPresentation'
 import { buildExplanation } from './buildExplanation'
 import { parseLocalDate } from './parseLocalDate'
 
@@ -350,6 +350,73 @@ export function classifyExternalChange(
   }
 
   return { changed: true, category: 'B', currentFingerprint: currentWeekFingerprint }
+}
+
+function matchPresentationSignature(
+  events: Array<{
+    date: string
+    is_home?: boolean
+    is_neutral?: boolean
+    opponent?: string
+    kickoff_time?: string
+  }>,
+): string {
+  return [...events]
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map(
+      (e) =>
+        `${e.date}:${e.is_home ?? ''}:${e.is_neutral ?? ''}:${e.opponent ?? ''}:${e.kickoff_time ?? ''}`,
+    )
+    .join('|')
+}
+
+/**
+ * True when calendar match display fields changed in the current week
+ * (lieu, adversaire, coup d'envoi) without add/remove of a match day.
+ */
+export function currentWeekMatchPresentationChanged(
+  snapshot: WeekSnapshot,
+  currentEvents: Array<
+    Pick<CalendarEvent, 'date' | 'type'> & {
+      user_hidden?: boolean
+      opponent?: string
+      is_home?: boolean
+      is_neutral?: boolean
+      kickoff_time?: string
+    }
+  >,
+  today: string,
+): boolean {
+  const fresh = getWeekMatchEvents(currentEvents, today)
+  return matchPresentationSignature(snapshot.presentation.matchEvents) !== matchPresentationSignature(fresh)
+}
+
+/**
+ * Rebuild only `presentation.matchEvents` from the live calendar (no engine re-run).
+ */
+export function patchSnapshotMatchPresentation(
+  snapshot: WeekSnapshot,
+  currentEvents: Array<
+    Pick<CalendarEvent, 'date' | 'type'> & {
+      user_hidden?: boolean
+      opponent?: string
+      opponent_code?: string
+      is_home?: boolean
+      is_neutral?: boolean
+      kickoff_time?: string
+    }
+  >,
+  today: string,
+  globalEventsHash: string,
+): WeekSnapshot {
+  return {
+    ...snapshot,
+    globalEventsHash,
+    presentation: {
+      ...snapshot.presentation,
+      matchEvents: getWeekMatchEvents(currentEvents, today),
+    },
+  }
 }
 
 /**

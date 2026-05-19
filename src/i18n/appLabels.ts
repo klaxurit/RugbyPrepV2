@@ -41,12 +41,12 @@ export const APP_LABELS = {
   cycle_off_season: { fr: 'Inter-saison', en: 'Off-Season' },
   cycle_pre_season: { fr: 'Pré-saison', en: 'Pre-Season' },
   cycle_in_season: { fr: 'En saison', en: 'In-Season' },
-  cycle_playoffs: { fr: 'Playoffs', en: 'Playoffs' },
+  cycle_playoffs: { fr: 'Phase finale', en: 'Knockouts' },
 
   // ── Training levels ─────────────────────────────────────────────────────
   level_starter: { fr: 'Fondations', en: 'Foundations' },
-  level_builder: { fr: 'Avancée', en: 'Intermediate' },
-  level_performance: { fr: 'Avancée', en: 'Advanced' },
+  level_builder: { fr: 'Intermédiaire', en: 'Intermediate' },
+  level_performance: { fr: 'Performance', en: 'Advanced' },
 
   // ── HomePage hero — eyebrows + CTAs (titles/subtitles restent JSX inline) ─
   hero_match_today_eyebrow: { fr: "Aujourd'hui · Match", en: 'Today · Match' },
@@ -317,7 +317,7 @@ export const APP_LABELS = {
   progress_pos_front_row: { fr: '1ère ligne', en: 'Front row' },
   progress_pos_second_row: { fr: '2ème ligne', en: 'Second row' },
   progress_pos_back_row: { fr: '3ème ligne', en: 'Back row' },
-  progress_pos_half_backs: { fr: 'Demis', en: 'Half-backs' },
+  progress_pos_half_backs: { fr: 'Demi', en: 'Half-backs' },
   progress_pos_centers: { fr: 'Centres', en: 'Centres' },
   progress_pos_back_three: { fr: 'Arrières', en: 'Backs' },
   progress_modal_title: { fr: 'Ajouter un test', en: 'Add a test' },
@@ -374,7 +374,7 @@ export const APP_LABELS = {
   profile_section_subscription: { fr: 'Mon abonnement', en: 'My subscription' },
   profile_section_photo: { fr: 'Photo de profil', en: 'Profile picture' },
   profile_section_photo_sub: { fr: 'Ajoute ta photo pour personnaliser ton compte.', en: 'Add your photo to personalize your account.' },
-  profile_section_photo_uploading: { fr: 'Upload en cours...', en: 'Uploading...' },
+  profile_section_photo_uploading: { fr: 'Envoi en cours…', en: 'Uploading...' },
   profile_section_play: { fr: 'Infos de jeu', en: 'Game info' },
   profile_section_play_sub: { fr: 'Poste, niveau, saison, fréquence', en: 'Position, level, season, frequency' },
   profile_section_lang: { fr: 'Langue', en: 'Language' },
@@ -463,7 +463,7 @@ export const APP_LABELS = {
   profile_avatar_aria: { fr: 'Changer la photo de profil', en: 'Change profile picture' },
   profile_avatar_crop_title: { fr: 'Recadrer la photo', en: 'Crop photo' },
   profile_avatar_crop_sub: { fr: 'Centre ton visage puis ajuste le zoom.', en: 'Center your face then adjust zoom.' },
-  profile_avatar_uploading: { fr: 'Upload...', en: 'Uploading...' },
+  profile_avatar_uploading: { fr: 'Envoi…', en: 'Uploading...' },
   profile_avatar_validate: { fr: 'Valider', en: 'Confirm' },
   profile_avatar_err_crop: { fr: "Impossible de recadrer l'image.", en: 'Unable to crop image.' },
   profile_avatar_err_update: { fr: 'Impossible de mettre à jour la photo.', en: 'Unable to update photo.' },
@@ -472,7 +472,7 @@ export const APP_LABELS = {
   profile_avatar_err_email_conf: { fr: 'Confirme ton email pour continuer.', en: 'Confirm your email to continue.' },
   profile_avatar_err_file_type: { fr: 'Format invalide. Utilise une image JPG, PNG ou WEBP.', en: 'Invalid format. Use a JPG, PNG or WEBP image.' },
   profile_avatar_err_file_size: { fr: 'Image trop lourde. Taille max: 5 MB.', en: 'Image too large. Max size: 5 MB.' },
-  profile_avatar_err_upload: { fr: 'Upload impossible pour le moment.', en: 'Upload failed for now.' },
+  profile_avatar_err_upload: { fr: 'Envoi impossible pour le moment.', en: 'Upload failed for now.' },
 
   // ── ProfilePage · footer ─────────────────────────────────────────────────
   profile_situation_resume: { fr: 'Je rejoue déjà', en: "I'm playing again" },
@@ -480,7 +480,7 @@ export const APP_LABELS = {
 
   // ── BottomNav ───────────────────────────────────────────────────────────
   nav_home: { fr: 'Accueil', en: 'Home' },
-  nav_program: { fr: 'Programme', en: 'Program' },
+  nav_program: { fr: 'Semaine', en: 'Week' },
   nav_profile: { fr: 'Profil', en: 'Profile' },
 
   // ── PageHeader (aria-labels) ────────────────────────────────────────────
@@ -585,6 +585,13 @@ export const APP_LABELS = {
   club_suggestion: { fr: 'Suggestion calculée', en: 'Computed suggestion' },
   club_suggestion_hint: { fr: 'Basé sur ton planning club et les règles de récup.', en: 'Based on your club schedule and recovery rules.' },
   club_no_suggestion: { fr: "Sélectionne tes jours d'entraînement club pour obtenir une suggestion.", en: 'Select your club training days to get a suggestion.' },
+
+  // ── WeekPage · upsell match proche ──────────────────────────────────────
+  week_upsell_match_title: { fr: 'Match dans les prochains jours', en: 'Match coming up soon' },
+  week_upsell_match_body: {
+    fr: 'Adapte ta semaine automatiquement en fonction du match — Premium.',
+    en: 'Adapt your week automatically around the match — Premium.',
+  },
 } as const satisfies Record<string, LabelEntry>
 
 export type AppLabelKey = keyof typeof APP_LABELS
@@ -625,7 +632,8 @@ export function trainingLevelLabel(
     case 'starter':
       return tr('level_starter', lang)
     case 'builder':
-      return tr('level_builder', lang)
+      // Legacy profil DB : affiché comme Performance (plus de tier Builder à l’UI).
+      return tr('level_performance', lang)
     case 'performance':
       return tr('level_performance', lang)
     default:

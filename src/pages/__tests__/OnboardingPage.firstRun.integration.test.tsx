@@ -61,8 +61,8 @@ function navigateToSummary() {
   fireEvent.click(screen.getByText('Première ligne'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
-  // Step 1: Profil → Avancée + 2 séances
-  fireEvent.click(screen.getByText('Avancée'))
+  // Step 1: Profil → Performance + 2 séances
+  fireEvent.click(screen.getByText('Performance'))
   fireEvent.click(screen.getByText('2 séances'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
@@ -117,8 +117,8 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    // Step 1: select Avancée
-    fireEvent.click(screen.getByText('Avancée'))
+    // Step 1: select Performance
+    fireEvent.click(screen.getByText('Performance'))
 
     // performanceFocus should NOT appear
     expect(screen.queryByText('Orientation performance')).toBeNull()
@@ -140,7 +140,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    fireEvent.click(screen.getByText('Avancée'))
+    fireEvent.click(screen.getByText('Performance'))
     fireEvent.click(screen.getByText('2 séances'))
 
     fireEvent.click(screen.getByText('Joueuse'))
@@ -191,7 +191,7 @@ describe('OnboardingPage · first run flow', () => {
 
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
-    fireEvent.click(screen.getByText('Avancée'))
+    fireEvent.click(screen.getByText('Performance'))
     fireEvent.click(screen.getByText('2 séances'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
     fireEvent.click(screen.getByTestId('onboarding-season-playoffs'))
