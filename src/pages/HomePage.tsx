@@ -382,7 +382,7 @@ export function HomePage() {
         matchEvents: structuralEvents,
         logs,
       }),
-    [readinessResult.score, acwr.acwr, acwr.hasSufficientData, acwr.zone, today, structuralEvents, logs],
+    [lang, readinessResult.score, acwr.acwr, acwr.hasSufficientData, acwr.zone, today, structuralEvents, logs],
   )
   const scorePillars = useMemo(
     () =>

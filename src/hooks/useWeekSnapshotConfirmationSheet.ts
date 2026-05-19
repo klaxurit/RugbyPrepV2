@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useProgramEvolutionSheet } from '../contexts/ProgramEvolutionSheetContext'
+import { useProgramEvolutionSheet } from './useProgramEvolutionSheet'
 import type { Lang } from '../i18n/appLabels'
 import {
   defaultProgramEvolutionBullets,

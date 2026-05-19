@@ -6,7 +6,7 @@ import { syncCalendar } from '../services/calendar/ffrSyncService'
 import { applyDeferralRules } from '../services/season/deferralRules'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 import type { CalendarEvent, MatchKind } from '../types/training'
-import { useProgramEvolutionSheet } from '../contexts/ProgramEvolutionSheetContext'
+import { useProgramEvolutionSheet } from './useProgramEvolutionSheet'
 import { getToday } from '../services/ui/debugDateOverride'
 
 const STORAGE_BASE = 'rugbyprep.calendar'

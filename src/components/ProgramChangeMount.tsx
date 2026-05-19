@@ -6,7 +6,7 @@ import { useCalendar } from '../hooks/useCalendar'
 import { useHistory } from '../hooks/useHistory'
 import { useACWR } from '../hooks/useACWR'
 import { useProgramChangeNotice } from '../hooks/useProgramChangeNotice'
-import { useProgramEvolutionSheet } from '../contexts/ProgramEvolutionSheetContext'
+import { useProgramEvolutionSheet } from '../hooks/useProgramEvolutionSheet'
 import { getToday } from '../services/ui/debugDateOverride'
 import { ProgramChangeModal } from './ProgramChangeModal'
 

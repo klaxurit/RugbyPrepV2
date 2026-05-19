@@ -8,19 +8,22 @@ import { supabase } from '../services/supabase/client'
  */
 export function useStripeCheckoutReturn(isPremium: boolean, refreshEntitlements: () => Promise<void>) {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [activationSyncing, setActivationSyncing] = useState(false)
-  const [activationSyncTimeout, setActivationSyncTimeout] = useState(false)
+  /** Session pour laquelle la synchro a échoué (timeout) — évite setState synchrone au montage de l’effet. */
+  const [timedOutSessionId, setTimedOutSessionId] = useState<string | null>(null)
 
   const checkoutSessionId = searchParams.get('session_id')
   const isCheckoutSuccess = searchParams.get('checkout') === 'success'
+  const needsActivationSync = isCheckoutSuccess && !isPremium
+  const activationSyncTimeout =
+    needsActivationSync &&
+    timedOutSessionId != null &&
+    timedOutSessionId === (checkoutSessionId ?? '')
+  const activationSyncing = needsActivationSync && !activationSyncTimeout
 
   useEffect(() => {
-    if (!isCheckoutSuccess || isPremium) return
+    if (!needsActivationSync) return
 
     let cancelled = false
-    setActivationSyncing(true)
-    setActivationSyncTimeout(false)
-
     let attempts = 0
     const maxAttempts = 12
     let timer: number | null = null
@@ -35,8 +38,7 @@ export function useStripeCheckoutReturn(isPremium: boolean, refreshEntitlements:
       attempts += 1
       if (cancelled) return
       if (attempts >= maxAttempts) {
-        setActivationSyncing(false)
-        setActivationSyncTimeout(true)
+        setTimedOutSessionId(checkoutSessionId ?? '')
         return
       }
       timer = window.setTimeout(() => {
@@ -50,13 +52,10 @@ export function useStripeCheckoutReturn(isPremium: boolean, refreshEntitlements:
       cancelled = true
       if (timer !== null) window.clearTimeout(timer)
     }
-  }, [checkoutSessionId, isCheckoutSuccess, isPremium, refreshEntitlements])
+  }, [checkoutSessionId, needsActivationSync, refreshEntitlements])
 
   useEffect(() => {
     if (!isCheckoutSuccess || !isPremium) return
-
-    setActivationSyncing(false)
-    setActivationSyncTimeout(false)
 
     const next = new URLSearchParams(searchParams)
     next.delete('checkout')

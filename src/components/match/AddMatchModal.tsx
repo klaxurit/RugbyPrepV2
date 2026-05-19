@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Calendar, Home, MapPin, Flag } from 'lucide-react'
 import type { CalendarEvent } from '../../types/training'
 import { BottomSheet } from '../ui/BottomSheet'
@@ -15,18 +15,22 @@ interface AddMatchModalProps {
   onSave: (payload: Omit<CalendarEvent, 'id' | 'created_at'>) => Promise<void>
 }
 
-/**
- * Ajout de match manuel — même coque {@link BottomSheet} que fin de séance /
- * évolution programme (handle, swipe, fond, safe-area).
- */
-export function AddMatchModal({
-  open,
+interface AddMatchFormProps {
+  todayISO: string
+  initialDate?: string
+  existingEvents?: CalendarEvent[]
+  onClose: () => void
+  onSave: (payload: Omit<CalendarEvent, 'id' | 'created_at'>) => Promise<void>
+}
+
+/** Remonté à chaque ouverture (key) — évite reset via useEffect. */
+function AddMatchForm({
   todayISO,
   initialDate,
   existingEvents,
   onClose,
   onSave,
-}: AddMatchModalProps) {
+}: AddMatchFormProps) {
   const [date, setDate] = useState(initialDate ?? suggestedMatchSaturdayISO(todayISO))
   const [kickoffTime, setKickoffTime] = useState('15:00')
   const [opponent, setOpponent] = useState('')
@@ -35,18 +39,6 @@ export function AddMatchModal({
   const [venue, setVenue] = useState('')
   const [saving, setSaving] = useState(false)
   const [confirmDuplicate, setConfirmDuplicate] = useState(false)
-
-  useEffect(() => {
-    if (!open) return
-    setDate(initialDate ?? suggestedMatchSaturdayISO(todayISO))
-    setKickoffTime('15:00')
-    setOpponent('')
-    setOpponentCode(undefined)
-    setVenueKind('home')
-    setVenue('')
-    setSaving(false)
-    setConfirmDuplicate(false)
-  }, [open, initialDate, todayISO])
 
   const handleOpponentChange = (name: string, code?: string) => {
     setOpponent(name)
@@ -87,21 +79,7 @@ export function AddMatchModal({
     onClose()
   }
 
-  const handleSheetClose = () => {
-    if (saving) return
-    onClose()
-  }
-
   return (
-    <BottomSheet
-      open={open}
-      onClose={handleSheetClose}
-      ariaLabel="Ajouter un match"
-      hideDefaultHeader
-      disableSwipeDismiss={saving}
-      disableBackdropDismiss={saving}
-      showClose={!saving}
-    >
       <div className="px-5 pb-4 pt-1" data-testid="add-match-modal">
         <div className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-tint">
           <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-brand text-on-brand">
@@ -215,6 +193,43 @@ export function AddMatchModal({
           </button>
         </div>
       </div>
+  )
+}
+
+/**
+ * Ajout de match manuel — même coque {@link BottomSheet} que fin de séance /
+ * évolution programme (handle, swipe, fond, safe-area).
+ */
+export function AddMatchModal({
+  open,
+  todayISO,
+  initialDate,
+  existingEvents,
+  onClose,
+  onSave,
+}: AddMatchModalProps) {
+  const formKey = `${initialDate ?? ''}:${todayISO}`
+
+  return (
+    <BottomSheet
+      open={open}
+      onClose={onClose}
+      ariaLabel="Ajouter un match"
+      hideDefaultHeader
+      disableSwipeDismiss={false}
+      disableBackdropDismiss={false}
+      showClose
+    >
+      {open ? (
+        <AddMatchForm
+          key={formKey}
+          todayISO={todayISO}
+          initialDate={initialDate}
+          existingEvents={existingEvents}
+          onClose={onClose}
+          onSave={onSave}
+        />
+      ) : null}
     </BottomSheet>
   )
 }
