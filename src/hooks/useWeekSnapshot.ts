@@ -598,7 +598,7 @@ export function useWeekSnapshot(
       'add_match',
       updatedEvents,
       p.fatigue,
-      '',
+      'Match ajouté — programme mis à jour',
       createdEvent.id,
       createdEvent.date,
     )

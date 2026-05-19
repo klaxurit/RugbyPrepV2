@@ -325,10 +325,9 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar', 'off_season')))
     renderWithRouter(<HomePage />, { initialEntries: ['/home'] })
 
-    // FIX 7 (mai 2026) : la métaligne expose la semaine ABSOLUE de saison
-    // (ancrée au 1er sept), pas le mésocycle moteur. Format attendu :
-    // "<date> · Inter-saison · Semaine N · <niveau>".
-    expect(screen.getByText(/Inter-saison · Semaine \d+/)).toBeInTheDocument()
+    // Méta-ligne : "<date> · <phase saison> · <niveau>" (sans numéro de semaine).
+    expect(screen.getByText(/Inter-saison/)).toBeInTheDocument()
+    expect(screen.getByText(/Performance/)).toBeInTheDocument()
   })
 
   // Refonte UI mai 2026 : section "Cette semaine" retirée de /home pour
@@ -374,8 +373,8 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
     mockSchedulingTransition.mockReturnValue({
       transition: {
-        type: 'calendar_mode_activated',
-        message: 'Match détecté — ton programme s\'adapte à ton calendrier.',
+        type: 'return_after_break',
+        message: 'Reprise après la trêve — ton programme repart sur le calendrier.',
         cta: 'OK',
       },
       dismiss: vi.fn(),

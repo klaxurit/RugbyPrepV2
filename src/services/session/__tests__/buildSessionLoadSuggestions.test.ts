@@ -116,6 +116,7 @@ describe('buildSessionLoadSuggestions', () => {
       fatigueLevel: 'normal',
       trainingLevel: 'performance',
       daysToMatch: null,
+      now: new Date('2026-05-01T10:00:00Z'),
     })
     expect(map.get('back_squat')?.decision).toBe('increase')
     // bench_press n'a qu'un seul log → G1 → MAINTAIN
