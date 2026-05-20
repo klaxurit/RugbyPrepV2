@@ -68,7 +68,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
           { name: 'DB Romanian Deadlift', prescription: '3x8' },
         ],
         coachingNotes: [
-          'Garder les deux mouvements autour de `RPE 4-5`.',
+          'Garder les deux exos en effort léger (`RPE 4-5`).',
           'L\'objectif est de restaurer le rythme, la position et la confiance sous charge légère.',
           '`Goblet Squat` doit rester droit et contrôlé, sans forcer.',
           'Le hinge doit être propre et simple, pas un test de chaîne postérieure.',
@@ -86,7 +86,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
           { name: 'Inverted Row', prescription: '3x8-10' },
         ],
         coachingNotes: [
-          'Garder les deux mouvements autour de `RPE 4-5`.',
+          'Garder les deux exos en effort léger (`RPE 4-5`).',
           'Laisser l\'épaule trouver un chemin confortable sur le `DB Bench Press`.',
           'Le tirage doit réveiller le contrôle scapulaire et le rythme de traction, pas créer de fatigue.',
           'Si le joueur est déconditionné ou sensible de l\'épaule, passer immédiatement à l\'alternative plus facile.',
@@ -1968,6 +1968,62 @@ const TEXT_EXACT_FR: Record<string, string> = {
     'Cette paire doit sembler forte et constructive, pas vidante.',
   'Keep the intent supportive, not maximal.':
     'Garder une intention de support, pas de maximal.',
+  'Keep both lifts around `RPE 5-6`.':
+    'Garder les deux exos en effort modéré (`RPE 5-6` — 3-4 reps en réserve).',
+  'Keep the trap bar around `RPE 6-8`.':
+    'Garder le trap bar en effort modéré (`RPE 6-8` — 2-3 reps en réserve).',
+  'Keep the trap bar around `RPE 5-6`.':
+    'Garder le trap bar en effort modéré (`RPE 5-6` — 3-4 reps en réserve).',
+  'Keep the squat around `RPE 6-8` across the block.':
+    'Garder le squat en effort modéré (`RPE 6-8` — 2-3 reps en réserve) tout au long du bloc.',
+  'Keep the press around `RPE 6-8` across the block.':
+    'Garder la presse en effort modéré (`RPE 6-8` — 2-3 reps en réserve) tout au long du bloc.',
+  'Keep both movements at around `RPE 4-5`.':
+    'Garder les deux exos en effort léger (`RPE 4-5`).',
+  'This is the first real bilateral upper loading block after Recovery.':
+    'C\'est le premier bloc de charge bilatérale haut du corps après la récupération.',
+  'This is the first real reintroduction of bilateral lower loading after Recovery.':
+    'C\'est la première vraie réintroduction de charge bilatérale bas du corps après la récupération.',
+  'Bench should feel stable and comfortable, not competitive.':
+    'Le bench doit être stable et confortable, on ne vise pas de record ici.',
+  'The row should feel strong and clean without lower-back involvement.':
+    'Le rowing doit rester contrôlé et propre sans sollicitation du bas du dos.',
+  'The row should reawaken scapular control and pulling rhythm, not create fatigue.':
+    'Le rowing doit réveiller le contrôle scapulaire et le rythme de traction, sans créer de fatigue.',
+  'The row should restore scapular rhythm and trunk position, not create fatigue.':
+    'Le rowing doit restaurer le rythme scapulaire et la position du tronc, sans créer de fatigue.',
+  'The row should stay strict and full-range.':
+    'Le rowing doit rester strict et en amplitude complète.',
+  'This block reintroduces vertical-ish upper work without pushing intensity too fast.':
+    'Ce bloc réintroduit du travail haut du corps vertical sans monter l\'intensité trop vite.',
+  'Landmine press should feel stacked, smooth, and shoulder-friendly.':
+    'Le landmine press doit être empilé, fluide et respectueux de l\'épaule.',
+  'Pulldown should restore vertical pulling rhythm, not become a lat burnout block.':
+    'Le pulldown doit restaurer le rythme de tirage vertical, pas devenir un bloc d\'épuisement des dorsaux.',
+  'This block supports scapular rhythm, posture, and trunk stiffness.':
+    'Ce bloc soutient le rythme scapulaire, la posture et la raideur du tronc.',
+  'Keep everything smooth and submaximal.':
+    'Garder tout fluide et sous-maximal.',
+  'The player should finish feeling organized and supported, not worked over.':
+    'Tu dois finir en te sentant organisé et soutenu, pas éreinté.',
+  'Unilateral work should feel stable and full-range, not rushed.':
+    'Le travail unilatéral doit être stable et en amplitude complète, pas bâclé.',
+  'Keep both exercises smooth, controlled, and full-range.':
+    'Garder les deux exercices fluides, contrôlés et en amplitude complète.',
+  'Keep both movements smooth, controlled, and technically clean.':
+    'Garder les deux mouvements fluides, contrôlés et techniquement propres.',
+  'Keep both exercises smooth and controlled.':
+    'Garder les deux exercices fluides et contrôlés.',
+  'Keep both exercises smooth and symmetrical.':
+    'Garder les deux exercices fluides et symétriques.',
+  'Keep both movements controlled and honest.':
+    'Garder les deux mouvements contrôlés et honnêtes.',
+  'Keep both exercises full-range and stable.':
+    'Garder les deux exercices en amplitude complète et stables.',
+  'Keep this short and practical.':
+    'Garder ça court et concret.',
+  'The player should feel ready for moderate upper training, not primed for max effort.':
+    'Tu dois te sentir prêt pour un entraînement haut du corps modéré, pas préparé pour un effort max.',
 }
 
 const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
@@ -2128,9 +2184,9 @@ const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
   [/\bminimal rest\b/gi, 'repos minimal'],
   [/\brest\b/gi, 'repos'],
   [/\bpair\b/gi, 'paire'],
-  [/\bkeep\b/gi, 'Garder'],
-  [/\breduce\b/gi, 'Réduire'],
-  [/\badd\b/gi, 'Ajouter'],
+  [/\bkeep\b/gi, 'garder'],
+  [/\breduce\b/gi, 'réduire'],
+  [/\badd\b/gi, 'ajouter'],
   [/\bonly if\b/gi, 'seulement si'],
   [/\bif\b/gi, 'si'],
   [/\bthis week\b/gi, 'cette semaine'],
@@ -2220,12 +2276,33 @@ const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
   [/\baccessory festival\b/gi, 'défilé d\'accessoires'],
   [/\bbench-only\b/gi, 'bench-only'],
   [/\b(?:approximately|roughly)\b/gi, 'environ'],
-  [/\baround\b/gi, 'autour de'],
+  [/\bKeep both lifts\b/gi, 'Garder les deux exos'],
+  [/\bKeep both movements\b/gi, 'Garder les deux mouvements'],
+  [/\bKeep both exercises\b/gi, 'Garder les deux exercices'],
+  [/\bKeep the trap bar around\b/gi, 'Garder le trap bar en effort modéré'],
+  [/\bKeep the squat around\b/gi, 'Garder le squat en effort modéré'],
+  [/\bKeep the press around\b/gi, 'Garder la presse en effort modéré'],
+  [/\blifts\b/gi, 'exos'],
+  [/\baround\b/gi, 'en'],
   [/\bRPE 6-8\b/gi, 'effort modéré (`RPE 6-8` — 2-3 reps en réserve)'],
   [/\bRPE 5-6\b/gi, 'effort modéré (`RPE 5-6` — 3-4 reps en réserve)'],
   [/\bRPE 7-8\b/gi, 'effort élevé (`RPE 7-8` — 1-2 reps en réserve)'],
   [/\bRPE 8-9\b/gi, 'effort très élevé (`RPE 8-9` — 0-1 rep en réserve)'],
   [/\bRPE 4-5\b/gi, 'effort léger (`RPE 4-5`)'],
+  [/\blower-back involvement\b/gi, 'sollicitation du bas du dos'],
+  [/\blower-back\b/gi, 'bas du dos'],
+  [/\bnot competitive\b/gi, 'on ne vise pas de record ici'],
+  [/\bcomfortable\b/gi, 'confortable'],
+  [/\bcompetitive\b/gi, 'compétitif'],
+  [/\bbilateral upper loading\b/gi, 'charge bilatérale haut du corps'],
+  [/\bbilateral lower loading\b/gi, 'charge bilatérale bas du corps'],
+  [/\bshoulder-friendly\b/gi, 'respectueux de l\'épaule'],
+  [/\bworked over\b/gi, 'éreinté'],
+  [/\borganized and supported\b/gi, 'organisé et soutenu'],
+  [/\bvertical-ish\b/gi, 'vertical'],
+  [/\blat burnout\b/gi, 'épuisement des dorsaux'],
+  [/\bfull-range\b/gi, 'amplitude complète'],
+  [/\btechnically clean\b/gi, 'techniquement propre'],
   [/\bThe player should\b/g, 'Tu dois'],
   [/\bthe player should\b/g, 'tu dois'],
   [/\bThe player\b/g, 'Tu'],
@@ -2277,24 +2354,71 @@ function translatePrescriptionToFr(value: string): string {
     .replace(/\bto\b/g, 'à')
 }
 
+function normalizeFrenchSentence(value: string): string {
+  const trimmed = value.trim()
+  if (!trimmed) return trimmed
+
+  let result = trimmed.replace(/\s+/g, ' ')
+
+  const capitalizeAt = (text: string, index: number): string =>
+    text.slice(0, index) + text.charAt(index).toUpperCase() + text.slice(index + 1)
+
+  const firstLetter = result.search(/[a-zA-ZÀ-ÿ]/)
+  if (firstLetter >= 0) {
+    result = capitalizeAt(result, firstLetter)
+  }
+
+  if (/[.!?…]$/.test(result)) return result
+  return `${result}.`
+}
+
+function maskBacktickSegments(value: string): { masked: string; segments: string[] } {
+  const segments: string[] = []
+  const masked = value.replace(/`([^`]+)`/g, (_match, inner: string) => {
+    segments.push(inner)
+    return `\x00BT${segments.length - 1}\x00`
+  })
+  return { masked, segments }
+}
+
+function unmaskBacktickSegments(value: string, segments: string[]): string {
+  return value.replace(/\x00BT(\d+)\x00/g, (_match, index: string) => `\`${segments[Number(index)]}\``)
+}
+
 function translateInlineTextToFr(value: string): string {
   let next = value
   for (const [source, target] of Object.entries(TEXT_EXACT_FR)) {
     next = next.split(source).join(target)
   }
+
+  const { masked, segments } = maskBacktickSegments(next)
+  let maskedNext = masked
   for (const [pattern, target] of TEXT_FRAGMENT_FR) {
-    next = next.replace(pattern, target)
+    maskedNext = maskedNext.replace(pattern, target)
   }
-  return next
+  return unmaskBacktickSegments(maskedNext, segments)
 }
 
 function translateBacktickedSegmentToFr(value: string): string {
-  if (/^(W\d|RIR|EMOM|\+?\d)/.test(value) || /\d/.test(value) && /kg|min|s|m|%/.test(value)) {
-    return translatePrescriptionToFr(value)
+  const trimmed = value.trim()
+  if (/^RPE\s+\d+-\d+$/i.test(trimmed)) return trimmed
+  if (/^(W\d|RIR|EMOM|\+?\d)/.test(trimmed) || (/\d/.test(trimmed) && /kg|min|s|m|%/.test(trimmed))) {
+    return translatePrescriptionToFr(trimmed)
   }
 
-  const translatedExercise = translateExerciseNameToFr(value)
-  return translatedExercise === value ? translateInlineTextToFr(value) : translatedExercise
+  const translatedExercise = translateExerciseNameToFr(trimmed)
+  if (translatedExercise !== trimmed) return translatedExercise
+
+  const { masked, segments } = maskBacktickSegments(trimmed)
+  let next = masked
+  for (const [source, target] of Object.entries(TEXT_EXACT_FR)) {
+    next = next.split(source).join(target)
+  }
+  for (const [pattern, target] of TEXT_FRAGMENT_FR) {
+    if (String(pattern).includes('RPE')) continue
+    next = next.replace(pattern, target)
+  }
+  return unmaskBacktickSegments(next, segments)
 }
 
 function translateTextToFr(value: string): string {
@@ -2302,9 +2426,22 @@ function translateTextToFr(value: string): string {
     return `\`${translateBacktickedSegmentToFr(inner)}\``
   })
 
-  return translateInlineTextToFr(withBackticks)
-    .replace(/\s+/g, ' ')
-    .trim()
+  return normalizeFrenchSentence(translateInlineTextToFr(withBackticks).trim())
+}
+
+function normalizeCoachingNotes(notes: string[]): string[] {
+  return notes.map(normalizeFrenchSentence)
+}
+
+function normalizeSessionContentFr(content: SessionContentFr): SessionContentFr {
+  return {
+    ...content,
+    warmUpNotes: normalizeCoachingNotes(content.warmUpNotes),
+    blocks: content.blocks.map((block) => ({
+      ...block,
+      coachingNotes: normalizeCoachingNotes(block.coachingNotes),
+    })),
+  }
 }
 
 export function translateBlockNameToFr(name: string): string {
@@ -2351,7 +2488,7 @@ export function getSessionFr(sessionId: string): SessionContentFr | undefined {
 
 export function getSessionFrOrFallback(session: MotherSession): SessionContentFr | undefined {
   const manual = getSessionFr(session.metadata.id)
-  if (manual) return manual
+  if (manual) return normalizeSessionContentFr(manual)
   if (!MOTHER_SESSIONS_BY_ID[session.metadata.id]) return undefined
-  return buildGeneratedFrContent(session)
+  return normalizeSessionContentFr(buildGeneratedFrContent(session))
 }

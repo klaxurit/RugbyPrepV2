@@ -55,6 +55,45 @@ describe('motherSessionContentFr', () => {
     expect(fr!.blocks[2].format).toBe('`2-3 tours`, `60-90s` de repos')
   })
 
+  it('UPPER_OFFSEASON_TRANSITION_V1 coaching notes are clean French', () => {
+    const session = MOTHER_SESSIONS_BY_ID.UPPER_OFFSEASON_TRANSITION_V1
+    const fr = getSessionFrOrFallback(session)!
+    const notes = fr.blocks[0].coachingNotes
+
+    expect(notes[0]).toBe(
+      'Garder les deux exos en effort modéré (`RPE 5-6` — 3-4 reps en réserve).',
+    )
+    expect(notes[1]).toBe(
+      'C\'est le premier bloc de charge bilatérale haut du corps après la récupération.',
+    )
+    expect(notes[2]).toBe(
+      'Le bench doit être stable et confortable, on ne vise pas de record ici.',
+    )
+    expect(notes[3]).toBe(
+      'Le rowing doit rester contrôlé et propre sans sollicitation du bas du dos.',
+    )
+  })
+
+  it('all mother sessions have French coaching notes without duplicate RPE or franglais', () => {
+    const duplicateRpe = /effort modéré.*effort modéré/i
+    const franglais =
+      /\b(should feel|should stay|the first real|and comfortable|not competitive|lower-back involvement|around `RPE)\b/i
+
+    for (const session of Object.values(MOTHER_SESSIONS_BY_ID)) {
+      const fr = getSessionFrOrFallback(session)
+      expect(fr, session.metadata.id).toBeDefined()
+
+      for (const block of fr!.blocks) {
+        for (const note of block.coachingNotes) {
+          expect(duplicateRpe.test(note), `${session.metadata.id}: ${note}`).toBe(false)
+          expect(franglais.test(note), `${session.metadata.id}: ${note}`).toBe(false)
+          expect(note).toMatch(/^(`|[A-ZÀ-ÿ])/)
+          expect(note).toMatch(/[.!?…]$/)
+        }
+      }
+    }
+  })
+
   it('humanizes free-text position group labels in FR', () => {
     expect(msPositionGroupLabel('front_row + back_three (phase 1 common base)', 'fr')).toBe(
       'Avants + Ligne arrière (base commune phase 1)',
