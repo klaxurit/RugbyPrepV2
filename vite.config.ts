@@ -75,7 +75,7 @@ export default defineConfig(({ mode }) => {
         display: 'standalone',
         scope: '/',
         start_url: '/',
-        orientation: 'portrait',
+        orientation: 'any',
         categories: ['sports', 'health', 'productivity'],
         icons: [
           {
