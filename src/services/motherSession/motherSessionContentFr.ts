@@ -2372,17 +2372,24 @@ function normalizeFrenchSentence(value: string): string {
   return `${result}.`
 }
 
+const BACKTICK_MASK_PREFIX = '\uE000BT'
+const BACKTICK_MASK_SUFFIX = '\uE001'
+
 function maskBacktickSegments(value: string): { masked: string; segments: string[] } {
   const segments: string[] = []
   const masked = value.replace(/`([^`]+)`/g, (_match, inner: string) => {
     segments.push(inner)
-    return `\x00BT${segments.length - 1}\x00`
+    return `${BACKTICK_MASK_PREFIX}${segments.length - 1}${BACKTICK_MASK_SUFFIX}`
   })
   return { masked, segments }
 }
 
 function unmaskBacktickSegments(value: string, segments: string[]): string {
-  return value.replace(/\x00BT(\d+)\x00/g, (_match, index: string) => `\`${segments[Number(index)]}\``)
+  const pattern = new RegExp(
+    `${BACKTICK_MASK_PREFIX}(\\d+)${BACKTICK_MASK_SUFFIX}`,
+    'g',
+  )
+  return value.replace(pattern, (_match, index: string) => `\`${segments[Number(index)]}\``)
 }
 
 function translateInlineTextToFr(value: string): string {
