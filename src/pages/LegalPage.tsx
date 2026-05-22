@@ -78,6 +78,18 @@ const PRIVACY_SECTIONS: Section[] = [
     ],
   },
   {
+    title: 'Durée de conservation',
+    content: [
+      `Compte, profil, séances, tests, calendrier et messages Coach IA : conservés tant que votre compte est actif, puis supprimés sous 30 jours après une demande d'effacement (suppression immédiate via l'outil in-app).`,
+      `Jetons de notification push : jusqu'à désactivation ou suppression du compte (effacement immédiat).`,
+      `Statut d'abonnement : tant que le compte est actif ; facturation détaillée chez Google Play ou Stripe selon leurs politiques.`,
+      `Justificatifs comptables : conservés par les prestataires de paiement jusqu'à 10 ans si la loi l'exige ; RugbyForge ne stocke pas vos coordonnées bancaires.`,
+      `Logs techniques serveur : maximum 90 jours.`,
+      `Analytique agrégée PostHog : jusqu'à 24 mois, non identifiable.`,
+      `Cookies de session : durée de la session ou jusqu'à déconnexion / suppression du compte.`,
+    ],
+  },
+  {
     title: 'Hébergement et sous-traitants',
     content: [
       `Vos données sont hébergées sur Supabase (infrastructure PostgreSQL sécurisée, EU). Le traitement IA du Coach est assuré par Anthropic (API Claude). Des outils d'analyse anonymisés (PostHog) peuvent collecter des données d'usage agrégées pour améliorer l'application. Les paiements sont traités par Google Play Billing sur Android et par Stripe sur le web.`,
@@ -99,8 +111,8 @@ const PRIVACY_SECTIONS: Section[] = [
   {
     title: 'Suppression de compte et droit à l\'effacement',
     content: [
-      `Vous pouvez demander la suppression de votre compte à tout moment depuis la page dédiée /delete-account ou en nous contactant à bonjour@rugbyforge.fr. La suppression entraîne l'effacement de toutes vos données personnelles : profil, historique de séances, tests physiques et calendrier.`,
-      `La suppression est effective dans un délai de 30 jours suivant la demande. Les données analytiques agrégées et anonymisées peuvent être conservées à des fins statistiques.`,
+      `Vous pouvez demander la suppression de votre compte à tout moment depuis la page https://rugbyforge.fr/delete-account/ (connecté) ou en nous contactant à bonjour@rugbyforge.fr depuis l'email de votre compte. La suppression efface votre profil, historique de séances, tests physiques, calendrier et préférences.`,
+      `Étapes in-app : connexion → page Suppression du compte → saisir SUPPRIMER → confirmation. Traitement immédiat côté serveur ; réponse aux demandes par email sous 30 jours maximum.`,
     ],
   },
 ]
@@ -184,7 +196,12 @@ export function LegalPage() {
         {/* Confidentialité — ancre pour Play Store / stores (#privacy) */}
         <section id="privacy" className="space-y-4 scroll-mt-20">
           <h1 className="text-lg font-black text-fg">Politique de Confidentialité</h1>
-          <p className="text-xs text-fg-muted">Conformément au RGPD (UE 2016/679)</p>
+          <p className="text-xs text-fg-muted">Dernière mise à jour : mai 2026</p>
+          <p className="text-sm text-fg-secondary">
+            Version détaillée crawlable :
+            {' '}
+            <a href="/privacy/" className="text-brand font-bold hover:underline">rugbyforge.fr/privacy</a>
+          </p>
           {PRIVACY_SECTIONS.map((s) => (
             <div key={s.title} className="bg-layer-5 border border-border-app rounded-[20px] p-5 space-y-2">
               <h2 className="text-sm font-black text-fg">{s.title}</h2>

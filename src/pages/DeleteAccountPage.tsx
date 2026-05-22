@@ -134,7 +134,7 @@ export function DeleteAccountPage() {
           <h2 className="text-sm font-black text-fg">Références utiles</h2>
           <div className="grid gap-2">
             <Link
-              to="/legal"
+              to="/privacy/"
               className="inline-flex items-center justify-between rounded-2xl border border-border-app px-4 py-3 text-sm font-semibold text-fg-secondary transition-colors hover:border-border-app hover:text-fg"
             >
               <span>Politique de confidentialité</span>

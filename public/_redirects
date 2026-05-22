@@ -3,10 +3,7 @@ https://www.rugbyforge.fr/* https://rugbyforge.fr/:splat 301!
 # Routes SPA (rewrite vers index.html, status 200)
 /landing                /index.html  200
 /landing/               /index.html  200
-/legal                  /index.html  200
-/legal/                 /index.html  200
-/delete-account         /index.html  200
-/delete-account/        /index.html  200
+# /legal, /privacy, /delete-account : pages HTML statiques (crawlables Play Store / RGPD)
 /auth/login             /index.html  200
 /auth/login/            /index.html  200
 /auth/signup            /index.html  200

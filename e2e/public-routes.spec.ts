@@ -21,7 +21,13 @@ test.describe('Routes publiques', () => {
 
   test('/legal — CGU visibles', async ({ page }) => {
     await page.goto('/legal')
-    await dismissCookieBannerIfPresent(page)
     await expect(page.getByText('Avertissement important')).toBeVisible()
+  })
+
+  test('/privacy — politique crawlable', async ({ page }) => {
+    await page.goto('/privacy/')
+    await expect(page.getByRole('heading', { name: 'Politique de confidentialité' })).toBeVisible()
+    await expect(page.getByText('Durée de conservation des données')).toBeVisible()
+    await expect(page.getByText('Suppression de vos données')).toBeVisible()
   })
 })

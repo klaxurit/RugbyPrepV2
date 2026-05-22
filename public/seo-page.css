@@ -368,6 +368,12 @@ article ol {
   margin-bottom: 1.4rem;
 }
 
+.meta {
+  color: var(--soft);
+  font-size: 0.92rem;
+  margin-bottom: 1.25rem;
+}
+
 .highlight {
   margin: 1.4rem 0;
   padding: 1rem 1.1rem;

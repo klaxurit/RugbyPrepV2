@@ -8,8 +8,8 @@
   - `fr.rugbyforge.premium.monthly`
   - `fr.rugbyforge.premium.yearly`
 - Verification serveur d'achat Google Play via Supabase Edge Function: `verify-play-purchase`
-- URL publique de confidentialite: `https://rugbyforge.fr/legal`
-- URL publique de suppression de compte: `https://rugbyforge.fr/delete-account`
+- URL publique de confidentialite: `https://rugbyforge.fr/privacy/` (page HTML statique crawlable ; ne pas utiliser `/legal` seul pour Play Console)
+- URL publique de suppression de compte: `https://rugbyforge.fr/delete-account/`
 
 ## Pre-requis techniques avant envoi
 
@@ -34,8 +34,8 @@
 
 ## App content / policy
 
-- Renseigner la privacy policy avec `https://rugbyforge.fr/legal`
-- Renseigner l'account deletion URL avec `https://rugbyforge.fr/delete-account`
+- Renseigner la privacy policy avec `https://rugbyforge.fr/privacy/`
+- Renseigner l'account deletion URL avec `https://rugbyforge.fr/delete-account/`
 - Completer Data safety
 - Completer Content rating
 - Declarer Ads = non, si l'app ne diffuse pas de publicite
