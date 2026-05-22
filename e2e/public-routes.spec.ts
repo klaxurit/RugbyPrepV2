@@ -25,7 +25,7 @@ test.describe('Routes publiques', () => {
   })
 
   test('/privacy — politique crawlable', async ({ page }) => {
-    await page.goto('/privacy/')
+    await page.goto('/privacy')
     await expect(page.getByRole('heading', { name: 'Politique de confidentialité' })).toBeVisible()
     await expect(page.getByText('Durée de conservation des données')).toBeVisible()
     await expect(page.getByText('Suppression de vos données')).toBeVisible()

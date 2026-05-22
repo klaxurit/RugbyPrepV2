@@ -13,21 +13,22 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
     <link rel="stylesheet" href="/seo-page.css" />
   </head>
-  <body>
+  <body class="legal-doc">
     <div class="page-shell">
       <div class="grid-overlay" aria-hidden="true"></div>
       <header class="topbar">
         <div class="container topbar-inner">
           <a class="brand" href="/" aria-label="RugbyForge — accueil"><span class="brand-green">Rugby</span><span class="brand-orange">Forge</span></a>
           <nav class="nav-links" aria-label="Navigation principale">
-            <a href="/auth/login">Connexion</a>
+            <a class="nav-link nav-link-optional" href="/legal/">Mentions légales</a>
+            <a class="nav-link" href="/auth/login">Connexion</a>
             <a class="button button-primary" href="/auth/signup">Créer un compte</a>
           </nav>
         </div>
       </header>
 
-      <main class="container article-shell">
-        <article class="article-main">
+      <main class="container legal-doc-shell">
+        <article class="legal-doc-card">
           <h1>Politique de confidentialité</h1>
           <p class="meta">Dernière mise à jour : mai 2026 · Conformément au RGPD (UE 2016/679)</p>
           <p>
@@ -65,44 +66,46 @@
 
           <h2>4. Durée de conservation des données</h2>
           <p>Nous conservons vos données uniquement le temps nécessaire aux finalités ci-dessous :</p>
-          <table>
-            <thead>
-              <tr>
-                <th>Type de donnée</th>
-                <th>Durée de conservation</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Compte, profil, séances, tests, calendrier, messages Coach IA</td>
-                <td>Tant que votre compte est actif. Supprimés sous <strong>30 jours</strong> après une demande d’effacement (suppression immédiate lorsque vous utilisez l’outil in-app).</td>
-              </tr>
-              <tr>
-                <td>Jetons de notification push</td>
-                <td>Jusqu’à désactivation des notifications ou suppression du compte (effacement immédiat).</td>
-              </tr>
-              <tr>
-                <td>Statut d’abonnement (Premium, Founding)</td>
-                <td>Tant que le compte est actif ; métadonnées de facturation chez Google Play ou Stripe selon leurs propres politiques.</td>
-              </tr>
-              <tr>
-                <td>Justificatifs comptables liés aux paiements</td>
-                <td>Conservés par Google Play ou Stripe ; RugbyForge ne conserve pas de numéro de carte. Obligations légales comptables : jusqu’à <strong>10 ans</strong> chez le prestataire de paiement le cas échéant.</td>
-              </tr>
-              <tr>
-                <td>Logs techniques et sécurité (serveur)</td>
-                <td>Maximum <strong>90 jours</strong>, sauf obligation légale contraire.</td>
-              </tr>
-              <tr>
-                <td>Données analytiques agrégées et anonymisées</td>
-                <td>Jusqu’à <strong>24 mois</strong> sous forme statistique non identifiable.</td>
-              </tr>
-              <tr>
-                <td>Cookies de session (authentification)</td>
-                <td>Durée de la session ou jusqu’à déconnexion / suppression du compte.</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type de donnée</th>
+                  <th>Durée de conservation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Compte, profil, séances, tests, calendrier, messages Coach IA</td>
+                  <td>Tant que votre compte est actif. Supprimés sous <strong>30 jours</strong> après une demande d’effacement (suppression immédiate lorsque vous utilisez l’outil in-app).</td>
+                </tr>
+                <tr>
+                  <td>Jetons de notification push</td>
+                  <td>Jusqu’à désactivation des notifications ou suppression du compte (effacement immédiat).</td>
+                </tr>
+                <tr>
+                  <td>Statut d’abonnement (Premium, Founding)</td>
+                  <td>Tant que le compte est actif ; métadonnées de facturation chez Google Play ou Stripe selon leurs propres politiques.</td>
+                </tr>
+                <tr>
+                  <td>Justificatifs comptables liés aux paiements</td>
+                  <td>Conservés par Google Play ou Stripe ; RugbyForge ne conserve pas de numéro de carte. Obligations légales comptables : jusqu’à <strong>10 ans</strong> chez le prestataire de paiement le cas échéant.</td>
+                </tr>
+                <tr>
+                  <td>Logs techniques et sécurité (serveur)</td>
+                  <td>Maximum <strong>90 jours</strong>, sauf obligation légale contraire.</td>
+                </tr>
+                <tr>
+                  <td>Données analytiques agrégées et anonymisées</td>
+                  <td>Jusqu’à <strong>24 mois</strong> sous forme statistique non identifiable.</td>
+                </tr>
+                <tr>
+                  <td>Cookies de session (authentification)</td>
+                  <td>Durée de la session ou jusqu’à déconnexion / suppression du compte.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <h2>5. Suppression de vos données</h2>
           <p>Vous pouvez demander la suppression de votre compte et de vos données personnelles à tout moment :</p>
@@ -137,21 +140,22 @@
             L’analytique PostHog n’est activée qu’avec votre consentement (bandeau cookies dans l’application).
           </p>
 
-          <p>
+          <div class="hero-actions">
             <a class="button button-primary" href="/delete-account/">Supprimer mon compte</a>
-            <a class="button" href="/legal/">Mentions légales et CGU</a>
-          </p>
+            <a class="button button-secondary" href="/legal/">Mentions légales et CGU</a>
+          </div>
         </article>
       </main>
 
-      <footer class="container footer">
+      <footer class="container footer legal-doc-footer">
         <p>
-          Contact données personnelles :
+          Contact :
           <a href="mailto:bonjour@rugbyforge.fr">bonjour@rugbyforge.fr</a>
         </p>
         <nav class="footer-nav" aria-label="Liens secondaires">
           <a href="/">Accueil</a>
           <a href="/legal/">Mentions légales</a>
+          <a href="/privacy/">Politique de confidentialité</a>
           <a href="/delete-account/">Suppression de compte</a>
         </nav>
       </footer>

@@ -1,12 +1,6 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PageHeader } from '../components/PageHeader'
-import {
-  acceptCookies,
-  declineCookies,
-  readCookieConsent,
-  type CookieConsent,
-} from '../services/analytics/cookieConsent'
+import { CookieSettingsSection } from '../components/legal/CookieSettingsSection'
 
 interface Section {
   title: string
@@ -66,96 +60,6 @@ const CGU_SECTIONS: Section[] = [
   },
 ]
 
-const PRIVACY_SECTIONS: Section[] = [
-  {
-    title: 'Données collectées',
-    content: [
-      `Nous collectons : adresse email, prénom (optionnel), données de profil sportif (poste, niveau, équipement), historique des séances, données de tests physiques.`,
-      `Nous collectons également des données liées à la personnalisation de votre programme : zones sensibles déclarées (épaule, genou, dos, etc.) et morphologie (taille, poids). Ces données sont utilisées exclusivement pour adapter les exercices et les charges de votre programme d'entraînement.`,
-      `Ces données sont nécessaires au fonctionnement du service et ne sont pas vendues.`,
-      `Lorsque vous utilisez la fonctionnalité Coach IA, les données nécessaires à la génération de conseils (profil sportif, zones sensibles déclarées, historique récent) sont transmises à un fournisseur externe de traitement par intelligence artificielle (Anthropic). Ces données sont envoyées uniquement pour produire la réponse demandée. Leur conservation éventuelle par le fournisseur est régie par sa politique de conservation des données API en vigueur. Le Coach IA fournit des conseils de préparation physique et ne réalise aucun diagnostic médical.`,
-      `Les données analytiques collectées via PostHog (hébergé en UE) sont agrégées et ne contiennent pas de données personnelles individuelles.`,
-    ],
-  },
-  {
-    title: 'Durée de conservation',
-    content: [
-      `Compte, profil, séances, tests, calendrier et messages Coach IA : conservés tant que votre compte est actif, puis supprimés sous 30 jours après une demande d'effacement (suppression immédiate via l'outil in-app).`,
-      `Jetons de notification push : jusqu'à désactivation ou suppression du compte (effacement immédiat).`,
-      `Statut d'abonnement : tant que le compte est actif ; facturation détaillée chez Google Play ou Stripe selon leurs politiques.`,
-      `Justificatifs comptables : conservés par les prestataires de paiement jusqu'à 10 ans si la loi l'exige ; RugbyForge ne stocke pas vos coordonnées bancaires.`,
-      `Logs techniques serveur : maximum 90 jours.`,
-      `Analytique agrégée PostHog : jusqu'à 24 mois, non identifiable.`,
-      `Cookies de session : durée de la session ou jusqu'à déconnexion / suppression du compte.`,
-    ],
-  },
-  {
-    title: 'Hébergement et sous-traitants',
-    content: [
-      `Vos données sont hébergées sur Supabase (infrastructure PostgreSQL sécurisée, EU). Le traitement IA du Coach est assuré par Anthropic (API Claude). Des outils d'analyse anonymisés (PostHog) peuvent collecter des données d'usage agrégées pour améliorer l'application. Les paiements sont traités par Google Play Billing sur Android et par Stripe sur le web.`,
-    ],
-  },
-  {
-    title: 'Paiements et données bancaires',
-    content: [
-      `RugbyForge ne conserve pas vos informations de carte bancaire. Sur Android, les abonnements sont encaissés via Google Play Billing / Google Payments. Sur le web, les paiements sont sécurisés par Stripe. Consultez les politiques de confidentialité des prestataires de paiement concernés pour plus de détails sur le traitement des données de paiement.`,
-    ],
-  },
-  {
-    title: 'Vos droits (RGPD)',
-    content: [
-      `Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de portabilité et d'effacement de vos données.`,
-      `Pour exercer ces droits ou pour toute question, contactez-nous à : bonjour@rugbyforge.fr`,
-    ],
-  },
-  {
-    title: 'Suppression de compte et droit à l\'effacement',
-    content: [
-      `Vous pouvez demander la suppression de votre compte à tout moment depuis la page https://rugbyforge.fr/delete-account/ (connecté) ou en nous contactant à bonjour@rugbyforge.fr depuis l'email de votre compte. La suppression efface votre profil, historique de séances, tests physiques, calendrier et préférences.`,
-      `Étapes in-app : connexion → page Suppression du compte → saisir SUPPRIMER → confirmation. Traitement immédiat côté serveur ; réponse aux demandes par email sous 30 jours maximum.`,
-    ],
-  },
-]
-
-function CookieSettings() {
-  const [consent, setConsent] = useState<CookieConsent | null>(() => readCookieConsent())
-
-  return (
-    <section className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-3">
-      <h2 className="text-sm font-black text-fg">Cookies &amp; analytique</h2>
-      <p className="text-sm text-fg-secondary leading-relaxed">
-        PostHog (UE) collecte des données d&apos;usage agrégées pour améliorer l&apos;application.
-        Cookies techniques (auth Supabase) toujours actifs — indispensables au service.
-      </p>
-      <p className="text-xs text-fg-muted">
-        Choix actuel : {consent === 'accepted' ? 'analytique acceptée' : consent === 'declined' ? 'analytique refusée' : 'aucun choix enregistré'}
-      </p>
-      <div className="flex gap-2 pt-1">
-        <button
-          type="button"
-          onClick={() => {
-            declineCookies()
-            setConsent('declined')
-          }}
-          className="flex-1 h-10 rounded-full border border-border-app text-xs font-bold text-fg-secondary hover:bg-layer-4 transition-colors"
-        >
-          Refuser
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            acceptCookies()
-            setConsent('accepted')
-          }}
-          className="flex-1 h-10 rounded-full bg-brand hover:bg-brand-hover text-on-brand text-xs font-black tracking-wide transition-colors"
-        >
-          Accepter
-        </button>
-      </div>
-    </section>
-  )
-}
-
 export function LegalPage() {
   return (
     <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav relative overflow-hidden">
@@ -194,26 +98,17 @@ export function LegalPage() {
         </section>
 
         {/* Confidentialité — ancre pour Play Store / stores (#privacy) */}
-        <section id="privacy" className="space-y-4 scroll-mt-20">
-          <h1 className="text-lg font-black text-fg">Politique de Confidentialité</h1>
-          <p className="text-xs text-fg-muted">Dernière mise à jour : mai 2026</p>
-          <p className="text-sm text-fg-secondary">
-            Version détaillée crawlable :
-            {' '}
-            <a href="/privacy/" className="text-brand font-bold hover:underline">rugbyforge.fr/privacy</a>
+        <section id="privacy" className="bg-layer-5 border border-border-app rounded-[20px] p-5 space-y-2 scroll-mt-20">
+          <h2 className="text-sm font-black text-fg">Politique de confidentialité</h2>
+          <p className="text-sm text-fg-secondary leading-relaxed">
+            Données collectées, durées de conservation, droits RGPD et suppression de compte.
           </p>
-          {PRIVACY_SECTIONS.map((s) => (
-            <div key={s.title} className="bg-layer-5 border border-border-app rounded-[20px] p-5 space-y-2">
-              <h2 className="text-sm font-black text-fg">{s.title}</h2>
-              {s.content.map((p, i) => (
-                <p key={i} className="text-sm text-fg-secondary leading-relaxed">{p}</p>
-              ))}
-            </div>
-          ))}
+          <Link to="/privacy" className="inline-flex text-sm font-bold text-brand hover:underline">
+            Lire la politique de confidentialité
+          </Link>
         </section>
 
-        {/* Cookies settings */}
-        <CookieSettings />
+        <CookieSettingsSection />
 
         {/* Contact */}
         <section className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-2">

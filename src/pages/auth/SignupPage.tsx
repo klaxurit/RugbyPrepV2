@@ -160,7 +160,7 @@ export function SignupPage() {
                 Je confirme avoir au moins 18 ans et j&apos;accepte les{' '}
                 <Link to="/legal" className="text-brand underline">conditions d&apos;utilisation</Link>
                 {' '}et la{' '}
-                <Link to="/privacy/" className="text-brand underline">politique de confidentialite</Link>.
+                <Link to="/privacy" className="text-brand underline">politique de confidentialite</Link>.
               </span>
             </label>
 

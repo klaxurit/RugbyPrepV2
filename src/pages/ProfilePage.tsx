@@ -1348,12 +1348,6 @@ export function ProfilePage() {
 
       {/* Footer */}
       <footer className="px-4 py-6 flex flex-col items-center gap-3 text-center relative">
-        <Link
-          to="/legal"
-          className="text-xs text-fg-muted hover:text-brand-tint transition-colors"
-        >
-          {tr('profile_legal_link', lang)}
-        </Link>
         {authState.status === 'authenticated' && (
           <button
             type="button"

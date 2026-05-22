@@ -35,6 +35,7 @@ const CallbackPage = lazy(() => import('./pages/auth/CallbackPage').then(m => ({
 const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })))
 const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })))
 const LegalPage = lazy(() => import('./pages/LegalPage').then(m => ({ default: m.LegalPage })))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })))
 const DeleteAccountPage = lazy(() => import('./pages/DeleteAccountPage').then(m => ({ default: m.DeleteAccountPage })))
 const FeedbackPage = lazy(() => import('./pages/FeedbackPage').then(m => ({ default: m.FeedbackPage })))
 const FoundingTriggerPage = lazy(() => import('./pages/FoundingTriggerPage').then(m => ({ default: m.FoundingTriggerPage })))
@@ -172,6 +173,7 @@ function App() {
           <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
           <Route path="/legal" element={<LegalPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/delete-account" element={<DeleteAccountPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/founding" element={<FoundingTriggerPage />} />

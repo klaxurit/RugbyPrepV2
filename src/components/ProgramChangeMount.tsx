@@ -21,6 +21,7 @@ const SUPPRESS_PATHS = new Set([
   '/signup',
   '/landing',
   '/legal',
+  '/privacy',
   '/delete-account',
 ])
 
