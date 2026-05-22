@@ -15,13 +15,19 @@ const ALL_DAYS: DayOfWeek[] = [0, 1, 2, 3, 4, 5, 6]
  * Risk levels — only match proximity matters.
  * Club training days are informational only (not a risk).
  *
- * 'match'      — jour de match lui-même (fortement déconseillé)
- * 'near_match' — veille de match (garder les jambes fraîches)
- * 'recovery'   — lendemain de match (récupération)
- * 'club'       — jour d'entraînement club (info seulement, combinable en muscu)
- * 'ok'         — aucune contrainte particulière
+ * 'match'       — jour de match lui-même (fortement déconseillé)
+ * 'primer_slot' — veille de match : le programme place une activation légère (pas d'alerte)
+ * 'recovery'    — lendemain de match (récupération)
+ * 'club'        — jour d'entraînement club (info seulement, combinable en muscu)
+ * 'ok'          — aucune contrainte particulière
  */
-export type DayRisk = 'match' | 'near_match' | 'recovery' | 'club' | 'ok'
+export type DayRisk = 'match' | 'primer_slot' | 'recovery' | 'club' | 'ok'
+
+/** Jour calendaire immédiatement avant le match habituel (MD-1), si défini. */
+export function primerSlotDay(matchDay: DayOfWeek | undefined): DayOfWeek | null {
+  if (matchDay === undefined) return null
+  return ((matchDay + 6) % 7) as DayOfWeek
+}
 
 export interface DayInfo {
   risk: DayRisk
@@ -36,11 +42,12 @@ export function getDayInfo(day: DayOfWeek, clubSchedule: ClubSchedule): DayInfo 
     return { risk: 'match', reason: 'Jour de match' }
   }
 
+  const primerDay = primerSlotDay(matchDay)
+  if (primerDay !== null && day === primerDay) {
+    return { risk: 'primer_slot', reason: null }
+  }
+
   if (matchDay !== undefined) {
-    const daysUntilMatch = ((matchDay - day + 7) % 7)
-    if (daysUntilMatch === 1) {
-      return { risk: 'near_match', reason: 'Veille de match — garder les jambes légères' }
-    }
     const dayAfterMatch = ((matchDay + 1) % 7) as DayOfWeek
     if (day === dayAfterMatch) {
       return { risk: 'recovery', reason: 'Lendemain de match — favoriser la récupération' }
@@ -133,7 +140,25 @@ export function computeSCSchedule(
   // aucun autre jour n'est disponible (bug observé en match-week).
   const eligibleDays = ALL_DAYS.filter((d) => !hardBlocked.has(d))
   const rankedDays = eligibleDays.sort((a, b) => scores[b] - scores[a])
-  const selectedDays = pickWithMinGap(rankedDays, weeklySessions, 2)
+
+  // 3×/sem + match : réserver MD-1 pour l'activation (primer) — ex. Mar·Jeu·Sam avant match dim.
+  let selectedDays: DayOfWeek[] = []
+  if (weeklySessions === 3 && matchDay !== undefined) {
+    const primerDay = primerSlotDay(matchDay)
+    if (primerDay !== null && !hardBlocked.has(primerDay)) {
+      const rest = pickWithMinGap(
+        rankedDays.filter((d) => d !== primerDay),
+        2,
+        2,
+      )
+      if (rest.length === 2) {
+        selectedDays = [...rest, primerDay]
+      }
+    }
+  }
+  if (selectedDays.length === 0) {
+    selectedDays = pickWithMinGap(rankedDays, weeklySessions, 2)
+  }
 
   if (selectedDays.length < weeklySessions) {
     // Fallback : defaults filtrés pour ne jamais inclure un jour de match ou MD+1.

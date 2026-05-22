@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Dumbbell, RefreshCw, Trophy } from 'lucide-react'
 import { useProfile, type UpdateProfileOptions } from '../../hooks/useProfile'
 import { useCalendar } from '../../hooks/useCalendar'
@@ -63,13 +63,34 @@ export function ClubSettingsSection({
   const seasonMode = effectiveSeasonMode ?? profile.seasonMode
   const { refreshFromFFR } = useCalendar()
 
+  const seasonSyncPatch = useCallback((): Partial<UserProfile> => (
+    effectiveSeasonMode && effectiveSeasonMode !== profile.seasonMode
+      ? { seasonMode: effectiveSeasonMode }
+      : {}
+  ), [effectiveSeasonMode, profile.seasonMode])
+
   const [clubQuery, setClubQuery] = useState(profile.clubName ?? '')
   const [ffrCompetitions, setFfrCompetitions] = useState<FfrCompetition[]>([])
   const [ffrCompLoading, setFfrCompLoading] = useState(false)
   const [ffrSyncLoading, setFfrSyncLoading] = useState(false)
   const [ffrSyncMessage, setFfrSyncMessage] = useState<string | null>(null)
   const [ffrSyncIsError, setFfrSyncIsError] = useState(false)
-  const [gymMode, setGymMode] = useState<'auto' | 'manual'>(profile.scSchedule?.source === 'manual' ? 'manual' : 'auto')
+  const isManualGymSchedule = profile.scSchedule?.source === 'manual'
+
+  const suggestedScSchedule = useMemo(() => {
+    if (!profile.clubSchedule || profile.clubSchedule.clubDays.length === 0) return null
+    return computeSCSchedule(profile.clubSchedule, profile.weeklySessions)
+  }, [profile.clubSchedule, profile.weeklySessions])
+
+  const gymSelectedDays = useMemo(
+    () =>
+      new Set<DayOfWeek>(
+        profile.scSchedule?.sessions.map((s) => s.day) ??
+          suggestedScSchedule?.sessions.map((s) => s.day) ??
+          TRAINING_DAYS_DEFAULT[profile.weeklySessions],
+      ),
+    [profile.scSchedule?.sessions, suggestedScSchedule, profile.weeklySessions],
+  )
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- sync champ local sur source externe (profil async)
@@ -171,10 +192,10 @@ export function ClubSettingsSection({
       matchDay,
     }
     // Recompute scSchedule in auto mode
-    const scSchedule = gymMode === 'auto'
-      ? computeSCSchedule(clubSchedule, profile.weeklySessions)
-      : profile.scSchedule
-    updateProfile({ clubSchedule, scSchedule })
+    const scSchedule = isManualGymSchedule
+      ? profile.scSchedule
+      : computeSCSchedule(clubSchedule, profile.weeklySessions)
+    updateProfile({ clubSchedule, scSchedule, ...seasonSyncPatch() })
   }
 
   const setMatchDay = (day: DayOfWeek | null) => {
@@ -182,10 +203,18 @@ export function ClubSettingsSection({
       clubDays: profile.clubSchedule?.clubDays ?? [],
       matchDay: day ?? undefined,
     }
-    const scSchedule = gymMode === 'auto'
-      ? computeSCSchedule(clubSchedule, profile.weeklySessions)
-      : profile.scSchedule
-    updateProfile({ clubSchedule, scSchedule })
+    const scSchedule = isManualGymSchedule
+      ? profile.scSchedule
+      : computeSCSchedule(clubSchedule, profile.weeklySessions)
+    updateProfile({ clubSchedule, scSchedule, ...seasonSyncPatch() })
+  }
+
+  const resetGymToSuggested = () => {
+    if (!profile.clubSchedule) return
+    updateProfile({
+      scSchedule: computeSCSchedule(profile.clubSchedule, profile.weeklySessions),
+      ...seasonSyncPatch(),
+    })
   }
 
   const clubLogoUrl = getClubLogoUrl(profile.clubCode)
@@ -205,9 +234,10 @@ export function ClubSettingsSection({
       const next = new Set(gymDays)
       if (next.has(day)) next.delete(day)
       else next.add(day)
+      // Ne pas effacer clubSchedule : conservé pour le retour en saison.
       updateProfile({
         scSchedule: buildManualSCSchedule(Array.from(next)),
-        clubSchedule: undefined,
+        ...seasonSyncPatch(),
       })
     }
 
@@ -454,64 +484,43 @@ export function ClubSettingsSection({
         </div>
       </div>
 
-      {/* Jours muscu */}
-      <div className="space-y-2 pt-1 border-t border-border-app">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-black text-fg-muted uppercase tracking-wide">Séances muscu</p>
-          <div className="flex gap-1 bg-layer-5 border border-border-app rounded-2xl p-0.5">
-            <button
-              type="button"
-              onClick={() => {
-                setGymMode('auto')
-                if (profile.clubSchedule) {
-                  updateProfile({
-                    scSchedule: computeSCSchedule(profile.clubSchedule, profile.weeklySessions),
-                  })
-                }
-              }}
-              className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                gymMode === 'auto' ? 'bg-layer-15 text-fg shadow-sm' : 'text-fg-muted'
-              }`}
-            >
-              Auto
-            </button>
-            <button
-              type="button"
-              onClick={() => setGymMode('manual')}
-              className={`px-3 py-1 rounded-xl text-[10px] font-black transition-all ${
-                gymMode === 'manual' ? 'bg-layer-15 text-fg shadow-sm' : 'text-fg-muted'
-              }`}
-            >
-              Manuel
-            </button>
-          </div>
+      {/* Jours muscu — suggestion calée sur club + match, ajustement optionnel */}
+      <div className="space-y-3 pt-1 border-t border-border-app">
+        <div className="space-y-1">
+          <p className="text-xs font-black text-fg-muted uppercase tracking-wide">
+            Séances muscu · {profile.weeklySessions}×/semaine
+          </p>
+          <p className="text-[11px] text-fg-muted leading-snug">
+            Proposition selon ton match et tes entraînements club. Tu peux toucher un jour pour l&apos;ajuster — le
+            programme gère l&apos;activation légère avant le match.
+          </p>
         </div>
 
-        {gymMode === 'auto' && profile.clubSchedule && profile.clubSchedule.clubDays.length > 0 && (
-          <div className="p-3 rounded-2xl bg-ok-bg-muted border border-ok-bd">
-            <p className="text-[10px] font-black text-ok uppercase tracking-wide mb-1">Suggestion calculée</p>
-            <p className="text-sm font-black text-ok-strong">
-              {computeSCSchedule(profile.clubSchedule, profile.weeklySessions).sessions
-                .map((s) => DAY_LABELS[s.day])
-                .join(' · ')}
-            </p>
-            <p className="text-[10px] text-ok opacity-90 mt-1">Basé sur ton planning club et les règles de récup.</p>
-          </div>
-        )}
-
-        {gymMode === 'auto' && (!profile.clubSchedule || profile.clubSchedule.clubDays.length === 0) && (
-          <p className="text-xs text-fg-muted">Sélectionne tes jours d'entraînement club pour obtenir une suggestion.</p>
-        )}
-
-        {gymMode === 'manual' && (
-          <GymDaySelector
-            clubSchedule={profile.clubSchedule ?? { clubDays: [] }}
-            selectedDays={new Set(profile.scSchedule?.sessions.map((s) => s.day) ?? [])}
-            weeklySessions={profile.weeklySessions}
-            onChange={(days) => {
-              updateProfile({ scSchedule: buildManualSCSchedule(Array.from(days)) })
-            }}
-          />
+        {!profile.clubSchedule || profile.clubSchedule.clubDays.length === 0 ? (
+          <p className="text-xs text-fg-muted">Indique d&apos;abord tes jours d&apos;entraînement club pour caler la muscu.</p>
+        ) : (
+          <>
+            <GymDaySelector
+              clubSchedule={profile.clubSchedule}
+              selectedDays={gymSelectedDays}
+              weeklySessions={profile.weeklySessions}
+              onChange={(days) => {
+                updateProfile({
+                  scSchedule: buildManualSCSchedule(Array.from(days)),
+                  ...seasonSyncPatch(),
+                })
+              }}
+            />
+            {isManualGymSchedule && suggestedScSchedule && (
+              <button
+                type="button"
+                onClick={resetGymToSuggested}
+                className="text-[11px] font-bold text-brand-tint hover:text-brand transition-colors"
+              >
+                Réaligner sur {suggestedScSchedule.sessions.map((s) => DAY_LABELS[s.day]).join(' · ')}
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>

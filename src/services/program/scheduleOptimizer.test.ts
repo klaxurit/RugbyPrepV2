@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { computeSCSchedule } from './scheduleOptimizer'
+import { computeSCSchedule, getDayInfo, primerSlotDay } from './scheduleOptimizer'
 
 describe('scheduleOptimizer edge contracts', () => {
   it('EC-11: ignores malformed upcoming match dates without crashing', () => {
@@ -46,6 +46,28 @@ describe('scheduleOptimizer edge contracts', () => {
         }
       }
     }
+  })
+
+  it('3×/sem + match dimanche → Mar, Jeu, Sam (veille = activation)', () => {
+    const schedule = computeSCSchedule(
+      {
+        clubDays: [{ day: 3 }, { day: 5 }],
+        matchDay: 0,
+      },
+      3,
+    )
+    const days = schedule.sessions.map((s) => s.day).sort((a, b) => a - b)
+    expect(days).toContain(6) // samedi = MD-1
+    expect(days).not.toContain(0) // pas dimanche match
+    expect(days).not.toContain(1) // pas lundi MD+1
+    expect(days.length).toBe(3)
+  })
+
+  it('veille de match = primer_slot (pas alerte near_match)', () => {
+    const club = { clubDays: [{ day: 3 as const }], matchDay: 0 as const }
+    expect(primerSlotDay(0)).toBe(6)
+    expect(getDayInfo(6, club).risk).toBe('primer_slot')
+    expect(getDayInfo(6, club).reason).toBeNull()
   })
 
   it('EC-13: match Sat usual Sunday (match moved) → jamais de séance le dimanche', () => {

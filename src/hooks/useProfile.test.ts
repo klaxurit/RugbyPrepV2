@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeLegacyProfile, rowToProfile } from './useProfile'
+import { normalizeLegacyProfile, rowToProfile, shouldApplyRemoteProfile } from './useProfile'
 
 type ProfileRow = Parameters<typeof rowToProfile>[0]
 
@@ -149,6 +149,38 @@ describe('seasonTransitionState persistence', () => {
   it('tolerates missing season_transition_state (legacy compat)', () => {
     const profile = rowToProfile(makeRow({ season_transition_state: null }))
     expect(profile.seasonTransitionState).toBeUndefined()
+  })
+})
+
+describe('shouldApplyRemoteProfile', () => {
+  it('applies remote row only when no local edit happened since load', () => {
+    expect(shouldApplyRemoteProfile(0)).toBe(true)
+    expect(shouldApplyRemoteProfile(1)).toBe(false)
+    expect(shouldApplyRemoteProfile(3)).toBe(false)
+  })
+})
+
+describe('rowToProfile schedule + baseline persistence', () => {
+  it('round-trips club schedule, sc schedule, and training baseline from row', () => {
+    const clubSchedule = { clubDays: [{ day: 2 as const }, { day: 4 as const }], matchDay: 6 as const }
+    const scSchedule = {
+      source: 'auto' as const,
+      sessions: [
+        { sessionIndex: 0 as const, day: 1 as const },
+        { sessionIndex: 1 as const, day: 3 as const },
+      ],
+    }
+    const profile = rowToProfile(makeRow({
+      club_schedule: clubSchedule,
+      sc_schedule: scSchedule,
+      training_baseline: 'active',
+      training_baseline_set_at: '2026-05-01T10:00:00.000Z',
+    }))
+
+    expect(profile.clubSchedule).toEqual(clubSchedule)
+    expect(profile.scSchedule).toEqual(scSchedule)
+    expect(profile.trainingBaseline).toBe('active')
+    expect(profile.trainingBaselineSetAt).toBe('2026-05-01T10:00:00.000Z')
   })
 })
 

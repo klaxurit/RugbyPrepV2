@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type {
   UserProfile,
   ClubSchedule,
@@ -350,6 +350,10 @@ export interface UpdateProfileOptions {
 
 // ─── Hook ────────────────────────────────────────────────────
 
+/** Évite qu'un fetch Supabase lent n'écrase des edits locaux plus récents (état + localStorage). */
+export const shouldApplyRemoteProfile = (localEditsSinceLoad: number): boolean =>
+  localEditsSinceLoad === 0
+
 export const useProfile = () => {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
@@ -358,10 +362,12 @@ export const useProfile = () => {
   // navigations de la même session utilisateur. Aucune fuite possible entre
   // comptes : la clé inclut `userId`, donc un nouvel utilisateur voit DEFAULT_PROFILE.
   const [profile, setProfileState] = useState<UserProfile>(() => loadFromStorage(userId) ?? DEFAULT_PROFILE)
+  const localEditsSinceLoadRef = useRef(0)
 
   // Quand userId change : recharge depuis le cache user-scoped ou le défaut,
-  // puis Supabase écrase avec la source de vérité.
+  // puis Supabase écrase avec la source de vérité (sauf si l'utilisateur a déjà modifié).
   useEffect(() => {
+    localEditsSinceLoadRef.current = 0
     // eslint-disable-next-line react-hooks/set-state-in-effect -- required: userId change must reset cache
     setProfileState(loadFromStorage(userId) ?? DEFAULT_PROFILE)
     if (!userId) return
@@ -378,10 +384,13 @@ export const useProfile = () => {
           // Pas encore de profil → onboarding requis (clé absente = pas complété)
           return
         }
+        if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) {
+          return
+        }
         const loaded = rowToProfile(data as ProfileRow)
         setProfileState(loaded)
         saveToStorage(loaded, userId)
-        // Profil Supabase trouvé avec onboarding complet → marquer localement
+        // Profil Supabase trouvé avec onboarding complet → marquer localelement
         if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {
           localStorage.setItem(onboardingKey(userId), '1')
         }
@@ -405,6 +414,7 @@ export const useProfile = () => {
 
   const setProfile = useCallback(
     (next: UserProfile) => {
+      localEditsSinceLoadRef.current += 1
       setProfileState(next)
       void persistProfile(next, userId)
     },
@@ -413,6 +423,7 @@ export const useProfile = () => {
 
   const updateProfile = useCallback(
     (patch: Partial<UserProfile>, options?: UpdateProfileOptions) => {
+      localEditsSinceLoadRef.current += 1
       setProfileState((current) => {
         // Auto-set trainingBaselineSetAt quand le baseline change (sauf override explicite).
         // Sert à expirer auto le mode 'restart' après 14j (rampe de reprise).

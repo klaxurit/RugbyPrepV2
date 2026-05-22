@@ -31,6 +31,7 @@ import { appendTransitionEntry, restoreLastTransition, cycleToSeasonMode } from 
 import type { AuthError } from '../types/auth'
 import type { TrainingLevel, TrainingBaseline } from '../types/training'
 import { isRestartRampUpActive, RESTART_RAMP_UP_DAYS } from '../services/program/restartRampUp'
+import { computeSCSchedule } from '../services/program/scheduleOptimizer'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { supabase } from '../services/supabase/client'
 import { tr, type Lang } from '../i18n/appLabels'
@@ -843,7 +844,18 @@ export function ProfilePage() {
                   <button
                     key={n}
                     type="button"
-                    onClick={() => updateProfile({ weeklySessions: n as 2 | 3 })}
+                    onClick={() => {
+                      const weeklySessions = n as 2 | 3
+                      const patch: Parameters<typeof updateProfile>[0] = { weeklySessions }
+                      if (
+                        profile.scSchedule?.source !== 'manual' &&
+                        profile.clubSchedule &&
+                        profile.clubSchedule.clubDays.length > 0
+                      ) {
+                        patch.scSchedule = computeSCSchedule(profile.clubSchedule, weeklySessions)
+                      }
+                      updateProfile(patch)
+                    }}
                     className={`py-2.5 px-3 rounded-2xl text-xs font-bold transition-all ${
                       active
                         ? 'bg-brand text-on-brand shadow-sm'
@@ -1395,8 +1407,9 @@ function FormeDuMomentSection({
     settled = ageDays >= FORME_AUTO_HIDE_DAYS || loggedSessions >= FORME_AUTO_HIDE_SESSIONS
   }
 
+  // Sans baseline enregistré, garder la section ouverte (évite l'impression de perte).
   // La rampe restart active doit rester visible — c'est sa raison d'être.
-  const shouldShow = forceOpen || !settled || restartActive
+  const shouldShow = forceOpen || !settled || restartActive || !profile.trainingBaseline
 
   if (!shouldShow) {
     const currentLabel = TRAINING_BASELINES.find((o) => o.value === profile.trainingBaseline)?.label ?? '—'
