@@ -906,6 +906,41 @@ export function LandingPage() {
                   </a>
                 </li>
               </ul>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted mb-3 mt-6">
+                Réseaux sociaux
+              </h4>
+              <ul className="space-y-2">
+                <li>
+                  <a
+                    href="https://www.reddit.com/user/RugbyForge/"
+                    className="text-sm text-fg-ghost hover:text-fg transition-colors"
+                    rel="me noopener noreferrer"
+                    target="_blank"
+                  >
+                    Reddit
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.instagram.com/rugbyforge/"
+                    className="text-sm text-fg-ghost hover:text-fg transition-colors"
+                    rel="me noopener noreferrer"
+                    target="_blank"
+                  >
+                    Instagram
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.facebook.com/profile.php?id=61586887983497"
+                    className="text-sm text-fg-ghost hover:text-fg transition-colors"
+                    rel="me noopener noreferrer"
+                    target="_blank"
+                  >
+                    Facebook
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
 
