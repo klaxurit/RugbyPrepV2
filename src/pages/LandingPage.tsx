@@ -400,8 +400,8 @@ export function LandingPage() {
               <div className="absolute w-80 h-80 bg-brand rounded-full blur-[80px] opacity-[0.08] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
               <div className="absolute w-48 h-48 bg-brand rounded-full blur-[60px] opacity-[0.06] top-0 right-0" />
               <PhoneMockup
-                src="/images/landing/rufo_home.webp"
-                alt="RugbyForge — accueil et programme"
+                src="/images/landing/rugbyforge_home_game.png"
+                alt="RugbyForge — tableau de bord, score de forme et prochain match"
                 loading="eager"
                 fetchPriority="high"
               />
@@ -494,7 +494,7 @@ export function LandingPage() {
 
       <AnnualCycleDiagram />
 
-      {/* ── Progression ──────────────────────────────────── */}
+      {/* ── App screenshots ──────────────────────────────── */}
       <section className="py-20 px-4 bg-layer-2">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -504,62 +504,54 @@ export function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
-              Suis ta progression en temps réel
+              De la planif à la séance guidée
             </h2>
             <p className="text-fg-muted max-w-2xl mx-auto">
-              Tes performances, ta charge et tes tests physiques — lisibles en un coup d'œil.
+              Calendrier mensuel, blocs structurés, chrono repos et bilan automatique — pensé pour
+              une vraie semaine de rugby.
             </p>
           </motion.div>
 
-          {/* Desktop : 3 en ligne — Mobile : 2 en haut + 1 centré en bas */}
           <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0 }}
-              className="flex flex-col items-center"
-            >
-              <PhoneMockup
-                src="/images/landing/rufo_datas.webp"
-                alt="Suivi de progression et données"
-              />
-              <p className="text-sm text-fg-muted text-center mt-5">
-                Suivi des tests physiques — CMJ, sprint, 1RM estimé
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="flex flex-col items-center"
-            >
-              <PhoneMockup
-                src="/images/landing/rufo_calendar.webp"
-                alt="Calendrier et planification"
-              />
-              <p className="text-sm text-fg-muted text-center mt-5">
-                Calendrier et planification de saison
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col items-center"
-            >
-              <PhoneMockup
-                src="/images/landing/rufo_data2.webp"
-                alt="Monitoring ACWR et charge"
-              />
-              <p className="text-sm text-fg-muted text-center mt-5">
-                Ratio charge aiguë/chronique — prévention du surentraînement
-              </p>
-            </motion.div>
+            {[
+              {
+                src: '/images/landing/rugbyforge_month_planning.png',
+                alt: 'Vue mois — séances, matchs et charge',
+                caption: 'Vue mois — séances, matchs et charge cumulée',
+              },
+              {
+                src: '/images/landing/rugbyforge_session_not_started.png',
+                alt: 'Détail séance par blocs avant démarrage',
+                caption: 'Séance structurée par blocs — force, puissance, spécifique poste',
+              },
+              {
+                src: '/images/landing/rugbyforge_session_rest.png',
+                alt: 'Chrono repos et saisie des charges',
+                caption: 'Repos chronométré et saisie des charges entre les séries',
+              },
+              {
+                src: '/images/landing/rugbyforge_session_chrono.png',
+                alt: 'Timers et isométries guidés en séance',
+                caption: 'Timers et isométries guidés pendant la séance',
+              },
+              {
+                src: '/images/landing/rugbyforge_session_ended.png',
+                alt: 'Bilan fin de séance avec RPE',
+                caption: 'Bilan automatique — durée, tonnage, effort ressenti',
+              },
+            ].map((shot, index) => (
+              <motion.div
+                key={shot.src}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+                className="flex flex-col items-center max-w-[290px]"
+              >
+                <PhoneMockup src={shot.src} alt={shot.alt} />
+                <p className="text-sm text-fg-muted text-center mt-5">{shot.caption}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
