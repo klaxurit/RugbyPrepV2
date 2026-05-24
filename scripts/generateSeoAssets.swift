@@ -179,8 +179,8 @@ let projectRoot = fileManager.currentDirectoryPath
 do {
   try writePNG(drawIcon(size: 192), to: "\(projectRoot)/public/icons/icon-192.png")
   try writePNG(drawIcon(size: 512), to: "\(projectRoot)/public/icons/icon-512.png")
-  try writePNG(drawOGImage(), to: "\(projectRoot)/public/og-rugbyforge.png")
-  print("Generated SEO assets in public/icons and public/og-rugbyforge.png")
+  try writePNG(drawOGImage(), to: "\(projectRoot)/public/og-rugbyforge.jpeg")
+  print("Generated SEO assets in public/icons and public/og-rugbyforge.jpeg")
 } catch {
   fputs("Failed to generate SEO assets: \(error.localizedDescription)\n", stderr)
   exit(1)
