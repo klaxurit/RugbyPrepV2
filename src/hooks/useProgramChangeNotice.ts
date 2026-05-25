@@ -122,7 +122,7 @@ const POSTPONE_DAYS = 7
  * `match_detected_in_offseason`, monté sur `/home`) qui doit
  * gérer la décision : il a 3 boutons (Oui/Non/Pas mon équipe) et
  * écrit le bon état dans `seasonTransitionState`. Faire pop-up le
- * `ProgramChangeModal` en parallèle = 2 surfaces concurrentes pour
+ * `ProgramEvolutionSheet` en parallèle = 2 surfaces concurrentes pour
  * la même décision, et son "Plus tard" ne pose pas d'override de
  * cycle → l'utilisateur refuse mais le programme bascule quand même.
  */

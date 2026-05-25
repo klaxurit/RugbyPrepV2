@@ -8,7 +8,7 @@ import { useACWR } from '../hooks/useACWR'
 import { useProgramChangeNotice } from '../hooks/useProgramChangeNotice'
 import { useProgramEvolutionSheet } from '../hooks/useProgramEvolutionSheet'
 import { getToday } from '../services/ui/debugDateOverride'
-import { ProgramChangeModal } from './ProgramChangeModal'
+import { programModalLabel } from '../i18n/programSurfaces'
 
 const SUPPRESS_PATHS = new Set([
   '/onboarding',
@@ -26,11 +26,11 @@ const SUPPRESS_PATHS = new Set([
 ])
 
 /**
- * Global mount for the program-change modal.
+ * Global mount for program-change notices.
  *
- * Les notices `match` utilisent la même {@link ProgramEvolutionSheet} que l’ajout
- * de match / sync FFR (bottom sheet, swipe, fond) — pas la {@link ProgramChangeModal}
- * (carte centrée + padding, pas de dismiss backdrop).
+ * Toutes les notices (match, phase, cycle, ACWR) passent par la même
+ * {@link ProgramEvolutionSheet} / {@link BottomSheet} que l’ajout de match
+ * ou la fin de séance — swipe, backdrop, bouton fermer, collée en bas.
  *
  * Suppressed during onboarding and on auth/legal pages — those have their
  * own focus and a blocking modal would derail them. Otherwise rides on top
@@ -45,42 +45,59 @@ export function ProgramChangeMount() {
   const location = useLocation()
   const today = getToday()
   const { openProgramEvolution } = useProgramEvolutionSheet()
-  const delegatedMatchNoticeRef = useRef<string | null>(null)
+  const delegatedNoticeRef = useRef<string | null>(null)
 
-  const { notice, acknowledge, postpone } = useProgramChangeNotice({
+  const { notice, postpone } = useProgramChangeNotice({
     profile: authState.status === 'authenticated' ? profile : null,
     calendarEvents: visibleEvents,
     acwrZone: acwr.zone,
     today,
   })
 
+  const lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'
+
   useEffect(() => {
-    if (!notice || notice.type !== 'match') {
-      delegatedMatchNoticeRef.current = null
+    if (authState.status !== 'authenticated') return
+    if (SUPPRESS_PATHS.has(location.pathname)) return
+
+    if (!notice) {
+      delegatedNoticeRef.current = null
       return
     }
-    if (delegatedMatchNoticeRef.current === notice.id) return
-    delegatedMatchNoticeRef.current = notice.id
-    const fromId = /^match:(\d{4}-\d{2}-\d{2})$/.exec(notice.id)?.[1]
+    if (delegatedNoticeRef.current === notice.id) return
+    delegatedNoticeRef.current = notice.id
+
+    if (notice.type === 'match') {
+      const fromId = /^match:(\d{4}-\d{2}-\d{2})$/.exec(notice.id)?.[1]
+      openProgramEvolution({
+        matchDateISO: fromId,
+        programNoticeId: notice.id,
+      })
+      return
+    }
+
     openProgramEvolution({
-      matchDateISO: fromId,
       programNoticeId: notice.id,
+      sectionTitle: notice.title,
+      summary: notice.summary,
+      bullets: notice.bullets,
+      secondaryCtaLabel: notice.canPostponeNow
+        ? programModalLabel('cta_postpone', lang)
+        : undefined,
+      onSecondaryPress: notice.canPostponeNow ? postpone : undefined,
+      secondaryHint:
+        !notice.canPostponeNow && notice.postponable
+          ? programModalLabel('already_postponed', lang)
+          : undefined,
     })
-  }, [notice, openProgramEvolution])
+  }, [
+    authState.status,
+    location.pathname,
+    notice,
+    openProgramEvolution,
+    postpone,
+    lang,
+  ])
 
-  if (authState.status !== 'authenticated') return null
-  if (SUPPRESS_PATHS.has(location.pathname)) return null
-  if (!notice) return null
-
-  if (notice.type === 'match') return null
-
-  const lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'
-  return (
-    <ProgramChangeModal
-      notice={notice}
-      lang={lang}
-      onAcknowledge={acknowledge}
-      onPostpone={postpone}
-    />
-  )
+  return null
 }

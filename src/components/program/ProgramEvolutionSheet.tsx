@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react'
+import { Sparkles, X } from 'lucide-react'
 import { BottomSheet } from '../ui/BottomSheet'
 import { DEFAULT_PROGRAM_EVOLUTION_BULLETS } from './programEvolutionSheetConstants'
 
@@ -16,6 +16,9 @@ export interface ProgramEvolutionSheetProps {
   summary: string
   bullets?: readonly string[]
   ctaLabel?: string
+  secondaryCtaLabel?: string
+  onSecondaryPress?: () => void
+  secondaryHint?: string
 }
 
 /**
@@ -35,6 +38,9 @@ export function ProgramEvolutionSheet({
   summary,
   bullets = DEFAULT_PROGRAM_EVOLUTION_BULLETS,
   ctaLabel = 'C\'est compris, on y va',
+  secondaryCtaLabel,
+  onSecondaryPress,
+  secondaryHint,
 }: ProgramEvolutionSheetProps) {
   return (
     <BottomSheet
@@ -46,7 +52,7 @@ export function ProgramEvolutionSheet({
       disableBackdropDismiss={blockFlexibleDismiss || primaryBusy}
       showClose={!blockFlexibleDismiss && !primaryBusy}
     >
-      <div className="px-5 pb-4 pt-1">
+      <div className="px-5 pb-4 pt-1" data-testid="program-change-modal">
         <div
           data-testid="program-evolution-eyebrow"
           className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand-tint"
@@ -78,15 +84,32 @@ export function ProgramEvolutionSheet({
             </li>
           ))}
         </ul>
-        <button
-          type="button"
-          onClick={() => void onCtaPress()}
-          disabled={primaryBusy}
-          data-testid="program-evolution-cta"
-          className="mt-6 w-full rounded-2xl bg-brand py-4 text-sm font-black uppercase italic tracking-wide text-on-brand transition-colors hover:bg-brand-hover shadow-lg shadow-brand-glow disabled:opacity-60"
-        >
-          {primaryBusy ? 'Mise à jour…' : ctaLabel}
-        </button>
+        <div className="mt-6 flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={() => void onCtaPress()}
+            disabled={primaryBusy}
+            data-testid="program-evolution-cta"
+            className="w-full rounded-2xl bg-brand py-4 text-sm font-black uppercase italic tracking-wide text-on-brand transition-colors hover:bg-brand-hover shadow-lg shadow-brand-glow disabled:opacity-60 rf-focus-ring"
+          >
+            {primaryBusy ? 'Mise à jour…' : ctaLabel}
+          </button>
+          {secondaryCtaLabel && onSecondaryPress && (
+            <button
+              type="button"
+              onClick={onSecondaryPress}
+              disabled={primaryBusy}
+              data-testid="program-change-postpone"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-2xl border border-border-app bg-layer-5 py-3 text-xs font-bold text-fg-soft transition-colors hover:border-layer-20 rf-focus-ring disabled:opacity-60"
+            >
+              <X className="h-3.5 w-3.5" />
+              {secondaryCtaLabel}
+            </button>
+          )}
+          {secondaryHint && (
+            <p className="text-center text-[11px] text-fg-muted">{secondaryHint}</p>
+          )}
+        </div>
       </div>
     </BottomSheet>
   )

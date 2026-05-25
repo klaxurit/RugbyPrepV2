@@ -95,6 +95,13 @@ export function ProgramEvolutionSheetProvider({ children }: { children: ReactNod
     setPayload(null)
   }, [])
 
+  const handleSecondaryPress = useCallback(() => {
+    const current = payloadRef.current
+    if (!current?.onSecondaryPress) return
+    current.onSecondaryPress()
+    setPayload(null)
+  }, [])
+
   const value = useMemo(() => ({ openProgramEvolution }), [openProgramEvolution])
 
   const blockFlexibleDismiss = Boolean(payload?.primaryAction)
@@ -113,6 +120,9 @@ export function ProgramEvolutionSheetProvider({ children }: { children: ReactNod
         summary={payload?.resolvedSummary ?? ''}
         bullets={payload?.resolvedBullets ?? DEFAULT_PROGRAM_EVOLUTION_BULLETS}
         ctaLabel={payload?.primaryCtaLabel ?? programEvolutionDefaults.cta_default[lang]}
+        secondaryCtaLabel={payload?.secondaryCtaLabel}
+        onSecondaryPress={payload?.onSecondaryPress ? handleSecondaryPress : undefined}
+        secondaryHint={payload?.secondaryHint}
       />
     </ProgramEvolutionSheetContext.Provider>
   )

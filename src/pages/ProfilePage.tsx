@@ -308,6 +308,17 @@ export function ProfilePage() {
     setWeightInput(profile.weightKg?.toString() ?? '')
   }, [profile.heightCm, profile.weightKg])
 
+  /** IMC live depuis les champs en cours (pas seulement profile après blur). */
+  const morphoBmi = useMemo(() => {
+    const parsedHeight = parseInt(heightInput, 10)
+    const parsedWeight = parseFloat(weightInput.replace(',', '.'))
+    const validHeight = !Number.isNaN(parsedHeight) && parsedHeight >= 140 && parsedHeight <= 230
+    const validWeight = !Number.isNaN(parsedWeight) && parsedWeight >= 40 && parsedWeight <= 200
+    if (!validHeight || !validWeight) return null
+    const h = parsedHeight / 100
+    return parsedWeight / (h * h)
+  }, [heightInput, weightInput])
+
   // ── "Ma situation" derived data ──────────────────────────────────────
   const today = useMemo(() => getToday(), [])
   const situationData = useMemo(() => {
@@ -949,9 +960,8 @@ export function ProfilePage() {
             </div>
           </div>
 
-          {profile.heightCm && profile.weightKg && (() => {
-            const h = profile.heightCm / 100
-            const bmi = profile.weightKg / (h * h)
+          {morphoBmi != null && (() => {
+            const bmi = morphoBmi
             const isForward = profile.rugbyPosition === 'FRONT_ROW' || profile.rugbyPosition === 'SECOND_ROW' || profile.rugbyPosition === 'BACK_ROW'
             const label =
               bmi < 20 ? tr('bmi_underweight', lang) :

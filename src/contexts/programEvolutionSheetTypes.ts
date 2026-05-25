@@ -15,6 +15,11 @@ export type ProgramEvolutionOpenArgs = {
   /** Si défini : CTA obligatoire, pas de dismiss backdrop/swipe/X tant que non terminé. */
   primaryAction?: () => void | Promise<void>
   primaryCtaLabel?: string
+  /** CTA secondaire (ex. reporter une notice cycle/phase). */
+  secondaryCtaLabel?: string
+  onSecondaryPress?: () => void
+  /** Texte informatif sous les CTA (ex. report déjà consommé). */
+  secondaryHint?: string
 }
 
 export type ResolvedProgramEvolutionPayload = ProgramEvolutionOpenArgs & {
