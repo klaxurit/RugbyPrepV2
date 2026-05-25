@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { ProfileProvider } from './contexts/ProfileProvider'
 import { SessionRunProvider } from './contexts/SessionRunContext'
 import { CoachProvider } from './contexts/CoachContext'
 import { CalendarProvider } from './contexts/CalendarContext'
@@ -155,6 +156,7 @@ function App() {
   return (
     <ErrorBoundary>
     <AuthProvider>
+      <ProfileProvider>
       <ProgramEvolutionSheetProvider>
       <CalendarProvider>
       <SessionRunProvider>
@@ -207,6 +209,7 @@ function App() {
       </SessionRunProvider>
       </CalendarProvider>
       </ProgramEvolutionSheetProvider>
+      </ProfileProvider>
     </AuthProvider>
     </ErrorBoundary>
   )

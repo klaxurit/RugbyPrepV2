@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeLegacyProfile, rowToProfile, shouldApplyRemoteProfile } from './useProfile'
+import {
+  DEFAULT_PROFILE,
+  normalizeLegacyProfile,
+  profileToRow,
+  rowToProfile,
+  shouldApplyRemoteProfile,
+} from './useProfile'
 
 type ProfileRow = Parameters<typeof rowToProfile>[0]
 
@@ -157,6 +163,16 @@ describe('shouldApplyRemoteProfile', () => {
     expect(shouldApplyRemoteProfile(0)).toBe(true)
     expect(shouldApplyRemoteProfile(1)).toBe(false)
     expect(shouldApplyRemoteProfile(3)).toBe(false)
+  })
+})
+
+describe('profileToRow defaults vs user data', () => {
+  it('DEFAULT_PROFILE maps to weekly_sessions 2 and null morpho', () => {
+    const row = profileToRow(DEFAULT_PROFILE, 'user-1')
+    expect(row.weekly_sessions).toBe(2)
+    expect(row.height_cm).toBeNull()
+    expect(row.weight_kg).toBeNull()
+    expect(row.season_mode).toBe('in_season')
   })
 })
 

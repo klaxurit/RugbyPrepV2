@@ -295,7 +295,7 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
   })
 }
 
-const profileToRow = (profile: UserProfile, userId: string) => ({
+export const profileToRow = (profile: UserProfile, userId: string) => ({
   id: userId,
   avatar_url: profile.avatarUrl ?? null,
   avatar_path: profile.avatarPath ?? null,
@@ -354,7 +354,7 @@ export interface UpdateProfileOptions {
 export const shouldApplyRemoteProfile = (localEditsSinceLoad: number): boolean =>
   localEditsSinceLoad === 0
 
-export const useProfile = () => {
+export const useProfileSource = () => {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
@@ -362,15 +362,19 @@ export const useProfile = () => {
   // navigations de la même session utilisateur. Aucune fuite possible entre
   // comptes : la clé inclut `userId`, donc un nouvel utilisateur voit DEFAULT_PROFILE.
   const [profile, setProfileState] = useState<UserProfile>(() => loadFromStorage(userId) ?? DEFAULT_PROFILE)
+  const isHydratedRef = useRef(!userId)
   const localEditsSinceLoadRef = useRef(0)
 
   // Quand userId change : recharge depuis le cache user-scoped ou le défaut,
   // puis Supabase écrase avec la source de vérité (sauf si l'utilisateur a déjà modifié).
   useEffect(() => {
     localEditsSinceLoadRef.current = 0
+    isHydratedRef.current = !userId
     // eslint-disable-next-line react-hooks/set-state-in-effect -- required: userId change must reset cache
     setProfileState(loadFromStorage(userId) ?? DEFAULT_PROFILE)
     if (!userId) return
+
+    let cancelled = false
 
     supabase
       .from('profiles')
@@ -380,6 +384,8 @@ export const useProfile = () => {
       .eq('id', userId)
       .single()
       .then(({ data, error }) => {
+        if (cancelled) return
+        isHydratedRef.current = true
         if (error || !data) {
           // Pas encore de profil → onboarding requis (clé absente = pas complété)
           return
@@ -395,13 +401,19 @@ export const useProfile = () => {
           localStorage.setItem(onboardingKey(userId), '1')
         }
       })
+
+    return () => {
+      cancelled = true
+    }
   }, [userId])
 
   // Persist Supabase + localStorage
   const persistProfile = useCallback(
     async (next: UserProfile, uid: string | null) => {
       saveToStorage(next, uid)
-      if (!uid) return
+      // Never upsert before the remote row was fetched — otherwise DEFAULT_PROFILE
+      // clobbers Supabase on login (weeklySessions: 2, empty morpho, in_season).
+      if (!uid || !isHydratedRef.current) return
       const { error } = await supabase
         .from('profiles')
         .upsert(profileToRow(next, uid), { onConflict: 'id' })
@@ -447,8 +459,14 @@ export const useProfile = () => {
   )
 
   const resetProfile = useCallback(() => {
+    const confirmed = window.confirm(
+      'Réinitialiser ton profil ? Toutes tes préférences (séances, morphologie, saison…) seront remises par défaut.',
+    )
+    if (!confirmed) return
     setProfile(DEFAULT_PROFILE)
   }, [setProfile])
 
   return { profile, setProfile, updateProfile, resetProfile }
 }
+
+export { useProfile } from '../contexts/profileContextValue'
