@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parseBlockRestSeconds } from '../blockPresentation'
+import { parseBlockRestSeconds, formatInterTourRest } from '../blockPresentation'
 import type { Block } from '../../../types/motherSession'
 
 function block(format: string, exercises: Array<{ name: string; prescription: string }> = []): Block {
@@ -88,5 +88,13 @@ describe('parseBlockRestSeconds — mother-session formats', () => {
     expect(parseBlockRestSeconds(block('', [{ name: 'squat', prescription: '4×5 @ 90s' }]))).toBe(90)
     expect(parseBlockRestSeconds(block('', [{ name: 'squat', prescription: '3×8 (60s)' }]))).toBe(60)
     expect(parseBlockRestSeconds(block('', [{ name: 'squat', prescription: '4×5 repos 3 min' }]))).toBe(180)
+  })
+})
+
+describe('formatInterTourRest', () => {
+  it('formats sub-minute and fractional minutes without rounding up', () => {
+    expect(formatInterTourRest(90, 'fr')).toBe('1 min 30')
+    expect(formatInterTourRest(120, 'fr')).toBe('2 min')
+    expect(formatInterTourRest(45, 'fr')).toBe('45s')
   })
 })

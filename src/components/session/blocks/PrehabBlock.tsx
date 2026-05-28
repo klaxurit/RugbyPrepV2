@@ -30,7 +30,7 @@ interface PrehabBlockProps {
   validatedByIdx?: Record<number, boolean>
   onValidateExo: (exoIdx: number) => void
   /** Lance le mini-chrono iso (ouvre l'overlay côté page). Passé à chaque exo iso. */
-  onStartIso?: (exoIdx: number, durationSec: number) => void
+  onStartIso?: (exoIdx: number) => void
   /** Fiche vidéo démo quand disponible dans le catalogue. */
   onPlayDemo?: (exoIdx: number) => void
   notes?: readonly string[]
@@ -77,7 +77,7 @@ export function PrehabBlock({
               isCurrent={state === 'active' && i === currentExoIdx}
               validated={validatedByIdx?.[i] ?? false}
               onValidate={() => onValidateExo(i)}
-              onStartIso={onStartIso ? (sec) => onStartIso(i, sec) : undefined}
+              onStartIso={onStartIso ? () => onStartIso(i) : undefined}
               onPlayDemo={
                 onPlayDemo && prehabExerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined
               }
@@ -97,7 +97,7 @@ interface PrehabRowProps {
   isCurrent: boolean
   validated: boolean
   onValidate: () => void
-  onStartIso?: (durationSec: number) => void
+  onStartIso?: () => void
   onPlayDemo?: () => void
   lang: Lang
 }
@@ -113,7 +113,14 @@ function PrehabRow({
 }: PrehabRowProps) {
   // Détecte une prescription temps (ex: "2x15-20s/side") → propose un bouton iso.
   const spec = parseExerciseSetSpec(exo.prescription)
-  const isoSeconds = spec.kind === 'time' ? spec.durationLow : null
+  const isoLabel =
+    spec.kind === 'time'
+      ? spec.durationHigh > spec.durationLow
+        ? `${spec.durationLow}-${spec.durationHigh}s`
+        : spec.perSide
+          ? `${spec.durationLow}s/côté`
+          : `${spec.durationLow}s`
+      : null
 
   const wrapperClass = isCurrent
     ? 'bg-badge-wine border-[1.5px] border-brand/55'
@@ -158,14 +165,14 @@ function PrehabRow({
         </button>
       )}
 
-      {isoSeconds != null && isCurrent && !validated && onStartIso && (
+      {isoLabel != null && isCurrent && !validated && onStartIso && (
         <button
           type="button"
-          onClick={() => onStartIso(isoSeconds)}
+          onClick={onStartIso}
           className="inline-flex h-8 items-center gap-1.5 rounded-[10px] bg-brand text-app px-3 text-[11px] font-extrabold uppercase tracking-[0.06em] active:scale-[0.97] transition-transform rf-focus-ring"
         >
           <Icon name="play" size={9} strokeWidth={2.4} />
-          {isoSeconds}s
+          {isoLabel}
         </button>
       )}
     </div>

@@ -241,6 +241,24 @@ describe('buildAthletePlanningInputs', () => {
     expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
   })
 
+  it('off_season onboarding hint preserved when calendar has past matches but no seasonEndedAt', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'off_season',
+        planningAnchors: {
+          onboardingCycleHint: 'off_season',
+          offSeasonStartAt: '2025-03-10',
+        },
+      }),
+      events: [{ id: 'm1', date: '2025-02-22', type: 'match' }] as CalendarEvent[],
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.planningAnchors?.onboardingCycleHint).toBe('off_season')
+    expect(r.inputs.planningAnchors?.offSeasonStartAt).toBe('2025-03-10')
+  })
+
   // ── S3 Slice 4: onboardingCycleHint source of truth ──
 
   it('prefers planningAnchors.onboardingCycleHint over seasonMode for bootstrap', () => {

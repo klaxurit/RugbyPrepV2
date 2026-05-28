@@ -7,6 +7,7 @@ import { findCurrentPending } from '../../services/motherSession/findCurrentPend
 import {
   parseBlockTourCount,
   parseBlockRestSeconds,
+  formatInterTourRest,
 } from '../../services/ui/blockPresentation'
 import { parseBlockFormat } from '../../services/ui/parseBlockFormat'
 import { getLoggableExerciseIndices } from '../../services/session/resolveLoggableExercises'
@@ -33,8 +34,8 @@ interface SessionBlocksProps {
   onBlockCompleted?: (blockNumber: number) => void
   /** Demande au parent d'ouvrir l'overlay EMOM/Tabata/AMRAP/For Time pour ce bloc. */
   onStartEmomTimer?: (blockNumber: number) => void
-  /** Demande au parent d'ouvrir l'overlay iso pour cet exo (durée en secondes). */
-  onStartIsoTimer?: (blockNumber: number, exerciseIndex: number, durationSec: number) => void
+  /** Demande au parent d'ouvrir l'overlay iso pour cet exo. */
+  onStartIsoTimer?: (blockNumber: number, tourIndex: number, exerciseIndex: number) => void
   /** Demande au parent d'afficher la démo vidéo de l'exo. */
   onPlayDemo?: (blockNumber: number, exerciseIndex: number) => void
   /** Suggestion de charge Premium par exerciseId (undefined si non Premium ou no_data). */
@@ -199,7 +200,7 @@ export function SessionBlocks({
                   onBlockCompleted,
                 })
               }}
-              onStartIso={(exoIdx, sec) => onStartIsoTimer?.(block.number, exoIdx, sec)}
+              onStartIso={(exoIdx) => onStartIsoTimer?.(block.number, 0, exoIdx)}
               notes={notes}
             />
           )
@@ -208,7 +209,8 @@ export function SessionBlocks({
         // tours
         const totalTours = parseBlockTourCount(block)
         const restSeconds = parseBlockRestSeconds(block)
-        const restMin = restSeconds > 0 ? Math.round(restSeconds / 60) : undefined
+        const restLabel =
+          restSeconds > 0 ? formatInterTourRest(restSeconds, lang) : undefined
         const tourData = buildToursTourData({
           block,
           totalTours,
@@ -227,7 +229,7 @@ export function SessionBlocks({
             onToggle={onToggle}
             lang={lang}
             totalTours={totalTours}
-            restMin={restMin}
+            restLabel={restLabel}
             currentTourIdx={currentTourIdx}
             currentExoIdx={currentExoIdx}
             premium={isPremium}
@@ -250,9 +252,12 @@ export function SessionBlocks({
                 ...(patch.kg !== undefined ? { loadKg: numKg } : {}),
                 ...(patch.reps !== undefined ? { reps: numReps } : {}),
               })
+              if (sessionRun.completedExercises.has(key)) {
+                onBlockCompleted?.(block.number)
+              }
             }}
             onPlayDemo={onPlayDemo ? (exoIdx) => onPlayDemo(block.number, exoIdx) : undefined}
-            onStartIso={(exoIdx, sec) => onStartIsoTimer?.(block.number, exoIdx, sec)}
+            onStartIso={(tourIdx, exoIdx) => onStartIsoTimer?.(block.number, tourIdx, exoIdx)}
             notes={notes}
             getLoadSuggestion={getLoadSuggestion}
           />

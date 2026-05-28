@@ -33,6 +33,7 @@ import type {
 } from '../types/training'
 import type { AnnualCycle } from '../types/annualPlanning'
 import { computeSCSchedule, TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
+import { startOfIsoWeek } from '../services/weeklyBilan/computeWeeklyBilan'
 import { tr, dayAbbrArray, type Lang } from '../i18n/appLabels'
 // betaEligibility import removed — all profiles eligible since V2 launch
 
@@ -341,6 +342,10 @@ export function OnboardingPage() {
       }
       if (seasonPhase === 'playoffs') nextAnchors.manualPlayoffs = true
       else delete nextAnchors.manualPlayoffs
+      if (seasonPhase === 'off_season') {
+        const todayIso = new Date().toISOString().slice(0, 10)
+        nextAnchors.offSeasonStartAt = startOfIsoWeek(todayIso)
+      }
 
       const profilePayload = {
         position: position!,

@@ -1,4 +1,5 @@
 import type { Block, Exercise } from '../../../types/motherSession'
+import { useState } from 'react'
 import { Icon } from '../../ui'
 import { parseExerciseSetSpec } from '../../../services/ui/exerciseSetSpec'
 import { BlockHeader } from '../BlockHeader'
@@ -40,8 +41,8 @@ interface ToursBlockProps {
   onToggle: () => void
   /** Nombre total de tours du bloc (calculé par le caller via parseBlockTourCount). */
   totalTours: number
-  /** Repos en minutes entre tours (optionnel). */
-  restMin?: number
+  /** Repos inter-tours formaté (ex. "1 min 30"). */
+  restLabel?: string
   /** Tour actif courant (0-based). Pertinent uniquement si state === 'active'. */
   currentTourIdx?: number
   /** Exo actif courant dans le tour. Highlight + animation. */
@@ -57,7 +58,7 @@ interface ToursBlockProps {
   /** Callback ouverture demo vidéo. */
   onPlayDemo?: (exoIdx: number) => void
   /** Callback démarrage chrono iso pour un exo time (Copenhagen, plank, etc.). */
-  onStartIso?: (exoIdx: number, durationSec: number) => void
+  onStartIso?: (tourIdx: number, exoIdx: number) => void
   /** Notes de coaching à afficher en bas du bloc. */
   notes?: readonly string[]
   /** Suggestion de charge Premium par exerciseId (optionnel). */
@@ -96,7 +97,7 @@ export function ToursBlock(props: ToursBlockProps) {
     expanded,
     onToggle,
     totalTours,
-    restMin,
+    restLabel,
     currentTourIdx = 0,
     currentExoIdx = 0,
     premium,
@@ -111,6 +112,16 @@ export function ToursBlock(props: ToursBlockProps) {
   } = props
 
   const displayTour = state === 'done' ? totalTours : Math.min(currentTourIdx + 1, totalTours)
+  const [expandedDoneTours, setExpandedDoneTours] = useState<Set<number>>(() => new Set())
+
+  const toggleDoneTour = (tourIdx: number) => {
+    setExpandedDoneTours((prev) => {
+      const next = new Set(prev)
+      if (next.has(tourIdx)) next.delete(tourIdx)
+      else next.add(tourIdx)
+      return next
+    })
+  }
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -129,7 +140,7 @@ export function ToursBlock(props: ToursBlockProps) {
           <div className="flex items-center justify-between px-1.5">
             <span className="text-[11px] font-medium text-fg/60">
               {totalTours} {totalTours > 1 ? tr('tours_meta_round_plural', lang) : tr('tours_meta_round_single', lang)}
-              {restMin != null && ` · ${tr('tours_meta_rest_prefix', lang)} ${restMin} min`}
+              {restLabel != null && ` · ${tr('tours_meta_rest_prefix', lang)} ${restLabel}`}
             </span>
             <span className="text-[10px] font-extrabold uppercase tabular-nums tracking-[0.12em] text-brand">
               {tr('tours_tour_label', lang)} {displayTour}/{totalTours}
@@ -163,6 +174,10 @@ export function ToursBlock(props: ToursBlockProps) {
                     firstTourData={tourData?.[0]}
                     showCarryForward={i > 0}
                     isActiveTour={tourState === 'active'}
+                    expanded={tourState === 'active' || (tourState === 'done' && expandedDoneTours.has(i))}
+                    onToggleExpand={
+                      tourState === 'done' ? () => toggleDoneTour(i) : undefined
+                    }
                     currentExoIdx={tourState === 'active' ? currentExoIdx : -1}
                     premium={premium}
                     onValidateExo={(exoIdx) => onValidateExo(i, exoIdx)}
@@ -170,7 +185,7 @@ export function ToursBlock(props: ToursBlockProps) {
                       onSetExoData ? (exoIdx, patch) => onSetExoData(i, exoIdx, patch) : undefined
                     }
                     onPlayDemo={onPlayDemo}
-                    onStartIso={onStartIso}
+                    onStartIso={onStartIso ? (exoIdx) => onStartIso(i, exoIdx) : undefined}
                     getLoadSuggestion={getLoadSuggestion}
                     lang={lang}
                   />
@@ -198,12 +213,16 @@ interface TourGroupProps {
   /** True quand ce TourGroup est tourIdx > 0 → propose les valeurs du tour 1 en placeholder. */
   showCarryForward: boolean
   isActiveTour: boolean
+  /** Tour déplié (actif ou tour terminé éditable). */
+  expanded: boolean
+  /** Clic sur l'en-tête d'un tour terminé pour le déplier. */
+  onToggleExpand?: () => void
   currentExoIdx: number
   premium: boolean
   onValidateExo: (exoIdx: number) => void
   onSetExoData?: (exoIdx: number, patch: Partial<ExoTourData>) => void
   onPlayDemo?: (exoIdx: number) => void
-  onStartIso?: (exoIdx: number, durationSec: number) => void
+  onStartIso?: (exoIdx: number) => void
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
   lang: Lang
 }
@@ -228,6 +247,8 @@ function TourGroup({
   firstTourData,
   showCarryForward,
   isActiveTour,
+  expanded,
+  onToggleExpand,
   currentExoIdx,
   premium,
   onValidateExo,
@@ -246,33 +267,65 @@ function TourGroup({
 
   return (
     <div className="mb-2">
-      <div
-        className={`flex w-full items-center gap-2.5 rounded-xl border-[1.5px] px-3.5 py-3 ${TOUR_HEADER_CLASS[state]}`}
-      >
-        <BulletIndicator state={state} />
-        <span
-          className={`text-[11px] font-extrabold uppercase tracking-[0.12em] ${TOUR_HEADER_FG[state]}`}
+      {onToggleExpand ? (
+        <button
+          type="button"
+          onClick={onToggleExpand}
+          className={`flex w-full items-center gap-2.5 rounded-xl border-[1.5px] px-3.5 py-3 text-left rf-focus-ring ${TOUR_HEADER_CLASS[state]}`}
         >
-          {tr('tours_tour_label', lang)} {tourNum}
-        </span>
-        <span aria-hidden className={`h-[3px] w-[3px] rounded-full opacity-50 ${TOUR_HEADER_FG[state]} bg-current`} />
-        <span
-          className={`text-[10px] font-bold uppercase tracking-[0.1em] opacity-85 ${TOUR_HEADER_FG[state]}`}
+          <BulletIndicator state={state} />
+          <span
+            className={`text-[11px] font-extrabold uppercase tracking-[0.12em] ${TOUR_HEADER_FG[state]}`}
+          >
+            {tr('tours_tour_label', lang)} {tourNum}
+          </span>
+          <span aria-hidden className={`h-[3px] w-[3px] rounded-full opacity-50 ${TOUR_HEADER_FG[state]} bg-current`} />
+          <span
+            className={`text-[10px] font-bold uppercase tracking-[0.1em] opacity-85 ${TOUR_HEADER_FG[state]}`}
+          >
+            {headerLabel}
+          </span>
+          <span
+            className={`ml-auto text-[10px] font-bold tabular-nums opacity-70 ${TOUR_HEADER_FG[state]}`}
+          >
+            {validatedCount}/{exercises.length}
+          </span>
+          <Icon
+            name="chevron-down"
+            size={14}
+            className={`flex-shrink-0 opacity-60 transition-transform ${expanded ? 'rotate-180' : ''}`}
+          />
+        </button>
+      ) : (
+        <div
+          className={`flex w-full items-center gap-2.5 rounded-xl border-[1.5px] px-3.5 py-3 ${TOUR_HEADER_CLASS[state]}`}
         >
-          {headerLabel}
-        </span>
-        <span
-          className={`ml-auto text-[10px] font-bold tabular-nums opacity-70 ${TOUR_HEADER_FG[state]}`}
-        >
-          {validatedCount}/{exercises.length}
-        </span>
-      </div>
+          <BulletIndicator state={state} />
+          <span
+            className={`text-[11px] font-extrabold uppercase tracking-[0.12em] ${TOUR_HEADER_FG[state]}`}
+          >
+            {tr('tours_tour_label', lang)} {tourNum}
+          </span>
+          <span aria-hidden className={`h-[3px] w-[3px] rounded-full opacity-50 ${TOUR_HEADER_FG[state]} bg-current`} />
+          <span
+            className={`text-[10px] font-bold uppercase tracking-[0.1em] opacity-85 ${TOUR_HEADER_FG[state]}`}
+          >
+            {headerLabel}
+          </span>
+          <span
+            className={`ml-auto text-[10px] font-bold tabular-nums opacity-70 ${TOUR_HEADER_FG[state]}`}
+          >
+            {validatedCount}/{exercises.length}
+          </span>
+        </div>
+      )}
 
-      {isActiveTour && (
+      {expanded && (
         <div className="mt-1.5 flex flex-col gap-1.5">
           {exercises.map((exo, i) => {
             const data = exoData[i] ?? {}
-            const isCurrent = i === currentExoIdx
+            const isCurrent = isActiveTour && i === currentExoIdx
+            const allowPastEdit = state === 'done' && data.validated === true
             const firstData = showCarryForward ? (firstTourData?.[i] ?? {}) : {}
             const exoIdRef = exo.exerciseId
             // Suggestion AI uniquement sur le tour 1 (showCarryForward=false).
@@ -309,6 +362,7 @@ function TourGroup({
                 exo={exo}
                 validated={data.validated === true}
                 isCurrent={isCurrent}
+                allowPastEdit={allowPastEdit}
                 premium={premium}
                 kg={effectiveKg}
                 reps={effectiveReps}
@@ -319,7 +373,7 @@ function TourGroup({
                 onSetKg={onSetExoData ? (v) => onSetExoData(i, { kg: v }) : undefined}
                 onSetReps={onSetExoData ? (v) => onSetExoData(i, { reps: v }) : undefined}
                 onPlayDemo={onPlayDemo && exerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined}
-                onStartIso={onStartIso ? (sec) => onStartIso(i, sec) : undefined}
+                onStartIso={onStartIso ? () => onStartIso(i) : undefined}
                 lang={lang}
               />
             )
@@ -356,6 +410,8 @@ interface ExerciseRowProps {
   exo: Exercise
   validated: boolean
   isCurrent: boolean
+  /** Tour terminé déplié — permet de corriger kg/reps. */
+  allowPastEdit?: boolean
   premium: boolean
   kg: string
   reps: string
@@ -369,14 +425,25 @@ interface ExerciseRowProps {
   onSetKg?: (next: string) => void
   onSetReps?: (next: string) => void
   onPlayDemo?: () => void
-  onStartIso?: (durationSec: number) => void
+  onStartIso?: () => void
   lang: Lang
+}
+
+function isoChronoLabel(prescription: string): string | null {
+  const spec = parseExerciseSetSpec(prescription)
+  if (spec.kind !== 'time') return null
+  if (spec.durationHigh > spec.durationLow) {
+    return `${spec.durationLow}-${spec.durationHigh}s`
+  }
+  if (spec.perSide) return `${spec.durationLow}s/côté`
+  return `${spec.durationLow}s`
 }
 
 function ExerciseRow({
   exo,
   validated,
   isCurrent,
+  allowPastEdit = false,
   premium,
   kg,
   reps,
@@ -395,7 +462,8 @@ function ExerciseRow({
   // déclenche l'overlay chrono dédié.
   const spec = parseExerciseSetSpec(exo.prescription)
   const hasLoad = spec.kind === 'reps'
-  const isoSeconds = spec.kind === 'time' ? spec.durationLow : null
+  const isoLabel = isoChronoLabel(exo.prescription)
+  const showLoadInputs = hasLoad && premium && (isCurrent || allowPastEdit)
 
   const wrapperClass = isCurrent
     ? 'bg-badge-wine border-[1.5px] border-brand/55'
@@ -437,14 +505,14 @@ function ExerciseRow({
           <div className="mt-0.5 text-[12px] tabular-nums text-fg/55">{exo.prescription}</div>
         </div>
 
-        {isoSeconds != null && isCurrent && !validated && onStartIso && (
+        {isoLabel != null && isCurrent && !validated && onStartIso && (
           <button
             type="button"
-            onClick={() => onStartIso(isoSeconds)}
+            onClick={onStartIso}
             className="inline-flex h-8 flex-shrink-0 items-center gap-1.5 rounded-[10px] bg-brand text-app px-3 text-[11px] font-extrabold uppercase tracking-[0.06em] active:scale-[0.97] transition-transform rf-focus-ring"
           >
             <Icon name="play" size={9} strokeWidth={2.4} />
-            {isoSeconds}s
+            {isoLabel}
           </button>
         )}
 
@@ -460,7 +528,7 @@ function ExerciseRow({
         )}
       </div>
 
-      {isCurrent && hasLoad && premium && (
+      {showLoadInputs && (
         <>
           <div className="flex items-center gap-2 border-t border-dashed border-brand/25 pt-2.5">
             {onSetKg && (
@@ -479,13 +547,15 @@ function ExerciseRow({
                 placeholder={repsPlaceholder}
               />
             )}
-            <button
-              type="button"
-              onClick={onValidate}
-              className="ml-auto h-9 rounded-[10px] bg-brand text-app px-3.5 text-[11px] font-extrabold uppercase tracking-[0.06em] active:scale-[0.97] transition-transform rf-focus-ring"
-            >
-              {tr('exercise_validate_set', lang)}
-            </button>
+            {isCurrent && (
+              <button
+                type="button"
+                onClick={onValidate}
+                className="ml-auto h-9 rounded-[10px] bg-brand text-app px-3.5 text-[11px] font-extrabold uppercase tracking-[0.06em] active:scale-[0.97] transition-transform rf-focus-ring"
+              >
+                {tr('exercise_validate_set', lang)}
+              </button>
+            )}
           </div>
         </>
       )}

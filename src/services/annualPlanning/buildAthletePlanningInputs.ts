@@ -210,8 +210,16 @@ function resolvePlanningAnchors(
     return { ...base, manualCycleOverride: 'off_season' }
   }
 
-  // With matches in calendar, let V2 auto-detect the cycle from calendar data.
-  if (hasMatchInCalendar) {
+  // With matches in calendar, let V2 auto-detect from calendar data — except when
+  // the athlete declared off-season at onboarding without an explicit season end:
+  // keep onboardingCycleHint + offSeasonStartAt so week 1 is anchored, not S4
+  // inferred from stale FFR calendar matches.
+  const keepOffSeasonBootstrap =
+    cycleHint === 'off_season' &&
+    !base.seasonEndedAt &&
+    (Boolean(base.offSeasonStartAt) || pa?.onboardingCycleHint === 'off_season')
+
+  if (hasMatchInCalendar && !keepOffSeasonBootstrap) {
     return Object.keys(base).length > 0 ? base : undefined
   }
 

@@ -27,7 +27,7 @@ const baseProps = {
   expanded: true,
   onToggle: vi.fn(),
   totalTours: 3,
-  restMin: 2,
+  restLabel: '2 min',
   currentTourIdx: 0,
   currentExoIdx: 0,
   premium: true,

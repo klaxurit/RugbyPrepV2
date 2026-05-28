@@ -1,6 +1,6 @@
 # B2 — Rest times audit findings (Phase B dry-run)
 
-**Generated:** 2026-05-08T07:59:16.331Z
+**Generated:** 2026-05-28T14:24:41.670Z
 **Total blocks:** 155
 
 ## Status breakdown

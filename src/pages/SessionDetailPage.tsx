@@ -6,6 +6,7 @@ import { useSessionRun, buildExerciseTourKey } from '../contexts/SessionRunConte
 import { findCurrentPending } from '../services/motherSession/findCurrentPending'
 import { isDirectiveText, resolveExerciseIdForSessionRun } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
+import { parseExerciseSetSpec } from '../services/ui/exerciseSetSpec'
 import { parseBlockFormat } from '../services/ui/parseBlockFormat'
 import { useWakeLock } from '../hooks/useWakeLock'
 import { useProfile } from '../hooks/useProfile'
@@ -324,6 +325,7 @@ export function SessionDetailPage() {
   // Iso : exo en chrono actif (avec contexte pour pouvoir le marquer fait)
   const [isoTrigger, setIsoTrigger] = useState<{
     blockNumber: number
+    tourIndex: number
     exerciseIndex: number
     overlayState: IsoOverlayState
   } | null>(null)
@@ -662,27 +664,37 @@ export function SessionDetailPage() {
 
   const handleStartIsoTimer = (
     blockNumber: number,
+    tourIndex: number,
     exerciseIndex: number,
-    durationSec: number,
   ) => {
     if (!adaptedSession) return
     const block = adaptedSession.blocks.find((b) => b.number === blockNumber)
     const exo = block?.exercises[exerciseIndex]
     if (!exo) return
+    const spec = parseExerciseSetSpec(exo.prescription)
+    if (spec.kind !== 'time') return
     setIsoTrigger({
       blockNumber,
+      tourIndex,
       exerciseIndex,
       overlayState: {
         exerciseName: exo.name,
         parentLabel: block?.name,
-        durationOptions: [durationSec],
+        durationLow: spec.durationLow,
+        durationHigh: spec.durationHigh,
+        perSide: spec.perSide,
+        perDirection: spec.perDirection,
       },
     })
   }
 
   const handleIsoComplete = () => {
     if (!isoTrigger) return
-    const key = buildExerciseTourKey(isoTrigger.blockNumber, 0, isoTrigger.exerciseIndex)
+    const key = buildExerciseTourKey(
+      isoTrigger.blockNumber,
+      isoTrigger.tourIndex,
+      isoTrigger.exerciseIndex,
+    )
     sessionRun.markExerciseDone(key)
     setIsoTrigger(null)
   }

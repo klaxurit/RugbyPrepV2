@@ -1,4 +1,5 @@
 import type { Block } from '../../types/motherSession'
+import type { Lang } from '../../services/motherSession/localizeMotherSessionExerciseName'
 import { isDirectiveText } from '../motherSession/motherSessionExerciseMap'
 import warmupAsset from '../../assets/echauffement_rufo.png'
 import powerAsset from '../../assets/puissance_rufo.png'
@@ -108,6 +109,18 @@ export function parseExerciseSets(prescription: string): number | null {
   if (!match) return null
   const n = Number(match[1])
   return Number.isFinite(n) && n > 0 && n <= 12 ? n : null
+}
+
+/** Affiche un repos inter-tours lisible (évite "2 min" pour 90 s). */
+export function formatInterTourRest(seconds: number, lang: Lang = 'fr'): string {
+  if (seconds <= 0) return ''
+  if (seconds < 60) return `${seconds}s`
+  const mins = Math.floor(seconds / 60)
+  const secs = seconds % 60
+  if (secs === 0) {
+    return lang === 'fr' ? `${mins} min` : `${mins} min`
+  }
+  return lang === 'fr' ? `${mins} min ${secs}` : `${mins}:${String(secs).padStart(2, '0')}`
 }
 
 const parseSets = parseExerciseSets
