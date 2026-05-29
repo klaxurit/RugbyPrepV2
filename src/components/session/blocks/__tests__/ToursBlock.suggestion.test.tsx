@@ -144,3 +144,64 @@ describe('ToursBlock — badge suggestion de charge', () => {
     expect(badge.getAttribute('title')).toMatch(/ressenti/i)
   })
 })
+
+describe('ToursBlock — carry-forward (tours > 0)', () => {
+  it("affiche la valeur du tour 1 en placeholder (pas en valeur) sur le tour 2", () => {
+    render(
+      <ToursBlock
+        {...baseProps}
+        currentTourIdx={1}
+        block={mkBlock()}
+        tourData={{
+          0: { 0: { kg: '80', reps: '10', validated: true } },
+          1: { 0: { kg: '', reps: '', validated: false } },
+          2: { 0: { kg: '', reps: '', validated: false } },
+        }}
+      />,
+    )
+    const kgInput = screen.getByLabelText('kg') as HTMLInputElement
+    const repsInput = screen.getByLabelText('reps') as HTMLInputElement
+    // Le champ reste VIDE (= ce qui est loggé), la valeur héritée n'est qu'un fantôme.
+    expect(kgInput.value).toBe('')
+    expect(repsInput.value).toBe('')
+    expect(kgInput.placeholder).toBe('80')
+    expect(repsInput.placeholder).toBe('10')
+  })
+
+  it("respecte un champ volontairement vidé sur le tour 2 (ne re-remplit pas)", () => {
+    render(
+      <ToursBlock
+        {...baseProps}
+        currentTourIdx={1}
+        block={mkBlock()}
+        tourData={{
+          0: { 0: { kg: '80', reps: '10', validated: true } },
+          // Tour 2 : l'utilisateur a vidé → kg/reps vides, ils doivent le rester.
+          1: { 0: { kg: '', reps: '', validated: false } },
+          2: { 0: { kg: '', reps: '', validated: false } },
+        }}
+      />,
+    )
+    const kgInput = screen.getByLabelText('kg') as HTMLInputElement
+    expect(kgInput.value).toBe('')
+  })
+
+  it("affiche la valeur saisie en clair quand l'utilisateur a tapé sur le tour 2", () => {
+    render(
+      <ToursBlock
+        {...baseProps}
+        currentTourIdx={1}
+        block={mkBlock()}
+        tourData={{
+          0: { 0: { kg: '80', reps: '10', validated: true } },
+          1: { 0: { kg: '82.5', reps: '8', validated: false } },
+          2: { 0: { kg: '', reps: '', validated: false } },
+        }}
+      />,
+    )
+    const kgInput = screen.getByLabelText('kg') as HTMLInputElement
+    const repsInput = screen.getByLabelText('reps') as HTMLInputElement
+    expect(kgInput.value).toBe('82.5')
+    expect(repsInput.value).toBe('8')
+  })
+})

@@ -339,21 +339,27 @@ function TourGroup({
               suggestion.decision !== 'no_suggestion' &&
               suggestion.decision !== 'no_data'
 
-            // Pattern Strong : tours > 0 → kg/reps PRÉ-REMPLIS EN CLAIR avec
-            // les valeurs du tour 1 (l'utilisateur voit "80 / 10" et peut
-            // valider direct, ou taper par-dessus pour modifier).
-            // Tour 1 : suggestion AI en ghost placeholder uniquement.
-            const inheritedKg = showCarryForward ? firstData.kg : undefined
-            const inheritedReps = showCarryForward ? firstData.reps : undefined
-            const effectiveKg = data.kg ? data.kg : (inheritedKg ?? '')
-            const effectiveReps = data.reps ? data.reps : (inheritedReps ?? '')
+            // La valeur affichée du champ = EXACTEMENT ce qui est loggé (data.kg).
+            // On ne re-dérive jamais depuis le tour 1 au rendu : sinon vider le
+            // champ le re-remplit aussitôt avec la valeur héritée → impossible à
+            // supprimer (bug UX). « Pas encore saisi » et « volontairement vidé »
+            // sont tous deux représentés par une valeur vide ; la valeur d'aide
+            // n'apparaît qu'en placeholder fantôme (cf. ci-dessous).
+            const effectiveKg = data.kg ?? ''
+            const effectiveReps = data.reps ?? ''
 
-            const kgPlaceholder =
-              !showCarryForward && showSuggestionPlaceholder
+            // Aide à la saisie en placeholder fantôme (gris) — n'empêche pas de
+            // vider, ce qui est tapé reste ce qui est loggé (WYSIWYG) :
+            //  - tours > 0 → valeurs du tour 1 (carry-forward)
+            //  - tour 1   → suggestion AI Premium
+            const kgPlaceholder = showCarryForward
+              ? firstData.kg || undefined
+              : showSuggestionPlaceholder
                 ? String(suggestion!.suggestedWeight)
                 : undefined
-            const repsPlaceholder =
-              !showCarryForward && showSuggestionPlaceholder && suggestion?.suggestedReps != null
+            const repsPlaceholder = showCarryForward
+              ? firstData.reps || undefined
+              : showSuggestionPlaceholder && suggestion?.suggestedReps != null
                 ? String(suggestion.suggestedReps)
                 : undefined
             return (
