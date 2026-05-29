@@ -354,6 +354,10 @@ export interface UpdateProfileOptions {
 export const shouldApplyRemoteProfile = (localEditsSinceLoad: number): boolean =>
   localEditsSinceLoad === 0
 
+/** PostgREST `.single()` when the profiles row does not exist yet. */
+export const isProfileRowMissingError = (error: { code?: string; message?: string } | null): boolean =>
+  error?.code === 'PGRST116'
+
 export const useProfileSource = () => {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
@@ -362,8 +366,35 @@ export const useProfileSource = () => {
   // navigations de la même session utilisateur. Aucune fuite possible entre
   // comptes : la clé inclut `userId`, donc un nouvel utilisateur voit DEFAULT_PROFILE.
   const [profile, setProfileState] = useState<UserProfile>(() => loadFromStorage(userId) ?? DEFAULT_PROFILE)
+  const profileRef = useRef(profile)
   const isHydratedRef = useRef(!userId)
   const localEditsSinceLoadRef = useRef(0)
+
+  useEffect(() => {
+    profileRef.current = profile
+  }, [profile])
+
+  // Persist Supabase + localStorage
+  const persistProfile = useCallback(
+    async (next: UserProfile, uid: string | null) => {
+      saveToStorage(next, uid)
+      // Never upsert before the remote row was fetched — otherwise DEFAULT_PROFILE
+      // clobbers Supabase on login (weeklySessions: 2, empty morpho, in_season).
+      if (!uid || !isHydratedRef.current) return
+      const { error } = await supabase
+        .from('profiles')
+        .upsert(profileToRow(next, uid), { onConflict: 'id' })
+      if (error) {
+        console.error('[useProfile] Supabase persist failed:', error.message)
+      }
+    },
+    []
+  )
+
+  const persistProfileRef = useRef(persistProfile)
+  useEffect(() => {
+    persistProfileRef.current = persistProfile
+  }, [persistProfile])
 
   // Quand userId change : recharge depuis le cache user-scoped ou le défaut,
   // puis Supabase écrase avec la source de vérité (sauf si l'utilisateur a déjà modifié).
@@ -385,18 +416,28 @@ export const useProfileSource = () => {
       .single()
       .then(({ data, error }) => {
         if (cancelled) return
+
+        if (error) {
+          if (isProfileRowMissingError(error)) {
+            isHydratedRef.current = true
+          } else {
+            console.error('[useProfile] Supabase fetch failed:', error.message)
+          }
+          return
+        }
+
         isHydratedRef.current = true
-        if (error || !data) {
-          // Pas encore de profil → onboarding requis (clé absente = pas complété)
-          return
-        }
+
         if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) {
+          const pending = loadFromStorage(userId) ?? profileRef.current
+          void persistProfileRef.current(pending, userId)
           return
         }
+
         const loaded = rowToProfile(data as ProfileRow)
         setProfileState(loaded)
         saveToStorage(loaded, userId)
-        // Profil Supabase trouvé avec onboarding complet → marquer localelement
+        // Profil Supabase trouvé avec onboarding complet → marquer localement
         if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {
           localStorage.setItem(onboardingKey(userId), '1')
         }
@@ -406,23 +447,6 @@ export const useProfileSource = () => {
       cancelled = true
     }
   }, [userId])
-
-  // Persist Supabase + localStorage
-  const persistProfile = useCallback(
-    async (next: UserProfile, uid: string | null) => {
-      saveToStorage(next, uid)
-      // Never upsert before the remote row was fetched — otherwise DEFAULT_PROFILE
-      // clobbers Supabase on login (weeklySessions: 2, empty morpho, in_season).
-      if (!uid || !isHydratedRef.current) return
-      const { error } = await supabase
-        .from('profiles')
-        .upsert(profileToRow(next, uid), { onConflict: 'id' })
-      if (error) {
-        console.error('[useProfile] Supabase persist failed:', error.message)
-      }
-    },
-    []
-  )
 
   const setProfile = useCallback(
     (next: UserProfile) => {

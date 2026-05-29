@@ -5,6 +5,7 @@ import {
   profileToRow,
   rowToProfile,
   shouldApplyRemoteProfile,
+  isProfileRowMissingError,
 } from './useProfile'
 
 type ProfileRow = Parameters<typeof rowToProfile>[0]
@@ -163,6 +164,13 @@ describe('shouldApplyRemoteProfile', () => {
     expect(shouldApplyRemoteProfile(0)).toBe(true)
     expect(shouldApplyRemoteProfile(1)).toBe(false)
     expect(shouldApplyRemoteProfile(3)).toBe(false)
+  })
+})
+
+describe('isProfileRowMissingError', () => {
+  it('detects PostgREST no-row error for new accounts', () => {
+    expect(isProfileRowMissingError({ code: 'PGRST116', message: 'JSON object requested, multiple (or no) rows returned' })).toBe(true)
+    expect(isProfileRowMissingError({ code: '42501', message: 'permission denied' })).toBe(false)
   })
 })
 

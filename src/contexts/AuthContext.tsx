@@ -14,6 +14,7 @@ import {
 import { AuthContext } from './authContextValue'
 import { posthog } from '../services/analytics/posthog'
 import { clearUserStorage } from '../services/storage/clearUserStorage'
+import { shouldClearUserStorageOnAuthChange } from '../services/storage/syncUserStoragePolicy'
 
 const initialAuthState: AuthState = { status: 'anonymous', user: null }
 
@@ -41,11 +42,12 @@ function writeLastUserId(userId: string | null): void {
   } catch { /* ignore */ }
 }
 
-/** Wipes user-scoped storage when the active userId changes. */
+/** Wipes user-scoped storage when switching between two distinct known users. */
 function syncUserStorage(newUserId: string | null): void {
   const lastUserId = readLastUserId()
-  if (newUserId === lastUserId) return
-  clearUserStorage()
+  if (shouldClearUserStorageOnAuthChange(lastUserId, newUserId)) {
+    clearUserStorage()
+  }
   writeLastUserId(newUserId)
 }
 
