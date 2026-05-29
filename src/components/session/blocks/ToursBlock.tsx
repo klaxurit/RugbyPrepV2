@@ -471,6 +471,17 @@ function ExerciseRow({
   const isoLabel = isoChronoLabel(exo.prescription)
   const showLoadInputs = hasLoad && premium && (isCurrent || allowPastEdit)
 
+  // Pré-remplissage 1-tap : propose d'injecter la valeur d'aide (tour 1 ou
+  // suggestion AI) quand les deux champs sont vides. Reste 100% supprimable
+  // ensuite puisqu'on écrit dans la vraie valeur (data.kg/reps).
+  const canPrefill =
+    showLoadInputs && kg === '' && reps === '' && (kgPlaceholder != null || repsPlaceholder != null)
+  const prefillIsSuggestion = suggestion != null
+  const handlePrefill = () => {
+    if (kgPlaceholder != null) onSetKg?.(kgPlaceholder)
+    if (repsPlaceholder != null) onSetReps?.(repsPlaceholder)
+  }
+
   const wrapperClass = isCurrent
     ? 'bg-badge-wine border-[1.5px] border-brand/55'
     : validated
@@ -535,8 +546,29 @@ function ExerciseRow({
       </div>
 
       {showLoadInputs && (
-        <>
-          <div className="flex items-center gap-2 border-t border-dashed border-brand/25 pt-2.5">
+        <div className="flex flex-col gap-2 border-t border-dashed border-brand/25 pt-2.5">
+          {canPrefill && (
+            <button
+              type="button"
+              onClick={handlePrefill}
+              data-testid="exo-prefill-chip"
+              className="flex items-center gap-1.5 self-start rounded-full border border-brand/30 bg-brand/5 px-2.5 py-1 text-[11px] font-bold text-brand active:scale-[0.97] transition-transform rf-focus-ring"
+            >
+              <Icon name="plus" size={11} strokeWidth={2.6} />
+              <span>
+                {tr(
+                  prefillIsSuggestion ? 'exercise_prefill_suggestion' : 'exercise_prefill_carry',
+                  lang,
+                )}
+              </span>
+              <span className="tabular-nums opacity-75">
+                {kgPlaceholder != null ? `${kgPlaceholder} kg` : ''}
+                {kgPlaceholder != null && repsPlaceholder != null ? ' × ' : ''}
+                {repsPlaceholder != null ? repsPlaceholder : ''}
+              </span>
+            </button>
+          )}
+          <div className="flex items-center gap-2">
             {onSetKg && (
               <NumInput
                 label="kg"
@@ -563,7 +595,7 @@ function ExerciseRow({
               </button>
             )}
           </div>
-        </>
+        </div>
       )}
 
       {isCurrent && hasLoad && !premium && (

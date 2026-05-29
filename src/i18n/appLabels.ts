@@ -361,6 +361,8 @@ export const APP_LABELS = {
   exercise_aria_demo: { fr: 'Voir la démo', en: 'View demo' },
   exercise_validate_set: { fr: 'Valider set', en: 'Validate set' },
   exercise_premium_tracking_pre: { fr: 'Suivi set-par-set', en: 'Set-by-set tracking' },
+  exercise_prefill_carry: { fr: 'Reprendre tour 1', en: 'Reuse round 1' },
+  exercise_prefill_suggestion: { fr: 'Utiliser la suggestion', en: 'Use suggestion' },
 
   // ── EMOM block ──────────────────────────────────────────────────────────
   emom_chrono_block: { fr: 'Bloc chronométré · EMOM', en: 'Timed block · EMOM' },

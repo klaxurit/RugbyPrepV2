@@ -186,6 +186,45 @@ describe('ToursBlock — carry-forward (tours > 0)', () => {
     expect(kgInput.value).toBe('')
   })
 
+  it("propose une puce de pré-remplissage qui injecte kg+reps du tour 1", () => {
+    const onSetExoData = vi.fn()
+    render(
+      <ToursBlock
+        {...baseProps}
+        currentTourIdx={1}
+        onSetExoData={onSetExoData}
+        block={mkBlock()}
+        tourData={{
+          0: { 0: { kg: '80', reps: '10', validated: true } },
+          1: { 0: { kg: '', reps: '', validated: false } },
+          2: { 0: { kg: '', reps: '', validated: false } },
+        }}
+      />,
+    )
+    const chip = screen.getByTestId('exo-prefill-chip')
+    expect(chip).toHaveTextContent('80 kg')
+    expect(chip).toHaveTextContent('10')
+    chip.click()
+    expect(onSetExoData).toHaveBeenCalledWith(1, 0, { kg: '80' })
+    expect(onSetExoData).toHaveBeenCalledWith(1, 0, { reps: '10' })
+  })
+
+  it("masque la puce de pré-remplissage dès qu'un champ est rempli", () => {
+    render(
+      <ToursBlock
+        {...baseProps}
+        currentTourIdx={1}
+        block={mkBlock()}
+        tourData={{
+          0: { 0: { kg: '80', reps: '10', validated: true } },
+          1: { 0: { kg: '80', reps: '', validated: false } },
+          2: { 0: { kg: '', reps: '', validated: false } },
+        }}
+      />,
+    )
+    expect(screen.queryByTestId('exo-prefill-chip')).toBeNull()
+  })
+
   it("affiche la valeur saisie en clair quand l'utilisateur a tapé sur le tour 2", () => {
     render(
       <ToursBlock
