@@ -280,6 +280,22 @@ describe('resolveMotherSessionsForWeek', () => {
     }
   })
 
+  it('V2 end_of_season: décompression — variant light, maxBlocks 2', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-01')],
+      today: '2025-04-15', // dernier match il y a 14j, aucun match futur → end_of_season
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+    })
+    expect(r.planningContext.inSeasonSubMode).toBe('end_of_season')
+    expect(r.warnings.some((w) => /fin de saison|décompression/i.test(w))).toBe(true)
+    expect(r.sessions).toHaveLength(2) // capped at 2
+    for (const s of r.sessions) {
+      expect(s.variant).toBe('light')
+      expect(s.maxBlocks).toBe(2)
+    }
+  })
+
   // ── V2: Monitoring micro-modulation ──────────────────────────────
   it('V2 readinessScore < 50 → maxBlocks réduit + warning', () => {
     const r = resolveMotherSessionsForWeek({

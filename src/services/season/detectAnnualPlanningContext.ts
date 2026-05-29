@@ -236,6 +236,14 @@ function resolveInSeasonSubMode(
     acc.rule('rule:treve_rampup_detected')
     return 'treve_rampup'
   }
+  // Queue de saison : aucun match futur ET dernier match il y a >= 14j (la saison
+  // s'éteint réellement), mais avant la bascule auto en inter-saison (gérée plus haut
+  // au-delà de AUTO_SEASON_END_DAYS=28). Fenêtre de décompression. On exige 14j pour
+  // ne PAS basculer un athlète qui n'a simplement pas encore saisi son prochain match.
+  if (daysUntilNextMatch == null && daysSinceLastMatch != null && daysSinceLastMatch >= 14) {
+    acc.rule('rule:end_of_season_detected')
+    return 'end_of_season'
+  }
   return 'competition'
 }
 
@@ -863,10 +871,14 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   const inSeasonSubMode = resolveInSeasonSubMode(base.daysUntilNextMatch, base.daysSinceLastMatch, acc)
 
   const trace = acc.freeze()
+  const weekLabel =
+    inSeasonSubMode === 'end_of_season'
+      ? `Fin de saison - décompression`
+      : `En saison - S${wIn} (${mesoCal.mesocycleWeek}/4)`
   return {
     cycle: 'in_season',
     weekNumber: wIn,
-    weekLabel: `En saison - S${wIn} (${mesoCal.mesocycleWeek}/4)`,
+    weekLabel,
     isDeloadWeek: mesoCal.isDeloadWeek,
     mesocycleWeek: mesoCal.mesocycleWeek,
     mesocycleBlock: mesoCal.mesocycleBlock,

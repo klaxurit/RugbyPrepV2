@@ -417,6 +417,23 @@ function resolveMotherSessionsForWeekCore(
     )
   }
 
+  // ── Fin de saison : dernier match passé, aucun match futur, avant la bascule auto
+  // en inter-saison. Fenêtre de décompression — volume réduit, maintien sans surcharge.
+  if (planningContext.inSeasonSubMode === 'end_of_season') {
+    resolverWarnings.push('Fin de saison — décompression : volume réduit avant la coupure inter-saison.')
+    const eosTpl = getWeeklyTemplate({ cycle: 'in_season', frequency: 2, positionGroup, fatigueLevel })
+    const eosSlots = eosTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
+    return hydrateSlots(
+      eosSlots,
+      { ...planningContext, loadManagementOverride: 'recovery' },
+      { cycle: 'in_season', requestedFrequency: weeklyFrequency, effectiveFrequency: 2, positionGroup, fatigueLevel },
+      eosTpl.warnings,
+      ['Décompression de fin de saison — entretien léger, on relâche avant la coupure'],
+      resolverWarnings,
+      sessionsById
+    )
+  }
+
   // ── Monitoring micro-modulation V2 : readinessScore et jumpTrend
   const monitoring = planningContext.monitoringSnapshot
   let microMaxBlocksOverride: number | undefined

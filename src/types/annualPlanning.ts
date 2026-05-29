@@ -5,7 +5,12 @@ export type AnnualCycle = 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
 export type OffSeasonPhase = 1 | 2 | 3 | 4 | 5
 export type PreSeasonPhase = 1 | 2 | 3
 
-export type InSeasonSubMode = 'competition' | 'treve_deep' | 'treve_return' | 'treve_rampup'
+export type InSeasonSubMode =
+  | 'competition'
+  | 'treve_deep'
+  | 'treve_return'
+  | 'treve_rampup'
+  | 'end_of_season'
 export type PlayoffTaperPhase = 'taper_1' | 'taper_2' | 'match_week'
 
 /**
@@ -96,7 +101,11 @@ export interface AnnualPlanningContext {
   weeklyFrequency: 2 | 3 | 4
   positionGroup: 'front_row' | 'back_three'
 
-  /** Sous-mode in-season (trêve, compétition normale). Absent si cycle ≠ in_season. */
+  /**
+   * Sous-mode in-season (trêve, compétition normale, fin de saison). Absent si cycle ≠ in_season.
+   * `end_of_season` : dernier match passé, aucun match futur, avant la bascule auto en inter-saison
+   * (fenêtre de décompression).
+   */
   inSeasonSubMode?: InSeasonSubMode
 
   /** Phase de taper en playoffs. Absent si cycle ≠ playoffs. */

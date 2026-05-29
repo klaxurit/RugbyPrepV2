@@ -398,6 +398,20 @@ describe('detectAnnualPlanningContext', () => {
     expect(r.inSeasonSubMode).toBe('competition')
   })
 
+  it('CA-4: in-season end_of_season quand dernier match passé, aucun match futur, < 28j', () => {
+    // Dernier match il y a ~14j, aucun match futur → fenêtre de décompression
+    // (avant la bascule auto en inter-saison à 28j).
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match(FIRST_MATCH), match('2025-04-01')],
+      today: '2025-04-15',
+    })
+    expect(r.cycle).toBe('in_season')
+    expect(r.inSeasonSubMode).toBe('end_of_season')
+    expect(r.weekLabel).toBe('Fin de saison - décompression')
+    expect(r.planningTrace.rulesApplied).toContain('rule:end_of_season_detected')
+  })
+
   // ── V2: Backward compatibility ──────────────────────────────────
   it('CA-7: profil V1 sans anchors retourne behavior V1', () => {
     const r = detectAnnualPlanningContext({

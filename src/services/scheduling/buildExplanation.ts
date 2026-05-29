@@ -127,6 +127,12 @@ const RULE_COPY: Record<string, RuleCopy> = {
     overridesSequential: true,
   },
 
+  'rule:end_of_season': {
+    summary: () => 'Fin de saison — décompression',
+    detail: () => 'Plus de match prévu : on relâche progressivement avant la coupure d\'inter-saison.',
+    overridesSequential: true,
+  },
+
   'rule:playoffs_taper': {
     summary: () => 'Phase finale — affûtage',
     detail: () => 'Le volume baisse pour que tu arrives frais et performant.',
