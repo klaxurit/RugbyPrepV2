@@ -2,6 +2,7 @@ import type { ReadinessResult } from '../services/readiness/computeReadinessScor
 import type { CoachInsight } from '../services/home/coachInsights'
 import type { Pillar, PillarStatus } from '../services/home/computePillars'
 import type { ScoreHistory7d } from '../services/home/computeScoreHistory7d'
+import { tr, type Lang } from '../i18n/appLabels'
 import { Icon } from './ui'
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
   insight: CoachInsight
   pillars: readonly Pillar[]
   history: ScoreHistory7d
+  lang?: Lang
 }
 
 const STATUS_LABEL: Record<NonNullable<ReadinessResult['color']>, string> = {
@@ -37,7 +39,7 @@ const STATUS_COLOR: Record<NonNullable<ReadinessResult['color']>, string> = {
  *
  * Pas de CTA bas (decision utilisateur — historique 30j à venir).
  */
-export function ScoreDeFormeCard({ current, insight, pillars, history }: Props) {
+export function ScoreDeFormeCard({ current, insight, pillars, history, lang = 'fr' }: Props) {
   const score = Math.max(0, Math.min(100, current.score))
   const statusColor = STATUS_COLOR[current.color] ?? '#E0A352'
   const statusLabel = STATUS_LABEL[current.color] ?? current.label
@@ -80,11 +82,11 @@ export function ScoreDeFormeCard({ current, insight, pillars, history }: Props) 
       />
 
       {/* TOP — eyebrow + PRO chip */}
-      <div className="relative mb-3.5 flex items-center justify-between">
+      <div className="relative mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span aria-hidden className="block h-[1.5px] w-[18px] bg-pro" />
           <span className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-pro">
-            Score de forme · Aujourd&apos;hui
+            {tr('score_card_eyebrow', lang)}
           </span>
         </div>
         <span
@@ -95,6 +97,12 @@ export function ScoreDeFormeCard({ current, insight, pillars, history }: Props) 
           Pro
         </span>
       </div>
+      <p
+        className="relative mb-3.5 text-[10px] leading-snug opacity-55 text-app [text-wrap:pretty]"
+        style={{ maxWidth: '92%' }}
+      >
+        {tr('score_card_composite_hint', lang)}
+      </p>
 
       {/* MIDDLE — gauge + readout */}
       <div className="relative flex items-center gap-4">
@@ -181,7 +189,7 @@ export function ScoreDeFormeCard({ current, insight, pillars, history }: Props) 
           <div className="mt-3">
             <div className="mb-1 flex items-center justify-between">
               <span className="text-[8px] font-extrabold uppercase tracking-[0.16em] opacity-55">
-                7 derniers jours
+                {tr('score_card_trend', lang)}
               </span>
               <span
                 className="text-[9px] font-bold tabular-nums"
@@ -201,7 +209,7 @@ export function ScoreDeFormeCard({ current, insight, pillars, history }: Props) 
         style={{ borderTop: '1px solid rgb(245 242 238 / 0.15)' }}
       >
         {pillars.map((p) => (
-          <PillarCell key={p.id} pillar={p} />
+          <PillarCell key={p.id} pillar={p} lang={lang} />
         ))}
       </div>
 
@@ -224,7 +232,7 @@ export function ScoreDeFormeCard({ current, insight, pillars, history }: Props) 
         </span>
         <div className="min-w-0 flex-1">
           <div className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-pro">
-            IA Coach · {insight.eyebrow}
+            {tr('score_card_coach', lang)} · {insight.eyebrow}
           </div>
           <p
             className="mt-1 font-serif italic leading-[1.4] text-app [text-wrap:pretty]"
@@ -300,7 +308,7 @@ const PILLAR_COLOR: Record<PillarStatus, string> = {
   warn: '#D9636A',
 }
 
-function PillarCell({ pillar }: { pillar: Pillar }) {
+function PillarCell({ pillar, lang }: { pillar: Pillar; lang: Lang }) {
   if (pillar.locked) {
     return (
       <div className="flex flex-col items-center gap-1.5 opacity-55">
@@ -341,7 +349,7 @@ function PillarCell({ pillar }: { pillar: Pillar }) {
               border: '1px solid rgb(184 137 58 / 0.55)',
             }}
           >
-            Bientôt
+            {tr('score_card_pillar_soon', lang)}
           </div>
         </div>
       </div>

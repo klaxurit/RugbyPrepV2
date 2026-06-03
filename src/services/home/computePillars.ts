@@ -1,4 +1,5 @@
 import type { ACWRZone } from '../../hooks/useACWR'
+import { recoveryScoreFromDaysSinceSession } from '../readiness/computeReadinessScore'
 import type { CalendarEvent, SessionLog } from '../../types/training'
 
 export type PillarStatus = 'good' | 'ok' | 'warn'
@@ -67,14 +68,7 @@ function diffDaysISO(fromISO: string, toISO: string): number {
   return Math.round((to - from) / 86_400_000)
 }
 
-/**
- * Récup heuristique :
- *  - Lendemain de match (J+1) → 35 (récup en cours)
- *  - 0 jour depuis dernière séance → 50 (encore frais ou en surcharge)
- *  - 1 jour depuis dernière séance → 75 (bonne récup)
- *  - 2-3 jours → 90 (optimal)
- *  - 4+ jours → 70 (sous-utilisation)
- */
+/** Aligné sur `recoveryScoreFromDaysSinceSession` (evidence-register.md). */
 function computeRecoveryPillar(
   logs: readonly SessionLog[],
   matches: readonly CalendarEvent[],
@@ -87,15 +81,15 @@ function computeRecoveryPillar(
     return { id: 'recov', label: 'Récup', value: 35, status: 'warn' }
   }
 
-  const lastLog = [...logs].sort((a, b) => b.dateISO.localeCompare(a.dateISO))[0]
+  const trainingLogs = logs.filter((l) => l.sessionType !== 'ACTIVE_RECOVERY')
+  const lastLog = [...trainingLogs].sort((a, b) => b.dateISO.localeCompare(a.dateISO))[0]
   if (!lastLog) {
     return { id: 'recov', label: 'Récup', value: 70, status: 'good' }
   }
   const daysSince = diffDaysISO(lastLog.dateISO.slice(0, 10), todayISO)
-  if (daysSince <= 0) return { id: 'recov', label: 'Récup', value: 50, status: 'ok' }
-  if (daysSince === 1) return { id: 'recov', label: 'Récup', value: 75, status: 'good' }
-  if (daysSince <= 3) return { id: 'recov', label: 'Récup', value: 90, status: 'good' }
-  return { id: 'recov', label: 'Récup', value: 70, status: 'ok' }
+  const value = recoveryScoreFromDaysSinceSession(daysSince)
+  const status: PillarStatus = value >= 85 ? 'good' : value >= 60 ? 'ok' : 'warn'
+  return { id: 'recov', label: 'Récup', value, status }
 }
 
 // ─── RPE ─────────────────────────────────────────────────────────────────────

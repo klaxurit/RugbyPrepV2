@@ -13,7 +13,7 @@ interface PremiumBlurredPreviewProps {
 
 export function PremiumBlurredPreview({
   children,
-  label = 'Premium',
+  label = 'Pro',
   placeholder,
 }: PremiumBlurredPreviewProps) {
   const navigate = useNavigate()

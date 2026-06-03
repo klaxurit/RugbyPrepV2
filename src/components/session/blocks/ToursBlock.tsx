@@ -602,7 +602,7 @@ function ExerciseRow({
         <div className="flex items-center gap-2 border-t border-dashed border-brand/25 pt-2.5 text-[11px] text-fg-muted italic">
           <Icon name="lock" size={12} color="var(--color-accent)" strokeWidth={1.8} />
           <span>
-            {tr('exercise_premium_tracking_pre', lang)} <strong className="not-italic text-brand">Premium</strong>
+            {tr('exercise_premium_tracking_pre', lang)} <strong className="not-italic text-brand">Pro</strong>
           </span>
         </div>
       )}

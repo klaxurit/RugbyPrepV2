@@ -83,6 +83,42 @@
 
 ---
 
+## Score de Forme (Readiness Composite)
+
+> Indicateur **composite maison** affiché sur l’accueil Pro. Ce n’est **pas** un test de performance
+> validé (pas de Hooper complet, HRV ni CMJ). Aide à la décision : charge + ressenti + récence.
+
+| Composant | Poids de base | Mapping score | Source | Niveau |
+|-----------|---------------|---------------|--------|--------|
+| ACWR (zone) | 40 % | optimal=100, underload=40, caution=70, danger=40, critical=10 | Gabbett/Hulin via `useACWR` | **B** (zones) · **D** (mapping 0–100) |
+| Fatigue déclarée | 20 % | OK=100, FATIGUE=40 | Proxy wellness simplifié | **D** |
+| Délai dernière séance muscu | 20 % | Courbe ci-dessous (hors ACTIVE_RECOVERY) | Heuristique inspirée modèle fatigue–forme (Banister) | **D** |
+| Proximité prochain match | 20 % | J≤0→50, J-1→70, J-2→90, J-3+→100 | Consensus sports collectifs (affûtage) | **C** |
+
+**Renormalisation** : si un composant manque (ex. pas de match), les poids restants sont redistribués à 100 %.
+
+**Courbe récupération (jours depuis dernière séance)** — niveau **D**, calibrage produit 2026-05 :
+
+| Jours | Score |
+|-------|-------|
+| 0 | 50 |
+| 1 | 75 |
+| 2 | 100 |
+| 3 | 90 |
+| 4 | 80 |
+| 5 | 70 |
+| 6 | 50 |
+| 7 | 45 |
+| 8–10 | 40 |
+| 11–14 | 30 |
+| 15+ | 20 |
+
+**Libellés affichés** : ≥80 excellente · ≥65 bonne · ≥40 attention · &lt;40 repos conseillé.
+
+**Non inclus V1** : sommeil, HRV, tests physiques, douleur, index Hooper complet.
+
+---
+
 ## Fatigue & Wellness
 
 | Threshold | Value | Application | Source | Level | Last verified |
@@ -103,5 +139,5 @@
 
 ---
 
-*Last updated: 2026-03-03*
+*Last updated: 2026-05-31*
 *Maintained by: RugbyPrep development team*

@@ -81,7 +81,7 @@ export function mapCheckoutError(raw: unknown): string {
     return 'Le paiement n\'est pas encore disponible. Reviens d\'ici quelques heures ou écris-nous à bonjour@rugbyforge.fr.'
   }
   if (FOUNDING_COHORT_FULL_PATTERNS.some((p) => p.test(message))) {
-    return 'L\'offre Founding est complète (100 places). Tu peux toujours choisir l\'abonnement Premium standard.'
+    return 'L\'offre Founding est complète (100 places). Tu peux toujours choisir l\'abonnement Pro standard.'
   }
 
   // Default fallback — generic but invites retry + contact.

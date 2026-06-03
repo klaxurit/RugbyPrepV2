@@ -28,7 +28,7 @@ export interface ReadinessResult {
 
 const ACWR_SCORES: Record<ACWRZone, number> = {
   optimal: 100,
-  underload: 60,
+  underload: 40,
   caution: 70,
   danger: 40,
   critical: 10,
@@ -40,12 +40,23 @@ function diffDays(fromISO: string, toISO: string): number {
   return Math.round((b.getTime() - a.getTime()) / 86_400_000)
 }
 
-function recoveryScore(daysSinceLastSession: number): number {
+/**
+ * Fraîcheur / récupération depuis la dernière séance de muscu (hors récup active).
+ * Pic à J+2, puis décroissance si inactivité prolongée (désadaptation).
+ * Seuils documentés dans `src/knowledge/evidence-register.md` (niveau D).
+ */
+export function recoveryScoreFromDaysSinceSession(daysSinceLastSession: number): number {
   if (daysSinceLastSession <= 0) return 50
-  if (daysSinceLastSession === 1) return 70
+  if (daysSinceLastSession === 1) return 75
   if (daysSinceLastSession === 2) return 100
   if (daysSinceLastSession === 3) return 90
-  return 80
+  if (daysSinceLastSession === 4) return 80
+  if (daysSinceLastSession === 5) return 70
+  if (daysSinceLastSession === 6) return 50
+  if (daysSinceLastSession === 7) return 45
+  if (daysSinceLastSession <= 10) return 40
+  if (daysSinceLastSession <= 14) return 30
+  return 20
 }
 
 function matchProximityScore(daysUntilMatch: number): number {
@@ -57,7 +68,7 @@ function matchProximityScore(daysUntilMatch: number): number {
 
 function labelAndColor(score: number): { label: string; color: ReadinessResult['color'] } {
   if (score >= 80) return { label: 'Excellente forme', color: 'emerald' }
-  if (score >= 60) return { label: 'Bonne forme', color: 'green' }
+  if (score >= 65) return { label: 'Bonne forme', color: 'green' }
   if (score >= 40) return { label: 'Attention', color: 'amber' }
   return { label: 'Repos conseillé', color: 'red' }
 }
@@ -76,7 +87,7 @@ export function computeReadinessScore(input: ReadinessInput): ReadinessResult {
 
   if (lastSessionDateISO != null) {
     const days = diffDays(lastSessionDateISO, todayISO)
-    raw.push({ key: 'recovery', score: recoveryScore(days), baseWeight: 0.2 })
+    raw.push({ key: 'recovery', score: recoveryScoreFromDaysSinceSession(days), baseWeight: 0.2 })
   }
 
   if (nextMatchDateISO != null) {

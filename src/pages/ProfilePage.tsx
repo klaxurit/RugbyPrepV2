@@ -138,8 +138,8 @@ function ManageSubscriptionCard({ lang }: { lang: Lang }) {
         <p className="text-sm font-black text-fg">{tr('profile_section_subscription', lang)}</p>
         <p className="text-xs text-fg-muted mt-0.5">
           {lang === 'fr'
-            ? 'Ton abonnement Premium est actif. Le renouvellement est automatique via Google Play.'
-            : 'Your Premium subscription is active. Auto-renews via Google Play.'}
+            ? 'Ton abonnement Pro est actif. Le renouvellement est automatique via Google Play.'
+            : 'Your Pro subscription is active. Auto-renews via Google Play.'}
         </p>
       </div>
 
@@ -189,8 +189,8 @@ function ManageSubscriptionCard({ lang }: { lang: Lang }) {
 
           <p className="text-[10px] text-fg-muted leading-relaxed">
             {lang === 'fr'
-              ? "L'annulation se fait via Google Play. Tu garderas l'accès Premium jusqu'à la fin de ta période en cours."
-              : 'Cancellation happens via Google Play. You keep Premium access until the end of your current period.'}
+              ? "L'annulation se fait via Google Play. Tu garderas l'accès Pro jusqu'à la fin de ta période en cours."
+              : 'Cancellation happens via Google Play. You keep Pro access until the end of your current period.'}
           </p>
 
           <div className="flex gap-2">
@@ -199,7 +199,7 @@ function ManageSubscriptionCard({ lang }: { lang: Lang }) {
               onClick={() => { setStep('info'); setReason(''); setDetail('') }}
               className="flex-1 rounded-2xl border border-border-app px-4 py-2.5 text-xs font-bold text-fg-muted transition-colors hover:border-brand-border rf-focus-ring"
             >
-              {lang === 'fr' ? 'Rester Premium' : 'Stay Premium'}
+              {lang === 'fr' ? 'Rester Pro' : 'Stay Pro'}
             </button>
             <button
               type="button"
@@ -461,16 +461,6 @@ export function ProfilePage() {
       <PageHeader
         title={tr('profile_page_title', lang)}
         backTo="/home"
-        right={
-          <button
-            type="button"
-            onClick={resetProfile}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-white/20 bg-white/15 text-xs font-bold text-shell-text-muted hover:bg-white/30 hover:text-shell-text transition-colors rf-focus-ring"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            Réinitialiser
-          </button>
-        }
       />
 
       <main className="relative px-6 pt-6 space-y-5 max-w-md mx-auto">
@@ -1032,7 +1022,7 @@ export function ProfilePage() {
                   : 'bg-layer-10 text-fg-soft'
               }`}
             >
-              {isPremium ? 'PREMIUM' : 'FREE'}
+              {isPremium ? 'PRO' : 'FREE'}
             </span>
           }
           defaultOpen={!isPremium}
@@ -1248,6 +1238,20 @@ export function ProfilePage() {
               <span>{tr('profile_feedback_link', lang)}</span>
               <span className="text-xs text-fg-muted">{tr('profile_section_open', lang)}</span>
             </Link>
+            <button
+              type="button"
+              onClick={resetProfile}
+              className="flex items-start justify-between gap-3 rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-left transition-colors hover:border-brand-border rf-focus-ring"
+            >
+              <span className="flex items-start gap-2">
+                <RefreshCw className="w-4 h-4 mt-0.5 shrink-0 text-fg-muted" />
+                <span className="flex flex-col">
+                  <span className="text-sm font-semibold text-fg">{tr('profile_reset_label', lang)}</span>
+                  <span className="mt-0.5 text-[11px] leading-relaxed text-fg-muted">{tr('profile_reset_hint', lang)}</span>
+                </span>
+              </span>
+              <span className="text-xs text-fg-muted shrink-0">{tr('profile_reset_open', lang)}</span>
+            </button>
             <Link
               to="/delete-account"
               className="flex items-center justify-between rounded-2xl border border-warn-bd bg-warn-bg-muted px-4 py-3 text-sm font-semibold text-warn-body transition-colors hover:border-warn-strong rf-focus-ring"

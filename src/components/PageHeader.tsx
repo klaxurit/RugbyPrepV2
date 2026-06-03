@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ChevronLeft, User } from 'lucide-react'
 import { RugbyForgeLogo } from './RugbyForgeLogo'
+import { TierAvatarPhoto, TierBadge, TIER_AVATAR_SIZE_CLASS } from './TierBadge'
 import type { ReactNode } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useProfile } from '../hooks/useProfile'
@@ -38,9 +39,8 @@ export function PageHeader({ title, backTo, titleSuffix, right, suppressProfileL
   const clubMonogram = getClubMonogram(profile.clubName)
   const showProfileAvatar = currentUser != null
   return (
-    <header
-      className="px-6 py-4 ios:py-3 pt-[max(1rem,env(safe-area-inset-top))] ios:pt-[env(safe-area-inset-top)] pl-[max(1.5rem,env(safe-area-inset-left))] pr-[max(1.5rem,env(safe-area-inset-right))] backdrop-blur flex items-center justify-between sticky top-0 z-50 relative bg-shell shadow-[0_4px_16px_rgb(44_24_16/0.15)]"
-      >
+    <header className="sticky top-0 z-50 overflow-visible bg-shell shadow-[0_4px_16px_rgb(44_24_16/0.15)]">
+      <div className="relative flex items-center justify-between overflow-visible px-6 py-4 ios:py-3 pt-[max(1rem,env(safe-area-inset-top))] ios:pt-[env(safe-area-inset-top)] pl-[max(1.5rem,env(safe-area-inset-left))] pr-[max(1.5rem,env(safe-area-inset-right))]">
         <div className="flex items-center gap-3 min-w-0 flex-1">
         {backTo && (
           <Link
@@ -62,52 +62,55 @@ export function PageHeader({ title, backTo, titleSuffix, right, suppressProfileL
         </div>
       </div>
       {(right || (showProfileAvatar && !suppressProfileLink)) && (
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="relative flex shrink-0 items-center gap-1.5 overflow-visible">
           {right}
               {showProfileAvatar && !suppressProfileLink ? (
-          <Link
-            to="/profile"
-            aria-label={tr('page_header_profile', lang)}
-            className="block rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-shell-text focus-visible:ring-offset-2 focus-visible:ring-offset-shell"
-          >
-            <div className="relative h-14 w-14">
-              {/* Avatar 56px rond */}
-              <div className="h-14 w-14 rounded-full overflow-hidden bg-white/20 border-2 border-white/25">
-                {resolvedAvatarUrl ? (
-                  <img
-                    src={resolvedAvatarUrl}
-                    alt="Avatar"
-                    className="h-full w-full object-cover"
-                  />
-                ) : positionIllustration ? (
-                  <img
-                    src={positionIllustration}
-                    alt="Avatar poste"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-shell-text-muted" />
-                  </div>
-                )}
+          <>
+            <TierBadge />
+            <Link
+              to="/profile"
+              aria-label={tr('page_header_profile', lang)}
+              className="relative block overflow-visible rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-shell-text focus-visible:ring-offset-2 focus-visible:ring-offset-shell"
+            >
+              <div className={TIER_AVATAR_SIZE_CLASS}>
+                <TierAvatarPhoto>
+                  {resolvedAvatarUrl ? (
+                    <img
+                      src={resolvedAvatarUrl}
+                      alt="Avatar"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : positionIllustration ? (
+                    <img
+                      src={positionIllustration}
+                      alt="Avatar poste"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-shell-text-muted" />
+                    </div>
+                  )}
+                </TierAvatarPhoto>
+                {/* Blason 28px — déborde en bas-droite */}
+                <div className="absolute -bottom-2 -right-2 z-40 h-7 w-7 rounded-full bg-white shadow-md flex items-center justify-center overflow-hidden ring-2 ring-shell">
+                  {clubLogoUrl ? (
+                    <img
+                      src={clubLogoUrl}
+                      alt={profile.clubName ?? 'Club'}
+                      className="h-5 w-5 object-contain"
+                    />
+                  ) : (
+                    <span className="text-[8px] font-black text-fg-muted">{clubMonogram}</span>
+                  )}
+                </div>
               </div>
-              {/* Blason 28px — déborde en bas-droite */}
-              <div className="absolute -bottom-2 -right-2 h-7 w-7 rounded-full bg-white shadow-md flex items-center justify-center overflow-hidden ring-2 ring-shell">
-                {clubLogoUrl ? (
-                  <img
-                    src={clubLogoUrl}
-                    alt={profile.clubName ?? 'Club'}
-                    className="h-5 w-5 object-contain"
-                  />
-                ) : (
-                  <span className="text-[8px] font-black text-fg-muted">{clubMonogram}</span>
-                )}
-              </div>
-            </div>
-          </Link>
+            </Link>
+          </>
           ) : null}
         </div>
       )}
+      </div>
     </header>
   )
 }

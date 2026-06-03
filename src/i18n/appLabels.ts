@@ -230,21 +230,21 @@ export const APP_LABELS = {
   chat_error_prefix: { fr: 'Erreur', en: 'Error' },
   chat_welcome_greeting: { fr: 'Salut ! Je suis ton coach IA RugbyForge 🏉', en: 'Hi! I am your RugbyForge AI coach 🏉' },
   chat_welcome_body: { fr: "Pose-moi n'importe quelle question sur l'entraînement, la nutrition, la récupération ou le sommeil. Je connais ton profil et ta semaine en cours.", en: 'Ask me any question about training, nutrition, recovery or sleep. I know your profile and your current week.' },
-  chat_free_note: { fr: 'Mode Free: le coach reste disponible, mais les suggestions contextuelles avancées sont réservées au Premium.', en: 'Free mode: the coach stays available, but advanced contextual suggestions are reserved for Premium.' },
+  chat_free_note: { fr: 'Mode Free: le coach reste disponible, mais les suggestions contextuelles avancées sont réservées au Pro.', en: 'Free mode: the coach stays available, but advanced contextual suggestions are reserved for Pro.' },
   chat_week_prefix: { fr: 'Semaine', en: 'Week' },
   chat_phase_prefix: { fr: 'Phase', en: 'Phase' },
   chat_fatigue_prefix: { fr: 'Fatigue', en: 'Fatigue' },
   chat_suggestions: { fr: 'Suggestions', en: 'Suggestions' },
-  chat_upsell_title: { fr: 'Passe en Premium', en: 'Upgrade to Premium' },
+  chat_upsell_title: { fr: 'Passe en Pro', en: 'Upgrade to Pro' },
   chat_upsell_body: { fr: 'Débloque les suggestions avancées liées à ta phase, à ta charge et à tes adaptations de programme.', en: 'Unlock advanced suggestions tied to your phase, load, and program adaptations.' },
-  chat_payment_confirmed: { fr: 'Paiement confirmé. Activation Premium en cours...', en: 'Payment confirmed. Premium activation in progress...' },
+  chat_payment_confirmed: { fr: 'Paiement confirmé. Activation Pro en cours...', en: 'Payment confirmed. Pro activation in progress...' },
   chat_activation_pending: { fr: 'Activation encore en attente. Clique sur vérifier ou consulte les logs webhook Stripe.', en: 'Activation still pending. Click verify or check Stripe webhook logs.' },
   chat_payment_detected: { fr: 'Retour de paiement détecté.', en: 'Payment return detected.' },
   chat_loading: { fr: 'Préparation…', en: 'Loading…' },
-  chat_verify_premium: { fr: 'Vérifier mon statut Premium', en: 'Verify my Premium status' },
-  chat_activate_premium: { fr: 'Activer Premium', en: 'Activate Premium' },
+  chat_verify_premium: { fr: 'Vérifier mon statut Pro', en: 'Verify my Pro status' },
+  chat_activate_premium: { fr: 'Activer Pro', en: 'Activate Pro' },
   chat_rate_limit_title: { fr: 'Tu as utilisé tes 3 messages du jour', en: 'You used your 3 messages for today' },
-  chat_rate_limit_body: { fr: 'Le coach Premium te connaît — il sait ton poste, ta charge, tes blessures, et adapte chaque réponse. Messages illimités.', en: 'The Premium coach knows you — your position, load, injuries, and adapts every reply. Unlimited messages.' },
+  chat_rate_limit_body: { fr: 'Le coach Pro te connaît — il sait ton poste, ta charge, tes blessures, et adapte chaque réponse. Messages illimités.', en: 'The Pro coach knows you — your position, load, injuries, and adapts every reply. Unlimited messages.' },
   chat_last_free_message: { fr: 'Dernier message gratuit du jour.', en: 'Last free message of the day.' },
   chat_remaining_suffix: { fr: "messages restants aujourd'hui.", en: 'messages remaining today.' },
   chat_input_placeholder: { fr: 'Pose ta question...', en: 'Ask your question...' },
@@ -395,6 +395,9 @@ export const APP_LABELS = {
   profile_section_billing_sub: { fr: 'La sécurité et le programme de base restent inclus, quel que soit le plan.', en: 'Security and the core program stay included, regardless of plan.' },
   profile_section_account: { fr: 'Compte & données', en: 'Account & data' },
   profile_section_account_sub: { fr: 'Gère tes informations légales, la confidentialité et la suppression de compte.', en: 'Manage your legal info, privacy and account deletion.' },
+  profile_reset_label: { fr: 'Réinitialiser le profil', en: 'Reset profile' },
+  profile_reset_hint: { fr: 'Efface tes réponses (poste, niveau, morphologie…) pour repartir de zéro. Ton compte et ton abonnement sont conservés.', en: 'Clears your answers (position, level, morphology…) to start fresh. Your account and subscription are kept.' },
+  profile_reset_open: { fr: 'Réinitialiser', en: 'Reset' },
   profile_section_notifs: { fr: "Rappels d'entraînement", en: 'Training reminders' },
 
   // ── ProfilePage · form labels & helpers ─────────────────────────────────
@@ -427,7 +430,7 @@ export const APP_LABELS = {
 
   // ── ProfilePage · cancel reasons (Stripe/Play cancellation) ────────────
   profile_cancel_too_expensive: { fr: 'Trop cher', en: 'Too expensive' },
-  profile_cancel_not_useful: { fr: "Je n'utilise pas assez les fonctions premium", en: "I don't use Premium features enough" },
+  profile_cancel_not_useful: { fr: "Je n'utilise pas assez les fonctions Pro", en: "I don't use Pro features enough" },
   profile_cancel_missing_features: { fr: 'Il manque des fonctionnalités', en: 'Missing features' },
   profile_cancel_bugs: { fr: 'Trop de bugs ou problèmes techniques', en: 'Too many bugs or technical issues' },
   profile_cancel_season_over: { fr: 'Ma saison est terminée', en: 'My season is over' },
@@ -438,15 +441,15 @@ export const APP_LABELS = {
   profile_cancel_redirect_play_suffix: { fr: 'pour finaliser.', en: 'to finalize.' },
   profile_cancel_placeholder: { fr: 'Un détail à partager ? (optionnel)', en: 'Anything to share? (optional)' },
 
-  // ── ProfilePage · Premium upsell ────────────────────────────────────────
+  // ── ProfilePage · Pro upsell ────────────────────────────────────────
   profile_premium_upsell_title: { fr: 'Débloque les fonctionnalités avancées', en: 'Unlock advanced features' },
   profile_premium_upsell_body: { fr: 'Score de forme, bilan de semaine, records personnels, suggestions de charge, analytics détaillées et chat IA illimité.', en: 'Fitness score, weekly summary, personal records, load suggestions, detailed analytics and unlimited AI chat.' },
-  profile_premium_go: { fr: 'Passer en Premium', en: 'Upgrade to Premium' },
+  profile_premium_go: { fr: 'Passer en Pro', en: 'Upgrade to Pro' },
   profile_plan_monthly: { fr: 'Mensuel', en: 'Monthly' },
   profile_plan_yearly: { fr: 'Annuel', en: 'Yearly' },
   profile_plan_monthly_legal: { fr: "Abonnement mensuel à 5,99 €/mois. Renouvellement automatique. Annulable à tout moment via Google Play.", en: 'Monthly subscription at €5.99/month. Auto-renewing. Cancel anytime via Google Play.' },
   profile_plan_yearly_legal: { fr: "Abonnement annuel à 64,99 €/an. Renouvellement automatique. Annulable à tout moment via Google Play.", en: 'Yearly subscription at €64.99/year. Auto-renewing. Cancel anytime via Google Play.' },
-  profile_premium_activate: { fr: 'Activer Premium', en: 'Activate Premium' },
+  profile_premium_activate: { fr: 'Activer Pro', en: 'Activate Pro' },
   profile_premium_preparing: { fr: 'Préparation…', en: 'Preparing…' },
 
   // ── ProfilePage · Account & data links ─────────────────────────────────
@@ -489,19 +492,25 @@ export const APP_LABELS = {
   page_header_back: { fr: 'Retour', en: 'Back' },
   page_header_profile: { fr: 'Voir mon profil', en: 'View my profile' },
 
+  // ── Badge de statut de compte (TierBadge) ───────────────────────────────
+  account_tier_pro_label: { fr: 'PRO', en: 'PRO' },
+  account_tier_free_label: { fr: 'FREE', en: 'FREE' },
+  account_tier_pro_aria: { fr: 'Compte Pro', en: 'Pro account' },
+  account_tier_free_aria: { fr: 'Compte gratuit — passer en Pro', en: 'Free account — upgrade to Pro' },
+
   // ── FoundingOffer modal ─────────────────────────────────────────────────
   founding_eyebrow: { fr: 'Offre Founding', en: 'Founding Offer' },
   founding_title_pre: { fr: 'Bloque ton tarif Founding', en: 'Lock your Founding rate' },
   founding_title_suffix: { fr: 'à vie', en: 'for life' },
   founding_body_1: { fr: "Tu as commencé ta préparation, tu sens que c'est sérieux. Cette offre est réservée aux premiers utilisateurs : 49€/an, à vie, même quand on monte les prix.", en: "You've started your prep — it's getting serious. This offer is for early users only: €49/year, for life, even when we raise prices later." },
-  founding_body_2: { fr: "Inclut tout l'abonnement Premium : adaptations programme, analyses avancées, mode coach, support prioritaire. Annulable à tout moment.", en: 'Includes full Premium: program adaptations, advanced analytics, coach mode, priority support. Cancel anytime.' },
+  founding_body_2: { fr: "Inclut tout l'abonnement Pro : adaptations programme, analyses avancées, mode coach, support prioritaire. Annulable à tout moment.", en: 'Includes full Pro: program adaptations, advanced analytics, coach mode, priority support. Cancel anytime.' },
   founding_redirecting: { fr: 'Redirection…', en: 'Redirecting…' },
   founding_become: { fr: 'Devenir Founding — 49€/an à vie', en: 'Become Founding — €49/year for life' },
   founding_later: { fr: 'Plus tard', en: 'Later' },
   founding_cohort_sold_out_title: { fr: 'Offre Founding complète', en: 'Founding offer is full' },
   founding_cohort_sold_out_body: {
-    fr: 'Les 100 premières places ont été attribuées. Tu peux toujours passer sur Premium depuis ton profil.',
-    en: 'All 100 Founding spots are taken. You can still subscribe to Premium from your profile.',
+    fr: 'Les 100 premières places ont été attribuées. Tu peux toujours passer sur Pro depuis ton profil.',
+    en: 'All 100 Founding spots are taken. You can still subscribe to Pro from your profile.',
   },
   founding_cohort_sold_out_note: {
     fr: 'Merci pour ton intérêt — on te prévient lors des prochaines ouvertures.',
@@ -509,8 +518,8 @@ export const APP_LABELS = {
   },
   profile_founding_card_title: { fr: 'Offre Founding (premiers utilisateurs)', en: 'Founding offer (early users)' },
   profile_founding_card_body: {
-    fr: '49€/an à vie tant que l’offre est disponible — tout Premium inclus. Tu peux aussi rouvrir la fenêtre depuis le lien ci-dessous.',
-    en: '€49/year for life while the offer lasts — full Premium included. You can reopen the offer sheet via the link below.',
+    fr: '49€/an à vie tant que l’offre est disponible — tout Pro inclus. Tu peux aussi rouvrir la fenêtre depuis le lien ci-dessous.',
+    en: '€49/year for life while the offer lasts — full Pro included. You can reopen the offer sheet via the link below.',
   },
   profile_founding_reopen: { fr: 'Rouvrir la fenêtre Founding', en: 'Re-open Founding sheet' },
 
@@ -560,12 +569,22 @@ export const APP_LABELS = {
   playoffs_body: { fr: "Active le mode Playoffs · programme d'affûtage", en: 'Enable Playoffs mode · taper program' },
 
   // ── ScoreDeFormeTeaser ──────────────────────────────────────────────────
-  score_teaser_aria: { fr: 'Score de forme — débloquer Premium', en: 'Fitness score — unlock Premium' },
+  score_teaser_aria: { fr: 'Score de forme — débloquer Pro', en: 'Fitness score — unlock Pro' },
   score_teaser_pro: { fr: 'Pro', en: 'Pro' },
   score_teaser_title_1: { fr: 'Mesure ta forme,', en: 'Track your fitness,' },
   score_teaser_title_2: { fr: 'jour après jour.', en: 'day after day.' },
   score_teaser_subtext: { fr: 'Charge · sommeil · récup · IA coach', en: 'Load · sleep · recovery · AI coach' },
   score_teaser_cta: { fr: 'Débloquer Pro', en: 'Unlock Pro' },
+
+  // ── ScoreDeFormeCard (Pro) ───────────────────────────────────────────────
+  score_card_eyebrow: { fr: 'Score de forme · Aujourd\'hui', en: 'Fitness score · Today' },
+  score_card_composite_hint: {
+    fr: 'Indicateur composite : charge ACWR, ressenti, récence séance et match à venir — pas un test physique.',
+    en: 'Composite indicator: ACWR load, how you feel, session recency and upcoming match — not a physical test.',
+  },
+  score_card_trend: { fr: '7 derniers jours', en: 'Last 7 days' },
+  score_card_coach: { fr: 'IA Coach', en: 'AI Coach' },
+  score_card_pillar_soon: { fr: 'Bientôt', en: 'Coming soon' },
 
   // ── ClubSettingsSection (extras non couverts par les keys déjà existantes) ─
   club_no_fixed_day: { fr: 'Pas de jour fixe', en: 'No fixed day' },
@@ -591,8 +610,8 @@ export const APP_LABELS = {
   // ── WeekPage · upsell match proche ──────────────────────────────────────
   week_upsell_match_title: { fr: 'Match dans les prochains jours', en: 'Match coming up soon' },
   week_upsell_match_body: {
-    fr: 'Adapte ta semaine automatiquement en fonction du match — Premium.',
-    en: 'Adapt your week automatically around the match — Premium.',
+    fr: 'Adapte ta semaine automatiquement en fonction du match — Pro.',
+    en: 'Adapt your week automatically around the match — Pro.',
   },
 } as const satisfies Record<string, LabelEntry>
 

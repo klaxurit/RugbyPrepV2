@@ -278,7 +278,7 @@ const PREMIUM_FEATURES = [
 ]
 
 const FOUNDING_FEATURES = [
-  'Tout le plan Premium, à vie',
+  'Tout le plan Pro, à vie',
   'Tarif Founding bloqué : 49€/an même quand on monte les prix',
   'Réservé aux 100 premiers utilisateurs',
   'Badge Founding dans ton profil',
@@ -329,9 +329,9 @@ export function LandingPage() {
         "Ta charge de travail, tes tests physiques (force, vitesse, détente), tes priorités par poste et l'évolution de ta saison.",
     },
     {
-      question: 'Quelle différence entre Free et Premium ?',
+      question: 'Quelle différence entre Free et Pro ?',
       answer:
-        "Le Free donne accès au programme complet, aux séances consultables, au calendrier et à la prévention. Le Premium débloque le suivi des charges, l'historique complet, le score de forme, les suggestions de charge, les courbes de progression et le chat IA illimité.",
+        "Le Free donne accès au programme complet, aux séances consultables, au calendrier et à la prévention. Le Pro débloque le suivi des charges, l'historique complet, le score de forme, les suggestions de charge, les courbes de progression et le chat IA illimité.",
     },
     {
       question: 'Par où commencer si je découvre RugbyForge ?',
@@ -461,7 +461,7 @@ export function LandingPage() {
             <FeatureCard
               icon={<Activity className="w-6 h-6 text-brand-tint" />}
               title="Suivi de charge"
-              description="Consulte ton score ACWR et repère les semaines à risque. Le Premium débloque le suivi des charges exercice par exercice."
+              description="Consulte ton score ACWR et repère les semaines à risque. Le Pro débloque le suivi des charges exercice par exercice."
               delay={0.1}
             />
             <FeatureCard
@@ -473,7 +473,7 @@ export function LandingPage() {
             <FeatureCard
               icon={<Brain className="w-6 h-6 text-brand-tint" />}
               title="Coach IA"
-              description="Pose tes questions sur la nutrition, la récup ou ta semaine de match. 3 messages/jour en Free, illimité en Premium."
+              description="Pose tes questions sur la nutrition, la récup ou ta semaine de match. 3 messages/jour en Free, illimité en Pro."
               delay={0.3}
             />
             <FeatureCard
@@ -485,7 +485,7 @@ export function LandingPage() {
             <FeatureCard
               icon={<TrendingUp className="w-6 h-6 text-brand-tint" />}
               title="Tests & progression"
-              description="Mesure ta force, ta vitesse et ta détente. Le Premium débloque l'historique complet et les courbes de progression."
+              description="Mesure ta force, ta vitesse et ta détente. Le Pro débloque l'historique complet et les courbes de progression."
               delay={0.5}
             />
           </div>
@@ -654,7 +654,7 @@ export function LandingPage() {
               Des tarifs simples et transparents
             </h2>
             <p className="text-fg-muted max-w-xl mx-auto">
-              Commence gratuitement avec tout le socle d'entraînement. Passe en Premium quand tu
+              Commence gratuitement avec tout le socle d'entraînement. Passe en Pro quand tu
               veux débloquer les charges suggérées, le coach IA enrichi et les lectures
               intelligentes de ta semaine.
             </p>
@@ -669,19 +669,19 @@ export function LandingPage() {
               cta="Créer mon compte Free"
             />
             <PricingCard
-              title="Premium Mensuel"
+              title="Pro Mensuel"
               price={PREMIUM_MONTHLY_PRICE}
               period="/mois"
               features={PREMIUM_FEATURES}
-              cta="Activer Premium"
+              cta="Activer Pro"
               ctaLink="/auth/signup?plan=premium&billing=monthly"
             />
             <PricingCard
-              title="Premium Annuel"
+              title="Pro Annuel"
               price={PREMIUM_YEARLY_PRICE}
               period="/an"
               features={[...PREMIUM_FEATURES, 'Économise ~10% par rapport au mensuel']}
-              cta="Activer Premium"
+              cta="Activer Pro"
               ctaLink="/auth/signup?plan=premium&billing=annual"
             />
             <PricingCard

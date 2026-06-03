@@ -12,7 +12,7 @@ interface PremiumUpsellCardProps {
 export function PremiumUpsellCard({
   title,
   body,
-  ctaLabel = 'Activer Premium',
+  ctaLabel = 'Activer Pro',
   dismissable = true,
   onDismiss,
 }: PremiumUpsellCardProps) {

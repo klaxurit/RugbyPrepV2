@@ -94,4 +94,18 @@ describe('computeReadinessScore', () => {
     expect(total).toBeGreaterThanOrEqual(99)
     expect(total).toBeLessThanOrEqual(101)
   })
+
+  it('7 jours sans séance + ACWR sous-charge → Attention (~56)', () => {
+    const r = computeReadinessScore({
+      acwrZone: 'underload',
+      fatigue: 'OK',
+      lastSessionDateISO: '2026-05-20',
+      nextMatchDateISO: null,
+      todayISO: '2026-05-27',
+    })
+    expect(r.score).toBeGreaterThanOrEqual(54)
+    expect(r.score).toBeLessThanOrEqual(58)
+    expect(r.label).toBe('Attention')
+    expect(r.components.recovery?.score).toBe(45)
+  })
 })

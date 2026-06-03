@@ -1,6 +1,7 @@
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { messageSW } from 'workbox-window'
 import { RefreshCcw, X } from 'lucide-react'
+import { resolveSafeReloadTarget } from './updatePromptReload'
 
 /**
  * Double envoi SKIP_WAITING : workbox-window (via virtual:pwa-register) appelle
@@ -99,8 +100,22 @@ export function UpdatePrompt() {
       <button
         type="button"
         onClick={() => {
-          void updateServiceWorker(true)
+          const reloadTarget = resolveSafeReloadTarget()
           postSkipWaitingToBrowserWaitingWorker()
+
+          const reload = () => {
+            window.location.assign(reloadTarget)
+          }
+
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('controllerchange', reload, { once: true })
+          }
+
+          // false = pas de reload automatique workbox (on contrôle la cible)
+          void updateServiceWorker(false)
+
+          // Fallback si controllerchange ne fire pas (TWA / WebView)
+          window.setTimeout(reload, 2500)
         }}
         className="inline-flex items-center gap-1.5 rounded-xl bg-brand text-on-brand px-3 py-2 text-xs font-black uppercase italic tracking-wide rf-focus-ring"
       >

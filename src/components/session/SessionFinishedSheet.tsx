@@ -281,7 +281,7 @@ function StatCell({
         {blurred && (
           <span
             data-testid={`${testId}-lock`}
-            aria-label="Premium"
+            aria-label="Pro"
             className="rounded-full bg-brand/15 p-0.5 text-brand-tint"
           >
             <Lock className="h-2.5 w-2.5" />

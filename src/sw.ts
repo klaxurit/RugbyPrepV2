@@ -1,10 +1,41 @@
 /// <reference lib="webworker" />
-import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
+import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
+import { NavigationRoute, registerRoute } from 'workbox-routing'
 
 declare let self: ServiceWorkerGlobalScope
 
 cleanupOutdatedCaches()
 precacheAndRoute(self.__WB_MANIFEST)
+
+// ─── SPA navigation fallback ────────────────────────────────────────────────
+//
+// Sans cette route, un reload (ex. toast « Recharger » après mise à jour PWA)
+// sur /home, /session/3, etc. peut retomber sur le 404 Cloudflare
+// (public/_redirects catch-all) au lieu de index.html — surtout hors ligne
+// ou quand le réseau répond avant que les règles Pages ne s'appliquent.
+// On sert index.html precaché pour toute navigation app, sauf pages statiques.
+
+const navigationHandler = createHandlerBoundToURL('/index.html')
+registerRoute(
+  new NavigationRoute(navigationHandler, {
+    denylist: [
+      /^\/legal\/?$/,
+      /^\/privacy\/?$/,
+      /^\/404\.html$/,
+      /^\/about\/?$/,
+      /^\/blog(\/|$)/,
+      /^\/preparation-physique-rugby\/?$/,
+      /^\/programme-musculation-rugby\/?$/,
+      /^\/acwr-rugby\/?$/,
+      /^\/periodisation-rugby\/?$/,
+      /^\/tests-physiques-rugby\/?$/,
+      /^\/prevention-blessures-rugby\/?$/,
+      /^\/assets\//,
+      /^\/icons\//,
+      /^\/images\//,
+    ],
+  }),
+)
 
 // ─── Update lifecycle ───────────────────────────────────────────────────────
 //

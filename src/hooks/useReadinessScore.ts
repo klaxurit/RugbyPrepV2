@@ -15,7 +15,10 @@ export function useReadinessScore(params: UseReadinessScoreParams): ReadinessRes
   const { acwrZone, fatigue, logs, nextMatchDate, today } = params
   // Active recovery is not training — exclude from "last session" determination
   const trainingLogs = logs.filter((l) => l.sessionType !== 'ACTIVE_RECOVERY')
-  const lastSessionDateISO = trainingLogs.length > 0 ? trainingLogs[0].dateISO : null
+  const lastSessionDateISO =
+    trainingLogs.length > 0
+      ? [...trainingLogs].sort((a, b) => b.dateISO.localeCompare(a.dateISO))[0].dateISO
+      : null
 
   return useMemo(
     () =>

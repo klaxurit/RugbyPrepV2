@@ -31,7 +31,7 @@ export function SessionStickyCTA({ variant }: SessionStickyCTAProps) {
           <p className="mb-2 text-center text-[11px] text-fg/65">
             Débloque le suivi set-par-set —{' '}
             <a href="/profile#premium" className="text-brand underline hover:text-brand-hover">
-              Découvrir Premium
+              Découvrir Pro
             </a>
           </p>
         )}

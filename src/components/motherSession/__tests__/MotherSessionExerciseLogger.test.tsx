@@ -206,7 +206,7 @@ describe('MotherSessionBlock — SessionTourTracker exposure', () => {
     )
     await screen.findByText(/Tour 1\/3/i)
     expect(screen.queryByText(/Logger mes kg\/reps/i)).toBeNull()
-    expect(screen.queryByText(/Activer Premium/i)).toBeNull()
+    expect(screen.queryByText(/Activer Pro/i)).toBeNull()
   })
 
   it('série validée → la carte est cliquable pour annuler (role=button)', async () => {

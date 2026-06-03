@@ -54,7 +54,7 @@ export function usePremiumCheckout() {
           return null
         }
         if (result && result.ok !== false) {
-          setState({ loading: false, error: null, message: 'Premium activé ! Tes nouveaux accès sont déjà déverrouillés.' })
+          setState({ loading: false, error: null, message: 'Pro activé ! Tes nouveaux accès sont déjà déverrouillés.' })
           return { ok: true, ready: true } as CheckoutResponse
         }
         // User cancelled — silent reset
@@ -144,7 +144,7 @@ export function usePremiumCheckout() {
         setState({
           loading: false,
           error: null,
-          message: 'Achat Google Play restauré — tes accès Premium sont actifs.',
+          message: 'Achat Google Play restauré — tes accès Pro sont actifs.',
         })
         return result
       }

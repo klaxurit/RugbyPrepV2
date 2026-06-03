@@ -414,7 +414,7 @@ function TonnageStat({ tonnageKg, isPremium }: TonnageStatProps) {
     return (
       <Link
         to="/profile#premium"
-        aria-label="Charge — débloquer Premium"
+        aria-label="Charge — débloquer Pro"
         className="relative block text-center px-1 border-l border-fg/8 rf-focus-ring"
       >
         <div
