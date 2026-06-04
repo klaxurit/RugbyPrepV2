@@ -102,6 +102,24 @@ describe('detectSeasonTransitions', () => {
     expect(r).toBeNull()
   })
 
+  it('no playoffs_suggested when FFR calendar already has a future finals journee', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, daysUntilNextMatch: 5, daysSinceLastMatch: 7 },
+      today: '2026-04-15',
+      visibleEvents: [{ id: 'm1', date: '2026-05-01', type: 'match', journee_name: 'Demi-finale' }],
+    })
+    expect(r).toBeNull()
+  })
+
+  it('no playoffs_suggested when a future cup_final is already classified', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, daysUntilNextMatch: 5, daysSinceLastMatch: 7 },
+      today: '2026-04-15',
+      visibleEvents: [{ id: 'm1', date: '2026-05-01', type: 'match', match_kind: 'cup_final' }],
+    })
+    expect(r).toBeNull()
+  })
+
   it('no playoffs if no future match', () => {
     const r = detectSeasonTransitions({
       planningContext: { ...baseCtx, daysUntilNextMatch: null, daysSinceLastMatch: 3 },

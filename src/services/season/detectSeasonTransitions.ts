@@ -1,3 +1,4 @@
+import { hasFuturePlayoffCalendarSignal } from '../calendar/inferMatchKindFromFfrJournee'
 import type { AnnualPlanningContext, InSeasonSubMode } from '../../types/annualPlanning'
 import type { MatchKind } from '../../types/training'
 
@@ -44,6 +45,7 @@ export function detectSeasonTransitions(params: {
     type: string
     opponent?: string
     match_kind?: MatchKind | null
+    journee_name?: string | null
   }>
   /** Active deferral — if set, suppresses match_detected_in_offseason. */
   hasActiveDeferral?: boolean
@@ -121,6 +123,7 @@ export function detectSeasonTransitions(params: {
     PLAYOFFS_MONTHS.has(month) &&
     ctx.cycle === 'in_season' &&
     ctx.daysUntilNextMatch != null &&
+    !hasFuturePlayoffCalendarSignal(params.visibleEvents ?? [], today) &&
     !isDismissed('playoffs_suggested')
   ) {
     return { type: 'playoffs_suggested' }
