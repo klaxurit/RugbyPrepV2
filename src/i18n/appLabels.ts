@@ -413,6 +413,15 @@ export const APP_LABELS = {
   profile_label_next_match: { fr: 'Prochain match', en: 'Next match' },
   profile_label_no_match: { fr: 'Aucun match prévu', en: 'No match scheduled' },
   profile_label_sessions_per_week: { fr: 'Séances / semaine', en: 'Sessions / week' },
+  profile_program_sessions_summary: {
+    fr: 'Programme : {n} séances de préparation physique par semaine.',
+    en: 'Program: {n} strength sessions per week.',
+  },
+  profile_sessions_gym_hint: {
+    fr: 'Les jours de musculation au club se règlent dans',
+    en: 'Gym days at the club are set in',
+  },
+  profile_sessions_gym_link: { fr: 'la section Mon club', en: 'the My club section' },
   profile_label_height: { fr: 'Taille (cm)', en: 'Height (cm)' },
   profile_label_weight: { fr: 'Poids (kg)', en: 'Weight (kg)' },
   profile_situation_offseason_active: { fr: 'Inter-saison active — programme adapté', en: 'Off-season active — program adapted' },

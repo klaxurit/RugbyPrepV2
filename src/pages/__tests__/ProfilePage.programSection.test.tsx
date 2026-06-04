@@ -112,5 +112,7 @@ describe('ProfilePage · Mon programme', () => {
     expect(screen.getByText('Troisième ligne')).toBeInTheDocument()
     expect(screen.getByText('Performance')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '3 séances' })).toBeInTheDocument()
+    expect(screen.getByTestId('profile-program-sessions-summary')).toHaveTextContent('3 séances')
+    expect(screen.getByTestId('profile-sessions-gym-hint')).toBeInTheDocument()
   })
 })

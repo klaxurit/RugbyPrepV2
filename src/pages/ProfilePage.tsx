@@ -568,6 +568,9 @@ export function ProfilePage() {
 
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_sessions_per_week', lang)}</label>
+            <p className="text-[10px] text-fg-muted leading-relaxed" data-testid="profile-program-sessions-summary">
+              {tr('profile_program_sessions_summary', lang).replace('{n}', String(profile.weeklySessions))}
+            </p>
             <div className="grid grid-cols-2 gap-2">
               {[2, 3].map((n) => {
                 const active = profile.weeklySessions === n
@@ -598,6 +601,24 @@ export function ProfilePage() {
                 )
               })}
             </div>
+            <p className="text-[10px] text-fg-muted leading-relaxed" data-testid="profile-sessions-gym-hint">
+              {tr('profile_sessions_gym_hint', lang)}{' '}
+              <button
+                type="button"
+                className="font-bold text-brand-tint underline-offset-2 hover:underline rf-focus-ring"
+                onClick={() => {
+                  const clubSection = document.querySelector('[data-testid="profile-section-club"]')
+                  clubSection?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  const toggle = clubSection?.querySelector('button')
+                  if (toggle && toggle.getAttribute('aria-expanded') === 'false') {
+                    toggle.click()
+                  }
+                }}
+              >
+                {tr('profile_sessions_gym_link', lang)}
+              </button>
+              .
+            </p>
           </div>
         </CollapsibleSection>
 
