@@ -14,6 +14,7 @@ interface NormalizedMatch {
   away_club_code: string
   away_club_name: string
   match_day?: number
+  journee_name?: string
   venue?: string
   match_status: string
 }
@@ -141,6 +142,8 @@ async function syncUserCalendar(
         opponent_code: opponentCode,
         is_home: isHome,
         match_day: match.match_day,
+        journee_name: match.journee_name ?? null,
+        match_status: match.match_status,
         venue: match.venue,
         competition_id: competitionId,
         synced_at: new Date().toISOString(),
@@ -181,6 +184,8 @@ async function syncUserCalendar(
           is_home: isHome,
           competition_id: competitionId,
           match_day: match.match_day,
+          journee_name: match.journee_name ?? null,
+          match_status: match.match_status,
           venue: match.venue,
           synced_at: new Date().toISOString(),
         })
@@ -205,6 +210,8 @@ async function syncUserCalendar(
         external_id: match.external_id,
         competition_id: competitionId,
         match_day: match.match_day,
+        journee_name: match.journee_name ?? null,
+        match_status: match.match_status,
         venue: match.venue,
         user_hidden: false,
         synced_at: new Date().toISOString(),

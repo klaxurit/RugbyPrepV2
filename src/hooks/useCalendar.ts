@@ -6,13 +6,14 @@ import { syncCalendar } from '../services/calendar/ffrSyncService'
 import { applyDeferralRules } from '../services/season/deferralRules'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 import type { CalendarEvent, MatchKind } from '../types/training'
+import { calendarRowToEvent } from '../services/calendar/calendarRowToEvent'
 import { useProgramEvolutionSheet } from './useProgramEvolutionSheet'
 import { getToday } from '../services/ui/debugDateOverride'
 
 const STORAGE_BASE = 'rugbyprep.calendar'
 const AUTO_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24h
 const CALENDAR_SELECT =
-  'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, venue, user_hidden, user_override, synced_at, match_kind'
+  'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, journee_name, match_status, venue, user_hidden, user_override, synced_at, match_kind'
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -94,7 +95,7 @@ export function useCalendarSource() {
           setError(err.message)
           return
         }
-        const loaded = ((data ?? []) as CalendarEvent[]).map(normalizeCalendarEvent)
+        const loaded = (data ?? []).map((row) => normalizeCalendarEvent(calendarRowToEvent(row)))
         setEvents(loaded)
         saveToStorage(loaded, userId)
       })
@@ -127,7 +128,7 @@ export function useCalendarSource() {
         .order('date', { ascending: true })
 
       if (data) {
-        const loaded = (data as CalendarEvent[]).map(normalizeCalendarEvent)
+        const loaded = data.map((row) => normalizeCalendarEvent(calendarRowToEvent(row)))
         setEvents(loaded)
         saveToStorage(loaded, userId)
 
@@ -161,7 +162,7 @@ export function useCalendarSource() {
           .select(CALENDAR_SELECT)
           .single()
         if (err) { setError(err.message); return undefined }
-        const newEvent = normalizeCalendarEvent(data as CalendarEvent)
+        const newEvent = normalizeCalendarEvent(calendarRowToEvent(data))
         setEvents((prev) => {
           const next = [...prev, newEvent].sort((a, b) => a.date.localeCompare(b.date))
           saveToStorage(next, userId)
@@ -367,7 +368,7 @@ export function useCalendarSource() {
           .eq('user_id', userId)
           .order('date', { ascending: true })
         if (!err && data) {
-          const loaded = (data as CalendarEvent[]).map(normalizeCalendarEvent)
+          const loaded = data.map((row) => normalizeCalendarEvent(calendarRowToEvent(row)))
           setEvents(loaded)
           saveToStorage(loaded, userId)
           if (result.imported > 0) {

@@ -1,6 +1,7 @@
 import { supabase } from '../supabase/client'
 import type { FfrCompetition } from '../../types/training'
 import clubFfrIdsData from '../../data/clubFfrIds.json'
+import { mapFfrRencontreToNormalizedMatch, type NormalizedFfrMatch } from './ffrMatchNormalization'
 
 const clubFfrIds = clubFfrIdsData as Record<string, number>
 
@@ -66,37 +67,6 @@ const JUNIOR_CLASS_CODES = new Set([
   '-15', '-16', '-17', '-18', '-19',
 ])
 
-// ─── Types internes ───
-
-interface NormalizedMatch {
-  external_id: string
-  match_date: string
-  kickoff_time?: string
-  home_club_code: string
-  home_club_name: string
-  away_club_code: string
-  away_club_name: string
-  match_day?: number
-  venue?: string
-  match_status: string
-}
-
-interface FfrEquipe {
-  Structure?: { code?: string; nom?: string } | null
-  Regroupement?: { code?: string; nom?: string } | null
-  nom?: string
-}
-
-function getClubCode(equipe: FfrEquipe): string {
-  return equipe?.Structure?.code ?? equipe?.Regroupement?.code ?? ''
-}
-function getClubName(equipe: FfrEquipe): string {
-  return equipe?.Structure?.nom ?? equipe?.Regroupement?.nom ?? equipe?.nom ?? ''
-}
-function equipeMatchesClub(equipe: FfrEquipe, clubCode: string): boolean {
-  return equipe?.Structure?.code === clubCode || equipe?.Regroupement?.code === clubCode
-}
-
 // ─── Public API ───
 
 /** Récupère les compétitions disponibles — appel direct FFR depuis le navigateur */
@@ -145,7 +115,7 @@ export async function syncCalendar(competitionId: string, clubCode: string): Pro
   error?: string
 }> {
   // 1. Fetch calendar from FFR (client-side, no 403)
-  let matches: NormalizedMatch[]
+  let matches: NormalizedFfrMatch[]
   try {
     const compIdNum = Number(competitionId)
     const res = await fetch(FFR_GRAPHQL_URL, {
@@ -165,38 +135,12 @@ export async function syncCalendar(competitionId: string, clubCode: string): Pro
     if (!competition?.Journees) return { imported: 0, error: 'competition_not_found' }
 
     const todayStr = new Date().toISOString().slice(0, 10)
-    const allClubMatches: NormalizedMatch[] = []
+    const allClubMatches: NormalizedFfrMatch[] = []
 
     for (const journee of competition.Journees) {
       for (const r of journee.Rencontres) {
-        if (!equipeMatchesClub(r.CompetitionEquipeLocale, clubCode) &&
-            !equipeMatchesClub(r.CompetitionEquipeVisiteuse, clubCode)) continue
-
-        const dateStr = r.dateEffective || r.dateOfficielle
-        const dt = new Date(dateStr)
-        const matchDate = dt.toISOString().slice(0, 10)
-        const hours = dt.getUTCHours().toString().padStart(2, '0')
-        const minutes = dt.getUTCMinutes().toString().padStart(2, '0')
-        const kickoff = hours === '00' && minutes === '00' ? undefined : `${hours}:${minutes}`
-        const venue = r.Terrain
-          ? [r.Terrain.nom, r.Terrain.Adresse?.localite].filter(Boolean).join(', ')
-          : undefined
-
-        allClubMatches.push({
-          external_id: r.id,
-          match_date: matchDate,
-          kickoff_time: kickoff,
-          home_club_code: getClubCode(r.CompetitionEquipeLocale),
-          home_club_name: getClubName(r.CompetitionEquipeLocale),
-          away_club_code: getClubCode(r.CompetitionEquipeVisiteuse),
-          away_club_name: getClubName(r.CompetitionEquipeVisiteuse),
-          match_day:
-            typeof r.Journee?.numero === 'number' && r.Journee.numero > 0
-              ? r.Journee.numero
-              : undefined,
-          venue,
-          match_status: r.Etat?.nom ?? 'unknown',
-        })
+        const normalized = mapFfrRencontreToNormalizedMatch(r, journee, clubCode)
+        if (normalized) allClubMatches.push(normalized)
       }
     }
 

@@ -542,6 +542,10 @@ export interface CalendarEvent {
   competition_id?: string
   competition_name?: string
   match_day?: number
+  /** Libellé FFR de la journée (ex. Journée 12, Demi-finale). */
+  journee_name?: string
+  /** État FFR de la rencontre (ex. Jouée, Programmée). */
+  match_status?: string
   venue?: string
   user_hidden?: boolean
   user_override?: {
