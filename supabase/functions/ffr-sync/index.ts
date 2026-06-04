@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { corsHeaders, json } from '../_shared/http.ts'
+import { resolveMatchKindOnFfrSync } from '../_shared/inferMatchKindFromFfrJournee.ts'
 import { captureEdgeException } from '../_shared/sentry.ts'
 import { requireUser } from '../_shared/supabase.ts'
 
@@ -102,6 +103,7 @@ interface ExistingEvent {
   rpe: number | null
   duration_min: number | null
   kickoff_time: string | null
+  match_kind: string | null
 }
 
 // ─── Sync user calendar ───
@@ -117,7 +119,7 @@ async function syncUserCalendar(
 
   const { data: existing } = await serviceClient
     .from('match_calendar')
-    .select('id, date, external_id, opponent_code, source, user_hidden, user_override, notes, rpe, duration_min')
+    .select('id, date, external_id, opponent_code, source, user_hidden, user_override, notes, rpe, duration_min, match_kind')
     .eq('user_id', userId)
 
   const existingByExtId = new Map<string, ExistingEvent>()
@@ -161,6 +163,12 @@ async function syncUserCalendar(
         }
       }
 
+      const inferredKind = resolveMatchKindOnFfrSync(
+        existingImport.match_kind as 'league' | 'friendly' | 'cup_final' | null,
+        match.journee_name,
+      )
+      if (inferredKind) updateData.match_kind = inferredKind
+
       await serviceClient
         .from('match_calendar')
         .update(updateData)
@@ -172,23 +180,30 @@ async function syncUserCalendar(
     // Case 2: Manual match at ±1 day with same opponent → link
     const linkedManual = findManualMatchNearDate(existingByDate, match.match_date, opponentCode)
     if (linkedManual) {
+      const linkUpdate: Record<string, unknown> = {
+        source: 'ffr_import',
+        external_id: match.external_id,
+        date: match.match_date,
+        kickoff_time: match.kickoff_time ?? linkedManual.kickoff_time ?? null,
+        opponent,
+        opponent_code: opponentCode,
+        is_home: isHome,
+        competition_id: competitionId,
+        match_day: match.match_day,
+        journee_name: match.journee_name ?? null,
+        match_status: match.match_status,
+        venue: match.venue,
+        synced_at: new Date().toISOString(),
+      }
+      const inferredKind = resolveMatchKindOnFfrSync(
+        linkedManual.match_kind as 'league' | 'friendly' | 'cup_final' | null,
+        match.journee_name,
+      )
+      if (inferredKind) linkUpdate.match_kind = inferredKind
+
       await serviceClient
         .from('match_calendar')
-        .update({
-          source: 'ffr_import',
-          external_id: match.external_id,
-          date: match.match_date,
-          kickoff_time: match.kickoff_time ?? linkedManual.kickoff_time ?? null,
-          opponent,
-          opponent_code: opponentCode,
-          is_home: isHome,
-          competition_id: competitionId,
-          match_day: match.match_day,
-          journee_name: match.journee_name ?? null,
-          match_status: match.match_status,
-          venue: match.venue,
-          synced_at: new Date().toISOString(),
-        })
+        .update(linkUpdate)
         .eq('id', linkedManual.id)
 
       imported++
@@ -196,26 +211,30 @@ async function syncUserCalendar(
     }
 
     // Case 3: New match → create
+    const insertRow: Record<string, unknown> = {
+      user_id: userId,
+      date: match.match_date,
+      type: 'match',
+      kickoff_time: match.kickoff_time ?? null,
+      opponent,
+      opponent_code: opponentCode,
+      is_home: isHome,
+      source: 'ffr_import',
+      external_id: match.external_id,
+      competition_id: competitionId,
+      match_day: match.match_day,
+      journee_name: match.journee_name ?? null,
+      match_status: match.match_status,
+      venue: match.venue,
+      user_hidden: false,
+      synced_at: new Date().toISOString(),
+    }
+    const inferredKind = resolveMatchKindOnFfrSync(null, match.journee_name)
+    if (inferredKind) insertRow.match_kind = inferredKind
+
     await serviceClient
       .from('match_calendar')
-      .insert({
-        user_id: userId,
-        date: match.match_date,
-        type: 'match',
-        kickoff_time: match.kickoff_time ?? null,
-        opponent,
-        opponent_code: opponentCode,
-        is_home: isHome,
-        source: 'ffr_import',
-        external_id: match.external_id,
-        competition_id: competitionId,
-        match_day: match.match_day,
-        journee_name: match.journee_name ?? null,
-        match_status: match.match_status,
-        venue: match.venue,
-        user_hidden: false,
-        synced_at: new Date().toISOString(),
-      })
+      .insert(insertRow)
 
     imported++
   }
