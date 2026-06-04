@@ -414,6 +414,34 @@ export const APP_LABELS = {
     fr: 'Pour ajuster la fin de saison, utilise la suggestion sur l’accueil.',
     en: 'To adjust the end of season, use the suggestion on the home screen.',
   },
+  profile_situation_treve_next_match_weeks: {
+    fr: 'Prochain match dans {weeks} semaines — trêve au calendrier',
+    en: 'Next match in {weeks} weeks — break detected on your calendar',
+  },
+  profile_situation_treve_detected: {
+    fr: 'Trêve détectée au calendrier',
+    en: 'Break detected on your calendar',
+  },
+  profile_situation_treve_readonly_hint: {
+    fr: 'Le programme s’adapte automatiquement. Pas besoin de clôturer la saison ici.',
+    en: 'Your program adapts automatically. No need to end the season here.',
+  },
+  profile_situation_auto_offseason_detected: {
+    fr: 'Inter-saison détectée — {days} jours depuis ton dernier match',
+    en: 'Off-season detected — {days} days since your last match',
+  },
+  profile_situation_auto_offseason_detected_short: {
+    fr: 'Inter-saison détectée',
+    en: 'Off-season detected',
+  },
+  profile_situation_auto_offseason_hint: {
+    fr: 'Confirme pour enregistrer la fin de saison et adapter ton programme.',
+    en: 'Confirm to record the end of season and adapt your program.',
+  },
+  profile_situation_confirm_end_season: {
+    fr: 'Confirmer',
+    en: 'Confirm',
+  },
   profile_label_situation_change_q: { fr: 'Quelque chose a changé ?', en: 'Anything changed?' },
   profile_label_season_detected: { fr: 'Saison détectée', en: 'Detected season' },
   profile_label_next_match: { fr: 'Prochain match', en: 'Next match' },

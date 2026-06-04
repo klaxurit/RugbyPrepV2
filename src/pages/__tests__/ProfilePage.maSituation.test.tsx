@@ -238,6 +238,42 @@ describe('ProfilePage · Ma situation', () => {
     expect(call.planningAnchors.manualPlayoffs).toBeUndefined()
   })
 
+  it('shows treve read-only panel without season-end buttons when trêve sub-mode', () => {
+    mockDetectCtx.mockReturnValue({
+      cycle: 'in_season',
+      inSeasonSubMode: 'treve_deep',
+      daysUntilNextMatch: 28,
+    })
+    renderProfileWithMaSituationOpen()
+
+    expect(screen.getByTestId('situation-treve-readonly')).toBeInTheDocument()
+    expect(screen.getByTestId('situation-treve-readonly')).toHaveTextContent('4 semaines')
+    expect(screen.queryByTestId('situation-override-toggle')).toBeNull()
+    expect(screen.queryByTestId('situation-season-ended')).toBeNull()
+  })
+
+  it('shows single confirm CTA when end_of_season sub-mode is detected', () => {
+    mockEvents.push({ id: '1', date: '2026-03-01', type: 'match', source: 'manual' })
+    mockDetectCtx.mockReturnValue({
+      cycle: 'in_season',
+      inSeasonSubMode: 'end_of_season',
+      daysSinceLastMatch: 20,
+      daysUntilNextMatch: null,
+    })
+    renderProfileWithMaSituationOpen()
+
+    expect(screen.getByTestId('situation-auto-end-detected')).toBeInTheDocument()
+    expect(screen.getByTestId('situation-confirm-end-season')).toHaveTextContent('Confirmer')
+    expect(screen.queryByTestId('situation-override-toggle')).toBeNull()
+
+    fireEvent.click(screen.getByTestId('situation-confirm-end-season'))
+
+    const call = mockUpdateProfile.mock.calls[0][0]
+    expect(call.planningAnchors.seasonEndedAt).toBe('2026-03-01')
+    expect(call.planningAnchors.seasonEndedSource).toBe('manual')
+    expect(call.seasonMode).toBe('off_season')
+  })
+
   it('hides in-season manual buttons when Home season_ended banner is active', () => {
     mockUseSeasonTransitions.mockReturnValue({
       transition: { type: 'season_ended', lastMatchDate: '2026-03-01', daysSinceLastMatch: 14 },

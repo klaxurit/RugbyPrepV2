@@ -1,9 +1,14 @@
 import { useState } from 'react'
-import type { AnnualCycle } from '../../types/annualPlanning'
+import type { AnnualCycle, AnnualPlanningContext } from '../../types/annualPlanning'
 import type { CalendarEvent, TransitionEntry, UserProfile } from '../../types/training'
 import type { SeasonTransition } from '../../services/season/detectSeasonTransitions'
 import { appendTransitionEntry, restoreLastTransition, cycleToSeasonMode } from '../../services/season/transitionJournal'
 import { shouldShowProfileSeasonActions } from './shouldShowProfileSeasonActions'
+import {
+  isTreveInSeasonSubMode,
+  shouldShowAutoEndOfSeasonConfirm,
+  treveGapWeeks,
+} from './profileSituationUi'
 import { tr, type Lang } from '../../i18n/appLabels'
 
 /**
@@ -21,6 +26,7 @@ export type MaSituationData = {
   nextMatch: CalendarEvent | null
   detectedCycle: AnnualCycle
   showSkipOffSeasonRecovery: boolean
+  planningContext: AnnualPlanningContext | null
 }
 
 type MaSituationSectionProps = {
@@ -110,6 +116,41 @@ function InSeasonSituationPanel({
   overrideOpen: boolean
   onOpenOverride: () => void
 }) {
+  const ctx = situationData.planningContext
+  const subMode = ctx?.inSeasonSubMode
+
+  if (isTreveInSeasonSubMode(subMode)) {
+    const weeks = treveGapWeeks(ctx?.daysUntilNextMatch ?? null)
+    return (
+      <div
+        className="rounded-2xl border border-border-app bg-layer-5 p-3 space-y-1"
+        data-testid="situation-treve-readonly"
+      >
+        <p className="text-xs font-bold text-fg-soft">
+          {weeks != null
+            ? tr('profile_situation_treve_next_match_weeks', lang).replace('{weeks}', String(weeks))
+            : tr('profile_situation_treve_detected', lang)}
+        </p>
+        <p className="text-[10px] text-fg-muted leading-relaxed">
+          {tr('profile_situation_treve_readonly_hint', lang)}
+        </p>
+      </div>
+    )
+  }
+
+  if (shouldShowAutoEndOfSeasonConfirm(ctx, profile)) {
+    return (
+      <AutoEndOfSeasonConfirmCard
+        situationData={situationData}
+        profile={profile}
+        updateProfile={updateProfile}
+        today={today}
+        lang={lang}
+        daysSinceLastMatch={ctx?.daysSinceLastMatch ?? null}
+      />
+    )
+  }
+
   if (!showManualActions) {
     return (
       <p className="text-[10px] text-fg-muted leading-relaxed" data-testid="situation-home-banner-hint">
@@ -331,6 +372,65 @@ function PreSeasonSituationActions({
         className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
       >
         La saison a commencé
+      </button>
+    </div>
+  )
+}
+
+function AutoEndOfSeasonConfirmCard({
+  situationData,
+  profile,
+  updateProfile,
+  today,
+  lang,
+  daysSinceLastMatch,
+}: MaSituationSectionProps & { daysSinceLastMatch: number | null }) {
+  const endSeason = (endedAt: string) => {
+    const prevAnchors = { ...profile.planningAnchors }
+    const entry: TransitionEntry = {
+      id: `t-${Date.now()}`,
+      at: today,
+      trigger: 'user_manual',
+      from: {
+        cycle: situationData.detectedCycle ?? 'in_season',
+        weekNumber: 1,
+        schedulingMode: 'calendar',
+      },
+      anchorsSnapshot: prevAnchors,
+      to: 'off_season',
+    }
+    const cleanAnchors = { ...prevAnchors }
+    delete cleanAnchors.manualPlayoffs
+    updateProfile({
+      planningAnchors: { ...cleanAnchors, seasonEndedAt: endedAt, seasonEndedSource: 'manual' },
+      seasonMode: 'off_season',
+      seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
+    })
+  }
+
+  return (
+    <div
+      className="rounded-2xl border border-ok-bd bg-ok-bg-muted p-3 space-y-2"
+      data-testid="situation-auto-end-detected"
+    >
+      <p className="text-xs font-bold text-ok-strong">
+        {daysSinceLastMatch != null
+          ? tr('profile_situation_auto_offseason_detected', lang).replace(
+              '{days}',
+              String(daysSinceLastMatch),
+            )
+          : tr('profile_situation_auto_offseason_detected_short', lang)}
+      </p>
+      <p className="text-[10px] text-fg-muted leading-relaxed">
+        {tr('profile_situation_auto_offseason_hint', lang)}
+      </p>
+      <button
+        type="button"
+        data-testid="situation-confirm-end-season"
+        onClick={() => endSeason(situationData.lastMatchDate ?? today)}
+        className="w-full py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all rf-focus-ring"
+      >
+        {tr('profile_situation_confirm_end_season', lang)}
       </button>
     </div>
   )
