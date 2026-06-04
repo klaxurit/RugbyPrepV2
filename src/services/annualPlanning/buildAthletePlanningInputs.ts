@@ -15,6 +15,7 @@ import type {
 import type { ACWRZone } from '../../hooks/useACWR'
 import { isRestartRampUpActive } from '../program/restartRampUp'
 import { resolveFatigueLevel } from '../program/resolveFatigueLevel'
+import { shouldAutoManualPlayoffsFromCalendar } from '../calendar/inferMatchKindFromFfrJournee'
 
 // (`AcwrZoneInput` retiré — on utilise directement `ACWRZone | null | undefined`
 //  depuis le hook canonical `useACWR`.)
@@ -283,7 +284,10 @@ export function buildAthletePlanningInputs(
     (e) => e.type === 'match' && e.date >= weekMonIso && e.date <= weekSunIso,
   )
 
-  const resolvedAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar, hasFutureMatch, hasMatchThisWeek)
+  let resolvedAnchors = resolvePlanningAnchors(profile, hasMatchInCalendar, hasFutureMatch, hasMatchThisWeek)
+  if (shouldAutoManualPlayoffsFromCalendar(profile, visibleEvents, today)) {
+    resolvedAnchors = { ...(resolvedAnchors ?? {}), manualPlayoffs: true }
+  }
   const skipRecoveryIntro = profile.planningAnchors?.skipOffSeasonRecoveryIntro === true
   const planningAnchors: AthletePlanningInputs['planningAnchors'] =
     resolvedAnchors || skipRecoveryIntro

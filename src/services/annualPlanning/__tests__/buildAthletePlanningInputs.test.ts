@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { DEFAULT_PROFILE } from '../../../hooks/useProfile'
 import type { CalendarEvent, SessionLog, UserProfile } from '../../../types/training'
+import { detectAnnualPlanningContext } from '../../season/detectAnnualPlanningContext'
 import { buildAthletePlanningInputs } from '../buildAthletePlanningInputs'
 
 const TODAY = '2025-03-10'
@@ -430,5 +431,55 @@ describe('buildAthletePlanningInputs', () => {
       acwrZone: 'critical',
     })
     expect(r.derived.fatigueLevel).toBe('very_high')
+  })
+
+  it('auto manualPlayoffs when a future FFR journee signals playoffs', () => {
+    const built = buildAthletePlanningInputs({
+      profile: baseProfile({ planningAnchors: {} }),
+      events: [
+        {
+          id: 'm-finals',
+          date: '2026-05-20',
+          type: 'match',
+          journee_name: 'Demi-finale',
+        } as CalendarEvent,
+      ],
+      logs: [],
+      today: '2026-05-01',
+      fatigue: 'OK',
+    })
+    expect(built.inputs.planningAnchors?.manualPlayoffs).toBe(true)
+
+    const ctx = detectAnnualPlanningContext({
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      events: built.inputs.events,
+      today: '2026-05-01',
+      planningAnchors: built.inputs.planningAnchors,
+    })
+    expect(ctx.cycle).toBe('playoffs')
+  })
+
+  it('does not auto manualPlayoffs after manual off-season confirmation', () => {
+    const built = buildAthletePlanningInputs({
+      profile: baseProfile({
+        planningAnchors: {
+          seasonEndedAt: '2026-03-01',
+          seasonEndedSource: 'manual',
+        },
+      }),
+      events: [
+        {
+          id: 'm-finals',
+          date: '2026-05-20',
+          type: 'match',
+          journee_name: 'Finale',
+        } as CalendarEvent,
+      ],
+      logs: [],
+      today: '2026-05-01',
+      fatigue: 'OK',
+    })
+    expect(built.inputs.planningAnchors?.manualPlayoffs).toBeUndefined()
   })
 })
