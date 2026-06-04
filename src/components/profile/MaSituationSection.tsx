@@ -1,7 +1,18 @@
+import { useState } from 'react'
 import type { AnnualCycle } from '../../types/annualPlanning'
 import type { CalendarEvent, TransitionEntry, UserProfile } from '../../types/training'
+import type { SeasonTransition } from '../../services/season/detectSeasonTransitions'
 import { appendTransitionEntry, restoreLastTransition, cycleToSeasonMode } from '../../services/season/transitionJournal'
+import { shouldShowProfileSeasonActions } from './shouldShowProfileSeasonActions'
 import { tr, type Lang } from '../../i18n/appLabels'
+
+/**
+ * Season transition ownership (M2):
+ * - Home (`useSeasonTransitions` + `SeasonTransitionBanner`) is the primary surface for
+ *   passive lifecycle prompts (fin de saison, trêve, playoffs, etc.).
+ * - Profile here is for explicit manual overrides (anchors, reprise, inter-saison) when
+ *   detection does not match reality — not a second banner stack.
+ */
 
 export type MaSituationData = {
   cycleLabel: string
@@ -18,6 +29,7 @@ type MaSituationSectionProps = {
   updateProfile: (patch: Partial<UserProfile>) => void
   today: string
   lang: Lang
+  seasonTransition?: SeasonTransition | null
 }
 
 export function MaSituationSection({
@@ -26,8 +38,14 @@ export function MaSituationSection({
   updateProfile,
   today,
   lang,
+  seasonTransition,
 }: MaSituationSectionProps) {
   const mode = situationData.detectedCycle ?? profile.seasonMode ?? 'in_season'
+  const [overrideOpen, setOverrideOpen] = useState(false)
+  const showInSeasonManualActions = shouldShowProfileSeasonActions({
+    seasonTransition,
+    cycle: mode,
+  })
 
   return (
     <div className="space-y-3" data-testid="ma-situation">
@@ -35,19 +53,19 @@ export function MaSituationSection({
         {tr('profile_label_situation', lang)}
       </label>
 
-      <div className="rounded-2xl border border-border-app bg-layer-5 p-4 space-y-2.5">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-bold text-fg-muted">{tr('profile_label_season_detected', lang)}</span>
-          <span className="text-xs font-black text-fg" data-testid="situation-cycle">
+      <div className="rounded-2xl border border-border-app bg-layer-5 p-4 space-y-2">
+        <p className="text-xs leading-relaxed" data-testid="situation-program-adapted">
+          <span className="font-bold text-fg-muted">{tr('profile_situation_program_adapted', lang)}</span>{' '}
+          <span className="font-black text-fg" data-testid="situation-cycle">
             {situationData.cycleLabel}
           </span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-bold text-fg-muted">{tr('profile_label_next_match', lang)}</span>
-          <span className="text-xs font-bold text-fg-emphasis" data-testid="situation-next-match">
+        </p>
+        <p className="text-[10px] text-fg-muted">
+          {tr('profile_label_next_match', lang)} :{' '}
+          <span className="font-bold text-fg-emphasis" data-testid="situation-next-match">
             {situationData.nextMatchLabel}
           </span>
-        </div>
+        </p>
       </div>
 
       {mode === 'off_season' && (
@@ -63,14 +81,65 @@ export function MaSituationSection({
         <PreSeasonSituationActions profile={profile} updateProfile={updateProfile} lang={lang} />
       )}
       {mode !== 'off_season' && mode !== 'pre_season' && (
-        <InSeasonSituationActions
+        <InSeasonSituationPanel
           situationData={situationData}
           profile={profile}
           updateProfile={updateProfile}
           today={today}
           lang={lang}
+          showManualActions={showInSeasonManualActions}
+          overrideOpen={overrideOpen}
+          onOpenOverride={() => setOverrideOpen(true)}
         />
       )}
+    </div>
+  )
+}
+
+function InSeasonSituationPanel({
+  situationData,
+  profile,
+  updateProfile,
+  today,
+  lang,
+  showManualActions,
+  overrideOpen,
+  onOpenOverride,
+}: Pick<MaSituationSectionProps, 'situationData' | 'profile' | 'updateProfile' | 'today' | 'lang'> & {
+  showManualActions: boolean
+  overrideOpen: boolean
+  onOpenOverride: () => void
+}) {
+  if (!showManualActions) {
+    return (
+      <p className="text-[10px] text-fg-muted leading-relaxed" data-testid="situation-home-banner-hint">
+        {tr('profile_situation_home_banner_hint', lang)}
+      </p>
+    )
+  }
+
+  if (!overrideOpen) {
+    return (
+      <button
+        type="button"
+        data-testid="situation-override-toggle"
+        onClick={onOpenOverride}
+        className="w-full py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all rf-focus-ring"
+      >
+        {tr('profile_situation_not_my_case', lang)}
+      </button>
+    )
+  }
+
+  return (
+    <div className="space-y-2" data-testid="situation-override-actions">
+      <InSeasonSituationActions
+        situationData={situationData}
+        profile={profile}
+        updateProfile={updateProfile}
+        today={today}
+        lang={lang}
+      />
     </div>
   )
 }

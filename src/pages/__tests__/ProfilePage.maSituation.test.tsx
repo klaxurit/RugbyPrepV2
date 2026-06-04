@@ -5,6 +5,7 @@ import { cleanup, screen, fireEvent, within } from '@testing-library/react'
 import { ProfilePage } from '../ProfilePage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
 import type { CalendarEvent } from '../../types/training'
+import type { SeasonTransition } from '../../services/season/detectSeasonTransitions'
 
 // "Ma situation" vit dans la section collapsible "Infos de jeu".
 // Helper : rend la page puis ouvre la section pour exposer son contenu.
@@ -15,9 +16,18 @@ function renderProfileWithMaSituationOpen() {
   fireEvent.click(toggle)
 }
 
+/** In-season manual actions are behind "Ce n'est pas mon cas ?" (M2). */
+function openMaSituationOverride() {
+  fireEvent.click(screen.getByTestId('situation-override-toggle'))
+}
+
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
 const mockUpdateProfile = vi.fn()
+const mockUseSeasonTransitions = vi.fn((): { transition: SeasonTransition | null; dismiss: ReturnType<typeof vi.fn> } => ({
+  transition: null,
+  dismiss: vi.fn(),
+}))
 const mockEvents: CalendarEvent[] = []
 let mockProfileOverrides: Record<string, unknown> = {}
 
@@ -25,6 +35,10 @@ const mockDetectCtx = vi.fn()
 
 vi.mock('../../services/season/detectAnnualPlanningContext', () => ({
   detectAnnualPlanningContext: (...args: unknown[]) => mockDetectCtx(...args),
+}))
+
+vi.mock('../../hooks/useSeasonTransitions', () => ({
+  useSeasonTransitions: () => mockUseSeasonTransitions(),
 }))
 
 vi.mock('../../services/analytics/posthog', () => ({
@@ -119,6 +133,7 @@ describe('ProfilePage · Ma situation', () => {
     mockEvents.length = 0
     mockProfileOverrides = {}
     mockDetectCtx.mockReturnValue({ cycle: 'in_season' })
+    mockUseSeasonTransitions.mockReturnValue({ transition: null, dismiss: vi.fn() })
   })
 
   afterEach(() => {
@@ -133,10 +148,11 @@ describe('ProfilePage · Ma situation', () => {
     expect(screen.queryByText('Période actuelle')).toBeNull()
   })
 
-  it('displays detected cycle from real annual context detection', () => {
+  it('displays programme adapté summary with detected cycle', () => {
     mockDetectCtx.mockReturnValue({ cycle: 'in_season' })
     renderProfileWithMaSituationOpen()
 
+    expect(screen.getByTestId('situation-program-adapted')).toHaveTextContent('Programme adapté à :')
     expect(screen.getByTestId('situation-cycle')).toHaveTextContent('En saison')
   })
 
@@ -158,6 +174,7 @@ describe('ProfilePage · Ma situation', () => {
       { id: '1', date: '2026-03-15', type: 'match', source: 'manual' },
     )
     renderProfileWithMaSituationOpen()
+    openMaSituationOverride()
 
     fireEvent.click(screen.getByTestId('situation-season-ended'))
 
@@ -183,6 +200,7 @@ describe('ProfilePage · Ma situation', () => {
       { id: 'visible', date: '2026-03-15', type: 'match', source: 'manual' },
     )
     renderProfileWithMaSituationOpen()
+    openMaSituationOverride()
 
     expect(mockDetectCtx).toHaveBeenCalled()
     expect(mockDetectCtx.mock.calls[0][0].events).toEqual([
@@ -197,6 +215,7 @@ describe('ProfilePage · Ma situation', () => {
 
   it('"La saison est finie" falls back to today when no past match', () => {
     renderProfileWithMaSituationOpen()
+    openMaSituationOverride()
 
     fireEvent.click(screen.getByTestId('situation-season-ended'))
 
@@ -208,6 +227,7 @@ describe('ProfilePage · Ma situation', () => {
 
   it('"Je n\'ai plus de match" writes seasonEndedAt = today and clears manualPlayoffs', () => {
     renderProfileWithMaSituationOpen()
+    openMaSituationOverride()
 
     fireEvent.click(screen.getByTestId('situation-no-match'))
 
@@ -216,6 +236,18 @@ describe('ProfilePage · Ma situation', () => {
     expect(call.seasonMode).toBe('off_season')
     // manualPlayoffs must be cleared to avoid stale playoff state
     expect(call.planningAnchors.manualPlayoffs).toBeUndefined()
+  })
+
+  it('hides in-season manual buttons when Home season_ended banner is active', () => {
+    mockUseSeasonTransitions.mockReturnValue({
+      transition: { type: 'season_ended', lastMatchDate: '2026-03-01', daysSinceLastMatch: 14 },
+      dismiss: vi.fn(),
+    })
+    renderProfileWithMaSituationOpen()
+
+    expect(screen.queryByTestId('situation-override-toggle')).toBeNull()
+    expect(screen.queryByTestId('situation-season-ended')).toBeNull()
+    expect(screen.getByTestId('situation-home-banner-hint')).toBeInTheDocument()
   })
 
   it('no internal jargon in the section', () => {

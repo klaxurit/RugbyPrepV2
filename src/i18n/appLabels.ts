@@ -408,6 +408,12 @@ export const APP_LABELS = {
   profile_label_position: { fr: 'Poste', en: 'Position' },
   profile_label_training_level: { fr: "Niveau d'entraînement", en: 'Training level' },
   profile_label_situation: { fr: 'Ma situation', en: 'My situation' },
+  profile_situation_program_adapted: { fr: 'Programme adapté à :', en: 'Program adapted to:' },
+  profile_situation_not_my_case: { fr: "Ce n'est pas mon cas ?", en: "That's not my case?" },
+  profile_situation_home_banner_hint: {
+    fr: 'Pour ajuster la fin de saison, utilise la suggestion sur l’accueil.',
+    en: 'To adjust the end of season, use the suggestion on the home screen.',
+  },
   profile_label_situation_change_q: { fr: 'Quelque chose a changé ?', en: 'Anything changed?' },
   profile_label_season_detected: { fr: 'Saison détectée', en: 'Detected season' },
   profile_label_next_match: { fr: 'Prochain match', en: 'Next match' },

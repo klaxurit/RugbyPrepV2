@@ -1,3 +1,9 @@
+/**
+ * Season transition ownership:
+ * - Home is the primary surface (`SeasonTransitionBanner` + dismiss).
+ * - Profile (`MaSituationSection`) is for explicit manual overrides only; see
+ *   `shouldShowProfileSeasonActions` when a Home banner already covers the same case.
+ */
 import { useCallback, useMemo, useState } from 'react'
 import type { AnnualPlanningContext } from '../types/annualPlanning'
 import type { CalendarEvent, UserProfile } from '../types/training'

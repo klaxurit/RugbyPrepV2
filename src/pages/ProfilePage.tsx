@@ -28,6 +28,7 @@ import { useACWR } from '../hooks/useACWR'
 import { getToday } from '../services/ui/debugDateOverride'
 import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
 import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
+import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import type { AnnualCycle, AnnualPlanningContext } from '../types/annualPlanning'
 import { cycleToSeasonMode } from '../services/season/transitionJournal'
 import type { AuthError } from '../types/auth'
@@ -359,6 +360,7 @@ export function ProfilePage() {
       nextMatch,
       detectedCycle,
       showSkipOffSeasonRecovery,
+      planningContext: annualPlanningPreview,
     }
   }, [
     profile,
@@ -371,6 +373,13 @@ export function ProfilePage() {
     today,
     lang,
   ])
+
+  const { transition: seasonTransition } = useSeasonTransitions({
+    planningContext: situationData.planningContext ?? null,
+    today,
+    visibleEvents: visibleEvents ?? [],
+    profile,
+  })
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -635,6 +644,7 @@ export function ProfilePage() {
             updateProfile={updateProfile}
             today={today}
             lang={lang}
+            seasonTransition={seasonTransition}
           />
         </CollapsibleSection>
 
