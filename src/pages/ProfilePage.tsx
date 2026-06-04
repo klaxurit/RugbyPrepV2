@@ -3,9 +3,11 @@ import { useMemo, useRef, useState, useEffect } from 'react'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Flame, Languages } from 'lucide-react'
+import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Languages } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
 import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
+import { FormeDuMomentSection } from '../components/profile/FormeDuMomentSection'
+import { MaSituationSection } from '../components/profile/MaSituationSection'
 import { getPositionIllustration } from '../assets/positions'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
@@ -26,11 +28,9 @@ import { getToday } from '../services/ui/debugDateOverride'
 import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
 import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
 import type { AnnualCycle, AnnualPlanningContext } from '../types/annualPlanning'
-import type { TransitionEntry } from '../types/training'
-import { appendTransitionEntry, restoreLastTransition, cycleToSeasonMode } from '../services/season/transitionJournal'
+import { cycleToSeasonMode } from '../services/season/transitionJournal'
 import type { AuthError } from '../types/auth'
-import type { TrainingLevel, TrainingBaseline } from '../types/training'
-import { isRestartRampUpActive, RESTART_RAMP_UP_DAYS } from '../services/program/restartRampUp'
+import type { TrainingLevel } from '../types/training'
 import { computeSCSchedule } from '../services/program/scheduleOptimizer'
 import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { supabase } from '../services/supabase/client'
@@ -45,20 +45,6 @@ function getPositionOptions(lang: Lang): readonly PositionOption[] {
     { value: 'HALF_BACKS', label: tr('pos_half_backs', lang) },
     { value: 'CENTERS',    label: tr('pos_centers', lang) },
     { value: 'BACK_THREE', label: tr('pos_back_three', lang) },
-  ]
-}
-
-type TrainingBaselineDef = {
-  value: TrainingBaseline
-  label: string
-  sub: string
-  icon: typeof RefreshCw
-}
-function getTrainingBaselinesProfile(lang: Lang): TrainingBaselineDef[] {
-  return [
-    { value: 'restart', label: tr('baseline_restart', lang), sub: tr('baseline_restart_sub', lang), icon: RefreshCw },
-    { value: 'active',  label: tr('baseline_active', lang),  sub: tr('baseline_active_sub', lang),  icon: Activity },
-    { value: 'peak',    label: tr('baseline_peak', lang),    sub: tr('baseline_peak_sub', lang),    icon: Flame },
   ]
 }
 
@@ -587,253 +573,13 @@ export function ProfilePage() {
             </div>
           </div>
 
-          {/* Ma situation */}
-          <div className="space-y-3" data-testid="ma-situation">
-            <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_situation', lang)}</label>
-
-            <div className="rounded-2xl border border-border-app bg-layer-5 p-4 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-fg-muted">{tr('profile_label_season_detected', lang)}</span>
-                <span className="text-xs font-black text-fg" data-testid="situation-cycle">{situationData.cycleLabel}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-fg-muted">{tr('profile_label_next_match', lang)}</span>
-                <span className="text-xs font-bold text-fg-emphasis" data-testid="situation-next-match">{situationData.nextMatchLabel}</span>
-              </div>
-            </div>
-
-            {(() => {
-              const mode = situationData.detectedCycle ?? profile.seasonMode ?? 'in_season'
-
-              // ── OFF-SEASON ───────────────────────────────────────────────
-              if (mode === 'off_season') {
-                const goInSeason = () => {
-                  const restored = restoreLastTransition(profile.seasonTransitionState)
-                  if (restored) {
-                    updateProfile({
-                      planningAnchors: restored.restoredAnchors,
-                      seasonMode: cycleToSeasonMode(restored.restoredCycle),
-                      seasonTransitionState: restored.updatedTransitionState,
-                    })
-                  } else {
-                    const cleanAnchors = { ...profile.planningAnchors }
-                    delete cleanAnchors.seasonEndedAt
-                    delete cleanAnchors.seasonEndedSource
-                    delete cleanAnchors.returnToTeamTrainingAt
-                    delete cleanAnchors.skipOffSeasonRecoveryIntro
-                    updateProfile({ planningAnchors: cleanAnchors, seasonMode: 'in_season' })
-                  }
-                }
-                return (
-                  <div className="space-y-2" id="reprise">
-                    <div className="flex items-center gap-2 py-2.5 px-3 rounded-2xl bg-ok-bg-muted border border-ok-bd" data-testid="situation-confirmed">
-                      <span className="text-xs font-bold text-ok-strong">{tr('profile_situation_offseason_active', lang)}</span>
-                    </div>
-
-                    {situationData.showSkipOffSeasonRecovery && (
-                      <div className="rounded-2xl border border-border-app bg-layer-5 p-3 space-y-2" data-testid="situation-skip-recovery-card">
-                        <p className="text-[10px] text-fg-muted leading-relaxed">{tr('profile_skip_recovery_intro_hint', lang)}</p>
-                        <button
-                          type="button"
-                          data-testid="situation-skip-recovery-intro"
-                          onClick={() =>
-                            updateProfile({
-                              planningAnchors: {
-                                ...profile.planningAnchors,
-                                skipOffSeasonRecoveryIntro: true,
-                              },
-                            })
-                          }
-                          className="w-full rounded-xl border border-brand-border bg-brand-soft px-3 py-2 text-[11px] font-bold text-brand-tint hover:bg-brand-soft/80 rf-focus-ring"
-                        >
-                          {tr('profile_skip_recovery_intro_btn', lang)}
-                        </button>
-                      </div>
-                    )}
-
-                    {profile.planningAnchors?.skipOffSeasonRecoveryIntro && (
-                      <button
-                        type="button"
-                        data-testid="situation-undo-skip-recovery"
-                        onClick={() => {
-                          const clean = { ...profile.planningAnchors }
-                          delete clean.skipOffSeasonRecoveryIntro
-                          updateProfile({ planningAnchors: clean })
-                        }}
-                        className="w-full text-center text-[10px] font-bold text-fg-muted hover:text-fg-soft underline-offset-2 hover:underline rf-focus-ring py-1"
-                      >
-                        {tr('profile_skip_recovery_intro_undo', lang)}
-                      </button>
-                    )}
-                    {profile.planningAnchors?.returnToTeamTrainingAt ? (
-                      <div className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-brand-soft border border-brand-border" data-testid="situation-return-set">
-                        <span className="text-xs font-bold text-brand-tint">
-                          Reprise le {new Date(profile.planningAnchors.returnToTeamTrainingAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
-                        </span>
-                        <button
-                          type="button"
-                          data-testid="situation-clear-return"
-                          onClick={() => {
-                            const cleanAnchors = { ...profile.planningAnchors }
-                            delete cleanAnchors.returnToTeamTrainingAt
-                            updateProfile({ planningAnchors: cleanAnchors })
-                          }}
-                          className="text-[10px] font-bold text-brand-muted hover:text-brand-tint"
-                        >
-                          {tr('profile_situation_modify', lang)}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-1.5">
-                        <p className="text-[10px] text-fg-faint">{tr('profile_situation_return_hint', lang)}</p>
-                        <input
-                          type="date"
-                          data-testid="situation-return-date"
-                          min={today}
-                          onChange={(e) => {
-                            if (!e.target.value) return
-                            updateProfile({
-                              planningAnchors: {
-                                ...profile.planningAnchors,
-                                returnToTeamTrainingAt: e.target.value,
-                              },
-                              seasonMode: 'pre_season',
-                            })
-                          }}
-                          style={{ colorScheme: 'dark' }}
-                          className="w-full py-2.5 px-3 rounded-2xl text-xs font-bold bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all [&::-webkit-calendar-picker-indicator]:brightness-[0.7] [&::-webkit-calendar-picker-indicator]:invert"
-                        />
-                      </div>
-                    )}
-
-                    <button
-                      type="button"
-                      data-testid="situation-resume-season"
-                      onClick={goInSeason}
-                      className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
-                    >
-                      {tr('profile_situation_resume', lang)}
-                    </button>
-                  </div>
-                )
-              }
-
-              // ── PRE-SEASON ───────────────────────────────────────────────
-              if (mode === 'pre_season') {
-                return (
-                  <div className="space-y-2" id="reprise">
-                    <div className="flex items-center gap-2 py-2.5 px-3 rounded-2xl bg-brand-soft border border-brand-border" data-testid="situation-confirmed">
-                      <span className="text-xs font-bold text-brand-tint">{tr('profile_situation_preseason_active', lang)}</span>
-                    </div>
-
-                    {profile.planningAnchors?.returnToTeamTrainingAt && (
-                      <div className="flex items-center justify-between py-2.5 px-3 rounded-2xl bg-layer-5 border border-border-app" data-testid="situation-return-set">
-                        <span className="text-xs font-bold text-fg-soft">
-                          Reprise prévue le {new Date(profile.planningAnchors.returnToTeamTrainingAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
-                        </span>
-                        <button
-                          type="button"
-                          data-testid="situation-clear-return"
-                          onClick={() => {
-                            const cleanAnchors = { ...profile.planningAnchors }
-                            delete cleanAnchors.returnToTeamTrainingAt
-                            updateProfile({ planningAnchors: cleanAnchors })
-                          }}
-                          className="text-[10px] font-bold text-fg-muted hover:text-fg"
-                        >
-                          {tr('profile_situation_modify', lang)}
-                        </button>
-                      </div>
-                    )}
-
-                    <button
-                      type="button"
-                      data-testid="situation-season-started"
-                      onClick={() => {
-                        const cleanAnchors = { ...profile.planningAnchors }
-                        delete cleanAnchors.seasonEndedAt
-                        delete cleanAnchors.seasonEndedSource
-                        delete cleanAnchors.returnToTeamTrainingAt
-                        delete cleanAnchors.skipOffSeasonRecoveryIntro
-                        updateProfile({ planningAnchors: cleanAnchors, seasonMode: 'in_season' })
-                      }}
-                      className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
-                    >
-                      La saison a commencé
-                    </button>
-                  </div>
-                )
-              }
-
-              // ── IN-SEASON / PLAYOFFS (default) ────────────────────────────
-              return (
-                <>
-                  <p className="text-[10px] text-fg-faint">{tr('profile_label_situation_change_q', lang)}</p>
-                  <div className="flex flex-col gap-2">
-                    <button
-                      type="button"
-                      data-testid="situation-season-ended"
-                      onClick={() => {
-                        const anchor = situationData.lastMatchDate ?? today
-                        const prevAnchors = { ...profile.planningAnchors }
-                        const entry: TransitionEntry = {
-                          id: `t-${Date.now()}`,
-                          at: today,
-                          trigger: 'user_manual',
-                          from: {
-                            cycle: situationData.detectedCycle ?? 'in_season',
-                            weekNumber: 1,
-                            schedulingMode: 'calendar',
-                          },
-                          anchorsSnapshot: prevAnchors,
-                          to: 'off_season',
-                        }
-                        const cleanAnchors = { ...prevAnchors }
-                        delete cleanAnchors.manualPlayoffs
-                        updateProfile({
-                          planningAnchors: { ...cleanAnchors, seasonEndedAt: anchor, seasonEndedSource: 'manual' },
-                          seasonMode: 'off_season',
-                          seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
-                        })
-                      }}
-                      className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
-                    >
-                      La saison est finie
-                    </button>
-                    <button
-                      type="button"
-                      data-testid="situation-no-match"
-                      onClick={() => {
-                        const prevAnchors = { ...profile.planningAnchors }
-                        const entry: TransitionEntry = {
-                          id: `t-${Date.now()}`,
-                          at: today,
-                          trigger: 'user_manual',
-                          from: {
-                            cycle: situationData.detectedCycle ?? 'in_season',
-                            weekNumber: 1,
-                            schedulingMode: 'calendar',
-                          },
-                          anchorsSnapshot: prevAnchors,
-                          to: 'off_season',
-                        }
-                        const cleanAnchors = { ...prevAnchors }
-                        delete cleanAnchors.manualPlayoffs
-                        updateProfile({
-                          planningAnchors: { ...cleanAnchors, seasonEndedAt: today, seasonEndedSource: 'manual' },
-                          seasonMode: 'off_season',
-                          seasonTransitionState: appendTransitionEntry(profile.seasonTransitionState, entry),
-                        })
-                      }}
-                      className="py-2.5 px-3 rounded-2xl text-xs font-bold text-left bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20 transition-all"
-                    >
-                      {tr('profile_situation_no_match_now', lang)}
-                    </button>
-                  </div>
-                </>
-              )
-            })()}
-          </div>
+          <MaSituationSection
+            situationData={situationData}
+            profile={profile}
+            updateProfile={updateProfile}
+            today={today}
+            lang={lang}
+          />
 
           {/* Séances / semaine */}
           <div className="space-y-2">
@@ -1389,120 +1135,5 @@ export function ProfilePage() {
 
       <BottomNav />
     </div>
-  )
-}
-
-// ── Forme du moment — auto-hidden after settle ──────────────────────
-
-const FORME_AUTO_HIDE_DAYS = 14
-const FORME_AUTO_HIDE_SESSIONS = 3
-
-function FormeDuMomentSection({
-  profile,
-  loggedSessions,
-  onUpdateBaseline,
-  lang,
-}: {
-  profile: import('../types/training').UserProfile
-  loggedSessions: number
-  onUpdateBaseline: (value: TrainingBaseline) => void
-  lang: Lang
-}) {
-  const TRAINING_BASELINES = getTrainingBaselinesProfile(lang)
-  const [forceOpen, setForceOpen] = useState(false)
-  // Date.now() capturé une fois au mount via useState init (autorisé impur).
-  // Settled est une décision one-shot par session — pas besoin de re-évaluer en live.
-  const [mountedAt] = useState(() => Date.now())
-  const restartActive = isRestartRampUpActive(profile)
-
-  let settled = false
-  if (profile.trainingBaselineSetAt) {
-    const ageDays = (mountedAt - new Date(profile.trainingBaselineSetAt).getTime()) / 86_400_000
-    settled = ageDays >= FORME_AUTO_HIDE_DAYS || loggedSessions >= FORME_AUTO_HIDE_SESSIONS
-  }
-
-  // Sans baseline enregistré, garder la section ouverte (évite l'impression de perte).
-  // La rampe restart active doit rester visible — c'est sa raison d'être.
-  const shouldShow = forceOpen || !settled || restartActive || !profile.trainingBaseline
-
-  if (!shouldShow) {
-    const currentLabel = TRAINING_BASELINES.find((o) => o.value === profile.trainingBaseline)?.label ?? '—'
-    return (
-      <button
-        type="button"
-        onClick={() => setForceOpen(true)}
-        data-testid="profile-baseline-reveal"
-        className="w-full flex items-center justify-between gap-3 py-2.5 px-4 rounded-2xl bg-layer-5 border border-border-app text-fg-soft hover:border-layer-20 transition-colors"
-      >
-        <span className="text-xs font-bold">
-          {lang === 'fr' ? 'Forme du moment' : 'Current shape'} — <span className="text-fg-muted font-normal">{currentLabel}</span>
-        </span>
-        <span className="text-[10px] font-black text-brand-tint uppercase tracking-wide">{tr('profile_situation_modify', lang)}</span>
-      </button>
-    )
-  }
-
-  return (
-    <section
-      className="bg-layer-5 border border-border-app rounded-[24px] p-6 space-y-3"
-      data-testid="profile-section-baseline"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h2 className="text-sm font-black text-fg">{lang === 'fr' ? 'Forme du moment' : 'Current shape'}</h2>
-          <p className="text-xs text-fg-muted">{lang === 'fr' ? 'Module la charge des 2 premières semaines selon ton état de reprise.' : 'Adjusts the load of the first 2 weeks based on your return state.'}</p>
-        </div>
-        {restartActive && (
-          <span className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-brand-soft border border-brand-border text-[10px] font-black text-brand-tint">
-            <RefreshCw className="w-3 h-3" />
-            {lang === 'fr' ? 'Rampe active' : 'Ramp active'}
-          </span>
-        )}
-      </div>
-      <div className="flex flex-col gap-2">
-        {TRAINING_BASELINES.map((opt) => {
-          const active = profile.trainingBaseline === opt.value
-          const Icon = opt.icon
-          return (
-            <button
-              key={opt.value}
-              type="button"
-              data-testid={`profile-baseline-${opt.value}`}
-              onClick={() => onUpdateBaseline(opt.value)}
-              className={`flex items-center gap-3 py-2.5 px-3 rounded-2xl text-xs font-bold text-left transition-all ${
-                active
-                  ? 'bg-brand text-on-brand shadow-sm'
-                  : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
-              }`}
-            >
-              <Icon className="w-4 h-4 flex-shrink-0" />
-              <div>
-                <p className="font-black">{opt.label}</p>
-                <p className={`text-[10px] font-normal ${active ? 'text-on-brand/80' : 'text-fg-muted'}`}>{opt.sub}</p>
-              </div>
-            </button>
-          )
-        })}
-      </div>
-      {profile.trainingBaseline === 'restart' && restartActive && profile.trainingBaselineSetAt && (
-        <p className="text-[11px] text-fg-muted">
-          Volume réduit jusqu'au{' '}
-          <span className="font-black text-fg-soft">
-            {new Date(new Date(profile.trainingBaselineSetAt).getTime() + RESTART_RAMP_UP_DAYS * 86_400_000)
-              .toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
-          </span>
-          , puis retour automatique au programme normal.
-        </p>
-      )}
-      {settled && forceOpen && (
-        <button
-          type="button"
-          onClick={() => setForceOpen(false)}
-          className="text-[10px] font-bold text-fg-faint hover:text-fg-soft transition-colors"
-        >
-          Replier
-        </button>
-      )}
-    </section>
   )
 }
