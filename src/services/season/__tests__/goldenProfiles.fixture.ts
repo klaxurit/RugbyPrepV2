@@ -3,7 +3,7 @@
  * Any change to `cycle` (or optional fields below) must be intentional and documented in the commit.
  */
 import { DEFAULT_PROFILE } from '../../../hooks/useProfile'
-import type { CalendarEvent, SessionLog, UserProfile } from '../../../types/training'
+import type { CalendarEvent, FatigueStatus, SessionLog, UserProfile } from '../../../types/training'
 import type { AnnualCycle } from '../../../types/annualPlanning'
 
 export const PROFILE_PRESERVED_TEST_IDS = [
@@ -46,7 +46,7 @@ export type GoldenPlanningProfile = {
   events: CalendarEvent[]
   logs: SessionLog[]
   today: string
-  fatigue: 'OK' | 'FATIGUE' | 'INJURED'
+  fatigue: FatigueStatus
   expected: GoldenPlanningExpectation
 }
 

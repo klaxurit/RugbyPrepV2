@@ -3,11 +3,12 @@ import { useMemo, useRef, useState, useEffect } from 'react'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Languages } from 'lucide-react'
+import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
 import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
 import { FormeDuMomentSection } from '../components/profile/FormeDuMomentSection'
 import { MaSituationSection } from '../components/profile/MaSituationSection'
+import { ProfilePreferencesSection } from '../components/profile/ProfilePreferencesSection'
 import { getPositionIllustration } from '../assets/positions'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
@@ -61,11 +62,6 @@ function getTrainingLevelsProfile(lang: Lang): TrainingLevelProfileDef[] {
     { value: 'performance', label: tr('level_performance', lang), sub: tr('level_performance_sub', lang), emoji: '🏆', legacyLevel: 'intermediate' },
   ]
 }
-
-const LANGUAGE_OPTIONS = [
-  { value: 'fr' as const, label: 'Français', sub: 'Programme affiché en français' },
-  { value: 'en' as const, label: 'English', sub: 'Program and exercises in english' },
-]
 
 type CancelReason = 'too_expensive' | 'not_useful' | 'missing_features' | 'bugs' | 'season_over' | 'other'
 function getCancelReasons(lang: Lang): { value: CancelReason; label: string }[] {
@@ -621,105 +617,16 @@ export function ProfilePage() {
           />
         </CollapsibleSection>
 
-        {/* Langue */}
-        <CollapsibleSection
-          title={tr('profile_section_lang', lang)}
-          subtitle={tr('profile_section_lang_sub', lang)}
-          icon={<Languages className="w-4 h-4" />}
-          iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
-          testId="profile-section-language"
-        >
-          <div className="grid grid-cols-2 gap-2">
-            {LANGUAGE_OPTIONS.map((opt) => {
-              const active = (profile.preferredLanguage ?? 'fr') === opt.value
-              return (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => updateProfile({ preferredLanguage: opt.value })}
-                  className={`py-2.5 px-3 rounded-2xl text-left transition-all ${
-                    active
-                      ? 'bg-brand text-on-brand shadow-sm'
-                      : 'bg-layer-5 text-fg-soft border border-border-app hover:border-layer-20'
-                  }`}
-                >
-                  <p className="text-xs font-black">{opt.label}</p>
-                  <p className={`mt-0.5 text-[10px] ${active ? 'text-on-brand/80' : 'text-fg-muted'}`}>{opt.sub}</p>
-                </button>
-              )
-            })}
-          </div>
-        </CollapsibleSection>
-
-        {/* Morphologie */}
-        <CollapsibleSection
-          title={tr('profile_section_morpho', lang)}
-          subtitle={tr('profile_section_morpho_sub', lang)}
-          icon={<Ruler className="w-4 h-4" />}
-          iconClassName="bg-violet-50 text-violet-600 border border-violet-200"
-          testId="profile-section-morphology"
-        >
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_height', lang)}</label>
-              <input
-                type="number"
-                inputMode="numeric"
-                min={140}
-                max={230}
-                value={heightInput}
-                onChange={(e) => setHeightInput(e.target.value)}
-                onBlur={() => {
-                  const v = parseInt(heightInput, 10)
-                  if (!isNaN(v) && v >= 140 && v <= 230) updateProfile({ heightCm: v })
-                }}
-                placeholder="182"
-                className="w-full h-11 rounded-2xl border border-border-app bg-layer-5 px-3 text-sm font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand rf-focus-ring"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_weight', lang)}</label>
-              <input
-                type="number"
-                inputMode="decimal"
-                min={40}
-                max={200}
-                step={0.5}
-                value={weightInput}
-                onChange={(e) => setWeightInput(e.target.value)}
-                onBlur={() => {
-                  const v = parseFloat(weightInput.replace(',', '.'))
-                  if (!isNaN(v) && v >= 40 && v <= 200) updateProfile({ weightKg: v })
-                }}
-                placeholder="95"
-                className="w-full h-11 rounded-2xl border border-border-app bg-layer-5 px-3 text-sm font-black text-fg placeholder:text-fg-ghost focus:outline-none focus:border-brand rf-focus-ring"
-              />
-            </div>
-          </div>
-
-          {morphoBmi != null && (() => {
-            const bmi = morphoBmi
-            const isForward = profile.rugbyPosition === 'FRONT_ROW' || profile.rugbyPosition === 'SECOND_ROW' || profile.rugbyPosition === 'BACK_ROW'
-            const label =
-              bmi < 20 ? tr('bmi_underweight', lang) :
-              bmi < 24 ? tr(isForward ? 'profile_bmi_light_forward' : 'bmi_optimal_back', lang) :
-              bmi < 27 ? tr(isForward ? 'bmi_adequate_forward' : 'bmi_above_back', lang) :
-              bmi < 31 ? tr(isForward ? 'bmi_optimal_forward' : 'bmi_above_norm', lang) :
-              tr(isForward ? 'bmi_big_forward' : 'bmi_surcharge_back', lang)
-            return (
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-violet-50 border border-violet-200">
-                <div>
-                  <p className="text-xs font-bold text-violet-600 uppercase tracking-wide">IMC</p>
-                  <p className="text-sm font-bold text-fg-emphasis mt-0.5">{label}</p>
-                </div>
-                <span className="text-2xl font-black text-violet-600">{bmi.toFixed(1)}</span>
-              </div>
-            )
-          })()}
-        </CollapsibleSection>
-
+        <ProfilePreferencesSection
+          profile={profile}
+          updateProfile={updateProfile}
+          lang={lang}
+          heightInput={heightInput}
+          weightInput={weightInput}
+          onHeightInputChange={setHeightInput}
+          onWeightInputChange={setWeightInput}
+          morphoBmi={morphoBmi}
+        />
 
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-4">
           <div className="flex items-center gap-2">

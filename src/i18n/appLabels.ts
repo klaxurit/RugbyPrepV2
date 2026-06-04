@@ -381,6 +381,8 @@ export const APP_LABELS = {
   profile_section_program_sub: { fr: 'Poste, niveau et fréquence hebdo', en: 'Position, level and weekly frequency' },
   profile_section_play: { fr: 'Infos de jeu', en: 'Game info' },
   profile_section_play_sub: { fr: 'Saison détectée et prochain match', en: 'Detected season and next match' },
+  profile_section_preferences: { fr: 'Préférences', en: 'Preferences' },
+  profile_section_preferences_sub: { fr: 'Langue et morphologie', en: 'Language and body metrics' },
   profile_section_lang: { fr: 'Langue', en: 'Language' },
   profile_section_lang_sub: { fr: "Français ou English pour les noms d'exercices", en: 'French or English for exercise names' },
   profile_section_morpho: { fr: 'Morphologie', en: 'Morphology' },
