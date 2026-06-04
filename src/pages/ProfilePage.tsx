@@ -3,7 +3,7 @@ import { useMemo, useRef, useState, useEffect } from 'react'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Languages } from 'lucide-react'
+import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Ruler, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Languages } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
 import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
 import { FormeDuMomentSection } from '../components/profile/FormeDuMomentSection'
@@ -508,15 +508,13 @@ export function ProfilePage() {
           lang={lang}
         />
 
-        {/* Infos de jeu */}
         <CollapsibleSection
-          title={tr('profile_section_play', lang)}
-          subtitle={tr('profile_section_play_sub', lang)}
-          icon={<Flag className="w-4 h-4" />}
+          title={tr('profile_section_program', lang)}
+          subtitle={tr('profile_section_program_sub', lang)}
+          icon={<Activity className="w-4 h-4" />}
           iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
-          testId="profile-section-playinfo"
+          testId="profile-section-program"
         >
-          {/* Poste */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_position', lang)}</label>
             <div className="grid grid-cols-2 gap-2">
@@ -540,7 +538,6 @@ export function ProfilePage() {
             </div>
           </div>
 
-          {/* Niveau d'entraînement */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_training_level', lang)}</label>
             <div className="flex flex-col gap-2">
@@ -573,15 +570,6 @@ export function ProfilePage() {
             </div>
           </div>
 
-          <MaSituationSection
-            situationData={situationData}
-            profile={profile}
-            updateProfile={updateProfile}
-            today={today}
-            lang={lang}
-          />
-
-          {/* Séances / semaine */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_sessions_per_week', lang)}</label>
             <div className="grid grid-cols-2 gap-2">
@@ -615,7 +603,22 @@ export function ProfilePage() {
               })}
             </div>
           </div>
+        </CollapsibleSection>
 
+        <CollapsibleSection
+          title={tr('profile_section_play', lang)}
+          subtitle={tr('profile_section_play_sub', lang)}
+          icon={<Flag className="w-4 h-4" />}
+          iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
+          testId="profile-section-playinfo"
+        >
+          <MaSituationSection
+            situationData={situationData}
+            profile={profile}
+            updateProfile={updateProfile}
+            today={today}
+            lang={lang}
+          />
         </CollapsibleSection>
 
         {/* Langue */}
