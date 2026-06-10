@@ -76,6 +76,8 @@ interface ResolvedDay {
   durationIsActual?: boolean
   isCompleted?: boolean
   isSkipped?: boolean
+  /** Log historique quand la séance est déjà faite (consultation). */
+  sessionLogId?: string
   /** Pour match */
   match?: PresentedMatchEvent
   /** Pour recovery */
@@ -120,7 +122,7 @@ export interface WeekDailyPlannerProps {
   /** Renvoie un titre formaté à partir d'un sessionSlot (mère-séance ID). */
   formatSessionTitle: (motherSessionId: string) => string
 
-  onSessionSelect: (index: number) => void
+  onSessionSelect: (index: number, options?: { reviewLogId?: string }) => void
   onSelectMatchByDate: (dateISO: string) => void
   onActiveRecoveryQuick?: (activity: string, dateISO: string) => void
 }
@@ -223,6 +225,7 @@ export function WeekDailyPlanner({
         durationIsActual: realDuration != null,
         isCompleted: session?.completionStatus === 'completed' || dayLog != null,
         isSkipped: session?.completionStatus === 'skipped',
+        sessionLogId: dayLog?.id,
         match: match ?? undefined,
         arDone: arDoneByDate.has(dateISO),
         arEligible: activeRecoveryEligibleDays.includes(dow),
@@ -378,7 +381,7 @@ function DayStrip({ days, activeIdx, onSelect, lang }: DayStripProps) {
 interface FeatureCardSwitchProps {
   day: ResolvedDay
   lang: 'fr' | 'en'
-  onSessionSelect: (index: number) => void
+  onSessionSelect: (index: number, options?: { reviewLogId?: string }) => void
   onSelectMatchByDate: (dateISO: string) => void
   onActiveRecoveryQuick?: (activity: string, dateISO: string) => void
 }
@@ -393,7 +396,19 @@ function FeatureCardSwitch({
     case 'match':
       return <MatchCard day={day} onClick={() => onSelectMatchByDate(day.dateISO)} />
     case 'gym':
-      return <GymCard day={day} onStart={() => day.sessionIndex != null && onSessionSelect(day.sessionIndex)} />
+      return (
+        <GymCard
+          day={day}
+          onStart={() => {
+            if (day.sessionIndex == null) return
+            if (day.isCompleted && day.sessionLogId) {
+              onSessionSelect(day.sessionIndex, { reviewLogId: day.sessionLogId })
+            } else {
+              onSessionSelect(day.sessionIndex)
+            }
+          }}
+        />
+      )
     case 'recovery':
       return <RecoveryCard day={day} onQuickLog={onActiveRecoveryQuick} />
     case 'unavailable':

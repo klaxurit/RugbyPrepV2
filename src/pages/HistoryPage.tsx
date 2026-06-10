@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Trash2, Calendar, Activity, Dumbbell, Zap, ChevronDown, Lock } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { tr, type Lang } from '../i18n/appLabels'
@@ -58,6 +58,7 @@ const formatDateTime = (iso: string, lang: Lang) =>
   })
 
 export function HistoryPage() {
+  const navigate = useNavigate()
   const { logs, clearLogs } = useHistory()
   const { logs: blockLogs } = useBlockLogs()
   const { profile } = useProfile()
@@ -162,7 +163,13 @@ export function HistoryPage() {
                 const cyclePart = getSessionLogCycleLabel(log, lang)
 
                 return (
-                  <div key={log.id} className="p-4 flex items-start justify-between gap-2" data-testid="history-log-entry">
+                  <button
+                    key={log.id}
+                    type="button"
+                    onClick={() => navigate(`/session/log/${log.id}`)}
+                    className="w-full p-4 flex items-start justify-between gap-2 text-left hover:bg-layer-4 transition-colors rf-focus-ring"
+                    data-testid="history-log-entry"
+                  >
                     <div className="flex items-start gap-3 min-w-0">
                       <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 mt-0.5 ${sessionTypeStyles[log.sessionType]}`}>
                         {sessionTypeIcon[log.sessionType]}
@@ -183,7 +190,7 @@ export function HistoryPage() {
                     }`}>
                       {log.fatigue === 'OK' ? 'OK' : tr('history_fatigue_tired', lang)}
                     </div>
-                  </div>
+                  </button>
                 )
               })}
             </div>

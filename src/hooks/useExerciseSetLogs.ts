@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { ExerciseSetLog } from '../types/training'
+import type { ExerciseSetLog, SessionLog } from '../types/training'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
@@ -174,6 +174,26 @@ export const useExerciseSetLogs = () => {
     [logs],
   )
 
+  /** Séries liées à un log de séance (session_log_id prioritaire, sinon slotSignature). */
+  const getSetsForSessionLog = useCallback(
+    (log: Pick<SessionLog, 'id' | 'slotSignature'>): ExerciseSetLog[] => {
+      const byLogId = logs.filter((l) => l.sessionLogId === log.id)
+      const source =
+        byLogId.length > 0
+          ? byLogId
+          : log.slotSignature
+            ? logs.filter((l) => l.slotSignature === log.slotSignature)
+            : []
+      return [...source].sort(
+        (a, b) =>
+          a.blockNumber - b.blockNumber ||
+          a.tourIndex - b.tourIndex ||
+          a.exerciseId.localeCompare(b.exerciseId),
+      )
+    },
+    [logs],
+  )
+
   /** Dernière entrée loggée pour un exerciseId (toutes séances confondues). */
   const getLastSetForExercise = useCallback(
     (exerciseId: string): ExerciseSetLog | undefined => {
@@ -223,5 +243,13 @@ export const useExerciseSetLogs = () => {
       .sort((a, b) => b.dateISO.localeCompare(a.dateISO))
   }, [logs])
 
-  return { logs, upsertSet, linkToSessionLog, getSetsForSlot, getLastSetForExercise, allPRsWithDates }
+  return {
+    logs,
+    upsertSet,
+    linkToSessionLog,
+    getSetsForSlot,
+    getSetsForSessionLog,
+    getLastSetForExercise,
+    allPRsWithDates,
+  }
 }

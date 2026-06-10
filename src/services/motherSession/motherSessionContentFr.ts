@@ -2024,6 +2024,158 @@ const TEXT_EXACT_FR: Record<string, string> = {
     'Garder ça court et concret.',
   'The player should feel ready for moderate upper training, not primed for max effort.':
     'Tu dois te sentir prêt pour un entraînement haut du corps modéré, pas préparé pour un effort max.',
+  'Add load only if the player owns full range and clean body position.':
+    'Ajouter de la charge seulement si le joueur maîtrise l\'amplitude complète et une position du corps propre.',
+  'Back three should keep the sled lighter, faster, and cleaner.':
+    'La ligne arrière doit garder le traîneau plus léger, plus rapide et plus propre.',
+  'Back three should keep the throw slightly cleaner and faster.':
+    'La ligne arrière doit garder le lancer un peu plus propre et plus rapide.',
+  'Broad jump is about projection quality, not chasing distance.':
+    'Le saut en longueur sans élan vise la qualité de projection, pas la recherche de distance.',
+  'Broad jumps must stay sharp and crisp; stop chasing distance once quality drops.':
+    'Les sauts doivent rester vifs et nets ; arrêter de chercher la distance dès que la qualité baisse.',
+  'If sprint volume is already high that week, reduce this block to `2 rounds` before cutting later support work.':
+    'Si le volume de sprint est déjà élevé cette semaine, réduire ce bloc à `2 tours` avant de couper le travail de support ultérieur.',
+  'If the ground is poor or the player is already fatigued, keep only calf raises or skip the block entirely.':
+    'Si le sol est mauvais ou si le joueur est déjà fatigué, garder uniquement les mollets ou sauter le bloc entièrement.',
+  'If the player already uses a good field warm-up, keep it as long as it covers ankles, hips, acceleration posture, and trunk readiness.':
+    'Si le joueur utilise déjà un bon échauffement terrain, le garder tant qu\'il couvre chevilles, hanches, posture d\'accélération et préparation du tronc.',
+  'If the player already uses a good field warm-up, keep it if it covers ankles, hips, trunk posture, and acceleration mechanics.':
+    'Si le joueur utilise déjà un bon échauffement terrain, le garder s\'il couvre chevilles, hanches, posture du tronc et mécanique d\'accélération.',
+  'If the player also performs `LOWER_PRESEASON_POWER_BACK_THREE_V1` in the same week, keep this throw at the low end of the range or use the Pallof swap.':
+    'Si le joueur réalise aussi `LOWER_PRESEASON_POWER_BACK_THREE_V1` la même semaine, garder ce lancer au bas de la fourchette ou utiliser l\'alternative Pallof.',
+  'If the player arrives with heavy legs or poor jump quality, reduce this block to `2 rounds` before cutting anything else.':
+    'Si le joueur arrive avec des jambes lourdes ou une mauvaise qualité de saut, réduire ce bloc à `2 tours` avant de couper autre chose.',
+  'If the player is already tired, reduce this block first.':
+    'Si le joueur est déjà fatigué, réduire ce bloc en premier.',
+  'If the player is very springy and experienced, allow slightly more reactive execution in `W7-W8`.':
+    'Si le joueur est très réactif et expérimenté, autoriser une exécution légèrement plus réactive en `W7-W8`.',
+  'If weekly adductor work looks insufficient, extend this block to `EMOM 9\'` by adding `Copenhagen Hold` on minute 3.':
+    'Si le travail adducteur hebdomadaire semble insuffisant, étendre ce bloc en `EMOM 9\'` en ajoutant `Copenhagen Hold` à la minute 3.',
+  'It should take around `2-3 min`, not become a separate accessory block.':
+    'Cela devrait prendre environ `2-3 min`, sans devenir un bloc accessoire séparé.',
+  'Keep the holds clean and submaximal.':
+    'Garder les maintiens propres et sous-maximaux.',
+  'Keep the incline press controlled and the row strict.':
+    'Garder la presse inclinée contrôlée et le rowing strict.',
+  'Keep the med ball light enough for true speed.':
+    'Garder le med ball assez léger pour une vraie vitesse.',
+  'Keep this block short and efficient.':
+    'Garder ce bloc court et efficace.',
+  'Lower-leg work should feel useful, not like a bodybuilding detour.':
+    'Le travail du bas de jambe doit sembler utile, pas comme un détour bodybuilding.',
+  'Pull-up : add load only if the player owns full range and clean body position.':
+    'Tractions : ajouter de la charge seulement si le joueur maîtrise l\'amplitude complète et une position du corps propre.',
+  'Suitcase carry should reinforce trunk stiffness and unilateral posture without slowing the player down.':
+    'La farmer walk unilatérale doit renforcer la rigidité du tronc et la posture unilatérale sans ralentir le joueur.',
+  'The focus early is acceleration posture and the quality of the first steps, not max velocity.':
+    'Le focus initial est la posture d\'accélération et la qualité des premiers pas, pas la vitesse max.',
+  'The lunge restores unilateral support without loading it as hard as the Lower Transition session.':
+    'La fente restaure le support unilatéral sans le charger aussi fort que la séance Lower Transition.',
+  'The player can keep their own full-body warm-up if it covers hips, trunk, and upper-body readiness.':
+    'Le joueur peut garder son propre échauffement corps complet s\'il couvre hanches, tronc et préparation du haut du corps.',
+  'The player can keep their own full-body warm-up if it covers hips, trunk, ankle stiffness, and upper-body readiness.':
+    'Le joueur peut garder son propre échauffement corps complet s\'il couvre hanches, tronc, rigidité de cheville et préparation du haut du corps.',
+  'The player can keep their own lower-body warm-up if it prepares ankles, hips, hamstrings, and posterior chain.':
+    'Le joueur peut garder son propre échauffement bas du corps s\'il prépare chevilles, hanches, ischio-jambiers et chaîne postérieure.',
+  'The player can keep their own upper-body warm-up if it covers thoracic mobility, scap control, and pressing readiness.':
+    'Le joueur peut garder son propre échauffement haut du corps s\'il couvre mobilité thoracique, contrôle scapulaire et préparation à la poussée.',
+  'The player should feel prepared for moderate training, not warmed up like a max-effort day.':
+    'Le joueur doit se sentir prêt pour un entraînement modéré, pas échauffé comme pour un jour d\'effort maximal.',
+  'The player should feel ready to train moderately, not fully activated for maximal output.':
+    'Le joueur doit se sentir prêt à s\'entraîner modérément, pas pleinement activé pour une sortie maximale.',
+  'The player should finish this block feeling stable and put back together, not smoked.':
+    'Le joueur doit terminer ce bloc en se sentant stable et remis, pas cuit.',
+  'The rotational throw should stay sharp and athletic, not become a fatigue drill.':
+    'Le lancer rotationnel doit rester vif et athlétique, sans devenir un drill de fatigue.',
+  'The rotational throw should stay sharp and coordinated, not become a fatigue drill.':
+    'Le lancer rotationnel doit rester vif et coordonné, sans devenir un drill de fatigue.',
+  'The rotational throw should stay sharp and violent, not become a fatigue drill.':
+    'Le lancer rotationnel doit rester vif et explosif, sans devenir un drill de fatigue.',
+  'The unilateral lift should still support hip and groin control, not become a quad-burner.':
+    'Le travail unilatéral doit encore soutenir le contrôle de hanche et des adducteurs, sans devenir un brûleur de quadriceps.',
+  'This block adds upper-body expression without simply copying the main back-three upper cluster.':
+    'Ce bloc ajoute de l\'expression haut du corps sans simplement copier le cluster haut principal ligne arrière.',
+  'This block adds upper-body expression without simply copying the main front-row upper cluster.':
+    'Ce bloc ajoute de l\'expression haut du corps sans simplement copier le cluster haut principal avants.',
+  'This block bridges posterior chain strength to horizontal power expression.':
+    'Ce bloc fait le pont entre la force de la chaîne postérieure et l\'expression de puissance horizontale.',
+  'This block develops pulling power and trunk transfer.':
+    'Ce bloc développe la puissance de tirage et le transfert du tronc.',
+  'This block is about building force, not chasing grinders.':
+    'Ce bloc vise à construire la force, pas à poursuivre des séries pénibles.',
+  'This block is the major change from Phase 1: the hinge-led force exposure now converts directly into output.':
+    'Ce bloc est le changement majeur depuis la phase 1 : l\'exposition à la force dominée par la charnière se convertit maintenant directement en production.',
+  'This block maintains force balance across pressing and pulling patterns.':
+    'Ce bloc maintient l\'équilibre de force entre les patterns de poussée et de tirage.',
+  'This block maintains single-leg balance and trunk integrity.':
+    'Ce bloc maintient l\'équilibre unipodal et l\'intégrité du tronc.',
+  'This block opens the session with force and elastic output while keeping a cleaner, more athletic posture than a heavier hinge-led pattern.':
+    'Ce bloc ouvre la séance avec force et production élastique tout en gardant une posture plus propre et plus athlétique qu\'un schéma plus lourd dominé par la charnière.',
+  'This block opens the session with lower-body force support and athletic output without duplicating the main lower-day opening.':
+    'Ce bloc ouvre la séance avec un support de force bas du corps et une production athlétique sans dupliquer l\'ouverture principale du jour bas.',
+  'This block should already feel very close to the later in-season front-row lower session.':
+    'Ce bloc devrait déjà sembler très proche de la séance bas avants en saison ultérieure.',
+  'This block should finish the session with control and support, not fatigue.':
+    'Ce bloc doit terminer la séance avec contrôle et support, pas de la fatigue.',
+  'This block should reinforce posture, rotation strength, and robustness, not flatten the player.':
+    'Ce bloc doit renforcer posture, force rotationnelle et robustesse, sans écraser le joueur.',
+  'This block should stay strong and useful, not flashy.':
+    'Ce bloc doit rester fort et utile, pas spectaculaire.',
+  'This block should support force-to-power transfer without becoming a second contrast block.':
+    'Ce bloc doit soutenir le transfert force-puissance sans devenir un second bloc de contraste.',
+  'This block should support future force-to-power transfer without becoming a contrast block already.':
+    'Ce bloc doit soutenir le futur transfert force-puissance sans devenir déjà un bloc de contraste.',
+  'This block should support transfer, not bury the player.':
+    'Ce bloc doit soutenir le transfert, pas enterrer le joueur.',
+  'This block should support upper-body transfer, not flatten the player.':
+    'Ce bloc doit soutenir le transfert haut du corps, sans écraser le joueur.',
+  'This block supports upper volume without repeating the exact structure of the Upper Transition session.':
+    'Ce bloc soutient le volume haut du corps sans répéter la structure exacte de la séance Upper Transition.',
+  'This pair supports upper force development without repeating the exact structure of the main upper session.':
+    'Cette paire soutient le développement de la force haut du corps sans répéter la structure exacte de la séance haut principale.',
+  'This should feel like real upper force work, not conditioning.':
+    'Cela doit sembler un vrai travail de force haut du corps, pas du conditionnement.',
+  'This should feel like useful training, not like chasing a pump.':
+    'Cela doit sembler un entraînement utile, pas une recherche de pump.',
+  'Use this when the player enjoys the feeling of a small arm pump before match exposure and is recovering well.':
+    'Utiliser quand le joueur apprécie la sensation d\'un petit pump des bras avant l\'exposition match et récupère bien.',
+  'Use this when the player likes a small arm pump and a little neck/contact confidence before match exposure.':
+    'Utiliser quand le joueur aime un petit pump des bras et un peu de confiance cou/contact avant l\'exposition match.',
+  'keep the same pair format with two different start styles':
+    'garder le même format en paire avec deux styles de départ différents',
+  'Jumps must stay crisp and athletic; stop if take-off quality drops.':
+    'Les sauts doivent rester nets et athlétiques ; arrêter si la qualité au décollage baisse.',
+  'Hip thrust should be powerful and clean, without exaggerated lumbar extension.':
+    'Le hip thrust doit être puissant et propre, sans extension lombaire exagérée.',
+  'replace Exercise A with `Reverse Lunge` or `RFESS` `3x4/side` only if the weekly plan needs more unilateral exposure than the default version provides':
+    'remplacer l\'exercice A par `Reverse Lunge` ou `RFESS` `3x4/côté` seulement si le plan hebdomadaire nécessite plus d\'exposition unilatérale que la version par défaut.',
+  'Load should allow maximal bar speed on every rep; if the bar slows visibly, the load is too heavy.':
+    'La charge doit permettre une vitesse de barre maximale à chaque rep ; si la barre ralentit visiblement, la charge est trop lourde.',
+  'Hip thrust : powerful and clean, no exaggerated lumbar extension. Main bilateral hip-extension exposure of the week.':
+    'Hip thrust : puissant et propre, sans extension lombaire exagérée. Principale exposition à l\'extension de hanche bilatérale de la semaine.',
+  'This block should feel athletic and useful, not like a heavy bodybuilding lower day.':
+    'Ce bloc doit sembler athlétique et utile, pas comme une journée bas lourde de bodybuilding.',
+  'Secondary fallback if the lunge pattern is too complex or space is awkward:':
+    'Alternative secondaire si le pattern de fente est trop complexe ou l\'espace est contraignant :',
+  'Skip it if the weekly lower-leg load is already well covered in the lower gym session.':
+    'Le sauter si la charge hebdomadaire du bas de jambe est déjà bien couverte dans la séance gym bas.',
+  'The rotational throw should come from hips and trunk, not an arm swing.':
+    'Le lancer rotationnel doit venir des hanches et du tronc, pas d\'un balancement de bras.',
+  'Secondary fallback if the lunge pattern is awkward in context:':
+    'Alternative secondaire si le pattern de fente est maladroit dans le contexte :',
+  'Skip it first if the lower gym day already covers calf and tibialis well.':
+    'Le sauter en premier si le jour gym bas couvre déjà bien mollets et tibial antérieur.',
+  'This replaces the med ball chest pass of the front-row version.':
+    'Ceci remplace la passe poitrine med ball de la version avants.',
+  'The med ball throw should stay sharp, violent, and technically clean.':
+    'Le lancer med ball doit rester vif, violent et techniquement propre.',
+  'T-Bar row should stay strong and strict, without torso cheating.':
+    'Le T-Bar row doit rester fort et strict, sans triche du buste.',
+  'Automatic alternative if the bar is not available: `Neutral-Grip DB Bench Press`.':
+    'Alternative automatique si la barre n\'est pas disponible : `Neutral-Grip DB Bench Press`.',
+  'T-Bar row : strong and strict, no torso cheating.':
+    'T-Bar row : fort et strict, sans triche du buste.',
 }
 
 const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
@@ -2429,7 +2581,11 @@ function translateBacktickedSegmentToFr(value: string): string {
 }
 
 function translateTextToFr(value: string): string {
-  const withBackticks = value.replace(/`([^`]+)`/g, (_match, inner: string) => {
+  const trimmed = value.trim()
+  const exact = TEXT_EXACT_FR[trimmed]
+  if (exact) return normalizeFrenchSentence(exact)
+
+  const withBackticks = trimmed.replace(/`([^`]+)`/g, (_match, inner: string) => {
     return `\`${translateBacktickedSegmentToFr(inner)}\``
   })
 
@@ -2491,6 +2647,47 @@ function buildGeneratedFrContent(session: MotherSession): SessionContentFr {
  */
 export function getSessionFr(sessionId: string): SessionContentFr | undefined {
   return SESSION_CONTENT_FR[sessionId]
+}
+
+/** Heuristique : anglais résiduel dans une note censée être en français. */
+export function looksLikeFranglais(note: string): boolean {
+  if (
+    /\bpetit pump\b/i.test(note) ||
+    /\bpump des bras\b/i.test(note) ||
+    /\brecherche de pump\b/i.test(note)
+  ) {
+    return false
+  }
+  const patterns = [
+    /\bfeel like\b/i,
+    /\bnot like\b/i,
+    /\bwithout repeating\b/i,
+    /\bupper volume\b/i,
+    /\bthe (hold|exact|first|player|bloc|structure|joueur|incline|med ball|row|lunge|rotational throw)\b/i,
+    /\b(chasing|pump)\b/i,
+    /\bfeeling stable\b/i,
+    /\bthis bloc\b/i,
+    /\bshould (feel|stay|finish|remain|support|reinforce)\b/i,
+    /\buseful training\b/i,
+    /\bTransition (session|séance)\b/i,
+    /\b(de la|of the) Upper\b/i,
+    /\b(garder|Garder) the\b/i,
+    /\b(termine|terminer) this\b/i,
+    /\brepeating the\b/i,
+    /\bexact structure\b/i,
+    /\blower-back\b/i,
+    /\bthe row should\b/i,
+    /\bnot create fatigue\b/i,
+    /\bnot become\b/i,
+    /\bsoutient upper\b/i,
+    /\bsans repeating\b/i,
+    /\bThis bloc\b/,
+    /\bThe joueur\b/,
+    /\bIt should\b/i,
+    /\bSi the\b/i,
+    /\band (propre|violent|athlétique|strict)\b/i,
+  ]
+  return patterns.some((p) => p.test(note))
 }
 
 export function getSessionFrOrFallback(session: MotherSession): SessionContentFr | undefined {

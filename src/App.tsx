@@ -26,6 +26,7 @@ const SignupPage = lazy(() => import('./pages/auth/SignupPage').then(m => ({ def
 const LandingPage = lazy(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })))
 const WeekPage = lazy(() => import('./pages/WeekPage').then(m => ({ default: m.WeekPage })))
 const SessionDetailPage = lazy(() => import('./pages/SessionDetailPage').then(m => ({ default: m.SessionDetailPage })))
+const SessionLogReviewPage = lazy(() => import('./pages/SessionLogReviewPage').then(m => ({ default: m.SessionLogReviewPage })))
 const ProgressPage = lazy(() => import('./pages/ProgressPage').then(m => ({ default: m.ProgressPage })))
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })))
 const HistoryPage = lazy(() => import('./pages/HistoryPage').then(m => ({ default: m.HistoryPage })))
@@ -190,6 +191,7 @@ function App() {
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/program" element={<ProgramPage />} />
+            <Route path="/session/log/:logId" element={<SessionLogReviewPage />} />
             <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
             <Route path="/chat" element={<ChatPage />} />
             {import.meta.env.DEV && (

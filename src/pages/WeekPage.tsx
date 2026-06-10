@@ -598,7 +598,13 @@ export function WeekPage() {
                 todayISO={today}
                 lang={lang}
                 formatSessionTitle={(id) => formatTitleFromMotherSessionId(id, lang)}
-                onSessionSelect={(index) => navigate(`/session/${index}`)}
+                onSessionSelect={(index, options) => {
+                  if (options?.reviewLogId) {
+                    navigate(`/session/log/${options.reviewLogId}`)
+                    return
+                  }
+                  navigate(`/session/${index}`)
+                }}
                 onSelectMatchByDate={openMatchByDate}
                 onActiveRecoveryQuick={(activity, dateISO) => {
                   addLog({
@@ -623,6 +629,7 @@ export function WeekPage() {
                   monthlyTonnageKg={monthlyTonnageKg}
                   isPremium={weekIsPremium}
                   onSelectMatch={(e) => setDrawerMatch(e)}
+                  onSelectSessionLog={(log) => navigate(`/session/log/${log.id}`)}
                   onAddForDate={(dateISO) => {
                     setAddModalDate(dateISO)
                     setAddModalOpen(true)

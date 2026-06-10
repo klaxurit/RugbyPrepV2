@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getSessionFr, getSessionFrOrFallback } from '../motherSessionContentFr'
+import { getSessionFr, getSessionFrOrFallback, looksLikeFranglais } from '../motherSessionContentFr'
 import { MOTHER_SESSIONS_BY_ID } from '../../../data/motherSessions.generated'
 import { msPositionGroupLabel } from '../motherSessionLabels'
 
@@ -76,20 +76,20 @@ describe('motherSessionContentFr', () => {
 
   it('all mother sessions have French coaching notes without duplicate RPE or franglais', () => {
     const duplicateRpe = /effort modéré.*effort modéré/i
-    const franglais =
-      /\b(should feel|should stay|the first real|and comfortable|not competitive|lower-back involvement|around `RPE)\b/i
 
     for (const session of Object.values(MOTHER_SESSIONS_BY_ID)) {
       const fr = getSessionFrOrFallback(session)
       expect(fr, session.metadata.id).toBeDefined()
 
-      for (const block of fr!.blocks) {
-        for (const note of block.coachingNotes) {
-          expect(duplicateRpe.test(note), `${session.metadata.id}: ${note}`).toBe(false)
-          expect(franglais.test(note), `${session.metadata.id}: ${note}`).toBe(false)
-          expect(note).toMatch(/^(`|[A-ZÀ-ÿ])/)
-          expect(note).toMatch(/[.!?…]$/)
-        }
+      const allNotes = [
+        ...fr!.warmUpNotes,
+        ...fr!.blocks.flatMap((b) => b.coachingNotes),
+      ]
+      for (const note of allNotes) {
+        expect(duplicateRpe.test(note), `${session.metadata.id}: ${note}`).toBe(false)
+        expect(looksLikeFranglais(note), `${session.metadata.id}: ${note}`).toBe(false)
+        expect(note).toMatch(/^(`|[A-ZÀ-ÿ])/)
+        expect(note).toMatch(/[.!?…]$/)
       }
     }
   })

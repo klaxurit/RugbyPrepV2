@@ -25,6 +25,8 @@ interface WeekMonthViewProps {
   /** Si false, la stat Charge est floutée + tease Premium. */
   isPremium?: boolean
   onSelectMatch?: (event: CalendarEvent) => void
+  /** Ouvre la consultation d'une séance gym déjà loguée ce jour-là. */
+  onSelectSessionLog?: (log: SessionLog) => void
   onAddForDate?: (dateISO: string) => void
 }
 
@@ -64,6 +66,7 @@ export function WeekMonthView({
   monthlyTonnageKg,
   isPremium = false,
   onSelectMatch,
+  onSelectSessionLog,
   onAddForDate,
 }: WeekMonthViewProps) {
   const todayDate = useMemo(() => new Date(`${todayISO}T12:00:00`), [todayISO])
@@ -169,10 +172,26 @@ export function WeekMonthView({
     }
   }
 
+  const gymLogByDay = useMemo(() => {
+    const map = new Map<number, SessionLog>()
+    for (const log of logs) {
+      if (log.sessionType === 'ACTIVE_RECOVERY' || log.sessionType === 'RECOVERY') continue
+      const dateOnly = log.dateISO.slice(0, 10)
+      const [y, m, d] = dateOnly.split('-').map(Number)
+      if (y === year && m - 1 === month) map.set(d, log)
+    }
+    return map
+  }, [logs, year, month])
+
   const handleCellClick = (day: number) => {
     const match = matchByDay.get(day)
     if (match && onSelectMatch) {
       onSelectMatch(match)
+      return
+    }
+    const gymLog = gymLogByDay.get(day)
+    if (gymLog && onSelectSessionLog) {
+      onSelectSessionLog(gymLog)
       return
     }
     if (onAddForDate) onAddForDate(ymd(year, month, day))
