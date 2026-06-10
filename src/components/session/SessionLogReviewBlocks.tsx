@@ -62,7 +62,7 @@ export function SessionLogReviewBlocks({ session, sets, lang }: SessionLogReview
           <ul className="mt-3 space-y-2">
             {warmup.exercises.map((exo, i) => (
               <li key={i} className="text-sm text-fg">
-                <span className="font-bold">{exerciseLabel(exo.name, exo.exerciseId, lang)}</span>
+                <span className="font-bold">{exerciseLabel(exo.name, undefined, lang)}</span>
                 {exo.prescription ? (
                   <span className="text-fg-muted"> · {exo.prescription}</span>
                 ) : null}

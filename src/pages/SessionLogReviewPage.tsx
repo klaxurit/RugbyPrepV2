@@ -37,7 +37,7 @@ export function SessionLogReviewPage() {
   const motherSession = useMemo(() => {
     if (!log?.motherSessionId) return null
     return MOTHER_SESSIONS_BY_ID[log.motherSessionId] ?? null
-  }, [log?.motherSessionId])
+  }, [log])
 
   const preparedSession = useMemo(() => {
     if (!motherSession) return null
