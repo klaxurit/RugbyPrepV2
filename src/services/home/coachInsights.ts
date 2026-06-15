@@ -32,6 +32,13 @@ function toInsight(id: CoachInsightId, lang: Lang): CoachInsight {
   return { id, ...copy }
 }
 
+function daysSinceLastTraining(logs: readonly SessionLog[], todayISO: string): number | null {
+  const trainingLogs = logs.filter((l) => l.sessionType !== 'ACTIVE_RECOVERY')
+  const lastLog = [...trainingLogs].sort((a, b) => b.dateISO.localeCompare(a.dateISO))[0]
+  if (!lastLog) return null
+  return diffDaysISO(lastLog.dateISO.slice(0, 10), todayISO)
+}
+
 export function selectCoachInsight(inputs: SelectInputs): CoachInsight {
   const { score, acwr, acwrZone, todayISO, matchEvents, logs, lang = 'fr' } = inputs
 
@@ -66,6 +73,15 @@ export function selectCoachInsight(inputs: SelectInputs): CoachInsight {
   const cutoff = fourteenDaysAgo.toISOString().slice(0, 10)
   const recentLogs = logs.filter((l) => l.dateISO >= cutoff)
   if (recentLogs.length >= 11) return toInsight('highCadence', lang)
+
+  const daysSince = daysSinceLastTraining(logs, todayISO)
+  if (daysSince != null && daysSince >= 7) {
+    return toInsight('prolongedBreak', lang)
+  }
+
+  if (acwrZone === 'underload' || (acwr != null && acwr < 0.8)) {
+    return toInsight('underload', lang)
+  }
 
   return toInsight('baseline', lang)
 }

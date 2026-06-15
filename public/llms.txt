@@ -16,7 +16,7 @@ de la périodisation, des tests physiques, de la force, de la récupération et 
 - [ACWR rugby](https://rugbyforge.fr/acwr-rugby/): guide sur le ratio charge aiguë / charge chronique
 - [Périodisation rugby](https://rugbyforge.fr/periodisation-rugby/): guide sur la DUP, les blocs et l'organisation de saison
 - [Tests physiques rugby](https://rugbyforge.fr/tests-physiques-rugby/): guide sur le CMJ, le sprint 10 m, le YYIR1 et l'estimation du 1RM
-- [Mentions légales](https://rugbyforge.fr/legal): CGU, confidentialité et contact
+- [Mentions légales](https://rugbyforge.fr/legal/): CGU, confidentialité et contact
 
 ## Faits utiles
 - Langue principale : français

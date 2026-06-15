@@ -533,6 +533,8 @@ export type CoachInsightId =
   | 'postMatch'
   | 'highCadence'
   | 'lowScore'
+  | 'prolongedBreak'
+  | 'underload'
   | 'baseline'
 
 const COACH_INSIGHT_COPY: Record<CoachInsightId, { eyebrow: L; text: L }> = {
@@ -569,6 +571,20 @@ const COACH_INSIGHT_COPY: Record<CoachInsightId, { eyebrow: L; text: L }> = {
     text: {
       fr: "Score sous 50. Aujourd'hui c'est mobilité, sommeil tôt, et on relance demain. Pas de héros.",
       en: 'Score under 50. Today is mobility, early sleep, back tomorrow. No heroics.',
+    },
+  },
+  prolongedBreak: {
+    eyebrow: { fr: 'Pause prolongée', en: 'Extended break' },
+    text: {
+      fr: "Plus d'une semaine sans charge significative. Le score en prudence est normal — reprends par des séances courtes, pas un gros bloc d'un coup.",
+      en: 'Over a week without meaningful load. A cautious score is expected — restart with short sessions, not a big block all at once.',
+    },
+  },
+  underload: {
+    eyebrow: { fr: 'Charge basse', en: 'Low load' },
+    text: {
+      fr: "Volume en baisse — OK si c'est voulu. En remontée, garde l'intensité modérée et laisse le corps s'adapter.",
+      en: 'Volume is down — fine if intentional. When building back, keep intensity moderate and let your body adapt.',
     },
   },
   baseline: {

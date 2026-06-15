@@ -8,8 +8,8 @@ interface StreakCardProps {
 }
 
 /**
- * Carte "Ta cadence" — flamme dorée + compteur géant + caption italic Playfair
- * + mini-barres semaine (14 derniers jours).
+ * Carte "Ta cadence" — flamme dorée + caption italic Playfair
+ * + mini-barres 14 jours (la récence se lit sur les barres, pas via un compteur).
  */
 export function StreakCard({ streak }: StreakCardProps) {
   const { profile } = useProfile()
@@ -35,19 +35,10 @@ export function StreakCard({ streak }: StreakCardProps) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-1.5">
-            <div
-              className="text-[38px] font-extrabold leading-none tabular-nums text-fg"
-              style={{ letterSpacing: '-1.5px' }}
-            >
-              {streak.count}
-            </div>
-            <div className="text-[13px] font-bold text-fg/60">
-              {streak.count > 1 ? tr('streak_session_plural', lang) : tr('streak_session_single', lang)}
-            </div>
-          </div>
-
-          <div className="mt-0.5 font-serif italic text-[16px] font-medium text-fg/85 leading-tight [text-wrap:balance]">
+          <div
+            className="font-serif italic text-[18px] font-medium text-fg/90 leading-snug [text-wrap:balance]"
+            aria-label={`${streak.count} ${streak.count > 1 ? tr('streak_session_plural', lang) : tr('streak_session_single', lang)} sur 14 jours`}
+          >
             {streak.caption}
           </div>
 

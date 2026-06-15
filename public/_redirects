@@ -1,5 +1,9 @@
 https://www.rugbyforge.fr/* https://rugbyforge.fr/:splat 301!
 
+# Ancienne URL accentuée (404) → slug canonique
+/périodisation-rugby/       /periodisation-rugby/  301
+/périodisation-rugby/*      /periodisation-rugby/:splat  301
+
 # Routes SPA (rewrite vers index.html, status 200)
 /landing                /index.html  200
 /landing/               /index.html  200
@@ -45,8 +49,7 @@ https://www.rugbyforge.fr/* https://rugbyforge.fr/:splat 301!
 /feedback/              /index.html  200
 /founding               /index.html  200
 /founding/              /index.html  200
-/delete-account         /index.html  200
-/delete-account/        /index.html  200
+/delete-account         /delete-account/  301
 /                       /index.html  200
 
 # Tout le reste : 404 réel pour éviter le soft-404 SEO

@@ -430,6 +430,10 @@ function decomposeTitle(insight: CoachInsight): [string, string | null] {
       return ['Lendemain de match.', 'Place à la récup.']
     case 'highCadence':
       return ['Cadence solide.', 'Pense à la récup.']
+    case 'prolongedBreak':
+      return ['Pause prolongée.', 'Reprends progressivement.']
+    case 'underload':
+      return ['Charge basse.', 'Volume en baisse.']
     default:
       return [insight.eyebrow, null]
   }
