@@ -8,9 +8,10 @@ function log(dateISO: string): SessionLog {
   return {
     id: dateISO,
     dateISO,
-    sessionType: 'STRENGTH',
+    week: 'W1',
+    sessionType: 'LOWER',
     fatigue: 'OK',
-  } as SessionLog
+  }
 }
 
 describe('computeStreak', () => {
