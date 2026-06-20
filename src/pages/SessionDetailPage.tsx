@@ -793,7 +793,7 @@ export function SessionDetailPage() {
    *  - Si tous les exos loggables du bloc sont faits → autosave (handleBlockCompleted)
    */
   const handleValidateFromStickyCTA = () => {
-    if (!runningCursor || !adaptedSession) return
+    if (!runningCursor || !adaptedSession || runningCursor.isTimedBlock) return
     if (sessionRun.restTimer) sessionRun.skipRestTimer()
     const key = buildExerciseTourKey(
       runningCursor.blockNumber,
@@ -819,6 +819,22 @@ export function SessionDetailPage() {
     }
 
     handleBlockCompleted(runningCursor.blockNumber)
+  }
+
+  const handleStartTimedBlockFromStickyCTA = () => {
+    if (!runningCursor?.isTimedBlock) return
+    if (sessionRun.restTimer) sessionRun.skipRestTimer()
+    if (emomBlockNumber === runningCursor.blockNumber) return
+    handleStartEmomTimer(runningCursor.blockNumber)
+  }
+
+  const timedBlockStickyEyebrow = (blockName: string, format: string): string => {
+    const fmt = parseBlockFormat(format)
+    const name = localizeBlockName(blockName, lang)
+    if (fmt.type === 'emom') return `${name} · EMOM`
+    if (fmt.type === 'tabata') return `${name} · Tabata`
+    if (fmt.type === 'amrap') return `${name} · AMRAP`
+    return `${name} · Chrono`
   }
 
   return (
@@ -1007,6 +1023,7 @@ export function SessionDetailPage() {
               onStartIsoTimer={handleStartIsoTimer}
               onPlayDemo={handlePlayDemo}
               getLoadSuggestion={getLoadSuggestion}
+              activeEmomBlockNumber={emomBlockNumber}
               lang={lang}
             />
           </div>
@@ -1071,14 +1088,31 @@ export function SessionDetailPage() {
       {!isUnavailable && activeSlot && phase === 'running' && (
         <div className="fixed left-0 right-0 z-30 bottom-0 max-w-md mx-auto">
           {runningCursor ? (
-            <SessionStickyCTA
-              variant={{
-                kind: 'validate-exo',
-                eyebrow: `${runningCursor.blockName} · Tour ${runningCursor.tourIndex + 1}`,
-                label: `Valider · ${localizeMotherSessionExerciseName(runningCursor.exerciseName, lang)}`,
-                onValidate: handleValidateFromStickyCTA,
-              }}
-            />
+            runningCursor.isTimedBlock ? (
+              <SessionStickyCTA
+                variant={{
+                  kind: 'validate-exo',
+                  eyebrow: timedBlockStickyEyebrow(
+                    runningCursor.blockName,
+                    adaptedSession?.blocks.find((b) => b.number === runningCursor.blockNumber)?.format ?? '',
+                  ),
+                  label:
+                    emomBlockNumber === runningCursor.blockNumber
+                      ? tr('emom_chrono_active', lang)
+                      : tr('emom_start_chrono', lang),
+                  onValidate: handleStartTimedBlockFromStickyCTA,
+                }}
+              />
+            ) : (
+              <SessionStickyCTA
+                variant={{
+                  kind: 'validate-exo',
+                  eyebrow: `${runningCursor.blockName} · Tour ${runningCursor.tourIndex + 1}`,
+                  label: `Valider · ${localizeMotherSessionExerciseName(runningCursor.exerciseName, lang)}`,
+                  onValidate: handleValidateFromStickyCTA,
+                }}
+              />
+            )
           ) : (
             <SessionStickyCTA
               variant={{

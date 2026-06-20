@@ -15,6 +15,7 @@ import { CoachCompanion } from './components/CoachCompanion'
 import { ProgramChangeMount } from './components/ProgramChangeMount'
 import { UpdatePrompt } from './components/UpdatePrompt'
 import { RestTimerNotificationPrompt } from './components/notifications/RestTimerNotificationPrompt'
+import { useRestEndNotificationHaptic } from './hooks/useRestEndNotificationHaptic'
 import { CookieConsentBanner } from './components/CookieConsentBanner'
 import { FoundingOffer } from './components/FoundingOffer'
 
@@ -150,6 +151,7 @@ function StaticPageDevRedirect({ target }: { target: string }) {
 }
 
 function App() {
+  useRestEndNotificationHaptic()
   const devStaticTarget = getDevStaticTarget(window.location.pathname)
 
   if (devStaticTarget) {

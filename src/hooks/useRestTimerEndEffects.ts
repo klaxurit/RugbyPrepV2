@@ -3,6 +3,7 @@ import type { RestTimerState } from '../contexts/SessionRunContext'
 import { useRestBeepPref } from './useRestBeepPref'
 import { playRestEndBeep } from '../utils/audioBeep'
 import { vibrate } from '../utils/vibrate'
+import { REST_END_VIBRATE_PATTERN } from '../services/notifications/restEndHaptic'
 
 /**
  * Bip + auto-dismiss du timer repos uniquement au premier plan.
@@ -39,7 +40,7 @@ export function useRestTimerEndEffects(
 
     const fireEnd = () => {
       if (document.visibilityState !== 'visible') return
-      vibrate([120, 80, 120])
+      vibrate([...REST_END_VIBRATE_PATTERN])
       if (beepRef.current) playRestEndBeep()
       dismissId = window.setTimeout(() => {
         skipRef.current()
