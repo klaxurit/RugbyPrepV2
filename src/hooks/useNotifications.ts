@@ -77,9 +77,9 @@ export const useNotifications = (profile: UserProfile) => {
   const vapidPublicKeyBytes = VAPID_PUBLIC_KEY ? urlBase64ToUint8Array(VAPID_PUBLIC_KEY) : null
 
   const syncSubscription = useCallback(
-    async (subscription: PushSubscription) => {
+    async (subscription: PushSubscription, profileForDays: UserProfile) => {
       const subJson = subscription.toJSON()
-      const trainingDays = resolveTrainingDays(profile)
+      const trainingDays = resolveTrainingDays(profileForDays)
       const { error } = await supabase.functions.invoke('register-push-subscription', {
         body: {
           endpoint: subJson.endpoint,
@@ -96,7 +96,7 @@ export const useNotifications = (profile: UserProfile) => {
         throw new Error(error.message ?? 'Push subscription sync failed')
       }
     },
-    [profile],
+    [],
   )
 
   // Check current state on mount — setState calls are intentional (init from external API)
@@ -137,7 +137,7 @@ export const useNotifications = (profile: UserProfile) => {
           return
         }
 
-        await syncSubscription(sub)
+        await syncSubscription(sub, profile)
         if (!cancelled) {
           setErrorMessage(null)
           setStatus('subscribed')
@@ -156,9 +156,10 @@ export const useNotifications = (profile: UserProfile) => {
     return () => {
       cancelled = true
     }
-  }, [syncSubscription, vapidPublicKeyBytes])
+  }, [syncSubscription, vapidPublicKeyBytes, profile])
 
-  const subscribe = useCallback(async () => {
+  const subscribe = useCallback(async (opts?: { profileOverride?: UserProfile }) => {
+    const profileForSync = opts?.profileOverride ?? profile
     if (!('Notification' in window) || !('serviceWorker' in navigator)) {
       setStatus('unsupported')
       return
@@ -189,7 +190,7 @@ export const useNotifications = (profile: UserProfile) => {
           }).catch(() => undefined)
           await existing.unsubscribe()
         } else {
-          await syncSubscription(existing)
+          await syncSubscription(existing, profileForSync)
           setStatus('subscribed')
           return
         }
@@ -201,7 +202,7 @@ export const useNotifications = (profile: UserProfile) => {
         applicationServerKey: vapidPublicKeyBytes as any,
       })
 
-      await syncSubscription(subscription)
+      await syncSubscription(subscription, profileForSync)
 
       setStatus('subscribed')
     } catch (err) {
@@ -209,7 +210,18 @@ export const useNotifications = (profile: UserProfile) => {
       setErrorMessage(err instanceof Error ? err.message : 'Impossible d’activer les notifications')
       setStatus('idle')
     }
-  }, [syncSubscription, vapidPublicKeyBytes])
+  }, [profile, syncSubscription, vapidPublicKeyBytes])
+
+  /** Permission navigateur seule (fin de repos locale) — sans abonnement push. */
+  const requestBrowserPermission = useCallback(async (): Promise<'granted' | 'denied' | 'default' | 'unsupported'> => {
+    if (!('Notification' in window)) return 'unsupported'
+    if (Notification.permission === 'granted') return 'granted'
+    if (Notification.permission === 'denied') return 'denied'
+    const permission = await Notification.requestPermission()
+    if (permission === 'granted') return 'granted'
+    if (permission === 'denied') return 'denied'
+    return 'default'
+  }, [])
 
   const unsubscribe = useCallback(async () => {
     setStatus('loading')
@@ -267,5 +279,5 @@ export const useNotifications = (profile: UserProfile) => {
     }
   }, [])
 
-  return { status, errorMessage, diagnostics, isDiagnosing, subscribe, unsubscribe, runDiagnostics }
+  return { status, errorMessage, diagnostics, isDiagnosing, subscribe, unsubscribe, requestBrowserPermission, runDiagnostics }
 }

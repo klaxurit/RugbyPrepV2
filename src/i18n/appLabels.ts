@@ -510,6 +510,46 @@ export const APP_LABELS = {
   profile_notif_unsupported: { fr: 'Non supporté par ce navigateur', en: 'Not supported by this browser' },
   profile_notif_no_vapid: { fr: 'Configuration manquante (VAPID)', en: 'Missing configuration (VAPID)' },
   profile_notif_idle: { fr: 'Reçois un push chaque jour de séance', en: 'Get a push each training day' },
+  profile_notif_rest_hint: {
+    fr: 'Les alertes de fin de repos utilisent la même permission système.',
+    en: 'Rest-timer alerts use the same system permission.',
+  },
+
+  // ── Notification opt-in (soft prompt) ───────────────────────────────────
+  notif_prompt_onboarding_aria: { fr: 'Activer les rappels', en: 'Enable reminders' },
+  notif_prompt_rest_aria: { fr: 'Alertes fin de repos', en: 'Rest timer alerts' },
+  notif_prompt_onboarding_eyebrow: { fr: 'Dernière étape', en: 'Last step' },
+  notif_prompt_rest_eyebrow: { fr: 'Pendant ta séance', en: 'During your session' },
+  notif_prompt_onboarding_title: { fr: 'Activer les rappels ?', en: 'Enable reminders?' },
+  notif_prompt_rest_title: { fr: 'Alerte quand le repos est fini ?', en: 'Alert when rest is over?' },
+  notif_prompt_onboarding_body: {
+    fr: 'Un petit rappel le matin de tes jours de séance — tu peux désactiver à tout moment dans ton profil.',
+    en: 'A gentle reminder on your training mornings — you can turn it off anytime in your profile.',
+  },
+  notif_prompt_rest_body: {
+    fr: 'Si tu quittes l’app pendant le repos, on te prévient quand c’est reparti. Pratique entre deux séries.',
+    en: 'If you leave the app during rest, we notify you when time is up. Handy between sets.',
+  },
+  notif_prompt_onboarding_bullet_training: {
+    fr: 'Rappel push le matin de tes jours de muscu',
+    en: 'Push reminder on your gym days',
+  },
+  notif_prompt_onboarding_bullet_rest: {
+    fr: 'Alerte locale à la fin du temps de repos',
+    en: 'Local alert when rest ends',
+  },
+  notif_prompt_onboarding_bullet_profile: {
+    fr: 'Désactivable à tout moment dans Profil',
+    en: 'Can be turned off anytime in Profile',
+  },
+  notif_prompt_enable: { fr: 'Activer les rappels', en: 'Enable reminders' },
+  notif_prompt_enable_rest: { fr: 'Activer les alertes', en: 'Enable alerts' },
+  notif_prompt_later: { fr: 'Plus tard', en: 'Not now' },
+  notif_prompt_enabling: { fr: 'Activation…', en: 'Enabling…' },
+  notif_prompt_privacy_note: {
+    fr: 'Tu choisis — aucune notification sans ton accord. Réglages dans Profil.',
+    en: 'Your choice — no notifications without your consent. Manage in Profile.',
+  },
 
   // ── ProfilePage · Avatar errors & UI ────────────────────────────────────
   profile_avatar_aria: { fr: 'Changer la photo de profil', en: 'Change profile picture' },
