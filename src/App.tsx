@@ -14,6 +14,7 @@ import { useAuth } from './hooks/useAuth'
 import { CoachCompanion } from './components/CoachCompanion'
 import { ProgramChangeMount } from './components/ProgramChangeMount'
 import { UpdatePrompt } from './components/UpdatePrompt'
+import { RestTimerNotificationPrompt } from './components/notifications/RestTimerNotificationPrompt'
 import { CookieConsentBanner } from './components/CookieConsentBanner'
 import { FoundingOffer } from './components/FoundingOffer'
 
@@ -206,6 +207,7 @@ function App() {
         <CoachCompanion />
         <ProgramChangeMount />
         <UpdatePrompt />
+        <RestTimerNotificationPrompt />
         <CookieConsentBanner />
         <FoundingOffer />
         </CoachProvider>

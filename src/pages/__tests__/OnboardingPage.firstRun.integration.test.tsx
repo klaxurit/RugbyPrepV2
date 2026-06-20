@@ -23,12 +23,23 @@ vi.mock('../../hooks/useAuth', () => ({
 
 let mockProfile: UserProfile | null = null
 
-vi.mock('../../hooks/useProfile', () => ({
-  useProfile: () => ({
-    profile: mockProfile,
-    updateProfile: updateProfileMock,
+vi.mock('../../hooks/useProfile', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../hooks/useProfile')>()
+  return {
+    ...actual,
+    useProfile: () => ({
+      profile: mockProfile,
+      updateProfile: updateProfileMock,
+    }),
+    markOnboardingComplete: (...args: unknown[]) => markOnboardingCompleteMock(...args),
+  }
+})
+
+vi.mock('../../hooks/useNotifications', () => ({
+  useNotifications: () => ({
+    subscribe: vi.fn(),
+    status: 'idle',
   }),
-  markOnboardingComplete: (...args: unknown[]) => markOnboardingCompleteMock(...args),
 }))
 
 vi.mock('react-router-dom', async () => {

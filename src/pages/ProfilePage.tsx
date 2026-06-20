@@ -964,6 +964,9 @@ export function ProfilePage() {
                   {notifStatus === 'no_vapid' && tr('profile_notif_no_vapid', lang)}
                   {(notifStatus === 'idle' || notifStatus === 'loading') && tr('profile_notif_idle', lang)}
                 </p>
+                <p className="text-[11px] text-fg-muted/80 mt-1 leading-snug">
+                  {tr('profile_notif_rest_hint', lang)}
+                </p>
                 {notifErrorMessage && (
                   <p className="mt-1 text-[11px] text-danger-soft">
                     {notifErrorMessage}
@@ -985,7 +988,7 @@ export function ProfilePage() {
               ) : notifStatus === 'idle' ? (
                 <button
                   type="button"
-                  onClick={notifSubscribe}
+                  onClick={() => void notifSubscribe()}
                   className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-brand text-on-brand text-xs font-black hover:bg-brand-hover transition-colors shadow-brand-float rf-focus-ring"
                 >
                   <Bell className="w-3 h-3" />

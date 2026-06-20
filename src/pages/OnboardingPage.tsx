@@ -20,6 +20,14 @@ import { weekStorageKey } from '../contexts/weekStorage'
 import { userScopedKey } from '../services/storage/userScopedStorage'
 import { posthog } from '../services/analytics/posthog'
 import { resolvePostOnboardingDestination } from '../services/navigation/resolveAppEntryDestination'
+import { NotificationOptInSheet } from '../components/notifications/NotificationOptInSheet'
+import { useNotifications } from '../hooks/useNotifications'
+import { DEFAULT_PROFILE } from '../hooks/useProfile'
+import {
+  canShowNotificationPrompt,
+  dismissNotificationPrompt,
+} from '../services/notifications/notificationPromptStorage'
+import { canOfferTrainingReminderOptIn } from '../services/notifications/notificationOptInEligibility'
 import type {
   UserProfile,
   Equipment,
@@ -256,6 +264,13 @@ export function OnboardingPage() {
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [notifPromptOpen, setNotifPromptOpen] = useState(false)
+  const [notifPromptLoading, setNotifPromptLoading] = useState(false)
+  const [pendingDestination, setPendingDestination] = useState<string | null>(null)
+  const [savedProfileForNotifs, setSavedProfileForNotifs] = useState<UserProfile | null>(null)
+
+  const notifProfile = savedProfileForNotifs ?? existingProfile ?? DEFAULT_PROFILE
+  const { subscribe: notifSubscribe } = useNotifications(notifProfile)
 
   const isOffSeason = seasonPhase === 'off_season'
 
@@ -324,6 +339,10 @@ export function OnboardingPage() {
     setStep((s) => s + 1)
   }
 
+  const completeOnboardingNavigation = (destination: string) => {
+    navigate(destination, { replace: true })
+  }
+
   const handleFinish = async () => {
     try {
       const clubSchedule = isOffSeason ? undefined : buildClubSchedule()
@@ -383,10 +402,57 @@ export function OnboardingPage() {
       })
 
       const destination = resolvePostOnboardingDestination(intendedPath)
-      navigate(destination, { replace: true })
+      const profileForNotifs: UserProfile = {
+        ...(existingProfile ?? DEFAULT_PROFILE),
+        ...profilePayload,
+      }
+
+      const offerNotifPrompt =
+        canOfferTrainingReminderOptIn() &&
+        canShowNotificationPrompt(userId, 'onboarding')
+
+      if (offerNotifPrompt) {
+        setSavedProfileForNotifs(profileForNotifs)
+        setPendingDestination(destination)
+        setNotifPromptOpen(true)
+        posthog.capture('notification_prompt_shown', { kind: 'onboarding' })
+        return
+      }
+
+      completeOnboardingNavigation(destination)
     } catch (err) {
       console.error('[Onboarding] handleFinish error:', err)
       setSubmitError(tr('onboarding_error', lang))
+    }
+  }
+
+  const finishAfterNotifPrompt = () => {
+    if (pendingDestination) completeOnboardingNavigation(pendingDestination)
+    setNotifPromptOpen(false)
+    setPendingDestination(null)
+    setSavedProfileForNotifs(null)
+  }
+
+  const handleNotifPromptLater = () => {
+    dismissNotificationPrompt(userId, 'onboarding')
+    posthog.capture('notification_prompt_dismissed', { kind: 'onboarding' })
+    finishAfterNotifPrompt()
+  }
+
+  const handleNotifPromptEnable = async () => {
+    if (!savedProfileForNotifs) {
+      finishAfterNotifPrompt()
+      return
+    }
+    setNotifPromptLoading(true)
+    try {
+      await notifSubscribe({ profileOverride: savedProfileForNotifs })
+      posthog.capture('notification_prompt_enabled', { kind: 'onboarding' })
+    } catch {
+      posthog.capture('notification_prompt_denied', { kind: 'onboarding' })
+    } finally {
+      setNotifPromptLoading(false)
+      finishAfterNotifPrompt()
     }
   }
 
@@ -1069,6 +1135,15 @@ export function OnboardingPage() {
           </div>
         </div>
       )}
+
+      <NotificationOptInSheet
+        open={notifPromptOpen}
+        variant="onboarding"
+        lang={lang}
+        isLoading={notifPromptLoading}
+        onEnable={handleNotifPromptEnable}
+        onLater={handleNotifPromptLater}
+      />
 
     </div>
   )
