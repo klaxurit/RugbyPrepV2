@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Lang } from '../../../i18n/appLabels'
 import { restOverlaySkipAriaLabel, sessionRestWord, sessionSkipRestLabel } from '../../../i18n/sessionRunUi'
 import { useSessionRun } from '../../../contexts/SessionRunContext'
 import { useProfile } from '../../../hooks/useProfile'
-import { useRestBeepPref } from '../../../hooks/useRestBeepPref'
-import { playRestEndBeep } from '../../../utils/audioBeep'
-import { vibrate } from '../../../utils/vibrate'
+import { useRestTimerEndEffects } from '../../../hooks/useRestTimerEndEffects'
 import { Icon } from '../../ui'
 
 /**
@@ -26,45 +24,15 @@ export function RestOverlay() {
   const { restTimer, skipRestTimer } = useSessionRun()
   const { profile } = useProfile()
   const lang: Lang = (profile.preferredLanguage as Lang | undefined) ?? 'fr'
-  const { enabled: beepEnabled } = useRestBeepPref()
   const [now, setNow] = useState(() => Date.now())
 
-  // Refs : on capture les callbacks pour que l'effet d'auto-dismiss ne dépende
-  // que de la *référence* du restTimer (pas de chaque tick du now).
-  const skipRef = useRef(skipRestTimer)
-  const beepRef = useRef(beepEnabled)
-  useEffect(() => {
-    skipRef.current = skipRestTimer
-  }, [skipRestTimer])
-  useEffect(() => {
-    beepRef.current = beepEnabled
-  }, [beepEnabled])
+  useRestTimerEndEffects(restTimer, skipRestTimer)
 
   // Ticker 200 ms pour rafraîchir l'affichage tant que le timer tourne.
   useEffect(() => {
     if (!restTimer) return
     const id = window.setInterval(() => setNow(Date.now()), 200)
     return () => window.clearInterval(id)
-  }, [restTimer])
-
-  // Auto-dismiss : 2 setTimeout absolus (beep à endsAt, skip à endsAt+800ms).
-  // Volontairement indépendant du tick — sinon le cleanup à chaque tick
-  // tuerait le setTimeout avant qu'il ne fire.
-  useEffect(() => {
-    if (!restTimer) return
-    const beepDelay = Math.max(0, restTimer.endsAt - Date.now())
-    const dismissDelay = beepDelay + 800
-    const beepId = window.setTimeout(() => {
-      vibrate([120, 80, 120])
-      if (beepRef.current) playRestEndBeep()
-    }, beepDelay)
-    const dismissId = window.setTimeout(() => {
-      skipRef.current()
-    }, dismissDelay)
-    return () => {
-      window.clearTimeout(beepId)
-      window.clearTimeout(dismissId)
-    }
   }, [restTimer])
 
   if (!restTimer) return null

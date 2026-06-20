@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Check, CheckCircle2, SkipForward } from 'lucide-react'
 import { useSessionRun, buildExerciseTourKey } from '../../contexts/SessionRunContext'
-import { useRestBeepPref } from '../../hooks/useRestBeepPref'
-import { playRestEndBeep } from '../../utils/audioBeep'
+import { useRestTimerEndEffects } from '../../hooks/useRestTimerEndEffects'
 import { findCurrentPending, type PendingCursor } from '../../services/motherSession/findCurrentPending'
+import { getInterTourRestAfterMarking } from '../../services/motherSession/interTourRest'
 import type { MotherSession } from '../../types/motherSession'
 import { getExerciseName } from '../../data/exercises'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
@@ -65,13 +65,22 @@ export function RunSessionCTA({ session, lang, onFinish, onCursorChange }: RunSe
       cursor.tourIndex,
       cursor.exerciseIndex,
     )
+    if (sessionRun.restTimer) sessionRun.skipRestTimer()
     sessionRun.markExerciseDone(key)
-    // Rest timer fires only after the LAST exo of a tour, and never after the
-    // final tour of the final block (the session is then over).
-    if (cursor.isLastOfTour && !(cursor.isLastTour && cursor.isLastBlock)) {
+
+    const completed = new Set(sessionRun.completedExercises)
+    completed.add(key)
+    const rest = getInterTourRestAfterMarking(
+      session,
+      cursor.blockNumber,
+      cursor.tourIndex,
+      cursor.exerciseIndex,
+      completed,
+    )
+    if (rest) {
       sessionRun.startRestTimer(
-        cursor.restSeconds,
-        restTimerAfterTourLine(cursor.tourIndex + 1, lang),
+        rest.restSeconds,
+        restTimerAfterTourLine(rest.tourOneBased, lang),
       )
     }
   }
@@ -96,48 +105,15 @@ export function RunSessionCTA({ session, lang, onFinish, onCursorChange }: RunSe
 
 function RestTimerCard({ lang }: { lang: AppLang }) {
   const { restTimer, skipRestTimer } = useSessionRun()
-  const { enabled: beepEnabled } = useRestBeepPref()
   const [now, setNow] = useState(() => Date.now())
 
-  // Captured via refs to keep the expiry effect dependencies tight — we want
-  // it to run exactly once per `restTimer` reference, not on every tick.
-  const skipRef = useRef(skipRestTimer)
-  const beepRef = useRef(beepEnabled)
-  useEffect(() => {
-    skipRef.current = skipRestTimer
-  }, [skipRestTimer])
-  useEffect(() => {
-    beepRef.current = beepEnabled
-  }, [beepEnabled])
+  useRestTimerEndEffects(restTimer, skipRestTimer)
 
   // Display ticker — refresh `now` every 200ms while the timer runs.
   useEffect(() => {
     if (!restTimer) return
     const id = window.setInterval(() => setNow(Date.now()), 200)
     return () => window.clearInterval(id)
-  }, [restTimer])
-
-  // Auto-dismiss : on schedule deux setTimeout absolus (un pour le beep
-  // à endsAt, un pour le skipRestTimer à endsAt+800ms) au moment où
-  // `restTimer` change. Précédemment, l'effet dépendait de `now` (pour
-  // checker `endsAt - now <= 0`), ce qui faisait que le ticker à 200ms
-  // déclenchait le cleanup et annulait le setTimeout de skip avant
-  // qu'il ne fire — la modal restait collée à 0:00 jusqu'au tap manuel.
-  useEffect(() => {
-    if (!restTimer) return
-    const beepDelay = Math.max(0, restTimer.endsAt - Date.now())
-    const dismissDelay = beepDelay + 800
-    const beepId = window.setTimeout(() => {
-      vibrate([120, 80, 120])
-      if (beepRef.current) playRestEndBeep()
-    }, beepDelay)
-    const dismissId = window.setTimeout(() => {
-      skipRef.current()
-    }, dismissDelay)
-    return () => {
-      window.clearTimeout(beepId)
-      window.clearTimeout(dismissId)
-    }
   }, [restTimer])
 
   if (!restTimer) return null
@@ -281,16 +257,4 @@ function FinishCard({ lang, onFinish }: { lang: AppLang; onFinish: () => void })
       {finishSessionCtaLabel(lang)}
     </button>
   )
-}
-
-// ─────────────────────────────────────────────────────────────────────────
-
-function vibrate(pattern: number | number[]) {
-  if (typeof navigator === 'undefined') return
-  const nav = navigator as Navigator & { vibrate?: (pattern: number | number[]) => boolean }
-  try {
-    nav.vibrate?.(pattern)
-  } catch {
-    // ignore
-  }
 }

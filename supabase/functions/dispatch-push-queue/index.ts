@@ -49,6 +49,16 @@ const buildPayload = (templateKey: string, rawPayload: Record<string, unknown>):
     }
   }
 
+  if (templateKey === 'rest_end') {
+    const label = typeof rawPayload.label === 'string' ? rawPayload.label : 'Repos terminé'
+    return {
+      title: `${label} 💪`,
+      body: 'Prêt pour le prochain set.',
+      url,
+      tag: 'rugbyforge-rest-end',
+    }
+  }
+
   return null
 }
 

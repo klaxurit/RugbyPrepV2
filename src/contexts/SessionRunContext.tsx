@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { syncRestEndNotifications, getSessionReturnUrl } from '../services/notifications/restEndNotifications'
 
 /**
  * Session run state machine — tracks the "En cours" mode of a workout session.
@@ -29,6 +30,8 @@ export interface RestTimerState {
   endsAt: number
   /** Optional label (ex. exercise name) shown in the overlay. */
   label?: string
+  /** Route de retour pour la notif fin de repos (ex. /session/2). */
+  returnUrl?: string
 }
 
 export interface SessionRunValue {
@@ -164,7 +167,12 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
   }, [persist])
 
   const startRestTimer = useCallback((seconds: number, label?: string) => {
-    setRestTimer({ totalSeconds: seconds, endsAt: Date.now() + seconds * 1000, label })
+    setRestTimer({
+      totalSeconds: seconds,
+      endsAt: Date.now() + seconds * 1000,
+      label,
+      returnUrl: getSessionReturnUrl(),
+    })
   }, [])
 
   const adjustRestTimer = useCallback((delta: number) => {
@@ -180,46 +188,31 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
     setRestTimer(null)
   }, [])
 
-  // ── Notif locale fin de repos via Service Worker ───────────────────────
-  // Quand un rest timer est actif ET que l'app passe en background, on
-  // demande au SW de programmer une notif système à la fin du décompte.
-  // Quand l'app revient au premier plan, on annule (la card RestTimerCard
-  // + le bip in-app suffisent). Si pas de rest timer, on annule aussi.
-  // Robuste à la mise en background ≥1-2 min sur Chrome Android (TWA).
-  // iOS Safari PWA non supporté en V1 — fix futur via push différé.
+  // ── Notif fin de repos (SW local + push serveur différé) ───────────────
+  // En arrière-plan : SW (permission navigateur) + edge schedule-rest-end
+  // (fiable sur TWA Android). Au retour au premier plan : annulation —
+  // RestOverlay gère bip + dismiss in-app.
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof navigator === 'undefined') return
-    const sw = navigator.serviceWorker
-    if (!sw) return
+    if (typeof document === 'undefined') return
 
-    const post = (msg: unknown) => {
-      sw.controller?.postMessage(msg)
-    }
+    const timerInput = restTimer
+      ? {
+          endsAt: restTimer.endsAt,
+          label: restTimer.label ?? 'Repos terminé',
+          returnUrl: restTimer.returnUrl ?? getSessionReturnUrl(),
+        }
+      : null
 
     const apply = () => {
-      if (!restTimer) {
-        post({ type: 'CANCEL_REST_END' })
-        return
-      }
-      if (document.visibilityState === 'hidden') {
-        const remaining = Math.max(0, Math.round((restTimer.endsAt - Date.now()) / 1000))
-        if (remaining <= 0) {
-          post({ type: 'CANCEL_REST_END' })
-          return
-        }
-        post({
-          type: 'SCHEDULE_REST_END',
-          seconds: remaining,
-          label: restTimer.label ?? 'Repos terminé',
-        })
-      } else {
-        post({ type: 'CANCEL_REST_END' })
-      }
+      void syncRestEndNotifications(timerInput, document.visibilityState === 'hidden')
     }
 
     apply()
     document.addEventListener('visibilitychange', apply)
-    return () => document.removeEventListener('visibilitychange', apply)
+    return () => {
+      document.removeEventListener('visibilitychange', apply)
+      void syncRestEndNotifications(null, false)
+    }
   }, [restTimer])
 
   const isRunningFor = useCallback(

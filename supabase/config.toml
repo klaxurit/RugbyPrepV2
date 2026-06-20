@@ -53,6 +53,13 @@ verify_jwt = true
 [functions.register-push-subscription]
 verify_jwt = true
 
+# Fin de repos différée — appelé par le client quand le timer passe en arrière-plan.
+[functions.schedule-rest-end]
+verify_jwt = true
+
+[functions.cancel-rest-end]
+verify_jwt = true
+
 [functions.unsubscribe-push]
 verify_jwt = true
 

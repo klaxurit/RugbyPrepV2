@@ -4,6 +4,7 @@ import { posthog } from '../services/analytics/posthog'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, X } from 'lucide-react'
 import { useSessionRun, buildExerciseTourKey } from '../contexts/SessionRunContext'
 import { findCurrentPending } from '../services/motherSession/findCurrentPending'
+import { getInterTourRestAfterMarking } from '../services/motherSession/interTourRest'
 import { isDirectiveText, resolveExerciseIdForSessionRun } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
 import { parseExerciseSetSpec } from '../services/ui/exerciseSetSpec'
@@ -689,13 +690,28 @@ export function SessionDetailPage() {
   }
 
   const handleIsoComplete = () => {
-    if (!isoTrigger) return
-    const key = buildExerciseTourKey(
-      isoTrigger.blockNumber,
-      isoTrigger.tourIndex,
-      isoTrigger.exerciseIndex,
-    )
+    if (!isoTrigger || !adaptedSession) return
+    const { blockNumber, tourIndex, exerciseIndex } = isoTrigger
+    const key = buildExerciseTourKey(blockNumber, tourIndex, exerciseIndex)
+    if (sessionRun.restTimer) sessionRun.skipRestTimer()
     sessionRun.markExerciseDone(key)
+
+    const completed = new Set(sessionRun.completedExercises)
+    completed.add(key)
+    const rest = getInterTourRestAfterMarking(
+      adaptedSession,
+      blockNumber,
+      tourIndex,
+      exerciseIndex,
+      completed,
+    )
+    if (rest) {
+      sessionRun.startRestTimer(
+        rest.restSeconds,
+        restTimerAfterTourLine(rest.tourOneBased, lang),
+      )
+    }
+
     setIsoTrigger(null)
   }
 
@@ -777,7 +793,7 @@ export function SessionDetailPage() {
    *  - Si tous les exos loggables du bloc sont faits → autosave (handleBlockCompleted)
    */
   const handleValidateFromStickyCTA = () => {
-    if (!runningCursor) return
+    if (!runningCursor || !adaptedSession) return
     if (sessionRun.restTimer) sessionRun.skipRestTimer()
     const key = buildExerciseTourKey(
       runningCursor.blockNumber,
@@ -785,12 +801,23 @@ export function SessionDetailPage() {
       runningCursor.exerciseIndex,
     )
     sessionRun.markExerciseDone(key)
-    if (runningCursor.isLastOfTour && !(runningCursor.isLastTour && runningCursor.isLastBlock)) {
+
+    const completed = new Set(sessionRun.completedExercises)
+    completed.add(key)
+    const rest = getInterTourRestAfterMarking(
+      adaptedSession,
+      runningCursor.blockNumber,
+      runningCursor.tourIndex,
+      runningCursor.exerciseIndex,
+      completed,
+    )
+    if (rest) {
       sessionRun.startRestTimer(
-        runningCursor.restSeconds,
-        restTimerAfterTourLine(runningCursor.tourIndex + 1, lang),
+        rest.restSeconds,
+        restTimerAfterTourLine(rest.tourOneBased, lang),
       )
     }
+
     handleBlockCompleted(runningCursor.blockNumber)
   }
 
