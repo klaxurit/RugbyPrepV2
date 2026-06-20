@@ -369,12 +369,12 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
     expect(screen.queryByTestId('planning-context-toggle')).toBeNull()
   })
 
-  it('renders scheduling transition banner when present', () => {
+  it('renders scheduling transition banner when mode changes', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
     mockSchedulingTransition.mockReturnValue({
       transition: {
-        type: 'return_after_break',
-        message: 'Reprise après la trêve — ton programme repart sur le calendrier.',
+        type: 'block_mode_activated',
+        message: 'Plus de match prévu — ton programme continue en mode progression.',
         cta: 'OK',
       },
       dismiss: vi.fn(),

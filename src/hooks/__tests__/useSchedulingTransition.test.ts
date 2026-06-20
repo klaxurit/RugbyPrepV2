@@ -142,36 +142,16 @@ describe('useSchedulingTransition', () => {
     expect(result.current.transition).toBeNull()
   })
 
-  // ── Return after break ──
+  // ── Return after break — retiré (doublon PlanningContextCard) ──
 
-  it('return_after_break when last log > 14 days ago', () => {
+  it('long absence sans changement de mode → pas de bannière scheduling', () => {
     const storage = createMockStorage()
     storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'calendar'
 
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [makeLog('2026-03-20')], // 17 days before TODAY
-        today: TODAY,
-        userId: 'user-a',
-        storage,
-      }),
-    )
-
-    expect(result.current.transition).not.toBeNull()
-    expect(result.current.transition?.type).toBe('return_after_break')
-    expect(result.current.transition?.message).toContain('revoir')
-    expect(result.current.transition?.cta).toContain('parti')
-  })
-
-  it('no return_after_break when last log is recent', () => {
-    const storage = createMockStorage()
-    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'calendar'
-
-    const { result } = renderHook(() =>
-      useSchedulingTransition({
-        schedulingMode: 'calendar',
-        logs: [makeLog('2026-04-01')], // 5 days before TODAY
+        logs: [makeLog('2026-03-20')],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -181,40 +161,21 @@ describe('useSchedulingTransition', () => {
     expect(result.current.transition).toBeNull()
   })
 
-  it('no return_after_break when no logs', () => {
-    const storage = createMockStorage()
-    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'calendar'
-
-    const { result } = renderHook(() =>
-      useSchedulingTransition({
-        schedulingMode: 'calendar',
-        logs: [],
-        today: TODAY,
-        userId: 'user-a',
-        storage,
-      }),
-    )
-
-    expect(result.current.transition).toBeNull()
-  })
-
-  // ── Mode transition takes priority over return_after_break ──
-
-  it('mode transition takes priority over return_after_break', () => {
+  it('mode transition when mode changes despite long absence', () => {
     const storage = createMockStorage()
     storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'sequential'
 
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [makeLog('2026-03-15')], // also qualifies for return_after_break
+        logs: [makeLog('2026-03-15')],
         today: TODAY,
         userId: 'user-a',
         storage,
       }),
     )
 
-    // Mode transition emitted, not return_after_break
+    // Mode transition emitted
     expect(result.current.transition?.type).toBe('calendar_mode_activated')
   })
 
@@ -249,31 +210,6 @@ describe('useSchedulingTransition', () => {
     expect(result.current.transition).toBeNull()
   })
 
-  it('return_after_break dismiss lasts 1 day', () => {
-    const storage = createMockStorage()
-    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'calendar'
-
-    const { result } = renderHook(() =>
-      useSchedulingTransition({
-        schedulingMode: 'calendar',
-        logs: [makeLog('2026-03-20')],
-        today: TODAY,
-        userId: 'user-a',
-        storage,
-      }),
-    )
-
-    expect(result.current.transition?.type).toBe('return_after_break')
-
-    result.current.dismiss('return_after_break')
-
-    // Dismiss stored with 1-day TTL (user-scoped key)
-    const dismissed = JSON.parse(storage.data['rugbyprep.schedulingTransition.dismissed.user-a'])
-    const dismissDate = new Date(dismissed.return_after_break)
-    const todayDate = new Date(TODAY)
-    const diffDays = Math.round((dismissDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24))
-    expect(diffDays).toBe(1)
-  })
 
   // ── Null schedulingMode ──
 

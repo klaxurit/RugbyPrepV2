@@ -1,8 +1,5 @@
 /**
- * Detects scheduling mode transitions and return-after-break.
- *
- * Uses a persisted previous-mode baseline to distinguish real transitions
- * from current-state. First access with no baseline initializes silently.
+ * Detects scheduling mode transitions (calendar ↔ sequential).
  *
  * Render-pure: detection is read-only. Baseline updates happen in useEffect.
  */
@@ -20,8 +17,6 @@ const HINT_PREFIX = 'scheduling_transition:'
 const BASELINE_KEY_PREFIX = 'rugbyprep.schedulingMode.baseline'
 const DISMISS_KEY_PREFIX = 'rugbyprep.schedulingTransition.dismissed'
 const DEFAULT_DISMISS_DAYS = 7
-const RETURN_AFTER_BREAK_DISMISS_DAYS = 1
-const RETURN_AFTER_BREAK_THRESHOLD_DAYS = 14
 
 // ── Storage interface (injectable for testing) ──────────────────────
 
@@ -51,7 +46,7 @@ export interface UseSchedulingTransitionResult {
 export function useSchedulingTransition(
   params: UseSchedulingTransitionParams,
 ): UseSchedulingTransitionResult {
-  const { schedulingMode, logs, today, userId, lang = 'fr', storage = localStorage } = params
+  const { schedulingMode, today, userId, lang = 'fr', storage = localStorage } = params
   const identity = userId ?? 'anon'
   const dismissKey = `${DISMISS_KEY_PREFIX}.${identity}`
 
@@ -106,23 +101,8 @@ export function useSchedulingTransition(
       }
     }
 
-    // 2. Return after break (independent from mode transitions)
-    if (!isDismissed(dismissed, 'return_after_break', today)) {
-      const lastLogDate = getLastLogDate(logs)
-      if (lastLogDate) {
-        const daysSince = daysBetween(lastLogDate, today)
-        if (daysSince > RETURN_AFTER_BREAK_THRESHOLD_DAYS) {
-          return {
-            type: 'return_after_break',
-            message: schedulingTransitionLabel('return_break', lang),
-            cta: schedulingTransitionLabel('cta_go', lang),
-          }
-        }
-      }
-    }
-
     return null
-  }, [schedulingMode, logs, today, identity, lang, storage, dismissKey, dismissCount])
+  }, [schedulingMode, today, identity, lang, storage, dismissKey, dismissCount])
 
   // Commit-phase: persist baseline after detection
   const baselineWrittenRef = useRef<string>('')
@@ -138,11 +118,9 @@ export function useSchedulingTransition(
 
   const dismiss = useCallback((type: string) => {
     const dismissed = readDismissed(storage, dismissKey)
-    const days = type === 'return_after_break'
-      ? RETURN_AFTER_BREAK_DISMISS_DAYS
-      : DEFAULT_DISMISS_DAYS
     const d = new Date(`${today}T12:00:00`)
-    d.setDate(d.getDate() + days)
+    d.setDate(d.getDate() + DEFAULT_DISMISS_DAYS)
+    dismissed[type] = d.toISOString().slice(0, 10)
     dismissed[type] = d.toISOString().slice(0, 10)
     writeDismissed(storage, dismissKey, dismissed)
     setDismissCount((c) => c + 1)
@@ -174,20 +152,4 @@ function isDismissed(dismissed: Record<string, string>, type: string, today: str
   const until = dismissed[type]
   if (!until) return false
   return today <= until
-}
-
-function getLastLogDate(logs: SessionLog[]): string | null {
-  if (logs.length === 0) return null
-  let latest = logs[0].dateISO
-  for (const log of logs) {
-    if (log.dateISO > latest) latest = log.dateISO
-  }
-  return latest
-}
-
-function daysBetween(dateA: string, dateB: string): number {
-  const msPerDay = 24 * 60 * 60 * 1000
-  const a = new Date(dateA).getTime()
-  const b = new Date(dateB).getTime()
-  return Math.floor((b - a) / msPerDay)
 }
