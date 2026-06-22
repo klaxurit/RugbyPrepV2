@@ -138,7 +138,6 @@ export interface ConfirmationRequired {
 export type SchedulingTransitionType =
   | 'calendar_mode_activated'
   | 'block_mode_activated'
-  | 'return_after_break'
 
 export interface SchedulingTransition {
   type: SchedulingTransitionType

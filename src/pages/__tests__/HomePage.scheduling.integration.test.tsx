@@ -373,8 +373,8 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
     mockSchedulingTransition.mockReturnValue({
       transition: {
-        type: 'return_after_break',
-        message: 'Reprise après la trêve — ton programme repart sur le calendrier.',
+        type: 'block_mode_activated',
+        message: 'Plus de match prévu — ton programme continue en mode progression.',
         cta: 'OK',
       },
       dismiss: vi.fn(),

@@ -136,12 +136,7 @@ export const schedulingTransitionLabels = {
     fr: 'Plus de match prévu — ton programme continue en mode progression.',
     en: 'No upcoming match — your program continues in progression mode.',
   },
-  return_break: {
-    fr: 'Content de te revoir ! Semaine de reprise progressive.',
-    en: 'Good to see you back! Progressive return week.',
-  },
   cta_ok: { fr: 'OK', en: 'OK' },
-  cta_go: { fr: "C'est parti", en: "Let's go" },
 } as const
 
 export function schedulingTransitionLabel(
@@ -162,7 +157,6 @@ export const seasonBannerCta = {
   match_defer: { fr: 'Non, pas maintenant', en: 'Not now' },
   match_hide: { fr: "Ce n'est pas mon équipe", en: 'Not my team' },
   scheduling_ok: schedulingTransitionLabels.cta_ok,
-  scheduling_go: schedulingTransitionLabels.cta_go,
 } as const
 
 export function seasonBannerCtaLabel(

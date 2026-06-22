@@ -153,6 +153,13 @@ describe('seasonTransitionState persistence', () => {
     expect(profile.planningAnchors?.seasonEndedSource).toBe('derived')
   })
 
+  it('backfills seasonEndedSource manual when seasonEndedAt exists without source', () => {
+    const profile = rowToProfile(makeRow({
+      planning_anchors: { seasonEndedAt: '2026-04-06' },
+    }))
+    expect(profile.planningAnchors?.seasonEndedSource).toBe('manual')
+  })
+
   it('tolerates missing season_transition_state (legacy compat)', () => {
     const profile = rowToProfile(makeRow({ season_transition_state: null }))
     expect(profile.seasonTransitionState).toBeUndefined()

@@ -3,7 +3,6 @@
 import { describe, expect, it } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useSchedulingTransition, type TransitionStorage } from '../useSchedulingTransition'
-import type { SessionLog } from '../../types/training'
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
@@ -14,16 +13,6 @@ function createMockStorage(): TransitionStorage & { data: Record<string, string>
     getItem(key: string) { return data[key] ?? null },
     setItem(key: string, value: string) { data[key] = value },
   }
-}
-
-function makeLog(dateISO: string): SessionLog {
-  return {
-    id: `log-${dateISO}`,
-    dateISO,
-    sessionType: 'FULL',
-    week: 'W1',
-    fatigue: 'OK',
-  } as SessionLog
 }
 
 const TODAY = '2026-04-06'
@@ -38,7 +27,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -46,7 +34,6 @@ describe('useSchedulingTransition', () => {
     )
 
     expect(result.current.transition).toBeNull()
-    // Baseline initialized
     expect(storage.data['rugbyprep.schedulingMode.baseline.user-a']).toBe('calendar')
   })
 
@@ -55,7 +42,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'sequential',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -75,7 +61,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -95,7 +80,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'sequential',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -115,7 +99,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -132,7 +115,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'sequential',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -140,82 +122,6 @@ describe('useSchedulingTransition', () => {
     )
 
     expect(result.current.transition).toBeNull()
-  })
-
-  // ── Return after break ──
-
-  it('return_after_break when last log > 14 days ago', () => {
-    const storage = createMockStorage()
-    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'calendar'
-
-    const { result } = renderHook(() =>
-      useSchedulingTransition({
-        schedulingMode: 'calendar',
-        logs: [makeLog('2026-03-20')], // 17 days before TODAY
-        today: TODAY,
-        userId: 'user-a',
-        storage,
-      }),
-    )
-
-    expect(result.current.transition).not.toBeNull()
-    expect(result.current.transition?.type).toBe('return_after_break')
-    expect(result.current.transition?.message).toContain('revoir')
-    expect(result.current.transition?.cta).toContain('parti')
-  })
-
-  it('no return_after_break when last log is recent', () => {
-    const storage = createMockStorage()
-    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'calendar'
-
-    const { result } = renderHook(() =>
-      useSchedulingTransition({
-        schedulingMode: 'calendar',
-        logs: [makeLog('2026-04-01')], // 5 days before TODAY
-        today: TODAY,
-        userId: 'user-a',
-        storage,
-      }),
-    )
-
-    expect(result.current.transition).toBeNull()
-  })
-
-  it('no return_after_break when no logs', () => {
-    const storage = createMockStorage()
-    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'calendar'
-
-    const { result } = renderHook(() =>
-      useSchedulingTransition({
-        schedulingMode: 'calendar',
-        logs: [],
-        today: TODAY,
-        userId: 'user-a',
-        storage,
-      }),
-    )
-
-    expect(result.current.transition).toBeNull()
-  })
-
-  // ── Mode transition takes priority over return_after_break ──
-
-  it('mode transition takes priority over return_after_break', () => {
-    const storage = createMockStorage()
-    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'sequential'
-
-    const { result } = renderHook(() =>
-      useSchedulingTransition({
-        schedulingMode: 'calendar',
-        logs: [makeLog('2026-03-15')], // also qualifies for return_after_break
-        today: TODAY,
-        userId: 'user-a',
-        storage,
-      }),
-    )
-
-    // Mode transition emitted, not return_after_break
-    expect(result.current.transition?.type).toBe('calendar_mode_activated')
   })
 
   // ── Dismiss behavior ──
@@ -228,7 +134,6 @@ describe('useSchedulingTransition', () => {
       ({ mode }) =>
         useSchedulingTransition({
           schedulingMode: mode,
-          logs: [],
           today: TODAY,
           userId: 'user-a',
           storage,
@@ -238,41 +143,12 @@ describe('useSchedulingTransition', () => {
 
     expect(result.current.transition?.type).toBe('calendar_mode_activated')
 
-    // Dismiss
     result.current.dismiss('calendar_mode_activated')
 
-    // Re-render — should be suppressed
-    // Reset baseline to trigger again on next rerender
     storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'sequential'
     rerender({ mode: 'calendar' as const })
 
     expect(result.current.transition).toBeNull()
-  })
-
-  it('return_after_break dismiss lasts 1 day', () => {
-    const storage = createMockStorage()
-    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'calendar'
-
-    const { result } = renderHook(() =>
-      useSchedulingTransition({
-        schedulingMode: 'calendar',
-        logs: [makeLog('2026-03-20')],
-        today: TODAY,
-        userId: 'user-a',
-        storage,
-      }),
-    )
-
-    expect(result.current.transition?.type).toBe('return_after_break')
-
-    result.current.dismiss('return_after_break')
-
-    // Dismiss stored with 1-day TTL (user-scoped key)
-    const dismissed = JSON.parse(storage.data['rugbyprep.schedulingTransition.dismissed.user-a'])
-    const dismissDate = new Date(dismissed.return_after_break)
-    const todayDate = new Date(TODAY)
-    const diffDays = Math.round((dismissDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24))
-    expect(diffDays).toBe(1)
   })
 
   // ── Null schedulingMode ──
@@ -282,7 +158,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: null,
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -300,7 +175,6 @@ describe('useSchedulingTransition', () => {
     renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         storage,
       }),
@@ -313,15 +187,12 @@ describe('useSchedulingTransition', () => {
 
   it('dismiss for user A does not suppress user B', () => {
     const storage = createMockStorage()
-    // Both users have sequential baseline
     storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'sequential'
     storage.data['rugbyprep.schedulingMode.baseline.user-b'] = 'sequential'
 
-    // User A sees and dismisses calendar_mode_activated
     const { result: rA } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -330,13 +201,10 @@ describe('useSchedulingTransition', () => {
     expect(rA.current.transition?.type).toBe('calendar_mode_activated')
     rA.current.dismiss('calendar_mode_activated')
 
-    // User B should still see the transition
-    // Reset baseline for user-b since useEffect already wrote 'calendar'
     storage.data['rugbyprep.schedulingMode.baseline.user-b'] = 'sequential'
     const { result: rB } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-b',
         storage,

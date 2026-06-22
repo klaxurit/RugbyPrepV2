@@ -308,10 +308,9 @@ describe('buildAthletePlanningInputs', () => {
     expect(r.inputs.planningAnchors?.onboardingCycleHint).toBe('off_season')
   })
 
-  // ── Match-in-current-week vs seasonEndedAt contradiction ──
+  // ── Match-in-current-week vs seasonEndedAt ──
 
-  it('match earlier in the same week invalidates seasonEndedAt anchor', () => {
-    // Today is Friday 2025-03-14 — match was Wednesday 2025-03-12 (same ISO week)
+  it('preserves seasonEndedAt when a match exists in the same ISO week (FFR stale)', () => {
     const today = '2025-03-14'
     const r = buildAthletePlanningInputs({
       profile: baseProfile({
@@ -323,13 +322,11 @@ describe('buildAthletePlanningInputs', () => {
       today,
       fatigue: 'OK',
     })
-    // seasonEndedAt must be dropped — match is visible in the week timeline
-    expect(r.inputs.planningAnchors?.seasonEndedAt).toBeUndefined()
-    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
+    expect(r.inputs.planningAnchors?.seasonEndedAt).toBe('2025-02-28')
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBe('off_season')
   })
 
-  it('match earlier in the same week prevents off_season manualCycleOverride', () => {
-    // Today is Thursday 2025-03-13 — match was Monday 2025-03-10 (same ISO week)
+  it('keeps off_season manualCycleOverride with match in same week when season ended', () => {
     const today = '2025-03-13'
     const r = buildAthletePlanningInputs({
       profile: baseProfile({
@@ -344,8 +341,8 @@ describe('buildAthletePlanningInputs', () => {
       today,
       fatigue: 'OK',
     })
-    // Must NOT produce manualCycleOverride off_season with a match visible this week
-    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBe('off_season')
+    expect(r.inputs.planningAnchors?.seasonEndedAt).toBe('2025-02-20')
   })
 
   it('seasonEndedAt is preserved when no match exists this week or in the future', () => {
@@ -366,7 +363,7 @@ describe('buildAthletePlanningInputs', () => {
     expect(r.inputs.planningAnchors?.manualCycleOverride).toBe('off_season')
   })
 
-  it('future match (>= today) still invalidates seasonEndedAt (existing behavior)', () => {
+  it('preserves seasonEndedAt when a future match exists (user declared end of season)', () => {
     const r = buildAthletePlanningInputs({
       profile: baseProfile({
         seasonMode: 'off_season',
@@ -377,8 +374,8 @@ describe('buildAthletePlanningInputs', () => {
       today: TODAY,
       fatigue: 'OK',
     })
-    expect(r.inputs.planningAnchors?.seasonEndedAt).toBeUndefined()
-    expect(r.inputs.planningAnchors?.manualCycleOverride).toBeUndefined()
+    expect(r.inputs.planningAnchors?.seasonEndedAt).toBe('2025-02-28')
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBe('off_season')
   })
 
   it('hidden match does not invalidate seasonEndedAt anchor', () => {
@@ -481,5 +478,38 @@ describe('buildAthletePlanningInputs', () => {
       fatigue: 'OK',
     })
     expect(built.inputs.planningAnchors?.manualPlayoffs).toBeUndefined()
+  })
+
+  it('regression: off-season hypertrophy not reset by FFR match this week', () => {
+    const seasonEndedAt = '2026-02-12'
+    const today = '2026-03-20'
+    const built = buildAthletePlanningInputs({
+      profile: baseProfile({
+        weeklySessions: 3,
+        seasonMode: 'off_season',
+        planningAnchors: {
+          seasonEndedAt,
+          seasonEndedSource: 'manual',
+          skipOffSeasonRecoveryIntro: true,
+          onboardingCycleHint: 'off_season',
+        },
+      }),
+      events: [
+        { id: 'm-ffr', date: '2026-03-18', type: 'match', source: 'ffr_import' } as CalendarEvent,
+      ],
+      logs: [],
+      today,
+      fatigue: 'OK',
+    })
+    const ctx = detectAnnualPlanningContext({
+      weeklyFrequency: built.inputs.weeklyFrequency,
+      positionGroup: built.inputs.positionGroup,
+      events: built.inputs.events,
+      today,
+      planningAnchors: built.inputs.planningAnchors,
+    })
+    expect(ctx.cycle).toBe('off_season')
+    expect(ctx.offSeasonPhase).toBe(3)
+    expect(built.inputs.weeklyFrequency).toBe(3)
   })
 })

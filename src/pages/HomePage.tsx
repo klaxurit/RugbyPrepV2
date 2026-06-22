@@ -320,7 +320,6 @@ export function HomePage() {
   const { transition: schedulingTransition, dismiss: dismissSchedulingTransition } =
     useSchedulingTransition({
       schedulingMode: surface?.schedulingMode ?? null,
-      logs,
       today,
       userId,
       lang,

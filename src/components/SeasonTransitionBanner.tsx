@@ -1,4 +1,4 @@
-import { Calendar, CheckCircle2, RefreshCw, Sparkles, Trophy, X } from 'lucide-react'
+import { Calendar, CheckCircle2, Sparkles, Trophy, X } from 'lucide-react'
 import type { Lang } from '../i18n/appLabels'
 import { seasonBannerCtaLabel, seasonTransitionMessage } from '../i18n/programSurfaces'
 import type { SeasonTransition } from '../services/season/detectSeasonTransitions'
@@ -76,16 +76,10 @@ const SCHEDULING_CONFIG: Record<SchedulingTransition['type'], BannerConfig> = {
     border: 'border-border-app',
     text: 'text-fg-secondary',
   },
-  return_after_break: {
-    icon: RefreshCw,
-    bg: 'bg-teal-50',
-    border: 'border-teal-200',
-    text: 'text-teal-700',
-  },
 }
 
-function schedulingCtaKey(type: SchedulingTransition['type']): 'scheduling_ok' | 'scheduling_go' {
-  return type === 'return_after_break' ? 'scheduling_go' : 'scheduling_ok'
+function schedulingCtaKey(_type: SchedulingTransition['type']): 'scheduling_ok' {
+  return 'scheduling_ok'
 }
 
 // ── Season Banner Props (existing) ──────────────────────────────────
