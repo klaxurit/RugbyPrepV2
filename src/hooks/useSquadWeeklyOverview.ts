@@ -7,6 +7,7 @@ import type {
   StaffPlanningRepository,
 } from '../services/staffPlanning/staffPlanningRepository'
 import { inMemoryStaffPlanningRepository } from '../services/staffPlanning/inMemoryStaffPlanningRepository'
+import { formatStaffAthleteDisplayName } from '../services/staffPlanning/formatStaffAthleteDisplayName'
 import type { ResolveMotherSessionsForWeekOptions } from '../services/motherSession/resolveMotherSessionsForWeek'
 
 export interface UseSquadWeeklyOverviewParams {
@@ -40,6 +41,7 @@ function mapRecordsToBuildParams(
     logs: r.logs,
     fatigue: r.fatigue,
     acwrZone: r.acwrZone,
+    displayName: formatStaffAthleteDisplayName(r.profile, r.athleteId),
     identity: {
       clubId: r.clubId ?? clubId,
       squadId: r.squadId ?? squadId,

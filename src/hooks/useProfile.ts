@@ -15,7 +15,8 @@ import type {
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { applyHealthConsentLifecycle } from '../services/privacy/healthConsentLifecycle'
-import { mergeProfileFromCache } from '../services/profile/mergeProfileFromCache'
+import { mergeProfileFromCache, applyServerAuthoritativeProfileFields } from '../services/profile/mergeProfileFromCache'
+import { resolveAvatarUrlFromAuthMetadata, resolveProfileAvatarUrl } from '../services/profile/resolveAvatarUrl'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 
 const STORAGE_BASE = 'rugbyprep.profile'
@@ -210,7 +211,7 @@ type ProfileRow = {
   training_baseline_set_at: string | null
   performance_focus: UserProfile['performanceFocus'] | null
   preferred_language: string | null
-  rehab_injury: unknown | null
+  display_name: string | null
   population_segment: UserProfile['populationSegment'] | null
   age_band: UserProfile['ageBand'] | null
   parental_consent_health_data: boolean | null
@@ -249,7 +250,7 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     )
 
   return normalizeLegacyProfile({
-    avatarUrl: row.avatar_url ?? undefined,
+    avatarUrl: resolveProfileAvatarUrl(row.avatar_url, row.avatar_path),
     avatarPath: row.avatar_path ?? undefined,
     level: (row.level === 'beginner' ? 'beginner' : 'intermediate') as UserProfile['level'],
     weeklySessions: (row.weekly_sessions === 2 ? 2 : 3) as UserProfile['weeklySessions'],
@@ -273,6 +274,7 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     trainingBaselineSetAt: row.training_baseline_set_at ?? null,
     performanceFocus: (row.performance_focus as PerformanceFocus | null) ?? undefined,
     preferredLanguage: (row.preferred_language as 'fr' | 'en' | null) ?? 'fr',
+    displayName: row.display_name?.trim() || undefined,
     populationSegment: (row.population_segment as PopulationSegment | null) ?? undefined,
     ageBand: row.age_band ?? undefined,
     parentalConsentHealthData: row.parental_consent_health_data ?? undefined,
@@ -322,6 +324,7 @@ export const profileToRow = (profile: UserProfile, userId: string) => ({
   training_baseline_set_at: profile.trainingBaselineSetAt ?? null,
   performance_focus: profile.performanceFocus ?? null,
   preferred_language: profile.preferredLanguage ?? 'fr',
+  display_name: profile.displayName?.trim() || null,
   population_segment: profile.populationSegment ?? null,
   age_band: profile.ageBand ?? null,
   parental_consent_health_data: profile.parentalConsentHealthData ?? null,
@@ -450,7 +453,7 @@ export const useProfileSource = () => {
     supabase
       .from('profiles')
       .select(
-        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state'
+        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, display_name, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state'
       )
       .eq('id', userId)
       .single()
@@ -481,25 +484,51 @@ export const useProfileSource = () => {
         isHydratedRef.current = true
 
         if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) {
+          const remote = rowToProfile(data as ProfileRow)
           const pending = applyPendingProfilePatches(
-            loadFromStorage(userId) ?? profileRef.current,
+            applyServerAuthoritativeProfileFields(
+              loadFromStorage(userId) ?? profileRef.current,
+              remote,
+            ),
             pendingPatches,
           )
           setProfileState(pending)
           saveLocalProfile(pending, userId)
-          await persistRemoteProfile(pending, userId)
           return
         }
 
         const remote = rowToProfile(data as ProfileRow)
         const { profile: mergedRemote, shouldHealRemote } = mergeProfileFromCache(remote, cached)
-        const loaded = normalizeLegacyProfile(
+        let loaded = normalizeLegacyProfile(
           applyPendingProfilePatches(mergedRemote, pendingPatches),
         )
+
+        const { data: authData } = await supabase.auth.getUser()
+        const authDisplayName =
+          typeof authData.user?.user_metadata?.display_name === 'string'
+            ? authData.user.user_metadata.display_name.trim()
+            : ''
+        let healDisplayName = shouldHealRemote
+        if (authDisplayName && !loaded.displayName) {
+          loaded = { ...loaded, displayName: authDisplayName }
+          healDisplayName = true
+        }
+
+        const authAvatar = resolveAvatarUrlFromAuthMetadata(authData.user?.user_metadata)
+        let healAvatar = false
+        if (authAvatar.avatarUrl && !loaded.avatarUrl) {
+          loaded = {
+            ...loaded,
+            avatarUrl: authAvatar.avatarUrl,
+            avatarPath: authAvatar.avatarPath ?? loaded.avatarPath,
+          }
+          healAvatar = true
+        }
+
         localEditsSinceLoadRef.current = 0
         setProfileState(loaded)
         saveLocalProfile(loaded, userId)
-        if (shouldHealRemote || pendingPatches.length > 0) {
+        if (healDisplayName || healAvatar || pendingPatches.length > 0) {
           await persistRemoteProfile(loaded, userId)
         }
         if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {

@@ -470,12 +470,14 @@ export function StaffPlanningSandboxPage() {
                       onSortDirToggle={toggleSortDir}
                       resultCount={rosterRowsFilteredSorted.length}
                       totalCount={rosterBaseRows.length}
+                      theme="dark"
                     />
                     <StaffRosterTable
                       rows={rosterRowsFilteredSorted}
                       selectedAthleteId={effectiveSelectedAthleteId}
                       onSelectRow={setSelectedAthleteId}
                       loading={false}
+                      theme="dark"
                     />
                   </div>
                 )}

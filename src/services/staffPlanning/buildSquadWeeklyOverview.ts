@@ -19,6 +19,7 @@ export interface BuildSquadWeeklyOverviewParams {
     identity?: BuildAthleteStaffWeeklyViewParams['identity']
     motherSessionResolverOptions?: BuildAthleteStaffWeeklyViewParams['motherSessionResolverOptions']
     planningAnchors?: BuildAthleteStaffWeeklyViewParams['planningAnchors']
+    displayName?: string
   }>
 }
 
@@ -102,6 +103,7 @@ export function buildSquadWeeklyOverview(
       },
       motherSessionResolverOptions: row.motherSessionResolverOptions,
       planningAnchors: row.planningAnchors,
+      displayName: row.displayName,
     })
   )
 

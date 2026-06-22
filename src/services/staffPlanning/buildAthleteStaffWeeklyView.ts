@@ -37,6 +37,8 @@ export interface BuildAthleteStaffWeeklyViewParams {
    * Ancres planning (staff / tests) — fusionnées après l’adaptateur, avant le resolver.
    */
   planningAnchors?: AthletePlanningInputs['planningAnchors']
+  /** Nom affiché dans le tableau coach. */
+  displayName?: string
 }
 
 function toIsoDateLocal(d: Date): string {
@@ -218,6 +220,7 @@ export function buildAthleteStaffWeeklyView(
     identity: identityExtra,
     motherSessionResolverOptions,
     planningAnchors,
+    displayName: displayNameParam,
   } = params
 
   const todayIso = normalizeTodayExplicit(today)
@@ -295,6 +298,11 @@ export function buildAthleteStaffWeeklyView(
   })
 
   return {
+    displayName:
+      displayNameParam?.trim() ||
+      profile.displayName?.trim() ||
+      athleteId.slice(0, 8),
+    avatarUrl: profile.avatarUrl,
     identity: athleteIdentity,
     planningInputs: inputs,
     annualPlanning: resolution.planningContext,

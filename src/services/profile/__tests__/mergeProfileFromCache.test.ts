@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { DEFAULT_PROFILE } from '../../../hooks/useProfile'
-import { mergeProfileFromCache } from '../mergeProfileFromCache'
+import { mergeProfileFromCache, applyServerAuthoritativeProfileFields } from '../mergeProfileFromCache'
 
 describe('mergeProfileFromCache', () => {
   it('returns remote unchanged when cache is absent', () => {
@@ -52,5 +52,54 @@ describe('mergeProfileFromCache', () => {
     }
     const { shouldHealRemote } = mergeProfileFromCache(remote, cached)
     expect(shouldHealRemote).toBe(false)
+  })
+
+  it('préserve les overrides admin du remote même après heal cache', () => {
+    const remote = {
+      ...DEFAULT_PROFILE,
+      weeklySessions: 2 as const,
+      seasonMode: 'off_season' as const,
+      planningAnchors: {
+        manualCycleOverride: 'off_season' as const,
+        manualOffSeasonWeekOverride: 5,
+        skipOffSeasonRecoveryIntro: true,
+      },
+    }
+    const cached = {
+      ...DEFAULT_PROFILE,
+      weeklySessions: 3 as const,
+      seasonMode: 'off_season' as const,
+      planningAnchors: {
+        seasonEndedAt: '2026-01-15',
+        seasonEndedSource: 'manual' as const,
+        skipOffSeasonRecoveryIntro: true,
+        onboardingCycleHint: 'off_season' as const,
+      },
+    }
+    const { profile } = mergeProfileFromCache(remote, cached)
+    expect(profile.planningAnchors?.manualOffSeasonWeekOverride).toBe(5)
+    expect(profile.planningAnchors?.manualCycleOverride).toBe('off_season')
+    expect(profile.planningAnchors?.seasonEndedAt).toBe('2026-01-15')
+  })
+})
+
+describe('applyServerAuthoritativeProfileFields', () => {
+  it('injecte les ancres admin depuis le remote dans le cache local', () => {
+    const local = {
+      ...DEFAULT_PROFILE,
+      seasonMode: 'off_season' as const,
+      planningAnchors: { skipOffSeasonRecoveryIntro: true },
+    }
+    const remote = {
+      ...local,
+      planningAnchors: {
+        manualCycleOverride: 'off_season' as const,
+        manualOffSeasonWeekOverride: 5,
+        skipOffSeasonRecoveryIntro: true,
+      },
+    }
+    const merged = applyServerAuthoritativeProfileFields(local, remote)
+    expect(merged.planningAnchors?.manualOffSeasonWeekOverride).toBe(5)
+    expect(merged.planningAnchors?.manualCycleOverride).toBe('off_season')
   })
 })

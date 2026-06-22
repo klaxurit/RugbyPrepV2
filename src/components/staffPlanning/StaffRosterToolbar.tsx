@@ -7,8 +7,7 @@ import type {
   SortKey,
   StaffRosterFilters,
 } from './staffRosterModel'
-
-const BG = '#0b0e14'
+import type { StaffRosterTheme } from './StaffRosterTable'
 
 export interface StaffRosterToolbarProps {
   filters: StaffRosterFilters
@@ -19,6 +18,7 @@ export interface StaffRosterToolbarProps {
   onSortDirToggle: () => void
   resultCount: number
   totalCount: number
+  theme?: StaffRosterTheme
 }
 
 const sortLabels: Record<SortKey, string> = {
@@ -37,39 +37,48 @@ export function StaffRosterToolbar({
   onSortDirToggle,
   resultCount,
   totalCount,
+  theme = 'app',
 }: StaffRosterToolbarProps) {
   const set = (patch: Partial<StaffRosterFilters>) => onFiltersChange({ ...filters, ...patch })
+  const isDark = theme === 'dark'
 
-  const selectClass = `rounded-lg border border-white/10 px-2 py-1.5 text-[10px] font-bold uppercase tracking-tight text-white focus:ring-1 focus:outline-none font-['Lexend'] min-w-0`
+  const inputClass = isDark
+    ? 'w-full rounded-lg border border-white/10 bg-[#0b0e14] pl-9 pr-3 py-1.5 text-[10px] font-bold text-white placeholder:text-slate-500 focus:ring-1 focus:outline-none'
+    : 'w-full rounded-lg border border-brand-border bg-layer-10 pl-9 pr-3 py-2 text-sm text-fg placeholder:text-fg-muted focus:ring-1 focus:outline-none focus:ring-brand/30'
+  const selectClass = isDark
+    ? 'rounded-lg border border-white/10 bg-[#0b0e14] px-2 py-1.5 text-[10px] font-bold uppercase tracking-tight text-white focus:ring-1 focus:outline-none min-w-0'
+    : 'rounded-lg border border-brand-border bg-layer-10 px-2 py-1.5 text-xs font-semibold text-fg focus:ring-1 focus:outline-none focus:ring-brand/30 min-w-0'
+  const iconMuted = isDark ? 'text-slate-500' : 'text-fg-muted'
+  const countClass = isDark ? 'text-slate-500' : 'text-fg-muted'
+  const divider = isDark ? 'bg-white/10' : 'bg-brand-border'
+  const sortBtn = isDark
+    ? 'rounded-md border border-white/10 bg-[#0b0e14] px-2 py-1.5 text-[10px] font-bold text-slate-400 hover:text-white'
+    : 'rounded-md border border-brand-border bg-layer-10 px-2 py-1.5 text-xs font-bold text-fg-muted hover:text-fg'
 
   return (
     <div data-testid="staff-roster-toolbar" className="space-y-3 overflow-hidden">
-      {/* Search row */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
+          <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 ${iconMuted}`} />
           <input
             type="search"
             value={filters.search}
             onChange={(e) => set({ search: e.target.value })}
             placeholder="Rechercher joueur…"
-            className="w-full rounded-lg border border-white/10 pl-9 pr-3 py-1.5 text-[10px] font-bold text-white placeholder:text-slate-600 focus:ring-1 focus:outline-none font-['Lexend']"
-            style={{ backgroundColor: BG }}
+            className={inputClass}
             data-testid="staff-roster-search"
           />
         </div>
-        <span className="text-[10px] font-bold text-slate-500 tabular-nums whitespace-nowrap">
+        <span className={`text-[10px] font-bold tabular-nums whitespace-nowrap ${countClass}`}>
           {resultCount}/{totalCount}
         </span>
       </div>
 
-      {/* Filters + Sort row */}
       <div className="flex flex-wrap items-center gap-2">
-        <SlidersHorizontal className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+        <SlidersHorizontal className={`w-3.5 h-3.5 shrink-0 ${iconMuted}`} />
 
         <select
           className={selectClass}
-          style={{ backgroundColor: BG }}
           value={filters.fatigue}
           onChange={(e) => set({ fatigue: e.target.value as FatigueFilter })}
           data-testid="staff-filter-fatigue"
@@ -82,7 +91,6 @@ export function StaffRosterToolbar({
 
         <select
           className={selectClass}
-          style={{ backgroundColor: BG }}
           value={filters.adherence}
           onChange={(e) => set({ adherence: e.target.value as AdherenceFilter })}
           data-testid="staff-filter-adherence"
@@ -94,7 +102,6 @@ export function StaffRosterToolbar({
 
         <select
           className={selectClass}
-          style={{ backgroundColor: BG }}
           value={filters.position}
           onChange={(e) => set({ position: e.target.value as PositionFilter })}
           data-testid="staff-filter-position"
@@ -106,7 +113,6 @@ export function StaffRosterToolbar({
 
         <select
           className={selectClass}
-          style={{ backgroundColor: BG }}
           value={filters.matchWeek}
           onChange={(e) => set({ matchWeek: e.target.value as MatchWeekFilter })}
           data-testid="staff-filter-match-week"
@@ -116,13 +122,12 @@ export function StaffRosterToolbar({
           <option value="no">Non</option>
         </select>
 
-        <div className="h-4 w-px bg-white/10 hidden sm:block" />
+        <div className={`h-4 w-px hidden sm:block ${divider}`} />
 
         <div className="flex items-center gap-1.5">
-          <ArrowUpDown className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+          <ArrowUpDown className={`w-3.5 h-3.5 shrink-0 ${iconMuted}`} />
           <select
             className={selectClass}
-            style={{ backgroundColor: BG }}
             value={sortKey}
             onChange={(e) => onSortKeyChange(e.target.value as SortKey)}
             data-testid="staff-sort-key"
@@ -136,8 +141,7 @@ export function StaffRosterToolbar({
           <button
             type="button"
             onClick={onSortDirToggle}
-            className="rounded-md border border-white/10 px-2 py-1.5 text-[10px] font-bold text-slate-400 hover:text-white transition-colors font-['Lexend']"
-            style={{ backgroundColor: BG }}
+            className={sortBtn}
             title={sortDir === 'asc' ? 'Ordre croissant' : 'Ordre décroissant'}
             data-testid="staff-sort-dir"
           >

@@ -6,6 +6,60 @@ export interface MergeProfileFromCacheResult {
   shouldHealRemote: boolean
 }
 
+/** Champs posés côté serveur (admin / staff) : le remote prime sur le cache local. */
+export const SERVER_AUTHORITATIVE_PLANNING_ANCHOR_KEYS = [
+  'manualCycleOverride',
+  'manualOffSeasonWeekOverride',
+  'manualPreSeasonWeekOverride',
+  'seasonEndedAt',
+  'offSeasonStartAt',
+  'returnToTeamTrainingAt',
+  'manualPlayoffs',
+  'onboardingCycleHint',
+  'seasonEndedSource',
+  'skipOffSeasonRecoveryIntro',
+  'firstMatchDateOverride',
+] as const satisfies readonly (keyof NonNullable<UserProfile['planningAnchors']>)[]
+
+export function mergePlanningAnchorsPreferRemote(
+  local: UserProfile['planningAnchors'],
+  remote: UserProfile['planningAnchors'],
+): UserProfile['planningAnchors'] {
+  if (!remote && !local) return undefined
+  const out: NonNullable<UserProfile['planningAnchors']> = { ...(local ?? {}) }
+  if (remote) {
+    for (const key of SERVER_AUTHORITATIVE_PLANNING_ANCHOR_KEYS) {
+      const value = remote[key]
+      if (value !== undefined) {
+        ;(out as Record<string, unknown>)[key] = value
+      }
+    }
+  }
+  return Object.keys(out).length > 0 ? out : undefined
+}
+
+/**
+ * Applique les champs serveur (admin) sur un profil local sans écraser le reste des edits.
+ * Utilisé quand localEditsSinceLoad > 0 mais que Supabase a des ancres plus récentes.
+ */
+export function applyServerAuthoritativeProfileFields(
+  local: UserProfile,
+  remote: UserProfile,
+): UserProfile {
+  const planningAnchors = mergePlanningAnchorsPreferRemote(
+    local.planningAnchors,
+    remote.planningAnchors,
+  )
+  return {
+    ...local,
+    ...(remote.seasonMode ? { seasonMode: remote.seasonMode } : {}),
+    ...(remote.weeklySessions === 2 || remote.weeklySessions === 3 || remote.weeklySessions === 4
+      ? { weeklySessions: remote.weeklySessions }
+      : {}),
+    ...(planningAnchors ? { planningAnchors } : {}),
+  }
+}
+
 /**
  * When Supabase was clobbered (DEFAULT_PROFILE race) but localStorage still has
  * the user's choices, prefer the cache for critical planning fields.
@@ -40,6 +94,11 @@ export function mergeProfileFromCache(
       shouldHealRemote = true
     }
   }
+
+  merged.planningAnchors = mergePlanningAnchorsPreferRemote(
+    merged.planningAnchors,
+    remoteAnchors,
+  )
 
   if (cached.weeklySessions === 3 && remote.weeklySessions === 2) {
     merged.weeklySessions = 3

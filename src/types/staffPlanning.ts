@@ -43,6 +43,8 @@ export interface AthleteWeeklyMotherSessionSummary {
 }
 
 export interface AthleteStaffWeeklyView {
+  displayName: string
+  avatarUrl?: string
   identity: Required<Pick<AthleteIdentityContext, 'athleteId'>> & AthleteIdentityContext
   planningInputs: AthletePlanningInputs
   annualPlanning: AnnualPlanningContext

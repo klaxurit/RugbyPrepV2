@@ -2,16 +2,15 @@ import { useEffect, useRef } from 'react'
 import { X, Activity, Dumbbell, TrendingUp } from 'lucide-react'
 import type { AthleteStaffWeeklyView } from '../../types/staffPlanning'
 import { AthleteWeeklyCard } from './AthleteWeeklyCard'
-
-const ORANGE = '#ff6b35'
-const BG = '#0b0e14'
-const SURFACE_HIGH = '#1c2028'
+import { StaffAthleteAvatar } from './StaffAthleteAvatar'
+import type { StaffRosterTheme } from './StaffRosterTable'
 
 export interface StaffAthleteDetailDrawerProps {
   open: boolean
   athlete: AthleteStaffWeeklyView | null
   displayName?: string
   onClose: () => void
+  theme?: StaffRosterTheme
 }
 
 export function StaffAthleteDetailDrawer({
@@ -19,6 +18,7 @@ export function StaffAthleteDetailDrawer({
   athlete,
   displayName,
   onClose,
+  theme = 'app',
 }: StaffAthleteDetailDrawerProps) {
   const closeRef = useRef<HTMLButtonElement>(null)
 
@@ -36,51 +36,71 @@ export function StaffAthleteDetailDrawer({
     return () => document.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
+  useEffect(() => {
+    if (!open) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [open])
+
   if (!open || !athlete) return null
 
-  const name = displayName ?? athlete.identity.athleteId ?? 'Athlète'
-  const initials = name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? '')
-    .join('')
+  const isDark = theme === 'dark'
+  const name = displayName ?? athlete.displayName ?? athlete.identity.athleteId ?? 'Athlète'
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end" role="presentation">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-stretch sm:justify-end" role="presentation">
       <button
         type="button"
         aria-label="Fermer la fiche joueur"
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
       <aside
-        className="relative z-10 flex h-full w-full max-w-lg flex-col border-l shadow-2xl font-['Lexend']"
-        style={{ backgroundColor: BG, borderColor: `${SURFACE_HIGH}` }}
+        className={`relative z-10 flex w-full flex-col shadow-2xl sm:max-w-lg sm:border-l ${
+          isDark
+            ? "font-['Lexend'] bg-[#0b0e14] text-white border-[#1c2028]"
+            : 'bg-app text-fg border-brand-border'
+        } max-h-[min(92dvh,100dvh)] sm:max-h-[100dvh] rounded-t-2xl sm:rounded-none`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="staff-athlete-drawer-title"
         data-testid="staff-athlete-drawer"
       >
+        {/* Handle mobile */}
+        <div className="flex justify-center pt-2 sm:hidden">
+          <div className={`h-1 w-10 rounded-full ${isDark ? 'bg-white/20' : 'bg-fg-muted/30'}`} />
+        </div>
+
         {/* Header */}
         <div
-          className="flex items-center justify-between gap-3 border-b px-6 py-5"
-          style={{ borderColor: `${SURFACE_HIGH}` }}
+          className={`flex shrink-0 items-center justify-between gap-3 border-b px-4 py-4 sm:px-6 ${
+            isDark ? 'border-[#1c2028]' : 'border-brand-border'
+          }`}
         >
-          <div className="flex items-center gap-4 min-w-0">
-            <div
-              className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-black text-sm shrink-0"
-              style={{ backgroundColor: SURFACE_HIGH }}
-            >
-              {initials}
-            </div>
+          <div className="flex min-w-0 items-center gap-3">
+            <StaffAthleteAvatar
+              name={name}
+              avatarUrl={athlete.avatarUrl}
+              size="md"
+              theme={theme}
+            />
             <div className="min-w-0">
               <h2
                 id="staff-athlete-drawer-title"
-                className="m-0 truncate text-lg font-black text-white uppercase tracking-tight"
+                className={`m-0 truncate text-lg font-bold leading-tight ${
+                  isDark ? 'uppercase tracking-tight text-white' : 'text-fg'
+                }`}
               >
                 {name}
               </h2>
-              <p className="m-0 mt-0.5 truncate text-[10px] font-bold uppercase tracking-widest" style={{ color: ORANGE }}>
+              <p
+                className={`m-0 mt-0.5 truncate text-xs ${
+                  isDark ? 'font-bold uppercase tracking-widest text-[#ff6b35]' : 'text-fg-muted font-mono'
+                }`}
+              >
                 {athlete.identity.athleteId}
               </p>
             </div>
@@ -89,52 +109,71 @@ export function StaffAthleteDetailDrawer({
             ref={closeRef}
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg p-2 text-slate-500 hover:text-white hover:bg-white/10 transition-colors"
+            className={`shrink-0 rounded-lg p-2 transition-colors ${
+              isDark
+                ? 'text-slate-500 hover:bg-white/10 hover:text-white'
+                : 'text-fg-muted hover:bg-layer-10 hover:text-fg'
+            }`}
             data-testid="staff-athlete-drawer-close"
             aria-label="Fermer"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 space-y-6">
-          <AthleteWeeklyCard athlete={athlete} displayName={displayName} />
+        {/* Content scrollable */}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-8 sm:px-6 sm:py-6 sm:pb-10 space-y-5">
+          <AthleteWeeklyCard athlete={athlete} displayName={displayName} theme={theme} />
 
-          {/* Performance placeholder */}
           <section
-            className="rounded-xl border border-white/[0.06] overflow-hidden"
-            style={{ backgroundColor: `${SURFACE_HIGH}40` }}
+            className={`overflow-hidden rounded-xl border ${
+              isDark ? 'border-white/[0.06] bg-[#1c2028]/40' : 'border-brand-border bg-layer-5'
+            }`}
             aria-label="Données performance"
           >
             <div
-              className="px-5 py-4 border-b flex items-center gap-2"
-              style={{ borderColor: 'rgba(255,255,255,0.04)' }}
+              className={`flex items-center gap-2 border-b px-4 py-3 ${
+                isDark ? 'border-white/[0.04]' : 'border-brand-border'
+              }`}
             >
-              <TrendingUp className="w-4 h-4" style={{ color: ORANGE }} />
-              <h3 className="m-0 text-xs font-black text-white uppercase tracking-widest">
+              <TrendingUp className={`h-4 w-4 ${isDark ? 'text-[#ff6b35]' : 'text-brand'}`} />
+              <h3
+                className={`m-0 text-xs font-bold uppercase tracking-widest ${
+                  isDark ? 'text-white' : 'text-fg'
+                }`}
+              >
                 Perf & Historique
               </h3>
             </div>
-            <div className="p-5 space-y-3">
+            <div className="space-y-2 p-4">
               <div
-                className="rounded-lg px-4 py-3 flex items-center gap-3"
-                style={{ backgroundColor: `${BG}` }}
+                className={`flex items-center gap-3 rounded-lg px-3 py-3 ${
+                  isDark ? 'bg-[#0b0e14]' : 'bg-layer-10'
+                }`}
               >
-                <Dumbbell className="w-4 h-4 text-slate-500 shrink-0" />
+                <Dumbbell className={`h-4 w-4 shrink-0 ${isDark ? 'text-slate-500' : 'text-fg-muted'}`} />
                 <div>
-                  <dt className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Dernières séances</dt>
-                  <dd className="m-0 text-xs text-slate-400 mt-0.5">Non disponible (Staff V1)</dd>
+                  <dt className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-fg-muted'}`}>
+                    Dernières séances
+                  </dt>
+                  <dd className={`m-0 mt-0.5 text-xs ${isDark ? 'text-slate-400' : 'text-fg-muted'}`}>
+                    Non disponible (Staff V1)
+                  </dd>
                 </div>
               </div>
               <div
-                className="rounded-lg px-4 py-3 flex items-center gap-3"
-                style={{ backgroundColor: `${BG}` }}
+                className={`flex items-center gap-3 rounded-lg px-3 py-3 ${
+                  isDark ? 'bg-[#0b0e14]' : 'bg-layer-10'
+                }`}
               >
-                <Activity className="w-4 h-4 text-slate-500 shrink-0" />
+                <Activity className={`h-4 w-4 shrink-0 ${isDark ? 'text-slate-500' : 'text-fg-muted'}`} />
                 <div>
-                  <dt className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Records estimés</dt>
-                  <dd className="m-0 text-xs text-slate-400 mt-0.5">Squat · Bench · —</dd>
+                  <dt className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-fg-muted'}`}>
+                    Records estimés
+                  </dt>
+                  <dd className={`m-0 mt-0.5 text-xs ${isDark ? 'text-slate-400' : 'text-fg-muted'}`}>
+                    Squat · Bench · —
+                  </dd>
                 </div>
               </div>
             </div>

@@ -36,7 +36,7 @@ const makeRow = (overrides: Partial<ProfileRow> = {}): ProfileRow => ({
   training_baseline_set_at: null,
   performance_focus: null,
   preferred_language: null,
-  rehab_injury: null,
+  display_name: null,
   population_segment: null,
   age_band: null,
   parental_consent_health_data: null,

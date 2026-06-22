@@ -1,7 +1,3 @@
-/**
- * Mappers purs Supabase → domaine training (staff planning).
- * Pas d’import depuis les hooks UI.
- */
 import type {
   AgeBand,
   CalendarEvent,
@@ -16,6 +12,7 @@ import type {
   UserProfile,
   SeasonMode,
 } from '../../types/training'
+import { resolveProfileAvatarUrl } from '../profile/resolveAvatarUrl'
 
 export type ProfileRow = {
   id: string
@@ -39,7 +36,10 @@ export type ProfileRow = {
   level_modifier_profile: LevelModifierProfileV1 | null
   season_mode: string | null
   performance_focus: PerformanceFocus | null
-  rehab_injury: unknown | null
+  display_name: string | null
+  avatar_url: string | null
+  avatar_path: string | null
+  planning_anchors: UserProfile['planningAnchors'] | null
   population_segment: PopulationSegment | null
   age_band: AgeBand | null
   parental_consent_health_data: boolean | null
@@ -165,6 +165,10 @@ export function profileRowToUserProfile(row: ProfileRow): UserProfile {
     levelModifierProfile,
     seasonMode: (row.season_mode as SeasonMode | null) ?? undefined,
     performanceFocus: row.performance_focus ?? undefined,
+    displayName: row.display_name?.trim() || undefined,
+    avatarUrl: resolveProfileAvatarUrl(row.avatar_url, row.avatar_path),
+    avatarPath: row.avatar_path?.trim() || undefined,
+    planningAnchors: row.planning_anchors ?? undefined,
     populationSegment: row.population_segment ?? undefined,
     ageBand: row.age_band ?? undefined,
     parentalConsentHealthData: row.parental_consent_health_data ?? undefined,

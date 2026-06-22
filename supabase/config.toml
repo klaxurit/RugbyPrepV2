@@ -74,6 +74,12 @@ verify_jwt = true
 [functions.delete-account]
 verify_jwt = true
 
+[functions.admin-panel]
+verify_jwt = true
+
+[functions.sync-club-membership]
+verify_jwt = true
+
 # ─── notify-training — REMOVED (Decision #24 fix, 2026-05-07) ─────────
 # This function was deleted because:
 #  1. No callers — neither client, cron, nor other Edge Functions invoked it.

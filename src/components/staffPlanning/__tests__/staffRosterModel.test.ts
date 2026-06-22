@@ -8,6 +8,7 @@ import {
 
 function mockAthlete(p: Partial<AthleteStaffWeeklyView>): AthleteStaffWeeklyView {
   const base: AthleteStaffWeeklyView = {
+    displayName: 'Joueur Test',
     identity: { athleteId: 'a1', clubId: 'c', squadId: 's', source: 'staff' },
     planningInputs: {} as AthleteStaffWeeklyView['planningInputs'],
     annualPlanning: {

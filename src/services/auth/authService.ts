@@ -1,5 +1,8 @@
-import type { AuthChangeEvent, AuthError as SupabaseAuthError, Session, Subscription, User } from '@supabase/supabase-js'
 import { supabase } from '../supabase/client'
+import type { AuthChangeEvent, AuthError as SupabaseAuthError, Session, Subscription, User } from '@supabase/supabase-js'
+import {
+  resolveAvatarUrlFromAuthMetadata,
+} from '../profile/resolveAvatarUrl'
 import type { AuthError, AuthUser } from '../../types/auth'
 import type { Result } from '../../types/result'
 
@@ -26,24 +29,8 @@ const MAX_AVATAR_SIZE_BYTES = 5 * 1024 * 1024
 const normalizeEmail = (email: string): string => email.trim().toLowerCase()
 
 const resolveAvatarUrl = (user: User): string | undefined => {
-  const avatarPath =
-    typeof user.user_metadata.avatar_path === 'string' ? user.user_metadata.avatar_path : undefined
-
-  if (avatarPath) {
-    const { data } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(avatarPath)
-    return data.publicUrl
-  }
-
-  const avatarUrl =
-    typeof user.user_metadata.avatar_url === 'string' ? user.user_metadata.avatar_url : undefined
-
-  if (!avatarUrl) return undefined
-
-  if (avatarUrl.includes('/storage/v1/object/avatars/')) {
-    return avatarUrl.replace('/storage/v1/object/avatars/', '/storage/v1/object/public/avatars/')
-  }
-
-  return avatarUrl
+  const fromMeta = resolveAvatarUrlFromAuthMetadata(user.user_metadata)
+  return fromMeta.avatarUrl
 }
 
 export const mapSupabaseUserToAuthUser = (user: User): AuthUser => ({
@@ -223,14 +210,11 @@ export const updateAvatar = async (file: File): Promise<Result<AuthUser, AuthErr
 
   const { error: profileMirrorError } = await supabase
     .from('profiles')
-    .upsert(
-      {
-        id: user.id,
-        avatar_path: filePath,
-        avatar_url: avatarUrl,
-      },
-      { onConflict: 'id' },
-    )
+    .update({
+      avatar_path: filePath,
+      avatar_url: avatarUrl,
+    })
+    .eq('id', user.id)
 
   if (profileMirrorError) {
     console.warn('[authService] Failed to mirror avatar into profiles:', profileMirrorError.message)

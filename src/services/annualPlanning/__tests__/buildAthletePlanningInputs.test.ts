@@ -308,6 +308,42 @@ describe('buildAthletePlanningInputs', () => {
     expect(r.inputs.planningAnchors?.onboardingCycleHint).toBe('off_season')
   })
 
+  it('propage les overrides admin (manualCycleOverride + semaine inter-saison)', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'off_season',
+        planningAnchors: {
+          manualCycleOverride: 'off_season',
+          manualOffSeasonWeekOverride: 5,
+        },
+      }),
+      events: [{ id: 'm1', date: TODAY, type: 'match' }] as CalendarEvent[],
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBe('off_season')
+    expect(r.inputs.planningAnchors?.manualOffSeasonWeekOverride).toBe(5)
+  })
+
+  it('semaine manuelle + skip récup sans manualCycleOverride → force off_season', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        seasonMode: 'off_season',
+        planningAnchors: {
+          manualOffSeasonWeekOverride: 5,
+          skipOffSeasonRecoveryIntro: true,
+        },
+      }),
+      events: [{ id: 'm1', date: TODAY, type: 'match' }] as CalendarEvent[],
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.planningAnchors?.manualCycleOverride).toBe('off_season')
+    expect(r.inputs.planningAnchors?.manualOffSeasonWeekOverride).toBe(5)
+  })
+
   // ── Match-in-current-week vs seasonEndedAt ──
 
   it('preserves seasonEndedAt when a match exists in the same ISO week (FFR stale)', () => {

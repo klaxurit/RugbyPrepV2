@@ -171,6 +171,29 @@ function buildIdentity(
   }
 }
 
+function applyProfileManualAnchors(
+  pa: UserProfile['planningAnchors'],
+  base: NonNullable<PlanningAnchorsResult>,
+  seasonMode: UserProfile['seasonMode'],
+): void {
+  if (!pa) return
+  if (pa.manualCycleOverride) base.manualCycleOverride = pa.manualCycleOverride
+  if (pa.manualOffSeasonWeekOverride != null && Number.isFinite(pa.manualOffSeasonWeekOverride)) {
+    base.manualOffSeasonWeekOverride = pa.manualOffSeasonWeekOverride
+  }
+  if (pa.manualPreSeasonWeekOverride != null && Number.isFinite(pa.manualPreSeasonWeekOverride)) {
+    base.manualPreSeasonWeekOverride = pa.manualPreSeasonWeekOverride
+  }
+  if (pa.seasonEndedSource) base.seasonEndedSource = pa.seasonEndedSource
+  if (
+    base.manualOffSeasonWeekOverride != null &&
+    !base.manualCycleOverride &&
+    seasonMode === 'off_season'
+  ) {
+    base.manualCycleOverride = 'off_season'
+  }
+}
+
 function resolvePlanningAnchors(
   profile: UserProfile,
   hasMatchInCalendar: boolean,
@@ -182,6 +205,7 @@ function resolvePlanningAnchors(
 
   // Start with profile-level anchors (seasonEndedAt, manualPlayoffs, etc.)
   const base: NonNullable<PlanningAnchorsResult> = {}
+  applyProfileManualAnchors(pa, base, seasonMode)
   if (pa?.manualPlayoffs) base.manualPlayoffs = true
   if (pa?.returnToTeamTrainingAt) base.returnToTeamTrainingAt = pa.returnToTeamTrainingAt
 
@@ -210,7 +234,8 @@ function resolvePlanningAnchors(
   // V2: Only force manualCycleOverride for explicit off_season confirmation
   // (seasonEndedAt anchor present). Without that anchor, off_season from
   // onboardingCycleHint goes through the normal hint path, not manual override.
-  if (base.seasonEndedAt && cycleHint === 'off_season') {
+  // Ne pas écraser un override admin/staff déjà posé sur le profil.
+  if (base.seasonEndedAt && cycleHint === 'off_season' && !base.manualCycleOverride) {
     return { ...base, manualCycleOverride: 'off_season' }
   }
 
