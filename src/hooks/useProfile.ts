@@ -15,6 +15,7 @@ import type {
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { applyHealthConsentLifecycle } from '../services/privacy/healthConsentLifecycle'
+import { mergeProfileFromCache } from '../services/profile/mergeProfileFromCache'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 
 const STORAGE_BASE = 'rugbyprep.profile'
@@ -388,7 +389,7 @@ function applyPendingProfilePatches(
 }
 
 export const useProfileSource = () => {
-  const { authState } = useAuth()
+  const { authState, isInitializing } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
   // Initialise depuis le cache user-scoped pour éviter le flash DEFAULT entre
@@ -399,34 +400,44 @@ export const useProfileSource = () => {
   const isHydratedRef = useRef(!userId)
   const localEditsSinceLoadRef = useRef(0)
   const preHydrationPatchesRef = useRef<Partial<UserProfile>[]>([])
+  const pendingRemotePersistRef = useRef<UserProfile | null>(null)
 
   useEffect(() => {
     profileRef.current = profile
   }, [profile])
 
+  const saveLocalProfile = useCallback((next: UserProfile, uid: string | null) => {
+    saveToStorage(next, uid)
+  }, [])
+
+  const persistRemoteProfile = useCallback(async (next: UserProfile, uid: string): Promise<boolean> => {
+    const { error } = await supabase
+      .from('profiles')
+      .upsert(profileToRow(next, uid), { onConflict: 'id' })
+    if (error) {
+      console.error('[useProfile] Supabase persist failed:', error.message)
+      pendingRemotePersistRef.current = next
+      return false
+    }
+    pendingRemotePersistRef.current = null
+    return true
+  }, [])
+
   // Persist Supabase + localStorage
   const persistProfile = useCallback(
     async (next: UserProfile, uid: string | null) => {
+      saveLocalProfile(next, uid)
       if (!uid || !isHydratedRef.current) return
-      saveToStorage(next, uid)
-      const { error } = await supabase
-        .from('profiles')
-        .upsert(profileToRow(next, uid), { onConflict: 'id' })
-      if (error) {
-        console.error('[useProfile] Supabase persist failed:', error.message)
-      }
+      await persistRemoteProfile(next, uid)
     },
-    []
+    [persistRemoteProfile, saveLocalProfile]
   )
-
-  const persistProfileRef = useRef(persistProfile)
-  useEffect(() => {
-    persistProfileRef.current = persistProfile
-  }, [persistProfile])
 
   // Quand userId change : recharge depuis le cache user-scoped ou le défaut,
   // puis Supabase écrase avec la source de vérité (sauf si l'utilisateur a déjà modifié).
   useEffect(() => {
+    if (isInitializing) return
+
     localEditsSinceLoadRef.current = 0
     preHydrationPatchesRef.current = []
     isHydratedRef.current = !userId
@@ -443,37 +454,54 @@ export const useProfileSource = () => {
       )
       .eq('id', userId)
       .single()
-      .then(({ data, error }) => {
+      .then(async ({ data, error }) => {
         if (cancelled) return
 
+        const cached = loadFromStorage(userId)
+        const pendingPatches = preHydrationPatchesRef.current
+        preHydrationPatchesRef.current = []
+
         if (error) {
+          isHydratedRef.current = true
           if (isProfileRowMissingError(error)) {
-            isHydratedRef.current = true
-          } else {
-            console.error('[useProfile] Supabase fetch failed:', error.message)
+            const pending = applyPendingProfilePatches(cached ?? profileRef.current, pendingPatches)
+            setProfileState(pending)
+            saveLocalProfile(pending, userId)
+            return
+          }
+          console.error('[useProfile] Supabase fetch failed:', error.message)
+          if (cached) {
+            const pending = applyPendingProfilePatches(cached, pendingPatches)
+            setProfileState(pending)
+            saveLocalProfile(pending, userId)
           }
           return
         }
 
         isHydratedRef.current = true
 
-        const pendingPatches = preHydrationPatchesRef.current
-        preHydrationPatchesRef.current = []
-
         if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) {
           const pending = applyPendingProfilePatches(
             loadFromStorage(userId) ?? profileRef.current,
             pendingPatches,
           )
-          void persistProfileRef.current(pending, userId)
+          setProfileState(pending)
+          saveLocalProfile(pending, userId)
+          await persistRemoteProfile(pending, userId)
           return
         }
 
-        const loaded = applyPendingProfilePatches(rowToProfile(data as ProfileRow), pendingPatches)
+        const remote = rowToProfile(data as ProfileRow)
+        const { profile: mergedRemote, shouldHealRemote } = mergeProfileFromCache(remote, cached)
+        const loaded = normalizeLegacyProfile(
+          applyPendingProfilePatches(mergedRemote, pendingPatches),
+        )
         localEditsSinceLoadRef.current = 0
         setProfileState(loaded)
-        saveToStorage(loaded, userId)
-        void persistProfileRef.current(loaded, userId)
+        saveLocalProfile(loaded, userId)
+        if (shouldHealRemote || pendingPatches.length > 0) {
+          await persistRemoteProfile(loaded, userId)
+        }
         if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {
           localStorage.setItem(onboardingKey(userId), '1')
         }
@@ -482,10 +510,18 @@ export const useProfileSource = () => {
     return () => {
       cancelled = true
     }
-  }, [userId])
+  }, [userId, isInitializing, persistRemoteProfile, saveLocalProfile])
+
+  useEffect(() => {
+    if (!userId || !isHydratedRef.current) return
+    const pending = pendingRemotePersistRef.current
+    if (!pending) return
+    void persistRemoteProfile(pending, userId)
+  }, [userId, isInitializing, persistRemoteProfile])
 
   const setProfile = useCallback(
     (next: UserProfile) => {
+      saveLocalProfile(next, userId)
       if (isHydratedRef.current) {
         localEditsSinceLoadRef.current += 1
         setProfileState(next)
@@ -494,7 +530,7 @@ export const useProfileSource = () => {
         setProfileState(next)
       }
     },
-    [userId, persistProfile]
+    [userId, persistProfile, saveLocalProfile]
   )
 
   const updateProfile = useCallback(
@@ -512,6 +548,7 @@ export const useProfileSource = () => {
           patch: stampedPatch,
           source: options?.source ?? 'profile',
         })
+        saveLocalProfile(next, userId)
         if (isHydratedRef.current) {
           localEditsSinceLoadRef.current += 1
           void persistProfile(next, userId)
@@ -521,7 +558,7 @@ export const useProfileSource = () => {
         return next
       })
     },
-    [userId, persistProfile]
+    [userId, persistProfile, saveLocalProfile]
   )
 
   const resetProfile = useCallback(() => {
