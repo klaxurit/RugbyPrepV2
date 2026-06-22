@@ -7,7 +7,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Lang } from '../i18n/appLabels'
 import { schedulingTransitionLabel } from '../i18n/programSurfaces'
 import type { SchedulingMode, SchedulingTransition } from '../types/scheduling'
-import type { SessionLog } from '../types/training'
 import { syncDismissToSupabase, useMergeRemoteDismisses } from './useDismissedUntilSync'
 
 const HINT_PREFIX = 'scheduling_transition:'
@@ -29,7 +28,6 @@ export interface TransitionStorage {
 
 export interface UseSchedulingTransitionParams {
   schedulingMode: SchedulingMode | null
-  logs: SessionLog[]
   today: string
   userId?: string | null
   lang?: Lang
@@ -120,7 +118,6 @@ export function useSchedulingTransition(
     const dismissed = readDismissed(storage, dismissKey)
     const d = new Date(`${today}T12:00:00`)
     d.setDate(d.getDate() + DEFAULT_DISMISS_DAYS)
-    dismissed[type] = d.toISOString().slice(0, 10)
     dismissed[type] = d.toISOString().slice(0, 10)
     writeDismissed(storage, dismissKey, dismissed)
     setDismissCount((c) => c + 1)

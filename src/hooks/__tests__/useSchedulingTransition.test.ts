@@ -3,7 +3,6 @@
 import { describe, expect, it } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useSchedulingTransition, type TransitionStorage } from '../useSchedulingTransition'
-import type { SessionLog } from '../../types/training'
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
@@ -16,15 +15,6 @@ function createMockStorage(): TransitionStorage & { data: Record<string, string>
   }
 }
 
-function makeLog(dateISO: string): SessionLog {
-  return {
-    id: `log-${dateISO}`,
-    dateISO,
-    sessionType: 'FULL',
-    week: 'W1',
-    fatigue: 'OK',
-  } as SessionLog
-}
 
 const TODAY = '2026-04-06'
 
@@ -38,7 +28,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -55,7 +44,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'sequential',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -75,7 +63,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -95,7 +82,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'sequential',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -115,7 +101,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -132,7 +117,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'sequential',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -142,7 +126,7 @@ describe('useSchedulingTransition', () => {
     expect(result.current.transition).toBeNull()
   })
 
-  // ── Return after break — retiré (doublon PlanningContextCard) ──
+  // ── Return after break — retiré (doublon Score de forme) ──
 
   it('long absence sans changement de mode → pas de bannière scheduling', () => {
     const storage = createMockStorage()
@@ -151,7 +135,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [makeLog('2026-03-20')],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -168,7 +151,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [makeLog('2026-03-15')],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -189,7 +171,6 @@ describe('useSchedulingTransition', () => {
       ({ mode }) =>
         useSchedulingTransition({
           schedulingMode: mode,
-          logs: [],
           today: TODAY,
           userId: 'user-a',
           storage,
@@ -218,7 +199,6 @@ describe('useSchedulingTransition', () => {
     const { result } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: null,
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -236,7 +216,6 @@ describe('useSchedulingTransition', () => {
     renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         storage,
       }),
@@ -257,7 +236,6 @@ describe('useSchedulingTransition', () => {
     const { result: rA } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-a',
         storage,
@@ -272,7 +250,6 @@ describe('useSchedulingTransition', () => {
     const { result: rB } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
-        logs: [],
         today: TODAY,
         userId: 'user-b',
         storage,

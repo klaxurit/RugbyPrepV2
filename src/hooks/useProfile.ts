@@ -290,7 +290,7 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     ffrCompetitionId: row.ffr_competition_id ?? undefined,
     ffrCompetitionName: row.ffr_competition_name ?? undefined,
     ffrLastSyncAt: row.ffr_last_sync_at ?? undefined,
-    planningAnchors: (row.planning_anchors as UserProfile['planningAnchors']) ?? undefined,
+    planningAnchors: normalizePlanningAnchors(row.planning_anchors as UserProfile['planningAnchors']),
     seasonTransitionState: (row.season_transition_state as UserProfile['seasonTransitionState']) ?? undefined,
   })
 }
@@ -358,6 +358,35 @@ export const shouldApplyRemoteProfile = (localEditsSinceLoad: number): boolean =
 export const isProfileRowMissingError = (error: { code?: string; message?: string } | null): boolean =>
   error?.code === 'PGRST116'
 
+/**
+ * Ancres legacy sans `seasonEndedSource` : traiter comme décision manuelle pour
+ * éviter qu'un match FFR ne réinitialise l'inter-saison.
+ */
+export function normalizePlanningAnchors(
+  raw: UserProfile['planningAnchors'] | null | undefined,
+): UserProfile['planningAnchors'] {
+  if (!raw) return undefined
+  if (raw.seasonEndedAt && !raw.seasonEndedSource) {
+    return { ...raw, seasonEndedSource: 'manual' }
+  }
+  return raw
+}
+
+function applyPendingProfilePatches(
+  base: UserProfile,
+  patches: Partial<UserProfile>[],
+): UserProfile {
+  let acc = base
+  for (const patch of patches) {
+    acc = applyHealthConsentLifecycle({
+      current: acc,
+      patch,
+      source: 'profile',
+    })
+  }
+  return acc
+}
+
 export const useProfileSource = () => {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
@@ -369,6 +398,7 @@ export const useProfileSource = () => {
   const profileRef = useRef(profile)
   const isHydratedRef = useRef(!userId)
   const localEditsSinceLoadRef = useRef(0)
+  const preHydrationPatchesRef = useRef<Partial<UserProfile>[]>([])
 
   useEffect(() => {
     profileRef.current = profile
@@ -377,10 +407,8 @@ export const useProfileSource = () => {
   // Persist Supabase + localStorage
   const persistProfile = useCallback(
     async (next: UserProfile, uid: string | null) => {
-      saveToStorage(next, uid)
-      // Never upsert before the remote row was fetched — otherwise DEFAULT_PROFILE
-      // clobbers Supabase on login (weeklySessions: 2, empty morpho, in_season).
       if (!uid || !isHydratedRef.current) return
+      saveToStorage(next, uid)
       const { error } = await supabase
         .from('profiles')
         .upsert(profileToRow(next, uid), { onConflict: 'id' })
@@ -400,6 +428,7 @@ export const useProfileSource = () => {
   // puis Supabase écrase avec la source de vérité (sauf si l'utilisateur a déjà modifié).
   useEffect(() => {
     localEditsSinceLoadRef.current = 0
+    preHydrationPatchesRef.current = []
     isHydratedRef.current = !userId
     // eslint-disable-next-line react-hooks/set-state-in-effect -- required: userId change must reset cache
     setProfileState(loadFromStorage(userId) ?? DEFAULT_PROFILE)
@@ -428,16 +457,23 @@ export const useProfileSource = () => {
 
         isHydratedRef.current = true
 
+        const pendingPatches = preHydrationPatchesRef.current
+        preHydrationPatchesRef.current = []
+
         if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) {
-          const pending = loadFromStorage(userId) ?? profileRef.current
+          const pending = applyPendingProfilePatches(
+            loadFromStorage(userId) ?? profileRef.current,
+            pendingPatches,
+          )
           void persistProfileRef.current(pending, userId)
           return
         }
 
-        const loaded = rowToProfile(data as ProfileRow)
+        const loaded = applyPendingProfilePatches(rowToProfile(data as ProfileRow), pendingPatches)
+        localEditsSinceLoadRef.current = 0
         setProfileState(loaded)
         saveToStorage(loaded, userId)
-        // Profil Supabase trouvé avec onboarding complet → marquer localement
+        void persistProfileRef.current(loaded, userId)
         if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {
           localStorage.setItem(onboardingKey(userId), '1')
         }
@@ -450,19 +486,20 @@ export const useProfileSource = () => {
 
   const setProfile = useCallback(
     (next: UserProfile) => {
-      localEditsSinceLoadRef.current += 1
-      setProfileState(next)
-      void persistProfile(next, userId)
+      if (isHydratedRef.current) {
+        localEditsSinceLoadRef.current += 1
+        setProfileState(next)
+        void persistProfile(next, userId)
+      } else {
+        setProfileState(next)
+      }
     },
     [userId, persistProfile]
   )
 
   const updateProfile = useCallback(
     (patch: Partial<UserProfile>, options?: UpdateProfileOptions) => {
-      localEditsSinceLoadRef.current += 1
       setProfileState((current) => {
-        // Auto-set trainingBaselineSetAt quand le baseline change (sauf override explicite).
-        // Sert à expirer auto le mode 'restart' après 14j (rampe de reprise).
         const baselineChanged =
           'trainingBaseline' in patch &&
           patch.trainingBaseline !== current.trainingBaseline
@@ -475,7 +512,12 @@ export const useProfileSource = () => {
           patch: stampedPatch,
           source: options?.source ?? 'profile',
         })
-        void persistProfile(next, userId)
+        if (isHydratedRef.current) {
+          localEditsSinceLoadRef.current += 1
+          void persistProfile(next, userId)
+        } else {
+          preHydrationPatchesRef.current.push(stampedPatch)
+        }
         return next
       })
     },

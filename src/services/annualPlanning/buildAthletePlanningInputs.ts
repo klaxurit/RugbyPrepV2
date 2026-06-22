@@ -185,10 +185,13 @@ function resolvePlanningAnchors(
   if (pa?.manualPlayoffs) base.manualPlayoffs = true
   if (pa?.returnToTeamTrainingAt) base.returnToTeamTrainingAt = pa.returnToTeamTrainingAt
 
-  // seasonEndedAt: apply if no match invalidates it, OR if the user explicitly
-  // confirmed end-of-season manually (manual decision overrides calendar data).
-  const isManualSeasonEnd = pa?.seasonEndedSource === 'manual'
-  const matchInvalidatesSeasonEnd = !isManualSeasonEnd && (hasFutureMatch || hasMatchThisWeek)
+  // seasonEndedAt / offSeasonStartAt : une fois déclarés, le calendrier (match FFR
+  // cette semaine, match futur stale) ne doit jamais les effacer — sinon reset brutal
+  // inter-saison → saison + perte de phase (Hypertrophie → Transition).
+  const userDeclaredSeasonEnd = Boolean(pa?.seasonEndedAt)
+  const matchInvalidatesSeasonEnd = userDeclaredSeasonEnd
+    ? false
+    : hasFutureMatch || hasMatchThisWeek
   if (pa?.seasonEndedAt && !matchInvalidatesSeasonEnd) {
     base.seasonEndedAt = pa.seasonEndedAt
   }

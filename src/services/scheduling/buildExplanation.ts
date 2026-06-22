@@ -342,25 +342,7 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
     }
   }
 
-  // Long absence: 0 sessions in 28d with historical logs
-  if (
-    ctx.monitoringSnapshot?.completedSessionsLast7d === 0 &&
-    ctx.monitoringSnapshot?.completedSessionsLast28d === 0 &&
-    ctx.monitoringSnapshot?.hasHistoricalLogs === true
-  ) {
-    const s = 'Semaine de reprise progressive'
-    if (!seen.has(s)) {
-      seen.add(s)
-      result.push({
-        summary: s,
-        detail: 'Après une pause, on reprend progressivement pour que tes muscles et tendons se réadaptent en sécurité.',
-        ruleId: 'context:return_after_break',
-        priority: -1,
-        overridesSequential: true,
-      })
-    }
-  }
-
+  // Long absence messaging → Score de forme (HomePage). Ne pas dupliquer ici.
   return result.sort((a, b) => a.priority - b.priority)
 }
 

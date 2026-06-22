@@ -170,7 +170,6 @@ export function WeekPage() {
   const visibleSchedulingMode = snapshot?.surface?.schedulingMode ?? surface?.schedulingMode ?? null
   const { transition: schedulingTransition, dismiss: dismissSchedulingTransition } = useSchedulingTransition({
     schedulingMode: visibleSchedulingMode,
-    logs,
     today,
     userId,
     lang,
