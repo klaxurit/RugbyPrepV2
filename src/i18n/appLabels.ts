@@ -173,6 +173,8 @@ export const APP_LABELS = {
   equipment_preset_full_gym_sub: { fr: 'Barre, machines, câbles…', en: 'Barbell, machines, cables…' },
   step1_title: { fr: 'Ton profil', en: 'Your profile' },
   step1_sub: { fr: 'Pour calibrer les charges et les volumes.', en: 'To tune loads and volumes.' },
+  step1_title_home: { fr: 'Ton rythme', en: 'Your schedule' },
+  step1_sub_home: { fr: 'Combien de séances muscu par semaine, en dehors du club.', en: 'How many strength sessions per week, outside club training.' },
   step1_section_level: { fr: 'Niveau en salle', en: 'Gym level' },
   step1_section_sessions: { fr: 'Séances par semaine', en: 'Sessions per week' },
   step1_section_gender: { fr: 'Tu es', en: 'You are' },

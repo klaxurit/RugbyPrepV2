@@ -202,6 +202,19 @@ function resolveEquipmentFromPreset(preset: EquipmentPreset): Equipment[] {
   }
 }
 
+function asksGymTrainingLevel(preset: EquipmentPreset | null): boolean {
+  return preset === 'full_gym'
+}
+
+/** Hors salle complète : niveau starter (volume foundations) sans question dédiée. */
+function resolveOnboardingTrainingLevel(
+  preset: EquipmentPreset | null,
+  selected: TrainingLevel | null,
+): TrainingLevel {
+  if (asksGymTrainingLevel(preset)) return selected ?? 'starter'
+  return 'starter'
+}
+
 // ─── BMI helper ───────────────────────────────────────────────
 
 function calcBmi(heightCm: number, weightKg: number): number {
@@ -324,6 +337,7 @@ export function OnboardingPage() {
   const { subscribe: notifSubscribe } = useNotifications(notifProfile)
 
   const isOffSeason = seasonPhase === 'off_season'
+  const showGymTrainingLevel = asksGymTrainingLevel(equipmentPreset)
 
   // Derive default gym days for off-season (no setState in effect needed)
   const effectiveOffSeasonGymDays: Set<DayOfWeek> = offSeasonGymDays
@@ -359,7 +373,10 @@ export function OnboardingPage() {
   const canNext = () => {
     if (step === 0) return position !== null
     if (step === 1) return equipmentPreset !== null
-    if (step === 2) return Boolean(trainingLevel) && sessions !== null
+    if (step === 2) {
+      const levelOk = showGymTrainingLevel ? Boolean(trainingLevel) : true
+      return levelOk && sessions !== null
+    }
     if (step === 3) return seasonPhase !== null && trainingBaseline !== null
     // Planning (4) et Morphologie (5) optionnels
     return true
@@ -400,7 +417,8 @@ export function OnboardingPage() {
   const handleFinish = async () => {
     try {
       const clubSchedule = isOffSeason ? undefined : buildClubSchedule()
-      const levelDef = TRAINING_LEVELS.find((l) => l.value === trainingLevel)!
+      const resolvedTrainingLevel = resolveOnboardingTrainingLevel(equipmentPreset, trainingLevel)
+      const levelDef = TRAINING_LEVELS.find((l) => l.value === resolvedTrainingLevel)!
       const derivedPopulationSegment: PopulationSegment =
         gender === 'female' ? 'female_senior' : 'male_senior'
 
@@ -424,7 +442,7 @@ export function OnboardingPage() {
         position: position!,
         rugbyPosition: position!,
         level: levelDef.legacyLevel,
-        trainingLevel: trainingLevel!,
+        trainingLevel: resolvedTrainingLevel,
         seasonMode: derivedSeasonMode,
         trainingBaseline: trainingBaseline ?? undefined,
         planningAnchors: nextAnchors,
@@ -448,7 +466,7 @@ export function OnboardingPage() {
 
       if (userId) markOnboardingComplete(userId)
       posthog.capture('onboarding_completed', {
-        position, trainingLevel, ageBand, gender,
+        position, trainingLevel: resolvedTrainingLevel, ageBand, gender,
         populationSegment: derivedPopulationSegment,
         performanceFocus: 'balanced',
         sessions,
@@ -616,7 +634,10 @@ export function OnboardingPage() {
                     key={opt.value}
                     type="button"
                     data-testid={`onboarding-equipment-${opt.value}`}
-                    onClick={() => setEquipmentPreset(opt.value)}
+                    onClick={() => {
+                      setEquipmentPreset(opt.value)
+                      if (!asksGymTrainingLevel(opt.value)) setTrainingLevel(null)
+                    }}
                     className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] rf-focus-ring ${
                       selected
                         ? 'border-brand bg-brand-soft shadow-[0_0_0_4px_var(--color-accent-glow)]'
@@ -646,9 +667,12 @@ export function OnboardingPage() {
         {/* ── Step 2 : Niveau + Séances + Genre ── */}
         {step === 2 && (
           <div className="space-y-7">
-            <StepTitle title={tr('step1_title', lang)} sub={tr('step1_sub', lang)} />
+            <StepTitle
+              title={tr(showGymTrainingLevel ? 'step1_title' : 'step1_title_home', lang)}
+              sub={tr(showGymTrainingLevel ? 'step1_sub' : 'step1_sub_home', lang)}
+            />
 
-            {/* Niveau */}
+            {showGymTrainingLevel && (
             <div className="space-y-3">
               <SectionLabel>{tr('step1_section_level', lang)}</SectionLabel>
               <div className="space-y-2.5">
@@ -690,6 +714,7 @@ export function OnboardingPage() {
                 })}
               </div>
             </div>
+            )}
 
             {/* Séances par semaine */}
             <div className="space-y-3">
@@ -1149,7 +1174,9 @@ export function OnboardingPage() {
                 label={tr('step5_row_equipment', lang)}
                 value={EQUIPMENT_PRESETS.find((p) => p.value === equipmentPreset)?.label ?? '–'}
               />
-              <SummaryRow label={tr('step5_row_level', lang)} value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
+              {showGymTrainingLevel && (
+                <SummaryRow label={tr('step5_row_level', lang)} value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
+              )}
               <SummaryRow label={tr('step5_row_sessions', lang)} value={`${sessions} ${tr('step5_sessions_per_week', lang)}`} />
               <SummaryRow
                 label={tr('step5_row_season', lang)}

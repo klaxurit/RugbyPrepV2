@@ -78,8 +78,10 @@ function navigateToSummary(options?: { equipmentPreset?: 'bodyweight' | 'bands' 
   fireEvent.click(screen.getByTestId(`onboarding-equipment-${equipmentPreset}`))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
-  // Step 2: Profil → Performance + 2 séances
-  fireEvent.click(screen.getByText('Performance'))
+  // Step 2: Profil
+  if (equipmentPreset === 'full_gym') {
+    fireEvent.click(screen.getByText('Performance'))
+  }
   fireEvent.click(screen.getByText('2 séances'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
@@ -134,8 +136,8 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    // Step 1: Matériel
-    fireEvent.click(screen.getByTestId('onboarding-equipment-bodyweight'))
+    // Step 1: Matériel salle (pour afficher le niveau)
+    fireEvent.click(screen.getByTestId('onboarding-equipment-full_gym'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
     // Step 2: select Performance
@@ -244,7 +246,21 @@ describe('OnboardingPage · first run flow', () => {
     expect(call.equipment).toEqual(expect.arrayContaining(['barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box']))
   })
 
-  it('onboarding submit enregistre equipment vide pour poids de corps', () => {
+  it('masque le niveau en salle hors preset salle complète', () => {
+    renderOnboarding()
+
+    fireEvent.click(screen.getByText('Première ligne'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+    fireEvent.click(screen.getByTestId('onboarding-equipment-bodyweight'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+
+    expect(screen.queryByText('Niveau en salle')).toBeNull()
+    expect(screen.queryByText('Fondations')).toBeNull()
+    expect(screen.getByText('Ton rythme')).toBeTruthy()
+    expect(screen.getByText('2 séances')).toBeTruthy()
+  })
+
+  it('onboarding submit enregistre starter par défaut pour poids de corps', () => {
     renderOnboarding()
     navigateToSummary({ equipmentPreset: 'bodyweight' })
 
@@ -252,6 +268,7 @@ describe('OnboardingPage · first run flow', () => {
 
     const call = updateProfileMock.mock.calls[0][0]
     expect(call.equipment).toEqual([])
+    expect(call.trainingLevel).toBe('starter')
   })
 
   it('onboarding submit preserves existing planningAnchors', () => {
