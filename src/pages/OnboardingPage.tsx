@@ -4,6 +4,7 @@ import {
   ChevronLeft, ChevronRight, CheckCircle2, Check,
   Dumbbell, Trophy, Ruler, Flame,
   Leaf, Sparkles, RefreshCw, Activity,
+  Home, Building2, StretchHorizontal,
 } from 'lucide-react'
 
 // Illustrations abstraites des groupes de poste (bordeaux / crème)
@@ -144,13 +145,62 @@ function getTrainingLevels(lang: Lang): TrainingLevelDef[] {
   ]
 }
 
-// Tous les profils démarrent avec un équipement "salle complète" — le moteur
-// adapte silencieusement les exercices via les variantes accessibles. Pas de
-// sélection d'équipement à l'onboarding.
+// Preset salle complète — choisi explicitement à l'onboarding (étape Matériel).
 const GYM_PRESET: Equipment[] = [
   'barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box',
   'machine', 'cable', 'landmine', 'tbar_row', 'ghd', 'med_ball', 'ab_wheel', 'sprint_track',
 ]
+
+type EquipmentPreset = 'bodyweight' | 'bands' | 'home_gym' | 'full_gym'
+
+type EquipmentPresetDef = {
+  value: EquipmentPreset
+  label: string
+  sub: string
+  icon: typeof Home
+}
+
+function getEquipmentPresets(lang: Lang): EquipmentPresetDef[] {
+  return [
+    {
+      value: 'bodyweight',
+      label: tr('equipment_preset_bodyweight', lang),
+      sub: tr('equipment_preset_bodyweight_sub', lang),
+      icon: Home,
+    },
+    {
+      value: 'bands',
+      label: tr('equipment_preset_bands', lang),
+      sub: tr('equipment_preset_bands_sub', lang),
+      icon: StretchHorizontal,
+    },
+    {
+      value: 'home_gym',
+      label: tr('equipment_preset_home', lang),
+      sub: tr('equipment_preset_home_sub', lang),
+      icon: Dumbbell,
+    },
+    {
+      value: 'full_gym',
+      label: tr('equipment_preset_full_gym', lang),
+      sub: tr('equipment_preset_full_gym_sub', lang),
+      icon: Building2,
+    },
+  ]
+}
+
+function resolveEquipmentFromPreset(preset: EquipmentPreset): Equipment[] {
+  switch (preset) {
+    case 'bodyweight':
+      return []
+    case 'bands':
+      return ['band']
+    case 'home_gym':
+      return ['band', 'dumbbell', 'bench', 'pullup_bar']
+    case 'full_gym':
+      return GYM_PRESET
+  }
+}
 
 // ─── BMI helper ───────────────────────────────────────────────
 
@@ -251,6 +301,7 @@ export function OnboardingPage() {
 
   const [step, setStep] = useState(0)
   const [position, setPosition] = useState<PositionValue | null>(null)
+  const [equipmentPreset, setEquipmentPreset] = useState<EquipmentPreset | null>(null)
   const [trainingLevel, setTrainingLevel] = useState<TrainingLevel | null>(null)
   const ageBand = 'adult' as const
   const [gender, setGender] = useState<'male' | 'female'>('male')
@@ -285,10 +336,12 @@ export function OnboardingPage() {
   const SEASON_PHASES = getSeasonPhases(lang)
   const TRAINING_BASELINES = getTrainingBaselines(lang)
   const TRAINING_LEVELS = getTrainingLevels(lang)
+  const EQUIPMENT_PRESETS = getEquipmentPresets(lang)
   const DAY_LABELS = dayAbbrArray(lang)
 
   const STEPS = [
     tr('step_position', lang),
+    tr('step_equipment', lang),
     tr('step_profile', lang),
     tr('step_situation', lang),
     tr('step_planning', lang),
@@ -305,9 +358,10 @@ export function OnboardingPage() {
 
   const canNext = () => {
     if (step === 0) return position !== null
-    if (step === 1) return Boolean(trainingLevel) && sessions !== null
-    if (step === 2) return seasonPhase !== null && trainingBaseline !== null
-    // Planning (3) et Morphologie (4) optionnels
+    if (step === 1) return equipmentPreset !== null
+    if (step === 2) return Boolean(trainingLevel) && sessions !== null
+    if (step === 3) return seasonPhase !== null && trainingBaseline !== null
+    // Planning (4) et Morphologie (5) optionnels
     return true
   }
 
@@ -376,7 +430,7 @@ export function OnboardingPage() {
         planningAnchors: nextAnchors,
         performanceFocus: 'balanced' as const,
         weeklySessions: sessions!,
-        equipment: GYM_PRESET,
+        equipment: resolveEquipmentFromPreset(equipmentPreset!),
         heightCm: validHeight ? parsedHeight : undefined,
         weightKg: validWeight ? parsedWeight : undefined,
         clubSchedule,
@@ -549,8 +603,48 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 1 : Niveau + Séances + Genre ── */}
+        {/* ── Step 1 : Matériel ── */}
         {step === 1 && (
+          <div className="space-y-3">
+            <StepTitle title={tr('step_equipment_title', lang)} sub={tr('step_equipment_sub', lang)} />
+            <div className="space-y-2.5">
+              {EQUIPMENT_PRESETS.map((opt) => {
+                const selected = equipmentPreset === opt.value
+                const Icon = opt.icon
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    data-testid={`onboarding-equipment-${opt.value}`}
+                    onClick={() => setEquipmentPreset(opt.value)}
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] rf-focus-ring ${
+                      selected
+                        ? 'border-brand bg-brand-soft shadow-[0_0_0_4px_var(--color-accent-glow)]'
+                        : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
+                    }`}
+                  >
+                    <Icon
+                      className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-brand' : 'text-fg-muted'}`}
+                      strokeWidth={2.25}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
+                        {opt.label}
+                      </p>
+                      <p className="text-xs text-fg-muted mt-0.5">{opt.sub}</p>
+                    </div>
+                    {selected && (
+                      <CheckCircle2 className="w-5 h-5 text-brand-tint flex-shrink-0" />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── Step 2 : Niveau + Séances + Genre ── */}
+        {step === 2 && (
           <div className="space-y-7">
             <StepTitle title={tr('step1_title', lang)} sub={tr('step1_sub', lang)} />
 
@@ -662,8 +756,8 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 2 : Situation saison + état de forme (NEW) ── */}
-        {step === 2 && (
+        {/* ── Step 3 : Situation saison + état de forme ── */}
+        {step === 3 && (
           <div className="space-y-7">
             <StepTitle
               title={tr('step2_title', lang)}
@@ -744,7 +838,7 @@ export function OnboardingPage() {
         )}
 
         {/* ── Step 3 : Planning ── */}
-        {step === 3 && isOffSeason && (
+        {step === 4 && isOffSeason && (
           <div className="space-y-6">
             <StepTitle
               title={tr('step3_offseason_title', lang)}
@@ -794,7 +888,7 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {step === 3 && !isOffSeason && (
+        {step === 4 && !isOffSeason && (
           <div className="space-y-6">
             <StepTitle
               title={tr('step3_club_title', lang)}
@@ -913,8 +1007,8 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 4 : Morphologie ── */}
-        {step === 4 && (
+        {/* ── Step 5 : Morphologie ── */}
+        {step === 5 && (
           <div className="space-y-6">
             <StepTitle
               title={tr('step4_title', lang)}
@@ -1017,8 +1111,8 @@ export function OnboardingPage() {
           </div>
         )}
 
-        {/* ── Step 5 : Résumé ── */}
-        {step === 5 && (
+        {/* ── Step 6 : Résumé ── */}
+        {step === 6 && (
           <div className="space-y-6">
             {/* Hero : illustration du poste choisi */}
             {position && (() => {
@@ -1051,6 +1145,10 @@ export function OnboardingPage() {
 
             <div className="bg-layer-5 border border-border-app rounded-[1.75rem] overflow-hidden divide-y divide-border-app">
               <SummaryRow label={tr('step5_row_position', lang)} value={POSITIONS.find((p) => p.value === position)?.label ?? '–'} />
+              <SummaryRow
+                label={tr('step5_row_equipment', lang)}
+                value={EQUIPMENT_PRESETS.find((p) => p.value === equipmentPreset)?.label ?? '–'}
+              />
               <SummaryRow label={tr('step5_row_level', lang)} value={TRAINING_LEVELS.find((l) => l.value === trainingLevel)?.label ?? '–'} />
               <SummaryRow label={tr('step5_row_sessions', lang)} value={`${sessions} ${tr('step5_sessions_per_week', lang)}`} />
               <SummaryRow
@@ -1094,8 +1192,8 @@ export function OnboardingPage() {
 
       </main>
 
-      {/* ── CTA flottant principal (steps 0, 1, 2, 4) ── */}
-      {step !== 3 && step !== 5 && (
+      {/* ── CTA flottant principal (steps 0–3, 5) ── */}
+      {step !== 4 && step !== 6 && (
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto pointer-events-auto">
             <button
@@ -1111,8 +1209,8 @@ export function OnboardingPage() {
         </div>
       )}
 
-      {/* ── CTA step 3 : Planning ── */}
-      {step === 3 && (
+      {/* ── CTA step 4 : Planning ── */}
+      {step === 4 && (
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <div className="max-w-md mx-auto space-y-2 pointer-events-auto">
             <button

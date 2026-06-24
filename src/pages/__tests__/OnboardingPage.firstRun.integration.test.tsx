@@ -67,25 +67,31 @@ function renderOnboarding(state?: Record<string, unknown>) {
 }
 
 /** Click through all steps to reach the summary. */
-function navigateToSummary() {
+function navigateToSummary(options?: { equipmentPreset?: 'bodyweight' | 'bands' | 'home_gym' | 'full_gym' }) {
+  const equipmentPreset = options?.equipmentPreset ?? 'full_gym'
+
   // Step 0: Position → Première ligne
   fireEvent.click(screen.getByText('Première ligne'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
-  // Step 1: Profil → Performance + 2 séances
+  // Step 1: Matériel
+  fireEvent.click(screen.getByTestId(`onboarding-equipment-${equipmentPreset}`))
+  fireEvent.click(screen.getAllByText('Suivant')[0])
+
+  // Step 2: Profil → Performance + 2 séances
   fireEvent.click(screen.getByText('Performance'))
   fireEvent.click(screen.getByText('2 séances'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
-  // Step 2: Situation → En saison + Actif
+  // Step 3: Situation → En saison + Actif
   fireEvent.click(screen.getByTestId('onboarding-season-in_season'))
   fireEvent.click(screen.getByTestId('onboarding-baseline-active'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
-  // Step 3: Planning club → skip
+  // Step 4: Planning club → skip
   fireEvent.click(screen.getByText(/Pas d'entraînement club/))
 
-  // Step 4: Morphologie → skip
+  // Step 5: Morphologie → skip
   fireEvent.click(screen.getByText('Passer cette étape'))
 }
 
@@ -128,27 +134,34 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
-    // Step 1: select Performance
+    // Step 1: Matériel
+    fireEvent.click(screen.getByTestId('onboarding-equipment-bodyweight'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+
+    // Step 2: select Performance
     fireEvent.click(screen.getByText('Performance'))
 
     // performanceFocus should NOT appear
     expect(screen.queryByText('Orientation performance')).toBeNull()
   })
 
-  it('résumé n\'affiche pas performanceFocus, Population, Période ni Équipement', () => {
+  it('résumé n\'affiche pas performanceFocus, Population ni Période', () => {
     renderOnboarding()
     navigateToSummary()
 
     expect(screen.queryByText('Orientation')).toBeNull()
     expect(screen.queryByText('Population')).toBeNull()
     expect(screen.queryByText('Période')).toBeNull()
-    expect(screen.queryByText('Équipement')).toBeNull()
+    expect(screen.getByText('Matériel')).toBeTruthy()
   })
 
   it('question genre visible et dérive le bon populationSegment', () => {
     renderOnboarding()
 
     fireEvent.click(screen.getByText('Première ligne'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+
+    fireEvent.click(screen.getByTestId('onboarding-equipment-full_gym'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
     fireEvent.click(screen.getByText('Performance'))
@@ -202,6 +215,8 @@ describe('OnboardingPage · first run flow', () => {
 
     fireEvent.click(screen.getByText('Première ligne'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
+    fireEvent.click(screen.getByTestId('onboarding-equipment-full_gym'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
     fireEvent.click(screen.getByText('Performance'))
     fireEvent.click(screen.getByText('2 séances'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
@@ -219,14 +234,24 @@ describe('OnboardingPage · first run flow', () => {
     expect(call.planningAnchors.manualPlayoffs).toBe(true)
   })
 
-  it('onboarding submit force l\'équipement sur GYM_PRESET complet', () => {
+  it('onboarding submit enregistre le preset salle complète si choisi', () => {
     renderOnboarding()
-    navigateToSummary()
+    navigateToSummary({ equipmentPreset: 'full_gym' })
 
     fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
 
     const call = updateProfileMock.mock.calls[0][0]
     expect(call.equipment).toEqual(expect.arrayContaining(['barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box']))
+  })
+
+  it('onboarding submit enregistre equipment vide pour poids de corps', () => {
+    renderOnboarding()
+    navigateToSummary({ equipmentPreset: 'bodyweight' })
+
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
+
+    const call = updateProfileMock.mock.calls[0][0]
+    expect(call.equipment).toEqual([])
   })
 
   it('onboarding submit preserves existing planningAnchors', () => {
