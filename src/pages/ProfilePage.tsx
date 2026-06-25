@@ -9,6 +9,8 @@ import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
 import { FormeDuMomentSection } from '../components/profile/FormeDuMomentSection'
 import { MaSituationSection } from '../components/profile/MaSituationSection'
 import { ProfilePreferencesSection } from '../components/profile/ProfilePreferencesSection'
+import { EquipmentSettingsSection } from '../components/profile/EquipmentSettingsSection'
+import { asksGymTrainingLevelForEquipment } from '../services/equipment/equipmentPresets'
 import { getPositionIllustration } from '../assets/positions'
 import { PageHeader } from '../components/PageHeader'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
@@ -513,6 +515,12 @@ export function ProfilePage() {
           lang={lang}
         />
 
+        <EquipmentSettingsSection
+          profile={profile}
+          updateProfile={updateProfile}
+          lang={lang}
+        />
+
         <CollapsibleSection
           title={tr('profile_section_program', lang)}
           subtitle={tr('profile_section_program_sub', lang)}
@@ -543,6 +551,7 @@ export function ProfilePage() {
             </div>
           </div>
 
+          {asksGymTrainingLevelForEquipment(profile.equipment) && (
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_training_level', lang)}</label>
             <div className="flex flex-col gap-2">
@@ -574,6 +583,7 @@ export function ProfilePage() {
               })}
             </div>
           </div>
+          )}
 
           <div className="space-y-2">
             <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_label_sessions_per_week', lang)}</label>

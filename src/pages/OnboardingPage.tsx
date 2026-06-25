@@ -145,13 +145,12 @@ function getTrainingLevels(lang: Lang): TrainingLevelDef[] {
   ]
 }
 
-// Preset salle complète — choisi explicitement à l'onboarding (étape Matériel).
-const GYM_PRESET: Equipment[] = [
-  'barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box',
-  'machine', 'cable', 'landmine', 'tbar_row', 'ghd', 'med_ball', 'ab_wheel', 'sprint_track',
-]
-
-type EquipmentPreset = 'bodyweight' | 'bands' | 'home_gym' | 'full_gym'
+import {
+  EQUIPMENT_PRESET_DEFS,
+  asksGymTrainingLevelForPreset,
+  resolveEquipmentFromPreset,
+  type EquipmentPreset,
+} from '../services/equipment/equipmentPresets'
 
 type EquipmentPresetDef = {
   value: EquipmentPreset
@@ -161,49 +160,18 @@ type EquipmentPresetDef = {
 }
 
 function getEquipmentPresets(lang: Lang): EquipmentPresetDef[] {
-  return [
-    {
-      value: 'bodyweight',
-      label: tr('equipment_preset_bodyweight', lang),
-      sub: tr('equipment_preset_bodyweight_sub', lang),
-      icon: Home,
-    },
-    {
-      value: 'bands',
-      label: tr('equipment_preset_bands', lang),
-      sub: tr('equipment_preset_bands_sub', lang),
-      icon: StretchHorizontal,
-    },
-    {
-      value: 'home_gym',
-      label: tr('equipment_preset_home', lang),
-      sub: tr('equipment_preset_home_sub', lang),
-      icon: Dumbbell,
-    },
-    {
-      value: 'full_gym',
-      label: tr('equipment_preset_full_gym', lang),
-      sub: tr('equipment_preset_full_gym_sub', lang),
-      icon: Building2,
-    },
-  ]
-}
-
-function resolveEquipmentFromPreset(preset: EquipmentPreset): Equipment[] {
-  switch (preset) {
-    case 'bodyweight':
-      return []
-    case 'bands':
-      return ['band']
-    case 'home_gym':
-      return ['band', 'dumbbell', 'bench', 'pullup_bar']
-    case 'full_gym':
-      return GYM_PRESET
-  }
-}
-
-function asksGymTrainingLevel(preset: EquipmentPreset | null): boolean {
-  return preset === 'full_gym'
+  const icons = {
+    bodyweight: Home,
+    bands: StretchHorizontal,
+    home_gym: Dumbbell,
+    full_gym: Building2,
+  } as const
+  return EQUIPMENT_PRESET_DEFS.map((def) => ({
+    value: def.value,
+    label: tr(def.labelKey, lang),
+    sub: tr(def.subKey, lang),
+    icon: icons[def.value],
+  }))
 }
 
 /** Hors salle complète : niveau starter (volume foundations) sans question dédiée. */
@@ -211,11 +179,9 @@ function resolveOnboardingTrainingLevel(
   preset: EquipmentPreset | null,
   selected: TrainingLevel | null,
 ): TrainingLevel {
-  if (asksGymTrainingLevel(preset)) return selected ?? 'starter'
+  if (asksGymTrainingLevelForPreset(preset ?? 'bodyweight')) return selected ?? 'starter'
   return 'starter'
 }
-
-// ─── BMI helper ───────────────────────────────────────────────
 
 function calcBmi(heightCm: number, weightKg: number): number {
   const h = heightCm / 100
@@ -337,7 +303,7 @@ export function OnboardingPage() {
   const { subscribe: notifSubscribe } = useNotifications(notifProfile)
 
   const isOffSeason = seasonPhase === 'off_season'
-  const showGymTrainingLevel = asksGymTrainingLevel(equipmentPreset)
+  const showGymTrainingLevel = asksGymTrainingLevelForPreset(equipmentPreset ?? 'bodyweight')
 
   // Derive default gym days for off-season (no setState in effect needed)
   const effectiveOffSeasonGymDays: Set<DayOfWeek> = offSeasonGymDays
@@ -636,7 +602,7 @@ export function OnboardingPage() {
                     data-testid={`onboarding-equipment-${opt.value}`}
                     onClick={() => {
                       setEquipmentPreset(opt.value)
-                      if (!asksGymTrainingLevel(opt.value)) setTrainingLevel(null)
+                      if (!asksGymTrainingLevelForPreset(opt.value)) setTrainingLevel(null)
                     }}
                     className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all active:scale-[.98] rf-focus-ring ${
                       selected

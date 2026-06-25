@@ -393,6 +393,15 @@ export const APP_LABELS = {
   profile_section_photo_uploading: { fr: 'Envoi en cours…', en: 'Uploading...' },
   profile_section_program: { fr: 'Mon programme', en: 'My program' },
   profile_section_program_sub: { fr: 'Poste, niveau et fréquence hebdo', en: 'Position, level and weekly frequency' },
+  profile_section_equipment: { fr: 'Mon matériel', en: 'My equipment' },
+  profile_section_equipment_sub: {
+    fr: 'Vacances, déplacement ou pas de salle ? Bascule en poids de corps sans perdre ta place dans le cycle.',
+    en: 'Holiday, travel or no gym? Switch to bodyweight without losing your place in the program.',
+  },
+  profile_equipment_stay_in_program: {
+    fr: 'Tu restes à la même semaine et la même phase — seuls les exercices s\'adaptent à ton matériel.',
+    en: 'You stay on the same week and phase — only the exercises adapt to your equipment.',
+  },
   profile_section_play: { fr: 'Infos de jeu', en: 'Game info' },
   profile_section_play_sub: { fr: 'Saison détectée et prochain match', en: 'Detected season and next match' },
   profile_section_preferences: { fr: 'Préférences', en: 'Preferences' },
