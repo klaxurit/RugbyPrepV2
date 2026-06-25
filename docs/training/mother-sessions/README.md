@@ -6,10 +6,10 @@ All mother sessions live as Markdown source files under `docs/training/mother-se
 
 | Cycle | Markdown source | Count |
 |-------|-----------------|------:|
-| Off-season | `off-season/*.md` | 17 |
+| Off-season | `off-season/*.md` | 19 |
 | Pre-season | `pre-season/*.md` | 14 |
 | In-season | `in-season/*.md` | 8 |
-| **Total** | | **39** |
+| **Total** | | **41** |
 
 Migration to MD-as-single-source-of-truth was completed during B2 Phase B' (2026-05-08).
 

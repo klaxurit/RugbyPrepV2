@@ -1,4 +1,4 @@
-import type { CalendarEvent } from './training'
+import type { CalendarEvent, Equipment } from './training'
 
 export type AnnualCycle = 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
 
@@ -32,6 +32,8 @@ export interface AthletePlanningInputs {
 
   weeklyFrequency: 2 | 3 | 4
   positionGroup: 'front_row' | 'back_three'
+  /** Matériel déclaré — pilote mother sessions BW vs full_gym. */
+  equipment?: Equipment[]
 
   fatigueLevel?: 'normal' | 'high' | 'very_high'
 

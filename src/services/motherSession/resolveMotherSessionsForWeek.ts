@@ -2,6 +2,11 @@ import { getWeeklyTemplate, type WeeklySessionSlot } from '../../data/weeklyTemp
 import { MOTHER_SESSIONS_BY_ID } from '../../data/motherSessions.generated'
 import type { AthletePlanningInputs, AnnualPlanningContext, PlayoffTaperPhase } from '../../types/annualPlanning'
 import type { MotherSession } from '../../types/motherSession'
+import type { Equipment } from '../../types/training'
+import {
+  bodyweightSessionFallbackWarning,
+  mapWeeklySlotsForEquipment,
+} from '../equipment/motherSessionEquipmentMap'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
 
 /** Entrée alignée sur le contexte annuel (identity, ancres, monitoring). */
@@ -66,6 +71,18 @@ function finalizeStatus(
   return 'resolved'
 }
 
+function applyEquipmentProgramToSlots(
+  slots: WeeklySessionSlot[],
+  equipment: AthletePlanningInputs['equipment'],
+  resolverWarnings: string[],
+): WeeklySessionSlot[] {
+  const mapped = mapWeeklySlotsForEquipment(slots, equipment)
+  for (let i = 0; i < slots.length; i += 1) {
+    const warning = bodyweightSessionFallbackWarning(slots[i].sessionId, mapped[i].sessionId, equipment)
+    if (warning) resolverWarnings.push(warning)
+  }
+  return mapped
+}
 
 function hydrateSlots(
   slots: WeeklySessionSlot[],
@@ -74,12 +91,14 @@ function hydrateSlots(
   templateWarnings: string[],
   companionRecommendations: string[] | undefined,
   resolverWarnings: string[],
-  sessionsById: Record<string, MotherSession>
+  sessionsById: Record<string, MotherSession>,
+  equipment?: Equipment[],
 ): ResolveMotherSessionsForWeekResult {
+  const resolvedSlots = applyEquipmentProgramToSlots(slots, equipment, resolverWarnings)
   const missingSessionIds: string[] = []
   const sessions: ResolvedMotherSessionSlot[] = []
 
-  for (const slot of slots) {
+  for (const slot of resolvedSlots) {
     const session = sessionsById[slot.sessionId]
     if (!session) {
       missingSessionIds.push(slot.sessionId)
@@ -152,6 +171,7 @@ function resolveMotherSessionsForWeekCore(
   const sessionsById = options?.sessionsById ?? MOTHER_SESSIONS_BY_ID
   const planningContext = detectAnnualPlanningContext(params)
   const { weeklyFrequency, positionGroup, fatigueLevel } = planningContext
+  const { equipment } = params
 
   const resolverWarnings: string[] = []
 
@@ -233,7 +253,8 @@ function resolveMotherSessionsForWeekCore(
       tplWarnings,
       ['Maintenir mobilité et activation neuromusculaire. Récupération prioritaire.'],
       resolverWarnings,
-      sessionsById
+      sessionsById,
+      equipment,
     )
   }
 
@@ -267,7 +288,8 @@ function resolveMotherSessionsForWeekCore(
       tpl.warnings,
       tpl.companionRecommendations,
       resolverWarnings,
-      sessionsById
+      sessionsById,
+      equipment,
     )
   }
 
@@ -300,7 +322,8 @@ function resolveMotherSessionsForWeekCore(
       tpl.warnings,
       tpl.companionRecommendations,
       resolverWarnings,
-      sessionsById
+      sessionsById,
+      equipment,
     )
   }
 
@@ -325,7 +348,8 @@ function resolveMotherSessionsForWeekCore(
       [],
       ['2x 20-30 min zone 2 (marche, vélo, jogging léger)'],
       resolverWarnings,
-      sessionsById
+      sessionsById,
+      equipment,
     )
   }
 
@@ -357,7 +381,8 @@ function resolveMotherSessionsForWeekCore(
       deloadTpl.warnings,
       ['1-2x zone 2 (20-30 min) — maintien cardiovasculaire'],
       resolverWarnings,
-      sessionsById
+      sessionsById,
+      equipment,
     )
   }
 
@@ -373,7 +398,8 @@ function resolveMotherSessionsForWeekCore(
       rampTpl.warnings,
       ['Activation neuromusculaire + mobilité avant la reprise des matchs'],
       resolverWarnings,
-      sessionsById
+      sessionsById,
+      equipment,
     )
   }
 
@@ -393,7 +419,8 @@ function resolveMotherSessionsForWeekCore(
       returnTpl.warnings,
       ['Reprise progressive — maintenir l\'intensité, ne pas surcharger le volume'],
       resolverWarnings,
-      sessionsById
+      sessionsById,
+      equipment,
     )
   }
 
@@ -413,7 +440,8 @@ function resolveMotherSessionsForWeekCore(
       treveTpl.warnings,
       ['Profite de la trêve : volume légèrement supérieur possible (pas de charge de match)'],
       resolverWarnings,
-      sessionsById
+      sessionsById,
+      equipment,
     )
   }
 
@@ -430,7 +458,8 @@ function resolveMotherSessionsForWeekCore(
       eosTpl.warnings,
       ['Décompression de fin de saison — entretien léger, on relâche avant la coupure'],
       resolverWarnings,
-      sessionsById
+      sessionsById,
+      equipment,
     )
   }
 

@@ -518,6 +518,342 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "FULL_BW_OFFSEASON_RECOVERY_A_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "full",
+      "targetLevel": "starter",
+      "targetPositionGroup": "front_row + back_three (common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "30-40 min"
+    },
+    "title": "FULL_BW_OFFSEASON_RECOVERY_A_V1",
+    "goal": [
+      "Reintroduce full-body training after the season without performance pressure.",
+      "Rehearse squat, hinge, push, pull, and trunk at bodyweight with optional band/DB upgrades.",
+      "Leave the player feeling better, looser, and more confident than when they walked in."
+    ],
+    "sessionIdentity": [
+      "Recovery re-entry session — not hypertrophy, not force work.",
+      "Rugby-specific through pattern restoration, trunk, adductors, and movement quality.",
+      "Keep all work around `RPE 4-5`."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "1 very light ramp-up round",
+          "prescription": ""
+        },
+        {
+          "name": "Bodyweight Squat",
+          "prescription": ""
+        },
+        {
+          "name": "Glute Bridge",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Keep this to `3-5 min` maximum.",
+        "The first reps of Block 1 should still feel like part of the re-entry process."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Squat / Hinge Re-Entry",
+        "format": "`3 rounds`, `60-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Bodyweight Squat",
+            "prescription": "3x8"
+          },
+          {
+            "name": "Glute Bridge",
+            "prescription": "3x8"
+          }
+        ],
+        "coachingNotes": [
+          "Keep both movements at around `RPE 4-5`.",
+          "Squat upright and controlled — no grinding.",
+          "Hinge should feel clean; glute bridge is the default BW hinge here."
+        ],
+        "fallbackOptions": [
+          "A: `Box-Assisted Goblet Squat` if bands/DB available",
+          "B: `Good Morning` with band if available"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Push / Pull Re-Entry",
+        "format": "`3 rounds`, `60-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Incline Push-Up",
+            "prescription": "3x8-10"
+          },
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "3x8-10"
+          }
+        ],
+        "coachingNotes": [
+          "Push on an incline first; progress to standard push-up when easy.",
+          "Row from a sturdy table or low bar; feet on floor."
+        ],
+        "fallbackOptions": [
+          "A: `Push-Up` on a higher surface",
+          "B: `Inverted Row` with knees bent if table height is limited",
+          "With band: seated band row; with pull-up bar: band-assisted pull-up"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Trunk / Mobility / Tissue Reset",
+        "format": "`2 rounds`, move continuously with minimal rest",
+        "exercises": [
+          {
+            "name": "Dead Bug",
+            "prescription": "2x8/side"
+          },
+          {
+            "name": "Adductor Rock-Back",
+            "prescription": "2x8/side"
+          },
+          {
+            "name": "World's Greatest Stretch",
+            "prescription": "2x4/side"
+          }
+        ],
+        "coachingNotes": [
+          "Trunk reset and groin reintroduction — nothing intense.",
+          "Move smoothly and breathe normally."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`S1`: conservative effort; stop well before meaningful fatigue.",
+      "`S2`: slightly more range or one harder push/row variant only if everything felt clean.",
+      "If beat up on the day, drop one round from Block 1 or Block 2 first."
+    ],
+    "positionAccent": [
+      "Common base session.",
+      "`Front_row`: optional 1 round neck isometric (hand) in finisher if no pain.",
+      "`Back_three`: prioritize fluid movement quality on hinge and row."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "Replace push with `Push-Up` on an elevated surface.",
+          "Replace row with `Inverted Row` knees bent or band row."
+        ],
+        "replaceWith": [],
+        "rehabFinisher": []
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "Replace squat with partial-range bodyweight squat or wall sit short holds."
+        ],
+        "replaceWith": [],
+        "rehabFinisher": []
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "Replace hinge work with `Glute Bridge` only; avoid deep flexion."
+        ],
+        "replaceWith": [],
+        "rehabFinisher": []
+      }
+    ],
+    "coachingWarnings": [
+      "Do not chase soreness, pump, or load.",
+      "If the athlete leaves feeling cooked, the session was too aggressive."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[bodyweight-program-review.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-program-review.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "FULL_BW_OFFSEASON_RECOVERY_B_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "full",
+      "targetLevel": "starter",
+      "targetPositionGroup": "front_row + back_three (common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "30-40 min"
+    },
+    "title": "FULL_BW_OFFSEASON_RECOVERY_B_V1",
+    "goal": [
+      "Second recovery session: lighter, freer, slightly more athletic than Recovery A.",
+      "Restore unilateral tolerance, locomotion, push/pull, and lower-leg/groin support at bodyweight.",
+      "Keep momentum without creating fatigue."
+    ],
+    "sessionIdentity": [
+      "Recovery reset — not conditioning, not reduced hypertrophy.",
+      "Rugby-specific through unilateral work, locomotion, trunk, groin, and lower-leg support."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "90/90 hip switch",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "1 easy prep round",
+          "prescription": ""
+        },
+        {
+          "name": "Reverse Lunge Bodyweight",
+          "prescription": ""
+        },
+        {
+          "name": "Incline Push-Up",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Keep this to `3-5 min` maximum.",
+        "Session should begin like movement practice, not heavy prep."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Unilateral / Locomotion Reset",
+        "format": "`2-3 rounds`, `60-75s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Reverse Lunge Bodyweight",
+            "prescription": "2-3x6/side"
+          },
+          {
+            "name": "Bear Crawl",
+            "prescription": "2-3x10-15m"
+          }
+        ],
+        "coachingNotes": [
+          "Lunge restores rhythm and balance, not strength.",
+          "Crawl coordinated and athletic — never rushed."
+        ],
+        "fallbackOptions": [
+          "A: `Bodyweight Split Squat`",
+          "B: `Bird Dog`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Push / Pull Reset",
+        "format": "`2-3 rounds`, `60-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Incline Push-Up",
+            "prescription": "2-3x8-10"
+          },
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "2-3x8/side"
+          }
+        ],
+        "coachingNotes": [
+          "Every push-up rep should look the same.",
+          "Row restores scapular rhythm without fatigue."
+        ],
+        "fallbackOptions": [
+          "A: `Push-Up` on a higher surface",
+          "B: `Inverted Row` with knees bent"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Lower-Leg / Groin / Trunk Support",
+        "format": "",
+        "exercises": [
+          {
+            "name": "Single-Leg Calf Raise",
+            "prescription": "2x10/side"
+          },
+          {
+            "name": "Wall Tibialis Raise",
+            "prescription": "2x12"
+          },
+          {
+            "name": "Side Plank",
+            "prescription": "2x20s/side"
+          },
+          {
+            "name": "Supine Adductor Squeeze",
+            "prescription": "2x20s"
+          }
+        ],
+        "coachingNotes": [
+          "Ankle stiffness, trunk control, gentle groin tolerance.",
+          "Run calf + tibialis first, then plank + adductor squeeze."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`S1`: low end of volume if still heavy from the season.",
+      "`S2`: move from `2` to `3` rounds only if the whole session felt easy and clean."
+    ],
+    "positionAccent": [
+      "Common base; front_row may add 1 round Copenhagen knee if tolerated."
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "Elevated push-up only; reduce row angle."
+        ],
+        "replaceWith": [],
+        "rehabFinisher": []
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "Replace lunge with `Bodyweight Split Squat` shallow range or `Wall Sit` short holds."
+        ],
+        "replaceWith": [],
+        "rehabFinisher": []
+      }
+    ],
+    "coachingWarnings": [
+      "Do not overload with circuits or extra sets.",
+      "Player should leave feeling put back together."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1",
       "status": "validated",
       "version": "V1",

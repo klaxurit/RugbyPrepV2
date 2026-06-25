@@ -122,6 +122,22 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.warnings.length).toBeGreaterThan(0)
   })
 
+  it('off-season Recovery 2x + equipment vide → sessions BW Recovery A/B', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [],
+      today: '2025-01-01',
+      weeklyFrequency: 2,
+      positionGroup: 'front_row',
+      equipment: [],
+    })
+    expect(r.sessions.map((s) => s.sessionId)).toEqual([
+      'FULL_BW_OFFSEASON_RECOVERY_A_V1',
+      'FULL_BW_OFFSEASON_RECOVERY_B_V1',
+    ])
+    expect(r.sessions[0].session.metadata.equipment).toBe('bodyweight')
+    expect(r.sessions[0].session.blocks[0].exercises[0].name).toMatch(/bodyweight squat/i)
+  })
+
   it('off-season Hypertrophy 3x → 3 sessions résolues (override semaine)', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH)],

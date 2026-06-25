@@ -107,6 +107,7 @@ export function msPositionGroupLabel(group: string, lang: AppLang): string {
 
 const EQUIPMENT_LABELS: Record<string, Record<AppLang, string>> = {
   full_gym: { fr: 'Salle complète', en: 'Full gym' },
+  bodyweight: { fr: 'Poids de corps', en: 'Bodyweight' },
   minimal:  { fr: 'Minimal',        en: 'Minimal' },
 }
 
