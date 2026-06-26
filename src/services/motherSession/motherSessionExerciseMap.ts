@@ -39,6 +39,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'incline db bench press': 'push_horizontal__bench_press__incline__dumbbell',
   'seated db overhead press': 'push_vertical__dumbbell_press__seated',
   'incline push-up': 'push_horizontal__push_up__incline',
+  'decline push-up': 'push_horizontal__push_up__decline',
+  'pike push-up': 'push_vertical__pike_push_up__bodyweight',
 
   // ── Pulls ───────────────────────────────────────────────────
   'chest-supported row': 'pull_horizontal__chest_supported_row__dumbbell',
@@ -47,6 +49,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'landmine row': 'pull_horizontal__landmine_row',
   'inverted row': 'pull_horizontal__inverted_row__knees_bent',
   'inverted row standard': 'pull_horizontal__inverted_row__standard',
+  'inverted row feet elevated': 'pull_horizontal__inverted_row__feet_elevated',
   'single-arm db row': 'pull_horizontal__one_arm_row__dumbbell',
   'half-kneeling cable row': 'pull_horizontal__cable_row__half_kneeling',
   'seated cable row': 'pull_horizontal__cable_row__seated',
@@ -69,6 +72,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'db romanian deadlift': 'hinge__rdl__dumbbell',
   'hex bar rdl': 'hinge__rdl__hex_bar',
   'single-leg rdl': 'hinge__rdl__single_leg__dumbbell',
+  'kickstand rdl': 'hinge__single_leg_rdl__bodyweight',
+  'good morning': 'hinge__good_morning__bodyweight',
   'single-leg romanian deadlift': 'hinge__rdl__single_leg__dumbbell',
   'nordic curl': 'hamstring__nordic__partner',
   'lying leg curl': 'hamstring__leg_curl__machine',

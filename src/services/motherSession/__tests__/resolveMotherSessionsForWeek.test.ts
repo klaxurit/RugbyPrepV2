@@ -138,6 +138,27 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.sessions[0].session.blocks[0].exercises[0].name).toMatch(/bodyweight squat/i)
   })
 
+  it('off-season Transition 2x + equipment vide → sessions BW Lower/Upper', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [],
+      today: '2025-01-15',
+      weeklyFrequency: 2,
+      positionGroup: 'front_row',
+      equipment: [],
+      planningAnchors: {
+        manualCycleOverride: 'off_season',
+        manualOffSeasonWeekOverride: 4,
+        offSeasonStartAt: '2025-01-01',
+      },
+    })
+    expect(r.planningContext.offSeasonPhase).toBe(2)
+    expect(r.sessions.map((s) => s.sessionId)).toEqual([
+      'LOWER_BW_OFFSEASON_TRANSITION_V1',
+      'UPPER_BW_OFFSEASON_TRANSITION_V1',
+    ])
+    expect(r.sessions[0].session.metadata.equipment).toBe('bodyweight')
+  })
+
   it('off-season Hypertrophy 3x → 3 sessions résolues (override semaine)', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH)],

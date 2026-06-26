@@ -41,7 +41,7 @@ describe('motherSessionEquipmentMap', () => {
     ).toBe('FULL_OFFSEASON_RECOVERY_A_V1')
   })
 
-  it('mappe les slots hebdo', () => {
+  it('mappe Recovery off-season pour profil BW', () => {
     const mapped = mapWeeklySlotsForEquipment(
       [
         { sessionId: 'FULL_OFFSEASON_RECOVERY_A_V1', role: 'primary' },
@@ -51,5 +51,17 @@ describe('motherSessionEquipmentMap', () => {
     )
     expect(mapped[0].sessionId).toBe('FULL_BW_OFFSEASON_RECOVERY_A_V1')
     expect(mapped[1].sessionId).toBe('FULL_BW_OFFSEASON_RECOVERY_B_V1')
+  })
+
+  it('mappe Transition off-season pour profil BW', () => {
+    const mapped = mapWeeklySlotsForEquipment(
+      [
+        { sessionId: 'LOWER_OFFSEASON_TRANSITION_V1', role: 'primary' },
+        { sessionId: 'UPPER_OFFSEASON_TRANSITION_V1', role: 'primary' },
+      ],
+      [],
+    )
+    expect(mapped[0].sessionId).toBe('LOWER_BW_OFFSEASON_TRANSITION_V1')
+    expect(mapped[1].sessionId).toBe('UPPER_BW_OFFSEASON_TRANSITION_V1')
   })
 })

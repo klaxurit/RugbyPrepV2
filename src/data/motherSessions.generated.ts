@@ -854,6 +854,128 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "FULL_BW_OFFSEASON_TRANSITION_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "full",
+      "targetLevel": "starter",
+      "targetPositionGroup": "front_row + back_three (common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "45-55 min"
+    },
+    "title": "FULL_BW_OFFSEASON_TRANSITION_V1",
+    "goal": [
+      "Bridge Recovery and off-season build with a controlled full-body bodyweight session.",
+      "Complement Lower/Upper Transition without repeating their main patterns exactly.",
+      "Reintroduce hinge, push/pull, locomotion, and trunk support."
+    ],
+    "sessionIdentity": [
+      "Transition full-body — not recovery circuit, not hypertrophy day.",
+      "Rugby-specific hinge, upper support, trunk, and light contact-prep accents."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Short — ready to train moderately."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Hinge / Squat Light Pair",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Good Morning",
+            "prescription": "3x8"
+          },
+          {
+            "name": "Bodyweight Squat",
+            "prescription": "3x10"
+          }
+        ],
+        "coachingNotes": [
+          "Hinge pattern with bodyweight good morning; squat controlled `RPE 5-6`.",
+          "Fallback: `Glute Bridge` if low back sensitive."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Push / Pull Pair",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Push-Up",
+            "prescription": "3x8-10"
+          },
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "3x8-10"
+          }
+        ],
+        "coachingNotes": [
+          "Quality reps; elevate hands on push-up if needed.",
+          "Upgrade to decline push-up or feet-elevated row when easy."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Rugby Light Finisher",
+        "format": "`2 rounds`, `45s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Bear Crawl",
+            "prescription": "2x15m"
+          },
+          {
+            "name": "Side Plank",
+            "prescription": "2x15s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Athletic but submaximal — not a conditioning test.",
+          "Front_row: optional 1 round neck isometric (hand) after planks if no pain."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`S3`–`S4`: progress movement quality and slightly harder BW variants before adding rounds.",
+      "Do not add extra blocks — stay transition volume."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Not an everything day or sneaky volume monster.",
+      "If beat up, reduce to 2 rounds on Blocks 1–2."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1",
       "status": "validated",
       "version": "V1",
@@ -3785,6 +3907,147 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "[fullbody-power-renfo.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/fullbody-power-renfo.jpg)",
       "[fullbody.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/fullbody.jpg)",
       "[pre-season-12week.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/pre-season-12week.png)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_BW_OFFSEASON_TRANSITION_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "lower",
+      "targetLevel": "starter",
+      "targetPositionGroup": "front_row + back_three (common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "40-50 min"
+    },
+    "title": "LOWER_BW_OFFSEASON_TRANSITION_V1",
+    "goal": [
+      "Rebuild lower-body structure after Recovery without jumping into hypertrophy intensity.",
+      "Restore squat, hinge, unilateral support, and groin/trunk robustness at bodyweight.",
+      "Keep the session clearly below true off-season build volume."
+    ],
+    "sessionIdentity": [
+      "Transition lower session — not recovery, not yet hypertrophy.",
+      "Rugby-specific through squat/hinge patterns, adductors, trunk, and lower-leg support."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight split squat",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Short and practical — prepared for moderate training, not max effort."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Squat / Hinge Base Pair",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Bodyweight Squat",
+            "prescription": "3x6-8"
+          },
+          {
+            "name": "Single-Leg Glute Bridge",
+            "prescription": "3x6-8/side"
+          }
+        ],
+        "coachingNotes": [
+          "Keep around `RPE 5-6`.",
+          "Squat with controlled tempo (3-1-3) if easy.",
+          "Unilateral glute bridge as default BW hinge progression."
+        ],
+        "fallbackOptions": [
+          "A: `Goblet Squat` if DB/KB available",
+          "B: `Good Morning` with band if available"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Unilateral Support Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Reverse Lunge Bodyweight",
+            "prescription": "3x6-8/side"
+          },
+          {
+            "name": "Kickstand RDL",
+            "prescription": "3x6-8/side"
+          }
+        ],
+        "coachingNotes": [
+          "Smooth, symmetrical unilateral work — support, not fatigue chasing."
+        ],
+        "fallbackOptions": [
+          "A: `Bodyweight Split Squat`",
+          "B: `Glute Bridge`"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Groin / Trunk / Lower-Leg Support",
+        "format": "",
+        "exercises": [
+          {
+            "name": "Side Plank",
+            "prescription": "2x20-30s/side"
+          },
+          {
+            "name": "Supine Adductor Squeeze",
+            "prescription": "2x20s"
+          },
+          {
+            "name": "Single-Leg Calf Raise",
+            "prescription": "2x10-12/side"
+          },
+          {
+            "name": "Wall Tibialis Raise",
+            "prescription": "2x12-15"
+          }
+        ],
+        "coachingNotes": [
+          "Submaximal holds and lower-leg support.",
+          "Run plank + adductor first, then calf + tibialis."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`S3`: moderate effort, all reps clean.",
+      "`S4`: small progression (range, tempo, or harder BW variant) only if quality holds.",
+      "If fatigue is high, cut one round from Block 2 first."
+    ],
+    "positionAccent": [
+      "Common base; front_row may add Copenhagen knee 1 round if tolerated (band or knee version)."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Rebuild session — not a strength test.",
+      "If still very beat up, stay closer to Recovery volume."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
     ]
   },
   {
@@ -6732,6 +6995,132 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "[speed-week2.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/speed-week2.png)",
       "[speed-week3.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/speed-week3.png)",
       "[pre-season-12week.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/pre-season-12week.png)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_BW_OFFSEASON_TRANSITION_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "upper",
+      "targetLevel": "starter",
+      "targetPositionGroup": "front_row + back_three (common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "40-50 min"
+    },
+    "title": "UPPER_BW_OFFSEASON_TRANSITION_V1",
+    "goal": [
+      "Rebuild upper-body structure after Recovery at bodyweight.",
+      "Restore push, pull, and shoulder-friendly vertical support without hypertrophy density.",
+      "Support scapular rhythm and trunk control."
+    ],
+    "sessionIdentity": [
+      "Transition upper — not recovery, not yet hypertrophy or force.",
+      "Rugby-specific push/pull patterns with shoulder-friendly structure."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6-8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "band pull-apart",
+          "prescription": "1x10"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Ready for moderate upper work — not max effort priming."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Main Push / Pull Base Pair",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "3x6-8"
+          },
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "3x8-10"
+          }
+        ],
+        "coachingNotes": [
+          "Around `RPE 5-6`.",
+          "Decline push-up as main horizontal push; row from sturdy table/bar."
+        ],
+        "fallbackOptions": [
+          "A: `Incline Push-Up` if shoulders need easier angle",
+          "B: `Inverted Row` with knees bent"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Vertical Support Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Pike Push-Up",
+            "prescription": "3x6-8"
+          },
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "3x8-10"
+          }
+        ],
+        "coachingNotes": [
+          "Pike for vertical-ish push; feet-elevated row for harder pull."
+        ],
+        "fallbackOptions": [
+          "A: `Push-Up` standard if pike is too hard",
+          "B: `Inverted Row Standard`"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Shoulder / Trunk Support",
+        "format": "`2 rounds`, minimal rest",
+        "exercises": [
+          {
+            "name": "Face Pull Band",
+            "prescription": "2x10-12"
+          },
+          {
+            "name": "Side Plank",
+            "prescription": "2x20s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Face pull with band if available; otherwise `scap push-up` and band pull-apart.",
+          "Submaximal — finish organized, not smoked."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`S3`: clean reps at moderate effort.",
+      "`S4`: harder push/row angle before adding sets.",
+      "Cut Block 2 volume first if fatigue is high."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Re-entry into upper training — not a bench test.",
+      "Keep final support block calm and useful."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
     ]
   },
   {
