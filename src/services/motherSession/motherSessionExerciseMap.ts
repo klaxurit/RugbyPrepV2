@@ -84,6 +84,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   // ── Squat Variants ──────────────────────────────────────────
   'goblet squat': 'squat__goblet_squat__dumbbell',
   'rear-foot elevated split squat': 'lower_squat__bulgarian_split_squat__dumbbell',
+  'bulgarian split squat': 'lower_squat__bulgarian_split_squat__bodyweight',
+  'nordic eccentric': 'hamstring__nordic__eccentric_solo',
   'reverse lunge': 'lower_lunge__reverse_lunge__barbell',
   'reverse lunge bodyweight': 'lower_lunge__reverse_lunge__bodyweight',
   'bodyweight squat': 'squat__bodyweight_squat',
@@ -157,6 +159,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'copenhagen hold': 'groin_adductors__copenhagen_plank__weighted',
   'copenhagen plank': 'groin_adductors__copenhagen_plank__weighted',
   'short copenhagen hold': 'groin_adductors__copenhagen_plank__short',
+  'copenhagen knee': 'groin_adductors__copenhagen_plank__knee',
   'supine adductor squeeze': 'groin_adductors__ball_squeeze__supine',
 
   // ── Neck ────────────────────────────────────────────────────

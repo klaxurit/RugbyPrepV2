@@ -518,6 +518,142 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "FULL_BW_OFFSEASON_HYPERTROPHY_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "full",
+      "targetLevel": "starter",
+      "targetPositionGroup": "front_row + back_three (common base with position accents)",
+      "equipment": "bodyweight",
+      "targetDuration": "55-65 min"
+    },
+    "title": "FULL_BW_OFFSEASON_HYPERTROPHY_V1",
+    "goal": [
+      "Complete the hypertrophy week with a full-body bodyweight session.",
+      "Hinge anchor, upper support, unilateral lower, and rugby finisher without duplicating Lower/Upper days exactly."
+    ],
+    "sessionIdentity": [
+      "Hypertrophy full-body — not a fourth heavy lower day.",
+      "Rugby finisher: carry/locomotion, adductors, optional neck."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Dense but controlled readiness."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Main Hinge Hypertrophy",
+        "format": "`4 work sets`, `2 min` rest between sets",
+        "exercises": [
+          {
+            "name": "Nordic Eccentric",
+            "prescription": "4x6-8"
+          }
+        ],
+        "coachingNotes": [
+          "Around `RPE 6-8` — hypertrophy hinge, not max strength.",
+          "Fallback: `Single-Leg Glute Bridge` heavy tempo if nordics not tolerated."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Upper Push / Pull Support",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Push-Up",
+            "prescription": "3x8-10"
+          },
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "3x8-10/side"
+          }
+        ],
+        "coachingNotes": [
+          "Weighted backpack on push-up if too easy.",
+          "Upgrade row: feet elevated or pull-up bar."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Lower Support / Trunk Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Reverse Lunge Bodyweight",
+            "prescription": "3x8-10/side"
+          },
+          {
+            "name": "Side Plank",
+            "prescription": "3x15-20s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Unilateral lower + trunk without turning into another leg day.",
+          "Fallback B: `Pallof Press Hold` if band available."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Rugby Finisher",
+        "format": "`2 rounds`, `45-60s` rest after the round",
+        "exercises": [
+          {
+            "name": "Bear Crawl",
+            "prescription": "2x30s"
+          },
+          {
+            "name": "Copenhagen Knee",
+            "prescription": "2x20-30s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Short rugby-oriented finisher — quality over exhaustion.",
+          "`Front_row`: optional neck isometric 2x10s/direction after round 2."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Week 4 deload: reduce Block 2–3 to 2 rounds; keep Block 1 load moderate.",
+      "Cut Block 4 first if weekly lower volume is already high."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Not a marathon checklist session.",
+      "If lower days were hard, keep Block 3 unilateral work submaximal."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "FULL_BW_OFFSEASON_RECOVERY_A_V1",
       "status": "validated",
       "version": "V1",
@@ -3911,6 +4047,150 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "LOWER_BW_OFFSEASON_HYPERTROPHY_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "lower",
+      "targetLevel": "starter",
+      "targetPositionGroup": "front_row + back_three (common base with position accents)",
+      "equipment": "bodyweight",
+      "targetDuration": "45-55 min"
+    },
+    "title": "LOWER_BW_OFFSEASON_HYPERTROPHY_V1",
+    "goal": [
+      "Build useful lower-body muscle during off-season hypertrophy at bodyweight.",
+      "Accumulate squat, hinge, unilateral, and groin volume without junk fatigue.",
+      "V1.1 volume cap: ~16–20 hard sets per session."
+    ],
+    "sessionIdentity": [
+      "Off-season hypertrophy lower — not transition, not pre-season force.",
+      "Rugby-specific muscle on squat, hinge, unilateral, adductors, and lower-leg tissues."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight split squat",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Ready for volume, not pre-fatigued."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Main Squat Hypertrophy",
+        "format": "`4 work sets`, `2 min` rest between sets",
+        "exercises": [
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "4x8-10/side"
+          }
+        ],
+        "coachingNotes": [
+          "Around `RPE 6-8` — tempo squat or bulgarian as main hypertrophy driver.",
+          "Fallback: `Bodyweight Squat` with 3-1-3 tempo if balance limits split work.",
+          "Upgrade: `Goblet Squat` if DB/KB available."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Hinge / Unilateral Pair",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Nordic Eccentric",
+            "prescription": "3x8-10"
+          },
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "3x8-10/side"
+          }
+        ],
+        "coachingNotes": [
+          "Main structural block — controlled nordics, stable unilateral work.",
+          "Fallback A: `Glute Bridge` if nordics not tolerated.",
+          "Fallback B: `Reverse Lunge Bodyweight`."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Posterior Chain / Groin Support",
+        "format": "`2 rounds`, `60-75s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Nordic Eccentric",
+            "prescription": "2x10-12"
+          },
+          {
+            "name": "Copenhagen Knee",
+            "prescription": "2x20-30s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Hamstring and adductor support — honest reps, no grinding.",
+          "Fallback B: `Supine Adductor Squeeze`."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Lower-Leg Support (optional)",
+        "format": "",
+        "exercises": [
+          {
+            "name": "Single-Leg Calf Raise",
+            "prescription": "2x10-12/side"
+          },
+          {
+            "name": "Wall Tibialis Raise",
+            "prescription": "2x12-15"
+          }
+        ],
+        "coachingNotes": [
+          "Optional — cut this block first if club fatigue is high."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Week 1–2: establish volume tolerance at lower RPE.",
+      "Week 3: highest volume week with `1-2 RIR` on main work if recovery OK.",
+      "Week 4 deload: `-25 to -30%` volume while keeping movement quality.",
+      "Cut Block 4 first, then one round from Block 2, before touching Block 1."
+    ],
+    "positionAccent": [
+      "`Front_row`: add neck isometric 2x10s/direction after Block 3 if no pain.",
+      "`Back_three`: optional +1 set unilateral in Block 2 if recovery is excellent."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Not a bodybuilding leg day — stay rugby-relevant.",
+      "Do not chase soreness for its own sake."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[bodyweight-program-review.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-program-review.md)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "LOWER_BW_OFFSEASON_TRANSITION_V1",
       "status": "validated",
       "version": "V1",
@@ -6995,6 +7275,141 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "[speed-week2.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/speed-week2.png)",
       "[speed-week3.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/speed-week3.png)",
       "[pre-season-12week.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Préparation%20Physique/pre-season-12week.png)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_BW_OFFSEASON_HYPERTROPHY_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "upper",
+      "targetLevel": "starter",
+      "targetPositionGroup": "front_row + back_three (common base with position accents)",
+      "equipment": "bodyweight",
+      "targetDuration": "45-55 min"
+    },
+    "title": "UPPER_BW_OFFSEASON_HYPERTROPHY_V1",
+    "goal": [
+      "Build useful upper-body muscle at bodyweight during off-season hypertrophy.",
+      "Meaningful push, pull, and shoulder support without bodybuilding fluff.",
+      "V1.1 volume cap: ~16–20 hard sets — optional blocks cut first."
+    ],
+    "sessionIdentity": [
+      "Hypertrophy upper — not transition, not pre-season force.",
+      "Rugby-relevant pressing, pulling, and shoulder health."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6-8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "band pull-apart",
+          "prescription": "1x10"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Ready for upper volume without pre-fatigue."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Main Push Hypertrophy",
+        "format": "`4 work sets`, `2 min` rest between sets",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "4x8-10"
+          }
+        ],
+        "coachingNotes": [
+          "Anchor press around `RPE 6-8`.",
+          "Fallback: `Push-Up` or `Incline Push-Up` if shoulders need easier angle.",
+          "Upgrade: weighted backpack or dips if available."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull / Vertical Push Pair",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "3x8-10"
+          },
+          {
+            "name": "Pike Push-Up",
+            "prescription": "3x8-10"
+          }
+        ],
+        "coachingNotes": [
+          "Main structural volume — strict rows, controlled pike.",
+          "Fallback A: `Inverted Row` knees bent.",
+          "Upgrade B: feet-elevated pike or band-assisted pull-up."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Vertical Support Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Pike Push-Up",
+            "prescription": "3x8-10"
+          },
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "3x10-12"
+          }
+        ],
+        "coachingNotes": [
+          "Support volume — not a shoulder max test.",
+          "Cut this block before Block 2 if fatigue accumulates."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Shoulder Health (optional)",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Face Pull Band",
+            "prescription": "2x12-15"
+          }
+        ],
+        "coachingNotes": [
+          "Optional — skip if club load is high or no band available (use `scap push-up`)."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Week 3 peak: hardest sets with `1-2 RIR` on Block 1 only if recovery supports.",
+      "Week 4 deload: `-25 to -30%` — cut Block 4 and one round from Block 3 first.",
+      "Never add extra arm volume beyond optional Block 4."
+    ],
+    "positionAccent": [
+      "`Front_row`: neck isometric 2x10s/direction after main work if tolerated.",
+      "`Back_three`: add lateral bound or shuffle finisher 2x5m if space allows."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Not a bench ego session or accessory festival.",
+      "Quality over pump chasing."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[bodyweight-program-review.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-program-review.md)"
     ]
   },
   {

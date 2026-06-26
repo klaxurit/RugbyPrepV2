@@ -159,6 +159,27 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.sessions[0].session.metadata.equipment).toBe('bodyweight')
   })
 
+  it('off-season Hypertrophy 3x + equipment vide → sessions BW Lower/Upper/Full', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match('2025-03-15')],
+      today: '2025-01-20',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      equipment: [],
+      planningAnchors: {
+        manualCycleOverride: 'off_season',
+        manualOffSeasonWeekOverride: 6,
+        offSeasonStartAt: '2025-01-01',
+      },
+    })
+    expect(r.planningContext.offSeasonPhase).toBe(3)
+    expect(r.sessions.map((s) => s.sessionId)).toEqual([
+      'LOWER_BW_OFFSEASON_HYPERTROPHY_V1',
+      'UPPER_BW_OFFSEASON_HYPERTROPHY_V1',
+      'FULL_BW_OFFSEASON_HYPERTROPHY_V1',
+    ])
+  })
+
   it('off-season Hypertrophy 3x → 3 sessions résolues (override semaine)', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH)],
