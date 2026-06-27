@@ -68,7 +68,7 @@ export const BLOC_POSITION_FRONT_ROW: PositionAccentBlock = {
       pattern: 'groin_adductors',
       prescription: '15–20s/côté',
       exerciseIds: [
-        'groin_adductors__copenhagen_plank__knee',
+        'groin_adductors__copenhagen_plank__foot_elevated',
         'groin_adductors__copenhagen_plank__short',
         'groin_adductors__copenhagen_plank__long',
         'groin_adductors__supine_squeeze',

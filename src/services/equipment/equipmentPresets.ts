@@ -48,6 +48,8 @@ function sameEquipmentSet(a: Equipment[], b: Equipment[]): boolean {
   return b.every((item) => setA.has(item))
 }
 
+export { sameEquipmentSet }
+
 /** Déduit le preset affiché depuis le tableau `equipment` du profil. */
 export function inferEquipmentPreset(equipment: Equipment[] | undefined): EquipmentPreset {
   if (!equipment?.length) return 'bodyweight'
@@ -57,14 +59,14 @@ export function inferEquipmentPreset(equipment: Equipment[] | undefined): Equipm
   if (sameEquipmentSet(equipment, resolveEquipmentFromPreset('bands'))) return 'bands'
 
   if (equipment.includes('barbell') || equipment.includes('machine') || equipment.includes('cable')) {
-    return 'full_gym'
+    if (equipment.includes('machine') || equipment.includes('cable')) return 'full_gym'
   }
 
   const homeItems: Equipment[] = ['band', 'dumbbell', 'bench', 'pullup_bar']
   if (equipment.every((item) => homeItems.includes(item))) return 'home_gym'
   if (equipment.includes('band') && equipment.length === 1) return 'bands'
 
-  return 'full_gym'
+  return 'bodyweight'
 }
 
 export function asksGymTrainingLevelForPreset(preset: EquipmentPreset): boolean {

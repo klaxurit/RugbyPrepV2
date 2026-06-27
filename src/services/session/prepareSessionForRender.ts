@@ -9,7 +9,9 @@ import {
   adaptMotherSessionForEquipmentAlternatives,
   adaptSessionContentFrForEquipmentAlternatives,
 } from '../motherSession/equipmentAlternativeAdaptations'
+import { adaptMotherSessionForBodyweightEquipment } from '../motherSession/bodyweightEquipmentAdaptations'
 import { getSessionFrOrFallback } from '../motherSession/motherSessionContentFr'
+import { getExerciseName } from '../../data/exercises'
 import { resolveExerciseIdForSessionRun } from '../motherSession/motherSessionExerciseMap'
 
 interface PrepareInputs {
@@ -21,9 +23,10 @@ interface PrepareInputs {
 
 /**
  * Pipeline de préparation d'une `MotherSession` pour rendu :
- *  1. Adaptation Foundations (si starter) — substitue Pin Back Squat → Goblet Squat / Leg Press
- *  2. Adaptation Equipment — substitue selon ce que possède le profil
- *  3. Localisation FR (si lang='fr') — applique les noms FR sur les blocs et exos
+ *  1. Adaptation Foundations (si starter)
+ *  2. Adaptation BW matériel (si bodyweight_minimal) — variantes selon bandes / home gym
+ *  3. Adaptation Equipment (med ball → câble, etc.)
+ *  4. Localisation FR
  *
  * La session retournée est prête à être passée aux blocs de rendu (`SessionBlocks`)
  * sans qu'ils aient à connaître le système d'adaptations / contenu FR.
@@ -40,7 +43,8 @@ export function prepareSessionForRender({
   const foundationsSession = isFoundationsLevel(trainingLevel)
     ? adaptMotherSessionForFoundations(session, equipment)
     : session
-  const adaptedEn = adaptMotherSessionForEquipmentAlternatives(foundationsSession, equipment)
+  const bodyweightSession = adaptMotherSessionForBodyweightEquipment(foundationsSession, equipment)
+  const adaptedEn = adaptMotherSessionForEquipmentAlternatives(bodyweightSession, equipment)
 
   if (lang !== 'fr') return adaptedEn
 
@@ -50,7 +54,7 @@ export function prepareSessionForRender({
     ? adaptSessionContentFrForFoundations(session, rawFr, equipment)
     : rawFr
   const finalFr = adaptSessionContentFrForEquipmentAlternatives(
-    foundationsSession,
+    bodyweightSession,
     foundationsFr,
     equipment,
   )
@@ -73,12 +77,14 @@ export function prepareSessionForRender({
       exercises: block.exercises.map((exo, exoIndex) => {
         const catalogId = resolveExerciseIdForSessionRun(exo.name, exo.exerciseId)
         const frExo = frBlock.exercises[exoIndex]
+        const localizedName =
+          catalogId != null ? getExerciseName(catalogId, 'fr') : frExo?.name
         if (!frExo) {
           return catalogId ? { ...exo, exerciseId: catalogId } : exo
         }
         return {
           ...exo,
-          name: frExo.name || exo.name,
+          name: localizedName || frExo.name || exo.name,
           prescription: frExo.prescription || exo.prescription,
           ...(catalogId ? { exerciseId: catalogId } : {}),
         }

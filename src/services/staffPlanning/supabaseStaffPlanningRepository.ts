@@ -37,7 +37,6 @@ export const STAFF_PLANNING_PROFILE_SELECT = [
   'level_modifier_profile',
   'season_mode',
   'performance_focus',
-  'rehab_injury',
   'population_segment',
   'age_band',
   'parental_consent_health_data',

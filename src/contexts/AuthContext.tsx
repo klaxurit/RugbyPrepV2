@@ -13,7 +13,7 @@ import {
 } from '../services/auth/authService'
 import { AuthContext } from './authContextValue'
 import { posthog } from '../services/analytics/posthog'
-import { clearUserStorage } from '../services/storage/clearUserStorage'
+import { clearLegacyUserStorage, clearUserStorage, clearUserStorageForUser } from '../services/storage/clearUserStorage'
 import { shouldClearUserStorageOnAuthChange } from '../services/storage/syncUserStoragePolicy'
 
 const initialAuthState: AuthState = { status: 'anonymous', user: null }
@@ -42,11 +42,12 @@ function writeLastUserId(userId: string | null): void {
   } catch { /* ignore */ }
 }
 
-/** Wipes user-scoped storage when switching between two distinct known users. */
+/** Wipes previous user's local cache when switching accounts (not the incoming user). */
 function syncUserStorage(newUserId: string | null): void {
   const lastUserId = readLastUserId()
   if (shouldClearUserStorageOnAuthChange(lastUserId, newUserId)) {
-    clearUserStorage()
+    if (lastUserId) clearUserStorageForUser(lastUserId)
+    clearLegacyUserStorage()
   }
   writeLastUserId(newUserId)
 }
@@ -124,12 +125,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   const signOut = useCallback<AuthContextValue['signOut']>(async () => {
+    const signingOutUserId =
+      authState.status === 'authenticated' ? authState.user?.id ?? null : readLastUserId()
     await signOutService()
-    clearUserStorage()
+    if (signingOutUserId) clearUserStorageForUser(signingOutUserId)
+    clearUserStorageForUser(null)
+    clearLegacyUserStorage()
     writeLastUserId(null)
     setAuthState({ status: 'anonymous', user: null })
     posthog.reset()
-  }, [])
+  }, [authState])
 
   const updateAvatar = useCallback<AuthContextValue['updateAvatar']>(async (file) => {
     const result = await updateAvatarService(file)

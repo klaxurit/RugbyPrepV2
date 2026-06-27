@@ -18,8 +18,8 @@ describe('shouldClearUserStorageOnAuthChange', () => {
     expect(shouldClearUserStorageOnAuthChange('user-a', 'user-b')).toBe(true)
   })
 
-  it('clears when signing out (known user → anonymous)', () => {
-    expect(shouldClearUserStorageOnAuthChange('user-a', null)).toBe(true)
+  it('does not clear on transient anonymous during session restore (user-a → null)', () => {
+    expect(shouldClearUserStorageOnAuthChange('user-a', null)).toBe(false)
   })
 
   it('does not clear anonymous → anonymous', () => {

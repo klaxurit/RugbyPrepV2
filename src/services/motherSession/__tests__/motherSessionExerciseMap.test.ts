@@ -38,8 +38,17 @@ describe('resolveExerciseId — alias', () => {
   it('resolves alias warm-up', () => {
     expect(resolveExerciseId('ankle rocks')).toBe(resolveExerciseId('Ankle Rocks'))
   })
-  it('resolves copenhagen variants', () => {
-    expect(resolveExerciseId('Copenhagen Hold')).toBe(resolveExerciseId('Copenhagen Plank'))
+  it('maps generic push-up to standard, not incline regression', () => {
+    expect(resolveExerciseId('Push-Up')).toBe('push_horizontal__push_up__standard')
+    expect(resolveExerciseId('Incline Push-Up')).toBe('push_horizontal__push_up__incline')
+  })
+  it('resolves copenhagen variants to foot-elevated tier 0', () => {
+    expect(resolveExerciseId('Copenhagen Plank')).toBe(
+      'groin_adductors__copenhagen_plank__foot_elevated',
+    )
+    expect(resolveExerciseId('Copenhagen Hold')).toBe(
+      'groin_adductors__copenhagen_plank__foot_elevated',
+    )
   })
   it('resolves single-leg RDL variants', () => {
     expect(resolveExerciseId('Single-Leg RDL')).toBe(resolveExerciseId('Single-Leg Romanian Deadlift'))

@@ -33,7 +33,7 @@ const STORAGE_KEY_PREFIX_V1 = 'rugbyprep.weekSnapshot.v1'
 // en cache contenaient des SequentialSession objets qui sont désormais filtrés
 // par le WeekPage (qui ne garde que les DatedSession). Un snapshot v1 restauré
 // tel quel rendait 7 jours vides. Bumper force un fresh resolve au prochain mount.
-export const CURRENT_SCHEMA_VERSION = 2
+export const CURRENT_SCHEMA_VERSION = 3
 
 // ── Public types ────────────────────────────────────────────────────
 

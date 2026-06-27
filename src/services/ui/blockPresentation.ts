@@ -186,6 +186,10 @@ function parseRestSeconds(prescription: string): number | null {
  */
 export function parseBlockTourCount(block: Block): number {
   if (block.format) {
+    // "4 work sets" = séries lourdes sur le même exo, pas 4 tours du circuit.
+    if (/\bwork\s*sets\b/i.test(block.format)) {
+      return 1
+    }
     const tourMatch = block.format.match(/(\d+)\s*(?:tour|round)/i)
     if (tourMatch) {
       const n = Number(tourMatch[1])

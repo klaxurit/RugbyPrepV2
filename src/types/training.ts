@@ -28,6 +28,7 @@ export type Equipment =
   | 'kettlebell'
   | 'trap_bar'
   | 'sled'
+  | 'squat_rack'
   | 'none';
 
 export type BlockIntent =

@@ -31,7 +31,6 @@ import {
 import { canOfferTrainingReminderOptIn } from '../services/notifications/notificationOptInEligibility'
 import type {
   UserProfile,
-  Equipment,
   DayOfWeek,
   ClubSchedule,
   SCSchedule,

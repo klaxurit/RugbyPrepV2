@@ -1,0 +1,89 @@
+# UPPER_BW_OFFSEASON_FORCE_BRIDGE_V1
+
+- `status`: validated
+- `version`: V1
+- `cycle`: off_season
+- `session_type`: upper
+- `target_level`: builder
+- `target_position_group`: front_row + back_three (common base with position accents)
+- `equipment`: bodyweight
+- `target_duration`: 45-55 min
+
+## Goal
+- Convert upper hypertrophy into pressing/pulling force and explosive power at bodyweight.
+- Complex training: heavy slow push → ballistic contrast within PAP window.
+- Prepare shoulders and trunk for pre-season demands without gym loads.
+
+## Session Identity
+- Force-bridge upper — fewer reps, higher intent, explosive follow-ups.
+- **Calibration** : pompes déclinées lentes lourdes, rowing pieds surélevés force-grade, pike difficile — rugbyman club entraîné.
+- Plyo and contrast quality > volume.
+
+## Warm-Up
+Warm-up is stored as a collapsible recommendation rather than a mandatory visible block.
+
+### Recommended warm-up
+- `thoracic rotation` `1x6-8/side`
+- `scap push-up` `1x8`
+- `band pull-apart` `1x10`
+- `2-3 progressive ramp-up sets` ``
+
+### Notes
+- Shoulder and thoracic activation before heavy pressing contrasts.
+
+## Visible Blocks
+
+### Block 1 - Press Force + Explosive Contrast
+- Format: `4 rounds`, `3-4 min` rest between rounds
+- Exercise A: `Decline Push-Up` `4x4-5`
+- Exercise B: (contrast) `Plyo Push-Up` `4x3-4, max height`
+- Coaching notes:
+  - Heavy A: backpack load or slow tempo, `RIR 1-2`.
+  - Plyo within 15-20s of A — hands leave the ground, max push speed.
+  - If plyo quality drops, reduce load on A first.
+  - Upgrade A: `Bench Press` dumbbell heavy if DB + bench available.
+  - Upgrade B: weighted dips on parallettes if available.
+
+### Block 2 - Pull Force
+- Format: `4 work sets`, `2-3 min` rest between sets
+- Exercise A: `Inverted Row Feet Elevated` `4x4-6`
+- Coaching notes:
+  - Force-grade reps — strict, full ROM, no kipping.
+  - Add backpack on chest or slow tempo before easier row angle.
+  - Upgrade: strict `Pull-Up` if pull-up bar available (add load via backpack).
+
+### Block 3 - Vertical Press / Row Strength
+- Format: `3 rounds`, `90s` rest after the pair
+- Exercise A: `Pike Push-Up Feet Elevated` `3x5`
+- Exercise B: `Inverted Row Standard` `3x6`
+- Coaching notes:
+  - Force-grade overhead and row support — controlled, no grinding.
+  - Upgrade A: `Dumbbell Press` seated if DB + bench available.
+  - Upgrade B: pull-up or one-arm row if equipment allows.
+
+### Block 4 - Rotation / Neck Prevention
+- Format: `2 rounds`, `45s` rest
+- Exercise A: `Band Rotation Explosive` `3-4/side`
+- Exercise B: `Neck Extension Isometric` `15-20s`
+- Coaching notes:
+  - Rotation: explosive trunk intent — floor rotation if no band (controlled).
+  - Neck: extension + flexion + lateral — 15-20s per direction.
+  - Upgrade neck: `Banded Neck Isometric` if band available.
+
+## Progression Rules
+- `FB1`: establish contrast pairs; confirm plyo height after heavy push.
+- `FB2`: add backpack load on A if explosive quality maintained.
+- Reduce Block 4 first, then Block 3 to 2 rounds.
+- NEVER reduce Blocks 1-2.
+
+## Position Accent
+- `Front_row`: optional extra neck isometric volume if tolerated.
+- `Back_three`: emphasize plyo push speed and rotation explosiveness.
+
+## Coaching Warnings
+- Full CNS recovery between Block 1 rounds — do not rush rest.
+- Stop plyo work if push speed or height degrades.
+
+## Source References
+- [bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)
+- [UPPER_OFFSEASON_FORCE_BRIDGE_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/off-season/UPPER_OFFSEASON_FORCE_BRIDGE_V1.md)

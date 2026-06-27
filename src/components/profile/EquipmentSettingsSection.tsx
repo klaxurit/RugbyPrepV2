@@ -1,20 +1,15 @@
-import { Building2, Dumbbell, Home, StretchHorizontal } from 'lucide-react'
+import { Building2, Check, Dumbbell } from 'lucide-react'
 import { CollapsibleSection } from '../ui'
 import type { UserProfile } from '../../types/training'
 import { tr, type Lang } from '../../i18n/appLabels'
+import { GYM_PRESET } from '../../services/equipment/equipmentPresets'
 import {
-  EQUIPMENT_PRESET_DEFS,
-  inferEquipmentPreset,
-  resolveEquipmentFromPreset,
-  type EquipmentPreset,
-} from '../../services/equipment/equipmentPresets'
-
-const PRESET_ICONS = {
-  bodyweight: Home,
-  bands: StretchHorizontal,
-  home_gym: Dumbbell,
-  full_gym: Building2,
-} as const
+  BODYWEIGHT_EQUIPMENT_CHECKS,
+  isChecklistItemActive,
+  isFullGymEquipment,
+  toggleBodyweightCheck,
+  type BodyweightEquipmentCheckId,
+} from '../../services/equipment/bodyweightEquipmentChecklist'
 
 type EquipmentSettingsSectionProps = {
   profile: UserProfile
@@ -27,11 +22,18 @@ export function EquipmentSettingsSection({
   updateProfile,
   lang,
 }: EquipmentSettingsSectionProps) {
-  const activePreset = inferEquipmentPreset(profile.equipment)
+  const fullGym = isFullGymEquipment(profile.equipment)
 
-  const handleSelect = (preset: EquipmentPreset) => {
-    if (preset === activePreset) return
-    updateProfile({ equipment: resolveEquipmentFromPreset(preset) })
+  const handleToggleCheck = (checkId: BodyweightEquipmentCheckId) => {
+    const def = BODYWEIGHT_EQUIPMENT_CHECKS.find((item) => item.id === checkId)
+    if (!def) return
+    const enabled = !isChecklistItemActive(profile.equipment, def)
+    updateProfile({ equipment: toggleBodyweightCheck(profile.equipment, checkId, enabled) })
+  }
+
+  const handleSelectFullGym = () => {
+    if (fullGym) return
+    updateProfile({ equipment: [...GYM_PRESET] })
   }
 
   return (
@@ -47,35 +49,67 @@ export function EquipmentSettingsSection({
         {tr('profile_equipment_stay_in_program', lang)}
       </p>
 
-      <div className="space-y-2">
-        {EQUIPMENT_PRESET_DEFS.map((opt) => {
-          const selected = activePreset === opt.value
-          const Icon = PRESET_ICONS[opt.value]
+      <div className="space-y-1.5" data-testid="profile-equipment-checklist">
+        {BODYWEIGHT_EQUIPMENT_CHECKS.map((item) => {
+          const checked = isChecklistItemActive(profile.equipment, item)
           return (
             <button
-              key={opt.value}
+              key={item.id}
               type="button"
-              data-testid={`profile-equipment-${opt.value}`}
-              onClick={() => handleSelect(opt.value)}
-              className={`w-full flex items-center gap-3 p-3 rounded-2xl border-2 text-left transition-all active:scale-[.98] rf-focus-ring ${
-                selected
+              data-testid={`profile-equipment-check-${item.id}`}
+              aria-pressed={checked}
+              onClick={() => handleToggleCheck(item.id)}
+              className={`w-full flex items-start gap-3 p-3 rounded-2xl border-2 text-left transition-all active:scale-[.98] rf-focus-ring ${
+                checked && !fullGym
                   ? 'border-brand bg-brand-soft shadow-[0_0_0_3px_var(--color-accent-glow)]'
                   : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
               }`}
             >
-              <Icon
-                className={`w-4 h-4 flex-shrink-0 ${selected ? 'text-brand' : 'text-fg-muted'}`}
-                strokeWidth={2.25}
-              />
+              <span
+                className={`mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border ${
+                  checked && !fullGym
+                    ? 'border-brand bg-brand text-white'
+                    : 'border-border-app bg-layer-3'
+                }`}
+                aria-hidden
+              >
+                {checked && !fullGym ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
+              </span>
               <div className="flex-1 min-w-0">
-                <p className={`text-xs font-black ${selected ? 'text-brand-tint' : 'text-fg'}`}>
-                  {tr(opt.labelKey, lang)}
+                <p className={`text-xs font-black ${checked && !fullGym ? 'text-brand-tint' : 'text-fg'}`}>
+                  {tr(item.labelKey, lang)}
                 </p>
-                <p className="text-[10px] text-fg-muted mt-0.5 leading-snug">{tr(opt.subKey, lang)}</p>
+                <p className="text-[10px] text-fg-muted mt-0.5 leading-snug">{tr(item.hintKey, lang)}</p>
               </div>
             </button>
           )
         })}
+      </div>
+
+      <div className="pt-1">
+        <button
+          type="button"
+          data-testid="profile-equipment-full_gym"
+          onClick={handleSelectFullGym}
+          className={`w-full flex items-center gap-3 p-3 rounded-2xl border-2 text-left transition-all active:scale-[.98] rf-focus-ring ${
+            fullGym
+              ? 'border-brand bg-brand-soft shadow-[0_0_0_3px_var(--color-accent-glow)]'
+              : 'border-border-app bg-layer-5 hover:border-border-dashed-app'
+          }`}
+        >
+          <Building2
+            className={`w-4 h-4 flex-shrink-0 ${fullGym ? 'text-brand' : 'text-fg-muted'}`}
+            strokeWidth={2.25}
+          />
+          <div className="flex-1 min-w-0">
+            <p className={`text-xs font-black ${fullGym ? 'text-brand-tint' : 'text-fg'}`}>
+              {tr('equipment_full_gym_cta', lang)}
+            </p>
+            <p className="text-[10px] text-fg-muted mt-0.5 leading-snug">
+              {tr('equipment_full_gym_cta_sub', lang)}
+            </p>
+          </div>
+        </button>
       </div>
     </CollapsibleSection>
   )

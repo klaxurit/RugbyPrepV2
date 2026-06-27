@@ -222,6 +222,47 @@ describe('resolveMotherSessionsForWeek', () => {
     ])
   })
 
+  it('off-season Force-Bridge 3x + equipment vide → sessions BW Lower/Upper/Full', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH)],
+      today: '2025-01-06',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      equipment: [],
+      planningAnchors: {
+        manualCycleOverride: 'off_season',
+        manualOffSeasonWeekOverride: 10,
+        offSeasonStartAt: '2024-12-30',
+      },
+    })
+    expect(r.planningContext.offSeasonPhase).toBe(4)
+    expect(r.sessions).toHaveLength(3)
+    expect(r.sessions.map((s) => s.sessionId)).toEqual([
+      'LOWER_BW_OFFSEASON_FORCE_BRIDGE_V1',
+      'UPPER_BW_OFFSEASON_FORCE_BRIDGE_V1',
+      'FULL_BW_OFFSEASON_FORCE_BRIDGE_V1',
+    ])
+    expect(r.sessions[0].session.metadata.equipment).toBe('bodyweight')
+  })
+
+  it('in-season 2x + equipment vide → sessions BW Lower/Upper', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-03-22')],
+      today: '2025-03-18',
+      weeklyFrequency: 2,
+      positionGroup: 'front_row',
+      equipment: [],
+      planningAnchors: { manualCycleOverride: 'in_season' },
+    })
+    expect(r.planningContext.cycle).toBe('in_season')
+    expect(r.sessions.map((s) => s.sessionId)).toEqual([
+      'LOWER_BW_IN_SEASON_V1',
+      'UPPER_BW_IN_SEASON_V1',
+    ])
+    expect(r.sessions[0].session.blocks[0].exercises[0].name).toMatch(/bulgarian split squat/i)
+    expect(r.sessions[0].session.metadata.equipment).toBe('bodyweight')
+  })
+
   it('playoffs V2 taper_1: normal variant + maxBlocks 3 when dun > 10', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH), match('2025-05-14')],

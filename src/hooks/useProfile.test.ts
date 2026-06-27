@@ -6,6 +6,8 @@ import {
   rowToProfile,
   shouldApplyRemoteProfile,
   isProfileRowMissingError,
+  reconcileCachedAndRemoteProfile,
+  profileSyncFingerprint,
 } from './useProfile'
 
 type ProfileRow = Parameters<typeof rowToProfile>[0]
@@ -36,7 +38,6 @@ const makeRow = (overrides: Partial<ProfileRow> = {}): ProfileRow => ({
   training_baseline_set_at: null,
   performance_focus: null,
   preferred_language: null,
-  rehab_injury: null,
   population_segment: null,
   age_band: null,
   parental_consent_health_data: null,
@@ -57,6 +58,7 @@ const makeRow = (overrides: Partial<ProfileRow> = {}): ProfileRow => ({
   ffr_last_sync_at: null,
   planning_anchors: null,
   season_transition_state: null,
+  updated_at: '2026-06-01T10:00:00.000Z',
   ...overrides,
 })
 
@@ -212,6 +214,32 @@ describe('rowToProfile schedule + baseline persistence', () => {
     expect(profile.scSchedule).toEqual(scSchedule)
     expect(profile.trainingBaseline).toBe('active')
     expect(profile.trainingBaselineSetAt).toBe('2026-05-01T10:00:00.000Z')
+  })
+})
+
+describe('reconcileCachedAndRemoteProfile', () => {
+  it('prefers newer local cache when Supabase row is stale', () => {
+    const remote = rowToProfile(makeRow({ equipment: ['barbell'], updated_at: '2026-06-01T10:00:00.000Z' }))
+    const cached = { ...remote, equipment: [] as typeof remote.equipment }
+    const resolved = reconcileCachedAndRemoteProfile(
+      cached,
+      '2026-06-02T10:00:00.000Z',
+      remote,
+      '2026-06-01T10:00:00.000Z',
+    )
+    expect(resolved.equipment).toEqual([])
+  })
+
+  it('keeps remote when cache matches remote fingerprint', () => {
+    const remote = rowToProfile(makeRow({ equipment: ['band'] }))
+    const cached = { ...remote }
+    const resolved = reconcileCachedAndRemoteProfile(
+      cached,
+      '2026-06-02T10:00:00.000Z',
+      remote,
+      '2026-06-01T10:00:00.000Z',
+    )
+    expect(profileSyncFingerprint(resolved)).toBe(profileSyncFingerprint(remote))
   })
 })
 

@@ -4739,6 +4739,20 @@
     "defaultNotes": "Hanches fixes, rotation thoracique. Intention explosive, pas de cambrure lombaire."
   },
   {
+    "id": "groin_adductors__copenhagen_plank__foot_elevated",
+    "exerciseId": "groin_adductors__copenhagen_plank__foot_elevated",
+    "name": "Copenhagen Plank (foot elevated)",
+    "nameFr": "Copenhagen (pied surélevé)",
+    "pattern": "groin_adductors",
+    "equipment": ["none"],
+    "contraindications": ["groin_pain"],
+    "level": "intermediate",
+    "metricType": "seconds",
+    "tags": ["groin", "prehab", "core"],
+    "notes": "Cheville ou tibia sur chaise, banc ou table — jambe du dessus en appui, bassin aligné. Pas de genou au sol (sinon planche latérale classique).",
+    "defaultNotes": "Pied surélevé stable. Adducteurs actifs, bassin neutre. Progression : Copenhagen court puis long sur banc."
+  },
+  {
     "id": "groin_adductors__copenhagen_plank__knee",
     "exerciseId": "groin_adductors__copenhagen_plank__knee",
     "name": "Copenhagen Plank (knee support)",

@@ -39,7 +39,6 @@ export type ProfileRow = {
   level_modifier_profile: LevelModifierProfileV1 | null
   season_mode: string | null
   performance_focus: PerformanceFocus | null
-  rehab_injury: unknown | null
   population_segment: PopulationSegment | null
   age_band: AgeBand | null
   parental_consent_health_data: boolean | null

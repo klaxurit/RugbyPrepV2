@@ -522,7 +522,8 @@ function resolveMotherSessionsForWeekCore(
     tpl.warnings,
     tpl.companionRecommendations,
     resolverWarnings,
-    sessionsById
+    sessionsById,
+    equipment,
   )
 }
 

@@ -7,7 +7,7 @@ import { GYM_PRESET } from '../../../services/equipment/equipmentPresets'
 
 const updateProfileMock = vi.fn()
 
-function renderSection(equipment: string[] = GYM_PRESET) {
+function renderSection(equipment: string[] = []) {
   return render(
     <EquipmentSettingsSection
       profile={{
@@ -33,14 +33,22 @@ describe('EquipmentSettingsSection', () => {
     expect(screen.getByTestId('profile-equipment-hint')).toHaveTextContent(/même semaine/i)
   })
 
-  it('bascule vers poids de corps sans toucher au cycle', () => {
-    renderSection(GYM_PRESET)
-    fireEvent.click(screen.getByTestId('profile-equipment-bodyweight'))
-    expect(updateProfileMock).toHaveBeenCalledWith({ equipment: [] })
+  it('coche la barre de traction et met à jour le profil', () => {
+    renderSection([])
+    fireEvent.click(screen.getByTestId('profile-equipment-check-pullup_bar'))
+    expect(updateProfileMock).toHaveBeenCalledWith({ equipment: ['pullup_bar'] })
+  })
+
+  it('cage à squat ajoute barre + rack', () => {
+    renderSection(['band'])
+    fireEvent.click(screen.getByTestId('profile-equipment-check-squat_rack'))
+    expect(updateProfileMock).toHaveBeenCalledWith({
+      equipment: ['band', 'barbell', 'squat_rack'],
+    })
   })
 
   it('restaure le preset salle complète', () => {
-    renderSection([])
+    renderSection(['pullup_bar'])
     fireEvent.click(screen.getByTestId('profile-equipment-full_gym'))
     expect(updateProfileMock).toHaveBeenCalledWith({ equipment: GYM_PRESET })
   })

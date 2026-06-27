@@ -4,7 +4,7 @@
 - `version`: V1
 - `cycle`: off_season
 - `session_type`: lower
-- `target_level`: starter
+- `target_level`: builder
 - `target_position_group`: front_row + back_three (common base with position accents)
 - `equipment`: bodyweight
 - `target_duration`: 45-55 min
@@ -17,6 +17,8 @@
 ## Session Identity
 - Off-season hypertrophy lower — not transition, not pre-season force.
 - Rugby-specific muscle on squat, hinge, unilateral, adductors, and lower-leg tissues.
+- **Calibration** : prescription par défaut = rugbyman club entraîné (niveau builder). Accessible sans être « débutant fitness » — régresser uniquement si douleur, mobilité limitante ou charge club très élevée.
+- **Charge sans matériel** : sac à dos, tempo lent (3-1-3), amplitude complète avant toute régression d'exercice.
 
 ## Warm-Up
 Warm-up is stored as a collapsible recommendation rather than a mandatory visible block.
@@ -37,26 +39,30 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Format: `4 work sets`, `2 min` rest between sets
 - Exercise A: `Bulgarian Split Squat` `4x8-10/side`
 - Coaching notes:
-  - Around `RPE 6-8` — tempo squat or bulgarian as main hypertrophy driver.
-  - Fallback: `Bodyweight Squat` with 3-1-3 tempo if balance limits split work.
+  - Around `RPE 6-8` — main hypertrophy driver for the lower session.
+  - Add backpack load or 3-1-3 tempo before switching to an easier variation.
+  - Fallback: `Reverse Lunge Bodyweight` only if single-leg balance is the limiter.
   - Upgrade: `Goblet Squat` if DB/KB available.
 
 ### Block 2 - Hinge / Unilateral Pair
-- Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Nordic Eccentric` `3x8-10`
-- Exercise B: `Bulgarian Split Squat` `3x8-10/side`
+- Format: `4 rounds`, `90-120s` rest after the pair
+- Exercise A: `Nordic Eccentric` `4x6-8`
+- Exercise B: `Bulgarian Split Squat` `4x8-10/side`
 - Coaching notes:
-  - Main structural block — controlled nordics, stable unilateral work.
-  - Fallback A: `Glute Bridge` if nordics not tolerated.
-  - Fallback B: `Reverse Lunge Bodyweight`.
+  - Main structural block — slow nordic eccentrics, stable unilateral work.
+  - Nordic: 3–4s descent; hands on floor only to finish the rep if needed.
+  - Fallback A: `Kickstand RDL` heavy tempo if nordics not tolerated this week.
+  - Fallback B: `Reverse Lunge Bodyweight` if split squat balance breaks down.
 
 ### Block 3 - Posterior Chain / Groin Support
 - Format: `2 rounds`, `60-75s` rest after the pair
-- Exercise A: `Nordic Eccentric` `2x10-12`
-- Exercise B: `Copenhagen Knee` `2x20-30s/side`
+- Exercise A: `Kickstand RDL` `2x10-12/side`
+- Exercise B: `Copenhagen Plank` `2x20-30s/side`
 - Coaching notes:
   - Hamstring and adductor support — honest reps, no grinding.
-  - Fallback B: `Supine Adductor Squeeze`.
+  - Copenhagen : pied surélevé obligatoire — progression vers levier court/long sur banc si disponible.
+  - Fallback A: `Single-Leg Glute Bridge` with 2s pause at top.
+  - Fallback B: `Supine Adductor Squeeze` if Copenhagen irritates groin.
 
 ### Block 4 - Lower-Leg Support (optional)
 - Exercise A: `Single-Leg Calf Raise` `2x10-12/side`
@@ -65,19 +71,22 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Optional — cut this block first if club fatigue is high.
 
 ## Progression Rules
-- Week 1–2: establish volume tolerance at lower RPE.
-- Week 3: highest volume week with `1-2 RIR` on main work if recovery OK.
+- Week 1–2: establish volume tolerance at `RPE 6-7`.
+- Week 3: highest volume week with `1-2 RIR` on Blocks 1–2 if recovery OK.
 - Week 4 deload: `-25 to -30%` volume while keeping movement quality.
 - Cut Block 4 first, then one round from Block 2, before touching Block 1.
+- Progress via load (backpack), tempo, or range — not by swapping to easier exercises.
 
 ## Position Accent
 - `Front_row`: add neck isometric 2x10s/direction after Block 3 if no pain.
-- `Back_three`: optional +1 set unilateral in Block 2 if recovery is excellent.
+- `Back_three`: optional +1 round unilateral in Block 2 if recovery is excellent.
 
 ## Coaching Warnings
 - Not a bodybuilding leg day — stay rugby-relevant.
 - Do not chase soreness for its own sake.
+- If the session feels too easy, add backpack load before reducing range or exercise difficulty.
 
 ## Source References
 - [bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)
 - [bodyweight-program-review.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-program-review.md)
+- [LOWER_OFFSEASON_HYPERTROPHY_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/off-season/LOWER_OFFSEASON_HYPERTROPHY_V1.md)

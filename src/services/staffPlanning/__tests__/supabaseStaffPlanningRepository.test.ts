@@ -73,7 +73,6 @@ function baseProfile(id: string, clubId: string): ProfileRow {
     level_modifier_profile: null,
     season_mode: 'in_season',
     performance_focus: 'balanced',
-    rehab_injury: null,
     population_segment: null,
     age_band: 'adult',
     parental_consent_health_data: null,

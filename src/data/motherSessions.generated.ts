@@ -518,12 +518,162 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "FULL_BW_OFFSEASON_FORCE_BRIDGE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "full",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (common base with position accents)",
+      "equipment": "bodyweight",
+      "targetDuration": "50-60 min"
+    },
+    "title": "FULL_BW_OFFSEASON_FORCE_BRIDGE_V1",
+    "goal": [
+      "Full-body force-bridge for 3x/week off-season frequency at bodyweight.",
+      "One lower contrast + one upper contrast + structural support in a single session.",
+      "Leave the athlete feeling powerful, not depleted."
+    ],
+    "sessionIdentity": [
+      "Force-bridge full-body — intensity and speed over hypertrophy volume.",
+      "**Calibration** : rugbyman club — nordiques stricts, push lourd + plyo, sauts max intention.",
+      "Third weekly session — complements Lower and Upper force-bridge days."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Préparer hanches, chevilles et épaules avant le bloc 1."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Hinge Force + Jump Contrast",
+        "format": "`3 rounds`, `3 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Nordic Eccentric",
+            "prescription": "3x4-5"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "3x3, max distance",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Nordiques stricts (3-4 s en descente) — viser la force, pas la chasse au volume.",
+          "Broad jump dans les 15-20 s après la série de nordiques.",
+          "Variante A : `Romanian Deadlift` lourd si haltères ou KB disponibles."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Push Force + Explosive Contrast",
+        "format": "`3 rounds`, `3 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "3x4"
+          },
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "3x4, max height",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Push lent lourd puis plyo explosive dans la fenêtre PAP.",
+          "Variante A : développé haltères si banc + haltères disponibles.",
+          "Réduire la charge sur A avant de couper les reps de plyo."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Pull + Unilateral Support",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "3x5"
+          },
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "3x5/side"
+          }
+        ],
+        "coachingNotes": [
+          "Tirage et squat unilatéral de qualité force — stable, sans grind.",
+          "Variante A : tractions strictes si barre disponible.",
+          "Variante B : fente bulgare chargée si haltères disponibles."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Rugby Finisher",
+        "format": "`2 rounds`, `45-60s` rest after the round",
+        "exercises": [
+          {
+            "name": "Bear Crawl",
+            "prescription": "2x20m"
+          },
+          {
+            "name": "Side Plank",
+            "prescription": "2x15-30s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Finisher court — locomotion rapide + anti-flexion latérale du tronc.",
+          "Variante A : `Farmer Carry` rapide si haltères ou KB disponibles.",
+          "Couper ce bloc en premier si la fatigue hebdomadaire est élevée."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`FB1`: establish both contrast pairs; confirm jump and plyo quality.",
+      "`FB2`: add external load on A exercises if ballistic quality holds.",
+      "Reduce Block 4 first, then Block 3 to 2 rounds.",
+      "NEVER reduce Blocks 1-2."
+    ],
+    "positionAccent": [
+      "`Front_row`: patient nordic setup; optional neck isometric after finisher if tolerated.",
+      "`Back_three`: prioritize broad jump distance and plyo push speed."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Powerful session — respect full rest on contrast blocks.",
+      "Not a fourth leg day disguised as full-body work."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[FULL_OFFSEASON_FORCE_BRIDGE_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/off-season/FULL_OFFSEASON_FORCE_BRIDGE_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "FULL_BW_OFFSEASON_HYPERTROPHY_V1",
       "status": "validated",
       "version": "V1",
       "cycle": "off_season",
       "sessionType": "full",
-      "targetLevel": "starter",
+      "targetLevel": "builder",
       "targetPositionGroup": "front_row + back_three (common base with position accents)",
       "equipment": "bodyweight",
       "targetDuration": "55-65 min"
@@ -531,11 +681,14 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "title": "FULL_BW_OFFSEASON_HYPERTROPHY_V1",
     "goal": [
       "Complete the hypertrophy week with a full-body bodyweight session.",
-      "Hinge anchor, upper support, unilateral lower, and rugby finisher without duplicating Lower/Upper days exactly."
+      "Hinge anchor, upper support, unilateral lower, and rugby finisher without duplicating Lower/Upper days exactly.",
+      "Aligned with gym `FULL_OFFSEASON_HYPERTROPHY_V1` intent at tier-0 equipment."
     ],
     "sessionIdentity": [
       "Hypertrophy full-body — not a fourth heavy lower day.",
-      "Rugby finisher: carry/locomotion, adductors, optional neck."
+      "Rugby finisher: carry/locomotion, adductors, optional neck.",
+      "**Calibration** : juste milieu rugbyman — exigeant mais faisable sans salle (`RPE 6-8`, `1-2 RIR` semaine 3).",
+      "Régressions (incline, fente arrière) = **fallbacks coaching** uniquement."
     ],
     "warmUp": {
       "exercises": [
@@ -577,26 +730,29 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ],
         "coachingNotes": [
           "Around `RPE 6-8` — hypertrophy hinge, not max strength.",
-          "Fallback: `Single-Leg Glute Bridge` heavy tempo if nordics not tolerated."
+          "Excentrique 3-4 s ; mains au sol uniquement pour finir si nécessaire.",
+          "Fallback: `Kickstand RDL` heavy tempo if nordics not tolerated."
         ]
       },
       {
         "number": 2,
         "name": "Upper Push / Pull Support",
-        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "Push-Up",
-            "prescription": "3x8-10"
+            "name": "Decline Push-Up",
+            "prescription": "4x8-10"
           },
           {
-            "name": "Inverted Row Standard",
-            "prescription": "3x8-10/side"
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "4x8-10"
           }
         ],
         "coachingNotes": [
-          "Weighted backpack on push-up if too easy.",
-          "Upgrade row: feet elevated or pull-up bar."
+          "Main upper volume — backpack on push-up before any angle regression.",
+          "Upgrade row: strict pull-ups if bar available.",
+          "Fallback A: `Push-Up` with backpack load.",
+          "Fallback B: `Inverted Row Standard`."
         ]
       },
       {
@@ -605,17 +761,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "Reverse Lunge Bodyweight",
+            "name": "Bulgarian Split Squat",
             "prescription": "3x8-10/side"
           },
           {
-            "name": "Side Plank",
-            "prescription": "3x15-20s/side"
+            "name": "Bird Dog",
+            "prescription": "3x8-10/side"
           }
         ],
         "coachingNotes": [
-          "Unilateral lower + trunk without turning into another leg day.",
-          "Fallback B: `Pallof Press Hold` if band available."
+          "Unilateral lower + trunk anti-extension/rotation without another leg day.",
+          "Bird dog : pause 2s en extension, pas de balancement.",
+          "Fallback A: `Reverse Lunge Bodyweight` if balance limits split work.",
+          "Upgrade B: `Pallof Press Hold` if band available."
         ]
       },
       {
@@ -628,28 +786,38 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "2x30s"
           },
           {
-            "name": "Copenhagen Knee",
+            "name": "Copenhagen Plank",
             "prescription": "2x20-30s/side"
+          },
+          {
+            "name": "Neck Extension Isometric",
+            "prescription": "2x10s/direction"
           }
         ],
         "coachingNotes": [
           "Short rugby-oriented finisher — quality over exhaustion.",
-          "`Front_row`: optional neck isometric 2x10s/direction after round 2."
+          "Copenhagen : pied surélevé (chaise/banc) — pas de genou au sol.",
+          "Neck : extension + flexion + latéral (main) — 10s par direction.",
+          "Upgrade neck: `Banded Neck Isometric` if band available.",
+          "`Front_row`: keep neck C in the finisher."
         ]
       }
     ],
     "progressionRules": [
       "Week 4 deload: reduce Block 2–3 to 2 rounds; keep Block 1 load moderate.",
-      "Cut Block 4 first if weekly lower volume is already high."
+      "Cut Block 4 first if weekly lower volume is already high.",
+      "Add backpack/tempo before swapping to easier exercise variants."
     ],
     "positionAccent": [],
     "injurySubstitutions": [],
     "coachingWarnings": [
       "Not a marathon checklist session.",
-      "If lower days were hard, keep Block 3 unilateral work submaximal."
+      "If lower days were hard, keep Block 3 unilateral work submaximal.",
+      "Too easy = augmenter charge ou tempo, pas régresser vers incliné."
     ],
     "sourceReferences": [
-      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[FULL_OFFSEASON_HYPERTROPHY_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/off-season/FULL_OFFSEASON_HYPERTROPHY_V1.md)"
     ]
   },
   {
@@ -1106,6 +1274,372 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "Not an everything day or sneaky volume monster.",
       "If beat up, reduce to 2 rounds on Blocks 1–2."
     ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "FULL_BW_PRESEASON_FORCE_POWER_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "full",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 2 common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "50-60 min"
+    },
+    "title": "FULL_BW_PRESEASON_FORCE_POWER_V1",
+    "goal": [
+      "Whole-body force-power contrasts for 3x/week pre-season phase 2.",
+      "Hinge + jump and push + plyo pairs with pull/rotation support."
+    ],
+    "sessionIdentity": [
+      "Full-body force-power — contrast quality over finisher volume."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Hinge + Jump",
+        "format": "`4 rounds`, `3 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Romanian Deadlift",
+            "prescription": "4x3-4"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "4x3",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy hinge — DB/KB or strict nordic fallback.",
+          "Broad jump: full hip extension, stick landing."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Contrast Push",
+        "format": "`3 rounds`, `3 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "3x4"
+          },
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "3x4",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade A: dumbbell bench if DB + bench."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Pull + Rotation",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "3x5"
+          },
+          {
+            "name": "Band Rotation Explosive",
+            "prescription": "3x5/side"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade A: pull-up if bar available."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Carry",
+        "format": "`2 rounds`, `60s` rest",
+        "exercises": [
+          {
+            "name": "Suitcase Carry",
+            "prescription": "2x20m/side"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy but clean — anti-lateral flexion under load."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Reduce Block 4 first; protect contrast blocks."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[FULL_PRESEASON_FORCE_POWER_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/pre-season/FULL_PRESEASON_FORCE_POWER_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "FULL_BW_PRESEASON_FORCE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "full",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 1 common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "50-60 min"
+    },
+    "title": "FULL_BW_PRESEASON_FORCE_V1",
+    "goal": [
+      "Whole-body force support for 3x/week pre-season phase 1 without gym.",
+      "Pair hinge force with push/pull fundamentals and rugby finisher."
+    ],
+    "sessionIdentity": [
+      "Full-body force construction — complements lower/upper split days.",
+      "**Calibration** : nordiques stricts, pompes lestées, tractions propres si barre dispo."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Hinge Force",
+        "format": "`3 work sets`, `2-3 min` rest between sets",
+        "exercises": [
+          {
+            "name": "Romanian Deadlift",
+            "prescription": "3x5"
+          }
+        ],
+        "coachingNotes": [
+          "Strict nordic or RDL — heaviest hinge pattern available.",
+          "Fallback: `Nordic Eccentric` strict if no DB/KB."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Push / Pull Pair",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "3x6-8"
+          },
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "3x6-8/side"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade A: dumbbell bench if DB + bench.",
+          "Upgrade B: `Neutral-Grip Pull-Up` if bar available."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Hip / Rotation",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Single-Leg Glute Bridge",
+            "prescription": "3x6-8/side"
+          },
+          {
+            "name": "Band Rotation Explosive",
+            "prescription": "2-3x6-8/side"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade A: hip thrust on bench if DB + bench available."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Finisher",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Bear Crawl",
+            "prescription": "15-20m"
+          },
+          {
+            "name": "Copenhagen Plank",
+            "prescription": "20-30s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Bear crawl: fast posture, scrum-like projection.",
+          "Upgrade A: `Farmer Carry` if DB/KB available."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`W4` deload: cut Block 4, then one round from Block 3.",
+      "Never sacrifice hinge or push quality for finisher volume."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[FULL_PRESEASON_FORCE_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/pre-season/FULL_PRESEASON_FORCE_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "FULL_BW_PRESEASON_POWER_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "full",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 3 common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "40-50 min"
+    },
+    "title": "FULL_BW_PRESEASON_POWER_V1",
+    "goal": [
+      "Phase 3 full-body power — swing/hinge speed, plyo push, explosive pull.",
+      "Short activation finisher before in-season transition."
+    ],
+    "sessionIdentity": [
+      "Power phase full — low volume, high intent, rugby activation finish."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "pogo hops",
+          "prescription": "1x8"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Full Body Contrast",
+        "format": "`3 rounds`, `2 min 30` rest between rounds",
+        "exercises": [
+          {
+            "name": "Banded KB Swing",
+            "prescription": "3x3"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "3 reps",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade A: KB swing if kettlebell available; banded swing if band only.",
+          "Fallback A: fast `Romanian Deadlift` if no KB/band."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Explosive Push / Pull",
+        "format": "`3 rounds`, `2 min` rest after the pair",
+        "exercises": [
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "3x3-4"
+          },
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "3x4"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade B: fast pull-up if bar available."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Activation",
+        "format": "`2 rounds`, `45s` rest",
+        "exercises": [
+          {
+            "name": "A-Skip",
+            "prescription": "2x10m"
+          },
+          {
+            "name": "Side Plank",
+            "prescription": "2x15s/side"
+          }
+        ],
+        "coachingNotes": [
+          "A-skip: stiff ankle, rhythmic acceleration posture.",
+          "Upgrade B: `Pallof Press Hold` if band available."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Keep total session crisp — cut Block 3 before reducing contrast intent."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
     "sourceReferences": [
       "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
     ]
@@ -4047,12 +4581,315 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "LOWER_BW_IN_SEASON_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "lower",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (common base with position accents)",
+      "equipment": "bodyweight",
+      "targetDuration": "35-45 min"
+    },
+    "title": "LOWER_BW_IN_SEASON_V1",
+    "goal": [
+      "Maintain lower-body force useful for rugby contact, acceleration, and short-force actions at bodyweight.",
+      "Keep one clean force -> projection contrast without excessive residual fatigue.",
+      "Maintain posterior-chain strength and unilateral control.",
+      "Finish with a short rugby finisher (locomotion/carry, adductors, trunk)."
+    ],
+    "sessionIdentity": [
+      "In-season lower maintenance — not pre-season build, not off-season hypertrophy.",
+      "**Calibration** : rugbyman club en saison — fente bulgare lourde (sac/tempo), sauts nets, volume contenu.",
+      "Mesocycle 3:1 — deload week 4 : `-30%` volume (cut Block 3 first, then one round from Block 2).",
+      "Rugby-specific through contrast lower, posterior/unilateral support, and collision-oriented finisher."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Short and specific — readiness, not volume.",
+        "Player can keep own lower warm-up if ankles, hips, adductors, and trunk are prepared."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Lower Force-Projection",
+        "format": "`4 rounds`, full rest `2 min 30 to 3 min` after each round",
+        "exercises": [
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "3-4x3/side"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "3 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy A: backpack load or slow 3-1-1 tempo, `RIR 2-3` (~75-80% effort).",
+          "Broad jump within 15-20s of A — powerful and crisp, not chased once quality drops.",
+          "Upgrade A: `Goblet Squat` heavy if DB/KB available.",
+          "Upgrade B: `Squat Jump` if space limited; `Lateral Squat Jump` for back-three speed bias.",
+          "This is force -> projection contrast, not a fatigue block.",
+          "`Front_row`: slightly heavier load bias on A.",
+          "`Back_three`: prioritize jump distance and take-off quality over extra load."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Posterior Chain + Unilateral Support",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Single-Leg Glute Bridge",
+            "prescription": "3x5-6/side"
+          },
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "3x5/side"
+          }
+        ],
+        "coachingNotes": [
+          "Athletic support work — clean lockout on bridge, stable unilateral squat.",
+          "Upgrade A: `Romanian Deadlift` if DB/KB available.",
+          "Upgrade B: loaded Bulgarian if DB available.",
+          "Fallback B: `Reverse Lunge Bodyweight` if balance limits split work.",
+          "Keep `RIR 2-3` — useful, not draining."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Rugby Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Bear Crawl",
+            "prescription": "15-20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Copenhagen Plank",
+            "prescription": "15-20s/side",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Bear crawl: fast posture, scrum-like projection intent.",
+          "Upgrade A: `Farmer Carry` or `Suitcase Carry` if DB/KB available.",
+          "Copenhagen : pied surélevé obligatoire.",
+          "If adductor load is already high: replace B with `Side Plank` or `Pallof Press Hold` if band available.",
+          "Robust and specific — not exhaustive."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize movement quality and jump projection over load jumps.",
+      "Progress A via backpack/tempo only if all sets stay sharp.",
+      "Deload week 4: reduce Block 3 to 6 min EMOM or skip; drop one round from Block 2.",
+      "If weekly fatigue is high: cut Block 3 first, then one round from Block 2; keep Block 1 if player is fresh enough."
+    ],
+    "positionAccent": [
+      "`Front_row`: heavier A bias, farmer/sled-style carry upgrade in finisher, adductor robustness.",
+      "`Back_three`: broad jump quality over load, slightly faster contrast profile, suitcase carry option."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Do not let heavy split squats become slow survival work.",
+      "Stop broad jumps when take-off quality drops.",
+      "On match weeks, schedule early enough for weekend recovery."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[LOWER_IN_SEASON_FRONT_ROW_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/in-season/LOWER_IN_SEASON_FRONT_ROW_V1.md)",
+      "[LOWER_IN_SEASON_BACK_THREE_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/in-season/LOWER_IN_SEASON_BACK_THREE_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_BW_OFFSEASON_FORCE_BRIDGE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "lower",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (common base with position accents)",
+      "equipment": "bodyweight",
+      "targetDuration": "45-55 min"
+    },
+    "title": "LOWER_BW_OFFSEASON_FORCE_BRIDGE_V1",
+    "goal": [
+      "Convert off-season hypertrophy into lower-body force and explosive power at bodyweight.",
+      "Use complex training (heavy slow → ballistic contrast) within 15-20s PAP windows.",
+      "Bridge toward pre-season power without gym loads."
+    ],
+    "sessionIdentity": [
+      "Force-bridge lower — not hypertrophy, not pre-season max power.",
+      "**Calibration** : rugbyman club entraîné — fente bulgare lente lourde (sac/tempo), nordiques stricts, sauts max intention.",
+      "Contrast pairs in Blocks 1-2 are non-negotiable session priority."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Ramp Bulgarian split squat before Block 1 — feel sharp, not fatigued."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Squat Force + Explosive Contrast",
+        "format": "`4 rounds`, `3-4 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "4x4-5/side"
+          },
+          {
+            "name": "Squat Jump",
+            "prescription": "4x3-4, max intention",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy A: slow 3-1-1 tempo or backpack load, `RIR 1-2`.",
+          "Jump within 15-20s of finishing A — exploit PAP.",
+          "If jump height drops, reduce load/tempo on A before cutting jumps.",
+          "Upgrade A: `Goblet Squat` heavy if DB/KB available.",
+          "Upgrade B: `Banded KB Swing` if band + KB; `Lateral Squat Jump` as horizontal contrast variant."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Hinge Force + Dynamic Contrast",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Nordic Eccentric",
+            "prescription": "4x4-5"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "4x3, max distance",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Strict nordic eccentrics (3-4s down) — force-grade, not hypertrophy volume.",
+          "Broad jump: full hip extension, stick the landing.",
+          "Upgrade A: `Romanian Deadlift` heavy if DB/KB available.",
+          "Fallback B: `Lateral Squat Jump` if space limited for broad jump."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Unilateral Strength + Posterior Support",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "3x5-6/side"
+          },
+          {
+            "name": "Nordic Eccentric",
+            "prescription": "3x4-5"
+          }
+        ],
+        "coachingNotes": [
+          "Force-grade reps (5-6), controlled — structural balance without junk fatigue.",
+          "Upgrade A: loaded Bulgarian if DB available.",
+          "Upgrade B: `Banded Nordic` if band available."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Lower-Leg / Groin Prevention",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Copenhagen Plank",
+            "prescription": "2x20-30s/side"
+          },
+          {
+            "name": "Single-Leg Calf Raise",
+            "prescription": "2x10-12/side"
+          },
+          {
+            "name": "Wall Tibialis Raise",
+            "prescription": "2x12"
+          }
+        ],
+        "coachingNotes": [
+          "Prevention only — cut this block first if CNS fatigue is high.",
+          "Copenhagen : pied surélevé obligatoire."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`FB1` (week 9): establish contrast tolerance; keep A exercises submax but crisp.",
+      "`FB2` (week 10): add load (backpack) or tempo on A if jump/throw quality holds.",
+      "Reduce Block 4 first, then Block 3 to 2 rounds.",
+      "NEVER reduce Blocks 1-2 — contrast pairs ARE the session."
+    ],
+    "positionAccent": [
+      "`Front_row`: patient bracing on nordics and split squat; slightly heavier load tolerated on A.",
+      "`Back_three`: prioritize broad jump distance and squat jump height over extra load."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Powerful and sharp — not exhausting. Full rest between contrast rounds.",
+      "Stop ballistic work if quality degrades visibly."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[LOWER_OFFSEASON_FORCE_BRIDGE_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/off-season/LOWER_OFFSEASON_FORCE_BRIDGE_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "LOWER_BW_OFFSEASON_HYPERTROPHY_V1",
       "status": "validated",
       "version": "V1",
       "cycle": "off_season",
       "sessionType": "lower",
-      "targetLevel": "starter",
+      "targetLevel": "builder",
       "targetPositionGroup": "front_row + back_three (common base with position accents)",
       "equipment": "bodyweight",
       "targetDuration": "45-55 min"
@@ -4065,7 +4902,9 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     ],
     "sessionIdentity": [
       "Off-season hypertrophy lower — not transition, not pre-season force.",
-      "Rugby-specific muscle on squat, hinge, unilateral, adductors, and lower-leg tissues."
+      "Rugby-specific muscle on squat, hinge, unilateral, adductors, and lower-leg tissues.",
+      "**Calibration** : prescription par défaut = rugbyman club entraîné (niveau builder). Accessible sans être « débutant fitness » — régresser uniquement si douleur, mobilité limitante ou charge club très élevée.",
+      "**Charge sans matériel** : sac à dos, tempo lent (3-1-3), amplitude complète avant toute régression d'exercice."
     ],
     "warmUp": {
       "exercises": [
@@ -4106,29 +4945,31 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Around `RPE 6-8` — tempo squat or bulgarian as main hypertrophy driver.",
-          "Fallback: `Bodyweight Squat` with 3-1-3 tempo if balance limits split work.",
+          "Around `RPE 6-8` — main hypertrophy driver for the lower session.",
+          "Add backpack load or 3-1-3 tempo before switching to an easier variation.",
+          "Fallback: `Reverse Lunge Bodyweight` only if single-leg balance is the limiter.",
           "Upgrade: `Goblet Squat` if DB/KB available."
         ]
       },
       {
         "number": 2,
         "name": "Hinge / Unilateral Pair",
-        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
             "name": "Nordic Eccentric",
-            "prescription": "3x8-10"
+            "prescription": "4x6-8"
           },
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "3x8-10/side"
+            "prescription": "4x8-10/side"
           }
         ],
         "coachingNotes": [
-          "Main structural block — controlled nordics, stable unilateral work.",
-          "Fallback A: `Glute Bridge` if nordics not tolerated.",
-          "Fallback B: `Reverse Lunge Bodyweight`."
+          "Main structural block — slow nordic eccentrics, stable unilateral work.",
+          "Nordic: 3–4s descent; hands on floor only to finish the rep if needed.",
+          "Fallback A: `Kickstand RDL` heavy tempo if nordics not tolerated this week.",
+          "Fallback B: `Reverse Lunge Bodyweight` if split squat balance breaks down."
         ]
       },
       {
@@ -4137,17 +4978,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`2 rounds`, `60-75s` rest after the pair",
         "exercises": [
           {
-            "name": "Nordic Eccentric",
-            "prescription": "2x10-12"
+            "name": "Kickstand RDL",
+            "prescription": "2x10-12/side"
           },
           {
-            "name": "Copenhagen Knee",
+            "name": "Copenhagen Plank",
             "prescription": "2x20-30s/side"
           }
         ],
         "coachingNotes": [
           "Hamstring and adductor support — honest reps, no grinding.",
-          "Fallback B: `Supine Adductor Squeeze`."
+          "Copenhagen : pied surélevé obligatoire — progression vers levier court/long sur banc si disponible.",
+          "Fallback A: `Single-Leg Glute Bridge` with 2s pause at top.",
+          "Fallback B: `Supine Adductor Squeeze` if Copenhagen irritates groin."
         ]
       },
       {
@@ -4170,23 +5013,26 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       }
     ],
     "progressionRules": [
-      "Week 1–2: establish volume tolerance at lower RPE.",
-      "Week 3: highest volume week with `1-2 RIR` on main work if recovery OK.",
+      "Week 1–2: establish volume tolerance at `RPE 6-7`.",
+      "Week 3: highest volume week with `1-2 RIR` on Blocks 1–2 if recovery OK.",
       "Week 4 deload: `-25 to -30%` volume while keeping movement quality.",
-      "Cut Block 4 first, then one round from Block 2, before touching Block 1."
+      "Cut Block 4 first, then one round from Block 2, before touching Block 1.",
+      "Progress via load (backpack), tempo, or range — not by swapping to easier exercises."
     ],
     "positionAccent": [
       "`Front_row`: add neck isometric 2x10s/direction after Block 3 if no pain.",
-      "`Back_three`: optional +1 set unilateral in Block 2 if recovery is excellent."
+      "`Back_three`: optional +1 round unilateral in Block 2 if recovery is excellent."
     ],
     "injurySubstitutions": [],
     "coachingWarnings": [
       "Not a bodybuilding leg day — stay rugby-relevant.",
-      "Do not chase soreness for its own sake."
+      "Do not chase soreness for its own sake.",
+      "If the session feels too easy, add backpack load before reducing range or exercise difficulty."
     ],
     "sourceReferences": [
       "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
-      "[bodyweight-program-review.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-program-review.md)"
+      "[bodyweight-program-review.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-program-review.md)",
+      "[LOWER_OFFSEASON_HYPERTROPHY_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/off-season/LOWER_OFFSEASON_HYPERTROPHY_V1.md)"
     ]
   },
   {
@@ -4319,13 +5165,398 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "If fatigue is high, cut one round from Block 2 first."
     ],
     "positionAccent": [
-      "Common base; front_row may add Copenhagen knee 1 round if tolerated (band or knee version)."
+      "Common base; front_row may add Copenhagen plank 1 round if tolerated (pied surélevé)."
     ],
     "injurySubstitutions": [],
     "coachingWarnings": [
       "Rebuild session — not a strength test.",
       "If still very beat up, stay closer to Recovery volume."
     ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_BW_PRESEASON_FORCE_POWER_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "lower",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 2 common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "45-55 min"
+    },
+    "title": "LOWER_BW_PRESEASON_FORCE_POWER_V1",
+    "goal": [
+      "Introduce force-power contrast on lower body in pre-season phase 2 (weeks 5-8).",
+      "Heavy slow pattern followed by ballistic expression within PAP window.",
+      "Maintain posterior-chain and unilateral support without excessive fatigue."
+    ],
+    "sessionIdentity": [
+      "Force-power lower — contrast pairs are session priority.",
+      "**Calibration** : goblet/fente lourde + squat sauté max intention."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Lower",
+        "format": "`4 rounds`, `3 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "4x4/side"
+          },
+          {
+            "name": "Squat Jump",
+            "prescription": "4x3-4",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy A: backpack or goblet if DB/KB, `RIR 1-2`.",
+          "Jump within 15-20s of A — max intention, not volume.",
+          "Upgrade B: `Banded KB Swing` if band available."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Hinge + Unilateral",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Romanian Deadlift",
+            "prescription": "3x4-5"
+          },
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "3x5/side"
+          }
+        ],
+        "coachingNotes": [
+          "Explosive concentric on B — athletic, not grinding.",
+          "Fallback A: `Nordic Eccentric` strict."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Bear Crawl",
+            "prescription": "15-20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Copenhagen Plank",
+            "prescription": "15-20s/side",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Fast bear crawl — scrum projection intent.",
+          "Upgrade A: `Farmer Carry` if DB/KB available."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Reduce Block 3 first if contrast quality drops.",
+      "NEVER cut Block 1 contrast rounds before reducing load on A."
+    ],
+    "positionAccent": [
+      "`Front_row`: heavier A load; patient bracing on nordics.",
+      "`Back_three`: prioritize jump height and broad jump distance."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[LOWER_PRESEASON_FORCE_POWER_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/pre-season/LOWER_PRESEASON_FORCE_POWER_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_BW_PRESEASON_FORCE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "lower",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 1 common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "45-55 min"
+    },
+    "title": "LOWER_BW_PRESEASON_FORCE_V1",
+    "goal": [
+      "Build lower-body force capacity in pre-season phase 1 without gym loads.",
+      "Reinforce squat pattern, hinge, unilateral support, and posterior-chain qualities.",
+      "Keep rugby-specific groin, trunk, and contact readiness through simple finishers."
+    ],
+    "sessionIdentity": [
+      "Pre-season force construction — not power contrast yet, not in-season maintenance.",
+      "**Calibration** : fente bulgare lente lourde (sac/tempo), nordiques stricts — rugbyman club entraîné.",
+      "Deload W4: reduce volume around `-30%` (cut Block 4 first, then one round from Block 3)."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "split squat isometric hold",
+          "prescription": "1x15-20s/side"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Short and useful — readiness for force, not early fatigue."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Main Lower Force",
+        "format": "`4 work sets`, `2-3 min` rest between sets",
+        "exercises": [
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "4x4-5/side"
+          }
+        ],
+        "coachingNotes": [
+          "Anchor block — slow 3-1-1 tempo or backpack load, `RIR 1-2`.",
+          "No collapse, no grinding — force construction, not testing.",
+          "Upgrade: `Goblet Squat` heavy if DB/KB available.",
+          "`Front_row`: slightly heavier load bias.",
+          "`Back_three`: more explosive concentric intent on split squat."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Hinge + Unilateral Strength Pair",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Romanian Deadlift",
+            "prescription": "3x5-6"
+          },
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "3x6/side"
+          }
+        ],
+        "coachingNotes": [
+          "RDL strict and posterior-chain dominant — upgrade from BW nordic if DB available.",
+          "Unilateral lift supports hip/groin control, not conditioning.",
+          "Fallback A: `Nordic Eccentric` if no DB/KB."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Posterior Chain / Lower Leg Support",
+        "format": "`2-3 rounds`, `60-90s` rest",
+        "exercises": [
+          {
+            "name": "Nordic Eccentric",
+            "prescription": "2-3x4-5"
+          },
+          {
+            "name": "Single-Leg Calf Raise",
+            "prescription": "3x10-12/side"
+          },
+          {
+            "name": "Wall Tibialis Raise",
+            "prescription": "2-3x10-12"
+          }
+        ],
+        "coachingNotes": [
+          "Low nordic volume to preserve hamstring quality across the week.",
+          "Upgrade B: weighted calf if DB available."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Position Support Finisher",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Copenhagen Plank",
+            "prescription": "20-30s/side"
+          },
+          {
+            "name": "Bear Crawl",
+            "prescription": "20m"
+          }
+        ],
+        "coachingNotes": [
+          "Copenhagen: foot elevated mandatory.",
+          "Upgrade B: `Farmer Carry` if DB/KB available.",
+          "`Front_row`: heavier carry; `Back_three`: cleaner athletic carry."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`W1-W3`: add load (backpack) only if all reps stay clean.",
+      "`W4`: deload `-30%` volume — Block 4 first, then Block 3.",
+      "Keep Block 1 protected unless clearly under-recovered."
+    ],
+    "positionAccent": [
+      "`Front_row`: +1 set Block 1 if tolerated; heavier farmer walk.",
+      "`Back_three`: more explosive split squat concentric; sprint-quality bear crawl."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[LOWER_PRESEASON_FORCE_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/pre-season/LOWER_PRESEASON_FORCE_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_BW_PRESEASON_POWER_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "lower",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 3 common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "40-50 min"
+    },
+    "title": "LOWER_BW_PRESEASON_POWER_V1",
+    "goal": [
+      "Phase 3 lower power — speed-strength contrasts, explosive unilateral work.",
+      "Prepare for in-season maintenance without max force grinding.",
+      "Short rugby finisher (sprint + Copenhagen)."
+    ],
+    "sessionIdentity": [
+      "Power phase lower — velocity and projection over max load.",
+      "Same skeleton for front_row/back_three; accents via load and sprint distance."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "pogo hops",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Speed Contrast Lower",
+        "format": "`4 rounds`, `2 min 30` rest between rounds",
+        "exercises": [
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "4x3/side"
+          },
+          {
+            "name": "Squat Jump",
+            "prescription": "3 reps",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "A: moderate load, max bar speed — goblet if DB/KB.",
+          "B: CMJ or squat jump within 15-20s of A.",
+          "`Front_row`: slightly heavier A; `Back_three`: longer sprint finisher."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Explosive Unilateral",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Bulgarian Split Squat",
+            "prescription": "3x4/side"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "3 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Explosive split squat — fast concentric, stable landing on jump.",
+          "Upgrade A: light DB if available."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Finisher",
+        "format": "`2 rounds`, `60s` rest",
+        "exercises": [
+          {
+            "name": "Short Acceleration Sprint",
+            "prescription": "2x15m"
+          },
+          {
+            "name": "Copenhagen Plank",
+            "prescription": "2x15s/side"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade A: band-resisted short sprint if band available.",
+          "Copenhagen: foot elevated mandatory."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize jump and sprint quality over load increases.",
+      "Cut Block 3 first if weekly fatigue is high."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
     "sourceReferences": [
       "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
     ]
@@ -6716,6 +7947,270 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "SPEED_BW_POWER_PRESEASON_INTRO_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "speed_power",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 1 terrain base)",
+      "equipment": "bodyweight",
+      "targetDuration": "35-45 min"
+    },
+    "title": "SPEED_BW_POWER_PRESEASON_INTRO_V1",
+    "goal": [
+      "Introduce sprint, jump, and simple COD qualities in pre-season weeks 1-4.",
+      "Terrain-first complement to gym/BW force sessions — low residual fatigue.",
+      "Rugby-specific through accelerations, clean jump contacts, and trunk ballistics."
+    ],
+    "sessionIdentity": [
+      "Optional 4th session for 4x/week — not a replacement for force days.",
+      "**Calibration** : sprints nets 10-15m, sauts propres, pas de circuit fatigue."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "wall drill march",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "A-skip",
+          "prescription": "1x10m"
+        },
+        {
+          "name": "2 progressive rehearsal reps",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Acceleration",
+        "format": "`4 rounds`, `2 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Resisted Acceleration",
+            "prescription": "8-10m"
+          },
+          {
+            "name": "Short Acceleration Sprint",
+            "prescription": "10-15m"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade A: band-resisted sprint if band available.",
+          "Fallback A: `Falling Start` sprint if no band.",
+          "`Front_row`: shorter distances, 3-point start bias.",
+          "`Back_three`: extend to 15-20m when quality holds."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Plyometrics Intro",
+        "format": "`3 rounds`, `90s` rest after the trio",
+        "exercises": [
+          {
+            "name": "Squat Jump",
+            "prescription": "2-3 reps"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "2 reps"
+          },
+          {
+            "name": "Lateral Bound",
+            "prescription": "2/side"
+          }
+        ],
+        "coachingNotes": [
+          "Stick landings W1-W2; fluid expression W3-W4 if clean.",
+          "Low total contacts — compatible with amateur load."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Upper Ballistic",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "4 reps"
+          },
+          {
+            "name": "Band Rotation Explosive",
+            "prescription": "3-4/side"
+          }
+        ],
+        "coachingNotes": [
+          "Max push speed on plyo — stop if height drops.",
+          "Fallback B: controlled `Bird Dog` weighted (backpack) if no band."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "COD",
+        "format": "`3 rounds`, `60s` rest between reps",
+        "exercises": [
+          {
+            "name": "Acceleration to Lateral Shuffle to Sprint",
+            "prescription": "3x5m"
+          }
+        ],
+        "coachingNotes": [
+          "Sharp repositioning — not sloppy fatigue work.",
+          "Reduced space: reactive 5m starts x6."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`W4` deload `-30%` contacts — cut Block 4 first.",
+      "Never progress sprint volume and jump contacts aggressively same week."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[SPEED_POWER_PRESEASON_INTRO_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/pre-season/SPEED_POWER_PRESEASON_INTRO_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "SPEED_BW_POWER_PRESEASON_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "speed_power",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 2 terrain base)",
+      "equipment": "bodyweight",
+      "targetDuration": "40-50 min"
+    },
+    "title": "SPEED_BW_POWER_PRESEASON_V1",
+    "goal": [
+      "Phase 2 speed-power: contrasted accelerations, plyometrics, upper ballistics, COD.",
+      "Higher intent than intro speed session — still terrain-first and low fatigue."
+    ],
+    "sessionIdentity": [
+      "4th session option weeks 5-8 — complements force-power gym/BW days."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "A-skip",
+          "prescription": "1x10m"
+        },
+        {
+          "name": "wall drill march",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "2 progressive rehearsal reps",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrasted Acceleration",
+        "format": "`4-5 rounds`, `2-3 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Resisted Acceleration",
+            "prescription": "8-10m"
+          },
+          {
+            "name": "Short Acceleration Sprint",
+            "prescription": "10-20m"
+          }
+        ],
+        "coachingNotes": [
+          "Band resisted if available; falling start fallback.",
+          "Full rest — quality over density."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Plyometrics",
+        "format": "`3 rounds`, `90-120s` rest after the trio",
+        "exercises": [
+          {
+            "name": "Countermovement Jump",
+            "prescription": "2-3 reps"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "2 reps"
+          },
+          {
+            "name": "Lateral Bound",
+            "prescription": "2/side"
+          }
+        ],
+        "coachingNotes": [
+          "CMJ: max height, clean landing.",
+          "Control total contacts across the week."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Upper Ballistic",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "4 reps"
+          },
+          {
+            "name": "Band Rotation Explosive",
+            "prescription": "3-4/side"
+          }
+        ],
+        "coachingNotes": [
+          "Explosive trunk — hips drive rotation."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "COD",
+        "format": "`3 rounds`, `60s` rest between reps",
+        "exercises": [
+          {
+            "name": "Acceleration to Lateral Shuffle to Sprint",
+            "prescription": "3x5m"
+          }
+        ],
+        "coachingNotes": [
+          "Defensive shuffle into re-sprint — rugby COD pattern."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`W4` deload: cut Block 4 reps first.",
+      "Do not chase contacts if landings degrade."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[SPEED_POWER_PRESEASON_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/pre-season/SPEED_POWER_PRESEASON_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "SPEED_POWER_PRESEASON_INTRO_V1",
       "status": "validated",
       "version": "V1",
@@ -7279,12 +8774,298 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "UPPER_BW_IN_SEASON_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "upper",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (common base with position accents)",
+      "equipment": "bodyweight",
+      "targetDuration": "35-45 min"
+    },
+    "title": "UPPER_BW_IN_SEASON_V1",
+    "goal": [
+      "Maintain upper-body force useful for contact, tackling, and pushing at bodyweight.",
+      "Keep one clear force -> speed exposure on horizontal push.",
+      "Maintain strong horizontal pull and trunk demand.",
+      "Finish with carry and neck robustness appropriate to position."
+    ],
+    "sessionIdentity": [
+      "In-season upper maintenance — controlled volume, high movement quality.",
+      "**Calibration** : pompes lestées/déclinées lentes, rowing difficile, plyo net — rugbyman club.",
+      "Deload week 4 : `-30%` volume — cut Block 3 or optional shoulder work first.",
+      "Not arm fluff or multiple explosive blocks."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6-8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "band pull-apart",
+          "prescription": "1x10"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Shoulder and thoracic activation before contrast pushing.",
+        "Keep short — prepares the session, not a separate workout."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Upper Push",
+        "format": "`4 rounds`, full rest `2 min 30 to 3 min` after each round",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "3-4x3-4"
+          },
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "3-4 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy A: backpack load or slow eccentric, `RIR 2-3` (~75-80% effort).",
+          "Plyo within 15-20s of A — max push speed, hands leave ground.",
+          "Upgrade A: `Bench Press` dumbbell if DB + bench available.",
+          "Upgrade B: `Med Ball Chest Pass` if med ball available.",
+          "Stop plyo when height or stiffness clearly drops."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Strength Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "3x5"
+          },
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "3x5-6"
+          }
+        ],
+        "coachingNotes": [
+          "Force-grade pulling — strict ROM, no kipping.",
+          "Upgrade A: strict `Pull-Up` if pull-up bar available (add backpack load if easy).",
+          "Upgrade B: `One-Arm Row` dumbbell if DB + bench available.",
+          "Front row: pull volume supports tackling and maul work."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Rugby Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Suitcase Carry",
+            "prescription": "20m/side",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Neck Extension Isometric",
+            "prescription": "15-20s",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Carry: upright posture, controlled steps — upgrade to `Farmer Carry` if DB/KB available.",
+          "Neck: rotate flexion, extension, lateral across rounds.",
+          "Upgrade neck: `Banded Neck Isometric` if band available.",
+          "Fallback A: `Bear Crawl` `15m` if no load available.",
+          "Specific and robust — not exhausting."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize bar speed / push quality over load jumps.",
+      "Progress via backpack on push-ups and row difficulty before adding reps.",
+      "Deload week 4: reduce to 3 rounds on Block 1 or cut Block 3 to 6 min EMOM.",
+      "High weekly fatigue: cut Block 3 first, then one round from Block 2."
+    ],
+    "positionAccent": [
+      "`Front_row`: optional extra neck isometric volume; farmer carry upgrade in finisher.",
+      "`Back_three`: emphasize plyo push speed; slightly less neck volume if time-constrained."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Clean contrast block — not a circuit.",
+      "Do not grind heavy push reps.",
+      "Place session early enough on match weeks."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[UPPER_IN_SEASON_FRONT_ROW_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/in-season/UPPER_IN_SEASON_FRONT_ROW_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_BW_OFFSEASON_FORCE_BRIDGE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "off_season",
+      "sessionType": "upper",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (common base with position accents)",
+      "equipment": "bodyweight",
+      "targetDuration": "45-55 min"
+    },
+    "title": "UPPER_BW_OFFSEASON_FORCE_BRIDGE_V1",
+    "goal": [
+      "Convert upper hypertrophy into pressing/pulling force and explosive power at bodyweight.",
+      "Complex training: heavy slow push → ballistic contrast within PAP window.",
+      "Prepare shoulders and trunk for pre-season demands without gym loads."
+    ],
+    "sessionIdentity": [
+      "Force-bridge upper — fewer reps, higher intent, explosive follow-ups.",
+      "**Calibration** : pompes déclinées lentes lourdes, rowing pieds surélevés force-grade, pike difficile — rugbyman club entraîné.",
+      "Plyo and contrast quality > volume."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6-8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "band pull-apart",
+          "prescription": "1x10"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Shoulder and thoracic activation before heavy pressing contrasts."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Press Force + Explosive Contrast",
+        "format": "`4 rounds`, `3-4 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "4x4-5"
+          },
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "4x3-4, max height",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy A: backpack load or slow tempo, `RIR 1-2`.",
+          "Plyo within 15-20s of A — hands leave the ground, max push speed.",
+          "If plyo quality drops, reduce load on A first.",
+          "Upgrade A: `Bench Press` dumbbell heavy if DB + bench available.",
+          "Upgrade B: weighted dips on parallettes if available."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Force",
+        "format": "`4 work sets`, `2-3 min` rest between sets",
+        "exercises": [
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "4x4-6"
+          }
+        ],
+        "coachingNotes": [
+          "Force-grade reps — strict, full ROM, no kipping.",
+          "Add backpack on chest or slow tempo before easier row angle.",
+          "Upgrade: strict `Pull-Up` if pull-up bar available (add load via backpack)."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Vertical Press / Row Strength",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Pike Push-Up Feet Elevated",
+            "prescription": "3x5"
+          },
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "3x6"
+          }
+        ],
+        "coachingNotes": [
+          "Force-grade overhead and row support — controlled, no grinding.",
+          "Upgrade A: `Dumbbell Press` seated if DB + bench available.",
+          "Upgrade B: pull-up or one-arm row if equipment allows."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Rotation / Neck Prevention",
+        "format": "`2 rounds`, `45s` rest",
+        "exercises": [
+          {
+            "name": "Band Rotation Explosive",
+            "prescription": "3-4/side"
+          },
+          {
+            "name": "Neck Extension Isometric",
+            "prescription": "15-20s"
+          }
+        ],
+        "coachingNotes": [
+          "Rotation: explosive trunk intent — floor rotation if no band (controlled).",
+          "Neck: extension + flexion + lateral — 15-20s per direction.",
+          "Upgrade neck: `Banded Neck Isometric` if band available."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`FB1`: establish contrast pairs; confirm plyo height after heavy push.",
+      "`FB2`: add backpack load on A if explosive quality maintained.",
+      "Reduce Block 4 first, then Block 3 to 2 rounds.",
+      "NEVER reduce Blocks 1-2."
+    ],
+    "positionAccent": [
+      "`Front_row`: optional extra neck isometric volume if tolerated.",
+      "`Back_three`: emphasize plyo push speed and rotation explosiveness."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [
+      "Full CNS recovery between Block 1 rounds — do not rush rest.",
+      "Stop plyo work if push speed or height degrades."
+    ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[UPPER_OFFSEASON_FORCE_BRIDGE_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/off-season/UPPER_OFFSEASON_FORCE_BRIDGE_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "UPPER_BW_OFFSEASON_HYPERTROPHY_V1",
       "status": "validated",
       "version": "V1",
       "cycle": "off_season",
       "sessionType": "upper",
-      "targetLevel": "starter",
+      "targetLevel": "builder",
       "targetPositionGroup": "front_row + back_three (common base with position accents)",
       "equipment": "bodyweight",
       "targetDuration": "45-55 min"
@@ -7297,7 +9078,9 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     ],
     "sessionIdentity": [
       "Hypertrophy upper — not transition, not pre-season force.",
-      "Rugby-relevant pressing, pulling, and shoulder health."
+      "Rugby-relevant pressing, pulling, and shoulder health.",
+      "**Calibration** : rugbyman club entraîné — pompes déclinées / pike / rowing pieds surélevés par défaut, pas pompes inclinées ni rowing genoux fléchis sauf blessure.",
+      "**Progression sans salle** : sac à dos sur pompes, pieds plus hauts sur pike/row, tractions strictes si barre dispo."
     ],
     "warmUp": {
       "exercises": [
@@ -7335,28 +9118,29 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ],
         "coachingNotes": [
           "Anchor press around `RPE 6-8`.",
-          "Fallback: `Push-Up` or `Incline Push-Up` if shoulders need easier angle.",
-          "Upgrade: weighted backpack or dips if available."
+          "Too easy → backpack load or feet higher; too hard → `Push-Up` standard (not incline) before reducing volume.",
+          "Upgrade: dips on parallettes or weighted backpack."
         ]
       },
       {
         "number": 2,
         "name": "Pull / Vertical Push Pair",
-        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
             "name": "Inverted Row Standard",
-            "prescription": "3x8-10"
+            "prescription": "4x8-10"
           },
           {
             "name": "Pike Push-Up",
-            "prescription": "3x8-10"
+            "prescription": "4x8-10"
           }
         ],
         "coachingNotes": [
-          "Main structural volume — strict rows, controlled pike.",
-          "Fallback A: `Inverted Row` knees bent.",
-          "Upgrade B: feet-elevated pike or band-assisted pull-up."
+          "Main structural volume — strict rows, controlled pike (hips high, not une demi-pompe).",
+          "Fallback A: `Inverted Row` knees bent only if row strength is clearly limiting.",
+          "Upgrade A: pull-up bar strict reps.",
+          "Upgrade B: `Pike Push-Up Feet Elevated`."
         ]
       },
       {
@@ -7365,7 +9149,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "Pike Push-Up",
+            "name": "Pike Push-Up Feet Elevated",
             "prescription": "3x8-10"
           },
           {
@@ -7374,7 +9158,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Support volume — not a shoulder max test.",
+          "Support volume harder than Block 2 — not a shoulder max test.",
           "Cut this block before Block 2 if fatigue accumulates."
         ]
       },
@@ -7389,14 +9173,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Optional — skip if club load is high or no band available (use `scap push-up`)."
+          "Optional — skip if club load is high or no band (use `scap push-up`)."
         ]
       }
     ],
     "progressionRules": [
       "Week 3 peak: hardest sets with `1-2 RIR` on Block 1 only if recovery supports.",
       "Week 4 deload: `-25 to -30%` — cut Block 4 and one round from Block 3 first.",
-      "Never add extra arm volume beyond optional Block 4."
+      "Never add extra arm volume beyond optional Block 4.",
+      "Difficulty ↑ via angle, load, or reps — not incline push-up regression."
     ],
     "positionAccent": [
       "`Front_row`: neck isometric 2x10s/direction after main work if tolerated.",
@@ -7405,11 +9190,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "injurySubstitutions": [],
     "coachingWarnings": [
       "Not a bench ego session or accessory festival.",
-      "Quality over pump chasing."
+      "Quality over pump chasing.",
+      "Session should feel demanding for a trained rugby player — if not, add external load."
     ],
     "sourceReferences": [
       "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
-      "[bodyweight-program-review.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-program-review.md)"
+      "[bodyweight-program-review.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-program-review.md)",
+      "[UPPER_OFFSEASON_HYPERTROPHY_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/off-season/UPPER_OFFSEASON_HYPERTROPHY_V1.md)"
     ]
   },
   {
@@ -7534,6 +9321,382 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "Re-entry into upper training — not a bench test.",
       "Keep final support block calm and useful."
     ],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_BW_PRESEASON_FORCE_POWER_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "upper",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 2 common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "45-55 min"
+    },
+    "title": "UPPER_BW_PRESEASON_FORCE_POWER_V1",
+    "goal": [
+      "Force-power contrast for upper body in pre-season phase 2.",
+      "Heavy press followed by plyo push; heavy pull support.",
+      "Trunk rotation and neck finisher for rugby contact."
+    ],
+    "sessionIdentity": [
+      "Upper force-power — plyo quality after heavy push is non-negotiable."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "band pull-apart",
+          "prescription": "1x10"
+        },
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6-8/side"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Push",
+        "format": "`4 rounds`, `3 min` rest between rounds",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "4x4"
+          },
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "4x4-5",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "Heavy slow A — backpack or tempo, `RIR 1-2`.",
+          "Plyo within 15-20s of A — hands leave ground.",
+          "Upgrade A: dumbbell bench if DB + bench."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Force",
+        "format": "`4 work sets`, `2-3 min` rest between sets",
+        "exercises": [
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "4x4-6"
+          }
+        ],
+        "coachingNotes": [
+          "Force-grade — strict, full ROM.",
+          "Upgrade: `Neutral-Grip Pull-Up` loaded (backpack) if bar available."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Support",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Pike Push-Up",
+            "prescription": "3x5"
+          },
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "3x6"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade A: seated dumbbell press if equipment allows."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Finisher",
+        "format": "`2 rounds`, `45s` rest",
+        "exercises": [
+          {
+            "name": "Band Rotation Explosive",
+            "prescription": "3-4/side"
+          },
+          {
+            "name": "Neck Extension Isometric",
+            "prescription": "15-20s"
+          },
+          {
+            "name": "Face Pull Band",
+            "prescription": "3x12"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade C requires band; fallback scap push-up if no band."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Cut Block 4 before Block 1 if fatigue rises.",
+      "Stop plyo if push speed degrades."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[UPPER_PRESEASON_FORCE_POWER_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/pre-season/UPPER_PRESEASON_FORCE_POWER_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_BW_PRESEASON_FORCE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "upper",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 1 common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "45-55 min"
+    },
+    "title": "UPPER_BW_PRESEASON_FORCE_V1",
+    "goal": [
+      "Build upper pressing and pulling force in pre-season phase 1 at bodyweight.",
+      "Establish force-grade push/pull patterns before power contrast work.",
+      "Maintain trunk rotation and neck resilience for contact."
+    ],
+    "sessionIdentity": [
+      "Pre-season upper force — heavy slow reps, no plyo contrast yet.",
+      "**Calibration** : pompes lestées lentes, rowing pieds surélevé force-grade — rugbyman club entraîné."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6-8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "band pull-apart",
+          "prescription": "1x10"
+        },
+        {
+          "name": "2-3 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Main Push Force",
+        "format": "`4 work sets`, `2-3 min` rest between sets",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "4x4-5"
+          }
+        ],
+        "coachingNotes": [
+          "Backpack load or slow tempo, `RIR 1-2` — anchor block.",
+          "Upgrade: `Bench Press` dumbbell if DB + bench; parallel dips if bar/parc available."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull + Push Support",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "3x6-8"
+          },
+          {
+            "name": "Pike Push-Up Feet Elevated",
+            "prescription": "3x6-8"
+          }
+        ],
+        "coachingNotes": [
+          "Upgrade A: `Neutral-Grip Pull-Up` if pull-up bar available.",
+          "Upgrade B: `Seated DB Overhead Press` if DB + bench available.",
+          "Fallback A: harder inverted row angle without bar."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Shoulder / Trunk Support",
+        "format": "`3 rounds`, `75s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Pike Push-Up",
+            "prescription": "3x6-8"
+          },
+          {
+            "name": "Band Rotation Explosive",
+            "prescription": "2-3x6-8/side"
+          }
+        ],
+        "coachingNotes": [
+          "Rotation: floor chop regression if no band.",
+          "Upgrade A: dumbbell press seated if equipment allows."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Finisher",
+        "format": "`2 rounds`, `45s` rest",
+        "exercises": [
+          {
+            "name": "Suitcase Carry",
+            "prescription": "2x20m/side"
+          },
+          {
+            "name": "Neck Extension Isometric",
+            "prescription": "2x10s/dir"
+          }
+        ],
+        "coachingNotes": [
+          "Fallback A: lateral `Bear Crawl` if no DB.",
+          "Upgrade neck: `Banded Neck Isometric` if band available."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "`W1-W3`: progress load on Block 1 only if technique holds.",
+      "`W4`: deload `-30%` — cut Block 4, then one round from Block 3.",
+      "Protect Block 1 priority."
+    ],
+    "positionAccent": [
+      "`Front_row`: heavier push load; extra neck isometric if tolerated.",
+      "`Back_three`: stricter pull ROM; faster rotation intent."
+    ],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
+    "sourceReferences": [
+      "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)",
+      "[UPPER_PRESEASON_FORCE_V1.md](/Users/junca/Projets/RugbyPrepV2/docs/training/mother-sessions/pre-season/UPPER_PRESEASON_FORCE_V1.md)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_BW_PRESEASON_POWER_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "pre_season",
+      "sessionType": "upper",
+      "targetLevel": "builder",
+      "targetPositionGroup": "front_row + back_three (phase 3 common base)",
+      "equipment": "bodyweight",
+      "targetDuration": "40-48 min"
+    },
+    "title": "UPPER_BW_PRESEASON_POWER_V1",
+    "goal": [
+      "Phase 3 upper power — speed push contrast and explosive pull.",
+      "Maintain trunk rotation and carry finisher for rugby transfer."
+    ],
+    "sessionIdentity": [
+      "Power phase upper — max bar/hand speed, not force grinding."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6-8/side"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": []
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Speed Push Contrast",
+        "format": "`4 rounds`, `2 min 30` rest between rounds",
+        "exercises": [
+          {
+            "name": "Decline Push-Up",
+            "prescription": "4x3"
+          },
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "3-4 reps",
+            "role": "contrast"
+          }
+        ],
+        "coachingNotes": [
+          "A: moderate load, max push speed — weighted push-ups or DB bench.",
+          "Plyo immediately after A if quality holds."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Explosive Pull",
+        "format": "`3 rounds`, `90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Inverted Row Feet Elevated",
+            "prescription": "3x4"
+          },
+          {
+            "name": "Decline Push-Up",
+            "prescription": "3x5"
+          }
+        ],
+        "coachingNotes": [
+          "Explosive row — fast pull, controlled descent.",
+          "Upgrade A: explosive pull-up if bar available."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Finisher",
+        "format": "`EMOM 6'`",
+        "exercises": [
+          {
+            "name": "Band Rotation Explosive",
+            "prescription": "3-4/side",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Suitcase Carry",
+            "prescription": "20m/side",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Fast carry — lateral trunk control under load.",
+          "Fallback rotation: floor chop if no band."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Stop plyo if push speed drops.",
+      "EMOM finisher optional if upper fatigue is high."
+    ],
+    "positionAccent": [],
+    "injurySubstitutions": [],
+    "coachingWarnings": [],
     "sourceReferences": [
       "[bodyweight-annual-cycle-program.md](/Users/junca/Projets/RugbyPrepV2/docs/training/bodyweight-annual-cycle-program.md)"
     ]

@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest'
-import { clearUserStorage } from '../clearUserStorage'
+import { clearUserStorage, clearUserStorageForUser } from '../clearUserStorage'
+import { userScopedKey } from '../userScopedStorage'
 
 // ── Mock localStorage ─────────────────────────────────────────────
 
@@ -85,5 +86,23 @@ describe('clearUserStorage', () => {
     clearUserStorage()
 
     expect(store['some.other.key']).toBe('keep me')
+  })
+})
+
+describe('clearUserStorageForUser', () => {
+  it('removes only the targeted user scoped keys', () => {
+    const profileA = userScopedKey('rugbyprep.profile', 'user-a')
+    const profileB = userScopedKey('rugbyprep.profile', 'user-b')
+    store[profileA] = '{"profile":{}}'
+    store[profileB] = '{"profile":{}}'
+    store['rugbyprep.weekSnapshot.v2.user-a.W2026-15'] = '{}'
+    store['rugbyprep.weekSnapshot.v2.user-b.W2026-15'] = '{}'
+
+    clearUserStorageForUser('user-a')
+
+    expect(store[profileA]).toBeUndefined()
+    expect(store[profileB]).toBeDefined()
+    expect(store['rugbyprep.weekSnapshot.v2.user-a.W2026-15']).toBeUndefined()
+    expect(store['rugbyprep.weekSnapshot.v2.user-b.W2026-15']).toBeDefined()
   })
 })

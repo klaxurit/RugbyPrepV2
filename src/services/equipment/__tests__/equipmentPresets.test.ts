@@ -23,4 +23,8 @@ describe('equipmentPresets', () => {
   it('infer home_gym from home preset', () => {
     expect(inferEquipmentPreset(resolveEquipmentFromPreset('home_gym'))).toBe('home_gym')
   })
+
+  it('barbell + cage reste bodyweight (pas full_gym)', () => {
+    expect(inferEquipmentPreset(['barbell', 'squat_rack'])).toBe('bodyweight')
+  })
 })

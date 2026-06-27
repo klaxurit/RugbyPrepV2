@@ -140,8 +140,84 @@ export function useOnboardingStatus(userId: string | null) {
 
 // ─── LocalStorage helpers (user-scoped) ───────────────────────
 
+type ProfileCacheEnvelope = {
+  profile: UserProfile
+  savedAt: string
+}
+
+function isProfileCacheEnvelope(value: unknown): value is ProfileCacheEnvelope {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'profile' in value &&
+    'savedAt' in value &&
+    typeof (value as ProfileCacheEnvelope).savedAt === 'string'
+  )
+}
+
+export const profileSyncFingerprint = (profile: UserProfile): string =>
+  JSON.stringify({
+    equipment: [...(profile.equipment ?? [])].sort(),
+    weeklySessions: profile.weeklySessions,
+    trainingLevel: profile.trainingLevel,
+    seasonMode: profile.seasonMode,
+    position: profile.position,
+    rugbyPosition: profile.rugbyPosition,
+    planningAnchors: profile.planningAnchors ?? null,
+    clubSchedule: profile.clubSchedule ?? null,
+    scSchedule: profile.scSchedule ?? null,
+    heightCm: profile.heightCm ?? null,
+    weightKg: profile.weightKg ?? null,
+    performanceFocus: profile.performanceFocus ?? null,
+    preferredLanguage: profile.preferredLanguage ?? 'fr',
+    injuries: [...(profile.injuries ?? [])].sort(),
+    trainingBaseline: profile.trainingBaseline ?? null,
+  })
+
+/**
+ * Au refresh, Supabase peut être en retard si un upsert a échoué.
+ * On préfère le cache local quand il est plus récent ou quand il diffère du défaut.
+ */
+export function reconcileCachedAndRemoteProfile(
+  cached: UserProfile | null,
+  cachedSavedAt: string | null,
+  remote: UserProfile,
+  remoteUpdatedAt: string | null,
+): UserProfile {
+  if (!cached) return remote
+  if (profileSyncFingerprint(cached) === profileSyncFingerprint(remote)) return remote
+
+  if (cachedSavedAt && remoteUpdatedAt) {
+    const localMs = new Date(cachedSavedAt).getTime()
+    const remoteMs = new Date(remoteUpdatedAt).getTime()
+    if (localMs > remoteMs + 1000) return cached
+    if (remoteMs > localMs + 1000) return remote
+  }
+
+  if (profileSyncFingerprint(cached) !== profileSyncFingerprint(DEFAULT_PROFILE)) {
+    return cached
+  }
+
+  return remote
+}
+
+const readProfileCache = (
+  userId: string | null,
+): { profile: UserProfile; savedAt: string | null } | null => {
+  const raw = readUserScoped<ProfileCacheEnvelope | UserProfile>(STORAGE_BASE, userId)
+  if (!raw) return null
+  if (isProfileCacheEnvelope(raw)) {
+    return { profile: normalizeLegacyProfile(raw.profile), savedAt: raw.savedAt }
+  }
+  return { profile: normalizeLegacyProfile(raw), savedAt: null }
+}
+
 const saveToStorage = (profile: UserProfile, userId: string | null) => {
-  writeUserScoped(STORAGE_BASE, userId, profile)
+  const envelope: ProfileCacheEnvelope = {
+    profile,
+    savedAt: new Date().toISOString(),
+  }
+  writeUserScoped(STORAGE_BASE, userId, envelope)
 }
 
 const inferNormalizedAgeBand = (
@@ -175,11 +251,8 @@ export const normalizeLegacyProfile = (profile: UserProfile): UserProfile => {
   }
 }
 
-const loadFromStorage = (userId: string | null): UserProfile | null => {
-  const parsed = readUserScoped<UserProfile>(STORAGE_BASE, userId)
-  if (!parsed) return null
-  return normalizeLegacyProfile(parsed)
-}
+const loadFromStorage = (userId: string | null): UserProfile | null =>
+  readProfileCache(userId)?.profile ?? null
 
 // ─── Row ↔ UserProfile mapping ────────────────────────────────
 
@@ -209,7 +282,6 @@ type ProfileRow = {
   training_baseline_set_at: string | null
   performance_focus: UserProfile['performanceFocus'] | null
   preferred_language: string | null
-  rehab_injury: unknown | null
   population_segment: UserProfile['populationSegment'] | null
   age_band: UserProfile['ageBand'] | null
   parental_consent_health_data: boolean | null
@@ -230,6 +302,7 @@ type ProfileRow = {
   ffr_last_sync_at: string | null
   planning_anchors: unknown | null
   season_transition_state: unknown | null
+  updated_at: string | null
 }
 
 export const rowToProfile = (row: ProfileRow): UserProfile => {
@@ -396,6 +469,7 @@ export const useProfileSource = () => {
   // comptes : la clé inclut `userId`, donc un nouvel utilisateur voit DEFAULT_PROFILE.
   const [profile, setProfileState] = useState<UserProfile>(() => loadFromStorage(userId) ?? DEFAULT_PROFILE)
   const profileRef = useRef(profile)
+  const activeUserIdRef = useRef<string | null>(userId)
   const isHydratedRef = useRef(!userId)
   const localEditsSinceLoadRef = useRef(0)
   const preHydrationPatchesRef = useRef<Partial<UserProfile>[]>([])
@@ -407,8 +481,8 @@ export const useProfileSource = () => {
   // Persist Supabase + localStorage
   const persistProfile = useCallback(
     async (next: UserProfile, uid: string | null) => {
-      // Never persist before remote row loaded — DEFAULT_PROFILE + sync FFR would clobber Supabase.
       if (!uid || !isHydratedRef.current) return
+      if (activeUserIdRef.current !== uid) return
       saveToStorage(next, uid)
       const { error } = await supabase
         .from('profiles')
@@ -428,30 +502,50 @@ export const useProfileSource = () => {
   // Quand userId change : recharge depuis le cache user-scoped ou le défaut,
   // puis Supabase écrase avec la source de vérité (sauf si l'utilisateur a déjà modifié).
   useEffect(() => {
+    activeUserIdRef.current = userId
     localEditsSinceLoadRef.current = 0
     preHydrationPatchesRef.current = []
     isHydratedRef.current = !userId
+    const cachedProfile = loadFromStorage(userId) ?? DEFAULT_PROFILE
+    profileRef.current = cachedProfile
     // eslint-disable-next-line react-hooks/set-state-in-effect -- required: userId change must reset cache
-    setProfileState(loadFromStorage(userId) ?? DEFAULT_PROFILE)
+    setProfileState(cachedProfile)
     if (!userId) return
 
     let cancelled = false
+    const fetchUserId = userId
 
     supabase
       .from('profiles')
       .select(
-        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, rehab_injury, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state'
+        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state, updated_at'
       )
-      .eq('id', userId)
+      .eq('id', fetchUserId)
       .single()
       .then(({ data, error }) => {
         if (cancelled) return
+        if (activeUserIdRef.current !== fetchUserId) return
 
         if (error) {
+          isHydratedRef.current = true
           if (isProfileRowMissingError(error)) {
-            isHydratedRef.current = true
+            const cached = readProfileCache(fetchUserId)
+            const pendingPatches = preHydrationPatchesRef.current
+            preHydrationPatchesRef.current = []
+            const baseline = cached?.profile ?? DEFAULT_PROFILE
+            const pending = applyPendingProfilePatches(baseline, pendingPatches)
+            setProfileState(pending)
+            saveToStorage(pending, fetchUserId)
+            void persistProfileRef.current(pending, fetchUserId)
           } else {
             console.error('[useProfile] Supabase fetch failed:', error.message)
+            const cached = readProfileCache(fetchUserId)
+            if (cached) {
+              const pendingPatches = preHydrationPatchesRef.current
+              preHydrationPatchesRef.current = []
+              const pending = applyPendingProfilePatches(cached.profile, pendingPatches)
+              setProfileState(pending)
+            }
           }
           return
         }
@@ -463,21 +557,28 @@ export const useProfileSource = () => {
 
         if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) {
           const pending = applyPendingProfilePatches(
-            loadFromStorage(userId) ?? profileRef.current,
+            loadFromStorage(fetchUserId) ?? DEFAULT_PROFILE,
             pendingPatches,
           )
-          void persistProfileRef.current(pending, userId)
+          void persistProfileRef.current(pending, fetchUserId)
           return
         }
 
-        const loaded = applyPendingProfilePatches(rowToProfile(data as ProfileRow), pendingPatches)
+        const remoteProfile = rowToProfile(data as ProfileRow)
+        const cached = readProfileCache(fetchUserId)
+        const reconciled = reconcileCachedAndRemoteProfile(
+          cached?.profile ?? null,
+          cached?.savedAt ?? null,
+          remoteProfile,
+          (data as ProfileRow).updated_at ?? null,
+        )
+        const loaded = applyPendingProfilePatches(reconciled, pendingPatches)
         localEditsSinceLoadRef.current = 0
         setProfileState(loaded)
-        saveToStorage(loaded, userId)
-        void persistProfileRef.current(loaded, userId)
-        // Profil Supabase trouvé avec onboarding complet → marquer localement
+        saveToStorage(loaded, fetchUserId)
+        void persistProfileRef.current(loaded, fetchUserId)
         if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {
-          localStorage.setItem(onboardingKey(userId), '1')
+          localStorage.setItem(onboardingKey(fetchUserId), '1')
         }
       })
 
@@ -521,6 +622,7 @@ export const useProfileSource = () => {
           void persistProfile(next, userId)
         } else {
           preHydrationPatchesRef.current.push(stampedPatch)
+          saveToStorage(next, userId)
         }
         return next
       })

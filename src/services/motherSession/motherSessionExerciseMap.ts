@@ -28,7 +28,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'box squat': 'squat__box_squat__barbell',
   'pin back squat': 'squat__pin_squat__barbell',
   'push press': 'power__push_press__barbell',
-  'push-up': 'push_horizontal__push_up__incline',
+  'push-up': 'push_horizontal__push_up__standard',
+  'push up': 'push_horizontal__push_up__standard',
   'strict standing overhead press': 'push_vertical__overhead_press__barbell',
   'machine shoulder press': 'push_vertical__shoulder_press__machine',
   'shoulder press machine': 'push_vertical__shoulder_press__machine',
@@ -41,6 +42,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'incline push-up': 'push_horizontal__push_up__incline',
   'decline push-up': 'push_horizontal__push_up__decline',
   'pike push-up': 'push_vertical__pike_push_up__bodyweight',
+  'pike push-up feet elevated': 'push_vertical__pike_push_up__feet_elevated',
 
   // ── Pulls ───────────────────────────────────────────────────
   'chest-supported row': 'pull_horizontal__chest_supported_row__dumbbell',
@@ -51,6 +53,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'inverted row standard': 'pull_horizontal__inverted_row__standard',
   'inverted row feet elevated': 'pull_horizontal__inverted_row__feet_elevated',
   'single-arm db row': 'pull_horizontal__one_arm_row__dumbbell',
+  'one-arm row': 'pull_horizontal__one_arm_row__dumbbell',
   'half-kneeling cable row': 'pull_horizontal__cable_row__half_kneeling',
   'seated cable row': 'pull_horizontal__cable_row__seated',
   'chest-supported machine row': 'pull_horizontal__chest_supported_row__machine',
@@ -70,6 +73,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'barbell hip thrust': 'hinge__hip_thrust__barbell',
   'barbell romanian deadlift': 'hinge__rdl__barbell',
   'db romanian deadlift': 'hinge__rdl__dumbbell',
+  'romanian deadlift': 'hinge__rdl__dumbbell',
   'hex bar rdl': 'hinge__rdl__hex_bar',
   'single-leg rdl': 'hinge__rdl__single_leg__dumbbell',
   'kickstand rdl': 'hinge__single_leg_rdl__bodyweight',
@@ -85,6 +89,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'goblet squat': 'squat__goblet_squat__dumbbell',
   'rear-foot elevated split squat': 'lower_squat__bulgarian_split_squat__dumbbell',
   'bulgarian split squat': 'lower_squat__bulgarian_split_squat__bodyweight',
+  'banded nordic': 'hamstring__nordic__band_assist',
   'nordic eccentric': 'hamstring__nordic__eccentric_solo',
   'reverse lunge': 'lower_lunge__reverse_lunge__barbell',
   'reverse lunge bodyweight': 'lower_lunge__reverse_lunge__bodyweight',
@@ -117,6 +122,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'cable rotation explosif': 'core_rotation__cable_rotation__explosive',
   'explosive cable rotation': 'core_rotation__cable_rotation__explosive',
   'cable chop explosif': 'core_rotation__cable_rotation__explosive',
+  'band rotation explosive': 'core_rotation__band_rotation__explosive',
   'dead bug': 'core_anti_extension__dead_bug',
   'bird dog': 'activation__bird_dog__bodyweight',
   'side plank': 'core_anti_rotation__side_plank',
@@ -141,6 +147,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'squat jump': 'power__squat_jump__bodyweight',
   'countermovement jump': 'power__countermovement_jump',
   'lateral bound': 'power__lateral_bound',
+  'lateral squat jump': 'power__split_jump__bodyweight',
   'plyo push-up': 'push_horizontal__push_up__plyo',
   'med ball chest pass': 'power__medball_chest_pass__wall',
   'med ball slam': 'power__medball_slam__overhead',
@@ -156,15 +163,16 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'pogo hops': 'power__pogo_hops__low',
 
   // ── Adductors / Groin ───────────────────────────────────────
-  'copenhagen hold': 'groin_adductors__copenhagen_plank__weighted',
-  'copenhagen plank': 'groin_adductors__copenhagen_plank__weighted',
-  'short copenhagen hold': 'groin_adductors__copenhagen_plank__short',
-  'copenhagen knee': 'groin_adductors__copenhagen_plank__knee',
+  'copenhagen hold': 'groin_adductors__copenhagen_plank__foot_elevated',
+  'copenhagen plank': 'groin_adductors__copenhagen_plank__foot_elevated',
+  'short copenhagen hold': 'groin_adductors__copenhagen_plank__foot_elevated',
+  'copenhagen knee': 'groin_adductors__copenhagen_plank__foot_elevated',
   'supine adductor squeeze': 'groin_adductors__ball_squeeze__supine',
 
   // ── Neck ────────────────────────────────────────────────────
   'neck isometric': 'neck__isometric__band',
   'banded neck isometric': 'neck__isometric__band',
+  'neck extension isometric': 'neck__extension_iso__bodyweight',
   'banded neck extension': 'neck__extension__band',
 
   // ── Prehab / Shoulder ───────────────────────────────────────

@@ -70,7 +70,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - If fatigue is high, cut one round from Block 2 first.
 
 ## Position Accent
-- Common base; front_row may add Copenhagen knee 1 round if tolerated (band or knee version).
+- Common base; front_row may add Copenhagen plank 1 round if tolerated (pied surélevé).
 
 ## Coaching Warnings
 - Rebuild session — not a strength test.

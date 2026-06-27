@@ -89,7 +89,7 @@ Ajouter **en fin de séance** (sauf Recovery A) sauf indication. Réduire ce blo
 | Slot | Prescription | Variantes |
 |------|--------------|-----------|
 | A — Nuque | `2×10s/direction` (flexion, extension, latéral) | BW : isométrie main → B : `neck__*_iso__band` |
-| B — Adducteurs | `2×15–20s/côté` | BW : Copenhagen genou → B : Copenhagen assisté → banc : Copenhagen long |
+| B — Adducteurs | `2×15–20s/côté` | BW : Copenhagen pied surélevé → B : Copenhagen assisté → banc : Copenhagen long |
 | C — Grip / contact | `2×20m` ou `2×30s` | BW : farmer walk sac → DB : farmer walk → PA : dips |
 
 ### BLOC_POSITION_BACK_THREE (2 tours, repos 45–60s)
@@ -362,7 +362,7 @@ Deload : semaine 4 de chaque mésocycle — réduire volume −30 %, garder l'in
 | Slot | Prescription | Variantes |
 |------|--------------|-----------|
 | A | `2×10–12` | BW : nordique excentrique → B : leg curl élastique |
-| B | `2×20–30s/côté` | BW : Copenhagen genou → B : Copenhagen assisté |
+| B | `2×20–30s/côté` | BW : Copenhagen pied surélevé → B : Copenhagen assisté → banc : Copenhagen long |
 
 ### Bloc 4 — Mollet / tibial *(optionnel — couper en premier)*
 

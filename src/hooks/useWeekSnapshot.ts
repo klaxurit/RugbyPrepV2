@@ -97,10 +97,12 @@ function computeProfileHash(profile: import('../types/training').UserProfile): s
   const scDays = profile.scSchedule?.sessions?.map((s: { day: number }) => s.day).sort().join(',') ?? ''
   const clubDays = profile.clubSchedule?.clubDays?.map((d: { day: number }) => d.day).sort().join(',') ?? ''
   const matchDay = profile.clubSchedule?.matchDay ?? ''
+  const equipmentKey = [...(profile.equipment ?? [])].sort().join(',')
   return [
     profile.weeklySessions,
     profile.trainingLevel,
     profile.seasonMode,
+    `eq:${equipmentKey}`,
     profile.planningAnchors?.seasonEndedAt ?? '',
     profile.planningAnchors?.returnToTeamTrainingAt ?? '',
     profile.planningAnchors?.skipOffSeasonRecoveryIntro ? '1' : '',

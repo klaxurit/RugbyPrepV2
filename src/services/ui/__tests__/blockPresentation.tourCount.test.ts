@@ -48,6 +48,13 @@ describe('parseBlockTourCount — picks the MAX exo set count', () => {
     expect(parseBlockTourCount(b)).toBe(4)
   })
 
+  it('treats "N work sets" as one pass through the exercise list', () => {
+    const b = block('`4 work sets`, `2 min` rest between sets', [
+      { name: 'Nordic Eccentric', prescription: '4x6-8' },
+    ])
+    expect(parseBlockTourCount(b)).toBe(1)
+  })
+
   it('falls back to 3 when nothing parseable is present', () => {
     const b = block('', [{ name: 'Plank', prescription: '60s' }])
     expect(parseBlockTourCount(b)).toBe(3)
