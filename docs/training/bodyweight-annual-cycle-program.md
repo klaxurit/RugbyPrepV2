@@ -1222,6 +1222,9 @@ Reprendre **LOWER_BW_IN_SEASON** et **UPPER_BW_IN_SEASON** avec :
 | UPPER_BW_IN_SEASON_V1 | UPPER_IN_SEASON_*_V1 |
 | FULL_BW_BODY_IN_SEASON_V1 | FULL_BODY_IN_SEASON_*_V1 |
 | FULL_BW_LIGHT_PRIMER_IN_SEASON_V1 | FULL_LIGHT_PRIMER_IN_SEASON_*_V1 |
+| FULL_BW_PLAYOFF_ACTIVATION_V1 | (activation playoffs — dataset publié, resolver à brancher) |
+
+**Playoffs taper (J-11 à J-6)** : réutilise `LOWER_BW_IN_SEASON_V1` / `UPPER_BW_IN_SEASON_V1` avec réduction de blocs via le resolver (`maxBlocks` 2–3), pas de mother session dédiée.
 
 Les variantes `front_row` / `back_three` utilisent le **Bloc Position** (§2ter) + accents de charge documentés dans `bodyweight-program-review.md`.
 
@@ -1229,7 +1232,7 @@ Les variantes `front_row` / `back_three` utilisent le **Bloc Position** (§2ter)
 
 ## Prochaine étape technique
 
-1. Valider Recovery/Transition avec testeurs (fiches §6 `bodyweight-program-review.md`).
-2. `patternExerciseRegistry.ts` + résolution matériel.
-3. Convertir séances validées en mother sessions MD.
-4. Brancher `positionAccentRegistry.ts` dans le pipeline de rendu.
+1. ~~Convertir séances validées en mother sessions MD~~ — cycle annuel BW couvert (off-season → playoffs activation).
+2. Enrichir `patternExerciseRegistry.ts` sur les patterns restants.
+3. Brancher `FULL_BW_PLAYOFF_ACTIVATION_V1` dans le resolver playoffs si slot dédié J-5→J-2.
+4. Merger `feature/bodyweight-minimal-equipment-program` → `main`.

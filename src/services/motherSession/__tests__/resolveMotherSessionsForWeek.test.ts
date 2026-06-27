@@ -263,6 +263,22 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.sessions[0].session.metadata.equipment).toBe('bodyweight')
   })
 
+  it('playoffs match_week + equipment vide → full body BW + primer BW', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-05-04')],
+      today: '2025-05-01',
+      weeklyFrequency: 2,
+      positionGroup: 'front_row',
+      planningAnchors: { manualCycleOverride: 'playoffs' },
+      equipment: [],
+    })
+    expect(r.planningContext.playoffTaperPhase).toBe('match_week')
+    const sessionIds = r.sessions.map((s) => s.session.metadata.id)
+    expect(sessionIds).toContain('FULL_BW_BODY_IN_SEASON_V1')
+    expect(sessionIds).toContain('FULL_BW_LIGHT_PRIMER_IN_SEASON_V1')
+    expect(r.sessions.every((s) => s.session.metadata.equipment === 'bodyweight')).toBe(true)
+  })
+
   it('playoffs V2 taper_1: normal variant + maxBlocks 3 when dun > 10', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH), match('2025-05-14')],

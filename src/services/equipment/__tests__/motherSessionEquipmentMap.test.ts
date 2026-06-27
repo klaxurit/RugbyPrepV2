@@ -109,4 +109,13 @@ describe('motherSessionEquipmentMap', () => {
       'FULL_BW_PRESEASON_POWER_V1',
     )
   })
+
+  it('mappe in-season full body et primer pour profil BW', () => {
+    expect(mapMotherSessionIdForEquipment('FULL_BODY_IN_SEASON_FRONT_ROW_V1', [])).toBe(
+      'FULL_BW_BODY_IN_SEASON_V1',
+    )
+    expect(mapMotherSessionIdForEquipment('FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1', ['band'])).toBe(
+      'FULL_BW_LIGHT_PRIMER_IN_SEASON_V1',
+    )
+  })
 })
