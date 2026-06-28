@@ -75,6 +75,9 @@ const RULES: IntentRule[] = [
       /\bplyometric/,
       /\blower\s+power\b/,
       /\bneural\s+pair\b/,
+      /\bneural\s+lower\b/,
+      /\bcns\b/,
+      /\bactivation\s+circuit\b/,
       /\bforce\s*\+\s*(?:horizontal|rotational|vertical)/,
       /\bforce\s*\+\s*projection\b/,
       /\bforce\s*\+\s*power\b/,
@@ -108,6 +111,7 @@ const RULES: IntentRule[] = [
       /\brehearsal\b/,
       /\beasy.*round\b/,
       /\bprogressive\b/,
+      /\bactivation\b/,
     ],
   },
 

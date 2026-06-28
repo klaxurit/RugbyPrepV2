@@ -50,7 +50,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise A: `Reverse Lunge Bodyweight` `3x6-8/side`
 - Exercise B: `Kickstand RDL` `3x6-8/side`
 - Coaching notes:
-  - Smooth, symmetrical unilateral work — support, not fatigue chasing.
+  - Travail unilatéral fluide et symétrique — soutien, pas de recherche de fatigue.
   - Fallback options:
     - A: `Bodyweight Split Squat`
     - B: `Glute Bridge`

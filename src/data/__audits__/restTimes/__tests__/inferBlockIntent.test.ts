@@ -130,6 +130,18 @@ describe('inferBlockIntent — Phase C canonized decisions', () => {
     expect(inferBlockIntent(block('Contact Confidence / Pump'), STUB_SESSION)).toBe('reward')
   })
 
+  it('BW neural / CNS / activation blocks map to known intents', () => {
+    expect(inferBlockIntent(block('Neural Lower', '`3 rounds`, `2-3 min` rest'), STUB_SESSION)).toBe(
+      'power_contrast',
+    )
+    expect(inferBlockIntent(block('CNS Activation Circuit', '`2 rounds`, `2 min` rest'), STUB_SESSION)).toBe(
+      'power_contrast',
+    )
+    expect(inferBlockIntent(block('Activation', '`2 rounds`, `45s` rest'), STUB_SESSION)).toBe(
+      'activation',
+    )
+  })
+
   it('completely unmatched name → unknown (forces explicit triage)', () => {
     expect(inferBlockIntent(block('Some Weird New Name'), STUB_SESSION)).toBe('unknown')
   })

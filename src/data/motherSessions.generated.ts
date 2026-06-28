@@ -630,7 +630,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "number": 4,
         "name": "Light Finisher",
-        "format": "`2 rounds`, `45s` rest",
+        "format": "`2 rounds`, `60s` rest",
         "exercises": [
           {
             "name": "Bear Crawl",
@@ -786,7 +786,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Bloc optionnel — confiance épaule / bras sans pump excessif.",
+          "Bloc optionnel — confiance épaule / bras sans congestion musculaire excessive.",
           "Couper en premier si le temps ou la fatigue manquent.",
           "Variante A : sans élastique, garder scap push-up uniquement."
         ]
@@ -1045,7 +1045,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Main upper volume — backpack on push-up before any angle regression.",
+          "Volume haut du corps principal — sac à dos sur les pompes avant toute régression d'angle.",
           "Upgrade row: strict pull-ups if bar available.",
           "Fallback A: `Push-Up` with backpack load.",
           "Fallback B: `Inverted Row Standard`."
@@ -1168,7 +1168,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       ],
       "notes": [
         "Keep this to `3-5 min` maximum.",
-        "The first reps of Block 1 should still feel like part of the re-entry process."
+        "Les premières répétitions du bloc 1 doivent encore faire partie du processus de réentrée."
       ]
     },
     "blocks": [
@@ -1361,7 +1361,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ],
         "coachingNotes": [
           "Lunge restores rhythm and balance, not strength.",
-          "Crawl coordinated and athletic — never rushed."
+          "Ramper coordonné et athlétique — jamais précipité."
         ],
         "fallbackOptions": [
           "A: `Bodyweight Split Squat`",
@@ -1543,7 +1543,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "number": 3,
         "name": "Rugby Light Finisher",
-        "format": "`2 rounds`, `45s` rest after the pair",
+        "format": "`2 rounds`, `60s` rest after the pair",
         "exercises": [
           {
             "name": "Bear Crawl",
@@ -1985,7 +1985,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "number": 2,
         "name": "Explosive Push / Pull",
-        "format": "`3 rounds`, `2 min` rest after the pair",
+        "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
             "name": "Plyo Push-Up",
@@ -5243,7 +5243,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Prevention only — cut this block first if CNS fatigue is high.",
+          "Prévention uniquement — couper ce bloc en premier si la fatigue du SNC est élevée.",
           "Copenhagen : pied surélevé obligatoire."
         ]
       }
@@ -5393,7 +5393,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Optional — cut this block first if club fatigue is high."
+          "Optionnel — couper ce bloc en premier si la fatigue club est élevée."
         ]
       }
     ],
@@ -5509,7 +5509,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Smooth, symmetrical unilateral work — support, not fatigue chasing."
+          "Travail unilatéral fluide et symétrique — soutien, pas de recherche de fatigue."
         ],
         "fallbackOptions": [
           "A: `Bodyweight Split Squat`",
@@ -8398,7 +8398,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "number": 2,
         "name": "Plyometrics Intro",
-        "format": "`3 rounds`, `90s` rest after the trio",
+        "format": "`3 rounds`, `120s` rest after the trio",
         "exercises": [
           {
             "name": "Squat Jump",
@@ -9487,7 +9487,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         }
       ],
       "notes": [
-        "Ready for upper volume without pre-fatigue."
+        "Prêt pour le volume haut du corps sans pré-fatigue."
       ]
     },
     "blocks": [
@@ -9544,7 +9544,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ],
         "coachingNotes": [
           "Support volume harder than Block 2 — not a shoulder max test.",
-          "Cut this block before Block 2 if fatigue accumulates."
+          "Couper ce bloc avant le bloc 2 si la fatigue s'accumule."
         ]
       },
       {
@@ -9810,7 +9810,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "number": 4,
         "name": "Finisher",
-        "format": "`2 rounds`, `45s` rest",
+        "format": "`2 rounds`, `60s` rest",
         "exercises": [
           {
             "name": "Band Rotation Explosive",
@@ -9943,7 +9943,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "number": 4,
         "name": "Finisher",
-        "format": "`2 rounds`, `45s` rest",
+        "format": "`2 rounds`, `60s` rest",
         "exercises": [
           {
             "name": "Suitcase Carry",

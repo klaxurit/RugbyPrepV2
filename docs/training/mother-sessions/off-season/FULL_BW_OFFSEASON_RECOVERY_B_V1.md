@@ -41,7 +41,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise B: `Bear Crawl` `2-3x10-15m`
 - Coaching notes:
   - Lunge restores rhythm and balance, not strength.
-  - Crawl coordinated and athletic — never rushed.
+  - Ramper coordonné et athlétique — jamais précipité.
   - Fallback options:
     - A: `Bodyweight Split Squat`
     - B: `Bird Dog`

@@ -40,7 +40,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - `Back_three`: extend to 15-20m when quality holds.
 
 ### Block 2 - Plyometrics Intro
-- Format: `3 rounds`, `90s` rest after the trio
+- Format: `3 rounds`, `120s` rest after the trio
 - Exercise A: `Squat Jump` `2-3 reps`
 - Exercise B: `Broad Jump` `2 reps`
 - Exercise C: `Lateral Bound` `2/side`

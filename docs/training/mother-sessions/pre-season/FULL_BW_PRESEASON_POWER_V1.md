@@ -35,7 +35,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Saut explosif — variante A : `Banded KB Swing` si élastique ou KB disponibles.
 
 ### Block 2 - Explosive Push / Pull
-- Format: `3 rounds`, `2 min` rest after the pair
+- Format: `3 rounds`, `90s` rest after the pair
 - Exercise A: `Plyo Push-Up` `3x3-4`
 - Exercise B: `Rowing inversé pieds surélevés` `3x4`
 - Coaching notes:

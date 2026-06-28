@@ -62,7 +62,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - `Front_row` : fente un peu plus lourde ; `Back_three` : fente plus explosive.
 
 ### Block 4 - Light Finisher
-- Format: `2 rounds`, `45s` rest
+- Format: `2 rounds`, `60s` rest
 - Exercise A: `Bear Crawl` `2x15m`
 - Exercise B: `Neck Extension Isometric` `2x10s/dir`
 - Coaching notes:

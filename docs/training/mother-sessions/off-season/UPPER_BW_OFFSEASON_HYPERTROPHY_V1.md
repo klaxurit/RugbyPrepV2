@@ -30,7 +30,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - `2 progressive ramp-up sets` ``
 
 ### Notes
-- Ready for upper volume without pre-fatigue.
+- Prêt pour le volume haut du corps sans pré-fatigue.
 
 ## Visible Blocks
 
@@ -58,7 +58,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise B: `Rowing inversé pieds surélevés` `3x10-12`
 - Coaching notes:
   - Support volume harder than Block 2 — not a shoulder max test.
-  - Cut this block before Block 2 if fatigue accumulates.
+  - Couper ce bloc avant le bloc 2 si la fatigue s'accumule.
 
 ### Block 4 - Shoulder Health (optional)
 - Format: `2 rounds`, `45-60s` rest

@@ -50,7 +50,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Upgrade to decline push-up or feet-elevated row when easy.
 
 ### Block 3 - Rugby Light Finisher
-- Format: `2 rounds`, `45s` rest after the pair
+- Format: `2 rounds`, `60s` rest after the pair
 - Exercise A: `Bear Crawl` `2x15m`
 - Exercise B: `Side Plank` `2x15s/side`
 - Coaching notes:

@@ -67,7 +67,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise A: `Single-Leg Calf Raise` `2x10-12/side`
 - Exercise B: `Wall Tibialis Raise` `2x12-15`
 - Coaching notes:
-  - Optional — cut this block first if club fatigue is high.
+  - Optionnel — couper ce bloc en premier si la fatigue club est élevée.
 
 ## Progression Rules
 - Week 1–2: establish volume tolerance at `RPE 6-7`.

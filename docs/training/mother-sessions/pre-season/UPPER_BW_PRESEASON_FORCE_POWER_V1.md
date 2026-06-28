@@ -52,7 +52,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Upgrade A: seated dumbbell press if equipment allows.
 
 ### Block 4 - Finisher
-- Format: `2 rounds`, `45s` rest
+- Format: `2 rounds`, `60s` rest
 - Exercise A: `Band Rotation Explosive` `3-4/side`
 - Exercise B: `Neck Extension Isometric` `15-20s`
 - Exercise C: `Face Pull Band` `3x12`

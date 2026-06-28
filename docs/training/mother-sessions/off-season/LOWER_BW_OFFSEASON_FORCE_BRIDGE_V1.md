@@ -69,7 +69,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise B: `Single-Leg Calf Raise` `2x10-12/side`
 - Exercise C: `Wall Tibialis Raise` `2x12`
 - Coaching notes:
-  - Prevention only — cut this block first if CNS fatigue is high.
+  - Prévention uniquement — couper ce bloc en premier si la fatigue du SNC est élevée.
   - Copenhagen : pied surélevé obligatoire.
 
 ## Progression Rules

@@ -65,7 +65,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise A: `Face Pull Band` `2x10`
 - Exercise B: `Scap Push-Up` `2x10`
 - Coaching notes:
-  - Bloc optionnel — confiance épaule / bras sans pump excessif.
+  - Bloc optionnel — confiance épaule / bras sans congestion musculaire excessive.
   - Couper en premier si le temps ou la fatigue manquent.
   - Variante A : sans élastique, garder scap push-up uniquement.
 

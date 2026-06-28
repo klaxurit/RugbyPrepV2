@@ -4,6 +4,7 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { cleanup, screen, fireEvent, within } from '@testing-library/react'
 import { ProfilePage } from '../ProfilePage'
 import { renderWithRouter } from '../../test/ui/renderWithRouter'
+import { GYM_PRESET } from '../../services/equipment/equipmentPresets'
 
 const mockDetectCtx = vi.fn()
 
@@ -26,7 +27,7 @@ vi.mock('../../hooks/useProfile', () => ({
   useProfile: () => ({
     profile: {
       level: 'intermediate',
-      equipment: ['barbell'],
+      equipment: [...GYM_PRESET],
       injuries: [],
       weeklySessions: 3,
       seasonMode: 'in_season',

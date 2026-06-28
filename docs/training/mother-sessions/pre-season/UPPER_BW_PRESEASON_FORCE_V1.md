@@ -54,7 +54,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Upgrade A: dumbbell press seated if equipment allows.
 
 ### Block 4 - Finisher
-- Format: `2 rounds`, `45s` rest
+- Format: `2 rounds`, `60s` rest
 - Exercise A: `Suitcase Carry` `2x20m/side`
 - Exercise B: `Neck Extension Isometric` `2x10s/dir`
 - Coaching notes:

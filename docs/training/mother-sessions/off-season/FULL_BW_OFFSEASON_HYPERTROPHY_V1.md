@@ -48,7 +48,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise A: `Decline Push-Up` `4x8-10`
 - Exercise B: `Rowing inversé pieds surélevés` `4x8-10`
 - Coaching notes:
-  - Main upper volume — backpack on push-up before any angle regression.
+  - Volume haut du corps principal — sac à dos sur les pompes avant toute régression d'angle.
   - Upgrade row: strict pull-ups if bar available.
   - Fallback A: `Push-Up` with backpack load.
   - Fallback B: `Inverted Row Standard`.

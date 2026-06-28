@@ -32,7 +32,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Notes
 - Keep this to `3-5 min` maximum.
-- The first reps of Block 1 should still feel like part of the re-entry process.
+- Les premières répétitions du bloc 1 doivent encore faire partie du processus de réentrée.
 
 ## Visible Blocks
 
