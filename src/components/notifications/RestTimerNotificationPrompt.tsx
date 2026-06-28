@@ -14,13 +14,13 @@ import type { Lang } from '../../i18n/appLabels'
 
 /**
  * Soft prompt contextuel : première utilisation du timer de repos.
- * Demande uniquement la permission navigateur (notif locale SW), pas l'abonnement push.
+ * Active l'abonnement push (fiable en arrière-plan sur TWA Android).
  */
 export function RestTimerNotificationPrompt() {
   const { restTimer } = useSessionRun()
   const { authState } = useAuth()
   const { profile } = useProfile()
-  const { requestBrowserPermission } = useNotifications(profile)
+  const { subscribe, status } = useNotifications(profile)
   const lang: Lang = (profile?.preferredLanguage as Lang | undefined) ?? 'fr'
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
@@ -39,12 +39,13 @@ export function RestTimerNotificationPrompt() {
     hadRestTimerRef.current = true
 
     if (!canOfferRestTimerNotificationOptIn()) return
+    if (status === 'subscribed' || status === 'denied' || status === 'unsupported' || status === 'no_vapid') return
     if (!canShowNotificationPrompt(userId, 'rest_timer')) return
 
     promptedThisSessionRef.current = true
     setOpen(true)
     posthog.capture('notification_prompt_shown', { kind: 'rest_timer' })
-  }, [restTimer, userId])
+  }, [restTimer, userId, status])
 
   const close = () => setOpen(false)
 
@@ -57,12 +58,10 @@ export function RestTimerNotificationPrompt() {
   const handleEnable = async () => {
     setIsLoading(true)
     try {
-      const result = await requestBrowserPermission()
-      if (result === 'granted') {
-        posthog.capture('notification_prompt_enabled', { kind: 'rest_timer' })
-      } else {
-        posthog.capture('notification_prompt_denied', { kind: 'rest_timer' })
-      }
+      await subscribe({ profileOverride: profile })
+      posthog.capture('notification_prompt_enabled', { kind: 'rest_timer' })
+    } catch {
+      posthog.capture('notification_prompt_denied', { kind: 'rest_timer' })
     } finally {
       setIsLoading(false)
       close()

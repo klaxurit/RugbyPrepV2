@@ -11,6 +11,9 @@ import {
 } from '../../services/ui/blockPresentation'
 import { parseBlockFormat } from '../../services/ui/parseBlockFormat'
 import { getLoggableExerciseIndices } from '../../services/session/resolveLoggableExercises'
+import { isTimedBlockComplete } from '../../services/motherSession/findCurrentPending'
+import { getInterTourRestAfterMarking } from '../../services/motherSession/interTourRest'
+import { restTimerAfterTourLine } from '../../i18n/sessionRunUi'
 import {
   WarmupBlock,
   ToursBlock,
@@ -34,6 +37,8 @@ interface SessionBlocksProps {
   onBlockCompleted?: (blockNumber: number) => void
   /** Demande au parent d'ouvrir l'overlay EMOM/Tabata/AMRAP/For Time pour ce bloc. */
   onStartEmomTimer?: (blockNumber: number) => void
+  /** Bloc EMOM dont le chrono overlay est actif. */
+  activeEmomBlockNumber?: number | null
   /** Demande au parent d'ouvrir l'overlay iso pour cet exo. */
   onStartIsoTimer?: (blockNumber: number, tourIndex: number, exerciseIndex: number) => void
   /** Demande au parent d'afficher la démo vidéo de l'exo. */
@@ -66,6 +71,7 @@ export function SessionBlocks({
   onStartIsoTimer,
   onPlayDemo,
   getLoadSuggestion,
+  activeEmomBlockNumber = null,
   lang = 'fr',
 }: SessionBlocksProps) {
   const sessionRun = useSessionRun()
@@ -166,7 +172,7 @@ export function SessionBlocks({
               expanded={expanded}
               onToggle={onToggle}
               totalMinutes={totalMinutes}
-              timerActive={false}
+              timerActive={activeEmomBlockNumber === block.number}
               onStartTimer={() => onStartEmomTimer?.(block.number)}
               notes={notes}
               lang={lang}
@@ -192,11 +198,13 @@ export function SessionBlocks({
               onPlayDemo={onPlayDemo ? (i) => onPlayDemo(block.number, i) : undefined}
               onValidateExo={(exoIdx) => {
                 handleValidateExoFromBlock({
+                  session,
                   blockNumber: block.number,
                   tourIndex: 0,
                   exerciseIndex: exoIdx,
                   sessionRun,
                   block,
+                  lang,
                   onBlockCompleted,
                 })
               }}
@@ -236,11 +244,13 @@ export function SessionBlocks({
             tourData={tourData}
             onValidateExo={(tourIdx, exoIdx) => {
               handleValidateExoFromBlock({
+                session,
                 blockNumber: block.number,
                 tourIndex: tourIdx,
                 exerciseIndex: exoIdx,
                 sessionRun,
                 block,
+                lang,
                 onBlockCompleted,
               })
             }}
@@ -288,6 +298,12 @@ function computeBlockState({
   // running : status calculé sur les exos loggables.
   const loggableIdx = getLoggableExerciseIndices(block)
   if (loggableIdx.length === 0) return 'pending'
+
+  if (detectBlockKind(block) === 'emom') {
+    if (isTimedBlockComplete(block, completedExercises)) return 'done'
+    if (cursor?.blockNumber === block.number) return 'active'
+    return 'pending'
+  }
 
   const tourCount = parseBlockTourCount(block)
   // Bloc fini : tous les couples (tour, exoLoggable) sont validés.
@@ -348,20 +364,24 @@ function buildPrehabValidatedMap(
 }
 
 interface HandleValidateArgs {
+  session: MotherSession
   blockNumber: number
   tourIndex: number
   exerciseIndex: number
   sessionRun: ReturnType<typeof useSessionRun>
   block: MotherSession['blocks'][number]
+  lang: Lang
   onBlockCompleted?: (blockNumber: number) => void
 }
 
 function handleValidateExoFromBlock({
+  session,
   blockNumber,
   tourIndex,
   exerciseIndex,
   sessionRun,
   block,
+  lang,
   onBlockCompleted,
 }: HandleValidateArgs) {
   const key = buildExerciseTourKey(blockNumber, tourIndex, exerciseIndex)
@@ -370,14 +390,31 @@ function handleValidateExoFromBlock({
     sessionRun.unmarkExerciseDone(key)
     return
   }
+
+  if (sessionRun.restTimer) sessionRun.skipRestTimer()
   sessionRun.markExerciseDone(key)
+
+  const completed = new Set(sessionRun.completedExercises)
+  completed.add(key)
+
+  const rest = getInterTourRestAfterMarking(
+    session,
+    blockNumber,
+    tourIndex,
+    exerciseIndex,
+    completed,
+  )
+  if (rest) {
+    sessionRun.startRestTimer(
+      rest.restSeconds,
+      restTimerAfterTourLine(rest.tourOneBased, lang),
+    )
+  }
 
   // Notification "bloc fini" si TOUS les loggables × TOUS les tours sont marqués.
   const loggableIdx = getLoggableExerciseIndices(block)
   if (loggableIdx.length === 0) return
   const tourCount = parseBlockTourCount(block)
-  const completed = new Set(sessionRun.completedExercises)
-  completed.add(key)
   const allDone = loggableIdx.every((exoIdx) => {
     for (let t = 0; t < tourCount; t++) {
       if (!completed.has(buildExerciseTourKey(blockNumber, t, exoIdx))) return false

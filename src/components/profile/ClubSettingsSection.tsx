@@ -7,6 +7,7 @@ import { getClubLogoUrl, getClubMonogram } from '../../services/ui/clubLogos'
 import { ClubSearchInput } from '../match/ClubSearchInput'
 import { GymDaySelector } from '../GymDaySelector'
 import { buildManualSCSchedule, computeSCSchedule, TRAINING_DAYS_DEFAULT } from '../../services/program/scheduleOptimizer'
+import { syncMyClubMembership } from '../../services/club/syncClubMembership'
 import type { ClubSchedule, DayOfWeek, FfrCompetition, SeasonMode, UserProfile } from '../../types/training'
 
 const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
@@ -97,6 +98,12 @@ export function ClubSettingsSection({
     setClubQuery(profile.clubName ?? '')
   }, [profile.clubName])
 
+  // Lie club_athlete_memberships (requis pour la vue coach staff).
+  useEffect(() => {
+    if (!profile.clubCode?.trim()) return
+    void syncMyClubMembership(profile.clubCode)
+  }, [profile.clubCode])
+
   // Fetch competitions when a club is set but none is picked yet.
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect -- setState synchrone avant la promesse, pattern fetch classique */
@@ -127,6 +134,7 @@ export function ClubSettingsSection({
     setClubQuery(name)
     if (code) {
       updateProfile({ clubCode: code, clubName: name })
+      void syncMyClubMembership(code)
     }
   }, [updateProfile])
 
@@ -140,6 +148,7 @@ export function ClubSettingsSection({
       ffrCompetitionName: undefined,
       ffrLastSyncAt: undefined,
     })
+    void syncMyClubMembership(null)
     setClubQuery('')
     setFfrCompetitions([])
     setFfrSyncMessage(null)

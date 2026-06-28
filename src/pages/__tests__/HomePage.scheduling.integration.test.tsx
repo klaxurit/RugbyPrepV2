@@ -369,7 +369,7 @@ describe('HomePage · S6 — dual-mode scheduling', () => {
     expect(screen.queryByTestId('planning-context-toggle')).toBeNull()
   })
 
-  it('renders scheduling transition banner when present', () => {
+  it('renders scheduling transition banner when mode changes', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeSurface('calendar')))
     mockSchedulingTransition.mockReturnValue({
       transition: {

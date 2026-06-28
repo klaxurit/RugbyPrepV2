@@ -722,9 +722,9 @@ describe('buildExplanation', () => {
     assertNoJargon(result)
   })
 
-  // ── Long absence (Slice 4 S2) ──
+  // ── Long absence — couvert par Score de forme (Home), pas PlanningContextCard ──
 
-  it('long absence → summaryLine: "Semaine de reprise progressive"', () => {
+  it('long absence → pas de summaryLine reprise (Score de forme à la place)', () => {
     const result = buildExplanation({
       planningContext: makeCtx({
         monitoringSnapshot: {
@@ -738,12 +738,11 @@ describe('buildExplanation', () => {
       corrections: [],
     })
 
-    expect(result.summaryLine).toBe('Semaine de reprise progressive')
-    expect(result.detailLines.some(l => l.includes('réadaptent'))).toBe(true)
+    expect(result.summaryLine).not.toContain('reprise progressive')
     assertNoJargon(result)
   })
 
-  it('long absence in sequential mode → overrides generic count summary', () => {
+  it('long absence in sequential mode → garde le résumé séances, pas reprise', () => {
     const result = buildExplanation({
       planningContext: makeCtx({
         monitoringSnapshot: {
@@ -757,12 +756,12 @@ describe('buildExplanation', () => {
       corrections: [],
     })
 
-    expect(result.summaryLine).toBe('Semaine de reprise progressive')
-    expect(result.summaryLine).not.toContain('rythme')
+    expect(result.summaryLine).not.toContain('reprise progressive')
+    expect(result.summaryLine).toContain('séance')
     assertNoJargon(result)
   })
 
-  it('long absence + real rule id → reprise still dominates', () => {
+  it('long absence + règle calendrier → reprise n’écrase plus le dominant', () => {
     const result = buildExplanation({
       planningContext: makeCtx({
         planningTrace: {
@@ -781,7 +780,7 @@ describe('buildExplanation', () => {
       corrections: [],
     })
 
-    expect(result.summaryLine).toBe('Semaine de reprise progressive')
+    expect(result.summaryLine).not.toContain('reprise progressive')
     assertNoJargon(result)
   })
 

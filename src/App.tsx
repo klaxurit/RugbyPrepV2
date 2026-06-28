@@ -8,6 +8,8 @@ import { CoachProvider } from './contexts/CoachContext'
 import { CalendarProvider } from './contexts/CalendarContext'
 import { ProgramEvolutionSheetProvider } from './contexts/ProgramEvolutionSheetContext'
 import { RequireAuth } from './components/auth/RequireAuth'
+import { RequireAdmin } from './components/auth/RequireAdmin'
+import { RequireStaffCoach } from './components/auth/RequireStaffCoach'
 import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useAuth } from './hooks/useAuth'
@@ -15,6 +17,7 @@ import { CoachCompanion } from './components/CoachCompanion'
 import { ProgramChangeMount } from './components/ProgramChangeMount'
 import { UpdatePrompt } from './components/UpdatePrompt'
 import { RestTimerNotificationPrompt } from './components/notifications/RestTimerNotificationPrompt'
+import { useRestEndNotificationHaptic } from './hooks/useRestEndNotificationHaptic'
 import { CookieConsentBanner } from './components/CookieConsentBanner'
 import { FoundingOffer } from './components/FoundingOffer'
 
@@ -35,6 +38,8 @@ const ChatPage = lazy(() => import('./pages/ChatPage').then(m => ({ default: m.C
 const ProgramPage = lazy(() => import('./pages/ProgramPage').then(m => ({ default: m.ProgramPage })))
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage').then(m => ({ default: m.OnboardingPage })))
 const StaffPlanningSandboxPage = lazy(() => import('./pages/StaffPlanningSandboxPage').then(m => ({ default: m.StaffPlanningSandboxPage })))
+const StaffClubPage = lazy(() => import('./pages/StaffClubPage').then(m => ({ default: m.StaffClubPage })))
+const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })))
 const CallbackPage = lazy(() => import('./pages/auth/CallbackPage').then(m => ({ default: m.CallbackPage })))
 const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })))
 const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })))
@@ -150,6 +155,7 @@ function StaticPageDevRedirect({ target }: { target: string }) {
 }
 
 function App() {
+  useRestEndNotificationHaptic()
   const devStaticTarget = getDevStaticTarget(window.location.pathname)
 
   if (devStaticTarget) {
@@ -198,6 +204,12 @@ function App() {
             {import.meta.env.DEV && (
               <Route path="/staff-sandbox" element={<StaffPlanningSandboxPage />} />
             )}
+            <Route element={<RequireStaffCoach />}>
+              <Route path="/staff" element={<StaffClubPage />} />
+            </Route>
+            <Route element={<RequireAdmin />}>
+              <Route path="/admin" element={<AdminPage />} />
+            </Route>
           </Route>
 
           {/* Catch-all : redirige vers /home (RequireAuth gère le reste) */}

@@ -23,6 +23,7 @@ import { useStripeCheckoutReturn } from '../hooks/useStripeCheckoutReturn'
 import { useFoundingCohortAvailability } from '../hooks/useFoundingCohortAvailability'
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
+import { useIsAdmin } from '../hooks/useIsAdmin'
 import { BottomNav } from '../components/BottomNav'
 import { useCalendar } from '../hooks/useCalendar'
 import { useFatigue } from '../hooks/useFatigue'
@@ -238,6 +239,7 @@ export function ProfilePage() {
   const TRAINING_LEVELS = getTrainingLevelsProfile(lang)
   const { logs } = useHistory()
   const { authState, updateAvatar, signOut } = useAuth()
+  const isAdmin = useIsAdmin()
   const { features, isPremium, isFounding, loading: entitlementsLoading, refresh: refreshEntitlements } = useFeatureAccess()
   const {
     isCheckoutSuccess,
@@ -1075,6 +1077,14 @@ export function ProfilePage() {
 
       {/* Footer */}
       <footer className="px-4 py-6 flex flex-col items-center gap-3 text-center relative">
+        {isAdmin && (
+          <Link
+            to="/admin"
+            className="text-xs font-semibold text-fg-muted hover:text-brand-tint transition-colors"
+          >
+            {tr('admin_panel_link', lang)}
+          </Link>
+        )}
         {authState.status === 'authenticated' && (
           <button
             type="button"

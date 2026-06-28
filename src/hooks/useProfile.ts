@@ -15,6 +15,8 @@ import type {
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { applyHealthConsentLifecycle } from '../services/privacy/healthConsentLifecycle'
+import { mergeProfileFromCache, applyServerAuthoritativeProfileFields } from '../services/profile/mergeProfileFromCache'
+import { resolveAvatarUrlFromAuthMetadata, resolveProfileAvatarUrl } from '../services/profile/resolveAvatarUrl'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 
 const STORAGE_BASE = 'rugbyprep.profile'
@@ -140,84 +142,8 @@ export function useOnboardingStatus(userId: string | null) {
 
 // ─── LocalStorage helpers (user-scoped) ───────────────────────
 
-type ProfileCacheEnvelope = {
-  profile: UserProfile
-  savedAt: string
-}
-
-function isProfileCacheEnvelope(value: unknown): value is ProfileCacheEnvelope {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    'profile' in value &&
-    'savedAt' in value &&
-    typeof (value as ProfileCacheEnvelope).savedAt === 'string'
-  )
-}
-
-export const profileSyncFingerprint = (profile: UserProfile): string =>
-  JSON.stringify({
-    equipment: [...(profile.equipment ?? [])].sort(),
-    weeklySessions: profile.weeklySessions,
-    trainingLevel: profile.trainingLevel,
-    seasonMode: profile.seasonMode,
-    position: profile.position,
-    rugbyPosition: profile.rugbyPosition,
-    planningAnchors: profile.planningAnchors ?? null,
-    clubSchedule: profile.clubSchedule ?? null,
-    scSchedule: profile.scSchedule ?? null,
-    heightCm: profile.heightCm ?? null,
-    weightKg: profile.weightKg ?? null,
-    performanceFocus: profile.performanceFocus ?? null,
-    preferredLanguage: profile.preferredLanguage ?? 'fr',
-    injuries: [...(profile.injuries ?? [])].sort(),
-    trainingBaseline: profile.trainingBaseline ?? null,
-  })
-
-/**
- * Au refresh, Supabase peut être en retard si un upsert a échoué.
- * On préfère le cache local quand il est plus récent ou quand il diffère du défaut.
- */
-export function reconcileCachedAndRemoteProfile(
-  cached: UserProfile | null,
-  cachedSavedAt: string | null,
-  remote: UserProfile,
-  remoteUpdatedAt: string | null,
-): UserProfile {
-  if (!cached) return remote
-  if (profileSyncFingerprint(cached) === profileSyncFingerprint(remote)) return remote
-
-  if (cachedSavedAt && remoteUpdatedAt) {
-    const localMs = new Date(cachedSavedAt).getTime()
-    const remoteMs = new Date(remoteUpdatedAt).getTime()
-    if (localMs > remoteMs + 1000) return cached
-    if (remoteMs > localMs + 1000) return remote
-  }
-
-  if (profileSyncFingerprint(cached) !== profileSyncFingerprint(DEFAULT_PROFILE)) {
-    return cached
-  }
-
-  return remote
-}
-
-const readProfileCache = (
-  userId: string | null,
-): { profile: UserProfile; savedAt: string | null } | null => {
-  const raw = readUserScoped<ProfileCacheEnvelope | UserProfile>(STORAGE_BASE, userId)
-  if (!raw) return null
-  if (isProfileCacheEnvelope(raw)) {
-    return { profile: normalizeLegacyProfile(raw.profile), savedAt: raw.savedAt }
-  }
-  return { profile: normalizeLegacyProfile(raw), savedAt: null }
-}
-
 const saveToStorage = (profile: UserProfile, userId: string | null) => {
-  const envelope: ProfileCacheEnvelope = {
-    profile,
-    savedAt: new Date().toISOString(),
-  }
-  writeUserScoped(STORAGE_BASE, userId, envelope)
+  writeUserScoped(STORAGE_BASE, userId, profile)
 }
 
 const inferNormalizedAgeBand = (
@@ -251,8 +177,11 @@ export const normalizeLegacyProfile = (profile: UserProfile): UserProfile => {
   }
 }
 
-const loadFromStorage = (userId: string | null): UserProfile | null =>
-  readProfileCache(userId)?.profile ?? null
+const loadFromStorage = (userId: string | null): UserProfile | null => {
+  const parsed = readUserScoped<UserProfile>(STORAGE_BASE, userId)
+  if (!parsed) return null
+  return normalizeLegacyProfile(parsed)
+}
 
 // ─── Row ↔ UserProfile mapping ────────────────────────────────
 
@@ -282,6 +211,7 @@ type ProfileRow = {
   training_baseline_set_at: string | null
   performance_focus: UserProfile['performanceFocus'] | null
   preferred_language: string | null
+  display_name: string | null
   population_segment: UserProfile['populationSegment'] | null
   age_band: UserProfile['ageBand'] | null
   parental_consent_health_data: boolean | null
@@ -302,7 +232,6 @@ type ProfileRow = {
   ffr_last_sync_at: string | null
   planning_anchors: unknown | null
   season_transition_state: unknown | null
-  updated_at: string | null
 }
 
 export const rowToProfile = (row: ProfileRow): UserProfile => {
@@ -321,7 +250,7 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     )
 
   return normalizeLegacyProfile({
-    avatarUrl: row.avatar_url ?? undefined,
+    avatarUrl: resolveProfileAvatarUrl(row.avatar_url, row.avatar_path),
     avatarPath: row.avatar_path ?? undefined,
     level: (row.level === 'beginner' ? 'beginner' : 'intermediate') as UserProfile['level'],
     weeklySessions: (row.weekly_sessions === 2 ? 2 : 3) as UserProfile['weeklySessions'],
@@ -345,6 +274,7 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     trainingBaselineSetAt: row.training_baseline_set_at ?? null,
     performanceFocus: (row.performance_focus as PerformanceFocus | null) ?? undefined,
     preferredLanguage: (row.preferred_language as 'fr' | 'en' | null) ?? 'fr',
+    displayName: row.display_name?.trim() || undefined,
     populationSegment: (row.population_segment as PopulationSegment | null) ?? undefined,
     ageBand: row.age_band ?? undefined,
     parentalConsentHealthData: row.parental_consent_health_data ?? undefined,
@@ -394,6 +324,7 @@ export const profileToRow = (profile: UserProfile, userId: string) => ({
   training_baseline_set_at: profile.trainingBaselineSetAt ?? null,
   performance_focus: profile.performanceFocus ?? null,
   preferred_language: profile.preferredLanguage ?? 'fr',
+  display_name: profile.displayName?.trim() || null,
   population_segment: profile.populationSegment ?? null,
   age_band: profile.ageBand ?? null,
   parental_consent_health_data: profile.parentalConsentHealthData ?? null,
@@ -461,7 +392,7 @@ function applyPendingProfilePatches(
 }
 
 export const useProfileSource = () => {
-  const { authState } = useAuth()
+  const { authState, isInitializing } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
   // Initialise depuis le cache user-scoped pour éviter le flash DEFAULT entre
@@ -469,126 +400,157 @@ export const useProfileSource = () => {
   // comptes : la clé inclut `userId`, donc un nouvel utilisateur voit DEFAULT_PROFILE.
   const [profile, setProfileState] = useState<UserProfile>(() => loadFromStorage(userId) ?? DEFAULT_PROFILE)
   const profileRef = useRef(profile)
-  const activeUserIdRef = useRef<string | null>(userId)
   const isHydratedRef = useRef(!userId)
   const localEditsSinceLoadRef = useRef(0)
   const preHydrationPatchesRef = useRef<Partial<UserProfile>[]>([])
+  const pendingRemotePersistRef = useRef<UserProfile | null>(null)
 
   useEffect(() => {
     profileRef.current = profile
   }, [profile])
 
+  const saveLocalProfile = useCallback((next: UserProfile, uid: string | null) => {
+    saveToStorage(next, uid)
+  }, [])
+
+  const persistRemoteProfile = useCallback(async (next: UserProfile, uid: string): Promise<boolean> => {
+    const { error } = await supabase
+      .from('profiles')
+      .upsert(profileToRow(next, uid), { onConflict: 'id' })
+    if (error) {
+      console.error('[useProfile] Supabase persist failed:', error.message)
+      pendingRemotePersistRef.current = next
+      return false
+    }
+    pendingRemotePersistRef.current = null
+    return true
+  }, [])
+
   // Persist Supabase + localStorage
   const persistProfile = useCallback(
     async (next: UserProfile, uid: string | null) => {
+      saveLocalProfile(next, uid)
       if (!uid || !isHydratedRef.current) return
-      if (activeUserIdRef.current !== uid) return
-      saveToStorage(next, uid)
-      const { error } = await supabase
-        .from('profiles')
-        .upsert(profileToRow(next, uid), { onConflict: 'id' })
-      if (error) {
-        console.error('[useProfile] Supabase persist failed:', error.message)
-      }
+      await persistRemoteProfile(next, uid)
     },
-    []
+    [persistRemoteProfile, saveLocalProfile]
   )
-
-  const persistProfileRef = useRef(persistProfile)
-  useEffect(() => {
-    persistProfileRef.current = persistProfile
-  }, [persistProfile])
 
   // Quand userId change : recharge depuis le cache user-scoped ou le défaut,
   // puis Supabase écrase avec la source de vérité (sauf si l'utilisateur a déjà modifié).
   useEffect(() => {
-    activeUserIdRef.current = userId
+    if (isInitializing) return
+
     localEditsSinceLoadRef.current = 0
     preHydrationPatchesRef.current = []
     isHydratedRef.current = !userId
-    const cachedProfile = loadFromStorage(userId) ?? DEFAULT_PROFILE
-    profileRef.current = cachedProfile
     // eslint-disable-next-line react-hooks/set-state-in-effect -- required: userId change must reset cache
-    setProfileState(cachedProfile)
+    setProfileState(loadFromStorage(userId) ?? DEFAULT_PROFILE)
     if (!userId) return
 
     let cancelled = false
-    const fetchUserId = userId
 
     supabase
       .from('profiles')
       .select(
-        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state, updated_at'
+        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, display_name, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state'
       )
-      .eq('id', fetchUserId)
+      .eq('id', userId)
       .single()
-      .then(({ data, error }) => {
+      .then(async ({ data, error }) => {
         if (cancelled) return
-        if (activeUserIdRef.current !== fetchUserId) return
+
+        const cached = loadFromStorage(userId)
+        const pendingPatches = preHydrationPatchesRef.current
+        preHydrationPatchesRef.current = []
 
         if (error) {
           isHydratedRef.current = true
           if (isProfileRowMissingError(error)) {
-            const cached = readProfileCache(fetchUserId)
-            const pendingPatches = preHydrationPatchesRef.current
-            preHydrationPatchesRef.current = []
-            const baseline = cached?.profile ?? DEFAULT_PROFILE
-            const pending = applyPendingProfilePatches(baseline, pendingPatches)
+            const pending = applyPendingProfilePatches(cached ?? profileRef.current, pendingPatches)
             setProfileState(pending)
-            saveToStorage(pending, fetchUserId)
-            void persistProfileRef.current(pending, fetchUserId)
-          } else {
-            console.error('[useProfile] Supabase fetch failed:', error.message)
-            const cached = readProfileCache(fetchUserId)
-            if (cached) {
-              const pendingPatches = preHydrationPatchesRef.current
-              preHydrationPatchesRef.current = []
-              const pending = applyPendingProfilePatches(cached.profile, pendingPatches)
-              setProfileState(pending)
-            }
+            saveLocalProfile(pending, userId)
+            return
+          }
+          console.error('[useProfile] Supabase fetch failed:', error.message)
+          if (cached) {
+            const pending = applyPendingProfilePatches(cached, pendingPatches)
+            setProfileState(pending)
+            saveLocalProfile(pending, userId)
           }
           return
         }
 
         isHydratedRef.current = true
 
-        const pendingPatches = preHydrationPatchesRef.current
-        preHydrationPatchesRef.current = []
-
         if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) {
+          const remote = rowToProfile(data as ProfileRow)
           const pending = applyPendingProfilePatches(
-            loadFromStorage(fetchUserId) ?? DEFAULT_PROFILE,
+            applyServerAuthoritativeProfileFields(
+              loadFromStorage(userId) ?? profileRef.current,
+              remote,
+            ),
             pendingPatches,
           )
-          void persistProfileRef.current(pending, fetchUserId)
+          setProfileState(pending)
+          saveLocalProfile(pending, userId)
           return
         }
 
-        const remoteProfile = rowToProfile(data as ProfileRow)
-        const cached = readProfileCache(fetchUserId)
-        const reconciled = reconcileCachedAndRemoteProfile(
-          cached?.profile ?? null,
-          cached?.savedAt ?? null,
-          remoteProfile,
-          (data as ProfileRow).updated_at ?? null,
+        const remote = rowToProfile(data as ProfileRow)
+        const { profile: mergedRemote, shouldHealRemote } = mergeProfileFromCache(remote, cached)
+        let loaded = normalizeLegacyProfile(
+          applyPendingProfilePatches(mergedRemote, pendingPatches),
         )
-        const loaded = applyPendingProfilePatches(reconciled, pendingPatches)
+
+        const { data: authData } = await supabase.auth.getUser()
+        const authDisplayName =
+          typeof authData.user?.user_metadata?.display_name === 'string'
+            ? authData.user.user_metadata.display_name.trim()
+            : ''
+        let healDisplayName = shouldHealRemote
+        if (authDisplayName && !loaded.displayName) {
+          loaded = { ...loaded, displayName: authDisplayName }
+          healDisplayName = true
+        }
+
+        const authAvatar = resolveAvatarUrlFromAuthMetadata(authData.user?.user_metadata)
+        let healAvatar = false
+        if (authAvatar.avatarUrl && !loaded.avatarUrl) {
+          loaded = {
+            ...loaded,
+            avatarUrl: authAvatar.avatarUrl,
+            avatarPath: authAvatar.avatarPath ?? loaded.avatarPath,
+          }
+          healAvatar = true
+        }
+
         localEditsSinceLoadRef.current = 0
         setProfileState(loaded)
-        saveToStorage(loaded, fetchUserId)
-        void persistProfileRef.current(loaded, fetchUserId)
+        saveLocalProfile(loaded, userId)
+        if (healDisplayName || healAvatar || pendingPatches.length > 0) {
+          await persistRemoteProfile(loaded, userId)
+        }
         if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {
-          localStorage.setItem(onboardingKey(fetchUserId), '1')
+          localStorage.setItem(onboardingKey(userId), '1')
         }
       })
 
     return () => {
       cancelled = true
     }
-  }, [userId])
+  }, [userId, isInitializing, persistRemoteProfile, saveLocalProfile])
+
+  useEffect(() => {
+    if (!userId || !isHydratedRef.current) return
+    const pending = pendingRemotePersistRef.current
+    if (!pending) return
+    void persistRemoteProfile(pending, userId)
+  }, [userId, isInitializing, persistRemoteProfile])
 
   const setProfile = useCallback(
     (next: UserProfile) => {
+      saveLocalProfile(next, userId)
       if (isHydratedRef.current) {
         localEditsSinceLoadRef.current += 1
         setProfileState(next)
@@ -597,14 +559,12 @@ export const useProfileSource = () => {
         setProfileState(next)
       }
     },
-    [userId, persistProfile]
+    [userId, persistProfile, saveLocalProfile]
   )
 
   const updateProfile = useCallback(
     (patch: Partial<UserProfile>, options?: UpdateProfileOptions) => {
       setProfileState((current) => {
-        // Auto-set trainingBaselineSetAt quand le baseline change (sauf override explicite).
-        // Sert à expirer auto le mode 'restart' après 14j (rampe de reprise).
         const baselineChanged =
           'trainingBaseline' in patch &&
           patch.trainingBaseline !== current.trainingBaseline
@@ -617,17 +577,17 @@ export const useProfileSource = () => {
           patch: stampedPatch,
           source: options?.source ?? 'profile',
         })
+        saveLocalProfile(next, userId)
         if (isHydratedRef.current) {
           localEditsSinceLoadRef.current += 1
           void persistProfile(next, userId)
         } else {
           preHydrationPatchesRef.current.push(stampedPatch)
-          saveToStorage(next, userId)
         }
         return next
       })
     },
-    [userId, persistProfile]
+    [userId, persistProfile, saveLocalProfile]
   )
 
   const resetProfile = useCallback(() => {

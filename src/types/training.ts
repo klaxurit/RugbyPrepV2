@@ -266,6 +266,8 @@ export interface UserProfile {
   trainingBaselineSetAt?: string | null
   performanceFocus?: PerformanceFocus
   preferredLanguage?: 'fr' | 'en'
+  /** Nom affiché (signup / profil). */
+  displayName?: string
   populationSegment?: PopulationSegment
   ageBand?: AgeBand
   parentalConsentHealthData?: boolean
@@ -285,6 +287,7 @@ export interface UserProfile {
   ffrCompetitionName?: string
   ffrLastSyncAt?: string
   planningAnchors?: {
+    firstMatchDateOverride?: string
     seasonEndedAt?: string
     offSeasonStartAt?: string
     returnToTeamTrainingAt?: string
@@ -297,6 +300,10 @@ export interface UserProfile {
     seasonEndedSource?: 'manual' | 'derived'
     /** Passer les 2 semaines gym « Récupération » en début d'inter-saison (voir planning annuel). */
     skipOffSeasonRecoveryIntro?: boolean
+    /** Overrides admin / staff — alignés sur AthletePlanningInputs['planningAnchors']. */
+    manualCycleOverride?: 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
+    manualOffSeasonWeekOverride?: number
+    manualPreSeasonWeekOverride?: number
   }
   seasonTransitionState?: SeasonTransitionState
 }

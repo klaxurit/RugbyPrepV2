@@ -623,6 +623,24 @@ export const APP_LABELS = {
   nav_home: { fr: 'Accueil', en: 'Home' },
   nav_program: { fr: 'Semaine', en: 'Week' },
   nav_profile: { fr: 'Profil', en: 'Profile' },
+  nav_coach: { fr: 'Coach', en: 'Coach' },
+
+  staff_players: { fr: 'Joueurs', en: 'Players' },
+  staff_fatigue_alerts: { fr: 'Alertes fatigue', en: 'Fatigue alerts' },
+  staff_empty_roster: {
+    fr: 'Aucun joueur lié à ce club pour l’instant.',
+    en: 'No players linked to this club yet.',
+  },
+  staff_empty_roster_hint: {
+    fr: 'Chaque joueur doit avoir rejoint le club dans son profil (code FFR). Utilise le panneau admin → « Backfill clubs » si besoin.',
+    en: 'Each player must join the club in their profile (FFR code). Use admin → “Backfill clubs” if needed.',
+  },
+  staff_club_id_mismatch: {
+    fr: 'Le club_id coach ne correspond pas au code club de ton profil — corrige-le dans le panneau admin.',
+    en: 'Coach club_id does not match your profile club code — fix it in the admin panel.',
+  },
+  admin_backfill_clubs: { fr: 'Backfill clubs (profils → joueurs)', en: 'Backfill clubs (profiles → players)' },
+  admin_panel_link: { fr: 'Panneau admin', en: 'Admin panel' },
 
   // ── PageHeader (aria-labels) ────────────────────────────────────────────
   page_header_back: { fr: 'Retour', en: 'Back' },

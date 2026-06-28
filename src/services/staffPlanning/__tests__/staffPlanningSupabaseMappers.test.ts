@@ -1,4 +1,17 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('../../supabase/client', () => ({
+  supabase: {
+    storage: {
+      from: () => ({
+        getPublicUrl: (path: string) => ({
+          data: { publicUrl: `https://example.supabase.co/storage/v1/object/public/avatars/${path}` },
+        }),
+      }),
+    },
+  },
+}))
+
 import {
   calendarDateToIsoString,
   calendarRowToCalendarEvent,
@@ -52,6 +65,10 @@ describe('staffPlanningSupabaseMappers', () => {
         level_modifier_profile: null,
         season_mode: 'in_season',
         performance_focus: 'balanced',
+        display_name: 'Jean Dupont',
+        avatar_url: null,
+        avatar_path: null,
+        planning_anchors: null,
         population_segment: 'male_senior',
         age_band: 'adult',
         parental_consent_health_data: false,
@@ -70,11 +87,58 @@ describe('staffPlanningSupabaseMappers', () => {
       }
       const p = profileRowToUserProfile(row)
       expect(p.clubCode).toBe('CLUB1')
+      expect(p.displayName).toBe('Jean Dupont')
       expect(p.weeklySessions).toBe(3)
       expect(p.trainingLevel).toBe('performance')
       expect(p.seasonMode).toBe('in_season')
       expect(p.heightCm).toBe(180)
       expect(p.weightKg).toBe(85)
+    })
+
+    it('résout avatarUrl depuis avatar_path si avatar_url absent', () => {
+      const row: ProfileRow = {
+        id: 'u2',
+        level: 'intermediate',
+        weekly_sessions: 3,
+        equipment: [],
+        injuries: [],
+        position: null,
+        rugby_position: null,
+        league_level: null,
+        club_code: null,
+        club_name: null,
+        club_ligue: null,
+        club_department_code: null,
+        height_cm: null,
+        weight_kg: null,
+        club_schedule: null,
+        sc_schedule: null,
+        training_level: null,
+        level_modifier_profile: null,
+        season_mode: null,
+        performance_focus: null,
+        display_name: 'Test',
+        avatar_url: null,
+        avatar_path: 'u2/photo.png',
+        planning_anchors: null,
+        population_segment: null,
+        age_band: null,
+        parental_consent_health_data: null,
+        adult_play_eligibility_approved: null,
+        maturity_status: null,
+        cycle_tracking_opt_in: null,
+        cycle_symptom_score_today: null,
+        prevention_sessions_week: null,
+        weekly_load_context: null,
+        health_consent_status: null,
+        health_consent_granted_at: null,
+        health_consent_revoked_at: null,
+        health_consent_source: null,
+        health_consent_audit_trail: null,
+        health_data_retention_state: null,
+      }
+      const p = profileRowToUserProfile(row)
+      expect(p.avatarUrl).toContain('u2/photo.png')
     })
   })
 

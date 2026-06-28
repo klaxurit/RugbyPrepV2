@@ -1,6 +1,7 @@
 import type { Block, MotherSession } from '../../types/motherSession'
 import { isDirectiveText, resolveExerciseIdForSessionRun } from './motherSessionExerciseMap'
 import { buildExerciseTourKey } from '../../contexts/SessionRunContext'
+import { detectBlockKind } from '../session/detectBlockKind'
 import {
   parseBlockTourCount,
   parseBlockRestSeconds,
@@ -27,6 +28,17 @@ export interface PendingCursor {
   isLastBlock: boolean
   /** Inter-tour rest in seconds (from block format / first prescription). */
   restSeconds: number
+  /** Bloc EMOM/Tabata/AMRAP — le CTA démarre le chrono, pas la validation set-par-set. */
+  isTimedBlock?: boolean
+}
+
+/** Bloc chronométré entièrement validé (tous les exos loggables au tour 0). */
+export function isTimedBlockComplete(block: Block, completedExercises: Set<string>): boolean {
+  const loggable = collectLoggableExercises(block)
+  if (loggable.length === 0) return true
+  return loggable.every(({ originalIndex }) =>
+    completedExercises.has(buildExerciseTourKey(block.number, 0, originalIndex)),
+  )
 }
 
 /**
@@ -48,9 +60,32 @@ export function findCurrentPending(
     const loggable = collectLoggableExercises(block)
     if (loggable.length === 0) continue
 
+    const isLastBlock = b === blocks.length - 1
+
+    // EMOM / Tabata / AMRAP : un seul passage chrono, pas de validation tour-par-tour.
+    if (detectBlockKind(block) === 'emom') {
+      if (isTimedBlockComplete(block, completedExercises)) continue
+      const first = loggable[0]
+      return {
+        blockNumber: block.number,
+        blockName: block.name,
+        blockIndex: b,
+        tourIndex: 0,
+        exerciseIndex: first.originalIndex,
+        exerciseName: first.ex.name,
+        exerciseId: first.exerciseId,
+        prescription: first.ex.prescription,
+        spec: parseExerciseSetSpec(first.ex.prescription),
+        isLastOfTour: true,
+        isLastTour: true,
+        isLastBlock,
+        restSeconds: 0,
+        isTimedBlock: true,
+      }
+    }
+
     const tourCount = parseBlockTourCount(block)
     const restSeconds = parseBlockRestSeconds(block)
-    const isLastBlock = b === blocks.length - 1
 
     for (let t = 0; t < tourCount; t++) {
       // Determine which loggable exos belong to this tour (per-exo set count).

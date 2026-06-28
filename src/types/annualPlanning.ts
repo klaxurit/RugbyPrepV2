@@ -62,6 +62,8 @@ export interface AthletePlanningInputs {
      * démarre comme S3–S4 (Transition). Ignoré si manualOffSeasonWeekOverride est défini.
      */
     skipOffSeasonRecoveryIntro?: boolean
+    /** Origine de la date de fin de saison (manuelle vs dérivée calendrier). */
+    seasonEndedSource?: 'manual' | 'derived'
   }
 
   monitoringSnapshot?: {

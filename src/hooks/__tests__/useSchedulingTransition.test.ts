@@ -15,6 +15,7 @@ function createMockStorage(): TransitionStorage & { data: Record<string, string>
   }
 }
 
+
 const TODAY = '2026-04-06'
 
 // ── Tests ───────────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ describe('useSchedulingTransition', () => {
     )
 
     expect(result.current.transition).toBeNull()
+    // Baseline initialized
     expect(storage.data['rugbyprep.schedulingMode.baseline.user-a']).toBe('calendar')
   })
 
@@ -124,6 +126,41 @@ describe('useSchedulingTransition', () => {
     expect(result.current.transition).toBeNull()
   })
 
+  // ── Return after break — retiré (doublon Score de forme) ──
+
+  it('long absence sans changement de mode → pas de bannière scheduling', () => {
+    const storage = createMockStorage()
+    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'calendar'
+
+    const { result } = renderHook(() =>
+      useSchedulingTransition({
+        schedulingMode: 'calendar',
+        today: TODAY,
+        userId: 'user-a',
+        storage,
+      }),
+    )
+
+    expect(result.current.transition).toBeNull()
+  })
+
+  it('mode transition when mode changes despite long absence', () => {
+    const storage = createMockStorage()
+    storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'sequential'
+
+    const { result } = renderHook(() =>
+      useSchedulingTransition({
+        schedulingMode: 'calendar',
+        today: TODAY,
+        userId: 'user-a',
+        storage,
+      }),
+    )
+
+    // Mode transition emitted
+    expect(result.current.transition?.type).toBe('calendar_mode_activated')
+  })
+
   // ── Dismiss behavior ──
 
   it('dismiss hides the transition for 7 days', () => {
@@ -143,13 +180,17 @@ describe('useSchedulingTransition', () => {
 
     expect(result.current.transition?.type).toBe('calendar_mode_activated')
 
+    // Dismiss
     result.current.dismiss('calendar_mode_activated')
 
+    // Re-render — should be suppressed
+    // Reset baseline to trigger again on next rerender
     storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'sequential'
     rerender({ mode: 'calendar' as const })
 
     expect(result.current.transition).toBeNull()
   })
+
 
   // ── Null schedulingMode ──
 
@@ -187,9 +228,11 @@ describe('useSchedulingTransition', () => {
 
   it('dismiss for user A does not suppress user B', () => {
     const storage = createMockStorage()
+    // Both users have sequential baseline
     storage.data['rugbyprep.schedulingMode.baseline.user-a'] = 'sequential'
     storage.data['rugbyprep.schedulingMode.baseline.user-b'] = 'sequential'
 
+    // User A sees and dismisses calendar_mode_activated
     const { result: rA } = renderHook(() =>
       useSchedulingTransition({
         schedulingMode: 'calendar',
@@ -201,6 +244,8 @@ describe('useSchedulingTransition', () => {
     expect(rA.current.transition?.type).toBe('calendar_mode_activated')
     rA.current.dismiss('calendar_mode_activated')
 
+    // User B should still see the transition
+    // Reset baseline for user-b since useEffect already wrote 'calendar'
     storage.data['rugbyprep.schedulingMode.baseline.user-b'] = 'sequential'
     const { result: rB } = renderHook(() =>
       useSchedulingTransition({

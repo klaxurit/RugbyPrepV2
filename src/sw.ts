@@ -1,6 +1,12 @@
 /// <reference lib="webworker" />
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
+import {
+  isRestEndNotificationTag,
+  REST_END_HAPTIC_MESSAGE,
+  REST_END_NOTIFICATION_TAG,
+  REST_END_VIBRATE_PATTERN,
+} from './services/notifications/restEndHaptic'
 
 declare let self: ServiceWorkerGlobalScope
 
@@ -75,7 +81,7 @@ const cancelRestTimer = () => {
 
 self.addEventListener('message', (event: ExtendableMessageEvent) => {
   const data = event.data as
-    | { type?: string; seconds?: number; label?: string }
+    | { type?: string; seconds?: number; label?: string; url?: string }
     | undefined
   if (data?.type === 'SKIP_WAITING') {
     void self.skipWaiting()
@@ -86,17 +92,25 @@ self.addEventListener('message', (event: ExtendableMessageEvent) => {
     const seconds = typeof data.seconds === 'number' ? data.seconds : 0
     if (seconds <= 0) return
     const label = data.label ?? 'Repos terminé'
-    restTimerHandle = setTimeout(() => {
-      restTimerHandle = null
-      void self.registration.showNotification(`${label} 💪`, {
-        body: 'Prêt pour le prochain set.',
-        tag: 'rugbyforge-rest-end',
-        icon: '/icons/icon-192.png',
-        badge: '/icons/badge-72.png',
-        vibrate: [200, 100, 200],
-        data: { url: '/week' },
-      } as NotificationOptions)
-    }, seconds * 1000)
+    const returnUrl = typeof data.url === 'string' && data.url.startsWith('/') ? data.url : '/week'
+    event.waitUntil(
+      new Promise<void>((resolve) => {
+        restTimerHandle = setTimeout(() => {
+          restTimerHandle = null
+          void self.registration
+            .showNotification(`${label} 💪`, {
+              body: 'Prêt pour le prochain set.',
+              tag: REST_END_NOTIFICATION_TAG,
+              icon: '/icons/icon-192.png',
+              badge: '/icons/badge-72.png',
+              vibrate: [...REST_END_VIBRATE_PATTERN],
+              data: { url: returnUrl },
+            } as NotificationOptions)
+            .then(() => resolve())
+            .catch(() => resolve())
+        }, seconds * 1000)
+      }),
+    )
     return
   }
   if (data?.type === 'CANCEL_REST_END') {
@@ -128,13 +142,14 @@ self.addEventListener('push', (event: PushEvent) => {
   }
 
   const title = data.title ?? 'RugbyForge'
+  const tag = data.tag ?? 'rugbyprep'
   const options = {
     body: data.body ?? '',
     icon: '/icons/icon-192.png',
     badge: '/icons/badge-72.png',
-    tag: data.tag ?? 'rugbyprep',
+    tag,
     data: { url: data.url ?? '/week' },
-    vibrate: [200, 100, 200],
+    vibrate: isRestEndNotificationTag(tag) ? [...REST_END_VIBRATE_PATTERN] : [200, 100, 200],
   } as NotificationOptions
 
   event.waitUntil(self.registration.showNotification(title, options))
@@ -142,18 +157,36 @@ self.addEventListener('push', (event: PushEvent) => {
 
 self.addEventListener('notificationclick', (event: NotificationEvent) => {
   event.notification.close()
-  const url: string = (event.notification.data as { url?: string })?.url ?? '/week'
+  const rawUrl: string = (event.notification.data as { url?: string })?.url ?? '/week'
+  const targetUrl = new URL(rawUrl, self.location.origin).href
+  const shouldHaptic = isRestEndNotificationTag(event.notification.tag)
+
+  const postHaptic = (client: Client) => {
+    if (shouldHaptic) client.postMessage({ type: REST_END_HAPTIC_MESSAGE })
+  }
 
   event.waitUntil(
     (self.clients as Clients)
       .matchAll({ type: 'window', includeUncontrolled: true })
-      .then((clientList) => {
+      .then(async (clientList) => {
         for (const client of clientList) {
-          if (client.url.includes(url) && 'focus' in client) {
-            return (client as WindowClient).focus()
+          if (!('focus' in client)) continue
+          const windowClient = client as WindowClient
+          await windowClient.focus()
+          const current = new URL(windowClient.url)
+          const target = new URL(targetUrl)
+          if (current.pathname !== target.pathname || current.search !== target.search) {
+            if (typeof windowClient.navigate === 'function') {
+              await windowClient.navigate(targetUrl)
+            } else {
+              await (self.clients as Clients).openWindow(targetUrl)
+            }
           }
+          postHaptic(windowClient)
+          return
         }
-        return (self.clients as Clients).openWindow(url)
-      })
+        const opened = await (self.clients as Clients).openWindow(targetUrl)
+        if (opened) postHaptic(opened)
+      }),
   )
 })
