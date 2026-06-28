@@ -4,7 +4,7 @@
 - `version`: V1
 - `cycle`: off_season
 - `session_type`: full
-- `target_level`: starter
+- `target_level`: builder
 - `target_position_group`: front_row + back_three (common base)
 - `equipment`: bodyweight
 - `target_duration`: 30-40 min

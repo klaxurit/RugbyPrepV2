@@ -519,6 +519,7 @@ export function ProfilePage() {
           profile={profile}
           updateProfile={updateProfile}
           lang={lang}
+          isPremium={isPremium}
         />
 
         <CollapsibleSection

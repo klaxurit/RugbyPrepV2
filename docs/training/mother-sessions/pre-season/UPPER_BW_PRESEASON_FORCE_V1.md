@@ -38,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull + Push Support
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Inverted Row Feet Elevated` `3x6-8`
+- Exercise A: `Rowing inversé pieds surélevés` `3x6-8`
 - Exercise B: `Pike Push-Up Feet Elevated` `3x6-8`
 - Coaching notes:
   - Upgrade A: `Neutral-Grip Pull-Up` if pull-up bar available.

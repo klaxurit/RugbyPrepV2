@@ -31,15 +31,14 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Hinge Force
 - Format: `3 work sets`, `2-3 min` rest between sets
-- Exercise A: `Romanian Deadlift` `3x5`
+- Exercise A: `Nordic Eccentric` `3x5`
 - Coaching notes:
-  - Strict nordic or RDL — heaviest hinge pattern available.
-  - Fallback: `Nordic Eccentric` strict if no DB/KB.
+  - Hinge force — nordiques stricts ou RDL si haltères disponibles.
 
 ### Block 2 - Push / Pull Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
 - Exercise A: `Decline Push-Up` `3x6-8`
-- Exercise B: `Inverted Row Feet Elevated` `3x6-8/side`
+- Exercise B: `Rowing inversé pieds surélevés` `3x6-8/side`
 - Coaching notes:
   - Upgrade A: dumbbell bench if DB + bench.
   - Upgrade B: `Neutral-Grip Pull-Up` if bar available.

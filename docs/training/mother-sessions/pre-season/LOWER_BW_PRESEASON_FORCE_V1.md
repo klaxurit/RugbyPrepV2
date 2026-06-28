@@ -46,10 +46,11 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Hinge + Unilateral Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Romanian Deadlift` `3x5-6`
+- Exercise A: `Nordic Eccentric` `3x5-6`
 - Exercise B: `Bulgarian Split Squat` `3x6/side`
 - Coaching notes:
-  - RDL strict and posterior-chain dominant — upgrade from BW nordic if DB available.
+  - Nordiques stricts — excentrique contrôlé, pas de grind.
+  - Variante A : `Romanian Deadlift` si haltères ou KB disponibles.
   - Unilateral lift supports hip/groin control, not conditioning.
   - Fallback A: `Nordic Eccentric` if no DB/KB.
 

@@ -4,7 +4,7 @@
 - `version`: V1
 - `cycle`: off_season
 - `session_type`: upper
-- `target_level`: starter
+- `target_level`: builder
 - `target_position_group`: front_row + back_three (common base)
 - `equipment`: bodyweight
 - `target_duration`: 40-50 min
@@ -46,7 +46,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 2 - Vertical Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
 - Exercise A: `Pike Push-Up` `3x6-8`
-- Exercise B: `Inverted Row Feet Elevated` `3x8-10`
+- Exercise B: `Rowing inversé pieds surélevés` `3x8-10`
 - Coaching notes:
   - Pike for vertical-ish push; feet-elevated row for harder pull.
   - Fallback options:

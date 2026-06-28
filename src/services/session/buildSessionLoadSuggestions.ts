@@ -26,6 +26,9 @@ export interface BuildSessionLoadSuggestionsInputs {
   fatigueLevel: FatigueLevel
   trainingLevel: TrainingLevel
   daysToMatch: number | null
+  /** Poids corps profil — charges d'entrée BW. */
+  weightKg?: number | null
+  isBodyweightProgram?: boolean
   /** Date "now" — injectable pour les tests. */
   now?: Date
 }
@@ -54,6 +57,8 @@ export function buildSessionLoadSuggestions({
   fatigueLevel,
   trainingLevel,
   daysToMatch,
+  weightKg,
+  isBodyweightProgram,
   now,
 }: BuildSessionLoadSuggestionsInputs): Map<string, LoadSuggestion> {
   const result = new Map<string, LoadSuggestion>()
@@ -93,6 +98,8 @@ export function buildSessionLoadSuggestions({
           prescribedRepsHigh,
           prescribedRepsLow,
           daysToMatch,
+          weightKg,
+          isBodyweightProgram,
         }),
       )
       continue
@@ -151,6 +158,8 @@ export function buildSessionLoadSuggestions({
         prescribedRepsLow,
         daysToMatch,
         daysSinceLastLog,
+        weightKg,
+        isBodyweightProgram,
       }),
     )
   }

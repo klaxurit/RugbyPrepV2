@@ -337,7 +337,7 @@ function TourGroup({
               suggestion?.confidence === 'high' &&
               suggestion?.suggestedWeight != null &&
               suggestion.decision !== 'no_suggestion' &&
-              suggestion.decision !== 'no_data'
+              (suggestion.decision !== 'no_data' || suggestion.suggestedWeight != null)
 
             // La valeur affichée du champ = EXACTEMENT ce qui est loggé (data.kg).
             // On ne re-dérive jamais depuis le tour 1 au rendu : sinon vider le

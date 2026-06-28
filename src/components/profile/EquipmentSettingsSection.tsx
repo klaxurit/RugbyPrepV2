@@ -10,19 +10,25 @@ import {
   toggleBodyweightCheck,
   type BodyweightEquipmentCheckId,
 } from '../../services/equipment/bodyweightEquipmentChecklist'
+import { bodyweightProgramMissingMorphology } from '../../services/bodyweight/bodyweightMorphologyWarning'
+import { BodyweightMorphologyBanner } from './BodyweightMorphologyBanner'
 
 type EquipmentSettingsSectionProps = {
   profile: UserProfile
   updateProfile: (patch: Partial<UserProfile>) => void
   lang: Lang
+  /** Charges d'entrée BW = fonctionnalité Premium uniquement. */
+  isPremium?: boolean
 }
 
 export function EquipmentSettingsSection({
   profile,
   updateProfile,
   lang,
+  isPremium = false,
 }: EquipmentSettingsSectionProps) {
   const fullGym = isFullGymEquipment(profile.equipment)
+  const showMorphoWarning = isPremium && bodyweightProgramMissingMorphology(profile)
 
   const handleToggleCheck = (checkId: BodyweightEquipmentCheckId) => {
     const def = BODYWEIGHT_EQUIPMENT_CHECKS.find((item) => item.id === checkId)
@@ -48,6 +54,8 @@ export function EquipmentSettingsSection({
       <p className="text-[11px] text-fg-muted leading-relaxed" data-testid="profile-equipment-hint">
         {tr('profile_equipment_stay_in_program', lang)}
       </p>
+
+      {showMorphoWarning ? <BodyweightMorphologyBanner lang={lang} /> : null}
 
       <div className="space-y-1.5" data-testid="profile-equipment-checklist">
         {BODYWEIGHT_EQUIPMENT_CHECKS.map((item) => {

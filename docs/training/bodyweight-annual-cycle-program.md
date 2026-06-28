@@ -19,7 +19,7 @@ Chaque exercice est prescrit en **version zéro matériel** (base). Les variante
 | **DB** | Haltères | Paire d'haltères |
 | **KB** | Kettlebell | Un ou deux KB |
 
-**Règle de résolution** : `BW → B → PB → PA → DB → KB` — utiliser la variante la plus avancée dont tu disposes **tout** le matériel requis.
+**Règle prescription (V1.2)** : chaque slot prescrit toujours la variante **tier 0 poids de corps** dans la mother session. Les upgrades matériel (haltères, barre, banc…) sont des **variantes runtime** selon la checklist profil — jamais l'exercice par défaut dans le MD.
 
 **Notation dans les séances** :
 ```

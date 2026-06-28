@@ -2,23 +2,28 @@
 
 import { describe, expect, it, vi, afterEach } from 'vitest'
 import { cleanup, screen, fireEvent, render } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { EquipmentSettingsSection } from '../EquipmentSettingsSection'
 import { GYM_PRESET } from '../../../services/equipment/equipmentPresets'
 
 const updateProfileMock = vi.fn()
 
-function renderSection(equipment: string[] = []) {
+function renderSection(equipment: string[] = [], opts?: { isPremium?: boolean; weightKg?: number }) {
   return render(
-    <EquipmentSettingsSection
-      profile={{
-        level: 'intermediate',
-        equipment: equipment as never,
-        injuries: [],
-        weeklySessions: 2,
-      }}
-      updateProfile={updateProfileMock}
-      lang="fr"
-    />,
+    <MemoryRouter>
+      <EquipmentSettingsSection
+        profile={{
+          level: 'intermediate',
+          equipment: equipment as never,
+          injuries: [],
+          weeklySessions: 2,
+          weightKg: opts?.weightKg,
+        }}
+        updateProfile={updateProfileMock}
+        lang="fr"
+        isPremium={opts?.isPremium ?? false}
+      />
+    </MemoryRouter>,
   )
 }
 
@@ -51,5 +56,20 @@ describe('EquipmentSettingsSection', () => {
     renderSection(['pullup_bar'])
     fireEvent.click(screen.getByTestId('profile-equipment-full_gym'))
     expect(updateProfileMock).toHaveBeenCalledWith({ equipment: GYM_PRESET })
+  })
+
+  it('n’affiche pas l’avertissement morpho BW pour les comptes free', () => {
+    renderSection([], { isPremium: false })
+    expect(screen.queryByTestId('bodyweight-morphology-warning')).toBeNull()
+  })
+
+  it('affiche l’avertissement morpho BW pour Premium sans poids', () => {
+    renderSection([], { isPremium: true })
+    expect(screen.getByTestId('bodyweight-morphology-warning')).toBeTruthy()
+  })
+
+  it('masque l’avertissement morpho BW si le poids est renseigné', () => {
+    renderSection([], { isPremium: true, weightKg: 85 })
+    expect(screen.queryByTestId('bodyweight-morphology-warning')).toBeNull()
   })
 })

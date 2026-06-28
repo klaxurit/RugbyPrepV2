@@ -13,6 +13,7 @@
 
 import type { ExerciseLogEntry, CycleWeek, FatigueLevel, TrainingLevel } from '../types/training'
 import { EXERCISE_METRIC_OVERRIDES } from '../data/exerciseMetricOverrides.v1'
+import { estimateBodyweightEntryLoadKg, exerciseSupportsBodyweightEntryLoad } from './bodyweight/estimateBodyweightEntryLoadKg'
 import { getExerciseMetricType } from './ui/exerciseMetrics'
 
 // ─── Types ──────────────────────────────────────────────────
@@ -45,6 +46,10 @@ export interface LoadSuggestionContext {
   prescribedRepsLow?: number
   /** Jours avant le prochain match (G4). null si pas de match prévu. */
   daysToMatch?: number | null
+  /** Poids corps (profil) — charge d'entrée approximative programme BW. */
+  weightKg?: number | null
+  /** Programme poids de corps / home minimal. */
+  isBodyweightProgram?: boolean
 }
 
 // ─── Increment table by exercise family ─────────────────────
@@ -120,7 +125,10 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
     trainingLevel,
     historicalEntries,
     prescribedRepsHigh,
+    prescribedRepsLow,
     daysToMatch,
+    weightKg,
+    isBodyweightProgram,
   } = ctx
   const family = getExerciseFamily(exerciseId)
 
@@ -150,10 +158,38 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
 
   // ── No previous log ──
   if (!lastEntry) {
+    if (isBodyweightProgram) {
+      const entryLoad = estimateBodyweightEntryLoadKg(exerciseId, weightKg)
+      if (entryLoad != null) {
+        const entryReps = prescribedRepsLow ?? prescribedRepsHigh ?? null
+        return {
+          decision: 'no_data',
+          suggestedWeight: entryLoad,
+          suggestedReps: entryReps,
+          justification: `Charge d'entrée estimée (~${entryLoad} kg) à partir de ton poids corps.`,
+          nextTarget: null,
+          confidence: 'high',
+        }
+      }
+      if (
+        exerciseSupportsBodyweightEntryLoad(exerciseId) &&
+        (weightKg == null || weightKg <= 0)
+      ) {
+        return {
+          decision: 'no_data',
+          suggestedWeight: null,
+          suggestedReps: prescribedRepsLow ?? prescribedRepsHigh ?? null,
+          justification:
+            'Renseigne ton poids dans Profil → Morphologie pour obtenir une charge d\'entrée estimée.',
+          nextTarget: null,
+          confidence: 'low',
+        }
+      }
+    }
     return {
       decision: 'no_data',
       suggestedWeight: null,
-      suggestedReps: null,
+      suggestedReps: prescribedRepsLow ?? prescribedRepsHigh ?? null,
       justification: 'Premiere fois — choisis ta charge, on ajustera ensuite.',
       nextTarget: null,
       confidence: 'low',

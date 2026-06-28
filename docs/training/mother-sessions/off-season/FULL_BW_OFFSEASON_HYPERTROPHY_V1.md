@@ -46,7 +46,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 2 - Upper Push / Pull Support
 - Format: `4 rounds`, `90-120s` rest after the pair
 - Exercise A: `Decline Push-Up` `4x8-10`
-- Exercise B: `Inverted Row Feet Elevated` `4x8-10`
+- Exercise B: `Rowing inversé pieds surélevés` `4x8-10`
 - Coaching notes:
   - Main upper volume — backpack on push-up before any angle regression.
   - Upgrade row: strict pull-ups if bar available.

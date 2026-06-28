@@ -36,18 +36,17 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Hinge + Jump
 - Format: `3 rounds`, `2 min 30` rest between rounds
-- Exercise A: `Romanian Deadlift` `3x3-4`
+- Exercise A: `Kickstand RDL` `3x3-4`
 - Exercise B: `Broad Jump` `3 reps`
 - Coaching notes:
   - Hinge modéré — `RIR 2-3`, pas de grind.
   - Saut dans les 15-20 s après A — projection nette, réception stable.
-  - Variante A : nordique strict si pas d'haltères.
-  - Variante B : `Squat Jump` si espace limité pour le broad jump.
+  - Variante A : `Romanian Deadlift` si haltères disponibles.
 
 ### Block 2 - Push / Pull
 - Format: `3 rounds`, `90s` rest after the pair
 - Exercise A: `Decline Push-Up` `3x5`
-- Exercise B: `Inverted Row Feet Elevated` `3x5`
+- Exercise B: `Rowing inversé pieds surélevés` `3x5`
 - Coaching notes:
   - Push lesté (sac) ou tempo lent — force utile sans fatigue excessive.
   - Variante A : développé haltères si banc + haltères.

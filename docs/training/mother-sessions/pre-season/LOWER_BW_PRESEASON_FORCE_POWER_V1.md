@@ -40,11 +40,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Hinge + Unilateral
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Romanian Deadlift` `3x4-5`
+- Exercise A: `Nordic Eccentric` `3x4-5`
 - Exercise B: `Bulgarian Split Squat` `3x5/side`
 - Coaching notes:
-  - Explosive concentric on B — athletic, not grinding.
-  - Fallback A: `Nordic Eccentric` strict.
+  - Nordiques force — variante : `Romanian Deadlift` si haltères disponibles.
 
 ### Block 3 - Finisher
 - Format: `EMOM 8'`

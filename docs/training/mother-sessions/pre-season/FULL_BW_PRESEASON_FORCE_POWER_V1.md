@@ -29,7 +29,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Hinge + Jump
 - Format: `4 rounds`, `3 min` rest between rounds
-- Exercise A: `Romanian Deadlift` `4x3-4`
+- Exercise A: `Nordic Eccentric` `4x3-4`
 - Exercise B: (contrast) `Broad Jump` `4x3`
 - Coaching notes:
   - Heavy hinge — DB/KB or strict nordic fallback.
@@ -44,7 +44,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull + Rotation
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Inverted Row Feet Elevated` `3x5`
+- Exercise A: `Rowing inversé pieds surélevés` `3x5`
 - Exercise B: `Band Rotation Explosive` `3x5/side`
 - Coaching notes:
   - Upgrade A: pull-up if bar available.

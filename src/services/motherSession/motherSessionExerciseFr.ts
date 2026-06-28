@@ -76,6 +76,8 @@ export const MS_EXERCISE_FR_MAP: Record<string, string> = {
   "incline db bench press": "Développé incliné haltères",
   "incline push-up": "Pompes inclinées",
   "inverted row": "Rowing inversé",
+  "inverted row feet elevated": "Rowing inversé pieds surélevés",
+  "inverted row standard": "Rowing inversé (pompe australienne)",
   "jump shrug": "Jump Shrug",
   "kettlebell swing": "Kettlebell Swing",
   "kickstand rdl": "Kickstand RDL",

@@ -416,6 +416,18 @@ export const APP_LABELS = {
     fr: 'Tu restes à la même semaine et la même phase — seuls les exercices s\'adaptent à ton matériel.',
     en: 'You stay on the same week and phase — only the exercises adapt to your equipment.',
   },
+  bodyweight_morpho_warning_title: {
+    fr: 'Poids corps requis pour les charges d\'entrée',
+    en: 'Body weight required for entry loads',
+  },
+  bodyweight_morpho_warning_body: {
+    fr: 'En programme poids de corps, on estime la charge de chaque exercice (pompes, fentes…) à partir de ton poids renseigné. Sans morphologie dans le profil, les champs charge restent vides à la première séance.',
+    en: 'On the bodyweight program, we estimate each exercise load (push-ups, lunges…) from your profile weight. Without morphology in your profile, load fields stay empty on your first session.',
+  },
+  bodyweight_morpho_warning_cta: {
+    fr: 'Renseigner mon poids →',
+    en: 'Add my weight →',
+  },
   profile_section_play: { fr: 'Infos de jeu', en: 'Game info' },
   profile_section_play_sub: { fr: 'Saison détectée et prochain match', en: 'Detected season and next match' },
   profile_section_preferences: { fr: 'Préférences', en: 'Preferences' },

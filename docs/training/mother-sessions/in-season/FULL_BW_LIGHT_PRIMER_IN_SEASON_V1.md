@@ -35,12 +35,12 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Neural Lower
 - Format: `3 rounds`, `2-3 min` rest between rounds
-- Exercise A: `Goblet Squat` `3x2-3`
+- Exercise A: `Bodyweight Squat` `3x2-3`
 - Exercise B: `Countermovement Jump` `3 reps`
 - Coaching notes:
-  - Squat rapide et explosif — variante : `Squat Jump` léger sans charge.
+  - Squat rapide et explosif — intent vitesse, pas de grind.
   - CMJ : hauteur max, réception propre — arrêter si qualité baisse.
-  - Variante A : goblet léger si haltères ; sinon squat sauté contrôlé.
+  - Variante A : `Goblet Squat` léger si haltères disponibles.
 
 ### Block 2 - Upper Primer
 - Format: `3 rounds`, `2-3 min` rest between rounds
@@ -53,7 +53,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull / Rotation
 - Format: `2-3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Inverted Row Feet Elevated` `2-3x5`
+- Exercise A: `Rowing inversé pieds surélevés` `2-3x5`
 - Exercise B: `Band Rotation Explosive` `2-3/side`
 - Coaching notes:
   - Rowing rapide et propre — variante : tractions rapides si barre dispo.

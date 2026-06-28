@@ -49,7 +49,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Strength Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Inverted Row Feet Elevated` `3x5`
+- Exercise A: `Rowing inversé pieds surélevés` `3x5`
 - Exercise B: `Inverted Row Standard` `3x5-6`
 - Coaching notes:
   - Force-grade pulling — strict ROM, no kipping.

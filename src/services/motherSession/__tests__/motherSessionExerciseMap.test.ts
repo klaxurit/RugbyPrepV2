@@ -50,6 +50,11 @@ describe('resolveExerciseId — alias', () => {
       'groin_adductors__copenhagen_plank__foot_elevated',
     )
   })
+  it('résout le nom FR rowing inversé pieds surélevés', () => {
+    expect(resolveExerciseId('Rowing inversé pieds surélevés')).toBe(
+      'pull_horizontal__inverted_row__feet_elevated',
+    )
+  })
   it('resolves single-leg RDL variants', () => {
     expect(resolveExerciseId('Single-Leg RDL')).toBe(resolveExerciseId('Single-Leg Romanian Deadlift'))
   })

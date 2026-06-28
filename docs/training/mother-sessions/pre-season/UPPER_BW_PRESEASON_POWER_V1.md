@@ -36,7 +36,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Explosive Pull
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Inverted Row Feet Elevated` `3x4`
+- Exercise A: `Rowing inversé pieds surélevés` `3x4`
 - Exercise B: `Decline Push-Up` `3x5`
 - Coaching notes:
   - Explosive row — fast pull, controlled descent.

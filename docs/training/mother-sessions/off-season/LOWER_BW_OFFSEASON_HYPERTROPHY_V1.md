@@ -17,7 +17,6 @@
 ## Session Identity
 - Off-season hypertrophy lower — not transition, not pre-season force.
 - Rugby-specific muscle on squat, hinge, unilateral, adductors, and lower-leg tissues.
-- **Calibration** : prescription par défaut = rugbyman club entraîné (niveau builder). Accessible sans être « débutant fitness » — régresser uniquement si douleur, mobilité limitante ou charge club très élevée.
 - **Charge sans matériel** : sac à dos, tempo lent (3-1-3), amplitude complète avant toute régression d'exercice.
 
 ## Warm-Up

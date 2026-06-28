@@ -36,6 +36,9 @@ import { SessionFinishedSheet } from '../components/session/SessionFinishedSheet
 import { computeSessionTonnage } from '../services/session/computeSessionTonnage'
 import { detectSessionPRs } from '../services/session/detectSessionPRs'
 import { buildSessionLoadSuggestions } from '../services/session/buildSessionLoadSuggestions'
+import { isBodyweightProgramTier } from '../services/equipment/resolveEquipmentProgramTier'
+import { bodyweightProgramMissingMorphology } from '../services/bodyweight/bodyweightMorphologyWarning'
+import { BodyweightMorphologyBanner } from '../components/profile/BodyweightMorphologyBanner'
 import { resolveFatigueLevel } from '../services/program/resolveFatigueLevel'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
@@ -428,6 +431,8 @@ export function SessionDetailPage() {
       fatigueLevel,
       trainingLevel: profile.trainingLevel ?? 'performance',
       daysToMatch: surface.planningContext.daysUntilNextMatch ?? null,
+      weightKg: profile.weightKg,
+      isBodyweightProgram: isBodyweightProgramTier(profile.equipment),
     })
   }, [
     isPremium,
@@ -439,11 +444,18 @@ export function SessionDetailPage() {
     acwrZone,
     fatigue,
     profile.trainingLevel,
+    profile.weightKg,
+    profile.equipment,
   ])
 
   const getLoadSuggestion = useCallback(
     (exerciseId: string) => loadSuggestionByExoId.get(exerciseId),
     [loadSuggestionByExoId],
+  )
+
+  const showBodyweightMorphoWarning = useMemo(
+    () => isPremium && bodyweightProgramMissingMorphology(profile),
+    [isPremium, profile],
   )
 
   // ── Autosave par bloc ─────────────────────────────────────────────────────
@@ -838,7 +850,10 @@ export function SessionDetailPage() {
       )}
 
       {phase === 'idle' && activeSlot && (
-        <div className="max-w-md mx-auto pt-5 pb-3">
+        <div className="max-w-md mx-auto pt-5 pb-3 space-y-3 px-[18px]">
+          {showBodyweightMorphoWarning ? (
+            <BodyweightMorphologyBanner lang={lang} compact />
+          ) : null}
           <HeroIdle
             eyebrow={`Séance du jour · ${formatShortDateUpper(today)}`}
             title={pageTitle}

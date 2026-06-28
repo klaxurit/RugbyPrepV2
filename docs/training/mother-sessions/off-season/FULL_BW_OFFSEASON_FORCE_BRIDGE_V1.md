@@ -53,7 +53,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull + Unilateral Support
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Inverted Row Feet Elevated` `3x5`
+- Exercise A: `Rowing inversé pieds surélevés` `3x5`
 - Exercise B: `Bulgarian Split Squat` `3x5/side`
 - Coaching notes:
   - Tirage et squat unilatéral de qualité force — stable, sans grind.

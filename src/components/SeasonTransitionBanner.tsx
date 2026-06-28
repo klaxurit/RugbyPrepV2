@@ -78,7 +78,7 @@ const SCHEDULING_CONFIG: Record<SchedulingTransition['type'], BannerConfig> = {
   },
 }
 
-function schedulingCtaKey(_type: SchedulingTransition['type']): 'scheduling_ok' {
+function schedulingCtaKey(): 'scheduling_ok' {
   return 'scheduling_ok'
 }
 
@@ -227,7 +227,7 @@ export function SchedulingTransitionBanner({
     <TransitionBannerShell
       cfg={cfg}
       message={transition.message}
-      ctaLabel={seasonBannerCtaLabel(schedulingCtaKey(transition.type), lang)}
+      ctaLabel={seasonBannerCtaLabel(schedulingCtaKey(), lang)}
       onAction={onAction}
       onDismiss={onDismiss}
     />

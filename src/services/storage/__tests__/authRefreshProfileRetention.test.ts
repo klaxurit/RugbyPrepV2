@@ -43,11 +43,10 @@ describe('auth refresh profile retention', () => {
       savedAt: '2026-06-18T10:00:00.000Z',
     })
 
-    let lastUserId: string | null = userId
-    lastUserId = syncUserStorage(lastUserId, null)
+    syncUserStorage(userId, null)
     expect(store[profileKey]).toBeDefined()
 
-    lastUserId = syncUserStorage(lastUserId, userId)
+    syncUserStorage(null, userId)
     expect(store[profileKey]).toBeDefined()
     expect(JSON.parse(store[profileKey]).profile.equipment).toEqual([])
   })

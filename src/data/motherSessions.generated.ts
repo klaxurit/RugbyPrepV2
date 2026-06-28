@@ -573,7 +573,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `2 min 30` rest between rounds",
         "exercises": [
           {
-            "name": "Romanian Deadlift",
+            "name": "Kickstand RDL",
             "prescription": "3x3-4"
           },
           {
@@ -584,8 +584,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "coachingNotes": [
           "Hinge modéré — `RIR 2-3`, pas de grind.",
           "Saut dans les 15-20 s après A — projection nette, réception stable.",
-          "Variante A : nordique strict si pas d'haltères.",
-          "Variante B : `Squat Jump` si espace limité pour le broad jump."
+          "Variante A : `Romanian Deadlift` si haltères disponibles."
         ]
       },
       {
@@ -598,7 +597,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x5"
           },
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x5"
           }
         ],
@@ -718,7 +717,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `2-3 min` rest between rounds",
         "exercises": [
           {
-            "name": "Goblet Squat",
+            "name": "Bodyweight Squat",
             "prescription": "3x2-3"
           },
           {
@@ -727,9 +726,9 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Squat rapide et explosif — variante : `Squat Jump` léger sans charge.",
+          "Squat rapide et explosif — intent vitesse, pas de grind.",
           "CMJ : hauteur max, réception propre — arrêter si qualité baisse.",
-          "Variante A : goblet léger si haltères ; sinon squat sauté contrôlé."
+          "Variante A : `Goblet Squat` léger si haltères disponibles."
         ]
       },
       {
@@ -758,7 +757,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`2-3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "2-3x5"
           },
           {
@@ -908,7 +907,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x5"
           },
           {
@@ -1041,7 +1040,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "4x8-10"
           },
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "4x8-10"
           }
         ],
@@ -1124,7 +1123,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "version": "V1",
       "cycle": "off_season",
       "sessionType": "full",
-      "targetLevel": "starter",
+      "targetLevel": "builder",
       "targetPositionGroup": "front_row + back_three (common base)",
       "equipment": "bodyweight",
       "targetDuration": "30-40 min"
@@ -1298,7 +1297,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "version": "V1",
       "cycle": "off_season",
       "sessionType": "full",
-      "targetLevel": "starter",
+      "targetLevel": "builder",
       "targetPositionGroup": "front_row + back_three (common base)",
       "equipment": "bodyweight",
       "targetDuration": "30-40 min"
@@ -1460,7 +1459,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "version": "V1",
       "cycle": "off_season",
       "sessionType": "full",
-      "targetLevel": "starter",
+      "targetLevel": "builder",
       "targetPositionGroup": "front_row + back_three (common base)",
       "equipment": "bodyweight",
       "targetDuration": "45-55 min"
@@ -1715,7 +1714,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `3 min` rest between rounds",
         "exercises": [
           {
-            "name": "Romanian Deadlift",
+            "name": "Nordic Eccentric",
             "prescription": "4x3-4"
           },
           {
@@ -1754,7 +1753,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x5"
           },
           {
@@ -1845,13 +1844,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 work sets`, `2-3 min` rest between sets",
         "exercises": [
           {
-            "name": "Romanian Deadlift",
+            "name": "Nordic Eccentric",
             "prescription": "3x5"
           }
         ],
         "coachingNotes": [
-          "Strict nordic or RDL — heaviest hinge pattern available.",
-          "Fallback: `Nordic Eccentric` strict if no DB/KB."
+          "Hinge force — nordiques stricts ou RDL si haltères disponibles."
         ]
       },
       {
@@ -1864,7 +1862,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x6-8"
           },
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x6-8/side"
           }
         ],
@@ -1971,7 +1969,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `2 min 30` rest between rounds",
         "exercises": [
           {
-            "name": "Banded KB Swing",
+            "name": "Squat Jump",
             "prescription": "3x3"
           },
           {
@@ -1981,8 +1979,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Upgrade A: KB swing if kettlebell available; banded swing if band only.",
-          "Fallback A: fast `Romanian Deadlift` if no KB/band."
+          "Saut explosif — variante A : `Banded KB Swing` si élastique ou KB disponibles."
         ]
       },
       {
@@ -1995,7 +1992,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x3-4"
           },
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x4"
           }
         ],
@@ -5292,7 +5289,6 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "sessionIdentity": [
       "Off-season hypertrophy lower — not transition, not pre-season force.",
       "Rugby-specific muscle on squat, hinge, unilateral, adductors, and lower-leg tissues.",
-      "**Calibration** : prescription par défaut = rugbyman club entraîné (niveau builder). Accessible sans être « débutant fitness » — régresser uniquement si douleur, mobilité limitante ou charge club très élevée.",
       "**Charge sans matériel** : sac à dos, tempo lent (3-1-3), amplitude complète avant toute régression d'exercice."
     ],
     "warmUp": {
@@ -5431,7 +5427,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "version": "V1",
       "cycle": "off_season",
       "sessionType": "lower",
-      "targetLevel": "starter",
+      "targetLevel": "builder",
       "targetPositionGroup": "front_row + back_three (common base)",
       "equipment": "bodyweight",
       "targetDuration": "40-50 min"
@@ -5636,7 +5632,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Romanian Deadlift",
+            "name": "Nordic Eccentric",
             "prescription": "3x4-5"
           },
           {
@@ -5645,8 +5641,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Explosive concentric on B — athletic, not grinding.",
-          "Fallback A: `Nordic Eccentric` strict."
+          "Nordiques force — variante : `Romanian Deadlift` si haltères disponibles."
         ]
       },
       {
@@ -5761,7 +5756,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "Romanian Deadlift",
+            "name": "Nordic Eccentric",
             "prescription": "3x5-6"
           },
           {
@@ -5770,7 +5765,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "RDL strict and posterior-chain dominant — upgrade from BW nordic if DB available.",
+          "Nordiques stricts — excentrique contrôlé, pas de grind.",
+          "Variante A : `Romanian Deadlift` si haltères ou KB disponibles.",
           "Unilateral lift supports hip/groin control, not conditioning.",
           "Fallback A: `Nordic Eccentric` if no DB/KB."
         ]
@@ -9239,7 +9235,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x5"
           },
           {
@@ -9376,7 +9372,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 work sets`, `2-3 min` rest between sets",
         "exercises": [
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "4x4-6"
           }
         ],
@@ -9542,7 +9538,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x8-10"
           },
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x10-12"
           }
         ],
@@ -9595,7 +9591,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "version": "V1",
       "cycle": "off_season",
       "sessionType": "upper",
-      "targetLevel": "starter",
+      "targetLevel": "builder",
       "targetPositionGroup": "front_row + back_three (common base)",
       "equipment": "bodyweight",
       "targetDuration": "40-50 min"
@@ -9667,7 +9663,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x6-8"
           },
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x8-10"
           }
         ],
@@ -9784,7 +9780,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 work sets`, `2-3 min` rest between sets",
         "exercises": [
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "4x4-6"
           }
         ],
@@ -9911,7 +9907,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x6-8"
           },
           {
@@ -10044,7 +10040,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Inverted Row Feet Elevated",
+            "name": "Rowing inversé pieds surélevés",
             "prescription": "3x4"
           },
           {

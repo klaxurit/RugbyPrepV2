@@ -178,6 +178,8 @@
 | 143 | Weighted Calf Raise | main | in/pre | Mollets lestés |
 | 144 | World's Greatest Stretch | main | off | World's Greatest Stretch |
 | 145 | Zercher Carry | main, alt | in/pre | Zercher Carry |
+| 146 | Inverted Row Feet Elevated | main, réhab | off | Rowing inversé pieds surélevés |
+| 147 | Inverted Row Standard | main, réhab | off | Rowing inversé (pompe australienne) |
 
 ---
 

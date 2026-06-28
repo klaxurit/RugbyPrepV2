@@ -55,7 +55,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 3 - Vertical Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
 - Exercise A: `Pike Push-Up Feet Elevated` `3x8-10`
-- Exercise B: `Inverted Row Feet Elevated` `3x10-12`
+- Exercise B: `Rowing inversé pieds surélevés` `3x10-12`
 - Coaching notes:
   - Support volume harder than Block 2 — not a shoulder max test.
   - Cut this block before Block 2 if fatigue accumulates.

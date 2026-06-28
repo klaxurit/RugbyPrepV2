@@ -20,6 +20,7 @@ const EQUIPMENT_LABELS: Record<Equipment, { fr: string; en: string }> = {
   med_ball: { fr: 'Med ball', en: 'Med ball' },
   box: { fr: 'Box', en: 'Box' },
   pullup_bar: { fr: 'Barre de traction', en: 'Pull-up bar' },
+  squat_rack: { fr: 'Cage à squat', en: 'Squat rack' },
   machine: { fr: 'Machine', en: 'Machine' },
   sprint_track: { fr: 'Piste', en: 'Track' },
   ab_wheel: { fr: 'Roue abdominale', en: 'Ab wheel' },

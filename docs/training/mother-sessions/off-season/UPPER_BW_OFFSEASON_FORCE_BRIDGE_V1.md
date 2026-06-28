@@ -46,7 +46,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Force
 - Format: `4 work sets`, `2-3 min` rest between sets
-- Exercise A: `Inverted Row Feet Elevated` `4x4-6`
+- Exercise A: `Rowing inversé pieds surélevés` `4x4-6`
 - Coaching notes:
   - Force-grade reps — strict, full ROM, no kipping.
   - Add backpack on chest or slow tempo before easier row angle.
