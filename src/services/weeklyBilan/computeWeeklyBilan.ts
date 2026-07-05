@@ -50,19 +50,27 @@ export interface WeeklyBilanProgression {
 
 // ── Helpers date ────────────────────────────────────────────────────
 
+/** Retourne l'ISO local YYYY-MM-DD (évite le glissement UTC de toISOString). */
+export function toLocalIsoDate(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 /** Retourne l'ISO du lundi de la semaine contenant `isoDate`. */
 export function startOfIsoWeek(isoDate: string): string {
   const d = new Date(`${isoDate}T12:00:00`)
   const dow = d.getDay() // 0=Dim, 1=Lun, ...
   const daysSinceMonday = dow === 0 ? 6 : dow - 1
   d.setDate(d.getDate() - daysSinceMonday)
-  return d.toISOString().slice(0, 10)
+  return toLocalIsoDate(d)
 }
 
 export function addDaysISO(isoDate: string, n: number): string {
   const d = new Date(`${isoDate}T12:00:00`)
   d.setDate(d.getDate() + n)
-  return d.toISOString().slice(0, 10)
+  return toLocalIsoDate(d)
 }
 
 // ── Core compute ────────────────────────────────────────────────────

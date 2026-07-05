@@ -642,7 +642,7 @@ export function WeekPage() {
                   onMonthChange={(y, m) => setMonthView({ year: y, month: m })}
                   plannedSessionsByDate={monthProgram?.sessionsByDate}
                   phaseMarkers={monthProgram?.phaseMarkers}
-                  phaseLabelByMonday={monthProgram?.phaseLabelByMonday}
+                  phaseBandByMonday={monthProgram?.phaseBandByMonday}
                   lang={lang}
                   monthlyTonnageKg={monthlyTonnageKg}
                   isPremium={weekIsPremium}

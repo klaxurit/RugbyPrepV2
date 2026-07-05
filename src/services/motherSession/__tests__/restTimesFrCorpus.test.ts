@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { MOTHER_SESSIONS } from '../../../data/motherSessions.generated'
 import { getSessionFrOrFallback } from '../motherSessionContentFr'
 import { parseBlockRestSeconds, parseRestSecondsFromText } from '../../ui/blockPresentation'
-import type { Block } from '../../../types/motherSession'
 
 /** Formats FR qui contiennent une indication de repos explicite. */
 function collectFrFormatsWithRestHint(): string[] {
   const formats = new Set<string>()
   for (const session of MOTHER_SESSIONS) {
     const fr = getSessionFrOrFallback(session)
+    if (!fr) continue
     for (const block of fr.blocks) {
       if (block.format && /repos|récup|rest|\d+\s*min|\d+s/i.test(block.format)) {
         formats.add(block.format)
@@ -38,7 +38,8 @@ describe('repos FR — corpus sessions (getSessionFrOrFallback)', () => {
     const session = MOTHER_SESSIONS.find((s) => s.metadata.id === 'FULL_OFFSEASON_HYPERTROPHY_V1')
     expect(session).toBeDefined()
     const fr = getSessionFrOrFallback(session!)
-    const rests = fr.blocks.map((b) =>
+    expect(fr).toBeDefined()
+    const rests = fr!.blocks.map((b) =>
       parseBlockRestSeconds({
         number: 1,
         name: b.name,

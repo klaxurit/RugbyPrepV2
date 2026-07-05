@@ -80,7 +80,7 @@ export function RunSessionCTA({ session, lang, onFinish, onCursorChange }: RunSe
         restTimerAfterSetLine({
           kind: rest.kind,
           tourOneBased: rest.tourOneBased,
-          exerciseName: cursor.exercise.name,
+          exerciseName: cursor.exerciseName,
           lang,
         }),
       )

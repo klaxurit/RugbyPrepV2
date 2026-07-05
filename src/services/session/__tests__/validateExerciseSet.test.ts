@@ -11,6 +11,7 @@ const benchBlock = (): Block => ({
   name: 'Main Upper Push Hypertrophy',
   format: '`4 work sets`, `2 min` rest between sets',
   exercises: [{ name: 'Bench Press', prescription: '4x8-10', exerciseId: 'push_horizontal__bench_press__barbell' }],
+  coachingNotes: [],
 })
 
 describe('buildExerciseValidatePrefill', () => {

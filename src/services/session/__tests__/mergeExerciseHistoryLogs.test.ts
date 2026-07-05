@@ -42,7 +42,7 @@ describe('mergeExerciseHistoryLogs', () => {
       {
         id: 'bl-old',
         dateISO: '2026-05-01T10:00:00.000Z',
-        week: 'W0',
+        week: 'W1',
         sessionType: 'UPPER',
         blockId: 'bench',
         blockName: 'Bench',

@@ -1097,7 +1097,7 @@ export function SessionDetailPage() {
                   getLoadSuggestion={getLoadSuggestion}
                   getPreviousSessionSet={getPreviousSessionSet}
                   historyLogs={historyLogs}
-                  slotSignature={slotSignature}
+                  slotSignature={slotSignature ?? undefined}
                   lang={lang}
                 />
               </div>
@@ -1137,7 +1137,7 @@ export function SessionDetailPage() {
               onLiveSetValidated={handleLiveSetValidated}
               activeEmomBlockNumber={emomBlockNumber}
               historyLogs={historyLogs}
-              slotSignature={slotSignature}
+              slotSignature={slotSignature ?? undefined}
               lang={lang}
             />
           </div>

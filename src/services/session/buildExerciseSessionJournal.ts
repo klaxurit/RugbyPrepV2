@@ -105,17 +105,17 @@ export function buildExerciseSessionJournal(params: {
     const latestTs = setsToShow.map(setTimestamp).sort().reverse()[0]
     if (latestTs) lastSessionDate = formatSessionDate(latestTs, lang)
 
-    lastSessionRows = setsToShow
-      .map((set, i) => {
-        const label = formatSetRow(set, metricType)
-        if (!label) return null
-        return {
+    lastSessionRows = setsToShow.flatMap((set, i) => {
+      const label = formatSetRow(set, metricType)
+      if (!label) return []
+      return [
+        {
           setNumber: i + 1,
           label,
           state: 'history' as const,
-        }
-      })
-      .filter((r): r is JournalSetRow => r != null)
+        },
+      ]
+    })
   }
 
   const currentRows: JournalSetRow[] = []

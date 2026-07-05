@@ -4,7 +4,6 @@ import type { ExerciseSetLog } from '../../../types/training'
 
 const mkSet = (over: Partial<ExerciseSetLog> = {}): ExerciseSetLog => ({
   id: 'id-1',
-  userId: 'u1',
   slotSignature: 'old-slot',
   motherSessionId: 'ms1',
   weekLabel: 'W1',

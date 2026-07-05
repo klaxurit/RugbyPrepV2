@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { CalendarEvent, SessionLog, DayOfWeek } from '../../types/training'
-import type { MonthPhaseMarker, MonthPlannedSession } from '../../services/scheduling/resolveMonthProgramGrid'
+import type { MonthPhaseMarker, MonthPlannedSession, MonthWeekBand } from '../../services/scheduling/resolveMonthProgramGrid'
+import { startOfIsoWeek } from '../../services/weeklyBilan/computeWeeklyBilan'
 import type { Lang } from '../../i18n/appLabels'
 import { Icon, SectionLabel } from '../ui'
 import { ClubAvatar } from '../match/ClubAvatar'
@@ -20,7 +21,7 @@ interface WeekMonthViewProps {
   onMonthChange: (year: number, month: number) => void
   plannedSessionsByDate?: ReadonlyMap<string, readonly MonthPlannedSession[]>
   phaseMarkers?: readonly MonthPhaseMarker[]
-  phaseLabelByMonday?: ReadonlyMap<string, string>
+  phaseBandByMonday?: ReadonlyMap<string, MonthWeekBand>
   lang?: Lang
   monthlyTonnageKg?: number | null
   isPremium?: boolean
@@ -62,7 +63,7 @@ export function WeekMonthView({
   onMonthChange,
   plannedSessionsByDate,
   phaseMarkers = [],
-  phaseLabelByMonday,
+  phaseBandByMonday,
   lang = 'fr',
   monthlyTonnageKg,
   isPremium = false,
@@ -155,18 +156,36 @@ export function WeekMonthView({
     return total
   }, [logs, year, month])
 
-  const cells: Array<number | null> = []
-  for (let i = 0; i < firstDow; i++) cells.push(null)
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d)
-  while (cells.length % 7 !== 0) cells.push(null)
+  const cells = useMemo(() => {
+    const grid: Array<number | null> = []
+    for (let i = 0; i < firstDow; i++) grid.push(null)
+    for (let d = 1; d <= daysInMonth; d++) grid.push(d)
+    while (grid.length % 7 !== 0) grid.push(null)
+    return grid
+  }, [firstDow, daysInMonth])
 
   const todayDayNum =
     todayDate.getFullYear() === year && todayDate.getMonth() === month
       ? todayDate.getDate()
       : null
 
+  const calendarRows = useMemo(() => {
+    const rows: Array<Array<number | null>> = []
+    for (let i = 0; i < cells.length; i += 7) {
+      rows.push(cells.slice(i, i + 7))
+    }
+    return rows
+  }, [cells])
+
   const monthFirst = ymd(year, month, 1)
   const monthLast = ymd(year, month, daysInMonth)
+
+  const resolveWeekBand = (row: Array<number | null>): MonthWeekBand | null => {
+    const firstInMonth = row.find((d) => d !== null)
+    if (firstInMonth == null) return null
+    const mondayIso = startOfIsoWeek(ymd(year, month, firstInMonth))
+    return phaseBandByMonday?.get(mondayIso) ?? null
+  }
 
   const upcomingMatches = useMemo(() => {
     return events
@@ -272,100 +291,106 @@ export function WeekMonthView({
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-1 -mt-3">
-        {cells.map((d, i) => {
-          if (d === null) return <div key={i} className="min-h-[4.25rem]" />
-
-          const iso = ymd(year, month, d)
-          const types = cellTypes.get(d)
-          const isToday = d === todayDayNum
-          const hasMatch = types?.has('match') ?? false
-          const hasGym = types?.has('gym') ?? false
-          const hasRecovery = types?.has('recovery') ?? false
-          const hasPlannedPending = types?.has('planned') ?? false
-          const hasPlannedDone = types?.has('planned_done') ?? false
-          const hasPlannedMissed = types?.has('planned_missed') ?? false
-          const hasPlanned = hasPlannedPending || hasPlannedDone || hasPlannedMissed
-          const hasClub = types?.has('club') ?? false
-          const planned = plannedSessionsByDate?.get(iso) ?? []
-          const mondayIso = startOfWeekMondayIso(iso)
-          const weekPhase = phaseLabelByMonday?.get(mondayIso)
-          const isMonday = dayOfWeekFromIso(iso) === 1
-
+      <div className="space-y-2">
+        {calendarRows.map((row, rowIdx) => {
+          const band = resolveWeekBand(row)
           return (
-            <button
-              key={i}
-              type="button"
-              onClick={() => handleCellClick(d)}
-              aria-label={`${d} ${monthNames[month]}${hasMatch ? ' — match' : ''}${planned.length ? ` — ${planned.map((p) => p.title).join(', ')}` : ''}`}
-              className="relative flex min-h-[4.25rem] flex-col items-stretch rounded-[10px] px-0.5 py-1 transition-transform hover:scale-[1.02] active:scale-95 rf-focus-ring"
-              style={{
-                background: isToday
-                  ? 'var(--color-accent)'
-                  : hasMatch
-                    ? 'var(--color-text-primary)'
-                    : hasGym || hasPlannedDone
-                      ? 'color-mix(in srgb, var(--color-ok-strong) 18%, transparent)'
-                      : hasPlannedMissed
-                        ? 'color-mix(in srgb, var(--color-warn-strong) 12%, transparent)'
-                        : hasPlannedPending
-                          ? 'color-mix(in srgb, var(--color-accent) 5%, transparent)'
-                          : 'transparent',
-                color: isToday || hasMatch ? 'var(--color-bg-app)' : 'var(--color-text-primary)',
-                border: hasPlannedMissed
-                  ? '1px dashed color-mix(in srgb, var(--color-warn-strong) 55%, transparent)'
-                  : hasPlannedPending && !hasGym && !hasMatch
-                    ? '1px dashed color-mix(in srgb, var(--color-accent) 45%, transparent)'
-                    : hasPlannedDone && !hasMatch
-                      ? '1px solid color-mix(in srgb, var(--color-ok-strong) 35%, transparent)'
-                      : '1px solid transparent',
-              }}
-            >
-              <div className="flex items-start justify-between px-1">
-                <span
-                  className="text-[13px] font-extrabold tabular-nums leading-none"
-                  style={{ letterSpacing: '-0.3px' }}
-                >
-                  {d}
-                </span>
-                <div className="flex gap-0.5">
-                  {hasMatch && (
-                    <span className="text-[7px] font-extrabold tracking-wider opacity-90">M</span>
-                  )}
-                  {hasClub && !hasMatch && (
-                    <span className="text-[7px] font-extrabold tracking-wider text-fg-muted">C</span>
-                  )}
-                </div>
-              </div>
-
-              {isMonday && weekPhase && !hasMatch && (
-                <span
-                  className="mx-0.5 mt-0.5 truncate text-[6px] font-bold uppercase tracking-[0.06em] text-brand-muted"
-                  title={weekPhase}
-                >
-                  {weekPhase}
-                </span>
-              )}
-
-              <div className="mt-auto flex flex-col gap-0.5 px-0.5 pb-0.5">
-                {planned.slice(0, 2).map((session, idx) => (
-                  <SessionChip
-                    key={`${session.shortLabel}-${idx}`}
-                    session={session}
-                    inverted={isToday || hasMatch}
-                    lang={lang}
-                  />
-                ))}
-                {planned.length > 2 && (
-                  <span className="text-[6px] font-bold opacity-60">+{planned.length - 2}</span>
-                )}
-                {!planned.length && hasRecovery && (
-                  <span className="text-[7px] font-bold opacity-50">
-                    {lang === 'fr' ? 'Récup' : 'Rec'}
+            <div key={rowIdx}>
+              {band && (
+                <div className="mb-1 flex items-baseline justify-between gap-2 rounded-lg bg-paper-deep/60 px-2.5 py-1.5">
+                  <span className="min-w-0 text-[11px] font-bold leading-snug text-brand-tint">
+                    {band.fullLabel}
                   </span>
-                )}
+                  <span className="shrink-0 text-[9px] font-semibold tabular-nums text-fg-muted">
+                    {formatShortDay(band.mondayISO, lang)} – {formatShortDay(band.sundayISO, lang)}
+                  </span>
+                </div>
+              )}
+              <div className="grid grid-cols-7 gap-1">
+                {row.map((d, i) => {
+                  if (d === null) return <div key={i} className="min-h-[4.25rem]" />
+
+                  const iso = ymd(year, month, d)
+                  const types = cellTypes.get(d)
+                  const isToday = d === todayDayNum
+                  const hasMatch = types?.has('match') ?? false
+                  const hasGym = types?.has('gym') ?? false
+                  const hasRecovery = types?.has('recovery') ?? false
+                  const hasPlannedPending = types?.has('planned') ?? false
+                  const hasPlannedDone = types?.has('planned_done') ?? false
+                  const hasPlannedMissed = types?.has('planned_missed') ?? false
+                  const hasClub = types?.has('club') ?? false
+                  const planned = plannedSessionsByDate?.get(iso) ?? []
+
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => handleCellClick(d)}
+                      aria-label={`${d} ${monthNames[month]}${hasMatch ? ' — match' : ''}${planned.length ? ` — ${planned.map((p) => p.title).join(', ')}` : ''}`}
+                      className="relative flex min-h-[4.25rem] flex-col items-stretch rounded-[10px] px-0.5 py-1 transition-transform hover:scale-[1.02] active:scale-95 rf-focus-ring"
+                      style={{
+                        background: isToday
+                          ? 'var(--color-accent)'
+                          : hasMatch
+                            ? 'var(--color-text-primary)'
+                            : hasGym || hasPlannedDone
+                              ? 'color-mix(in srgb, var(--color-ok-strong) 18%, transparent)'
+                              : hasPlannedMissed
+                                ? 'color-mix(in srgb, var(--color-warn-strong) 12%, transparent)'
+                                : hasPlannedPending
+                                  ? 'color-mix(in srgb, var(--color-accent) 5%, transparent)'
+                                  : 'transparent',
+                        color: isToday || hasMatch ? 'var(--color-bg-app)' : 'var(--color-text-primary)',
+                        border: hasPlannedMissed
+                          ? '1px dashed color-mix(in srgb, var(--color-warn-strong) 55%, transparent)'
+                          : hasPlannedPending && !hasGym && !hasMatch
+                            ? '1px dashed color-mix(in srgb, var(--color-accent) 45%, transparent)'
+                            : hasPlannedDone && !hasMatch
+                              ? '1px solid color-mix(in srgb, var(--color-ok-strong) 35%, transparent)'
+                              : '1px solid transparent',
+                      }}
+                    >
+                      <div className="flex items-start justify-between px-1">
+                        <span
+                          className="text-[13px] font-extrabold tabular-nums leading-none"
+                          style={{ letterSpacing: '-0.3px' }}
+                        >
+                          {d}
+                        </span>
+                        <div className="flex gap-0.5">
+                          {hasMatch && (
+                            <span className="text-[7px] font-extrabold tracking-wider opacity-90">M</span>
+                          )}
+                          {hasClub && !hasMatch && (
+                            <span className="text-[7px] font-extrabold tracking-wider text-fg-muted">C</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-auto flex flex-col gap-0.5 px-0.5 pb-0.5">
+                        {planned.slice(0, 2).map((session, idx) => (
+                          <SessionChip
+                            key={`${session.shortLabel}-${idx}`}
+                            session={session}
+                            inverted={isToday || hasMatch}
+                            lang={lang}
+                          />
+                        ))}
+                        {planned.length > 2 && (
+                          <span className="text-[6px] font-bold opacity-60">+{planned.length - 2}</span>
+                        )}
+                        {!planned.length && hasRecovery && (
+                          <span className="text-[7px] font-bold opacity-50">
+                            {lang === 'fr' ? 'Récup' : 'Rec'}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
-            </button>
+            </div>
           )
         })}
       </div>
@@ -484,14 +509,6 @@ function SessionChip({
       {session.shortLabel}
     </span>
   )
-}
-
-function startOfWeekMondayIso(iso: string): string {
-  const d = new Date(`${iso}T12:00:00`)
-  const dow = d.getDay()
-  const daysSinceMonday = dow === 0 ? 6 : dow - 1
-  d.setDate(d.getDate() - daysSinceMonday)
-  return d.toISOString().slice(0, 10)
 }
 
 function formatShortDay(iso: string, lang: Lang): string {

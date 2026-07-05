@@ -19,7 +19,75 @@ import { mergeDatedSessionCompletionForWeek } from './mergeDatedSessionCompletio
 import type { DatedSession } from '../../types/scheduling'
 import type { MotherSessionType } from '../../types/motherSession'
 import { startOfIsoWeek, addDaysISO } from '../weeklyBilan/computeWeeklyBilan'
+import type { UserProfile } from '../../types/training'
 import { formatTitleFromMotherSessionId } from '../../components/motherSession/formatMotherSessionTitle'
+
+/** Ancres figées depuis la semaine réelle + début implicite si override manuel. */
+function buildMonthProjectionBase(
+  params: ResolveMonthProgramGridParams,
+): { baseParams: ResolveMonthProgramGridParams; currentMonday: string } {
+  const anchorCtx = safeDetectContext(params, params.today)
+  const anchors = { ...(params.profile.planningAnchors ?? {}) }
+  const currentMonday = startOfIsoWeek(params.today)
+
+  if (
+    anchorCtx?.cycle === 'off_season' &&
+    anchorCtx.weekNumber != null &&
+    anchorCtx.weekNumber > 0
+  ) {
+    // Aligner les semaines futures sur la semaine réelle (ex. S7 → S8, S9…),
+    // y compris quand un override manuel diverge du calendrier seasonEndedAt.
+    anchors.offSeasonStartAt = addDaysISO(currentMonday, -(anchorCtx.weekNumber - 1) * 7)
+    delete anchors.manualOffSeasonWeekOverride
+  } else if (anchorCtx?.offSeasonStartAt) {
+    anchors.offSeasonStartAt = anchorCtx.offSeasonStartAt
+  }
+
+  const baseProfile: UserProfile = {
+    ...params.profile,
+    planningAnchors: { ...anchors },
+  }
+
+  return {
+    baseParams: { ...params, profile: baseProfile },
+    currentMonday,
+  }
+}
+
+function paramsForProjectedWeek(
+  baseParams: ResolveMonthProgramGridParams,
+  weekMonday: string,
+): ResolveMonthProgramGridParams {
+  const anchors = { ...(baseParams.profile.planningAnchors ?? {}) }
+  delete anchors.manualOffSeasonWeekOverride
+  delete anchors.manualPreSeasonWeekOverride
+  return {
+    ...baseParams,
+    profile: { ...baseParams.profile, planningAnchors: anchors },
+    today: weekMonday,
+  }
+}
+
+function safeDetectContext(
+  params: ResolveMonthProgramGridParams,
+  today: string,
+): AnnualPlanningContext | null {
+  try {
+    const { inputs } = buildAthletePlanningInputs({
+      profile: params.profile,
+      events: params.events,
+      logs: params.logs,
+      today,
+      fatigue: params.fatigue,
+      acwrZone: params.acwrZone,
+      readinessScore: params.readinessScore,
+      jumpTrend: params.jumpTrend,
+    })
+    return detectAnnualPlanningContext(inputs)
+  } catch {
+    return null
+  }
+}
 
 export type MonthSessionStatus = 'completed' | 'missed' | 'pending' | 'skipped'
 
@@ -43,11 +111,19 @@ export interface MonthPhaseMarker {
   summary: string
 }
 
+export interface MonthWeekBand {
+  mondayISO: string
+  sundayISO: string
+  /** Ex. « Inter-saison · Hypertrophie · semaine 7 » */
+  fullLabel: string
+}
+
 export interface MonthProgramGrid {
   sessionsByDate: Map<string, MonthPlannedSession[]>
   phaseMarkers: MonthPhaseMarker[]
-  /** Label court de phase par lundi ISO (lundi visible dans le mois). */
+  /** @deprecated préférer phaseBandByMonday */
   phaseLabelByMonday: Map<string, string>
+  phaseBandByMonday: Map<string, MonthWeekBand>
 }
 
 export type ResolveMonthProgramGridParams = ResolveWeeklyProgramSurfaceParams & {
@@ -94,25 +170,35 @@ function isoDateFromWeekMonday(weekMonday: string, dayOfWeek: number): string {
   return addDaysISO(weekMonday, offset)
 }
 
-function safeDetectContext(
-  params: ResolveMonthProgramGridParams,
-  today: string,
-): AnnualPlanningContext | null {
-  try {
-    const { inputs } = buildAthletePlanningInputs({
-      profile: params.profile,
-      events: params.events,
-      logs: params.logs,
-      today,
-      fatigue: params.fatigue,
-      acwrZone: params.acwrZone,
-      readinessScore: params.readinessScore,
-      jumpTrend: params.jumpTrend,
-    })
-    return detectAnnualPlanningContext(inputs)
-  } catch {
-    return null
+function planningWeekBandLabel(ctx: AnnualPlanningContext, lang: Lang): string {
+  if (ctx.cycle === 'off_season' && ctx.offSeasonPhase != null && ctx.weekNumber != null) {
+    const phase = offSeasonPhaseLabel(ctx.offSeasonPhase, lang)
+    return lang === 'fr'
+      ? `Inter-saison · ${phase} · semaine ${ctx.weekNumber}`
+      : `Off-season · ${phase} · week ${ctx.weekNumber}`
   }
+  if (ctx.cycle === 'pre_season' && ctx.preSeasonPhase != null && ctx.weekNumber != null) {
+    const phase = preSeasonPhaseLabel(ctx.preSeasonPhase, lang)
+    return lang === 'fr'
+      ? `Pré-saison · ${phase} · semaine ${ctx.weekNumber}`
+      : `Pre-season · ${phase} · week ${ctx.weekNumber}`
+  }
+  if (ctx.cycle === 'in_season' && ctx.weekNumber != null) {
+    const base = ctx.isDeloadWeek
+      ? lang === 'fr'
+        ? 'Décharge'
+        : 'Deload'
+      : lang === 'fr'
+        ? 'En saison'
+        : 'In season'
+    return lang === 'fr'
+      ? `${base} · semaine ${ctx.weekNumber}`
+      : `${base} · week ${ctx.weekNumber}`
+  }
+  if (ctx.cycle === 'playoffs') {
+    return lang === 'fr' ? 'Phase finale' : 'Playoffs'
+  }
+  return cycleLabel(ctx.cycle, lang)
 }
 
 function planningWeekRowLabel(ctx: AnnualPlanningContext, lang: Lang): string {
@@ -162,15 +248,15 @@ function resolveMonthSessionStatus(
 
 function detectPhaseMarkers(
   weekMondays: string[],
-  params: ResolveMonthProgramGridParams,
+  baseParams: ResolveMonthProgramGridParams,
   lang: Lang,
 ): MonthPhaseMarker[] {
   const markers: MonthPhaseMarker[] = []
   for (let i = 0; i < weekMondays.length - 1; i++) {
     const fromMonday = weekMondays[i]
     const toMonday = weekMondays[i + 1]
-    const current = safeDetectContext(params, fromMonday)
-    const next = safeDetectContext(params, toMonday)
+    const current = safeDetectContext(paramsForProjectedWeek(baseParams, fromMonday), fromMonday)
+    const next = safeDetectContext(paramsForProjectedWeek(baseParams, toMonday), toMonday)
     if (!current || !next) continue
 
     const fromLabel = planningWeekRowLabel(current, lang)
@@ -249,9 +335,11 @@ export function resolveMonthProgramGrid(params: ResolveMonthProgramGridParams): 
   const { year, month } = params
   const { first, last } = monthBounds(year, month)
   const weekMondays = listIsoWeekMondaysInMonth(year, month)
+  const { baseParams } = buildMonthProjectionBase(params)
 
   const sessionsByDate = new Map<string, MonthPlannedSession[]>()
   const phaseLabelByMonday = new Map<string, string>()
+  const phaseBandByMonday = new Map<string, MonthWeekBand>()
 
   const gymLogDates = new Set<string>()
   for (const log of params.logs) {
@@ -260,22 +348,28 @@ export function resolveMonthProgramGrid(params: ResolveMonthProgramGridParams): 
   }
 
   for (const weekMonday of weekMondays) {
-    const ctx = safeDetectContext(params, weekMonday)
+    const weekParams = paramsForProjectedWeek(baseParams, weekMonday)
+    const ctx = safeDetectContext(weekParams, weekMonday)
     if (ctx) {
       phaseLabelByMonday.set(weekMonday, planningWeekRowLabel(ctx, lang))
+      phaseBandByMonday.set(weekMonday, {
+        mondayISO: weekMonday,
+        sundayISO: addDaysISO(weekMonday, 6),
+        fullLabel: planningWeekBandLabel(ctx, lang),
+      })
     }
 
-    const surface = resolveWeeklyProgramSurface({ ...params, today: weekMonday })
+    const surface = resolveWeeklyProgramSurface(weekParams)
     const slots = surface.motherSession?.sessions ?? []
     if (slots.length === 0) continue
 
     const presentation = resolveWeekPresentation({
       motherSessions: slots,
       schedulingMode: surface.schedulingMode,
-      events: params.events,
+      events: weekParams.events,
       today: weekMonday,
-      clubSchedule: params.profile.clubSchedule,
-      scSchedule: params.profile.scSchedule,
+      clubSchedule: weekParams.profile.clubSchedule,
+      scSchedule: weekParams.profile.scSchedule,
       corrections: [],
     })
 
@@ -314,7 +408,8 @@ export function resolveMonthProgramGrid(params: ResolveMonthProgramGridParams): 
 
   return {
     sessionsByDate,
-    phaseMarkers: detectPhaseMarkers(weekMondays, params, lang),
+    phaseMarkers: detectPhaseMarkers(weekMondays, baseParams, lang),
     phaseLabelByMonday,
+    phaseBandByMonday,
   }
 }

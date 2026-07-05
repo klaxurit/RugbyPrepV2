@@ -92,7 +92,7 @@ describe('resolveMonthProgramGrid', () => {
     }
     const grid = resolveMonthProgramGrid({
       profile,
-      events: [{ date: '2026-09-15', type: 'match' as const }],
+      events: [{ id: 'match-sep', date: '2026-09-15', type: 'match' as const }],
       logs: [],
       today: '2026-06-15',
       fatigue: 'OK',
@@ -110,5 +110,51 @@ describe('resolveMonthProgramGrid', () => {
     if (hasForcePont) {
       expect(hasHypertrophyS9).toBe(false)
     }
+  })
+
+  it('juillet 2026 : semaines distinctes S7 S8 S9 (pas S7 partout)', () => {
+    const profile: UserProfile = {
+      ...baseProfile,
+      planningAnchors: {
+        seasonEndedAt: '2026-04-06',
+        seasonEndedSource: 'manual',
+        manualOffSeasonWeekOverride: 7,
+      },
+    }
+    const grid = resolveMonthProgramGrid({
+      profile,
+      events: [],
+      logs: [],
+      today: '2026-07-05',
+      fatigue: 'OK',
+      week: 'W1',
+      lastNonDeloadWeek: 'W1',
+      year: 2026,
+      month: 6,
+      lang: 'fr',
+    })
+
+    const julyMondays = listIsoWeekMondaysInMonth(2026, 6).filter((m) => m.startsWith('2026-07'))
+    expect(julyMondays.length).toBeGreaterThanOrEqual(3)
+
+    const labelsByMonday = Object.fromEntries(
+      julyMondays.map((m) => [m, grid.phaseLabelByMonday.get(m)]),
+    )
+
+    const weekNumbers = julyMondays
+      .map((monday) => grid.phaseLabelByMonday.get(monday))
+      .filter((l): l is string => l != null)
+      .map((l) => Number(l.match(/S(\d+)/)?.[1]))
+
+    expect(weekNumbers).toEqual([8, 9, 10, 10])
+    expect(new Set(weekNumbers).size).toBeGreaterThan(1)
+
+    for (const monday of julyMondays) {
+      const band = grid.phaseBandByMonday.get(monday)
+      expect(band?.fullLabel).toMatch(/semaine \d+/)
+    }
+
+    expect(labelsByMonday['2026-07-06']).toBe('Hypertrophie S8')
+    expect(labelsByMonday['2026-07-13']).toBe('Force-Pont S9')
   })
 })
