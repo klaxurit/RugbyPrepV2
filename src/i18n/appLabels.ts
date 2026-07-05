@@ -561,7 +561,7 @@ export const APP_LABELS = {
   profile_notif_denied: { fr: 'Bloqués — autorise les notifs dans les réglages', en: 'Blocked — enable notifications in settings' },
   profile_notif_unsupported: { fr: 'Non supporté par ce navigateur', en: 'Not supported by this browser' },
   profile_notif_no_vapid: { fr: 'Configuration manquante (VAPID)', en: 'Missing configuration (VAPID)' },
-  profile_notif_idle: { fr: 'Reçois un push chaque jour de séance', en: 'Get a push each training day' },
+  profile_notif_idle: { fr: 'Reçois un rappel chaque jour de séance', en: 'Get a reminder each training day' },
   profile_notif_rest_hint: {
     fr: 'Les alertes de fin de repos utilisent la même permission système.',
     en: 'Rest-timer alerts use the same system permission.',
@@ -583,8 +583,8 @@ export const APP_LABELS = {
     en: 'If you leave the app during rest, we notify you when time is up. Handy between sets.',
   },
   notif_prompt_onboarding_bullet_training: {
-    fr: 'Rappel push le matin de tes jours de muscu',
-    en: 'Push reminder on your gym days',
+    fr: 'Rappel le matin de tes jours de muscu',
+    en: 'Reminder on your gym days',
   },
   notif_prompt_onboarding_bullet_rest: {
     fr: 'Alerte locale à la fin du temps de repos',
