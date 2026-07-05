@@ -160,6 +160,21 @@ describe('seasonTransitionState persistence', () => {
     expect(profile.planningAnchors?.seasonEndedSource).toBe('manual')
   })
 
+  it('strips invalid returnToTeamTrainingAt from planning anchors', () => {
+    const profile = rowToProfile(makeRow({
+      planning_anchors: { returnToTeamTrainingAt: '0002-08-10', seasonEndedAt: '2026-04-06' },
+    }))
+    expect(profile.planningAnchors?.returnToTeamTrainingAt).toBeUndefined()
+    expect(profile.planningAnchors?.seasonEndedAt).toBe('2026-04-06')
+  })
+
+  it('normalizes admin datetime seasonEndedAt to date-only', () => {
+    const profile = rowToProfile(makeRow({
+      planning_anchors: { seasonEndedAt: '2026-04-06T12:00:00.000Z' },
+    }))
+    expect(profile.planningAnchors?.seasonEndedAt).toBe('2026-04-06')
+  })
+
   it('tolerates missing season_transition_state (legacy compat)', () => {
     const profile = rowToProfile(makeRow({ season_transition_state: null }))
     expect(profile.seasonTransitionState).toBeUndefined()

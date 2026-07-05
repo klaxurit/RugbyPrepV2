@@ -504,6 +504,20 @@ describe('detectAnnualPlanningContext', () => {
     expect(r.planningTrace.rulesApplied).toContain('rule:pre_season_from_return_date')
   })
 
+  it('returnToTeamTrainingAt invalid date does not crash planning', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match('2025-09-20'), match('2026-03-29')],
+      today: '2026-05-15',
+      planningAnchors: {
+        seasonEndedAt: '2026-04-06',
+        returnToTeamTrainingAt: '0002-08-10',
+      },
+    })
+    expect(r.cycle).toBe('off_season')
+    expect(r.planningTrace.warnings.some((w) => w.includes('returnToTeamTrainingAt'))).toBe(true)
+  })
+
   it('returnToTeamTrainingAt stays off-season if today is before pre-season window', () => {
     // Season ended April 6, return to club August 3, today is May 15 (too early for pre-season)
     const r = detectAnnualPlanningContext({

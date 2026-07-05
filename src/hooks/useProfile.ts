@@ -18,6 +18,7 @@ import { applyHealthConsentLifecycle } from '../services/privacy/healthConsentLi
 import { mergeProfileFromCache, applyServerAuthoritativeProfileFields } from '../services/profile/mergeProfileFromCache'
 import { resolveAvatarUrlFromAuthMetadata, resolveProfileAvatarUrl } from '../services/profile/resolveAvatarUrl'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
+import { sanitizePlanningIsoDate } from '../services/dates/localIsoDate'
 
 const STORAGE_BASE = 'rugbyprep.profile'
 
@@ -174,6 +175,7 @@ export const normalizeLegacyProfile = (profile: UserProfile): UserProfile => {
     ageBand,
     parentalConsentHealthData:
       profile.parentalConsentHealthData ?? (ageBand === 'adult' ? false : undefined),
+    planningAnchors: normalizePlanningAnchors(profile.planningAnchors),
   }
 }
 
@@ -362,18 +364,35 @@ export const shouldApplyRemoteProfile = (localEditsSinceLoad: number): boolean =
 export const isProfileRowMissingError = (error: { code?: string; message?: string } | null): boolean =>
   error?.code === 'PGRST116'
 
+const PLANNING_ANCHOR_DATE_KEYS = [
+  'seasonEndedAt',
+  'offSeasonStartAt',
+  'returnToTeamTrainingAt',
+  'firstMatchDateOverride',
+] as const satisfies readonly (keyof NonNullable<UserProfile['planningAnchors']>)[]
+
 /**
  * Ancres legacy sans `seasonEndedSource` : traiter comme décision manuelle pour
  * éviter qu'un match FFR ne réinitialise l'inter-saison.
+ * Nettoie aussi les dates invalides (ex. saisie clavier `0002-08-10`).
  */
 export function normalizePlanningAnchors(
   raw: UserProfile['planningAnchors'] | null | undefined,
 ): UserProfile['planningAnchors'] {
   if (!raw) return undefined
-  if (raw.seasonEndedAt && !raw.seasonEndedSource) {
-    return { ...raw, seasonEndedSource: 'manual' }
+  const out: NonNullable<UserProfile['planningAnchors']> = { ...raw }
+  for (const key of PLANNING_ANCHOR_DATE_KEYS) {
+    const value = out[key]
+    if (typeof value === 'string') {
+      const sanitized = sanitizePlanningIsoDate(value)
+      if (sanitized) out[key] = sanitized
+      else delete out[key]
+    }
   }
-  return raw
+  if (out.seasonEndedAt && !out.seasonEndedSource) {
+    out.seasonEndedSource = 'manual'
+  }
+  return Object.keys(out).length > 0 ? out : undefined
 }
 
 function applyPendingProfilePatches(
@@ -577,14 +596,18 @@ export const useProfileSource = () => {
           patch: stampedPatch,
           source: options?.source ?? 'profile',
         })
-        saveLocalProfile(next, userId)
+        const normalized: UserProfile = {
+          ...next,
+          planningAnchors: normalizePlanningAnchors(next.planningAnchors),
+        }
+        saveLocalProfile(normalized, userId)
         if (isHydratedRef.current) {
           localEditsSinceLoadRef.current += 1
-          void persistProfile(next, userId)
+          void persistProfile(normalized, userId)
         } else {
           preHydrationPatchesRef.current.push(stampedPatch)
         }
-        return next
+        return normalized
       })
     },
     [userId, persistProfile, saveLocalProfile]

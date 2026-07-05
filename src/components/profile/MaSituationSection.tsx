@@ -10,6 +10,7 @@ import {
   treveGapWeeks,
 } from './profileSituationUi'
 import { tr, type Lang } from '../../i18n/appLabels'
+import { isValidPlanningIsoDate, parseLocalDateOnly } from '../../services/dates/localIsoDate'
 
 /**
  * Season transition ownership (M2):
@@ -27,6 +28,15 @@ export type MaSituationData = {
   detectedCycle: AnnualCycle
   showSkipOffSeasonRecovery: boolean
   planningContext: AnnualPlanningContext | null
+}
+
+function formatReturnDateLabel(iso: string, lang: Lang): string | null {
+  const d = parseLocalDateOnly(iso)
+  if (!d) return null
+  return d.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {
+    day: 'numeric',
+    month: 'long',
+  })
 }
 
 type MaSituationSectionProps = {
@@ -264,10 +274,7 @@ function OffSeasonSituationActions({
         >
           <span className="text-xs font-bold text-brand-tint">
             Reprise le{' '}
-            {new Date(profile.planningAnchors.returnToTeamTrainingAt).toLocaleDateString('fr-FR', {
-              day: 'numeric',
-              month: 'long',
-            })}
+            {formatReturnDateLabel(profile.planningAnchors.returnToTeamTrainingAt, lang) ?? '—'}
           </span>
           <button
             type="button"
@@ -290,11 +297,12 @@ function OffSeasonSituationActions({
             data-testid="situation-return-date"
             min={today}
             onChange={(e) => {
-              if (!e.target.value) return
+              const value = e.target.value
+              if (!value || !isValidPlanningIsoDate(value)) return
               updateProfile({
                 planningAnchors: {
                   ...profile.planningAnchors,
-                  returnToTeamTrainingAt: e.target.value,
+                  returnToTeamTrainingAt: value,
                 },
                 seasonMode: 'pre_season',
               })
@@ -338,10 +346,7 @@ function PreSeasonSituationActions({
         >
           <span className="text-xs font-bold text-fg-soft">
             Reprise prévue le{' '}
-            {new Date(profile.planningAnchors.returnToTeamTrainingAt).toLocaleDateString('fr-FR', {
-              day: 'numeric',
-              month: 'long',
-            })}
+            {formatReturnDateLabel(profile.planningAnchors.returnToTeamTrainingAt, lang) ?? '—'}
           </span>
           <button
             type="button"

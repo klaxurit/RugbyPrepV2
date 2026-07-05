@@ -8,6 +8,7 @@ import type {
   PreSeasonPhase,
 } from '../../types/annualPlanning'
 import type { CalendarEvent } from '../../types/training'
+import { parseLocalDateOnly } from '../dates/localIsoDate'
 
 type MatchInput = Pick<CalendarEvent, 'date' | 'type' | 'match_kind'>
 type TraceMode = AnnualPlanningContext['planningTrace']['resolutionMode']
@@ -89,18 +90,6 @@ class TraceAcc {
       warnings: [...this.warnings],
     }
   }
-}
-
-function parseLocalDateOnly(iso: string): Date | null {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso.trim())
-  if (!m) return null
-  const y = Number(m[1])
-  const mo = Number(m[2])
-  const d = Number(m[3])
-  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null
-  const dt = new Date(y, mo - 1, d, 12, 0, 0, 0)
-  if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return null
-  return dt
 }
 
 function requireIsoDate(label: string, value: string | undefined): Date {
@@ -536,8 +525,13 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     acc.rule('anchor:season_ended_at_validated')
   }
   if (anchors.returnToTeamTrainingAt) {
-    requireIsoDate('returnToTeamTrainingAt', anchors.returnToTeamTrainingAt)
-    acc.rule('anchor:return_to_team_training_validated')
+    if (parseLocalDateOnly(anchors.returnToTeamTrainingAt)) {
+      acc.rule('anchor:return_to_team_training_validated')
+    } else {
+      acc.warn(
+        `returnToTeamTrainingAt ignoré (invalide) : ${JSON.stringify(anchors.returnToTeamTrainingAt)}`,
+      )
+    }
   }
 
   const matchDates = collectMatchDates(inputs.events)
