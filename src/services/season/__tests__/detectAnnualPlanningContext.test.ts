@@ -451,6 +451,39 @@ describe('detectAnnualPlanningContext', () => {
     expect(r.cycle).toBe('off_season')
   })
 
+  it('returnToTeamTrainingAt en juillet avec override S7 : reste inter-saison', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [],
+      today: '2026-07-05',
+      planningAnchors: {
+        manualCycleOverride: 'off_season',
+        seasonEndedAt: '2026-04-06',
+        returnToTeamTrainingAt: '2026-09-01',
+        manualOffSeasonWeekOverride: 7,
+      },
+    })
+    expect(r.cycle).toBe('off_season')
+    expect(r.offSeasonPhase).toBe(3)
+    expect(r.weekNumber).toBe(7)
+  })
+
+  it('manualCycleOverride off_season au-delà de S10 → Entretien (pas bloqué Force-Pont)', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [],
+      today: '2025-08-15',
+      planningAnchors: {
+        manualCycleOverride: 'off_season',
+        seasonEndedAt: '2025-05-25',
+      },
+    })
+    expect(r.cycle).toBe('off_season')
+    expect(r.offSeasonPhase).toBe(5)
+    expect(r.weekLabel).toContain('Entretien')
+    expect(r.weekNumber).toBeGreaterThan(10)
+  })
+
   it('seasonEndedAt forces off-season even when last match < 28 days ago', () => {
     // User clicked "La saison est finie" with recent matches in calendar.
     // Without the fix, the code would fall through to in-season because

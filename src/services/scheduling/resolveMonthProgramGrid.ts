@@ -21,11 +21,22 @@ import type { MotherSessionType } from '../../types/motherSession'
 import { startOfIsoWeek, addDaysISO } from '../weeklyBilan/computeWeeklyBilan'
 import type { UserProfile } from '../../types/training'
 import { formatTitleFromMotherSessionId } from '../../components/motherSession/formatMotherSessionTitle'
+import {
+  applyMonthProjectionToWeekParams,
+  monthProjectionToPlanningContext,
+  projectMonthWeekContext,
+  resolvePreSeasonStartMonday,
+} from './projectMonthWeekContext'
 
 /** Ancres figées depuis la semaine réelle + début implicite si override manuel. */
 function buildMonthProjectionBase(
   params: ResolveMonthProgramGridParams,
-): { baseParams: ResolveMonthProgramGridParams; currentMonday: string } {
+): {
+  baseParams: ResolveMonthProgramGridParams
+  currentMonday: string
+  anchorCtx: AnnualPlanningContext | null
+  preSeasonStartMonday: string | null
+} {
   const anchorCtx = safeDetectContext(params, params.today)
   const anchors = { ...(params.profile.planningAnchors ?? {}) }
   const currentMonday = startOfIsoWeek(params.today)
@@ -51,6 +62,8 @@ function buildMonthProjectionBase(
   return {
     baseParams: { ...params, profile: baseProfile },
     currentMonday,
+    anchorCtx,
+    preSeasonStartMonday: resolvePreSeasonStartMonday(baseProfile),
   }
 }
 
@@ -171,6 +184,10 @@ function isoDateFromWeekMonday(weekMonday: string, dayOfWeek: number): string {
 }
 
 function planningWeekBandLabel(ctx: AnnualPlanningContext, lang: Lang): string {
+  if (ctx.cycle === 'off_season' && ctx.offSeasonPhase === 5 && ctx.weekLabel) {
+    const stripped = ctx.weekLabel.replace(/^Inter-saison\s+/i, '')
+    return lang === 'fr' ? `Inter-saison · ${stripped}` : `Off-season · ${stripped}`
+  }
   if (ctx.cycle === 'off_season' && ctx.offSeasonPhase != null && ctx.weekNumber != null) {
     const phase = offSeasonPhaseLabel(ctx.offSeasonPhase, lang)
     return lang === 'fr'
@@ -202,6 +219,9 @@ function planningWeekBandLabel(ctx: AnnualPlanningContext, lang: Lang): string {
 }
 
 function planningWeekRowLabel(ctx: AnnualPlanningContext, lang: Lang): string {
+  if (ctx.cycle === 'off_season' && ctx.offSeasonPhase === 5 && ctx.weekLabel) {
+    return ctx.weekLabel.replace(/^Inter-saison\s+/i, '')
+  }
   if (ctx.cycle === 'off_season' && ctx.offSeasonPhase != null && ctx.weekNumber != null) {
     return `${offSeasonPhaseLabel(ctx.offSeasonPhase, lang)} S${ctx.weekNumber}`
   }
@@ -249,14 +269,29 @@ function resolveMonthSessionStatus(
 function detectPhaseMarkers(
   weekMondays: string[],
   baseParams: ResolveMonthProgramGridParams,
+  anchorCtx: AnnualPlanningContext | null,
+  currentMonday: string,
+  preSeasonStartMonday: string | null,
   lang: Lang,
 ): MonthPhaseMarker[] {
   const markers: MonthPhaseMarker[] = []
   for (let i = 0; i < weekMondays.length - 1; i++) {
     const fromMonday = weekMondays[i]
     const toMonday = weekMondays[i + 1]
-    const current = safeDetectContext(paramsForProjectedWeek(baseParams, fromMonday), fromMonday)
-    const next = safeDetectContext(paramsForProjectedWeek(baseParams, toMonday), toMonday)
+    const current = resolveProjectedWeekContext(
+      anchorCtx,
+      currentMonday,
+      fromMonday,
+      preSeasonStartMonday,
+      baseParams,
+    )
+    const next = resolveProjectedWeekContext(
+      anchorCtx,
+      currentMonday,
+      toMonday,
+      preSeasonStartMonday,
+      baseParams,
+    )
     if (!current || !next) continue
 
     const fromLabel = planningWeekRowLabel(current, lang)
@@ -319,6 +354,27 @@ function detectPhaseMarkers(
   return markers
 }
 
+function resolveProjectedWeekContext(
+  anchorCtx: AnnualPlanningContext | null,
+  currentMonday: string,
+  weekMonday: string,
+  preSeasonStartMonday: string | null,
+  baseParams: ResolveMonthProgramGridParams,
+): AnnualPlanningContext | null {
+  if (anchorCtx) {
+    const linear = projectMonthWeekContext(
+      anchorCtx,
+      currentMonday,
+      weekMonday,
+      preSeasonStartMonday,
+    )
+    if (linear) {
+      return monthProjectionToPlanningContext(linear)
+    }
+  }
+  return safeDetectContext(paramsForProjectedWeek(baseParams, weekMonday), weekMonday)
+}
+
 function shortLabelForSession(
   sessionType: MotherSessionType,
   motherSessionId: string,
@@ -335,7 +391,7 @@ export function resolveMonthProgramGrid(params: ResolveMonthProgramGridParams): 
   const { year, month } = params
   const { first, last } = monthBounds(year, month)
   const weekMondays = listIsoWeekMondaysInMonth(year, month)
-  const { baseParams } = buildMonthProjectionBase(params)
+  const { baseParams, currentMonday, anchorCtx, preSeasonStartMonday } = buildMonthProjectionBase(params)
 
   const sessionsByDate = new Map<string, MonthPlannedSession[]>()
   const phaseLabelByMonday = new Map<string, string>()
@@ -348,8 +404,20 @@ export function resolveMonthProgramGrid(params: ResolveMonthProgramGridParams): 
   }
 
   for (const weekMonday of weekMondays) {
-    const weekParams = paramsForProjectedWeek(baseParams, weekMonday)
-    const ctx = safeDetectContext(weekParams, weekMonday)
+    const projection = anchorCtx
+      ? projectMonthWeekContext(anchorCtx, currentMonday, weekMonday, preSeasonStartMonday)
+      : null
+    const weekParams = applyMonthProjectionToWeekParams(
+      paramsForProjectedWeek(baseParams, weekMonday),
+      projection,
+    )
+    const ctx = resolveProjectedWeekContext(
+      anchorCtx,
+      currentMonday,
+      weekMonday,
+      preSeasonStartMonday,
+      baseParams,
+    )
     if (ctx) {
       phaseLabelByMonday.set(weekMonday, planningWeekRowLabel(ctx, lang))
       phaseBandByMonday.set(weekMonday, {
@@ -408,7 +476,14 @@ export function resolveMonthProgramGrid(params: ResolveMonthProgramGridParams): 
 
   return {
     sessionsByDate,
-    phaseMarkers: detectPhaseMarkers(weekMondays, baseParams, lang),
+    phaseMarkers: detectPhaseMarkers(
+      weekMondays,
+      baseParams,
+      anchorCtx,
+      currentMonday,
+      preSeasonStartMonday,
+      lang,
+    ),
     phaseLabelByMonday,
     phaseBandByMonday,
   }

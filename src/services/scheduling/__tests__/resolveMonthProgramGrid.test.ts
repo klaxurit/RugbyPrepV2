@@ -77,7 +77,7 @@ describe('resolveMonthProgramGrid', () => {
 
     expect(grid.phaseLabelByMonday.size).toBeGreaterThan(0)
     for (const label of grid.phaseLabelByMonday.values()) {
-      expect(label).toMatch(/S\d+/)
+      expect(label).toMatch(/S\d+|Entretien/)
     }
   })
 
@@ -112,6 +112,36 @@ describe('resolveMonthProgramGrid', () => {
     }
   })
 
+  it('juillet 2026 avec reprise club : inter-saison (Hypertrophie/Force-Pont), pas pré-saison', () => {
+    const profile: UserProfile = {
+      ...baseProfile,
+      planningAnchors: {
+        seasonEndedAt: '2026-04-06',
+        seasonEndedSource: 'manual',
+        returnToTeamTrainingAt: '2026-09-01',
+        manualOffSeasonWeekOverride: 7,
+      },
+    }
+    const grid = resolveMonthProgramGrid({
+      profile,
+      events: [],
+      logs: [],
+      today: '2026-07-05',
+      fatigue: 'OK',
+      week: 'W1',
+      lastNonDeloadWeek: 'W1',
+      year: 2026,
+      month: 6,
+      lang: 'fr',
+    })
+
+    const bands = [...grid.phaseBandByMonday.values()].map((b) => b.fullLabel)
+    expect(bands.some((l) => l.includes('Hypertrophie'))).toBe(true)
+    expect(bands.some((l) => l.includes('Force-Pont'))).toBe(true)
+    expect(bands.some((l) => l.includes('Phase générale'))).toBe(false)
+    expect(bands.some((l) => l.includes('Affûtage'))).toBe(false)
+  })
+
   it('juillet 2026 : semaines distinctes S7 S8 S9 (pas S7 partout)', () => {
     const profile: UserProfile = {
       ...baseProfile,
@@ -141,20 +171,44 @@ describe('resolveMonthProgramGrid', () => {
       julyMondays.map((m) => [m, grid.phaseLabelByMonday.get(m)]),
     )
 
-    const weekNumbers = julyMondays
-      .map((monday) => grid.phaseLabelByMonday.get(monday))
-      .filter((l): l is string => l != null)
-      .map((l) => Number(l.match(/S(\d+)/)?.[1]))
-
-    expect(weekNumbers).toEqual([8, 9, 10, 10])
-    expect(new Set(weekNumbers).size).toBeGreaterThan(1)
-
-    for (const monday of julyMondays) {
-      const band = grid.phaseBandByMonday.get(monday)
-      expect(band?.fullLabel).toMatch(/semaine \d+/)
-    }
-
     expect(labelsByMonday['2026-07-06']).toBe('Hypertrophie S8')
     expect(labelsByMonday['2026-07-13']).toBe('Force-Pont S9')
+    expect(labelsByMonday['2026-07-20']).toBe('Force-Pont S10')
+    expect(labelsByMonday['2026-07-27']).toMatch(/Entretien/)
+  })
+
+  it('août 2026 : pré-saison progressive puis en saison (pas Affûtage S8 bloqué)', () => {
+    const profile: UserProfile = {
+      ...baseProfile,
+      planningAnchors: {
+        seasonEndedAt: '2026-04-06',
+        seasonEndedSource: 'manual',
+        returnToTeamTrainingAt: '2026-09-01',
+        manualOffSeasonWeekOverride: 7,
+      },
+    }
+    const grid = resolveMonthProgramGrid({
+      profile,
+      events: [],
+      logs: [],
+      today: '2026-07-05',
+      fatigue: 'OK',
+      week: 'W1',
+      lastNonDeloadWeek: 'W1',
+      year: 2026,
+      month: 7,
+      lang: 'fr',
+    })
+
+    const bands = [...grid.phaseBandByMonday.values()].map((b) => b.fullLabel)
+    expect(bands.length).toBeGreaterThan(0)
+    expect(bands.every((l) => l.includes('Affûtage') && l.includes('semaine 8'))).toBe(false)
+    const weekNums = bands
+      .map((l) => l.match(/semaine (\d+)/)?.[1])
+      .filter((n): n is string => n != null)
+      .map(Number)
+    expect(new Set(weekNums).size).toBeGreaterThan(1)
+    expect(bands.some((l) => l.includes('En saison') || l.includes('Affûtage') || l.includes('Phase'))).toBe(true)
+    expect(bands.filter((l) => l.includes('Affûtage') && l.includes('semaine 8')).length).toBeLessThanOrEqual(1)
   })
 })

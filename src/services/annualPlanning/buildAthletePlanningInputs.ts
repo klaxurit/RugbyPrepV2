@@ -184,6 +184,7 @@ function applyProfileManualAnchors(
   if (pa.manualPreSeasonWeekOverride != null && Number.isFinite(pa.manualPreSeasonWeekOverride)) {
     base.manualPreSeasonWeekOverride = pa.manualPreSeasonWeekOverride
   }
+  if (pa.firstMatchDateOverride) base.firstMatchDateOverride = pa.firstMatchDateOverride
   if (pa.seasonEndedSource) base.seasonEndedSource = pa.seasonEndedSource
   if (
     base.manualOffSeasonWeekOverride != null &&
