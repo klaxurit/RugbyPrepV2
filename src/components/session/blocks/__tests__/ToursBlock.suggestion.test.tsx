@@ -144,6 +144,48 @@ describe('ToursBlock — badge suggestion de charge', () => {
     expect(badge.getAttribute('title')).toMatch(/ressenti/i)
   })
 })
+describe('ToursBlock — dernière séance (PREVIOUS)', () => {
+  it('affiche la puce dernière séance sur le tour 1 quand historique disponible', () => {
+    render(
+      <ToursBlock
+        {...baseProps}
+        currentTourIdx={0}
+        block={mkBlock()}
+        getPreviousSessionSet={() => ({ loadKg: 82.5, reps: 5 })}
+        tourData={{
+          0: { 0: { kg: '', reps: '', validated: false } },
+          1: { 0: { kg: '', reps: '', validated: false } },
+          2: { 0: { kg: '', reps: '', validated: false } },
+        }}
+      />,
+    )
+    const chip = screen.getByTestId('exo-previous-chip')
+    expect(chip).toHaveTextContent(/Dernière séance|Last session/)
+    expect(chip).toHaveTextContent(/82\.5/)
+    expect(chip).toHaveTextContent(/5/)
+  })
+
+  it('injecte kg+reps au clic sur la puce dernière séance', () => {
+    const onSetExoData = vi.fn()
+    render(
+      <ToursBlock
+        {...baseProps}
+        currentTourIdx={0}
+        onSetExoData={onSetExoData}
+        block={mkBlock()}
+        getPreviousSessionSet={() => ({ loadKg: 80, reps: 8 })}
+        tourData={{
+          0: { 0: { kg: '', reps: '', validated: false } },
+          1: { 0: { kg: '', reps: '', validated: false } },
+          2: { 0: { kg: '', reps: '', validated: false } },
+        }}
+      />,
+    )
+    screen.getByTestId('exo-previous-chip').click()
+    expect(onSetExoData).toHaveBeenCalledWith(0, 0, { kg: '80' })
+    expect(onSetExoData).toHaveBeenCalledWith(0, 0, { reps: '8' })
+  })
+})
 
 describe('ToursBlock — carry-forward (tours > 0)', () => {
   it("affiche la valeur du tour 1 en placeholder (pas en valeur) sur le tour 2", () => {
@@ -225,22 +267,23 @@ describe('ToursBlock — carry-forward (tours > 0)', () => {
     expect(screen.queryByTestId('exo-prefill-chip')).toBeNull()
   })
 
-  it("affiche la valeur saisie en clair quand l'utilisateur a tapé sur le tour 2", () => {
+  it("propose les valeurs du tour précédent sur le tour 3 (pas celles du tour 1)", () => {
     render(
       <ToursBlock
         {...baseProps}
-        currentTourIdx={1}
+        currentTourIdx={2}
         block={mkBlock()}
         tourData={{
-          0: { 0: { kg: '80', reps: '10', validated: true } },
-          1: { 0: { kg: '82.5', reps: '8', validated: false } },
+          0: { 0: { kg: '50', reps: '8', validated: true } },
+          1: { 0: { kg: '40', reps: '10', validated: true } },
           2: { 0: { kg: '', reps: '', validated: false } },
         }}
       />,
     )
     const kgInput = screen.getByLabelText('kg') as HTMLInputElement
     const repsInput = screen.getByLabelText('reps') as HTMLInputElement
-    expect(kgInput.value).toBe('82.5')
-    expect(repsInput.value).toBe('8')
+    expect(kgInput.placeholder).toBe('40')
+    expect(repsInput.placeholder).toBe('10')
+    expect(kgInput.placeholder).not.toBe('50')
   })
 })

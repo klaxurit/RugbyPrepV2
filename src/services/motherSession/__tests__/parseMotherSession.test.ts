@@ -254,6 +254,17 @@ describe('parseExerciseLine', () => {
       prescription: '20m',
     })
   })
+
+  it('parse un repos explicite en 3e backtick', () => {
+    const e = parseExerciseLine(
+      '- Exercise A: `Trap Bar Deadlift` `4x6-8` `rest 2 min`',
+    )
+    expect(e).toMatchObject({
+      name: 'Trap Bar Deadlift',
+      prescription: '4x6-8',
+      restAfterSetSeconds: 120,
+    })
+  })
 })
 
 describe('parseAllMotherSessions', () => {

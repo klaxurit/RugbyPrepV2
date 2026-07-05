@@ -126,52 +126,74 @@ export function formatInterTourRest(seconds: number, lang: Lang = 'fr'): string 
 const parseSets = parseExerciseSets
 
 /**
- * Extract inter-tour rest from a prescription/format string.
- *
- * Handles the full range of mother-session format conventions:
- *   - "`90-120s` rest after the pair"          → 120
- *   - "`75-90s` rest"                          → 90
- *   - "full rest `3 min` after each round"     → 180
- *   - "`2-3 min` rest between sets"            → 180
- *   - "`4 rounds`, `10-15s` between exercises, full rest `3-4 min` after each round"
- *                                              → 240 (takes the longer rest = inter-round)
- *   - "@ 90s" / "(60s)" / "repos 3 min"        → legacy patterns
- *
- * Rationale (KB strength-methods.md): when a range is given, prefer the upper
- * bound so the chrono guarantees adequate recovery — the user can always
- * shorten via the −10s / Skip controls.
+ * Extract rest duration (seconds) from a format/prescription string.
+ * Prefers upper bound of ranges (KB: garantir récup suffisante).
  */
-function parseRestSeconds(prescription: string): number | null {
-  const text = prescription.replace(/`/g, ' ').replace(/\s+/g, ' ')
+export function parseRestSecondsFromText(prescription: string): number | null {
+  const text = prescription.replace(/`/g, ' ').replace(/\s+/g, ' ').trim()
   const candidates: number[] = []
 
-  const restQualifier =
-    '(?:rest|between\\s+(?:rounds?|sets?|reps?|pairs?|triplets?|drills?|exercises)|after\\s+(?:each|the|every)\\s+(?:rounds?|sets?|pairs?|triplets?|reps?))'
+  // "2 min 30" / "2 min 30 to 3 min" (borne haute seule pour le simple compound)
+  for (const m of text.matchAll(/(\d+)\s+min\s+(\d+)\b/gi)) {
+    const mins = Number(m[1])
+    const secs = Number(m[2])
+    if (Number.isFinite(mins) && Number.isFinite(secs)) candidates.push(mins * 60 + secs)
+  }
+
+  const restQualifierEn =
+    '(?:rest|repos(?:\\s+between\\s+(?:tours|rounds|sets|reps))?|between\\s+(?:rounds?|sets?|reps?|pairs?|triplets?|drills?|exercises)|after\\s+(?:each|the|every)\\s+(?:rounds?|sets?|pairs?|triplets?|reps?|trio))'
+  const restQualifierFr =
+    '(?:de\\s+repos|repos\\s+complet|entre\\s+(?:les\\s+)?(?:séries|series|exercices|exos|reps?|tours?)|après\\s+(?:la\\s+|le\\s+|chaque\\s+)?(?:paire|triplet|tour|round|série|serie|trio))'
+
   const patterns = [
-    // "<num>[-<num>] (s|min) ... rest|between rounds|after each round" — number BEFORE qualifier
     new RegExp(
-      `(\\d+)(?:\\s*[-–]\\s*(\\d+))?\\s*(min|sec|s)\\b[^,;]{0,30}?\\b${restQualifier}\\b`,
+      `(\\d+)(?:\\s*[-–]\\s*(\\d+))?\\s*(min|sec|s)\\b[^,;]{0,48}?\\b(?:${restQualifierEn}|${restQualifierFr})\\b`,
       'gi',
     ),
-    // "rest <num>[-<num>] (s|min)"              — number AFTER rest (incl. "full rest")
-    /\brest\s+(\d+)(?:\s*[-–]\s*(\d+))?\s*(min|sec|s)\b/gi,
-    // "@<num> (s|min)" or "(<num>s)"            — legacy compact prescriptions
+    // "`90s` repos" / "`2 min` repos between tours" (hybride FR/EN)
+    /(\d+)(?:\s*[-–]\s*(\d+))?\s*(min|sec|s)\s+repos\b/gi,
+    /\b(?:rest|repos\s+complet)\s+(\d+)(?:\s*[-–]\s*(\d+))?\s*(min|sec|s)\b/gi,
     /[@(]\s*(\d+)(?:\s*[-–]\s*(\d+))?\s*(min|sec|s)\b/gi,
-    // "repos [...] <num> min"                   — legacy French
     /\brepos(?:\s+\w+)?\s*(\d+)(?:\s*[-–]\s*(\d+))?\s*(min|sec|s)\b/gi,
+    /\b(?:rest|repos)\s+(\d+)(?:\s*[-–]\s*(\d+))?\s*(min|sec|s)\b/gi,
   ]
 
   for (const pattern of patterns) {
     let m: RegExpExecArray | null
-    while ((m = pattern.exec(text)) !== null) {
+    const re = new RegExp(pattern.source, pattern.flags)
+    while ((m = re.exec(text)) !== null) {
       const upper = m[2] ?? m[1]
-      const unit = m[3].toLowerCase()
+      const unit = (m[3] ?? 's').toLowerCase()
       const value = Number(upper)
       if (!Number.isFinite(value)) continue
       candidates.push(unit === 'min' ? value * 60 : value)
     }
   }
 
+  if (candidates.length === 0) return null
+  return Math.max(...candidates)
+}
+
+/**
+ * Repos court entre exos d'un même tour (ex. "10-15s between exercises").
+ * Retourne la borne haute pour laisser le temps de transition.
+ */
+export function parseIntraTourRestSeconds(format: string): number | null {
+  const text = format.replace(/`/g, ' ').replace(/\s+/g, ' ')
+  const patterns = [
+    /(\d+)(?:\s*[-–]\s*(\d+))?\s*(?:s|sec)\b[^,;]{0,40}?\bbetween\s+exercises\b/gi,
+    /(\d+)(?:\s*[-–]\s*(\d+))?\s*(?:s|sec)\b[^,;]{0,40}?\bentre\s+(?:les\s+)?exercices\b/gi,
+    /(\d+)(?:\s*[-–]\s*(\d+))?\s*(?:s|sec)\b[^,;]{0,40}?\bentre\s+exos\b/gi,
+  ]
+  const candidates: number[] = []
+  for (const pattern of patterns) {
+    let m: RegExpExecArray | null
+    while ((m = pattern.exec(text)) !== null) {
+      const upper = m[2] ?? m[1]
+      const value = Number(upper)
+      if (Number.isFinite(value)) candidates.push(value)
+    }
+  }
   if (candidates.length === 0) return null
   return Math.max(...candidates)
 }
@@ -212,12 +234,15 @@ export function parseBlockTourCount(block: Block): number {
  */
 export function parseBlockRestSeconds(block: Block): number {
   if (block.format) {
-    const fromFormat = parseRestSeconds(block.format)
+    const fromFormat = parseRestSecondsFromText(block.format)
     if (fromFormat != null) return fromFormat
   }
   for (const ex of block.exercises) {
     if (isDirectiveText(ex.name)) continue
-    const fromPrescription = parseRestSeconds(ex.prescription)
+    if (ex.restAfterSetSeconds != null && ex.restAfterSetSeconds > 0) {
+      return ex.restAfterSetSeconds
+    }
+    const fromPrescription = parseRestSecondsFromText(ex.prescription)
     if (fromPrescription != null) return fromPrescription
   }
   return 90
@@ -245,7 +270,7 @@ export function estimateBlockSeconds(block: Block): number {
   let total = 0
   for (const ex of loggable) {
     const sets = parseSets(ex.prescription) ?? 3
-    const rest = parseRestSeconds(ex.prescription) ?? 90
+    const rest = parseRestSecondsFromText(ex.prescription) ?? 90
     total += sets * (WORK_PER_SET_SEC + rest)
   }
   return total

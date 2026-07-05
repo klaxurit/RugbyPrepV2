@@ -3,7 +3,7 @@ import { Check, CheckCircle2, SkipForward } from 'lucide-react'
 import { useSessionRun, buildExerciseTourKey } from '../../contexts/SessionRunContext'
 import { useRestTimerEndEffects } from '../../hooks/useRestTimerEndEffects'
 import { findCurrentPending, type PendingCursor } from '../../services/motherSession/findCurrentPending'
-import { getInterTourRestAfterMarking } from '../../services/motherSession/interTourRest'
+import { getRestAfterExerciseSet } from '../../services/motherSession/interTourRest'
 import type { MotherSession } from '../../types/motherSession'
 import { getExerciseName } from '../../data/exercises'
 import type { AppLang } from '../../services/motherSession/motherSessionLabels'
@@ -12,7 +12,7 @@ import { localizeMotherSessionExerciseName } from '../../services/motherSession/
 import { localizeBlockName } from '../../services/motherSession/motherSessionBlockLabels'
 import {
   finishSessionCtaLabel,
-  restTimerAfterTourLine,
+  restTimerAfterSetLine,
   sessionRestWord,
   sessionSkipRestLabel,
   sessionTourWord,
@@ -68,19 +68,21 @@ export function RunSessionCTA({ session, lang, onFinish, onCursorChange }: RunSe
     if (sessionRun.restTimer) sessionRun.skipRestTimer()
     sessionRun.markExerciseDone(key)
 
-    const completed = new Set(sessionRun.completedExercises)
-    completed.add(key)
-    const rest = getInterTourRestAfterMarking(
+    const rest = getRestAfterExerciseSet(
       session,
       cursor.blockNumber,
       cursor.tourIndex,
       cursor.exerciseIndex,
-      completed,
     )
     if (rest) {
       sessionRun.startRestTimer(
         rest.restSeconds,
-        restTimerAfterTourLine(rest.tourOneBased, lang),
+        restTimerAfterSetLine({
+          kind: rest.kind,
+          tourOneBased: rest.tourOneBased,
+          exerciseName: cursor.exercise.name,
+          lang,
+        }),
       )
     }
   }

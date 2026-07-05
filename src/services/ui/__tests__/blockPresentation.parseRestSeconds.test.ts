@@ -89,6 +89,31 @@ describe('parseBlockRestSeconds — mother-session formats', () => {
     expect(parseBlockRestSeconds(block('', [{ name: 'squat', prescription: '3×8 (60s)' }]))).toBe(60)
     expect(parseBlockRestSeconds(block('', [{ name: 'squat', prescription: '4×5 repos 3 min' }]))).toBe(180)
   })
+
+  it('parse formats hybrides FR/EN (repos après, 2 min 30)', () => {
+    expect(parseBlockRestSeconds(block('`3 Rounds`, `90s` repos après la paire.'))).toBe(90)
+    expect(parseBlockRestSeconds(block('`3 Rounds`, `2 min 30` repos between tours.'))).toBe(150)
+    expect(parseBlockRestSeconds(block('3 tours, `75-90s` de repos'))).toBe(90)
+    expect(parseBlockRestSeconds(block('`3 Rounds`, `120s` repos after the trio.'))).toBe(120)
+  })
+
+  it('parse les formats FR mother-session (de repos, après la paire)', () => {
+    expect(
+      parseBlockRestSeconds(
+        block('`4 séries de travail`, `2 min` de repos entre les séries'),
+      ),
+    ).toBe(120)
+    expect(
+      parseBlockRestSeconds(block('`4 tours`, `90-120s` de repos après la paire')),
+    ).toBe(120)
+    expect(
+      parseBlockRestSeconds(block('`3 tours`, `75-90s` de repos après la paire')),
+    ).toBe(90)
+    expect(
+      parseBlockRestSeconds(block('`2 tours`, `45-60s` de repos après le tour')),
+    ).toBe(60)
+    expect(parseBlockRestSeconds(block('`3 tours`, repos complet `3 min`'))).toBe(180)
+  })
 })
 
 describe('formatInterTourRest', () => {

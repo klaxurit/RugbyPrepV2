@@ -11,6 +11,7 @@ export interface PRDetectionInput {
   }
   previousBest: {
     bestLoadRepsScore?: number
+    bestLoadKg?: number
     bestReps?: number
     bestMeters?: number
     bestSeconds?: number
@@ -27,7 +28,8 @@ export interface DetectedPR {
 }
 
 function formatLoadReps(loadKg: number, reps: number): string {
-  return `${loadKg}kg x ${reps}`
+  const kg = Number.isInteger(loadKg) ? String(loadKg) : String(loadKg).replace(/\.0$/, '')
+  return `${kg} kg × ${reps}`
 }
 
 /**
@@ -42,19 +44,43 @@ export function detectPRs(inputs: PRDetectionInput[]): DetectedPR[] {
     if (metricType === 'load_reps') {
       const loadKg = draft.loadKg
       const reps = draft.reps
-      if (loadKg == null || reps == null || loadKg <= 0) continue
-      const score = loadKg * reps
-      const prev = previousBest.bestLoadRepsScore
+      if (loadKg == null || loadKg <= 0) continue
 
-      if (prev == null || score > prev) {
-        const prevLoad = prev != null ? Math.round(prev) : undefined
-        const delta = prev != null ? Math.round(score - prev) : undefined
+      const score = reps != null && reps > 0 ? loadKg * reps : null
+      const prevScore = previousBest.bestLoadRepsScore
+      const prevLoad = previousBest.bestLoadKg
+
+      const loadPR = prevLoad != null && loadKg > prevLoad
+
+      if (loadPR) {
+        const delta = Math.round((loadKg - prevLoad) * 10) / 10
         results.push({
           exerciseId,
           metricType,
-          newValue: score,
+          newValue: loadKg,
           previousValue: prevLoad,
-          improvement: delta != null ? `+${delta} score` : 'Premier record',
+          improvement: `+${delta} kg`,
+          label:
+            reps != null && reps > 0 ? formatLoadReps(loadKg, reps) : `${loadKg} kg`,
+        })
+        continue
+      }
+
+      if (reps == null || reps <= 0) continue
+
+      const isFirstRecord = prevScore == null && prevLoad == null
+      const volumePR = prevScore == null || score! > prevScore
+
+      if (!isFirstRecord && !volumePR) continue
+
+      if (volumePR) {
+        const delta = prevScore != null ? Math.round(score! - prevScore) : undefined
+        results.push({
+          exerciseId,
+          metricType,
+          newValue: score!,
+          previousValue: prevScore != null ? Math.round(prevScore) : undefined,
+          improvement: delta != null ? `+${delta} vol.` : 'Premier record',
           label: formatLoadReps(loadKg, reps),
         })
       }

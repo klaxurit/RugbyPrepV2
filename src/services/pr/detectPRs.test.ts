@@ -13,7 +13,33 @@ const make = (
 describe('detectPRs', () => {
   // ── load_reps ─────────────────────────────────────────────
 
-  it('detects load_reps PR when score exceeds best', () => {
+  it('detects load_reps PR when load exceeds best without reps in draft', () => {
+    const r = detectPRs([
+      make({
+        exerciseId: 'squat',
+        draft: { loadKg: 90 },
+        previousBest: { bestLoadKg: 87.5 },
+      }),
+    ])
+    expect(r).toHaveLength(1)
+    expect(r[0].improvement).toBe('+2.5 kg')
+    expect(r[0].label).toBe('90 kg')
+  })
+
+  it('detects load_reps PR when load exceeds best', () => {
+    const r = detectPRs([
+      make({
+        exerciseId: 'squat',
+        draft: { loadKg: 90, reps: 5 },
+        previousBest: { bestLoadRepsScore: 450, bestLoadKg: 87.5 },
+      }),
+    ])
+    expect(r).toHaveLength(1)
+    expect(r[0].improvement).toBe('+2.5 kg')
+    expect(r[0].label).toBe('90 kg × 5')
+  })
+
+  it('detects load_reps PR when volume exceeds best', () => {
     const r = detectPRs([
       make({
         exerciseId: 'squat',
@@ -22,10 +48,9 @@ describe('detectPRs', () => {
       }),
     ])
     expect(r).toHaveLength(1)
-    expect(r[0].exerciseId).toBe('squat')
     expect(r[0].newValue).toBe(450)
-    expect(r[0].improvement).toBe('+50 score')
-    expect(r[0].label).toBe('90kg x 5')
+    expect(r[0].improvement).toBe('+50 vol.')
+    expect(r[0].label).toBe('90 kg × 5')
   })
 
   it('no PR when load_reps score is equal', () => {

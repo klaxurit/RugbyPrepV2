@@ -356,6 +356,21 @@ Deno.serve(async (req: Request) => {
         return json({ ok: true, synced })
       }
 
+      case 'list_users': {
+        const page = Math.max(1, Math.round(Number(body.page ?? 1)))
+        const pageSize = Math.min(50, Math.max(1, Math.round(Number(body.pageSize ?? 20))))
+        const searchRaw = body.search != null ? String(body.search).trim() : ''
+        const search = searchRaw.length > 0 ? searchRaw.slice(0, 120) : null
+
+        const { data, error } = await serviceClient.rpc('admin_list_users_page', {
+          p_page: page,
+          p_page_size: pageSize,
+          p_search: search,
+        })
+        if (error) return json({ error: error.message }, 500)
+        return json(data ?? { page, pageSize, total: 0, users: [] })
+      }
+
       default:
         return json({ error: `Unknown action: ${action}` }, 400)
     }

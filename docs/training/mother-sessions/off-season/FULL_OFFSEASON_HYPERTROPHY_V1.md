@@ -38,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Trap Bar Deadlift` `4x6-8`
+- Exercise A: `Trap Bar Deadlift` `4x6-8` `rest 2 min`
 - Coaching notes:
   - Keep the trap bar around `RPE 6-8`.
   - This is the anchor lift of the session, but it should stay clearly hypertrophy-oriented rather than max-strength oriented.

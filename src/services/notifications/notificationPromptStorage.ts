@@ -29,15 +29,28 @@ export function dismissNotificationPrompt(
   }
 }
 
+/** L'utilisateur a cliqué « Activer » — ne plus reproposer ce prompt. */
+export function acceptNotificationPrompt(
+  userId: string | null | undefined,
+  kind: NotificationPromptKind,
+): void {
+  try {
+    window.localStorage.setItem(storageKey(kind, userId), 'accepted')
+  } catch {
+    /* ignore quota errors */
+  }
+}
+
 export function isNotificationPromptSuppressed(
   userId: string | null | undefined,
   kind: NotificationPromptKind,
   todayYmd = new Date().toISOString().slice(0, 10),
 ): boolean {
   try {
-    const until = window.localStorage.getItem(storageKey(kind, userId))
-    if (!until) return false
-    return todayYmd <= until
+    const stored = window.localStorage.getItem(storageKey(kind, userId))
+    if (!stored) return false
+    if (stored === 'accepted') return true
+    return todayYmd <= stored
   } catch {
     return false
   }

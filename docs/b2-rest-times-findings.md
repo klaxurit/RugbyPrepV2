@@ -1,14 +1,14 @@
 # B2 — Rest times audit findings (Phase B dry-run)
 
-**Generated:** 2026-05-28T14:24:41.670Z
-**Total blocks:** 155
+**Generated:** 2026-07-05T09:58:56.317Z
+**Total blocks:** 249
 
 ## Status breakdown
 
 | Status | Count |
 |---|---:|
-| PASS | 139 |
-| SKIP | 16 |
+| PASS | 224 |
+| SKIP | 25 |
 | FAIL_RANGE | 0 |
 | FAIL_INTENT_UNKNOWN | 0 |
 | FAIL_PARSE | 0 |
@@ -17,23 +17,23 @@
 
 | Intent | Total | Pass | Fail | Skip |
 |---|---:|---:|---:|---:|
-| power_contrast | 37 | 37 | 0 | 0 |
-| hypertrophy | 64 | 64 | 0 | 0 |
-| prehab | 20 | 17 | 0 | 3 |
-| reward | 5 | 5 | 0 | 0 |
-| core | 12 | 10 | 0 | 2 |
-| conditioning | 9 | 0 | 0 | 9 |
-| activation | 2 | 1 | 0 | 1 |
-| sprint | 4 | 3 | 0 | 1 |
-| dynamic | 2 | 2 | 0 | 0 |
+| power_contrast | 56 | 56 | 0 | 0 |
+| hypertrophy | 110 | 110 | 0 | 0 |
+| prehab | 27 | 21 | 0 | 6 |
+| reward | 6 | 6 | 0 | 0 |
+| core | 19 | 15 | 0 | 4 |
+| dynamic | 7 | 7 | 0 | 0 |
+| activation | 3 | 2 | 0 | 1 |
+| conditioning | 13 | 0 | 0 | 13 |
+| sprint | 8 | 7 | 0 | 1 |
 
 ## Skipped (allowlist)
 
 | Reason | Count |
 |---|---:|
-| EMOM/Tabata/AMRAP timed protocol | 9 |
-| minimal-rest sentinel (mobility/flow) | 3 |
-| empty-format (warmup or prep block) | 3 |
+| EMOM/Tabata/AMRAP timed protocol | 13 |
+| empty-format (warmup or prep block) | 6 |
+| minimal-rest sentinel (mobility/flow) | 5 |
 | walk-back sprint recovery | 1 |
 
 ## Sample PASS rows (first 10)

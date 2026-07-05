@@ -5,6 +5,7 @@ import { useProfile } from '../../hooks/useProfile'
 import { useNotifications } from '../../hooks/useNotifications'
 import { NotificationOptInSheet } from './NotificationOptInSheet'
 import {
+  acceptNotificationPrompt,
   canShowNotificationPrompt,
   dismissNotificationPrompt,
 } from '../../services/notifications/notificationPromptStorage'
@@ -20,7 +21,7 @@ export function RestTimerNotificationPrompt() {
   const { restTimer } = useSessionRun()
   const { authState } = useAuth()
   const { profile } = useProfile()
-  const { subscribe, status } = useNotifications(profile)
+  const { subscribe, requestBrowserPermission, status } = useNotifications(profile)
   const lang: Lang = (profile?.preferredLanguage as Lang | undefined) ?? 'fr'
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
@@ -58,9 +59,19 @@ export function RestTimerNotificationPrompt() {
   const handleEnable = async () => {
     setIsLoading(true)
     try {
-      await subscribe({ profileOverride: profile })
-      posthog.capture('notification_prompt_enabled', { kind: 'rest_timer' })
+      // Fin de repos : la permission navigateur suffit (notif SW locale sur PC).
+      // L'abonnement push est tenté en best-effort pour l'arrière-plan mobile/TWA.
+      const permission = await requestBrowserPermission()
+      acceptNotificationPrompt(userId, 'rest_timer')
+
+      if (permission === 'granted') {
+        void subscribe({ profileOverride: profile }).catch(() => undefined)
+        posthog.capture('notification_prompt_enabled', { kind: 'rest_timer' })
+      } else {
+        posthog.capture('notification_prompt_denied', { kind: 'rest_timer' })
+      }
     } catch {
+      acceptNotificationPrompt(userId, 'rest_timer')
       posthog.capture('notification_prompt_denied', { kind: 'rest_timer' })
     } finally {
       setIsLoading(false)

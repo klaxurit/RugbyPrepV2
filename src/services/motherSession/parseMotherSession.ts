@@ -11,6 +11,7 @@ import type {
   MotherSessionType,
   WarmUp,
 } from '../../types/motherSession'
+import { parseRestSecondsFromText } from '../ui/blockPresentation'
 
 function deriveIdFromPath(filePath?: string): string {
   if (!filePath || !filePath.trim()) return 'unknown'
@@ -204,9 +205,22 @@ export function parseExerciseLine(rawLine: string): Exercise | null {
   } else if (segments.length === 1) {
     result = { name: segments[0], prescription: '', role, slotLabel }
   } else {
-    const prescription = segments[segments.length - 1]
-    const name = segments.slice(0, -1).join(' or ')
+    let prescription = segments[segments.length - 1]
+    let name = segments.slice(0, -1).join(' or ')
+    let restAfterSetSeconds: number | undefined
+
+    if (segments.length >= 3) {
+      const maybeRest = segments[segments.length - 1]
+      const parsedRest = parseRestSecondsFromText(`rest ${maybeRest}`)
+      if (parsedRest != null && /^(?:rest|repos)\b/i.test(maybeRest.trim())) {
+        restAfterSetSeconds = parsedRest
+        prescription = segments[segments.length - 2]
+        name = segments.slice(0, -2).join(' or ')
+      }
+    }
+
     result = { name, prescription, role, slotLabel }
+    if (restAfterSetSeconds != null) result.restAfterSetSeconds = restAfterSetSeconds
   }
   if (isOptional) result.isOptional = true
   return result

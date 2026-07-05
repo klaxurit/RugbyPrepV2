@@ -49,7 +49,6 @@ export function EquipmentSettingsSection({
       icon={<Dumbbell className="w-4 h-4" />}
       iconClassName="bg-brand-soft text-brand-tint border border-brand-border"
       testId="profile-section-equipment"
-      defaultOpen
     >
       <p className="text-[11px] text-fg-muted leading-relaxed" data-testid="profile-equipment-hint">
         {tr('profile_equipment_stay_in_program', lang)}

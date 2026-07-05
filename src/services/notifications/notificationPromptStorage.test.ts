@@ -2,6 +2,7 @@
 
 import { describe, expect, it, beforeEach, afterEach } from 'vitest'
 import {
+  acceptNotificationPrompt,
   canShowNotificationPrompt,
   dismissNotificationPrompt,
   isNotificationPromptSuppressed,
@@ -33,6 +34,12 @@ describe('notificationPromptStorage', () => {
     expect(isNotificationPromptSuppressed(userId, 'onboarding', '2026-06-22')).toBe(true)
     expect(isNotificationPromptSuppressed(userId, 'onboarding', '2026-06-23')).toBe(true)
     expect(isNotificationPromptSuppressed(userId, 'onboarding', '2026-06-24')).toBe(false)
+  })
+
+  it('accept → suppression permanente', () => {
+    acceptNotificationPrompt(userId, 'rest_timer')
+    expect(isNotificationPromptSuppressed(userId, 'rest_timer', '2030-01-01')).toBe(true)
+    expect(canShowNotificationPrompt(userId, 'rest_timer', '2030-01-01')).toBe(false)
   })
 })
 

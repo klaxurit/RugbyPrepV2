@@ -37,7 +37,7 @@ describe('getInterTourRestAfterMarking', () => {
     ])
 
     const rest = getInterTourRestAfterMarking(session, 1, 0, 1, completed)
-    expect(rest).toEqual({ restSeconds: 90, tourOneBased: 1 })
+    expect(rest).toEqual({ restSeconds: 90, kind: 'inter_tour', tourOneBased: 1 })
   })
 
   it('pas de repos si le tour n’est pas complet', () => {

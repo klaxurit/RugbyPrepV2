@@ -40,6 +40,7 @@ const OnboardingPage = lazy(() => import('./pages/OnboardingPage').then(m => ({ 
 const StaffPlanningSandboxPage = lazy(() => import('./pages/StaffPlanningSandboxPage').then(m => ({ default: m.StaffPlanningSandboxPage })))
 const StaffClubPage = lazy(() => import('./pages/StaffClubPage').then(m => ({ default: m.StaffClubPage })))
 const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })))
+const AdminUsersPage = lazy(() => import('./pages/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })))
 const CallbackPage = lazy(() => import('./pages/auth/CallbackPage').then(m => ({ default: m.CallbackPage })))
 const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })))
 const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })))
@@ -209,6 +210,7 @@ function App() {
             </Route>
             <Route element={<RequireAdmin />}>
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/users" element={<AdminUsersPage />} />
             </Route>
           </Route>
 

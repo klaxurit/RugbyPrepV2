@@ -8,8 +8,16 @@ import { GYM_PRESET } from '../../../services/equipment/equipmentPresets'
 
 const updateProfileMock = vi.fn()
 
+function openEquipmentSection() {
+  const section = screen.getByTestId('profile-section-equipment')
+  const toggle = section.querySelector('button')
+  if (toggle?.getAttribute('aria-expanded') === 'false') {
+    fireEvent.click(toggle)
+  }
+}
+
 function renderSection(equipment: string[] = [], opts?: { isPremium?: boolean; weightKg?: number }) {
-  return render(
+  const view = render(
     <MemoryRouter>
       <EquipmentSettingsSection
         profile={{
@@ -25,12 +33,34 @@ function renderSection(equipment: string[] = [], opts?: { isPremium?: boolean; w
       />
     </MemoryRouter>,
   )
+  openEquipmentSection()
+  return view
 }
 
 describe('EquipmentSettingsSection', () => {
   afterEach(() => {
     cleanup()
     vi.clearAllMocks()
+  })
+
+  it('est repliée par défaut comme les autres sections profil', () => {
+    render(
+      <MemoryRouter>
+        <EquipmentSettingsSection
+          profile={{
+            level: 'intermediate',
+            equipment: [],
+            injuries: [],
+            weeklySessions: 2,
+          }}
+          updateProfile={updateProfileMock}
+          lang="fr"
+        />
+      </MemoryRouter>,
+    )
+    const section = screen.getByTestId('profile-section-equipment')
+    expect(section.querySelector('button')?.getAttribute('aria-expanded')).toBe('false')
+    expect(screen.queryByTestId('profile-equipment-hint')).toBeNull()
   })
 
   it('affiche le hint de continuité programme', () => {

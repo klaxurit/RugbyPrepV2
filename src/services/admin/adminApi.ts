@@ -1,5 +1,6 @@
 import { supabase } from '../supabase/client'
 import type { StaffMembershipRole } from '../staffPlanning/staffMembershipAdmin'
+import { resolveProfileAvatarUrl } from '../profile/resolveAvatarUrl'
 
 export type AdminUserDetail = {
   userId: string
@@ -107,4 +108,81 @@ export async function adminUpsertAthleteMembership(params: {
 
 export async function adminBackfillAthleteMemberships(): Promise<{ ok: true; synced: number }> {
   return invokeAdmin({ action: 'backfill_athlete_memberships' })
+}
+
+export type AdminUserListItem = {
+  userId: string
+  email: string | null
+  displayName: string | null
+  avatarUrl: string | null
+  clubCode: string | null
+  clubName: string | null
+  weeklySessions: number | null
+  seasonMode: string | null
+  onboardingComplete: boolean
+  hasProfile: boolean
+  isPremium: boolean
+  isFounding: boolean
+  isActive: boolean
+  sessionsThisWeek: number
+  updatedAt: string | null
+}
+
+export type AdminUserListPage = {
+  page: number
+  pageSize: number
+  total: number
+  weekStart: string
+  weekEnd: string
+  users: AdminUserListItem[]
+}
+
+function mapAdminUserListRow(raw: Record<string, unknown>): AdminUserListItem {
+  const avatarUrl = raw.avatar_url != null ? String(raw.avatar_url) : null
+  const avatarPath = raw.avatar_path != null ? String(raw.avatar_path) : null
+  return {
+    userId: String(raw.user_id ?? ''),
+    email: raw.email != null ? String(raw.email) : null,
+    displayName: raw.display_name != null ? String(raw.display_name) : null,
+    avatarUrl: resolveProfileAvatarUrl(avatarUrl, avatarPath) ?? null,
+    clubCode: raw.club_code != null ? String(raw.club_code) : null,
+    clubName: raw.club_name != null ? String(raw.club_name) : null,
+    weeklySessions: raw.weekly_sessions != null ? Number(raw.weekly_sessions) : null,
+    seasonMode: raw.season_mode != null ? String(raw.season_mode) : null,
+    onboardingComplete: raw.onboarding_complete === true,
+    hasProfile: raw.has_profile === true,
+    isPremium: raw.is_premium === true,
+    isFounding: raw.is_founding === true,
+    isActive: raw.is_active === true,
+    sessionsThisWeek: Number(raw.sessions_this_week ?? 0),
+    updatedAt: raw.updated_at != null ? String(raw.updated_at) : null,
+  }
+}
+
+export async function adminListUsers(params: {
+  page?: number
+  pageSize?: number
+  search?: string
+}): Promise<AdminUserListPage> {
+  const raw = await invokeAdmin<{
+    page: number
+    pageSize: number
+    total: number
+    weekStart?: string
+    weekEnd?: string
+    users: Record<string, unknown>[]
+  }>({
+    action: 'list_users',
+    page: params.page ?? 1,
+    pageSize: params.pageSize ?? 20,
+    search: params.search,
+  })
+  return {
+    page: raw.page,
+    pageSize: raw.pageSize,
+    total: raw.total,
+    weekStart: raw.weekStart ?? '',
+    weekEnd: raw.weekEnd ?? '',
+    users: (raw.users ?? []).map(mapAdminUserListRow),
+  }
 }

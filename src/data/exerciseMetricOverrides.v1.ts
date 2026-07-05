@@ -102,6 +102,20 @@ export const EXERCISE_METRIC_OVERRIDES: Record<string, ExerciseMetricOverride> =
     progressionFamily: 'ballistic_iso'
   },
 
+  // ── Préhab épaule (charge poulie / haltères légers) ─────────
+  'prehab_shoulder__face_pull__cable': {
+    metricType: 'load_reps',
+    progressionHint: 'quality',
+    suggestionTemplate: 'Charge légère, coudes hauts, tirage au visage.',
+    progressionFamily: 'assistance',
+  },
+  'prehab_shoulder__tyi__incline_bench': {
+    metricType: 'load_reps',
+    progressionHint: 'quality',
+    suggestionTemplate: 'Haltères très légers, tenue contrôlée par position.',
+    progressionFamily: 'assistance',
+  },
+
   // ── Med ball ────────────────────────────────────────────────
   'power__medball_chest_pass__wall': {
     metricType: 'reps',

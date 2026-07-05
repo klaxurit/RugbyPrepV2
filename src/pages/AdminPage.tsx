@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Shield, Search, Crown, Users, Anchor, ChevronLeft } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { Shield, Search, Crown, Users, Anchor, ChevronLeft, LayoutGrid } from 'lucide-react'
 import {
   adminGetUser,
   adminGrantPremium,
@@ -75,7 +75,9 @@ function Field({
 }
 
 export function AdminPage() {
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchParams] = useSearchParams()
+  const initialQuery = searchParams.get('q') ?? ''
+  const [searchQuery, setSearchQuery] = useState(initialQuery)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -103,6 +105,26 @@ export function AdminPage() {
     setAthleteClubId(detail.profile?.club_code ?? '')
     setAnchorPresetId('')
   }, [])
+
+  useEffect(() => {
+    const q = searchParams.get('q')?.trim()
+    if (!q) return
+    setSearchQuery(q)
+    void (async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const found = await adminSearchUser(q)
+        const detail = await adminGetUser(found.userId)
+        setUser(detail)
+        hydrateForms(detail)
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Erreur')
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [searchParams, hydrateForms])
 
   const applyAnchorPreset = useCallback(
     (presetId: string) => {
@@ -176,6 +198,13 @@ export function AdminPage() {
         </Link>
         <Shield className="w-5 h-5 text-brand-tint" />
         <h1 className="text-lg font-bold">Admin</h1>
+        <Link
+          to="/admin/users"
+          className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-brand-border bg-layer-5 px-3 py-1.5 text-xs font-semibold text-fg hover:bg-layer-10"
+        >
+          <LayoutGrid className="h-3.5 w-3.5" />
+          Tous les joueurs
+        </Link>
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">

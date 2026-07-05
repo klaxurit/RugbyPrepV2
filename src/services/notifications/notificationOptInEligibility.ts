@@ -17,12 +17,13 @@ export function getTrainingReminderOptInEligibility(): NotificationOptInBlockRea
   return 'eligible'
 }
 
-/** Éligibilité au soft prompt fin de repos (push serveur pour arrière-plan TWA). */
+/** Éligibilité au soft prompt fin de repos (permission navigateur + push optionnel TWA). */
 export function getRestTimerNotificationOptInEligibility(): NotificationOptInBlockReason {
   if (typeof window === 'undefined') return 'unsupported'
   if (!('Notification' in window) || !('serviceWorker' in navigator)) return 'unsupported'
   if (!VAPID_PUBLIC_KEY) return 'no_vapid'
   if (Notification.permission === 'denied') return 'denied'
+  if (Notification.permission === 'granted') return 'already_granted'
   return 'eligible'
 }
 

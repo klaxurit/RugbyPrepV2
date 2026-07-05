@@ -3,6 +3,8 @@ import type { Block, MotherSession } from '../../types/motherSession'
 import { tr } from '../../i18n/appLabels'
 import { buildExerciseTourKey, useSessionRun } from '../../contexts/SessionRunContext'
 import { detectBlockKind } from '../../services/session/detectBlockKind'
+import type { BlockCompletionSnapshot } from '../../services/session/collectBlockSetUpserts'
+import type { ExerciseTourLoad } from '../../contexts/SessionRunContext'
 import { findCurrentPending } from '../../services/motherSession/findCurrentPending'
 import {
   parseBlockTourCount,
@@ -11,9 +13,12 @@ import {
 } from '../../services/ui/blockPresentation'
 import { parseBlockFormat } from '../../services/ui/parseBlockFormat'
 import { getLoggableExerciseIndices } from '../../services/session/resolveLoggableExercises'
+import { parseExerciseInputNumber } from '../../services/ui/parseExerciseInputNumber'
 import { isTimedBlockComplete } from '../../services/motherSession/findCurrentPending'
-import { getInterTourRestAfterMarking } from '../../services/motherSession/interTourRest'
-import { restTimerAfterTourLine } from '../../i18n/sessionRunUi'
+import {
+  buildCompletionSnapshot,
+  validateExerciseSetFromBlock,
+} from '../../services/session/validateExerciseSet'
 import {
   WarmupBlock,
   ToursBlock,
@@ -24,7 +29,9 @@ import {
 } from './blocks'
 import type { BlockState } from './BlockStateChip'
 import type { LoadSuggestion } from '../../services/loadSuggestion'
+import type { PreviousSessionSetRef } from '../../services/session/buildPreviousSessionSetMap'
 import type { Lang } from '../../services/motherSession/localizeMotherSessionExerciseName'
+import type { ExerciseSetLog } from '../../types/training'
 
 export type SessionPhase = 'idle' | 'running' | 'completed'
 
@@ -34,7 +41,7 @@ interface SessionBlocksProps {
   phase: SessionPhase
   isPremium: boolean
   /** Notifie le parent qu'un bloc vient d'être validé (autosave par bloc). */
-  onBlockCompleted?: (blockNumber: number) => void
+  onBlockCompleted?: (blockNumber: number, snapshot?: BlockCompletionSnapshot) => void
   /** Demande au parent d'ouvrir l'overlay EMOM/Tabata/AMRAP/For Time pour ce bloc. */
   onStartEmomTimer?: (blockNumber: number) => void
   /** Bloc EMOM dont le chrono overlay est actif. */
@@ -45,8 +52,23 @@ interface SessionBlocksProps {
   onPlayDemo?: (blockNumber: number, exerciseIndex: number) => void
   /** Suggestion de charge Premium par exerciseId (undefined si non Premium ou no_data). */
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
+  /** Dernière série loggée (hors séance courante) par exerciseId + tourIndex. */
+  getPreviousSessionSet?: (exerciseId: string, tourIndex: number) => PreviousSessionSetRef | undefined
+  /** Notifie un PR all-time détecté à la validation d'une série (Premium). */
+  onLiveSetValidated?: (payload: {
+    exerciseId: string
+    loadKg?: number
+    reps?: number
+    blockNumber: number
+    tourIndex: number
+    exerciseIndex: number
+  }) => void
   /** Langue d'affichage des noms d'exercices (UserProfile.preferredLanguage). Défaut: 'fr'. */
   lang?: Lang
+  /** Historique des sets (journal Hevy + PR inter-séances). */
+  historyLogs?: readonly ExerciseSetLog[]
+  /** Signature de la séance courante (pour filtrer l'historique). */
+  slotSignature?: string
 }
 
 /**
@@ -71,8 +93,12 @@ export function SessionBlocks({
   onStartIsoTimer,
   onPlayDemo,
   getLoadSuggestion,
+  getPreviousSessionSet,
+  onLiveSetValidated,
   activeEmomBlockNumber = null,
   lang = 'fr',
+  historyLogs,
+  slotSignature,
 }: SessionBlocksProps) {
   const sessionRun = useSessionRun()
   const blocks = session.blocks
@@ -197,7 +223,7 @@ export function SessionBlocks({
               lang={lang}
               onPlayDemo={onPlayDemo ? (i) => onPlayDemo(block.number, i) : undefined}
               onValidateExo={(exoIdx) => {
-                handleValidateExoFromBlock({
+                validateExerciseSetFromBlock({
                   session,
                   blockNumber: block.number,
                   tourIndex: 0,
@@ -242,8 +268,8 @@ export function SessionBlocks({
             currentExoIdx={currentExoIdx}
             premium={isPremium}
             tourData={tourData}
-            onValidateExo={(tourIdx, exoIdx) => {
-              handleValidateExoFromBlock({
+            onValidateExo={(tourIdx, exoIdx, prefill) => {
+              validateExerciseSetFromBlock({
                 session,
                 blockNumber: block.number,
                 tourIndex: tourIdx,
@@ -252,24 +278,34 @@ export function SessionBlocks({
                 block,
                 lang,
                 onBlockCompleted,
+                loadPrefill: prefill,
+                onLiveSetValidated,
               })
             }}
             onSetExoData={(tourIdx, exoIdx, patch) => {
               const key = buildExerciseTourKey(block.number, tourIdx, exoIdx)
               const numKg = patch.kg !== undefined ? toNumberOrUndefined(patch.kg) : undefined
               const numReps = patch.reps !== undefined ? toNumberOrUndefined(patch.reps) : undefined
-              sessionRun.setExerciseTourLoad(key, {
+              const loadPatch: ExerciseTourLoad = {
                 ...(patch.kg !== undefined ? { loadKg: numKg } : {}),
                 ...(patch.reps !== undefined ? { reps: numReps } : {}),
-              })
+              }
+              sessionRun.setExerciseTourLoad(key, loadPatch)
               if (sessionRun.completedExercises.has(key)) {
-                onBlockCompleted?.(block.number)
+                onBlockCompleted?.(
+                  block.number,
+                  buildCompletionSnapshot(sessionRun, key, loadPatch),
+                )
               }
             }}
             onPlayDemo={onPlayDemo ? (exoIdx) => onPlayDemo(block.number, exoIdx) : undefined}
             onStartIso={(tourIdx, exoIdx) => onStartIsoTimer?.(block.number, tourIdx, exoIdx)}
             notes={notes}
             getLoadSuggestion={getLoadSuggestion}
+            getPreviousSessionSet={getPreviousSessionSet}
+            historyLogs={historyLogs}
+            slotSignature={slotSignature}
+            blockNumber={block.number}
           />
         )
       })}
@@ -363,69 +399,8 @@ function buildPrehabValidatedMap(
   return out
 }
 
-interface HandleValidateArgs {
-  session: MotherSession
-  blockNumber: number
-  tourIndex: number
-  exerciseIndex: number
-  sessionRun: ReturnType<typeof useSessionRun>
-  block: MotherSession['blocks'][number]
-  lang: Lang
-  onBlockCompleted?: (blockNumber: number) => void
-}
-
-function handleValidateExoFromBlock({
-  session,
-  blockNumber,
-  tourIndex,
-  exerciseIndex,
-  sessionRun,
-  block,
-  lang,
-  onBlockCompleted,
-}: HandleValidateArgs) {
-  const key = buildExerciseTourKey(blockNumber, tourIndex, exerciseIndex)
-  const wasValidated = sessionRun.completedExercises.has(key)
-  if (wasValidated) {
-    sessionRun.unmarkExerciseDone(key)
-    return
-  }
-
-  if (sessionRun.restTimer) sessionRun.skipRestTimer()
-  sessionRun.markExerciseDone(key)
-
-  const completed = new Set(sessionRun.completedExercises)
-  completed.add(key)
-
-  const rest = getInterTourRestAfterMarking(
-    session,
-    blockNumber,
-    tourIndex,
-    exerciseIndex,
-    completed,
-  )
-  if (rest) {
-    sessionRun.startRestTimer(
-      rest.restSeconds,
-      restTimerAfterTourLine(rest.tourOneBased, lang),
-    )
-  }
-
-  // Notification "bloc fini" si TOUS les loggables × TOUS les tours sont marqués.
-  const loggableIdx = getLoggableExerciseIndices(block)
-  if (loggableIdx.length === 0) return
-  const tourCount = parseBlockTourCount(block)
-  const allDone = loggableIdx.every((exoIdx) => {
-    for (let t = 0; t < tourCount; t++) {
-      if (!completed.has(buildExerciseTourKey(blockNumber, t, exoIdx))) return false
-    }
-    return true
-  })
-  if (allDone) onBlockCompleted?.(blockNumber)
-}
+export type { ExerciseLoadPrefill } from '../../services/session/collectBlockSetUpserts'
 
 function toNumberOrUndefined(value: string): number | undefined {
-  if (!value || value.trim() === '') return undefined
-  const n = Number(value)
-  return Number.isFinite(n) ? n : undefined
+  return parseExerciseInputNumber(value)
 }

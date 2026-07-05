@@ -40,6 +40,8 @@ export interface Exercise {
   role?: 'prime' | 'contrast' | 'support'
   /** Ex. minute 1, minute 2 (EMOM) */
   slotLabel?: string
+  /** Repos après validation d'une série (secondes). Prioritaire sur l'inférence bloc. */
+  restAfterSetSeconds?: number
   /** Skippable en cas de fatigue accumulée. La session reste valide sans cet exo. */
   isOptional?: boolean
 }

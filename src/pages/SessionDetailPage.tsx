@@ -4,7 +4,7 @@ import { posthog } from '../services/analytics/posthog'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, X } from 'lucide-react'
 import { useSessionRun, buildExerciseTourKey } from '../contexts/SessionRunContext'
 import { findCurrentPending } from '../services/motherSession/findCurrentPending'
-import { getInterTourRestAfterMarking } from '../services/motherSession/interTourRest'
+import { getRestAfterExerciseSet } from '../services/motherSession/interTourRest'
 import { isDirectiveText, resolveExerciseIdForSessionRun } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
 import { parseExerciseSetSpec } from '../services/ui/exerciseSetSpec'
@@ -23,20 +23,33 @@ import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { useWeekSnapshotConfirmationSheet } from '../hooks/useWeekSnapshotConfirmationSheet'
 import { useAuth } from '../hooks/useAuth'
 import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
+import { useBlockLogs } from '../hooks/useBlockLogs'
+import { mergeExerciseHistoryLogs } from '../services/session/mergeExerciseHistoryLogs'
+import { flushSessionExerciseSets } from '../services/session/flushSessionExerciseSets'
 import { buildSlotSignature } from '../services/motherSession/slotSignature'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
+import { collectBlockSetUpserts, type BlockCompletionSnapshot } from '../services/session/collectBlockSetUpserts'
+import {
+  resolveExerciseSetValidatePrefill,
+  validateExerciseSetFromBlock,
+} from '../services/session/validateExerciseSet'
 import { buildMotherSessionProgramSessionLog } from '../services/program/buildProgramSessionLog'
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { prepareSessionForRender } from '../services/session/prepareSessionForRender'
 import { localizeMotherSessionExerciseName } from '../services/motherSession/localizeMotherSessionExerciseName'
 import { localizeBlockName } from '../services/motherSession/motherSessionBlockLabels'
-import { restTimerAfterTourLine } from '../i18n/sessionRunUi'
+import { restTimerAfterSetLine } from '../i18n/sessionRunUi'
 import { SessionFinishedSheet } from '../components/session/SessionFinishedSheet'
 import { computeSessionTonnage } from '../services/session/computeSessionTonnage'
 import { detectSessionPRs } from '../services/session/detectSessionPRs'
 import { buildSessionLoadSuggestions } from '../services/session/buildSessionLoadSuggestions'
+import {
+  buildPreviousSessionSetMap,
+  previousSessionSetKey,
+  type PreviousSessionSetRef,
+} from '../services/session/buildPreviousSessionSetMap'
 import { isBodyweightProgramTier } from '../services/equipment/resolveEquipmentProgramTier'
 import { bodyweightProgramMissingMorphology } from '../services/bodyweight/bodyweightMorphologyWarning'
 import { BodyweightMorphologyBanner } from '../components/profile/BodyweightMorphologyBanner'
@@ -45,8 +58,11 @@ import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { getPrehab, CONTRA_LABELS } from '../services/ui/getPrehab'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
-
 import { SessionRunProgressBar, SessionStickyCTA, SessionBlocks } from '../components/session'
+import { SessionPRToast } from '../components/session/SessionPRToast'
+import { detectLiveSetPR, collectPriorSessionDrafts } from '../services/pr/detectLiveSetPR'
+import { buildLivePRToastData, type LivePRToastData } from '../services/pr/formatLivePRToast'
+import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
 import { HeroIdle } from '../components/session/blocks'
 import { ExerciseDemoSheet } from '../components/motherSession/ExerciseDemoSheet'
 import { hasExerciseDemo } from '../data/exercises'
@@ -118,6 +134,7 @@ export function SessionDetailPage() {
   const { structuralEvents, visibleEvents } = useCalendar()
   const navigate = useNavigate()
   const { upsertSet, linkToSessionLog, logs: setLogs } = useExerciseSetLogs()
+  const { logs: blockLogs } = useBlockLogs()
   const { isPremium } = useFeatureAccess()
   const sessionRun = useSessionRun()
   const [prehabbOpen, setPrehabbOpen] = useState(true)
@@ -129,6 +146,7 @@ export function SessionDetailPage() {
   const [isSavingSession, setIsSavingSession] = useState(false)
   // B3 — exercise demo sheet (eye button on exercise rows in ToursBlock)
   const [demoExerciseId, setDemoExerciseId] = useState<string | null>(null)
+  const [livePRToast, setLivePRToast] = useState<LivePRToastData | null>(null)
   // Note : depuis le passage à SessionBlocks, les sets sont persistés via
   // `upsertSet` (table exercise_set_logs). Le hook `useBlockLogs` ne sert plus
   // sur cette page — il sera ré-introduit en D5/D6 pour la suggestion de charge
@@ -232,6 +250,22 @@ export function SessionDetailPage() {
     const rawSessions = msResolution?.sessions ?? []
     return rawSessions[index] ?? null
   }, [snapshot, msResolution, index])
+
+  const adaptedSession = useMemo(() => {
+    if (!activeSlot) return null
+    return prepareSessionForRender({
+      session: activeSlot.session,
+      trainingLevel: profile.trainingLevel,
+      equipment: profile.equipment,
+      lang,
+    })
+  }, [activeSlot, profile.trainingLevel, profile.equipment, lang])
+
+  /** Set logs + block_logs legacy — source unique pour PR / PREVIOUS / suggestions. */
+  const historyLogs = useMemo(
+    () => mergeExerciseHistoryLogs(setLogs, blockLogs),
+    [setLogs, blockLogs],
+  )
 
   // ── Session Run Mode ──────────────────────────────────────────────────────
   const sessionRunKey = activeSlot ? `${activeSlot.session.metadata.id}_${today}` : null
@@ -404,10 +438,10 @@ export function SessionDetailPage() {
   const sessionPRs = useMemo(() => {
     if (!slotSignature) return []
     return detectSessionPRs({
-      allSets: setLogs,
+      allSets: historyLogs,
       currentSlotSignature: slotSignature,
     })
-  }, [setLogs, slotSignature])
+  }, [historyLogs, slotSignature])
 
   // ── Suggestions de charge Premium par exercice (garde-fous KB) ───────────
   const loadSuggestionByExoId = useMemo(() => {
@@ -424,7 +458,7 @@ export function SessionDetailPage() {
     }
     const fatigueLevel = resolveFatigueLevel(fatigue, acwrZone)
     return buildSessionLoadSuggestions({
-      allSetLogs: setLogs,
+      allSetLogs: historyLogs,
       exercises,
       currentSlotSignature: slotSignature,
       week,
@@ -439,7 +473,7 @@ export function SessionDetailPage() {
     isPremium,
     activeSlot,
     surface,
-    setLogs,
+    historyLogs,
     slotSignature,
     week,
     acwrZone,
@@ -454,62 +488,116 @@ export function SessionDetailPage() {
     [loadSuggestionByExoId],
   )
 
+  const previousSessionSetMap = useMemo(() => {
+    if (!slotSignature || !activeSlot) return new Map<string, PreviousSessionSetRef>()
+    const exerciseIds = new Set<string>()
+    let maxTours = 1
+    for (const block of activeSlot.session.blocks) {
+      maxTours = Math.max(maxTours, parseBlockTourCount(block))
+      for (const exercise of block.exercises) {
+        if (!exercise || isDirectiveText(exercise.name)) continue
+        const exerciseId = resolveExerciseIdForSessionRun(exercise.name, exercise.exerciseId)
+        if (exerciseId) exerciseIds.add(exerciseId)
+      }
+    }
+    return buildPreviousSessionSetMap({
+      allSetLogs: historyLogs,
+      currentSlotSignature: slotSignature,
+      exerciseIds: Array.from(exerciseIds),
+      tourCount: maxTours,
+    })
+  }, [slotSignature, activeSlot, historyLogs])
+
+  const getPreviousSessionSet = useCallback(
+    (exerciseId: string, tourIndex: number): PreviousSessionSetRef | undefined =>
+      previousSessionSetMap.get(previousSessionSetKey(exerciseId, tourIndex)),
+    [previousSessionSetMap],
+  )
+
+  const handleLiveSetValidated = useCallback(
+    (payload: {
+      exerciseId: string
+      loadKg?: number
+      reps?: number
+      blockNumber: number
+      tourIndex: number
+      exerciseIndex: number
+    }) => {
+      if (!slotSignature || !isPremium) return
+      const metricType = getExerciseMetricType({ exerciseId: payload.exerciseId })
+      const priorSessionDrafts = collectPriorSessionDrafts(
+        sessionRun.exerciseTourLoads,
+        payload.blockNumber,
+        payload.tourIndex,
+        payload.exerciseIndex,
+        buildExerciseTourKey,
+      )
+      const pr = detectLiveSetPR({
+        setLogs: historyLogs,
+        exerciseId: payload.exerciseId,
+        metricType,
+        draft: { loadKg: payload.loadKg, reps: payload.reps },
+        validatingSet: {
+          slotSignature,
+          blockNumber: payload.blockNumber,
+          tourIndex: payload.tourIndex,
+        },
+        priorSessionDrafts,
+      })
+      if (!pr) return
+      const beatsPriorSessions = historyLogs.some(
+        (s) =>
+          s.exerciseId === payload.exerciseId &&
+          s.slotSignature !== slotSignature &&
+          (s.loadKg != null || s.reps != null),
+      )
+      setLivePRToast(buildLivePRToastData(pr, lang, { beatsPriorSessions }))
+      posthog.capture('session_live_pr', {
+        exerciseId: payload.exerciseId,
+        metricType,
+      })
+    },
+    [slotSignature, isPremium, historyLogs, lang, sessionRun.exerciseTourLoads],
+  )
+
   const showBodyweightMorphoWarning = useMemo(
     () => isPremium && bodyweightProgramMissingMorphology(profile),
     [isPremium, profile],
   )
 
   // ── Autosave par bloc ─────────────────────────────────────────────────────
-  // Autofill : si l'utilisateur n'a saisi que le tour 1, on hérite de ses valeurs
-  // pour les tours suivants validés mais vides.
   const handleBlockCompleted = useCallback(
-    (blockNumber: number) => {
-      if (!slotSignature || !activeSlot || !surface) return
-      const block = activeSlot.session.blocks.find((b) => b.number === blockNumber)
+    (blockNumber: number, snapshot?: BlockCompletionSnapshot) => {
+      if (!slotSignature || !adaptedSession || !surface) return
+      const block = adaptedSession.blocks.find((b) => b.number === blockNumber)
       if (!block) return
       const weekLabel = surface.planningContext.weekLabel ?? 'unknown'
-      const motherSessionId = activeSlot.session.metadata.id
-      const tourCount = parseBlockTourCount(block)
+      const motherSessionId = adaptedSession.metadata.id
 
-      block.exercises.forEach((exercise, exerciseIndex) => {
-        if (!exercise || isDirectiveText(exercise.name)) return
-        const exerciseId = resolveExerciseIdForSessionRun(exercise.name, exercise.exerciseId)
-        if (!exerciseId) return
-
-        const valuesPerTour: ({ loadKg?: number; reps?: number } | undefined)[] = []
-        let firstFilled: { loadKg?: number; reps?: number } | undefined
-        for (let tour = 0; tour < tourCount; tour++) {
-          const k = buildExerciseTourKey(blockNumber, tour, exerciseIndex)
-          const v = sessionRun.exerciseTourLoads[k]
-          valuesPerTour.push(v)
-          if (!firstFilled && v && (v.loadKg != null || v.reps != null)) firstFilled = v
-        }
-        if (!firstFilled) return
-
-        for (let tour = 0; tour < tourCount; tour++) {
-          const k = buildExerciseTourKey(blockNumber, tour, exerciseIndex)
-          const isValidated = sessionRun.completedExercises.has(k)
-          const own = valuesPerTour[tour]
-          const ownHasData = own && (own.loadKg != null || own.reps != null)
-          if (!isValidated && !ownHasData) continue
-          const effective = ownHasData ? own! : firstFilled
-          void upsertSet({
-            slotSignature,
-            motherSessionId,
-            weekLabel,
-            sessionIndex: index,
-            blockNumber,
-            exerciseId,
-            tourIndex: tour,
-            loadKg: effective.loadKg,
-            reps: effective.reps,
-          })
-        }
+      const upserts = collectBlockSetUpserts({
+        block,
+        blockNumber,
+        exerciseTourLoads: snapshot?.exerciseTourLoads ?? sessionRun.exerciseTourLoads,
+        completedExercises: snapshot?.completedExercises ?? sessionRun.completedExercises,
       })
+
+      for (const row of upserts) {
+        void upsertSet({
+          slotSignature,
+          motherSessionId,
+          weekLabel,
+          sessionIndex: index,
+          blockNumber: row.blockNumber,
+          exerciseId: row.exerciseId,
+          tourIndex: row.tourIndex,
+          loadKg: row.loadKg,
+          reps: row.reps,
+        })
+      }
     },
     [
       slotSignature,
-      activeSlot,
+      adaptedSession,
       surface,
       sessionRun.exerciseTourLoads,
       sessionRun.completedExercises,
@@ -521,19 +609,6 @@ export function SessionDetailPage() {
   // (Suggestion de charge Premium retirée temporairement — sera ré-introduite
   //  via `getLoadSuggestion` passé à SessionBlocks. Le service
   //  `loadSuggestion` reste disponible.)
-
-  // ── Session adaptée + localisée (Foundations + Equipment + FR) ───────────
-  // Pipeline pur, idempotent. `SessionBlocks` reçoit la session prête à rendre.
-  // ⚠️ Hook placé AVANT l'early return `hasHardBlock` (rules-of-hooks).
-  const adaptedSession = useMemo(() => {
-    if (!activeSlot) return null
-    return prepareSessionForRender({
-      session: activeSlot.session,
-      trainingLevel: profile.trainingLevel,
-      equipment: profile.equipment,
-      lang,
-    })
-  }, [activeSlot, profile.trainingLevel, profile.equipment, lang])
 
   // ── Phase visuelle dérivée ─────────────────────────────────────────────────
   const phase: 'idle' | 'running' | 'completed' = celebrationOpen
@@ -708,19 +783,24 @@ export function SessionDetailPage() {
     if (sessionRun.restTimer) sessionRun.skipRestTimer()
     sessionRun.markExerciseDone(key)
 
-    const completed = new Set(sessionRun.completedExercises)
-    completed.add(key)
-    const rest = getInterTourRestAfterMarking(
+    const rest = getRestAfterExerciseSet(
       adaptedSession,
       blockNumber,
       tourIndex,
       exerciseIndex,
-      completed,
     )
     if (rest) {
+      const exo = adaptedSession.blocks
+        .find((b) => b.number === blockNumber)
+        ?.exercises[exerciseIndex]
       sessionRun.startRestTimer(
         rest.restSeconds,
-        restTimerAfterTourLine(rest.tourOneBased, lang),
+        restTimerAfterSetLine({
+          kind: rest.kind,
+          tourOneBased: rest.tourOneBased,
+          exerciseName: exo?.name,
+          lang,
+        }),
       )
     }
 
@@ -743,6 +823,20 @@ export function SessionDetailPage() {
     try {
       setFatigue(payload.fatigue)
       const noteText = (payload.notes != null ? payload.notes : msNotes).trim() || undefined
+
+      if (adaptedSession && slotSignature) {
+        await flushSessionExerciseSets({
+          session: adaptedSession,
+          slotSignature,
+          motherSessionId: adaptedSession.metadata.id,
+          weekLabel: surface.planningContext.weekLabel ?? 'unknown',
+          sessionIndex: index,
+          exerciseTourLoads: sessionRun.exerciseTourLoads,
+          completedExercises: sessionRun.completedExercises,
+          upsertSet,
+        })
+      }
+
       const log = buildMotherSessionProgramSessionLog({
         dateISO: new Date().toISOString(),
         fatigue: payload.fatigue,
@@ -797,40 +891,38 @@ export function SessionDetailPage() {
     : []
 
   /**
-   * Validate la série courante depuis le sticky CTA :
-   *  - Si un rest timer est actif → on le skippe d'abord (l'utilisateur veut
-   *    relancer immédiatement un tour, ne pas attendre la fin du repos)
-   *  - Marque l'exo comme fait
-   *  - Si dernier exo du tour (et pas dernier tour/bloc) → démarre le rest timer
-   *  - Si tous les exos loggables du bloc sont faits → autosave (handleBlockCompleted)
+   * Validate la série courante depuis le sticky CTA (même logique que ToursBlock :
+   * prefill, PR live, repos, autosave incrémental).
    */
   const handleValidateFromStickyCTA = () => {
     if (!runningCursor || !adaptedSession || runningCursor.isTimedBlock) return
-    if (sessionRun.restTimer) sessionRun.skipRestTimer()
-    const key = buildExerciseTourKey(
-      runningCursor.blockNumber,
-      runningCursor.tourIndex,
-      runningCursor.exerciseIndex,
-    )
-    sessionRun.markExerciseDone(key)
 
-    const completed = new Set(sessionRun.completedExercises)
-    completed.add(key)
-    const rest = getInterTourRestAfterMarking(
-      adaptedSession,
-      runningCursor.blockNumber,
-      runningCursor.tourIndex,
-      runningCursor.exerciseIndex,
-      completed,
-    )
-    if (rest) {
-      sessionRun.startRestTimer(
-        rest.restSeconds,
-        restTimerAfterTourLine(rest.tourOneBased, lang),
-      )
-    }
+    const block = adaptedSession.blocks.find((b) => b.number === runningCursor.blockNumber)
+    if (!block) return
 
-    handleBlockCompleted(runningCursor.blockNumber)
+    const loadPrefill = resolveExerciseSetValidatePrefill({
+      block,
+      blockNumber: runningCursor.blockNumber,
+      tourIndex: runningCursor.tourIndex,
+      exerciseIndex: runningCursor.exerciseIndex,
+      exerciseTourLoads: sessionRun.exerciseTourLoads,
+      premium: isPremium,
+      getPreviousSessionSet,
+      getLoadSuggestion,
+    })
+
+    validateExerciseSetFromBlock({
+      session: adaptedSession,
+      blockNumber: runningCursor.blockNumber,
+      tourIndex: runningCursor.tourIndex,
+      exerciseIndex: runningCursor.exerciseIndex,
+      sessionRun,
+      block,
+      lang,
+      onBlockCompleted: handleBlockCompleted,
+      loadPrefill,
+      onLiveSetValidated: handleLiveSetValidated,
+    })
   }
 
   const handleStartTimedBlockFromStickyCTA = () => {
@@ -1003,6 +1095,9 @@ export function SessionDetailPage() {
                   onStartIsoTimer={handleStartIsoTimer}
                   onPlayDemo={handlePlayDemo}
                   getLoadSuggestion={getLoadSuggestion}
+                  getPreviousSessionSet={getPreviousSessionSet}
+                  historyLogs={historyLogs}
+                  slotSignature={slotSignature}
                   lang={lang}
                 />
               </div>
@@ -1038,7 +1133,11 @@ export function SessionDetailPage() {
               onStartIsoTimer={handleStartIsoTimer}
               onPlayDemo={handlePlayDemo}
               getLoadSuggestion={getLoadSuggestion}
+              getPreviousSessionSet={getPreviousSessionSet}
+              onLiveSetValidated={handleLiveSetValidated}
               activeEmomBlockNumber={emomBlockNumber}
+              historyLogs={historyLogs}
+              slotSignature={slotSignature}
               lang={lang}
             />
           </div>
@@ -1181,6 +1280,11 @@ export function SessionDetailPage() {
       />
 
       {/* B3 — exercise demo sheet (bouton œil). Rendu à la racine pour overlay plein écran. */}
+      <SessionPRToast
+        data={livePRToast}
+        onDismiss={() => setLivePRToast(null)}
+        stackAboveRest={Boolean(livePRToast)}
+      />
       <ExerciseDemoSheet
         exerciseId={demoExerciseId}
         lang={lang}

@@ -2,6 +2,8 @@ import type { Block, Exercise } from '../../../types/motherSession'
 import { useState } from 'react'
 import { Icon } from '../../ui'
 import { parseExerciseSetSpec } from '../../../services/ui/exerciseSetSpec'
+import { getExerciseMetricType } from '../../../services/ui/exerciseMetrics'
+import type { ExerciseMetricType } from '../../../services/ui/exerciseMetrics'
 import { BlockHeader } from '../BlockHeader'
 import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
@@ -14,6 +16,20 @@ import {
 } from '../../../services/motherSession/localizeMotherSessionExerciseName'
 import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
 import { tr } from '../../../i18n/appLabels'
+import {
+  sanitizeDecimalInput,
+} from '../../../services/ui/parseExerciseInputNumber'
+import {
+  formatPreviousSessionSetLabel,
+  type PreviousSessionSetRef,
+} from '../../../services/session/buildPreviousSessionSetMap'
+import { buildExerciseValidatePrefill } from '../../../services/session/validateExerciseSet'
+import type { ExerciseLoadPrefill } from '../../../services/session/collectBlockSetUpserts'
+import { buildExerciseSessionJournal } from '../../../services/session/buildExerciseSessionJournal'
+import type { ExerciseSessionJournal } from '../../../services/session/buildExerciseSessionJournal'
+import { ExerciseSessionJournalPanel } from '../ExerciseSessionJournal'
+import { ExercisePrefillChip } from '../ExercisePrefillChip'
+import type { ExerciseSetLog } from '../../../types/training'
 
 /**
  * Per-exo gate for the eye/demo button. Aligné sur `resolveExerciseIdForSessionRun`
@@ -52,7 +68,7 @@ interface ToursBlockProps {
   /** Données de log par tour (Premium). */
   tourData?: TourDataMap
   /** Callback validation d'un exo (toggle bool). */
-  onValidateExo: (tourIdx: number, exoIdx: number) => void
+  onValidateExo: (tourIdx: number, exoIdx: number, prefill?: ExerciseLoadPrefill) => void
   /** Callback patch des inputs kg/reps. */
   onSetExoData?: (tourIdx: number, exoIdx: number, patch: Partial<ExoTourData>) => void
   /** Callback ouverture demo vidéo. */
@@ -63,8 +79,14 @@ interface ToursBlockProps {
   notes?: readonly string[]
   /** Suggestion de charge Premium par exerciseId (optionnel). */
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
+  /** Dernière série loggée (même n° de tour, séance précédente). */
+  getPreviousSessionSet?: (exerciseId: string, tourIndex: number) => PreviousSessionSetRef | undefined
   /** Langue d'affichage des noms d'exercices. Défaut: 'fr'. */
   lang?: Lang
+  /** Historique sets pour journal set-by-set (Premium). */
+  historyLogs?: readonly ExerciseSetLog[]
+  slotSignature?: string
+  blockNumber?: number
 }
 
 const TOUR_STATE_FROM_BLOCK = (
@@ -108,7 +130,11 @@ export function ToursBlock(props: ToursBlockProps) {
     onStartIso,
     notes,
     getLoadSuggestion,
+    getPreviousSessionSet,
     lang = 'fr',
+    historyLogs,
+    slotSignature,
+    blockNumber,
   } = props
 
   const displayTour = state === 'done' ? totalTours : Math.min(currentTourIdx + 1, totalTours)
@@ -168,10 +194,11 @@ export function ToursBlock(props: ToursBlockProps) {
                   <TourGroup
                     key={i}
                     tourNum={i + 1}
+                    tourIdx={i}
                     state={tourState}
                     exercises={block.exercises}
                     exoData={tourExoData}
-                    firstTourData={tourData?.[0]}
+                    previousTourData={i > 0 ? tourData?.[i - 1] : undefined}
                     showCarryForward={i > 0}
                     isActiveTour={tourState === 'active'}
                     expanded={tourState === 'active' || (tourState === 'done' && expandedDoneTours.has(i))}
@@ -180,14 +207,20 @@ export function ToursBlock(props: ToursBlockProps) {
                     }
                     currentExoIdx={tourState === 'active' ? currentExoIdx : -1}
                     premium={premium}
-                    onValidateExo={(exoIdx) => onValidateExo(i, exoIdx)}
+                    onValidateExo={(exoIdx, prefill) => onValidateExo(i, exoIdx, prefill)}
                     onSetExoData={
                       onSetExoData ? (exoIdx, patch) => onSetExoData(i, exoIdx, patch) : undefined
                     }
                     onPlayDemo={onPlayDemo}
                     onStartIso={onStartIso ? (exoIdx) => onStartIso(i, exoIdx) : undefined}
                     getLoadSuggestion={getLoadSuggestion}
+                    getPreviousSessionSet={getPreviousSessionSet}
                     lang={lang}
+                    historyLogs={historyLogs}
+                    slotSignature={slotSignature}
+                    blockNumber={blockNumber ?? number}
+                    totalTours={totalTours}
+                    allTourData={tourData}
                   />
                 )
               })}
@@ -205,12 +238,13 @@ export function ToursBlock(props: ToursBlockProps) {
 
 interface TourGroupProps {
   tourNum: number
+  tourIdx: number
   state: BlockState
   exercises: readonly Exercise[]
   exoData: Record<number, ExoTourData>
-  /** Données du tour 1 (tourIdx=0) — utilisées comme placeholder ghost pour les tours suivants. */
-  firstTourData?: Record<number, ExoTourData>
-  /** True quand ce TourGroup est tourIdx > 0 → propose les valeurs du tour 1 en placeholder. */
+  /** Données du tour précédent — placeholder ghost pour le tour courant. */
+  previousTourData?: Record<number, ExoTourData>
+  /** True quand ce TourGroup est tourIdx > 0 → propose les valeurs du tour précédent. */
   showCarryForward: boolean
   isActiveTour: boolean
   /** Tour déplié (actif ou tour terminé éditable). */
@@ -219,12 +253,18 @@ interface TourGroupProps {
   onToggleExpand?: () => void
   currentExoIdx: number
   premium: boolean
-  onValidateExo: (exoIdx: number) => void
+  onValidateExo: (exoIdx: number, prefill?: ExerciseLoadPrefill) => void
   onSetExoData?: (exoIdx: number, patch: Partial<ExoTourData>) => void
   onPlayDemo?: (exoIdx: number) => void
   onStartIso?: (exoIdx: number) => void
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
+  getPreviousSessionSet?: (exerciseId: string, tourIndex: number) => PreviousSessionSetRef | undefined
   lang: Lang
+  historyLogs?: readonly ExerciseSetLog[]
+  slotSignature?: string
+  blockNumber: number
+  totalTours: number
+  allTourData?: TourDataMap
 }
 
 const TOUR_HEADER_CLASS: Record<BlockState, string> = {
@@ -241,10 +281,11 @@ const TOUR_HEADER_FG: Record<BlockState, string> = {
 
 function TourGroup({
   tourNum,
+  tourIdx,
   state,
   exercises,
   exoData,
-  firstTourData,
+  previousTourData,
   showCarryForward,
   isActiveTour,
   expanded,
@@ -256,7 +297,13 @@ function TourGroup({
   onPlayDemo,
   onStartIso,
   getLoadSuggestion,
+  getPreviousSessionSet,
   lang,
+  historyLogs,
+  slotSignature,
+  blockNumber,
+  totalTours,
+  allTourData,
 }: TourGroupProps) {
   const validatedCount = Object.values(exoData).filter((d) => d.validated).length
   const headerLabel = state === 'active'
@@ -326,12 +373,17 @@ function TourGroup({
             const data = exoData[i] ?? {}
             const isCurrent = isActiveTour && i === currentExoIdx
             const allowPastEdit = state === 'done' && data.validated === true
-            const firstData = showCarryForward ? (firstTourData?.[i] ?? {}) : {}
-            const exoIdRef = exo.exerciseId
-            // Suggestion AI uniquement sur le tour 1 (showCarryForward=false).
+            const previousData = showCarryForward ? (previousTourData?.[i] ?? {}) : {}
+            const exerciseId = resolveExerciseIdForSessionRun(exo.name, exo.exerciseId) ?? ''
+            const metricType = exerciseId ? getExerciseMetricType({ exerciseId }) : 'load_reps'
+            const previousSession =
+              exerciseId && getPreviousSessionSet
+                ? getPreviousSessionSet(exerciseId, tourIdx)
+                : undefined
+            // Suggestion AI Premium (tour courant sans carry-forward intra-séance).
             const suggestion =
-              !showCarryForward && exoIdRef && premium
-                ? getLoadSuggestion?.(exoIdRef)
+              !showCarryForward && exerciseId && premium
+                ? getLoadSuggestion?.(exerciseId)
                 : undefined
             const showSuggestionPlaceholder =
               suggestion?.confidence === 'high' &&
@@ -350,22 +402,60 @@ function TourGroup({
 
             // Aide à la saisie en placeholder fantôme (gris) — n'empêche pas de
             // vider, ce qui est tapé reste ce qui est loggé (WYSIWYG) :
-            //  - tours > 0 → valeurs du tour 1 (carry-forward)
-            //  - tour 1   → suggestion AI Premium
+            //  - tours > 0 → valeurs du tour précédent (même exo, séance en cours)
+            //  - tour 1   → dernière séance, sinon suggestion AI Premium
+            const previousKg =
+              !showCarryForward && previousSession?.loadKg != null
+                ? String(previousSession.loadKg)
+                : undefined
+            const previousReps =
+              !showCarryForward && previousSession?.reps != null
+                ? String(previousSession.reps)
+                : undefined
             const kgPlaceholder = showCarryForward
-              ? firstData.kg || undefined
-              : showSuggestionPlaceholder
-                ? String(suggestion!.suggestedWeight)
-                : undefined
+              ? previousData.kg || undefined
+              : previousKg ??
+                (showSuggestionPlaceholder ? String(suggestion!.suggestedWeight) : undefined)
             const repsPlaceholder = showCarryForward
-              ? firstData.reps || undefined
-              : showSuggestionPlaceholder && suggestion?.suggestedReps != null
-                ? String(suggestion.suggestedReps)
-                : undefined
+              ? previousData.reps || undefined
+              : previousReps ??
+                (showSuggestionPlaceholder && suggestion?.suggestedReps != null
+                  ? String(suggestion.suggestedReps)
+                  : undefined)
+
+            let sessionJournal: ExerciseSessionJournal | null = null
+            if (
+              premium &&
+              isCurrent &&
+              exerciseId &&
+              historyLogs &&
+              slotSignature &&
+              allTourData
+            ) {
+              const tourDataByIndex: Record<number, ExoTourData> = {}
+              for (let t = 0; t < totalTours; t++) {
+                tourDataByIndex[t] = allTourData[t]?.[i] ?? {}
+              }
+              sessionJournal = buildExerciseSessionJournal({
+                allSetLogs: historyLogs,
+                exerciseId,
+                currentSlotSignature: slotSignature,
+                blockNumber,
+                totalTours,
+                tourDataByIndex,
+                currentTourIdx: tourIdx,
+                metricType,
+                lang,
+              })
+            }
+
             return (
               <ExerciseRow
                 key={i}
                 exo={exo}
+                metricType={metricType}
+                previousSession={previousSession}
+                sessionJournal={sessionJournal}
                 validated={data.validated === true}
                 isCurrent={isCurrent}
                 allowPastEdit={allowPastEdit}
@@ -374,8 +464,9 @@ function TourGroup({
                 reps={effectiveReps}
                 kgPlaceholder={kgPlaceholder}
                 repsPlaceholder={repsPlaceholder}
+                showCarryForward={showCarryForward}
                 suggestion={!showCarryForward ? suggestion : undefined}
-                onValidate={() => onValidateExo(i)}
+                onValidate={(prefill) => onValidateExo(i, prefill)}
                 onSetKg={onSetExoData ? (v) => onSetExoData(i, { kg: v }) : undefined}
                 onSetReps={onSetExoData ? (v) => onSetExoData(i, { reps: v }) : undefined}
                 onPlayDemo={onPlayDemo && exerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined}
@@ -414,6 +505,9 @@ function BulletIndicator({ state }: { state: BlockState }) {
 
 interface ExerciseRowProps {
   exo: Exercise
+  metricType: ExerciseMetricType
+  previousSession?: PreviousSessionSetRef
+  sessionJournal?: ExerciseSessionJournal | null
   validated: boolean
   isCurrent: boolean
   /** Tour terminé déplié — permet de corriger kg/reps. */
@@ -427,7 +521,9 @@ interface ExerciseRowProps {
   repsPlaceholder?: string
   /** Suggestion de charge Premium (badge à côté du nom). undefined = pas de badge. */
   suggestion?: LoadSuggestion
-  onValidate: () => void
+  /** Tour > 0 : placeholder = série précédente dans la séance en cours. */
+  showCarryForward?: boolean
+  onValidate: (prefill?: ExerciseLoadPrefill) => void
   onSetKg?: (next: string) => void
   onSetReps?: (next: string) => void
   onPlayDemo?: () => void
@@ -447,6 +543,9 @@ function isoChronoLabel(prescription: string): string | null {
 
 function ExerciseRow({
   exo,
+  metricType,
+  previousSession,
+  sessionJournal,
   validated,
   isCurrent,
   allowPastEdit = false,
@@ -455,6 +554,7 @@ function ExerciseRow({
   reps,
   kgPlaceholder,
   repsPlaceholder,
+  showCarryForward = false,
   suggestion,
   onValidate,
   onSetKg,
@@ -467,19 +567,87 @@ function ExerciseRow({
   // Pour les exos en temps (iso, planks), pas d'inputs kg/reps — un bouton iso
   // déclenche l'overlay chrono dédié.
   const spec = parseExerciseSetSpec(exo.prescription)
-  const hasLoad = spec.kind === 'reps'
+  const hasRepScheme = spec.kind === 'reps'
   const isoLabel = isoChronoLabel(exo.prescription)
-  const showLoadInputs = hasLoad && premium && (isCurrent || allowPastEdit)
+  const showLoadInputs =
+    hasRepScheme &&
+    premium &&
+    (metricType === 'load_reps' || metricType === 'reps') &&
+    (isCurrent || allowPastEdit)
+  const showKgInput = showLoadInputs && metricType === 'load_reps'
+  const showRepsInput = showLoadInputs && (metricType === 'load_reps' || metricType === 'reps')
 
-  // Pré-remplissage 1-tap : propose d'injecter la valeur d'aide (tour 1 ou
-  // suggestion AI) quand les deux champs sont vides. Reste 100% supprimable
-  // ensuite puisqu'on écrit dans la vraie valeur (data.kg/reps).
-  const canPrefill =
-    showLoadInputs && kg === '' && reps === '' && (kgPlaceholder != null || repsPlaceholder != null)
-  const prefillIsSuggestion = suggestion != null
-  const handlePrefill = () => {
-    if (kgPlaceholder != null) onSetKg?.(kgPlaceholder)
-    if (repsPlaceholder != null) onSetReps?.(repsPlaceholder)
+  // Pré-remplissage 1-tap : dernière séance, série précédente ou suggestion AI.
+  const previousLabel =
+    previousSession != null ? formatPreviousSessionSetLabel(previousSession, metricType) : null
+  const canPrefillPrevious =
+    showLoadInputs &&
+    previousLabel != null &&
+    (showKgInput ? kg === '' : true) &&
+    (showRepsInput ? reps === '' : true)
+  const canPrefillSuggestion =
+    showLoadInputs &&
+    suggestion != null &&
+    suggestion.confidence === 'high' &&
+    suggestion.decision !== 'no_data' &&
+    suggestion.decision !== 'no_suggestion' &&
+    (showKgInput ? kg === '' : true) &&
+    (showRepsInput ? reps === '' : true) &&
+    (suggestion.suggestedWeight != null || suggestion.suggestedReps != null)
+  const canPrefillCarry =
+    showLoadInputs &&
+    showCarryForward &&
+    (showKgInput ? kg === '' : true) &&
+    (showRepsInput ? reps === '' : true) &&
+    (kgPlaceholder != null || repsPlaceholder != null)
+
+  const handlePrefillCarry = () => {
+    if (showKgInput && kgPlaceholder != null) onSetKg?.(kgPlaceholder)
+    if (showRepsInput && repsPlaceholder != null) onSetReps?.(repsPlaceholder)
+  }
+  const handlePrefillPrevious = () => {
+    if (showKgInput && previousSession?.loadKg != null) {
+      onSetKg?.(String(previousSession.loadKg))
+    }
+    if (showRepsInput && previousSession?.reps != null) {
+      onSetReps?.(String(previousSession.reps))
+    }
+  }
+  const handlePrefillSuggestion = () => {
+    if (showKgInput && suggestion?.suggestedWeight != null) {
+      onSetKg?.(String(suggestion.suggestedWeight))
+    }
+    if (showRepsInput && suggestion?.suggestedReps != null) {
+      onSetReps?.(String(suggestion.suggestedReps))
+    }
+  }
+
+  const suggestionValue =
+    suggestion != null
+      ? [
+          suggestion.suggestedWeight != null ? `${suggestion.suggestedWeight} kg` : '',
+          suggestion.suggestedWeight != null && suggestion.suggestedReps != null ? ' × ' : '',
+          suggestion.suggestedReps != null ? String(suggestion.suggestedReps) : '',
+        ].join('')
+      : ''
+  const carryValue = [
+    kgPlaceholder != null ? `${kgPlaceholder} kg` : '',
+    kgPlaceholder != null && repsPlaceholder != null ? ' × ' : '',
+    repsPlaceholder != null ? repsPlaceholder : '',
+  ].join('')
+
+  const handleValidate = () => {
+    const prefill = buildExerciseValidatePrefill({
+      hasLoadInputs: showLoadInputs,
+      showKgInput,
+      showRepsInput,
+      kg,
+      reps,
+      previousSession,
+      kgPlaceholder,
+      repsPlaceholder,
+    })
+    onValidate(prefill)
   }
 
   const wrapperClass = isCurrent
@@ -493,7 +661,7 @@ function ExerciseRow({
       <div className="flex items-start gap-2.5">
         <button
           type="button"
-          onClick={onValidate}
+          onClick={handleValidate}
           aria-label={validated ? tr('exercise_aria_unvalidate', lang) : tr('exercise_aria_validate', lang)}
           className={`mt-0.5 flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-[7px] rf-focus-ring transition-colors ${
             validated
@@ -547,29 +715,38 @@ function ExerciseRow({
 
       {showLoadInputs && (
         <div className="flex flex-col gap-2 border-t border-dashed border-brand/25 pt-2.5">
-          {canPrefill && (
-            <button
-              type="button"
-              onClick={handlePrefill}
-              data-testid="exo-prefill-chip"
-              className="flex items-center gap-1.5 self-start rounded-full border border-brand/30 bg-brand/5 px-2.5 py-1 text-[11px] font-bold text-brand active:scale-[0.97] transition-transform rf-focus-ring"
-            >
-              <Icon name="plus" size={11} strokeWidth={2.6} />
-              <span>
-                {tr(
-                  prefillIsSuggestion ? 'exercise_prefill_suggestion' : 'exercise_prefill_carry',
-                  lang,
-                )}
-              </span>
-              <span className="tabular-nums opacity-75">
-                {kgPlaceholder != null ? `${kgPlaceholder} kg` : ''}
-                {kgPlaceholder != null && repsPlaceholder != null ? ' × ' : ''}
-                {repsPlaceholder != null ? repsPlaceholder : ''}
-              </span>
-            </button>
+          {sessionJournal && (
+            <ExerciseSessionJournalPanel journal={sessionJournal} lang={lang} />
+          )}
+          {canPrefillPrevious && previousLabel && (
+            <ExercisePrefillChip
+              variant="previous"
+              label={tr('exercise_prefill_previous', lang)}
+              value={previousLabel}
+              onClick={handlePrefillPrevious}
+              testId="exo-previous-chip"
+            />
+          )}
+          {canPrefillSuggestion && (
+            <ExercisePrefillChip
+              variant="suggestion"
+              label={tr('exercise_prefill_suggestion', lang)}
+              value={suggestionValue}
+              onClick={handlePrefillSuggestion}
+              testId="exo-suggestion-chip"
+            />
+          )}
+          {canPrefillCarry && (
+            <ExercisePrefillChip
+              variant="carry"
+              label={tr('exercise_prefill_carry', lang)}
+              value={carryValue}
+              onClick={handlePrefillCarry}
+              testId="exo-prefill-chip"
+            />
           )}
           <div className="flex items-center gap-2">
-            {onSetKg && (
+            {showKgInput && onSetKg && (
               <NumInput
                 label="kg"
                 value={kg}
@@ -577,7 +754,10 @@ function ExerciseRow({
                 placeholder={kgPlaceholder}
               />
             )}
-            {onSetReps && (
+            {showKgInput && showRepsInput && (
+              <span className="text-[10px] text-fg-muted">×</span>
+            )}
+            {showRepsInput && onSetReps && (
               <NumInput
                 label="reps"
                 value={reps}
@@ -588,7 +768,7 @@ function ExerciseRow({
             {isCurrent && (
               <button
                 type="button"
-                onClick={onValidate}
+                onClick={handleValidate}
                 className="ml-auto h-9 rounded-[10px] bg-brand text-app px-3.5 text-[11px] font-extrabold uppercase tracking-[0.06em] active:scale-[0.97] transition-transform rf-focus-ring"
               >
                 {tr('exercise_validate_set', lang)}
@@ -598,7 +778,7 @@ function ExerciseRow({
         </div>
       )}
 
-      {isCurrent && hasLoad && !premium && (
+      {isCurrent && hasRepScheme && !premium && (
         <div className="flex items-center gap-2 border-t border-dashed border-brand/25 pt-2.5 text-[11px] text-fg-muted italic">
           <Icon name="lock" size={12} color="var(--color-accent)" strokeWidth={1.8} />
           <span>
@@ -713,7 +893,7 @@ function NumInput({ label, value, onChange, placeholder }: NumInputProps) {
         type="text"
         inputMode="decimal"
         value={value}
-        onChange={(e) => onChange(e.target.value.replace(/[^0-9.]/g, ''))}
+        onChange={(e) => onChange(sanitizeDecimalInput(e.target.value))}
         placeholder={placeholder}
         aria-label={label}
         className="h-full w-11 min-w-0 flex-1 border-0 bg-transparent px-2 text-right text-[14px] font-extrabold text-fg outline-none tabular-nums placeholder:font-extrabold placeholder:text-fg/30"

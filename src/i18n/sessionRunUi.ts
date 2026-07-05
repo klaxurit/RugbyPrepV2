@@ -5,6 +5,25 @@ export function restTimerAfterTourLine(tourOneBased: number, lang: Lang): string
   return lang === 'en' ? `End of round ${tourOneBased}` : `Fin du tour ${tourOneBased}`
 }
 
+/** Libellé timer repos après validation d'une série. */
+export function restTimerAfterSetLine(params: {
+  kind: 'intra_tour' | 'inter_tour'
+  tourOneBased: number
+  exerciseName?: string
+  lang: Lang
+}): string {
+  const { kind, tourOneBased, exerciseName, lang } = params
+  if (kind === 'intra_tour') {
+    return lang === 'en' ? 'Next exercise' : 'Exercice suivant'
+  }
+  if (exerciseName) {
+    return lang === 'en'
+      ? `After set · round ${tourOneBased}`
+      : `Après série · tour ${tourOneBased}`
+  }
+  return restTimerAfterTourLine(tourOneBased, lang)
+}
+
 /** Mot « Repos » / « Rest » dans la carte timer embarquée. */
 export function sessionRestWord(lang: Lang): string {
   return lang === 'en' ? 'Rest' : 'Repos'
