@@ -29,7 +29,16 @@ export function mergeDatedSessionCompletion(
   logs: SessionLog[],
   today: string,
 ): DatedSession[] {
-  const completedIds = motherSessionIdsLoggedThisWeek(logs, today)
+  return mergeDatedSessionCompletionForWeek(sessions, logs, today)
+}
+
+/** Variante pour une semaine ISO arbitraire (vue mois, replays). */
+export function mergeDatedSessionCompletionForWeek(
+  sessions: DatedSession[],
+  logs: SessionLog[],
+  weekAnchorIso: string,
+): DatedSession[] {
+  const completedIds = motherSessionIdsLoggedThisWeek(logs, weekAnchorIso)
   return sessions.map((s) => {
     if (s.completionStatus === 'skipped') return s
     if (completedIds.has(s.sessionSlot.sessionId)) {

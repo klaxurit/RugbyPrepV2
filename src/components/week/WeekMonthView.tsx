@@ -1,49 +1,43 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { CalendarEvent, SessionLog, DayOfWeek } from '../../types/training'
+import type { MonthPhaseMarker, MonthPlannedSession } from '../../services/scheduling/resolveMonthProgramGrid'
+import type { Lang } from '../../i18n/appLabels'
 import { Icon, SectionLabel } from '../ui'
 import { ClubAvatar } from '../match/ClubAvatar'
 import { formatTonnage } from '../../services/home/formatTonnage'
 
-type CellEvent = 'match' | 'gym' | 'recovery'
+type CellEvent = 'match' | 'gym' | 'recovery' | 'planned' | 'planned_done' | 'planned_missed' | 'club'
 
 interface WeekMonthViewProps {
   events: readonly CalendarEvent[]
   logs: readonly SessionLog[]
-  /** Jours club hebdo (du profil). Affichage indicatif uniquement. */
   clubDays?: readonly DayOfWeek[]
-  /** Jours muscu prévisionnels (du profil). Affichage indicatif uniquement. */
   scDays?: readonly DayOfWeek[]
-  /** ISO YYYY-MM-DD du jour courant. */
   todayISO: string
-  /**
-   * Charge totale soulevée du mois courant (kg). Calculée par le caller via
-   * `computeMonthlyTonnage(sets, yearMonth, bodyweightKg)`. `null` quand
-   * pas de data exploitable (notamment free users sans set tracking).
-   */
+  year: number
+  month: number
+  onMonthChange: (year: number, month: number) => void
+  plannedSessionsByDate?: ReadonlyMap<string, readonly MonthPlannedSession[]>
+  phaseMarkers?: readonly MonthPhaseMarker[]
+  phaseLabelByMonday?: ReadonlyMap<string, string>
+  lang?: Lang
   monthlyTonnageKg?: number | null
-  /** Si false, la stat Charge est floutée + tease Premium. */
   isPremium?: boolean
   onSelectMatch?: (event: CalendarEvent) => void
-  /** Ouvre la consultation d'une séance gym déjà loguée ce jour-là. */
   onSelectSessionLog?: (log: SessionLog) => void
   onAddForDate?: (dateISO: string) => void
 }
 
-const DOWS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
+const DOWS_FR = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
+const DOWS_EN = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 const MONTHS_FR = [
-  'Janvier',
-  'Février',
-  'Mars',
-  'Avril',
-  'Mai',
-  'Juin',
-  'Juillet',
-  'Août',
-  'Septembre',
-  'Octobre',
-  'Novembre',
-  'Décembre',
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+]
+const MONTHS_EN = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
 function pad2(n: number): string {
@@ -54,15 +48,22 @@ function ymd(year: number, month: number, day: number): string {
   return `${year}-${pad2(month + 1)}-${pad2(day)}`
 }
 
-/**
- * Vue mensuelle éditoriale (refonte UI mai 2026, design v4-pro.jsx) — remplace
- * `MonthlyMatchGrid`. Stats 3-up + grille `aspect-square` minimaliste avec dots
- * indicateurs sous chaque numéro + légende + liste des matchs à venir.
- */
+function dayOfWeekFromIso(iso: string): DayOfWeek {
+  return new Date(`${iso}T12:00:00`).getDay() as DayOfWeek
+}
+
 export function WeekMonthView({
   events,
   logs,
+  clubDays = [],
   todayISO,
+  year,
+  month,
+  onMonthChange,
+  plannedSessionsByDate,
+  phaseMarkers = [],
+  phaseLabelByMonday,
+  lang = 'fr',
   monthlyTonnageKg,
   isPremium = false,
   onSelectMatch,
@@ -70,17 +71,17 @@ export function WeekMonthView({
   onAddForDate,
 }: WeekMonthViewProps) {
   const todayDate = useMemo(() => new Date(`${todayISO}T12:00:00`), [todayISO])
-  const [year, setYear] = useState(todayDate.getFullYear())
-  const [month, setMonth] = useState(todayDate.getMonth())
+  const monthNames = lang === 'fr' ? MONTHS_FR : MONTHS_EN
+  const dowLabels = lang === 'fr' ? DOWS_FR : DOWS_EN
 
   const firstDow = useMemo(() => {
-    // JS getDay() : 0=Dim..6=Sam ; on veut 0=Lun..6=Dim.
     const d = new Date(year, month, 1).getDay()
     return d === 0 ? 6 : d - 1
   }, [year, month])
   const daysInMonth = useMemo(() => new Date(year, month + 1, 0).getDate(), [year, month])
 
-  // ─── Indexation des events par jour ──
+  const clubDaySet = useMemo(() => new Set(clubDays), [clubDays])
+
   const cellTypes = useMemo(() => {
     const map = new Map<number, Set<CellEvent>>()
     const add = (day: number, type: CellEvent) => {
@@ -88,25 +89,32 @@ export function WeekMonthView({
       set.add(type)
       map.set(day, set)
     }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const iso = ymd(year, month, d)
+      if (clubDaySet.has(dayOfWeekFromIso(iso))) add(d, 'club')
+      const planned = plannedSessionsByDate?.get(iso) ?? []
+      if (planned.some((s) => s.status === 'completed')) add(d, 'planned_done')
+      else if (planned.some((s) => s.status === 'missed')) add(d, 'planned_missed')
+      else if (planned.some((s) => s.status === 'pending' || s.status === 'skipped')) add(d, 'planned')
+    }
     for (const e of events) {
-      const [y, m, d] = e.date.split('-').map(Number)
-      if (y === year && m - 1 === month && e.type === 'match') add(d, 'match')
+      const [y, m, day] = e.date.split('-').map(Number)
+      if (y === year && m - 1 === month && e.type === 'match') add(day, 'match')
     }
     for (const log of logs) {
       const dateOnly = log.dateISO.slice(0, 10)
-      const [y, m, d] = dateOnly.split('-').map(Number)
+      const [y, m, day] = dateOnly.split('-').map(Number)
       if (y === year && m - 1 === month) {
         if (log.sessionType === 'ACTIVE_RECOVERY' || log.sessionType === 'RECOVERY') {
-          add(d, 'recovery')
+          add(day, 'recovery')
         } else {
-          add(d, 'gym')
+          add(day, 'gym')
         }
       }
     }
     return map
-  }, [events, logs, year, month])
+  }, [events, logs, year, month, daysInMonth, clubDaySet, plannedSessionsByDate])
 
-  // Match par jour (pour onSelectMatch).
   const matchByDay = useMemo(() => {
     const map = new Map<number, CalendarEvent>()
     for (const e of events) {
@@ -115,62 +123,6 @@ export function WeekMonthView({
     }
     return map
   }, [events, year, month])
-
-  // ─── Stats du mois ──
-  const matchCount = useMemo(() => matchByDay.size, [matchByDay])
-  const sessionCount = useMemo(() => {
-    let n = 0
-    for (const set of cellTypes.values()) {
-      if (set.has('gym') || set.has('recovery')) n += 1
-    }
-    return n
-  }, [cellTypes])
-  const volumeMin = useMemo(() => {
-    let total = 0
-    for (const log of logs) {
-      const [y, m] = log.dateISO.slice(0, 10).split('-').map(Number)
-      if (y === year && m - 1 === month) total += log.durationMin ?? 0
-    }
-    return total
-  }, [logs, year, month])
-
-  // ─── Cellules (vide pour offset, puis 1..N) ──
-  const cells: Array<number | null> = []
-  for (let i = 0; i < firstDow; i++) cells.push(null)
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d)
-  while (cells.length % 7 !== 0) cells.push(null)
-
-  const todayDayNum =
-    todayDate.getFullYear() === year && todayDate.getMonth() === month
-      ? todayDate.getDate()
-      : null
-
-  // ─── Matchs à venir (≤ 4, à partir de today) ──
-  const upcomingMatches = useMemo(() => {
-    return events
-      .filter((e) => e.type === 'match' && e.date >= todayISO)
-      .sort((a, b) => a.date.localeCompare(b.date))
-      .slice(0, 4)
-  }, [events, todayISO])
-
-  const monthName = `${MONTHS_FR[month]} ${year}`
-
-  const goPrev = () => {
-    if (month === 0) {
-      setMonth(11)
-      setYear((y) => y - 1)
-    } else {
-      setMonth((m) => m - 1)
-    }
-  }
-  const goNext = () => {
-    if (month === 11) {
-      setMonth(0)
-      setYear((y) => y + 1)
-    } else {
-      setMonth((m) => m + 1)
-    }
-  }
 
   const gymLogByDay = useMemo(() => {
     const map = new Map<number, SessionLog>()
@@ -182,6 +134,63 @@ export function WeekMonthView({
     }
     return map
   }, [logs, year, month])
+
+  const sessionDayCount = useMemo(() => {
+    const days = new Set<number>()
+    for (const [day, types] of cellTypes) {
+      if (types.has('gym') || types.has('recovery') || types.has('planned') || types.has('planned_done') || types.has('planned_missed')) {
+        days.add(day)
+      }
+    }
+    return days.size
+  }, [cellTypes])
+
+  const matchCount = matchByDay.size
+  const volumeMin = useMemo(() => {
+    let total = 0
+    for (const log of logs) {
+      const [y, m] = log.dateISO.slice(0, 10).split('-').map(Number)
+      if (y === year && m - 1 === month) total += log.durationMin ?? 0
+    }
+    return total
+  }, [logs, year, month])
+
+  const cells: Array<number | null> = []
+  for (let i = 0; i < firstDow; i++) cells.push(null)
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d)
+  while (cells.length % 7 !== 0) cells.push(null)
+
+  const todayDayNum =
+    todayDate.getFullYear() === year && todayDate.getMonth() === month
+      ? todayDate.getDate()
+      : null
+
+  const monthFirst = ymd(year, month, 1)
+  const monthLast = ymd(year, month, daysInMonth)
+
+  const upcomingMatches = useMemo(() => {
+    return events
+      .filter((e) => e.type === 'match' && e.date >= monthFirst && e.date <= monthLast)
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(0, 6)
+  }, [events, monthFirst, monthLast])
+
+  const phaseMarkersInMonth = useMemo(
+    () =>
+      phaseMarkers.filter(
+        (m) => m.effectiveDateISO >= monthFirst && m.effectiveDateISO <= monthLast,
+      ),
+    [phaseMarkers, monthFirst, monthLast],
+  )
+
+  const goPrev = () => {
+    if (month === 0) onMonthChange(year - 1, 11)
+    else onMonthChange(year, month - 1)
+  }
+  const goNext = () => {
+    if (month === 11) onMonthChange(year + 1, 0)
+    else onMonthChange(year, month + 1)
+  }
 
   const handleCellClick = (day: number) => {
     const match = matchByDay.get(day)
@@ -199,12 +208,11 @@ export function WeekMonthView({
 
   return (
     <div className="space-y-5">
-      {/* ── Nav mois (chevrons + titre Playfair italic) ── */}
       <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={goPrev}
-          aria-label="Mois précédent"
+          aria-label={lang === 'fr' ? 'Mois précédent' : 'Previous month'}
           className="flex h-9 w-9 items-center justify-center rounded-full border border-paper-deep bg-transparent transition-colors hover:bg-paper-soft rf-focus-ring"
         >
           <Icon name="chevron-left" size={16} color="var(--color-text-primary)" />
@@ -213,29 +221,48 @@ export function WeekMonthView({
           className="font-serif italic font-extrabold text-fg"
           style={{ fontSize: 22, letterSpacing: '-0.6px' }}
         >
-          {monthName}
+          {monthNames[month]} {year}
         </h2>
         <button
           type="button"
           onClick={goNext}
-          aria-label="Mois suivant"
+          aria-label={lang === 'fr' ? 'Mois suivant' : 'Next month'}
           className="flex h-9 w-9 items-center justify-center rounded-full border border-paper-deep bg-transparent transition-colors hover:bg-paper-soft rf-focus-ring"
         >
           <Icon name="chevron-right" size={16} color="var(--color-text-primary)" />
         </button>
       </div>
 
-      {/* ── Stats 4-up (Séances / Matchs / Volume / Charge Premium) ── */}
+      {phaseMarkersInMonth.length > 0 && (
+        <section className="rounded-2xl border border-brand-border bg-brand-soft/40 p-3 space-y-2">
+          <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-brand-muted">
+            {lang === 'fr' ? 'Évolution du programme' : 'Program evolution'}
+          </p>
+          <ul className="space-y-1.5">
+            {phaseMarkersInMonth.map((marker) => (
+              <li
+                key={`${marker.effectiveDateISO}-${marker.kind}`}
+                className="flex items-baseline gap-2 text-xs"
+              >
+                <span className="shrink-0 font-bold tabular-nums text-fg-muted">
+                  {formatShortDay(marker.effectiveDateISO, lang)}
+                </span>
+                <span className="font-bold text-brand-tint">{marker.summary}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <div className="grid grid-cols-4 gap-0 border-y border-paper-deep py-3.5">
-        <MStat n={pad2(sessionCount)} l="Séances" />
-        <MStat n={pad2(matchCount)} l="Matchs" divider />
+        <MStat n={pad2(sessionDayCount)} l={lang === 'fr' ? 'Séances' : 'Sessions'} />
+        <MStat n={pad2(matchCount)} l={lang === 'fr' ? 'Matchs' : 'Matches'} divider />
         <MStat n={`${volumeMin}'`} l="Volume" divider />
-        <TonnageStat tonnageKg={monthlyTonnageKg ?? 0} isPremium={isPremium} />
+        <TonnageStat tonnageKg={monthlyTonnageKg ?? 0} isPremium={isPremium} lang={lang} />
       </div>
 
-      {/* ── En-tête jours L M M J V S D ── */}
       <div className="grid grid-cols-7 gap-1">
-        {DOWS.map((d, i) => (
+        {dowLabels.map((d, i) => (
           <div
             key={i}
             className="text-center text-[9px] font-extrabold tracking-[0.1em] text-fg/50"
@@ -245,97 +272,121 @@ export function WeekMonthView({
         ))}
       </div>
 
-      {/* ── Grille mensuelle ── */}
       <div className="grid grid-cols-7 gap-1 -mt-3">
         {cells.map((d, i) => {
-          if (d === null) return <div key={i} className="aspect-square" />
+          if (d === null) return <div key={i} className="min-h-[4.25rem]" />
+
+          const iso = ymd(year, month, d)
           const types = cellTypes.get(d)
           const isToday = d === todayDayNum
           const hasMatch = types?.has('match') ?? false
           const hasGym = types?.has('gym') ?? false
           const hasRecovery = types?.has('recovery') ?? false
+          const hasPlannedPending = types?.has('planned') ?? false
+          const hasPlannedDone = types?.has('planned_done') ?? false
+          const hasPlannedMissed = types?.has('planned_missed') ?? false
+          const hasPlanned = hasPlannedPending || hasPlannedDone || hasPlannedMissed
+          const hasClub = types?.has('club') ?? false
+          const planned = plannedSessionsByDate?.get(iso) ?? []
+          const mondayIso = startOfWeekMondayIso(iso)
+          const weekPhase = phaseLabelByMonday?.get(mondayIso)
+          const isMonday = dayOfWeekFromIso(iso) === 1
 
           return (
             <button
               key={i}
               type="button"
               onClick={() => handleCellClick(d)}
-              aria-label={`${d} ${MONTHS_FR[month]}${hasMatch ? ' — match' : ''}`}
-              className="relative flex aspect-square flex-col items-center justify-center rounded-[10px] transition-transform hover:scale-105 active:scale-95 rf-focus-ring"
+              aria-label={`${d} ${monthNames[month]}${hasMatch ? ' — match' : ''}${planned.length ? ` — ${planned.map((p) => p.title).join(', ')}` : ''}`}
+              className="relative flex min-h-[4.25rem] flex-col items-stretch rounded-[10px] px-0.5 py-1 transition-transform hover:scale-[1.02] active:scale-95 rf-focus-ring"
               style={{
                 background: isToday
                   ? 'var(--color-accent)'
                   : hasMatch
                     ? 'var(--color-text-primary)'
-                    : 'transparent',
+                    : hasGym || hasPlannedDone
+                      ? 'color-mix(in srgb, var(--color-ok-strong) 18%, transparent)'
+                      : hasPlannedMissed
+                        ? 'color-mix(in srgb, var(--color-warn-strong) 12%, transparent)'
+                        : hasPlannedPending
+                          ? 'color-mix(in srgb, var(--color-accent) 5%, transparent)'
+                          : 'transparent',
                 color: isToday || hasMatch ? 'var(--color-bg-app)' : 'var(--color-text-primary)',
+                border: hasPlannedMissed
+                  ? '1px dashed color-mix(in srgb, var(--color-warn-strong) 55%, transparent)'
+                  : hasPlannedPending && !hasGym && !hasMatch
+                    ? '1px dashed color-mix(in srgb, var(--color-accent) 45%, transparent)'
+                    : hasPlannedDone && !hasMatch
+                      ? '1px solid color-mix(in srgb, var(--color-ok-strong) 35%, transparent)'
+                      : '1px solid transparent',
               }}
             >
-              <div
-                className="text-[14px] font-extrabold tabular-nums"
-                style={{ letterSpacing: '-0.3px' }}
-              >
-                {d}
-              </div>
-              {/* Indicateurs sous le numéro (max 1 dot pertinent) */}
-              <div className="mt-1 flex h-1 gap-0.5">
-                {hasMatch && (
-                  <span
-                    aria-hidden
-                    className="h-1 w-1 rounded-sm"
-                    style={{ background: 'var(--color-bg-app)' }}
-                  />
-                )}
-                {!hasMatch && hasGym && (
-                  <span
-                    aria-hidden
-                    className="h-1 w-1 rounded-sm"
-                    style={{
-                      background: isToday ? 'var(--color-bg-app)' : 'var(--color-accent)',
-                    }}
-                  />
-                )}
-                {!hasMatch && !hasGym && hasRecovery && (
-                  <span
-                    aria-hidden
-                    className="h-1 w-1 rounded-sm"
-                    style={{
-                      background: isToday ? 'var(--color-bg-app)' : 'var(--color-accent)',
-                      opacity: 0.4,
-                    }}
-                  />
-                )}
-              </div>
-              {hasMatch && (
+              <div className="flex items-start justify-between px-1">
                 <span
-                  aria-hidden
-                  className="absolute right-1 top-1 text-[8px] font-extrabold tracking-wider opacity-85"
-                  style={{ color: 'var(--color-bg-app)' }}
+                  className="text-[13px] font-extrabold tabular-nums leading-none"
+                  style={{ letterSpacing: '-0.3px' }}
                 >
-                  M
+                  {d}
+                </span>
+                <div className="flex gap-0.5">
+                  {hasMatch && (
+                    <span className="text-[7px] font-extrabold tracking-wider opacity-90">M</span>
+                  )}
+                  {hasClub && !hasMatch && (
+                    <span className="text-[7px] font-extrabold tracking-wider text-fg-muted">C</span>
+                  )}
+                </div>
+              </div>
+
+              {isMonday && weekPhase && !hasMatch && (
+                <span
+                  className="mx-0.5 mt-0.5 truncate text-[6px] font-bold uppercase tracking-[0.06em] text-brand-muted"
+                  title={weekPhase}
+                >
+                  {weekPhase}
                 </span>
               )}
+
+              <div className="mt-auto flex flex-col gap-0.5 px-0.5 pb-0.5">
+                {planned.slice(0, 2).map((session, idx) => (
+                  <SessionChip
+                    key={`${session.shortLabel}-${idx}`}
+                    session={session}
+                    inverted={isToday || hasMatch}
+                    lang={lang}
+                  />
+                ))}
+                {planned.length > 2 && (
+                  <span className="text-[6px] font-bold opacity-60">+{planned.length - 2}</span>
+                )}
+                {!planned.length && hasRecovery && (
+                  <span className="text-[7px] font-bold opacity-50">
+                    {lang === 'fr' ? 'Récup' : 'Rec'}
+                  </span>
+                )}
+              </div>
             </button>
           )
         })}
       </div>
 
-      {/* ── Légende ── */}
-      <div className="flex justify-center gap-3.5">
-        <Legend label="Gym" tone="brand" />
+      <div className="flex flex-wrap justify-center gap-3">
+        <Legend label={lang === 'fr' ? 'À faire' : 'Todo'} tone="brand" dashed />
+        <Legend label={lang === 'fr' ? 'Fait' : 'Done'} tone="ok" filled />
+        <Legend label={lang === 'fr' ? 'Manqué' : 'Missed'} tone="warn" dashed />
         <Legend label="Match" tone="ink" square />
-        <Legend label="Récup" tone="brand" faded />
+        <Legend label="Club" tone="muted" labelOnly />
+        <Legend label={lang === 'fr' ? 'Récup' : 'Rec'} tone="brand" faded />
       </div>
 
-      {/* ── Matchs à venir ── */}
       {upcomingMatches.length > 0 && (
         <section>
-          <SectionLabel label="Matchs à venir" />
+          <SectionLabel label={lang === 'fr' ? 'Matchs du mois' : 'Matches this month'} />
           <ul className="mt-2.5">
-            {upcomingMatches.map((m, i) => (
+            {upcomingMatches.map((m, idx) => (
               <li
-                key={m.id ?? `${m.date}-${i}`}
-                className={i < upcomingMatches.length - 1 ? 'border-b border-paper-deep' : ''}
+                key={m.id ?? `${m.date}-${idx}`}
+                className={idx < upcomingMatches.length - 1 ? 'border-b border-paper-deep' : ''}
               >
                 <button
                   type="button"
@@ -344,7 +395,7 @@ export function WeekMonthView({
                 >
                   <div className="flex h-10 w-10 flex-col items-center justify-center rounded-[10px] bg-fg text-app flex-shrink-0">
                     <span className="text-[8px] font-extrabold tracking-[0.06em] opacity-60">
-                      {formatDow(m.date)}
+                      {formatDow(m.date, lang)}
                     </span>
                     <span
                       className="text-[14px] font-extrabold tabular-nums"
@@ -355,13 +406,13 @@ export function WeekMonthView({
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-brand">
-                      vs. · {(m.is_neutral ? 'Neutre' : m.is_home ? 'Domicile' : 'Extérieur').toUpperCase()}
+                      vs. · {(m.is_neutral ? (lang === 'fr' ? 'Neutre' : 'Neutral') : m.is_home ? (lang === 'fr' ? 'Domicile' : 'Home') : (lang === 'fr' ? 'Extérieur' : 'Away')).toUpperCase()}
                     </div>
                     <div
                       className="mt-0.5 truncate text-[14px] font-bold text-fg"
                       style={{ letterSpacing: '-0.2px' }}
                     >
-                      {m.opponent ?? 'Adversaire à confirmer'}
+                      {m.opponent ?? (lang === 'fr' ? 'Adversaire à confirmer' : 'TBC opponent')}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
@@ -382,12 +433,76 @@ export function WeekMonthView({
   )
 }
 
-// ─── Helpers internes ─────────────────────────────────────────────────────────
+function SessionChip({
+  session,
+  inverted,
+  lang,
+}: {
+  session: MonthPlannedSession
+  inverted: boolean
+  lang: Lang
+}) {
+  const status = session.status ?? (session.completionStatus === 'completed' ? 'completed' : 'pending')
+  const baseBg =
+    status === 'completed'
+      ? inverted
+        ? 'color-mix(in srgb, var(--color-bg-app) 28%, transparent)'
+        : 'color-mix(in srgb, var(--color-ok-strong) 22%, transparent)'
+      : status === 'missed'
+        ? inverted
+          ? 'color-mix(in srgb, var(--color-bg-app) 18%, transparent)'
+          : 'color-mix(in srgb, var(--color-warn-strong) 18%, transparent)'
+        : status === 'skipped'
+          ? 'transparent'
+          : inverted
+            ? 'color-mix(in srgb, var(--color-bg-app) 22%, transparent)'
+            : 'color-mix(in srgb, var(--color-accent) 14%, transparent)'
 
-function formatDow(iso: string): string {
+  return (
+    <span
+      className={`truncate rounded px-0.5 text-[7px] font-bold leading-tight ${
+        status === 'skipped' ? 'opacity-40 line-through' : ''
+      } ${status === 'missed' ? 'text-warn-strong' : ''} ${status === 'completed' ? 'text-ok-strong' : ''}`}
+      style={{
+        background: baseBg,
+        border:
+          status === 'pending'
+            ? `1px dashed ${inverted ? 'color-mix(in srgb, var(--color-bg-app) 50%, transparent)' : 'color-mix(in srgb, var(--color-accent) 40%, transparent)'}`
+            : status === 'missed'
+              ? '1px dashed color-mix(in srgb, var(--color-warn-strong) 50%, transparent)'
+              : status === 'completed'
+                ? '1px solid color-mix(in srgb, var(--color-ok-strong) 40%, transparent)'
+                : 'none',
+      }}
+      title={
+        status === 'missed'
+          ? `${session.title} — ${lang === 'fr' ? 'non réalisée' : 'not completed'}`
+          : session.title
+      }
+    >
+      {status === 'completed' ? '✓ ' : status === 'missed' ? '· ' : ''}
+      {session.shortLabel}
+    </span>
+  )
+}
+
+function startOfWeekMondayIso(iso: string): string {
+  const d = new Date(`${iso}T12:00:00`)
+  const dow = d.getDay()
+  const daysSinceMonday = dow === 0 ? 6 : dow - 1
+  d.setDate(d.getDate() - daysSinceMonday)
+  return d.toISOString().slice(0, 10)
+}
+
+function formatShortDay(iso: string, lang: Lang): string {
+  const d = new Date(`${iso}T12:00:00`)
+  return d.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'short' })
+}
+
+function formatDow(iso: string, lang: Lang): string {
   const d = new Date(`${iso}T12:00:00`)
   return d
-    .toLocaleDateString('fr-FR', { weekday: 'short' })
+    .toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { weekday: 'short' })
     .slice(0, 3)
     .toUpperCase()
     .replace('.', '')
@@ -401,9 +516,7 @@ interface MStatProps {
 
 function MStat({ n, l, divider = false }: MStatProps) {
   return (
-    <div
-      className={`text-center px-1 ${divider ? 'border-l border-fg/8' : ''}`}
-    >
+    <div className={`text-center px-1 ${divider ? 'border-l border-fg/8' : ''}`}>
       <div
         className="text-[22px] font-extrabold tabular-nums text-brand"
         style={{ letterSpacing: '-0.6px' }}
@@ -420,20 +533,17 @@ function MStat({ n, l, divider = false }: MStatProps) {
 interface TonnageStatProps {
   tonnageKg: number
   isPremium: boolean
+  lang: Lang
 }
 
-/**
- * Stat "Charge" — Premium uniquement. Affiche le tonnage formaté pour Premium,
- * sinon un teaser flouté + lock vers `/profile#premium`.
- */
-function TonnageStat({ tonnageKg, isPremium }: TonnageStatProps) {
+function TonnageStat({ tonnageKg, isPremium, lang }: TonnageStatProps) {
   const formatted = formatTonnage(tonnageKg)
 
   if (!isPremium) {
     return (
       <Link
         to="/profile#premium"
-        aria-label="Charge — débloquer Pro"
+        aria-label={lang === 'fr' ? 'Charge — débloquer Pro' : 'Load — unlock Pro'}
         className="relative block text-center px-1 border-l border-fg/8 rf-focus-ring"
       >
         <div
@@ -449,7 +559,7 @@ function TonnageStat({ tonnageKg, isPremium }: TonnageStatProps) {
           </span>
         </div>
         <div className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-fg/55">
-          Charge
+          {lang === 'fr' ? 'Charge' : 'Load'}
         </div>
       </Link>
     )
@@ -464,7 +574,7 @@ function TonnageStat({ tonnageKg, isPremium }: TonnageStatProps) {
         {formatted}
       </div>
       <div className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-fg/55">
-        Charge
+        {lang === 'fr' ? 'Charge' : 'Load'}
       </div>
     </div>
   )
@@ -472,13 +582,33 @@ function TonnageStat({ tonnageKg, isPremium }: TonnageStatProps) {
 
 interface LegendProps {
   label: string
-  tone: 'brand' | 'ink'
+  tone: 'brand' | 'ink' | 'muted' | 'ok' | 'warn'
   square?: boolean
   faded?: boolean
+  dashed?: boolean
+  filled?: boolean
+  labelOnly?: boolean
 }
 
-function Legend({ label, tone, square = false, faded = false }: LegendProps) {
-  const dotColor = tone === 'brand' ? 'var(--color-accent)' : 'var(--color-text-primary)'
+function Legend({ label, tone, square = false, faded = false, dashed = false, filled = false, labelOnly = false }: LegendProps) {
+  if (labelOnly) {
+    return (
+      <div className="flex items-center gap-1.5">
+        <span className="text-[10px] font-extrabold text-fg-muted">C</span>
+        <span className="text-[10px] font-semibold text-fg/75">{label}</span>
+      </div>
+    )
+  }
+  const dotColor =
+    tone === 'brand'
+      ? 'var(--color-accent)'
+      : tone === 'ink'
+        ? 'var(--color-text-primary)'
+        : tone === 'ok'
+          ? 'var(--color-ok-strong)'
+          : tone === 'warn'
+            ? 'var(--color-warn-strong)'
+            : 'var(--color-text-muted)'
   return (
     <div className="flex items-center gap-1.5">
       <span
@@ -487,7 +617,12 @@ function Legend({ label, tone, square = false, faded = false }: LegendProps) {
         style={{
           width: 8,
           height: 8,
-          background: dotColor,
+          background: filled ? dotColor : 'transparent',
+          border: dashed
+            ? `1px dashed ${dotColor}`
+            : filled
+              ? 'none'
+              : `1.5px solid ${dotColor}`,
           opacity: faded ? 0.4 : 1,
         }}
       />

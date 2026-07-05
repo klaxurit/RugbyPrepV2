@@ -14,6 +14,7 @@ import { useACWR } from '../hooks/useACWR'
 import { useAuth } from '../hooks/useAuth'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
+import { useMonthProgramGrid } from '../hooks/useMonthProgramGrid'
 import { markWeekViewed, useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
@@ -78,6 +79,10 @@ export function WeekPage() {
   // Match edit drawer + monthly grid toggle + add match modal
   const [drawerMatch, setDrawerMatch] = useState<typeof visibleEvents[number] | null>(null)
   const [monthOpen, setMonthOpen] = useState(false)
+  const [monthView, setMonthView] = useState(() => {
+    const d = new Date(`${getToday()}T12:00:00`)
+    return { year: d.getFullYear(), month: d.getMonth() }
+  })
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [addModalDate, setAddModalDate] = useState<string | undefined>(undefined)
   const [pendingManualMatch, setPendingManualMatch] = useState<CalendarEvent | null>(null)
@@ -114,10 +119,10 @@ export function WeekPage() {
     () =>
       computeMonthlyTonnage({
         sets: exerciseSetLogs,
-        yearMonth: today.slice(0, 7),
+        yearMonth: `${monthView.year}-${String(monthView.month + 1).padStart(2, '0')}`,
         bodyweightKg: profile.weightKg,
       }),
-    [exerciseSetLogs, today, profile.weightKg],
+    [exerciseSetLogs, monthView.year, monthView.month, profile.weightKg],
   )
 
   const nextMatchDate = useMemo(() => {
@@ -255,6 +260,13 @@ export function WeekPage() {
 
   // ── Hard-block global ──────────────────────────────────────────────────────
   const { hasHardBlock, hardBlockReasons } = getGlobalProgramHardBlock(profile)
+
+  const monthProgram = useMonthProgramGrid(surfaceParams, {
+    year: monthView.year,
+    month: monthView.month,
+    lang,
+    enabled: monthOpen && !hasHardBlock,
+  })
 
   useEffect(() => {
     if (hasHardBlock) {
@@ -625,6 +637,13 @@ export function WeekPage() {
                   clubDays={clubDaysForGrid}
                   scDays={scDaysForGrid}
                   todayISO={today}
+                  year={monthView.year}
+                  month={monthView.month}
+                  onMonthChange={(y, m) => setMonthView({ year: y, month: m })}
+                  plannedSessionsByDate={monthProgram?.sessionsByDate}
+                  phaseMarkers={monthProgram?.phaseMarkers}
+                  phaseLabelByMonday={monthProgram?.phaseLabelByMonday}
+                  lang={lang}
                   monthlyTonnageKg={monthlyTonnageKg}
                   isPremium={weekIsPremium}
                   onSelectMatch={(e) => setDrawerMatch(e)}
