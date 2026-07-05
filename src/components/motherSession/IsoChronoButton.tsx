@@ -18,10 +18,10 @@ export interface IsoChronoButtonProps {
   onCompleted: () => void
 }
 
-type Phase = 'idle' | 'work' | 'between'
+type Phase = 'idle' | 'prep' | 'work' | 'between'
 
-/** Prep window between phases (left → between → right, etc.). */
-const BETWEEN_SIDES_SECONDS = 5
+/** Prep window before first work phase and between phases (left → prep → right, etc.). */
+const PREP_SECONDS = 5
 
 const SIDE_LABELS = ['Côté gauche', 'Côté droit'] as const
 const DIRECTION_LABELS = ['Avant', 'Arrière', 'Côté gauche', 'Côté droit'] as const
@@ -32,6 +32,8 @@ const DIRECTION_LABELS = ['Avant', 'Arrière', 'Côté gauche', 'Côté droit'] 
  * - Idle state shows duration pills (e.g. `20s` / `30s`) when the prescription
  *   is a range, or a single Start button when fixed.
  * - Running state shows a big tabular countdown + Skip.
+ * - A 5s prep window runs before the first work phase so the user can get
+ *   into position (gainage, plank, etc.).
  * - Multi-phase patterns (perSide → 2 phases, perDirection → 4 phases) loop
  *   through their phases with a 5s prep window between each (Down Dog /
  *   Caliber pattern). Each phase shows its own label so the user knows
@@ -86,8 +88,15 @@ export function IsoChronoButton({
   // user picked it (set together with phase=work via `start()`).
   useEffect(() => {
     if (phase === 'idle') return
-    const phaseDuration = phase === 'between' ? BETWEEN_SIDES_SECONDS : pickedDuration
+    const phaseDuration =
+      phase === 'between' || phase === 'prep' ? PREP_SECONDS : pickedDuration
     const id = window.setTimeout(() => {
+      if (phase === 'prep') {
+        if (beepEnabled) playSideSwitchBeep()
+        setPhase('work')
+        setEndsAt(Date.now() + pickedDuration * 1000)
+        return
+      }
       if (phase === 'work') {
         const isLastPhase = workIndex >= workTotal - 1
         if (isLastPhase) {
@@ -104,7 +113,7 @@ export function IsoChronoButton({
         vibrate([60, 40, 60])
         if (beepEnabled) playSideSwitchBeep()
         setPhase('between')
-        setEndsAt(Date.now() + BETWEEN_SIDES_SECONDS * 1000)
+        setEndsAt(Date.now() + PREP_SECONDS * 1000)
         return
       }
       // between → start next work phase.
@@ -123,8 +132,8 @@ export function IsoChronoButton({
   const start = (duration: number) => {
     setPickedDuration(duration)
     setWorkIndex(0)
-    setEndsAt(Date.now() + duration * 1000)
-    setPhase('work')
+    setEndsAt(Date.now() + PREP_SECONDS * 1000)
+    setPhase('prep')
   }
 
   /** Skip the chrono and validate the set as done. Available everywhere
@@ -140,8 +149,14 @@ export function IsoChronoButton({
     onCompletedRef.current()
   }
 
-  /** During the prep window, jump straight to the next work phase. */
-  const nextPhaseEarly = () => {
+  /** During prep windows, jump straight to the next work phase. */
+  const startWorkEarly = () => {
+    if (phase === 'prep') {
+      if (beepEnabled) playSideSwitchBeep()
+      setPhase('work')
+      setEndsAt(Date.now() + pickedDuration * 1000)
+      return
+    }
     if (phase !== 'between') return
     if (beepEnabled) playSideSwitchBeep()
     setWorkIndex((i) => i + 1)
@@ -192,16 +207,23 @@ export function IsoChronoButton({
   // Running / between state.
   const remainingMs = endsAt !== null ? Math.max(0, endsAt - now) : 0
   const remainingSec = Math.ceil(remainingMs / 1000)
-  const phaseDurationSec = phase === 'between' ? BETWEEN_SIDES_SECONDS : pickedDuration
+  const phaseDurationSec = phase === 'between' || phase === 'prep' ? PREP_SECONDS : pickedDuration
   const totalMs = phaseDurationSec * 1000
   const pct = totalMs > 0 ? Math.max(0, Math.min(1, remainingMs / totalMs)) : 0
 
-  if (phase === 'between') {
-    const nextLabel = phaseLabels[workIndex + 1] ?? 'Phase suivante'
+  if (phase === 'prep' || phase === 'between') {
+    const nextLabel =
+      phase === 'prep'
+        ? (phaseLabels[0] ?? label)
+        : (phaseLabels[workIndex + 1] ?? 'Phase suivante')
+    const prepHeading =
+      phase === 'prep' && workTotal === 1
+        ? 'Prépare-toi'
+        : `Prépare · ${nextLabel}`
     return (
       <div className="flex flex-col items-center gap-3 w-full">
         <p className="text-[10px] font-black uppercase tracking-widest text-brand-tint text-center">
-          Prépare · {nextLabel}
+          {prepHeading}
         </p>
         <p
           className="text-5xl font-black tabular-nums text-fg leading-none"
@@ -221,7 +243,7 @@ export function IsoChronoButton({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={nextPhaseEarly}
+            onClick={startWorkEarly}
             className="inline-flex items-center gap-1.5 rounded-2xl bg-brand text-on-brand px-4 py-2.5 font-black uppercase italic tracking-wide text-sm shadow-brand-float rf-focus-ring"
           >
             <Play className="w-3.5 h-3.5" strokeWidth={3} />
