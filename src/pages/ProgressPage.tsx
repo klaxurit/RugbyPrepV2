@@ -18,6 +18,7 @@ import { getSessionLogDisplayTitle, getSessionLogCycleLabel } from '../services/
 import { getExerciseDeltaW1W4, getExerciseRecentHistory } from '../services/ui/progression'
 import { getExerciseSuggestion } from '../services/ui/suggestions'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
+import { mergePRBoardEntries } from '../services/pr/buildAllTimePRs'
 import { estimateOneRM } from '../services/athleticTesting/estimateOneRM'
 import {
   getPositionBaseline,
@@ -156,20 +157,10 @@ export function ProgressPage() {
 
   // Merge des records : nouveau pipeline mother sessions (per-set) prioritaire,
   // legacy block_logs en fallback pour les exercices non couverts.
-  const allPRsWithDates = useMemo(() => {
-    type PR = NonNullable<typeof legacyPRs>[number]
-    const safeLegacy: PR[] = legacyPRs ?? []
-    const safeSetLog: PR[] = setLogPRs ?? []
-    const byExerciseId = new Map<string, PR>()
-    for (const pr of safeLegacy) byExerciseId.set(pr.exerciseId, pr)
-    for (const pr of safeSetLog) {
-      const existing = byExerciseId.get(pr.exerciseId)
-      if (!existing || pr.bestValue > existing.bestValue) {
-        byExerciseId.set(pr.exerciseId, pr)
-      }
-    }
-    return Array.from(byExerciseId.values()).sort((a, b) => b.dateISO.localeCompare(a.dateISO))
-  }, [legacyPRs, setLogPRs])
+  const allPRsWithDates = useMemo(
+    () => mergePRBoardEntries(legacyPRs ?? [], setLogPRs ?? []),
+    [legacyPRs, setLogPRs],
+  )
   const { addTest, getHistoryFor, getBestFor } = useAthleteTests()
   const { profile } = useProfile()
   const lang: Lang = (profile.preferredLanguage as Lang | undefined) ?? 'fr'

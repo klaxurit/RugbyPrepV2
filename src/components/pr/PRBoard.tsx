@@ -18,8 +18,8 @@ export function PRBoard({ prs, isPremium, lang = 'fr' }: PRBoardProps) {
         </p>
         <p className="text-xs text-fg-faint">
           {lang === 'fr'
-            ? 'Logge tes performances dans tes seances pour voir tes records ici.'
-            : 'Log your performance in sessions to see your records here.'}
+            ? 'Logge tes charges sur les gros mouvements (squat, bench, tirage…) pour voir tes records ici.'
+            : 'Log loads on main compound lifts (squat, bench, row…) to see your records here.'}
         </p>
       </div>
     )

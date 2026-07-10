@@ -3,6 +3,7 @@ import type { ExerciseSetLog, SessionLog } from '../types/training'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
+import { buildAllTimePRsFromSetLogs } from '../services/pr/buildAllTimePRs'
 
 const STORAGE_BASE = 'rugbyprep.setlogs'
 
@@ -211,37 +212,7 @@ export const useExerciseSetLogs = () => {
    */
   // eslint-disable-next-line react-hooks/purity -- Date.now() utilisé uniquement pour le badge "récent", stable au rendu
   const nowRef = useRef(Date.now())
-  const allPRsWithDates = useMemo(() => {
-    type Best = { value: number; label: string; dateISO: string }
-    const bests = new Map<string, Best>()
-    // Tri chrono ascendant → la dernière mise à jour gagne pour la date du PR
-    const chronological = [...logs].sort((a, b) => {
-      const da = a.updatedAt ?? a.createdAt ?? ''
-      const db = b.updatedAt ?? b.createdAt ?? ''
-      return da.localeCompare(db)
-    })
-    for (const l of chronological) {
-      if (l.loadKg == null || l.reps == null) continue
-      const value = l.loadKg * l.reps
-      const label = `${l.loadKg}kg x ${l.reps}`
-      const ts = (l.updatedAt ?? l.createdAt ?? '').slice(0, 10)
-      const existing = bests.get(l.exerciseId)
-      if (!existing || value > existing.value) {
-        bests.set(l.exerciseId, { value, label, dateISO: ts })
-      }
-    }
-    const fourteenDays = 14 * 86_400_000
-    return Array.from(bests.entries())
-      .map(([exerciseId, data]) => ({
-        exerciseId,
-        metricType: 'load_reps' as const,
-        bestValue: data.value,
-        bestLabel: data.label,
-        dateISO: data.dateISO,
-        isRecent: data.dateISO ? nowRef.current - new Date(data.dateISO).getTime() < fourteenDays : false,
-      }))
-      .sort((a, b) => b.dateISO.localeCompare(a.dateISO))
-  }, [logs])
+  const allPRsWithDates = useMemo(() => buildAllTimePRsFromSetLogs(logs, nowRef.current), [logs])
 
   return {
     logs,

@@ -59,6 +59,17 @@ describe('detectSessionPRs', () => {
     ).toEqual([])
   })
 
+  it('ignore les exercices non trackables (assistance)', () => {
+    const sets: ExerciseSetLog[] = [
+      baseSet({ slotSignature: 'past-1', exerciseId: 'lateral_raise', loadKg: 8, completed: true }),
+      baseSet({ slotSignature: 'past-2', exerciseId: 'lateral_raise', loadKg: 10, completed: true }),
+      baseSet({ slotSignature: 'slot-current', exerciseId: 'lateral_raise', loadKg: 12, completed: true }),
+    ]
+    expect(
+      detectSessionPRs({ allSets: sets, currentSlotSignature: 'slot-current' }),
+    ).toEqual([])
+  })
+
   it('détecte les PR sur plusieurs exercices', () => {
     const sets: ExerciseSetLog[] = [
       baseSet({ slotSignature: 'past-1', loadKg: 80, completed: true }),

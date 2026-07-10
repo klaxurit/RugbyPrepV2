@@ -1,14 +1,13 @@
 import type { ExerciseSetLog } from '../../types/training'
 import type { ExerciseMetricType } from '../ui/exerciseMetrics'
-import type { ExerciseHistoricalBests } from './buildExerciseBestsFromSetLogs'
+import {
+  aggregateMaxLoadBests,
+  type SetDraft,
+} from './buildAllTimePRs'
 import { detectPRs, type DetectedPR } from './detectPRs'
+import { isPRTrackableExercise } from './prEligibility'
 
-export type LiveSetPRDraft = {
-  loadKg?: number
-  reps?: number
-  seconds?: number
-  meters?: number
-}
+export type LiveSetPRDraft = SetDraft
 
 export type ValidatingSetRef = {
   slotSignature: string
@@ -17,12 +16,7 @@ export type ValidatingSetRef = {
 }
 
 function setHasLoggableData(set: LiveSetPRDraft): boolean {
-  return (
-    set.loadKg != null ||
-    set.reps != null ||
-    set.meters != null ||
-    set.seconds != null
-  )
+  return set.loadKg != null && set.loadKg > 0
 }
 
 function isSameValidatingSet(
@@ -34,35 +28,6 @@ function isSameValidatingSet(
     set.blockNumber === validatingSet.blockNumber &&
     set.tourIndex === validatingSet.tourIndex
   )
-}
-
-function aggregateBests(sets: readonly LiveSetPRDraft[]): ExerciseHistoricalBests {
-  const bests: ExerciseHistoricalBests = {}
-
-  for (const set of sets) {
-    if (set.loadKg != null && set.loadKg > 0) {
-      bests.bestLoadKg =
-        bests.bestLoadKg == null ? set.loadKg : Math.max(bests.bestLoadKg, set.loadKg)
-    }
-    if (set.reps != null && set.reps > 0) {
-      bests.bestReps = bests.bestReps == null ? set.reps : Math.max(bests.bestReps, set.reps)
-    }
-    if (set.meters != null && set.meters > 0) {
-      bests.bestMeters =
-        bests.bestMeters == null ? set.meters : Math.max(bests.bestMeters, set.meters)
-    }
-    if (set.seconds != null && set.seconds > 0) {
-      bests.bestSeconds =
-        bests.bestSeconds == null ? set.seconds : Math.min(bests.bestSeconds, set.seconds)
-    }
-    if (set.loadKg != null && set.reps != null && set.loadKg > 0 && set.reps > 0) {
-      const score = set.loadKg * set.reps
-      bests.bestLoadRepsScore =
-        bests.bestLoadRepsScore == null ? score : Math.max(bests.bestLoadRepsScore, score)
-    }
-  }
-
-  return bests
 }
 
 /**
@@ -80,7 +45,7 @@ export function collectPriorSessionDrafts(
   for (let tour = 0; tour < tourIndex; tour++) {
     const load = exerciseTourLoads[buildKey(blockNumber, tour, exerciseIndex)]
     if (load && setHasLoggableData(load)) {
-      drafts.push({ loadKg: load.loadKg, reps: load.reps, meters: load.meters, seconds: load.seconds })
+      drafts.push({ loadKg: load.loadKg, reps: load.reps })
     }
   }
   return drafts
@@ -88,8 +53,7 @@ export function collectPriorSessionDrafts(
 
 /**
  * Détecte un PR lors de la validation d'une série en séance.
- * Compare à toutes les séries passées (séances précédentes + tours déjà validés
- * dans la séance en cours). Ne célèbre pas la toute première série loguée.
+ * Charge max uniquement, polyarticulaires uniquement.
  */
 export function detectLiveSetPR(params: {
   setLogs: readonly ExerciseSetLog[]
@@ -97,24 +61,23 @@ export function detectLiveSetPR(params: {
   metricType: ExerciseMetricType
   draft: LiveSetPRDraft
   validatingSet: ValidatingSetRef
-  /** Tours précédents déjà saisis dans sessionRun (filet si setLogs en retard). */
   priorSessionDrafts?: readonly LiveSetPRDraft[]
 }): DetectedPR | null {
   const { setLogs, exerciseId, metricType, draft, validatingSet, priorSessionDrafts = [] } =
     params
 
-  const baselineDrafts: LiveSetPRDraft[] = []
+  if (!isPRTrackableExercise(exerciseId)) return null
+  if (metricType !== 'load_reps') return null
+  if (!setHasLoggableData(draft)) return null
+
+  const baselineDrafts: SetDraft[] = []
 
   for (const set of setLogs) {
     if (set.exerciseId !== exerciseId) continue
     if (!setHasLoggableData(set)) continue
+    if (set.completed === false) continue
     if (isSameValidatingSet(set, validatingSet)) continue
-    baselineDrafts.push({
-      loadKg: set.loadKg,
-      reps: set.reps,
-      meters: set.meters,
-      seconds: set.seconds,
-    })
+    baselineDrafts.push({ loadKg: set.loadKg, reps: set.reps })
   }
 
   for (const prior of priorSessionDrafts) {
@@ -123,7 +86,7 @@ export function detectLiveSetPR(params: {
 
   if (baselineDrafts.length === 0) return null
 
-  const previousBest = aggregateBests(baselineDrafts)
+  const previousBest = aggregateMaxLoadBests(baselineDrafts)
   const [pr] = detectPRs([{ exerciseId, metricType, draft, previousBest }])
   if (!pr || pr.previousValue === undefined) return null
   return pr

@@ -1,4 +1,5 @@
 import type { ExerciseSetLog } from '../../types/training'
+import { isPRTrackableExercise } from '../pr/prEligibility'
 
 export interface SessionPR {
   exerciseId: string
@@ -45,6 +46,7 @@ export function detectSessionPRs({
 
   const prs: SessionPR[] = []
   for (const exerciseId of exerciseIds) {
+    if (!isPRTrackableExercise(exerciseId)) continue
     const historicalForExo = historicalSets.filter(
       (s) => s.exerciseId === exerciseId && typeof s.loadKg === 'number' && s.loadKg > 0,
     )

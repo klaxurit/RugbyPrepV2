@@ -10,13 +10,15 @@ const make = (
   ...overrides,
 })
 
-describe('detectPRs', () => {
-  // ── load_reps ─────────────────────────────────────────────
+const SQUAT = 'squat__back_squat__barbell'
+const BENCH = 'push_horizontal__bench_press__barbell'
+const CURL = 'push_vertical__lateral_raise__dumbbell'
 
-  it('detects load_reps PR when load exceeds best without reps in draft', () => {
+describe('detectPRs', () => {
+  it('detects load PR when load exceeds best without reps in draft', () => {
     const r = detectPRs([
       make({
-        exerciseId: 'squat',
+        exerciseId: SQUAT,
         draft: { loadKg: 90 },
         previousBest: { bestLoadKg: 87.5 },
       }),
@@ -26,132 +28,68 @@ describe('detectPRs', () => {
     expect(r[0].label).toBe('90 kg')
   })
 
-  it('detects load_reps PR when load exceeds best', () => {
+  it('detects load PR when load exceeds best (charge prime sur volume)', () => {
     const r = detectPRs([
       make({
-        exerciseId: 'squat',
-        draft: { loadKg: 90, reps: 5 },
-        previousBest: { bestLoadRepsScore: 450, bestLoadKg: 87.5 },
+        exerciseId: SQUAT,
+        draft: { loadKg: 100, reps: 3 },
+        previousBest: { bestLoadKg: 95 },
       }),
     ])
     expect(r).toHaveLength(1)
-    expect(r[0].improvement).toBe('+2.5 kg')
-    expect(r[0].label).toBe('90 kg × 5')
+    expect(r[0].improvement).toBe('+5 kg')
+    expect(r[0].label).toBe('100 kg × 3')
   })
 
-  it('detects load_reps PR when volume exceeds best', () => {
+  it('no PR when load is lower even if volume would beat (95×5 vs 100×3)', () => {
     const r = detectPRs([
       make({
-        exerciseId: 'squat',
-        draft: { loadKg: 90, reps: 5 },
-        previousBest: { bestLoadRepsScore: 400 },
+        exerciseId: SQUAT,
+        draft: { loadKg: 95, reps: 5 },
+        previousBest: { bestLoadKg: 100 },
       }),
     ])
-    expect(r).toHaveLength(1)
-    expect(r[0].newValue).toBe(450)
-    expect(r[0].improvement).toBe('+50 vol.')
-    expect(r[0].label).toBe('90 kg × 5')
+    expect(r).toHaveLength(0)
   })
 
-  it('no PR when load_reps score is equal', () => {
+  it('no PR when load is equal', () => {
     const r = detectPRs([
       make({
-        exerciseId: 'squat',
+        exerciseId: SQUAT,
         draft: { loadKg: 80, reps: 5 },
-        previousBest: { bestLoadRepsScore: 400 },
+        previousBest: { bestLoadKg: 80 },
       }),
     ])
     expect(r).toHaveLength(0)
   })
 
-  it('no PR when load_reps score is lower', () => {
+  it('skips non-trackable assistance exercises', () => {
     const r = detectPRs([
       make({
-        exerciseId: 'squat',
-        draft: { loadKg: 70, reps: 5 },
-        previousBest: { bestLoadRepsScore: 400 },
+        exerciseId: CURL,
+        draft: { loadKg: 20, reps: 12 },
+        previousBest: { bestLoadKg: 15 },
       }),
     ])
     expect(r).toHaveLength(0)
   })
 
-  // ── reps ──────────────────────────────────────────────────
-
-  it('detects reps PR', () => {
+  it('skips reps-only metric (pompes sans charge)', () => {
     const r = detectPRs([
       make({
-        exerciseId: 'pushup',
+        exerciseId: 'push_horizontal__push_up__bodyweight',
         metricType: 'reps',
         draft: { reps: 25 },
-        previousBest: { bestReps: 20 },
-      }),
-    ])
-    expect(r).toHaveLength(1)
-    expect(r[0].improvement).toBe('+5 reps')
-    expect(r[0].label).toBe('25 reps')
-  })
-
-  it('no reps PR when equal', () => {
-    const r = detectPRs([
-      make({
-        exerciseId: 'pushup',
-        metricType: 'reps',
-        draft: { reps: 20 },
-        previousBest: { bestReps: 20 },
+        previousBest: {},
       }),
     ])
     expect(r).toHaveLength(0)
   })
 
-  // ── meters ────────────────────────────────────────────────
-
-  it('detects meters PR', () => {
+  it('first-ever entry counts as PR for trackable compound', () => {
     const r = detectPRs([
       make({
-        exerciseId: 'carry',
-        metricType: 'meters',
-        draft: { meters: 55 },
-        previousBest: { bestMeters: 50 },
-      }),
-    ])
-    expect(r).toHaveLength(1)
-    expect(r[0].improvement).toBe('+5m')
-  })
-
-  // ── seconds (lower is better) ─────────────────────────────
-
-  it('detects seconds PR (lower is better)', () => {
-    const r = detectPRs([
-      make({
-        exerciseId: 'plank',
-        metricType: 'seconds',
-        draft: { seconds: 58 },
-        previousBest: { bestSeconds: 60 },
-      }),
-    ])
-    expect(r).toHaveLength(1)
-    expect(r[0].improvement).toBe('-2s')
-    expect(r[0].label).toBe('58s')
-  })
-
-  it('no seconds PR when higher (slower)', () => {
-    const r = detectPRs([
-      make({
-        exerciseId: 'plank',
-        metricType: 'seconds',
-        draft: { seconds: 65 },
-        previousBest: { bestSeconds: 60 },
-      }),
-    ])
-    expect(r).toHaveLength(0)
-  })
-
-  // ── first-ever entry ──────────────────────────────────────
-
-  it('first-ever entry counts as PR', () => {
-    const r = detectPRs([
-      make({
-        exerciseId: 'squat',
+        exerciseId: SQUAT,
         draft: { loadKg: 80, reps: 5 },
         previousBest: {},
       }),
@@ -160,42 +98,25 @@ describe('detectPRs', () => {
     expect(r[0].improvement).toBe('Premier record')
   })
 
-  // ── edge cases ────────────────────────────────────────────
-
-  it('skips entries with no relevant draft values', () => {
-    const r = detectPRs([
-      make({ exerciseId: 'squat', draft: {} }),
-    ])
-    expect(r).toHaveLength(0)
+  it('skips entries with no load', () => {
+    expect(detectPRs([make({ exerciseId: SQUAT, draft: {} })])).toHaveLength(0)
+    expect(detectPRs([make({ exerciseId: SQUAT, draft: { loadKg: 0, reps: 5 } })])).toHaveLength(0)
   })
 
-  it('skips entries with zero load', () => {
-    const r = detectPRs([
-      make({ exerciseId: 'squat', draft: { loadKg: 0, reps: 5 } }),
-    ])
-    expect(r).toHaveLength(0)
-  })
-
-  it('detects multiple PRs in one batch', () => {
+  it('detects multiple compound PRs in one batch', () => {
     const r = detectPRs([
       make({
-        exerciseId: 'squat',
+        exerciseId: SQUAT,
         draft: { loadKg: 100, reps: 5 },
-        previousBest: { bestLoadRepsScore: 400 },
+        previousBest: { bestLoadKg: 90 },
       }),
       make({
-        exerciseId: 'bench',
+        exerciseId: BENCH,
         draft: { loadKg: 80, reps: 6 },
-        previousBest: { bestLoadRepsScore: 450 },
-      }),
-      make({
-        exerciseId: 'curl',
-        metricType: 'reps',
-        draft: { reps: 15 },
-        previousBest: { bestReps: 15 },
+        previousBest: { bestLoadKg: 75 },
       }),
     ])
-    expect(r).toHaveLength(2) // squat PR (500 > 400), bench PR (480 > 450), curl same (no PR)
-    expect(r.map((p) => p.exerciseId)).toEqual(['squat', 'bench'])
+    expect(r).toHaveLength(2)
+    expect(r.map((p) => p.exerciseId)).toEqual([SQUAT, BENCH])
   })
 })
