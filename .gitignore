@@ -82,6 +82,13 @@ _bmad-output/
 .agents/
 .cursor/
 .claude/
+
+# Local / generated artifacts (not for version control)
+/build/
+skills-lock.json
+public/images/social/
+scripts/generateSocialPosts.py
+
 docs/*
 !docs/testing/
 !docs/training/
