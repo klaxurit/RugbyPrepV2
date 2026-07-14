@@ -287,6 +287,15 @@ describe('detectSeasonTransitions', () => {
     expect(r!.type).toBe('pre_season_suggested')
   })
 
+  it('no pre_season_suggested when returnToTeamTrainingAt already set', () => {
+    const r = detectSeasonTransitions({
+      planningContext: { ...baseCtx, cycle: 'off_season', weekNumber: 10 },
+      today: '2026-07-01',
+      hasReturnDate: true,
+    })
+    expect(r).toBeNull()
+  })
+
   // ── Grace period post-onboarding ────────────────────────────
 
   it('grace period suppresses pre_season_suggested within 7d after onboarding', () => {

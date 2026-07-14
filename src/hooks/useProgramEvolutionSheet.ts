@@ -3,5 +3,5 @@ import { ProgramEvolutionSheetContext } from '../contexts/programEvolutionSheetC
 
 export function useProgramEvolutionSheet() {
   const ctx = useContext(ProgramEvolutionSheetContext)
-  return ctx ?? { openProgramEvolution: () => {} }
+  return ctx ?? { openProgramEvolution: () => {}, isProgramEvolutionOpen: false }
 }

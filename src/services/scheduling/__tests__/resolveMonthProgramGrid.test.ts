@@ -116,10 +116,9 @@ describe('resolveMonthProgramGrid', () => {
     const profile: UserProfile = {
       ...baseProfile,
       planningAnchors: {
-        seasonEndedAt: '2026-04-06',
+        seasonEndedAt: '2026-05-11',
         seasonEndedSource: 'manual',
         returnToTeamTrainingAt: '2026-09-01',
-        manualOffSeasonWeekOverride: 7,
       },
     }
     const grid = resolveMonthProgramGrid({
@@ -146,9 +145,8 @@ describe('resolveMonthProgramGrid', () => {
     const profile: UserProfile = {
       ...baseProfile,
       planningAnchors: {
-        seasonEndedAt: '2026-04-06',
+        seasonEndedAt: '2026-05-11',
         seasonEndedSource: 'manual',
-        manualOffSeasonWeekOverride: 7,
       },
     }
     const grid = resolveMonthProgramGrid({
@@ -181,10 +179,9 @@ describe('resolveMonthProgramGrid', () => {
     const profile: UserProfile = {
       ...baseProfile,
       planningAnchors: {
-        seasonEndedAt: '2026-04-06',
+        seasonEndedAt: '2026-05-11',
         seasonEndedSource: 'manual',
         returnToTeamTrainingAt: '2026-09-01',
-        manualOffSeasonWeekOverride: 7,
       },
     }
     const grid = resolveMonthProgramGrid({

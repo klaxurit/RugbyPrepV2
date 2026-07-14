@@ -513,6 +513,23 @@ export const APP_LABELS = {
   profile_situation_offseason_active: { fr: 'Inter-saison active — programme adapté', en: 'Off-season active — program adapted' },
   profile_situation_preseason_active: { fr: 'Pré-saison active — programme de reprise', en: 'Pre-season active — return-to-training program' },
   profile_situation_return_hint: { fr: 'La saison reprend bientôt ? Indique ta date de reprise au club.', en: 'Season starts soon? Enter your club return date.' },
+  return_club_prompt_aria: { fr: 'Date de reprise au club', en: 'Club return date' },
+  return_club_prompt_eyebrow: { fr: 'Reprise au club', en: 'Back at the club' },
+  return_club_prompt_title: { fr: 'Quand reprends-tu les entraînements ?', en: 'When do training sessions resume?' },
+  return_club_prompt_body: {
+    fr: 'Cette date calibre ta pré-saison (8 semaines avant) pour arriver prêt le jour J — force, puissance, puis affûtage avant les matchs.',
+    en: 'This date anchors your pre-season (8 weeks before) so you arrive ready on day one — strength, power, then taper before matches.',
+  },
+  return_club_prompt_date_label: { fr: 'Date de reprise au club', en: 'Club return date' },
+  return_club_prompt_club_label: { fr: 'Ton club (optionnel)', en: 'Your club (optional)' },
+  return_club_prompt_club_hint: {
+    fr: 'Importe ton calendrier FFR et personnalise ton programme avec les jours d’entraînement au club.',
+    en: 'Import your FFR calendar and tailor your program to club training days.',
+  },
+  return_club_prompt_club_placeholder: { fr: 'Rechercher un club FFR…', en: 'Search for an FFR club…' },
+  return_club_prompt_save: { fr: 'Enregistrer ma reprise', en: 'Save my return date' },
+  return_club_prompt_later: { fr: 'Me le rappeler la semaine prochaine', en: 'Remind me next week' },
+  return_club_prompt_date_required: { fr: 'Choisis une date de reprise pour continuer.', en: 'Pick a return date to continue.' },
   profile_situation_modify: { fr: 'Modifier', en: 'Edit' },
   profile_skip_recovery_intro_hint: {
     fr: "Les 2 premières semaines d'inter-saison sont dédiées à la récupération (2 séances gym guidées). Tu peux les sauter si tu préfères enchaîner directement sur la phase Transition.",

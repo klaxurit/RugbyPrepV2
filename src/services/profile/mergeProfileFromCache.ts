@@ -1,4 +1,5 @@
 import type { UserProfile } from '../../types/training'
+import { sanitizePlanningAnchorsForProgression } from '../season/sanitizePlanningAnchors'
 
 export interface MergeProfileFromCacheResult {
   profile: UserProfile
@@ -35,7 +36,9 @@ export function mergePlanningAnchorsPreferRemote(
       }
     }
   }
-  return Object.keys(out).length > 0 ? out : undefined
+  return sanitizePlanningAnchorsForProgression(
+    Object.keys(out).length > 0 ? out : undefined,
+  )
 }
 
 /**

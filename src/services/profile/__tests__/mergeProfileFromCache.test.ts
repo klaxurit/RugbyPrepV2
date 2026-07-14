@@ -54,7 +54,7 @@ describe('mergeProfileFromCache', () => {
     expect(shouldHealRemote).toBe(false)
   })
 
-  it('préserve les overrides admin du remote même après heal cache', () => {
+  it('retire override admin si ancre calendrier présente après heal cache', () => {
     const remote = {
       ...DEFAULT_PROFILE,
       weeklySessions: 2 as const,
@@ -77,7 +77,7 @@ describe('mergeProfileFromCache', () => {
       },
     }
     const { profile } = mergeProfileFromCache(remote, cached)
-    expect(profile.planningAnchors?.manualOffSeasonWeekOverride).toBe(5)
+    expect(profile.planningAnchors?.manualOffSeasonWeekOverride).toBeUndefined()
     expect(profile.planningAnchors?.manualCycleOverride).toBe('off_season')
     expect(profile.planningAnchors?.seasonEndedAt).toBe('2026-01-15')
   })

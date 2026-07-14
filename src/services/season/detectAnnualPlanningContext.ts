@@ -14,6 +14,10 @@ import {
   PRE_SEASON_WEEKS_BEFORE_RETURN,
   resolvePreSeasonWeekFromReturn,
 } from '../scheduling/projectMonthWeekContext'
+import {
+  sanitizePlanningAnchorsForProgression,
+  shouldFreezeOffSeasonWeek,
+} from './sanitizePlanningAnchors'
 
 type MatchInput = Pick<CalendarEvent, 'date' | 'type' | 'match_kind'>
 type TraceMode = AnnualPlanningContext['planningTrace']['resolutionMode']
@@ -39,7 +43,7 @@ function bumpOffSeasonWeekSkipRecoveryIntro(
   anchors: NonNullable<AthletePlanningInputs['planningAnchors']>,
 ): number {
   const capped = Math.min(effectiveMaxWeeks, Math.max(1, calendarWeek))
-  if (anchors.manualOffSeasonWeekOverride !== undefined) return capped
+  if (shouldFreezeOffSeasonWeek(anchors)) return capped
   // Sans « skip récup », ne pas borner au max du bloc planifié : au-delà → phase Entretien (5).
   if (!anchors.skipOffSeasonRecoveryIntro) return Math.max(1, calendarWeek)
   const w = capped
@@ -437,9 +441,9 @@ function resolveManualCycle(
 
     const offSeasonStartIso = toIsoDate(offStartMonday)
 
-    let wn =
-      anchors.manualOffSeasonWeekOverride ??
-      Math.max(1, Math.floor(wholeDaysBetween(offStartMonday, todayWeekMonday) / DAYS_PER_WEEK) + 1)
+    let wn = shouldFreezeOffSeasonWeek(anchors)
+      ? anchors.manualOffSeasonWeekOverride!
+      : Math.max(1, Math.floor(wholeDaysBetween(offStartMonday, todayWeekMonday) / DAYS_PER_WEEK) + 1)
     wn = bumpOffSeasonWeekSkipRecoveryIntro(wn, OFF_SEASON_WEEKS_V1, anchors)
 
     if (anchors.returnToTeamTrainingAt) {
@@ -558,7 +562,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   const todayWeekMonday = startOfIsoWeekMonday(todayDate)
 
   const acc = new TraceAcc()
-  const anchors = inputs.planningAnchors ?? {}
+  const anchors = sanitizePlanningAnchorsForProgression(inputs.planningAnchors) ?? {}
 
   if (anchors.firstMatchDateOverride !== undefined && anchors.firstMatchDateOverride !== '') {
     requireIsoDate('firstMatchDateOverride', anchors.firstMatchDateOverride)
@@ -830,10 +834,10 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     let rawOffWeek =
       Math.floor(wholeDaysBetween(offSeasonStartMonday, todayWeekMonday) / DAYS_PER_WEEK) + 1
     let clamped = false
-    if (anchors.manualOffSeasonWeekOverride !== undefined) {
+    if (shouldFreezeOffSeasonWeek(anchors)) {
       acc.bump('manual_override')
       acc.rule('rule:manual_off_season_week')
-      rawOffWeek = anchors.manualOffSeasonWeekOverride
+      rawOffWeek = anchors.manualOffSeasonWeekOverride!
     }
     if (rawOffWeek < 1) {
       rawOffWeek = 1
@@ -846,7 +850,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
         `Semaine off-season hors fenêtre (S1–S${effectiveOffSeasonWeeks}) : valeur ramenée à S${effectiveOffSeasonWeeks} (Force-Bridge).`
       )
     }
-    if (clamped && anchors.manualOffSeasonWeekOverride === undefined) {
+    if (clamped && !shouldFreezeOffSeasonWeek(anchors)) {
       acc.warn('Semaine off-season bornée au modèle annuel.')
     }
     if (anchors.offSeasonStartAt || anchors.seasonEndedAt) {

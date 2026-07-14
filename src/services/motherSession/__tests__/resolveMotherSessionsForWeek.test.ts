@@ -141,13 +141,12 @@ describe('resolveMotherSessionsForWeek', () => {
   it('off-season Transition 2x + equipment vide → sessions BW Lower/Upper', () => {
     const r = resolveMotherSessionsForWeek({
       events: [],
-      today: '2025-01-15',
+      today: '2025-01-22',
       weeklyFrequency: 2,
       positionGroup: 'front_row',
       equipment: [],
       planningAnchors: {
         manualCycleOverride: 'off_season',
-        manualOffSeasonWeekOverride: 4,
         offSeasonStartAt: '2025-01-01',
       },
     })
@@ -162,13 +161,12 @@ describe('resolveMotherSessionsForWeek', () => {
   it('off-season Hypertrophy 3x + equipment vide → sessions BW Lower/Upper/Full', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match('2025-03-15')],
-      today: '2025-01-20',
+      today: '2025-02-05',
       weeklyFrequency: 3,
       positionGroup: 'front_row',
       equipment: [],
       planningAnchors: {
         manualCycleOverride: 'off_season',
-        manualOffSeasonWeekOverride: 6,
         offSeasonStartAt: '2025-01-01',
       },
     })
@@ -180,15 +178,14 @@ describe('resolveMotherSessionsForWeek', () => {
     ])
   })
 
-  it('off-season Hypertrophy 3x → 3 sessions résolues (override semaine)', () => {
+  it('off-season Hypertrophy 3x → 3 sessions résolues (semaine calendaire S6)', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH)],
-      today: '2025-01-06',
+      today: '2025-02-03',
       weeklyFrequency: 3,
       positionGroup: 'front_row',
       planningAnchors: {
         manualCycleOverride: 'off_season',
-        manualOffSeasonWeekOverride: 6,
         offSeasonStartAt: '2024-12-30',
       },
     })
@@ -204,12 +201,11 @@ describe('resolveMotherSessionsForWeek', () => {
   it('off-season Force-Bridge 3x → 3 sessions resolved (Lower + Upper + Full)', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH)],
-      today: '2025-01-06',
+      today: '2025-03-03',
       weeklyFrequency: 3,
       positionGroup: 'front_row',
       planningAnchors: {
         manualCycleOverride: 'off_season',
-        manualOffSeasonWeekOverride: 10,
         offSeasonStartAt: '2024-12-30',
       },
     })
@@ -225,13 +221,12 @@ describe('resolveMotherSessionsForWeek', () => {
   it('off-season Force-Bridge 3x + equipment vide → sessions BW Lower/Upper/Full', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH)],
-      today: '2025-01-06',
+      today: '2025-03-03',
       weeklyFrequency: 3,
       positionGroup: 'front_row',
       equipment: [],
       planningAnchors: {
         manualCycleOverride: 'off_season',
-        manualOffSeasonWeekOverride: 10,
         offSeasonStartAt: '2024-12-30',
       },
     })

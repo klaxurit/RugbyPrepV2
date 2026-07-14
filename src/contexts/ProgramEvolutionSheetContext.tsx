@@ -102,7 +102,10 @@ export function ProgramEvolutionSheetProvider({ children }: { children: ReactNod
     setPayload(null)
   }, [])
 
-  const value = useMemo(() => ({ openProgramEvolution }), [openProgramEvolution])
+  const value = useMemo(
+    () => ({ openProgramEvolution, isProgramEvolutionOpen: payload != null }),
+    [openProgramEvolution, payload],
+  )
 
   const blockFlexibleDismiss = Boolean(payload?.primaryAction)
 

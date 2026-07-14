@@ -20,6 +20,7 @@ import { RestTimerNotificationPrompt } from './components/notifications/RestTime
 import { useRestEndNotificationHaptic } from './hooks/useRestEndNotificationHaptic'
 import { CookieConsentBanner } from './components/CookieConsentBanner'
 import { FoundingOffer } from './components/FoundingOffer'
+import { ReturnToClubPromptMount } from './components/ReturnToClubPromptMount'
 
 // Eager : seulement HomePage (default after login, évite un flash sur l'écran principal)
 import { HomePage } from './pages/HomePage'
@@ -224,6 +225,7 @@ function App() {
         <RestTimerNotificationPrompt />
         <CookieConsentBanner />
         <FoundingOffer />
+        <ReturnToClubPromptMount />
         </CoachProvider>
       </BrowserRouter>
       </SessionRunProvider>

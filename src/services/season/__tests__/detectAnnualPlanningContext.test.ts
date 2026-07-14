@@ -107,7 +107,7 @@ describe('detectAnnualPlanningContext', () => {
     expect(r.weekLabel).toBe('Inter-saison Transition - S3')
   })
 
-  it('skipOffSeasonRecoveryIntro ignoré si manualOffSeasonWeekOverride est défini', () => {
+  it('avec ancre calendrier, manualOffSeasonWeekOverride ignoré (skip recovery s’applique)', () => {
     const r = detectAnnualPlanningContext({
       ...baseParams,
       events: [match(FIRST_MATCH)],
@@ -116,6 +116,21 @@ describe('detectAnnualPlanningContext', () => {
         offSeasonStartAt: '2024-10-07',
         skipOffSeasonRecoveryIntro: true,
         manualOffSeasonWeekOverride: 1,
+      },
+    })
+    expect(r.weekNumber).toBe(3)
+    expect(r.offSeasonPhase).toBe(2)
+  })
+
+  it('sans ancre calendrier, manualOffSeasonWeekOverride fige la semaine (QA admin)', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [],
+      today: '2024-10-08',
+      planningAnchors: {
+        manualCycleOverride: 'off_season',
+        manualOffSeasonWeekOverride: 1,
+        skipOffSeasonRecoveryIntro: true,
       },
     })
     expect(r.weekNumber).toBe(1)
@@ -451,7 +466,7 @@ describe('detectAnnualPlanningContext', () => {
     expect(r.cycle).toBe('off_season')
   })
 
-  it('returnToTeamTrainingAt en juillet avec override S7 : reste inter-saison', () => {
+  it('returnToTeamTrainingAt en juillet : calendrier prime sur override S7 figé', () => {
     const r = detectAnnualPlanningContext({
       ...baseParams,
       events: [],
@@ -464,8 +479,10 @@ describe('detectAnnualPlanningContext', () => {
       },
     })
     expect(r.cycle).toBe('off_season')
-    expect(r.offSeasonPhase).toBe(3)
-    expect(r.weekNumber).toBe(7)
+    // Fin de saison 2026-04-06 → inter-saison calendaire en juillet, pas bloqué à S7 Hypertrophie
+    expect(r.weekNumber).toBeGreaterThan(7)
+    expect(r.offSeasonPhase).toBe(5)
+    expect(r.weekLabel).toContain('Entretien')
   })
 
   it('manualCycleOverride off_season au-delà de S10 → Entretien (pas bloqué Force-Pont)', () => {

@@ -406,6 +406,8 @@ function AutoEndOfSeasonConfirmCard({
     }
     const cleanAnchors = { ...prevAnchors }
     delete cleanAnchors.manualPlayoffs
+    delete cleanAnchors.manualOffSeasonWeekOverride
+    delete cleanAnchors.manualPreSeasonWeekOverride
     updateProfile({
       planningAnchors: { ...cleanAnchors, seasonEndedAt: endedAt, seasonEndedSource: 'manual' },
       seasonMode: 'off_season',
@@ -464,6 +466,8 @@ function InSeasonSituationActions({
     }
     const cleanAnchors = { ...prevAnchors }
     delete cleanAnchors.manualPlayoffs
+    delete cleanAnchors.manualOffSeasonWeekOverride
+    delete cleanAnchors.manualPreSeasonWeekOverride
     updateProfile({
       planningAnchors: { ...cleanAnchors, seasonEndedAt: endedAt, seasonEndedSource: 'manual' },
       seasonMode: 'off_season',

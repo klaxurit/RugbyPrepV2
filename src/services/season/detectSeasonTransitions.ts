@@ -159,10 +159,12 @@ export function detectSeasonTransitions(params: {
   // UC8: Pre-season suggested — off-season athlete approaching typical pre-season window
   // Two triggers: (a) calendar date July+ or (b) off-season week >= 8
   // Only when no future match exists (FFR sync would auto-trigger pre-season otherwise)
+  // Skip if return date already set — MaSituation + countdown chip on Home cover that case.
   if (
     !inGracePeriod &&
     ctx.cycle === 'off_season' &&
     ctx.daysUntilNextMatch == null &&
+    !params.hasReturnDate &&
     !isDismissed('pre_season_suggested')
   ) {
     const monthNow = new Date(`${today}T12:00:00`).getMonth() + 1
