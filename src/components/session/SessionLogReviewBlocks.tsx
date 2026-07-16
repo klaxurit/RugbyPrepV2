@@ -143,7 +143,12 @@ export function SessionLogReviewBlocks({ session, sets, lang }: SessionLogReview
 
             {block.coachingNotes.length > 0 && (
               <div className="border-t border-border-app p-3">
-                <SessionNotes notes={block.coachingNotes} defaultOpen={false} />
+                <SessionNotes notes={block.coachingNotes} defaultOpen={false} label="Notes de coaching" />
+              </div>
+            )}
+            {block.fallbackOptions && block.fallbackOptions.length > 0 && (
+              <div className="border-t border-border-app p-3">
+                <SessionNotes notes={block.fallbackOptions} defaultOpen={false} label="Alternatives" />
               </div>
             )}
           </section>

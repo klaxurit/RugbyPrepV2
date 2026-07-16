@@ -26,6 +26,8 @@ interface EmomBlockProps {
   timerActive: boolean
   onStartTimer: () => void
   notes?: readonly string[]
+  /** Alternatives matériel (med ball → câble, etc.). */
+  fallbackOptions?: readonly string[]
   lang?: Lang
   /** Fiche vidéo démo (même résolution que WarmupBlock / ToursBlock). */
   onPlayDemo?: (exerciseIndex: number) => void
@@ -46,6 +48,7 @@ export function EmomBlock({
   timerActive,
   onStartTimer,
   notes,
+  fallbackOptions,
   lang = 'fr',
   onPlayDemo,
 }: EmomBlockProps) {
@@ -137,7 +140,20 @@ export function EmomBlock({
             )}
           </div>
 
-          {notes && notes.length > 0 && <SessionNotes notes={notes} defaultOpen={state === 'active'} />}
+          {notes && notes.length > 0 && (
+            <SessionNotes
+              notes={notes}
+              defaultOpen={state === 'active'}
+              label={tr('session_coaching_notes', lang)}
+            />
+          )}
+          {fallbackOptions && fallbackOptions.length > 0 && (
+            <SessionNotes
+              notes={fallbackOptions}
+              defaultOpen={false}
+              label={tr('session_alternatives', lang)}
+            />
+          )}
         </div>
       )}
     </div>

@@ -94,5 +94,23 @@ export function prepareSessionForRender({
     }
   })
 
-  return { ...adaptedEn, blocks }
+  return {
+    ...adaptedEn,
+    blocks,
+    warmUp: adaptedEn.warmUp
+      ? {
+          ...adaptedEn.warmUp,
+          notes: finalFr.warmUpNotes.length > 0 ? finalFr.warmUpNotes : adaptedEn.warmUp.notes,
+          exercises: adaptedEn.warmUp.exercises.map((exo, i) => {
+            const frExo = finalFr.warmUpExercises[i]
+            if (!frExo) return exo
+            return {
+              ...exo,
+              name: frExo.name || exo.name,
+              prescription: frExo.prescription || exo.prescription,
+            }
+          }),
+        }
+      : adaptedEn.warmUp,
+  }
 }

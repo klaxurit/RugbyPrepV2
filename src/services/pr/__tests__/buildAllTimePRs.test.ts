@@ -50,6 +50,17 @@ describe('buildAllTimePRsFromSetLogs', () => {
     ])
     expect(prs[0].bestValue).toBe(90)
   })
+
+  it('à charge égale, ne crée pas de nouveau record (plus de reps)', () => {
+    const prs = buildAllTimePRsFromSetLogs([
+      mk({ loadKg: 80, reps: 4, updatedAt: '2026-06-01T10:00:00Z' }),
+      mk({ loadKg: 80, reps: 5, updatedAt: '2026-06-10T10:00:00Z' }),
+    ])
+    expect(prs).toHaveLength(1)
+    expect(prs[0].bestValue).toBe(80)
+    expect(prs[0].bestLabel).toBe('80 kg × 4')
+    expect(prs[0].dateISO).toBe('2026-06-01')
+  })
 })
 
 describe('mergePRBoardEntries', () => {

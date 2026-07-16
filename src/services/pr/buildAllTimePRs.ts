@@ -71,8 +71,8 @@ function pickBestLoadCandidate(
 ): LoadCandidate {
   if (!current || next.loadKg > current.loadKg) return next
   if (next.loadKg < current.loadKg) return current
-  // Même charge : garder la série la plus récente (dateISO plus tardive)
-  return next.dateISO >= current.dateISO ? next : current
+  // Même charge : garder la 1re occurrence (pas de « nouveau record » sur + de reps).
+  return current
 }
 
 function buildFromLoadCandidates(

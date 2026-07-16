@@ -168,6 +168,7 @@ export function SessionBlocks({
         const onToggle = () => toggleExpand(block.number, defaultExpanded)
         const kind = detectBlockKind(block)
         const notes = block.coachingNotes
+        const fallbackOptions = block.fallbackOptions
         const isCursorBlock = cursor?.blockNumber === block.number
 
         if (kind === 'warmup') {
@@ -201,6 +202,7 @@ export function SessionBlocks({
               timerActive={activeEmomBlockNumber === block.number}
               onStartTimer={() => onStartEmomTimer?.(block.number)}
               notes={notes}
+              fallbackOptions={fallbackOptions}
               lang={lang}
               onPlayDemo={onPlayDemo ? (i) => onPlayDemo(block.number, i) : undefined}
             />
@@ -236,6 +238,7 @@ export function SessionBlocks({
               }}
               onStartIso={(exoIdx) => onStartIsoTimer?.(block.number, 0, exoIdx)}
               notes={notes}
+              fallbackOptions={fallbackOptions}
             />
           )
         }
@@ -301,6 +304,7 @@ export function SessionBlocks({
             onPlayDemo={onPlayDemo ? (exoIdx) => onPlayDemo(block.number, exoIdx) : undefined}
             onStartIso={(tourIdx, exoIdx) => onStartIsoTimer?.(block.number, tourIdx, exoIdx)}
             notes={notes}
+            fallbackOptions={fallbackOptions}
             getLoadSuggestion={getLoadSuggestion}
             getPreviousSessionSet={getPreviousSessionSet}
             historyLogs={historyLogs}

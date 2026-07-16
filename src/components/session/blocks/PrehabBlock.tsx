@@ -34,6 +34,8 @@ interface PrehabBlockProps {
   /** Fiche vidéo démo quand disponible dans le catalogue. */
   onPlayDemo?: (exoIdx: number) => void
   notes?: readonly string[]
+  /** Alternatives matériel (med ball → câble, etc.). */
+  fallbackOptions?: readonly string[]
   lang?: Lang
 }
 
@@ -54,6 +56,7 @@ export function PrehabBlock({
   onStartIso,
   onPlayDemo,
   notes,
+  fallbackOptions,
   lang = 'fr',
 }: PrehabBlockProps) {
   return (
@@ -85,7 +88,20 @@ export function PrehabBlock({
             />
           ))}
 
-          {notes && notes.length > 0 && <SessionNotes notes={notes} defaultOpen={false} />}
+          {notes && notes.length > 0 && (
+            <SessionNotes
+              notes={notes}
+              defaultOpen={false}
+              label={tr('session_coaching_notes', lang)}
+            />
+          )}
+          {fallbackOptions && fallbackOptions.length > 0 && (
+            <SessionNotes
+              notes={fallbackOptions}
+              defaultOpen={false}
+              label={tr('session_alternatives', lang)}
+            />
+          )}
         </div>
       )}
     </div>

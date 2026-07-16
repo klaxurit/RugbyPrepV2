@@ -1949,8 +1949,72 @@ const TEXT_EXACT_FR: Record<string, string> = {
   'The player can keep their own full-body warm-up if it prepares hips, trunk, shoulders, and the first main pattern.':
     'Le joueur peut garder son propre échauffement full-body s’il prépare les hanches, le tronc, les épaules et le premier pattern principal.',
   'Keep this short and useful.': 'Garder ça court et utile.',
-  'The goal is readiness for force production, not early fatigue.':
-    'L’objectif est d’être prêt à produire de la force, pas de créer de la fatigue trop tôt.',
+  'Shoulder and thoracic activation before heavy pressing.':
+    'Activation des épaules et du thorax avant les presses lourdes.',
+  'Shoulder and thoracic activation before heavy pressing contrasts.':
+    'Activation des épaules et du thorax avant les contrastes de presse lourde.',
+  'Shoulder and thoracic activation before contrast pushing.':
+    'Activation des épaules et du thorax avant les pushes en contraste.',
+  'Shoulder and thoracic activation before pressing.':
+    'Activation des épaules et du thorax avant les presses.',
+  'Ramp-up sets are essential — reach working weight over 2-3 sets.':
+    'Les séries de montée en charge sont essentielles — atteindre le poids de travail en 2-3 séries.',
+  'Heavy bench: controlled eccentric, explosive concentric. RIR 1-2.':
+    'Bench lourd : excentrique contrôlée, concentrique explosif. RIR 1-2.',
+  'Med ball pass within 15-20s of bench set — exploit PAP.':
+    'Passe med ball dans les 15-20 s après la série de bench — exploiter le PAP.',
+  'Pass should feel noticeably faster/harder after the heavy set.':
+    'La passe doit sembler nettement plus rapide et plus vive après la série lourde.',
+  'If pass quality drops, reduce bench load first.':
+    'Si la qualité de la passe baisse, réduire d’abord la charge de bench.',
+  'If plyo quality drops, reduce bench load before cutting push-ups.':
+    'Si la qualité du plyo baisse, réduire d’abord la charge de bench avant de couper les pompes.',
+  'If plyo quality drops, reduce load on A first.':
+    'Si la qualité du plyo baisse, réduire d’abord la charge sur A.',
+  'Jump within 15-20s of finishing A — exploit PAP.':
+    'Sauter dans les 15-20 s après la fin de A — exploiter le PAP.',
+  'Jump within 15-20s of A — max intention, not volume.':
+    'Sauter dans les 15-20 s après A — intention max, pas de volume.',
+  'Jump within 15-20s of unracking — exploit the PAP window.':
+    'Sauter dans les 15-20 s après le décrochage — exploiter la fenêtre PAP.',
+  'Jump height should feel noticeably better after the heavy set.':
+    'La hauteur de saut doit sembler nettement meilleure après la série lourde.',
+  'Broad jump within 15-20s of A — powerful and crisp, not chased once quality drops.':
+    'Broad jump dans les 15-20 s après A — puissant et net, sans forcer la distance dès que la qualité baisse.',
+  'B: CMJ or squat jump within 15-20s of A.':
+    'B : CMJ ou squat jump dans les 15-20 s après A.',
+  'Plyo within 15-20s of A — hands leave the ground, max push speed.':
+    'Plyo dans les 15-20 s après A — les mains quittent le sol, vitesse de poussée max.',
+  'Plyo within 15-20s of A — max push speed, hands leave ground.':
+    'Plyo dans les 15-20 s après A — vitesse de poussée max, les mains quittent le sol.',
+  'Plyo within 15-20s of A — hands leave ground.':
+    'Plyo dans les 15-20 s après A — les mains quittent le sol.',
+  'Ramp-up is critical before heavy loading — take 2-3 sets to reach working weight.':
+    'La montée en charge est critique avant le travail lourd — prendre 2-3 séries pour atteindre le poids de travail.',
+  'Nordic curl: controlled eccentric, assist concentric if needed.':
+    'Nordic curl : excentrique contrôlée, assister le concentrique si besoin.',
+  'Band assist allows explosive intent without excessive eccentric stress.':
+    'L’assistance élastique permet une intention explosive sans stress excentrique excessif.',
+  'Sprint-resilience: eccentric hamstring + groin robustness.':
+    'Résilience sprint : ischio excentrique + robustesse des adducteurs.',
+  '`Back_three`: more explosive concentric intent on split squat.':
+    '`Back_three` : intention concentrique plus explosive sur le split squat.',
+  'Explosive split squat — fast concentric, stable landing on jump.':
+    'Split squat explosif — concentrique rapide, réception stable sur le saut.',
+  'Heavy A: backpack load or slow eccentric, `RIR 2-3` (~75-80% effort).':
+    'A lourd : charge sac à dos ou excentrique lente, `RIR 2-3` (~75-80 % d’effort).',
+  'Concentric intent is maximal.':
+    'L’intention concentrique est maximale.',
+  'Concentric intent is maximal; no grinding reps.':
+    'L’intention concentrique est maximale ; pas de reps en forçant.',
+  'Sled push should reinforce horizontal projection and scrum-like bracing without adding much eccentric fatigue.':
+    'Le sled push doit renforcer la projection horizontale et le gainage type mêlée sans ajouter beaucoup de fatigue excentrique.',
+  'Broad jumps should stay crisp and projective, not chased once quality drops.':
+    'Les broad jumps doivent rester nets et projectifs, sans forcer la distance dès que la qualité baisse.',
+  'Nordic Curl : ajouté pour équilibrer quad:ham (ratio 2.33 → 1.17). Eccentric gold-standard prévention ischio (Askling 2003/2013, -70% blessures saison rugby).':
+    'Nordic Curl : ajouté pour équilibrer quad:ham (ratio 2.33 → 1.17). Gold-standard excentrique de prévention ischio (Askling 2003/2013, −70 % blessures saison rugby).',
+  'Pins keep the squat honest and reinforce concentric force from a stable position.':
+    'Les pins gardent le squat honnête et renforcent la force concentrique depuis une position stable.',
   'This block is the anchor of the session.': 'Ce bloc est l’ancrage de la séance.',
   'Reps must stay technically clean with `RIR 1-2`.':
     'Les répétitions doivent rester techniquement propres avec `RIR 1-2`.',
@@ -2686,6 +2750,19 @@ export function looksLikeFranglais(note: string): boolean {
     /\bIt should\b/i,
     /\bSi the\b/i,
     /\band (propre|violent|athlétique|strict)\b/i,
+    // Marqueurs EN résiduels fréquents (Force Bridge / PAP / ramp-up)
+    /\beccentric\b/i,
+    /\bconcentric\b/i,
+    /\bnoticeably\b/i,
+    /\bexploit PAP\b/i,
+    /\bwithin \d+-\d+s of\b/i,
+    /\bquality drops\b/i,
+    /\bRamp-up sets\b/i,
+    /\bworking weight\b/i,
+    /\bheavy pressing\b/i,
+    /\bthoracic activation\b/i,
+    /\bfaster\/harder\b/i,
+    /\breduce bench load\b/i,
   ]
   return patterns.some((p) => p.test(note))
 }

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { BlockLog, ExerciseLogEntry } from '../types/training'
 import type { ExerciseMetricType } from '../types/training'
-import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
 import { buildAllTimePRsFromBlockLogs } from '../services/pr/buildAllTimePRs'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
@@ -153,11 +152,16 @@ export const useBlockLogs = () => {
             bestSeconds = bestSeconds === undefined ? entry.seconds : Math.min(bestSeconds, entry.seconds)
           }
 
-          if (entry.loadKg !== undefined && entry.reps !== undefined) {
-            const score = entry.loadKg * entry.reps
-            if (bestLoadRepsScore === undefined || score > bestLoadRepsScore) {
-              bestLoadRepsScore = score
-              bestLabel = `${entry.loadKg}kg × ${entry.reps}`
+          // Charge max uniquement (pas load×reps) — aligné sur detectPRs / board Records.
+          if (entry.loadKg !== undefined && entry.loadKg > 0) {
+            const isBetterLoad =
+              bestLoadRepsScore === undefined || entry.loadKg > bestLoadRepsScore
+            if (isBetterLoad) {
+              bestLoadRepsScore = entry.loadKg
+              bestLabel =
+                entry.reps !== undefined
+                  ? `${entry.loadKg}kg × ${entry.reps}`
+                  : `${entry.loadKg}kg`
             }
           } else if (entry.meters !== undefined) {
             if (!bestLabel || (bestMeters !== undefined && entry.meters >= bestMeters)) {
@@ -195,11 +199,13 @@ export const useBlockLogs = () => {
           if (entry.exerciseId !== exerciseId) continue
 
           if (metricType === 'load_reps') {
-            if (entry.loadKg === undefined || entry.reps === undefined) continue
-            const score = entry.loadKg * entry.reps
-            if (bestScore === undefined || score > bestScore) {
-              bestScore = score
-              bestLabel = `${entry.loadKg}kg × ${entry.reps}`
+            if (entry.loadKg === undefined || entry.loadKg <= 0) continue
+            if (bestScore === undefined || entry.loadKg > bestScore) {
+              bestScore = entry.loadKg
+              bestLabel =
+                entry.reps !== undefined
+                  ? `${entry.loadKg}kg × ${entry.reps}`
+                  : `${entry.loadKg}kg`
             }
             continue
           }

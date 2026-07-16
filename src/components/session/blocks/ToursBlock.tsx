@@ -77,6 +77,8 @@ interface ToursBlockProps {
   onStartIso?: (tourIdx: number, exoIdx: number) => void
   /** Notes de coaching à afficher en bas du bloc. */
   notes?: readonly string[]
+  /** Alternatives matériel (med ball → câble, etc.) sous les notes. */
+  fallbackOptions?: readonly string[]
   /** Suggestion de charge Premium par exerciseId (optionnel). */
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
   /** Dernière série loggée (même n° de tour, séance précédente). */
@@ -129,6 +131,7 @@ export function ToursBlock(props: ToursBlockProps) {
     onPlayDemo,
     onStartIso,
     notes,
+    fallbackOptions,
     getLoadSuggestion,
     getPreviousSessionSet,
     lang = 'fr',
@@ -227,7 +230,20 @@ export function ToursBlock(props: ToursBlockProps) {
             </div>
           )}
 
-          {notes && notes.length > 0 && <SessionNotes notes={notes} defaultOpen={state === 'active'} />}
+          {notes && notes.length > 0 && (
+            <SessionNotes
+              notes={notes}
+              defaultOpen={state === 'active'}
+              label={tr('session_coaching_notes', lang)}
+            />
+          )}
+          {fallbackOptions && fallbackOptions.length > 0 && (
+            <SessionNotes
+              notes={fallbackOptions}
+              defaultOpen={false}
+              label={tr('session_alternatives', lang)}
+            />
+          )}
         </div>
       )}
     </div>

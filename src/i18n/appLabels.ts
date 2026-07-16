@@ -30,6 +30,8 @@ export const APP_LABELS = {
 
   // ── Synthetic warmup block title ────────────────────────────────────────
   warmup_block_title: { fr: 'Échauffement', en: 'Warm-Up' },
+  session_coaching_notes: { fr: 'Notes de coaching', en: 'Coaching notes' },
+  session_alternatives: { fr: 'Alternatives', en: 'Alternatives' },
 
   /** Header — quitter la séance en cours (même action que l'ancien bouton flottant). */
   session_quit_workout_aria: {

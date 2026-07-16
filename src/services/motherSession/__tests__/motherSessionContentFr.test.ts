@@ -94,6 +94,23 @@ describe('motherSessionContentFr', () => {
     }
   })
 
+  it('UPPER_OFFSEASON_FORCE_BRIDGE_V1 coaching notes are clean French', () => {
+    const session = MOTHER_SESSIONS_BY_ID.UPPER_OFFSEASON_FORCE_BRIDGE_V1
+    const fr = getSessionFrOrFallback(session)!
+    expect(fr.warmUpNotes[0]).toBe(
+      'Activation des épaules et du thorax avant les presses lourdes.',
+    )
+    expect(fr.warmUpNotes[1]).toBe(
+      'Les séries de montée en charge sont essentielles — atteindre le poids de travail en 2-3 séries.',
+    )
+    expect(fr.blocks[0].coachingNotes).toEqual([
+      'Bench lourd : excentrique contrôlée, concentrique explosif. RIR 1-2.',
+      'Passe med ball dans les 15-20 s après la série de bench — exploiter le PAP.',
+      'La passe doit sembler nettement plus rapide et plus vive après la série lourde.',
+      'Si la qualité de la passe baisse, réduire d’abord la charge de bench.',
+    ])
+  })
+
   it('humanizes free-text position group labels in FR', () => {
     expect(msPositionGroupLabel('front_row + back_three (phase 1 common base)', 'fr')).toBe(
       'Avants + Ligne arrière (base commune phase 1)',
