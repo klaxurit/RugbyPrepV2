@@ -15,6 +15,7 @@ import {
   RETURN_TO_CLUB_PROMPT_HINT_ID,
   shouldPromptReturnToClub,
 } from '../services/season/shouldPromptReturnToClub'
+import { buildReturnToClubProfilePatch } from '../services/season/buildReturnToClubProfilePatch'
 import { userScopedKey } from '../services/storage/userScopedStorage'
 import { getToday } from '../services/ui/debugDateOverride'
 import type { Lang } from '../i18n/appLabels'
@@ -62,8 +63,8 @@ export function useReturnToClubPrompt() {
         events: visibleEvents ?? [],
         logs,
         today,
-        fatigue: null,
-        acwrZone: acwr.hasSufficientData ? acwr.zone : null,
+        fatigue: 'OK',
+        acwrZone: acwr.hasSufficientData ? acwr.zone : undefined,
       })
       return detectAnnualPlanningContext(inputs)
     } catch {
@@ -106,18 +107,7 @@ export function useReturnToClubPrompt() {
     (payload: { returnDate: string; clubName?: string; clubCode?: string }) => {
       setSaving(true)
       try {
-        const patch: Parameters<typeof updateProfile>[0] = {
-          planningAnchors: {
-            ...profile.planningAnchors,
-            returnToTeamTrainingAt: payload.returnDate,
-          },
-          seasonMode: 'pre_season',
-        }
-        if (payload.clubCode) {
-          patch.clubCode = payload.clubCode
-          patch.clubName = payload.clubName
-        }
-        updateProfile(patch)
+        updateProfile(buildReturnToClubProfilePatch(profile.planningAnchors, payload))
         if (payload.clubCode) {
           void import('../services/club/syncClubMembership').then(({ syncMyClubMembership }) =>
             syncMyClubMembership(payload.clubCode),
