@@ -3,7 +3,7 @@ import {
   buildAllTimePRsFromSetLogs,
   mergePRBoardEntries,
 } from '../buildAllTimePRs'
-import type { ExerciseSetLog } from '../../types/training'
+import type { ExerciseSetLog } from '../../../types/training'
 
 const mk = (overrides: Partial<ExerciseSetLog>): ExerciseSetLog => ({
   id: '1',
