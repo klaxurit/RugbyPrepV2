@@ -886,7 +886,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `3 min` rest between rounds",
         "exercises": [
           {
-            "name": "Decline Push-Up",
+            "name": "Pike Push-Up",
             "prescription": "3x4"
           },
           {
@@ -896,8 +896,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Push lent lourd puis plyo explosive dans la fenêtre PAP.",
-          "Variante A : développé haltères si banc + haltères disponibles.",
+          "Pike (pas decline — réservé à la séance UPPER de la semaine) puis plyo explosive dans la fenêtre PAP.",
+          "Variante A : développé haltères assis si banc + haltères disponibles.",
           "Réduire la charge sur A avant de couper les reps de plyo."
         ]
       },
@@ -2570,7 +2570,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `90-120s` rest",
         "exercises": [
           {
-            "name": "bench press",
+            "name": "DB Incline Bench Press",
             "prescription": "4x4-5"
           },
           {
@@ -2580,7 +2580,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy bench into rotational throw — trunk transfer power.",
+          "Incline DB press (not flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.",
           "This replaces the plyo push-up contrast of the front-row version."
         ]
       },
@@ -2644,7 +2644,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "area": "shoulder_pain",
         "remove": [
-          "`Bench Press`"
+          "`DB Incline Bench Press`"
         ],
         "replaceWith": [
           "`Neutral-Grip DB Bench Press`"
@@ -2772,7 +2772,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "bench press",
+            "name": "DB Incline Bench Press",
             "prescription": "4x4-5 @ 85-90%"
           },
           {
@@ -2782,12 +2782,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy bench into explosive plyo push-up — classic upper-body PAP pair.",
+          "Incline DB press (not flat bench — reserved for the UPPER session this week) into explosive plyo push-up.",
           "Plyo push-up: hands should leave the ground. Focus on speed of push.",
-          "If plyo quality drops, reduce bench load before cutting push-ups."
+          "If plyo quality drops, reduce incline load before cutting push-ups."
         ],
         "fallbackOptions": [
-          "A: `Med Ball Chest Pass` if plyo push-ups too demanding"
+          "A: `Push Press` if no incline bench",
+          "B: `Med Ball Chest Pass` if plyo push-ups too demanding"
         ]
       },
       {
@@ -2848,14 +2849,14 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     ],
     "positionAccent": [
       "Session is common for both groups.",
-      "`Front_row`: slightly more patience on trap bar setup; heavier bench tolerated.",
+      "`Front_row`: slightly more patience on trap bar setup; heavier incline loads tolerated.",
       "`Back_three`: slightly more emphasis on jump height and push-up speed."
     ],
     "injurySubstitutions": [
       {
         "area": "shoulder_pain",
         "remove": [
-          "`Bench Press`",
+          "`DB Incline Bench Press`",
           "`Plyo Push-Up`"
         ],
         "replaceWith": [

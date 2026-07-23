@@ -5,6 +5,8 @@ import { useAuth } from './useAuth'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 
 const STORAGE_BASE = 'rugbyprep.history'
+const DELETED_IDS_BASE = 'rugbyprep.history.deleted'
+const HISTORY_CHANGED_EVENT = 'rf.history.changed'
 
 const sortNewestFirst = (logs: SessionLog[]): SessionLog[] =>
   [...logs].sort(
@@ -31,6 +33,68 @@ const readFromStorage = (userId: string | null): SessionLog[] => {
 
 const saveToStorage = (logs: SessionLog[], userId: string | null) => {
   writeUserScoped(STORAGE_BASE, userId, logs)
+}
+
+const readDeletedIds = (userId: string | null): Set<string> => {
+  if (typeof window === 'undefined') return new Set()
+  const parsed = readUserScoped<string[]>(DELETED_IDS_BASE, userId)
+  return new Set(Array.isArray(parsed) ? parsed : [])
+}
+
+const saveDeletedIds = (ids: Set<string>, userId: string | null) => {
+  writeUserScoped(DELETED_IDS_BASE, userId, [...ids])
+}
+
+const rememberDeletedIds = (userId: string | null, ids: string[]) => {
+  if (ids.length === 0) return
+  const next = readDeletedIds(userId)
+  for (const id of ids) next.add(id)
+  saveDeletedIds(next, userId)
+}
+
+/** Exclut les logs tombstonés (évite la résurrection via merge offline). */
+export const excludeDeletedLogs = (
+  logs: SessionLog[],
+  deletedIds: Set<string>,
+): SessionLog[] => {
+  if (deletedIds.size === 0) return logs
+  return logs.filter((log) => !deletedIds.has(log.id))
+}
+
+/**
+ * Merge local + remote en ignorant les ids annulés.
+ * Un tombstone ne se retire que lorsque le remote ne renvoie plus l'id
+ * (confirmation que la suppression a tenu — pas un fetch périmé).
+ */
+export const mergeHistoryAfterRemoteFetch = (
+  local: SessionLog[],
+  remote: SessionLog[],
+  deletedIds: Set<string>,
+): { logs: SessionLog[]; deletedIds: Set<string> } => {
+  const remoteIds = new Set(remote.map((l) => l.id))
+  const nextDeleted = new Set<string>()
+  for (const id of deletedIds) {
+    if (remoteIds.has(id)) nextDeleted.add(id)
+  }
+  return {
+    logs: excludeDeletedLogs(mergeLogsById(local, remote), deletedIds),
+    deletedIds: nextDeleted,
+  }
+}
+
+const notifyHistoryChanged = () => {
+  if (typeof window === 'undefined') return
+  window.dispatchEvent(new Event(HISTORY_CHANGED_EVENT))
+}
+
+const applyLocalLogs = (
+  userId: string | null,
+  setLogs: (logs: SessionLog[] | ((current: SessionLog[]) => SessionLog[])) => void,
+  next: SessionLog[],
+) => {
+  saveToStorage(next, userId)
+  setLogs(next)
+  notifyHistoryChanged()
 }
 
 // ─── Row ↔ SessionLog mapping ──────────────────────────────────
@@ -104,32 +168,59 @@ const logToRow = (log: SessionLog, userId: string) => {
   }
 }
 
+const SESSION_LOG_SELECT =
+  'id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context, slot_signature'
+
 // ─── Hook ────────────────────────────────────────────────────
 
 export const useHistory = () => {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  const [logs, setLogs] = useState<SessionLog[]>(() => readFromStorage(userId))
+  const [logs, setLogs] = useState<SessionLog[]>(() =>
+    excludeDeletedLogs(readFromStorage(userId), readDeletedIds(userId)),
+  )
 
   // Sync from Supabase on auth. Also re-seed local state from the active user's
   // cache when userId changes, so a new session doesn't keep the previous user's logs.
   useEffect(() => {
+    let cancelled = false
     // eslint-disable-next-line react-hooks/set-state-in-effect -- required: userId change must reset cache
-    setLogs(readFromStorage(userId))
+    setLogs(excludeDeletedLogs(readFromStorage(userId), readDeletedIds(userId)))
     if (!userId) return
+
     supabase
       .from('session_logs')
-      .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context, slot_signature')
+      .select(SESSION_LOG_SELECT)
       .eq('user_id', userId)
       .order('date_iso', { ascending: false })
       .then(({ data, error }) => {
-        if (error || !data) return
+        if (cancelled || error || !data) return
         const loaded = (data as SessionLogRow[]).map(rowToLog)
-        const merged = mergeLogsById(readFromStorage(userId), loaded)
-        setLogs(merged)
+        const deletedIds = readDeletedIds(userId)
+        const { logs: merged, deletedIds: nextDeleted } = mergeHistoryAfterRemoteFetch(
+          readFromStorage(userId),
+          loaded,
+          deletedIds,
+        )
+        saveDeletedIds(nextDeleted, userId)
         saveToStorage(merged, userId)
+        setLogs(merged)
       })
+
+    return () => {
+      cancelled = true
+    }
+  }, [userId])
+
+  // Chaque instance useHistory a son propre state : resync après delete/add ailleurs.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const sync = () => {
+      setLogs(excludeDeletedLogs(readFromStorage(userId), readDeletedIds(userId)))
+    }
+    window.addEventListener(HISTORY_CHANGED_EVENT, sync)
+    return () => window.removeEventListener(HISTORY_CHANGED_EVENT, sync)
   }, [userId])
 
   const addLog = useCallback(
@@ -150,13 +241,16 @@ export const useHistory = () => {
             .from('session_logs')
             .update(logToRow(updated, userId))
             .eq('id', existing.data.id)
-            .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context, slot_signature')
+            .select(SESSION_LOG_SELECT)
             .single()
           if (!error && data) {
             const saved = rowToLog(data as SessionLogRow)
+            const deleted = readDeletedIds(userId)
+            if (deleted.delete(saved.id)) saveDeletedIds(deleted, userId)
             setLogs((current) => {
               const next = mergeLogsById([saved], current)
               saveToStorage(next, userId)
+              notifyHistoryChanged()
               return next
             })
             return saved
@@ -170,13 +264,16 @@ export const useHistory = () => {
         const { data, error } = await supabase
           .from('session_logs')
           .insert(logToRow(completeLog, userId))
-          .select('id, date_iso, week, session_type, fatigue, notes, rpe, duration_min, program_source, legacy_recipe_id, mother_session_id, session_label, program_context, slot_signature')
+          .select(SESSION_LOG_SELECT)
           .single()
         if (!error && data) {
           const saved = rowToLog(data as SessionLogRow)
+          const deleted = readDeletedIds(userId)
+          if (deleted.delete(saved.id)) saveDeletedIds(deleted, userId)
           setLogs((current) => {
             const next = mergeLogsById([saved], current)
             saveToStorage(next, userId)
+            notifyHistoryChanged()
             return next
           })
           return saved
@@ -187,6 +284,7 @@ export const useHistory = () => {
       setLogs((current) => {
         const next = mergeLogsById([completeLog], current)
         saveToStorage(next, userId)
+        notifyHistoryChanged()
         return next
       })
       return completeLog
@@ -198,9 +296,64 @@ export const useHistory = () => {
     if (userId) {
       await supabase.from('session_logs').delete().eq('user_id', userId)
     }
-    setLogs([])
-    saveToStorage([], userId)
+    saveDeletedIds(new Set(), userId)
+    applyLocalLogs(userId, setLogs, [])
   }, [userId])
 
-  return { logs, addLog, clearLogs }
+  /**
+   * Supprime une séance enregistrée pour pouvoir la refaire.
+   * Vérifie que la ligne a bien disparu côté Supabase (sinon RLS no-op silencieux),
+   * et pose un tombstone pour empêcher un fetch périmé / merge offline de la ressusciter.
+   */
+  const deleteLog = useCallback(
+    async (logId: string, slotSignature?: string | null): Promise<boolean> => {
+      const removedIds = new Set<string>([logId])
+
+      if (userId) {
+        const { data, error } = await supabase
+          .from('session_logs')
+          .delete()
+          .eq('id', logId)
+          .eq('user_id', userId)
+          .select('id')
+
+        if (error) {
+          console.error('[useHistory] deleteLog failed:', error.message)
+          return false
+        }
+
+        let deletedRows = data ?? []
+        if (deletedRows.length === 0 && slotSignature) {
+          const fallback = await supabase
+            .from('session_logs')
+            .delete()
+            .eq('user_id', userId)
+            .eq('slot_signature', slotSignature)
+            .select('id')
+          if (fallback.error) {
+            console.error('[useHistory] deleteLog slot fallback failed:', fallback.error.message)
+            return false
+          }
+          deletedRows = fallback.data ?? []
+        }
+
+        if (deletedRows.length === 0) {
+          console.error('[useHistory] deleteLog: aucune ligne supprimée', { logId, slotSignature })
+          return false
+        }
+
+        for (const row of deletedRows) removedIds.add(row.id)
+      }
+
+      rememberDeletedIds(userId, [...removedIds])
+      const next = excludeDeletedLogs(readFromStorage(userId), readDeletedIds(userId)).filter(
+        (log) => !removedIds.has(log.id) && !(slotSignature && log.slotSignature === slotSignature),
+      )
+      applyLocalLogs(userId, setLogs, next)
+      return true
+    },
+    [userId],
+  )
+
+  return { logs, addLog, clearLogs, deleteLog }
 }

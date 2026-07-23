@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import type { SessionLog } from '../types/training'
-import { mergeLogsById } from './useHistory'
+import {
+  excludeDeletedLogs,
+  mergeHistoryAfterRemoteFetch,
+  mergeLogsById,
+} from './useHistory'
 
 const makeLog = (overrides: Partial<SessionLog> & Pick<SessionLog, 'id' | 'dateISO'>): SessionLog => ({
   id: overrides.id,
@@ -50,5 +54,39 @@ describe('mergeLogsById', () => {
 
     expect(merged).toHaveLength(1)
     expect(merged[0].notes).toBe('remote')
+  })
+})
+
+describe('mergeHistoryAfterRemoteFetch', () => {
+  it('ne ressuscite pas un log annulé même si un fetch périmé le renvoie', () => {
+    const deleted = makeLog({ id: 'gone', dateISO: '2026-07-21T12:00:00.000Z' })
+    const { logs, deletedIds } = mergeHistoryAfterRemoteFetch(
+      [],
+      [deleted],
+      new Set(['gone']),
+    )
+
+    expect(logs.map((l) => l.id)).not.toContain('gone')
+    expect(deletedIds.has('gone')).toBe(true)
+  })
+
+  it('retire le tombstone quand le remote ne contient plus le log', () => {
+    const other = makeLog({ id: 'keep', dateISO: '2026-07-20T12:00:00.000Z' })
+    const { logs, deletedIds } = mergeHistoryAfterRemoteFetch(
+      [makeLog({ id: 'gone', dateISO: '2026-07-21T12:00:00.000Z' })],
+      [other],
+      new Set(['gone']),
+    )
+
+    expect(logs.map((l) => l.id)).toEqual(['keep'])
+    expect(deletedIds.has('gone')).toBe(false)
+  })
+
+  it('excludeDeletedLogs filtre correctement', () => {
+    const logs = [
+      makeLog({ id: 'a', dateISO: '2026-07-21T12:00:00.000Z' }),
+      makeLog({ id: 'b', dateISO: '2026-07-20T12:00:00.000Z' }),
+    ]
+    expect(excludeDeletedLogs(logs, new Set(['a'])).map((l) => l.id)).toEqual(['b'])
   })
 })

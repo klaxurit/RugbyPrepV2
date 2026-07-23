@@ -42,13 +42,15 @@ function bumpOffSeasonWeekSkipRecoveryIntro(
   effectiveMaxWeeks: number,
   anchors: NonNullable<AthletePlanningInputs['planningAnchors']>,
 ): number {
-  const capped = Math.min(effectiveMaxWeeks, Math.max(1, calendarWeek))
-  if (shouldFreezeOffSeasonWeek(anchors)) return capped
+  if (shouldFreezeOffSeasonWeek(anchors)) {
+    return Math.min(effectiveMaxWeeks, Math.max(1, calendarWeek))
+  }
   // Sans « skip récup », ne pas borner au max du bloc planifié : au-delà → phase Entretien (5).
   if (!anchors.skipOffSeasonRecoveryIntro) return Math.max(1, calendarWeek)
-  const w = capped
-  if (w > 2) return w
-  return Math.min(effectiveMaxWeeks, w + 2)
+  // Skip récup : S1–S2 → Transition (S3–S4), puis suivre le calendrier
+  // (y compris Entretien au-delà du bloc — ne pas rester coincé en S10).
+  if (calendarWeek <= 2) return Math.min(effectiveMaxWeeks, calendarWeek + 2)
+  return Math.max(1, calendarWeek)
 }
 
 const MODE_RANK: Record<TraceMode, number> = {
@@ -407,9 +409,10 @@ function resolveManualCycle(
   matchDates: string[],
   firstMatchDate: string | null,
   cycle: AnnualCycle,
-  acc: TraceAcc
+  acc: TraceAcc,
+  /** Ancres déjà sanitisées / migrées par detectAnnualPlanningContext. */
+  anchors: NonNullable<AthletePlanningInputs['planningAnchors']>,
 ): AnnualPlanningContext {
-  const anchors = inputs.planningAnchors ?? {}
   const base = (t: AnnualPlanningContext['planningTrace']) =>
     baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, t)
 
@@ -425,6 +428,25 @@ function resolveManualCycle(
       offStartMonday = addDays(startOfIsoWeekMonday(ended), DAYS_PER_WEEK)
       acc.bump('explicit_anchors')
       acc.rule('rule:manual_off_season_from_season_ended')
+    } else if (anchors.returnToTeamTrainingAt) {
+      // Reprise club connue mais pas de fin de saison : reconstruire un début
+      // d'inter-saison cohérent (pré-saison − backfill) pour que la semaine avance.
+      const returnMonday = startOfIsoWeekMonday(
+        parseLocalDateOnly(anchors.returnToTeamTrainingAt)!,
+      )
+      const preSeasonStart = addDays(
+        returnMonday,
+        -PRE_SEASON_WEEKS_BEFORE_RETURN * DAYS_PER_WEEK,
+      )
+      offStartMonday = addDays(
+        preSeasonStart,
+        -OFF_SEASON_BACKFILL_WEEKS * DAYS_PER_WEEK,
+      )
+      acc.bump('explicit_anchors')
+      acc.rule('rule:manual_off_season_from_return_date')
+      acc.warn(
+        'Cycle off-season manuel : début d\'inter-saison dérivé de la date de reprise club.',
+      )
     } else if (firstMatchDate) {
       const firstMatchWeekMonday = startOfIsoWeekMonday(parseLocalDateOnly(firstMatchDate)!)
       const preSeasonStartMonday = addDays(firstMatchWeekMonday, -PRE_SEASON_WEEKS * DAYS_PER_WEEK)
@@ -451,6 +473,8 @@ function resolveManualCycle(
       if (returnDate) {
         const returnMonday = startOfIsoWeekMonday(returnDate)
         const preSeasonStart = addDays(returnMonday, -PRE_SEASON_WEEKS_BEFORE_RETURN * DAYS_PER_WEEK)
+        // Ne pas couper le bloc S1–S10 : la date de reprise n'ouvre la pré-saison
+        // qu'après la fin du bloc structuré (règle partagée avec la vue mois).
         if (
           todayWeekMonday >= preSeasonStart &&
           offSeasonWeekCompleteForPreSeason(wn)
@@ -562,7 +586,7 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   const todayWeekMonday = startOfIsoWeekMonday(todayDate)
 
   const acc = new TraceAcc()
-  const anchors = sanitizePlanningAnchorsForProgression(inputs.planningAnchors) ?? {}
+  const anchors = sanitizePlanningAnchorsForProgression(inputs.planningAnchors, todayIso) ?? {}
 
   if (anchors.firstMatchDateOverride !== undefined && anchors.firstMatchDateOverride !== '') {
     requireIsoDate('firstMatchDateOverride', anchors.firstMatchDateOverride)
@@ -641,7 +665,8 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
       matchDates,
       firstMatchDate,
       anchors.manualCycleOverride,
-      acc
+      acc,
+      anchors,
     )
   }
 

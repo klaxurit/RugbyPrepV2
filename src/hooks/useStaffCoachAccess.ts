@@ -61,7 +61,6 @@ export function useStaffCoachAccess(): UseStaffCoachAccessResult {
   }, [userId])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch staff memberships on auth change
     void refresh()
   }, [refresh])
 

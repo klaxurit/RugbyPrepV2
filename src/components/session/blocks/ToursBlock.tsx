@@ -598,6 +598,7 @@ function ExerciseRow({
     previousSession != null ? formatPreviousSessionSetLabel(previousSession, metricType) : null
   const canPrefillPrevious =
     showLoadInputs &&
+    !showCarryForward &&
     previousLabel != null &&
     (showKgInput ? kg === '' : true) &&
     (showRepsInput ? reps === '' : true)

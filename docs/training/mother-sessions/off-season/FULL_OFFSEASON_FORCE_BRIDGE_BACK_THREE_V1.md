@@ -11,7 +11,7 @@
 
 ## Goal
 - Full-body force-bridge with back-three bias: horizontal projection, rotational power, reactive patterns.
-- Maintain bilateral anchors (trap bar + bench) while shifting contrasts toward sprint and open-field demands.
+- Maintain bilateral anchors (trap bar + incline press) while shifting contrasts toward sprint and open-field demands.
 - Third weekly session for 3x frequency in Force-Bridge phase.
 
 ## Session Identity
@@ -45,10 +45,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Force + Rotational Power
 - Format: `4 rounds`, `90-120s` rest
-- Exercise A: `bench press` `4x4-5`
+- Exercise A: `DB Incline Bench Press` `4x4-5`
 - Exercise B: (contrast) `med ball rotational throw` `4x3/side`
 - Coaching notes:
-  - Heavy bench into rotational throw — trunk transfer power.
+  - Incline DB press (not flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.
   - This replaces the plyo push-up contrast of the front-row version.
 
 ### Block 3 - Reactive Support / Anti-Rotation
@@ -94,7 +94,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Shoulder Pain
 - Remove:
-  - `Bench Press`
+  - `DB Incline Bench Press`
 - Replace with:
   - `Neutral-Grip DB Bench Press`
 - Rehab finisher:

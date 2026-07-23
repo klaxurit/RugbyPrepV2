@@ -2240,9 +2240,248 @@ const TEXT_EXACT_FR: Record<string, string> = {
     'Alternative automatique si la barre n\'est pas disponible : `Neutral-Grip DB Bench Press`.',
   'T-Bar row : strong and strict, no torso cheating.':
     'T-Bar row : fort et strict, sans triche du buste.',
+  'Incline DB press (not flat bench — reserved for the UPPER session this week) into explosive plyo push-up.':
+    'Presse incline haltères (pas de bench à plat — réservé à la séance UPPER de la semaine) puis plyo push-up explosive.',
+  'Incline DB press (not flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.':
+    'Presse incline haltères (pas de bench à plat — réservé à la séance UPPER de la semaine) puis lancer rotationnel — transfert de puissance du tronc.',
+  'If plyo quality drops, reduce incline load before cutting push-ups.':
+    'Si la qualité plyo baisse, réduire d\'abord la charge incline avant de couper les pompes.',
 }
 
 const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
+  // ── Phrases longues AVANT les remplacements atomiques (évite le franglais) ──
+  [/\bThis is the anchor (?:lift|press) of the session\b/gi, `C'est l'exercice d'ancrage de la séance`],
+  [/\bThis is the lower-body power developer of the session\b/gi, `C'est le développeur de puissance bas du corps de la séance`],
+  [/\bThe goal is to restore confident full-body force production, not to test strength\b/gi, `L'objectif est de restaurer une production de force corps complet confiante, pas de tester la force`],
+  [/\bThe goal is to restore\b/gi, `L'objectif est de restaurer`],
+  [/\bThe goal is readiness and projection, not fatigue\b/gi, `L'objectif est la disponibilité et la projection, pas la fatigue`],
+  [/\bThe goal is readiness and expression, not fatigue\b/gi, `L'objectif est la disponibilité et l'expression, pas la fatigue`],
+  [/\bThe goal is to arrive ready to lift, not already tired\b/gi, `L'objectif est d'arriver prêt à soulever, pas déjà fatigué`],
+  [/\bL'objectif is to\b/gi, `L'objectif est de`],
+  [/\bL'objectif is\b/gi, `L'objectif est`],
+  [/\bC'est the anchor (?:lift|press) de la séance\b/gi, `C'est l'exercice d'ancrage de la séance`],
+  [/\bof the session\b/gi, 'de la séance'],
+  [/\bof the séance\b/gi, 'de la séance'],
+  [/\bis to restore\b/gi, 'est de restaurer'],
+  [/\bis to arrive\b/gi, `est d'arriver`],
+  [/\bis to complement\b/gi, 'est de compléter'],
+  [/\bis to\b/gi, 'est de'],
+  [/\bDo not turn this into\b/gi, 'Ne transforme pas ça en'],
+  [/\bDo not turn the\b/gi, 'Ne transforme pas le'],
+  [/\bDo not turn\b/gi, 'Ne transforme pas'],
+  [/\bDo not let the\b/gi, 'Ne laisse pas le'],
+  [/\bDo not add\b/gi, `N'ajoute pas`],
+  [/\bDo not\b/gi, 'Ne'],
+  [/\bThis replaces the (.+?) of the front-row version\b/gi, 'Ceci remplace $1 de la version avants'],
+  [/\bCeci remplace the (.+?) of la version avants\b/gi, 'Ceci remplace $1 de la version avants'],
+  [/\bCeci remplace the (.+?) contrast of la version avants\b/gi, 'Ceci remplace le contraste $1 de la version avants'],
+  [/\bhands should leave the ground\b/gi, 'les mains doivent quitter le sol'],
+  [/\bhands devrait quitter the ground\b/gi, 'les mains doivent quitter le sol'],
+  [/\bFocus on speed of push\b/gi, 'Focus sur la vitesse de poussée'],
+  [/\bSession is common for both groups\b/gi, 'Séance commune pour les deux groupes'],
+  [/\bSéance is commune for les deux groupes\b/gi, 'Séance commune pour les deux groupes'],
+  [/\bGarder this to\b/gi, 'Garder ça à'],
+  [/\bEvery push-up rep should look the same\b/gi, 'Chaque rep de pompe doit se ressembler'],
+  [/\bfeel clearly submaximal\b/gi, 'sembler clairement sous-maximal'],
+  [/\bencore feel clairement sous-maximal\b/gi, 'encore sembler clairement sous-maximal'],
+  [/\bbut it should still feel clearly submaximal\b/gi, 'mais doit encore sembler clairement sous-maximal'],
+  [/\bmais devrait encore feel clairement sous-maximal\b/gi, 'mais doit encore sembler clairement sous-maximal'],
+  [/\bnot to test strength\b/gi, 'pas de tester la force'],
+  [/\bnot already tired\b/gi, 'pas déjà fatigué'],
+  [/\bnot fatigue\b/gi, 'pas la fatigue'],
+  [/\bquality holds?\b/gi, 'la qualité tient'],
+  [/\band throw quality hold\b/gi, 'et la qualité des lancers tient'],
+  [/\bincrease intensity to\b/gi, `augmenter l'intensité à`],
+  [/\baugmenter intensity to\b/gi, `augmenter l'intensité à`],
+  [/\baugmenter to\b/gi, 'augmenter à'],
+  [/\bon both main lifts\b/gi, 'sur les deux exos principaux'],
+  [/\bon les deux main exos\b/gi, 'sur les deux exos principaux'],
+  [/\bif explosive quality holds\b/gi, 'si la qualité explosive tient'],
+  [/\bsi explosif quality holds\b/gi, 'si la qualité explosive tient'],
+  [/\banti-rotation endurance to support trunk stability for contrast work\b/gi, `endurance anti-rotation pour soutenir la stabilité du tronc pendant le travail de contraste`],
+  [/\bThis session is intentionally common in phase 1\b/gi, 'Cette séance est volontairement commune en phase 1'],
+  [/\bThis séance is intentionally commune in phase 1\b/gi, 'Cette séance est volontairement commune en phase 1'],
+  [/\bThis séance is\b/gi, 'Cette séance est'],
+  [/\bThis supports\b/gi, 'Ceci soutient'],
+  [/\bThis session should feel\b/gi, 'Cette séance doit sembler'],
+  [/\bThis séance doit sembler\b/gi, 'Cette séance doit sembler'],
+  [/\bmore explosive than\b/gi, 'plus explosive que'],
+  [/\bmore explosif than\b/gi, 'plus explosive que'],
+  [/\bKeep Blocks? 1 and 2\b/gi, 'Garder les blocs 1 et 2'],
+  [/\bGarder Blocks 1 and 2\b/gi, 'Garder les blocs 1 et 2'],
+  [/\bif the athlete is still moving explosively\b/gi, `si l'athlète bouge encore de façon explosive`],
+  [/\bsi l'athlète is encore moving explosively\b/gi, `si l'athlète bouge encore de façon explosive`],
+  [/\breduce Block 4 first, then\b/gi, "réduire d'abord le bloc 4, puis"],
+  [/\breduce bloc 4 first, then\b/gi, "réduire d'abord le bloc 4, puis"],
+  [/\bfirst, then reduce\b/gi, "d'abord, puis réduire"],
+  [/\breduce one tour from\b/gi, 'réduire un tour de'],
+  [/\bunder-recovered\b/gi, 'sous-récupéré'],
+  [/\bsymptom-free\b/gi, 'sans symptômes'],
+  [/\bfeels smooth and\b/gi, 'semble fluide et'],
+  [/\bthe whole séance feels?\b/gi, 'toute la séance semble'],
+  [/\bthe whole séance felt\b/gi, 'toute la séance a semblé'],
+  [/\bwith a sense of rebuild\b/gi, 'avec un sentiment de reconstruction'],
+  [/\bnot accumulated fatigue\b/gi, 'pas une fatigue accumulée'],
+  [/\binto a conditioning circuit\b/gi, 'en circuit de conditioning'],
+  [/\binto fatigue inutile\b/gi, 'en fatigue inutile'],
+  [/\binto a max day\b/gi, 'en journée de max'],
+  [/\binto a second strength séance\b/gi, 'en deuxième séance de force'],
+  [/\btechnically clean\b/gi, 'techniquement propre'],
+  [/\btechnically propre\b/gi, 'techniquement propre'],
+  [/\band technically propre\b/gi, 'et techniquement propre'],
+  [/\band propre\b/gi, 'et propre'],
+  [/\band athlétique\b/gi, 'et athlétique'],
+  [/\band rapide\b/gi, 'et rapide'],
+  [/\band gainé\b/gi, 'et gainé'],
+  [/\band low-volume\b/gi, 'et à faible volume'],
+  [/\band short\b/gi, 'et court'],
+  [/\band complete\b/gi, 'et complète'],
+  [/\bnot like surviving\b/gi, 'pas comme survivre à'],
+  [/\ban hors-saison monster day\b/gi, 'une journée monstre de hors-saison'],
+  [/\bstay high\b/gi, 'reste élevée'],
+  [/\bstay vif\b/gi, 'reste vif'],
+  [/\bif earned\b/gi, 'si mérité'],
+  [/\bor add(?:er)? one tour to\b/gi, 'ou ajouter un tour à'],
+  [/\bor ajouter one tour to\b/gi, 'ou ajouter un tour à'],
+  [/\bif recovery is good\b/gi, 'si la récupération est bonne'],
+  [/\bsi récupération is good\b/gi, 'si la récupération est bonne'],
+  [/\bif fatigue is high\b/gi, 'si la fatigue est élevée'],
+  [/\bSi fatigue is high\b/gi, 'Si la fatigue est élevée'],
+  [/\bKeep the sled work\b/gi, 'Garder le travail de sled'],
+  [/\bGarder the sled work\b/gi, 'Garder le travail de sled'],
+  [/\bThe purpose is to\b/gi, `Le but est de`],
+  [/\bThe purpose is\b/gi, 'Le but est'],
+  [/\bThe throw\b/gi, 'Le lancer'],
+  [/\bThe loaded lower movement\b/gi, 'Le mouvement bas du corps chargé'],
+  [/\bThe joueur devrait quitter with\b/gi, 'Le joueur devrait partir avec'],
+  [/\bFront squat devrait être driven with maximal bar-speed intent, not loaded into a slow grind\b/gi, 'Le front squat doit être tiré avec une intention maximale de vitesse de barre, pas chargé en grind lent'],
+  [/\bSi no med ball is available, replace with\b/gi, `Si pas de med ball, remplacer par`],
+  [/\bat the expense of\b/gi, 'au détriment de'],
+  [/\bau expense of\b/gi, 'au détriment de'],
+  [/\bopen-field\b/gi, 'terrain ouvert'],
+  [/\bbrute-force feel\b/gi, 'sensation de force brute'],
+  [/\bless brute-force feel than\b/gi, 'moins de sensation de force brute que'],
+  [/\bwithout turning the séance into another hinge-dominant day\b/gi, 'sans transformer la séance en une autre journée dominante charnière'],
+  [/\bthat supports athletic posture\b/gi, 'qui soutient une posture athlétique'],
+  [/\bthat supports athlétique posture\b/gi, 'qui soutient une posture athlétique'],
+  [/\bA fast upright squat pattern\b/gi, 'Un pattern de squat vertical rapide'],
+  [/\bA rapide upright squat pattern\b/gi, 'Un pattern de squat vertical rapide'],
+  [/\bThis séance is explicitly back-three specific\b/gi, 'Cette séance est explicitement spécifique ligne arrière'],
+  [/\bThis séance doit sembler vif, athlétique, and clairement more open-field than the front-row corps complet version\b/gi, 'Cette séance doit sembler vive, athlétique, et clairement plus terrain ouvert que la version corps complet avants'],
+  [/\bRamp-up on first heavy lift before starting block 1\b/gi, 'Montée en charge sur le premier exo lourd avant de démarrer le bloc 1'],
+  [/\bRamp-up on first lourd lift before starting bloc 1\b/gi, 'Montée en charge sur le premier exo lourd avant de démarrer le bloc 1'],
+  [/\bbefore starting bloc 1\b/gi, 'avant de démarrer le bloc 1'],
+  [/\bbefore adding tours\b/gi, "avant d'ajouter des tours"],
+  [/\bbefore swapping to\b/gi, 'avant de passer à'],
+  [/\bNever sacrifice\b/gi, 'Ne jamais sacrifier'],
+  [/\bJamais sacrifice\b/gi, 'Ne jamais sacrifier'],
+  [/\bhinge or push quality for finisher volume\b/gi, 'la qualité hinge ou push pour du volume de finisher'],
+  [/\bprogress movement quality and slightly harder BW variants\b/gi, 'progresser la qualité de mouvement et des variantes BW un peu plus dures'],
+  [/\bprogress movement quality and légèrement harder BW variants\b/gi, 'progresser la qualité de mouvement et des variantes BW un peu plus dures'],
+  [/\bprioritize fluid movement quality on hinge and row\b/gi, 'prioriser une qualité de mouvement fluide sur hinge et row'],
+  [/\blow end of volume if still heavy from the season\b/gi, 'bas de la fourchette de volume si encore lourd depuis la saison'],
+  [/\blow end of volume si encore lourd from the season\b/gi, 'bas de la fourchette de volume si encore lourd depuis la saison'],
+  [/\bmove from `2` to `3` tours only if the whole session felt easy and clean\b/gi, 'passer de `2` à `3` tours seulement si toute la séance a semblé facile et propre'],
+  [/\bmove from `2` to `3` tours seulement si the whole séance felt easy and propre\b/gi, 'passer de `2` à `3` tours seulement si toute la séance a semblé facile et propre'],
+  [/\bAdd backpack\/tempo before swapping to easier exercise variants\b/gi, 'Ajouter sac à dos/tempo avant de passer à des variantes plus faciles'],
+  [/\bAjouter backpack\/tempo before swapping to easier exercise variants\b/gi, 'Ajouter sac à dos/tempo avant de passer à des variantes plus faciles'],
+  [/\bKeep this to\b/gi, 'Garder ça à'],
+  [/\bGarder this to\b/gi, 'Garder ça à'],
+  [/\bGarder this short and specific\b/gi, 'Garder ça court et spécifique'],
+  [/\bGarder this short and vif\b/gi, 'Garder ça court et vif'],
+  [/\bGarder this efficient — don't turn it into extra training volume\b/gi, 'Garder ça efficace — ne pas en faire du volume d\'entraînement en plus'],
+  [/\bGarder this efficient\b/gi, 'Garder ça efficace'],
+  [/\bDo not chase soreness, pump, or load\b/gi, 'Ne chasse pas la courbature, le pump ou la charge'],
+  [/\bNe chase soreness, pump, or load\b/gi, 'Ne chasse pas la courbature, le pump ou la charge'],
+  [/\bQuality over pump chasing\b/gi, 'La qualité avant la chasse au pump'],
+  [/\bmove from `2` to `3` tours seulement si the whole séance felt easy and propre\b/gi, 'passer de `2` à `3` tours seulement si toute la séance a semblé facile et propre'],
+  [/\bsi the whole séance seemed? fluide\b/gi, 'si toute la séance semble fluide'],
+  [/\bsi the whole séance semble fluide\b/gi, 'si toute la séance semble fluide'],
+  [/\bsi the whole séance felt easy and propre\b/gi, 'si toute la séance a semblé facile et propre'],
+  [/\bStop reactive movements if quality drops\b/gi, 'Arrêter les mouvements réactifs si la qualité baisse'],
+  [/\bStop reactive movements si quality drops\b/gi, 'Arrêter les mouvements réactifs si la qualité baisse'],
+  [/\bsi quality drops\b/gi, 'si la qualité baisse'],
+  [/\bif quality drops\b/gi, 'si la qualité baisse'],
+  [/\bquality drops\b/gi, 'la qualité baisse'],
+  [/\bIf plyo quality drops, reduce incline load before cutting push-ups\b/gi, 'Si la qualité plyo baisse, réduire d\'abord la charge incline avant de couper les pompes'],
+  [/\bSi plyo quality drops, réduire incline load before cutting push-ups\b/gi, 'Si la qualité plyo baisse, réduire d\'abord la charge incline avant de couper les pompes'],
+  [/\bbefore cutting push-ups\b/gi, 'avant de couper les pompes'],
+  [/\bIf either contrast pair loses explosive quality, end the block early\b/gi, 'Si l\'une des paires de contraste perd sa qualité explosive, arrêter le bloc plus tôt'],
+  [/\bSi either contrast paire loses explosif quality, end the bloc early\b/gi, 'Si l\'une des paires de contraste perd sa qualité explosive, arrêter le bloc plus tôt'],
+  [/\bKeep block 1 protected unless the player is clearly under-recovered\b/gi, 'Garder le bloc 1 protégé sauf si le joueur est clairement sous-récupéré'],
+  [/\bGarder bloc 1 protected unless the joueur is clairement sous-récupéré\b/gi, 'Garder le bloc 1 protégé sauf si le joueur est clairement sous-récupéré'],
+  [/\bThis session should feel like a bridge toward real off-season training, not like a challenge session\b/gi, 'Cette séance doit sembler un pont vers le vrai hors-saison, pas un challenge'],
+  [/\bCette séance doit sembler like a bridge toward real hors-saison training, not like a challenge séance\b/gi, 'Cette séance doit sembler un pont vers le vrai hors-saison, pas un challenge'],
+  [/\bdoit sembler like\b/gi, 'doit sembler'],
+  [/\bnot like a\b/gi, 'pas comme un'],
+  [/\bThe player should leave with\b/gi, 'Le joueur devrait partir avec'],
+  [/\bThe joueur devrait quitter avec\b/gi, 'Le joueur devrait partir avec'],
+  [/\bThis supports upper force retention without competing with the main upper session\b/gi, 'Ceci soutient la rétention de force haut du corps sans concurrencer la séance upper principale'],
+  [/\bCeci soutient upper force retention sans competing with le principal upper séance\b/gi, 'Ceci soutient la rétention de force haut du corps sans concurrencer la séance upper principale'],
+  [/\bThis session is explicitly back-three specific\b/gi, 'Cette séance est explicitement spécifique ligne arrière'],
+  [/\bThis session is explicitly front-row specific\b/gi, 'Cette séance est explicitement spécifique avants'],
+  [/\bCette séance is explicitly back-three specific\b/gi, 'Cette séance est explicitement spécifique ligne arrière'],
+  [/\bCette séance is explicitly front-row specific\b/gi, 'Cette séance est explicitement spécifique avants'],
+  [/\bKeep the lower-leg\/groin block useful, not endless\b/gi, 'Garder le bloc bas de jambe/adducteurs utile, pas interminable'],
+  [/\bGarder the lower-leg\/groin bloc utile, not endless\b/gi, 'Garder le bloc bas de jambe/adducteurs utile, pas interminable'],
+  [/\bDo not skip the shoulder micro-block just because the player feels good\b/gi, 'Ne saute pas le micro-bloc épaule juste parce que le joueur se sent bien'],
+  [/\bNe skip the shoulder micro-bloc just because the joueur feels good\b/gi, 'Ne saute pas le micro-bloc épaule juste parce que le joueur se sent bien'],
+  [/\bNe skip the shoulder micro-bloc just because the joueur “feels fine”\b/gi, 'Ne saute pas le micro-bloc épaule juste parce que le joueur « se sent bien »'],
+  [/\bNe skip the shoulder micro-bloc just because the joueur “feels good”\b/gi, 'Ne saute pas le micro-bloc épaule juste parce que le joueur se sent bien'],
+  [/\bKeep the finisher specific, not crushing\b/gi, 'Garder le finisher spécifique, pas écrasant'],
+  [/\bGarder the finisher specific, not crushing\b/gi, 'Garder le finisher spécifique, pas écrasant'],
+  [/\bGarder the finisher simple and utile\b/gi, 'Garder le finisher simple et utile'],
+  [/\bGarder the finisher athlétique and crisp\b/gi, 'Garder le finisher athlétique et net'],
+  [/\bGarder the final support bloc calm and utile\b/gi, 'Garder le bloc de support final calme et utile'],
+  [/\bGarder the sled light suffisamment to stay athlétique\b/gi, 'Garder le sled assez léger pour rester athlétique'],
+  [/\bGarder the sled crisp and puissant; si speed collapses, la charge is too lourd\b/gi, 'Garder le sled net et puissant ; si la vitesse s\'effondre, la charge est trop lourde'],
+  [/\bStop broad jumps when take-off quality drops\b/gi, 'Arrêter les broad jumps quand la qualité d\'appel baisse'],
+  [/\bIf the session feels too easy, add backpack load before reducing range or exercise difficulty\b/gi, 'Si la séance semble trop facile, ajouter une charge sac à dos avant de réduire l\'amplitude ou la difficulté'],
+  [/\bSi the séance feels too easy, ajouter backpack load before reducing range or exercise difficulty\b/gi, 'Si la séance semble trop facile, ajouter une charge sac à dos avant de réduire l\'amplitude ou la difficulté'],
+  [/\bReduce block 3 first if contrast quality drops\b/gi, 'Réduire d\'abord le bloc 3 si la qualité de contraste baisse'],
+  [/\bRéduire bloc 3 first si contrast quality drops\b/gi, 'Réduire d\'abord le bloc 3 si la qualité de contraste baisse'],
+  [/\bmore explosive split squat concentric; sprint-quality bear crawl\b/gi, 'concentrique de split squat plus explosive ; bear crawl de qualité sprint'],
+  [/\bmore explosif split squat concentric; sprint-quality bear crawl\b/gi, 'concentrique de split squat plus explosive ; bear crawl de qualité sprint'],
+  [/\bBroad jump and split jump degrade quickly with fatigue — stop if quality drops\b/gi, 'Broad jump et split jump se dégradent vite avec la fatigue — arrêter si la qualité baisse'],
+  [/\bBroad jump and split jump degrade quickly with fatigue — stop si la qualité baisse\b/gi, 'Broad jump et split jump se dégradent vite avec la fatigue — arrêter si la qualité baisse'],
+  [/\bIf the player is still very beat up from the season, stay closer to recovery than to Hypertrophy\b/gi, 'Si le joueur est encore très marqué par la saison, rester plus proche de la récupération que de l\'Hypertrophie'],
+  [/\bSi the joueur is encore very beat up from the season, stay closer to récupération than to Hypertrophy\b/gi, 'Si le joueur est encore très marqué par la saison, rester plus proche de la récupération que de l\'Hypertrophie'],
+  [/\bThe goal is readiness and stiffness, not fatigue\b/gi, 'L\'objectif est la disponibilité et la raideur, pas la fatigue'],
+  [/\bL'objectif is readiness and stiffness, pas la fatigue\b/gi, 'L\'objectif est la disponibilité et la raideur, pas la fatigue'],
+  [/\bL'objectif is readiness and speed, pas la fatigue\b/gi, 'L\'objectif est la disponibilité et la vitesse, pas la fatigue'],
+  [/\bL'objectif is readiness for production de force, not early fatigue\b/gi, 'L\'objectif est la disponibilité pour produire de la force, pas une fatigue précoce'],
+  [/\bL'objectif is readiness, stiffness, and projection, pas la fatigue\b/gi, 'L\'objectif est la disponibilité, la raideur et la projection, pas la fatigue'],
+  [/\bL'objectif is readiness and speed of force expression, pas la fatigue\b/gi, 'L\'objectif est la disponibilité et la vitesse d\'expression de force, pas la fatigue'],
+  [/\bL'objectif is stiffness, posture, and rapide intent\b/gi, 'L\'objectif est la raideur, la posture et l\'intention rapide'],
+  [/\bL'objectif is posture, stiffness, and readiness, not sweat\b/gi, 'L\'objectif est la posture, la raideur et la disponibilité, pas la transpiration'],
+  [/\bL'objectif is dominé par la chaîne postérieure, asymmetry control, and unilateral force application, pas la fatigue\b/gi, 'L\'objectif est la dominance chaîne postérieure, le contrôle d\'asymétrie et l\'application de force unilatérale, pas la fatigue'],
+  [/\bThis is the major change from phase 1: the force exposure is now immediately converted into projection\b/gi, 'C\'est le changement majeur depuis la phase 1 : l\'exposition de force est maintenant convertie immédiatement en projection'],
+  [/\bC'est the major change from phase 1: the force exposure is now immediately converted into projection\b/gi, 'C\'est le changement majeur depuis la phase 1 : l\'exposition de force est maintenant convertie immédiatement en projection'],
+  [/\bC'est the major change from phase 1: press is now immediately converted into rapide force\b/gi, 'C\'est le changement majeur depuis la phase 1 : la presse est maintenant convertie immédiatement en force rapide'],
+  [/\bKeep block 1 as the protected priority if the player is still moving explosively\b/gi, 'Garder le bloc 1 comme priorité protégée si le joueur bouge encore de façon explosive'],
+  [/\bGarder bloc 1 comme priorité\(s\) protégée\(s\) si the joueur is encore moving explosively\b/gi, 'Garder le bloc 1 comme priorité protégée si le joueur bouge encore de façon explosive'],
+  [/\bIt should bridge clearly toward the later power phase without trying to become it already\b/gi, 'Elle doit clairement faire le pont vers la phase puissance sans essayer de la devenir déjà'],
+  [/\bIt should bridge clairement toward the later power phase sans trying to become it already\b/gi, 'Elle doit clairement faire le pont vers la phase puissance sans essayer de la devenir déjà'],
+  [/\bDo not chase broad jump distance once take-off quality drops\b/gi, 'Ne chasse pas la distance de broad jump une fois que la qualité d\'appel baisse'],
+  [/\bNe chase broad jump distance once take-off quality drops\b/gi, 'Ne chasse pas la distance de broad jump une fois que la qualité d\'appel baisse'],
+  [/\bW1`: establish posture, landing quality, and clean sprint starts\b/gi, 'W1` : établir la posture, la qualité de réception et des départs de sprint propres'],
+  [/\b`W1`: establish posture, la qualité de réception, and propre sprint starts\b/gi, '`W1` : établir la posture, la qualité de réception et des départs de sprint propres'],
+  [/\bThe structure remains common because this is still an introductory field session\b/gi, 'La structure reste commune car c\'est encore une séance terrain d\'introduction'],
+  [/\bThe structure reste commune because C'est encore an introductory terrain séance\b/gi, 'La structure reste commune car c\'est encore une séance terrain d\'introduction'],
+  [/\bDo not chase jump contacts just because the session is field-based\b/gi, 'Ne chasse pas les contacts de saut juste parce que la séance est sur le terrain'],
+  [/\bNe chase jump contacts just because the séance is field-based\b/gi, 'Ne chasse pas les contacts de saut juste parce que la séance est sur le terrain'],
+  [/\bThis session should leave the player feeling switched on, not crushed\b/gi, 'Cette séance doit laisser le joueur allumé, pas écrasé'],
+  [/\bCette séance devrait quitter the joueur feeling switched on, not crushed\b/gi, 'Cette séance doit laisser le joueur allumé, pas écrasé'],
+  [/\bDo not let the bench become a grind just because the player “feels fresh”\b/gi, 'Ne laisse pas le bench devenir un grind juste parce que le joueur « se sent frais »'],
+  [/\bNe laisse pas le bench become a grind just because the joueur “feels fresh”\b/gi, 'Ne laisse pas le bench devenir un grind juste parce que le joueur « se sent frais »'],
+  [/\bDo not turn the lat pulldown into sloppy fatigue chasing\b/gi, 'Ne transforme pas le lat pulldown en chasse de fatigue bâclée'],
+  [/\bNe transforme pas le lat pulldown into sloppy fatigue chasing\b/gi, 'Ne transforme pas le lat pulldown en chasse de fatigue bâclée'],
+  [/\bThis session should feel like upper construction, not like a pumped-up bodybuilding day\b/gi, 'Cette séance doit sembler une construction haut du corps, pas une journée bodybuilding gonflée'],
+  [/\bCette séance doit sembler like upper construction, not like a pumped-up bodybuilding day\b/gi, 'Cette séance doit sembler une construction haut du corps, pas une journée bodybuilding gonflée'],
+  [/\bPlyo push-ups and rotational throws degrade quickly — stop if quality drops\b/gi, 'Les plyo push-ups et lancers rotationnels se dégradent vite — arrêter si la qualité baisse'],
+  [/\bPlyo push-ups and rotational throws degrade quickly — stop si la qualité baisse\b/gi, 'Les plyo push-ups et lancers rotationnels se dégradent vite — arrêter si la qualité baisse'],
+  [/\bIncline DB press \(not flat bench — reserved for the UPPER session this week\) into explosive plyo push-up\b/gi, 'Presse incline haltères (pas de bench à plat — réservé à la séance UPPER de la semaine) puis plyo push-up explosive'],
+  [/\bIncline DB press \(not flat bench — reserved for the UPPER session this week\) into rotational throw — trunk transfer power\b/gi, 'Presse incline haltères (pas de bench à plat — réservé à la séance UPPER de la semaine) puis lancer rotationnel — transfert de puissance du tronc'],
   // ── Sentences / long phrases (longest match first) ──
   [/\bThis is the main structural (?:bloc|block) of the séance\b/gi, `C'est le bloc structurel principal de la séance`],
   [/\bThis is the main positional accent bloc\b/gi, `C'est le bloc d'accent positionnel principal`],
@@ -2384,6 +2623,9 @@ const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
   [/\boff-season\b/gi, 'hors-saison'],
   [/\bin-season\b/gi, 'en saison'],
   [/\bwarm-up\b/gi, 'échauffement'],
+  [/\bthis session\b/gi, 'cette séance'],
+  [/\bthis block\b/gi, 'ce bloc'],
+  [/\bof the session\b/gi, 'de la séance'],
   [/\bsession\b/gi, 'séance'],
   [/\bblock\b/gi, 'bloc'],
   [/\bplayer\b/gi, 'joueur'],
@@ -2407,8 +2649,6 @@ const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
   [/\bif\b/gi, 'si'],
   [/\bthis week\b/gi, 'cette semaine'],
   [/\bthis pair\b/gi, 'cette paire'],
-  [/\bthis session\b/gi, 'cette séance'],
-  [/\bthis block\b/gi, 'ce bloc'],
   [/\bthe goal\b/gi, `l'objectif`],
   [/\bthe player\b/gi, 'le joueur'],
   [/\bthe main\b/gi, 'le principal'],
@@ -2619,7 +2859,57 @@ function translateInlineTextToFr(value: string): string {
   for (const [pattern, target] of TEXT_FRAGMENT_FR) {
     maskedNext = maskedNext.replace(pattern, target)
   }
+  maskedNext = scrubResidualFranglais(maskedNext)
   return unmaskBacktickSegments(maskedNext, segments)
+}
+
+/** Dernière passe : résidus EN fréquents après le pipeline fragmentaire. */
+function scrubResidualFranglais(value: string): string {
+  return value
+    .replace(/\bGarder this\b/gi, 'Garder ça')
+    .replace(/\bGarder the\b/gi, 'Garder le')
+    .replace(/\bL'objectif is\b/gi, "L'objectif est")
+    .replace(/\bC'est the\b/gi, "C'est le")
+    .replace(/\bCette séance is\b/gi, 'Cette séance est')
+    .replace(/\bSéance is\b/gi, 'Séance est')
+    .replace(/\bNe skip the\b/gi, 'Ne saute pas le')
+    .replace(/\bNe chase\b/gi, 'Ne chasse pas')
+    .replace(/just because the joueur .{0,2}feels (?:fine|fresh|good).{0,2}/gi, 'juste parce que le joueur se sent bien')
+    .replace(/\bbecome a grind\b/gi, 'devenir un grind')
+    .replace(/\bdevenir un grind just because the joueur .{0,2}feels fresh.{0,2}/gi, 'devenir un grind juste parce que le joueur se sent frais')
+    .replace(/\binto sloppy fatigue chasing\b/gi, 'en chasse de fatigue bâclée')
+    .replace(/\bprotected unless the joueur is clairement\b/gi, 'protégé sauf si le joueur est clairement')
+    .replace(/\bGarder bloc 1 protected unless\b/gi, 'Garder le bloc 1 protégé sauf si')
+    .replace(/\bThe joueur devrait quitter avec\b/gi, 'Le joueur devrait partir avec')
+    .replace(/\bsans competing with le principal upper séance\b/gi, 'sans concurrencer la séance upper principale')
+    .replace(/\bCeci soutient upper force retention\b/gi, 'Ceci soutient la rétention de force haut du corps')
+    .replace(/\breadiness and stiffness, pas la fatigue\b/gi, 'la disponibilité et la raideur, pas la fatigue')
+    .replace(/\breadiness and speed, pas la fatigue\b/gi, 'la disponibilité et la vitesse, pas la fatigue')
+    .replace(/\breadiness for production de force, not early fatigue\b/gi, 'la disponibilité pour produire de la force, pas une fatigue précoce')
+    .replace(/\breadiness, stiffness, and projection, pas la fatigue\b/gi, 'la disponibilité, la raideur et la projection, pas la fatigue')
+    .replace(/\breadiness and speed of force expression, pas la fatigue\b/gi, "la disponibilité et la vitesse d'expression de force, pas la fatigue")
+    .replace(/\bstiffness, posture, and rapide intent\b/gi, "la raideur, la posture et l'intention rapide")
+    .replace(/\bposture, stiffness, and readiness, not sweat\b/gi, 'la posture, la raideur et la disponibilité, pas la transpiration')
+    .replace(/\bdominé par la chaîne postérieure, asymmetry control, and unilateral force application, pas la fatigue\b/gi, "dominé par la chaîne postérieure, le contrôle d'asymétrie et l'application de force unilatérale, pas la fatigue")
+    .replace(/\bthe major change from phase 1: press is now immediately converted into rapide force\b/gi, 'le changement majeur depuis la phase 1 : la presse est maintenant convertie immédiatement en force rapide')
+    .replace(/\bthe major change from phase 1: the force exposure is now immediately converted into projection\b/gi, "le changement majeur depuis la phase 1 : l'exposition de force est maintenant convertie immédiatement en projection")
+    .replace(/\bsi the joueur is encore moving explosively\b/gi, 'si le joueur bouge encore de façon explosive')
+    .replace(/\bsi the whole séance semble fluide\b/gi, 'si toute la séance semble fluide')
+    .replace(/\bsi the whole séance felt easy and propre\b/gi, 'si toute la séance a semblé facile et propre')
+    .replace(/\bmove from `2` to `3` tours seulement\b/gi, 'passer de `2` à `3` tours seulement')
+    .replace(/\befficient — don't turn it into extra training volume\b/gi, "efficace — ne pas en faire du volume d'entraînement en plus")
+    .replace(/\befficient — don’t turn it into extra training volume\b/gi, "efficace — ne pas en faire du volume d'entraînement en plus")
+    .replace(/\bshort and specific\b/gi, 'court et spécifique')
+    .replace(/\bshort and vif\b/gi, 'court et vif')
+    .replace(/\bfinal support bloc calm and utile\b/gi, 'bloc de support final calme et utile')
+    .replace(/\bfinisher simple and utile\b/gi, 'finisher simple et utile')
+    .replace(/\bfinisher athlétique and crisp\b/gi, 'finisher athlétique et net')
+    .replace(/\bsled light suffisamment to stay athlétique\b/gi, 'sled assez léger pour rester athlétique')
+    .replace(/\bsled crisp and puissant; si speed collapses, la charge is too lourd\b/gi, "sled net et puissant ; si la vitesse s'effondre, la charge est trop lourde")
+    .replace(/\bestablish posture, la qualité de réception, and propre sprint starts\b/gi, 'établir la posture, la qualité de réception et des départs de sprint propres')
+    .replace(/\bThe structure reste commune because C'est encore an introductory terrain séance\b/gi, "La structure reste commune car c'est encore une séance terrain d'introduction")
+    .replace(/\bCette séance devrait quitter the joueur feeling switched on, not crushed\b/gi, 'Cette séance doit laisser le joueur allumé, pas écrasé')
+    .replace(/\bshoulder micro-bloc\b/gi, 'micro-bloc épaule')
 }
 
 function translateBacktickedSegmentToFr(value: string): string {
@@ -2657,17 +2947,23 @@ function translateTextToFr(value: string): string {
 }
 
 function normalizeCoachingNotes(notes: string[]): string[] {
-  return notes.map(normalizeFrenchSentence)
+  return notes.map((note) => normalizeFrenchSentence(scrubResidualFranglais(note)))
 }
 
 function normalizeSessionContentFr(content: SessionContentFr): SessionContentFr {
   return {
     ...content,
+    goals: content.goals?.map((g) => scrubResidualFranglais(g)) ?? content.goals,
+    sessionIdentity:
+      content.sessionIdentity?.map((g) => scrubResidualFranglais(g)) ?? content.sessionIdentity,
     warmUpNotes: normalizeCoachingNotes(content.warmUpNotes),
     blocks: content.blocks.map((block) => ({
       ...block,
       coachingNotes: normalizeCoachingNotes(block.coachingNotes),
     })),
+    progressionRules: normalizeCoachingNotes(content.progressionRules ?? []),
+    positionAccent: normalizeCoachingNotes(content.positionAccent ?? []),
+    coachingWarnings: normalizeCoachingNotes(content.coachingWarnings ?? []),
   }
 }
 
@@ -2718,7 +3014,8 @@ export function looksLikeFranglais(note: string): boolean {
   if (
     /\bpetit pump\b/i.test(note) ||
     /\bpump des bras\b/i.test(note) ||
-    /\brecherche de pump\b/i.test(note)
+    /\brecherche de pump\b/i.test(note) ||
+    /\bbloc pump\b/i.test(note)
   ) {
     return false
   }
@@ -2728,7 +3025,8 @@ export function looksLikeFranglais(note: string): boolean {
     /\bwithout repeating\b/i,
     /\bupper volume\b/i,
     /\bthe (hold|exact|first|player|bloc|structure|joueur|incline|med ball|row|lunge|rotational throw)\b/i,
-    /\b(chasing|pump)\b/i,
+    /\bchasing\b/i,
+    /\bpump chasing\b/i,
     /\bfeeling stable\b/i,
     /\bthis bloc\b/i,
     /\bshould (feel|stay|finish|remain|support|reinforce)\b/i,
@@ -2763,6 +3061,21 @@ export function looksLikeFranglais(note: string): boolean {
     /\bthoracic activation\b/i,
     /\bfaster\/harder\b/i,
     /\breduce bench load\b/i,
+    // Franglais typique après pipeline partiel
+    /\bC'est the\b/i,
+    /\bL'objectif is\b/i,
+    /\banchor lift\b/i,
+    /\bis to restore\b/i,
+    /\bCeci remplace the\b/i,
+    /\bGarder this\b/i,
+    /\bGarder the\b/i,
+    /\bhands should\b/i,
+    /\bFocus on speed\b/i,
+    /\bquality holds?\b/i,
+    /\bDo not turn\b/i,
+    /\bDo not let\b/i,
+    /\bSéance is\b/i,
+    /\bthis to\b/i,
   ]
   return patterns.some((p) => p.test(note))
 }

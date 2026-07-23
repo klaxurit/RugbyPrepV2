@@ -56,6 +56,7 @@ export const USER_SCOPED_BASES = [
   'rugbyprep.fatigue',
   'rugbyprep.calendar',
   'rugbyprep.history',
+  'rugbyprep.history.deleted',
   'rugbyprep.blocklogs',
   'rugbyprep.athletictests',
   'rugbyprep.viewmode',

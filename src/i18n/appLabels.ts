@@ -343,6 +343,22 @@ export const APP_LABELS = {
   history_fatigue_tired: { fr: 'Fatigue', en: 'Tired' },
   history_section_blocks: { fr: 'Détail des exercices', en: 'Exercise details' },
   history_unit_reps: { fr: 'rép.', en: 'reps' },
+  session_review_undo: { fr: 'Annuler pour refaire', en: 'Undo to redo' },
+  session_review_undo_confirm: {
+    fr: 'Annuler cette séance ? Elle disparaîtra de l’historique et tu pourras la refaire depuis la semaine.',
+    en: 'Cancel this session? It will be removed from history and you can redo it from the week view.',
+  },
+  session_review_undo_error: {
+    fr: 'Impossible d’annuler la séance. Réessaie.',
+    en: 'Could not cancel the session. Try again.',
+  },
+  session_review_undo_pending: { fr: 'Annulation…', en: 'Cancelling…' },
+  session_review_back: { fr: 'Retour', en: 'Back' },
+  session_review_page_title: { fr: 'Séance effectuée', en: 'Completed session' },
+  session_review_quote: {
+    fr: 'Séance enregistrée.\nConsultation en lecture seule.',
+    en: 'Session logged.\nRead-only review.',
+  },
 
   progress_pos_front_row: { fr: '1ère ligne', en: 'Front row' },
   progress_pos_second_row: { fr: '2ème ligne', en: 'Second row' },
@@ -788,6 +804,60 @@ export const APP_LABELS = {
   week_upsell_match_body: {
     fr: 'Adapte ta semaine automatiquement en fonction du match — Pro.',
     en: 'Adapt your week automatically around the match — Pro.',
+  },
+
+  // ── Session share (post-save Stories card) ──────────────────────────────
+  session_share_aria: {
+    fr: 'Partager la séance',
+    en: 'Share session',
+  },
+  session_share_eyebrow: {
+    fr: 'Séance enregistrée',
+    en: 'Session saved',
+  },
+  session_share_title: {
+    fr: 'Partage ta séance',
+    en: 'Share your session',
+  },
+  session_share_subtitle: {
+    fr: 'Envoie la carte via le menu de partage de ton téléphone, ou enregistre-la.',
+    en: 'Send the card via your phone’s share menu, or save it.',
+  },
+  session_share_preview_alt: {
+    fr: 'Aperçu de la carte de partage',
+    en: 'Share card preview',
+  },
+  session_share_loading: {
+    fr: 'Préparation de la carte…',
+    en: 'Preparing card…',
+  },
+  session_share_preview_error: {
+    fr: 'Aperçu indisponible — tu peux quand même partager.',
+    en: 'Preview unavailable — you can still share.',
+  },
+  session_share_cta: {
+    fr: 'Partager',
+    en: 'Share',
+  },
+  session_share_save: {
+    fr: "Enregistrer l'image",
+    en: 'Save image',
+  },
+  session_share_continue: {
+    fr: 'Continuer',
+    en: 'Continue',
+  },
+  session_share_saved_hint: {
+    fr: 'Image enregistrée — tu peux la poster en Story depuis ta galerie.',
+    en: 'Image saved — you can post it as a Story from your gallery.',
+  },
+  session_share_error: {
+    fr: 'Partage impossible pour le moment. Réessaie.',
+    en: 'Sharing failed for now. Try again.',
+  },
+  session_share_congrats_fallback: {
+    fr: 'Bravo pour ta séance !',
+    en: 'Nice work — session done.',
   },
 } as const satisfies Record<string, LabelEntry>
 

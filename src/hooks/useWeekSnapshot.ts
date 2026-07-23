@@ -98,14 +98,18 @@ function computeProfileHash(profile: import('../types/training').UserProfile): s
   const clubDays = profile.clubSchedule?.clubDays?.map((d: { day: number }) => d.day).sort().join(',') ?? ''
   const matchDay = profile.clubSchedule?.matchDay ?? ''
   const equipmentKey = [...(profile.equipment ?? [])].sort().join(',')
+  const pa = profile.planningAnchors
   return [
     profile.weeklySessions,
     profile.trainingLevel,
     profile.seasonMode,
     `eq:${equipmentKey}`,
-    profile.planningAnchors?.seasonEndedAt ?? '',
-    profile.planningAnchors?.returnToTeamTrainingAt ?? '',
-    profile.planningAnchors?.skipOffSeasonRecoveryIntro ? '1' : '',
+    pa?.seasonEndedAt ?? '',
+    pa?.offSeasonStartAt ?? '',
+    pa?.returnToTeamTrainingAt ?? '',
+    pa?.manualOffSeasonWeekOverride ?? '',
+    pa?.manualCycleOverride ?? '',
+    pa?.skipOffSeasonRecoveryIntro ? '1' : '',
     (profile.injuries ?? []).join(','),
     deferral ? `${deferral.eventId}:${deferral.expiresAt}` : '',
     ack ?? '',
@@ -170,7 +174,12 @@ export function useWeekSnapshot(
         persisted &&
         persisted.weekId === currentWeekId &&
         persisted.profileHash === profileHash &&
-        persisted.schemaVersion === CURRENT_SCHEMA_VERSION
+        persisted.schemaVersion === CURRENT_SCHEMA_VERSION &&
+        persisted.surface.planningContext.weekNumber ===
+          upstream.surface.planningContext.weekNumber &&
+        persisted.surface.planningContext.weekLabel ===
+          upstream.surface.planningContext.weekLabel &&
+        persisted.surface.planningContext.cycle === upstream.surface.planningContext.cycle
       ) {
         // Migrate old snapshots to current schema (explanation, clubDays, schemaVersion)
         const profileClubDays = (params.profile.clubSchedule?.clubDays ?? []).map(

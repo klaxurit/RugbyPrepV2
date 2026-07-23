@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { MOTHER_SESSIONS_BY_ID } from '../data/motherSessions.generated'
 import { BottomNav } from '../components/BottomNav'
@@ -27,10 +27,11 @@ function formatShortDate(iso: string, lang: Lang): string {
 export function SessionLogReviewPage() {
   const { logId } = useParams<{ logId: string }>()
   const navigate = useNavigate()
-  const { logs } = useHistory()
+  const { logs, deleteLog } = useHistory()
   const { profile } = useProfile()
-  const { getSetsForSessionLog } = useExerciseSetLogs()
+  const { getSetsForSessionLog, deleteSetsForSessionLog } = useExerciseSetLogs()
   const lang = (profile.preferredLanguage as Lang | undefined) ?? 'fr'
+  const [undoing, setUndoing] = useState(false)
 
   const log = useMemo(() => logs.find((l) => l.id === logId), [logs, logId])
 
@@ -54,6 +55,24 @@ export function SessionLogReviewPage() {
     [log, getSetsForSessionLog],
   )
 
+  const handleUndoSession = async () => {
+    if (!log || undoing) return
+    if (!window.confirm(tr('session_review_undo_confirm', lang))) return
+
+    setUndoing(true)
+    try {
+      await deleteSetsForSessionLog(log)
+      const ok = await deleteLog(log.id, log.slotSignature)
+      if (!ok) {
+        window.alert(tr('session_review_undo_error', lang))
+        return
+      }
+      navigate('/week', { replace: true })
+    } finally {
+      setUndoing(false)
+    }
+  }
+
   if (!log) {
     return (
       <div className="min-h-screen bg-app pb-bottom-nav">
@@ -73,7 +92,7 @@ export function SessionLogReviewPage() {
 
   const title = getSessionLogDisplayTitle(log, lang)
   const cyclePart = getSessionLogCycleLabel(log, lang)
-  const pageTitle = lang === 'fr' ? 'Séance effectuée' : 'Completed session'
+  const pageTitle = tr('session_review_page_title', lang)
 
   const stats = [
     log.durationMin != null
@@ -99,11 +118,7 @@ export function SessionLogReviewPage() {
         </div>
 
         <HeroCompleted
-          quote={
-            lang === 'fr'
-              ? 'Séance enregistrée.\nConsultation en lecture seule.'
-              : 'Session logged.\nRead-only review.'
-          }
+          quote={tr('session_review_quote', lang)}
           ghostNumber={preparedSession ? String(preparedSession.blocks.length) : undefined}
           stats={stats.length > 0 ? stats : undefined}
         />
@@ -135,7 +150,7 @@ export function SessionLogReviewPage() {
             onClick={() => navigate(-1)}
             className="flex-1 h-11 rounded-full border border-border-app text-sm font-bold text-fg rf-focus-ring"
           >
-            {lang === 'fr' ? 'Retour' : 'Back'}
+            {tr('session_review_back', lang)}
           </button>
           <Link
             to="/history"
@@ -143,6 +158,17 @@ export function SessionLogReviewPage() {
           >
             {tr('history_page_title', lang)}
           </Link>
+        </div>
+
+        <div className="px-4 mt-3">
+          <button
+            type="button"
+            onClick={() => void handleUndoSession()}
+            disabled={undoing}
+            className="w-full h-11 rounded-full border border-danger-bd text-sm font-bold text-danger disabled:opacity-50 rf-focus-ring"
+          >
+            {undoing ? tr('session_review_undo_pending', lang) : tr('session_review_undo', lang)}
+          </button>
         </div>
       </main>
 

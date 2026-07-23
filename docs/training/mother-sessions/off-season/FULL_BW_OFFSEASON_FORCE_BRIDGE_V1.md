@@ -44,11 +44,11 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Push Force + Explosive Contrast
 - Format: `3 rounds`, `3 min` rest between rounds
-- Exercise A: `Decline Push-Up` `3x4`
+- Exercise A: `Pike Push-Up` `3x4`
 - Exercise B: (contrast) `Plyo Push-Up` `3x4, max height`
 - Coaching notes:
-  - Push lent lourd puis plyo explosive dans la fenêtre PAP.
-  - Variante A : développé haltères si banc + haltères disponibles.
+  - Pike (pas decline — réservé à la séance UPPER de la semaine) puis plyo explosive dans la fenêtre PAP.
+  - Variante A : développé haltères assis si banc + haltères disponibles.
   - Réduire la charge sur A avant de couper les reps de plyo.
 
 ### Block 3 - Pull + Unilateral Support

@@ -16,7 +16,7 @@ import type { ACWRZone } from '../../hooks/useACWR'
 import { isRestartRampUpActive } from '../program/restartRampUp'
 import { resolveFatigueLevel } from '../program/resolveFatigueLevel'
 import { shouldAutoManualPlayoffsFromCalendar } from '../calendar/inferMatchKindFromFfrJournee'
-import { sanitizePlanningAnchorsForProgression } from '../season/sanitizePlanningAnchors'
+import { sanitizePlanningAnchorsForProgressionDetailed } from '../season/sanitizePlanningAnchors'
 
 // (`AcwrZoneInput` retiré — on utilise directement `ACWRZone | null | undefined`
 //  depuis le hook canonical `useACWR`.)
@@ -37,6 +37,8 @@ export interface BuildAthletePlanningInputsParams {
 export interface BuildAthletePlanningInputsResult {
   inputs: AthletePlanningInputs
   warnings: string[]
+  /** Freeze QA converti en offSeasonStartAt — à persister sur le profil. */
+  didMigrateFrozenWeek: boolean
   derived: {
     resolvedPositionGroup: 'front_row' | 'back_three'
     fatigueLevel: FatigueLevel
@@ -326,7 +328,8 @@ export function buildAthletePlanningInputs(
           ...(skipRecoveryIntro ? { skipOffSeasonRecoveryIntro: true as const } : {}),
         }
       : undefined
-  const planningAnchors = sanitizePlanningAnchorsForProgression(planningAnchorsRaw)
+  const { anchors: planningAnchors, didMigrateFrozenWeek } =
+    sanitizePlanningAnchorsForProgressionDetailed(planningAnchorsRaw, today)
 
   const inputs: AthletePlanningInputs = {
     events: visibleEvents.map((e) => ({
@@ -347,6 +350,7 @@ export function buildAthletePlanningInputs(
 
   return {
     inputs,
+    didMigrateFrozenWeek,
     warnings,
     derived: {
       resolvedPositionGroup,

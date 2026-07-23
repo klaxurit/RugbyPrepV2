@@ -42,6 +42,11 @@ import { localizeMotherSessionExerciseName } from '../services/motherSession/loc
 import { localizeBlockName } from '../services/motherSession/motherSessionBlockLabels'
 import { restTimerAfterSetLine } from '../i18n/sessionRunUi'
 import { SessionFinishedSheet } from '../components/session/SessionFinishedSheet'
+import { SessionShareSheet } from '../components/session/SessionShareSheet'
+import type { SessionSharePayload } from '../services/share/sessionShareTypes'
+import { buildSessionShareIntent } from '../services/share/buildSessionShareIntent'
+import { collectSessionExerciseMaxLoads } from '../services/share/collectSessionExerciseMaxLoads'
+import { getExerciseName } from '../data/exercises'
 import { computeSessionTonnage } from '../services/session/computeSessionTonnage'
 import { detectSessionPRs } from '../services/session/detectSessionPRs'
 import { buildSessionLoadSuggestions } from '../services/session/buildSessionLoadSuggestions'
@@ -142,6 +147,8 @@ export function SessionDetailPage() {
   const [msSaved, setMsSaved] = useState(false)
   const [completionOpen, setCompletionOpen] = useState(false)
   const [celebrationOpen, setCelebrationOpen] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
+  const [sharePayload, setSharePayload] = useState<SessionSharePayload | null>(null)
   const [msSaveError, setMsSaveError] = useState<string | null>(null)
   const [isSavingSession, setIsSavingSession] = useState(false)
   // B3 — exercise demo sheet (eye button on exercise rows in ToursBlock)
@@ -853,12 +860,64 @@ export function SessionDetailPage() {
       if (savedLog?.id && slotSignature) {
         await linkToSessionLog(slotSignature, savedLog.id)
       }
+
+      // Snapshot avant stop() — stop vide exerciseTourLoads / completedExercises.
+      const loadsSnapshot = { ...sessionRun.exerciseTourLoads }
+      const completedSnapshot = new Set(sessionRun.completedExercises)
+      const sessionIdForShare = activeSlot.session.metadata.id
+
       setCompletionOpen(false)
       setCelebrationOpen(false)
       setMsNotes('')
       setMsSaved(true)
       sessionRun.stop()
-      window.setTimeout(() => navigate('/week'), 1200)
+
+      const sessionLabel = formatTitleFromMotherSessionId(sessionIdForShare, lang)
+      const intent = buildSessionShareIntent(sessionIdForShare, lang)
+      const exerciseMaxLoads =
+        isPremium && adaptedSession
+          ? collectSessionExerciseMaxLoads({
+              session: adaptedSession,
+              exerciseTourLoads: loadsSnapshot,
+              completedExercises: completedSnapshot,
+              resolveName: (exerciseId) => getExerciseName(exerciseId, lang) || exerciseId,
+              limit: 6,
+            })
+          : []
+
+      const nextSharePayload: SessionSharePayload = {
+        sessionLabel,
+        durationMin: payload.durationMin,
+        completedSets: celebrationStats.completedSets,
+        totalSets: celebrationStats.totalSets,
+        tonnageKg: isPremium ? celebrationStats.tonnageKg : null,
+        rpe: payload.rpe,
+        fatigue: payload.fatigue,
+        prs: isPremium
+          ? sessionPRs.slice(0, 3).map((pr) => ({
+              exerciseName: getExerciseName(pr.exerciseId, lang) || pr.exerciseId,
+              newBestKg: pr.newBest,
+              previousBestKg: pr.previousBest,
+            }))
+          : [],
+        lang,
+        isPremium,
+        exerciseMaxLoads,
+        congratLine: intent.congratLine,
+        purposeLine: intent.purposeLine,
+      }
+      setSharePayload(nextSharePayload)
+      setShareOpen(true)
+      posthog.capture('session_completed', {
+        index,
+        sessionId: sessionIdForShare,
+        durationMin: payload.durationMin,
+        rpe: payload.rpe,
+        fatigue: payload.fatigue,
+        prCount: sessionPRs.length,
+        hasTonnage: celebrationStats.tonnageKg != null,
+        isPremium,
+      })
     } catch (error) {
       console.error('session_detail_complete_failed', error)
       setMsSaveError("La séance n'a pas pu être enregistrée. Réessaie dans quelques instants.")
@@ -1277,6 +1336,16 @@ export function SessionDetailPage() {
           setCompletionOpen(false)
         }}
         onConfirm={handleConfirmMotherSession}
+      />
+
+      <SessionShareSheet
+        open={shareOpen}
+        payload={sharePayload}
+        lang={lang}
+        onContinue={() => {
+          setShareOpen(false)
+          navigate('/week')
+        }}
       />
 
       {/* B3 — exercise demo sheet (bouton œil). Rendu à la racine pour overlay plein écran. */}

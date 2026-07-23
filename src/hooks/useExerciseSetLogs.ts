@@ -207,6 +207,40 @@ export const useExerciseSetLogs = () => {
   )
 
   /**
+   * Purge les séries d'une séance annulée (slot + lien session_log_id).
+   * Couvre les orphelins non liés : le cascade DB ne suffit pas pour refaire proprement.
+   */
+  const deleteSetsForSessionLog = useCallback(
+    async (log: Pick<SessionLog, 'id' | 'slotSignature'>) => {
+      if (userId) {
+        if (log.slotSignature) {
+          await supabase
+            .from('exercise_set_logs')
+            .delete()
+            .eq('user_id', userId)
+            .eq('slot_signature', log.slotSignature)
+        }
+        await supabase
+          .from('exercise_set_logs')
+          .delete()
+          .eq('user_id', userId)
+          .eq('session_log_id', log.id)
+      }
+
+      setLogs((current) => {
+        const next = current.filter((l) => {
+          if (l.sessionLogId === log.id) return false
+          if (log.slotSignature && l.slotSignature === log.slotSignature) return false
+          return true
+        })
+        saveToStorage(next, userId)
+        return next
+      })
+    },
+    [userId],
+  )
+
+  /**
    * PRs all-time par exerciceId calculés à partir des sets loggés (load × reps),
    * triés par date la plus récente. Source pour l'onglet Records côté ProgressPage.
    */
@@ -221,6 +255,7 @@ export const useExerciseSetLogs = () => {
     getSetsForSlot,
     getSetsForSessionLog,
     getLastSetForExercise,
+    deleteSetsForSessionLog,
     allPRsWithDates,
   }
 }

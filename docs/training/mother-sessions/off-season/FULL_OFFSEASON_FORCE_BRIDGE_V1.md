@@ -49,14 +49,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Force + Explosive Contrast
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `bench press` `4x4-5 @ 85-90%`
+- Exercise A: `DB Incline Bench Press` `4x4-5 @ 85-90%`
 - Exercise B: (contrast) `plyo push-up` `4x4-5, max height`
 - Coaching notes:
-  - Heavy bench into explosive plyo push-up — classic upper-body PAP pair.
+  - Incline DB press (not flat bench — reserved for the UPPER session this week) into explosive plyo push-up.
   - Plyo push-up: hands should leave the ground. Focus on speed of push.
-  - If plyo quality drops, reduce bench load before cutting push-ups.
+  - If plyo quality drops, reduce incline load before cutting push-ups.
   - Fallback options:
-    - A: `Med Ball Chest Pass` if plyo push-ups too demanding
+    - A: `Push Press` if no incline bench
+    - B: `Med Ball Chest Pass` if plyo push-ups too demanding
 
 ### Block 3 - Unilateral / Trunk Support
 - Format: `3 rounds`, `75-90s` rest after the pair
@@ -89,7 +90,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ## Position Accent
 - Session is common for both groups.
-- `Front_row`: slightly more patience on trap bar setup; heavier bench tolerated.
+- `Front_row`: slightly more patience on trap bar setup; heavier incline loads tolerated.
 - `Back_three`: slightly more emphasis on jump height and push-up speed.
 
 ## Injury Substitutions
@@ -106,7 +107,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Shoulder Pain
 - Remove:
-  - `Bench Press`
+  - `DB Incline Bench Press`
   - `Plyo Push-Up`
 - Replace with:
   - `Neutral-Grip DB Bench Press`

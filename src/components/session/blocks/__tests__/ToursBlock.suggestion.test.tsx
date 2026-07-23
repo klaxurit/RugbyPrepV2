@@ -185,6 +185,24 @@ describe('ToursBlock — dernière séance (PREVIOUS)', () => {
     expect(onSetExoData).toHaveBeenCalledWith(0, 0, { kg: '80' })
     expect(onSetExoData).toHaveBeenCalledWith(0, 0, { reps: '8' })
   })
+
+  it('sur tour > 0 : masque « dernière séance », garde seulement « série préc. »', () => {
+    render(
+      <ToursBlock
+        {...baseProps}
+        currentTourIdx={1}
+        block={mkBlock()}
+        getPreviousSessionSet={() => ({ loadKg: 82.5, reps: 5 })}
+        tourData={{
+          0: { 0: { kg: '80', reps: '10', validated: true } },
+          1: { 0: { kg: '', reps: '', validated: false } },
+          2: { 0: { kg: '', reps: '', validated: false } },
+        }}
+      />,
+    )
+    expect(screen.queryByTestId('exo-previous-chip')).toBeNull()
+    expect(screen.getByTestId('exo-prefill-chip')).toBeInTheDocument()
+  })
 })
 
 describe('ToursBlock — carry-forward (tours > 0)', () => {
