@@ -20,6 +20,7 @@ const makeLog = (overrides: Partial<SessionLog> & Pick<SessionLog, 'id' | 'dateI
   motherSessionId: overrides.motherSessionId,
   sessionLabel: overrides.sessionLabel,
   programContext: overrides.programContext,
+  slotSignature: overrides.slotSignature,
 })
 
 describe('mergeLogsById', () => {
@@ -88,5 +89,23 @@ describe('mergeHistoryAfterRemoteFetch', () => {
       makeLog({ id: 'b', dateISO: '2026-07-20T12:00:00.000Z' }),
     ]
     expect(excludeDeletedLogs(logs, new Set(['a'])).map((l) => l.id)).toEqual(['b'])
+  })
+
+  it('purge locale d’un fantôme : tombstone + slotSignature retirent le log même sans remote', () => {
+    const ghost = makeLog({
+      id: 'da8f04cd-cad2-4c51-aff9-f671e233f070',
+      dateISO: '2026-07-18T20:57:50.633Z',
+      programSource: 'mother_session',
+      motherSessionId: 'FULL_OFFSEASON_FORCE_BRIDGE_V1',
+      slotSignature: 'FULL_OFFSEASON_FORCE_BRIDGE_V1:Inter-saison Force-Pont - S9:2',
+    })
+    const keep = makeLog({ id: 'keep', dateISO: '2026-07-20T12:00:00.000Z' })
+    const deletedIds = new Set([ghost.id])
+    const next = excludeDeletedLogs([ghost, keep], deletedIds).filter(
+      (log) =>
+        !deletedIds.has(log.id) &&
+        log.slotSignature !== 'FULL_OFFSEASON_FORCE_BRIDGE_V1:Inter-saison Force-Pont - S9:2',
+    )
+    expect(next.map((l) => l.id)).toEqual(['keep'])
   })
 })

@@ -17,6 +17,17 @@ describe('resolveExerciseVariantForEquipment', () => {
         'pullup_bar',
       ]),
     ).toBe('pull_vertical__pull_up__neutral')
+    expect(
+      resolveExerciseVariantForEquipment('pull_horizontal__inverted_row__knees_bent', [
+        'pullup_bar',
+      ]),
+    ).toBe('pull_vertical__pull_up__neutral')
+  })
+
+  it('fente arrière BW → haltères si dispo', () => {
+    expect(
+      resolveExerciseVariantForEquipment('lower_lunge__reverse_lunge__bodyweight', ['dumbbell']),
+    ).toBe('lower_lunge__reverse_lunge__dumbbell')
   })
 
   it('monte vers goblet si haltères', () => {

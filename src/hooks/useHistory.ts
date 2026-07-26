@@ -302,8 +302,9 @@ export const useHistory = () => {
 
   /**
    * Supprime une séance enregistrée pour pouvoir la refaire.
-   * Vérifie que la ligne a bien disparu côté Supabase (sinon RLS no-op silencieux),
-   * et pose un tombstone pour empêcher un fetch périmé / merge offline de la ressusciter.
+   * Idempotent : si la ligne est déjà absente côté Supabase (log fantôme offline,
+   * double annulation, id local ≠ id remote), on purge quand même le cache local
+   * + tombstone — sinon /week reste « faite » alors que la revue est impossible.
    */
   const deleteLog = useCallback(
     async (logId: string, slotSignature?: string | null): Promise<boolean> => {
@@ -338,8 +339,11 @@ export const useHistory = () => {
         }
 
         if (deletedRows.length === 0) {
-          console.error('[useHistory] deleteLog: aucune ligne supprimée', { logId, slotSignature })
-          return false
+          // Déjà absent pour ce user (fantôme localStorage / sync ratée) → succès local.
+          console.warn('[useHistory] deleteLog: aucune ligne remote — purge locale', {
+            logId,
+            slotSignature,
+          })
         }
 
         for (const row of deletedRows) removedIds.add(row.id)

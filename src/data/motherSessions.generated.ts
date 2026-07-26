@@ -5347,15 +5347,16 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "4x6-8"
           },
           {
-            "name": "Bulgarian Split Squat",
+            "name": "Reverse Lunge Bodyweight",
             "prescription": "4x8-10/side"
           }
         ],
         "coachingNotes": [
-          "Main structural block — slow nordic eccentrics, stable unilateral work.",
+          "Main structural block — slow nordic eccentrics + reverse lunge (distinct from Block 1 Bulgarian driver, mirrors gym RDL + split/lunge pair).",
           "Nordic: 3–4s descent; hands on floor only to finish the rep if needed.",
+          "Lunge: long step back, front knee tracks toes, torso tall — backpack or 3-1-3 tempo before regressing.",
           "Fallback A: `Kickstand RDL` heavy tempo if nordics not tolerated this week.",
-          "Fallback B: `Reverse Lunge Bodyweight` if split squat balance breaks down."
+          "Fallback B: `Bulgarian Split Squat` only if reverse lunge irritates the front knee."
         ]
       },
       {
@@ -9369,18 +9370,24 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Pull Force",
-        "format": "`4 work sets`, `2-3 min` rest between sets",
+        "name": "Pull Force + Power Contrast",
+        "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
             "name": "Rowing inversé pieds surélevés",
             "prescription": "4x4-6"
+          },
+          {
+            "name": "Inverted Row Standard",
+            "prescription": "4x4, max speed",
+            "role": "contrast"
           }
         ],
         "coachingNotes": [
-          "Force-grade reps — strict, full ROM, no kipping.",
-          "Add backpack on chest or slow tempo before easier row angle.",
-          "Upgrade: strict `Pull-Up` if pull-up bar available (add load via backpack)."
+          "Heavy A: force-grade, strict, full ROM — backpack on chest or slow tempo before an easier row angle.",
+          "Contrast B within 15-20s: slightly easier angle so the pull can be truly explosive (chest to bar, fast concentric). Mirrors gym pull-up + slam intent.",
+          "Pull progression without a bar: table/inverted row knees bent → standard → feet elevated (A). With `pullup_bar`, upgrade A to strict `Pull-Up` (add load via backpack) and keep B as explosive inverted row or explosive pull-up.",
+          "If B speed drops, reduce load/tempo on A first — never skip the contrast pair."
         ]
       },
       {

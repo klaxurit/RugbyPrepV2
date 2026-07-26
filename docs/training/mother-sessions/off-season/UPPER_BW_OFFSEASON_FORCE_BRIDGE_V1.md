@@ -44,13 +44,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Upgrade A: `Bench Press` dumbbell heavy if DB + bench available.
   - Upgrade B: weighted dips on parallettes if available.
 
-### Block 2 - Pull Force
-- Format: `4 work sets`, `2-3 min` rest between sets
+### Block 2 - Pull Force + Power Contrast
+- Format: `4 rounds`, `90-120s` rest after the pair
 - Exercise A: `Rowing inversé pieds surélevés` `4x4-6`
+- Exercise B: (contrast) `Inverted Row Standard` `4x4, max speed`
 - Coaching notes:
-  - Force-grade reps — strict, full ROM, no kipping.
-  - Add backpack on chest or slow tempo before easier row angle.
-  - Upgrade: strict `Pull-Up` if pull-up bar available (add load via backpack).
+  - Heavy A: force-grade, strict, full ROM — backpack on chest or slow tempo before an easier row angle.
+  - Contrast B within 15-20s: slightly easier angle so the pull can be truly explosive (chest to bar, fast concentric). Mirrors gym pull-up + slam intent.
+  - Pull progression without a bar: table/inverted row knees bent → standard → feet elevated (A). With `pullup_bar`, upgrade A to strict `Pull-Up` (add load via backpack) and keep B as explosive inverted row or explosive pull-up.
+  - If B speed drops, reduce load/tempo on A first — never skip the contrast pair.
 
 ### Block 3 - Vertical Press / Row Strength
 - Format: `3 rounds`, `90s` rest after the pair

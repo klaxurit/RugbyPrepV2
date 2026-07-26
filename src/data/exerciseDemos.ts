@@ -363,4 +363,104 @@ export const EXERCISE_DEMOS: Record<string, ExerciseDemoDefinition> = {
       en: 'hang clean pull technique',
     },
   },
+  'lower_lunge__cossack_squat__bodyweight': {
+    youtubeUrl: 'https://www.youtube.com/watch?v=QhCZj1zMAZg',
+    cues: {
+      fr: [
+        'Pieds larges, orteils légèrement sortis.',
+        'Assieds-toi sur une jambe en gardant l’autre tendue.',
+        'Poitrine haute, talon ancré — amplitude progressive.',
+      ],
+    },
+  },
+  'lower_squat__pistol_assisted_wall__bodyweight': {
+    youtubeUrl: 'https://www.youtube.com/watch?v=qDtF3y2QXVA',
+    cues: {
+      fr: [
+        'Appui mur léger pour l’équilibre, pas pour tricher la force.',
+        'Genou avant stable, descente contrôlée jambe libre tendue.',
+        'Remonte en poussant le sol sans coller la hanche au mur.',
+      ],
+    },
+  },
+  'lower_squat__pistol_box__bodyweight': {
+    youtubeUrl: 'https://www.youtube.com/shorts/D5Iib9ZEkk8',
+    cues: {
+      fr: [
+        'Assieds-toi sur la box en contrôle, jambe libre tendue.',
+        'Garde le torse compact, genou avant aligné.',
+        'Remonte sans élan ni rebond sur la box.',
+      ],
+    },
+  },
+  'lower_lunge__shrimp__bodyweight': {
+    youtubeUrl: 'https://www.youtube.com/watch?v=wqSFYYxX2zo',
+    cues: {
+      fr: [
+        'Tiens le pied arrière, genou vers le sol derrière toi.',
+        'Torse haut, descente lente jusqu’au contrôle.',
+        'Régression : shrimp sur box si l’équilibre lâche.',
+      ],
+    },
+  },
+  'push_vertical__handstand_push_up__wall': {
+    youtubeUrl: 'https://www.youtube.com/watch?v=tQhrk6WMcKw',
+    cues: {
+      fr: [
+        'Dos au mur, corps gainé en ligne.',
+        'Descends la tête vers le sol sous contrôle.',
+        'Pousse jusqu’à bras tendus sans cambrer le bas du dos.',
+      ],
+    },
+  },
+  'push_horizontal__archer_push_up__bodyweight': {
+    youtubeUrl: 'https://www.youtube.com/watch?v=s0-f5Hj_6V4',
+    cues: {
+      fr: [
+        'Décale le poids vers un bras, l’autre reste long.',
+        'Poitrine basse côté chargé, amplitude profonde.',
+        'Alterne les côtés à volume égal.',
+      ],
+    },
+  },
+  'pull_horizontal__inverted_row__feet_elevated': {
+    youtubeUrl: 'https://www.youtube.com/watch?v=YaXPRq65A2c',
+    cues: {
+      fr: [
+        'Pieds surélevés, corps rigide talons-tête.',
+        'Tire la poitrine vers la barre/table.',
+        'Contrôle la descente sans laisser le bassin tomber.',
+      ],
+    },
+  },
+  'lower_squat__bulgarian_split_squat__bodyweight': {
+    youtubeUrl: 'https://www.youtube.com/watch?v=2C-uNgKwPLE',
+    cues: {
+      fr: [
+        'Pied arrière sur chaise, torse haut.',
+        'Descente verticale, genou avant stable.',
+        'Pousse le sol pour remonter — pas la chaise.',
+      ],
+    },
+  },
+  'push_vertical__pike_push_up__bodyweight': {
+    youtubeUrl: 'https://www.youtube.com/watch?v=x7_I5SUAd00',
+    cues: {
+      fr: [
+        'Hanches au-dessus des épaules, tête entre les bras.',
+        'Descends la tête vers le sol.',
+        'Pousse sans creuser le bas du dos.',
+      ],
+    },
+  },
+  'hamstring__nordic__eccentric_solo': {
+    youtubeUrl: 'https://www.youtube.com/watch?v=d2qjaJtVf5Q',
+    cues: {
+      fr: [
+        'Pieds bloqués, bassin gainé.',
+        'Descends le plus lentement possible.',
+        'Mains au sol pour remonter si besoin.',
+      ],
+    },
+  },
 }

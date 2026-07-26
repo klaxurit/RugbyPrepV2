@@ -1,8 +1,12 @@
 import type { Block, Exercise } from '../../../types/motherSession'
+import type { Equipment } from '../../../types/training'
+import { RefreshCw } from 'lucide-react'
 import { Icon } from '../../ui'
 import { BlockHeader } from '../BlockHeader'
 import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
+import { BlockAlternativesPanel } from '../BlockAlternativesPanel'
+import type { VariantPhaseContext } from '../../../services/equipment/exerciseVariantOptions'
 import { tr, type Lang } from '../../../i18n/appLabels'
 import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
 import { localizeMotherSessionExerciseName } from '../../../services/motherSession/localizeMotherSessionExerciseName'
@@ -28,9 +32,15 @@ interface EmomBlockProps {
   notes?: readonly string[]
   /** Alternatives matériel (med ball → câble, etc.). */
   fallbackOptions?: readonly string[]
+  preparedExercises?: readonly Exercise[]
+  equipment?: Equipment[]
+  variantPhaseContext?: VariantPhaseContext
   lang?: Lang
   /** Fiche vidéo démo (même résolution que WarmupBlock / ToursBlock). */
   onPlayDemo?: (exerciseIndex: number) => void
+  onOpenVariants?: (exerciseIndex: number) => void
+  hasVariants?: (exerciseIndex: number) => boolean
+  onSelectVariant?: (exerciseIndex: number, exerciseId: string) => void
 }
 
 /**
@@ -49,8 +59,14 @@ export function EmomBlock({
   onStartTimer,
   notes,
   fallbackOptions,
+  preparedExercises,
+  equipment,
+  variantPhaseContext,
   lang = 'fr',
   onPlayDemo,
+  onOpenVariants,
+  hasVariants,
+  onSelectVariant,
 }: EmomBlockProps) {
   const pattern = buildEmomPattern(block.exercises)
 
@@ -92,6 +108,17 @@ export function EmomBlock({
                       <span className="ml-1 font-medium text-fg-muted">{p.detail}</span>
                     )}
                   </span>
+                  {onOpenVariants && hasVariants?.(p.exerciseIndex) ? (
+                    <button
+                      type="button"
+                      onClick={() => onOpenVariants(p.exerciseIndex)}
+                      aria-label={tr('exercise_aria_variants', lang)}
+                      data-testid="exercise-variants-btn"
+                      className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-app rf-focus-ring"
+                    >
+                      <RefreshCw size={14} color="var(--color-text-primary)" strokeWidth={1.8} aria-hidden />
+                    </button>
+                  ) : null}
                   {onPlayDemo && emomExerciseHasDemo(p.exercise) ? (
                     <button
                       type="button"
@@ -147,13 +174,17 @@ export function EmomBlock({
               label={tr('session_coaching_notes', lang)}
             />
           )}
-          {fallbackOptions && fallbackOptions.length > 0 && (
-            <SessionNotes
-              notes={fallbackOptions}
-              defaultOpen={false}
-              label={tr('session_alternatives', lang)}
-            />
-          )}
+          <BlockAlternativesPanel
+            preparedExercises={preparedExercises ?? block.exercises}
+            displayExercises={block.exercises}
+            fallbackOptions={fallbackOptions}
+            lang={lang}
+            equipment={equipment}
+            phaseContext={variantPhaseContext}
+            defaultOpen={state === 'active'}
+            onOpenVariants={onOpenVariants}
+            onSelectVariant={onSelectVariant}
+          />
         </div>
       )}
     </div>

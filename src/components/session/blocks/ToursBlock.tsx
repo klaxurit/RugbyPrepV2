@@ -1,5 +1,6 @@
 import type { Block, Exercise } from '../../../types/motherSession'
 import { useState } from 'react'
+import { RefreshCw } from 'lucide-react'
 import { Icon } from '../../ui'
 import { parseExerciseSetSpec } from '../../../services/ui/exerciseSetSpec'
 import { getExerciseMetricType } from '../../../services/ui/exerciseMetrics'
@@ -7,6 +8,9 @@ import type { ExerciseMetricType } from '../../../services/ui/exerciseMetrics'
 import { BlockHeader } from '../BlockHeader'
 import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
+import { BlockAlternativesPanel } from '../BlockAlternativesPanel'
+import type { VariantPhaseContext } from '../../../services/equipment/exerciseVariantOptions'
+import type { Equipment } from '../../../types/training'
 import type { LoadSuggestion } from '../../../services/loadSuggestion'
 import { hasExerciseDemo } from '../../../data/exercises'
 import { resolveExerciseIdForSessionRun } from '../../../services/motherSession/motherSessionExerciseMap'
@@ -73,12 +77,22 @@ interface ToursBlockProps {
   onSetExoData?: (tourIdx: number, exoIdx: number, patch: Partial<ExoTourData>) => void
   /** Callback ouverture demo vidéo. */
   onPlayDemo?: (exoIdx: number) => void
+  /** Callback ouverture picker de variantes (swap). */
+  onOpenVariants?: (exoIdx: number) => void
+  /** True si l’exo i a au moins une variante sélectionnable. */
+  hasVariants?: (exoIdx: number) => boolean
   /** Callback démarrage chrono iso pour un exo time (Copenhagen, plank, etc.). */
   onStartIso?: (tourIdx: number, exoIdx: number) => void
   /** Notes de coaching à afficher en bas du bloc. */
   notes?: readonly string[]
   /** Alternatives matériel (med ball → câble, etc.) sous les notes. */
   fallbackOptions?: readonly string[]
+  /** Exos prescrits du bloc (avant override) — pour rattacher les Alternatives MD. */
+  preparedExercises?: readonly Exercise[]
+  equipment?: Equipment[]
+  variantPhaseContext?: VariantPhaseContext
+  /** Remplacement 1-clic depuis la card Alternatives. */
+  onSelectVariant?: (exoIdx: number, exerciseId: string) => void
   /** Suggestion de charge Premium par exerciseId (optionnel). */
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
   /** Dernière série loggée (même n° de tour, séance précédente). */
@@ -129,9 +143,15 @@ export function ToursBlock(props: ToursBlockProps) {
     onValidateExo,
     onSetExoData,
     onPlayDemo,
+    onOpenVariants,
+    hasVariants,
     onStartIso,
     notes,
     fallbackOptions,
+    preparedExercises,
+    equipment,
+    variantPhaseContext,
+    onSelectVariant,
     getLoadSuggestion,
     getPreviousSessionSet,
     lang = 'fr',
@@ -184,6 +204,9 @@ export function ToursBlock(props: ToursBlockProps) {
                   key={i}
                   exo={exo}
                   onPlayDemo={onPlayDemo && exerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined}
+                  onOpenVariants={
+                    onOpenVariants && hasVariants?.(i) ? () => onOpenVariants(i) : undefined
+                  }
                   lang={lang}
                 />
               ))}
@@ -215,6 +238,8 @@ export function ToursBlock(props: ToursBlockProps) {
                       onSetExoData ? (exoIdx, patch) => onSetExoData(i, exoIdx, patch) : undefined
                     }
                     onPlayDemo={onPlayDemo}
+                    onOpenVariants={onOpenVariants}
+                    hasVariants={hasVariants}
                     onStartIso={onStartIso ? (exoIdx) => onStartIso(i, exoIdx) : undefined}
                     getLoadSuggestion={getLoadSuggestion}
                     getPreviousSessionSet={getPreviousSessionSet}
@@ -237,11 +262,17 @@ export function ToursBlock(props: ToursBlockProps) {
               label={tr('session_coaching_notes', lang)}
             />
           )}
-          {fallbackOptions && fallbackOptions.length > 0 && (
-            <SessionNotes
-              notes={fallbackOptions}
-              defaultOpen={false}
-              label={tr('session_alternatives', lang)}
+          {(fallbackOptions?.length || preparedExercises) && (
+            <BlockAlternativesPanel
+              preparedExercises={preparedExercises ?? block.exercises}
+              displayExercises={block.exercises}
+              fallbackOptions={fallbackOptions}
+              lang={lang}
+              equipment={equipment}
+              phaseContext={variantPhaseContext}
+              defaultOpen={state === 'active'}
+              onOpenVariants={onOpenVariants}
+              onSelectVariant={onSelectVariant}
             />
           )}
         </div>
@@ -272,6 +303,8 @@ interface TourGroupProps {
   onValidateExo: (exoIdx: number, prefill?: ExerciseLoadPrefill) => void
   onSetExoData?: (exoIdx: number, patch: Partial<ExoTourData>) => void
   onPlayDemo?: (exoIdx: number) => void
+  onOpenVariants?: (exoIdx: number) => void
+  hasVariants?: (exoIdx: number) => boolean
   onStartIso?: (exoIdx: number) => void
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
   getPreviousSessionSet?: (exerciseId: string, tourIndex: number) => PreviousSessionSetRef | undefined
@@ -311,6 +344,8 @@ function TourGroup({
   onValidateExo,
   onSetExoData,
   onPlayDemo,
+  onOpenVariants,
+  hasVariants,
   onStartIso,
   getLoadSuggestion,
   getPreviousSessionSet,
@@ -486,6 +521,9 @@ function TourGroup({
                 onSetKg={onSetExoData ? (v) => onSetExoData(i, { kg: v }) : undefined}
                 onSetReps={onSetExoData ? (v) => onSetExoData(i, { reps: v }) : undefined}
                 onPlayDemo={onPlayDemo && exerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined}
+                onOpenVariants={
+                  onOpenVariants && hasVariants?.(i) ? () => onOpenVariants(i) : undefined
+                }
                 onStartIso={onStartIso ? () => onStartIso(i) : undefined}
                 lang={lang}
               />
@@ -543,6 +581,7 @@ interface ExerciseRowProps {
   onSetKg?: (next: string) => void
   onSetReps?: (next: string) => void
   onPlayDemo?: () => void
+  onOpenVariants?: () => void
   onStartIso?: () => void
   lang: Lang
 }
@@ -576,6 +615,7 @@ function ExerciseRow({
   onSetKg,
   onSetReps,
   onPlayDemo,
+  onOpenVariants,
   onStartIso,
   lang,
 }: ExerciseRowProps) {
@@ -718,6 +758,18 @@ function ExerciseRow({
           </button>
         )}
 
+        {onOpenVariants && (
+          <button
+            type="button"
+            onClick={onOpenVariants}
+            aria-label={tr('exercise_aria_variants', lang)}
+            data-testid="exercise-variants-btn"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-app rf-focus-ring"
+          >
+            <RefreshCw size={14} color="var(--color-text-primary)" strokeWidth={1.8} aria-hidden />
+          </button>
+        )}
+
         {onPlayDemo && (
           <button
             type="button"
@@ -810,6 +862,7 @@ function ExerciseRow({
 interface PreviewExerciseRowProps {
   exo: Exercise
   onPlayDemo?: () => void
+  onOpenVariants?: () => void
   lang: Lang
 }
 
@@ -817,7 +870,7 @@ interface PreviewExerciseRowProps {
  * Variante "preview" d'un exo (mode pending/idle) — pas de checkbox de validation,
  * pas d'inputs Premium ; juste le nom + prescription + bouton démo optionnel.
  */
-function PreviewExerciseRow({ exo, onPlayDemo, lang }: PreviewExerciseRowProps) {
+function PreviewExerciseRow({ exo, onPlayDemo, onOpenVariants, lang }: PreviewExerciseRowProps) {
   return (
     <div className="flex items-center gap-2.5 rounded-[14px] border border-paper-deep bg-app px-3 py-3">
       <div className="min-w-0 flex-1">
@@ -829,6 +882,17 @@ function PreviewExerciseRow({ exo, onPlayDemo, lang }: PreviewExerciseRowProps) 
         </div>
         <div className="mt-0.5 text-[12px] tabular-nums text-fg/55">{exo.prescription}</div>
       </div>
+      {onOpenVariants && (
+        <button
+          type="button"
+          onClick={onOpenVariants}
+          aria-label={tr('exercise_aria_variants', lang)}
+          data-testid="exercise-variants-btn"
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-app rf-focus-ring"
+        >
+          <RefreshCw size={14} color="var(--color-text-primary)" strokeWidth={1.8} aria-hidden />
+        </button>
+      )}
       {onPlayDemo && (
         <button
           type="button"

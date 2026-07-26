@@ -405,6 +405,7 @@ export const APP_LABELS = {
   exercise_aria_validate: { fr: 'Valider', en: 'Validate' },
   exercise_aria_unvalidate: { fr: 'Marquer non fait', en: 'Mark not done' },
   exercise_aria_demo: { fr: 'Voir la démo', en: 'View demo' },
+  exercise_aria_variants: { fr: 'Choisir une variante', en: 'Choose a variant' },
   exercise_validate_set: { fr: 'Valider set', en: 'Validate set' },
   exercise_premium_tracking_pre: { fr: 'Suivi set-par-set', en: 'Set-by-set tracking' },
   exercise_prefill_carry: { fr: 'Reprendre série préc.', en: 'Reuse previous set' },

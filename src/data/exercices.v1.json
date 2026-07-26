@@ -1366,7 +1366,8 @@
     "defaultNotes": "Amplitude progressive.",
     "id": "lower_lunge__cossack_squat__bodyweight",
     "name": "Cossack squat",
-    "notes": "Amplitude progressive."
+    "notes": "Amplitude progressive.",
+    "videoUrl": "https://www.youtube.com/watch?v=QhCZj1zMAZg"
   },
   {
     "exerciseId": "lower_step__step_up__dumbbell",
@@ -2274,7 +2275,8 @@
       "push",
       "starter"
     ],
-    "defaultNotes": "Du talon à la tête en planche. Serrer fesses et ventre. Descendre lentement, pousser loin."
+    "defaultNotes": "Du talon à la tête en planche. Serrer fesses et ventre. Descendre lentement, pousser loin.",
+    "videoUrl": "https://www.youtube.com/watch?v=IODxDxX7oi4"
   },
   {
     "id": "hinge__good_morning__bodyweight",
@@ -2344,7 +2346,7 @@
       "starter"
     ],
     "defaultNotes": "Corps rigide des genoux aux épaules. Initier par les omoplates, puis coudes. Poitrine vers la barre.",
-    "videoUrl": "https://www.youtube.com/shorts/vZy_Eu_Z0WA"
+    "videoUrl": "https://www.youtube.com/watch?v=hXTc1mDnWiw"
   },
   {
     "id": "pull_horizontal__band_row__standing",
@@ -3198,7 +3200,8 @@
       "starter"
     ],
     "notes": "Reculer un pied, descendre le genou arrière vers le sol. Torse droit. Pousser dans le talon avant pour remonter.",
-    "defaultNotes": "Pas en arrière contrôlé. Genou arrière frôle le sol. Remonter par le talon avant."
+    "defaultNotes": "Pas en arrière contrôlé. Genou arrière frôle le sol. Remonter par le talon avant.",
+    "videoUrl": "https://www.youtube.com/watch?v=QOVaHwm-Q6U"
   },
   {
     "id": "lower_lunge__lateral_lunge__bodyweight",
@@ -4506,13 +4509,23 @@
     "name": "Inverted Row (standard)",
     "nameFr": "Rowing inversé (pompe australienne)",
     "pattern": "pull_horizontal",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["upper", "pull", "starter"],
+    "tags": [
+      "upper",
+      "pull",
+      "starter"
+    ],
     "notes": "Sous une table solide ou barre basse. Corps aligné, jambes tendues. Tirer la poitrine vers la barre.",
-    "defaultNotes": "Corps rigide talons-tête. Poitrine vers la barre/table. Contrôler la descente."
+    "defaultNotes": "Corps rigide talons-tête. Poitrine vers la barre/table. Contrôler la descente.",
+    "videoUrl": "https://www.youtube.com/watch?v=hXTc1mDnWiw"
   },
   {
     "id": "pull_horizontal__inverted_row__feet_elevated",
@@ -4520,13 +4533,22 @@
     "name": "Inverted Row (feet elevated)",
     "nameFr": "Rowing inversé pieds surélevés",
     "pattern": "pull_horizontal",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
     "level": "intermediate",
     "metricType": "reps",
-    "tags": ["upper", "pull"],
+    "tags": [
+      "upper",
+      "pull"
+    ],
     "notes": "Pieds sur chaise ou table pour augmenter la charge. Progression pull tier 0 sans barre de traction.",
-    "defaultNotes": "Pieds surélevés, corps aligné. Tirer poitrine vers la barre. Plus dur que genoux fléchis."
+    "defaultNotes": "Pieds surélevés, corps aligné. Tirer poitrine vers la barre. Plus dur que genoux fléchis.",
+    "videoUrl": "https://www.youtube.com/watch?v=YaXPRq65A2c"
   },
   {
     "id": "pull_vertical__scap_pull__bodyweight",
@@ -4534,11 +4556,20 @@
     "name": "Scap Pull-Up",
     "nameFr": "Scap pull (dead hang)",
     "pattern": "pull_vertical",
-    "equipment": ["pullup_bar"],
-    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "equipment": [
+      "pullup_bar"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["upper", "pull", "prehab"],
+    "tags": [
+      "upper",
+      "pull",
+      "prehab"
+    ],
     "notes": "Suspension passive puis dépression/rétraction scapulaire sans plier les coudes. Pré-traction et santé épaule.",
     "defaultNotes": "Bras tendus. Monter les omoplates sans tirer avec les bras. Redescendre en contrôle."
   },
@@ -4548,11 +4579,21 @@
     "name": "Band-Assisted Pull-Up",
     "nameFr": "Tractions assistées élastique",
     "pattern": "pull_vertical",
-    "equipment": ["band", "pullup_bar"],
-    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "equipment": [
+      "band",
+      "pullup_bar"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["upper", "pull", "starter"],
+    "tags": [
+      "upper",
+      "pull",
+      "starter"
+    ],
     "notes": "Bande sous les genoux ou pieds, ancrée à la barre. Progression vers traction stricte.",
     "defaultNotes": "Même trajectoire qu'une traction stricte. Réduire l'assistance quand les reps restent propres."
   },
@@ -4562,11 +4603,20 @@
     "name": "Foot-Assisted Pull-Up",
     "nameFr": "Tractions assistées pieds au sol",
     "pattern": "pull_vertical",
-    "equipment": ["pullup_bar"],
-    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "equipment": [
+      "pullup_bar"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["upper", "pull", "starter"],
+    "tags": [
+      "upper",
+      "pull",
+      "starter"
+    ],
     "notes": "Barre basse de parc street workout. Pieds au sol, inclinaison du corps. Progression vers traction stricte.",
     "defaultNotes": "Barre basse, corps incliné. Tirer poitrine vers barre en gardant le corps rigide."
   },
@@ -4576,13 +4626,24 @@
     "name": "Pike Push-Up",
     "nameFr": "Pike push-up",
     "pattern": "push_vertical",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "neck_pain", "wrist_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "neck_pain",
+      "wrist_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["upper", "push", "starter"],
+    "tags": [
+      "upper",
+      "push",
+      "starter"
+    ],
     "notes": "Hanches hautes, tête entre les bras. Push vertical tier 0 sans matériel.",
-    "defaultNotes": "Hanches au-dessus des épaules. Descendre la tête vers le sol. Pousser sans creuser le bas du dos."
+    "defaultNotes": "Hanches au-dessus des épaules. Descendre la tête vers le sol. Pousser sans creuser le bas du dos.",
+    "videoUrl": "https://www.youtube.com/watch?v=x7_I5SUAd00"
   },
   {
     "id": "push_vertical__pike_push_up__feet_elevated",
@@ -4590,13 +4651,23 @@
     "name": "Feet-Elevated Pike Push-Up",
     "nameFr": "Pike push-up pieds surélevés",
     "pattern": "push_vertical",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "neck_pain", "wrist_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "neck_pain",
+      "wrist_pain"
+    ],
     "level": "intermediate",
     "metricType": "reps",
-    "tags": ["upper", "push"],
+    "tags": [
+      "upper",
+      "push"
+    ],
     "notes": "Pieds sur chaise ou marche. Progression push vertical avant développé épaules chargé.",
-    "defaultNotes": "Pieds surélevés, hanches hautes. Amplitude contrôlée, pas de cambrure lombaire."
+    "defaultNotes": "Pieds surélevés, hanches hautes. Amplitude contrôlée, pas de cambrure lombaire.",
+    "videoUrl": "https://www.youtube.com/watch?v=x7_I5SUAd00"
   },
   {
     "id": "push_horizontal__push_up__decline",
@@ -4604,13 +4675,22 @@
     "name": "Decline Push-Up",
     "nameFr": "Pompes déclinées",
     "pattern": "push_horizontal",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "wrist_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
     "level": "intermediate",
     "metricType": "reps",
-    "tags": ["upper", "push"],
+    "tags": [
+      "upper",
+      "push"
+    ],
     "notes": "Pieds sur chaise ou marche. Plus de charge sur pecs/deltoides antérieurs que pompe standard.",
-    "defaultNotes": "Pieds surélevés, corps rigide. Poitrine vers le sol. Contrôler la descente."
+    "defaultNotes": "Pieds surélevés, corps rigide. Poitrine vers le sol. Contrôler la descente.",
+    "videoUrl": "https://www.youtube.com/watch?v=SKPab2YC8BE"
   },
   {
     "id": "push_horizontal__dip__chair",
@@ -4618,11 +4698,20 @@
     "name": "Chair Dip",
     "nameFr": "Dips entre chaises",
     "pattern": "push_horizontal",
-    "equipment": ["none"],
-    "contraindications": ["shoulder_pain", "elbow_pain", "wrist_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain",
+      "wrist_pain"
+    ],
     "level": "intermediate",
     "metricType": "reps",
-    "tags": ["upper", "push"],
+    "tags": [
+      "upper",
+      "push"
+    ],
     "notes": "Mains sur deux chaises stables, pieds au sol ou surélevés. Alternative tier 0 aux parallèles.",
     "defaultNotes": "Descendre jusqu'à 90° coudes max si épaules OK. Remonter sans balancer."
   },
@@ -4632,11 +4721,19 @@
     "name": "Parallel Bar Dip",
     "nameFr": "Dips aux parallèles",
     "pattern": "push_horizontal",
-    "equipment": ["pullup_bar"],
-    "contraindications": ["shoulder_pain", "elbow_pain"],
+    "equipment": [
+      "pullup_bar"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "elbow_pain"
+    ],
     "level": "intermediate",
     "metricType": "reps",
-    "tags": ["upper", "push"],
+    "tags": [
+      "upper",
+      "push"
+    ],
     "notes": "Parc street workout ou barres parallèles. Push horizontal lourd, transfert mêlée/plaquage.",
     "defaultNotes": "Descente contrôlée, coude arrière. Remonter bras tendus sans verrouillage brutal."
   },
@@ -4646,13 +4743,23 @@
     "name": "Bodyweight Split Squat",
     "nameFr": "Fente statique / split squat",
     "pattern": "lower_squat",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain", "groin_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "groin_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["lower", "unilateral", "starter"],
+    "tags": [
+      "lower",
+      "unilateral",
+      "starter"
+    ],
     "notes": "Pied arrière sur chaise ou sol. Descente verticale, genou avant aligné avec le pied.",
-    "defaultNotes": "Torse haut, bassin stable. Genou arrière frôle le sol sans rebond."
+    "defaultNotes": "Torse haut, bassin stable. Genou arrière frôle le sol sans rebond.",
+    "videoUrl": "https://www.youtube.com/watch?v=2C-uNgKwPLE"
   },
   {
     "id": "lower_squat__bulgarian_split_squat__bodyweight",
@@ -4660,13 +4767,22 @@
     "name": "Bodyweight Bulgarian Split Squat",
     "nameFr": "Bulgarian split squat",
     "pattern": "lower_squat",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain", "groin_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "groin_pain"
+    ],
     "level": "intermediate",
     "metricType": "reps",
-    "tags": ["lower", "unilateral"],
+    "tags": [
+      "lower",
+      "unilateral"
+    ],
     "notes": "Pied arrière surélevé (chaise). Unilatéral tier 0 pour hypertrophie et force sans haltères.",
-    "defaultNotes": "Descente contrôlée, genou avant stable. Pousser le sol, pas la chaise."
+    "defaultNotes": "Descente contrôlée, genou avant stable. Pousser le sol, pas la chaise.",
+    "videoUrl": "https://www.youtube.com/watch?v=2C-uNgKwPLE"
   },
   {
     "id": "hinge__single_leg_rdl__bodyweight",
@@ -4674,11 +4790,21 @@
     "name": "Single-Leg RDL (bodyweight)",
     "nameFr": "RDL unilatéral (kickstand)",
     "pattern": "hinge",
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain", "knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "knee_pain"
+    ],
     "level": "beginner",
     "metricType": "reps",
-    "tags": ["lower", "hinge", "unilateral", "starter"],
+    "tags": [
+      "lower",
+      "hinge",
+      "unilateral",
+      "starter"
+    ],
     "notes": "Kickstand ou unilatéral strict. Charière hanche, jambe libre en extension. Dos neutre.",
     "defaultNotes": "Hanche en arrière, dos plat. Sentir l'étirement ischios. Revenir hanche en avant."
   },
@@ -4688,13 +4814,22 @@
     "name": "Solo Nordic Curl (eccentric)",
     "nameFr": "Nordique excentrique solo",
     "pattern": "hinge",
-    "equipment": ["none"],
-    "contraindications": ["knee_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
     "level": "intermediate",
     "metricType": "reps",
-    "tags": ["lower", "posterior_chain", "prehab"],
+    "tags": [
+      "lower",
+      "posterior_chain",
+      "prehab"
+    ],
     "notes": "Pieds bloqués sous canapé ou partenaire. Descente excentrique contrôlée, poussée mains au retour.",
-    "defaultNotes": "Descendre le plus lentement possible. Utiliser les mains au sol si nécessaire pour remonter."
+    "defaultNotes": "Descendre le plus lentement possible. Utiliser les mains au sol si nécessaire pour remonter.",
+    "videoUrl": "https://www.youtube.com/watch?v=d2qjaJtVf5Q"
   },
   {
     "id": "carry__farmer_walk__backpack",
@@ -4702,11 +4837,20 @@
     "name": "Farmer Walk (backpack)",
     "nameFr": "Farmer walk sac à dos",
     "pattern": "carry",
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain", "shoulder_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain",
+      "shoulder_pain"
+    ],
     "level": "beginner",
     "metricType": "meters",
-    "tags": ["carry", "core", "grip"],
+    "tags": [
+      "carry",
+      "core",
+      "grip"
+    ],
     "notes": "Sac à dos lesté ou sac de courses. Posture haute, pas courts et contrôlés.",
     "defaultNotes": "Épaules basses, ventre serré. Marcher sans pencher. Lest progressif."
   },
@@ -4716,11 +4860,19 @@
     "name": "Suitcase Walk (backpack)",
     "nameFr": "Suitcase walk sac",
     "pattern": "carry",
-    "equipment": ["none"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "beginner",
     "metricType": "meters",
-    "tags": ["carry", "core", "anti_rotation"],
+    "tags": [
+      "carry",
+      "core",
+      "anti_rotation"
+    ],
     "notes": "Un sac lourd d'un côté. Anti-rotation et grip. Finisher rugby tier 0.",
     "defaultNotes": "Bassin stable, ne pas pencher du côté opposé. Marche droite."
   },
@@ -4730,11 +4882,19 @@
     "name": "Explosive Band Rotation",
     "nameFr": "Rotation élastique explosive",
     "pattern": "core_rotation",
-    "equipment": ["band"],
-    "contraindications": ["low_back_pain"],
+    "equipment": [
+      "band"
+    ],
+    "contraindications": [
+      "low_back_pain"
+    ],
     "level": "intermediate",
     "metricType": "reps",
-    "tags": ["core", "rotation", "power"],
+    "tags": [
+      "core",
+      "rotation",
+      "power"
+    ],
     "notes": "Remplace med ball rotational throw tier 1. Ancrage latéral, rotation rapide et contrôlée.",
     "defaultNotes": "Hanches fixes, rotation thoracique. Intention explosive, pas de cambrure lombaire."
   },
@@ -4744,11 +4904,19 @@
     "name": "Copenhagen Plank (foot elevated)",
     "nameFr": "Copenhagen (pied surélevé)",
     "pattern": "groin_adductors",
-    "equipment": ["none"],
-    "contraindications": ["groin_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
     "level": "intermediate",
     "metricType": "seconds",
-    "tags": ["groin", "prehab", "core"],
+    "tags": [
+      "groin",
+      "prehab",
+      "core"
+    ],
     "notes": "Cheville ou tibia sur chaise, banc ou table — jambe du dessus en appui, bassin aligné. Pas de genou au sol (sinon planche latérale classique).",
     "defaultNotes": "Pied surélevé stable. Adducteurs actifs, bassin neutre. Progression : Copenhagen court puis long sur banc."
   },
@@ -4758,11 +4926,19 @@
     "name": "Copenhagen Plank (knee support)",
     "nameFr": "Copenhagen genou au sol",
     "pattern": "groin_adductors",
-    "equipment": ["none"],
-    "contraindications": ["groin_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "groin_pain"
+    ],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["groin", "prehab", "core"],
+    "tags": [
+      "groin",
+      "prehab",
+      "core"
+    ],
     "notes": "Genou du dessus au sol, cheville surélevée sur chaise ou sol. Progression vers Copenhagen long.",
     "defaultNotes": "Corps aligné, adducteurs actifs. Tenir sans rotation du bassin."
   },
@@ -4772,11 +4948,19 @@
     "name": "Neck Extension Isometric (hand)",
     "nameFr": "Isométrie extension cou (main)",
     "pattern": "neck",
-    "equipment": ["none"],
-    "contraindications": ["neck_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["neck", "prehab", "front_row"],
+    "tags": [
+      "neck",
+      "prehab",
+      "front_row"
+    ],
     "notes": "Main sur le front, résister en extension. Essentiel avants (mêlée, plaquage).",
     "defaultNotes": "10s par direction, sans douleur. Nuque longue, menton rentré."
   },
@@ -4786,11 +4970,19 @@
     "name": "Neck Lateral Flexion Isometric (hand)",
     "nameFr": "Isométrie latéral cou (main)",
     "pattern": "neck",
-    "equipment": ["none"],
-    "contraindications": ["neck_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["neck", "prehab", "front_row"],
+    "tags": [
+      "neck",
+      "prehab",
+      "front_row"
+    ],
     "notes": "Main sur le côté de la tête, résister. Prévention cervical contact latéral.",
     "defaultNotes": "10s/côté, contrôle total. Pas de compensation tronc."
   },
@@ -4800,12 +4992,116 @@
     "name": "Neck Rotation Isometric (hand)",
     "nameFr": "Isométrie rotation cou (main)",
     "pattern": "neck",
-    "equipment": ["none"],
-    "contraindications": ["neck_pain"],
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
     "level": "beginner",
     "metricType": "seconds",
-    "tags": ["neck", "prehab"],
+    "tags": [
+      "neck",
+      "prehab"
+    ],
     "notes": "Main sur la tempe, résister rotation. Volume modéré.",
     "defaultNotes": "10s/côté. Stop si vertiges ou douleur."
+  },
+  {
+    "id": "lower_squat__pistol_assisted_wall__bodyweight",
+    "exerciseId": "lower_squat__pistol_assisted_wall__bodyweight",
+    "name": "Wall-Assisted Pistol Squat",
+    "nameFr": "Pistol squat assisté mur",
+    "pattern": "lower_squat",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain"
+    ],
+    "level": "intermediate",
+    "metricType": "reps",
+    "tags": [
+      "lower",
+      "unilateral",
+      "advanced_bw"
+    ],
+    "notes": "Pistol avec appui léger au mur pour l'équilibre. Progression vers pistol box / free.",
+    "defaultNotes": "Appui mur minimal. Genou avant stable, descente contrôlée. Même volume / côté.",
+    "videoUrl": "https://www.youtube.com/watch?v=qDtF3y2QXVA"
+  },
+  {
+    "id": "lower_lunge__shrimp__bodyweight",
+    "exerciseId": "lower_lunge__shrimp__bodyweight",
+    "name": "Shrimp Squat",
+    "nameFr": "Shrimp squat",
+    "pattern": "lower_lunge",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "knee_pain",
+      "groin_pain"
+    ],
+    "level": "intermediate",
+    "metricType": "reps",
+    "tags": [
+      "lower",
+      "unilateral",
+      "advanced_bw"
+    ],
+    "notes": "Squat unilatéral genou arrière tenu. Exige mobilité genou/hanche et contrôle.",
+    "defaultNotes": "Tenir le pied arrière. Descente lente, torse haut. Régression: shrimp box.",
+    "videoUrl": "https://www.youtube.com/watch?v=wqSFYYxX2zo"
+  },
+  {
+    "id": "push_vertical__handstand_push_up__wall",
+    "exerciseId": "push_vertical__handstand_push_up__wall",
+    "name": "Wall Handstand Push-Up",
+    "nameFr": "HSPU mur (handstand push-up)",
+    "pattern": "push_vertical",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "neck_pain",
+      "wrist_pain"
+    ],
+    "level": "intermediate",
+    "metricType": "reps",
+    "tags": [
+      "upper",
+      "push",
+      "advanced_bw"
+    ],
+    "notes": "Pompe en équilibre contre le mur. Progression après pike pieds surélevés.",
+    "defaultNotes": "Dos au mur, gainage total. Amplitude contrôlée. Stop si douleur cervicale.",
+    "videoUrl": "https://www.youtube.com/watch?v=tQhrk6WMcKw"
+  },
+  {
+    "id": "push_horizontal__archer_push_up__bodyweight",
+    "exerciseId": "push_horizontal__archer_push_up__bodyweight",
+    "name": "Archer Push-Up",
+    "nameFr": "Pompe archer",
+    "pattern": "push_horizontal",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "shoulder_pain",
+      "wrist_pain"
+    ],
+    "level": "intermediate",
+    "metricType": "reps",
+    "tags": [
+      "upper",
+      "push",
+      "unilateral",
+      "advanced_bw"
+    ],
+    "notes": "Pompe unilatérale partielle : un bras charge, l'autre assiste en extension.",
+    "defaultNotes": "Décaler le poids vers un bras. Amplitude profonde côté chargé. Alterner les côtés.",
+    "videoUrl": "https://www.youtube.com/watch?v=s0-f5Hj_6V4"
   }
 ]

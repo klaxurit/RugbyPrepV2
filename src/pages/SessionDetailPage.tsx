@@ -38,10 +38,22 @@ import { buildMotherSessionProgramSessionLog } from '../services/program/buildPr
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { prepareSessionForRender } from '../services/session/prepareSessionForRender'
+import {
+  applyExerciseOverridesToSession,
+  buildExerciseOverrideKey,
+  makeExerciseOverride,
+} from '../services/session/exerciseOverrides'
+import {
+  getExerciseVariantOptions,
+  hasExerciseVariantOptions,
+  type VariantPhaseContext,
+} from '../services/equipment/exerciseVariantOptions'
+import { buildBlockAlternativeGroups } from '../services/equipment/parseFallbackOptionExercises'
 import { localizeMotherSessionExerciseName } from '../services/motherSession/localizeMotherSessionExerciseName'
 import { localizeBlockName } from '../services/motherSession/motherSessionBlockLabels'
 import { restTimerAfterSetLine } from '../i18n/sessionRunUi'
 import { SessionFinishedSheet } from '../components/session/SessionFinishedSheet'
+import { ExerciseVariantPickerSheet } from '../components/session/ExerciseVariantPickerSheet'
 import { SessionShareSheet } from '../components/session/SessionShareSheet'
 import type { SessionSharePayload } from '../services/share/sessionShareTypes'
 import { buildSessionShareIntent } from '../services/share/buildSessionShareIntent'
@@ -153,6 +165,10 @@ export function SessionDetailPage() {
   const [isSavingSession, setIsSavingSession] = useState(false)
   // B3 — exercise demo sheet (eye button on exercise rows in ToursBlock)
   const [demoExerciseId, setDemoExerciseId] = useState<string | null>(null)
+  const [variantPicker, setVariantPicker] = useState<{
+    blockNumber: number
+    exerciseIndex: number
+  } | null>(null)
   const [livePRToast, setLivePRToast] = useState<LivePRToastData | null>(null)
   // Note : depuis le passage à SessionBlocks, les sets sont persistés via
   // `upsertSet` (table exercise_set_logs). Le hook `useBlockLogs` ne sert plus
@@ -258,7 +274,7 @@ export function SessionDetailPage() {
     return rawSessions[index] ?? null
   }, [snapshot, msResolution, index])
 
-  const adaptedSession = useMemo(() => {
+  const preparedSession = useMemo(() => {
     if (!activeSlot) return null
     return prepareSessionForRender({
       session: activeSlot.session,
@@ -384,6 +400,46 @@ export function SessionDetailPage() {
       sessionIndex: index,
     })
   }, [activeSlot, surface, index])
+
+  const variantPhaseContext = useMemo<VariantPhaseContext | undefined>(() => {
+    if (!activeSlot || !surface) return undefined
+    return {
+      cycle: surface.planningContext.cycle,
+      offSeasonPhase: surface.planningContext.offSeasonPhase,
+      preSeasonPhase: surface.planningContext.preSeasonPhase,
+      sessionType: activeSlot.session.metadata.sessionType,
+      equipmentProfile: activeSlot.session.metadata.equipment,
+    }
+  }, [activeSlot, surface])
+
+  /** Session adaptée auto + overrides user (variantes 1-clic). */
+  const adaptedSession = useMemo(() => {
+    if (!preparedSession) return null
+    return applyExerciseOverridesToSession(
+      preparedSession,
+      slotSignature,
+      sessionRun.exerciseOverrides,
+    )
+  }, [preparedSession, slotSignature, sessionRun.exerciseOverrides])
+
+  /** Alternatives MD rattachées par bloc → index exo (prescrit). */
+  const mdAlternativesByBlock = useMemo(() => {
+    const map = new Map<number, Record<number, string[]>>()
+    if (!preparedSession) return map
+    for (const block of preparedSession.blocks) {
+      const built = buildBlockAlternativeGroups({
+        preparedExercises: block.exercises,
+        displayExercises: block.exercises,
+        fallbackOptions: block.fallbackOptions,
+      })
+      const byIndex: Record<number, string[]> = {}
+      for (const g of built.groups) {
+        if (g.mdAlternativeIds.length > 0) byIndex[g.exerciseIndex] = g.mdAlternativeIds
+      }
+      map.set(block.number, byIndex)
+    }
+    return map
+  }, [preparedSession])
 
   // ── Stats for the celebration screen ─────────────────────────────────────
   const celebrationStats = useMemo(() => {
@@ -665,6 +721,162 @@ export function SessionDetailPage() {
     runningCursor,
   ])
 
+  // Hooks variantes : AVANT tout early return (rules-of-hooks).
+  const resolveSlotExerciseId = useCallback(
+    (
+      session: NonNullable<typeof preparedSession>,
+      blockNumber: number,
+      exerciseIndex: number,
+    ): string | undefined => {
+      const exercise = session.blocks.find((b) => b.number === blockNumber)?.exercises[exerciseIndex]
+      if (!exercise) return undefined
+      return resolveExerciseIdForSessionRun(exercise.name ?? '', exercise.exerciseId)
+    },
+    [],
+  )
+
+  const getMdAlternativeIds = useCallback(
+    (blockNumber: number, exerciseIndex: number): string[] =>
+      mdAlternativesByBlock.get(blockNumber)?.[exerciseIndex] ?? [],
+    [mdAlternativesByBlock],
+  )
+
+  const handleOpenVariants = useCallback(
+    (blockNumber: number, exerciseIndex: number) => {
+      if (!preparedSession || !slotSignature) return
+      const prescribedId = resolveSlotExerciseId(preparedSession, blockNumber, exerciseIndex)
+      if (!prescribedId) return
+      if (
+        !hasExerciseVariantOptions(prescribedId, {
+          equipment: profile.equipment,
+          phaseContext: variantPhaseContext,
+          mdAlternativeIds: getMdAlternativeIds(blockNumber, exerciseIndex),
+        })
+      ) {
+        return
+      }
+      setVariantPicker({ blockNumber, exerciseIndex })
+    },
+    [
+      preparedSession,
+      slotSignature,
+      resolveSlotExerciseId,
+      profile.equipment,
+      variantPhaseContext,
+      getMdAlternativeIds,
+    ],
+  )
+
+  const handleHasVariants = useCallback(
+    (blockNumber: number, exerciseIndex: number) => {
+      if (!preparedSession) return false
+      const prescribedId = resolveSlotExerciseId(preparedSession, blockNumber, exerciseIndex)
+      if (!prescribedId) return false
+      return hasExerciseVariantOptions(prescribedId, {
+        equipment: profile.equipment,
+        phaseContext: variantPhaseContext,
+        mdAlternativeIds: getMdAlternativeIds(blockNumber, exerciseIndex),
+      })
+    },
+    [
+      preparedSession,
+      resolveSlotExerciseId,
+      profile.equipment,
+      variantPhaseContext,
+      getMdAlternativeIds,
+    ],
+  )
+
+  const variantPickerOptions = useMemo(() => {
+    if (!variantPicker || !preparedSession) return []
+    const prescribedId = resolveSlotExerciseId(
+      preparedSession,
+      variantPicker.blockNumber,
+      variantPicker.exerciseIndex,
+    )
+    if (!prescribedId) return []
+    return getExerciseVariantOptions(prescribedId, {
+      equipment: profile.equipment,
+      phaseContext: variantPhaseContext,
+      mdAlternativeIds: getMdAlternativeIds(
+        variantPicker.blockNumber,
+        variantPicker.exerciseIndex,
+      ),
+    })
+  }, [
+    variantPicker,
+    preparedSession,
+    resolveSlotExerciseId,
+    profile.equipment,
+    variantPhaseContext,
+    getMdAlternativeIds,
+  ])
+
+  const variantPickerPrescribedId = useMemo(() => {
+    if (!variantPicker || !preparedSession) return ''
+    return (
+      resolveSlotExerciseId(
+        preparedSession,
+        variantPicker.blockNumber,
+        variantPicker.exerciseIndex,
+      ) ?? ''
+    )
+  }, [variantPicker, preparedSession, resolveSlotExerciseId])
+
+  const variantPickerCurrentId = useMemo(() => {
+    if (!variantPicker || !adaptedSession) return variantPickerPrescribedId
+    return (
+      resolveSlotExerciseId(
+        adaptedSession,
+        variantPicker.blockNumber,
+        variantPicker.exerciseIndex,
+      ) ?? variantPickerPrescribedId
+    )
+  }, [variantPicker, adaptedSession, resolveSlotExerciseId, variantPickerPrescribedId])
+
+  const handleSelectVariant = useCallback(
+    (exerciseId: string) => {
+      if (!variantPicker || !slotSignature) return
+      const key = buildExerciseOverrideKey(
+        slotSignature,
+        variantPicker.blockNumber,
+        variantPicker.exerciseIndex,
+      )
+      if (exerciseId === variantPickerPrescribedId) {
+        sessionRun.setExerciseOverride(key, null)
+      } else {
+        sessionRun.setExerciseOverride(key, makeExerciseOverride(exerciseId, lang))
+      }
+      setVariantPicker(null)
+    },
+    [variantPicker, slotSignature, variantPickerPrescribedId, sessionRun, lang],
+  )
+
+  const handleResetVariant = useCallback(() => {
+    if (!variantPicker || !slotSignature) return
+    const key = buildExerciseOverrideKey(
+      slotSignature,
+      variantPicker.blockNumber,
+      variantPicker.exerciseIndex,
+    )
+    sessionRun.setExerciseOverride(key, null)
+    setVariantPicker(null)
+  }, [variantPicker, slotSignature, sessionRun])
+
+  const handleSelectVariantDirect = useCallback(
+    (blockNumber: number, exerciseIndex: number, exerciseId: string) => {
+      if (!slotSignature || !preparedSession) return
+      const prescribedId = resolveSlotExerciseId(preparedSession, blockNumber, exerciseIndex)
+      const key = buildExerciseOverrideKey(slotSignature, blockNumber, exerciseIndex)
+      if (!prescribedId || exerciseId === prescribedId) {
+        sessionRun.setExerciseOverride(key, null)
+      } else {
+        sessionRun.setExerciseOverride(key, makeExerciseOverride(exerciseId, lang))
+      }
+    },
+    [slotSignature, preparedSession, resolveSlotExerciseId, sessionRun, lang],
+  )
+
   if (hasHardBlock) {
     return (
       <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav">
@@ -694,9 +906,6 @@ export function SessionDetailPage() {
   // ── Décision moteur ────────────────────────────────────────────────────────
   const primarySource = surface?.primarySource ?? 'mother_session'
   const isUnavailable = primarySource === 'unavailable'
-
-  // `MS_TYPE_TO_SESSION_TYPE` reste exporté pour les appels en aval (RPEModal/celebration).
-
   const prehabs = getPrehab(profile.injuries)
 
   const handleStartSession = () => {
@@ -717,16 +926,12 @@ export function SessionDetailPage() {
     setCompletionOpen(true)
   }
 
-  // ── Handlers overlays D5 ─────────────────────────────────────────────────
-
   const handleStartEmomTimer = (blockNumber: number) => {
     setEmomBlockNumber(blockNumber)
   }
 
   const handleEmomComplete = () => {
     if (emomBlockNumber == null) return
-    // Marque tous les exos loggables du bloc EMOM comme validés (le chrono pilote
-    // un bloc entier — pas d'agrégation set-par-set).
     if (adaptedSession) {
       const block = adaptedSession.blocks.find((b) => b.number === emomBlockNumber)
       if (block) {
@@ -741,8 +946,6 @@ export function SessionDetailPage() {
     setEmomBlockNumber(null)
   }
 
-  // B3 — démo depuis le bouton œil (ToursBlock + WarmupBlock + Emom/Prehab, bloc #0).
-  // Même résolution que le moteur de séance (`resolveExerciseIdForSessionRun`).
   const handlePlayDemo = (blockNumber: number, exerciseIndex: number) => {
     if (!adaptedSession) return
     const exercise =
@@ -870,6 +1073,7 @@ export function SessionDetailPage() {
       setCelebrationOpen(false)
       setMsNotes('')
       setMsSaved(true)
+      if (slotSignature) sessionRun.clearExerciseOverridesForSlot(slotSignature)
       sessionRun.stop()
 
       const sessionLabel = formatTitleFromMotherSessionId(sessionIdForShare, lang)
@@ -1153,6 +1357,12 @@ export function SessionDetailPage() {
                   onStartEmomTimer={handleStartEmomTimer}
                   onStartIsoTimer={handleStartIsoTimer}
                   onPlayDemo={handlePlayDemo}
+                  onOpenVariants={handleOpenVariants}
+                  hasVariants={handleHasVariants}
+                  onSelectVariant={handleSelectVariantDirect}
+                  preparedSession={preparedSession}
+                  equipment={profile.equipment}
+                  variantPhaseContext={variantPhaseContext}
                   getLoadSuggestion={getLoadSuggestion}
                   getPreviousSessionSet={getPreviousSessionSet}
                   historyLogs={historyLogs}
@@ -1191,6 +1401,12 @@ export function SessionDetailPage() {
               onStartEmomTimer={handleStartEmomTimer}
               onStartIsoTimer={handleStartIsoTimer}
               onPlayDemo={handlePlayDemo}
+              onOpenVariants={handleOpenVariants}
+              hasVariants={handleHasVariants}
+              onSelectVariant={handleSelectVariantDirect}
+              preparedSession={preparedSession}
+              equipment={profile.equipment}
+              variantPhaseContext={variantPhaseContext}
               getLoadSuggestion={getLoadSuggestion}
               getPreviousSessionSet={getPreviousSessionSet}
               onLiveSetValidated={handleLiveSetValidated}
@@ -1358,6 +1574,17 @@ export function SessionDetailPage() {
         exerciseId={demoExerciseId}
         lang={lang}
         onClose={() => setDemoExerciseId(null)}
+      />
+
+      <ExerciseVariantPickerSheet
+        open={variantPicker != null}
+        lang={lang}
+        options={variantPickerOptions}
+        currentExerciseId={variantPickerCurrentId}
+        prescribedExerciseId={variantPickerPrescribedId}
+        onSelect={handleSelectVariant}
+        onResetToPrescribed={handleResetVariant}
+        onClose={() => setVariantPicker(null)}
       />
     </div>
   )

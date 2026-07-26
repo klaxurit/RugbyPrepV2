@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { Block, MotherSession } from '../../types/motherSession'
+import type { Equipment } from '../../types/training'
+import type { VariantPhaseContext } from '../../services/equipment/exerciseVariantOptions'
 import { tr } from '../../i18n/appLabels'
 import { buildExerciseTourKey, useSessionRun } from '../../contexts/SessionRunContext'
 import { detectBlockKind } from '../../services/session/detectBlockKind'
@@ -50,6 +52,16 @@ interface SessionBlocksProps {
   onStartIsoTimer?: (blockNumber: number, tourIndex: number, exerciseIndex: number) => void
   /** Demande au parent d'afficher la démo vidéo de l'exo. */
   onPlayDemo?: (blockNumber: number, exerciseIndex: number) => void
+  /** Demande au parent d'ouvrir le picker de variantes. */
+  onOpenVariants?: (blockNumber: number, exerciseIndex: number) => void
+  /** True si l’exo a des variantes sélectionnables. */
+  hasVariants?: (blockNumber: number, exerciseIndex: number) => boolean
+  /** Remplacement 1-clic depuis Alternatives. */
+  onSelectVariant?: (blockNumber: number, exerciseIndex: number, exerciseId: string) => void
+  /** Session avant overrides user (pour rattacher les Alternatives MD). */
+  preparedSession?: MotherSession | null
+  equipment?: Equipment[]
+  variantPhaseContext?: VariantPhaseContext
   /** Suggestion de charge Premium par exerciseId (undefined si non Premium ou no_data). */
   getLoadSuggestion?: (exerciseId: string) => LoadSuggestion | undefined
   /** Dernière série loggée (hors séance courante) par exerciseId + tourIndex. */
@@ -92,6 +104,12 @@ export function SessionBlocks({
   onStartEmomTimer,
   onStartIsoTimer,
   onPlayDemo,
+  onOpenVariants,
+  hasVariants,
+  onSelectVariant,
+  preparedSession = null,
+  equipment,
+  variantPhaseContext,
   getLoadSuggestion,
   getPreviousSessionSet,
   onLiveSetValidated,
@@ -203,8 +221,24 @@ export function SessionBlocks({
               onStartTimer={() => onStartEmomTimer?.(block.number)}
               notes={notes}
               fallbackOptions={fallbackOptions}
+              preparedExercises={
+                preparedSession?.blocks.find((b) => b.number === block.number)?.exercises
+              }
+              equipment={equipment}
+              variantPhaseContext={variantPhaseContext}
               lang={lang}
               onPlayDemo={onPlayDemo ? (i) => onPlayDemo(block.number, i) : undefined}
+              onOpenVariants={
+                onOpenVariants ? (i) => onOpenVariants(block.number, i) : undefined
+              }
+              hasVariants={
+                hasVariants ? (i) => hasVariants(block.number, i) : undefined
+              }
+              onSelectVariant={
+                onSelectVariant
+                  ? (i, exerciseId) => onSelectVariant(block.number, i, exerciseId)
+                  : undefined
+              }
             />
           )
         }
@@ -224,6 +258,17 @@ export function SessionBlocks({
               validatedByIdx={validatedByIdx}
               lang={lang}
               onPlayDemo={onPlayDemo ? (i) => onPlayDemo(block.number, i) : undefined}
+              onOpenVariants={
+                onOpenVariants ? (i) => onOpenVariants(block.number, i) : undefined
+              }
+              hasVariants={
+                hasVariants ? (i) => hasVariants(block.number, i) : undefined
+              }
+              onSelectVariant={
+                onSelectVariant
+                  ? (i, exerciseId) => onSelectVariant(block.number, i, exerciseId)
+                  : undefined
+              }
               onValidateExo={(exoIdx) => {
                 validateExerciseSetFromBlock({
                   session,
@@ -239,6 +284,11 @@ export function SessionBlocks({
               onStartIso={(exoIdx) => onStartIsoTimer?.(block.number, 0, exoIdx)}
               notes={notes}
               fallbackOptions={fallbackOptions}
+              preparedExercises={
+                preparedSession?.blocks.find((b) => b.number === block.number)?.exercises
+              }
+              equipment={equipment}
+              variantPhaseContext={variantPhaseContext}
             />
           )
         }
@@ -302,6 +352,22 @@ export function SessionBlocks({
               }
             }}
             onPlayDemo={onPlayDemo ? (exoIdx) => onPlayDemo(block.number, exoIdx) : undefined}
+            onOpenVariants={
+              onOpenVariants ? (exoIdx) => onOpenVariants(block.number, exoIdx) : undefined
+            }
+            hasVariants={
+              hasVariants ? (exoIdx) => hasVariants(block.number, exoIdx) : undefined
+            }
+            onSelectVariant={
+              onSelectVariant
+                ? (exoIdx, exerciseId) => onSelectVariant(block.number, exoIdx, exerciseId)
+                : undefined
+            }
+            preparedExercises={
+              preparedSession?.blocks.find((b) => b.number === block.number)?.exercises
+            }
+            equipment={equipment}
+            variantPhaseContext={variantPhaseContext}
             onStartIso={(tourIdx, exoIdx) => onStartIsoTimer?.(block.number, tourIdx, exoIdx)}
             notes={notes}
             fallbackOptions={fallbackOptions}

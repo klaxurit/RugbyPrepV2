@@ -3,7 +3,8 @@ import { isBodyweightProgramTier } from './resolveEquipmentProgramTier'
 
 /**
  * Mapping full_gym → bodyweight pour les mother sessions publiées.
- * Étendre au fur et à mesure de la conversion MD (Transition, Hyp, etc.).
+ * Playoffs : le resolver réutilise les IDs in-season Full/Primer (déjà mappés).
+ * `FULL_BW_PLAYOFF_ACTIVATION_V1` reste hors map (orphelin — activation dédiée future).
  */
 export const BODYWEIGHT_MOTHER_SESSION_ID_MAP: Readonly<Record<string, string>> = {
   FULL_OFFSEASON_RECOVERY_A_V1: 'FULL_BW_OFFSEASON_RECOVERY_A_V1',

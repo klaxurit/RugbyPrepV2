@@ -29,7 +29,7 @@ Exercice `prescription`
 
 **Progression de difficulté BW** (quand la base devient trop facile sans matériel) :
 - Pompes : genoux → standard → pieds surélevés → diamant → tempo 3-1-3
-- Tractions : rowing table → rowing pieds sur chaise → traction assistée (corps + jambes)
+- **Pull (sans barre)** : rowing table / genoux fléchis → rowing inversé standard → pieds surélevés → tempo / sac. **Avec barre** : traction assistée → stricte → lestée (chaîne runtime `inverted_row_*` → `pull_up`)
 - Squat : 2 jambes → tempo → squat sauté → pistol assisté mur
 - Hinge : pont fessier → pont unilatéral → nordique excentrique assisté
 
@@ -526,12 +526,13 @@ Deload : semaine 4 de chaque mésocycle — réduire volume −30 %, garder l'in
 | A | `4×4–5` RIR 1–2 | BW : pompes lestées / déclinées lentes → PA : dips lestés → DB : développé lourd |
 | B | `4×3–4` | BW : pompes plyo → PA : dips explosifs |
 
-### Bloc 2 — Pull force
-- Format : `4 séries`, repos `2–3 min`
+### Bloc 2 — Pull force + contrast
+- Format : `4 tours`, repos `90–120s`
 
 | Slot | Prescription | Variantes |
 |------|--------------|-----------|
-| A | `4×4–6` | BW : rowing inversé pieds très surélevés → PB : tractions lestées (sac) → DB : rowing lourd |
+| A | `4×4–6` | BW : rowing inversé pieds surélevés → PB : tractions lestées (sac) → DB : rowing lourd |
+| B | `4×4` max speed | BW : rowing inversé standard explosif → PB : traction explosive |
 
 ### Bloc 3 — Push vertical + row
 - Format : `3 tours`, repos `90s`

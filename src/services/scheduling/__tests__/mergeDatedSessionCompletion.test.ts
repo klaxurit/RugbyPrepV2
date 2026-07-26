@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import type { DatedSession } from '../../../types/scheduling'
 import type { SessionLog } from '../../../types/training'
-import { mergeDatedSessionCompletion, motherSessionIdsLoggedThisWeek } from '../mergeDatedSessionCompletion'
+import {
+  findSessionLogForPlannedSlot,
+  mergeDatedSessionCompletion,
+  motherSessionIdsLoggedThisWeek,
+} from '../mergeDatedSessionCompletion'
 import type { ResolvedMotherSessionSlot } from '../../motherSession/resolveMotherSessionsForWeek'
 
 function mockSlot(sessionId: string): ResolvedMotherSessionSlot {
@@ -71,6 +75,12 @@ describe('mergeDatedSessionCompletion', () => {
     expect(merged[0].completionStatus).toBe('skipped')
   })
 
+  it('clears stale completed when log is gone', () => {
+    const sessions: DatedSession[] = [{ ...baseDated('MS_A'), completionStatus: 'completed' }]
+    const merged = mergeDatedSessionCompletion(sessions, [], '2026-04-07')
+    expect(merged[0].completionStatus).toBeUndefined()
+  })
+
   it('motherSessionIdsLoggedThisWeek ignores non-mother logs', () => {
     const logs: SessionLog[] = [{
       id: '1',
@@ -81,5 +91,69 @@ describe('mergeDatedSessionCompletion', () => {
     }]
     const set = motherSessionIdsLoggedThisWeek(logs, '2026-04-07')
     expect(set.size).toBe(0)
+  })
+})
+
+describe('findSessionLogForPlannedSlot', () => {
+  const lowerLog: SessionLog = {
+    id: 'log-lower',
+    dateISO: '2026-07-23T18:00:00.000Z',
+    week: 'W1',
+    sessionType: 'LOWER',
+    fatigue: 'OK',
+    programSource: 'mother_session',
+    motherSessionId: 'LOWER_OFFSEASON_FORCE_BRIDGE_V1',
+    durationMin: 1,
+  }
+  const upperLog: SessionLog = {
+    id: 'log-upper',
+    dateISO: '2026-07-21T18:00:00.000Z',
+    week: 'W1',
+    sessionType: 'UPPER',
+    fatigue: 'OK',
+    programSource: 'mother_session',
+    motherSessionId: 'UPPER_OFFSEASON_FORCE_BRIDGE_V1',
+    durationMin: 55,
+  }
+
+  it('ne prend pas le log Bas du même jour pour un Haut planifié', () => {
+    const found = findSessionLogForPlannedSlot([lowerLog, upperLog], {
+      motherSessionId: 'UPPER_OFFSEASON_FORCE_BRIDGE_V1',
+      plannedDateISO: '2026-07-23',
+      weekAnchorISO: '2026-07-26',
+      expectedSessionType: 'UPPER',
+    })
+    expect(found?.id).toBe('log-upper')
+  })
+
+  it('préfère le log du jour planifié quand plusieurs candidats existent', () => {
+    const upperSameDay: SessionLog = {
+      ...upperLog,
+      id: 'log-upper-thu',
+      dateISO: '2026-07-23T19:00:00.000Z',
+    }
+    const found = findSessionLogForPlannedSlot([upperLog, upperSameDay], {
+      motherSessionId: 'UPPER_OFFSEASON_FORCE_BRIDGE_V1',
+      plannedDateISO: '2026-07-23',
+      weekAnchorISO: '2026-07-26',
+    })
+    expect(found?.id).toBe('log-upper-thu')
+  })
+
+  it('repli legacy : date + sessionType si pas de motherSessionId', () => {
+    const legacy: SessionLog = {
+      id: 'legacy-upper',
+      dateISO: '2026-07-23T12:00:00.000Z',
+      week: 'W1',
+      sessionType: 'UPPER',
+      fatigue: 'OK',
+    }
+    const found = findSessionLogForPlannedSlot([legacy, lowerLog], {
+      motherSessionId: 'UPPER_OFFSEASON_FORCE_BRIDGE_V1',
+      plannedDateISO: '2026-07-23',
+      weekAnchorISO: '2026-07-26',
+      expectedSessionType: 'UPPER',
+    })
+    expect(found?.id).toBe('legacy-upper')
   })
 })

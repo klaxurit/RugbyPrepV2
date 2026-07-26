@@ -1,9 +1,13 @@
 import type { Block, Exercise } from '../../../types/motherSession'
+import type { Equipment } from '../../../types/training'
+import { RefreshCw } from 'lucide-react'
 import { Icon } from '../../ui'
 import { parseExerciseSetSpec } from '../../../services/ui/exerciseSetSpec'
 import { BlockHeader } from '../BlockHeader'
 import type { BlockState } from '../BlockStateChip'
 import { SessionNotes } from '../SessionNotes'
+import { BlockAlternativesPanel } from '../BlockAlternativesPanel'
+import type { VariantPhaseContext } from '../../../services/equipment/exerciseVariantOptions'
 import {
   localizeMotherSessionExerciseName,
   type Lang,
@@ -33,9 +37,15 @@ interface PrehabBlockProps {
   onStartIso?: (exoIdx: number) => void
   /** Fiche vidéo démo quand disponible dans le catalogue. */
   onPlayDemo?: (exoIdx: number) => void
+  onOpenVariants?: (exoIdx: number) => void
+  hasVariants?: (exoIdx: number) => boolean
+  onSelectVariant?: (exoIdx: number, exerciseId: string) => void
   notes?: readonly string[]
   /** Alternatives matériel (med ball → câble, etc.). */
   fallbackOptions?: readonly string[]
+  preparedExercises?: readonly Exercise[]
+  equipment?: Equipment[]
+  variantPhaseContext?: VariantPhaseContext
   lang?: Lang
 }
 
@@ -55,8 +65,14 @@ export function PrehabBlock({
   onValidateExo,
   onStartIso,
   onPlayDemo,
+  onOpenVariants,
+  hasVariants,
+  onSelectVariant,
   notes,
   fallbackOptions,
+  preparedExercises,
+  equipment,
+  variantPhaseContext,
   lang = 'fr',
 }: PrehabBlockProps) {
   return (
@@ -84,6 +100,9 @@ export function PrehabBlock({
               onPlayDemo={
                 onPlayDemo && prehabExerciseHasDemo(exo) ? () => onPlayDemo(i) : undefined
               }
+              onOpenVariants={
+                onOpenVariants && hasVariants?.(i) ? () => onOpenVariants(i) : undefined
+              }
               lang={lang}
             />
           ))}
@@ -95,13 +114,17 @@ export function PrehabBlock({
               label={tr('session_coaching_notes', lang)}
             />
           )}
-          {fallbackOptions && fallbackOptions.length > 0 && (
-            <SessionNotes
-              notes={fallbackOptions}
-              defaultOpen={false}
-              label={tr('session_alternatives', lang)}
-            />
-          )}
+          <BlockAlternativesPanel
+            preparedExercises={preparedExercises ?? block.exercises}
+            displayExercises={block.exercises}
+            fallbackOptions={fallbackOptions}
+            lang={lang}
+            equipment={equipment}
+            phaseContext={variantPhaseContext}
+            defaultOpen={false}
+            onOpenVariants={onOpenVariants}
+            onSelectVariant={onSelectVariant}
+          />
         </div>
       )}
     </div>
@@ -115,6 +138,7 @@ interface PrehabRowProps {
   onValidate: () => void
   onStartIso?: () => void
   onPlayDemo?: () => void
+  onOpenVariants?: () => void
   lang: Lang
 }
 
@@ -125,6 +149,7 @@ function PrehabRow({
   onValidate,
   onStartIso,
   onPlayDemo,
+  onOpenVariants,
   lang,
 }: PrehabRowProps) {
   // Détecte une prescription temps (ex: "2x15-20s/side") → propose un bouton iso.
@@ -169,6 +194,18 @@ function PrehabRow({
         </div>
         <div className="mt-0.5 text-[11px] tabular-nums text-fg-muted">{exo.prescription}</div>
       </div>
+
+      {onOpenVariants && (
+        <button
+          type="button"
+          onClick={onOpenVariants}
+          aria-label={tr('exercise_aria_variants', lang)}
+          data-testid="exercise-variants-btn"
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-app rf-focus-ring"
+        >
+          <RefreshCw size={14} color="var(--color-text-primary)" strokeWidth={1.8} aria-hidden />
+        </button>
+      )}
 
       {onPlayDemo && (
         <button

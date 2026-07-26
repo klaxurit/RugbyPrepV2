@@ -27,6 +27,10 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
     { exerciseId: 'push_horizontal__bench_press__dumbbell', requires: ['dumbbell', 'bench'] },
     { exerciseId: 'push_horizontal__bench_press__barbell', requires: ['barbell', 'bench'] },
   ],
+  'pull_horizontal__inverted_row__knees_bent': [
+    { exerciseId: 'pull_horizontal__inverted_row__knees_bent', requires: [] },
+    { exerciseId: 'pull_vertical__pull_up__neutral', requires: ['pullup_bar'] },
+  ],
   'pull_horizontal__inverted_row__standard': [
     { exerciseId: 'pull_horizontal__inverted_row__standard', requires: [] },
     { exerciseId: 'pull_vertical__pull_up__neutral', requires: ['pullup_bar'] },
@@ -36,6 +40,10 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
     { exerciseId: 'pull_horizontal__inverted_row__feet_elevated', requires: [] },
     { exerciseId: 'pull_vertical__pull_up__neutral', requires: ['pullup_bar'] },
     { exerciseId: 'pull_horizontal__one_arm_row__dumbbell', requires: ['dumbbell', 'bench'] },
+  ],
+  'lower_lunge__reverse_lunge__bodyweight': [
+    { exerciseId: 'lower_lunge__reverse_lunge__bodyweight', requires: [] },
+    { exerciseId: 'lower_lunge__reverse_lunge__dumbbell', requires: ['dumbbell'] },
   ],
   'push_vertical__pike_push_up__bodyweight': [
     { exerciseId: 'push_vertical__pike_push_up__bodyweight', requires: [] },

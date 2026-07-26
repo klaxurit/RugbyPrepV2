@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { syncRestEndNotifications, getSessionReturnUrl } from '../services/notifications/restEndNotifications'
+import type { ExerciseOverride } from '../services/session/exerciseOverrides'
+import { stripOverridesForSlot } from '../services/session/exerciseOverrides'
 
 /**
  * Session run state machine — tracks the "En cours" mode of a workout session.
@@ -14,6 +16,9 @@ import { syncRestEndNotifications, getSessionReturnUrl } from '../services/notif
  *   - blockNumber : numéro du bloc (stable, cf. Block.number)
  *   - tourIndex   : 0-based
  *   - exerciseIndex : 0-based, position dans block.exercises
+ *
+ * Overrides de variantes : `${slotSignature}:${blockNumber}:${exerciseIndex}`
+ * (persistés indépendamment du statut running, TTL 7j).
  */
 
 export type SessionRunStatus = 'idle' | 'running'
@@ -44,6 +49,11 @@ export interface SessionRunValue {
   completedExercises: Set<string>
   /** Premium only : charges/reps saisies par étape. */
   exerciseTourLoads: Record<string, ExerciseTourLoad>
+  /**
+   * Remplacements d’exos choisis par l’utilisateur.
+   * Clé : `${slotSignature}:${blockNumber}:${exerciseIndex}`.
+   */
+  exerciseOverrides: Record<string, ExerciseOverride>
   start: (sessionKey: string) => void
   stop: () => void
   /** Check if user has a running session matching the given sessionKey. */
@@ -53,6 +63,10 @@ export interface SessionRunValue {
   resetCompleted: () => void
   /** Met à jour kg/reps pour une étape (premium). */
   setExerciseTourLoad: (key: string, patch: ExerciseTourLoad) => void
+  /** Remplace (ou annule) l’exo d’un créneau. */
+  setExerciseOverride: (key: string, override: ExerciseOverride | null) => void
+  /** Purge les overrides d’un slot (après finalisation). */
+  clearExerciseOverridesForSlot: (slotSignature: string) => void
   /** Rest timer state. null = idle. */
   restTimer: RestTimerState | null
   startRestTimer: (seconds: number, label?: string) => void
@@ -63,13 +77,20 @@ export interface SessionRunValue {
 const SessionRunContext = createContext<SessionRunValue | null>(null)
 
 const STORAGE_KEY = 'rf.sessionRun.v1'
+const OVERRIDES_STORAGE_KEY = 'rf.exerciseOverrides.v1'
 const EXPIRY_MS = 24 * 60 * 60 * 1000
+const OVERRIDES_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000
 
 interface PersistedState {
   sessionKey: string
   startedAt: number
   completedExercises: string[]
   exerciseTourLoads?: Record<string, ExerciseTourLoad>
+}
+
+interface PersistedOverrides {
+  updatedAt: number
+  overrides: Record<string, ExerciseOverride>
 }
 
 function readPersisted(): PersistedState | null {
@@ -102,12 +123,44 @@ function writePersisted(state: PersistedState | null) {
   }
 }
 
+function readPersistedOverrides(): Record<string, ExerciseOverride> {
+  if (typeof window === 'undefined') return {}
+  try {
+    const raw = window.localStorage.getItem(OVERRIDES_STORAGE_KEY)
+    if (!raw) return {}
+    const parsed = JSON.parse(raw) as PersistedOverrides
+    if (!parsed || typeof parsed.updatedAt !== 'number' || !parsed.overrides) return {}
+    if (Date.now() - parsed.updatedAt > OVERRIDES_EXPIRY_MS) {
+      window.localStorage.removeItem(OVERRIDES_STORAGE_KEY)
+      return {}
+    }
+    return parsed.overrides
+  } catch {
+    return {}
+  }
+}
+
+function writePersistedOverrides(overrides: Record<string, ExerciseOverride>) {
+  if (typeof window === 'undefined') return
+  try {
+    if (Object.keys(overrides).length === 0) {
+      window.localStorage.removeItem(OVERRIDES_STORAGE_KEY)
+    } else {
+      const payload: PersistedOverrides = { updatedAt: Date.now(), overrides }
+      window.localStorage.setItem(OVERRIDES_STORAGE_KEY, JSON.stringify(payload))
+    }
+  } catch {
+    // ignore quota
+  }
+}
+
 export function SessionRunProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<SessionRunStatus>('idle')
   const [sessionKey, setSessionKey] = useState<string | null>(null)
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const [completedExercises, setCompletedExercises] = useState<Set<string>>(new Set())
   const [exerciseTourLoads, setExerciseTourLoads] = useState<Record<string, ExerciseTourLoad>>({})
+  const [exerciseOverrides, setExerciseOverrides] = useState<Record<string, ExerciseOverride>>({})
   const [restTimer, setRestTimer] = useState<RestTimerState | null>(null)
 
   useEffect(() => {
@@ -120,6 +173,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       setCompletedExercises(new Set(persisted.completedExercises))
       setExerciseTourLoads(persisted.exerciseTourLoads ?? {})
     }
+    setExerciseOverrides(readPersistedOverrides())
   }, [])
 
   const persist = useCallback(
@@ -151,6 +205,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       setStartedAt(now)
       setCompletedExercises(new Set())
       setExerciseTourLoads({})
+      // Les overrides de variantes survivent au start (choix fait en aperçu).
       persist({ sessionKey: key, startedAt: now, completedExercises: new Set(), exerciseTourLoads: {} })
     },
     [persist],
@@ -271,6 +326,27 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
     [persist, sessionKey, startedAt, completedExercises],
   )
 
+  const setExerciseOverride = useCallback((key: string, override: ExerciseOverride | null) => {
+    setExerciseOverrides((prev) => {
+      const next = { ...prev }
+      if (override == null) {
+        delete next[key]
+      } else {
+        next[key] = override
+      }
+      writePersistedOverrides(next)
+      return next
+    })
+  }, [])
+
+  const clearExerciseOverridesForSlot = useCallback((slotSignature: string) => {
+    setExerciseOverrides((prev) => {
+      const next = stripOverridesForSlot(prev, slotSignature)
+      writePersistedOverrides(next)
+      return next
+    })
+  }, [])
+
   const value = useMemo<SessionRunValue>(
     () => ({
       status,
@@ -278,6 +354,7 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       startedAt,
       completedExercises,
       exerciseTourLoads,
+      exerciseOverrides,
       start,
       stop,
       isRunningFor,
@@ -285,12 +362,34 @@ export function SessionRunProvider({ children }: { children: ReactNode }) {
       unmarkExerciseDone,
       resetCompleted,
       setExerciseTourLoad,
+      setExerciseOverride,
+      clearExerciseOverridesForSlot,
       restTimer,
       startRestTimer,
       adjustRestTimer,
       skipRestTimer,
     }),
-    [status, sessionKey, startedAt, completedExercises, exerciseTourLoads, start, stop, isRunningFor, markExerciseDone, unmarkExerciseDone, resetCompleted, setExerciseTourLoad, restTimer, startRestTimer, adjustRestTimer, skipRestTimer],
+    [
+      status,
+      sessionKey,
+      startedAt,
+      completedExercises,
+      exerciseTourLoads,
+      exerciseOverrides,
+      start,
+      stop,
+      isRunningFor,
+      markExerciseDone,
+      unmarkExerciseDone,
+      resetCompleted,
+      setExerciseTourLoad,
+      setExerciseOverride,
+      clearExerciseOverridesForSlot,
+      restTimer,
+      startRestTimer,
+      adjustRestTimer,
+      skipRestTimer,
+    ],
   )
 
   return <SessionRunContext.Provider value={value}>{children}</SessionRunContext.Provider>
@@ -303,6 +402,7 @@ const NOOP_VALUE: SessionRunValue = {
   startedAt: null,
   completedExercises: new Set(),
   exerciseTourLoads: {},
+  exerciseOverrides: {},
   start: () => {},
   stop: () => {},
   isRunningFor: () => false,
@@ -310,6 +410,8 @@ const NOOP_VALUE: SessionRunValue = {
   unmarkExerciseDone: () => {},
   resetCompleted: () => {},
   setExerciseTourLoad: () => {},
+  setExerciseOverride: () => {},
+  clearExerciseOverridesForSlot: () => {},
   restTimer: null,
   startRestTimer: () => {},
   adjustRestTimer: () => {},

@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import type { DatedSession, DayOfWeek, PresentedMatchEvent } from '../../types/scheduling'
 import type { MotherSessionType } from '../../types/motherSession'
 import type { SessionLog } from '../../types/training'
+import { mapMotherSessionType } from '../../services/program/buildProgramSessionLog'
+import { findSessionLogForPlannedSlot } from '../../services/scheduling/mergeDatedSessionCompletion'
 import { Icon, Pill, SectionLabel, type IconName } from '../ui'
 
 const SESSION_SUBTITLE: Record<MotherSessionType, string> = {
@@ -191,16 +193,19 @@ export function WeekDailyPlanner({
       else if (isUnavailable) type = 'unavailable'
       else type = 'rest'
 
-      // Durée affichée : préfère la durée RÉELLE loguée pour la cohérence avec
-      // le total Volume du mois. Fallback sur la durée prévue (targetDuration)
-      // pour les séances pas encore faites.
-      const dayLog = logs?.find(
-        (l) =>
-          l.dateISO.slice(0, 10) === dateISO &&
-          l.sessionType !== 'ACTIVE_RECOVERY' &&
-          l.sessionType !== 'RECOVERY',
-      )
-      const realDuration = dayLog?.durationMin
+      // Log de la séance PLANIFIÉE (par motherSessionId), pas « n'importe quel
+      // log du jour » — sinon Haut planifié + Bas fait le même jour → revue inversée.
+      const matchedLog = session
+        ? findSessionLogForPlannedSlot(logs, {
+            motherSessionId: session.sessionSlot.sessionId,
+            plannedDateISO: dateISO,
+            weekAnchorISO: todayISO,
+            expectedSessionType: mapMotherSessionType(
+              session.sessionSlot.session.metadata.sessionType,
+            ),
+          })
+        : undefined
+      const realDuration = matchedLog?.durationMin
       const targetDuration = session
         ? (parseTargetDuration(session.sessionSlot.session.metadata.targetDuration) ?? undefined)
         : undefined
@@ -223,9 +228,11 @@ export function WeekDailyPlanner({
         blocs: session?.sessionSlot.session.blocks?.length,
         durationMin: realDuration ?? targetDuration,
         durationIsActual: realDuration != null,
-        isCompleted: session?.completionStatus === 'completed' || dayLog != null,
+        // « Faite » seulement s'il existe un log rejouable — sinon CTA « Revoir »
+        // sans sessionLogId (clic → démarrer) après une annulation partielle.
+        isCompleted: matchedLog != null,
         isSkipped: session?.completionStatus === 'skipped',
-        sessionLogId: dayLog?.id,
+        sessionLogId: matchedLog?.id,
         match: match ?? undefined,
         arDone: arDoneByDate.has(dateISO),
         arEligible: activeRecoveryEligibleDays.includes(dow),
@@ -539,7 +546,7 @@ function GymCard({ day, onStart }: { day: ResolvedDay; onStart: () => void }) {
             className="flex h-[46px] flex-1 items-center justify-center gap-2 rounded-[14px] bg-app text-brand text-[13px] font-extrabold uppercase tracking-[0.04em] active:scale-[0.97] transition-transform disabled:opacity-50 disabled:active:scale-100 rf-focus-ring"
           >
             <Icon name="play" size={11} color="var(--color-accent)" />
-            {day.isCompleted ? 'Revoir la séance' : 'Démarrer'}
+            {day.sessionLogId ? 'Revoir la séance' : 'Démarrer'}
           </button>
         </div>
       </div>

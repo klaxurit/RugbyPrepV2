@@ -435,8 +435,9 @@ describe('SessionDetailPage · annual-first', () => {
     // pour vérifier le contenu adapté (Fondations) de chaque bloc.
     screen.getAllByRole('button', { expanded: false }).forEach((btn) => fireEvent.click(btn))
 
-    expect(screen.getByText('Presse à cuisses')).toBeInTheDocument()
-    expect(screen.getByText('Curl ischios machine')).toBeInTheDocument()
+    // Le libellé peut apparaître plusieurs fois (exo prescrit + card Alternatives).
+    expect(screen.getAllByText('Presse à cuisses').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Curl ischios machine').length).toBeGreaterThan(0)
     expect(screen.queryByText('Pin Back Squat')).toBeNull()
     expect(screen.queryByText('Nordic Curl')).toBeNull()
     // Refonte UI mai 2026 : "Fondations" apparaît à la fois en tag du HeroIdle

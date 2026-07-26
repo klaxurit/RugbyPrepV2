@@ -1989,6 +1989,8 @@ const TEXT_EXACT_FR: Record<string, string> = {
     'Plyo dans les 15-20 s après A — vitesse de poussée max, les mains quittent le sol.',
   'Plyo within 15-20s of A — hands leave ground.':
     'Plyo dans les 15-20 s après A — les mains quittent le sol.',
+  'Contrast B within 15-20s: slightly easier angle so the pull can be truly explosive (chest to bar, fast concentric). Mirrors gym pull-up + slam intent.':
+    'Contraste B dans les 15-20 s : angle un peu plus facile pour un tirage vraiment explosif (poitrine à la barre, concentrique rapide). Même intention qu’une traction + slam en salle.',
   'Ramp-up is critical before heavy loading — take 2-3 sets to reach working weight.':
     'La montée en charge est critique avant le travail lourd — prendre 2-3 séries pour atteindre le poids de travail.',
   'Nordic curl: controlled eccentric, assist concentric if needed.':
@@ -2671,6 +2673,8 @@ const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [
   [/\bclearly\b/gi, 'clairement'],
   [/\benough\b/gi, 'suffisamment'],
   [/\bslightly\b/gi, 'légèrement'],
+  [/\blégèrement easier\b/gi, 'légèrement plus facile'],
+  [/\beasier angle\b/gi, 'angle plus facile'],
   [/\bheavier\b/gi, 'plus lourd'],
   [/\blighter\b/gi, 'plus léger'],
   [/\bcleaner\b/gi, 'plus propre'],
