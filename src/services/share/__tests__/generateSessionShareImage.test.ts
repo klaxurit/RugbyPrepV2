@@ -8,6 +8,19 @@ import {
   SESSION_SHARE_WIDTH,
   type SessionSharePayload,
 } from '../sessionShareTypes'
+import {
+  buildSessionShareCardHtml,
+  buildSessionShareCardModel,
+  formatShareTitleHtml,
+} from '../buildSessionShareCardHtml'
+
+vi.mock('html-to-image', () => ({
+  toBlob: vi.fn(async () => new Blob(['fake-png'], { type: 'image/png' })),
+}))
+
+vi.mock('../sessionShareCard.css?raw', () => ({
+  default: '.rf-share-card{width:1080px;height:1920px}',
+}))
 
 const payload: SessionSharePayload = {
   sessionLabel: 'Haut du corps · Force',
@@ -26,6 +39,13 @@ const payload: SessionSharePayload = {
   ],
   congratLine: 'Bravo pour ta séance !',
   purposeLine: 'Cette séance développe la force (haut du corps).',
+  firstName: 'Jean',
+  displayName: 'Jean Dupont',
+  positionLabel: '1ère ligne',
+  clubName: 'JO Pradéenne',
+  dateLabel: 'Vendredi 8 mai',
+  weekLabel: 'Semaine 19',
+  sessionOrdinalLabel: 'Séance 3/5',
 }
 
 function mockImageLoad() {
@@ -35,11 +55,15 @@ function mockImageLoad() {
     src: string
     width: number
     height: number
+    complete: boolean
+    naturalWidth: number
   }) {
     this.onload = null
     this.onerror = null
     this.width = 800
     this.height = 800
+    this.complete = true
+    this.naturalWidth = 800
     Object.defineProperty(this, 'src', {
       set() {
         queueMicrotask(() => this.onload?.(new Event('load')))
@@ -51,81 +75,83 @@ function mockImageLoad() {
   } as unknown as typeof Image)
 }
 
-function mockCanvas2d() {
-  const ctx = {
-    fillStyle: '',
-    strokeStyle: '',
-    lineWidth: 1,
-    font: '',
-    textAlign: 'center' as CanvasTextAlign,
-    textBaseline: 'alphabetic' as CanvasTextBaseline,
-    createLinearGradient: () => ({ addColorStop: vi.fn() }),
-    createRadialGradient: () => ({ addColorStop: vi.fn() }),
-    fillRect: vi.fn(),
-    beginPath: vi.fn(),
-    moveTo: vi.fn(),
-    arcTo: vi.fn(),
-    closePath: vi.fn(),
-    fill: vi.fn(),
-    stroke: vi.fn(),
-    fillText: vi.fn(),
-    drawImage: vi.fn(),
-    measureText: (text: string) => ({ width: text.length * 18 }),
-  }
+describe('formatShareTitleHtml', () => {
+  it('casse le titre mockup sur 2 lignes', () => {
+    expect(formatShareTitleHtml('Bas du corps · Puissance')).toBe(
+      'Bas du corps<br>Puissance.',
+    )
+  })
+})
 
-  const canvas = {
-    width: 0,
-    height: 0,
-    getContext: () => ctx,
-    toBlob: vi.fn((cb: BlobCallback) => {
-      cb(new Blob(['fake-png'], { type: 'image/png' }))
-    }),
-  }
+describe('buildSessionShareCardHtml', () => {
+  it('reproduit la structure du mockup (stats plates, quote, footer CTA)', () => {
+    const model = buildSessionShareCardModel(payload, {
+      logoSrc: '/logo.png',
+      portraitSrc: '/avatar.png',
+    })
+    const html = buildSessionShareCardHtml(model)
 
-  const originalCreateElement = document.createElement.bind(document)
-  let canvasCalls = 0
-  vi.spyOn(document, 'createElement').mockImplementation((tag: string) => {
-    if (tag === 'canvas') {
-      canvasCalls += 1
-      if (canvasCalls === 1) return canvas as unknown as HTMLCanvasElement
-      // Offscreen pour punchBlackBackground
-      return {
-        width: 0,
-        height: 0,
-        getContext: () => ({
-          drawImage: vi.fn(),
-        }),
-      } as unknown as HTMLCanvasElement
-    }
-    return originalCreateElement(tag)
+    expect(html).toContain('class="rf-share-card"')
+    expect(html).toContain('Séance terminée')
+    expect(html).toContain('Haut du corps<br>Force.')
+    expect(html).toContain('Vendredi 8 mai · Semaine 19 · Séance 3/5')
+    expect(html).toContain('class="tag gold"')
+    expect(html).toContain('class="stats"')
+    expect(html).toContain('class="stat"')
+    expect(html).toContain('Record de séance')
+    // RPE 8 → « À fond, Jean. »
+    expect(html).toContain('&quot;À fond, Jean.&quot;')
+    expect(html).toContain('class="rpe-dots"')
+    expect(html).toContain('Jean Dupont')
+    expect(html).toContain('1ère ligne · JO Pradéenne')
+    expect(html).toContain('footer-cta')
+    expect(html).toContain('rugbyforge.fr')
+    // Pas de filigrane jour (ex. « 28 ») ni UI browse
+    expect(html).not.toContain('font-size:420px')
+    expect(html).not.toContain('browse')
+    expect(html).not.toContain('image-slot')
   })
 
-  return { canvas, ctx }
-}
+  it('n’affiche pas la bannière record sans vrai PR', () => {
+    const model = buildSessionShareCardModel(
+      { ...payload, prs: [] },
+      { logoSrc: '/logo.png', portraitSrc: '/avatar.png' },
+    )
+    expect(model.sessionRecord).toBeNull()
+    const html = buildSessionShareCardHtml(model)
+    expect(html).not.toContain('class="pr"')
+    expect(html).not.toContain('Record de séance')
+  })
+})
 
 describe('generateSessionShareImage', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+    document.querySelectorAll('[data-rf-share-host]').forEach((n) => n.remove())
   })
 
-  it('configure le canvas Stories et encode un PNG', async () => {
+  it('monte le mockup DOM et encode un PNG Stories', async () => {
     mockImageLoad()
-    const { canvas } = mockCanvas2d()
+    const { toBlob } = await import('html-to-image')
     const blob = await generateSessionShareImage(payload)
 
-    expect(canvas.toBlob).toHaveBeenCalled()
-    expect(canvas.width).toBe(SESSION_SHARE_WIDTH)
-    expect(canvas.height).toBe(SESSION_SHARE_HEIGHT)
+    expect(toBlob).toHaveBeenCalled()
+    const cardArg = vi.mocked(toBlob).mock.calls[0]?.[0] as HTMLElement
+    expect(cardArg.classList.contains('rf-share-card')).toBe(true)
     expect(blob.type).toBe('image/png')
+
+    const opts = vi.mocked(toBlob).mock.calls[0]?.[1] as {
+      width: number
+      height: number
+    }
+    expect(opts.width).toBe(SESSION_SHARE_WIDTH)
+    expect(opts.height).toBe(SESSION_SHARE_HEIGHT)
   })
 
-  it('accepte titre long + sans PR (free)', async () => {
+  it('accepte un payload free sans PR', async () => {
     mockImageLoad()
-    mockCanvas2d()
     const blob = await generateSessionShareImage({
       ...payload,
-      sessionLabel:
-        'Préparation physique complète bas du corps hypertrophie volume élevé',
       tonnageKg: null,
       prs: [],
       exerciseMaxLoads: [],
@@ -133,8 +159,6 @@ describe('generateSessionShareImage', () => {
       rpe: 3,
       fatigue: 'OK',
       lang: 'en',
-      congratLine: 'Nice work — session done.',
-      purposeLine: 'This session builds muscle size and work capacity (lower body).',
     })
     expect(blob.type).toBe('image/png')
   })

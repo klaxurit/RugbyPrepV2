@@ -36,6 +36,22 @@ export interface SessionSharePayload {
   congratLine: string
   /** Recap objectif de la séance (hors-image + free on-image). */
   purposeLine: string
+  /** Photo de profil (URL publique). Si absente / échec chargement → illustration Rufo. */
+  avatarUrl?: string | null
+  /** Prénom affiché sur le libellé d’intensité (ex. « Belle intensité, Jean »). */
+  firstName?: string | null
+  /** Nom complet sous l’avatar. */
+  displayName?: string | null
+  /** Poste / groupe de poste (ex. « 1ère ligne »). */
+  positionLabel?: string | null
+  /** Club (ex. « JO Pradéenne… »). */
+  clubName?: string | null
+  /** Date longue (ex. « Vendredi 8 mai »). */
+  dateLabel?: string | null
+  /** Semaine programme (ex. « Semaine 19 »). */
+  weekLabel?: string | null
+  /** Rang dans la semaine (ex. « Séance 3/5 »). */
+  sessionOrdinalLabel?: string | null
 }
 
 export type SessionShareTarget = 'system' | 'download'

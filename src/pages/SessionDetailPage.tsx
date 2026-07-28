@@ -58,6 +58,7 @@ import { SessionShareSheet } from '../components/session/SessionShareSheet'
 import type { SessionSharePayload } from '../services/share/sessionShareTypes'
 import { buildSessionShareIntent } from '../services/share/buildSessionShareIntent'
 import { collectSessionExerciseMaxLoads } from '../services/share/collectSessionExerciseMaxLoads'
+import { resolveShareFirstName } from '../services/share/resolveSessionShareDifficulty'
 import { getExerciseName } from '../data/exercises'
 import { computeSessionTonnage } from '../services/session/computeSessionTonnage'
 import { detectSessionPRs } from '../services/session/detectSessionPRs'
@@ -95,7 +96,8 @@ import {
 //  est utilisé en aval directement dans buildMotherSessionProgramSessionLog.)
 
 import { getToday } from '../services/ui/debugDateOverride'
-import { cyclePhaseLabel, trainingLevelLabel, tr } from '../i18n/appLabels'
+import { formatMatchDate } from '../services/program/formatMatchDateFr'
+import { cyclePhaseLabel, positionShortLabel, trainingLevelLabel, tr } from '../i18n/appLabels'
 
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
   let out = label
@@ -1089,6 +1091,30 @@ export function SessionDetailPage() {
             })
           : []
 
+      const displayName =
+        authState.user?.displayName?.trim() || profile.displayName?.trim() || null
+      const rawDate = formatMatchDate(today, lang)
+      const dateLabel = rawDate
+        ? rawDate.charAt(0).toUpperCase() + rawDate.slice(1)
+        : null
+      const weekNumber = surface.planningContext.weekNumber
+      const weekLabel =
+        weekNumber != null
+          ? lang === 'en'
+            ? `Week ${weekNumber}`
+            : `Semaine ${weekNumber}`
+          : null
+      const sessionsInWeek =
+        snapshot?.presentation?.sessions?.length ??
+        msResolution?.sessions?.length ??
+        0
+      const sessionOrdinalLabel =
+        sessionsInWeek > 0
+          ? lang === 'en'
+            ? `Session ${index + 1}/${sessionsInWeek}`
+            : `Séance ${index + 1}/${sessionsInWeek}`
+          : null
+
       const nextSharePayload: SessionSharePayload = {
         sessionLabel,
         durationMin: payload.durationMin,
@@ -1109,6 +1135,17 @@ export function SessionDetailPage() {
         exerciseMaxLoads,
         congratLine: intent.congratLine,
         purposeLine: intent.purposeLine,
+        avatarUrl: authState.user?.avatarUrl ?? profile.avatarUrl ?? null,
+        firstName: resolveShareFirstName(displayName),
+        displayName,
+        positionLabel: positionShortLabel(
+          profile.rugbyPosition ?? profile.position,
+          lang,
+        ),
+        clubName: profile.clubName?.trim() || null,
+        dateLabel,
+        weekLabel,
+        sessionOrdinalLabel,
       }
       setSharePayload(nextSharePayload)
       setShareOpen(true)

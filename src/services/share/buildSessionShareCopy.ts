@@ -34,7 +34,7 @@ export function formatShareFatigue(
 /** Texte court accompagnant l’image (WhatsApp, Messages, etc.). */
 export function buildSessionShareText(payload: SessionSharePayload): string {
   const { lang } = payload
-  const difficulty = resolveSessionShareDifficulty(payload.rpe, lang)
+  const difficulty = resolveSessionShareDifficulty(payload.rpe, lang, payload.firstName)
   const parts: string[] = []
 
   parts.push(payload.congratLine)

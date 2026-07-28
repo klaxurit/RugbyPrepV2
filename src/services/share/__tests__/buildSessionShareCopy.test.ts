@@ -7,7 +7,7 @@ import {
   formatShareTonnage,
 } from '../buildSessionShareCopy'
 import { buildSessionShareIntent } from '../buildSessionShareIntent'
-import { resolveSessionShareDifficulty } from '../resolveSessionShareDifficulty'
+import { resolveSessionShareDifficulty, resolveShareFirstName } from '../resolveSessionShareDifficulty'
 import { SESSION_SHARE_LANDING_URL } from '../sessionShareTypes'
 import type { SessionSharePayload } from '../sessionShareTypes'
 
@@ -117,5 +117,24 @@ describe('resolveSessionShareDifficulty', () => {
       imageSrc: '/images/illu/rufo_3.png',
     })
     expect(resolveSessionShareDifficulty(10, 'fr').tier).toBe('beast')
+  })
+
+  it('personnifie le libellé avec le prénom', () => {
+    expect(resolveSessionShareDifficulty(5, 'fr', 'Jean').label).toBe(
+      'Belle intensité, Jean',
+    )
+    expect(resolveSessionShareDifficulty(2, 'fr', 'Marie').label).toBe(
+      'Séance fluide, Marie',
+    )
+    expect(resolveSessionShareDifficulty(9, 'en', 'Alex').label).toBe('All-out, Alex')
+  })
+})
+
+describe('resolveShareFirstName', () => {
+  it('extrait le premier mot du display name', () => {
+    expect(resolveShareFirstName('Jean Dupont')).toBe('Jean')
+    expect(resolveShareFirstName('  Marie  ')).toBe('Marie')
+    expect(resolveShareFirstName(null)).toBeNull()
+    expect(resolveShareFirstName('')).toBeNull()
   })
 })
