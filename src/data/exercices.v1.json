@@ -1430,6 +1430,27 @@
     "videoUrl": "https://www.youtube.com/shorts/hhu1zJc40Cc"
   },
   {
+    "id": "calf__standing_raise__single_leg__bodyweight",
+    "exerciseId": "calf__standing_raise__single_leg__bodyweight",
+    "name": "Mollet unilatéral debout",
+    "nameFr": "Mollet unilatéral debout",
+    "pattern": "calf",
+    "equipment": [
+      "none"
+    ],
+    "metricType": "reps",
+    "tags": [
+      "lower",
+      "unilateral"
+    ],
+    "contraindications": [
+      "ankle_pain"
+    ],
+    "notes": "Une jambe, amplitude complète, appui léger pour l'équilibre si besoin.",
+    "defaultNotes": "Contrôle la descente. Alterne gauche / droite.",
+    "videoUrl": "https://www.youtube.com/shorts/hhu1zJc40Cc"
+  },
+  {
     "exerciseId": "tibialis__raise__bodyweight",
     "nameFr": "Relevé tibial",
     "metricType": "reps",
@@ -4901,8 +4922,8 @@
   {
     "id": "groin_adductors__copenhagen_plank__foot_elevated",
     "exerciseId": "groin_adductors__copenhagen_plank__foot_elevated",
-    "name": "Copenhagen Plank (foot elevated)",
-    "nameFr": "Copenhagen (pied surélevé)",
+    "name": "Copenhagen Plank (top foot elevated)",
+    "nameFr": "Copenhagen — pied haut sur chaise",
     "pattern": "groin_adductors",
     "equipment": [
       "none"

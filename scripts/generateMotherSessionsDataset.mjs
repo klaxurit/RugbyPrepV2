@@ -59,8 +59,25 @@ function compileParserBundle() {
   }
 
   const srcRoot = path.join(repoRoot, 'src')
+  const assetShimPath = path.join(cacheDir, 'asset-modules.d.ts')
+  fs.mkdirSync(cacheDir, { recursive: true })
+  fs.writeFileSync(
+    assetShimPath,
+    [
+      'declare module "*.png" { const src: string; export default src }',
+      'declare module "*.jpg" { const src: string; export default src }',
+      'declare module "*.jpeg" { const src: string; export default src }',
+      'declare module "*.svg" { const src: string; export default src }',
+      'declare module "*.webp" { const src: string; export default src }',
+      '',
+    ].join('\n'),
+    'utf8'
+  )
+
   const files = [
+    assetShimPath,
     path.join(srcRoot, 'types', 'motherSession.ts'),
+    path.join(srcRoot, 'services', 'ui', 'blockPresentation.ts'),
     path.join(srcRoot, 'services', 'motherSession', 'parseMotherSession.ts'),
     path.join(srcRoot, 'services', 'motherSession', 'parseAllMotherSessions.ts'),
   ]
@@ -70,7 +87,7 @@ function compileParserBundle() {
 
   const tsconfig = {
     compilerOptions: {
-      rootDir: srcRoot.replace(/\\/g, '/'),
+      rootDir: repoRoot.replace(/\\/g, '/'),
       outDir: compileOutDir.replace(/\\/g, '/'),
       module: 'CommonJS',
       moduleResolution: 'node10',
@@ -106,9 +123,24 @@ function compileParserBundle() {
 }
 
 function loadParseAllMotherSessions() {
-  const modPath = path.join(compileOutDir, 'services', 'motherSession', 'parseAllMotherSessions.js')
+  const modPath = path.join(compileOutDir, 'src', 'services', 'motherSession', 'parseAllMotherSessions.js')
   if (!fs.existsSync(modPath)) {
     fail(`Sortie tsc introuvable : ${modPath}`)
+  }
+  // blockPresentation importe des assets image ; créer des fichiers vides + stub CJS.
+  const assetsOut = path.join(compileOutDir, 'src', 'assets')
+  fs.mkdirSync(assetsOut, { recursive: true })
+  const assetsSrc = path.join(repoRoot, 'src', 'assets')
+  for (const name of fs.readdirSync(assetsSrc)) {
+    if (!/\.(png|jpe?g|svg|webp)$/i.test(name)) continue
+    fs.writeFileSync(path.join(assetsOut, name), '')
+  }
+  const Module = require('module')
+  const stub = function imageStub(module) {
+    module.exports = ''
+  }
+  for (const ext of ['.png', '.jpg', '.jpeg', '.svg', '.webp']) {
+    Module._extensions[ext] = stub
   }
   return require(modPath)
 }

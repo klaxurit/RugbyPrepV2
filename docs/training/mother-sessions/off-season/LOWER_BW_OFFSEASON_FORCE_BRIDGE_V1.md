@@ -41,7 +41,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Heavy A: slow 3-1-1 tempo or backpack load, `RIR 1-2`.
   - Jump within 15-20s of finishing A — exploit PAP.
   - If jump height drops, reduce load/tempo on A before cutting jumps.
-  - Upgrade A: `Goblet Squat` heavy if DB/KB available.
+  - Upgrade A: load the Bulgarian with DB/KB if available (keep unilateral).
   - Upgrade B: `Banded KB Swing` if band + KB; `Lateral Squat Jump` as horizontal contrast variant.
 
 ### Block 2 - Hinge Force + Dynamic Contrast

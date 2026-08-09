@@ -91,21 +91,22 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "DB Incline Bench Press",
+            "name": "Parallel Bar Dip",
             "prescription": "3x6-8"
           },
           {
-            "name": "Chest-Supported Row",
+            "name": "Half-Kneeling Cable Row",
             "prescription": "3x6-8"
           }
         ],
         "coachingNotes": [
           "This is your main push/pull renfo block.",
-          "Keep it strong and clean, not sloppy.",
-          "This block should feel useful and satisfying without turning into an upper-only session."
+          "Dips (not incline/flat bench — reserved for the UPPER session this week) into a strict cable row.",
+          "Automatic alternative if no dip bars: `Chair Dip` or `Landmine Press`."
         ],
         "fallbackOptions": [
-          "B: `Single-Arm DB Row`"
+          "A: `Chair Dip`",
+          "B: `Seated Cable Row`"
         ]
       },
       {
@@ -114,8 +115,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest",
         "exercises": [
           {
-            "name": "Hex Bar RDL",
-            "prescription": "3x6-8"
+            "name": "Single-Leg RDL",
+            "prescription": "3x6-8/side"
           },
           {
             "name": "Landmine Rotation",
@@ -123,11 +124,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "The main lift should support speed and robustness, not create two days of soreness.",
+          "Single-leg RDL (LOWER already covers trap bar / hip thrust this week): support speed without two days of soreness.",
           "The rotation work should stay crisp and athletic."
         ],
         "fallbackOptions": [
-          "A: `Barbell Hip Thrust`"
+          "A: `Kickstand RDL`"
         ]
       },
       {
@@ -314,8 +315,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, full rest `3 min`",
         "exercises": [
           {
-            "name": "Front Squat",
-            "prescription": "3x4-5"
+            "name": "Reverse Lunge",
+            "prescription": "3x5/side"
           },
           {
             "name": "Countermovement Jump",
@@ -323,12 +324,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "The front squat should stay sharp, upright, and braced.",
+          "Reverse lunge (not front/box squat — reserved for the LOWER session this week): sharp, upright, braced.",
           "The jump stays crisp and explosive.",
-          "This block opens the session with force support and athletic output, without duplicating the lower-day opening."
+          "This block opens with unilateral force + athletic output without duplicating the lower-day opening."
         ],
         "fallbackOptions": [
-          "A: `Box Squat`",
+          "A: `Rear-Foot Elevated Split Squat`",
           "B: `Broad Jump`"
         ]
       },
@@ -338,25 +339,22 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "Football Bar Bench Press",
+            "name": "Parallel Bar Dip",
             "prescription": "3x5-6"
           },
           {
-            "name": "Chest-Supported Row",
+            "name": "Half-Kneeling Cable Row",
             "prescription": "3x6-8"
           }
         ],
         "coachingNotes": [
           "This is the main upper renfo block.",
-          "Keep the push strong and the pull equally solid.",
-          "This block should feel robust and useful, not sloppy.",
-          "`Football Bar Bench Press` = neutral-grip football bar / Swiss bar bench press.",
-          "Automatic alternative if the bar is not available: `Neutral-Grip DB Bench Press`."
+          "Dips (not football-bar/flat bench — reserved for the UPPER session this week) into a strict cable row.",
+          "Automatic alternative if no dip bars: `Chair Dip` or `Landmine Press`."
         ],
         "fallbackOptions": [
-          "A1: `Neutral-Grip DB Bench Press`",
-          "A2: `Bench Press`",
-          "B: `Landmine Row`"
+          "A: `Chair Dip`",
+          "B: `Seated Cable Row`"
         ]
       },
       {
@@ -365,8 +363,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest",
         "exercises": [
           {
-            "name": "Hex Bar RDL",
-            "prescription": "3x6-8"
+            "name": "Single-Leg RDL",
+            "prescription": "3x6-8/side"
           },
           {
             "name": "Landmine Rotation",
@@ -374,11 +372,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "The hinge lift should support contact robustness and sprint support without excessive soreness.",
+          "Single-leg RDL (LOWER already covers bilateral hinge this week): support contact robustness without extra soreness.",
           "The rotation work should stay controlled and athletic."
         ],
         "fallbackOptions": [
-          "A: `Barbell Hip Thrust`",
+          "A: `Kickstand RDL`",
           "B: `Ab Wheel`"
         ]
       },
@@ -593,18 +591,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Decline Push-Up",
+            "name": "Chair Dip",
             "prescription": "3x5"
           },
           {
-            "name": "Rowing inversé pieds surélevés",
+            "name": "Neutral-Grip Pull-Up",
             "prescription": "3x5"
           }
         ],
         "coachingNotes": [
-          "Push lesté (sac) ou tempo lent — force utile sans fatigue excessive.",
-          "Variante A : développé haltères si banc + haltères.",
-          "Variante B : `Neutral-Grip Pull-Up` si barre de traction disponible."
+          "Chair dips (pas decline — réservé à UPPER cette semaine) — force utile sans fatigue excessive.",
+          "Pull-ups (pas rowing inversé — réservé à UPPER cette semaine).",
+          "Fallback A : `Archer Push-Up` ou `Parallel Bar Dip`.",
+          "Fallback B : `Face Pull Band` si pas de barre."
         ]
       },
       {
@@ -613,8 +612,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`2 rounds`, `75s` rest after the pair",
         "exercises": [
           {
-            "name": "Bulgarian Split Squat",
-            "prescription": "2x6/side"
+            "name": "Single-Leg Glute Bridge",
+            "prescription": "2x8/side"
           },
           {
             "name": "Side Plank",
@@ -622,9 +621,9 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Fente bulgare contrôlée — support unilatéral, pas de circuit.",
+          "Pont fessier unilatéral (pas Bulgarian — déjà sur LOWER cette semaine) — support hanche, pas de circuit.",
           "Variante B : `Pallof Press Hold` si élastique disponible.",
-          "`Front_row` : fente un peu plus lourde ; `Back_three` : fente plus explosive."
+          "`Front_row` : tempo plus contrôlé ; `Back_three` : lockout plus explosif."
         ]
       },
       {
@@ -741,13 +740,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x5"
           },
           {
-            "name": "Plyo Push-Up",
-            "prescription": "3x3-5"
+            "name": "Archer Push-Up",
+            "prescription": "3x3/side"
           }
         ],
         "coachingNotes": [
           "Pike explosif — intent overhead, pas de grind.",
-          "Plyo légères — mains quittent le sol, vitesse max.",
+          "Archer (pas plyo — déjà sur UPPER cette semaine) — intent unilatéral, vitesse contrôlée.",
           "Variante A : développé haltères léger si banc + haltères."
         ]
       },
@@ -757,8 +756,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`2-3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "Rowing inversé pieds surélevés",
-            "prescription": "2-3x5"
+            "name": "Face Pull Band",
+            "prescription": "2-3x8-10"
           },
           {
             "name": "Band Rotation Explosive",
@@ -766,7 +765,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Rowing rapide et propre — variante : tractions rapides si barre dispo.",
+          "Face pull (pas rowing inversé — déjà sur UPPER cette semaine) : priming scapulaire.",
           "Rotation explosive — variante : rotation au sol contrôlée sans élastique.",
           "Pas de chasse à la fatigue."
         ]
@@ -865,8 +864,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `3 min` rest between rounds",
         "exercises": [
           {
-            "name": "Nordic Eccentric",
-            "prescription": "3x4-5"
+            "name": "Kickstand RDL",
+            "prescription": "3x4-5/side"
           },
           {
             "name": "Broad Jump",
@@ -875,9 +874,9 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Nordiques stricts (3-4 s en descente) — viser la force, pas la chasse au volume.",
-          "Broad jump dans les 15-20 s après la série de nordiques.",
-          "Variante A : `Romanian Deadlift` lourd si haltères ou KB disponibles."
+          "Kickstand RDL (pas nordiques — déjà sur LOWER cette semaine) — viser la force, pas la chasse au volume.",
+          "Broad jump dans les 15-20 s après la série de RDL.",
+          "Variante A : `Single-Leg Glute Bridge` si bas du dos sensible."
         ]
       },
       {
@@ -886,19 +885,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `3 min` rest between rounds",
         "exercises": [
           {
-            "name": "Pike Push-Up",
+            "name": "Chair Dip",
             "prescription": "3x4"
           },
           {
-            "name": "Plyo Push-Up",
-            "prescription": "3x4, max height",
+            "name": "Band Rotation Explosive",
+            "prescription": "3x4/side",
             "role": "contrast"
           }
         ],
         "coachingNotes": [
-          "Pike (pas decline — réservé à la séance UPPER de la semaine) puis plyo explosive dans la fenêtre PAP.",
-          "Variante A : développé haltères assis si banc + haltères disponibles.",
-          "Réduire la charge sur A avant de couper les reps de plyo."
+          "Chair dips (pas pike/decline/plyo — déjà sur UPPER cette semaine) puis rotation explosive.",
+          "Fallback A : `Archer Push-Up` ou `Parallel Bar Dip`.",
+          "Réduire la difficulté sur A avant de couper les reps de contraste."
         ]
       },
       {
@@ -907,18 +906,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Rowing inversé pieds surélevés",
-            "prescription": "3x5"
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x4-5"
           },
           {
-            "name": "Bulgarian Split Squat",
-            "prescription": "3x5/side"
+            "name": "Single-Leg Glute Bridge",
+            "prescription": "3x6/side"
           }
         ],
         "coachingNotes": [
-          "Tirage et squat unilatéral de qualité force — stable, sans grind.",
-          "Variante A : tractions strictes si barre disponible.",
-          "Variante B : fente bulgare chargée si haltères disponibles."
+          "Pull-ups (pas rowing inversé — déjà sur UPPER) + pont fessier uni (pas Bulgarian — déjà sur LOWER).",
+          "Fallback A : `Face Pull Band` si pas de barre.",
+          "Variante B : hip thrust banc si haltères disponibles."
         ]
       },
       {
@@ -1020,14 +1019,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 work sets`, `2 min` rest between sets",
         "exercises": [
           {
-            "name": "Nordic Eccentric",
-            "prescription": "4x6-8"
+            "name": "Single-Leg Glute Bridge",
+            "prescription": "4x8-10/side"
           }
         ],
         "coachingNotes": [
-          "Around `RPE 6-8` — hypertrophy hinge, not max strength.",
-          "Excentrique 3-4 s ; mains au sol uniquement pour finir si nécessaire.",
-          "Fallback: `Kickstand RDL` heavy tempo if nordics not tolerated."
+          "Around `RPE 6-8` — hip extension hypertrophy (not nordics — already on LOWER this week).",
+          "Fallback: `Kickstand RDL` heavy tempo."
         ]
       },
       {
@@ -1036,19 +1034,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "Decline Push-Up",
+            "name": "Chair Dip",
             "prescription": "4x8-10"
           },
           {
-            "name": "Rowing inversé pieds surélevés",
-            "prescription": "4x8-10"
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "4x6-8"
           }
         ],
         "coachingNotes": [
-          "Volume haut du corps principal — sac à dos sur les pompes avant toute régression d'angle.",
-          "Upgrade row: strict pull-ups if bar available.",
-          "Fallback A: `Push-Up` with backpack load.",
-          "Fallback B: `Inverted Row Standard`."
+          "Chair dips (not decline — reserved for UPPER this week).",
+          "Pull-ups (not inverted row — reserved for UPPER this week).",
+          "Fallback A: `Archer Push-Up` or `Parallel Bar Dip`.",
+          "Fallback B: `Face Pull Band` if no bar."
         ]
       },
       {
@@ -1057,7 +1055,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "Bulgarian Split Squat",
+            "name": "Kickstand RDL",
             "prescription": "3x8-10/side"
           },
           {
@@ -1066,9 +1064,9 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Unilateral lower + trunk anti-extension/rotation without another leg day.",
+          "Unilateral hinge (not Bulgarian — already on LOWER this week) + trunk support.",
           "Bird dog : pause 2s en extension, pas de balancement.",
-          "Fallback A: `Reverse Lunge Bodyweight` if balance limits split work.",
+          "Fallback A: `Reverse Lunge Bodyweight` if hinge irritates low back.",
           "Upgrade B: `Pallof Press Hold` if band available."
         ]
       },
@@ -1379,7 +1377,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Inverted Row Standard",
-            "prescription": "2-3x8/side"
+            "prescription": "2-3x8"
           }
         ],
         "coachingNotes": [
@@ -1512,12 +1510,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x8"
           },
           {
-            "name": "Bodyweight Squat",
-            "prescription": "3x10"
+            "name": "Reverse Lunge Bodyweight",
+            "prescription": "3x8/side"
           }
         ],
         "coachingNotes": [
-          "Hinge pattern with bodyweight good morning; squat controlled `RPE 5-6`.",
+          "Hinge pattern with bodyweight good morning; reverse lunge (not BW squat — already on LOWER this week) `RPE 5-6`.",
           "Fallback: `Glute Bridge` if low back sensitive."
         ]
       },
@@ -1527,17 +1525,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Push-Up",
+            "name": "Chair Dip",
             "prescription": "3x8-10"
           },
           {
-            "name": "Inverted Row Standard",
-            "prescription": "3x8-10"
+            "name": "Face Pull Band",
+            "prescription": "3x10-12"
           }
         ],
         "coachingNotes": [
-          "Quality reps; elevate hands on push-up if needed.",
-          "Upgrade to decline push-up or feet-elevated row when easy."
+          "Chair dips (not decline push-up — reserved for UPPER this week).",
+          "Face pull (not inverted row — reserved for UPPER this week).",
+          "Fallback A: `Archer Push-Up`. Fallback B: `Inverted Row Standard` only if UPPER was skipped."
         ]
       },
       {
@@ -1714,8 +1713,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `3 min` rest between rounds",
         "exercises": [
           {
-            "name": "Nordic Eccentric",
-            "prescription": "4x3-4"
+            "name": "Kickstand RDL",
+            "prescription": "4x4/side"
           },
           {
             "name": "Broad Jump",
@@ -1724,7 +1723,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy hinge — DB/KB or strict nordic fallback.",
+          "Kickstand RDL (not nordics — already on LOWER this week) into broad jump.",
           "Broad jump: full hip extension, stick landing."
         ]
       },
@@ -1734,17 +1733,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `3 min` rest between rounds",
         "exercises": [
           {
-            "name": "Decline Push-Up",
+            "name": "Chair Dip",
             "prescription": "3x4"
           },
           {
-            "name": "Plyo Push-Up",
-            "prescription": "3x4",
+            "name": "Band Rotation Explosive",
+            "prescription": "3x4/side",
             "role": "contrast"
           }
         ],
         "coachingNotes": [
-          "Upgrade A: dumbbell bench if DB + bench."
+          "Chair dips (not decline/plyo — reserved for UPPER this week) into rotational power.",
+          "Fallback A: `Archer Push-Up` or `Parallel Bar Dip`.",
+          "Fallback B: `Med Ball Rotational Throw` if med ball available."
         ]
       },
       {
@@ -1753,8 +1754,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Rowing inversé pieds surélevés",
-            "prescription": "3x5"
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x4-5"
           },
           {
             "name": "Band Rotation Explosive",
@@ -1762,7 +1763,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Upgrade A: pull-up if bar available."
+          "Pull-ups (not inverted row feet-elevated — reserved for UPPER this week).",
+          "Fallback A: `Face Pull Band` if no bar."
         ]
       },
       {
@@ -1844,12 +1846,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 work sets`, `2-3 min` rest between sets",
         "exercises": [
           {
-            "name": "Nordic Eccentric",
-            "prescription": "3x5"
+            "name": "Single-Leg Glute Bridge",
+            "prescription": "3x8/side"
           }
         ],
         "coachingNotes": [
-          "Hinge force — nordiques stricts ou RDL si haltères disponibles."
+          "Hip extension force (not nordics — already on LOWER this week).",
+          "Upgrade: hip thrust on bench if DB + bench available."
         ]
       },
       {
@@ -1858,17 +1861,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "Decline Push-Up",
+            "name": "Chair Dip",
             "prescription": "3x6-8"
           },
           {
-            "name": "Rowing inversé pieds surélevés",
-            "prescription": "3x6-8/side"
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5-6"
           }
         ],
         "coachingNotes": [
-          "Upgrade A: dumbbell bench if DB + bench.",
-          "Upgrade B: `Neutral-Grip Pull-Up` if bar available."
+          "Chair dips (not decline push-up — reserved for UPPER this week).",
+          "Pull-ups (not inverted row feet-elevated — reserved for UPPER this week).",
+          "Fallback A: `Archer Push-Up` or `Parallel Bar Dip` if bars available.",
+          "Fallback B: `Face Pull Band` if no pull-up bar."
         ]
       },
       {
@@ -1877,7 +1882,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "Single-Leg Glute Bridge",
+            "name": "Kickstand RDL",
             "prescription": "3x6-8/side"
           },
           {
@@ -1886,7 +1891,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Upgrade A: hip thrust on bench if DB + bench available."
+          "Unilateral hinge support complementary to LOWER nordics."
         ]
       },
       {
@@ -1988,16 +1993,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Plyo Push-Up",
-            "prescription": "3x3-4"
+            "name": "Archer Push-Up",
+            "prescription": "3x3-4/side"
           },
           {
-            "name": "Rowing inversé pieds surélevés",
-            "prescription": "3x4"
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x3-4"
           }
         ],
         "coachingNotes": [
-          "Upgrade B: fast pull-up if bar available."
+          "Archer push-up (not decline/plyo — reserved for UPPER this week).",
+          "Pull-ups (not inverted row — reserved for UPPER this week).",
+          "Fallback A: `Chair Dip`. Fallback B: `Face Pull Band`."
         ]
       },
       {
@@ -2089,8 +2096,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, full rest `2-3 min`",
         "exercises": [
           {
-            "name": "Trap Bar Deadlift",
-            "prescription": "3x2-3 @ ~70-75%"
+            "name": "Barbell Hip Thrust",
+            "prescription": "3x3 @ ~70-75%, max intent"
           },
           {
             "name": "Countermovement Jump",
@@ -2100,11 +2107,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "coachingNotes": [
           "This block is about intent and fast force production, not fatigue.",
           "Rest must be long enough to keep each rep sharp.",
-          "The trap bar should move fast and clean, with no grinding reps.",
+          "Hip thrust (not trap bar — reserved for the LOWER session this week): fast lockout, clean reps.",
           "The jump should stay crisp and elastic without creating excessive eccentric stress before match day."
         ],
         "fallbackOptions": [
-          "A: `Back Squat` `3x3 @ ~70-75%`",
+          "A: `Single-Leg RDL` light `3x3/side`",
           "B: `Drop to Stick`"
         ]
       },
@@ -2138,8 +2145,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, full rest `90-120s`",
         "exercises": [
           {
-            "name": "Landmine Row",
-            "prescription": "3x5-6"
+            "name": "Face Pull",
+            "prescription": "3x8-10"
           },
           {
             "name": "Med Ball Throw",
@@ -2147,12 +2154,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "This block should stay ballistic and coordinated.",
+          "Face pull (not a heavy row — UPPER already covers rowing this week): scapular priming.",
           "Keep the throw/rotation low in volume and high in intent.",
           "No fatigue chasing here."
         ],
         "fallbackOptions": [
-          "A: `Power Pendlay Row`",
+          "A: `Band Pull-Apart`",
           "B: `Med Ball Scoop Throw` or `Landmine Rotation`"
         ]
       },
@@ -2316,8 +2323,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, full rest `2-3 min`",
         "exercises": [
           {
-            "name": "Banded Anderson Box Squat",
-            "prescription": "3x3 @ ~75-80% + band tension"
+            "name": "Reverse Lunge",
+            "prescription": "3x3/side @ light-moderate, max intent"
           },
           {
             "name": "Banded KB Swing",
@@ -2326,11 +2333,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ],
         "coachingNotes": [
           "This block is about intent and fast force production, not fatigue.",
-          "Each rep should feel aggressive and crisp from a stable position.",
+          "Reverse lunge (not box/anderson squat — reserved for the LOWER session this week): crisp and stable.",
           "Load should allow maximal concentric speed on every rep."
         ],
         "fallbackOptions": [
-          "A: `Box Squat`",
+          "A: `Rear-Foot Elevated Split Squat` light",
           "B: `Broad Jump`"
         ]
       },
@@ -2340,8 +2347,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, full rest `2-3 min`",
         "exercises": [
           {
-            "name": "Football Bar Bench Press",
-            "prescription": "3x5 @ ~70-75%"
+            "name": "Parallel Bar Dip",
+            "prescription": "3x5 @ controlled, crisp"
           },
           {
             "name": "Supine Med Ball Throw",
@@ -2349,16 +2356,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "The press stays sharp and technically clean.",
+          "Dips (not football-bar/flat bench — reserved for the UPPER session this week): sharp and technically clean.",
           "The throw stays ballistic and low-volume.",
           "This is a true game-week push primer, not a heavy bench block.",
-          "Use a load that allows maximal bar speed on every rep.",
-          "`Football Bar Bench Press` = neutral-grip football bar / Swiss bar bench press.",
-          "Automatic alternative if the bar is not available: `Neutral-Grip DB Bench Press`."
+          "Automatic alternative if no dip bars: `Chair Dip` or `Explosive Landmine Press`."
         ],
         "fallbackOptions": [
-          "A1: `Neutral-Grip DB Bench Press`",
-          "A2: `Bench Press`",
+          "A: `Chair Dip`",
           "B: `Med Ball Chest Pass`"
         ]
       },
@@ -2368,8 +2372,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, full rest `90-120s`",
         "exercises": [
           {
-            "name": "Landmine Row",
-            "prescription": "3x6"
+            "name": "Face Pull",
+            "prescription": "3x8-10"
           },
           {
             "name": "Landmine Rotation",
@@ -2377,12 +2381,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "This block should feel strong, coordinated, and posture-driven.",
-          "Keep the row clean and the trunk work athletic.",
+          "Face pull (not a heavy row — UPPER already covers rowing this week): posture and scapular priming.",
+          "Keep the trunk work athletic.",
           "No fatigue chasing."
         ],
         "fallbackOptions": [
-          "A: `Power Pendlay Row`",
+          "A: `Band Pull-Apart`",
           "B: `Med Ball Scoop Throw`"
         ]
       },
@@ -2508,7 +2512,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "title": "FULL_OFFSEASON_FORCE_BRIDGE_BACK_THREE_V1",
     "goal": [
       "Full-body force-bridge with back-three bias: horizontal projection, rotational power, reactive patterns.",
-      "Maintain bilateral anchors (trap bar + bench) while shifting contrasts toward sprint and open-field demands.",
+      "Maintain bilateral anchors (hip thrust + dips) while shifting contrasts toward sprint and open-field demands.",
       "Third weekly session for 3x frequency in Force-Bridge phase."
     ],
     "sessionIdentity": [
@@ -2536,7 +2540,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         }
       ],
       "notes": [
-        "Full-body activation. Ramp-up on trap bar before B1."
+        "Full-body activation. Ramp-up on hip thrust before B1."
       ]
     },
     "blocks": [
@@ -2546,7 +2550,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `3-4 min` rest",
         "exercises": [
           {
-            "name": "trap bar deadlift",
+            "name": "Barbell Hip Thrust",
             "prescription": "4x3-4 @ 85%",
             "role": "prime"
           },
@@ -2557,11 +2561,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Bilateral anchor + horizontal projection — sprint power transfer.",
+          "Hip thrust (not trap bar — already primed on LOWER BT this week) + horizontal projection — sprint power transfer.",
           "This replaces the box jump contrast of the front-row version."
         ],
         "fallbackOptions": [
-          "A: `Back Squat` + `Vertical Jump`"
+          "A: `Single-Leg RDL` heavy + `Vertical Jump`"
         ]
       },
       {
@@ -2570,7 +2574,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `90-120s` rest",
         "exercises": [
           {
-            "name": "DB Incline Bench Press",
+            "name": "Parallel Bar Dip",
             "prescription": "4x4-5"
           },
           {
@@ -2580,7 +2584,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Incline DB press (not flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.",
+          "Dips (not incline/flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.",
+          "Automatic alternative if no dip bars: `Chair Dip`.",
           "This replaces the plyo push-up contrast of the front-row version."
         ]
       },
@@ -2746,7 +2751,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `3-4 min` rest between rounds",
         "exercises": [
           {
-            "name": "trap bar deadlift",
+            "name": "Barbell Hip Thrust",
             "prescription": "4x4-5 @ 85-90%",
             "role": "prime"
           },
@@ -2757,12 +2762,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Trap bar deadlift: powerful hip extension, controlled descent.",
+          "Hip thrust (not trap bar — already primed on LOWER this week): powerful lockout, controlled descent.",
           "Box jump within 15-20s: stick the landing, full extension.",
           "This is the lower-body power developer of the session."
         ],
         "fallbackOptions": [
-          "A: `Back Squat` heavy (4x4-5)",
+          "A: `Single-Leg RDL` heavy (4x4/side)",
           "B: `Vertical Jump` if no box"
         ]
       },
@@ -2772,8 +2777,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "DB Incline Bench Press",
-            "prescription": "4x4-5 @ 85-90%"
+            "name": "Parallel Bar Dip",
+            "prescription": "4x4-5"
           },
           {
             "name": "plyo push-up",
@@ -2782,12 +2787,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Incline DB press (not flat bench — reserved for the UPPER session this week) into explosive plyo push-up.",
+          "Dips (not incline/flat bench — reserved for the UPPER session this week) into explosive plyo push-up.",
           "Plyo push-up: hands should leave the ground. Focus on speed of push.",
-          "If plyo quality drops, reduce incline load before cutting push-ups."
+          "If plyo quality drops, reduce dip difficulty before cutting push-ups.",
+          "Automatic alternative if no dip bars: `Chair Dip`."
         ],
         "fallbackOptions": [
-          "A: `Push Press` if no incline bench",
+          "A: `Chair Dip` or `Push Press`",
           "B: `Med Ball Chest Pass` if plyo push-ups too demanding"
         ]
       },
@@ -2797,7 +2803,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "reverse lunge",
+            "name": "Single-Leg RDL",
             "prescription": "3x5-6/side"
           },
           {
@@ -2806,12 +2812,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Lunge: force-grade reps (5-6), stable and controlled.",
+          "Single-leg RDL (not reverse lunge / RFESS — already on LOWER this week): force-grade, stable.",
           "Pallof: anti-rotation endurance to support trunk stability for contrast work.",
           "This block maintains single-leg balance and trunk integrity."
         ],
         "fallbackOptions": [
-          "A: `Split Squat` DB",
+          "A: `Kickstand RDL`",
           "B: `Dead Bug` if no band"
         ]
       },
@@ -2849,18 +2855,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     ],
     "positionAccent": [
       "Session is common for both groups.",
-      "`Front_row`: slightly more patience on trap bar setup; heavier incline loads tolerated.",
+      "`Front_row`: slightly more patience on hip-thrust setup; heavier dip loads tolerated.",
       "`Back_three`: slightly more emphasis on jump height and push-up speed."
     ],
     "injurySubstitutions": [
       {
         "area": "shoulder_pain",
         "remove": [
-          "`DB Incline Bench Press`",
+          "`Parallel Bar Dip`",
           "`Plyo Push-Up`"
         ],
         "replaceWith": [
-          "`Neutral-Grip DB Bench Press`",
+          "`Landmine Press` light",
           "`Med Ball Chest Pass`"
         ],
         "rehabFinisher": [
@@ -2871,11 +2877,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "area": "knee_pain",
         "remove": [
           "`Box Jump` if landing painful",
-          "`Reverse Lunge`"
+          "`Single-Leg RDL` if provocative"
         ],
         "replaceWith": [
           "`Countermovement Jump` reduced range",
-          "`Hip Thrust` 3x5"
+          "supported hip hinge variation"
         ],
         "rehabFinisher": [
           "controlled knee-friendly pattern"
@@ -2884,10 +2890,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "area": "low_back_pain",
         "remove": [
-          "`Trap Bar Deadlift` if bracing fails"
+          "`Barbell Hip Thrust` if bracing fails",
+          "`Single-Leg RDL` if provocative"
         ],
         "replaceWith": [
-          "`Hip Thrust` heavy (4x5)"
+          "`Single-Leg Glute Bridge` (4x6/side)"
         ],
         "rehabFinisher": [
           "breathing and trunk stiffness work"
@@ -2921,7 +2928,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "title": "FULL_OFFSEASON_HYPERTROPHY_BACK_THREE_V1",
     "goal": [
       "Full-body hypertrophy with back-three bias: rotational patterns, unilateral support, and lower-leg tissue quality.",
-      "Maintain trap bar as the bilateral hinge anchor.",
+      "Maintain hip thrust as the bilateral hinge/extension anchor.",
       "Prepare trunk transfer and multi-directional capacity for pre-season."
     ],
     "sessionIdentity": [
@@ -2943,7 +2950,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           "prescription": "1x8"
         },
         {
-          "name": "2 progressive ramp-up sets on trap bar",
+          "name": "2 progressive ramp-up sets on hip thrust",
           "prescription": ""
         }
       ],
@@ -2958,34 +2965,38 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 work sets`, `2 min` rest",
         "exercises": [
           {
-            "name": "trap bar deadlift",
-            "prescription": "4x6-8"
+            "name": "Barbell Hip Thrust",
+            "prescription": "4x8-10"
           }
         ],
         "coachingNotes": [
-          "Bilateral anchor. RPE 6-8, powerful but controlled."
+          "Hip thrust (not trap bar — LOWER BT already covers hinge this week). RPE 6-8, powerful but controlled."
         ],
         "fallbackOptions": [
-          "A: `Barbell Romanian Deadlift`"
+          "A: `Single-Leg Glute Bridge`"
         ]
       },
       {
         "number": 2,
-        "name": "Rotational Press / Unilateral Pull",
+        "name": "Vertical Push / Horizontal Pull",
         "format": "`4 rounds`, `90-120s` rest after pair",
         "exercises": [
           {
-            "name": "half-kneeling landmine press",
-            "prescription": "4x8-10/side"
+            "name": "Parallel Bar Dip",
+            "prescription": "4x8-10"
           },
           {
-            "name": "single-arm db row",
-            "prescription": "4x8-10/side"
+            "name": "Chest-Supported Row",
+            "prescription": "4x8-10"
           }
         ],
         "coachingNotes": [
-          "Rotational pressing + unilateral pulling: trunk transfer emphasis.",
-          "Both exercises challenge anti-rotation through the trunk."
+          "Dips + CSR (not landmine press / SA row — already on UPPER BT this week).",
+          "Automatic alternative if no dip bars: `Chair Dip` or `Seated DB Overhead Press`."
+        ],
+        "fallbackOptions": [
+          "A: `Chair Dip`",
+          "B: `Seated Cable Row`"
         ]
       },
       {
@@ -3086,7 +3097,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "coachingWarnings": [
       "Keep rotational throws controlled in hypertrophy phase.",
       "Do not add sets beyond the prescription.",
-      "Bilateral anchor (trap bar) stays non-negotiable."
+      "Bilateral anchor (hip thrust) stays non-negotiable."
     ],
     "sourceReferences": [
       "[off-season-periodization.md]",
@@ -3152,17 +3163,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 work sets`, `2 min` rest between sets",
         "exercises": [
           {
-            "name": "Trap Bar Deadlift",
-            "prescription": "4x6-8"
+            "name": "Barbell Hip Thrust",
+            "prescription": "4x8-10",
+            "restAfterSetSeconds": 120
           }
         ],
         "coachingNotes": [
-          "Keep the trap bar around `RPE 6-8`.",
-          "This is the anchor lift of the session, but it should stay clearly hypertrophy-oriented rather than max-strength oriented.",
+          "Keep the hip thrust around `RPE 6-8`.",
+          "Hip thrust (not trap bar / RDL — LOWER already covers those this week): hypertrophy-oriented hip extension.",
           "The lift should feel powerful and productive, not like testing."
         ],
         "fallbackOptions": [
-          "A: `Barbell Romanian Deadlift`"
+          "A: `Single-Leg Glute Bridge`"
         ]
       },
       {
@@ -3171,22 +3183,22 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "DB Incline Bench Press",
+            "name": "Parallel Bar Dip",
             "prescription": "4x8-10"
           },
           {
-            "name": "Single-Arm DB Row",
+            "name": "Half-Kneeling Cable Row",
             "prescription": "4x8-10/side"
           }
         ],
         "coachingNotes": [
-          "This block builds upper volume without copying the exact Upper Hypertrophy structure.",
+          "Dips + cable row (UPPER already has flat + incline bench and CSR this week — do not repeat them).",
           "Keep both exercises smooth, controlled, and full-range.",
-          "This should feel dense and useful, not sloppy."
+          "Automatic alternative if no dip bars: `Chair Dip`."
         ],
         "fallbackOptions": [
-          "A: `Neutral-Grip DB Bench Press`",
-          "B: `Chest-Supported Row`"
+          "A: `Chair Dip`",
+          "B: `Seated Cable Row`"
         ]
       },
       {
@@ -3195,7 +3207,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "Reverse Lunge",
+            "name": "Single-Leg RDL",
             "prescription": "3x8-10/side"
           },
           {
@@ -3204,12 +3216,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "This block gives the week one more unilateral lower exposure without turning it into another lower day.",
-          "Keep the lunge controlled and stable.",
+          "Single-leg RDL (LOWER already has RFESS this week): unilateral hinge without another squat-pattern day.",
           "Pallof should stay crisp and posture-driven."
         ],
         "fallbackOptions": [
-          "A: `Split Squat`",
+          "A: `Kickstand RDL`",
           "B: `Side Plank`"
         ]
       },
@@ -3810,17 +3821,17 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 work sets`, `2 min` rest between sets",
         "exercises": [
           {
-            "name": "Trap Bar Deadlift",
-            "prescription": "3x5"
+            "name": "Barbell Hip Thrust",
+            "prescription": "3x6-8"
           }
         ],
         "coachingNotes": [
-          "Keep the trap bar around `RPE 5-6`.",
-          "This is the anchor lift of the session, but it should still feel clearly submaximal.",
+          "Keep the hip thrust around `RPE 5-6`.",
+          "Hip thrust (not trap bar / RDL — LOWER already covers those this week): confident hip extension, clearly submaximal.",
           "The goal is to restore confident full-body force production, not to test strength."
         ],
         "fallbackOptions": [
-          "A: `DB Romanian Deadlift`"
+          "A: `Single-Leg Glute Bridge`"
         ]
       },
       {
@@ -3829,22 +3840,22 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "DB Incline Bench Press",
+            "name": "Parallel Bar Dip",
             "prescription": "3x8-10"
           },
           {
-            "name": "Single-Arm DB Row",
+            "name": "Half-Kneeling Cable Row",
             "prescription": "3x8-10/side"
           }
         ],
         "coachingNotes": [
-          "This block supports upper volume without repeating the exact structure of the Upper Transition session.",
+          "Dips + cable row (not incline/flat bench or CSR — reserved for UPPER this week).",
           "Keep both movements smooth, controlled, and technically clean.",
-          "This should feel like useful training, not like chasing a pump."
+          "Automatic alternative if no dip bars: `Chair Dip`."
         ],
         "fallbackOptions": [
-          "A: `Neutral-Grip DB Bench Press`",
-          "B: `Chest-Supported Row`"
+          "A: `Chair Dip`",
+          "B: `Seated Cable Row`"
         ]
       },
       {
@@ -3853,7 +3864,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `60-75s` rest after the pair",
         "exercises": [
           {
-            "name": "Reverse Lunge",
+            "name": "Rear-Foot Elevated Split Squat",
             "prescription": "3x6-8/side"
           },
           {
@@ -3862,7 +3873,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "The lunge restores unilateral support without loading it as hard as the Lower Transition session.",
+          "RFESS (not reverse lunge — already on LOWER this week): unilateral support without copying the Lower Transition session.",
           "Pallof holds should stay crisp and posture-driven.",
           "This block should finish the session with control and support, not fatigue."
         ],
@@ -4058,17 +4069,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "DB Incline Bench Press",
+            "name": "Parallel Bar Dip",
             "prescription": "3x6"
           },
           {
-            "name": "Single-Arm DB Row",
+            "name": "Half-Kneeling Cable Row",
             "prescription": "3x6-8/side"
           }
         ],
         "coachingNotes": [
           "This block should stay strong and useful, not flashy.",
-          "Keep the incline press controlled and the row strict.",
+          "Dips (not incline/flat bench — reserved for the UPPER session this week) into a strict cable row.",
+          "Automatic alternative if no dip bars: `Chair Dip` or `Neutral-Grip DB Bench Press`.",
           "This supports upper force retention without competing with the main upper session."
         ]
       },
@@ -4140,11 +4152,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "area": "shoulder_pain",
         "remove": [
-          "`DB Incline Bench Press`",
+          "`Parallel Bar Dip`",
           "sled only if arm position is aggravating"
         ],
         "replaceWith": [
-          "`Neutral-Grip DB Bench Press`",
+          "`Machine Chest Press` light or `Cable Press`",
           "`Carry` alternative or tolerated lower-body finish if sled setup is not tolerated"
         ],
         "rehabFinisher": [
@@ -4284,17 +4296,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
-            "name": "DB Incline Bench Press",
+            "name": "Parallel Bar Dip",
             "prescription": "3x6-8"
           },
           {
-            "name": "Single-Arm DB Row",
+            "name": "Half-Kneeling Cable Row",
             "prescription": "3x6-8/side"
           }
         ],
         "coachingNotes": [
           "This block should feel strong and useful, not flashy.",
-          "Keep the incline press controlled and the row strict.",
+          "Dips (not incline/flat bench — reserved for the UPPER session this week) into a strict cable row.",
+          "Automatic alternative if no dip bars: `Chair Dip` or `Neutral-Grip DB Bench Press`.",
           "This pair supports upper force development without repeating the exact structure of the main upper session."
         ]
       },
@@ -4365,11 +4378,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       {
         "area": "shoulder_pain",
         "remove": [
-          "`DB Incline Bench Press`",
+          "`Parallel Bar Dip`",
           "sled only if arm position is aggravating"
         ],
         "replaceWith": [
-          "`Neutral-Grip DB Bench Press`",
+          "`Machine Chest Press` light or `Cable Press`",
           "`Leg Press` or `Carry` alternative if sled setup is not tolerated"
         ],
         "rehabFinisher": [
@@ -4411,7 +4424,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     ],
     "coachingWarnings": [
       "Do not let the trap bar deadlift become a sloppy grind.",
-      "Do not turn the incline press/row pair into junk fatigue.",
+      "Do not turn the dips/row pair into junk fatigue.",
       "Do not overcook hip thrust volume just because it feels safe.",
       "Keep the sled work powerful and short.",
       "This session should feel constructive and complete, not like surviving an off-season monster day."
@@ -4543,12 +4556,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90-120s` rest after the triplet",
         "exercises": [
           {
-            "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x4-5"
+            "name": "Neutral-Grip Lat Pulldown",
+            "prescription": "3x5-6"
           },
           {
-            "name": "Chest-Supported Row",
-            "prescription": "3x5-6"
+            "name": "Single-Arm DB Row",
+            "prescription": "3x5-6/side"
           },
           {
             "name": "Barbell Hip Thrust",
@@ -4556,8 +4569,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Pull-ups : clean and forceful, not ugly weighted reps.",
-          "Chest-supported row : strict, no torso cheating — ajoute le volume pull manquant pour équilibrer le double-push de B2.",
+          "Lat pulldown (not pull-ups — reserved for the UPPER session this week): clean and forceful.",
+          "Single-arm DB row (not CSR — déjà programmé en UPPER cette semaine): strict, no torso cheating.",
           "Hip thrust : powerful and clean, no exaggerated lumbar extension. Main bilateral hip-extension exposure of the week.",
           "Ce triplet miroir le power pair B2 (Push Press + Chest Pass) pour équilibre push/pull rugby back-three (plaquage, ruck-over)."
         ]
@@ -4762,8 +4775,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, full rest `3 min`",
         "exercises": [
           {
-            "name": "Front Squat",
-            "prescription": "3x3 @ 80-85%"
+            "name": "Reverse Lunge",
+            "prescription": "3x4/side @ strong but fast"
           },
           {
             "name": "Broad Jump",
@@ -4771,13 +4784,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Front squat should stay sharp, upright, and strongly braced.",
+          "Reverse lunge (not front/box squat — reserved for the LOWER session this week): loaded, upright, and sharp.",
           "The jump stays crisp and explosive.",
-          "This block opens the session with lower-body force support and athletic output without duplicating the main lower-day opening.",
-          "Broad jump is used here to give a more horizontal projection feel than the main lower session."
+          "This block opens the session with lower-body force support and athletic output without duplicating the main lower-day opening."
         ],
         "fallbackOptions": [
-          "A: `Box Squat`",
+          "A: `Rear-Foot Elevated Split Squat`",
           "B: `Countermovement Jump`"
         ]
       },
@@ -4810,22 +4822,22 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90-120s` rest after the triplet",
         "exercises": [
           {
-            "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x4-5"
-          },
-          {
-            "name": "Chest-Supported Row",
+            "name": "Neutral-Grip Lat Pulldown",
             "prescription": "3x5-6"
           },
           {
-            "name": "Hex Bar RDL",
+            "name": "Seated Cable Row",
+            "prescription": "3x5-6"
+          },
+          {
+            "name": "Barbell Hip Thrust",
             "prescription": "3x4-5"
           }
         ],
         "coachingNotes": [
-          "Pull-ups : clean and forceful, not ugly weighted reps.",
-          "Chest-supported row : strict, no torso cheating — ajoute le volume pull manquant pour équilibrer le double-push de B2.",
-          "Hex bar RDL : support posterior-chain — upgrade 2→3 sets pour cohérence triplet.",
+          "Lat pulldown (not pull-ups — reserved for the UPPER session this week): clean and forceful.",
+          "Seated cable row : strict, no torso cheating — volume pull sans répéter T-Bar / CSR de l’UPPER.",
+          "Hip thrust : support posterior-chain (LOWER a déjà le RDL cette semaine).",
           "Ce triplet miroir le power pair B2 (Push Press + Chest Pass) pour équilibre push/pull rugby front-row (plaquage, maul)."
         ]
       },
@@ -5037,7 +5049,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "coachingNotes": [
           "Heavy A: backpack load or slow 3-1-1 tempo, `RIR 2-3` (~75-80% effort).",
           "Broad jump within 15-20s of A — powerful and crisp, not chased once quality drops.",
-          "Upgrade A: `Goblet Squat` heavy if DB/KB available.",
+          "Upgrade A: load the Bulgarian with DB/KB if available (keep unilateral).",
           "Upgrade B: `Squat Jump` if space limited; `Lateral Squat Jump` for back-three speed bias.",
           "This is force -> projection contrast, not a fatigue block.",
           "`Front_row`: slightly heavier load bias on A.",
@@ -5060,7 +5072,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ],
         "coachingNotes": [
           "Athletic support work — clean lockout on bridge, stable unilateral squat.",
-          "Upgrade A: `Romanian Deadlift` if DB/KB available.",
+          "Upgrade A: `Single-Leg Romanian Deadlift` if DB/KB available.",
           "Upgrade B: loaded Bulgarian if DB available.",
           "Fallback B: `Reverse Lunge Bodyweight` if balance limits split work.",
           "Keep `RIR 2-3` — useful, not draining."
@@ -5179,7 +5191,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           "Heavy A: slow 3-1-1 tempo or backpack load, `RIR 1-2`.",
           "Jump within 15-20s of finishing A — exploit PAP.",
           "If jump height drops, reduce load/tempo on A before cutting jumps.",
-          "Upgrade A: `Goblet Squat` heavy if DB/KB available.",
+          "Upgrade A: load the Bulgarian with DB/KB if available (keep unilateral).",
           "Upgrade B: `Banded KB Swing` if band + KB; `Lateral Squat Jump` as horizontal contrast variant."
         ]
       },
@@ -5334,7 +5346,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           "Around `RPE 6-8` — main hypertrophy driver for the lower session.",
           "Add backpack load or 3-1-3 tempo before switching to an easier variation.",
           "Fallback: `Reverse Lunge Bodyweight` only if single-leg balance is the limiter.",
-          "Upgrade: `Goblet Squat` if DB/KB available."
+          "Upgrade: load the Bulgarian with DB/KB if available (keep unilateral)."
         ]
       },
       {
@@ -5623,7 +5635,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy A: backpack or goblet if DB/KB, `RIR 1-2`.",
+          "Heavy A: backpack or DB held in goblet position on the Bulgarian if DB/KB, `RIR 1-2`.",
           "Jump within 15-20s of A — max intention, not volume.",
           "Upgrade B: `Banded KB Swing` if band available."
         ]
@@ -5747,7 +5759,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "coachingNotes": [
           "Anchor block — slow 3-1-1 tempo or backpack load, `RIR 1-2`.",
           "No collapse, no grinding — force construction, not testing.",
-          "Upgrade: `Goblet Squat` heavy if DB/KB available.",
+          "Upgrade: load the Bulgarian with DB/KB if available (keep unilateral).",
           "`Front_row`: slightly heavier load bias.",
           "`Back_three`: more explosive concentric intent on split squat."
         ]
@@ -5811,7 +5823,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Copenhagen: foot elevated mandatory.",
+          "Copenhagen: top foot/ankle elevated on a chair or bench (adductor plank).",
           "Upgrade B: `Farmer Carry` if DB/KB available.",
           "`Front_row`: heavier carry; `Back_three`: cleaner athletic carry."
         ]
@@ -5893,7 +5905,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "A: moderate load, max bar speed — goblet if DB/KB.",
+          "A: moderate load, max bar speed — Bulgarian with DB/KB if available (keep unilateral).",
           "B: CMJ or squat jump within 15-20s of A.",
           "`Front_row`: slightly heavier A; `Back_three`: longer sprint finisher."
         ]
@@ -5933,7 +5945,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         ],
         "coachingNotes": [
           "Upgrade A: band-resisted short sprint if band available.",
-          "Copenhagen: foot elevated mandatory."
+          "Copenhagen: top foot/ankle elevated on a chair or bench (adductor plank) — not related to the sprint."
         ]
       }
     ],
@@ -10734,10 +10746,6 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         {
           "name": "push-up",
           "prescription": "1x8"
-        },
-        {
-          "name": "band pull-apart",
-          "prescription": "1x8/side"
         },
         {
           "name": "2-3 progressive ramp-up sets on bench press",

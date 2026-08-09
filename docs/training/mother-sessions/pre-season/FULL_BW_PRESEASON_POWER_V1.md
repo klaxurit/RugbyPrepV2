@@ -36,10 +36,12 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Explosive Push / Pull
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Plyo Push-Up` `3x3-4`
-- Exercise B: `Rowing inversé pieds surélevés` `3x4`
+- Exercise A: `Archer Push-Up` `3x3-4/side`
+- Exercise B: `Neutral-Grip Pull-Up` `3x3-4`
 - Coaching notes:
-  - Upgrade B: fast pull-up if bar available.
+  - Archer push-up (not decline/plyo — reserved for UPPER this week).
+  - Pull-ups (not inverted row — reserved for UPPER this week).
+  - Fallback A: `Chair Dip`. Fallback B: `Face Pull Band`.
 
 ### Block 3 - Activation
 - Format: `2 rounds`, `45s` rest

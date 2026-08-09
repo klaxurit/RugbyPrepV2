@@ -45,21 +45,22 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Push / Pull
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Decline Push-Up` `3x5`
-- Exercise B: `Rowing inversé pieds surélevés` `3x5`
+- Exercise A: `Chair Dip` `3x5`
+- Exercise B: `Neutral-Grip Pull-Up` `3x5`
 - Coaching notes:
-  - Push lesté (sac) ou tempo lent — force utile sans fatigue excessive.
-  - Variante A : développé haltères si banc + haltères.
-  - Variante B : `Neutral-Grip Pull-Up` si barre de traction disponible.
+  - Chair dips (pas decline — réservé à UPPER cette semaine) — force utile sans fatigue excessive.
+  - Pull-ups (pas rowing inversé — réservé à UPPER cette semaine).
+  - Fallback A : `Archer Push-Up` ou `Parallel Bar Dip`.
+  - Fallback B : `Face Pull Band` si pas de barre.
 
 ### Block 3 - Unilateral + Trunk
 - Format: `2 rounds`, `75s` rest after the pair
-- Exercise A: `Bulgarian Split Squat` `2x6/side`
+- Exercise A: `Single-Leg Glute Bridge` `2x8/side`
 - Exercise B: `Side Plank` `2x15s/side`
 - Coaching notes:
-  - Fente bulgare contrôlée — support unilatéral, pas de circuit.
+  - Pont fessier unilatéral (pas Bulgarian — déjà sur LOWER cette semaine) — support hanche, pas de circuit.
   - Variante B : `Pallof Press Hold` si élastique disponible.
-  - `Front_row` : fente un peu plus lourde ; `Back_three` : fente plus explosive.
+  - `Front_row` : tempo plus contrôlé ; `Back_three` : lockout plus explosif.
 
 ### Block 4 - Light Finisher
 - Format: `2 rounds`, `60s` rest

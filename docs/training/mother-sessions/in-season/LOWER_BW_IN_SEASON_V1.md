@@ -44,7 +44,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Coaching notes:
   - Heavy A: backpack load or slow 3-1-1 tempo, `RIR 2-3` (~75-80% effort).
   - Broad jump within 15-20s of A — powerful and crisp, not chased once quality drops.
-  - Upgrade A: `Goblet Squat` heavy if DB/KB available.
+  - Upgrade A: load the Bulgarian with DB/KB if available (keep unilateral).
   - Upgrade B: `Squat Jump` if space limited; `Lateral Squat Jump` for back-three speed bias.
   - This is force -> projection contrast, not a fatigue block.
   - `Front_row`: slightly heavier load bias on A.
@@ -56,7 +56,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise B: `Bulgarian Split Squat` `3x5/side`
 - Coaching notes:
   - Athletic support work — clean lockout on bridge, stable unilateral squat.
-  - Upgrade A: `Romanian Deadlift` if DB/KB available.
+  - Upgrade A: `Single-Leg Romanian Deadlift` if DB/KB available.
   - Upgrade B: loaded Bulgarian if DB available.
   - Fallback B: `Reverse Lunge Bodyweight` if balance limits split work.
   - Keep `RIR 2-3` — useful, not draining.

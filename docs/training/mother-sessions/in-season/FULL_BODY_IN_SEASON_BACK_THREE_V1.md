@@ -51,24 +51,25 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push/Pull Strength
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `DB Incline Bench Press` `3x6-8`
-- Exercise B: `Chest-Supported Row` `3x6-8`
+- Exercise A: `Parallel Bar Dip` `3x6-8`
+- Exercise B: `Half-Kneeling Cable Row` `3x6-8`
 - Coaching notes:
   - This is your main push/pull renfo block.
-  - Keep it strong and clean, not sloppy.
-  - This block should feel useful and satisfying without turning into an upper-only session.
+  - Dips (not incline/flat bench — reserved for the UPPER session this week) into a strict cable row.
+  - Automatic alternative if no dip bars: `Chair Dip` or `Landmine Press`.
   - Fallback options:
-    - B: `Single-Arm DB Row`
+    - A: `Chair Dip`
+    - B: `Seated Cable Row`
 
 ### Block 3 - Posterior Chain / Rotation Support
 - Format: `3 rounds`, `75-90s` rest
-- Exercise A: `Hex Bar RDL` `3x6-8`
+- Exercise A: `Single-Leg RDL` `3x6-8/side`
 - Exercise B: `Landmine Rotation` `2-3x6-8/side`
 - Coaching notes:
-  - The main lift should support speed and robustness, not create two days of soreness.
+  - Single-leg RDL (LOWER already covers trap bar / hip thrust this week): support speed without two days of soreness.
   - The rotation work should stay crisp and athletic.
   - Fallback options:
-    - A: `Barbell Hip Thrust`
+    - A: `Kickstand RDL`
 
 ### Block 4 - Lower Leg / Groin Support
 - Format: `2-3 rounds`, `45-60s` rest

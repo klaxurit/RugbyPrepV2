@@ -2248,6 +2248,58 @@ const TEXT_EXACT_FR: Record<string, string> = {
     'Presse incline haltères (pas de bench à plat — réservé à la séance UPPER de la semaine) puis lancer rotationnel — transfert de puissance du tronc.',
   'If plyo quality drops, reduce incline load before cutting push-ups.':
     'Si la qualité plyo baisse, réduire d\'abord la charge incline avant de couper les pompes.',
+  'Hip thrust (not trap bar / RDL — LOWER already covers those this week): confident hip extension, clearly submaximal.':
+    'Hip thrust (pas trap bar / RDL — déjà couverts en LOWER cette semaine) : extension de hanche confiante, clairement submaximale.',
+  'Dips + cable row (not incline/flat bench or CSR — reserved for UPPER this week).':
+    'Dips + rowing poulie (pas incline/bench à plat ni CSR — réservés à UPPER cette semaine).',
+  'RFESS (not reverse lunge — already on LOWER this week): unilateral support without copying the Lower Transition session.':
+    'RFESS (pas de fente arrière — déjà en LOWER cette semaine) : support unilatéral sans copier la séance Lower Transition.',
+  'Hip thrust (not trap bar / RDL — LOWER already covers those this week): hypertrophy-oriented hip extension.':
+    'Hip thrust (pas trap bar / RDL — déjà couverts en LOWER cette semaine) : extension de hanche orientée hypertrophie.',
+  'Dips + cable row (UPPER already has flat + incline bench and CSR this week — do not repeat them).':
+    'Dips + rowing poulie (UPPER a déjà bench à plat + incline et CSR cette semaine — ne pas les répéter).',
+  'Single-leg RDL (LOWER already has RFESS this week): unilateral hinge without another squat-pattern day.':
+    'RDL unilatéral (LOWER a déjà le RFESS cette semaine) : charnière unilatérale sans une autre journée squat.',
+  'Hip thrust (not trap bar — LOWER BT already covers hinge this week). RPE 6-8, powerful but controlled.':
+    'Hip thrust (pas trap bar — LOWER BT couvre déjà la charnière cette semaine). RPE 6-8, puissant mais contrôlé.',
+  'Dips + CSR (not landmine press / SA row — already on UPPER BT this week).':
+    'Dips + CSR (pas landmine press / rowing un bras — déjà en UPPER BT cette semaine).',
+  'Hip thrust (not trap bar — already primed on LOWER this week): powerful lockout, controlled descent.':
+    'Hip thrust (pas trap bar — déjà amorcé en LOWER cette semaine) : verrouillage puissant, descente contrôlée.',
+  'Dips (not incline/flat bench — reserved for the UPPER session this week) into explosive plyo push-up.':
+    'Dips (pas incline/bench à plat — réservés à la séance UPPER de la semaine) puis plyo push-up explosive.',
+  'Single-leg RDL (not reverse lunge / RFESS — already on LOWER this week): force-grade, stable.':
+    'RDL unilatéral (pas fente arrière / RFESS — déjà en LOWER cette semaine) : reps force, stable.',
+  'Hip thrust (not trap bar — already primed on LOWER BT this week) + horizontal projection — sprint power transfer.':
+    'Hip thrust (pas trap bar — déjà amorcé en LOWER BT cette semaine) + projection horizontale — transfert puissance sprint.',
+  'Dips (not incline/flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.':
+    'Dips (pas incline/bench à plat — réservés à la séance UPPER de la semaine) puis lancer rotationnel — transfert de puissance du tronc.',
+  'Dips (not incline/flat bench — reserved for the UPPER session this week) into a strict cable row.':
+    'Dips (pas incline/bench à plat — réservés à la séance UPPER de la semaine) puis rowing poulie strict.',
+  'Dips (not football-bar/flat bench — reserved for the UPPER session this week) into a strict cable row.':
+    'Dips (pas football bar/bench à plat — réservés à la séance UPPER de la semaine) puis rowing poulie strict.',
+  'Reverse lunge (not front/box squat — reserved for the LOWER session this week): sharp, upright, braced.':
+    'Fente arrière (pas front/box squat — réservés à la séance LOWER de la semaine) : nette, droite, gainée.',
+  'Reverse lunge (not front/box squat — reserved for the LOWER session this week): loaded, upright, and sharp.':
+    'Fente arrière (pas front/box squat — réservés à la séance LOWER de la semaine) : chargée, droite et nette.',
+  'Reverse lunge (not box/anderson squat — reserved for the LOWER session this week): crisp and stable.':
+    'Fente arrière (pas box/anderson squat — réservés à la séance LOWER de la semaine) : nette et stable.',
+  'Dips (not football-bar/flat bench — reserved for the UPPER session this week): sharp and technically clean.':
+    'Dips (pas football bar/bench à plat — réservés à la séance UPPER de la semaine) : nets et techniquement propres.',
+  'Face pull (not a heavy row — UPPER already covers rowing this week): posture and scapular priming.':
+    'Face pull (pas un rowing lourd — UPPER couvre déjà le tirage cette semaine) : posture et priming scapulaire.',
+  'Face pull (not a heavy row — UPPER already covers rowing this week): scapular priming.':
+    'Face pull (pas un rowing lourd — UPPER couvre déjà le tirage cette semaine) : priming scapulaire.',
+  'Hip thrust (not trap bar — reserved for the LOWER session this week): fast lockout, clean reps.':
+    'Hip thrust (pas trap bar — réservé à la séance LOWER de la semaine) : verrouillage rapide, reps propres.',
+  'Lat pulldown (not pull-ups — reserved for the UPPER session this week): clean and forceful.':
+    'Tirage vertical (pas de tractions — réservées à la séance UPPER de la semaine) : propre et puissant.',
+  'Single-leg RDL (LOWER already covers bilateral hinge this week): support contact robustness without extra soreness.':
+    'RDL unilatéral (LOWER couvre déjà la charnière bilatérale cette semaine) : support robustesse contact sans courbatures inutiles.',
+  'Single-leg RDL (LOWER already covers trap bar / hip thrust this week): support speed without two days of soreness.':
+    'RDL unilatéral (LOWER couvre déjà trap bar / hip thrust cette semaine) : support vitesse sans deux jours de courbatures.',
+  'This is a true game-week push primer, not a heavy bench block.':
+    'C’est un vrai primer push de semaine de match, pas un bloc bench lourd.',
 }
 
 const TEXT_FRAGMENT_FR: Array<[RegExp, string]> = [

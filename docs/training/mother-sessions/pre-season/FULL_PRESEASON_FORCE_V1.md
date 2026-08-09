@@ -47,11 +47,12 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push/Pull Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `DB Incline Bench Press` `3x6-8`
-- Exercise B: `Single-Arm DB Row` `3x6-8/side`
+- Exercise A: `Parallel Bar Dip` `3x6-8`
+- Exercise B: `Half-Kneeling Cable Row` `3x6-8/side`
 - Coaching notes:
   - This block should feel strong and useful, not flashy.
-  - Keep the incline press controlled and the row strict.
+  - Dips (not incline/flat bench — reserved for the UPPER session this week) into a strict cable row.
+  - Automatic alternative if no dip bars: `Chair Dip` or `Neutral-Grip DB Bench Press`.
   - This pair supports upper force development without repeating the exact structure of the main upper session.
 
 ### Block 3 - Posterior Chain / Trunk Support
@@ -98,10 +99,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Shoulder Pain
 - Remove:
-  - `DB Incline Bench Press`
+  - `Parallel Bar Dip`
   - sled only if arm position is aggravating
 - Replace with:
-  - `Neutral-Grip DB Bench Press`
+  - `Machine Chest Press` light or `Cable Press`
   - `Leg Press` or `Carry` alternative if sled setup is not tolerated
 - Rehab finisher:
   - `band external rotation`
@@ -132,7 +133,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ## Coaching Warnings
 - Do not let the trap bar deadlift become a sloppy grind.
-- Do not turn the incline press/row pair into junk fatigue.
+- Do not turn the dips/row pair into junk fatigue.
 - Do not overcook hip thrust volume just because it feels safe.
 - Keep the sled work powerful and short.
 - This session should feel constructive and complete, not like surviving an off-season monster day.

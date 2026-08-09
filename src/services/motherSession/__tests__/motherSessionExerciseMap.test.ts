@@ -50,6 +50,19 @@ describe('resolveExerciseId — alias', () => {
       'groin_adductors__copenhagen_plank__foot_elevated',
     )
   })
+  it('mappe short / knee vers leurs IDs dédiés', () => {
+    expect(resolveExerciseId('Short Copenhagen Hold')).toBe(
+      'groin_adductors__copenhagen_plank__short',
+    )
+    expect(resolveExerciseId('Copenhagen Knee')).toBe(
+      'groin_adductors__copenhagen_plank__knee',
+    )
+  })
+  it('mappe single-leg calf raise vers mollet unilatéral', () => {
+    expect(resolveExerciseId('single-leg calf raise')).toBe(
+      'calf__standing_raise__single_leg__bodyweight',
+    )
+  })
   it('résout le nom FR rowing inversé pieds surélevés', () => {
     expect(resolveExerciseId('Rowing inversé pieds surélevés')).toBe(
       'pull_horizontal__inverted_row__feet_elevated',

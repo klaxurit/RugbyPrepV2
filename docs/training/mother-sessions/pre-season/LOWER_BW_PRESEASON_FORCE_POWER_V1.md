@@ -34,7 +34,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise A: `Bulgarian Split Squat` `4x4/side`
 - Exercise B: (contrast) `Squat Jump` `4x3-4`
 - Coaching notes:
-  - Heavy A: backpack or goblet if DB/KB, `RIR 1-2`.
+  - Heavy A: backpack or DB held in goblet position on the Bulgarian if DB/KB, `RIR 1-2`.
   - Jump within 15-20s of A — max intention, not volume.
   - Upgrade B: `Banded KB Swing` if band available.
 

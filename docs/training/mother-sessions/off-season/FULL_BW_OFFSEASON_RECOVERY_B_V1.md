@@ -49,7 +49,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 2 - Push / Pull Reset
 - Format: `2-3 rounds`, `60-90s` rest after the pair
 - Exercise A: `Incline Push-Up` `2-3x8-10`
-- Exercise B: `Inverted Row Standard` `2-3x8/side`
+- Exercise B: `Inverted Row Standard` `2-3x8`
 - Coaching notes:
   - Every push-up rep should look the same.
   - Row restores scapular rhythm without fatigue.

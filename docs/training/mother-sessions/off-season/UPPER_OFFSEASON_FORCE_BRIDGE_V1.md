@@ -25,7 +25,6 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Recommended warm-up
 - `band pull-apart` `1x12`
 - `push-up` `1x8`
-- `band pull-apart` `1x8/side`
 - `2-3 progressive ramp-up sets on bench press` ``
 
 ### Notes

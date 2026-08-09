@@ -27,6 +27,17 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
     { exerciseId: 'push_horizontal__bench_press__dumbbell', requires: ['dumbbell', 'bench'] },
     { exerciseId: 'push_horizontal__bench_press__barbell', requires: ['barbell', 'bench'] },
   ],
+  // FULL_BW prescrit parfois directement les dips (anti-doublon vs UPPER decline).
+  'push_horizontal__dip__chair': [
+    { exerciseId: 'push_horizontal__dip__chair', requires: [] },
+    { exerciseId: 'push_horizontal__bench_press__dumbbell', requires: ['dumbbell', 'bench'] },
+    { exerciseId: 'push_horizontal__bench_press__barbell', requires: ['barbell', 'bench'] },
+  ],
+  'push_horizontal__dip__parallel': [
+    { exerciseId: 'push_horizontal__dip__parallel', requires: [] },
+    { exerciseId: 'push_horizontal__bench_press__dumbbell', requires: ['dumbbell', 'bench'] },
+    { exerciseId: 'push_horizontal__bench_press__barbell', requires: ['barbell', 'bench'] },
+  ],
   'pull_horizontal__inverted_row__knees_bent': [
     { exerciseId: 'pull_horizontal__inverted_row__knees_bent', requires: [] },
     { exerciseId: 'pull_vertical__pull_up__neutral', requires: ['pullup_bar'] },
@@ -34,12 +45,10 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
   'pull_horizontal__inverted_row__standard': [
     { exerciseId: 'pull_horizontal__inverted_row__standard', requires: [] },
     { exerciseId: 'pull_vertical__pull_up__neutral', requires: ['pullup_bar'] },
-    { exerciseId: 'pull_horizontal__one_arm_row__dumbbell', requires: ['dumbbell', 'bench'] },
   ],
   'pull_horizontal__inverted_row__feet_elevated': [
     { exerciseId: 'pull_horizontal__inverted_row__feet_elevated', requires: [] },
     { exerciseId: 'pull_vertical__pull_up__neutral', requires: ['pullup_bar'] },
-    { exerciseId: 'pull_horizontal__one_arm_row__dumbbell', requires: ['dumbbell', 'bench'] },
   ],
   'lower_lunge__reverse_lunge__bodyweight': [
     { exerciseId: 'lower_lunge__reverse_lunge__bodyweight', requires: [] },
@@ -55,8 +64,9 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
   ],
   'lower_squat__bulgarian_split_squat__bodyweight': [
     { exerciseId: 'lower_squat__bulgarian_split_squat__bodyweight', requires: [] },
-    { exerciseId: 'squat__goblet_squat__dumbbell', requires: ['dumbbell'] },
-    { exerciseId: 'squat__back_squat__barbell', requires: ['squat_rack', 'barbell'] },
+    // Rester unilatéral : Bulgarian haltères (pas goblet bilatéral).
+    { exerciseId: 'lower_squat__bulgarian_split_squat__dumbbell', requires: ['dumbbell'] },
+    { exerciseId: 'lower_squat__bulgarian_split_squat__dumbbell', requires: ['kettlebell'] },
   ],
   'hamstring__nordic__eccentric_solo': [
     { exerciseId: 'hamstring__nordic__eccentric_solo', requires: [] },
@@ -65,7 +75,9 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
   ],
   'hinge__single_leg_rdl__bodyweight': [
     { exerciseId: 'hinge__single_leg_rdl__bodyweight', requires: [] },
-    { exerciseId: 'hinge__rdl__dumbbell', requires: ['dumbbell'] },
+    // Rester unilatéral (Kickstand / SL RDL) — pas de RDL bilatéral.
+    { exerciseId: 'hinge__rdl__single_leg__dumbbell', requires: ['dumbbell'] },
+    { exerciseId: 'hinge__rdl__single_leg__dumbbell', requires: ['kettlebell'] },
   ],
   'groin_adductors__copenhagen_plank__foot_elevated': [
     { exerciseId: 'groin_adductors__copenhagen_plank__foot_elevated', requires: [] },
@@ -112,16 +124,20 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
     { exerciseId: 'hinge__kb_swing__banded', requires: ['band'] },
   ],
   'core_rotation__band_rotation__explosive': [
-    { exerciseId: 'core_rotation__cable_chop', requires: [] },
+    // Besoin d’un élastique au minimum — pas de cable chop « sans câble ».
     { exerciseId: 'core_rotation__band_rotation__explosive', requires: ['band'] },
+    { exerciseId: 'core_rotation__cable_chop', requires: ['cable'] },
   ],
   'hamstring__bridge_iso__single_leg': [
     { exerciseId: 'hamstring__bridge_iso__single_leg', requires: [] },
-    { exerciseId: 'hinge__rdl__dumbbell', requires: ['dumbbell'] },
+    // Rester unilatéral : SL RDL haltères (pas RDL bilatéral).
+    { exerciseId: 'hinge__rdl__single_leg__dumbbell', requires: ['dumbbell'] },
+    { exerciseId: 'hinge__rdl__single_leg__dumbbell', requires: ['kettlebell'] },
   ],
   'carry__suitcase_walk__dumbbell': [
-    { exerciseId: 'carry__farmer_walk__backpack', requires: [] },
+    // Farmer = bilatéral (un seul timer) — ne pas l’injecter comme fallback suitcase `/side`.
     { exerciseId: 'carry__suitcase_walk__dumbbell', requires: ['dumbbell'] },
+    { exerciseId: 'carry__suitcase_walk__dumbbell', requires: ['kettlebell'] },
   ],
 }
 

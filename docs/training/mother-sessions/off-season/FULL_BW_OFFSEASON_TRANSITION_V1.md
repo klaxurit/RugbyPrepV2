@@ -36,18 +36,19 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 1 - Hinge / Squat Light Pair
 - Format: `3 rounds`, `90s` rest after the pair
 - Exercise A: `Good Morning` `3x8`
-- Exercise B: `Bodyweight Squat` `3x10`
+- Exercise B: `Reverse Lunge Bodyweight` `3x8/side`
 - Coaching notes:
-  - Hinge pattern with bodyweight good morning; squat controlled `RPE 5-6`.
+  - Hinge pattern with bodyweight good morning; reverse lunge (not BW squat — already on LOWER this week) `RPE 5-6`.
   - Fallback: `Glute Bridge` if low back sensitive.
 
 ### Block 2 - Push / Pull Pair
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Push-Up` `3x8-10`
-- Exercise B: `Inverted Row Standard` `3x8-10`
+- Exercise A: `Chair Dip` `3x8-10`
+- Exercise B: `Face Pull Band` `3x10-12`
 - Coaching notes:
-  - Quality reps; elevate hands on push-up if needed.
-  - Upgrade to decline push-up or feet-elevated row when easy.
+  - Chair dips (not decline push-up — reserved for UPPER this week).
+  - Face pull (not inverted row — reserved for UPPER this week).
+  - Fallback A: `Archer Push-Up`. Fallback B: `Inverted Row Standard` only if UPPER was skipped.
 
 ### Block 3 - Rugby Light Finisher
 - Format: `2 rounds`, `60s` rest after the pair

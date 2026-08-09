@@ -39,15 +39,14 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Power Pair
 - Format: `3 rounds`, full rest `3 min`
-- Exercise A: `Front Squat` `3x3 @ 80-85%`
+- Exercise A: `Reverse Lunge` `3x4/side @ strong but fast`
 - Exercise B: `Broad Jump` `3 reps`
 - Coaching notes:
-  - Front squat should stay sharp, upright, and strongly braced.
+  - Reverse lunge (not front/box squat — reserved for the LOWER session this week): loaded, upright, and sharp.
   - The jump stays crisp and explosive.
   - This block opens the session with lower-body force support and athletic output without duplicating the main lower-day opening.
-  - Broad jump is used here to give a more horizontal projection feel than the main lower session.
   - Fallback options:
-    - A: `Box Squat`
+    - A: `Rear-Foot Elevated Split Squat`
     - B: `Countermovement Jump`
 
 ### Block 2 - Upper Power Pair
@@ -64,13 +63,13 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull / Posterior Cluster
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Neutral-Grip Pull-Up` `3x4-5`
-- Exercise B: `Chest-Supported Row` `3x5-6`
-- Exercise C: `Hex Bar RDL` `3x4-5`
+- Exercise A: `Neutral-Grip Lat Pulldown` `3x5-6`
+- Exercise B: `Seated Cable Row` `3x5-6`
+- Exercise C: `Barbell Hip Thrust` `3x4-5`
 - Coaching notes:
-  - Pull-ups : clean and forceful, not ugly weighted reps.
-  - Chest-supported row : strict, no torso cheating — ajoute le volume pull manquant pour équilibrer le double-push de B2.
-  - Hex bar RDL : support posterior-chain — upgrade 2→3 sets pour cohérence triplet.
+  - Lat pulldown (not pull-ups — reserved for the UPPER session this week): clean and forceful.
+  - Seated cable row : strict, no torso cheating — volume pull sans répéter T-Bar / CSR de l’UPPER.
+  - Hip thrust : support posterior-chain (LOWER a déjà le RDL cette semaine).
   - Ce triplet miroir le power pair B2 (Push Press + Chest Pass) pour équilibre push/pull rugby front-row (plaquage, maul).
 
 ### Block 4 - Front Row Finisher

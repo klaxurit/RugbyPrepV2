@@ -38,36 +38,35 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Trap Bar Deadlift` `4x6-8` `rest 2 min`
+- Exercise A: `Barbell Hip Thrust` `4x8-10` `rest 2 min`
 - Coaching notes:
-  - Keep the trap bar around `RPE 6-8`.
-  - This is the anchor lift of the session, but it should stay clearly hypertrophy-oriented rather than max-strength oriented.
+  - Keep the hip thrust around `RPE 6-8`.
+  - Hip thrust (not trap bar / RDL — LOWER already covers those this week): hypertrophy-oriented hip extension.
   - The lift should feel powerful and productive, not like testing.
   - Fallback options:
-    - A: `Barbell Romanian Deadlift`
+    - A: `Single-Leg Glute Bridge`
 
 ### Block 2 - Upper Push / Pull Support
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `DB Incline Bench Press` `4x8-10`
-- Exercise B: `Single-Arm DB Row` `4x8-10/side`
+- Exercise A: `Parallel Bar Dip` `4x8-10`
+- Exercise B: `Half-Kneeling Cable Row` `4x8-10/side`
 - Coaching notes:
-  - This block builds upper volume without copying the exact Upper Hypertrophy structure.
+  - Dips + cable row (UPPER already has flat + incline bench and CSR this week — do not repeat them).
   - Keep both exercises smooth, controlled, and full-range.
-  - This should feel dense and useful, not sloppy.
+  - Automatic alternative if no dip bars: `Chair Dip`.
   - Fallback options:
-    - A: `Neutral-Grip DB Bench Press`
-    - B: `Chest-Supported Row`
+    - A: `Chair Dip`
+    - B: `Seated Cable Row`
 
 ### Block 3 - Lower Support / Trunk Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Reverse Lunge` `3x8-10/side`
+- Exercise A: `Single-Leg RDL` `3x8-10/side`
 - Exercise B: `Pallof Press Hold` `3x15-20s/side`
 - Coaching notes:
-  - This block gives the week one more unilateral lower exposure without turning it into another lower day.
-  - Keep the lunge controlled and stable.
+  - Single-leg RDL (LOWER already has RFESS this week): unilateral hinge without another squat-pattern day.
   - Pallof should stay crisp and posture-driven.
   - Fallback options:
-    - A: `Split Squat`
+    - A: `Kickstand RDL`
     - B: `Side Plank`
 
 ### Block 4 - Finisher Rugby

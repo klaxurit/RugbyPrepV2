@@ -38,42 +38,39 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Neural Pair
 - Format: `3 rounds`, full rest `2-3 min`
-- Exercise A: `Banded Anderson Box Squat` `3x3 @ ~75-80% + band tension`
+- Exercise A: `Reverse Lunge` `3x3/side @ light-moderate, max intent`
 - Exercise B: `Banded KB Swing` `3x5`
 - Coaching notes:
   - This block is about intent and fast force production, not fatigue.
-  - Each rep should feel aggressive and crisp from a stable position.
+  - Reverse lunge (not box/anderson squat — reserved for the LOWER session this week): crisp and stable.
   - Load should allow maximal concentric speed on every rep.
   - Fallback options:
-    - A: `Box Squat`
+    - A: `Rear-Foot Elevated Split Squat` light
     - B: `Broad Jump`
 
 ### Block 2 - Upper Push Primer
 - Format: `3 rounds`, full rest `2-3 min`
-- Exercise A: `Football Bar Bench Press` `3x5 @ ~70-75%`
+- Exercise A: `Parallel Bar Dip` `3x5 @ controlled, crisp`
 - Exercise B: `Supine Med Ball Throw` `3x3`
 - Coaching notes:
-  - The press stays sharp and technically clean.
+  - Dips (not football-bar/flat bench — reserved for the UPPER session this week): sharp and technically clean.
   - The throw stays ballistic and low-volume.
   - This is a true game-week push primer, not a heavy bench block.
-  - Use a load that allows maximal bar speed on every rep.
-  - `Football Bar Bench Press` = neutral-grip football bar / Swiss bar bench press.
-  - Automatic alternative if the bar is not available: `Neutral-Grip DB Bench Press`.
+  - Automatic alternative if no dip bars: `Chair Dip` or `Explosive Landmine Press`.
   - Fallback options:
-    - A1: `Neutral-Grip DB Bench Press`
-    - A2: `Bench Press`
+    - A: `Chair Dip`
     - B: `Med Ball Chest Pass`
 
 ### Block 3 - Pull / Trunk Primer
 - Format: `3 rounds`, full rest `90-120s`
-- Exercise A: `Landmine Row` `3x6`
+- Exercise A: `Face Pull` `3x8-10`
 - Exercise B: `Landmine Rotation` `3x5/side`
 - Coaching notes:
-  - This block should feel strong, coordinated, and posture-driven.
-  - Keep the row clean and the trunk work athletic.
+  - Face pull (not a heavy row — UPPER already covers rowing this week): posture and scapular priming.
+  - Keep the trunk work athletic.
   - No fatigue chasing.
   - Fallback options:
-    - A: `Power Pendlay Row`
+    - A: `Band Pull-Apart`
     - B: `Med Ball Scoop Throw`
 
 ### Optional Block 4 - Contact Confidence / Pump

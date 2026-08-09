@@ -35,30 +35,30 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Hinge Force + Jump Contrast
 - Format: `3 rounds`, `3 min` rest between rounds
-- Exercise A: `Nordic Eccentric` `3x4-5`
+- Exercise A: `Kickstand RDL` `3x4-5/side`
 - Exercise B: (contrast) `Broad Jump` `3x3, max distance`
 - Coaching notes:
-  - Nordiques stricts (3-4 s en descente) — viser la force, pas la chasse au volume.
-  - Broad jump dans les 15-20 s après la série de nordiques.
-  - Variante A : `Romanian Deadlift` lourd si haltères ou KB disponibles.
+  - Kickstand RDL (pas nordiques — déjà sur LOWER cette semaine) — viser la force, pas la chasse au volume.
+  - Broad jump dans les 15-20 s après la série de RDL.
+  - Variante A : `Single-Leg Glute Bridge` si bas du dos sensible.
 
 ### Block 2 - Push Force + Explosive Contrast
 - Format: `3 rounds`, `3 min` rest between rounds
-- Exercise A: `Pike Push-Up` `3x4`
-- Exercise B: (contrast) `Plyo Push-Up` `3x4, max height`
+- Exercise A: `Chair Dip` `3x4`
+- Exercise B: (contrast) `Band Rotation Explosive` `3x4/side`
 - Coaching notes:
-  - Pike (pas decline — réservé à la séance UPPER de la semaine) puis plyo explosive dans la fenêtre PAP.
-  - Variante A : développé haltères assis si banc + haltères disponibles.
-  - Réduire la charge sur A avant de couper les reps de plyo.
+  - Chair dips (pas pike/decline/plyo — déjà sur UPPER cette semaine) puis rotation explosive.
+  - Fallback A : `Archer Push-Up` ou `Parallel Bar Dip`.
+  - Réduire la difficulté sur A avant de couper les reps de contraste.
 
 ### Block 3 - Pull + Unilateral Support
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Rowing inversé pieds surélevés` `3x5`
-- Exercise B: `Bulgarian Split Squat` `3x5/side`
+- Exercise A: `Neutral-Grip Pull-Up` `3x4-5`
+- Exercise B: `Single-Leg Glute Bridge` `3x6/side`
 - Coaching notes:
-  - Tirage et squat unilatéral de qualité force — stable, sans grind.
-  - Variante A : tractions strictes si barre disponible.
-  - Variante B : fente bulgare chargée si haltères disponibles.
+  - Pull-ups (pas rowing inversé — déjà sur UPPER) + pont fessier uni (pas Bulgarian — déjà sur LOWER).
+  - Fallback A : `Face Pull Band` si pas de barre.
+  - Variante B : hip thrust banc si haltères disponibles.
 
 ### Block 4 - Rugby Finisher
 - Format: `2 rounds`, `45-60s` rest after the round

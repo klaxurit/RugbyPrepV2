@@ -40,7 +40,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Coaching notes:
   - Anchor block — slow 3-1-1 tempo or backpack load, `RIR 1-2`.
   - No collapse, no grinding — force construction, not testing.
-  - Upgrade: `Goblet Squat` heavy if DB/KB available.
+  - Upgrade: load the Bulgarian with DB/KB if available (keep unilateral).
   - `Front_row`: slightly heavier load bias.
   - `Back_three`: more explosive concentric intent on split squat.
 
@@ -68,7 +68,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise A: `Copenhagen Plank` `20-30s/side`
 - Exercise B: `Bear Crawl` `20m`
 - Coaching notes:
-  - Copenhagen: foot elevated mandatory.
+  - Copenhagen: top foot/ankle elevated on a chair or bench (adductor plank).
   - Upgrade B: `Farmer Carry` if DB/KB available.
   - `Front_row`: heavier carry; `Back_three`: cleaner athletic carry.
 

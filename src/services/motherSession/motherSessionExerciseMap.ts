@@ -47,6 +47,11 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'decline push-up': 'push_horizontal__push_up__decline',
   'pike push-up': 'push_vertical__pike_push_up__bodyweight',
   'pike push-up feet elevated': 'push_vertical__pike_push_up__feet_elevated',
+  'parallel bar dip': 'push_horizontal__dip__parallel',
+  'dips': 'push_horizontal__dip__parallel',
+  'dip': 'push_horizontal__dip__parallel',
+  'chair dip': 'push_horizontal__dip__chair',
+  'archer push-up': 'push_horizontal__archer_push_up__bodyweight',
 
   // ── Pulls ───────────────────────────────────────────────────
   'chest-supported row': 'pull_horizontal__chest_supported_row__dumbbell',
@@ -142,7 +147,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'sled push': 'sled__push__standard',
 
   // ── Calves ──────────────────────────────────────────────────
-  'single-leg calf raise': 'calf__standing_raise__bodyweight',
+  'single-leg calf raise': 'calf__standing_raise__single_leg__bodyweight',
   'seated calf raise': 'calf__seated_raise__machine',
   'weighted calf raise': 'calf__weighted_raise__barbell',
 
@@ -168,10 +173,10 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'pogo hops': 'power__pogo_hops__low',
 
   // ── Adductors / Groin ───────────────────────────────────────
+  'short copenhagen hold': 'groin_adductors__copenhagen_plank__short',
+  'copenhagen knee': 'groin_adductors__copenhagen_plank__knee',
   'copenhagen hold': 'groin_adductors__copenhagen_plank__foot_elevated',
   'copenhagen plank': 'groin_adductors__copenhagen_plank__foot_elevated',
-  'short copenhagen hold': 'groin_adductors__copenhagen_plank__foot_elevated',
-  'copenhagen knee': 'groin_adductors__copenhagen_plank__foot_elevated',
   'supine adductor squeeze': 'groin_adductors__ball_squeeze__supine',
 
   // ── Neck ────────────────────────────────────────────────────

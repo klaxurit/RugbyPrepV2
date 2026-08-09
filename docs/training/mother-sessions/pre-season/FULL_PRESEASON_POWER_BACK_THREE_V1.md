@@ -68,12 +68,12 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull / Posterior Cluster
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Neutral-Grip Pull-Up` `3x4-5`
-- Exercise B: `Chest-Supported Row` `3x5-6`
+- Exercise A: `Neutral-Grip Lat Pulldown` `3x5-6`
+- Exercise B: `Single-Arm DB Row` `3x5-6/side`
 - Exercise C: `Barbell Hip Thrust` `3x4-5`
 - Coaching notes:
-  - Pull-ups : clean and forceful, not ugly weighted reps.
-  - Chest-supported row : strict, no torso cheating — ajoute le volume pull manquant pour équilibrer le double-push de B2.
+  - Lat pulldown (not pull-ups — reserved for the UPPER session this week): clean and forceful.
+  - Single-arm DB row (not CSR — déjà programmé en UPPER cette semaine): strict, no torso cheating.
   - Hip thrust : powerful and clean, no exaggerated lumbar extension. Main bilateral hip-extension exposure of the week.
   - Ce triplet miroir le power pair B2 (Push Press + Chest Pass) pour équilibre push/pull rugby back-three (plaquage, ruck-over).
 

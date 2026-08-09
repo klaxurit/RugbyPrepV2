@@ -11,7 +11,7 @@
 
 ## Goal
 - Full-body hypertrophy with back-three bias: rotational patterns, unilateral support, and lower-leg tissue quality.
-- Maintain trap bar as the bilateral hinge anchor.
+- Maintain hip thrust as the bilateral hinge/extension anchor.
 - Prepare trunk transfer and multi-directional capacity for pre-season.
 
 ## Session Identity
@@ -25,7 +25,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - `ankle rocks` `1x8/side`
 - `glute bridge` `1x8`
 - `push-up` `1x8`
-- `2 progressive ramp-up sets on trap bar` ``
+- `2 progressive ramp-up sets on hip thrust` ``
 
 ### Notes
 - Full-body warm-up covering hip, ankle, shoulder.
@@ -34,19 +34,22 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge
 - Format: `4 work sets`, `2 min` rest
-- Exercise A: `trap bar deadlift` `4x6-8`
+- Exercise A: `Barbell Hip Thrust` `4x8-10`
 - Coaching notes:
-  - Bilateral anchor. RPE 6-8, powerful but controlled.
+  - Hip thrust (not trap bar — LOWER BT already covers hinge this week). RPE 6-8, powerful but controlled.
   - Fallback options:
-    - A: `Barbell Romanian Deadlift`
+    - A: `Single-Leg Glute Bridge`
 
-### Block 2 - Rotational Press / Unilateral Pull
+### Block 2 - Vertical Push / Horizontal Pull
 - Format: `4 rounds`, `90-120s` rest after pair
-- Exercise A: `half-kneeling landmine press` `4x8-10/side`
-- Exercise B: `single-arm db row` `4x8-10/side`
+- Exercise A: `Parallel Bar Dip` `4x8-10`
+- Exercise B: `Chest-Supported Row` `4x8-10`
 - Coaching notes:
-  - Rotational pressing + unilateral pulling: trunk transfer emphasis.
-  - Both exercises challenge anti-rotation through the trunk.
+  - Dips + CSR (not landmine press / SA row — already on UPPER BT this week).
+  - Automatic alternative if no dip bars: `Chair Dip` or `Seated DB Overhead Press`.
+  - Fallback options:
+    - A: `Chair Dip`
+    - B: `Seated Cable Row`
 
 ### Block 3 - Unilateral Lower / Rotation
 - Format: `3 rounds`, `75-90s` rest after pair
@@ -107,7 +110,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Coaching Warnings
 - Keep rotational throws controlled in hypertrophy phase.
 - Do not add sets beyond the prescription.
-- Bilateral anchor (trap bar) stays non-negotiable.
+- Bilateral anchor (hip thrust) stays non-negotiable.
 
 ## Source References
 - [off-season-periodization.md]

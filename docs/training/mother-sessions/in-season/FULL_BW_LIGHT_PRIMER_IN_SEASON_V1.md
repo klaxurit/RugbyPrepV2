@@ -45,18 +45,18 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 2 - Upper Primer
 - Format: `3 rounds`, `2-3 min` rest between rounds
 - Exercise A: `Pike Push-Up` `3x5`
-- Exercise B: `Plyo Push-Up` `3x3-5`
+- Exercise B: `Archer Push-Up` `3x3/side`
 - Coaching notes:
   - Pike explosif — intent overhead, pas de grind.
-  - Plyo légères — mains quittent le sol, vitesse max.
+  - Archer (pas plyo — déjà sur UPPER cette semaine) — intent unilatéral, vitesse contrôlée.
   - Variante A : développé haltères léger si banc + haltères.
 
 ### Block 3 - Pull / Rotation
 - Format: `2-3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Rowing inversé pieds surélevés` `2-3x5`
+- Exercise A: `Face Pull Band` `2-3x8-10`
 - Exercise B: `Band Rotation Explosive` `2-3/side`
 - Coaching notes:
-  - Rowing rapide et propre — variante : tractions rapides si barre dispo.
+  - Face pull (pas rowing inversé — déjà sur UPPER cette semaine) : priming scapulaire.
   - Rotation explosive — variante : rotation au sol contrôlée sans élastique.
   - Pas de chasse à la fatigue.
 

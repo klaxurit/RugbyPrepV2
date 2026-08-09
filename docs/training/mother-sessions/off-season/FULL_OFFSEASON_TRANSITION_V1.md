@@ -38,32 +38,32 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge
 - Format: `3 work sets`, `2 min` rest between sets
-- Exercise A: `Trap Bar Deadlift` `3x5`
+- Exercise A: `Barbell Hip Thrust` `3x6-8`
 - Coaching notes:
-  - Keep the trap bar around `RPE 5-6`.
-  - This is the anchor lift of the session, but it should still feel clearly submaximal.
+  - Keep the hip thrust around `RPE 5-6`.
+  - Hip thrust (not trap bar / RDL — LOWER already covers those this week): confident hip extension, clearly submaximal.
   - The goal is to restore confident full-body force production, not to test strength.
   - Fallback options:
-    - A: `DB Romanian Deadlift`
+    - A: `Single-Leg Glute Bridge`
 
 ### Block 2 - Upper Push / Pull Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `DB Incline Bench Press` `3x8-10`
-- Exercise B: `Single-Arm DB Row` `3x8-10/side`
+- Exercise A: `Parallel Bar Dip` `3x8-10`
+- Exercise B: `Half-Kneeling Cable Row` `3x8-10/side`
 - Coaching notes:
-  - This block supports upper volume without repeating the exact structure of the Upper Transition session.
+  - Dips + cable row (not incline/flat bench or CSR — reserved for UPPER this week).
   - Keep both movements smooth, controlled, and technically clean.
-  - This should feel like useful training, not like chasing a pump.
+  - Automatic alternative if no dip bars: `Chair Dip`.
   - Fallback options:
-    - A: `Neutral-Grip DB Bench Press`
-    - B: `Chest-Supported Row`
+    - A: `Chair Dip`
+    - B: `Seated Cable Row`
 
 ### Block 3 - Lower Support / Trunk Pair
 - Format: `3 rounds`, `60-75s` rest after the pair
-- Exercise A: `Reverse Lunge` `3x6-8/side`
+- Exercise A: `Rear-Foot Elevated Split Squat` `3x6-8/side`
 - Exercise B: `Pallof Press Hold` `3x15-20s/side`
 - Coaching notes:
-  - The lunge restores unilateral support without loading it as hard as the Lower Transition session.
+  - RFESS (not reverse lunge — already on LOWER this week): unilateral support without copying the Lower Transition session.
   - Pallof holds should stay crisp and posture-driven.
   - This block should finish the session with control and support, not fatigue.
   - Fallback options:

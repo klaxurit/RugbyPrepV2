@@ -37,30 +37,29 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Hinge Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Nordic Eccentric` `4x6-8`
+- Exercise A: `Single-Leg Glute Bridge` `4x8-10/side`
 - Coaching notes:
-  - Around `RPE 6-8` — hypertrophy hinge, not max strength.
-  - Excentrique 3-4 s ; mains au sol uniquement pour finir si nécessaire.
-  - Fallback: `Kickstand RDL` heavy tempo if nordics not tolerated.
+  - Around `RPE 6-8` — hip extension hypertrophy (not nordics — already on LOWER this week).
+  - Fallback: `Kickstand RDL` heavy tempo.
 
 ### Block 2 - Upper Push / Pull Support
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Decline Push-Up` `4x8-10`
-- Exercise B: `Rowing inversé pieds surélevés` `4x8-10`
+- Exercise A: `Chair Dip` `4x8-10`
+- Exercise B: `Neutral-Grip Pull-Up` `4x6-8`
 - Coaching notes:
-  - Volume haut du corps principal — sac à dos sur les pompes avant toute régression d'angle.
-  - Upgrade row: strict pull-ups if bar available.
-  - Fallback A: `Push-Up` with backpack load.
-  - Fallback B: `Inverted Row Standard`.
+  - Chair dips (not decline — reserved for UPPER this week).
+  - Pull-ups (not inverted row — reserved for UPPER this week).
+  - Fallback A: `Archer Push-Up` or `Parallel Bar Dip`.
+  - Fallback B: `Face Pull Band` if no bar.
 
 ### Block 3 - Lower Support / Trunk Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Bulgarian Split Squat` `3x8-10/side`
+- Exercise A: `Kickstand RDL` `3x8-10/side`
 - Exercise B: `Bird Dog` `3x8-10/side`
 - Coaching notes:
-  - Unilateral lower + trunk anti-extension/rotation without another leg day.
+  - Unilateral hinge (not Bulgarian — already on LOWER this week) + trunk support.
   - Bird dog : pause 2s en extension, pas de balancement.
-  - Fallback A: `Reverse Lunge Bodyweight` if balance limits split work.
+  - Fallback A: `Reverse Lunge Bodyweight` if hinge irritates low back.
   - Upgrade B: `Pallof Press Hold` if band available.
 
 ### Block 4 - Rugby Finisher

@@ -34,7 +34,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise A: `Bulgarian Split Squat` `4x3/side`
 - Exercise B: (contrast) `Squat Jump` `3 reps`
 - Coaching notes:
-  - A: moderate load, max bar speed — goblet if DB/KB.
+  - A: moderate load, max bar speed — Bulgarian with DB/KB if available (keep unilateral).
   - B: CMJ or squat jump within 15-20s of A.
   - `Front_row`: slightly heavier A; `Back_three`: longer sprint finisher.
 
@@ -52,7 +52,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise B: `Copenhagen Plank` `2x15s/side`
 - Coaching notes:
   - Upgrade A: band-resisted short sprint if band available.
-  - Copenhagen: foot elevated mandatory.
+  - Copenhagen: top foot/ankle elevated on a chair or bench (adductor plank) — not related to the sprint.
 
 ## Progression Rules
 - Prioritize jump and sprint quality over load increases.

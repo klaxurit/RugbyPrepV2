@@ -30,12 +30,27 @@ describe('resolveExerciseVariantForEquipment', () => {
     ).toBe('lower_lunge__reverse_lunge__dumbbell')
   })
 
-  it('monte vers goblet si haltères', () => {
+  it('Bulgarian BW → Bulgarian haltères si DB/KB (reste unilatéral)', () => {
     expect(
       resolveExerciseVariantForEquipment('lower_squat__bulgarian_split_squat__bodyweight', [
         'dumbbell',
       ]),
-    ).toBe('squat__goblet_squat__dumbbell')
+    ).toBe('lower_squat__bulgarian_split_squat__dumbbell')
+    expect(
+      resolveExerciseVariantForEquipment('lower_squat__bulgarian_split_squat__bodyweight', [
+        'kettlebell',
+      ]),
+    ).toBe('lower_squat__bulgarian_split_squat__dumbbell')
+  })
+
+  it('ne convertit pas la Bulgarian en goblet bilatéral', () => {
+    expect(
+      resolveExerciseVariantForEquipment('lower_squat__bulgarian_split_squat__bodyweight', [
+        'dumbbell',
+        'squat_rack',
+        'barbell',
+      ]),
+    ).toBe('lower_squat__bulgarian_split_squat__dumbbell')
   })
 
   it('monte Copenhagen vers banc court/long si banc dispo', () => {
@@ -58,10 +73,48 @@ describe('resolveExerciseVariantForEquipment', () => {
     ).toBe('hinge__kb_swing__banded')
   })
 
-  it('rotation band → chop au sol sans élastique', () => {
+  it('rotation bande reste bande sans élastique ; chop seulement avec câble', () => {
     expect(
       resolveExerciseVariantForEquipment('core_rotation__band_rotation__explosive', []),
+    ).toBe('core_rotation__band_rotation__explosive')
+    expect(
+      resolveExerciseVariantForEquipment('core_rotation__band_rotation__explosive', ['band']),
+    ).toBe('core_rotation__band_rotation__explosive')
+    expect(
+      resolveExerciseVariantForEquipment('core_rotation__band_rotation__explosive', ['cable']),
     ).toBe('core_rotation__cable_chop')
+  })
+
+  it('SL RDL / pont 1 jambe restent unilatéraux avec DB', () => {
+    expect(
+      resolveExerciseVariantForEquipment('hinge__single_leg_rdl__bodyweight', ['dumbbell']),
+    ).toBe('hinge__rdl__single_leg__dumbbell')
+    expect(
+      resolveExerciseVariantForEquipment('hamstring__bridge_iso__single_leg', ['dumbbell']),
+    ).toBe('hinge__rdl__single_leg__dumbbell')
+  })
+
+  it('suitcase ne bascule pas vers farmer sac', () => {
+    expect(
+      resolveExerciseVariantForEquipment('carry__suitcase_walk__dumbbell', []),
+    ).toBe('carry__suitcase_walk__dumbbell')
+    expect(
+      resolveExerciseVariantForEquipment('carry__suitcase_walk__dumbbell', ['dumbbell']),
+    ).toBe('carry__suitcase_walk__dumbbell')
+  })
+
+  it('rowing inversé ne monte pas vers rowing 1 bras', () => {
+    expect(
+      resolveExerciseVariantForEquipment('pull_horizontal__inverted_row__standard', [
+        'dumbbell',
+        'bench',
+      ]),
+    ).toBe('pull_horizontal__inverted_row__standard')
+    expect(
+      resolveExerciseVariantForEquipment('pull_horizontal__inverted_row__standard', [
+        'pullup_bar',
+      ]),
+    ).toBe('pull_vertical__pull_up__neutral')
   })
 
   it('bodyweight squat → goblet si haltères', () => {

@@ -38,15 +38,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Neural Pair
 - Format: `3 rounds`, full rest `2-3 min`
-- Exercise A: `Trap Bar Deadlift` `3x2-3 @ ~70-75%`
+- Exercise A: `Barbell Hip Thrust` `3x3 @ ~70-75%, max intent`
 - Exercise B: `Countermovement Jump` `3 reps`
 - Coaching notes:
   - This block is about intent and fast force production, not fatigue.
   - Rest must be long enough to keep each rep sharp.
-  - The trap bar should move fast and clean, with no grinding reps.
+  - Hip thrust (not trap bar — reserved for the LOWER session this week): fast lockout, clean reps.
   - The jump should stay crisp and elastic without creating excessive eccentric stress before match day.
   - Fallback options:
-    - A: `Back Squat` `3x3 @ ~70-75%`
+    - A: `Single-Leg RDL` light `3x3/side`
     - B: `Drop to Stick`
 
 ### Block 2 - Upper Push Primer
@@ -63,14 +63,14 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull / Rotation Primer
 - Format: `3 rounds`, full rest `90-120s`
-- Exercise A: `Landmine Row` `3x5-6`
+- Exercise A: `Face Pull` `3x8-10`
 - Exercise B: `Med Ball Throw` `2-3 reps/side`
 - Coaching notes:
-  - This block should stay ballistic and coordinated.
+  - Face pull (not a heavy row — UPPER already covers rowing this week): scapular priming.
   - Keep the throw/rotation low in volume and high in intent.
   - No fatigue chasing here.
   - Fallback options:
-    - A: `Power Pendlay Row`
+    - A: `Band Pull-Apart`
     - B: `Med Ball Scoop Throw` or `Landmine Rotation`
 
 ### Optional Block 4 - Arm Pump / Confidence Block

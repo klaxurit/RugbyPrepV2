@@ -11,7 +11,7 @@
 
 ## Goal
 - Full-body force-bridge with back-three bias: horizontal projection, rotational power, reactive patterns.
-- Maintain bilateral anchors (trap bar + incline press) while shifting contrasts toward sprint and open-field demands.
+- Maintain bilateral anchors (hip thrust + dips) while shifting contrasts toward sprint and open-field demands.
 - Third weekly session for 3x frequency in Force-Bridge phase.
 
 ## Session Identity
@@ -29,26 +29,27 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - `2-3 progressive ramp-up sets on main lift` ``
 
 ### Notes
-- Full-body activation. Ramp-up on trap bar before B1.
+- Full-body activation. Ramp-up on hip thrust before B1.
 
 ## Visible Blocks
 
 ### Block 1 - Lower Force + Horizontal Projection
 - Format: `4 rounds`, `3-4 min` rest
-- Exercise A: (prime) `trap bar deadlift` `4x3-4 @ 85%`
+- Exercise A: (prime) `Barbell Hip Thrust` `4x3-4 @ 85%`
 - Exercise B: (contrast) `broad jump` `4x3, max distance`
 - Coaching notes:
-  - Bilateral anchor + horizontal projection — sprint power transfer.
+  - Hip thrust (not trap bar — already primed on LOWER BT this week) + horizontal projection — sprint power transfer.
   - This replaces the box jump contrast of the front-row version.
   - Fallback options:
-    - A: `Back Squat` + `Vertical Jump`
+    - A: `Single-Leg RDL` heavy + `Vertical Jump`
 
 ### Block 2 - Upper Force + Rotational Power
 - Format: `4 rounds`, `90-120s` rest
-- Exercise A: `DB Incline Bench Press` `4x4-5`
+- Exercise A: `Parallel Bar Dip` `4x4-5`
 - Exercise B: (contrast) `med ball rotational throw` `4x3/side`
 - Coaching notes:
-  - Incline DB press (not flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.
+  - Dips (not incline/flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.
+  - Automatic alternative if no dip bars: `Chair Dip`.
   - This replaces the plyo push-up contrast of the front-row version.
 
 ### Block 3 - Reactive Support / Anti-Rotation

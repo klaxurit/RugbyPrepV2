@@ -37,38 +37,39 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Force + Explosive Contrast
 - Format: `4 rounds`, `3-4 min` rest between rounds
-- Exercise A: (prime) `trap bar deadlift` `4x4-5 @ 85-90%`
+- Exercise A: (prime) `Barbell Hip Thrust` `4x4-5 @ 85-90%`
 - Exercise B: (contrast) `box jump` `4x3-4, max intention`
 - Coaching notes:
-  - Trap bar deadlift: powerful hip extension, controlled descent.
+  - Hip thrust (not trap bar — already primed on LOWER this week): powerful lockout, controlled descent.
   - Box jump within 15-20s: stick the landing, full extension.
   - This is the lower-body power developer of the session.
   - Fallback options:
-    - A: `Back Squat` heavy (4x4-5)
+    - A: `Single-Leg RDL` heavy (4x4/side)
     - B: `Vertical Jump` if no box
 
 ### Block 2 - Upper Force + Explosive Contrast
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `DB Incline Bench Press` `4x4-5 @ 85-90%`
+- Exercise A: `Parallel Bar Dip` `4x4-5`
 - Exercise B: (contrast) `plyo push-up` `4x4-5, max height`
 - Coaching notes:
-  - Incline DB press (not flat bench — reserved for the UPPER session this week) into explosive plyo push-up.
+  - Dips (not incline/flat bench — reserved for the UPPER session this week) into explosive plyo push-up.
   - Plyo push-up: hands should leave the ground. Focus on speed of push.
-  - If plyo quality drops, reduce incline load before cutting push-ups.
+  - If plyo quality drops, reduce dip difficulty before cutting push-ups.
+  - Automatic alternative if no dip bars: `Chair Dip`.
   - Fallback options:
-    - A: `Push Press` if no incline bench
+    - A: `Chair Dip` or `Push Press`
     - B: `Med Ball Chest Pass` if plyo push-ups too demanding
 
 ### Block 3 - Unilateral / Trunk Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `reverse lunge` `3x5-6/side`
+- Exercise A: `Single-Leg RDL` `3x5-6/side`
 - Exercise B: `pallof press hold` `3x15-20s/side`
 - Coaching notes:
-  - Lunge: force-grade reps (5-6), stable and controlled.
+  - Single-leg RDL (not reverse lunge / RFESS — already on LOWER this week): force-grade, stable.
   - Pallof: anti-rotation endurance to support trunk stability for contrast work.
   - This block maintains single-leg balance and trunk integrity.
   - Fallback options:
-    - A: `Split Squat` DB
+    - A: `Kickstand RDL`
     - B: `Dead Bug` if no band
 
 ### Block 4 - Finisher Rugby
@@ -90,7 +91,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ## Position Accent
 - Session is common for both groups.
-- `Front_row`: slightly more patience on trap bar setup; heavier incline loads tolerated.
+- `Front_row`: slightly more patience on hip-thrust setup; heavier dip loads tolerated.
 - `Back_three`: slightly more emphasis on jump height and push-up speed.
 
 ## Injury Substitutions
@@ -98,28 +99,29 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Knee Pain
 - Remove:
   - `Box Jump` if landing painful
-  - `Reverse Lunge`
+  - `Single-Leg RDL` if provocative
 - Replace with:
   - `Countermovement Jump` reduced range
-  - `Hip Thrust` 3x5
+  - supported hip hinge variation
 - Rehab finisher:
   - controlled knee-friendly pattern
 
 ### Shoulder Pain
 - Remove:
-  - `DB Incline Bench Press`
+  - `Parallel Bar Dip`
   - `Plyo Push-Up`
 - Replace with:
-  - `Neutral-Grip DB Bench Press`
+  - `Landmine Press` light
   - `Med Ball Chest Pass`
 - Rehab finisher:
   - `band external rotation`
 
 ### Low Back Pain
 - Remove:
-  - `Trap Bar Deadlift` if bracing fails
+  - `Barbell Hip Thrust` if bracing fails
+  - `Single-Leg RDL` if provocative
 - Replace with:
-  - `Hip Thrust` heavy (4x5)
+  - `Single-Leg Glute Bridge` (4x6/side)
 - Rehab finisher:
   - breathing and trunk stiffness work
 

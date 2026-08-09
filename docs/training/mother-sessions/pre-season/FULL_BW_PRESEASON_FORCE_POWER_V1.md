@@ -29,25 +29,28 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Hinge + Jump
 - Format: `4 rounds`, `3 min` rest between rounds
-- Exercise A: `Nordic Eccentric` `4x3-4`
+- Exercise A: `Kickstand RDL` `4x4/side`
 - Exercise B: (contrast) `Broad Jump` `4x3`
 - Coaching notes:
-  - Heavy hinge — DB/KB or strict nordic fallback.
+  - Kickstand RDL (not nordics — already on LOWER this week) into broad jump.
   - Broad jump: full hip extension, stick landing.
 
 ### Block 2 - Contrast Push
 - Format: `3 rounds`, `3 min` rest between rounds
-- Exercise A: `Decline Push-Up` `3x4`
-- Exercise B: (contrast) `Plyo Push-Up` `3x4`
+- Exercise A: `Chair Dip` `3x4`
+- Exercise B: (contrast) `Band Rotation Explosive` `3x4/side`
 - Coaching notes:
-  - Upgrade A: dumbbell bench if DB + bench.
+  - Chair dips (not decline/plyo — reserved for UPPER this week) into rotational power.
+  - Fallback A: `Archer Push-Up` or `Parallel Bar Dip`.
+  - Fallback B: `Med Ball Rotational Throw` if med ball available.
 
 ### Block 3 - Pull + Rotation
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Rowing inversé pieds surélevés` `3x5`
+- Exercise A: `Neutral-Grip Pull-Up` `3x4-5`
 - Exercise B: `Band Rotation Explosive` `3x5/side`
 - Coaching notes:
-  - Upgrade A: pull-up if bar available.
+  - Pull-ups (not inverted row feet-elevated — reserved for UPPER this week).
+  - Fallback A: `Face Pull Band` if no bar.
 
 ### Block 4 - Carry
 - Format: `2 rounds`, `60s` rest

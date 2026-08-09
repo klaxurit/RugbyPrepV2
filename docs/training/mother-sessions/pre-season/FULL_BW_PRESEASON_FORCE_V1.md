@@ -31,24 +31,27 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Hinge Force
 - Format: `3 work sets`, `2-3 min` rest between sets
-- Exercise A: `Nordic Eccentric` `3x5`
+- Exercise A: `Single-Leg Glute Bridge` `3x8/side`
 - Coaching notes:
-  - Hinge force — nordiques stricts ou RDL si haltères disponibles.
+  - Hip extension force (not nordics — already on LOWER this week).
+  - Upgrade: hip thrust on bench if DB + bench available.
 
 ### Block 2 - Push / Pull Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Decline Push-Up` `3x6-8`
-- Exercise B: `Rowing inversé pieds surélevés` `3x6-8/side`
+- Exercise A: `Chair Dip` `3x6-8`
+- Exercise B: `Neutral-Grip Pull-Up` `3x5-6`
 - Coaching notes:
-  - Upgrade A: dumbbell bench if DB + bench.
-  - Upgrade B: `Neutral-Grip Pull-Up` if bar available.
+  - Chair dips (not decline push-up — reserved for UPPER this week).
+  - Pull-ups (not inverted row feet-elevated — reserved for UPPER this week).
+  - Fallback A: `Archer Push-Up` or `Parallel Bar Dip` if bars available.
+  - Fallback B: `Face Pull Band` if no pull-up bar.
 
 ### Block 3 - Hip / Rotation
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Single-Leg Glute Bridge` `3x6-8/side`
+- Exercise A: `Kickstand RDL` `3x6-8/side`
 - Exercise B: `Band Rotation Explosive` `2-3x6-8/side`
 - Coaching notes:
-  - Upgrade A: hip thrust on bench if DB + bench available.
+  - Unilateral hinge support complementary to LOWER nordics.
 
 ### Block 4 - Finisher
 - Format: `2 rounds`, `45-60s` rest

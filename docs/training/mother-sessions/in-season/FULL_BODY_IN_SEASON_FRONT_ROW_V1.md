@@ -38,40 +38,37 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Power Pair
 - Format: `3 rounds`, full rest `3 min`
-- Exercise A: `Front Squat` `3x4-5`
+- Exercise A: `Reverse Lunge` `3x5/side`
 - Exercise B: `Countermovement Jump` `3 reps`
 - Coaching notes:
-  - The front squat should stay sharp, upright, and braced.
+  - Reverse lunge (not front/box squat — reserved for the LOWER session this week): sharp, upright, braced.
   - The jump stays crisp and explosive.
-  - This block opens the session with force support and athletic output, without duplicating the lower-day opening.
+  - This block opens with unilateral force + athletic output without duplicating the lower-day opening.
   - Fallback options:
-    - A: `Box Squat`
+    - A: `Rear-Foot Elevated Split Squat`
     - B: `Broad Jump`
 
 ### Block 2 - Upper Push/Pull Strength
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Football Bar Bench Press` `3x5-6`
-- Exercise B: `Chest-Supported Row` `3x6-8`
+- Exercise A: `Parallel Bar Dip` `3x5-6`
+- Exercise B: `Half-Kneeling Cable Row` `3x6-8`
 - Coaching notes:
   - This is the main upper renfo block.
-  - Keep the push strong and the pull equally solid.
-  - This block should feel robust and useful, not sloppy.
-  - `Football Bar Bench Press` = neutral-grip football bar / Swiss bar bench press.
-  - Automatic alternative if the bar is not available: `Neutral-Grip DB Bench Press`.
+  - Dips (not football-bar/flat bench — reserved for the UPPER session this week) into a strict cable row.
+  - Automatic alternative if no dip bars: `Chair Dip` or `Landmine Press`.
   - Fallback options:
-    - A1: `Neutral-Grip DB Bench Press`
-    - A2: `Bench Press`
-    - B: `Landmine Row`
+    - A: `Chair Dip`
+    - B: `Seated Cable Row`
 
 ### Block 3 - Posterior Chain / Trunk Support
 - Format: `3 rounds`, `75-90s` rest
-- Exercise A: `Hex Bar RDL` `3x6-8`
+- Exercise A: `Single-Leg RDL` `3x6-8/side`
 - Exercise B: `Landmine Rotation` `2-3x6-8/side`
 - Coaching notes:
-  - The hinge lift should support contact robustness and sprint support without excessive soreness.
+  - Single-leg RDL (LOWER already covers bilateral hinge this week): support contact robustness without extra soreness.
   - The rotation work should stay controlled and athletic.
   - Fallback options:
-    - A: `Barbell Hip Thrust`
+    - A: `Kickstand RDL`
     - B: `Ab Wheel`
 
 ### Block 4 - Front Row Support

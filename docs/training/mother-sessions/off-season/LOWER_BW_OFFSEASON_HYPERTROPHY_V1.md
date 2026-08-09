@@ -41,7 +41,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Around `RPE 6-8` — main hypertrophy driver for the lower session.
   - Add backpack load or 3-1-3 tempo before switching to an easier variation.
   - Fallback: `Reverse Lunge Bodyweight` only if single-leg balance is the limiter.
-  - Upgrade: `Goblet Squat` if DB/KB available.
+  - Upgrade: load the Bulgarian with DB/KB if available (keep unilateral).
 
 ### Block 2 - Hinge / Unilateral Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
