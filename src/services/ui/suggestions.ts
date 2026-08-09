@@ -75,14 +75,14 @@ function computeFamilySuggestion(
   const baseReps = lastEntry.reps
 
   if (family === 'ballistic_iso') {
-    // No load increment. Progress quality/distance/duration/reps if RIR >= 2
+    // No load increment. Progress quality/distance/duration/reps if RER >= 2
     const suggestedReps = rir >= 2 && baseReps ? baseReps + 1 : baseReps
     return {
       kind: 'load_reps',
       suggestionText: override?.suggestionTemplate ?? `${baseLoad} kg × ${suggestedReps ?? '?'}`,
       rationale: rir >= 2
         ? 'Qualité bonne, légère hausse de volume.'
-        : 'RIR bas: garde le même volume, qualité.',
+        : 'RER bas: garde le même volume, qualité.',
       suggestedLoadKg: baseLoad !== undefined ? baseLoad : undefined,
       suggestedReps,
       lastText
@@ -93,7 +93,7 @@ function computeFamilySuggestion(
     return {
       kind: 'load_reps',
       suggestionText: override?.suggestionTemplate ?? `${baseLoad} kg × ${baseReps ?? '?'}`,
-      rationale: 'RIR ≤ 1: garde la charge, priorité exécution.',
+      rationale: 'RER ≤ 1: garde la charge, priorité exécution.',
       suggestedLoadKg: baseLoad !== undefined ? baseLoad : undefined,
       suggestedReps: baseReps,
       lastText
@@ -101,15 +101,15 @@ function computeFamilySuggestion(
   }
 
   if (family === 'upper_compound') {
-    // +1.25 to +2.5 kg when RIR >= 2
+    // +1.25 to +2.5 kg when RER >= 2
     const increment = rir >= 3 ? 2.5 : 1.25
     const suggestedLoadKg = roundToIncrement(baseLoad + increment, 1.25)
     return {
       kind: 'load_reps',
       suggestionText: override?.suggestionTemplate ?? `${suggestedLoadKg} kg × ${baseReps ?? '?'}`,
       rationale: rir >= 3
-        ? 'RIR 3+: marge suffisante, monte de +2.5 kg.'
-        : 'RIR 2: progression prudente +1.25 kg.',
+        ? 'RER 3+: marge suffisante, monte de +2.5 kg.'
+        : 'RER 2: progression prudente +1.25 kg.',
       suggestedLoadKg,
       suggestedReps: baseReps,
       lastText
@@ -117,15 +117,15 @@ function computeFamilySuggestion(
   }
 
   if (family === 'lower_compound') {
-    // +2.5 to +5 kg when RIR >= 2
+    // +2.5 to +5 kg when RER >= 2
     const increment = rir >= 3 ? 5 : 2.5
     const suggestedLoadKg = roundToIncrement(baseLoad + increment)
     return {
       kind: 'load_reps',
       suggestionText: override?.suggestionTemplate ?? `${suggestedLoadKg} kg × ${baseReps ?? '?'}`,
       rationale: rir >= 3
-        ? 'RIR 3+: marge suffisante, monte de +5 kg.'
-        : 'RIR 2: progression prudente +2.5 kg.',
+        ? 'RER 3+: marge suffisante, monte de +5 kg.'
+        : 'RER 2: progression prudente +2.5 kg.',
       suggestedLoadKg,
       suggestedReps: baseReps,
       lastText
@@ -140,7 +140,7 @@ function computeFamilySuggestion(
     return {
       kind: 'load_reps',
       suggestionText: override?.suggestionTemplate ?? `${suggestedLoadKg} kg × ${suggestedReps}`,
-      rationale: 'Haut de fourchette + RIR suffisant: monte la charge, reps au bas.',
+      rationale: 'Haut de fourchette + RER suffisant: monte la charge, reps au bas.',
       suggestedLoadKg,
       suggestedReps,
       lastText
@@ -154,7 +154,7 @@ function computeFamilySuggestion(
     suggestionText: override?.suggestionTemplate ?? `${baseLoad} kg × ${suggestedReps ?? '?'}`,
     rationale: rir >= 2
       ? 'Ajoute 1 rep, garde la charge stable.'
-      : 'RIR bas: garde les mêmes reps.',
+      : 'RER bas: garde les mêmes reps.',
     suggestedLoadKg: baseLoad || undefined,
     suggestedReps,
     lastText

@@ -36,7 +36,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Neural Lower
 - Format: `3 rounds`, `2-3 min` rest between rounds
-- Exercise A: `Bodyweight Squat` `3x2-3 @ RIR 3-4`
+- Exercise A: `Bodyweight Squat` `3x2-3 @ RER 3-4`
 - Exercise B: `Countermovement Jump` `3 reps`
 - Coaching notes:
   - Squat rapide et explosif — intent vitesse, pas de grind.
@@ -45,8 +45,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Primer
 - Format: `3 rounds`, `2-3 min` rest between rounds
-- Exercise A: `Pike Push-Up` `3x5 @ RIR 3-4`
-- Exercise B: `Archer Push-Up` `3x3/side @ RIR 3-4`
+- Exercise A: `Pike Push-Up` `3x5 @ RER 3-4`
+- Exercise B: `Archer Push-Up` `3x3/side @ RER 3-4`
 - Coaching notes:
   - Pike explosif — intent overhead, pas de grind.
   - Archer (pas plyo — déjà sur UPPER cette semaine) — intent unilatéral, vitesse contrôlée.
@@ -54,7 +54,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull / Rotation
 - Format: `2-3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Face Pull Band` `2-3x8-10 @ RIR 3-4`
+- Exercise A: `Face Pull Band` `2-3x8-10 @ RER 3-4`
 - Exercise B: `Band Rotation Explosive` `2-3/side`
 - Coaching notes:
   - Face pull (pas rowing inversé — déjà sur UPPER cette semaine) : priming scapulaire.
@@ -63,8 +63,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 4 - Optional Confidence
 - Format: `2 rounds`, `45s` rest
-- Exercise A: `Face Pull Band` `2x10 @ RIR 3-4`
-- Exercise B: `Scap Push-Up` `2x10 @ RIR 3-4`
+- Exercise A: `Face Pull Band` `2x10 @ RER 3-4`
+- Exercise B: `Scap Push-Up` `2x10 @ RER 3-4`
 - Coaching notes:
   - Bloc optionnel — confiance épaule / bras sans congestion musculaire excessive.
   - Couper en premier si le temps ou la fatigue manquent.

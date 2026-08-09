@@ -49,9 +49,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Lower Strength Triplet
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Barbell Romanian Deadlift` `3x5 @ RIR 1-2`
-- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side @ RIR 1-2`
-- Exercise C: `Nordic Curl` `3x4-5 @ RIR 1-2`
+- Exercise A: `Barbell Romanian Deadlift` `3x5 @ RER 1-2`
+- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side @ RER 1-2`
+- Exercise C: `Nordic Curl` `3x4-5 @ RER 1-2`
 - Coaching notes:
   - RDL stays strict, braced, and posterior-chain dominant.
   - The unilateral lift should still support hip and groin control, not become a quad-burner.

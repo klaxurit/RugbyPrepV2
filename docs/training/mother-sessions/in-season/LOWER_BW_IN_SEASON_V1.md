@@ -40,10 +40,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Lower Force-Projection
 - Format: `4 rounds`, full rest `2 min 30 to 3 min` after each round
-- Exercise A: `Bulgarian Split Squat` `3-4x3/side @ RIR 2-3`
+- Exercise A: `Bulgarian Split Squat` `3-4x3/side @ RER 2-3`
 - Exercise B: `Broad Jump` `3 reps`
 - Coaching notes:
-  - Heavy A: backpack load or slow 3-1-1 tempo, `RIR 2-3` (~75-80% effort).
+  - Heavy A: backpack load or slow 3-1-1 tempo, `RER 2-3` (~75-80% effort).
   - Broad jump within 15-20s of A — powerful and crisp, not chased once quality drops.
   - Upgrade A: load the Bulgarian with DB/KB if available (keep unilateral).
   - Upgrade B: `Squat Jump` if space limited; `Lateral Squat Jump` for back-three speed bias.
@@ -53,14 +53,14 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Posterior Chain + Unilateral Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Single-Leg Glute Bridge` `3x5-6/side @ RIR 2-3`
-- Exercise B: `Bulgarian Split Squat` `3x5/side @ RIR 2-3`
+- Exercise A: `Single-Leg Glute Bridge` `3x5-6/side @ RER 2-3`
+- Exercise B: `Bulgarian Split Squat` `3x5/side @ RER 2-3`
 - Coaching notes:
   - Athletic support work — clean lockout on bridge, stable unilateral squat.
   - Upgrade A: `Single-Leg Romanian Deadlift` if DB/KB available.
   - Upgrade B: loaded Bulgarian if DB available.
   - Fallback B: `Reverse Lunge Bodyweight` if balance limits split work.
-  - Keep `RIR 2-3` — useful, not draining.
+  - Keep `RER 2-3` — useful, not draining.
 
 ### Block 3 - Rugby Finisher
 - Format: `EMOM 8'`

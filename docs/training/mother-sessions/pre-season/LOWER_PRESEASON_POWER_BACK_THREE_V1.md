@@ -57,7 +57,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Posterior Chain Force Maintenance
 - Format: `3 rounds`, `90-120s` rest
-- Exercise A: `Single-Leg Romanian Deadlift` `3x5/side @ RIR 1-2`
+- Exercise A: `Single-Leg Romanian Deadlift` `3x5/side @ RER 1-2`
 - Coaching notes:
   - Keep the load moderate enough that pelvis control and hinge quality stay clean.
   - Do not turn this into a balance circus or a max-force exercise.
@@ -68,9 +68,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Hamstring / Lower-Leg Micro-Dose
 - Format: `2 rounds`, `60-75s` rest
-- Exercise A: `Nordic Curl` `2x3-4 @ RIR 1-2`
-- Exercise B: `Seated Calf Raise` `2x8-10 @ RIR 1-2`
-- Exercise C: `Tibialis Raise` `2x10-12 @ RIR 1-2`
+- Exercise A: `Nordic Curl` `2x3-4 @ RER 1-2`
+- Exercise B: `Seated Calf Raise` `2x8-10 @ RER 1-2`
+- Exercise C: `Tibialis Raise` `2x10-12 @ RER 1-2`
 - Coaching notes:
   - This is a low-volume insurance block for sprint resilience and ankle stiffness.
   - Stop the Nordics before reps become ugly or cramp-prone.

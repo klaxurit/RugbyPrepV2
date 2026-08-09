@@ -50,8 +50,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Posterior Chain + Unilateral Strength Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Barbell Hip Thrust` `3x5-6 @ RIR 2-3`
-- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side @ RIR 2-3`
+- Exercise A: `Barbell Hip Thrust` `3x5-6 @ RER 2-3`
+- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side @ RER 2-3`
 - Coaching notes:
   - Hip thrust stays powerful and clean, with a hard lockout and no lumbar overextension.
   - The unilateral pattern supports sprint mechanics, force application, and change-of-direction robustness.
@@ -71,7 +71,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Progression Rules
 - Prioritize movement speed and projection quality over load jumps.
 - Trap bar can progress by `+2.5 to +5 kg` only if all sets stay sharp.
-- Hip thrust and unilateral work progress gradually while keeping `RIR 2-3`.
+- Hip thrust and unilateral work progress gradually while keeping `RER 2-3`.
 - If weekly fatigue is high:
 - reduce Block 3 first
 - then reduce one round from Block 2

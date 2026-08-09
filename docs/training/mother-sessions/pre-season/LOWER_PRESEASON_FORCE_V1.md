@@ -39,18 +39,18 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Lower Force
 - Format: `4 work sets`, `2-3 min` rest between sets
-- Exercise A: `Pin Back Squat` `4x4-5 @ RIR 1-2`
+- Exercise A: `Pin Back Squat` `4x4-5 @ RER 1-2`
 - Coaching notes:
   - This block is the anchor of the session.
-  - Reps must stay technically clean with `RIR 1-2`.
+  - Reps must stay technically clean with `RER 1-2`.
   - No grinding, no collapse at the bottom, no rushed descent.
   - Pins should reinforce a strong concentric start and a stable bottom position.
   - The goal is force construction, not testing.
 
 ### Block 2 - Hinge + Unilateral Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Barbell Romanian Deadlift` `3x5-6 @ RIR 1-2`
-- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x6/side @ RIR 1-2`
+- Exercise A: `Barbell Romanian Deadlift` `3x5-6 @ RER 1-2`
+- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x6/side @ RER 1-2`
 - Coaching notes:
   - RDL stays strict and posterior-chain dominant.
   - The unilateral lift should support hip and groin control, not become a conditioning block.
@@ -58,9 +58,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Lower Leg Support
 - Format: `2-3 rounds`, `60-90s` rest
-- Exercise A: `Nordic Curl` `2-3x4-5 @ RIR 1-2`
-- Exercise B: `Seated Calf Raise` `3x10-12 @ RIR 1-2`
-- Exercise C: `Tibialis Raise` `2-3x10-12 @ RIR 1-2`
+- Exercise A: `Nordic Curl` `2-3x4-5 @ RER 1-2`
+- Exercise B: `Seated Calf Raise` `3x10-12 @ RER 1-2`
+- Exercise C: `Tibialis Raise` `2-3x10-12 @ RER 1-2`
 - Coaching notes:
   - Nordic volume stays low enough to preserve hamstring quality across the week.
   - Calf and tibialis work support lower-leg resilience before speed and power volumes rise later in pre-season.

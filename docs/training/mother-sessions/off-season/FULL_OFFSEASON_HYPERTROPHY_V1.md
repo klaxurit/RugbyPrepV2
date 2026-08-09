@@ -39,9 +39,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Barbell Hip Thrust` `4x8-10 @ RIR 1-2` `rest 2 min`
+- Exercise A: `Barbell Hip Thrust` `4x8-10 @ RER 1-2` `rest 2 min`
 - Coaching notes:
-  - Keep the hip thrust around `RIR 1-2`.
+  - Keep the hip thrust around `RER 1-2`.
   - Hip thrust (not trap bar / RDL — LOWER already covers those this week): hypertrophy-oriented hip extension.
   - The lift should feel powerful and productive, not like testing.
   - Fallback options:
@@ -49,8 +49,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push / Pull Support
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Parallel Bar Dip` `4x8-10 @ RIR 1-2`
-- Exercise B: `Half-Kneeling Cable Row` `4x8-10/side @ RIR 1-2`
+- Exercise A: `Parallel Bar Dip` `4x8-10 @ RER 1-2`
+- Exercise B: `Half-Kneeling Cable Row` `4x8-10/side @ RER 1-2`
 - Coaching notes:
   - Dips + cable row (UPPER already has flat + incline bench and CSR this week — do not repeat them).
   - Keep both exercises smooth, controlled, and full-range.
@@ -61,7 +61,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Lower Support / Trunk Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Single-Leg RDL` `3x8-10/side @ RIR 1-2`
+- Exercise A: `Single-Leg RDL` `3x8-10/side @ RER 1-2`
 - Exercise B: `Pallof Press Hold` `3x15-20s/side`
 - Coaching notes:
   - Single-leg RDL (LOWER already has RFESS this week): unilateral hinge without another squat-pattern day.
@@ -83,7 +83,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Progression Rules
 - `Semaine 1`: start at the lower end of the load range and establish weekly tolerance.
 - `Semaine 2`: increase load only if the main hinge and upper support work are recovering well.
-- `Semaine 3`: this is the densest week; allow hard but clean sets with `1-2 RIR`.
+- `Semaine 3`: this is the densest week; allow hard but clean sets with `1-2 RER`.
 - `Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.
 - Reduce one round of Block 4 first if fatigue rises (carry + Copenhagen still pertinent).
 - Reduce one round from Block 4 second.

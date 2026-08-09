@@ -51,9 +51,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Lower Strength Triplet
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Barbell Romanian Deadlift` `3x5-6 @ RIR 2-3`
-- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side @ RIR 2-3`
-- Exercise C: `Barbell Hip Thrust` `3x6-8 @ RIR 2-3`
+- Exercise A: `Barbell Romanian Deadlift` `3x5-6 @ RER 2-3`
+- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side @ RER 2-3`
+- Exercise C: `Barbell Hip Thrust` `3x6-8 @ RER 2-3`
 - Coaching notes:
   - RDL stays strict, braced, and posterior-chain dominant.
   - The unilateral pattern keeps hip and groin control without turning the session into a quad-volume day.
@@ -74,7 +74,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Prioritize bar speed and position quality over load jumps.
 - Squat can progress by `+2.5 to +5 kg` only if all sets stay sharp.
 - Box height should remain consistent before load is progressed.
-- RDL and unilateral work progress gradually while keeping `RIR 2-3`.
+- RDL and unilateral work progress gradually while keeping `RER 2-3`.
 - If weekly fatigue is high:
 - reduce Block 3 first
 - then reduce one round from Block 2

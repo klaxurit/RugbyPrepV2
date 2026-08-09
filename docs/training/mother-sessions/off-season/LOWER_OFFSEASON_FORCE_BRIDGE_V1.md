@@ -41,7 +41,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise A: (prime) `pin back squat` `4x4-5 @ 85-90%`
 - Exercise B: (contrast) `squat jump` `4x3-4, max intention`
 - Coaching notes:
-  - Heavy squat first: dead-stop from pins, no bounce. RIR 1-2.
+  - Heavy squat first: dead-stop from pins, no bounce. RER 1-2.
   - Jump within 15-20s of unracking — exploit the PAP window.
   - Jump height should feel noticeably better after the heavy set.
   - If jump quality drops, reduce squat load before cutting jumps.
@@ -62,8 +62,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Unilateral Strength + Posterior Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `rear-foot elevated split squat` `3x5-6/side @ RIR 1-2`
-- Exercise B: `nordic curl` `3x4-5 @ RIR 1-2`
+- Exercise A: `rear-foot elevated split squat` `3x5-6/side @ RER 1-2`
+- Exercise B: `nordic curl` `3x4-5 @ RER 1-2`
 - Coaching notes:
   - Unilateral work at force-grade reps (5-6), not hypertrophy (8+).
   - Nordic curl: controlled eccentric, assist concentric if needed.
@@ -75,8 +75,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 4 - Lower-Leg / Groin Prevention
 - Format: `2 rounds`, `45-60s` rest
 - Exercise A: `copenhagen hold` `2x20-30s/side`
-- Exercise B: `seated calf raise` `2x10-12 @ RIR 1-2`
-- Exercise C: `wall tibialis raise` `2x12 @ RIR 1-2`
+- Exercise B: `seated calf raise` `2x10-12 @ RER 1-2`
+- Exercise C: `wall tibialis raise` `2x12 @ RER 1-2`
 - Coaching notes:
   - Prevention work stays consistent across all off-season phases.
   - Keep this efficient — don't turn it into extra training volume.

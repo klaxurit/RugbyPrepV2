@@ -143,4 +143,19 @@ describe('resolveExerciseVariantForEquipment', () => {
       resolveExerciseVariantForEquipment('push_horizontal__push_up__standard', ['pullup_bar']),
     ).toBe('push_horizontal__dip__parallel')
   })
+
+  it('plyo ne monte pas vers dips (reste balistique ; med ball si dispo)', () => {
+    expect(
+      resolveExerciseVariantForEquipment('push_horizontal__push_up__plyo', ['pullup_bar']),
+    ).toBe('push_horizontal__push_up__plyo')
+    expect(
+      resolveExerciseVariantForEquipment('push_horizontal__push_up__plyo', ['med_ball']),
+    ).toBe('power__medball_chest_pass__wall')
+  })
+
+  it('decline → dips si barre, sans forcer le contraste plyo', () => {
+    expect(
+      resolveExerciseVariantForEquipment('push_horizontal__push_up__decline', ['pullup_bar']),
+    ).toBe('push_horizontal__dip__parallel')
+  })
 })

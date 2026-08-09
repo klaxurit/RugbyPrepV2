@@ -35,16 +35,16 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Upper Press
 - Format: `5 work sets`, `2 min` rest
-- Exercise A: `bench press` `5x8-10 @ RIR 1-2`
+- Exercise A: `bench press` `5x8-10 @ RER 1-2`
 - Coaching notes:
-  - Bilateral anchor. Target `RIR 1-2`, controlled and repeatable.
+  - Bilateral anchor. Target `RER 1-2`, controlled and repeatable.
   - Fallback options:
     - A: `Neutral-Grip DB Bench Press`
 
 ### Block 2 - Unilateral Pull / Rotational Press
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `single-arm db row` `4x8-10/side @ RIR 1-2`
-- Exercise B: `half-kneeling landmine press` `3-4x8-10/side @ RIR 1-2`
+- Exercise A: `single-arm db row` `4x8-10/side @ RER 1-2`
+- Exercise B: `half-kneeling landmine press` `3-4x8-10/side @ RER 1-2`
 - Coaching notes:
   - This is the main positional accent block.
   - Single-arm row develops unilateral pulling strength and anti-rotation demand.
@@ -57,7 +57,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 3 - Anti-Rotation / Vertical Pull
 - Format: `3 rounds`, `75-90s` rest after the pair
 - Exercise A: `pallof press hold` `3x15-20s/side`
-- Exercise B: `neutral-grip pull-up` `3x6-8 @ RIR 1-2`
+- Exercise B: `neutral-grip pull-up` `3x6-8 @ RER 1-2`
 - Coaching notes:
   - Pallof builds anti-rotation endurance for direction changes.
   - Pull-up: full range, dead hang to chin over.
@@ -66,10 +66,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 4 - Arms / Rotational Prep
 - Format: `2-3 rounds`, `45-60s` rest
-- Exercise A: `hammer curl` `3x10-12 @ RIR 1-2`
-- Exercise B: `rope pressdown` `3x10-12 @ RIR 1-2`
-- Exercise C: `lateral raise` `3x12-15 @ RIR 1-2`
-- Exercise D: `face pull` `2x12-15 @ RIR 1-2`
+- Exercise A: `hammer curl` `3x10-12 @ RER 1-2`
+- Exercise B: `rope pressdown` `3x10-12 @ RER 1-2`
+- Exercise C: `lateral raise` `3x12-15 @ RER 1-2`
+- Exercise D: `face pull` `2x12-15 @ RER 1-2`
 - Exercise E: `med ball rotational throw` `2x4/side`
 - Coaching notes:
   - Arms stay common. Lateral raise covers direct shoulder volume; face pull for shoulder health.
@@ -79,7 +79,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Progression Rules
 - `Semaine 1`: establish form on landmine press and single-arm row.
 - `Semaine 2`: increase loads if form is clean.
-- `Semaine 3`: highest volume; RIR 1-2 allowed.
+- `Semaine 3`: highest volume; RER 1-2 allowed.
 - `Semaine 4 (décharge)`: reduce -25-30%. Drop med ball throws and face pull first.
 
 ## Position Accent

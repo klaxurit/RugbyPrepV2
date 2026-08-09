@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Injecte une ancre d'effort `@ RIR X-Y` dans les prescriptions des mother
- * sessions qui n'en ont pas encore (ni %1RM, ni RIR/RPE).
+ * Injecte une ancre d'effort `@ RER X-Y` dans les prescriptions des mother
+ * sessions qui n'en ont pas encore (ni %1RM, ni RER/RPE).
  *
  * Cibles (alignées sur le moteur de progression) :
- *   - off_season / pre_season : RIR 1-2
- *   - in_season / playoffs     : RIR 2-3
- *   - recovery / light primer  : RIR 3-4 (volontairement plus large)
+ *   - off_season / pre_season : RER 1-2
+ *   - in_season / playoffs     : RER 2-3
+ *   - recovery / light primer  : RER 3-4 (volontairement plus large)
  *
  * Usage :
  *   node scripts/injectIntensityAnchors.mjs           # dry-run
@@ -27,7 +27,7 @@ const SKIP_NAME_RE =
   /jump|throw|plyo|slam|swing|bound|hop|sprint|shuttle|skip|carry|hold|plank|crawl|stretch|rotation isometric|isometric|pogo|sled|emom|minute /i
 
 /** Prescription déjà ancrée, ou non-reps (temps / distance / directive). */
-const ALREADY_ANCHORED_RE = /@|%|RIR|RPE/i
+const ALREADY_ANCHORED_RE = /@|%|RER|RIR|RPE/i
 const NON_REPS_RE = /\d+\s*(s|sec|min|m)\b|progressive\s+sets/i
 const SETS_X_REPS_RE = /^\s*\d+(?:[-–]\d+)?\s*[x×]\s*\d+(?:[-–]\d+)?(?:\s*\/(?:side|côté|cote|direction))?\s*$/i
 
@@ -65,18 +65,20 @@ function shouldAnchor(name, prescription) {
 
 function rewriteCoachingEffort(text, rir) {
   let out = text
-  // Harmonise les anciennes cibles RPE 6-8 / RPE 7-8 vers la zone RIR.
-  out = out.replace(/\bRPE\s*6\s*[-–]\s*8\b/gi, `RIR ${rir}`)
-  out = out.replace(/\bRPE\s*7\s*[-–]\s*8\b/gi, `RIR ${rir}`)
-  out = out.replace(/\baround\s+`RPE\s*6\s*[-–]\s*8`/gi, `target \`RIR ${rir}\``)
+  // Harmonise les anciennes cibles RPE 6-8 / RPE 7-8 vers la zone RER.
+  out = out.replace(/\bRPE\s*6\s*[-–]\s*8\b/gi, `RER ${rir}`)
+  out = out.replace(/\bRPE\s*7\s*[-–]\s*8\b/gi, `RER ${rir}`)
+  out = out.replace(/\baround\s+`RPE\s*6\s*[-–]\s*8`/gi, `target \`RER ${rir}\``)
   out = out.replace(/\bKeep\s+the\s+\w+(?:\s+\w+)?\s+around\s+`RPE\s*6\s*[-–]\s*8`/gi, (m) =>
-    m.replace(/around\s+`RPE\s*6\s*[-–]\s*8`/i, `at \`RIR ${rir}\``),
+    m.replace(/around\s+`RPE\s*6\s*[-–]\s*8`/i, `at \`RER ${rir}\``),
   )
-  // Notes in-season qui disent encore RIR 2-3 partout : hors saison on veut 1-2.
+  // Notes in-season qui disent encore RER 2-3 partout : hors saison on veut 1-2.
   if (rir === '1-2') {
-    out = out.replace(/`RIR\s*2\s*[-–]\s*3`/gi, '`RIR 1-2`')
-    out = out.replace(/\bRIR\s*2\s*[-–]\s*3\b/gi, 'RIR 1-2')
+    out = out.replace(/`RER\s*2\s*[-–]\s*3`/gi, '`RER 1-2`')
+    out = out.replace(/\bRER\s*2\s*[-–]\s*3\b/gi, 'RER 1-2')
   }
+  // Compat legacy : RIR (anglais) → RER (libellé app FR).
+  out = out.replace(/\bRIR\b/g, 'RER')
   return out
 }
 
@@ -100,14 +102,14 @@ function processFile(filePath) {
     if (inVisibleBlocks) {
       const ex = extractExerciseName(line)
       if (ex && shouldAnchor(ex.name, ex.prescription)) {
-        const next = `${ex.prescription.trim()} @ RIR ${rir}`
+        const next = `${ex.prescription.trim()} @ RER ${rir}`
         line = line.replace(`\`${ex.prescription}\``, `\`${next}\``)
         changed += 1
       }
     }
 
     // Coaching notes / progression : aligner le langage d'effort.
-    if (/RPE|RIR/.test(line)) {
+    if (/RPE|RER|RIR/.test(line)) {
       const rewritten = rewriteCoachingEffort(line, rir)
       if (rewritten !== line) {
         line = rewritten
@@ -142,5 +144,5 @@ console.log(
   `${WRITE ? 'WRITE' : 'DRY-RUN'} — ${touched.length}/${files.length} séances, ${totalChanges} modifications`,
 )
 for (const r of touched.sort((a, b) => a.id.localeCompare(b.id))) {
-  console.log(`  ${r.id} [${r.cycle} → RIR ${r.rir}] ×${r.changed}`)
+  console.log(`  ${r.id} [${r.cycle} → RER ${r.rir}] ×${r.changed}`)
 }

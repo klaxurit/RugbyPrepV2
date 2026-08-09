@@ -35,16 +35,16 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge
 - Format: `4 work sets`, `2 min` rest
-- Exercise A: `Barbell Hip Thrust` `4x8-10 @ RIR 1-2`
+- Exercise A: `Barbell Hip Thrust` `4x8-10 @ RER 1-2`
 - Coaching notes:
-  - Hip thrust (not trap bar — LOWER BT already covers hinge this week). RIR 1-2, powerful but controlled.
+  - Hip thrust (not trap bar — LOWER BT already covers hinge this week). RER 1-2, powerful but controlled.
   - Fallback options:
     - A: `Single-Leg Glute Bridge`
 
 ### Block 2 - Vertical Push / Horizontal Pull
 - Format: `5 rounds`, `90-120s` rest after pair
-- Exercise A: `Parallel Bar Dip` `5x8-10 @ RIR 1-2`
-- Exercise B: `Chest-Supported Row` `4x8-10 @ RIR 1-2`
+- Exercise A: `Parallel Bar Dip` `5x8-10 @ RER 1-2`
+- Exercise B: `Chest-Supported Row` `4x8-10 @ RER 1-2`
 - Coaching notes:
   - Dips + CSR (not landmine press / SA row — already on UPPER BT this week).
   - Automatic alternative if no dip bars: `Chair Dip` or `Seated DB Overhead Press`.
@@ -54,7 +54,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Unilateral Lower / Rotation
 - Format: `3 rounds`, `75-90s` rest after pair
-- Exercise A: `reverse lunge` `3x8-10/side @ RIR 1-2`
+- Exercise A: `reverse lunge` `3x8-10/side @ RER 1-2`
 - Exercise B: `med ball rotational throw` `3x4/side`
 - Coaching notes:
   - Lunge for single-leg structural work.
@@ -76,7 +76,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Progression Rules
 - `Semaine 1`: establish form on landmine and rotational throws.
 - `Semaine 2`: increase loads; keep throws at 4/side.
-- `Semaine 3`: peak volume. RIR 1-2.
+- `Semaine 3`: peak volume. RER 1-2.
 - `Semaine 4 (décharge)`: reduce -25-30%. Reduce one round of Block 4 first, reduce B3 throws second.
 
 ## Position Accent

@@ -39,10 +39,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Upper Push
 - Format: `4 rounds`, full rest `2 min 30 to 3 min` after each round
-- Exercise A: `Decline Push-Up` `3-4x3-4 @ RIR 2-3`
+- Exercise A: `Decline Push-Up` `3-4x3-4 @ RER 2-3`
 - Exercise B: `Plyo Push-Up` `3-4 reps`
 - Coaching notes:
-  - Heavy A: backpack load or slow eccentric, `RIR 2-3` (~75-80% effort).
+  - Heavy A: backpack load or slow eccentric, `RER 2-3` (~75-80% effort).
   - Plyo within 15-20s of A — max push speed, hands leave ground.
   - Upgrade A: `Bench Press` dumbbell if DB + bench available.
   - Upgrade B: `Med Ball Chest Pass` if med ball available.
@@ -50,8 +50,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Strength Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Rowing inversé pieds surélevés` `3x5 @ RIR 2-3`
-- Exercise B: `Inverted Row Standard` `3x5-6 @ RIR 2-3`
+- Exercise A: `Rowing inversé pieds surélevés` `3x5 @ RER 2-3`
+- Exercise B: `Inverted Row Standard` `3x5-6 @ RER 2-3`
 - Coaching notes:
   - Force-grade pulling — strict ROM, no kipping.
   - Upgrade A: strict `Pull-Up` if pull-up bar available (add backpack load if easy).

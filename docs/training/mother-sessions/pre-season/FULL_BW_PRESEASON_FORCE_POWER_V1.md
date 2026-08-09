@@ -30,7 +30,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Hinge + Jump
 - Format: `4 rounds`, `3 min` rest between rounds
-- Exercise A: `Kickstand RDL` `4x4/side @ RIR 1-2`
+- Exercise A: `Kickstand RDL` `4x4/side @ RER 1-2`
 - Exercise B: (contrast) `Broad Jump` `4x3`
 - Coaching notes:
   - Kickstand RDL (not nordics — already on LOWER this week) into broad jump.
@@ -38,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Contrast Push
 - Format: `3 rounds`, `3 min` rest between rounds
-- Exercise A: `Chair Dip` `3x4 @ RIR 1-2`
+- Exercise A: `Chair Dip` `3x4 @ RER 1-2`
 - Exercise B: (contrast) `Band Rotation Explosive` `3x4/side`
 - Coaching notes:
   - Chair dips (not decline/plyo — reserved for UPPER this week) into rotational power.
@@ -47,8 +47,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull + Rotation
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Neutral-Grip Pull-Up` `3x4-5 @ RIR 1-2`
-- Exercise B: `Band Rotation Explosive` `3x5/side @ RIR 1-2`
+- Exercise A: `Neutral-Grip Pull-Up` `3x4-5 @ RER 1-2`
+- Exercise B: `Band Rotation Explosive` `3x5/side @ RER 1-2`
 - Coaching notes:
   - Pull-ups (not inverted row feet-elevated — reserved for UPPER this week).
   - Fallback A: `Face Pull Band` if no bar.

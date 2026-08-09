@@ -39,9 +39,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Squat Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Back Squat` `4x8-10 @ RIR 1-2`
+- Exercise A: `Back Squat` `4x8-10 @ RER 1-2`
 - Coaching notes:
-  - Keep the squat around `RIR 1-2` across the block.
+  - Keep the squat around `RER 1-2` across the block.
   - The goal is productive lower-body volume, not grinding or ego loading.
   - Depth and control matter more than absolute load.
   - Fallback options:
@@ -50,8 +50,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Main Hinge / Unilateral Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Barbell Romanian Deadlift` `4x8-10 @ RIR 1-2`
-- Exercise B: `Rear-Foot Elevated Split Squat` `3-4x8-10/side @ RIR 1-2`
+- Exercise A: `Barbell Romanian Deadlift` `4x8-10 @ RER 1-2`
+- Exercise B: `Rear-Foot Elevated Split Squat` `3-4x8-10/side @ RER 1-2`
 - Coaching notes:
   - This is the main structural block of the session.
   - The hinge should build posterior chain mass without turning into a max-strength pull.
@@ -62,7 +62,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Groin Support
 - Format: `3 rounds`, `60-75s` rest after the pair
-- Exercise A: `Lying Leg Curl` `3x10-12 @ RIR 1-2`
+- Exercise A: `Lying Leg Curl` `3x10-12 @ RER 1-2`
 - Exercise B: `Copenhagen Hold` `2-3x20-30s/side`
 - Coaching notes:
   - This block supports hamstring mass and adductor robustness.
@@ -73,10 +73,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - B: `Supine Adductor Squeeze`
 
 ### Block 4 - Lower-Leg / Optional Reward
-- Exercise A: `Seated Calf Raise` `2-3x10-12 @ RIR 1-2`
-- Exercise B: `Wall Tibialis Raise` `2-3x12-15 @ RIR 1-2`
-- Exercise C: `Leg Extension` `2x12-15 @ RIR 1-2`
-- Exercise D: `Leg Press Calf Press` `2x12-15 @ RIR 1-2`
+- Exercise A: `Seated Calf Raise` `2-3x10-12 @ RER 1-2`
+- Exercise B: `Wall Tibialis Raise` `2-3x12-15 @ RER 1-2`
+- Exercise C: `Leg Extension` `2x12-15 @ RER 1-2`
+- Exercise D: `Leg Press Calf Press` `2x12-15 @ RER 1-2`
 - Coaching notes:
   - `Calf + Tibialis` is the default tissue-support pair.
   - `Leg Extension + Calf Press` is optional and functions as a controlled reward block if recovery is good.
@@ -85,7 +85,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Progression Rules
 - `Semaine 1`: start at the lower end of the load range and establish clean volume tolerance.
 - `Semaine 2`: increase load only if recovery is good while keeping unilateral work at `3 sets`.
-- `Semaine 3`: this is the highest volume week; keep quality but allow hard sets with `1-2 RIR`.
+- `Semaine 3`: this is the highest volume week; keep quality but allow hard sets with `1-2 RER`.
 - `Semaine 3`: progress unilateral work to `4 sets` only if recovery supports it.
 - `Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.
 - Reduce optional Pair 2 of Block 4 first if fatigue rises.

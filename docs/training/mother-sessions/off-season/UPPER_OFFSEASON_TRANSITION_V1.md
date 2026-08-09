@@ -38,8 +38,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Press / Pull Base Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Bench Press` `3x6-8 @ RIR 1-2`
-- Exercise B: `Chest-Supported Row` `3x8-10 @ RIR 1-2`
+- Exercise A: `Bench Press` `3x6-8 @ RER 1-2`
+- Exercise B: `Chest-Supported Row` `3x8-10 @ RER 1-2`
 - Coaching notes:
   - Keep both lifts around `RPE 5-6`.
   - This is the first real bilateral upper loading block after Recovery.
@@ -51,8 +51,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Vertical Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Half-Kneeling Landmine Press` `3x6-8/side @ RIR 1-2`
-- Exercise B: `Neutral-Grip Lat Pulldown` `3x8-10 @ RIR 1-2`
+- Exercise A: `Half-Kneeling Landmine Press` `3x6-8/side @ RER 1-2`
+- Exercise B: `Neutral-Grip Lat Pulldown` `3x8-10 @ RER 1-2`
 - Coaching notes:
   - This block reintroduces vertical-ish upper work without pushing intensity too fast.
   - Landmine press should feel stacked, smooth, and shoulder-friendly.
@@ -63,7 +63,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Shoulder / Trunk Support
 - Format: `2 rounds`, minimal rest
-- Exercise A: `Face Pull` `2x10-12 @ RIR 1-2`
+- Exercise A: `Face Pull` `2x10-12 @ RER 1-2`
 - Exercise B: `Pallof Press Hold` `2x15-20s/side`
 - Coaching notes:
   - This block supports scapular rhythm, posture, and trunk stiffness.

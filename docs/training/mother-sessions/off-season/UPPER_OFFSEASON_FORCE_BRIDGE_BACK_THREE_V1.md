@@ -46,7 +46,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Force + Rotational Power
 - Format: `4 rounds`, `90-120s` rest
-- Exercise A: `neutral-grip pull-up` `4x4-5 @ RIR 1-2`
+- Exercise A: `neutral-grip pull-up` `4x4-5 @ RER 1-2`
 - Exercise B: (contrast) `med ball rotational throw` `4x3/side`
 - Coaching notes:
   - Pull-up for vertical pulling force.
@@ -58,8 +58,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Unilateral Rotational Strength
 - Format: `3 rounds`, `75-90s` rest
-- Exercise A: `half-kneeling landmine press` `3x4-5/side @ RIR 1-2`
-- Exercise B: `half-kneeling cable row` `3x5-6/side @ RIR 1-2`
+- Exercise A: `half-kneeling landmine press` `3x4-5/side @ RER 1-2`
+- Exercise B: `half-kneeling cable row` `3x5-6/side @ RER 1-2`
 - Coaching notes:
   - Both exercises in half-kneeling: trunk stability under unilateral load.
   - This replaces the push press + t-bar row of the front-row version.
@@ -70,7 +70,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 4 - Trunk / Shoulder Prevention
 - Format: `2 rounds`, `45-60s` rest
 - Exercise A: `cable chop` `2x6-8/side`
-- Exercise B: `face pull` `2x10-12 @ RIR 1-2`
+- Exercise B: `face pull` `2x10-12 @ RER 1-2`
 - Coaching notes:
   - Same structure as front-row. Cable chop at force-grade reps.
 

@@ -38,9 +38,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Squat Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `back squat` `4x8-10 @ RIR 1-2`
+- Exercise A: `back squat` `4x8-10 @ RER 1-2`
 - Coaching notes:
-  - Bilateral anchor preserved. RIR 1-2.
+  - Bilateral anchor preserved. RER 1-2.
   - Depth and control matter more than load.
   - Fallback options:
     - A: `Front Squat`
@@ -48,8 +48,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Unilateral Hinge / Quad Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `single-leg romanian deadlift` `4x8-10/side @ RIR 1-2`
-- Exercise B: `reverse lunge` `3-4x8-10/side @ RIR 1-2`
+- Exercise A: `single-leg romanian deadlift` `4x8-10/side @ RER 1-2`
+- Exercise B: `reverse lunge` `3-4x8-10/side @ RER 1-2`
 - Coaching notes:
   - This is the main positional accent block.
   - Single-leg RDL builds unilateral posterior chain — key for sprint acceleration.
@@ -61,7 +61,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Groin Support
 - Format: `4 rounds`, `60-75s` rest after the pair
-- Exercise A: `nordic curl` `4x4-5 @ RIR 1-2`
+- Exercise A: `nordic curl` `4x4-5 @ RER 1-2`
 - Exercise B: `copenhagen hold` `2-3x20-30s/side`
 - Coaching notes:
   - Nordic curl for sprint-resilience: eccentric hamstring strength protects against high-speed running injuries.
@@ -72,8 +72,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 4 - Lower-Leg / Stiffness Prep
 - Format: `2 rounds`, minimal rest
-- Exercise A: `single-leg calf raise` `2-3x10-12/side @ RIR 1-2`
-- Exercise B: `wall tibialis raise` `2-3x12-15 @ RIR 1-2`
+- Exercise A: `single-leg calf raise` `2-3x10-12/side @ RER 1-2`
+- Exercise B: `wall tibialis raise` `2-3x12-15 @ RER 1-2`
 - Exercise C: `low pogo hops` `2x8`
 - Coaching notes:
   - Single-leg calf for ankle stiffness and unilateral balance.
@@ -83,7 +83,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Progression Rules
 - `Semaine 1`: establish clean volume tolerance on all exercises.
 - `Semaine 2`: increase load if recovery is good; keep nordic at 4-5 reps.
-- `Semaine 3`: highest volume week; allow RIR 1-2 on main lifts.
+- `Semaine 3`: highest volume week; allow RER 1-2 on main lifts.
 - `Semaine 4 (décharge)`: reduce volume -25-30% while keeping load. Reduce Block 4 first, Block 3 second.
 
 ## Position Accent

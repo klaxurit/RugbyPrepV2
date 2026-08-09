@@ -50,8 +50,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Neutral-Grip Pull-Up` `3x5 @ RIR 2-3`
-- Exercise B: `Pendlay Row` `3x5-6 @ RIR 2-3`
+- Exercise A: `Neutral-Grip Pull-Up` `3x5 @ RER 2-3`
+- Exercise B: `Pendlay Row` `3x5-6 @ RER 2-3`
 - Coaching notes:
   - Pull-up : weighted if strong (add dip belt). Traction strict, no kipping.
   - Pendlay starts from a dead stop each rep, explosive but technically strict.
@@ -78,7 +78,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Progression Rules
 - Prioritize bar speed and execution quality over loading jumps.
 - Bench can progress by `+2.5 kg` only if all four sets stay crisp.
-- Landmine and Pendlay can progress gradually when the player keeps `RIR 2-3` with clean mechanics.
+- Landmine and Pendlay can progress gradually when the player keeps `RER 2-3` with clean mechanics.
 - If fatigue is high during the week, reduce volume before reducing intensity:
 - Block 3 first
 - then one round from Block 2

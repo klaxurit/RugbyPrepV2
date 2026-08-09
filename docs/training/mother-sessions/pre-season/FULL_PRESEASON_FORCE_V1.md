@@ -39,17 +39,17 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Force
 - Format: `3 work sets`, `2-3 min` rest between sets
-- Exercise A: `Trap Bar Deadlift` `3x5 @ RIR 1-2`
+- Exercise A: `Trap Bar Deadlift` `3x5 @ RER 1-2`
 - Coaching notes:
   - This is the anchor lift of the session.
-  - Reps must stay strong, clean, and braced with `RIR 1-2`.
+  - Reps must stay strong, clean, and braced with `RER 1-2`.
   - Do not turn this into a max day.
   - The purpose is to complement the squat-led lower day with a full-body hinge-dominant force exposure.
 
 ### Block 2 - Upper Push/Pull Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Parallel Bar Dip` `3x6-8 @ RIR 1-2`
-- Exercise B: `Half-Kneeling Cable Row` `3x6-8/side @ RIR 1-2`
+- Exercise A: `Parallel Bar Dip` `3x6-8 @ RER 1-2`
+- Exercise B: `Half-Kneeling Cable Row` `3x6-8/side @ RER 1-2`
 - Coaching notes:
   - This block should feel strong and useful, not flashy.
   - Dips (not incline/flat bench — reserved for the UPPER session this week) into a strict cable row.
@@ -58,8 +58,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Trunk Support
 - Format: `3 rounds`, `75-90s` rest
-- Exercise A: `Barbell Hip Thrust` `3x6-8 @ RIR 1-2`
-- Exercise B: `Landmine Rotation` `2-3x6-8/side @ RIR 1-2`
+- Exercise A: `Barbell Hip Thrust` `3x6-8 @ RER 1-2`
+- Exercise B: `Landmine Rotation` `2-3x6-8/side @ RER 1-2`
 - Coaching notes:
   - Hip thrust should be powerful and clean, without exaggerated lumbar extension.
   - Rotation work should stay controlled and athletic.

@@ -38,9 +38,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Upper Push Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Bench Press` `4x8-10 @ RIR 1-2`
+- Exercise A: `Bench Press` `4x8-10 @ RER 1-2`
 - Coaching notes:
-  - Keep the press around `RIR 1-2` across the block.
+  - Keep the press around `RER 1-2` across the block.
   - This is the anchor press of the session.
   - Reps should stay controlled and repeatable, not grindy.
   - Fallback options:
@@ -48,8 +48,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Main Upper Pull / Secondary Push Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Chest-Supported Row` `4x8-10 @ RIR 1-2`
-- Exercise B: `Incline DB Bench Press` `3-4x8-10 @ RIR 1-2`
+- Exercise A: `Chest-Supported Row` `4x8-10 @ RER 1-2`
+- Exercise B: `Incline DB Bench Press` `3-4x8-10 @ RER 1-2`
 - Coaching notes:
   - This is the main structural volume block of the session.
   - The row should stay strict and full-range.
@@ -60,8 +60,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Vertical Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Seated DB Overhead Press` `3x8-10 @ RIR 1-2`
-- Exercise B: `Neutral-Grip Lat Pulldown` `3x10-12 @ RIR 1-2`
+- Exercise A: `Seated DB Overhead Press` `3x8-10 @ RER 1-2`
+- Exercise B: `Neutral-Grip Lat Pulldown` `3x10-12 @ RER 1-2`
 - Coaching notes:
   - This block restores vertical push/pull support without making it the main event.
   - Keep both movements controlled and honest.
@@ -72,16 +72,16 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 4 - Arms (Curl + Pressdown)
 - Format: `3 rounds`, `60-75s` rest after the pair
-- Exercise A: `Hammer Curl` `3x10-12 @ RIR 1-2`
-- Exercise B: `Rope Pressdown` `3x10-12 @ RIR 1-2`
+- Exercise A: `Hammer Curl` `3x10-12 @ RER 1-2`
+- Exercise B: `Rope Pressdown` `3x10-12 @ RER 1-2`
 - Coaching notes:
   - Paire de base bras — toujours faite.
   - Charge sous-maximale, technique stricte, pas de triche.
 
 ### Block 5 - Shoulder Health
 - Format: `3 rounds`, `45-60s` rest after the round
-- Exercise A: `Face Pull` `3x12-15 @ RIR 1-2`
-- Exercise B: `Lateral Raise` `2x12-15 @ RIR 1-2` *(optional)*
+- Exercise A: `Face Pull` `3x12-15 @ RER 1-2`
+- Exercise B: `Lateral Raise` `2x12-15 @ RER 1-2` *(optional)*
 - Exercise C: `T-Y-I Incline Bench` `2x5 (5s per position: T, Y, I)` *(optional)*
 - Coaching notes:
   - Bloc santé épaule rugby — 3 têtes du deltoïde + trapèze inférieur (via le Y du T-Y-I).
@@ -92,7 +92,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Progression Rules
 - `Semaine 1`: start at the lower end of the load range and establish clean volume tolerance.
 - `Semaine 2`: increase load only if pressing and pulling are recovering well while keeping secondary push work at `3 sets`.
-- `Semaine 3`: this is the highest volume week; allow hard but clean sets with `1-2 RIR`.
+- `Semaine 3`: this is the highest volume week; allow hard but clean sets with `1-2 RER`.
 - `Semaine 3`: progress `Incline DB Bench Press` to `4 sets` only if recovery supports it.
 - `Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.
 - Reduce optional exercises of Block 5 first (Lateral Raise + T-Y-I) if fatigue rises.

@@ -36,8 +36,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Squat / Hinge Base Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Bodyweight Squat` `3x6-8 @ RIR 1-2`
-- Exercise B: `Single-Leg Glute Bridge` `3x6-8/side @ RIR 1-2`
+- Exercise A: `Bodyweight Squat` `3x6-8 @ RER 1-2`
+- Exercise B: `Single-Leg Glute Bridge` `3x6-8/side @ RER 1-2`
 - Coaching notes:
   - Keep around `RPE 5-6`.
   - Squat with controlled tempo (3-1-3) if easy.
@@ -48,8 +48,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Unilateral Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Reverse Lunge Bodyweight` `3x6-8/side @ RIR 1-2`
-- Exercise B: `Kickstand RDL` `3x6-8/side @ RIR 1-2`
+- Exercise A: `Reverse Lunge Bodyweight` `3x6-8/side @ RER 1-2`
+- Exercise B: `Kickstand RDL` `3x6-8/side @ RER 1-2`
 - Coaching notes:
   - Travail unilatéral fluide et symétrique — soutien, pas de recherche de fatigue.
   - Fallback options:
@@ -59,8 +59,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 3 - Groin / Trunk / Lower-Leg Support
 - Exercise A: `Side Plank` `2x20-30s/side`
 - Exercise B: `Supine Adductor Squeeze` `2x20s`
-- Exercise C: `Single-Leg Calf Raise` `2x10-12/side @ RIR 1-2`
-- Exercise D: `Wall Tibialis Raise` `2x12-15 @ RIR 1-2`
+- Exercise C: `Single-Leg Calf Raise` `2x10-12/side @ RER 1-2`
+- Exercise D: `Wall Tibialis Raise` `2x12-15 @ RER 1-2`
 - Coaching notes:
   - Submaximal holds and lower-leg support.
   - Run plank + adductor first, then calf + tibialis.

@@ -104,7 +104,7 @@ describe('motherSessionContentFr', () => {
       'Les séries de montée en charge sont essentielles — atteindre le poids de travail en 2-3 séries.',
     )
     expect(fr.blocks[0].coachingNotes).toEqual([
-      'Bench lourd : excentrique contrôlée, concentrique explosif. RIR 1-2.',
+      'Bench lourd : excentrique contrôlée, concentrique explosif. RER 1-2.',
       'Passe med ball dans les 15-20 s après la série de bench — exploiter le PAP.',
       'La passe doit sembler nettement plus rapide et plus vive après la série lourde.',
       'Si la qualité de la passe baisse, réduire d’abord la charge de bench.',

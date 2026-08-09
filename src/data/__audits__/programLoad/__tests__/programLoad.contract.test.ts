@@ -79,7 +79,7 @@ describe('cohérence répétitions × %1RM', () => {
   })
 })
 
-describe('ancres d\'intensité (RIR / %1RM)', () => {
+describe('ancres d\'intensité (RER / %1RM)', () => {
   const missing = auditIntensityAnchors(MOTHER_SESSIONS)
 
   it('couvre les prescriptions dures avec une ancre d\'effort', () => {

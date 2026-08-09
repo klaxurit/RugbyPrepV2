@@ -16,9 +16,9 @@ const ENTRIES: GlossaryEntry[] = [
     en: 'Rate of Perceived Exertion — effort on a 1-10 scale. **RPE 6-8** = you could do 2-4 more reps before failure. RPE 10 = total failure.',
   },
   {
-    term: 'RIR',
-    fr: 'Reps In Reserve — nombre de reps que tu pourrais encore faire avant l\'échec. **RIR 2** = "il te reste 2 reps en réserve". Plus précis et plus sûr que d\'aller à l\'échec.',
-    en: 'Reps In Reserve — how many reps you could still do before failure. **RIR 2** = "2 reps left in the tank". More precise and safer than training to failure.',
+    term: 'RER',
+    fr: 'Reps En Réserve — nombre de reps que tu pourrais encore faire avant l\'échec. **RER 2** = « il te reste 2 reps en réserve ». Plus précis et plus sûr que d\'aller à l\'échec.',
+    en: 'Reps In Reserve (RIR) — how many reps you could still do before failure. **RER 2** = "2 reps left in the tank". More precise and safer than training to failure.',
   },
   {
     term: 'Mésocycle',
@@ -54,7 +54,7 @@ interface SessionGlossaryProps {
 
 /**
  * Compact, collapsible glossary for the technical terms used in mother-session
- * coaching notes (RPE, RIR, mésocycle, décharge, ACWR). Sits below "Comprendre
+ * coaching notes (RPE, RER, mésocycle, décharge, ACWR). Sits below "Comprendre
  * cette séance" so users can build up vocabulary without breaking the flow.
  */
 export function SessionGlossary({ lang }: SessionGlossaryProps) {

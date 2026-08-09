@@ -29,7 +29,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Speed Push Contrast
 - Format: `4 rounds`, `2 min 30` rest between rounds
-- Exercise A: `Decline Push-Up` `4x3 @ RIR 1-2`
+- Exercise A: `Decline Push-Up` `4x3 @ RER 1-2`
 - Exercise B: (contrast) `Plyo Push-Up` `3-4 reps`
 - Coaching notes:
   - A: moderate load, max push speed — weighted push-ups or DB bench.
@@ -37,11 +37,12 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Explosive Pull
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Rowing inversé pieds surélevés` `3x4 @ RIR 1-2`
-- Exercise B: `Decline Push-Up` `3x5 @ RIR 1-2`
+- Exercise A: `Rowing inversé pieds surélevés` `3x4 @ RER 1-2`
+- Exercise B: `Face Pull Band` `3x12-15 @ RER 1-2`
 - Coaching notes:
-  - Explosive row — fast pull, controlled descent.
-  - Upgrade A: explosive pull-up if bar available.
+  - Rowing explosif — tirage rapide, descente contrôlée.
+  - Upgrade A : traction explosive si barre disponible.
+  - B = deltoïdes postérieurs / rotateurs (miroir du pull cluster salle) — pas un 2e push (decline déjà en B1).
 
 ### Block 3 - Finisher
 - Format: `EMOM 6'`

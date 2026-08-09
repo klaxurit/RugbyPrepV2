@@ -57,7 +57,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Power Pair
 - Format: `3 rounds`, full rest `2-3 min`
-- Exercise A: `Push Press` `3x3-4 @ RIR 1-2`
+- Exercise A: `Push Press` `3x3-4 @ RER 1-2`
 - Exercise B: `Med Ball Chest Pass` `3 reps`
 - Coaching notes:
   - Push press should stay explosive and vertically organised, not grindy.
@@ -69,9 +69,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull / Posterior Cluster
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Neutral-Grip Lat Pulldown` `3x5-6 @ RIR 1-2`
-- Exercise B: `Single-Arm DB Row` `3x5-6/side @ RIR 1-2`
-- Exercise C: `Barbell Hip Thrust` `3x4-5 @ RIR 1-2`
+- Exercise A: `Neutral-Grip Lat Pulldown` `3x5-6 @ RER 1-2`
+- Exercise B: `Single-Arm DB Row` `3x5-6/side @ RER 1-2`
+- Exercise C: `Barbell Hip Thrust` `3x4-5 @ RER 1-2`
 - Coaching notes:
   - Lat pulldown (not pull-ups — reserved for the UPPER session this week): clean and forceful.
   - Single-arm DB row (not CSR — déjà programmé en UPPER cette semaine): strict, no torso cheating.

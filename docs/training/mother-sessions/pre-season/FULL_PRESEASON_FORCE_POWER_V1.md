@@ -49,8 +49,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push/Pull Support Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Parallel Bar Dip` `3x6 @ RIR 1-2`
-- Exercise B: `Half-Kneeling Cable Row` `3x6-8/side @ RIR 1-2`
+- Exercise A: `Parallel Bar Dip` `3x6 @ RER 1-2`
+- Exercise B: `Half-Kneeling Cable Row` `3x6-8/side @ RER 1-2`
 - Coaching notes:
   - This block should stay strong and useful, not flashy.
   - Dips (not incline/flat bench — reserved for the UPPER session this week) into a strict cable row.
@@ -59,7 +59,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Rotation Support
 - Format: `3 rounds`, `75-90s` rest
-- Exercise A: `Barbell Hip Thrust` `3x5-6 @ RIR 1-2`
+- Exercise A: `Barbell Hip Thrust` `3x5-6 @ RER 1-2`
 - Exercise B: `Med Ball Rotational Throw` `3-4/side`
 - Coaching notes:
   - Hip thrust should stay powerful and clean.

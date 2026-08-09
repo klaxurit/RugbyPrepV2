@@ -32,15 +32,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Push Force
 - Format: `4 work sets`, `2-3 min` rest between sets
-- Exercise A: `Decline Push-Up` `4x4-5 @ RIR 1-2`
+- Exercise A: `Decline Push-Up` `4x4-5 @ RER 1-2`
 - Coaching notes:
-  - Backpack load or slow tempo, `RIR 1-2` — anchor block.
+  - Backpack load or slow tempo, `RER 1-2` — anchor block.
   - Upgrade: `Bench Press` dumbbell if DB + bench; parallel dips if bar/parc available.
 
 ### Block 2 - Pull + Push Support
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Rowing inversé pieds surélevés` `3x6-8 @ RIR 1-2`
-- Exercise B: `Pike Push-Up Feet Elevated` `3x6-8 @ RIR 1-2`
+- Exercise A: `Rowing inversé pieds surélevés` `3x6-8 @ RER 1-2`
+- Exercise B: `Pike Push-Up Feet Elevated` `3x6-8 @ RER 1-2`
 - Coaching notes:
   - Upgrade A: `Neutral-Grip Pull-Up` if pull-up bar available.
   - Upgrade B: `Seated DB Overhead Press` if DB + bench available.
@@ -48,8 +48,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Shoulder / Trunk Support
 - Format: `3 rounds`, `75s` rest after the pair
-- Exercise A: `Pike Push-Up` `3x6-8 @ RIR 1-2`
-- Exercise B: `Band Rotation Explosive` `2-3x6-8/side @ RIR 1-2`
+- Exercise A: `Pike Push-Up` `3x6-8 @ RER 1-2`
+- Exercise B: `Band Rotation Explosive` `2-3x6-8/side @ RER 1-2`
 - Coaching notes:
   - Rotation: floor chop regression if no band.
   - Upgrade A: dumbbell press seated if equipment allows.

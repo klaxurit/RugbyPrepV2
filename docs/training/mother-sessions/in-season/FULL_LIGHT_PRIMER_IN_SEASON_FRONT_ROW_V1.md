@@ -64,8 +64,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull / Trunk Primer
 - Format: `3 rounds`, full rest `90-120s`
-- Exercise A: `Face Pull` `3x8-10 @ RIR 3-4`
-- Exercise B: `Landmine Rotation` `3x5/side @ RIR 3-4`
+- Exercise A: `Face Pull` `3x8-10 @ RER 3-4`
+- Exercise B: `Landmine Rotation` `3x5/side @ RER 3-4`
 - Coaching notes:
   - Face pull (not a heavy row — UPPER already covers rowing this week): posture and scapular priming.
   - Keep the trunk work athletic.
@@ -76,9 +76,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Optional Block 4 - Contact Confidence / Pump
 - Format: `2 rounds`, `45-60s` rest
-- Exercise A: `Hammer Curl` `2x10 @ RIR 3-4`
-- Exercise B: `Rope Pressdown` `2x10 @ RIR 3-4`
-- Exercise C: `Banded Neck Extension` `2x10 @ RIR 3-4`
+- Exercise A: `Hammer Curl` `2x10 @ RER 3-4`
+- Exercise B: `Rope Pressdown` `2x10 @ RER 3-4`
+- Exercise C: `Banded Neck Extension` `2x10 @ RER 3-4`
 - Coaching notes:
   - Optional only.
   - Use this when the player likes a small arm pump and a little neck/contact confidence before match exposure.

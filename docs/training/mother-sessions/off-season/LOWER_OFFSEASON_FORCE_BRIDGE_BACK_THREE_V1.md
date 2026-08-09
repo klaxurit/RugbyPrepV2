@@ -47,7 +47,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Unilateral Force + Reactive Contrast
 - Format: `4 rounds`, `90-120s` rest after pair
-- Exercise A: `single-leg romanian deadlift` `4x4/side @ RIR 1-2`
+- Exercise A: `single-leg romanian deadlift` `4x4/side @ RER 1-2`
 - Exercise B: (contrast) `band-assisted split jump` `4x3/side`
 - Coaching notes:
   - Unilateral hinge force paired with reactive single-leg jump.
@@ -58,7 +58,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain Support
 - Format: `3 rounds`, `75-90s` rest
-- Exercise A: `nordic curl` `3x4-5 @ RIR 1-2`
+- Exercise A: `nordic curl` `3x4-5 @ RER 1-2`
 - Exercise B: `copenhagen hold` `2x20-30s/side`
 - Coaching notes:
   - Sprint-resilience: eccentric hamstring + groin robustness.
@@ -66,8 +66,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 4 - Lower-Leg / Reactive Stiffness
 - Format: `2 rounds`, `45-60s` rest
-- Exercise A: `single-leg calf raise` `2x8/side @ RIR 1-2`
-- Exercise B: `wall tibialis raise` `2x12 @ RIR 1-2`
+- Exercise A: `single-leg calf raise` `2x8/side @ RER 1-2`
+- Exercise B: `wall tibialis raise` `2x12 @ RER 1-2`
 - Exercise C: `low pogo hops` `2x8`
 - Coaching notes:
   - Lower-leg stiffness and reactive quality for acceleration.

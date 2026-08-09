@@ -99,11 +99,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Parallel Bar Dip",
-            "prescription": "3x6-8 @ RIR 2-3"
+            "prescription": "3x6-8 @ RER 2-3"
           },
           {
             "name": "Half-Kneeling Cable Row",
-            "prescription": "3x6-8 @ RIR 2-3"
+            "prescription": "3x6-8 @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -123,11 +123,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg RDL",
-            "prescription": "3x6-8/side @ RIR 2-3"
+            "prescription": "3x6-8/side @ RER 2-3"
           },
           {
             "name": "Landmine Rotation",
-            "prescription": "2-3x6-8/side @ RIR 2-3"
+            "prescription": "2-3x6-8/side @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -329,7 +329,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Reverse Lunge",
-            "prescription": "3x5/side @ RIR 2-3"
+            "prescription": "3x5/side @ RER 2-3"
           },
           {
             "name": "Countermovement Jump",
@@ -353,11 +353,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Parallel Bar Dip",
-            "prescription": "3x5-6 @ RIR 2-3"
+            "prescription": "3x5-6 @ RER 2-3"
           },
           {
             "name": "Half-Kneeling Cable Row",
-            "prescription": "3x6-8 @ RIR 2-3"
+            "prescription": "3x6-8 @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -377,11 +377,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg RDL",
-            "prescription": "3x6-8/side @ RIR 2-3"
+            "prescription": "3x6-8/side @ RER 2-3"
           },
           {
             "name": "Landmine Rotation",
-            "prescription": "2-3x6-8/side @ RIR 2-3"
+            "prescription": "2-3x6-8/side @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -591,7 +591,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Kickstand RDL",
-            "prescription": "3x3-4 @ RIR 2-3"
+            "prescription": "3x3-4 @ RER 2-3"
           },
           {
             "name": "Broad Jump",
@@ -599,7 +599,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Hinge modéré — `RIR 2-3`, pas de grind.",
+          "Hinge modéré — `RER 2-3`, pas de grind.",
           "Saut dans les 15-20 s après A — projection nette, réception stable.",
           "Variante A : `Romanian Deadlift` si haltères disponibles."
         ]
@@ -611,11 +611,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Chair Dip",
-            "prescription": "3x5 @ RIR 2-3"
+            "prescription": "3x5 @ RER 2-3"
           },
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x5 @ RIR 2-3"
+            "prescription": "3x5 @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -632,7 +632,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg Glute Bridge",
-            "prescription": "2x8/side @ RIR 2-3"
+            "prescription": "2x8/side @ RER 2-3"
           },
           {
             "name": "Side Plank",
@@ -742,7 +742,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bodyweight Squat",
-            "prescription": "3x2-3 @ RIR 3-4"
+            "prescription": "3x2-3 @ RER 3-4"
           },
           {
             "name": "Countermovement Jump",
@@ -762,11 +762,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Pike Push-Up",
-            "prescription": "3x5 @ RIR 3-4"
+            "prescription": "3x5 @ RER 3-4"
           },
           {
             "name": "Archer Push-Up",
-            "prescription": "3x3/side @ RIR 3-4"
+            "prescription": "3x3/side @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -782,7 +782,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Face Pull Band",
-            "prescription": "2-3x8-10 @ RIR 3-4"
+            "prescription": "2-3x8-10 @ RER 3-4"
           },
           {
             "name": "Band Rotation Explosive",
@@ -802,11 +802,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Face Pull Band",
-            "prescription": "2x10 @ RIR 3-4"
+            "prescription": "2x10 @ RER 3-4"
           },
           {
             "name": "Scap Push-Up",
-            "prescription": "2x10 @ RIR 3-4"
+            "prescription": "2x10 @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -894,7 +894,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Kickstand RDL",
-            "prescription": "3x4-5/side @ RIR 1-2"
+            "prescription": "3x4-5/side @ RER 1-2"
           },
           {
             "name": "Broad Jump",
@@ -915,7 +915,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Chair Dip",
-            "prescription": "3x4 @ RIR 1-2"
+            "prescription": "3x4 @ RER 1-2"
           },
           {
             "name": "Band Rotation Explosive",
@@ -936,11 +936,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           },
           {
             "name": "Single-Leg Glute Bridge",
-            "prescription": "3x6/side @ RIR 1-2"
+            "prescription": "3x6/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -1017,7 +1017,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "sessionIdentity": [
       "Hypertrophy full-body — not a fourth heavy lower day.",
       "Rugby finisher: carry/locomotion, adductors, optional neck.",
-      "**Calibration** : juste milieu rugbyman — exigeant mais faisable sans salle (`RIR 1-2`, `1-2 RIR` semaine 3).",
+      "**Calibration** : juste milieu rugbyman — exigeant mais faisable sans salle (`RER 1-2`, `1-2 RER` semaine 3).",
       "Régressions (incline, fente arrière) = **fallbacks coaching** uniquement."
     ],
     "warmUp": {
@@ -1055,11 +1055,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg Glute Bridge",
-            "prescription": "4x8-10/side @ RIR 1-2"
+            "prescription": "4x8-10/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Around `RIR 1-2` — hip extension hypertrophy (not nordics — already on LOWER this week).",
+          "Around `RER 1-2` — hip extension hypertrophy (not nordics — already on LOWER this week).",
           "Fallback: `Kickstand RDL` heavy tempo."
         ]
       },
@@ -1070,11 +1070,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Archer Push-Up",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           },
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "4x6-8 @ RIR 1-2"
+            "prescription": "4x6-8 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -1091,11 +1091,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Kickstand RDL",
-            "prescription": "3x8-10/side @ RIR 1-2"
+            "prescription": "3x8-10/side @ RER 1-2"
           },
           {
             "name": "Bird Dog",
-            "prescription": "3x8-10/side @ RIR 1-2"
+            "prescription": "3x8-10/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -1217,11 +1217,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bodyweight Squat",
-            "prescription": "3x8 @ RIR 3-4"
+            "prescription": "3x8 @ RER 3-4"
           },
           {
             "name": "Glute Bridge",
-            "prescription": "3x8 @ RIR 3-4"
+            "prescription": "3x8 @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -1241,11 +1241,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Incline Push-Up",
-            "prescription": "3x8-10 @ RIR 3-4"
+            "prescription": "3x8-10 @ RER 3-4"
           },
           {
             "name": "Inverted Row Standard",
-            "prescription": "3x8-10 @ RIR 3-4"
+            "prescription": "3x8-10 @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -1265,11 +1265,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Dead Bug",
-            "prescription": "2x8/side @ RIR 3-4"
+            "prescription": "2x8/side @ RER 3-4"
           },
           {
             "name": "Adductor Rock-Back",
-            "prescription": "2x8/side @ RIR 3-4"
+            "prescription": "2x8/side @ RER 3-4"
           },
           {
             "name": "World's Greatest Stretch",
@@ -1395,7 +1395,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Reverse Lunge Bodyweight",
-            "prescription": "2-3x6/side @ RIR 3-4"
+            "prescription": "2-3x6/side @ RER 3-4"
           },
           {
             "name": "Bear Crawl",
@@ -1418,11 +1418,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Incline Push-Up",
-            "prescription": "2-3x8-10 @ RIR 3-4"
+            "prescription": "2-3x8-10 @ RER 3-4"
           },
           {
             "name": "Inverted Row Standard",
-            "prescription": "2-3x8 @ RIR 3-4"
+            "prescription": "2-3x8 @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -1441,11 +1441,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg Calf Raise",
-            "prescription": "2x10/side @ RIR 3-4"
+            "prescription": "2x10/side @ RER 3-4"
           },
           {
             "name": "Wall Tibialis Raise",
-            "prescription": "2x12 @ RIR 3-4"
+            "prescription": "2x12 @ RER 3-4"
           },
           {
             "name": "Side Plank",
@@ -1557,11 +1557,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Good Morning",
-            "prescription": "3x8 @ RIR 1-2"
+            "prescription": "3x8 @ RER 1-2"
           },
           {
             "name": "Reverse Lunge Bodyweight",
-            "prescription": "3x8/side @ RIR 1-2"
+            "prescription": "3x8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -1576,11 +1576,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Chair Dip",
-            "prescription": "3x8-10 @ RIR 1-2"
+            "prescription": "3x8-10 @ RER 1-2"
           },
           {
             "name": "Face Pull Band",
-            "prescription": "3x10-12 @ RIR 1-2"
+            "prescription": "3x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -1684,7 +1684,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Inverted Row Standard",
-            "prescription": "2x3 @ RIR 3-4"
+            "prescription": "2x3 @ RER 3-4"
           },
           {
             "name": "A-Skip",
@@ -1773,7 +1773,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Kickstand RDL",
-            "prescription": "4x4/side @ RIR 1-2"
+            "prescription": "4x4/side @ RER 1-2"
           },
           {
             "name": "Broad Jump",
@@ -1793,7 +1793,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Chair Dip",
-            "prescription": "3x4 @ RIR 1-2"
+            "prescription": "3x4 @ RER 1-2"
           },
           {
             "name": "Band Rotation Explosive",
@@ -1814,11 +1814,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           },
           {
             "name": "Band Rotation Explosive",
-            "prescription": "3x5/side @ RIR 1-2"
+            "prescription": "3x5/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -1912,7 +1912,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg Glute Bridge",
-            "prescription": "3x8/side @ RIR 1-2"
+            "prescription": "3x8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -1927,11 +1927,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Chair Dip",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -1948,11 +1948,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Kickstand RDL",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           },
           {
             "name": "Band Rotation Explosive",
-            "prescription": "2-3x6-8/side @ RIR 1-2"
+            "prescription": "2-3x6-8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -2064,17 +2064,17 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Archer Push-Up",
-            "prescription": "3x3-4/side @ RIR 1-2"
+            "prescription": "3x3-4/side @ RER 1-2"
           },
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x3-4 @ RIR 1-2"
+            "prescription": "3x3-4 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Archer push-up (not decline/plyo — reserved for UPPER this week).",
-          "Pull-ups (not inverted row — reserved for UPPER this week).",
-          "Fallback A: `Chair Dip`. Fallback B: `Face Pull Band`."
+          "Pompe archer (pas decline/plyo — réservés à UPPER cette semaine).",
+          "Tractions (pas rowing inversé — réservé à UPPER cette semaine).",
+          "Fallback A : `Push-Up Standard` (garder le push au sol — pas de dips si UPPER a déjà decline/dips cette semaine). Fallback B : `Face Pull Band`."
         ]
       },
       {
@@ -2198,7 +2198,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Explosive Landmine Press",
-            "prescription": "3x5/side @ RIR 3-4"
+            "prescription": "3x5/side @ RER 3-4"
           },
           {
             "name": "Plyo Push-Up",
@@ -2222,7 +2222,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Face Pull",
-            "prescription": "3x8-10 @ RIR 3-4"
+            "prescription": "3x8-10 @ RER 3-4"
           },
           {
             "name": "Med Ball Throw",
@@ -2246,11 +2246,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Hammer Curl",
-            "prescription": "2x10 @ RIR 3-4"
+            "prescription": "2x10 @ RER 3-4"
           },
           {
             "name": "French Press",
-            "prescription": "2x10 @ RIR 3-4"
+            "prescription": "2x10 @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -2455,11 +2455,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Face Pull",
-            "prescription": "3x8-10 @ RIR 3-4"
+            "prescription": "3x8-10 @ RER 3-4"
           },
           {
             "name": "Landmine Rotation",
-            "prescription": "3x5/side @ RIR 3-4"
+            "prescription": "3x5/side @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -2479,15 +2479,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Hammer Curl",
-            "prescription": "2x10 @ RIR 3-4"
+            "prescription": "2x10 @ RER 3-4"
           },
           {
             "name": "Rope Pressdown",
-            "prescription": "2x10 @ RIR 3-4"
+            "prescription": "2x10 @ RER 3-4"
           },
           {
             "name": "Banded Neck Extension",
-            "prescription": "2x10 @ RIR 3-4"
+            "prescription": "2x10 @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -2661,7 +2661,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Parallel Bar Dip",
-            "prescription": "4x4-5 @ RIR 1-2"
+            "prescription": "4x4-5 @ RER 1-2"
           },
           {
             "name": "med ball rotational throw",
@@ -2868,7 +2868,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Parallel Bar Dip",
-            "prescription": "4x4-5 @ RIR 1-2"
+            "prescription": "4x4-5 @ RER 1-2"
           },
           {
             "name": "plyo push-up",
@@ -2894,7 +2894,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg RDL",
-            "prescription": "3x5-6/side @ RIR 1-2"
+            "prescription": "3x5-6/side @ RER 1-2"
           },
           {
             "name": "pallof press hold",
@@ -3062,11 +3062,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Hip thrust (not trap bar — LOWER BT already covers hinge this week). RIR 1-2, powerful but controlled."
+          "Hip thrust (not trap bar — LOWER BT already covers hinge this week). RER 1-2, powerful but controlled."
         ],
         "fallbackOptions": [
           "A: `Single-Leg Glute Bridge`"
@@ -3079,11 +3079,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Parallel Bar Dip",
-            "prescription": "5x8-10 @ RIR 1-2"
+            "prescription": "5x8-10 @ RER 1-2"
           },
           {
             "name": "Chest-Supported Row",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -3102,7 +3102,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "reverse lunge",
-            "prescription": "3x8-10/side @ RIR 1-2"
+            "prescription": "3x8-10/side @ RER 1-2"
           },
           {
             "name": "med ball rotational throw",
@@ -3146,7 +3146,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "progressionRules": [
       "`Semaine 1`: establish form on landmine and rotational throws.",
       "`Semaine 2`: increase loads; keep throws at 4/side.",
-      "`Semaine 3`: peak volume. RIR 1-2.",
+      "`Semaine 3`: peak volume. RER 1-2.",
       "`Semaine 4 (décharge)`: reduce -25-30%. Reduce one round of Block 4 first, reduce B3 throws second."
     ],
     "positionAccent": [
@@ -3264,12 +3264,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "4x8-10 @ RIR 1-2",
+            "prescription": "4x8-10 @ RER 1-2",
             "restAfterSetSeconds": 120
           }
         ],
         "coachingNotes": [
-          "Keep the hip thrust around `RIR 1-2`.",
+          "Keep the hip thrust around `RER 1-2`.",
           "Hip thrust (not trap bar / RDL — LOWER already covers those this week): hypertrophy-oriented hip extension.",
           "The lift should feel powerful and productive, not like testing."
         ],
@@ -3284,11 +3284,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Parallel Bar Dip",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           },
           {
             "name": "Half-Kneeling Cable Row",
-            "prescription": "4x8-10/side @ RIR 1-2"
+            "prescription": "4x8-10/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -3308,7 +3308,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg RDL",
-            "prescription": "3x8-10/side @ RIR 1-2"
+            "prescription": "3x8-10/side @ RER 1-2"
           },
           {
             "name": "Pallof Press Hold",
@@ -3352,7 +3352,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "progressionRules": [
       "`Semaine 1`: start at the lower end of the load range and establish weekly tolerance.",
       "`Semaine 2`: increase load only if the main hinge and upper support work are recovering well.",
-      "`Semaine 3`: this is the densest week; allow hard but clean sets with `1-2 RIR`.",
+      "`Semaine 3`: this is the densest week; allow hard but clean sets with `1-2 RER`.",
       "`Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.",
       "Reduce one round of Block 4 first if fatigue rises (carry + Copenhagen still pertinent).",
       "Reduce one round from Block 4 second.",
@@ -3502,11 +3502,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Goblet Squat",
-            "prescription": "3x8 @ RIR 3-4"
+            "prescription": "3x8 @ RER 3-4"
           },
           {
             "name": "DB Romanian Deadlift",
-            "prescription": "3x8 @ RIR 3-4"
+            "prescription": "3x8 @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -3527,11 +3527,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "DB Bench Press",
-            "prescription": "3x8-10 @ RIR 3-4"
+            "prescription": "3x8-10 @ RER 3-4"
           },
           {
             "name": "Inverted Row",
-            "prescription": "3x8-10 @ RIR 3-4"
+            "prescription": "3x8-10 @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -3552,11 +3552,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Dead Bug",
-            "prescription": "2x8/side @ RIR 3-4"
+            "prescription": "2x8/side @ RER 3-4"
           },
           {
             "name": "Adductor Rock-Back",
-            "prescription": "2x8/side @ RIR 3-4"
+            "prescription": "2x8/side @ RER 3-4"
           },
           {
             "name": "World's Greatest Stretch",
@@ -3720,7 +3720,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Reverse Lunge",
-            "prescription": "2-3x6/side @ RIR 3-4"
+            "prescription": "2-3x6/side @ RER 3-4"
           },
           {
             "name": "Bear Crawl",
@@ -3745,11 +3745,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Incline Push-Up",
-            "prescription": "2-3x8-10 @ RIR 3-4"
+            "prescription": "2-3x8-10 @ RER 3-4"
           },
           {
             "name": "Half-Kneeling Cable Row",
-            "prescription": "2-3x8/side @ RIR 3-4"
+            "prescription": "2-3x8/side @ RER 3-4"
           }
         ],
         "coachingNotes": [
@@ -3769,11 +3769,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg Calf Raise",
-            "prescription": "2x10/side @ RIR 3-4"
+            "prescription": "2x10/side @ RER 3-4"
           },
           {
             "name": "Wall Tibialis Raise",
-            "prescription": "2x12 @ RIR 3-4"
+            "prescription": "2x12 @ RER 3-4"
           },
           {
             "name": "Side Plank",
@@ -3937,7 +3937,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -3956,11 +3956,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Parallel Bar Dip",
-            "prescription": "3x8-10 @ RIR 1-2"
+            "prescription": "3x8-10 @ RER 1-2"
           },
           {
             "name": "Half-Kneeling Cable Row",
-            "prescription": "3x8-10/side @ RIR 1-2"
+            "prescription": "3x8-10/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -3980,7 +3980,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Rear-Foot Elevated Split Squat",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           },
           {
             "name": "Pallof Press Hold",
@@ -4190,11 +4190,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Parallel Bar Dip",
-            "prescription": "3x6 @ RIR 1-2"
+            "prescription": "3x6 @ RER 1-2"
           },
           {
             "name": "Half-Kneeling Cable Row",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -4211,7 +4211,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           },
           {
             "name": "Med Ball Rotational Throw",
@@ -4405,12 +4405,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Trap Bar Deadlift",
-            "prescription": "3x5 @ RIR 1-2"
+            "prescription": "3x5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
           "This is the anchor lift of the session.",
-          "Reps must stay strong, clean, and braced with `RIR 1-2`.",
+          "Reps must stay strong, clean, and braced with `RER 1-2`.",
           "Do not turn this into a max day.",
           "The purpose is to complement the squat-led lower day with a full-body hinge-dominant force exposure."
         ]
@@ -4422,11 +4422,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Parallel Bar Dip",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Half-Kneeling Cable Row",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -4443,11 +4443,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Landmine Rotation",
-            "prescription": "2-3x6-8/side @ RIR 1-2"
+            "prescription": "2-3x6-8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -4664,7 +4664,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Push Press",
-            "prescription": "3x3-4 @ RIR 1-2"
+            "prescription": "3x3-4 @ RER 1-2"
           },
           {
             "name": "Med Ball Chest Pass",
@@ -4687,15 +4687,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Lat Pulldown",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           },
           {
             "name": "Single-Arm DB Row",
-            "prescription": "3x5-6/side @ RIR 1-2"
+            "prescription": "3x5-6/side @ RER 1-2"
           },
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -4936,7 +4936,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Push Press",
-            "prescription": "3x3-4 @ RIR 1-2"
+            "prescription": "3x3-4 @ RER 1-2"
           },
           {
             "name": "Med Ball Chest Pass",
@@ -4959,15 +4959,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Lat Pulldown",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           },
           {
             "name": "Seated Cable Row",
-            "prescription": "2x5-6 @ RIR 1-2"
+            "prescription": "2x5-6 @ RER 1-2"
           },
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5180,7 +5180,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "3-4x3/side @ RIR 2-3"
+            "prescription": "3-4x3/side @ RER 2-3"
           },
           {
             "name": "Broad Jump",
@@ -5188,7 +5188,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy A: backpack load or slow 3-1-1 tempo, `RIR 2-3` (~75-80% effort).",
+          "Heavy A: backpack load or slow 3-1-1 tempo, `RER 2-3` (~75-80% effort).",
           "Broad jump within 15-20s of A — powerful and crisp, not chased once quality drops.",
           "Upgrade A: load the Bulgarian with DB/KB if available (keep unilateral).",
           "Upgrade B: `Squat Jump` if space limited; `Lateral Squat Jump` for back-three speed bias.",
@@ -5204,11 +5204,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg Glute Bridge",
-            "prescription": "3x5-6/side @ RIR 2-3"
+            "prescription": "3x5-6/side @ RER 2-3"
           },
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "3x5/side @ RIR 2-3"
+            "prescription": "3x5/side @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -5216,7 +5216,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           "Upgrade A: `Single-Leg Romanian Deadlift` if DB/KB available.",
           "Upgrade B: loaded Bulgarian if DB available.",
           "Fallback B: `Reverse Lunge Bodyweight` if balance limits split work.",
-          "Keep `RIR 2-3` — useful, not draining."
+          "Keep `RER 2-3` — useful, not draining."
         ]
       },
       {
@@ -5324,7 +5324,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "4x4-5/side @ RIR 1-2"
+            "prescription": "4x4-5/side @ RER 1-2"
           },
           {
             "name": "Squat Jump",
@@ -5333,7 +5333,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy A: slow 3-1-1 tempo or backpack load, `RIR 1-2`.",
+          "Heavy A: slow 3-1-1 tempo or backpack load, `RER 1-2`.",
           "Jump within 15-20s of finishing A — exploit PAP.",
           "If jump height drops, reduce load/tempo on A before cutting jumps.",
           "Upgrade A: load the Bulgarian with DB/KB if available (keep unilateral).",
@@ -5347,7 +5347,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Nordic Eccentric",
-            "prescription": "4x4-5 @ RIR 1-2"
+            "prescription": "4x4-5 @ RER 1-2"
           },
           {
             "name": "Broad Jump",
@@ -5369,11 +5369,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "3x5-6/side @ RIR 1-2"
+            "prescription": "3x5-6/side @ RER 1-2"
           },
           {
             "name": "Nordic Eccentric",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5393,11 +5393,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Single-Leg Calf Raise",
-            "prescription": "2x10-12/side @ RIR 1-2"
+            "prescription": "2x10-12/side @ RER 1-2"
           },
           {
             "name": "Wall Tibialis Raise",
-            "prescription": "2x12 @ RIR 1-2"
+            "prescription": "2x12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5490,11 +5490,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "5x8-10/side @ RIR 1-2"
+            "prescription": "5x8-10/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Around `RIR 1-2` — main hypertrophy driver for the lower session.",
+          "Around `RER 1-2` — main hypertrophy driver for the lower session.",
           "Add backpack load or 3-1-3 tempo before switching to an easier variation.",
           "Fallback: `Reverse Lunge Bodyweight` only if single-leg balance is the limiter.",
           "Upgrade: load the Bulgarian with DB/KB if available (keep unilateral)."
@@ -5507,11 +5507,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Nordic Eccentric",
-            "prescription": "4x6-8 @ RIR 1-2"
+            "prescription": "4x6-8 @ RER 1-2"
           },
           {
             "name": "Reverse Lunge Bodyweight",
-            "prescription": "5x8-10/side @ RIR 1-2"
+            "prescription": "5x8-10/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5529,7 +5529,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Kickstand RDL",
-            "prescription": "2x10-12/side @ RIR 1-2"
+            "prescription": "2x10-12/side @ RER 1-2"
           },
           {
             "name": "Copenhagen Plank",
@@ -5550,11 +5550,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg Calf Raise",
-            "prescription": "2x10-12/side @ RIR 1-2"
+            "prescription": "2x10-12/side @ RER 1-2"
           },
           {
             "name": "Wall Tibialis Raise",
-            "prescription": "2x12-15 @ RIR 1-2"
+            "prescription": "2x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5564,7 +5564,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     ],
     "progressionRules": [
       "Week 1–2: establish volume tolerance at `RPE 6-7`.",
-      "Week 3: highest volume week with `1-2 RIR` on Blocks 1–2 if recovery OK.",
+      "Week 3: highest volume week with `1-2 RER` on Blocks 1–2 if recovery OK.",
       "Week 4 deload: `-25 to -30%` volume while keeping movement quality.",
       "Cut Block 4 first, then one round from Block 2, before touching Block 1.",
       "Progress via load (backpack), tempo, or range — not by swapping to easier exercises."
@@ -5647,11 +5647,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bodyweight Squat",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Single-Leg Glute Bridge",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5671,11 +5671,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Reverse Lunge Bodyweight",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           },
           {
             "name": "Kickstand RDL",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5701,11 +5701,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Single-Leg Calf Raise",
-            "prescription": "2x10-12/side @ RIR 1-2"
+            "prescription": "2x10-12/side @ RER 1-2"
           },
           {
             "name": "Wall Tibialis Raise",
-            "prescription": "2x12-15 @ RIR 1-2"
+            "prescription": "2x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5786,7 +5786,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "4x4/side @ RIR 1-2"
+            "prescription": "4x4/side @ RER 1-2"
           },
           {
             "name": "Squat Jump",
@@ -5795,7 +5795,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy A: backpack or DB held in goblet position on the Bulgarian if DB/KB, `RIR 1-2`.",
+          "Heavy A: backpack or DB held in goblet position on the Bulgarian if DB/KB, `RER 1-2`.",
           "Jump within 15-20s of A — max intention, not volume.",
           "Upgrade B: `Banded KB Swing` if band available."
         ]
@@ -5807,11 +5807,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Nordic Eccentric",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           },
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "3x5/side @ RIR 1-2"
+            "prescription": "3x5/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5918,11 +5918,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "4x4-5/side @ RIR 1-2"
+            "prescription": "4x4-5/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Anchor block — slow 3-1-1 tempo or backpack load, `RIR 1-2`.",
+          "Anchor block — slow 3-1-1 tempo or backpack load, `RER 1-2`.",
           "No collapse, no grinding — force construction, not testing.",
           "Upgrade: load the Bulgarian with DB/KB if available (keep unilateral).",
           "`Front_row`: slightly heavier load bias.",
@@ -5936,11 +5936,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Nordic Eccentric",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           },
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "3x6/side @ RIR 1-2"
+            "prescription": "3x6/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -5957,15 +5957,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Nordic Eccentric",
-            "prescription": "2-3x4-5 @ RIR 1-2"
+            "prescription": "2-3x4-5 @ RER 1-2"
           },
           {
             "name": "Single-Leg Calf Raise",
-            "prescription": "3x10-12/side @ RIR 1-2"
+            "prescription": "3x10-12/side @ RER 1-2"
           },
           {
             "name": "Wall Tibialis Raise",
-            "prescription": "2-3x10-12 @ RIR 1-2"
+            "prescription": "2-3x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -6066,7 +6066,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "4x3/side @ RIR 1-2"
+            "prescription": "4x3/side @ RER 1-2"
           },
           {
             "name": "Squat Jump",
@@ -6087,7 +6087,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bulgarian Split Squat",
-            "prescription": "3x4/side @ RIR 1-2"
+            "prescription": "3x4/side @ RER 1-2"
           },
           {
             "name": "Broad Jump",
@@ -6216,11 +6216,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "3x5-6 @ RIR 2-3"
+            "prescription": "3x5-6 @ RER 2-3"
           },
           {
             "name": "Rear-Foot Elevated Split Squat or Reverse Lunge",
-            "prescription": "3x5/side @ RIR 2-3"
+            "prescription": "3x5/side @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -6257,7 +6257,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "progressionRules": [
       "Prioritize movement speed and projection quality over load jumps.",
       "Trap bar can progress by `+2.5 to +5 kg` only if all sets stay sharp.",
-      "Hip thrust and unilateral work progress gradually while keeping `RIR 2-3`.",
+      "Hip thrust and unilateral work progress gradually while keeping `RER 2-3`.",
       "If weekly fatigue is high:",
       "reduce Block 3 first",
       "then reduce one round from Block 2",
@@ -6420,15 +6420,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Romanian Deadlift",
-            "prescription": "3x5-6 @ RIR 2-3"
+            "prescription": "3x5-6 @ RER 2-3"
           },
           {
             "name": "Rear-Foot Elevated Split Squat or Reverse Lunge",
-            "prescription": "3x5/side @ RIR 2-3"
+            "prescription": "3x5/side @ RER 2-3"
           },
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "3x6-8 @ RIR 2-3"
+            "prescription": "3x6-8 @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -6466,7 +6466,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "Prioritize bar speed and position quality over load jumps.",
       "Squat can progress by `+2.5 to +5 kg` only if all sets stay sharp.",
       "Box height should remain consistent before load is progressed.",
-      "RDL and unilateral work progress gradually while keeping `RIR 2-3`.",
+      "RDL and unilateral work progress gradually while keeping `RER 2-3`.",
       "If weekly fatigue is high:",
       "reduce Block 3 first",
       "then reduce one round from Block 2",
@@ -6627,7 +6627,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "single-leg romanian deadlift",
-            "prescription": "4x4/side @ RIR 1-2"
+            "prescription": "4x4/side @ RER 1-2"
           },
           {
             "name": "band-assisted split jump",
@@ -6651,7 +6651,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "nordic curl",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           },
           {
             "name": "copenhagen hold",
@@ -6670,11 +6670,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "single-leg calf raise",
-            "prescription": "2x8/side @ RIR 1-2"
+            "prescription": "2x8/side @ RER 1-2"
           },
           {
             "name": "wall tibialis raise",
-            "prescription": "2x12 @ RIR 1-2"
+            "prescription": "2x12 @ RER 1-2"
           },
           {
             "name": "low pogo hops",
@@ -6810,7 +6810,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy squat first: dead-stop from pins, no bounce. RIR 1-2.",
+          "Heavy squat first: dead-stop from pins, no bounce. RER 1-2.",
           "Jump within 15-20s of unracking — exploit the PAP window.",
           "Jump height should feel noticeably better after the heavy set.",
           "If jump quality drops, reduce squat load before cutting jumps."
@@ -6851,11 +6851,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "rear-foot elevated split squat",
-            "prescription": "3x5-6/side @ RIR 1-2"
+            "prescription": "3x5-6/side @ RER 1-2"
           },
           {
             "name": "nordic curl",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -6879,11 +6879,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "seated calf raise",
-            "prescription": "2x10-12 @ RIR 1-2"
+            "prescription": "2x10-12 @ RER 1-2"
           },
           {
             "name": "wall tibialis raise",
-            "prescription": "2x12 @ RIR 1-2"
+            "prescription": "2x12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -7021,11 +7021,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "back squat",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Bilateral anchor preserved. RIR 1-2.",
+          "Bilateral anchor preserved. RER 1-2.",
           "Depth and control matter more than load."
         ],
         "fallbackOptions": [
@@ -7040,11 +7040,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "single-leg romanian deadlift",
-            "prescription": "4x8-10/side @ RIR 1-2"
+            "prescription": "4x8-10/side @ RER 1-2"
           },
           {
             "name": "reverse lunge",
-            "prescription": "3-4x8-10/side @ RIR 1-2"
+            "prescription": "3-4x8-10/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -7065,7 +7065,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "nordic curl",
-            "prescription": "4x4-5 @ RIR 1-2"
+            "prescription": "4x4-5 @ RER 1-2"
           },
           {
             "name": "copenhagen hold",
@@ -7088,11 +7088,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "single-leg calf raise",
-            "prescription": "2-3x10-12/side @ RIR 1-2"
+            "prescription": "2-3x10-12/side @ RER 1-2"
           },
           {
             "name": "wall tibialis raise",
-            "prescription": "2-3x12-15 @ RIR 1-2"
+            "prescription": "2-3x12-15 @ RER 1-2"
           },
           {
             "name": "low pogo hops",
@@ -7109,7 +7109,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "progressionRules": [
       "`Semaine 1`: establish clean volume tolerance on all exercises.",
       "`Semaine 2`: increase load if recovery is good; keep nordic at 4-5 reps.",
-      "`Semaine 3`: highest volume week; allow RIR 1-2 on main lifts.",
+      "`Semaine 3`: highest volume week; allow RER 1-2 on main lifts.",
       "`Semaine 4 (décharge)`: reduce volume -25-30% while keeping load. Reduce Block 4 first, Block 3 second."
     ],
     "positionAccent": [
@@ -7231,11 +7231,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Back Squat",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Keep the squat around `RIR 1-2` across the block.",
+          "Keep the squat around `RER 1-2` across the block.",
           "The goal is productive lower-body volume, not grinding or ego loading.",
           "Depth and control matter more than absolute load."
         ],
@@ -7251,11 +7251,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Romanian Deadlift",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           },
           {
             "name": "Rear-Foot Elevated Split Squat",
-            "prescription": "3-4x8-10/side @ RIR 1-2"
+            "prescription": "3-4x8-10/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -7275,7 +7275,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Lying Leg Curl",
-            "prescription": "3x10-12 @ RIR 1-2"
+            "prescription": "3x10-12 @ RER 1-2"
           },
           {
             "name": "Copenhagen Hold",
@@ -7299,19 +7299,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Seated Calf Raise",
-            "prescription": "2-3x10-12 @ RIR 1-2"
+            "prescription": "2-3x10-12 @ RER 1-2"
           },
           {
             "name": "Wall Tibialis Raise",
-            "prescription": "2-3x12-15 @ RIR 1-2"
+            "prescription": "2-3x12-15 @ RER 1-2"
           },
           {
             "name": "Leg Extension",
-            "prescription": "2x12-15 @ RIR 1-2"
+            "prescription": "2x12-15 @ RER 1-2"
           },
           {
             "name": "Leg Press Calf Press",
-            "prescription": "2x12-15 @ RIR 1-2"
+            "prescription": "2x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -7324,7 +7324,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "progressionRules": [
       "`Semaine 1`: start at the lower end of the load range and establish clean volume tolerance.",
       "`Semaine 2`: increase load only if recovery is good while keeping unilateral work at `3 sets`.",
-      "`Semaine 3`: this is the highest volume week; keep quality but allow hard sets with `1-2 RIR`.",
+      "`Semaine 3`: this is the highest volume week; keep quality but allow hard sets with `1-2 RER`.",
       "`Semaine 3`: progress unilateral work to `4 sets` only if recovery supports it.",
       "`Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.",
       "Reduce optional Pair 2 of Block 4 first if fatigue rises.",
@@ -7470,11 +7470,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Front Squat",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Barbell Romanian Deadlift",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -7495,11 +7495,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Reverse Lunge",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           },
           {
             "name": "Single-Leg RDL",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -7527,11 +7527,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Single-Leg Calf Raise",
-            "prescription": "2x10-12/side @ RIR 1-2"
+            "prescription": "2x10-12/side @ RER 1-2"
           },
           {
             "name": "Wall Tibialis Raise",
-            "prescription": "2x12-15 @ RIR 1-2"
+            "prescription": "2x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -7706,15 +7706,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Romanian Deadlift",
-            "prescription": "3x5 @ RIR 1-2"
+            "prescription": "3x5 @ RER 1-2"
           },
           {
             "name": "Rear-Foot Elevated Split Squat or Reverse Lunge",
-            "prescription": "3x5/side @ RIR 1-2"
+            "prescription": "3x5/side @ RER 1-2"
           },
           {
             "name": "Nordic Curl",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -7900,12 +7900,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Pin Back Squat",
-            "prescription": "4x4-5 @ RIR 1-2"
+            "prescription": "4x4-5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
           "This block is the anchor of the session.",
-          "Reps must stay technically clean with `RIR 1-2`.",
+          "Reps must stay technically clean with `RER 1-2`.",
           "No grinding, no collapse at the bottom, no rushed descent.",
           "Pins should reinforce a strong concentric start and a stable bottom position.",
           "The goal is force construction, not testing."
@@ -7918,11 +7918,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Romanian Deadlift",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           },
           {
             "name": "Rear-Foot Elevated Split Squat or Reverse Lunge",
-            "prescription": "3x6/side @ RIR 1-2"
+            "prescription": "3x6/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -7938,15 +7938,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Nordic Curl",
-            "prescription": "2-3x4-5 @ RIR 1-2"
+            "prescription": "2-3x4-5 @ RER 1-2"
           },
           {
             "name": "Seated Calf Raise",
-            "prescription": "3x10-12 @ RIR 1-2"
+            "prescription": "3x10-12 @ RER 1-2"
           },
           {
             "name": "Tibialis Raise",
-            "prescription": "2-3x10-12 @ RIR 1-2"
+            "prescription": "2-3x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -8164,7 +8164,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Single-Leg Romanian Deadlift",
-            "prescription": "3x5/side @ RIR 1-2"
+            "prescription": "3x5/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -8184,15 +8184,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Nordic Curl",
-            "prescription": "2x3-4 @ RIR 1-2"
+            "prescription": "2x3-4 @ RER 1-2"
           },
           {
             "name": "Seated Calf Raise",
-            "prescription": "2x8-10 @ RIR 1-2"
+            "prescription": "2x8-10 @ RER 1-2"
           },
           {
             "name": "Tibialis Raise",
-            "prescription": "2x10-12 @ RIR 1-2"
+            "prescription": "2x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -8419,7 +8419,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Romanian Deadlift",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -8439,7 +8439,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Nordic Curl",
-            "prescription": "2x3-4 @ RIR 1-2"
+            "prescription": "2x3-4 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -9477,7 +9477,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Decline Push-Up",
-            "prescription": "3-4x3-4 @ RIR 2-3"
+            "prescription": "3-4x3-4 @ RER 2-3"
           },
           {
             "name": "Plyo Push-Up",
@@ -9485,7 +9485,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy A: backpack load or slow eccentric, `RIR 2-3` (~75-80% effort).",
+          "Heavy A: backpack load or slow eccentric, `RER 2-3` (~75-80% effort).",
           "Plyo within 15-20s of A — max push speed, hands leave ground.",
           "Upgrade A: `Bench Press` dumbbell if DB + bench available.",
           "Upgrade B: `Med Ball Chest Pass` if med ball available.",
@@ -9499,11 +9499,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Rowing inversé pieds surélevés",
-            "prescription": "3x5 @ RIR 2-3"
+            "prescription": "3x5 @ RER 2-3"
           },
           {
             "name": "Inverted Row Standard",
-            "prescription": "3x5-6 @ RIR 2-3"
+            "prescription": "3x5-6 @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -9617,7 +9617,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Decline Push-Up",
-            "prescription": "4x4-5 @ RIR 1-2"
+            "prescription": "4x4-5 @ RER 1-2"
           },
           {
             "name": "Plyo Push-Up",
@@ -9626,7 +9626,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy A: backpack load or slow tempo, `RIR 1-2`.",
+          "Heavy A: backpack load or slow tempo, `RER 1-2`.",
           "Plyo within 15-20s of A — hands leave the ground, max push speed.",
           "If plyo quality drops, reduce load on A first.",
           "Upgrade A: `Bench Press` dumbbell heavy if DB + bench available.",
@@ -9640,7 +9640,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Rowing inversé pieds surélevés",
-            "prescription": "4x4-6 @ RIR 1-2"
+            "prescription": "4x4-6 @ RER 1-2"
           },
           {
             "name": "Inverted Row Standard",
@@ -9662,11 +9662,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Pike Push-Up Feet Elevated",
-            "prescription": "3x5 @ RIR 1-2"
+            "prescription": "3x5 @ RER 1-2"
           },
           {
             "name": "Inverted Row Standard",
-            "prescription": "3x6 @ RIR 1-2"
+            "prescription": "3x6 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -9777,11 +9777,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Decline Push-Up",
-            "prescription": "6x8-10 @ RIR 1-2"
+            "prescription": "6x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Anchor press around `RIR 1-2`.",
+          "Anchor press around `RER 1-2`.",
           "Too easy → backpack load or feet higher; too hard → `Push-Up` standard (not incline) before reducing volume.",
           "Upgrade: dips on parallettes or weighted backpack."
         ]
@@ -9793,11 +9793,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Inverted Row Standard",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           },
           {
             "name": "Pike Push-Up",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -9814,11 +9814,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Pike Push-Up Feet Elevated",
-            "prescription": "3x8-10 @ RIR 1-2"
+            "prescription": "3x8-10 @ RER 1-2"
           },
           {
             "name": "Rowing inversé pieds surélevés",
-            "prescription": "3x10-12 @ RIR 1-2"
+            "prescription": "3x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -9833,7 +9833,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Face Pull Band",
-            "prescription": "2x12-15 @ RIR 1-2"
+            "prescription": "2x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -9842,7 +9842,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       }
     ],
     "progressionRules": [
-      "Week 3 peak: hardest sets with `1-2 RIR` on Block 1 only if recovery supports.",
+      "Week 3 peak: hardest sets with `1-2 RER` on Block 1 only if recovery supports.",
       "Week 4 deload: `-25 to -30%` — cut Block 4 and one round from Block 3 first.",
       "Never add extra arm volume beyond optional Block 4.",
       "Difficulty ↑ via angle, load, or reps — not incline push-up regression."
@@ -9921,11 +9921,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Decline Push-Up",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Inverted Row Standard",
-            "prescription": "3x8-10 @ RIR 1-2"
+            "prescription": "3x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -9944,11 +9944,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Pike Push-Up",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Rowing inversé pieds surélevés",
-            "prescription": "3x8-10 @ RIR 1-2"
+            "prescription": "3x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -9966,7 +9966,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Face Pull Band",
-            "prescription": "2x10-12 @ RIR 1-2"
+            "prescription": "2x10-12 @ RER 1-2"
           },
           {
             "name": "Side Plank",
@@ -10050,7 +10050,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Decline Push-Up",
-            "prescription": "4x4 @ RIR 1-2"
+            "prescription": "4x4 @ RER 1-2"
           },
           {
             "name": "Plyo Push-Up",
@@ -10059,7 +10059,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy slow A — backpack or tempo, `RIR 1-2`.",
+          "Heavy slow A — backpack or tempo, `RER 1-2`.",
           "Plyo within 15-20s of A — hands leave ground.",
           "Upgrade A: dumbbell bench if DB + bench."
         ]
@@ -10071,7 +10071,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Rowing inversé pieds surélevés",
-            "prescription": "4x4-6 @ RIR 1-2"
+            "prescription": "4x4-6 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -10086,11 +10086,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Pike Push-Up",
-            "prescription": "3x5 @ RIR 1-2"
+            "prescription": "3x5 @ RER 1-2"
           },
           {
             "name": "Inverted Row Standard",
-            "prescription": "3x6 @ RIR 1-2"
+            "prescription": "3x6 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -10112,7 +10112,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Face Pull Band",
-            "prescription": "3x12 @ RIR 1-2"
+            "prescription": "3x12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -10188,11 +10188,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Decline Push-Up",
-            "prescription": "4x4-5 @ RIR 1-2"
+            "prescription": "4x4-5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Backpack load or slow tempo, `RIR 1-2` — anchor block.",
+          "Backpack load or slow tempo, `RER 1-2` — anchor block.",
           "Upgrade: `Bench Press` dumbbell if DB + bench; parallel dips if bar/parc available."
         ]
       },
@@ -10203,11 +10203,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Rowing inversé pieds surélevés",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Pike Push-Up Feet Elevated",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -10223,11 +10223,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Pike Push-Up",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Band Rotation Explosive",
-            "prescription": "2-3x6-8/side @ RIR 1-2"
+            "prescription": "2-3x6-8/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -10321,7 +10321,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Decline Push-Up",
-            "prescription": "4x3 @ RIR 1-2"
+            "prescription": "4x3 @ RER 1-2"
           },
           {
             "name": "Plyo Push-Up",
@@ -10341,16 +10341,17 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Rowing inversé pieds surélevés",
-            "prescription": "3x4 @ RIR 1-2"
+            "prescription": "3x4 @ RER 1-2"
           },
           {
-            "name": "Decline Push-Up",
-            "prescription": "3x5 @ RIR 1-2"
+            "name": "Face Pull Band",
+            "prescription": "3x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Explosive row — fast pull, controlled descent.",
-          "Upgrade A: explosive pull-up if bar available."
+          "Rowing explosif — tirage rapide, descente contrôlée.",
+          "Upgrade A : traction explosive si barre disponible.",
+          "B = deltoïdes postérieurs / rotateurs (miroir du pull cluster salle) — pas un 2e push (decline déjà en B1)."
         ]
       },
       {
@@ -10469,11 +10470,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x5 @ RIR 2-3"
+            "prescription": "3x5 @ RER 2-3"
           },
           {
             "name": "Pendlay Row",
-            "prescription": "3x5-6 @ RIR 2-3"
+            "prescription": "3x5-6 @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -10509,7 +10510,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "progressionRules": [
       "Prioritize speed and quality over loading jumps.",
       "Bench can progress by `+2.5 kg` only if all sets stay sharp.",
-      "Landmine and row progress gradually when mechanics remain clean and the player keeps `RIR 2-3`.",
+      "Landmine and row progress gradually when mechanics remain clean and the player keeps `RER 2-3`.",
       "If weekly fatigue is high:",
       "reduce Block 3 first",
       "then reduce one round from Block 2",
@@ -10670,11 +10671,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x5 @ RIR 2-3"
+            "prescription": "3x5 @ RER 2-3"
           },
           {
             "name": "Pendlay Row",
-            "prescription": "3x5-6 @ RIR 2-3"
+            "prescription": "3x5-6 @ RER 2-3"
           }
         ],
         "coachingNotes": [
@@ -10733,7 +10734,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "progressionRules": [
       "Prioritize bar speed and execution quality over loading jumps.",
       "Bench can progress by `+2.5 kg` only if all four sets stay crisp.",
-      "Landmine and Pendlay can progress gradually when the player keeps `RIR 2-3` with clean mechanics.",
+      "Landmine and Pendlay can progress gradually when the player keeps `RER 2-3` with clean mechanics.",
       "If fatigue is high during the week, reduce volume before reducing intensity:",
       "Block 3 first",
       "then one round from Block 2",
@@ -10890,7 +10891,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "neutral-grip pull-up",
-            "prescription": "4x4-5 @ RIR 1-2"
+            "prescription": "4x4-5 @ RER 1-2"
           },
           {
             "name": "med ball rotational throw",
@@ -10915,11 +10916,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "half-kneeling landmine press",
-            "prescription": "3x4-5/side @ RIR 1-2"
+            "prescription": "3x4-5/side @ RER 1-2"
           },
           {
             "name": "half-kneeling cable row",
-            "prescription": "3x5-6/side @ RIR 1-2"
+            "prescription": "3x5-6/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -10942,7 +10943,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "face pull",
-            "prescription": "2x10-12 @ RIR 1-2"
+            "prescription": "2x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11072,7 +11073,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Heavy bench: controlled eccentric, explosive concentric. RIR 1-2.",
+          "Heavy bench: controlled eccentric, explosive concentric. RER 1-2.",
           "Med ball pass within 15-20s of bench set — exploit PAP.",
           "Pass should feel noticeably faster/harder after the heavy set.",
           "If pass quality drops, reduce bench load first."
@@ -11089,7 +11090,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "neutral-grip pull-up",
-            "prescription": "4x4-5 @ RIR 1-2 (add load if needed)"
+            "prescription": "4x4-5 @ RER 1-2 (add load if needed)"
           },
           {
             "name": "med ball slam",
@@ -11114,11 +11115,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "push press",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           },
           {
             "name": "t-bar row",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11142,7 +11143,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "face pull",
-            "prescription": "2x10-12 @ RIR 1-2"
+            "prescription": "2x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11269,11 +11270,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "bench press",
-            "prescription": "5x8-10 @ RIR 1-2"
+            "prescription": "5x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Bilateral anchor. Target `RIR 1-2`, controlled and repeatable."
+          "Bilateral anchor. Target `RER 1-2`, controlled and repeatable."
         ],
         "fallbackOptions": [
           "A: `Neutral-Grip DB Bench Press`"
@@ -11286,11 +11287,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "single-arm db row",
-            "prescription": "4x8-10/side @ RIR 1-2"
+            "prescription": "4x8-10/side @ RER 1-2"
           },
           {
             "name": "half-kneeling landmine press",
-            "prescription": "3-4x8-10/side @ RIR 1-2"
+            "prescription": "3-4x8-10/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11315,7 +11316,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "neutral-grip pull-up",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11333,19 +11334,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "hammer curl",
-            "prescription": "3x10-12 @ RIR 1-2"
+            "prescription": "3x10-12 @ RER 1-2"
           },
           {
             "name": "rope pressdown",
-            "prescription": "3x10-12 @ RIR 1-2"
+            "prescription": "3x10-12 @ RER 1-2"
           },
           {
             "name": "lateral raise",
-            "prescription": "3x12-15 @ RIR 1-2"
+            "prescription": "3x12-15 @ RER 1-2"
           },
           {
             "name": "face pull",
-            "prescription": "2x12-15 @ RIR 1-2"
+            "prescription": "2x12-15 @ RER 1-2"
           },
           {
             "name": "med ball rotational throw",
@@ -11362,7 +11363,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "progressionRules": [
       "`Semaine 1`: establish form on landmine press and single-arm row.",
       "`Semaine 2`: increase loads if form is clean.",
-      "`Semaine 3`: highest volume; RIR 1-2 allowed.",
+      "`Semaine 3`: highest volume; RER 1-2 allowed.",
       "`Semaine 4 (décharge)`: reduce -25-30%. Drop med ball throws and face pull first."
     ],
     "positionAccent": [
@@ -11474,11 +11475,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bench Press",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Keep the press around `RIR 1-2` across the block.",
+          "Keep the press around `RER 1-2` across the block.",
           "This is the anchor press of the session.",
           "Reps should stay controlled and repeatable, not grindy."
         ],
@@ -11493,11 +11494,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Chest-Supported Row",
-            "prescription": "4x8-10 @ RIR 1-2"
+            "prescription": "4x8-10 @ RER 1-2"
           },
           {
             "name": "Incline DB Bench Press",
-            "prescription": "3-4x8-10 @ RIR 1-2"
+            "prescription": "3-4x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11517,11 +11518,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Seated DB Overhead Press",
-            "prescription": "3x8-10 @ RIR 1-2"
+            "prescription": "3x8-10 @ RER 1-2"
           },
           {
             "name": "Neutral-Grip Lat Pulldown",
-            "prescription": "3x10-12 @ RIR 1-2"
+            "prescription": "3x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11541,11 +11542,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Hammer Curl",
-            "prescription": "3x10-12 @ RIR 1-2"
+            "prescription": "3x10-12 @ RER 1-2"
           },
           {
             "name": "Rope Pressdown",
-            "prescription": "3x10-12 @ RIR 1-2"
+            "prescription": "3x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11560,11 +11561,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Face Pull",
-            "prescription": "3x12-15 @ RIR 1-2"
+            "prescription": "3x12-15 @ RER 1-2"
           },
           {
             "name": "Lateral Raise",
-            "prescription": "2x12-15 @ RIR 1-2",
+            "prescription": "2x12-15 @ RER 1-2",
             "isOptional": true
           },
           {
@@ -11584,7 +11585,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
     "progressionRules": [
       "`Semaine 1`: start at the lower end of the load range and establish clean volume tolerance.",
       "`Semaine 2`: increase load only if pressing and pulling are recovering well while keeping secondary push work at `3 sets`.",
-      "`Semaine 3`: this is the highest volume week; allow hard but clean sets with `1-2 RIR`.",
+      "`Semaine 3`: this is the highest volume week; allow hard but clean sets with `1-2 RER`.",
       "`Semaine 3`: progress `Incline DB Bench Press` to `4 sets` only if recovery supports it.",
       "`Semaine 4 (décharge)`: reduce total volume around `-25 to -30%` while keeping useful load.",
       "Reduce optional exercises of Block 5 first (Lateral Raise + T-Y-I) if fatigue rises.",
@@ -11726,11 +11727,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bench Press",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           },
           {
             "name": "Chest-Supported Row",
-            "prescription": "3x8-10 @ RIR 1-2"
+            "prescription": "3x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11751,11 +11752,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Half-Kneeling Landmine Press",
-            "prescription": "3x6-8/side @ RIR 1-2"
+            "prescription": "3x6-8/side @ RER 1-2"
           },
           {
             "name": "Neutral-Grip Lat Pulldown",
-            "prescription": "3x8-10 @ RIR 1-2"
+            "prescription": "3x8-10 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11775,7 +11776,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Face Pull",
-            "prescription": "2x10-12 @ RIR 1-2"
+            "prescription": "2x10-12 @ RER 1-2"
           },
           {
             "name": "Pallof Press Hold",
@@ -11951,7 +11952,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "4x4-6 @ RIR 1-2"
+            "prescription": "4x4-6 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11967,11 +11968,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Strict Standing Overhead Press",
-            "prescription": "3x5 @ RIR 1-2"
+            "prescription": "3x5 @ RER 1-2"
           },
           {
             "name": "T-Bar Row",
-            "prescription": "3x6 @ RIR 1-2"
+            "prescription": "3x6 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -11995,7 +11996,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           },
           {
             "name": "Face Pull",
-            "prescription": "3x12-15 @ RIR 1-2"
+            "prescription": "3x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -12159,12 +12160,12 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Bench Press",
-            "prescription": "4x5 @ RIR 1-2"
+            "prescription": "4x5 @ RER 1-2"
           }
         ],
         "coachingNotes": [
           "This is the anchor press of the session.",
-          "Reps must stay clean with `RIR 1-2`.",
+          "Reps must stay clean with `RER 1-2`.",
           "Control the descent, then drive with intent.",
           "This block is about building force, not chasing grinders."
         ]
@@ -12176,7 +12177,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "4x5-6 @ RIR 1-2"
+            "prescription": "4x5-6 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -12192,11 +12193,11 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Strict Standing Overhead Press",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           },
           {
             "name": "T-Bar Row",
-            "prescription": "3x6-8 @ RIR 1-2"
+            "prescription": "3x6-8 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -12407,15 +12408,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           },
           {
             "name": "Chest-Supported Row",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           },
           {
             "name": "Face Pull",
-            "prescription": "2x12-15 @ RIR 1-2"
+            "prescription": "2x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
@@ -12659,15 +12660,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Neutral-Grip Pull-Up",
-            "prescription": "3x4-5 @ RIR 1-2"
+            "prescription": "3x4-5 @ RER 1-2"
           },
           {
             "name": "T-Bar Row",
-            "prescription": "3x5-6 @ RIR 1-2"
+            "prescription": "3x5-6 @ RER 1-2"
           },
           {
             "name": "Face Pull",
-            "prescription": "2x12-15 @ RIR 1-2"
+            "prescription": "2x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [

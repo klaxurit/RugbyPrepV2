@@ -32,17 +32,17 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Lower
 - Format: `4 rounds`, `3 min` rest between rounds
-- Exercise A: `Bulgarian Split Squat` `4x4/side @ RIR 1-2`
+- Exercise A: `Bulgarian Split Squat` `4x4/side @ RER 1-2`
 - Exercise B: (contrast) `Squat Jump` `4x3-4`
 - Coaching notes:
-  - Heavy A: backpack or DB held in goblet position on the Bulgarian if DB/KB, `RIR 1-2`.
+  - Heavy A: backpack or DB held in goblet position on the Bulgarian if DB/KB, `RER 1-2`.
   - Jump within 15-20s of A — max intention, not volume.
   - Upgrade B: `Banded KB Swing` if band available.
 
 ### Block 2 - Hinge + Unilateral
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Nordic Eccentric` `3x4-5 @ RIR 1-2`
-- Exercise B: `Bulgarian Split Squat` `3x5/side @ RIR 1-2`
+- Exercise A: `Nordic Eccentric` `3x4-5 @ RER 1-2`
+- Exercise B: `Bulgarian Split Squat` `3x5/side @ RER 1-2`
 - Coaching notes:
   - Nordiques force — variante : `Romanian Deadlift` si haltères disponibles.
 

@@ -39,7 +39,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge
 - Format: `3 work sets`, `2 min` rest between sets
-- Exercise A: `Barbell Hip Thrust` `3x6-8 @ RIR 1-2`
+- Exercise A: `Barbell Hip Thrust` `3x6-8 @ RER 1-2`
 - Coaching notes:
   - Keep the hip thrust around `RPE 5-6`.
   - Hip thrust (not trap bar / RDL — LOWER already covers those this week): confident hip extension, clearly submaximal.
@@ -49,8 +49,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push / Pull Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Parallel Bar Dip` `3x8-10 @ RIR 1-2`
-- Exercise B: `Half-Kneeling Cable Row` `3x8-10/side @ RIR 1-2`
+- Exercise A: `Parallel Bar Dip` `3x8-10 @ RER 1-2`
+- Exercise B: `Half-Kneeling Cable Row` `3x8-10/side @ RER 1-2`
 - Coaching notes:
   - Dips + cable row (not incline/flat bench or CSR — reserved for UPPER this week).
   - Keep both movements smooth, controlled, and technically clean.
@@ -61,7 +61,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Lower Support / Trunk Pair
 - Format: `3 rounds`, `60-75s` rest after the pair
-- Exercise A: `Rear-Foot Elevated Split Squat` `3x6-8/side @ RIR 1-2`
+- Exercise A: `Rear-Foot Elevated Split Squat` `3x6-8/side @ RER 1-2`
 - Exercise B: `Pallof Press Hold` `3x15-20s/side`
 - Coaching notes:
   - RFESS (not reverse lunge — already on LOWER this week): unilateral support without copying the Lower Transition session.

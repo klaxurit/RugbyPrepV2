@@ -46,7 +46,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Force + Rotational Power
 - Format: `4 rounds`, `90-120s` rest
-- Exercise A: `Parallel Bar Dip` `4x4-5 @ RIR 1-2`
+- Exercise A: `Parallel Bar Dip` `4x4-5 @ RER 1-2`
 - Exercise B: (contrast) `med ball rotational throw` `4x3/side`
 - Coaching notes:
   - Dips (not incline/flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.

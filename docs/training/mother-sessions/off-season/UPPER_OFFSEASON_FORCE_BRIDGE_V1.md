@@ -39,7 +39,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Exercise A: (prime) `bench press` `4x4-5 @ 85-90%`
 - Exercise B: (contrast) `med ball chest pass` `4x4-5, max intention`
 - Coaching notes:
-  - Heavy bench: controlled eccentric, explosive concentric. RIR 1-2.
+  - Heavy bench: controlled eccentric, explosive concentric. RER 1-2.
   - Med ball pass within 15-20s of bench set — exploit PAP.
   - Pass should feel noticeably faster/harder after the heavy set.
   - If pass quality drops, reduce bench load first.
@@ -49,7 +49,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Force + Power Contrast
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `neutral-grip pull-up` `4x4-5 @ RIR 1-2 (add load if needed)`
+- Exercise A: `neutral-grip pull-up` `4x4-5 @ RER 1-2 (add load if needed)`
 - Exercise B: (contrast) `med ball slam` `4x4, explosive`
 - Coaching notes:
   - Pull-up: full range, dead hang to chin over bar. Add weight belt if bodyweight is too easy.
@@ -61,8 +61,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Vertical Press/Row Strength
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `push press` `3x4-5 @ RIR 1-2`
-- Exercise B: `t-bar row` `3x5-6 @ RIR 1-2`
+- Exercise A: `push press` `3x4-5 @ RER 1-2`
+- Exercise B: `t-bar row` `3x5-6 @ RER 1-2`
 - Coaching notes:
   - Push press: use leg drive to move heavier loads overhead — this IS a power exercise.
   - T-bar row: strict form, force-grade reps, no body english.
@@ -74,7 +74,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 4 - Trunk / Shoulder Prevention
 - Format: `2 rounds`, `45-60s` rest
 - Exercise A: `cable chop` `2x6-8/side`
-- Exercise B: `face pull` `2x10-12 @ RIR 1-2`
+- Exercise B: `face pull` `2x10-12 @ RER 1-2`
 - Coaching notes:
   - Cable chop at force-grade reps — controlled, powerful rotation.
   - Face pull: light, high-rep, shoulder health priority.

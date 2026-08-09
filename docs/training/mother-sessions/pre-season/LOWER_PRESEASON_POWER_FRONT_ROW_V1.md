@@ -58,7 +58,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Posterior Chain Force Maintenance
 - Format: `3 rounds`, `90-120s` rest
-- Exercise A: `Barbell Romanian Deadlift` `3x4-5 @ RIR 1-2`
+- Exercise A: `Barbell Romanian Deadlift` `3x4-5 @ RER 1-2`
 - Coaching notes:
   - RDL stays strict, braced, and posterior-chain dominant.
   - This is now a maintenance anchor, not a major builder block.
@@ -69,7 +69,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Hamstring Micro-Dose
 - Format: `2 rounds`, `60-75s` rest
-- Exercise A: `Nordic Curl` `2x3-4 @ RIR 1-2`
+- Exercise A: `Nordic Curl` `2x3-4 @ RER 1-2`
 - Coaching notes:
   - This is a low-volume insurance block, not a fatigue block.
   - Stop before reps become ugly or cramp-prone.

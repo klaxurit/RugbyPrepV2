@@ -121,9 +121,10 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
     { exerciseId: 'squat__goblet_squat__dumbbell', requires: ['dumbbell'] },
     { exerciseId: 'squat__back_squat__barbell', requires: ['squat_rack', 'barbell'] },
   ],
+  // Plyo = intent balistique — ne jamais monter vers dips (sinon contraste Decline→Dip + Plyo→Dip).
   'push_horizontal__push_up__plyo': [
     { exerciseId: 'push_horizontal__push_up__plyo', requires: [] },
-    { exerciseId: 'push_horizontal__dip__parallel', requires: ['pullup_bar'] },
+    { exerciseId: 'power__medball_chest_pass__wall', requires: ['med_ball'] },
   ],
   'power__squat_jump__bodyweight': [
     { exerciseId: 'power__squat_jump__bodyweight', requires: [] },

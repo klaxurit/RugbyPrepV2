@@ -37,12 +37,12 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Explosive Push / Pull
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Archer Push-Up` `3x3-4/side @ RIR 1-2`
-- Exercise B: `Neutral-Grip Pull-Up` `3x3-4 @ RIR 1-2`
+- Exercise A: `Archer Push-Up` `3x3-4/side @ RER 1-2`
+- Exercise B: `Neutral-Grip Pull-Up` `3x3-4 @ RER 1-2`
 - Coaching notes:
-  - Archer push-up (not decline/plyo — reserved for UPPER this week).
-  - Pull-ups (not inverted row — reserved for UPPER this week).
-  - Fallback A: `Chair Dip`. Fallback B: `Face Pull Band`.
+  - Pompe archer (pas decline/plyo — réservés à UPPER cette semaine).
+  - Tractions (pas rowing inversé — réservé à UPPER cette semaine).
+  - Fallback A : `Push-Up Standard` (garder le push au sol — pas de dips si UPPER a déjà decline/dips cette semaine). Fallback B : `Face Pull Band`.
 
 ### Block 3 - Activation
 - Format: `2 rounds`, `45s` rest

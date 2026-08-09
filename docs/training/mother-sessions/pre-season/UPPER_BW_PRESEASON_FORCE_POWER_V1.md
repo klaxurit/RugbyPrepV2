@@ -31,24 +31,24 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Push
 - Format: `4 rounds`, `3 min` rest between rounds
-- Exercise A: `Decline Push-Up` `4x4 @ RIR 1-2`
+- Exercise A: `Decline Push-Up` `4x4 @ RER 1-2`
 - Exercise B: (contrast) `Plyo Push-Up` `4x4-5`
 - Coaching notes:
-  - Heavy slow A — backpack or tempo, `RIR 1-2`.
+  - Heavy slow A — backpack or tempo, `RER 1-2`.
   - Plyo within 15-20s of A — hands leave ground.
   - Upgrade A: dumbbell bench if DB + bench.
 
 ### Block 2 - Pull Force
 - Format: `4 work sets`, `2-3 min` rest between sets
-- Exercise A: `Rowing inversé pieds surélevés` `4x4-6 @ RIR 1-2`
+- Exercise A: `Rowing inversé pieds surélevés` `4x4-6 @ RER 1-2`
 - Coaching notes:
   - Force-grade — strict, full ROM.
   - Upgrade: `Neutral-Grip Pull-Up` loaded (backpack) if bar available.
 
 ### Block 3 - Support
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Pike Push-Up` `3x5 @ RIR 1-2`
-- Exercise B: `Inverted Row Standard` `3x6 @ RIR 1-2`
+- Exercise A: `Pike Push-Up` `3x5 @ RER 1-2`
+- Exercise B: `Inverted Row Standard` `3x6 @ RER 1-2`
 - Coaching notes:
   - Upgrade A: seated dumbbell press if equipment allows.
 
@@ -56,7 +56,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Format: `2 rounds`, `60s` rest
 - Exercise A: `Band Rotation Explosive` `3-4/side`
 - Exercise B: `Neck Extension Isometric` `15-20s`
-- Exercise C: `Face Pull Band` `3x12 @ RIR 1-2`
+- Exercise C: `Face Pull Band` `3x12 @ RER 1-2`
 - Coaching notes:
   - Upgrade C requires band; fallback scap push-up if no band.
 

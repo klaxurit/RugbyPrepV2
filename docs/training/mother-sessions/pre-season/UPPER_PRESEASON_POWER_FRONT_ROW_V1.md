@@ -58,9 +58,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Pull Cluster
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Neutral-Grip Pull-Up` `3x4-5 @ RIR 1-2`
-- Exercise B: `T-Bar Row` `3x5-6 @ RIR 1-2`
-- Exercise C: `Face Pull` `2x12-15 @ RIR 1-2`
+- Exercise A: `Neutral-Grip Pull-Up` `3x4-5 @ RER 1-2`
+- Exercise B: `T-Bar Row` `3x5-6 @ RER 1-2`
+- Exercise C: `Face Pull` `2x12-15 @ RER 1-2`
 - Coaching notes:
   - Pull-up : add load only if the player owns full range and clean body position.
   - T-Bar row : strong and strict, no torso cheating.

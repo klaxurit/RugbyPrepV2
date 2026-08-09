@@ -37,16 +37,16 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Push Hypertrophy
 - Format: `6 work sets`, `2 min` rest between sets
-- Exercise A: `Decline Push-Up` `6x8-10 @ RIR 1-2`
+- Exercise A: `Decline Push-Up` `6x8-10 @ RER 1-2`
 - Coaching notes:
-  - Anchor press around `RIR 1-2`.
+  - Anchor press around `RER 1-2`.
   - Too easy → backpack load or feet higher; too hard → `Push-Up` standard (not incline) before reducing volume.
   - Upgrade: dips on parallettes or weighted backpack.
 
 ### Block 2 - Pull / Vertical Push Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Inverted Row Standard` `4x8-10 @ RIR 1-2`
-- Exercise B: `Pike Push-Up` `4x8-10 @ RIR 1-2`
+- Exercise A: `Inverted Row Standard` `4x8-10 @ RER 1-2`
+- Exercise B: `Pike Push-Up` `4x8-10 @ RER 1-2`
 - Coaching notes:
   - Main structural volume — strict rows, controlled pike (hips high, not une demi-pompe).
   - Fallback A: `Inverted Row` knees bent only if row strength is clearly limiting.
@@ -55,20 +55,20 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Vertical Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Pike Push-Up Feet Elevated` `3x8-10 @ RIR 1-2`
-- Exercise B: `Rowing inversé pieds surélevés` `3x10-12 @ RIR 1-2`
+- Exercise A: `Pike Push-Up Feet Elevated` `3x8-10 @ RER 1-2`
+- Exercise B: `Rowing inversé pieds surélevés` `3x10-12 @ RER 1-2`
 - Coaching notes:
   - Support volume harder than Block 2 — not a shoulder max test.
   - Couper ce bloc avant le bloc 2 si la fatigue s'accumule.
 
 ### Block 4 - Shoulder Health (optional)
 - Format: `2 rounds`, `45-60s` rest
-- Exercise A: `Face Pull Band` `2x12-15 @ RIR 1-2`
+- Exercise A: `Face Pull Band` `2x12-15 @ RER 1-2`
 - Coaching notes:
   - Optional — skip if club load is high or no band (use `scap push-up`).
 
 ## Progression Rules
-- Week 3 peak: hardest sets with `1-2 RIR` on Block 1 only if recovery supports.
+- Week 3 peak: hardest sets with `1-2 RER` on Block 1 only if recovery supports.
 - Week 4 deload: `-25 to -30%` — cut Block 4 and one round from Block 3 first.
 - Never add extra arm volume beyond optional Block 4.
 - Difficulty ↑ via angle, load, or reps — not incline push-up regression.

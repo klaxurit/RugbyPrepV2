@@ -1,9 +1,9 @@
 /**
  * Audit de couverture des ancres d'intensité.
  *
- * Une prescription `4x8-10` sans RIR ni %1RM laisse l'athlète libre de
- * sous-doser. Le moteur de progression suppose une zone d'effort (RIR 1-2 hors
- * saison, RIR 2-3 en saison) : cette zone doit être écrite dans la prescription
+ * Une prescription `4x8-10` sans RER ni %1RM laisse l'athlète libre de
+ * sous-doser. Le moteur de progression suppose une zone d'effort (RER 1-2 hors
+ * saison, RER 2-3 en saison) : cette zone doit être écrite dans la prescription
  * pour que le joueur et le log parlent le même langage.
  */
 
@@ -24,8 +24,8 @@ const SKIP_NAME_RE =
   /jump|throw|plyo|slam|swing|bound|hop|sprint|shuttle|skip|carry|hold|plank|crawl|stretch|isometric|pogo|sled|chest pass|band rotation/i
 
 const SETS_X_REPS_RE = /^\s*\d+(?:[-–]\d+)?\s*[x×]\s*\d+(?:[-–]\d+)?/i
-const HAS_ANCHOR_RE = /@|%|RIR|RPE/i
-/** Intent max / vitesse : l'effort est déjà ancré en prose, pas en RIR. */
+const HAS_ANCHOR_RE = /@|%|RER|RIR|RPE/i
+/** Intent max / vitesse : l'effort est déjà ancré en prose, pas en RER. */
 const INTENT_ANCHORED_RE = /\bmax\b|intention|speed/i
 const NON_REPS_RE = /\d+\s*(s|sec|min|m)\b|progressive\s+sets/i
 

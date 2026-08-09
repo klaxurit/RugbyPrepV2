@@ -38,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Unilateral / Locomotion Reset
 - Format: `2-3 rounds`, `60-75s` rest after the pair
-- Exercise A: `Reverse Lunge Bodyweight` `2-3x6/side @ RIR 3-4`
+- Exercise A: `Reverse Lunge Bodyweight` `2-3x6/side @ RER 3-4`
 - Exercise B: `Bear Crawl` `2-3x10-15m`
 - Coaching notes:
   - Lunge restores rhythm and balance, not strength.
@@ -49,8 +49,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Push / Pull Reset
 - Format: `2-3 rounds`, `60-90s` rest after the pair
-- Exercise A: `Incline Push-Up` `2-3x8-10 @ RIR 3-4`
-- Exercise B: `Inverted Row Standard` `2-3x8 @ RIR 3-4`
+- Exercise A: `Incline Push-Up` `2-3x8-10 @ RER 3-4`
+- Exercise B: `Inverted Row Standard` `2-3x8 @ RER 3-4`
 - Coaching notes:
   - Every push-up rep should look the same.
   - Row restores scapular rhythm without fatigue.
@@ -59,8 +59,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - B: `Inverted Row` with knees bent
 
 ### Block 3 - Lower-Leg / Groin / Trunk Support
-- Exercise A: `Single-Leg Calf Raise` `2x10/side @ RIR 3-4`
-- Exercise B: `Wall Tibialis Raise` `2x12 @ RIR 3-4`
+- Exercise A: `Single-Leg Calf Raise` `2x10/side @ RER 3-4`
+- Exercise B: `Wall Tibialis Raise` `2x12 @ RER 3-4`
 - Exercise C: `Side Plank` `2x20s/side`
 - Exercise D: `Supine Adductor Squeeze` `2x20s`
 - Coaching notes:

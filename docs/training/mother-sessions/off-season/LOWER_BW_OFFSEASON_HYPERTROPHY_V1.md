@@ -37,17 +37,17 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Squat Hypertrophy
 - Format: `5 work sets`, `2 min` rest between sets
-- Exercise A: `Bulgarian Split Squat` `5x8-10/side @ RIR 1-2`
+- Exercise A: `Bulgarian Split Squat` `5x8-10/side @ RER 1-2`
 - Coaching notes:
-  - Around `RIR 1-2` — main hypertrophy driver for the lower session.
+  - Around `RER 1-2` — main hypertrophy driver for the lower session.
   - Add backpack load or 3-1-3 tempo before switching to an easier variation.
   - Fallback: `Reverse Lunge Bodyweight` only if single-leg balance is the limiter.
   - Upgrade: load the Bulgarian with DB/KB if available (keep unilateral).
 
 ### Block 2 - Hinge / Unilateral Pair
 - Format: `5 rounds`, `90-120s` rest after the pair
-- Exercise A: `Nordic Eccentric` `4x6-8 @ RIR 1-2`
-- Exercise B: `Reverse Lunge Bodyweight` `5x8-10/side @ RIR 1-2`
+- Exercise A: `Nordic Eccentric` `4x6-8 @ RER 1-2`
+- Exercise B: `Reverse Lunge Bodyweight` `5x8-10/side @ RER 1-2`
 - Coaching notes:
   - Main structural block — slow nordic eccentrics + reverse lunge (distinct from Block 1 Bulgarian driver, mirrors gym RDL + split/lunge pair).
   - Nordic: 3–4s descent; hands on floor only to finish the rep if needed.
@@ -57,7 +57,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Groin Support
 - Format: `2 rounds`, `60-75s` rest after the pair
-- Exercise A: `Kickstand RDL` `2x10-12/side @ RIR 1-2`
+- Exercise A: `Kickstand RDL` `2x10-12/side @ RER 1-2`
 - Exercise B: `Copenhagen Plank` `2x20-30s/side`
 - Coaching notes:
   - Hamstring and adductor support — honest reps, no grinding.
@@ -66,14 +66,14 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Fallback B: `Supine Adductor Squeeze` if Copenhagen irritates groin.
 
 ### Block 4 - Lower-Leg Support (optional)
-- Exercise A: `Single-Leg Calf Raise` `2x10-12/side @ RIR 1-2`
-- Exercise B: `Wall Tibialis Raise` `2x12-15 @ RIR 1-2`
+- Exercise A: `Single-Leg Calf Raise` `2x10-12/side @ RER 1-2`
+- Exercise B: `Wall Tibialis Raise` `2x12-15 @ RER 1-2`
 - Coaching notes:
   - Optionnel — couper ce bloc en premier si la fatigue club est élevée.
 
 ## Progression Rules
 - Week 1–2: establish volume tolerance at `RPE 6-7`.
-- Week 3: highest volume week with `1-2 RIR` on Blocks 1–2 if recovery OK.
+- Week 3: highest volume week with `1-2 RER` on Blocks 1–2 if recovery OK.
 - Week 4 deload: `-25 to -30%` volume while keeping movement quality.
 - Cut Block 4 first, then one round from Block 2, before touching Block 1.
 - Progress via load (backpack), tempo, or range — not by swapping to easier exercises.

@@ -18,7 +18,7 @@
 ## Session Identity
 - Hypertrophy full-body — not a fourth heavy lower day.
 - Rugby finisher: carry/locomotion, adductors, optional neck.
-- **Calibration** : juste milieu rugbyman — exigeant mais faisable sans salle (`RIR 1-2`, `1-2 RIR` semaine 3).
+- **Calibration** : juste milieu rugbyman — exigeant mais faisable sans salle (`RER 1-2`, `1-2 RER` semaine 3).
 - Régressions (incline, fente arrière) = **fallbacks coaching** uniquement.
 
 ## Warm-Up
@@ -38,15 +38,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Hinge Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Single-Leg Glute Bridge` `4x8-10/side @ RIR 1-2`
+- Exercise A: `Single-Leg Glute Bridge` `4x8-10/side @ RER 1-2`
 - Coaching notes:
-  - Around `RIR 1-2` — hip extension hypertrophy (not nordics — already on LOWER this week).
+  - Around `RER 1-2` — hip extension hypertrophy (not nordics — already on LOWER this week).
   - Fallback: `Kickstand RDL` heavy tempo.
 
 ### Block 2 - Upper Push / Pull Support
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Archer Push-Up` `4x8-10 @ RIR 1-2`
-- Exercise B: `Neutral-Grip Pull-Up` `4x6-8 @ RIR 1-2`
+- Exercise A: `Archer Push-Up` `4x8-10 @ RER 1-2`
+- Exercise B: `Neutral-Grip Pull-Up` `4x6-8 @ RER 1-2`
 - Coaching notes:
   - Archer push-ups cover direct chest volume (decline reserved for UPPER this week).
   - Pull-ups (not inverted row — reserved for UPPER this week).
@@ -55,8 +55,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Lower Support / Trunk Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Kickstand RDL` `3x8-10/side @ RIR 1-2`
-- Exercise B: `Bird Dog` `3x8-10/side @ RIR 1-2`
+- Exercise A: `Kickstand RDL` `3x8-10/side @ RER 1-2`
+- Exercise B: `Bird Dog` `3x8-10/side @ RER 1-2`
 - Coaching notes:
   - Unilateral hinge (not Bulgarian — already on LOWER this week) + trunk support.
   - Bird dog : pause 2s en extension, pas de balancement.

@@ -50,7 +50,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Force + Explosive Contrast
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Parallel Bar Dip` `4x4-5 @ RIR 1-2`
+- Exercise A: `Parallel Bar Dip` `4x4-5 @ RER 1-2`
 - Exercise B: (contrast) `plyo push-up` `4x4-5, max height`
 - Coaching notes:
   - Dips (not incline/flat bench — reserved for the UPPER session this week) into explosive plyo push-up.
@@ -63,7 +63,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Unilateral / Trunk Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Single-Leg RDL` `3x5-6/side @ RIR 1-2`
+- Exercise A: `Single-Leg RDL` `3x5-6/side @ RER 1-2`
 - Exercise B: `pallof press hold` `3x15-20s/side`
 - Coaching notes:
   - Single-leg RDL (not reverse lunge / RFESS — already on LOWER this week): force-grade, stable.

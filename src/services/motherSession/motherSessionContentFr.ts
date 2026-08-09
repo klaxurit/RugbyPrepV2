@@ -320,7 +320,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
       'Prioriser la vitesse de barre et la qualité de position plutôt que les sauts de charge.',
       'Le squat peut progresser de `+2.5 à +5 kg` uniquement si toutes les séries restent nettes.',
       'La hauteur du box doit rester constante avant de progresser en charge.',
-      'Le `RDL` et le travail unilatéral progressent graduellement en gardant `RIR 2-3`.',
+      'Le `RDL` et le travail unilatéral progressent graduellement en gardant `RER 2-3`.',
       'Si la fatigue de la semaine est élevée :',
       'réduire le Bloc 3 en premier',
       'puis retirer un tour du Bloc 2',
@@ -418,7 +418,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     progressionRules: [
       'Prioriser la vitesse de mouvement et la qualité de projection plutôt que les sauts de charge.',
       'La `Trap Bar` peut progresser de `+2.5 à +5 kg` uniquement si toutes les séries restent nettes.',
-      'Le `Hip Thrust` et le travail unilatéral progressent graduellement en gardant `RIR 2-3`.',
+      'Le `Hip Thrust` et le travail unilatéral progressent graduellement en gardant `RER 2-3`.',
       'Si la fatigue de la semaine est élevée :',
       'réduire le Bloc 3 en premier',
       'puis retirer un tour du Bloc 2',
@@ -526,7 +526,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     progressionRules: [
       'Prioriser la vitesse de barre et la qualité d\'exécution plutôt que les sauts de charge.',
       'Le `Bench Press` peut progresser de `+2.5 kg` uniquement si les quatre séries restent nettes.',
-      'Le `Landmine` et le `Pendlay` peuvent progresser graduellement quand le joueur garde `RIR 2-3` avec une mécanique propre.',
+      'Le `Landmine` et le `Pendlay` peuvent progresser graduellement quand le joueur garde `RER 2-3` avec une mécanique propre.',
       'Si la fatigue est élevée dans la semaine, réduire le volume avant l\'intensité :',
       'Bloc 3 en premier',
       'puis un tour du Bloc 2',
@@ -621,7 +621,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     progressionRules: [
       'Prioriser la vitesse et la qualité plutôt que les sauts de charge.',
       'Le `Bench Press` peut progresser de `+2.5 kg` uniquement si toutes les séries restent nettes.',
-      'Le `Landmine` et le tirage progressent graduellement quand la mécanique reste propre et que le joueur garde `RIR 2-3`.',
+      'Le `Landmine` et le tirage progressent graduellement quand la mécanique reste propre et que le joueur garde `RER 2-3`.',
       'Si la fatigue de la semaine est élevée :',
       'réduire le Bloc 3 en premier',
       'puis retirer un tour du Bloc 2',
@@ -1958,8 +1958,8 @@ const TEXT_EXACT_FR: Record<string, string> = {
     'Activation des épaules et du thorax avant les presses.',
   'Ramp-up sets are essential — reach working weight over 2-3 sets.':
     'Les séries de montée en charge sont essentielles — atteindre le poids de travail en 2-3 séries.',
-  'Heavy bench: controlled eccentric, explosive concentric. RIR 1-2.':
-    'Bench lourd : excentrique contrôlée, concentrique explosif. RIR 1-2.',
+  'Heavy bench: controlled eccentric, explosive concentric. RER 1-2.':
+    'Bench lourd : excentrique contrôlée, concentrique explosif. RER 1-2.',
   'Med ball pass within 15-20s of bench set — exploit PAP.':
     'Passe med ball dans les 15-20 s après la série de bench — exploiter le PAP.',
   'Pass should feel noticeably faster/harder after the heavy set.':
@@ -2002,8 +2002,8 @@ const TEXT_EXACT_FR: Record<string, string> = {
     '`Back_three` : intention concentrique plus explosive sur le split squat.',
   'Explosive split squat — fast concentric, stable landing on jump.':
     'Split squat explosif — concentrique rapide, réception stable sur le saut.',
-  'Heavy A: backpack load or slow eccentric, `RIR 2-3` (~75-80% effort).':
-    'A lourd : charge sac à dos ou excentrique lente, `RIR 2-3` (~75-80 % d’effort).',
+  'Heavy A: backpack load or slow eccentric, `RER 2-3` (~75-80% effort).':
+    'A lourd : charge sac à dos ou excentrique lente, `RER 2-3` (~75-80 % d’effort).',
   'Concentric intent is maximal.':
     'L’intention concentrique est maximale.',
   'Concentric intent is maximal; no grinding reps.':
@@ -2017,8 +2017,8 @@ const TEXT_EXACT_FR: Record<string, string> = {
   'Pins keep the squat honest and reinforce concentric force from a stable position.':
     'Les pins gardent le squat honnête et renforcent la force concentrique depuis une position stable.',
   'This block is the anchor of the session.': 'Ce bloc est l’ancrage de la séance.',
-  'Reps must stay technically clean with `RIR 1-2`.':
-    'Les répétitions doivent rester techniquement propres avec `RIR 1-2`.',
+  'Reps must stay technically clean with `RER 1-2`.':
+    'Les répétitions doivent rester techniquement propres avec `RER 1-2`.',
   'No grinding, no collapse at the bottom, no rushed descent.':
     'Pas de grind, pas d’effondrement en bas, pas de descente précipitée.',
   'Pins should reinforce a strong concentric start and a stable bottom position.':
@@ -2863,6 +2863,7 @@ function translatePrescriptionToFr(value: string): string {
   return value
     .replace(/\/side\b/gi, '/côté')
     .replace(/\bto\b/g, 'à')
+    .replace(/\bRIR\b/g, 'RER')
 }
 
 function normalizeFrenchSentence(value: string): string {
@@ -2921,6 +2922,7 @@ function translateInlineTextToFr(value: string): string {
 /** Dernière passe : résidus EN fréquents après le pipeline fragmentaire. */
 function scrubResidualFranglais(value: string): string {
   return value
+    .replace(/\bRIR\b/g, 'RER')
     .replace(/\bGarder this\b/gi, 'Garder ça')
     .replace(/\bGarder the\b/gi, 'Garder le')
     .replace(/\bL'objectif is\b/gi, "L'objectif est")
@@ -2970,7 +2972,7 @@ function scrubResidualFranglais(value: string): string {
 function translateBacktickedSegmentToFr(value: string): string {
   const trimmed = value.trim()
   if (/^RPE\s+\d+-\d+$/i.test(trimmed)) return trimmed
-  if (/^(W\d|RIR|EMOM|\+?\d)/.test(trimmed) || (/\d/.test(trimmed) && /kg|min|s|m|%/.test(trimmed))) {
+  if (/^(W\d|RER|RIR|EMOM|\+?\d)/.test(trimmed) || (/\d/.test(trimmed) && /kg|min|s|m|%/.test(trimmed))) {
     return translatePrescriptionToFr(trimmed)
   }
 
