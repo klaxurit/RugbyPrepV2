@@ -8,6 +8,7 @@
 - `target_position_group`: back_three
 - `equipment`: full_gym
 - `target_duration`: 50-65 min
+- `reduction_order`: 5, 4, 3, 2, 1
 
 ## Goal
 - Maintain whole-body force and power in weeks without a match.
@@ -51,8 +52,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push/Pull Strength
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Parallel Bar Dip` `3x6-8`
-- Exercise B: `Half-Kneeling Cable Row` `3x6-8`
+- Exercise A: `Parallel Bar Dip` `3x6-8 @ RIR 2-3`
+- Exercise B: `Half-Kneeling Cable Row` `3x6-8 @ RIR 2-3`
 - Coaching notes:
   - This is your main push/pull renfo block.
   - Dips (not incline/flat bench — reserved for the UPPER session this week) into a strict cable row.
@@ -63,8 +64,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Rotation Support
 - Format: `3 rounds`, `75-90s` rest
-- Exercise A: `Single-Leg RDL` `3x6-8/side`
-- Exercise B: `Landmine Rotation` `2-3x6-8/side`
+- Exercise A: `Single-Leg RDL` `3x6-8/side @ RIR 2-3`
+- Exercise B: `Landmine Rotation` `2-3x6-8/side @ RIR 2-3`
 - Coaching notes:
   - Single-leg RDL (LOWER already covers trap bar / hip thrust this week): support speed without two days of soreness.
   - The rotation work should stay crisp and athletic.

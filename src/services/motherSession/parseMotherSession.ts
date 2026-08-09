@@ -79,6 +79,20 @@ function parseMetadataBlock(block: string): Record<string, string> {
   return out
 }
 
+/**
+ * `reduction_order`: `4, 3, 2` → ordre de sacrifice des blocs.
+ * Absent ou vide → aucune consigne, le consommateur applique son défaut.
+ */
+function parseReductionOrder(raw: string | undefined): number[] | undefined {
+  if (!raw) return undefined
+  const nums = raw
+    .split(/[,\s]+/)
+    .map((token) => Number(token.replace(/[^\d]/g, '')))
+    .filter((n) => Number.isInteger(n) && n > 0)
+  if (nums.length === 0) return undefined
+  return [...new Set(nums)]
+}
+
 function splitPreamble(markdown: string): {
   title?: string
   metadataBlock: string
@@ -441,6 +455,9 @@ export function parseMotherSession(markdown: string, filePath?: string): MotherS
     targetPositionGroup: metaPick(metaRaw, 'target_position_group', 'targetpositiongroup'),
     equipment: metaPick(metaRaw, 'equipment'),
     targetDuration: metaPick(metaRaw, 'target_duration', 'targetduration'),
+    reductionOrder: parseReductionOrder(
+      metaPick(metaRaw, 'reduction_order', 'reductionorder') || undefined,
+    ),
   }
 
   return {

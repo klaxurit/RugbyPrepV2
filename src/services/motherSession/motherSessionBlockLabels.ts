@@ -101,7 +101,6 @@ const BLOCK_NAME_FR: Record<string, string> = {
 
   // ── Pre-season ─────────────────────────────────────────────────────────
   'Position Support Finisher': 'Finisher support poste',
-  'Mandatory Shoulder Prehab Micro-Block': 'Micro-bloc préhab épaule obligatoire',
   'Upper Power Pair': 'Paire puissance haut',
   'Pull / Posterior Cluster': 'Cluster tirage / postérieur',
   'Lower Strength Triplet': 'Triplet force bas',

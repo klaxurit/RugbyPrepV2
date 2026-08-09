@@ -1866,7 +1866,6 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Shoulder / Trunk Support': 'Support épaule / tronc',
   'Arms / Shoulder Support': 'Support bras / épaule',
   'Shoulder Prehab Micro-Block': 'Micro-bloc préhab épaule',
-  'Mandatory Shoulder Prehab Micro-Block': 'Micro-bloc préhab épaule obligatoire',
   'Push / Pull Re-Entry': 'Reprise poussée / tirage',
   'Push / Pull Reset': 'Reset poussée / tirage',
   'Squat / Hinge Base Pair': 'Base squat / hinge',

@@ -33,6 +33,12 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
     { exerciseId: 'push_horizontal__bench_press__dumbbell', requires: ['dumbbell', 'bench'] },
     { exerciseId: 'push_horizontal__bench_press__barbell', requires: ['barbell', 'bench'] },
   ],
+  // FULL_BW hypertrophie : archer pour le volume pectoraux direct (decline déjà sur UPPER).
+  'push_horizontal__archer_push_up__bodyweight': [
+    { exerciseId: 'push_horizontal__archer_push_up__bodyweight', requires: [] },
+    { exerciseId: 'push_horizontal__bench_press__dumbbell', requires: ['dumbbell', 'bench'] },
+    { exerciseId: 'push_horizontal__bench_press__barbell', requires: ['barbell', 'bench'] },
+  ],
   'push_horizontal__dip__parallel': [
     { exerciseId: 'push_horizontal__dip__parallel', requires: [] },
     { exerciseId: 'push_horizontal__bench_press__dumbbell', requires: ['dumbbell', 'bench'] },

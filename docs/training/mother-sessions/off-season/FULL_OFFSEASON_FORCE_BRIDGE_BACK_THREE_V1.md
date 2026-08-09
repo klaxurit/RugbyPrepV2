@@ -8,6 +8,7 @@
 - `target_position_group`: back_three
 - `equipment`: full_gym
 - `target_duration`: 55-65 min
+- `reduction_order`: 4, 3
 
 ## Goal
 - Full-body force-bridge with back-three bias: horizontal projection, rotational power, reactive patterns.
@@ -45,7 +46,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Force + Rotational Power
 - Format: `4 rounds`, `90-120s` rest
-- Exercise A: `Parallel Bar Dip` `4x4-5`
+- Exercise A: `Parallel Bar Dip` `4x4-5 @ RIR 1-2`
 - Exercise B: (contrast) `med ball rotational throw` `4x3/side`
 - Coaching notes:
   - Dips (not incline/flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.

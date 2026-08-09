@@ -281,6 +281,23 @@ function resolveMotherSessionsForWeekCore(
       positionGroup,
       fatigueLevel,
     }
+    // Décharge du bloc d'hypertrophie : même logique qu'en pré-saison, on garde
+    // la fréquence et l'intensité et on coupe le volume.
+    if (planningContext.isDeloadWeek) {
+      resolverWarnings.push(
+        'Semaine de décharge inter-saison — volume réduit, intensité maintenue.',
+      )
+      return hydrateSlots(
+        tpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 3 })),
+        planningContext,
+        templateContext,
+        tpl.warnings,
+        tpl.companionRecommendations,
+        resolverWarnings,
+        sessionsById,
+        equipment,
+      )
+    }
     return hydrateSlots(
       tpl.sessions,
       planningContext,
@@ -314,6 +331,24 @@ function resolveMotherSessionsForWeekCore(
       effectiveFrequency: tpl.effectiveFrequency,
       positionGroup,
       fatigueLevel,
+    }
+    // Décharge pré-saison (S4 / S8 / dernière semaine) : on garde la fréquence
+    // et l'intensité, on coupe le volume. Israetel 2019 : -40 à -50 % du volume
+    // de la semaine précédente, ce que donnent `light` + un bloc en moins.
+    if (planningContext.isDeloadWeek) {
+      resolverWarnings.push(
+        'Semaine de décharge pré-saison — volume réduit, intensité maintenue.',
+      )
+      return hydrateSlots(
+        tpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 3 })),
+        planningContext,
+        templateContext,
+        tpl.warnings,
+        tpl.companionRecommendations,
+        resolverWarnings,
+        sessionsById,
+        equipment,
+      )
     }
     return hydrateSlots(
       tpl.sessions,

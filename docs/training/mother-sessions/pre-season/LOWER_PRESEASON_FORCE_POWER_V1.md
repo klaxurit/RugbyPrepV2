@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 2 common base with marked accents)
 - `equipment`: full_gym
 - `target_duration`: 50-55 min
+- `reduction_order`: 3, 2
 
 ## Goal
 - Begin converting lower-body force into rugby-usable power during weeks 5 to 8 of pre-season.
@@ -48,9 +49,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Lower Strength Triplet
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Barbell Romanian Deadlift` `3x5`
-- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side`
-- Exercise C: `Nordic Curl` `3x4-5`
+- Exercise A: `Barbell Romanian Deadlift` `3x5 @ RIR 1-2`
+- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side @ RIR 1-2`
+- Exercise C: `Nordic Curl` `3x4-5 @ RIR 1-2`
 - Coaching notes:
   - RDL stays strict, braced, and posterior-chain dominant.
   - The unilateral lift should still support hip and groin control, not become a quad-burner.

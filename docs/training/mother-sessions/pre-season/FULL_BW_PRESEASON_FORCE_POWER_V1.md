@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 2 common base)
 - `equipment`: bodyweight
 - `target_duration`: 50-60 min
+- `reduction_order`: 4, 3, 2, 1
 
 ## Goal
 - Whole-body force-power contrasts for 3x/week pre-season phase 2.
@@ -29,7 +30,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Hinge + Jump
 - Format: `4 rounds`, `3 min` rest between rounds
-- Exercise A: `Kickstand RDL` `4x4/side`
+- Exercise A: `Kickstand RDL` `4x4/side @ RIR 1-2`
 - Exercise B: (contrast) `Broad Jump` `4x3`
 - Coaching notes:
   - Kickstand RDL (not nordics — already on LOWER this week) into broad jump.
@@ -37,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Contrast Push
 - Format: `3 rounds`, `3 min` rest between rounds
-- Exercise A: `Chair Dip` `3x4`
+- Exercise A: `Chair Dip` `3x4 @ RIR 1-2`
 - Exercise B: (contrast) `Band Rotation Explosive` `3x4/side`
 - Coaching notes:
   - Chair dips (not decline/plyo — reserved for UPPER this week) into rotational power.
@@ -46,8 +47,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull + Rotation
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Neutral-Grip Pull-Up` `3x4-5`
-- Exercise B: `Band Rotation Explosive` `3x5/side`
+- Exercise A: `Neutral-Grip Pull-Up` `3x4-5 @ RIR 1-2`
+- Exercise B: `Band Rotation Explosive` `3x5/side @ RIR 1-2`
 - Coaching notes:
   - Pull-ups (not inverted row feet-elevated — reserved for UPPER this week).
   - Fallback A: `Face Pull Band` if no bar.

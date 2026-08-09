@@ -56,6 +56,7 @@ function makeMotherSessionSurface(
   cycle: AnnualPlanningContext['cycle'],
   overrides?: Partial<Pick<WeeklyProgramSurfaceResult, 'warnings' | 'decisionReason'>>,
   sessionId = 'FULL_OFFSEASON_RECOVERY_A_V1',
+  slotOverrides?: Partial<Pick<ResolvedMotherSessionSlot, 'maxBlocks' | 'variant'>>,
 ): WeeklyProgramSurfaceResult {
   const session = MOTHER_SESSIONS_BY_ID[sessionId]
   if (!session) throw new Error(`${sessionId} absente du dataset de test`)
@@ -69,6 +70,7 @@ function makeMotherSessionSurface(
       session,
       role: 'primary',
       dayPreference: 'early_week',
+      ...slotOverrides,
     }],
     warnings: [],
     companionRecommendations: [],
@@ -321,6 +323,24 @@ describe('SessionDetailPage · annual-first', () => {
     expect(screen.queryByTestId('orchestrator-fallback-reason')).toBeNull()
     // Le CTA primaire est maintenant rendu dans le footer sticky (mode Aperçu).
     expect(screen.getByTestId('ms-start-btn')).toBeInTheDocument()
+  })
+
+  it('maxBlocks du slot : la séance rendue est tronquée dans l’ordre de retrait déclaré', () => {
+    useProfileMock.mockReturnValue({
+      profile: { ...BASE_PROFILE, seasonMode: 'off_season' },
+    })
+    useWeeklyProgramSurfaceMock.mockReturnValue({
+      isReady: true,
+      surface: makeMotherSessionSurface('off_season', undefined, undefined, { maxBlocks: 2 }),
+    })
+
+    renderSessionDetail(0)
+
+    // FULL_OFFSEASON_RECOVERY_A_V1 déclare reduction_order 3, 2, 1 : à 2 blocs,
+    // le bloc 3 saute et les deux blocs de force restent.
+    expect(screen.getByText(/Reprise Squat \/ Hinge/i)).toBeInTheDocument()
+    expect(screen.getByText(/Reprise Push \/ Pull/i)).toBeInTheDocument()
+    expect(screen.queryByText(/Reset Tissulaire/i)).toBeNull()
   })
 
   it('complétion mother-session → ouvre le modal puis enregistre le log enrichi', async () => {

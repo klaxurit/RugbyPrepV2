@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 1 common base)
 - `equipment`: full_gym
 - `target_duration`: 50-60 min
+- `reduction_order`: 4, 3
 
 ## Goal
 - Build upper-body force capacity for the first 4 weeks of pre-season.
@@ -37,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Upper Force
 - Format: `4 work sets`, `2-3 min` rest between sets
-- Exercise A: `Bench Press` `4x5`
+- Exercise A: `Bench Press` `4x5 @ RIR 1-2`
 - Coaching notes:
   - This is the anchor press of the session.
   - Reps must stay clean with `RIR 1-2`.
@@ -46,7 +47,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Main Upper Pull
 - Format: `4 work sets`, `2-3 min` rest between sets
-- Exercise A: `Neutral-Grip Pull-Up` `4x5-6`
+- Exercise A: `Neutral-Grip Pull-Up` `4x5-6 @ RIR 1-2`
 - Coaching notes:
   - Add load only if the player owns full range and clean body position.
   - If bodyweight pull-ups are already very hard, keep them clean rather than forcing load.
@@ -54,8 +55,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Upper Support Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Strict Standing Overhead Press` `3x5-6`
-- Exercise B: `T-Bar Row` `3x6-8`
+- Exercise A: `Strict Standing Overhead Press` `3x5-6 @ RIR 1-2`
+- Exercise B: `T-Bar Row` `3x6-8 @ RIR 1-2`
 - Coaching notes:
   - Overhead press should stay strict, stacked, and controlled.
   - T-Bar row should stay strong and strict, without torso cheating.

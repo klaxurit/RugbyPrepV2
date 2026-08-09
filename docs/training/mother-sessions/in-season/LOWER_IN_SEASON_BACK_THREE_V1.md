@@ -8,6 +8,7 @@
 - `target_position_group`: back_three
 - `equipment`: full_gym
 - `target_duration`: 40-50 min
+- `reduction_order`: 3, 2
 
 ## Goal
 - Maintain lower-body force useful for acceleration, speed support, and open-field contact.
@@ -49,8 +50,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Posterior Chain + Unilateral Strength Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Barbell Hip Thrust` `3x5-6`
-- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side`
+- Exercise A: `Barbell Hip Thrust` `3x5-6 @ RIR 2-3`
+- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side @ RIR 2-3`
 - Coaching notes:
   - Hip thrust stays powerful and clean, with a hard lockout and no lumbar overextension.
   - The unilateral pattern supports sprint mechanics, force application, and change-of-direction robustness.

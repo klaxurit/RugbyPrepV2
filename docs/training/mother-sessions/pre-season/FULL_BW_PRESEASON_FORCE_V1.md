@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 1 common base)
 - `equipment`: bodyweight
 - `target_duration`: 50-60 min
+- `reduction_order`: 4, 3, 2, 1
 
 ## Goal
 - Whole-body force support for 3x/week pre-season phase 1 without gym.
@@ -31,15 +32,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Hinge Force
 - Format: `3 work sets`, `2-3 min` rest between sets
-- Exercise A: `Single-Leg Glute Bridge` `3x8/side`
+- Exercise A: `Single-Leg Glute Bridge` `3x8/side @ RIR 1-2`
 - Coaching notes:
   - Hip extension force (not nordics — already on LOWER this week).
   - Upgrade: hip thrust on bench if DB + bench available.
 
 ### Block 2 - Push / Pull Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Chair Dip` `3x6-8`
-- Exercise B: `Neutral-Grip Pull-Up` `3x5-6`
+- Exercise A: `Chair Dip` `3x6-8 @ RIR 1-2`
+- Exercise B: `Neutral-Grip Pull-Up` `3x5-6 @ RIR 1-2`
 - Coaching notes:
   - Chair dips (not decline push-up — reserved for UPPER this week).
   - Pull-ups (not inverted row feet-elevated — reserved for UPPER this week).
@@ -48,8 +49,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Hip / Rotation
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Kickstand RDL` `3x6-8/side`
-- Exercise B: `Band Rotation Explosive` `2-3x6-8/side`
+- Exercise A: `Kickstand RDL` `3x6-8/side @ RIR 1-2`
+- Exercise B: `Band Rotation Explosive` `2-3x6-8/side @ RIR 1-2`
 - Coaching notes:
   - Unilateral hinge support complementary to LOWER nordics.
 

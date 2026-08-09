@@ -1,3 +1,4 @@
+import type { AnnualCycle } from '../../types/annualPlanning'
 import type {
   ExerciseSetLog,
   ExerciseLogEntry,
@@ -29,6 +30,8 @@ export interface BuildSessionLoadSuggestionsInputs {
   /** Poids corps profil — charges d'entrée BW. */
   weightKg?: number | null
   isBodyweightProgram?: boolean
+  /** Cycle annuel — pilote la zone d'effort visée par les suggestions. */
+  cycle?: AnnualCycle
   /** Date "now" — injectable pour les tests. */
   now?: Date
 }
@@ -59,6 +62,7 @@ export function buildSessionLoadSuggestions({
   daysToMatch,
   weightKg,
   isBodyweightProgram,
+  cycle,
   now,
 }: BuildSessionLoadSuggestionsInputs): Map<string, LoadSuggestion> {
   const result = new Map<string, LoadSuggestion>()
@@ -100,6 +104,7 @@ export function buildSessionLoadSuggestions({
           daysToMatch,
           weightKg,
           isBodyweightProgram,
+          cycle,
         }),
       )
       continue
@@ -160,6 +165,7 @@ export function buildSessionLoadSuggestions({
         daysSinceLastLog,
         weightKg,
         isBodyweightProgram,
+        cycle,
       }),
     )
   }

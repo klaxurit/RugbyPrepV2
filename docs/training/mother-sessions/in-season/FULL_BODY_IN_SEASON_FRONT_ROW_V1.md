@@ -8,6 +8,7 @@
 - `target_position_group`: front_row
 - `equipment`: full_gym
 - `target_duration`: 55-70 min
+- `reduction_order`: 5, 3, 2, 1
 
 ## Goal
 - Maintain whole-body force and useful muscle support in weeks without a match.
@@ -38,7 +39,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Power Pair
 - Format: `3 rounds`, full rest `3 min`
-- Exercise A: `Reverse Lunge` `3x5/side`
+- Exercise A: `Reverse Lunge` `3x5/side @ RIR 2-3`
 - Exercise B: `Countermovement Jump` `3 reps`
 - Coaching notes:
   - Reverse lunge (not front/box squat — reserved for the LOWER session this week): sharp, upright, braced.
@@ -50,8 +51,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push/Pull Strength
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Parallel Bar Dip` `3x5-6`
-- Exercise B: `Half-Kneeling Cable Row` `3x6-8`
+- Exercise A: `Parallel Bar Dip` `3x5-6 @ RIR 2-3`
+- Exercise B: `Half-Kneeling Cable Row` `3x6-8 @ RIR 2-3`
 - Coaching notes:
   - This is the main upper renfo block.
   - Dips (not football-bar/flat bench — reserved for the UPPER session this week) into a strict cable row.
@@ -62,8 +63,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Trunk Support
 - Format: `3 rounds`, `75-90s` rest
-- Exercise A: `Single-Leg RDL` `3x6-8/side`
-- Exercise B: `Landmine Rotation` `2-3x6-8/side`
+- Exercise A: `Single-Leg RDL` `3x6-8/side @ RIR 2-3`
+- Exercise B: `Landmine Rotation` `2-3x6-8/side @ RIR 2-3`
 - Coaching notes:
   - Single-leg RDL (LOWER already covers bilateral hinge this week): support contact robustness without extra soreness.
   - The rotation work should stay controlled and athletic.

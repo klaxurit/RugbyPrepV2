@@ -8,6 +8,7 @@
 - `target_position_group`: front_row
 - `equipment`: full_gym
 - `target_duration`: 48-58 min
+- `reduction_order`: 4, 3, 2
 
 ## Goal
 - Express lower-body power specific to front-row demands during weeks 9 to 12 of pre-season.
@@ -57,7 +58,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Posterior Chain Force Maintenance
 - Format: `3 rounds`, `90-120s` rest
-- Exercise A: `Barbell Romanian Deadlift` `3x4-5`
+- Exercise A: `Barbell Romanian Deadlift` `3x4-5 @ RIR 1-2`
 - Coaching notes:
   - RDL stays strict, braced, and posterior-chain dominant.
   - This is now a maintenance anchor, not a major builder block.
@@ -68,7 +69,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Hamstring Micro-Dose
 - Format: `2 rounds`, `60-75s` rest
-- Exercise A: `Nordic Curl` `2x3-4`
+- Exercise A: `Nordic Curl` `2x3-4 @ RIR 1-2`
 - Coaching notes:
   - This is a low-volume insurance block, not a fatigue block.
   - Stop before reps become ugly or cramp-prone.

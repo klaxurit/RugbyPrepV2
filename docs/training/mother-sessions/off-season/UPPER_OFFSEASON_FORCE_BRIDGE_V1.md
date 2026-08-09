@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base)
 - `equipment`: full_gym
 - `target_duration`: 50-60 min
+- `reduction_order`: 4, 3
 
 ## Goal
 - Convert off-season upper-body hypertrophy into maximal pressing/pulling force and explosive power.
@@ -48,7 +49,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Force + Power Contrast
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `neutral-grip pull-up` `4x4-5 (add load if needed)`
+- Exercise A: `neutral-grip pull-up` `4x4-5 @ RIR 1-2 (add load if needed)`
 - Exercise B: (contrast) `med ball slam` `4x4, explosive`
 - Coaching notes:
   - Pull-up: full range, dead hang to chin over bar. Add weight belt if bodyweight is too easy.
@@ -60,8 +61,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Vertical Press/Row Strength
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `push press` `3x4-5`
-- Exercise B: `t-bar row` `3x5-6`
+- Exercise A: `push press` `3x4-5 @ RIR 1-2`
+- Exercise B: `t-bar row` `3x5-6 @ RIR 1-2`
 - Coaching notes:
   - Push press: use leg drive to move heavier loads overhead — this IS a power exercise.
   - T-bar row: strict form, force-grade reps, no body english.
@@ -73,7 +74,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 4 - Trunk / Shoulder Prevention
 - Format: `2 rounds`, `45-60s` rest
 - Exercise A: `cable chop` `2x6-8/side`
-- Exercise B: `face pull` `2x10-12`
+- Exercise B: `face pull` `2x10-12 @ RIR 1-2`
 - Coaching notes:
   - Cable chop at force-grade reps — controlled, powerful rotation.
   - Face pull: light, high-rep, shoulder health priority.

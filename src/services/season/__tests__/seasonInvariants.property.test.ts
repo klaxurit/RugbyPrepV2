@@ -191,13 +191,15 @@ describe('B4 — detectAnnualPlanningContext invariants', () => {
     )
   })
 
-  it('P5 — off-season: weekNumber ≥ 1, never deload', () => {
+  it('P5 — off-season: weekNumber ≥ 1, décharge réservée au bloc hypertrophie', () => {
     fc.assert(
       fc.property(arbInputs, (inputs) => {
         const ctx = detectAnnualPlanningContext(inputs)
         if (ctx.cycle !== 'off_season') return
         expect(ctx.weekNumber).toBeGreaterThanOrEqual(1)
-        expect(ctx.isDeloadWeek).toBe(false)
+        // Récupération, Transition et Entretien sont déjà à volume bas, et
+        // Force-Pont ne dure que 2 semaines : aucune décharge n'y a de sens.
+        if (ctx.isDeloadWeek) expect(ctx.offSeasonPhase).toBe(3)
       }),
     )
   })

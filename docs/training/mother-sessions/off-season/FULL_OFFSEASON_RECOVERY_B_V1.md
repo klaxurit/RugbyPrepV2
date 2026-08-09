@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base)
 - `equipment`: full_gym
 - `target_duration`: 30-45 min
+- `reduction_order`: 3, 2, 1
 
 ## Goal
 - Give the player a second off-season recovery session that feels lighter, freer, and slightly more athletic than Recovery A.
@@ -39,7 +40,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Unilateral / Locomotion Reset
 - Format: `2-3 rounds`, `60-75s` rest after the pair
-- Exercise A: `Reverse Lunge` `2-3x6/side`
+- Exercise A: `Reverse Lunge` `2-3x6/side @ RIR 3-4`
 - Exercise B: `Bear Crawl` `2-3x10-15m`
 - Coaching notes:
   - Keep both exercises smooth and controlled.
@@ -52,8 +53,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Push / Pull Reset
 - Format: `2-3 rounds`, `60-90s` rest after the pair
-- Exercise A: `Incline Push-Up` `2-3x8-10`
-- Exercise B: `Half-Kneeling Cable Row` `2-3x8/side`
+- Exercise A: `Incline Push-Up` `2-3x8-10 @ RIR 3-4`
+- Exercise B: `Half-Kneeling Cable Row` `2-3x8/side @ RIR 3-4`
 - Coaching notes:
   - Keep the push-up easy enough that every rep looks the same.
   - The row should restore scapular rhythm and trunk position, not create fatigue.
@@ -63,8 +64,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - B: `Seated Cable Row`
 
 ### Block 3 - Lower-Leg / Groin / Trunk Support
-- Exercise A: `Single-Leg Calf Raise` `2x10/side`
-- Exercise B: `Wall Tibialis Raise` `2x12`
+- Exercise A: `Single-Leg Calf Raise` `2x10/side @ RIR 3-4`
+- Exercise B: `Wall Tibialis Raise` `2x12 @ RIR 3-4`
 - Exercise C: `Side Plank` `2x20s/side`
 - Exercise D: `Supine Adductor Squeeze` `2x20s`
 - Coaching notes:

@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 1 terrain base)
 - `equipment`: bodyweight
 - `target_duration`: 35-45 min
+- `reduction_order`: 4, 3, 2, 1
 
 ## Goal
 - Introduce sprint, jump, and simple COD qualities in pre-season weeks 1-4.

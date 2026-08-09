@@ -107,6 +107,92 @@ describe('getLoadSuggestion — garde-fous', () => {
     })
   })
 
+  // Zone d'effort : RIR 1-2 hors saison, RIR 2-3 en saison. Une série dans la
+  // zone doit faire progresser. Auparavant RIR 2 (RPE 8) gelait l'athlète sur
+  // la même charge et les mêmes reps indéfiniment : celui qui loguait
+  // honnêtement son effort ne progressait jamais.
+  describe('Zone d\'effort cible', () => {
+    it('RIR 2 au haut de fourchette → INCREASE en saison', () => {
+      const r = getLoadSuggestion(
+        baseCtx({
+          cycle: 'in_season',
+          lastEntry: baseEntry({ reps: 5, rir: 2 }),
+          historicalEntries: [baseEntry({ rir: 2 }), baseEntry({ rir: 2 })],
+        }),
+      )
+      expect(r.decision).toBe('increase')
+      expect(r.suggestedWeight).toBe(105)
+    })
+
+    it('RIR 2 sous le haut de fourchette → vise +1 rep, plus de palier mort', () => {
+      const r = getLoadSuggestion(
+        baseCtx({
+          cycle: 'in_season',
+          lastEntry: baseEntry({ reps: 3, rir: 2 }),
+        }),
+      )
+      expect(r.decision).toBe('maintain')
+      expect(r.suggestedReps).toBe(4)
+    })
+
+    it('RIR 1 → INCREASE hors saison, MAINTAIN en saison', () => {
+      const hard = baseEntry({ reps: 5, rir: 1 })
+      const offSeason = getLoadSuggestion(
+        baseCtx({ cycle: 'off_season', lastEntry: hard, historicalEntries: [hard, hard] }),
+      )
+      expect(offSeason.decision).toBe('increase')
+
+      // En saison la charge du club s'ajoute : RIR 1 sort de la zone visée.
+      const inSeason = getLoadSuggestion(
+        baseCtx({ cycle: 'in_season', lastEntry: hard, historicalEntries: [hard, hard] }),
+      )
+      expect(inSeason.decision).toBe('maintain')
+    })
+
+    it('cycle absent → zone in-season, la plus conservatrice', () => {
+      const hard = baseEntry({ reps: 5, rir: 1 })
+      const r = getLoadSuggestion(baseCtx({ lastEntry: hard, historicalEntries: [hard, hard] }))
+      expect(r.decision).toBe('maintain')
+    })
+
+    it('série nettement trop facile → pas de charge doublé', () => {
+      const easy = baseEntry({ reps: 5, rir: 5 })
+      const r = getLoadSuggestion(
+        baseCtx({ cycle: 'off_season', lastEntry: easy, historicalEntries: [easy, easy] }),
+      )
+      expect(r.decision).toBe('increase')
+      // lower_compound : +5 kg normalement, doublé à +10 quand l'effort est
+      // deux points sous le plafond.
+      expect(r.suggestedWeight).toBe(110)
+      expect(r.justification).toMatch(/trop facile/i)
+    })
+
+    it('poids de corps : RIR 2 fait progresser les reps au lieu de figer', () => {
+      const bwCtx = (rir: number) =>
+        baseCtx({
+          exerciseId: 'power__squat_jump__bodyweight',
+          cycle: 'off_season',
+          lastEntry: baseEntry({ exerciseId: 'power__squat_jump__bodyweight', reps: 8, rir }),
+          prescribedRepsHigh: undefined,
+        })
+      const inZone = getLoadSuggestion(bwCtx(2))
+      expect(inZone.decision).toBe('bodyweight')
+      expect(inZone.suggestedReps).toBe(9)
+
+      // Nettement trop facile → +2 reps.
+      expect(getLoadSuggestion(bwCtx(5)).suggestedReps).toBe(10)
+    })
+
+    it('les garde-fous priment sur la zone d\'effort', () => {
+      const inZone = baseEntry({ reps: 5, rir: 2 })
+      const ctx = { cycle: 'off_season' as const, lastEntry: inZone, historicalEntries: [inZone, inZone] }
+      expect(getLoadSuggestion(baseCtx({ ...ctx, daysToMatch: 1 })).decision).toBe('maintain')
+      expect(getLoadSuggestion(baseCtx({ ...ctx, acwr: 1.4 })).decision).toBe('maintain')
+      expect(getLoadSuggestion(baseCtx({ ...ctx, fatigueLevel: 'high' })).decision).toBe('maintain')
+      expect(getLoadSuggestion(baseCtx({ ...ctx, week: 'DELOAD' })).decision).toBe('decrease')
+    })
+  })
+
   describe('G9 — 2 séances RPE 9+ consécutives reps incomplètes', () => {
     it('DECREASE -10% si 2 dernières séances toutes deux RPE 9+ + setsCompleted=0', () => {
       const failed = baseEntry({ rir: 0, setsCompleted: 0 }) // rpe=10, reps incomplètes

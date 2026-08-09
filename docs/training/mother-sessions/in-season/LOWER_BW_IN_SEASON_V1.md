@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base with position accents)
 - `equipment`: bodyweight
 - `target_duration`: 35-45 min
+- `reduction_order`: 3, 2
 
 ## Goal
 - Maintain lower-body force useful for rugby contact, acceleration, and short-force actions at bodyweight.
@@ -39,7 +40,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Lower Force-Projection
 - Format: `4 rounds`, full rest `2 min 30 to 3 min` after each round
-- Exercise A: `Bulgarian Split Squat` `3-4x3/side`
+- Exercise A: `Bulgarian Split Squat` `3-4x3/side @ RIR 2-3`
 - Exercise B: `Broad Jump` `3 reps`
 - Coaching notes:
   - Heavy A: backpack load or slow 3-1-1 tempo, `RIR 2-3` (~75-80% effort).
@@ -52,8 +53,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Posterior Chain + Unilateral Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Single-Leg Glute Bridge` `3x5-6/side`
-- Exercise B: `Bulgarian Split Squat` `3x5/side`
+- Exercise A: `Single-Leg Glute Bridge` `3x5-6/side @ RIR 2-3`
+- Exercise B: `Bulgarian Split Squat` `3x5/side @ RIR 2-3`
 - Coaching notes:
   - Athletic support work — clean lockout on bridge, stable unilateral squat.
   - Upgrade A: `Single-Leg Romanian Deadlift` if DB/KB available.

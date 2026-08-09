@@ -8,6 +8,7 @@
 - `target_position_group`: back_three
 - `equipment`: full_gym
 - `target_duration`: 55-70 min
+- `reduction_order`: 4, 3, 2, 1
 
 ## Goal
 - Rebuild lower-body muscle mass with a back-three bias: unilateral patterns, sprint-resilience, and lower-leg stiffness.
@@ -37,9 +38,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Squat Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `back squat` `4x8-10`
+- Exercise A: `back squat` `4x8-10 @ RIR 1-2`
 - Coaching notes:
-  - Bilateral anchor preserved. RPE 6-8.
+  - Bilateral anchor preserved. RIR 1-2.
   - Depth and control matter more than load.
   - Fallback options:
     - A: `Front Squat`
@@ -47,8 +48,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Unilateral Hinge / Quad Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `single-leg romanian deadlift` `4x8-10/side`
-- Exercise B: `reverse lunge` `3-4x8-10/side`
+- Exercise A: `single-leg romanian deadlift` `4x8-10/side @ RIR 1-2`
+- Exercise B: `reverse lunge` `3-4x8-10/side @ RIR 1-2`
 - Coaching notes:
   - This is the main positional accent block.
   - Single-leg RDL builds unilateral posterior chain — key for sprint acceleration.
@@ -59,8 +60,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - B: `Split Squat`
 
 ### Block 3 - Posterior Chain / Groin Support
-- Format: `3 rounds`, `60-75s` rest after the pair
-- Exercise A: `nordic curl` `3x4-5`
+- Format: `4 rounds`, `60-75s` rest after the pair
+- Exercise A: `nordic curl` `4x4-5 @ RIR 1-2`
 - Exercise B: `copenhagen hold` `2-3x20-30s/side`
 - Coaching notes:
   - Nordic curl for sprint-resilience: eccentric hamstring strength protects against high-speed running injuries.
@@ -71,8 +72,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 4 - Lower-Leg / Stiffness Prep
 - Format: `2 rounds`, minimal rest
-- Exercise A: `single-leg calf raise` `2-3x10-12/side`
-- Exercise B: `wall tibialis raise` `2-3x12-15`
+- Exercise A: `single-leg calf raise` `2-3x10-12/side @ RIR 1-2`
+- Exercise B: `wall tibialis raise` `2-3x12-15 @ RIR 1-2`
 - Exercise C: `low pogo hops` `2x8`
 - Coaching notes:
   - Single-leg calf for ankle stiffness and unilateral balance.
@@ -82,7 +83,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Progression Rules
 - `Semaine 1`: establish clean volume tolerance on all exercises.
 - `Semaine 2`: increase load if recovery is good; keep nordic at 4-5 reps.
-- `Semaine 3`: highest volume week; allow RPE 7-8 on main lifts.
+- `Semaine 3`: highest volume week; allow RIR 1-2 on main lifts.
 - `Semaine 4 (décharge)`: reduce volume -25-30% while keeping load. Reduce Block 4 first, Block 3 second.
 
 ## Position Accent

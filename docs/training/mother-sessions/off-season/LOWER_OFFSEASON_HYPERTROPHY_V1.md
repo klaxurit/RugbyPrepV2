@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base with light accents)
 - `equipment`: full_gym
 - `target_duration`: 55-70 min
+- `reduction_order`: 4, 3
 
 ## Goal
 - Rebuild useful lower-body muscle mass during the main off-season hypertrophy block.
@@ -38,9 +39,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Squat Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Back Squat` `4x8-10`
+- Exercise A: `Back Squat` `4x8-10 @ RIR 1-2`
 - Coaching notes:
-  - Keep the squat around `RPE 6-8` across the block.
+  - Keep the squat around `RIR 1-2` across the block.
   - The goal is productive lower-body volume, not grinding or ego loading.
   - Depth and control matter more than absolute load.
   - Fallback options:
@@ -49,8 +50,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Main Hinge / Unilateral Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Barbell Romanian Deadlift` `4x8-10`
-- Exercise B: `Rear-Foot Elevated Split Squat` `3-4x8-10/side`
+- Exercise A: `Barbell Romanian Deadlift` `4x8-10 @ RIR 1-2`
+- Exercise B: `Rear-Foot Elevated Split Squat` `3-4x8-10/side @ RIR 1-2`
 - Coaching notes:
   - This is the main structural block of the session.
   - The hinge should build posterior chain mass without turning into a max-strength pull.
@@ -61,7 +62,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Groin Support
 - Format: `3 rounds`, `60-75s` rest after the pair
-- Exercise A: `Lying Leg Curl` `3x10-12`
+- Exercise A: `Lying Leg Curl` `3x10-12 @ RIR 1-2`
 - Exercise B: `Copenhagen Hold` `2-3x20-30s/side`
 - Coaching notes:
   - This block supports hamstring mass and adductor robustness.
@@ -72,10 +73,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - B: `Supine Adductor Squeeze`
 
 ### Block 4 - Lower-Leg / Optional Reward
-- Exercise A: `Seated Calf Raise` `2-3x10-12`
-- Exercise B: `Wall Tibialis Raise` `2-3x12-15`
-- Exercise C: `Leg Extension` `2x12-15`
-- Exercise D: `Leg Press Calf Press` `2x12-15`
+- Exercise A: `Seated Calf Raise` `2-3x10-12 @ RIR 1-2`
+- Exercise B: `Wall Tibialis Raise` `2-3x12-15 @ RIR 1-2`
+- Exercise C: `Leg Extension` `2x12-15 @ RIR 1-2`
+- Exercise D: `Leg Press Calf Press` `2x12-15 @ RIR 1-2`
 - Coaching notes:
   - `Calf + Tibialis` is the default tissue-support pair.
   - `Leg Extension + Calf Press` is optional and functions as a controlled reward block if recovery is good.

@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base)
 - `equipment`: bodyweight
 - `target_duration`: 40-50 min
+- `reduction_order`: 3, 2, 1
 
 ## Goal
 - Rebuild upper-body structure after Recovery at bodyweight.
@@ -34,8 +35,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Push / Pull Base Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Decline Push-Up` `3x6-8`
-- Exercise B: `Inverted Row Standard` `3x8-10`
+- Exercise A: `Decline Push-Up` `3x6-8 @ RIR 1-2`
+- Exercise B: `Inverted Row Standard` `3x8-10 @ RIR 1-2`
 - Coaching notes:
   - Around `RPE 5-6`.
   - Decline push-up as main horizontal push; row from sturdy table/bar.
@@ -45,8 +46,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Vertical Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Pike Push-Up` `3x6-8`
-- Exercise B: `Rowing inversé pieds surélevés` `3x8-10`
+- Exercise A: `Pike Push-Up` `3x6-8 @ RIR 1-2`
+- Exercise B: `Rowing inversé pieds surélevés` `3x8-10 @ RIR 1-2`
 - Coaching notes:
   - Pike for vertical-ish push; feet-elevated row for harder pull.
   - Fallback options:
@@ -55,7 +56,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Shoulder / Trunk Support
 - Format: `2 rounds`, minimal rest
-- Exercise A: `Face Pull Band` `2x10-12`
+- Exercise A: `Face Pull Band` `2x10-12 @ RIR 1-2`
 - Exercise B: `Side Plank` `2x20s/side`
 - Coaching notes:
   - Face pull with band if available; otherwise `scap push-up` and band pull-apart.

@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base)
 - `equipment`: full_gym
 - `target_duration`: 50-60 min
+- `reduction_order`: 4, 3
 
 ## Goal
 - Convert off-season hypertrophy gains into maximal lower-body force and explosive power.
@@ -61,8 +62,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Unilateral Strength + Posterior Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `rear-foot elevated split squat` `3x5-6/side`
-- Exercise B: `nordic curl` `3x4-5`
+- Exercise A: `rear-foot elevated split squat` `3x5-6/side @ RIR 1-2`
+- Exercise B: `nordic curl` `3x4-5 @ RIR 1-2`
 - Coaching notes:
   - Unilateral work at force-grade reps (5-6), not hypertrophy (8+).
   - Nordic curl: controlled eccentric, assist concentric if needed.
@@ -74,8 +75,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 4 - Lower-Leg / Groin Prevention
 - Format: `2 rounds`, `45-60s` rest
 - Exercise A: `copenhagen hold` `2x20-30s/side`
-- Exercise B: `seated calf raise` `2x10-12`
-- Exercise C: `wall tibialis raise` `2x12`
+- Exercise B: `seated calf raise` `2x10-12 @ RIR 1-2`
+- Exercise C: `wall tibialis raise` `2x12 @ RIR 1-2`
 - Coaching notes:
   - Prevention work stays consistent across all off-season phases.
   - Keep this efficient — don't turn it into extra training volume.

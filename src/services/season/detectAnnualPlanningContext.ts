@@ -325,6 +325,22 @@ function offSeasonWeekLabel(weekNumber: number, phase: OffSeasonPhase): string {
   return `Inter-saison ${offSeasonPhaseName(phase)} - S${weekNumber}`
 }
 
+/**
+ * Décharge en inter-saison : uniquement dans le bloc d'hypertrophie, qui est le
+ * seul assez long pour accumuler de la fatigue (4 à 8 semaines selon la durée
+ * réelle). Récupération et Transition sont déjà à volume bas, Force-Pont ne
+ * dure que 2 semaines, Entretien alterne A/B à charge constante.
+ *
+ * On décharge toutes les 4 semaines de bloc et sur sa dernière semaine, qui
+ * sert aussi de transition vers le bloc de force (Israetel 2019, « H4 »).
+ */
+function isOffSeasonDeloadWeek(weekNumber: number, totalWeeks: number): boolean {
+  if (offSeasonPhaseFromWeek(weekNumber, totalWeeks) !== 3) return false
+  const HYPERTROPHY_BLOCK_START = 5
+  const weekInBlock = weekNumber - HYPERTROPHY_BLOCK_START + 1
+  return weekInBlock % 4 === 0 || weekNumber === totalWeeks - 2
+}
+
 function baseContextFields(
   inputs: AthletePlanningInputs,
   todayDate: Date,
@@ -394,7 +410,7 @@ function buildOffSeasonContext(
     offSeasonPhase: phase,
     weekNumber,
     weekLabel: offSeasonWeekLabel(weekNumber, phase),
-    isDeloadWeek: false,
+    isDeloadWeek: isOffSeasonDeloadWeek(weekNumber, totalWeeks),
     offSeasonStartAt: offSeasonStartIso,
     effectiveOffSeasonWeeks: totalWeeks,
     ...base,

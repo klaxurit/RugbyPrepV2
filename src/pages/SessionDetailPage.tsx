@@ -38,6 +38,7 @@ import { buildMotherSessionProgramSessionLog } from '../services/program/buildPr
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { prepareSessionForRender } from '../services/session/prepareSessionForRender'
+import { truncateSessionBlocks } from '../services/session/truncateSessionBlocks'
 import {
   applyExerciseOverridesToSession,
   buildExerciseOverrideKey,
@@ -278,12 +279,17 @@ export function SessionDetailPage() {
 
   const preparedSession = useMemo(() => {
     if (!activeSlot) return null
-    return prepareSessionForRender({
+    const prepared = prepareSessionForRender({
       session: activeSlot.session,
       trainingLevel: profile.trainingLevel,
       equipment: profile.equipment,
       lang,
     })
+    // Décharge, taper et overrides de fatigue passent tous par ces deux champs.
+    return truncateSessionBlocks(prepared, {
+      maxBlocks: activeSlot.maxBlocks,
+      variant: activeSlot.variant,
+    }).session
   }, [activeSlot, profile.trainingLevel, profile.equipment, lang])
 
   /** Set logs + block_logs legacy — source unique pour PR / PREVIOUS / suggestions. */
@@ -311,7 +317,7 @@ export function SessionDetailPage() {
         activeBlockUnitLabel: 'Tour' as 'Tour' | 'Minute' | 'Round' | 'For Time',
       }
     }
-    const blocks = activeSlot.session.blocks
+    const blocks = preparedSession?.blocks ?? activeSlot.session.blocks
     let totalTours = 0
     let completedTours = 0
     let activeBlockIndex = 0
@@ -375,7 +381,7 @@ export function SessionDetailPage() {
       activeBlockTourCount,
       activeBlockUnitLabel,
     }
-  }, [activeSlot, sessionRun.completedExercises, lang])
+  }, [activeSlot, preparedSession, sessionRun.completedExercises, lang])
 
   // (handleCursorChange retiré : l'auto-scroll vers la série courante sera
   //  réintégré en D6 via le sticky CTA contextuel `validate-exo`.)
@@ -452,8 +458,8 @@ export function SessionDetailPage() {
     const completedSets = sessionRun.completedExercises.size
 
     let totalSets = 0
-    if (activeSlot) {
-      for (const block of activeSlot.session.blocks) {
+    if (preparedSession) {
+      for (const block of preparedSession.blocks) {
         const tourCount = parseBlockTourCount(block)
         const loggable = block.exercises.filter((e) => e && !isDirectiveText(e.name)).length
         totalSets += loggable * tourCount
@@ -493,7 +499,7 @@ export function SessionDetailPage() {
     sessionRun.completedExercises,
     sessionRun.exerciseTourLoads,
     sessionRun.startedAt,
-    activeSlot,
+    preparedSession,
     slotSignature,
     setLogs,
     profile.weightKg,
@@ -511,9 +517,9 @@ export function SessionDetailPage() {
   // ── Suggestions de charge Premium par exercice (garde-fous KB) ───────────
   const loadSuggestionByExoId = useMemo(() => {
     const empty = new Map<string, never>()
-    if (!isPremium || !activeSlot || !surface) return empty
+    if (!isPremium || !preparedSession || !surface) return empty
     const exercises: { exerciseId: string; prescription: string }[] = []
-    for (const block of activeSlot.session.blocks) {
+    for (const block of preparedSession.blocks) {
       for (const exercise of block.exercises) {
         if (!exercise || isDirectiveText(exercise.name)) continue
         const exerciseId = resolveExerciseIdForSessionRun(exercise.name, exercise.exerciseId)
@@ -533,10 +539,11 @@ export function SessionDetailPage() {
       daysToMatch: surface.planningContext.daysUntilNextMatch ?? null,
       weightKg: profile.weightKg,
       isBodyweightProgram: isBodyweightProgramTier(profile.equipment),
+      cycle: surface.planningContext.cycle,
     })
   }, [
     isPremium,
-    activeSlot,
+    preparedSession,
     surface,
     historyLogs,
     slotSignature,
@@ -554,10 +561,10 @@ export function SessionDetailPage() {
   )
 
   const previousSessionSetMap = useMemo(() => {
-    if (!slotSignature || !activeSlot) return new Map<string, PreviousSessionSetRef>()
+    if (!slotSignature || !preparedSession) return new Map<string, PreviousSessionSetRef>()
     const exerciseIds = new Set<string>()
     let maxTours = 1
-    for (const block of activeSlot.session.blocks) {
+    for (const block of preparedSession.blocks) {
       maxTours = Math.max(maxTours, parseBlockTourCount(block))
       for (const exercise of block.exercises) {
         if (!exercise || isDirectiveText(exercise.name)) continue
@@ -571,7 +578,7 @@ export function SessionDetailPage() {
       exerciseIds: Array.from(exerciseIds),
       tourCount: maxTours,
     })
-  }, [slotSignature, activeSlot, historyLogs])
+  }, [slotSignature, preparedSession, historyLogs])
 
   const getPreviousSessionSet = useCallback(
     (exerciseId: string, tourIndex: number): PreviousSessionSetRef | undefined =>

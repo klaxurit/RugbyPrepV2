@@ -9,6 +9,7 @@ import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
 import { useHistory } from '../hooks/useHistory'
 import { useProfile } from '../hooks/useProfile'
 import { prepareSessionForRender } from '../services/session/prepareSessionForRender'
+import { truncateSessionBlocks } from '../services/session/truncateSessionBlocks'
 import {
   getSessionLogCycleLabel,
   getSessionLogDisplayTitle,
@@ -42,13 +43,19 @@ export function SessionLogReviewPage() {
 
   const preparedSession = useMemo(() => {
     if (!motherSession) return null
-    return prepareSessionForRender({
+    const prepared = prepareSessionForRender({
       session: motherSession,
       trainingLevel: profile.trainingLevel,
       equipment: profile.equipment,
       lang,
     })
-  }, [motherSession, profile.trainingLevel, profile.equipment, lang])
+    // La revue doit montrer la séance telle qu'elle a été servie ce jour-là,
+    // décharge ou taper compris, pas la version intégrale du dataset.
+    return truncateSessionBlocks(prepared, {
+      maxBlocks: log?.programContext?.maxBlocks,
+      variant: log?.programContext?.variant,
+    }).session
+  }, [motherSession, profile.trainingLevel, profile.equipment, lang, log])
 
   const sets = useMemo(
     () => (log ? getSetsForSessionLog(log) : []),

@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 3 common base)
 - `equipment`: bodyweight
 - `target_duration`: 40-48 min
+- `reduction_order`: 3, 2, 1
 
 ## Goal
 - Phase 3 upper power — speed push contrast and explosive pull.
@@ -28,7 +29,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Speed Push Contrast
 - Format: `4 rounds`, `2 min 30` rest between rounds
-- Exercise A: `Decline Push-Up` `4x3`
+- Exercise A: `Decline Push-Up` `4x3 @ RIR 1-2`
 - Exercise B: (contrast) `Plyo Push-Up` `3-4 reps`
 - Coaching notes:
   - A: moderate load, max push speed — weighted push-ups or DB bench.
@@ -36,8 +37,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Explosive Pull
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Rowing inversé pieds surélevés` `3x4`
-- Exercise B: `Decline Push-Up` `3x5`
+- Exercise A: `Rowing inversé pieds surélevés` `3x4 @ RIR 1-2`
+- Exercise B: `Decline Push-Up` `3x5 @ RIR 1-2`
 - Coaching notes:
   - Explosive row — fast pull, controlled descent.
   - Upgrade A: explosive pull-up if bar available.

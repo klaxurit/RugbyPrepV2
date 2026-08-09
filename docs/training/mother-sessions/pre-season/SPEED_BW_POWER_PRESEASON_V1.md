@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 2 terrain base)
 - `equipment`: bodyweight
 - `target_duration`: 40-50 min
+- `reduction_order`: 4, 3, 2, 1
 
 ## Goal
 - Phase 2 speed-power: contrasted accelerations, plyometrics, upper ballistics, COD.

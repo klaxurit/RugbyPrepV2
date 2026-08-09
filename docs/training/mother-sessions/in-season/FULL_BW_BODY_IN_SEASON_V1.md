@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base with position accents)
 - `equipment`: bodyweight
 - `target_duration`: 40-50 min
+- `reduction_order`: 4, 3, 2, 1
 
 ## Goal
 - Maintenir force globale utile en semaine sans match, en poids de corps.
@@ -36,7 +37,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Hinge + Jump
 - Format: `3 rounds`, `2 min 30` rest between rounds
-- Exercise A: `Kickstand RDL` `3x3-4`
+- Exercise A: `Kickstand RDL` `3x3-4 @ RIR 2-3`
 - Exercise B: `Broad Jump` `3 reps`
 - Coaching notes:
   - Hinge modéré — `RIR 2-3`, pas de grind.
@@ -45,8 +46,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Push / Pull
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Chair Dip` `3x5`
-- Exercise B: `Neutral-Grip Pull-Up` `3x5`
+- Exercise A: `Chair Dip` `3x5 @ RIR 2-3`
+- Exercise B: `Neutral-Grip Pull-Up` `3x5 @ RIR 2-3`
 - Coaching notes:
   - Chair dips (pas decline — réservé à UPPER cette semaine) — force utile sans fatigue excessive.
   - Pull-ups (pas rowing inversé — réservé à UPPER cette semaine).
@@ -55,7 +56,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Unilateral + Trunk
 - Format: `2 rounds`, `75s` rest after the pair
-- Exercise A: `Single-Leg Glute Bridge` `2x8/side`
+- Exercise A: `Single-Leg Glute Bridge` `2x8/side @ RIR 2-3`
 - Exercise B: `Side Plank` `2x15s/side`
 - Coaching notes:
   - Pont fessier unilatéral (pas Bulgarian — déjà sur LOWER cette semaine) — support hanche, pas de circuit.

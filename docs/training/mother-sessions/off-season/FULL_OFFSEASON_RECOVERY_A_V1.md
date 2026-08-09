@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base)
 - `equipment`: full_gym
 - `target_duration`: 30-45 min
+- `reduction_order`: 3, 2, 1
 
 ## Goal
 - Reintroduce full-body training after the season without performance pressure.
@@ -39,8 +40,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Squat / Hinge Re-Entry
 - Format: `3 rounds`, `60-90s` rest after the pair
-- Exercise A: `Goblet Squat` `3x8`
-- Exercise B: `DB Romanian Deadlift` `3x8`
+- Exercise A: `Goblet Squat` `3x8 @ RIR 3-4`
+- Exercise B: `DB Romanian Deadlift` `3x8 @ RIR 3-4`
 - Coaching notes:
   - Keep both movements at around `RPE 4-5`.
   - The goal is to restore rhythm, position, and confidence under light load.
@@ -52,8 +53,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Push / Pull Re-Entry
 - Format: `3 rounds`, `60-90s` rest after the pair
-- Exercise A: `DB Bench Press` `3x8-10`
-- Exercise B: `Inverted Row` `3x8-10`
+- Exercise A: `DB Bench Press` `3x8-10 @ RIR 3-4`
+- Exercise B: `Inverted Row` `3x8-10 @ RIR 3-4`
 - Coaching notes:
   - Keep both movements at around `RPE 4-5`.
   - Let the shoulder find a comfortable path on the DB press.
@@ -65,8 +66,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Trunk / Mobility / Tissue Reset
 - Format: `2 rounds`, move continuously with minimal rest
-- Exercise A: `Dead Bug` `2x8/side`
-- Exercise B: `Adductor Rock-Back` `2x8/side`
+- Exercise A: `Dead Bug` `2x8/side @ RIR 3-4`
+- Exercise B: `Adductor Rock-Back` `2x8/side @ RIR 3-4`
 - Exercise C: `World's Greatest Stretch` `2x4/side`
 - Coaching notes:
   - This block is part trunk reset, part groin reintroduction, part global mobility.

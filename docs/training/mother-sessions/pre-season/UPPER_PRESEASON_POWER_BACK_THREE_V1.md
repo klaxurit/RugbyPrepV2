@@ -8,6 +8,7 @@
 - `target_position_group`: back_three
 - `equipment`: full_gym
 - `target_duration`: 42-52 min
+- `reduction_order`: 4, 3, 2
 
 ## Goal
 - Express upper-body power specific to back-three demands during weeks 9 to 12 of pre-season.
@@ -54,9 +55,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Pull Cluster
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Neutral-Grip Pull-Up` `3x4-5`
-- Exercise B: `Chest-Supported Row` `3x5-6`
-- Exercise C: `Face Pull` `3x12-15`
+- Exercise A: `Neutral-Grip Pull-Up` `3x4-5 @ RIR 1-2`
+- Exercise B: `Chest-Supported Row` `3x5-6 @ RIR 1-2`
+- Exercise C: `Face Pull` `2x12-15 @ RIR 1-2`
 - Coaching notes:
   - Pull-up : add load only if the player owns full range and clean body position.
   - Row : stay strong, clean, no torso compensation.
@@ -74,7 +75,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - If weekly rotational work is already high, replace the throw slot with `Pallof Press Hold` `15-20s/side`.
   - If the player also performs `LOWER_PRESEASON_POWER_BACK_THREE_V1` in the same week, keep this throw at the low end of the range or use the Pallof swap.
 
-### Block 4 - Mandatory Shoulder Prehab Micro-Block
+### Optional Block 4 - Shoulder Prehab Micro-Block
 - Format: `1-2 rounds`, `20-30s` rest between drills
 - Exercise A: `Band External Rotation` `10-12 reps`
 - Exercise B: `Serratus Reach` `8-10 reps`
@@ -91,7 +92,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - `W12`: reduce volume around `-30%` while preserving speed and sharpness.
 - Reduce Block 3 first if fatigue rises.
 - Reduce Block 2 second.
-- Keep Block 4 unless shoulder irritability requires a different rehab emphasis.
+- Drop Block 4 first when the session must be shortened. Keep it if the shoulder is currently irritable.
 - Keep Block 1 as the protected priority if the athlete is still moving explosively.
 
 ## Position Accent

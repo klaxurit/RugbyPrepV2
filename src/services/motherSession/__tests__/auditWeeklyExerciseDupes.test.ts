@@ -143,7 +143,8 @@ describe('weekly heavy-family duplicates (FULL vs Lower/Upper)', () => {
   })
 
   it('has no motivating duplicates in bodyweight weeks', () => {
-    const dupes = collectDupes(['bodyweight'])
+    // Profil poids de corps = aucun équipement déclaré (cf. resolveEquipmentProgramTier).
+    const dupes = collectDupes([])
     if (dupes.length) {
       // eslint-disable-next-line no-console
       console.log('\nBW DUPES:\n' + dupes.join('\n'))

@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 3 common base)
 - `equipment`: bodyweight
 - `target_duration`: 40-50 min
+- `reduction_order`: 3, 2, 1
 
 ## Goal
 - Phase 3 lower power — speed-strength contrasts, explosive unilateral work.
@@ -31,7 +32,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Speed Contrast Lower
 - Format: `4 rounds`, `2 min 30` rest between rounds
-- Exercise A: `Bulgarian Split Squat` `4x3/side`
+- Exercise A: `Bulgarian Split Squat` `4x3/side @ RIR 1-2`
 - Exercise B: (contrast) `Squat Jump` `3 reps`
 - Coaching notes:
   - A: moderate load, max bar speed — Bulgarian with DB/KB if available (keep unilateral).
@@ -40,7 +41,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Explosive Unilateral
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Bulgarian Split Squat` `3x4/side`
+- Exercise A: `Bulgarian Split Squat` `3x4/side @ RIR 1-2`
 - Exercise B: `Broad Jump` `3 reps`
 - Coaching notes:
   - Explosive split squat — fast concentric, stable landing on jump.

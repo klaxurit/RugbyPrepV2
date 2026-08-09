@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base)
 - `equipment`: bodyweight
 - `target_duration`: 15-20 min
+- `reduction_order`: 1
 
 ## Goal
 - Activation CNS en semaine de match (J-5 à J-2) — zéro fatigue résiduelle.
@@ -36,7 +37,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Format: `2 rounds`, `2 min` rest between rounds
 - Exercise A: `Squat Jump` `2x3`
 - Exercise B: `Plyo Push-Up` `2x3`
-- Exercise C: `Inverted Row Standard` `2x3`
+- Exercise C: `Inverted Row Standard` `2x3 @ RIR 3-4`
 - Exercise D: `A-Skip` `2x10m`
 - Exercise E: `Neck Extension Isometric` `2x10s/dir`
 - Coaching notes:

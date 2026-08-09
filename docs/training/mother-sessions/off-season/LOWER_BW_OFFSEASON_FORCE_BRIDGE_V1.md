@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base with position accents)
 - `equipment`: bodyweight
 - `target_duration`: 45-55 min
+- `reduction_order`: 4, 3
 
 ## Goal
 - Convert off-season hypertrophy into lower-body force and explosive power at bodyweight.
@@ -35,7 +36,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Squat Force + Explosive Contrast
 - Format: `4 rounds`, `3-4 min` rest between rounds
-- Exercise A: `Bulgarian Split Squat` `4x4-5/side`
+- Exercise A: `Bulgarian Split Squat` `4x4-5/side @ RIR 1-2`
 - Exercise B: (contrast) `Squat Jump` `4x3-4, max intention`
 - Coaching notes:
   - Heavy A: slow 3-1-1 tempo or backpack load, `RIR 1-2`.
@@ -46,7 +47,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Hinge Force + Dynamic Contrast
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Nordic Eccentric` `4x4-5`
+- Exercise A: `Nordic Eccentric` `4x4-5 @ RIR 1-2`
 - Exercise B: (contrast) `Broad Jump` `4x3, max distance`
 - Coaching notes:
   - Strict nordic eccentrics (3-4s down) — force-grade, not hypertrophy volume.
@@ -56,8 +57,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Unilateral Strength + Posterior Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Bulgarian Split Squat` `3x5-6/side`
-- Exercise B: `Nordic Eccentric` `3x4-5`
+- Exercise A: `Bulgarian Split Squat` `3x5-6/side @ RIR 1-2`
+- Exercise B: `Nordic Eccentric` `3x4-5 @ RIR 1-2`
 - Coaching notes:
   - Force-grade reps (5-6), controlled — structural balance without junk fatigue.
   - Upgrade A: loaded Bulgarian if DB available.
@@ -66,8 +67,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 4 - Lower-Leg / Groin Prevention
 - Format: `2 rounds`, `45-60s` rest
 - Exercise A: `Copenhagen Plank` `2x20-30s/side`
-- Exercise B: `Single-Leg Calf Raise` `2x10-12/side`
-- Exercise C: `Wall Tibialis Raise` `2x12`
+- Exercise B: `Single-Leg Calf Raise` `2x10-12/side @ RIR 1-2`
+- Exercise C: `Wall Tibialis Raise` `2x12 @ RIR 1-2`
 - Coaching notes:
   - Prévention uniquement — couper ce bloc en premier si la fatigue du SNC est élevée.
   - Copenhagen : pied surélevé obligatoire.

@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base with position accents)
 - `equipment`: bodyweight
 - `target_duration`: 45-55 min
+- `reduction_order`: 4, 3, 2, 1
 
 ## Goal
 - Build useful upper-body muscle at bodyweight during off-season hypertrophy.
@@ -35,17 +36,17 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ## Visible Blocks
 
 ### Block 1 - Main Push Hypertrophy
-- Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Decline Push-Up` `4x8-10`
+- Format: `6 work sets`, `2 min` rest between sets
+- Exercise A: `Decline Push-Up` `6x8-10 @ RIR 1-2`
 - Coaching notes:
-  - Anchor press around `RPE 6-8`.
+  - Anchor press around `RIR 1-2`.
   - Too easy → backpack load or feet higher; too hard → `Push-Up` standard (not incline) before reducing volume.
   - Upgrade: dips on parallettes or weighted backpack.
 
 ### Block 2 - Pull / Vertical Push Pair
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Inverted Row Standard` `4x8-10`
-- Exercise B: `Pike Push-Up` `4x8-10`
+- Exercise A: `Inverted Row Standard` `4x8-10 @ RIR 1-2`
+- Exercise B: `Pike Push-Up` `4x8-10 @ RIR 1-2`
 - Coaching notes:
   - Main structural volume — strict rows, controlled pike (hips high, not une demi-pompe).
   - Fallback A: `Inverted Row` knees bent only if row strength is clearly limiting.
@@ -54,15 +55,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Vertical Support Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Pike Push-Up Feet Elevated` `3x8-10`
-- Exercise B: `Rowing inversé pieds surélevés` `3x10-12`
+- Exercise A: `Pike Push-Up Feet Elevated` `3x8-10 @ RIR 1-2`
+- Exercise B: `Rowing inversé pieds surélevés` `3x10-12 @ RIR 1-2`
 - Coaching notes:
   - Support volume harder than Block 2 — not a shoulder max test.
   - Couper ce bloc avant le bloc 2 si la fatigue s'accumule.
 
 ### Block 4 - Shoulder Health (optional)
 - Format: `2 rounds`, `45-60s` rest
-- Exercise A: `Face Pull Band` `2x12-15`
+- Exercise A: `Face Pull Band` `2x12-15 @ RIR 1-2`
 - Coaching notes:
   - Optional — skip if club load is high or no band (use `scap push-up`).
 

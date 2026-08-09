@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base)
 - `equipment`: bodyweight
 - `target_duration`: 30-40 min
+- `reduction_order`: 3, 2, 1
 
 ## Goal
 - Reintroduce full-body training after the season without performance pressure.
@@ -38,8 +39,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Squat / Hinge Re-Entry
 - Format: `3 rounds`, `60-90s` rest after the pair
-- Exercise A: `Bodyweight Squat` `3x8`
-- Exercise B: `Glute Bridge` `3x8`
+- Exercise A: `Bodyweight Squat` `3x8 @ RIR 3-4`
+- Exercise B: `Glute Bridge` `3x8 @ RIR 3-4`
 - Coaching notes:
   - Keep both movements at around `RPE 4-5`.
   - Squat upright and controlled — no grinding.
@@ -50,8 +51,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Push / Pull Re-Entry
 - Format: `3 rounds`, `60-90s` rest after the pair
-- Exercise A: `Incline Push-Up` `3x8-10`
-- Exercise B: `Inverted Row Standard` `3x8-10`
+- Exercise A: `Incline Push-Up` `3x8-10 @ RIR 3-4`
+- Exercise B: `Inverted Row Standard` `3x8-10 @ RIR 3-4`
 - Coaching notes:
   - Push on an incline first; progress to standard push-up when easy.
   - Row from a sturdy table or low bar; feet on floor.
@@ -62,8 +63,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Trunk / Mobility / Tissue Reset
 - Format: `2 rounds`, move continuously with minimal rest
-- Exercise A: `Dead Bug` `2x8/side`
-- Exercise B: `Adductor Rock-Back` `2x8/side`
+- Exercise A: `Dead Bug` `2x8/side @ RIR 3-4`
+- Exercise B: `Adductor Rock-Back` `2x8/side @ RIR 3-4`
 - Exercise C: `World's Greatest Stretch` `2x4/side`
 - Coaching notes:
   - Trunk reset and groin reintroduction — nothing intense.

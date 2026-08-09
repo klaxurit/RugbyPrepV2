@@ -8,6 +8,7 @@
 - `target_position_group`: back_three
 - `equipment`: full_gym
 - `target_duration`: 40-48 min
+- `reduction_order`: 3, 2
 
 ## Goal
 - Maintain upper-body force without creating unnecessary fatigue.
@@ -49,8 +50,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Strength Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Neutral-Grip Pull-Up` `3x5`
-- Exercise B: `Pendlay Row` `3x5-6`
+- Exercise A: `Neutral-Grip Pull-Up` `3x5 @ RIR 2-3`
+- Exercise B: `Pendlay Row` `3x5-6 @ RIR 2-3`
 - Coaching notes:
   - Pull-up : traction lourde, add load if strong enough (ceinture lest).
   - Pendlay starts from a dead stop each rep.

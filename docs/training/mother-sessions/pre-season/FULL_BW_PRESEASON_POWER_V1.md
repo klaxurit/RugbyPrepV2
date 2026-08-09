@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 3 common base)
 - `equipment`: bodyweight
 - `target_duration`: 40-50 min
+- `reduction_order`: 3, 2, 1
 
 ## Goal
 - Phase 3 full-body power — swing/hinge speed, plyo push, explosive pull.
@@ -36,8 +37,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Explosive Push / Pull
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Archer Push-Up` `3x3-4/side`
-- Exercise B: `Neutral-Grip Pull-Up` `3x3-4`
+- Exercise A: `Archer Push-Up` `3x3-4/side @ RIR 1-2`
+- Exercise B: `Neutral-Grip Pull-Up` `3x3-4 @ RIR 1-2`
 - Coaching notes:
   - Archer push-up (not decline/plyo — reserved for UPPER this week).
   - Pull-ups (not inverted row — reserved for UPPER this week).

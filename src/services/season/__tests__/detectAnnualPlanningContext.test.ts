@@ -148,6 +148,20 @@ describe('detectAnnualPlanningContext', () => {
     expect(r.weekLabel).toBe('Inter-saison Hypertrophie - S6')
     expect(r.offSeasonPhase).toBe(3)
     expect(r.weekNumber).toBe(6)
+    expect(r.isDeloadWeek).toBe(false)
+  })
+
+  it('off-season : décharge à la dernière semaine du bloc hypertrophie', () => {
+    // Inter-saison de 10 semaines : hypertrophie S5-S8, donc décharge en S8.
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match(FIRST_MATCH)],
+      today: '2024-11-25',
+      planningAnchors: { offSeasonStartAt: '2024-10-07' },
+    })
+    expect(r.weekNumber).toBe(8)
+    expect(r.offSeasonPhase).toBe(3)
+    expect(r.isDeloadWeek).toBe(true)
   })
 
   it('off-season Force-Bridge S10', () => {

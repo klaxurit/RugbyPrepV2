@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 1 common terrain base)
 - `equipment`: field priority + minimal equipment
 - `target_duration`: 45-51 min
+- `reduction_order`: 5, 4, 3, 2
 
 ## Goal
 - Introduce sprint, jump, throw, and simple change-of-direction qualities during weeks 1 to 4 of pre-season.

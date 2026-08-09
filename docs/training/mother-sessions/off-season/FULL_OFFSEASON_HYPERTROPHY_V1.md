@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base with light accents)
 - `equipment`: full_gym
 - `target_duration`: 60-75 min
+- `reduction_order`: 4, 3
 
 ## Goal
 - Complete the main off-season hypertrophy week with a full-body session that adds useful muscle without simply repeating the Lower and Upper hypertrophy days.
@@ -38,9 +39,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Full-Body Hinge Hypertrophy
 - Format: `4 work sets`, `2 min` rest between sets
-- Exercise A: `Barbell Hip Thrust` `4x8-10` `rest 2 min`
+- Exercise A: `Barbell Hip Thrust` `4x8-10 @ RIR 1-2` `rest 2 min`
 - Coaching notes:
-  - Keep the hip thrust around `RPE 6-8`.
+  - Keep the hip thrust around `RIR 1-2`.
   - Hip thrust (not trap bar / RDL — LOWER already covers those this week): hypertrophy-oriented hip extension.
   - The lift should feel powerful and productive, not like testing.
   - Fallback options:
@@ -48,8 +49,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push / Pull Support
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Parallel Bar Dip` `4x8-10`
-- Exercise B: `Half-Kneeling Cable Row` `4x8-10/side`
+- Exercise A: `Parallel Bar Dip` `4x8-10 @ RIR 1-2`
+- Exercise B: `Half-Kneeling Cable Row` `4x8-10/side @ RIR 1-2`
 - Coaching notes:
   - Dips + cable row (UPPER already has flat + incline bench and CSR this week — do not repeat them).
   - Keep both exercises smooth, controlled, and full-range.
@@ -60,7 +61,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Lower Support / Trunk Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Single-Leg RDL` `3x8-10/side`
+- Exercise A: `Single-Leg RDL` `3x8-10/side @ RIR 1-2`
 - Exercise B: `Pallof Press Hold` `3x15-20s/side`
 - Coaching notes:
   - Single-leg RDL (LOWER already has RFESS this week): unilateral hinge without another squat-pattern day.

@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base with position accents)
 - `equipment`: bodyweight
 - `target_duration`: 45-55 min
+- `reduction_order`: 4, 3
 
 ## Goal
 - Convert upper hypertrophy into pressing/pulling force and explosive power at bodyweight.
@@ -35,7 +36,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Press Force + Explosive Contrast
 - Format: `4 rounds`, `3-4 min` rest between rounds
-- Exercise A: `Decline Push-Up` `4x4-5`
+- Exercise A: `Decline Push-Up` `4x4-5 @ RIR 1-2`
 - Exercise B: (contrast) `Plyo Push-Up` `4x3-4, max height`
 - Coaching notes:
   - Heavy A: backpack load or slow tempo, `RIR 1-2`.
@@ -46,7 +47,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Force + Power Contrast
 - Format: `4 rounds`, `90-120s` rest after the pair
-- Exercise A: `Rowing inversé pieds surélevés` `4x4-6`
+- Exercise A: `Rowing inversé pieds surélevés` `4x4-6 @ RIR 1-2`
 - Exercise B: (contrast) `Inverted Row Standard` `4x4, max speed`
 - Coaching notes:
   - Heavy A: force-grade, strict, full ROM — backpack on chest or slow tempo before an easier row angle.
@@ -56,8 +57,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Vertical Press / Row Strength
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Pike Push-Up Feet Elevated` `3x5`
-- Exercise B: `Inverted Row Standard` `3x6`
+- Exercise A: `Pike Push-Up Feet Elevated` `3x5 @ RIR 1-2`
+- Exercise B: `Inverted Row Standard` `3x6 @ RIR 1-2`
 - Coaching notes:
   - Force-grade overhead and row support — controlled, no grinding.
   - Upgrade A: `Dumbbell Press` seated if DB + bench available.

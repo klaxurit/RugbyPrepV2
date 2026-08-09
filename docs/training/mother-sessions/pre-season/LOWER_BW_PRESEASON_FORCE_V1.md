@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 1 common base)
 - `equipment`: bodyweight
 - `target_duration`: 45-55 min
+- `reduction_order`: 4, 3, 2
 
 ## Goal
 - Build lower-body force capacity in pre-season phase 1 without gym loads.
@@ -36,7 +37,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Main Lower Force
 - Format: `4 work sets`, `2-3 min` rest between sets
-- Exercise A: `Bulgarian Split Squat` `4x4-5/side`
+- Exercise A: `Bulgarian Split Squat` `4x4-5/side @ RIR 1-2`
 - Coaching notes:
   - Anchor block — slow 3-1-1 tempo or backpack load, `RIR 1-2`.
   - No collapse, no grinding — force construction, not testing.
@@ -46,8 +47,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Hinge + Unilateral Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Nordic Eccentric` `3x5-6`
-- Exercise B: `Bulgarian Split Squat` `3x6/side`
+- Exercise A: `Nordic Eccentric` `3x5-6 @ RIR 1-2`
+- Exercise B: `Bulgarian Split Squat` `3x6/side @ RIR 1-2`
 - Coaching notes:
   - Nordiques stricts — excentrique contrôlé, pas de grind.
   - Variante A : `Romanian Deadlift` si haltères ou KB disponibles.
@@ -56,9 +57,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Posterior Chain / Lower Leg Support
 - Format: `2-3 rounds`, `60-90s` rest
-- Exercise A: `Nordic Eccentric` `2-3x4-5`
-- Exercise B: `Single-Leg Calf Raise` `3x10-12/side`
-- Exercise C: `Wall Tibialis Raise` `2-3x10-12`
+- Exercise A: `Nordic Eccentric` `2-3x4-5 @ RIR 1-2`
+- Exercise B: `Single-Leg Calf Raise` `3x10-12/side @ RIR 1-2`
+- Exercise C: `Wall Tibialis Raise` `2-3x10-12 @ RIR 1-2`
 - Coaching notes:
   - Low nordic volume to preserve hamstring quality across the week.
   - Upgrade B: weighted calf if DB available.

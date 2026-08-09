@@ -11,7 +11,7 @@ describe('adaptMotherSessionForBodyweightEquipment', () => {
     expect(adapted).toBe(gym)
   })
 
-  it('upgrade chair dip en développé haltères si home gym', () => {
+  it('upgrade archer push-up en développé haltères si home gym', () => {
     const adapted = adaptMotherSessionForBodyweightEquipment(session, [
       'dumbbell',
       'bench',

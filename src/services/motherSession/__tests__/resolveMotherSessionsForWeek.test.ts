@@ -42,16 +42,18 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.sessions.every((s) => s.session.metadata.id === s.sessionId)).toBe(true)
   })
 
+  // S11 et non S12 : la dernière semaine de pré-saison est une décharge, qui
+  // ajoute un warning et brouillerait l'assertion sur le repli de fréquence.
   it('pré-saison phase 3, fréquence 4 → repli template 3 séances + effectiveFrequency 3', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH)],
-      today: '2025-03-03',
+      today: '2025-02-24',
       weeklyFrequency: 4,
       positionGroup: 'front_row',
     })
     expect(r.status).toBe('resolved')
     expect(r.planningContext.preSeasonPhase).toBe(3)
-    expect(r.planningContext.weekLabel).toBe('Pré-saison Phase 3 - S12')
+    expect(r.planningContext.weekLabel).toBe('Pré-saison Phase 3 - S11')
     expect(r.templateContext?.requestedFrequency).toBe(4)
     expect(r.templateContext?.effectiveFrequency).toBe(3)
     expect(r.sessions).toHaveLength(3)
@@ -60,6 +62,26 @@ describe('resolveMotherSessionsForWeek', () => {
       'UPPER_PRESEASON_POWER_FRONT_ROW_V1',
       'FULL_PRESEASON_POWER_FRONT_ROW_V1',
     ])
+    expect(r.sessions.every((s) => s.variant === undefined && s.maxBlocks === undefined)).toBe(true)
+  })
+
+  it('pré-saison semaine de décharge → même fréquence, volume coupé', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH)],
+      today: '2025-03-03',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+    })
+    expect(r.planningContext.weekLabel).toBe('Pré-saison Phase 3 - S12')
+    expect(r.planningContext.isDeloadWeek).toBe(true)
+    // La décharge coupe le volume, pas la fréquence : 3 séances demandées,
+    // 3 séances servies, chacune allégée et plafonnée à 3 blocs.
+    expect(r.sessions).toHaveLength(3)
+    expect(r.sessions.every((s) => s.variant === 'light')).toBe(true)
+    expect(r.sessions.every((s) => s.maxBlocks === 3)).toBe(true)
+    expect(r.warnings).toContain(
+      'Semaine de décharge pré-saison — volume réduit, intensité maintenue.',
+    )
   })
 
   it('in-season match week, back_three, 3x → primer résolu', () => {

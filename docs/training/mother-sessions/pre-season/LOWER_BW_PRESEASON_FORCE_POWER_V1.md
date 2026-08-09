@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 2 common base)
 - `equipment`: bodyweight
 - `target_duration`: 45-55 min
+- `reduction_order`: 3, 2
 
 ## Goal
 - Introduce force-power contrast on lower body in pre-season phase 2 (weeks 5-8).
@@ -31,7 +32,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Lower
 - Format: `4 rounds`, `3 min` rest between rounds
-- Exercise A: `Bulgarian Split Squat` `4x4/side`
+- Exercise A: `Bulgarian Split Squat` `4x4/side @ RIR 1-2`
 - Exercise B: (contrast) `Squat Jump` `4x3-4`
 - Coaching notes:
   - Heavy A: backpack or DB held in goblet position on the Bulgarian if DB/KB, `RIR 1-2`.
@@ -40,8 +41,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Hinge + Unilateral
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Nordic Eccentric` `3x4-5`
-- Exercise B: `Bulgarian Split Squat` `3x5/side`
+- Exercise A: `Nordic Eccentric` `3x4-5 @ RIR 1-2`
+- Exercise B: `Bulgarian Split Squat` `3x5/side @ RIR 1-2`
 - Coaching notes:
   - Nordiques force — variante : `Romanian Deadlift` si haltères disponibles.
 

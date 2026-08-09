@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base with position accents)
 - `equipment`: bodyweight
 - `target_duration`: 50-60 min
+- `reduction_order`: 4, 3
 
 ## Goal
 - Full-body force-bridge for 3x/week off-season frequency at bodyweight.
@@ -35,7 +36,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Hinge Force + Jump Contrast
 - Format: `3 rounds`, `3 min` rest between rounds
-- Exercise A: `Kickstand RDL` `3x4-5/side`
+- Exercise A: `Kickstand RDL` `3x4-5/side @ RIR 1-2`
 - Exercise B: (contrast) `Broad Jump` `3x3, max distance`
 - Coaching notes:
   - Kickstand RDL (pas nordiques — déjà sur LOWER cette semaine) — viser la force, pas la chasse au volume.
@@ -44,7 +45,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Push Force + Explosive Contrast
 - Format: `3 rounds`, `3 min` rest between rounds
-- Exercise A: `Chair Dip` `3x4`
+- Exercise A: `Chair Dip` `3x4 @ RIR 1-2`
 - Exercise B: (contrast) `Band Rotation Explosive` `3x4/side`
 - Coaching notes:
   - Chair dips (pas pike/decline/plyo — déjà sur UPPER cette semaine) puis rotation explosive.
@@ -53,8 +54,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull + Unilateral Support
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Neutral-Grip Pull-Up` `3x4-5`
-- Exercise B: `Single-Leg Glute Bridge` `3x6/side`
+- Exercise A: `Neutral-Grip Pull-Up` `3x4-5 @ RIR 1-2`
+- Exercise B: `Single-Leg Glute Bridge` `3x6/side @ RIR 1-2`
 - Coaching notes:
   - Pull-ups (pas rowing inversé — déjà sur UPPER) + pont fessier uni (pas Bulgarian — déjà sur LOWER).
   - Fallback A : `Face Pull Band` si pas de barre.

@@ -5,12 +5,13 @@
  * Garde-fous (KB strength-methods.md, double progression Schoenfeld 2021) :
  *  - G1 : min 2 logs historiques avant de proposer une INCREASE.
  *  - G2 : double progression — INCREASE seulement si le haut de fourchette
- *         de reps prescrites est atteint avec RPE ≤ 8.
+ *         de reps prescrites est atteint, à l'intérieur de la zone d'effort.
  *  - G4 : match J-2 ou moins → MAINTAIN (sécurité jour de match).
  *  - G5 : trainingLevel === 'starter' → pas de suggestion (BW only).
  *  - G9 : 2 séances consécutives RPE ≥ 9 + reps incomplètes → DECREASE -10%.
  */
 
+import type { AnnualCycle } from '../types/annualPlanning'
 import type { ExerciseLogEntry, CycleWeek, FatigueLevel, TrainingLevel } from '../types/training'
 import { EXERCISE_METRIC_OVERRIDES } from '../data/exerciseMetricOverrides.v1'
 import { estimateBodyweightEntryLoadKg, exerciseSupportsBodyweightEntryLoad } from './bodyweight/estimateBodyweightEntryLoadKg'
@@ -50,7 +51,44 @@ export interface LoadSuggestionContext {
   weightKg?: number | null
   /** Programme poids de corps / home minimal. */
   isBodyweightProgram?: boolean
+  /**
+   * Cycle annuel — pilote la zone d'effort visée. Absent → hypothèse in-season,
+   * la plus conservatrice.
+   */
+  cycle?: AnnualCycle
 }
+
+// ─── Zone d'effort cible ────────────────────────────────────
+
+/**
+ * RPE maximal auquel une série reste « productive » et autorise une
+ * progression, par cycle.
+ *
+ * Hors saison, l'objectif est l'hypertrophie et il n'y a pas de charge de club
+ * à absorber : on vise RIR 1-2, soit RPE 8-9. Robinson et al. 2024 (Sports Med,
+ * méta-régression sur la proximité de l'échec) montrent que l'hypertrophie
+ * augmente à mesure que les séries se terminent près de l'échec, alors que la
+ * force y est insensible et dépend surtout de la charge.
+ *
+ * En saison, les entraînements du club et les matchs s'empilent : on redescend
+ * à RIR 2-3, soit RPE 7-8, pour garder de la marge de récupération.
+ */
+export function progressionEffortCeiling(cycle: AnnualCycle | undefined): number {
+  switch (cycle) {
+    case 'off_season':
+    case 'pre_season':
+      return 9
+    default:
+      return 8
+  }
+}
+
+/**
+ * Écart au plafond à partir duquel la série est jugée nettement trop facile.
+ * On double alors le pas de charge : sans ça, un athlète parti trop léger met
+ * des mois à rejoindre sa zone de travail à +1 rep par séance.
+ */
+const UNDERSHOOT_RPE_GAP = 2
 
 // ─── Increment table by exercise family ─────────────────────
 
@@ -129,6 +167,7 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
     daysToMatch,
     weightKg,
     isBodyweightProgram,
+    cycle,
   } = ctx
   const family = getExerciseFamily(exerciseId)
 
@@ -211,11 +250,14 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
     } else if (fatigueLevel === 'high' || fatigueLevel === 'very_high') {
       justification = 'Fatigue elevee — reps stables.'
     } else if (rpe !== undefined) {
-      if (rpe <= 7) {
-        suggestedReps = lastReps + 1
-        justification = 'Bien maitrise — +1 rep.'
-      } else if (rpe === 8) {
-        justification = 'Bonne intensite, on consolide.'
+      const effortCeiling = progressionEffortCeiling(cycle)
+      if (rpe <= effortCeiling) {
+        // Dans la zone de travail : on progresse. Nettement en dessous, on
+        // rattrape plus vite.
+        const step = effortCeiling - rpe >= UNDERSHOOT_RPE_GAP ? 2 : 1
+        suggestedReps = lastReps + step
+        justification =
+          step === 2 ? 'Trop facile — on accelere.' : 'Dans la zone de travail — on progresse.'
       } else if (rpe >= 9 && lastEntry.setsCompleted !== undefined && lastEntry.reps !== undefined && lastEntry.setsCompleted < 1) {
         suggestedReps = Math.max(1, lastReps - 1)
         justification = 'RPE max + reps incompletes — on baisse.'
@@ -339,8 +381,15 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
     }
   }
 
-  // RPE ≤ 7 + all reps completed → INCREASE (sous garde-fous G1 + G2)
-  if (rpe <= 7) {
+  // ── Série dans la zone de travail → double progression ──
+  //
+  // Le plafond dépend du cycle : RPE 9 hors saison (RIR 1-2), RPE 8 en saison
+  // (RIR 2-3). Une série à RPE 8 hors saison n'est pas « trop dure », c'est
+  // précisément la cible : elle doit donc faire progresser, par les reps puis
+  // par la charge. Traiter cette zone comme un simple palier gelait l'athlète
+  // qui logue honnêtement son effort.
+  const effortCeiling = progressionEffortCeiling(cycle)
+  if (rpe <= effortCeiling) {
     // G1 : min 2 logs historiques sur cet exo avant de proposer une INCREASE.
     // Sans baseline suffisante on ne peut pas extrapoler en sécurité.
     const historicalCount = historicalEntries?.length ?? 0
@@ -356,8 +405,8 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
     }
 
     // G2 : double progression — on ne monte la charge que quand le HAUT
-    // de fourchette de reps est atteint avec RPE ≤ 8 (KB Schoenfeld 2021).
-    // Si non atteint, on reste sur la charge et on vise +1 rep.
+    // de fourchette de reps est atteint (KB Schoenfeld 2021). Si non atteint,
+    // on reste sur la charge et on vise +1 rep.
     const lastReps = lastEntry.reps ?? 0
     if (prescribedRepsHigh !== undefined && lastReps < prescribedRepsHigh) {
       return {
@@ -372,7 +421,11 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
 
     // Tous les feux verts → INCREASE
     // Builder : increment divisé par 2 (rampe plus douce).
-    const upStep = trainingLevel === 'builder' ? increment.up / 2 : increment.up
+    // Série nettement sous la zone cible : pas double, pour rattraper le retard
+    // de charge au lieu de le traîner sur des mois.
+    const baseStep = trainingLevel === 'builder' ? increment.up / 2 : increment.up
+    const isUndershooting = effortCeiling - rpe >= UNDERSHOOT_RPE_GAP
+    const upStep = isUndershooting ? baseStep * 2 : baseStep
     const newWeight = Math.round((lastWeight + upStep) / 2.5) * 2.5
     const nextAfter = Math.round((newWeight + upStep) / 2.5) * 2.5
     return {
@@ -381,25 +434,15 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
       suggestedReps: prescribedRepsHigh !== undefined
         ? Math.max(1, prescribedRepsHigh - 2)
         : lastEntry.reps ?? null,
-      justification: 'Charge bien maitrisée — on monte.',
+      justification: isUndershooting
+        ? 'Série trop facile — on rattrape la charge.'
+        : 'Charge bien maitrisée — on monte.',
       nextTarget: `Si réussi → semaine prochaine ${nextAfter} kg`,
       confidence: 'high',
     }
   }
 
-  // RPE 8 → MAINTAIN
-  if (rpe === 8) {
-    return {
-      decision: 'maintain',
-      suggestedWeight: lastWeight,
-      suggestedReps: lastEntry.reps ?? null,
-      justification: 'Bonne intensite, on consolide.',
-      nextTarget: `Si RPE redescend → +${increment.up} kg`,
-      confidence: 'high',
-    }
-  }
-
-  // RPE ≥ 9
+  // ── Au-dessus de la zone de travail ──
   // Check if reps were incomplete (setsCompleted < expected is a proxy)
   // Since we don't have explicit "reps incomplete" flag, RPE 9+ with low setsCompleted = incomplete
   const repsLikelyIncomplete = lastEntry.setsCompleted !== undefined && lastEntry.setsCompleted === 0

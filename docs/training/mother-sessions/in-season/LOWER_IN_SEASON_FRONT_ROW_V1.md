@@ -8,6 +8,7 @@
 - `target_position_group`: front_row
 - `equipment`: full_gym
 - `target_duration`: 42-52 min
+- `reduction_order`: 3, 2
 
 ## Goal
 - Maintain lower-body force useful for scrum, contact, and short-force actions.
@@ -50,9 +51,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Lower Strength Triplet
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Barbell Romanian Deadlift` `3x5-6`
-- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side`
-- Exercise C: `Barbell Hip Thrust` `3x6-8`
+- Exercise A: `Barbell Romanian Deadlift` `3x5-6 @ RIR 2-3`
+- Exercise B: `Rear-Foot Elevated Split Squat or Reverse Lunge` `3x5/side @ RIR 2-3`
+- Exercise C: `Barbell Hip Thrust` `3x6-8 @ RIR 2-3`
 - Coaching notes:
   - RDL stays strict, braced, and posterior-chain dominant.
   - The unilateral pattern keeps hip and groin control without turning the session into a quad-volume day.

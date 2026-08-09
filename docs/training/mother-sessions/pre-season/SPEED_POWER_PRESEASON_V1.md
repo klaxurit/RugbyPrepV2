@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 2 common terrain base with marked accents)
 - `equipment`: field priority + minimal equipment
 - `target_duration`: 40-50 min
+- `reduction_order`: 5, 4, 3, 2
 
 ## Goal
 - Introduce a more structured speed-power exposure during weeks 5 to 8 of pre-season.

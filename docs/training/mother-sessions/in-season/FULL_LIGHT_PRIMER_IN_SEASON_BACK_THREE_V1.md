@@ -8,6 +8,7 @@
 - `target_position_group`: back_three
 - `equipment`: full_gym
 - `target_duration`: 25-40 min
+- `reduction_order`: 4, 3, 2, 1
 
 ## Goal
 - Prime the nervous system without creating fatigue.
@@ -51,7 +52,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Push Primer
 - Format: `3 rounds`, full rest `2-3 min`
-- Exercise A: `Explosive Landmine Press` `3x5/side`
+- Exercise A: `Explosive Landmine Press` `3x5/side @ RIR 3-4`
 - Exercise B: `Plyo Push-Up` `3x3-5`
 - Coaching notes:
   - This block should feel aggressive and clean.
@@ -63,7 +64,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull / Rotation Primer
 - Format: `3 rounds`, full rest `90-120s`
-- Exercise A: `Face Pull` `3x8-10`
+- Exercise A: `Face Pull` `3x8-10 @ RIR 3-4`
 - Exercise B: `Med Ball Throw` `2-3 reps/side`
 - Coaching notes:
   - Face pull (not a heavy row — UPPER already covers rowing this week): scapular priming.
@@ -75,8 +76,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Optional Block 4 - Arm Pump / Confidence Block
 - Format: `2 rounds`, `45-60s` rest
-- Exercise A: `Hammer Curl` `2x10`
-- Exercise B: `French Press` `2x10`
+- Exercise A: `Hammer Curl` `2x10 @ RIR 3-4`
+- Exercise B: `French Press` `2x10 @ RIR 3-4`
 - Coaching notes:
   - Optional only.
   - Use this when the player enjoys the feeling of a small arm pump before match exposure and is recovering well.

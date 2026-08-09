@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (common base with position accents)
 - `equipment`: bodyweight
 - `target_duration`: 35-45 min
+- `reduction_order`: 3, 2, 1
 
 ## Goal
 - Maintain upper-body force useful for contact, tackling, and pushing at bodyweight.
@@ -38,7 +39,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Contrast Upper Push
 - Format: `4 rounds`, full rest `2 min 30 to 3 min` after each round
-- Exercise A: `Decline Push-Up` `3-4x3-4`
+- Exercise A: `Decline Push-Up` `3-4x3-4 @ RIR 2-3`
 - Exercise B: `Plyo Push-Up` `3-4 reps`
 - Coaching notes:
   - Heavy A: backpack load or slow eccentric, `RIR 2-3` (~75-80% effort).
@@ -49,8 +50,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Pull Strength Pair
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Rowing inversé pieds surélevés` `3x5`
-- Exercise B: `Inverted Row Standard` `3x5-6`
+- Exercise A: `Rowing inversé pieds surélevés` `3x5 @ RIR 2-3`
+- Exercise B: `Inverted Row Standard` `3x5-6 @ RIR 2-3`
 - Coaching notes:
   - Force-grade pulling — strict ROM, no kipping.
   - Upgrade A: strict `Pull-Up` if pull-up bar available (add backpack load if easy).

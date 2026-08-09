@@ -30,6 +30,15 @@ export interface MotherSessionMetadata {
   equipment: string
   /** Ex. 50-60 min */
   targetDuration: string
+  /**
+   * Numéros de blocs retirables, du premier sacrifié au dernier, quand la
+   * séance doit être raccourcie (décharge, taper, fatigue élevée).
+   *
+   * Un bloc absent de cette liste est PROTÉGÉ : la troncature ne le retire
+   * jamais, quitte à servir plus de blocs que demandé. Dérivé des
+   * `## Progression Rules` par `scripts/deriveReductionOrder.mjs`.
+   */
+  reductionOrder?: number[]
 }
 
 export interface Exercise {

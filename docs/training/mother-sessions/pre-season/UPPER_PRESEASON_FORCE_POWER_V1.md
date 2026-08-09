@@ -8,6 +8,7 @@
 - `target_position_group`: front_row + back_three (phase 2 common base with marked accents)
 - `equipment`: full_gym
 - `target_duration`: 50-55 min
+- `reduction_order`: 4, 3, 2
 
 ## Goal
 - Begin converting upper-body force into rugby-usable power during weeks 5 to 8 of pre-season.
@@ -48,7 +49,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Main Upper Pull
 - Format: `4 work sets`, `2-3 min` rest between sets
-- Exercise A: `Neutral-Grip Pull-Up` `4x4-6`
+- Exercise A: `Neutral-Grip Pull-Up` `4x4-6 @ RIR 1-2`
 - Coaching notes:
   - Add load only if the player owns full range and clean body position.
   - This block keeps a real force anchor in the session while the press becomes contrast-led.
@@ -56,8 +57,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Upper Support Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
-- Exercise A: `Strict Standing Overhead Press` `3x5`
-- Exercise B: `T-Bar Row` `3x6`
+- Exercise A: `Strict Standing Overhead Press` `3x5 @ RIR 1-2`
+- Exercise B: `T-Bar Row` `3x6 @ RIR 1-2`
 - Coaching notes:
   - Overhead press should stay strict, stacked, and controlled.
   - T-Bar row should stay strong without torso cheating.
@@ -67,7 +68,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Format: `2 rounds`, `45-60s` rest
 - Exercise A: `Med Ball Rotational Throw` `3-4/side`
 - Exercise B: `Banded Neck Isometric` `15-20s`
-- Exercise C: `Face Pull` `3x12-15`
+- Exercise C: `Face Pull` `3x12-15 @ RIR 1-2`
 - Coaching notes:
   - The med ball throw should stay sharp, violent, and technically clean.
   - Neck work should stay controlled and never become a fatigue contest.

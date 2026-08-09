@@ -8,6 +8,7 @@
 - `target_position_group`: back_three
 - `equipment`: full_gym
 - `target_duration`: 44-56 min
+- `reduction_order`: 5, 4, 3
 
 ## Goal
 - Express full-body power specific to back-three demands during weeks 9 to 12 of pre-season.
@@ -56,7 +57,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Upper Power Pair
 - Format: `3 rounds`, full rest `2-3 min`
-- Exercise A: `Push Press` `3x3-4`
+- Exercise A: `Push Press` `3x3-4 @ RIR 1-2`
 - Exercise B: `Med Ball Chest Pass` `3 reps`
 - Coaching notes:
   - Push press should stay explosive and vertically organised, not grindy.
@@ -68,9 +69,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Pull / Posterior Cluster
 - Format: `3 rounds`, `90-120s` rest after the triplet
-- Exercise A: `Neutral-Grip Lat Pulldown` `3x5-6`
-- Exercise B: `Single-Arm DB Row` `3x5-6/side`
-- Exercise C: `Barbell Hip Thrust` `3x4-5`
+- Exercise A: `Neutral-Grip Lat Pulldown` `3x5-6 @ RIR 1-2`
+- Exercise B: `Single-Arm DB Row` `3x5-6/side @ RIR 1-2`
+- Exercise C: `Barbell Hip Thrust` `3x4-5 @ RIR 1-2`
 - Coaching notes:
   - Lat pulldown (not pull-ups — reserved for the UPPER session this week): clean and forceful.
   - Single-arm DB row (not CSR — déjà programmé en UPPER cette semaine): strict, no torso cheating.
@@ -87,7 +88,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Keep it clean and simple.
   - If the player is already tired, reduce this block first.
 
-### Block 5 - Mandatory Shoulder Prehab Micro-Block
+### Optional Block 5 - Shoulder Prehab Micro-Block
 - Format: `1-2 rounds`, `20-30s` rest between drills
 - Exercise A: `Band External Rotation` `10-12 reps`
 - Exercise B: `Serratus Reach` `8-10 reps`
@@ -104,7 +105,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - `W12`: reduce volume around `-30%` while preserving speed and sharpness.
 - Reduce Block 4 first if fatigue rises.
 - Reduce one round from Block 3 second.
-- Keep Block 5 unless shoulder irritability requires a different rehab emphasis.
+- Drop Block 5 first when the session must be shortened. Keep it if the shoulder is currently irritable.
 - Keep Blocks 1 and 2 as the protected priorities if the athlete is still moving explosively.
 
 ## Position Accent
