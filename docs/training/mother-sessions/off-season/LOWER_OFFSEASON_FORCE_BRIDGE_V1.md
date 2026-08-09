@@ -38,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Squat Force + Explosive Contrast
 - Format: `4 rounds`, `3-4 min` rest between rounds
-- Exercise A: (prime) `pin back squat` `4x4-5 @ 85-90%`
+- Exercise A: (prime) `pin back squat` `4x3-4 @ 85-90%`
 - Exercise B: (contrast) `squat jump` `4x3-4, max intention`
 - Coaching notes:
   - Heavy squat first: dead-stop from pins, no bounce. RER 1-2.

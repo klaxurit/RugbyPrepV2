@@ -44,17 +44,16 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Fallback options:
     - A: `Med Ball Chest Pass` if plyo push-ups too demanding
 
-### Block 2 - Pull Force + Rotational Power
+### Block 2 - Pull Force
 - Format: `4 rounds`, `90-120s` rest
 - Exercise A: `neutral-grip pull-up` `4x4-5 @ RER 1-2`
-- Exercise B: (contrast) `med ball rotational throw` `4x3/side`
+- Exercise B: `half-kneeling cable row` `3x5-6/side @ RER 1-2`
 - Coaching notes:
   - Pull-up for vertical pulling force.
-  - Rotational throw for trunk transfer power — key for open-field passing and fending.
-  - This replaces the sagittal med ball slam of the front-row version.
+  - Row unilatéral half-kneeling (pas de 2e contraste rotationnel — B1 porte le contraste press ; limite neurale hebdo).
   - Fallback options:
     - A: `Chest-Supported Row` heavy
-    - B: `Cable Rotation Explosive`
+    - B: `Cable Rotation Explosive` only if Upper is the only session this week
 
 ### Block 3 - Unilateral Rotational Strength
 - Format: `3 rounds`, `75-90s` rest

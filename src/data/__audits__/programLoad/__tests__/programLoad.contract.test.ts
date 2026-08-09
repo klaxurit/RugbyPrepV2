@@ -32,26 +32,13 @@ import { auditWeeklyLoad, findBudgetBreaches, formatBreach } from '../weeklyLoad
  * Prescriptions incohérentes connues, à corriger avec le rééquilibrage du bloc
  * Force-Pont. Clé : `sessionId::exerciseName`.
  */
-const KNOWN_REPS_INTENSITY_DEBT = new Set<string>([
-  'LOWER_OFFSEASON_FORCE_BRIDGE_V1::pin back squat',
-  'UPPER_OFFSEASON_FORCE_BRIDGE_V1::bench press',
-  'FULL_OFFSEASON_FORCE_BRIDGE_V1::Barbell Hip Thrust',
-])
+const KNOWN_REPS_INTENSITY_DEBT = new Set<string>([])
 
 /**
  * Semaines en dépassement de charge neurale ou ischios. Clé : `weekKey::metric`.
- * Deux foyers : le bloc Force-Pont inter-saison et la pré-saison phase 3, qui
- * empilent six blocs de contraste sur la semaine.
+ * Vidé après P2 (reclassement clusters + 2e contraste Full/Upper Force-Pont retiré).
  */
-const KNOWN_LOAD_DEBT = new Set<string>([
-  'gym|off_season|off3|f3|front_row::hamstringSets', // 17 vs 16
-  'gym|off_season|off4|f3|front_row::contrastBlocks', // 6 vs 4
-  'gym|off_season|off4|f3|back_three::contrastBlocks', // 6 vs 4
-  'gym|pre_season|p3|f3|front_row::contrastBlocks', // 6 vs 4
-  'gym|pre_season|p3|f3|back_three::contrastBlocks', // 6 vs 4
-  'bodyweight|off_season|off4|f3|front_row::contrastBlocks', // 6 vs 4
-  'bodyweight|pre_season|p2|f4|front_row::contrastBlocks', // 5 vs 4
-])
+const KNOWN_LOAD_DEBT = new Set<string>([])
 
 /**
  * Écarts par groupe musculaire. Vidé après correction des sous-dosages

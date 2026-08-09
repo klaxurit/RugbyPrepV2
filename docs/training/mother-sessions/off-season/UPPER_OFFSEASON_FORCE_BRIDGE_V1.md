@@ -36,7 +36,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Press Force + Explosive Contrast
 - Format: `4 rounds`, `3-4 min` rest between rounds
-- Exercise A: (prime) `bench press` `4x4-5 @ 85-90%`
+- Exercise A: (prime) `bench press` `4x3-4 @ 85-90%`
 - Exercise B: (contrast) `med ball chest pass` `4x4-5, max intention`
 - Coaching notes:
   - Heavy bench: controlled eccentric, explosive concentric. RER 1-2.
@@ -47,17 +47,16 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - A: `DB Bench Press` heavy
     - B: `Plyo Push-Up` if no med ball
 
-### Block 2 - Pull Force + Power Contrast
+### Block 2 - Pull Force
 - Format: `4 rounds`, `90-120s` rest after the pair
 - Exercise A: `neutral-grip pull-up` `4x4-5 @ RER 1-2 (add load if needed)`
-- Exercise B: (contrast) `med ball slam` `4x4, explosive`
+- Exercise B: `t-bar row` `3x5-6 @ RER 1-2`
 - Coaching notes:
   - Pull-up: full range, dead hang to chin over bar. Add weight belt if bodyweight is too easy.
-  - Slam: full hip extension into powerful overhead throw. Speed matters.
-  - This block develops pulling power and trunk transfer.
+  - T-bar : force stricte (pas de 2e contraste slam — le contraste press est déjà en B1 ; limite neurale hebdo).
   - Fallback options:
     - A: `Chest-Supported Row` heavy (4x5)
-    - B: `Cable Slam` if no med ball
+    - B: `Seated Cable Row`
 
 ### Block 3 - Vertical Press/Row Strength
 - Format: `3 rounds`, `75-90s` rest after the pair

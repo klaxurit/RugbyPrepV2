@@ -910,23 +910,23 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Push Force + Explosive Contrast",
-        "format": "`3 rounds`, `3 min` rest between rounds",
+        "name": "Push Force Support",
+        "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
             "name": "Chair Dip",
             "prescription": "3x4 @ RER 1-2"
           },
           {
-            "name": "Band Rotation Explosive",
-            "prescription": "3x4/side",
-            "role": "contrast"
+            "name": "Face Pull Band",
+            "prescription": "3x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Chair dips (pas pike/decline/plyo — déjà sur UPPER cette semaine) puis rotation explosive.",
+          "Chair dips (pas pike/decline/plyo — déjà sur UPPER cette semaine) — force only.",
+          "Pas de 2e contraste : Lower + Upper portent déjà les contrastes de la semaine.",
           "Fallback A : `Archer Push-Up` ou `Parallel Bar Dip`.",
-          "Réduire la difficulté sur A avant de couper les reps de contraste."
+          "Fallback B : `Scap Push-Up` si pas d’élastique."
         ]
       },
       {
@@ -1788,23 +1788,23 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Contrast Push",
-        "format": "`3 rounds`, `3 min` rest between rounds",
+        "name": "Push Strength",
+        "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
             "name": "Chair Dip",
             "prescription": "3x4 @ RER 1-2"
           },
           {
-            "name": "Band Rotation Explosive",
-            "prescription": "3x4/side",
-            "role": "contrast"
+            "name": "Face Pull Band",
+            "prescription": "3x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Chair dips (not decline/plyo — reserved for UPPER this week) into rotational power.",
+          "Chair dips (pas decline/plyo — réservés à UPPER cette semaine) — force only.",
+          "Pas de 2e contraste ni rotation doublée (B3 porte déjà pull + rotation).",
           "Fallback A: `Archer Push-Up` or `Parallel Bar Dip`.",
-          "Fallback B: `Med Ball Rotational Throw` if med ball available."
+          "Fallback B: `Scap Push-Up` si pas d’élastique."
         ]
       },
       {
@@ -2656,7 +2656,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Upper Force + Rotational Power",
+        "name": "Upper Force Support",
         "format": "`4 rounds`, `90-120s` rest",
         "exercises": [
           {
@@ -2664,15 +2664,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "4x4-5 @ RER 1-2"
           },
           {
-            "name": "med ball rotational throw",
-            "prescription": "4x3/side",
-            "role": "contrast"
+            "name": "Face Pull",
+            "prescription": "3x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Dips (not incline/flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.",
+          "Dips (not incline/flat bench — reserved for the UPPER session this week) — force only.",
+          "Pas de 2e contraste rotationnel ici : Lower + Upper portent déjà les contrastes de la semaine.",
           "Automatic alternative if no dip bars: `Chair Dip`.",
-          "This replaces the plyo push-up contrast of the front-row version."
+          "Fallback B: `Band Pull-Apart` / `Cable Rotation` light if needed for trunk."
         ]
       },
       {
@@ -2842,7 +2842,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "Barbell Hip Thrust",
-            "prescription": "4x4-5 @ 85-90%",
+            "prescription": "4x3-4 @ 85-90%",
             "role": "prime"
           },
           {
@@ -2863,7 +2863,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Upper Force + Explosive Contrast",
+        "name": "Upper Force Support",
         "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
@@ -2871,20 +2871,19 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "4x4-5 @ RER 1-2"
           },
           {
-            "name": "plyo push-up",
-            "prescription": "4x4-5, max height",
-            "role": "contrast"
+            "name": "Face Pull",
+            "prescription": "3x12-15 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Dips (not incline/flat bench — reserved for the UPPER session this week) into explosive plyo push-up.",
-          "Plyo push-up: hands should leave the ground. Focus on speed of push.",
-          "If plyo quality drops, reduce dip difficulty before cutting push-ups.",
+          "Dips (not incline/flat bench — reserved for the UPPER session this week) — force only.",
+          "Pas de 2e contraste plyo ici : Lower + Upper portent déjà les contrastes de la semaine.",
+          "Face Pull : rear delt / santé épaule après le push.",
           "Automatic alternative if no dip bars: `Chair Dip`."
         ],
         "fallbackOptions": [
           "A: `Chair Dip` or `Push Press`",
-          "B: `Med Ball Chest Pass` if plyo push-ups too demanding"
+          "B: `Band Pull-Apart` if no cable"
         ]
       },
       {
@@ -6801,7 +6800,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "pin back squat",
-            "prescription": "4x4-5 @ 85-90%",
+            "prescription": "4x3-4 @ 85-90%",
             "role": "prime"
           },
           {
@@ -9636,24 +9635,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Pull Force + Power Contrast",
-        "format": "`4 rounds`, `90-120s` rest after the pair",
+        "name": "Pull Force",
+        "format": "`4 work sets`, `2-3 min` rest between sets",
         "exercises": [
           {
             "name": "Rowing inversé pieds surélevés",
             "prescription": "4x4-6 @ RER 1-2"
-          },
-          {
-            "name": "Inverted Row Standard",
-            "prescription": "4x4, max speed",
-            "role": "contrast"
           }
         ],
         "coachingNotes": [
-          "Heavy A: force-grade, strict, full ROM — backpack on chest or slow tempo before an easier row angle.",
-          "Contrast B within 15-20s: slightly easier angle so the pull can be truly explosive (chest to bar, fast concentric). Mirrors gym pull-up + slam intent.",
-          "Pull progression without a bar: table/inverted row knees bent → standard → feet elevated (A). With `pullup_bar`, upgrade A to strict `Pull-Up` (add load via backpack) and keep B as explosive inverted row or explosive pull-up.",
-          "If B speed drops, reduce load/tempo on A first — never skip the contrast pair."
+          "Force-grade, strict, full ROM — backpack on chest or slow tempo.",
+          "Pas de 2e contraste pull : le contraste press est déjà en B1 (limite neurale hebdo).",
+          "Upgrade : `Neutral-Grip Pull-Up` chargé (sac) si barre disponible."
         ]
       },
       {
@@ -9671,7 +9664,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Overhead force-grade + rear delt (pas 2e rowing — déjà en contraste B2).",
+          "Overhead force-grade + rear delt.",
           "Upgrade A : `Dumbbell Press` assis si DB + banc.",
           "Fallback B : `Scap Push-Up` si pas d’élastique."
         ]
@@ -10887,7 +10880,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Pull Force + Rotational Power",
+        "name": "Pull Force",
         "format": "`4 rounds`, `90-120s` rest",
         "exercises": [
           {
@@ -10895,19 +10888,17 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "4x4-5 @ RER 1-2"
           },
           {
-            "name": "med ball rotational throw",
-            "prescription": "4x3/side",
-            "role": "contrast"
+            "name": "half-kneeling cable row",
+            "prescription": "3x5-6/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
           "Pull-up for vertical pulling force.",
-          "Rotational throw for trunk transfer power — key for open-field passing and fending.",
-          "This replaces the sagittal med ball slam of the front-row version."
+          "Row unilatéral half-kneeling (pas de 2e contraste rotationnel — B1 porte le contraste press ; limite neurale hebdo)."
         ],
         "fallbackOptions": [
           "A: `Chest-Supported Row` heavy",
-          "B: `Cable Rotation Explosive`"
+          "B: `Cable Rotation Explosive` only if Upper is the only session this week"
         ]
       },
       {
@@ -11064,7 +11055,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "exercises": [
           {
             "name": "bench press",
-            "prescription": "4x4-5 @ 85-90%",
+            "prescription": "4x3-4 @ 85-90%",
             "role": "prime"
           },
           {
@@ -11086,7 +11077,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Pull Force + Power Contrast",
+        "name": "Pull Force",
         "format": "`4 rounds`, `90-120s` rest after the pair",
         "exercises": [
           {
@@ -11094,19 +11085,17 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "4x4-5 @ RER 1-2 (add load if needed)"
           },
           {
-            "name": "med ball slam",
-            "prescription": "4x4, explosive",
-            "role": "contrast"
+            "name": "t-bar row",
+            "prescription": "3x5-6 @ RER 1-2"
           }
         ],
         "coachingNotes": [
           "Pull-up: full range, dead hang to chin over bar. Add weight belt if bodyweight is too easy.",
-          "Slam: full hip extension into powerful overhead throw. Speed matters.",
-          "This block develops pulling power and trunk transfer."
+          "T-bar : force stricte (pas de 2e contraste slam — le contraste press est déjà en B1 ; limite neurale hebdo)."
         ],
         "fallbackOptions": [
           "A: `Chest-Supported Row` heavy (4x5)",
-          "B: `Cable Slam` if no med ball"
+          "B: `Seated Cable Row`"
         ]
       },
       {

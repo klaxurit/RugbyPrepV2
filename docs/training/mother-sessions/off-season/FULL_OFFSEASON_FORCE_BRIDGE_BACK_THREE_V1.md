@@ -44,14 +44,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Fallback options:
     - A: `Single-Leg RDL` heavy + `Vertical Jump`
 
-### Block 2 - Upper Force + Rotational Power
+### Block 2 - Upper Force Support
 - Format: `4 rounds`, `90-120s` rest
 - Exercise A: `Parallel Bar Dip` `4x4-5 @ RER 1-2`
-- Exercise B: (contrast) `med ball rotational throw` `4x3/side`
+- Exercise B: `Face Pull` `3x12-15 @ RER 1-2`
 - Coaching notes:
-  - Dips (not incline/flat bench — reserved for the UPPER session this week) into rotational throw — trunk transfer power.
+  - Dips (not incline/flat bench — reserved for the UPPER session this week) — force only.
+  - Pas de 2e contraste rotationnel ici : Lower + Upper portent déjà les contrastes de la semaine.
   - Automatic alternative if no dip bars: `Chair Dip`.
-  - This replaces the plyo push-up contrast of the front-row version.
+  - Fallback B: `Band Pull-Apart` / `Cable Rotation` light if needed for trunk.
 
 ### Block 3 - Reactive Support / Anti-Rotation
 - Format: `3 rounds`, `75-90s` rest

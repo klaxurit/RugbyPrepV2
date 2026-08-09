@@ -43,14 +43,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Broad jump dans les 15-20 s après la série de RDL.
   - Variante A : `Single-Leg Glute Bridge` si bas du dos sensible.
 
-### Block 2 - Push Force + Explosive Contrast
-- Format: `3 rounds`, `3 min` rest between rounds
+### Block 2 - Push Force Support
+- Format: `3 rounds`, `90s` rest after the pair
 - Exercise A: `Chair Dip` `3x4 @ RER 1-2`
-- Exercise B: (contrast) `Band Rotation Explosive` `3x4/side`
+- Exercise B: `Face Pull Band` `3x10-12 @ RER 1-2`
 - Coaching notes:
-  - Chair dips (pas pike/decline/plyo — déjà sur UPPER cette semaine) puis rotation explosive.
+  - Chair dips (pas pike/decline/plyo — déjà sur UPPER cette semaine) — force only.
+  - Pas de 2e contraste : Lower + Upper portent déjà les contrastes de la semaine.
   - Fallback A : `Archer Push-Up` ou `Parallel Bar Dip`.
-  - Réduire la difficulté sur A avant de couper les reps de contraste.
+  - Fallback B : `Scap Push-Up` si pas d’élastique.
 
 ### Block 3 - Pull + Unilateral Support
 - Format: `3 rounds`, `90s` rest after the pair

@@ -58,7 +58,7 @@ const RULES: IntentRule[] = [
     intent: 'power_contrast',
     namePatterns: [
       /\bcontrast\b/,
-      /\bcluster\b/,
+      /\bpower\s+cluster\b/,
       /\bforce[-\s]projection\b/,
       /\bforce[-\s]power\b/,
       /\bspeed[-\s]power\b/,
@@ -187,6 +187,9 @@ const RULES: IntentRule[] = [
       /\bhinge\b/,
       /\bstrength\s+pair\b/,
       /\bstrength\s+triplet\b/,
+      /\bpush\s+strength\b/,
+      /\bpull\s+strength\b/,
+      /\bcluster\b/,
       /\bforce\s+maintenance\b/,
       /\bmain\s+(?:squat|hinge|press|pull|upper|lower|full)/,
       /\bsecondary\s+(?:push|pull)/,

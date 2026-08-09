@@ -205,9 +205,9 @@ export interface LoadBudget {
 export const LOAD_BUDGETS: Record<GetWeeklyTemplateParams['cycle'], LoadBudget> = {
   // Hors saison : le bloc hypertrophie doit pouvoir viser le MEV ischios
   // (~10 séries fractionnelles) sans être bloqué par un plafond de risque calé
-  // trop bas. 16 laisse de la marge pour nordics + hinge sans ouvrir la porte
-  // à un vrai empilement.
-  off_season: { maxContrastBlocks: 4, maxHamstringSets: 16 },
+  // trop bas. 18 laisse de la marge pour nordics + hinge (MEV + support)
+  // sans ouvrir la porte à un vrai empilement.
+  off_season: { maxContrastBlocks: 4, maxHamstringSets: 18 },
   pre_season: { maxContrastBlocks: 4, maxHamstringSets: 14 },
   in_season: { maxContrastBlocks: 4, maxHamstringSets: 14 },
 }

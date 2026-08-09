@@ -38,7 +38,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 1 - Lower Force + Explosive Contrast
 - Format: `4 rounds`, `3-4 min` rest between rounds
-- Exercise A: (prime) `Barbell Hip Thrust` `4x4-5 @ 85-90%`
+- Exercise A: (prime) `Barbell Hip Thrust` `4x3-4 @ 85-90%`
 - Exercise B: (contrast) `box jump` `4x3-4, max intention`
 - Coaching notes:
   - Hip thrust (not trap bar — already primed on LOWER this week): powerful lockout, controlled descent.
@@ -48,18 +48,18 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
     - A: `Single-Leg RDL` heavy (4x4/side)
     - B: `Vertical Jump` if no box
 
-### Block 2 - Upper Force + Explosive Contrast
+### Block 2 - Upper Force Support
 - Format: `4 rounds`, `90-120s` rest after the pair
 - Exercise A: `Parallel Bar Dip` `4x4-5 @ RER 1-2`
-- Exercise B: (contrast) `plyo push-up` `4x4-5, max height`
+- Exercise B: `Face Pull` `3x12-15 @ RER 1-2`
 - Coaching notes:
-  - Dips (not incline/flat bench — reserved for the UPPER session this week) into explosive plyo push-up.
-  - Plyo push-up: hands should leave the ground. Focus on speed of push.
-  - If plyo quality drops, reduce dip difficulty before cutting push-ups.
+  - Dips (not incline/flat bench — reserved for the UPPER session this week) — force only.
+  - Pas de 2e contraste plyo ici : Lower + Upper portent déjà les contrastes de la semaine.
+  - Face Pull : rear delt / santé épaule après le push.
   - Automatic alternative if no dip bars: `Chair Dip`.
   - Fallback options:
     - A: `Chair Dip` or `Push Press`
-    - B: `Med Ball Chest Pass` if plyo push-ups too demanding
+    - B: `Band Pull-Apart` if no cable
 
 ### Block 3 - Unilateral / Trunk Support
 - Format: `3 rounds`, `75-90s` rest after the pair

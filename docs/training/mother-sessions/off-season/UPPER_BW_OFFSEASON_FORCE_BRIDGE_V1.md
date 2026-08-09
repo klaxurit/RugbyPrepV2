@@ -45,22 +45,20 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Upgrade A: `Bench Press` dumbbell heavy if DB + bench available.
   - Upgrade B: weighted dips on parallettes if available.
 
-### Block 2 - Pull Force + Power Contrast
-- Format: `4 rounds`, `90-120s` rest after the pair
+### Block 2 - Pull Force
+- Format: `4 work sets`, `2-3 min` rest between sets
 - Exercise A: `Rowing inversé pieds surélevés` `4x4-6 @ RER 1-2`
-- Exercise B: (contrast) `Inverted Row Standard` `4x4, max speed`
 - Coaching notes:
-  - Heavy A: force-grade, strict, full ROM — backpack on chest or slow tempo before an easier row angle.
-  - Contrast B within 15-20s: slightly easier angle so the pull can be truly explosive (chest to bar, fast concentric). Mirrors gym pull-up + slam intent.
-  - Pull progression without a bar: table/inverted row knees bent → standard → feet elevated (A). With `pullup_bar`, upgrade A to strict `Pull-Up` (add load via backpack) and keep B as explosive inverted row or explosive pull-up.
-  - If B speed drops, reduce load/tempo on A first — never skip the contrast pair.
+  - Force-grade, strict, full ROM — backpack on chest or slow tempo.
+  - Pas de 2e contraste pull : le contraste press est déjà en B1 (limite neurale hebdo).
+  - Upgrade : `Neutral-Grip Pull-Up` chargé (sac) si barre disponible.
 
 ### Block 3 - Vertical Press / Rear Delt Support
 - Format: `3 rounds`, `90s` rest after the pair
 - Exercise A: `Pike Push-Up Feet Elevated` `3x5 @ RER 1-2`
 - Exercise B: `Face Pull Band` `3x10-12 @ RER 1-2`
 - Coaching notes:
-  - Overhead force-grade + rear delt (pas 2e rowing — déjà en contraste B2).
+  - Overhead force-grade + rear delt.
   - Upgrade A : `Dumbbell Press` assis si DB + banc.
   - Fallback B : `Scap Push-Up` si pas d’élastique.
 

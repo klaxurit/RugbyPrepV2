@@ -36,14 +36,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Kickstand RDL (not nordics — already on LOWER this week) into broad jump.
   - Broad jump: full hip extension, stick landing.
 
-### Block 2 - Contrast Push
-- Format: `3 rounds`, `3 min` rest between rounds
+### Block 2 - Push Strength
+- Format: `3 rounds`, `90s` rest after the pair
 - Exercise A: `Chair Dip` `3x4 @ RER 1-2`
-- Exercise B: (contrast) `Band Rotation Explosive` `3x4/side`
+- Exercise B: `Face Pull Band` `3x10-12 @ RER 1-2`
 - Coaching notes:
-  - Chair dips (not decline/plyo — reserved for UPPER this week) into rotational power.
+  - Chair dips (pas decline/plyo — réservés à UPPER cette semaine) — force only.
+  - Pas de 2e contraste ni rotation doublée (B3 porte déjà pull + rotation).
   - Fallback A: `Archer Push-Up` or `Parallel Bar Dip`.
-  - Fallback B: `Med Ball Rotational Throw` if med ball available.
+  - Fallback B: `Scap Push-Up` si pas d’élastique.
 
 ### Block 3 - Pull + Rotation
 - Format: `3 rounds`, `90s` rest after the pair
