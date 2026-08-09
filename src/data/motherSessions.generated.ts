@@ -5207,16 +5207,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x5-6/side @ RER 2-3"
           },
           {
-            "name": "Bulgarian Split Squat",
+            "name": "Reverse Lunge Bodyweight",
             "prescription": "3x5/side @ RER 2-3"
           }
         ],
         "coachingNotes": [
-          "Athletic support work — clean lockout on bridge, stable unilateral squat.",
-          "Upgrade A: `Single-Leg Romanian Deadlift` if DB/KB available.",
-          "Upgrade B: loaded Bulgarian if DB available.",
-          "Fallback B: `Reverse Lunge Bodyweight` if balance limits split work.",
-          "Keep `RER 2-3` — useful, not draining."
+          "Support athlétique — lockout propre sur le pont, fente stable (pas 2e Bulgarian — déjà en B1).",
+          "Upgrade A : `Single-Leg Romanian Deadlift` / Kickstand si DB/KB.",
+          "Upgrade B : fente chargée haltères ou KB.",
+          "Keep `RER 2-3` — utile, pas drainant."
         ]
       },
       {
@@ -5368,18 +5367,18 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `75-90s` rest after the pair",
         "exercises": [
           {
-            "name": "Bulgarian Split Squat",
+            "name": "Reverse Lunge Bodyweight",
             "prescription": "3x5-6/side @ RER 1-2"
           },
           {
-            "name": "Nordic Eccentric",
-            "prescription": "3x4-5 @ RER 1-2"
+            "name": "Kickstand RDL",
+            "prescription": "3x5-6/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Force-grade reps (5-6), controlled — structural balance without junk fatigue.",
-          "Upgrade A: loaded Bulgarian if DB available.",
-          "Upgrade B: `Banded Nordic` if band available."
+          "Pas de 2e Bulgarian ni 2e Nordic (déjà en B1/B2) — fente + kickstand pour diversifier squat/hinge.",
+          "Upgrade A : fente chargée DB/KB. Upgrade B : SL RDL haltères/KB.",
+          "Fallback B : `Single-Leg Glute Bridge` si le hinge irrite le bas du dos."
         ]
       },
       {
@@ -5810,12 +5809,13 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x4-5 @ RER 1-2"
           },
           {
-            "name": "Bulgarian Split Squat",
+            "name": "Reverse Lunge Bodyweight",
             "prescription": "3x5/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Nordiques force — variante : `Romanian Deadlift` si haltères disponibles."
+          "Nordiques force — variante : `Romanian Deadlift` si haltères/KB disponibles.",
+          "B = fente arrière (pas 2e Bulgarian — déjà en B1). Upgrade : DB/KB."
         ]
       },
       {
@@ -5939,15 +5939,15 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x5-6 @ RER 1-2"
           },
           {
-            "name": "Bulgarian Split Squat",
+            "name": "Reverse Lunge Bodyweight",
             "prescription": "3x6/side @ RER 1-2"
           }
         ],
         "coachingNotes": [
           "Nordiques stricts — excentrique contrôlé, pas de grind.",
-          "Variante A : `Romanian Deadlift` si haltères ou KB disponibles.",
-          "Unilateral lift supports hip/groin control, not conditioning.",
-          "Fallback A: `Nordic Eccentric` if no DB/KB."
+          "B = fente arrière (pas 2e Bulgarian — déjà en B1).",
+          "Upgrade B : haltères ou KB en goblet / suitcase.",
+          "Variante A : `Romanian Deadlift` si haltères ou KB disponibles."
         ]
       },
       {
@@ -5956,8 +5956,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`2-3 rounds`, `60-90s` rest",
         "exercises": [
           {
-            "name": "Nordic Eccentric",
-            "prescription": "2-3x4-5 @ RER 1-2"
+            "name": "Kickstand RDL",
+            "prescription": "2-3x6-8/side @ RER 1-2"
           },
           {
             "name": "Single-Leg Calf Raise",
@@ -5969,7 +5969,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Low nordic volume to preserve hamstring quality across the week.",
+          "Kickstand (pas 2e Nordic — déjà en B2) : hinge unilatéral léger pour finir la chaîne postérieure.",
+          "Upgrade A : `Single-Leg RDL` haltères/KB si disponibles.",
           "Upgrade B: weighted calf if DB available."
         ]
       },
@@ -6086,7 +6087,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
-            "name": "Bulgarian Split Squat",
+            "name": "Reverse Lunge Bodyweight",
             "prescription": "3x4/side @ RER 1-2"
           },
           {
@@ -6095,8 +6096,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
           }
         ],
         "coachingNotes": [
-          "Explosive split squat — fast concentric, stable landing on jump.",
-          "Upgrade A: light DB if available."
+          "Fente arrière explosive (pas 2e Bulgarian — déjà en B1) — concentrique rapide, réception stable sur le saut.",
+          "Upgrade A : DB/KB légers si disponibles."
         ]
       },
       {
@@ -9657,7 +9658,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 3,
-        "name": "Vertical Press / Row Strength",
+        "name": "Vertical Press / Rear Delt Support",
         "format": "`3 rounds`, `90s` rest after the pair",
         "exercises": [
           {
@@ -9665,14 +9666,14 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "prescription": "3x5 @ RER 1-2"
           },
           {
-            "name": "Inverted Row Standard",
-            "prescription": "3x6 @ RER 1-2"
+            "name": "Face Pull Band",
+            "prescription": "3x10-12 @ RER 1-2"
           }
         ],
         "coachingNotes": [
-          "Force-grade overhead and row support — controlled, no grinding.",
-          "Upgrade A: `Dumbbell Press` seated if DB + bench available.",
-          "Upgrade B: pull-up or one-arm row if equipment allows."
+          "Overhead force-grade + rear delt (pas 2e rowing — déjà en contraste B2).",
+          "Upgrade A : `Dumbbell Press` assis si DB + banc.",
+          "Fallback B : `Scap Push-Up` si pas d’élastique."
         ]
       },
       {

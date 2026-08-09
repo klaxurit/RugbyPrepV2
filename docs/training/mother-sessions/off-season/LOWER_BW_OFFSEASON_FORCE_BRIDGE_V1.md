@@ -57,12 +57,12 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Unilateral Strength + Posterior Support
 - Format: `3 rounds`, `75-90s` rest after the pair
-- Exercise A: `Bulgarian Split Squat` `3x5-6/side @ RER 1-2`
-- Exercise B: `Nordic Eccentric` `3x4-5 @ RER 1-2`
+- Exercise A: `Reverse Lunge Bodyweight` `3x5-6/side @ RER 1-2`
+- Exercise B: `Kickstand RDL` `3x5-6/side @ RER 1-2`
 - Coaching notes:
-  - Force-grade reps (5-6), controlled — structural balance without junk fatigue.
-  - Upgrade A: loaded Bulgarian if DB available.
-  - Upgrade B: `Banded Nordic` if band available.
+  - Pas de 2e Bulgarian ni 2e Nordic (déjà en B1/B2) — fente + kickstand pour diversifier squat/hinge.
+  - Upgrade A : fente chargée DB/KB. Upgrade B : SL RDL haltères/KB.
+  - Fallback B : `Single-Leg Glute Bridge` si le hinge irrite le bas du dos.
 
 ### Block 4 - Lower-Leg / Groin Prevention
 - Format: `2 rounds`, `45-60s` rest

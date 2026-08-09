@@ -42,9 +42,10 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 2 - Hinge + Unilateral
 - Format: `3 rounds`, `90s` rest after the pair
 - Exercise A: `Nordic Eccentric` `3x4-5 @ RER 1-2`
-- Exercise B: `Bulgarian Split Squat` `3x5/side @ RER 1-2`
+- Exercise B: `Reverse Lunge Bodyweight` `3x5/side @ RER 1-2`
 - Coaching notes:
-  - Nordiques force — variante : `Romanian Deadlift` si haltères disponibles.
+  - Nordiques force — variante : `Romanian Deadlift` si haltères/KB disponibles.
+  - B = fente arrière (pas 2e Bulgarian — déjà en B1). Upgrade : DB/KB.
 
 ### Block 3 - Finisher
 - Format: `EMOM 8'`

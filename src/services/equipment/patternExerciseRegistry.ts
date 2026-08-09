@@ -59,6 +59,7 @@ export const BODYWEIGHT_VARIANT_CHAINS: Readonly<Record<string, readonly Exercis
   'lower_lunge__reverse_lunge__bodyweight': [
     { exerciseId: 'lower_lunge__reverse_lunge__bodyweight', requires: [] },
     { exerciseId: 'lower_lunge__reverse_lunge__dumbbell', requires: ['dumbbell'] },
+    { exerciseId: 'lower_lunge__reverse_lunge__dumbbell', requires: ['kettlebell'] },
   ],
   'push_vertical__pike_push_up__bodyweight': [
     { exerciseId: 'push_vertical__pike_push_up__bodyweight', requires: [] },

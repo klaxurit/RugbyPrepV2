@@ -54,13 +54,12 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 2 - Posterior Chain + Unilateral Support
 - Format: `3 rounds`, `75-90s` rest after the pair
 - Exercise A: `Single-Leg Glute Bridge` `3x5-6/side @ RER 2-3`
-- Exercise B: `Bulgarian Split Squat` `3x5/side @ RER 2-3`
+- Exercise B: `Reverse Lunge Bodyweight` `3x5/side @ RER 2-3`
 - Coaching notes:
-  - Athletic support work — clean lockout on bridge, stable unilateral squat.
-  - Upgrade A: `Single-Leg Romanian Deadlift` if DB/KB available.
-  - Upgrade B: loaded Bulgarian if DB available.
-  - Fallback B: `Reverse Lunge Bodyweight` if balance limits split work.
-  - Keep `RER 2-3` — useful, not draining.
+  - Support athlétique — lockout propre sur le pont, fente stable (pas 2e Bulgarian — déjà en B1).
+  - Upgrade A : `Single-Leg Romanian Deadlift` / Kickstand si DB/KB.
+  - Upgrade B : fente chargée haltères ou KB.
+  - Keep `RER 2-3` — utile, pas drainant.
 
 ### Block 3 - Rugby Finisher
 - Format: `EMOM 8'`

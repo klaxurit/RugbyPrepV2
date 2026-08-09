@@ -55,14 +55,14 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Pull progression without a bar: table/inverted row knees bent → standard → feet elevated (A). With `pullup_bar`, upgrade A to strict `Pull-Up` (add load via backpack) and keep B as explosive inverted row or explosive pull-up.
   - If B speed drops, reduce load/tempo on A first — never skip the contrast pair.
 
-### Block 3 - Vertical Press / Row Strength
+### Block 3 - Vertical Press / Rear Delt Support
 - Format: `3 rounds`, `90s` rest after the pair
 - Exercise A: `Pike Push-Up Feet Elevated` `3x5 @ RER 1-2`
-- Exercise B: `Inverted Row Standard` `3x6 @ RER 1-2`
+- Exercise B: `Face Pull Band` `3x10-12 @ RER 1-2`
 - Coaching notes:
-  - Force-grade overhead and row support — controlled, no grinding.
-  - Upgrade A: `Dumbbell Press` seated if DB + bench available.
-  - Upgrade B: pull-up or one-arm row if equipment allows.
+  - Overhead force-grade + rear delt (pas 2e rowing — déjà en contraste B2).
+  - Upgrade A : `Dumbbell Press` assis si DB + banc.
+  - Fallback B : `Scap Push-Up` si pas d’élastique.
 
 ### Block 4 - Rotation / Neck Prevention
 - Format: `2 rounds`, `45s` rest

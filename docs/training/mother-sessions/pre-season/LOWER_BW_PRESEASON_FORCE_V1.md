@@ -48,20 +48,21 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 2 - Hinge + Unilateral Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
 - Exercise A: `Nordic Eccentric` `3x5-6 @ RER 1-2`
-- Exercise B: `Bulgarian Split Squat` `3x6/side @ RER 1-2`
+- Exercise B: `Reverse Lunge Bodyweight` `3x6/side @ RER 1-2`
 - Coaching notes:
   - Nordiques stricts — excentrique contrôlé, pas de grind.
+  - B = fente arrière (pas 2e Bulgarian — déjà en B1).
+  - Upgrade B : haltères ou KB en goblet / suitcase.
   - Variante A : `Romanian Deadlift` si haltères ou KB disponibles.
-  - Unilateral lift supports hip/groin control, not conditioning.
-  - Fallback A: `Nordic Eccentric` if no DB/KB.
 
 ### Block 3 - Posterior Chain / Lower Leg Support
 - Format: `2-3 rounds`, `60-90s` rest
-- Exercise A: `Nordic Eccentric` `2-3x4-5 @ RER 1-2`
+- Exercise A: `Kickstand RDL` `2-3x6-8/side @ RER 1-2`
 - Exercise B: `Single-Leg Calf Raise` `3x10-12/side @ RER 1-2`
 - Exercise C: `Wall Tibialis Raise` `2-3x10-12 @ RER 1-2`
 - Coaching notes:
-  - Low nordic volume to preserve hamstring quality across the week.
+  - Kickstand (pas 2e Nordic — déjà en B2) : hinge unilatéral léger pour finir la chaîne postérieure.
+  - Upgrade A : `Single-Leg RDL` haltères/KB si disponibles.
   - Upgrade B: weighted calf if DB available.
 
 ### Block 4 - Position Support Finisher

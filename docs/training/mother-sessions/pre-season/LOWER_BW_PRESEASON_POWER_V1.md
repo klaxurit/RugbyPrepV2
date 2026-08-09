@@ -41,11 +41,11 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 2 - Explosive Unilateral
 - Format: `3 rounds`, `90s` rest after the pair
-- Exercise A: `Bulgarian Split Squat` `3x4/side @ RER 1-2`
+- Exercise A: `Reverse Lunge Bodyweight` `3x4/side @ RER 1-2`
 - Exercise B: `Broad Jump` `3 reps`
 - Coaching notes:
-  - Explosive split squat — fast concentric, stable landing on jump.
-  - Upgrade A: light DB if available.
+  - Fente arrière explosive (pas 2e Bulgarian — déjà en B1) — concentrique rapide, réception stable sur le saut.
+  - Upgrade A : DB/KB légers si disponibles.
 
 ### Block 3 - Finisher
 - Format: `2 rounds`, `60s` rest
