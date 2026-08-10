@@ -34,11 +34,17 @@ function basePlanning(overrides: Partial<AnnualPlanningContext> = {}): AnnualPla
     cycle: 'in_season',
     isMatchWeek: false,
     isDeloadWeek: false,
-    fatigueLevel: 'moderate',
+    fatigueLevel: 'normal',
     daysUntilNextMatch: 10,
+    daysSinceLastMatch: null,
+    firstMatchDate: null,
+    lastMatchDate: null,
+    offSeasonStartAt: null,
     weekLabel: 'S4',
     weekNumber: 4,
     mesocycleWeek: 4,
+    weeklyFrequency: 3,
+    positionGroup: 'front_row',
     planningTrace: {
       resolutionMode: 'calendar_inferred',
       rulesApplied: ['rule:in_season_deload_3_1'],
@@ -64,7 +70,14 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
       const exp = buildExplanation({
         planningContext: basePlanning({ isDeloadWeek: true }),
         schedulingMode: 'sequential',
-        presentation: { sessions: [], companionRecommendations: [] },
+        presentation: {
+          sessions: [],
+          matchEvents: [],
+          unavailableDays: [],
+          clubDays: [],
+          corrections: [],
+          mode: 'sequential',
+        },
         corrections: [],
       })
       const blob = [exp.summaryLine, ...exp.detailLines].join(' ')
@@ -224,6 +237,36 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
         beatPreviousSession: true,
       })
       expect(insight?.message).toMatch(/record/i)
+    })
+  })
+
+  describe('Hu — tip poste (période tactique)', () => {
+    it('in-season arrières → tip charge externe dans explanation', () => {
+      const exp = buildExplanation({
+        planningContext: basePlanning({
+          isDeloadWeek: false,
+          mesocycleWeek: 2,
+          weekNumber: 2,
+          positionGroup: 'back_three',
+          planningTrace: {
+            resolutionMode: 'calendar_inferred',
+            rulesApplied: [],
+            warnings: [],
+          },
+        }),
+        schedulingMode: 'sequential',
+        presentation: {
+          sessions: [],
+          matchEvents: [],
+          unavailableDays: [],
+          clubDays: [],
+          corrections: [],
+          mode: 'sequential',
+        },
+        corrections: [],
+      })
+      expect(exp.detailLines.join(' ')).toMatch(/arrière/i)
+      expect(exp.detailItems.some((d) => d.ruleId === 'context:hu_position_workload')).toBe(true)
     })
   })
 })

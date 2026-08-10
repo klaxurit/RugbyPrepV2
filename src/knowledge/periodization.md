@@ -491,8 +491,8 @@ Travaux sur club Pro D2 / rugby union FR (Hu, Boisbluche, Prioux et al.) :
    déjà amorcée dans RugbyPrep.
    https://doi.org/10.1371/journal.pone.0288345
 
-**Vague 2 (runtime)** : copy coach + éventuellement pondération tips
-« jour type » ; pas de changement de mother sessions dans la Vague 1.
+**Vague 2 (runtime)** : tip poste dans `buildExplanation` (`context:hu_position_workload`)
+— bulle coach semaine (pré / in-season). Pas de changement de mother sessions.
 
 ---
 

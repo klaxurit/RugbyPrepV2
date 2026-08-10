@@ -8,15 +8,16 @@
 | Vague | Contenu | Runtime | Statut |
 |-------|---------|---------|--------|
 | 1 | Synthèses KB + cet index | Non | Fait |
-| 2 | Israetel copy/soft-floor · Severo NHE · Weakley feedback | Oui | **En cours / à tester** |
+| 2 | Israetel · Severo · Weakley · Hu tip poste | Oui | **Fait (tests auto)** |
 
-### Runtime Vague 2 (à tester en app)
+### Runtime Vague 2 (vérifié)
 
 | Étude | Hook | Fichiers |
 |-------|------|----------|
 | Israetel | Notice décharge + explanation + soft-floor truncate ≤2 blocs | `programSurfaces`, `buildExplanation`, `truncateSessionBlocks` |
-| Severo | Prescription Nordic selon meso week | `applyProgressiveNordic` → `prepareSessionForRender` |
+| Severo | Prescription Nordic selon meso week (match FR Nordique) | `applyProgressiveNordic` → `prepareSessionForRender` |
 | Weakley | Chip « À battre », toast vs last, insight fin | `SessionDetailPage`, `selectSessionInsight`, `formatLivePRToast` |
+| Hu 2024 | Tip poste pré/in-season (filler détail coach) | `buildExplanation` `huPositionWorkloadTip` |
 
 ## Études intégrées (Vague 1)
 

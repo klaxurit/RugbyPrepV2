@@ -641,7 +641,7 @@ describe('buildExplanation', () => {
       corrections: [],
     })
 
-    expect(result.detailLines).toHaveLength(0)
+    expect(result.detailLines.some((l) => /S1|ISO|décalée/i.test(l))).toBe(false)
   })
 
   it('filters warnings containing Force-Bridge', () => {
@@ -658,7 +658,7 @@ describe('buildExplanation', () => {
       corrections: [],
     })
 
-    expect(result.detailLines).toHaveLength(0)
+    expect(result.detailLines.some((l) => /Force-Bridge/i.test(l))).toBe(false)
   })
 
   it('filters warnings containing off-season english term', () => {
@@ -675,7 +675,7 @@ describe('buildExplanation', () => {
       corrections: [],
     })
 
-    expect(result.detailLines).toHaveLength(0)
+    expect(result.detailLines.some((l) => /off-season|Off-season/i.test(l))).toBe(false)
   })
 
   // ── Newly covered real rule/anchor ids ──
@@ -836,5 +836,82 @@ describe('buildExplanation', () => {
     // buildExplanation is a pure mapper — if 2 fatigue corrections exist, it produces 2 lines
     const fatigueLines = result.corrections.filter(l => l.includes('fatigue'))
     expect(fatigueLines).toHaveLength(2)
+  })
+
+  describe('Hu — tip poste (période tactique)', () => {
+    it('in-season back_three → tip charge externe', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'in_season',
+          positionGroup: 'back_three',
+          planningTrace: { resolutionMode: 'calendar_inferred', rulesApplied: [], warnings: [] },
+        }),
+        schedulingMode: 'calendar',
+        presentation: makePres(),
+        corrections: [],
+      })
+      const blob = result.detailLines.join(' ')
+      expect(blob).toMatch(/arrière/i)
+      expect(blob).toMatch(/charge externe|distance/i)
+      assertNoJargon(result)
+    })
+
+    it('pre-season front_row → tip RPE jour force', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'pre_season',
+          preSeasonPhase: 1,
+          positionGroup: 'front_row',
+          weekLabel: 'Pré-saison S2',
+          planningTrace: { resolutionMode: 'calendar_inferred', rulesApplied: [], warnings: [] },
+        }),
+        schedulingMode: 'calendar',
+        presentation: makePres(),
+        corrections: [],
+      })
+      const blob = result.detailLines.join(' ')
+      expect(blob).toMatch(/avant/i)
+      expect(blob).toMatch(/force|RPE|récup/i)
+      assertNoJargon(result)
+    })
+
+    it('off-season → pas de tip Hu', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'off_season',
+          offSeasonPhase: 3,
+          positionGroup: 'front_row',
+          weekLabel: 'Inter-saison',
+          planningTrace: { resolutionMode: 'calendar_inferred', rulesApplied: [], warnings: [] },
+        }),
+        schedulingMode: 'sequential',
+        presentation: makeSeqPres(),
+        corrections: [],
+      })
+      expect(result.detailLines.join(' ')).not.toMatch(/Poste avant|Poste arrière/)
+    })
+
+    it('plafond 3 détails : tip Hu pas poussé si déjà plein', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'in_season',
+          positionGroup: 'back_three',
+          isMatchWeek: true,
+          daysUntilNextMatch: 3,
+          isDeloadWeek: true,
+          fatigueLevel: 'very_high',
+          planningTrace: {
+            resolutionMode: 'calendar_inferred',
+            rulesApplied: ['rule:in_season_deload_3_1'],
+            warnings: ['Attention récupération limitée cette semaine.'],
+          },
+        }),
+        schedulingMode: 'calendar',
+        presentation: makePres(),
+        corrections: [],
+      })
+      expect(result.detailItems.length).toBeLessThanOrEqual(3)
+      expect(result.detailItems.some((d) => d.ruleId === 'context:hu_position_workload')).toBe(false)
+    })
   })
 })

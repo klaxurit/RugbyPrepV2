@@ -143,11 +143,11 @@
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| Israetel deload copy + soft-floor ≤2 blocs | **Shipped** (`feature/kb-evidence-p0`) | Notice / explanation volume ↓ intensité = ; truncate soft-floor |
+| Israetel deload copy + soft-floor ≤2 blocs | **Shipped** | Notice / explanation volume ↓ intensité = ; truncate soft-floor |
 | NHE Severo progressif | **Shipped** | `applyProgressiveNordic` via `prepareSessionForRender` |
 | Weakley feedback vs dernière | **Shipped** | Chip « À battre », toast vs previous, insight fin de séance |
-| Hu TP tips poste | Pending | Copy only |
-| Pelland / Bauer register sync | Pending | Docs KB Vague 1 |
+| Hu TP tips poste | **Shipped** | `buildExplanation` → `context:hu_position_workload` (pré/in-season) |
+| Pelland / Bauer register sync | **Shipped** (docs) | KB + note registre ; audits fractional déjà en place |
 
 ---
 
