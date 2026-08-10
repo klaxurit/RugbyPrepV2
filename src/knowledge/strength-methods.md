@@ -218,11 +218,15 @@ Changement de seuils runtime → Vague 2 après relecture.
 resistance training dose response: meta-regressions exploring weekly volume and
 frequency. *Sports Medicine*. https://doi.org/10.1007/s40279-025-02344-w
 
-**Proximité de l’échec (Robinson et al., 2024)** : gains de force et
-d’hypertrophie restent possibles en s’arrêtant avant l’échec musculaire ;
-l’échec systématique n’est pas nécessaire et augmente la fatigue. Aligne les
-prescriptions `@ RER` et les plafonds RPE plus prudents en saison
-(`loadSuggestion`).
+**Proximité de l’échec (Robinson et al., 2024)** : méta-régression — l’hypertrophie
+augmente près de l’échec ; la force dépend surtout de la charge absolue.
+L’échec systématique n’est pas requis et alourdit la fatigue.
+
+**Mapping produit RugbyPrep** :
+- Ancre utilisateur = **RER** (équivalent RIR dans les logs).
+- `progressionEffortCeiling` : hors/pré → RPE 9 (RER 1–2) ; in-season → RPE 8 (RER 2–3).
+- Justifications `getLoadSuggestion` + insight fin de séance si effort très élevé.
+- Mother sessions : prescriptions `@ RER` déjà alignées — pas de rewrite volume.
 
 **Source** : Robinson Z.P. et al. (2024). Exploring the dose–response between
 estimated proximity to failure, strength, and hypertrophy. *Sports Medicine*,

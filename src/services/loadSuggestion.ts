@@ -64,14 +64,12 @@ export interface LoadSuggestionContext {
  * RPE maximal auquel une série reste « productive » et autorise une
  * progression, par cycle.
  *
- * Hors saison, l'objectif est l'hypertrophie et il n'y a pas de charge de club
- * à absorber : on vise RIR 1-2, soit RPE 8-9. Robinson et al. 2024 (Sports Med,
- * méta-régression sur la proximité de l'échec) montrent que l'hypertrophie
- * augmente à mesure que les séries se terminent près de l'échec, alors que la
- * force y est insensible et dépend surtout de la charge.
+ * Hors saison / pré-saison : RER 1–2 (RPE 8–9). Robinson et al. 2024
+ * (Sports Med) : l’hypertrophie monte près de l’échec ; la force dépend surtout
+ * de la charge — l’échec systématique n’est pas requis.
  *
- * En saison, les entraînements du club et les matchs s'empilent : on redescend
- * à RIR 2-3, soit RPE 7-8, pour garder de la marge de récupération.
+ * En saison : RER 2–3 (RPE 7–8) pour absorber club + matchs.
+ * Les messages utilisateur parlent toujours de RER (ancre produit).
  */
 export function progressionEffortCeiling(cycle: AnnualCycle | undefined): number {
   switch (cycle) {
@@ -80,6 +78,17 @@ export function progressionEffortCeiling(cycle: AnnualCycle | undefined): number
       return 9
     default:
       return 8
+  }
+}
+
+/** Libellé RER cible affiché dans les justifications de suggestion. */
+export function effortZoneRerLabel(cycle: AnnualCycle | undefined): string {
+  switch (cycle) {
+    case 'off_season':
+    case 'pre_season':
+      return 'RER 1–2'
+    default:
+      return 'RER 2–3'
   }
 }
 
@@ -251,18 +260,21 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
       justification = 'Fatigue elevee — reps stables.'
     } else if (rpe !== undefined) {
       const effortCeiling = progressionEffortCeiling(cycle)
+      const rerZone = effortZoneRerLabel(cycle)
       if (rpe <= effortCeiling) {
         // Dans la zone de travail : on progresse. Nettement en dessous, on
         // rattrape plus vite.
         const step = effortCeiling - rpe >= UNDERSHOOT_RPE_GAP ? 2 : 1
         suggestedReps = lastReps + step
         justification =
-          step === 2 ? 'Trop facile — on accelere.' : 'Dans la zone de travail — on progresse.'
+          step === 2
+            ? `Trop facile vs ${rerZone} — on accélère.`
+            : `Dans la zone ${rerZone} — on progresse.`
       } else if (rpe >= 9 && lastEntry.setsCompleted !== undefined && lastEntry.reps !== undefined && lastEntry.setsCompleted < 1) {
         suggestedReps = Math.max(1, lastReps - 1)
-        justification = 'RPE max + reps incompletes — on baisse.'
+        justification = 'Échec trop proche + reps incomplètes — on baisse.'
       } else {
-        justification = 'RPE eleve mais reps OK — on consolide.'
+        justification = `Trop proche de l'échec pour ce cycle (vise ${rerZone}) — on consolide.`
       }
     } else {
       justification = 'Continue sur cette base.'
@@ -383,12 +395,10 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
 
   // ── Série dans la zone de travail → double progression ──
   //
-  // Le plafond dépend du cycle : RPE 9 hors saison (RIR 1-2), RPE 8 en saison
-  // (RIR 2-3). Une série à RPE 8 hors saison n'est pas « trop dure », c'est
-  // précisément la cible : elle doit donc faire progresser, par les reps puis
-  // par la charge. Traiter cette zone comme un simple palier gelait l'athlète
-  // qui logue honnêtement son effort.
+  // Plafond cycle : RPE 9 hors saison (RER 1–2), RPE 8 en saison (RER 2–3).
+  // Une série à RPE 8 hors saison n'est pas « trop dure » : c'est la cible.
   const effortCeiling = progressionEffortCeiling(cycle)
+  const rerZone = effortZoneRerLabel(cycle)
   if (rpe <= effortCeiling) {
     // G1 : min 2 logs historiques sur cet exo avant de proposer une INCREASE.
     // Sans baseline suffisante on ne peut pas extrapoler en sécurité.
@@ -413,7 +423,7 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
         decision: 'maintain',
         suggestedWeight: lastWeight,
         suggestedReps: Math.min(prescribedRepsHigh, lastReps + 1),
-        justification: `Vise ${prescribedRepsHigh} reps avant de monter la charge.`,
+        justification: `Dans la zone ${rerZone} — vise ${prescribedRepsHigh} reps avant de monter la charge.`,
         nextTarget: `Quand tu atteins ${prescribedRepsHigh} reps → +${increment.up} kg`,
         confidence: 'high',
       }
@@ -435,8 +445,8 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
         ? Math.max(1, prescribedRepsHigh - 2)
         : lastEntry.reps ?? null,
       justification: isUndershooting
-        ? 'Série trop facile — on rattrape la charge.'
-        : 'Charge bien maitrisée — on monte.',
+        ? `Trop facile vs ${rerZone} — on rattrape la charge.`
+        : `Dans la zone ${rerZone} — on monte.`,
       nextTarget: `Si réussi → semaine prochaine ${nextAfter} kg`,
       confidence: 'high',
     }
@@ -454,19 +464,19 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
       decision: 'decrease',
       suggestedWeight: newWeight,
       suggestedReps: lastEntry.reps ?? null,
-      justification: 'Reps incompletes a RPE max — on baisse.',
+      justification: `Échec trop proche + reps incomplètes — on baisse (cible ${rerZone}).`,
       nextTarget: null,
       confidence: 'high',
     }
   }
 
   if (rpe >= 9) {
-    // RPE ≥ 9 + reps completed → MAINTAIN
+    // RPE ≥ 9 + reps completed → MAINTAIN (souvent hors zone en saison)
     return {
       decision: 'maintain',
       suggestedWeight: lastWeight,
       suggestedReps: lastEntry.reps ?? null,
-      justification: 'RPE eleve mais reps OK — on consolide avant de monter.',
+      justification: `Trop proche de l'échec pour ce cycle (vise ${rerZone}) — on consolide.`,
       nextTarget: null,
       confidence: 'high',
     }

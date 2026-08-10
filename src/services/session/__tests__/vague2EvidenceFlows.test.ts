@@ -269,4 +269,26 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
       expect(exp.detailItems.some((d) => d.ruleId === 'context:hu_position_workload')).toBe(true)
     })
   })
+
+  describe('Robinson — RER / proximité de l\'échec', () => {
+    it('insight RPE 9+ complète rappelle que l\'échec systématique n\'est pas nécessaire', () => {
+      const insight = selectSessionInsight({
+        rpe: 9,
+        completedRatio: 1,
+        prs: [],
+      })
+      expect(insight?.tone).toBe('info')
+      expect(insight?.message).toMatch(/échec systématique/i)
+    })
+
+    it('insight RPE 9+ incomplète mentionne RER de réserve', () => {
+      const insight = selectSessionInsight({
+        rpe: 9,
+        completedRatio: 0.5,
+        prs: [],
+      })
+      expect(insight?.tone).toBe('warn')
+      expect(insight?.message).toMatch(/RER/)
+    })
+  })
 })

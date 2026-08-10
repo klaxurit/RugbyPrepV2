@@ -32,6 +32,7 @@ describe('selectSessionInsight', () => {
     })
     expect(insight?.tone).toBe('warn')
     expect(insight?.message).toMatch(/deload/i)
+    expect(insight?.message).toMatch(/RER/)
   })
 
   it('insight info "limite atteinte" si RPE 9+ avec complétion totale', () => {
@@ -42,6 +43,7 @@ describe('selectSessionInsight', () => {
     })
     expect(insight?.tone).toBe('info')
     expect(insight?.message).toMatch(/limite/i)
+    expect(insight?.message).toMatch(/échec systématique/i)
   })
 
   it('insight "trop facile" si RPE ≤ 5 + complétion totale', () => {

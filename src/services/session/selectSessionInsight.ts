@@ -67,7 +67,8 @@ export function selectSessionInsight({
     return {
       tone: 'warn',
       badge: '⚠',
-      message: 'Effort très haut sans tout boucler — envisage un deload.',
+      message:
+        'Trop proche de l\'échec sans tout boucler — garde un RER de réserve ; envisage un deload.',
     }
   }
 
@@ -75,7 +76,8 @@ export function selectSessionInsight({
     return {
       tone: 'info',
       badge: '🔥',
-      message: 'Limite atteinte mais série complétée — belle séance.',
+      message:
+        'Limite atteinte mais série complétée — l\'échec systématique n\'est pas nécessaire ; belle séance.',
     }
   }
 

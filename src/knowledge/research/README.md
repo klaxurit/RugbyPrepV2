@@ -8,7 +8,7 @@
 | Vague | Contenu | Runtime | Statut |
 |-------|---------|---------|--------|
 | 1 | Synthèses KB + cet index | Non | Fait |
-| 2 | Israetel · Severo · Weakley · Hu tip poste | Oui | **Fait (tests auto)** |
+| 2 | Israetel · Severo · Weakley · Hu · Robinson | Oui | **Fait (tests auto)** |
 
 ### Runtime Vague 2 (vérifié)
 
@@ -18,6 +18,7 @@
 | Severo | Prescription Nordic selon meso week (match FR Nordique) | `applyProgressiveNordic` → `prepareSessionForRender` |
 | Weakley | Chip « À battre », toast vs last, insight fin | `SessionDetailPage`, `selectSessionInsight`, `formatLivePRToast` |
 | Hu 2024 | Tip poste pré/in-season (filler détail coach) | `buildExplanation` `huPositionWorkloadTip` |
+| Robinson 2024 | Justifications RER selon cycle + insight fin | `loadSuggestion` `effortZoneRerLabel`, `selectSessionInsight` |
 
 ## Études intégrées (Vague 1)
 
@@ -31,7 +32,7 @@
 | P1 | Severo-Silveira et al. 2021 | `injury-prevention.md` §5.2 | Cohérence NHE | Progression Nordic mother sessions |
 | P1 | van Dyk et al. 2019 | `injury-prevention.md` §5.2 | Pertinence | Ancre −51 % UX / landing |
 | P1 | Weakley et al. 2019/2020 | `strength-methods.md` §feedback | Ludique | Prompts / encouragements séance |
-| P2 | Robinson et al. 2024 | `strength-methods.md` (RER) | Cohérence | Formaliser plafonds déjà partiels en code |
+| P2 | Robinson et al. 2024 | `strength-methods.md` (RER) | Cohérence | **Shipped** — justifications RER + insight |
 | P2 | Freitas et al. 2017 | `strength-methods.md` §4.2 | Pertinence | Attentes contrastes amateurs |
 
 ## Liens DOI
