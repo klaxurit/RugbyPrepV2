@@ -26,6 +26,7 @@ export function SessionPRToast({
 
   const bottomClass = stackAboveRest ? 'bottom-[15.5rem]' : 'bottom-32'
   const isPersonal = data.kind === 'personal'
+  const isProgress = data.kind === 'progress'
 
   return createPortal(
     <div
@@ -46,7 +47,11 @@ export function SessionPRToast({
               isPersonal ? 'bg-brand text-on-brand' : 'bg-layer-20 text-brand'
             }`}
           >
-            <Trophy className="h-5 w-5" strokeWidth={2.2} />
+            {isProgress ? (
+              <TrendingUp className="h-5 w-5" strokeWidth={2.2} />
+            ) : (
+              <Trophy className="h-5 w-5" strokeWidth={2.2} />
+            )}
           </span>
           <div className="min-w-0 flex-1 pt-0.5">
             <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-brand">

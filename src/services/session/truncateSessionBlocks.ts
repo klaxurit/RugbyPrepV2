@@ -122,14 +122,22 @@ export function truncateSessionBlocks(
   { maxBlocks, variant }: TruncateOptions,
 ): TruncateResult {
   const isLight = variant === 'light'
-  const target = maxBlocks != null ? Math.max(MIN_BLOCKS, maxBlocks) : null
 
   let droppedBlockNumbers: number[] = []
   let blocks = session.blocks
 
-  if (target != null && session.blocks.length > target) {
+  // Garde-fou séances déjà très courtes (≤ 2 blocs) : on n’arrache pas un
+  // bloc via maxBlocks — seul `light` (−1 tour) s’applique. Les séances à
+  // 3–4+ blocs gardent la troncature Israetel (~−40 %).
+  const softFloorShortSession = session.blocks.length <= 2
+  const effectiveMaxBlocks =
+    softFloorShortSession || maxBlocks == null
+      ? undefined
+      : Math.max(MIN_BLOCKS, maxBlocks)
+
+  if (effectiveMaxBlocks != null && session.blocks.length > effectiveMaxBlocks) {
     const order = resolveReductionOrder(session)
-    const dropCount = Math.min(session.blocks.length - target, order.length)
+    const dropCount = Math.min(session.blocks.length - effectiveMaxBlocks, order.length)
     droppedBlockNumbers = order.slice(0, dropCount)
     const droppedSet = new Set(droppedBlockNumbers)
     blocks = session.blocks.filter((b) => !droppedSet.has(b.number))
@@ -149,6 +157,7 @@ export function truncateSessionBlocks(
     session: unchanged ? session : { ...session, blocks },
     droppedBlockNumbers,
     lightenedBlockNumbers,
-    flooredByProtectedBlocks: target != null && blocks.length > target,
+    flooredByProtectedBlocks:
+      effectiveMaxBlocks != null && blocks.length > effectiveMaxBlocks,
   }
 }

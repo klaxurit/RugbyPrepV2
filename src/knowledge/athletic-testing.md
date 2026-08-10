@@ -421,3 +421,6 @@ Cinq questions notées 1 (très bon) à 7 (très mauvais) :
 15. Arnason A et al. (2008). *Prevention of hamstring strains in elite soccer.* Scand J Med Sci Sports 18(1):40–48.
 16. Cissik JM et al. (2008). *Relationship between training load, competition schedule and muscular performance.* J Strength Cond Res 22(4):1107–1116.
 17. Cronin J, Sleivert G (2005). *Challenges in understanding the influence of maximal power training on improving athletic performance.* Sports Med 35(3):213–234.
+18. Hu X et al. (2024). *Position-specific workload during tactical periodization (rugby union).* PLoS ONE 19(3):e0288345 — backs vs forwards external/internal load on acquisition days; use for position messaging alongside Duthie/Cahill baselines.
+
+*Dernière mise à jour : 2026-08-10*

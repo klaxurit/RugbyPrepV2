@@ -139,5 +139,17 @@
 
 ---
 
-*Last updated: 2026-05-31*
+## Pending product changes (Vague 2)
+
+| Candidate | Status | Notes |
+|-----------|--------|-------|
+| Israetel deload copy + soft-floor ≤2 blocs | **Shipped** (`feature/kb-evidence-p0`) | Notice / explanation volume ↓ intensité = ; truncate soft-floor |
+| NHE Severo progressif | **Shipped** | `applyProgressiveNordic` via `prepareSessionForRender` |
+| Weakley feedback vs dernière | **Shipped** | Chip « À battre », toast vs previous, insight fin de séance |
+| Hu TP tips poste | Pending | Copy only |
+| Pelland / Bauer register sync | Pending | Docs KB Vague 1 |
+
+---
+
+*Last updated: 2026-08-10*
 *Maintained by: RugbyPrep development team*

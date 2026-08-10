@@ -18,7 +18,7 @@ const PREVIEW_KEY = 'rf.programNotice.preview.v1'
 /**
  * Dev-only preview hook: read a synthetic notice from localStorage so the
  * modal can be exercised without driving the real detector. Set via:
- *   localStorage.setItem('rf.programNotice.preview.v1', 'cycle' | 'phase' | 'acwr-critical' | 'acwr-danger' | 'match')
+ *   localStorage.setItem('rf.programNotice.preview.v1', 'cycle' | 'phase' | 'deload' | 'acwr-critical' | 'acwr-danger' | 'match')
  * and reload. Clear with `localStorage.removeItem('rf.programNotice.preview.v1')`.
  */
 function readPreviewNotice(): ProgramChangeNotice | null {
@@ -53,6 +53,22 @@ function readPreviewNotice(): ProgramChangeNotice | null {
             'Réintroduction progressive du tonnage',
             'Mouvements composés à charge modérée',
             'Préparation pour l\'hypertrophie',
+          ],
+          postponable: true,
+          effectiveDate: '2099-01-01',
+        }
+      case 'deload':
+        return {
+          id: 'preview:deload',
+          type: 'phase',
+          severity: 'info',
+          title: 'Semaine de décharge',
+          summary:
+            'Cette semaine est la 4ᵉ du cycle 3:1 — volume réduit (~40 %), intensité maintenue.',
+          bullets: [
+            '≈ −40 % de volume (moins de blocs / tours)',
+            'Intensité gardée — qualité d’exécution, pas séance « vide »',
+            'Capitalise sur les 3 semaines de charge précédentes',
           ],
           postponable: true,
           effectiveDate: '2099-01-01',

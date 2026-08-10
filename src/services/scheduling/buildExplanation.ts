@@ -153,7 +153,8 @@ const RULE_COPY: Record<string, RuleCopy> = {
 
   'rule:in_season_deload': {
     summary: () => 'Semaine de récupération',
-    detail: () => 'Après 3 semaines d\'entraînement, une semaine plus légère permet à ton corps de s\'adapter et de progresser.',
+    detail: () =>
+      'Après 3 semaines de charge, on coupe ~40 % du volume (moins de blocs/tours) tout en gardant l’intensité — pour digérer et progresser.',
     overridesSequential: true,
   },
 
@@ -310,7 +311,7 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
     seen.add('Semaine de récupération')
     result.push({
       summary: 'Semaine de récupération',
-      detail: 'Après 3 semaines d\'entraînement, une semaine plus légère permet à ton corps de s\'adapter.',
+      detail: 'Après 3 semaines de charge, on coupe ~40 % du volume (moins de blocs/tours) tout en gardant l’intensité — pour digérer et progresser.',
       ruleId: 'context:deload',
       priority: basePriority + 1,
       overridesSequential: true,

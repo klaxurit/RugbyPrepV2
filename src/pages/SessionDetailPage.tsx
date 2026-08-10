@@ -80,7 +80,7 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { SessionRunProgressBar, SessionStickyCTA, SessionBlocks } from '../components/session'
 import { SessionPRToast } from '../components/session/SessionPRToast'
 import { detectLiveSetPR, collectPriorSessionDrafts } from '../services/pr/detectLiveSetPR'
-import { buildLivePRToastData, type LivePRToastData } from '../services/pr/formatLivePRToast'
+import { buildLivePRToastData, buildVsPreviousToastData, type LivePRToastData } from '../services/pr/formatLivePRToast'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
 import { HeroIdle } from '../components/session/blocks'
 import { ExerciseDemoSheet } from '../components/motherSession/ExerciseDemoSheet'
@@ -173,6 +173,7 @@ export function SessionDetailPage() {
     exerciseIndex: number
   } | null>(null)
   const [livePRToast, setLivePRToast] = useState<LivePRToastData | null>(null)
+  const [beatPreviousSession, setBeatPreviousSession] = useState(false)
   // Note : depuis le passage à SessionBlocks, les sets sont persistés via
   // `upsertSet` (table exercise_set_logs). Le hook `useBlockLogs` ne sert plus
   // sur cette page — il sera ré-introduit en D5/D6 pour la suggestion de charge
@@ -279,18 +280,28 @@ export function SessionDetailPage() {
 
   const preparedSession = useMemo(() => {
     if (!activeSlot) return null
+    const planning = surface?.planningContext
     const prepared = prepareSessionForRender({
       session: activeSlot.session,
       trainingLevel: profile.trainingLevel,
       equipment: profile.equipment,
       lang,
+      mesocycleWeek: planning?.mesocycleWeek,
+      weekNumber: planning?.weekNumber,
     })
     // Décharge, taper et overrides de fatigue passent tous par ces deux champs.
     return truncateSessionBlocks(prepared, {
       maxBlocks: activeSlot.maxBlocks,
       variant: activeSlot.variant,
     }).session
-  }, [activeSlot, profile.trainingLevel, profile.equipment, lang])
+  }, [
+    activeSlot,
+    profile.trainingLevel,
+    profile.equipment,
+    lang,
+    surface?.planningContext?.mesocycleWeek,
+    surface?.planningContext?.weekNumber,
+  ])
 
   /** Set logs + block_logs legacy — source unique pour PR / PREVIOUS / suggestions. */
   const historyLogs = useMemo(
@@ -301,6 +312,10 @@ export function SessionDetailPage() {
   // ── Session Run Mode ──────────────────────────────────────────────────────
   const sessionRunKey = activeSlot ? `${activeSlot.session.metadata.id}_${today}` : null
   const isRunning = sessionRunKey != null && sessionRun.isRunningFor(sessionRunKey)
+
+  useEffect(() => {
+    setBeatPreviousSession(false)
+  }, [sessionRunKey])
 
   // Progression par TOURS (pas par série/exo). Un tour est "validé" quand tous
   // les exos loggables du bloc sont cochés pour ce tourIndex.
@@ -616,20 +631,60 @@ export function SessionDetailPage() {
         },
         priorSessionDrafts,
       })
-      if (!pr) return
-      const beatsPriorSessions = historyLogs.some(
-        (s) =>
-          s.exerciseId === payload.exerciseId &&
-          s.slotSignature !== slotSignature &&
-          (s.loadKg != null || s.reps != null),
+      if (pr) {
+        const beatsPriorSessions = historyLogs.some(
+          (s) =>
+            s.exerciseId === payload.exerciseId &&
+            s.slotSignature !== slotSignature &&
+            (s.loadKg != null || s.reps != null),
+        )
+        setLivePRToast(buildLivePRToastData(pr, lang, { beatsPriorSessions }))
+        posthog.capture('session_live_pr', {
+          exerciseId: payload.exerciseId,
+          metricType,
+        })
+        return
+      }
+
+      const previous = getPreviousSessionSet(payload.exerciseId, payload.tourIndex)
+      if (!previous || previous.loadKg == null || payload.loadKg == null) return
+      const beatLoad = payload.loadKg > previous.loadKg
+      const beatReps =
+        payload.loadKg === previous.loadKg &&
+        payload.reps != null &&
+        previous.reps != null &&
+        payload.reps > previous.reps
+      if (!beatLoad && !beatReps) return
+
+      setBeatPreviousSession(true)
+      const setLabel =
+        payload.reps != null
+          ? `${payload.loadKg} kg × ${payload.reps}`
+          : `${payload.loadKg} kg`
+      const delta = beatLoad
+        ? `+${Math.round((payload.loadKg - previous.loadKg) * 10) / 10} kg`
+        : `+${payload.reps! - previous.reps!} reps`
+      setLivePRToast(
+        buildVsPreviousToastData({
+          exerciseId: payload.exerciseId,
+          lang,
+          setLabel,
+          delta,
+        }),
       )
-      setLivePRToast(buildLivePRToastData(pr, lang, { beatsPriorSessions }))
-      posthog.capture('session_live_pr', {
+      posthog.capture('session_vs_previous', {
         exerciseId: payload.exerciseId,
         metricType,
       })
     },
-    [slotSignature, isPremium, historyLogs, lang, sessionRun.exerciseTourLoads],
+    [
+      slotSignature,
+      isPremium,
+      historyLogs,
+      lang,
+      sessionRun.exerciseTourLoads,
+      getPreviousSessionSet,
+    ],
   )
 
   const showBodyweightMorphoWarning = useMemo(
@@ -1588,6 +1643,7 @@ export function SessionDetailPage() {
         totalSets={celebrationStats.totalSets}
         tonnageKg={celebrationStats.tonnageKg}
         prs={sessionPRs}
+        beatPreviousSession={beatPreviousSession}
         isPremium={isPremium}
         initialFatigue={fatigue}
         isSubmitting={isSavingSession}

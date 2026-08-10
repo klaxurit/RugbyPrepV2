@@ -58,7 +58,14 @@ describe('selectSessionInsight', () => {
     expect(selectSessionInsight({ rpe: 7, completedRatio: 1, prs: [] })).toBeNull()
   })
 
-  it('renvoie null si rpe non noté et pas de PR', () => {
-    expect(selectSessionInsight({ rpe: null, completedRatio: 0.5, prs: [] })).toBeNull()
+  it('insight Weakley si battu dernière séance sans PR', () => {
+    const insight = selectSessionInsight({
+      rpe: 7,
+      completedRatio: 1,
+      prs: [],
+      beatPreviousSession: true,
+    })
+    expect(insight?.tone).toBe('success')
+    expect(insight?.message).toMatch(/dernière séance/i)
   })
 })

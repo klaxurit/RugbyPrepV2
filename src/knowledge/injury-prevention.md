@@ -329,6 +329,24 @@ Preventive effect of eccentric training on acute hamstring injuries in men's
 soccer: a cluster-randomized controlled trial. *American Journal of Sports
 Medicine*, 39(11), 2296-2303.
 
+**Compléments rugby & méta (2021 / 2019)** :
+
+- **van Dyk et al. (2019, BJSM)** — méta multi-sports (n = 8459) : programmes
+  incluant le NHE réduisent le taux de blessures ischio d’environ **51 %**
+  (RR ≈ 0.49). Ancre statistique pour UX / prévention (au-delà du seul
+  van der Horst soccer).
+  https://doi.org/10.1136/bjsports-2018-100045
+- **Chavarro-Nieto et al. (2021)** — revue systématique **Rugby Union** :
+  facteurs de risque (poste, fatigue, antécédents, asymétries, course) ;
+  programmes Nordic progressifs associés à force ↑, épaisseur musculaire ↑,
+  déséquilibres ↓ ; intérêt aussi chez joueuses.
+  https://doi.org/10.1080/00913847.2021.1992601
+- **Severo-Silveira et al. (2021, JSCR)** — joueurs rugby : NHE **progressif**
+  (8 sem) > charge constante pour force ischio / ratios H:Q ; les deux
+  allongent les fascicules BFlh. **Vague 2** : envisager progression product
+  (sets/reps montantes) plutôt que dose plate en mother sessions.
+  https://doi.org/10.1519/JSC.0000000000002849
+
 ---
 
 ### 5.3 Programme de Prévention des Blessures au Genou — LCA
@@ -797,8 +815,14 @@ Si l'utilisateur signale ≥ 2 signaux "STOP SÉANCE" sur la même semaine :
 
 25. **Zazulak B.T. et al.** (2007). The effects of core proprioception on knee injury. *American Journal of Sports Medicine*, 35(3), 368-373.
 
+26. **van Dyk N., Behan F.P. & Whiteley R.** (2019). Including the Nordic hamstring exercise halves hamstring injury rates. *British Journal of Sports Medicine*, 53(21), 1362-1370. https://doi.org/10.1136/bjsports-2018-100045
+
+27. **Chavarro-Nieto C.D. et al.** (2021). Hamstrings injury incidence, risk factors, and prevention in Rugby Union: a systematic review. *The Physician and Sportsmedicine*. https://doi.org/10.1080/00913847.2021.1992601
+
+28. **Severo-Silveira L. et al.** (2021). Progressive workload periodization maximizes effects of Nordic hamstring exercise. *Journal of Strength and Conditioning Research*, 35(4), 1006-1013. https://doi.org/10.1519/JSC.0000000000002849
+
 ---
 
-*Dernière mise à jour : 2026-02-24 | Version : 1.0.0*
+*Dernière mise à jour : 2026-08-10 | Version : 1.1.0*
 *Domaines couverts : épidémiologie des blessures rugby (taux, anatomie, postes), facteurs de risque, paradoxe entraînement-blessure, ACWR, screening fonctionnel, protocoles préventifs (RugbyReady, NHE, LCA, épaule, cheville, lombaires, cervical), commotions cérébrales (protocole World Rugby 6 étapes), retour au jeu, échauffement structuré, signaux d'alerte.*
-*Fichiers complémentaires : `periodization.md`, `recovery.md`, `strength-methods.md`, `nutrition.md`, `energy-systems.md` (à venir).*
+*Fichiers complémentaires : `periodization.md`, `recovery.md`, `strength-methods.md`, `nutrition.md`, `energy-systems.md`, `research/README.md`.*
