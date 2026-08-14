@@ -139,5 +139,18 @@
 
 ---
 
-*Last updated: 2026-05-31*
+## Pending product changes (Vague 2)
+
+| Candidate | Status | Notes |
+|-----------|--------|-------|
+| Israetel deload copy + soft-floor ≤2 blocs | **Shipped** | Notice / explanation volume ↓ intensité = ; truncate soft-floor |
+| NHE Severo progressif | **Shipped** | `applyProgressiveNordic` via `prepareSessionForRender` |
+| Weakley feedback vs dernière | **Shipped** | Chip « À battre », toast vs previous, insight fin de séance |
+| Hu TP tips poste | **Shipped** | `buildExplanation` → `context:hu_position_workload` (pré/in-season) |
+| Robinson RER zone copy | **Shipped** | `effortZoneRerLabel` + justifications `getLoadSuggestion` ; insight fin RPE 9+ |
+| Pelland / Bauer register sync | **Shipped** (docs) | KB + note registre ; audits fractional déjà en place |
+
+---
+
+*Last updated: 2026-08-10*
 *Maintained by: RugbyPrep development team*

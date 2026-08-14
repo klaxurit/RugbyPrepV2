@@ -30,7 +30,8 @@ et adaptées au profil du joueur.
 | `medical-red-flags.md` | Drapeaux rouges, stop rules, renvoi médical | 123 lignes | Opérationnel |
 | `double-match-weeks.md` | Gestion d’une double semaine de match | 168 lignes | Opérationnel |
 | `off-season-periodization.md` | Logique off-season et reconstruction | 210 lignes | Opérationnel |
-| `evidence-register.md` | Registre des seuils et sources “dures” | 107 lignes | Opérationnel |
+| `evidence-register.md` | Registre des seuils et sources “dures” | ~140 lignes | Opérationnel |
+| `research/README.md` | Index enrichissements études + Vague 2 | — | Opérationnel |
 | `beginner-programming.md` | Principes de programmation starter | 242 lignes | Complémentaire |
 | `beginner-intermediate-training.md` | Progressions starter/builder et supersets | 538 lignes | Complémentaire |
 | `population-specific.md` | Femmes, U18, masters, profils particuliers | 152 lignes | Complémentaire |
@@ -152,9 +153,13 @@ mais n'est pas encore dans la littérature formelle. Format libre.
 
 ### 4. Dossier research/ (Articles Indexés)
 
+Index courant : [`research/README.md`](./research/README.md) (Vague 1
+documentation — branche `feature/kb-evidence-p0`).
+
 Pour les articles complets (open access via PubMed Central) :
 ```
 src/knowledge/research/
+  README.md
   2024-concurrent-training-rugby.md
   2025-sleep-extension-contact-sport.md
   ...

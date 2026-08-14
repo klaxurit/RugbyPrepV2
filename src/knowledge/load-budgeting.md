@@ -116,5 +116,13 @@ Sessions exceeding 75 min with high intensity show diminishing returns and eleva
 
 ---
 
-*Last updated: 2026-03-03*
-*Sources: Gabbett TJ (2016) BJSM; Israetel M et al. (2019) Scientific Principles of Strength Training; Haff GG & Triplett NT (2016) NSCA Essentials of Strength Training*
+## Evidence refresh (2025–2026) — documentation only
+
+- **Pelland et al. 2025** (*Sports Medicine*): positive weekly-volume dose–response for hypertrophy and strength with diminishing returns; fractional counting of indirect sets preferred. Aligns with existing audit weighting — **no threshold change in Vague 1**.
+  https://doi.org/10.1007/s40279-025-02344-w
+- Operational MEV/MAV/MRV and deload −40–50% remain **Israetel 2019** until product review (Vague 2).
+
+---
+
+*Last updated: 2026-08-10*
+*Sources: Gabbett TJ (2016) BJSM; Israetel M et al. (2019) Scientific Principles of Strength Training; Haff GG & Triplett NT (2016) NSCA Essentials; Pelland et al. (2025) Sports Medicine*

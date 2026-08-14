@@ -20,6 +20,8 @@ export interface SessionFinishedSheetProps {
   tonnageKg: number | null
   /** Records détectés sur la séance. */
   prs: readonly SessionPR[]
+  /** Au moins une série ≥ dernière séance (Weakley). */
+  beatPreviousSession?: boolean
   /** L'utilisateur Premium voit le tonnage en clair, sinon flouté. */
   isPremium: boolean
   initialFatigue?: FatigueStatus
@@ -76,6 +78,7 @@ export function SessionFinishedSheet({
   totalSets,
   tonnageKg,
   prs,
+  beatPreviousSession = false,
   isPremium,
   initialFatigue = 'OK',
   isSubmitting = false,
@@ -90,7 +93,7 @@ export function SessionFinishedSheet({
   const effectiveDuration = durationMin ?? 0
   const sRPE = rpe * effectiveDuration
   const completedRatio = totalSets > 0 ? completedSets / totalSets : 1
-  const insight = selectSessionInsight({ rpe, completedRatio, prs })
+  const insight = selectSessionInsight({ rpe, completedRatio, prs, beatPreviousSession })
 
   const canConfirm = !isSubmitting
 

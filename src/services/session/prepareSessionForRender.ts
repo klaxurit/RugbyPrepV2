@@ -13,12 +13,20 @@ import { adaptMotherSessionForBodyweightEquipment } from '../motherSession/bodyw
 import { getSessionFrOrFallback } from '../motherSession/motherSessionContentFr'
 import { getExerciseName } from '../../data/exercises'
 import { resolveExerciseIdForSessionRun } from '../motherSession/motherSessionExerciseMap'
+import {
+  applyProgressiveNordic,
+  resolveNordicMesoWeek,
+} from './applyProgressiveNordic'
 
 interface PrepareInputs {
   session: MotherSession
   trainingLevel: TrainingLevel | undefined
   equipment: Equipment[] | undefined
   lang: 'fr' | 'en'
+  /** Semaine du mésocycle 3:1 (deload = 4) — progression NHE Severo. */
+  mesocycleWeek?: 1 | 2 | 3 | 4 | null
+  /** Numéro de semaine de cycle (fallback si pas de mésocycle). */
+  weekNumber?: number | null
 }
 
 /**
@@ -27,6 +35,7 @@ interface PrepareInputs {
  *  2. Adaptation BW matériel (si bodyweight_minimal) — variantes selon bandes / home gym
  *  3. Adaptation Equipment (med ball → câble, etc.)
  *  4. Localisation FR
+ *  5. Progression NHE (Severo) si Lower éligible
  *
  * La session retournée est prête à être passée aux blocs de rendu (`SessionBlocks`)
  * sans qu'ils aient à connaître le système d'adaptations / contenu FR.
@@ -38,6 +47,8 @@ export function prepareSessionForRender({
   trainingLevel,
   equipment,
   lang,
+  mesocycleWeek,
+  weekNumber,
 }: PrepareInputs): MotherSession {
   // 1+2. Adaptations EN (Foundations puis Equipment).
   const foundationsSession = isFoundationsLevel(trainingLevel)
@@ -45,8 +56,11 @@ export function prepareSessionForRender({
     : session
   const bodyweightSession = adaptMotherSessionForBodyweightEquipment(foundationsSession, equipment)
   const adaptedEn = adaptMotherSessionForEquipmentAlternatives(bodyweightSession, equipment)
+  const mesoWeek = resolveNordicMesoWeek({ mesocycleWeek, weekNumber })
 
-  if (lang !== 'fr') return adaptedEn
+  if (lang !== 'fr') {
+    return applyProgressiveNordic(adaptedEn, mesoWeek)
+  }
 
   // 3. Pipeline FR : raw FR → Foundations FR → Equipment FR → merge dans la session.
   const rawFr = getSessionFrOrFallback(session)
@@ -59,7 +73,7 @@ export function prepareSessionForRender({
     equipment,
   )
 
-  if (!finalFr) return adaptedEn
+  if (!finalFr) return applyProgressiveNordic(adaptedEn, mesoWeek)
 
   // Merge des noms FR sur les blocs et exos. Format/coachingNotes/fallbackOptions
   // restent ceux de l'EN si pas surchargés en FR.
@@ -94,23 +108,26 @@ export function prepareSessionForRender({
     }
   })
 
-  return {
-    ...adaptedEn,
-    blocks,
-    warmUp: adaptedEn.warmUp
-      ? {
-          ...adaptedEn.warmUp,
-          notes: finalFr.warmUpNotes.length > 0 ? finalFr.warmUpNotes : adaptedEn.warmUp.notes,
-          exercises: adaptedEn.warmUp.exercises.map((exo, i) => {
-            const frExo = finalFr.warmUpExercises[i]
-            if (!frExo) return exo
-            return {
-              ...exo,
-              name: frExo.name || exo.name,
-              prescription: frExo.prescription || exo.prescription,
-            }
-          }),
-        }
-      : adaptedEn.warmUp,
-  }
+  return applyProgressiveNordic(
+    {
+      ...adaptedEn,
+      blocks,
+      warmUp: adaptedEn.warmUp
+        ? {
+            ...adaptedEn.warmUp,
+            notes: finalFr.warmUpNotes.length > 0 ? finalFr.warmUpNotes : adaptedEn.warmUp.notes,
+            exercises: adaptedEn.warmUp.exercises.map((exo, i) => {
+              const frExo = finalFr.warmUpExercises[i]
+              if (!frExo) return exo
+              return {
+                ...exo,
+                name: frExo.name || exo.name,
+                prescription: frExo.prescription || exo.prescription,
+              }
+            }),
+          }
+        : adaptedEn.warmUp,
+    },
+    mesoWeek,
+  )
 }

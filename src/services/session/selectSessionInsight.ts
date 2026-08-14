@@ -16,6 +16,11 @@ export interface SelectSessionInsightInputs {
   completedRatio: number
   /** PRs détectés sur la séance. */
   prs: readonly SessionPR[]
+  /**
+   * Au moins une série a égalé ou battu la dernière séance (Weakley) —
+   * sans être un PR all-time.
+   */
+  beatPreviousSession?: boolean
 }
 
 /**
@@ -26,16 +31,14 @@ export interface SelectSessionInsightInputs {
  *  2. RPE ≥ 9 + reps incomplètes → suggérer un deload.
  *  3. RPE ≥ 9 + reps complètes → "limite atteinte, bonne séance".
  *  4. RPE ≤ 5 + completion totale → "trop facile, on augmentera".
- *  5. Sinon : pas d'insight (return null).
- *
- * L'objectif n'est pas de polluer l'UI : si rien de notable, on n'affiche
- * rien. Les seuils sont calés sur la KB rugby (RPE ≤ 5 = sous-stimulation,
- * RPE ≥ 9 = limite haute, jamais à l'échec).
+ *  5. Battu dernière séance (Weakley) + séance bien remplie → encouragement.
+ *  6. Sinon : pas d'insight (return null).
  */
 export function selectSessionInsight({
   rpe,
   completedRatio,
   prs,
+  beatPreviousSession = false,
 }: SelectSessionInsightInputs): SessionInsight | null {
   if (prs.length > 0) {
     const top = prs[0]
@@ -49,13 +52,23 @@ export function selectSessionInsight({
     }
   }
 
-  if (rpe == null) return null
+  if (rpe == null) {
+    if (beatPreviousSession && completedRatio >= 0.8) {
+      return {
+        tone: 'success',
+        badge: '↑',
+        message: 'Tu as battu ta dernière séance — le feedback paie.',
+      }
+    }
+    return null
+  }
 
   if (rpe >= 9 && completedRatio < 1) {
     return {
       tone: 'warn',
       badge: '⚠',
-      message: 'Effort très haut sans tout boucler — envisage un deload.',
+      message:
+        'Trop proche de l\'échec sans tout boucler — garde un RER de réserve ; envisage un deload.',
     }
   }
 
@@ -63,7 +76,8 @@ export function selectSessionInsight({
     return {
       tone: 'info',
       badge: '🔥',
-      message: 'Limite atteinte mais série complétée — belle séance.',
+      message:
+        'Limite atteinte mais série complétée — l\'échec systématique n\'est pas nécessaire ; belle séance.',
     }
   }
 
@@ -72,6 +86,14 @@ export function selectSessionInsight({
       tone: 'info',
       badge: '💡',
       message: 'Séance confortable — on augmentera la charge la prochaine fois.',
+    }
+  }
+
+  if (beatPreviousSession && completedRatio >= 0.8) {
+    return {
+      tone: 'success',
+      badge: '↑',
+      message: 'Au-dessus de ta dernière séance — continue comme ça.',
     }
   }
 

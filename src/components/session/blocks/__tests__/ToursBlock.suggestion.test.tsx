@@ -160,7 +160,7 @@ describe('ToursBlock — dernière séance (PREVIOUS)', () => {
       />,
     )
     const chip = screen.getByTestId('exo-previous-chip')
-    expect(chip).toHaveTextContent(/Dernière séance|Last session/)
+    expect(chip).toHaveTextContent(/À battre \(dernière\)|Beat last session/)
     expect(chip).toHaveTextContent(/82\.5/)
     expect(chip).toHaveTextContent(/5/)
   })

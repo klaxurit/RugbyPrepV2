@@ -475,6 +475,25 @@ CYCLE 8 SEMAINES :
   charge subjective pour affiner.
 - Source : Buchheit M. (2014). Monitoring training status with HR measures. *Frontiers in Physiology*, 5, 1-28.
 
+**F. Période tactique rugby union (données FR — Hu et al., 2024)**
+
+Travaux sur club Pro D2 / rugby union FR (Hu, Boisbluche, Prioux et al.) :
+
+1. **Pré-saison 6 sem (JSCR)** — 3 jours d’acquisition par microcycle
+   (force, endurance, vitesse) : charge externe/interne max le jour endurance,
+   min le jour vitesse ; arrières > avants sur la plupart des métriques GPS ;
+   bien-être (Hooper) comparable entre jours. Utile pour tips pré-saison et
+   monitoring staff sans imposer un modèle terrain dans l’app S&C.
+   https://doi.org/10.1519/JSC.0000000000004607
+2. **In-season (PLOS One)** — mêmes jours d’acquisition : profils de charge
+   **position-spécifiques** (backs plus de distance/HSR ; forwards RPE plus
+   élevée le jour force). Soutient la différenciation messages / prefs poste
+   déjà amorcée dans RugbyPrep.
+   https://doi.org/10.1371/journal.pone.0288345
+
+**Vague 2 (runtime)** : tip poste dans `buildExplanation` (`context:hu_position_workload`)
+— bulle coach semaine (pré / in-season). Pas de changement de mother sessions.
+
 ---
 
 ## 8. Références Bibliographiques Complètes
@@ -527,8 +546,12 @@ CYCLE 8 SEMAINES :
 
 24. **Zourdos M.C. et al.** (2016). Novel resistance training-specific RPE scale measuring repetitions in reserve. *Journal of Strength and Conditioning Research*, 30(1), 267-275.
 
+25. **Hu X. et al.** (2024). Effects of tactical periodization on workload, physical fitness, and well-being in professional rugby union (preseason). *Journal of Strength and Conditioning Research*, 38(1), 105-115. https://doi.org/10.1519/JSC.0000000000004607
+
+26. **Hu X. et al.** (2024). Position-specific workload of professional rugby union players during tactical periodization training. *PLoS ONE*, 19(3), e0288345. https://doi.org/10.1371/journal.pone.0288345
+
 ---
 
-*Dernière mise à jour : 2026-02-24 | Version : 1.0.0*
-*Domaines couverts : périodisation théorique, modèles d'entraînement, exigences rugby à XV, saison française, analyse cycle app.*
-*Fichiers complémentaires : voir `recovery.md`, `strength-methods.md`, `nutrition.md`, `injury-prevention.md` (à venir).*
+*Dernière mise à jour : 2026-08-10 | Version : 1.1.0*
+*Domaines couverts : périodisation théorique, modèles d'entraînement, exigences rugby à XV, saison française, analyse cycle app, période tactique (Hu).*
+*Fichiers complémentaires : voir `recovery.md`, `strength-methods.md`, `nutrition.md`, `injury-prevention.md`, `research/README.md`.*

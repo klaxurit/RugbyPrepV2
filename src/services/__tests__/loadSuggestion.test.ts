@@ -141,12 +141,29 @@ describe('getLoadSuggestion — garde-fous', () => {
         baseCtx({ cycle: 'off_season', lastEntry: hard, historicalEntries: [hard, hard] }),
       )
       expect(offSeason.decision).toBe('increase')
+      expect(offSeason.justification).toMatch(/RER 1/)
 
       // En saison la charge du club s'ajoute : RIR 1 sort de la zone visée.
       const inSeason = getLoadSuggestion(
         baseCtx({ cycle: 'in_season', lastEntry: hard, historicalEntries: [hard, hard] }),
       )
       expect(inSeason.decision).toBe('maintain')
+      expect(inSeason.justification).toMatch(/RER 2/)
+    })
+
+    it('justifications Robinson : zone RER selon cycle', () => {
+      const easy = baseEntry({ reps: 5, rir: 2 })
+      const off = getLoadSuggestion(
+        baseCtx({ cycle: 'off_season', lastEntry: easy, historicalEntries: [easy, easy] }),
+      )
+      expect(off.decision).toBe('increase')
+      expect(off.justification).toMatch(/RER 1–2/)
+
+      const inS = getLoadSuggestion(
+        baseCtx({ cycle: 'in_season', lastEntry: easy, historicalEntries: [easy, easy] }),
+      )
+      expect(inS.decision).toBe('increase')
+      expect(inS.justification).toMatch(/RER 2–3/)
     })
 
     it('cycle absent → zone in-season, la plus conservatrice', () => {

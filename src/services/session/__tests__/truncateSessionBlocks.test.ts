@@ -64,7 +64,7 @@ describe('truncateSessionBlocks — troncature', () => {
 
   it('ne retire jamais un bloc absent de reduction_order', () => {
     // Bloc 1 protégé : il n est pas dans la liste.
-    const s = session([block(1), block(2), block(3)], [3, 2])
+    const s = session([block(1), block(2), block(3), block(4)], [4, 3, 2])
     const result = truncateSessionBlocks(s, { maxBlocks: 1 })
     expect(result.session.blocks.map((b) => b.number)).toEqual([1])
     expect(result.flooredByProtectedBlocks).toBe(false)
@@ -72,14 +72,14 @@ describe('truncateSessionBlocks — troncature', () => {
 
   it('sert plus de blocs que demandé plutôt que de violer une protection', () => {
     // Deux blocs protégés, la décharge en demande un seul.
-    const s = session([block(1), block(2), block(3)], [3])
+    const s = session([block(1), block(2), block(3), block(4)], [4])
     const result = truncateSessionBlocks(s, { maxBlocks: 1 })
-    expect(result.session.blocks.map((b) => b.number)).toEqual([1, 2])
+    expect(result.session.blocks.map((b) => b.number)).toEqual([1, 2, 3])
     expect(result.flooredByProtectedBlocks).toBe(true)
   })
 
   it('conserve toujours au moins un bloc, même à maxBlocks 0', () => {
-    const s = session([block(1), block(2)], [2, 1])
+    const s = session([block(1), block(2), block(3), block(4)], [4, 3, 2, 1])
     const result = truncateSessionBlocks(s, { maxBlocks: 0 })
     expect(result.session.blocks).toHaveLength(1)
   })
@@ -92,9 +92,17 @@ describe('truncateSessionBlocks — troncature', () => {
   })
 
   it('ignore les numéros de bloc obsolètes dans reduction_order', () => {
-    const s = session([block(1), block(2)], [9, 2])
-    const result = truncateSessionBlocks(s, { maxBlocks: 1 })
-    expect(result.droppedBlockNumbers).toEqual([2])
+    const s = session([block(1), block(2), block(3), block(4)], [9, 4, 3])
+    const result = truncateSessionBlocks(s, { maxBlocks: 2 })
+    expect(result.droppedBlockNumbers).toEqual([4, 3])
+  })
+
+  it('soft-floor : séance ≤2 blocs ignore maxBlocks (seul light compte)', () => {
+    const s = session([block(1), block(2)], [2, 1])
+    const result = truncateSessionBlocks(s, { maxBlocks: 1, variant: 'light' })
+    expect(result.droppedBlockNumbers).toEqual([])
+    expect(result.session.blocks).toHaveLength(2)
+    expect(result.lightenedBlockNumbers).toEqual([1, 2])
   })
 })
 
@@ -128,25 +136,29 @@ describe('truncateSessionBlocks — variant light', () => {
   })
 
   it('combine troncature et allègement', () => {
-    const s = session([block(1), block(2), block(3)], [3, 2])
+    const s = session([block(1), block(2), block(3), block(4)], [4, 3, 2])
     const result = truncateSessionBlocks(s, { maxBlocks: 2, variant: 'light' })
     expect(result.session.blocks.map((b) => b.number)).toEqual([1, 2])
     expect(result.session.blocks.every((b) => b.format.includes('2 rounds'))).toBe(true)
   })
 
   it('ne modifie pas la séance source', () => {
-    const s = session([block(1), block(2), block(3)], [3])
+    const s = session([block(1), block(2), block(3), block(4)], [4])
     truncateSessionBlocks(s, { maxBlocks: 1, variant: 'light' })
-    expect(s.blocks).toHaveLength(3)
+    expect(s.blocks).toHaveLength(4)
     expect(s.blocks[0].format).toContain('3 rounds')
   })
 })
 
 describe('truncateSessionBlocks — sur le corpus réel', () => {
-  it('respecte maxBlocks 2 sur toutes les séances, aux protections près', () => {
+  it('respecte maxBlocks 2 sur les séances ≥3 blocs, soft-floor sinon', () => {
     for (const s of MOTHER_SESSIONS) {
       const result = truncateSessionBlocks(s, { maxBlocks: 2, variant: 'light' })
       expect(result.session.blocks.length).toBeGreaterThanOrEqual(1)
+      if (s.blocks.length <= 2) {
+        expect(result.session.blocks.length).toBe(s.blocks.length)
+        continue
+      }
       if (!result.flooredByProtectedBlocks) {
         expect(
           result.session.blocks.length,

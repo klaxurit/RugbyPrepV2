@@ -198,6 +198,40 @@ par groupe musculaire par semaine :
 **Source** : Israetel M., Hoffmann J. & Case C. (2019). *Scientific Principles of
 Strength Training*. Renaissance Periodization, chap. 4.
 
+**Mise à jour dose-réponse (Pelland et al., 2025)** — méta-régressions
+(67 études, n ≈ 2058) sur volume et fréquence hebdomadaires :
+
+- Relation **positive** volume → hypertrophie et force, avec **rendements
+  décroissants** (surtout pour la force).
+- Quantification **fractionnelle** des sets indirects (ex. 0.5) mieux supportée
+  que le comptage « total » ou « direct only » — cohérent avec les audits
+  RugbyPrep (`muscleVolume` / pondération Pelland déjà en code).
+- Fréquence : bénéfice plus clair pour la **force** que pour l’hypertrophie
+  une fois le volume contrôlé.
+
+**Implication produit (Vague 1 = doc)** : conserver Israetel comme cadre
+opérationnel MEV/MAV/MRV ; utiliser Pelland 2025 pour défendre le comptage
+fractionnel et éviter de pousser le volume force sans plafond neural.
+Changement de seuils runtime → Vague 2 après relecture.
+
+**Source** : Pelland J.C., Remmert J.F., Robinson Z.P. et al. (2025). The
+resistance training dose response: meta-regressions exploring weekly volume and
+frequency. *Sports Medicine*. https://doi.org/10.1007/s40279-025-02344-w
+
+**Proximité de l’échec (Robinson et al., 2024)** : méta-régression — l’hypertrophie
+augmente près de l’échec ; la force dépend surtout de la charge absolue.
+L’échec systématique n’est pas requis et alourdit la fatigue.
+
+**Mapping produit RugbyPrep** :
+- Ancre utilisateur = **RER** (équivalent RIR dans les logs).
+- `progressionEffortCeiling` : hors/pré → RPE 9 (RER 1–2) ; in-season → RPE 8 (RER 2–3).
+- Justifications `getLoadSuggestion` + insight fin de séance si effort très élevé.
+- Mother sessions : prescriptions `@ RER` déjà alignées — pas de rewrite volume.
+
+**Source** : Robinson Z.P. et al. (2024). Exploring the dose–response between
+estimated proximity to failure, strength, and hypertrophy. *Sports Medicine*,
+54(9), 2209-2231. https://doi.org/10.1007/s40279-024-02069-2
+
 ---
 
 ## 3. Les Grandes Méthodes d'Entraînement
@@ -337,9 +371,27 @@ Exercice B (explosif)   : 3–5 reps @ intention maximale
 rugby union : le complex training sur 6 semaines améliore le CMJ de +6.2%,
 le 10m sprint de −2.4%, et le 30m de −1.8% vs entraînement force seul.
 
+**Méta complex training (Bauer et al., 2019)** : combiner exercice à charge
+élevée + exercice à charge faible / balistique (complex / contraste) améliore
+les performances explosives vs entraînement mono-modal, avec hétérogénéité
+selon protocoles. Soutient la logique RugbyPrep : **un contraste lourd de
+qualité** plutôt que plusieurs contrastes saturants la même semaine (budget
+neural Force-Pont).
+
+**Sports collectifs (Freitas et al., 2017)** : adaptations court terme
+(saut / sprint / COD) après complex training — attentes réalistes chez
+amateurs : gains modestes, technique du plyo prioritaire sur le volume.
+
 **Source** : Dello Iacono A., Martone D., Milic M. & Padulo J. (2017).
 Vertical- vs. horizontal-oriented drop jump training: chronic effects.
-*Journal of Strength and Conditioning Research*, 31(8), 2245-2254.
+*Journal of Strength and Conditioning Research*, 31(8), 2245-2254. /
+Bauer P. et al. (2019). Combining higher-load and lower-load resistance
+training exercises: a systematic review and meta-analysis of complex training.
+*Journal of Science and Medicine in Sport*, 22(7), 838-851.
+https://doi.org/10.1016/j.jsams.2019.01.006 /
+Freitas T.T. et al. (2017). Short-term adaptations following Complex Training
+in team-sports: a meta-analysis. *PLoS ONE*, 12(6), e0180223.
+https://doi.org/10.1371/journal.pone.0180223
 
 ---
 
@@ -781,7 +833,33 @@ dépasse la testostérone et le rapport hormonal devient catabolique.
 
 ---
 
-## 10. Références Bibliographiques Complètes
+## 10. Feedback, motivation et boucles « ludiques » (Weakley)
+
+Chez des joueurs de rugby union semi-pro, le **feedback immédiat** (vitesse
+barre, distance saut, temps sprint) pendant 4 semaines améliore davantage
+CMJ, sprint et squat que le même programme **sans** feedback
+(Weakley et al., 2019, IJSPP).
+
+Comparaison des modalités (Weakley et al., 2020, JSCR) : feedback **visuel**,
+**verbal** (chiffres) et **encouragement verbal** améliorent tous la vitesse
+barre vs contrôle ; les écarts entre modalités sont triviaux. L’encouragement
+reste donc une option valide **sans capteur** — pertinent pour RugbyPrep
+amateur (toasts coach, messages post-série, challenges « battre ton dernier
+set »).
+
+**Implication produit (Vague 2)** : prioriser (1) affichage PR / dernière perf,
+(2) encouragement contextuel RER, (3) option future VBT si matériel.
+
+**Sources** :
+- Weakley J. et al. (2019). Effects of augmented feedback on sprint, jump, and
+  strength adaptations in rugby union. *IJSPP*, 14(9), 1205-1211.
+  https://doi.org/10.1123/ijspp.2018-0523
+- Weakley J. et al. (2020). Show me, tell me, encourage me. *JSCR*, 34(11),
+  3157-3163. https://doi.org/10.1519/JSC.0000000000002887
+
+---
+
+## 11. Références Bibliographiques Complètes
 
 1. **Aagaard P. et al.** (2002). Increased rate of force development and neural drive following resistance training. *Journal of Applied Physiology*, 93(4), 1318-1326.
 
@@ -789,66 +867,78 @@ dépasse la testostérone et le rapport hormonal devient catabolique.
 
 3. **Baker D. & Newton R.U.** (2005). Methods to assess and develop explosive power in rugby league players. *Strength and Conditioning Coach*, 13(1), 5-17.
 
-4. **Boyle M.** (2016). *New Functional Training for Sports* (2nd ed.). Human Kinetics.
+4. **Bauer P. et al.** (2019). Combining higher-load and lower-load resistance training exercises: complex training meta-analysis. *Journal of Science and Medicine in Sport*, 22(7), 838-851.
 
-5. **Cometti G.** (2002). *La préparation physique en football*. Editions Chiron.
+5. **Boyle M.** (2016). *New Functional Training for Sports* (2nd ed.). Human Kinetics.
 
-6. **Cormie P., McGuigan M.R. & Newton R.U.** (2011). Developing maximal neuromuscular power: Part 1 — Biological basis. *Sports Medicine*, 41(1), 17-38.
+6. **Cometti G.** (2002). *La préparation physique en football*. Editions Chiron.
 
-7. **Dello Iacono A., Martone D., Milic M. & Padulo J.** (2017). Vertical- vs. horizontal-oriented drop jump training. *Journal of Strength and Conditioning Research*, 31(8), 2245-2254.
+7. **Cormie P., McGuigan M.R. & Newton R.U.** (2011). Developing maximal neuromuscular power: Part 1 — Biological basis. *Sports Medicine*, 41(1), 17-38.
 
-8. **Dietz C. & Peterson B.** (2012). *Triphasic Training*. Cal Dietz.
+8. **Dello Iacono A., Martone D., Milic M. & Padulo J.** (2017). Vertical- vs. horizontal-oriented drop jump training. *Journal of Strength and Conditioning Research*, 31(8), 2245-2254.
 
-9. **González-Badillo J.J. & Sánchez-Medina L.** (2010). Movement velocity as a measure of loading intensity. *International Journal of Sports Medicine*, 31(5), 347-352.
+9. **Dietz C. & Peterson B.** (2012). *Triphasic Training*. Cal Dietz.
 
-10. **Haff G.G. & Triplett N.T. (eds)** (2016). *NSCA's Essentials of Strength Training and Conditioning* (4th ed.). Human Kinetics.
+10. **Freitas T.T. et al.** (2017). Short-term adaptations following Complex Training in team-sports. *PLoS ONE*, 12(6), e0180223.
 
-11. **Hill A.V.** (1938). The heat of shortening and the dynamic constants of muscle. *Proceedings of the Royal Society B*, 126(843), 136-195.
+11. **González-Badillo J.J. & Sánchez-Medina L.** (2010). Movement velocity as a measure of loading intensity. *International Journal of Sports Medicine*, 31(5), 347-352.
 
-12. **Israetel M., Hoffmann J. & Case C.** (2019). *Scientific Principles of Strength Training*. Renaissance Periodization.
+12. **Haff G.G. & Triplett N.T. (eds)** (2016). *NSCA's Essentials of Strength Training and Conditioning* (4th ed.). Human Kinetics.
 
-13. **Kraemer W. & Zatsiorsky V.** (2006). *Science and Practice of Strength Training* (2nd ed.). Human Kinetics.
+13. **Hill A.V.** (1938). The heat of shortening and the dynamic constants of muscle. *Proceedings of the Royal Society B*, 126(843), 136-195.
 
-14. **Lum D. & Barbosa T.M.** (2019). Brief review: Effects of isometric strength training. *International Journal of Sports Medicine*, 40(6), 363-375.
+14. **Israetel M., Hoffmann J. & Case C.** (2019). *Scientific Principles of Strength Training*. Renaissance Periodization.
 
-15. **Markovic G. & Mikulic P.** (2010). Neuro-musculoskeletal adaptations to lower-extremity plyometric training. *Sports Medicine*, 40(10), 859-895.
+15. **Kraemer W. & Zatsiorsky V.** (2006). *Science and Practice of Strength Training* (2nd ed.). Human Kinetics.
 
-16. **McCurdy K. et al.** (2010). Comparison of lower extremity EMG between 2-leg and single-leg squat. *Journal of Sport Rehabilitation*, 19(1), 57-70.
+16. **Lum D. & Barbosa T.M.** (2019). Brief review: Effects of isometric strength training. *International Journal of Sports Medicine*, 40(6), 363-375.
 
-17. **McGill S.M.** (2010). Core training: Evidence translating to better performance and injury prevention. *Strength and Conditioning Journal*, 32(3), 33-46.
+17. **Markovic G. & Mikulic P.** (2010). Neuro-musculoskeletal adaptations to lower-extremity plyometric training. *Sports Medicine*, 40(10), 859-895.
 
-18. **Moritani T. & deVries H.A.** (1979). Neural factors versus hypertrophy in muscle strength gain. *American Journal of Physical Medicine*, 58(3), 115-130.
+18. **McCurdy K. et al.** (2010). Comparison of lower extremity EMG between 2-leg and single-leg squat. *Journal of Sport Rehabilitation*, 19(1), 57-70.
 
-19. **Mujika I. & Padilla S.** (2000). Muscular characteristics of detraining in humans. *Medicine & Science in Sports & Exercise*, 33(8), 1297-1303.
+19. **McGill S.M.** (2010). Core training: Evidence translating to better performance and injury prevention. *Strength and Conditioning Journal*, 32(3), 33-46.
 
-20. **Rippetoe M. & Baker A.** (2013). *Practical Programming for Strength Training* (3rd ed.). The Aasgaard Company.
+20. **Moritani T. & deVries H.A.** (1979). Neural factors versus hypertrophy in muscle strength gain. *American Journal of Physical Medicine*, 58(3), 115-130.
 
-21. **Robbins D.W.** (2005). Postactivation potentiation and its practical applicability. *Journal of Strength and Conditioning Research*, 19(2), 453-458.
+21. **Mujika I. & Padilla S.** (2000). Muscular characteristics of detraining in humans. *Medicine & Science in Sports & Exercise*, 33(8), 1297-1303.
 
-22. **Schoenfeld B.J.** (2010). The mechanisms of muscle hypertrophy. *Journal of Strength and Conditioning Research*, 24(10), 2857-2872.
+22. **Pelland J.C. et al.** (2025). The resistance training dose response: volume and frequency meta-regressions. *Sports Medicine*. https://doi.org/10.1007/s40279-025-02344-w
 
-23. **Schoenfeld B.J.** (2021). Resistance training to volitional failure. *Strength and Conditioning Journal*, 43(4), 6-10.
+23. **Rippetoe M. & Baker A.** (2013). *Practical Programming for Strength Training* (3rd ed.). The Aasgaard Company.
 
-24. **Simmons L.** (2007). *Westside Barbell Book of Methods*. Westside Barbell.
+24. **Robbins D.W.** (2005). Postactivation potentiation and its practical applicability. *Journal of Strength and Conditioning Research*, 19(2), 453-458.
 
-25. **Stone M.H. et al.** (2007). Weightlifting: a brief overview. *Strength and Conditioning Journal*, 29(5), 50-66.
+25. **Robinson Z.P. et al.** (2024). Dose–response proximity to failure, strength, and hypertrophy. *Sports Medicine*, 54(9), 2209-2231.
 
-26. **Suchomel T.J., Nimphius S. & Stone M.H.** (2016). The importance of muscular strength in athletic performance. *Sports Medicine*, 46(10), 1419-1449.
+26. **Schoenfeld B.J.** (2010). The mechanisms of muscle hypertrophy. *Journal of Strength and Conditioning Research*, 24(10), 2857-2872.
 
-27. **Suchomel T.J. et al.** (2018). The benefits of muscular strength in athletes. *Sports Medicine*, 48(3), 765-788.
+27. **Schoenfeld B.J.** (2021). Resistance training to volitional failure. *Strength and Conditioning Journal*, 43(4), 6-10.
 
-28. **Tillin N.A. & Bishop D.** (2009). Factors modulating post-activation potentiation. *Sports Medicine*, 39(2), 147-166.
+28. **Simmons L.** (2007). *Westside Barbell Book of Methods*. Westside Barbell.
 
-29. **Turner A.** (2011). The science and practice of periodization. *Strength and Conditioning Journal*, 33(1), 34-46.
+29. **Stone M.H. et al.** (2007). Weightlifting: a brief overview. *Strength and Conditioning Journal*, 29(5), 50-66.
 
-30. **van der Horst N. et al.** (2015). The preventive effect of the nordic hamstring exercise. *American Journal of Sports Medicine*, 43(6), 1316-1323.
+30. **Suchomel T.J., Nimphius S. & Stone M.H.** (2016). The importance of muscular strength in athletic performance. *Sports Medicine*, 46(10), 1419-1449.
 
-31. **Zatsiorsky V. & Kraemer W.** (2006). *Science and Practice of Strength Training* (2nd ed.). Human Kinetics.
+31. **Suchomel T.J. et al.** (2018). The benefits of muscular strength in athletes. *Sports Medicine*, 48(3), 765-788.
 
-32. **Zourdos M.C. et al.** (2016). Novel resistance training–specific RPE scale. *Journal of Strength and Conditioning Research*, 30(1), 267-275.
+32. **Tillin N.A. & Bishop D.** (2009). Factors modulating post-activation potentiation. *Sports Medicine*, 39(2), 147-166.
+
+33. **Turner A.** (2011). The science and practice of periodization. *Strength and Conditioning Journal*, 33(1), 34-46.
+
+34. **van der Horst N. et al.** (2015). The preventive effect of the nordic hamstring exercise. *American Journal of Sports Medicine*, 43(6), 1316-1323.
+
+35. **Weakley J. et al.** (2019). Augmented feedback and training adaptations in rugby union. *International Journal of Sports Physiology and Performance*, 14(9), 1205-1211.
+
+36. **Weakley J. et al.** (2020). Show me, tell me, encourage me. *Journal of Strength and Conditioning Research*, 34(11), 3157-3163.
+
+37. **Zatsiorsky V. & Kraemer W.** (2006). *Science and Practice of Strength Training* (2nd ed.). Human Kinetics.
+
+38. **Zourdos M.C. et al.** (2016). Novel resistance training–specific RPE scale. *Journal of Strength and Conditioning Research*, 30(1), 267-275.
 
 ---
 
-*Dernière mise à jour : 2026-02-24 | Version : 1.0.0*
-*Domaines couverts : courbe force-vitesse, RFD, zones d'intensité, RPE/RIR/VBT, méthodes ME/DE/RE, PAP, complex training, French Contrast Method, plyométrie, excentrique, dérivés olympiques, patterns moteurs rugby, progressions, adaptations neurales/structurelles.*
-*Fichiers complémentaires : `periodization.md`, `recovery.md`, `nutrition.md` (à venir), `injury-prevention.md` (à venir).*
+*Dernière mise à jour : 2026-08-10 | Version : 1.1.0*
+*Domaines couverts : courbe force-vitesse, RFD, zones d'intensité, RPE/RIR/VBT, méthodes ME/DE/RE, PAP, complex training, French Contrast Method, plyométrie, excentrique, dérivés olympiques, patterns moteurs rugby, progressions, adaptations neurales/structurelles, feedback/motivation.*
+*Fichiers complémentaires : `periodization.md`, `recovery.md`, `nutrition.md`, `injury-prevention.md`, `research/README.md`.*

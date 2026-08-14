@@ -153,7 +153,8 @@ const RULE_COPY: Record<string, RuleCopy> = {
 
   'rule:in_season_deload': {
     summary: () => 'Semaine de récupération',
-    detail: () => 'Après 3 semaines d\'entraînement, une semaine plus légère permet à ton corps de s\'adapter et de progresser.',
+    detail: () =>
+      'Après 3 semaines de charge, on coupe ~40 % du volume (moins de blocs/tours) tout en gardant l’intensité — pour digérer et progresser.',
     overridesSequential: true,
   },
 
@@ -310,7 +311,7 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
     seen.add('Semaine de récupération')
     result.push({
       summary: 'Semaine de récupération',
-      detail: 'Après 3 semaines d\'entraînement, une semaine plus légère permet à ton corps de s\'adapter.',
+      detail: 'Après 3 semaines de charge, on coupe ~40 % du volume (moins de blocs/tours) tout en gardant l’intensité — pour digérer et progresser.',
       ruleId: 'context:deload',
       priority: basePriority + 1,
       overridesSequential: true,
@@ -428,7 +429,33 @@ function buildDetailItems(
     items.push({ ruleId: 'warning', text: warning })
   }
 
+  // Tip poste (Hu 2024 période tactique) — filler si place libre, pré/in-season only.
+  if (items.length < 3) {
+    const tip = huPositionWorkloadTip(ctx)
+    if (tip && !seen.has(tip)) {
+      seen.add(tip)
+      items.push({ ruleId: 'context:hu_position_workload', text: tip })
+    }
+  }
+
   return items
+}
+
+/**
+ * Insights charge par poste (Hu et al. 2024 — rugby union FR / période tactique).
+ * Vulgarisé pour amateur : pas de jargon GPS.
+ */
+export function huPositionWorkloadTip(ctx: Pick<AnnualPlanningContext, 'cycle' | 'positionGroup'>): string | undefined {
+  if (ctx.cycle !== 'pre_season' && ctx.cycle !== 'in_season') return undefined
+  if (ctx.positionGroup === 'back_three') {
+    return ctx.cycle === 'pre_season'
+      ? 'Poste arrière : tu cumules souvent plus de course / intensité terrain que les avants — en pré-saison, laisse de la fraîcheur pour le club, la salle ne doit pas tout manger.'
+      : 'Poste arrière : en général tu cumules plus de charge externe (distance / intensité) que les avants — garde du jus pour le club, la salle ne doit pas tout manger.'
+  }
+  // front_row
+  return ctx.cycle === 'pre_season'
+    ? 'Poste avant : le jour force, le ressenti (RPE) monte souvent plus haut que chez les arrières — en pré-saison, qualité d’exécution et récup avant le volume.'
+    : 'Poste avant : le jour force, le RPE monte souvent plus haut que chez les arrières — privilégie la qualité d’exécution et la récup, pas le volume pour le volume.'
 }
 
 /** Patterns that indicate a warning is too technical for user-facing display. */

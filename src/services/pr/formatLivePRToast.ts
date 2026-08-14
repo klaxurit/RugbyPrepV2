@@ -3,7 +3,7 @@ import { getExerciseName } from '../../data/exercises'
 import type { DetectedPR } from './detectPRs'
 
 export type LivePRToastData = {
-  kind: 'personal' | 'session'
+  kind: 'personal' | 'session' | 'progress'
   title: string
   exerciseName: string
   setLabel: string
@@ -29,6 +29,22 @@ export function buildLivePRToastData(
     pr.improvement && pr.improvement !== 'Premier record' ? pr.improvement : undefined
 
   return { kind, title, exerciseName, setLabel: pr.label, delta }
+}
+
+/** Toast Weakley : série ≥ dernière séance, sans PR all-time. */
+export function buildVsPreviousToastData(input: {
+  exerciseId: string
+  lang: Lang
+  setLabel: string
+  delta?: string
+}): LivePRToastData {
+  return {
+    kind: 'progress',
+    title: input.lang === 'fr' ? 'Vs dernière séance' : 'Vs last session',
+    exerciseName: getExerciseName(input.exerciseId, input.lang) ?? input.exerciseId,
+    setLabel: input.setLabel,
+    delta: input.delta,
+  }
 }
 
 /** @deprecated Préférer buildLivePRToastData + SessionPRToast structuré */

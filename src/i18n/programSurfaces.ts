@@ -257,21 +257,21 @@ export function programNoticeDeloadTitle(lang: Lang): string {
 
 export function programNoticeDeloadSummary(lang: Lang): string {
   return lang === 'fr'
-    ? 'Cette semaine est la 4ᵉ du cycle 3:1 — volume et intensité réduits.'
-    : 'This is week 4 of the 3:1 cycle — reduced volume and intensity.'
+    ? 'Cette semaine est la 4ᵉ du cycle 3:1 — volume réduit (~40 %), intensité maintenue.'
+    : 'This is week 4 of the 3:1 cycle — volume down (~40 %), intensity maintained.'
 }
 
 export function programNoticeDeloadBullets(lang: Lang): string[] {
   return lang === 'fr'
     ? [
-        '−40% de volume environ',
-        'Charges plus légères, focus sur la qualité',
-        'Permet de capitaliser sur les 3 semaines précédentes',
+        '≈ −40 % de volume (moins de blocs / tours)',
+        'Intensité gardée — qualité d’exécution, pas séance « vide »',
+        'Capitalise sur les 3 semaines de charge précédentes',
       ]
     : [
-        'Roughly −40% volume',
-        'Lighter loads, focus on quality',
-        'Capitalize on the previous 3 weeks',
+        '≈ −40% volume (fewer blocks / rounds)',
+        'Intensity kept — quality over junk volume',
+        'Capitalize on the previous 3 loading weeks',
       ]
 }
 

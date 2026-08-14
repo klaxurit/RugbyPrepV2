@@ -32,6 +32,7 @@ describe('selectSessionInsight', () => {
     })
     expect(insight?.tone).toBe('warn')
     expect(insight?.message).toMatch(/deload/i)
+    expect(insight?.message).toMatch(/RER/)
   })
 
   it('insight info "limite atteinte" si RPE 9+ avec complétion totale', () => {
@@ -42,6 +43,7 @@ describe('selectSessionInsight', () => {
     })
     expect(insight?.tone).toBe('info')
     expect(insight?.message).toMatch(/limite/i)
+    expect(insight?.message).toMatch(/échec systématique/i)
   })
 
   it('insight "trop facile" si RPE ≤ 5 + complétion totale', () => {
@@ -58,7 +60,14 @@ describe('selectSessionInsight', () => {
     expect(selectSessionInsight({ rpe: 7, completedRatio: 1, prs: [] })).toBeNull()
   })
 
-  it('renvoie null si rpe non noté et pas de PR', () => {
-    expect(selectSessionInsight({ rpe: null, completedRatio: 0.5, prs: [] })).toBeNull()
+  it('insight Weakley si battu dernière séance sans PR', () => {
+    const insight = selectSessionInsight({
+      rpe: 7,
+      completedRatio: 1,
+      prs: [],
+      beatPreviousSession: true,
+    })
+    expect(insight?.tone).toBe('success')
+    expect(insight?.message).toMatch(/dernière séance/i)
   })
 })

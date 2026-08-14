@@ -83,6 +83,9 @@ _bmad-output/
 .cursor/
 .claude/
 
+# Programmes perso / achetés — ne jamais pousser (copyright)
+docs/rugby-programs/
+
 # Local / generated artifacts (not for version control)
 /build/
 skills-lock.json

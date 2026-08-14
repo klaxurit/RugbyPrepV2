@@ -451,3 +451,7 @@ L'application possède déjà un hook `useACWR(logs, events)` qui calcule l'ACWR
 10. Gabbett TJ (2020). *Debunking the myths about training load, injury and performance.* Br J Sports Med 54(1):58–66.
 11. Borg GA (1982). *Psychophysical bases of perceived exertion.* Med Sci Sports Exerc 14(5):377–381.
 12. Plisky PJ et al. (2006). *Star Excursion Balance Test as a predictor of lower extremity injury.* N Am J Sports Phys Ther 1(1):3–10.
+13. Hu X et al. (2024). *Effects of tactical periodization on workload, fitness, and well-being in professional rugby union (preseason).* J Strength Cond Res 38(1):105–115. https://doi.org/10.1519/JSC.0000000000004607
+14. Hu X et al. (2024). *Position-specific workload during tactical periodization training (rugby union).* PLoS ONE 19(3):e0288345. https://doi.org/10.1371/journal.pone.0288345
+
+*Dernière mise à jour : 2026-08-10 — ajout Hu et al. (période tactique FR).*

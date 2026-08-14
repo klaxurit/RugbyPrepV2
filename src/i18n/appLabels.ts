@@ -409,7 +409,7 @@ export const APP_LABELS = {
   exercise_validate_set: { fr: 'Valider set', en: 'Validate set' },
   exercise_premium_tracking_pre: { fr: 'Suivi set-par-set', en: 'Set-by-set tracking' },
   exercise_prefill_carry: { fr: 'Reprendre série préc.', en: 'Reuse previous set' },
-  exercise_prefill_previous: { fr: 'Dernière séance', en: 'Last session' },
+  exercise_prefill_previous: { fr: 'À battre (dernière)', en: 'Beat last session' },
   exercise_prefill_suggestion: { fr: 'Utiliser la suggestion', en: 'Use suggestion' },
   exercise_journal_last_session: { fr: 'Dernière séance', en: 'Last session' },
   exercise_journal_current_session: { fr: 'Cette séance', en: 'This session' },
