@@ -25,7 +25,6 @@ function match(date: string): CalendarEvent {
     id: `m-${date}`,
     type: 'match',
     date,
-    title: 'Match',
   }
 }
 
@@ -106,7 +105,7 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
       const prepared = prepareSessionForRender({
         session: raw,
         trainingLevel: 'performance',
-        equipment: ['barbell', 'rack', 'bench', 'dumbbells'],
+        equipment: ['barbell', 'squat_rack', 'bench', 'dumbbell'],
         lang: 'fr',
         mesocycleWeek: 4,
       })
@@ -152,14 +151,14 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
       const w1 = prepareSessionForRender({
         session: raw,
         trainingLevel: 'performance',
-        equipment: ['pullup_bar', 'bands'],
+        equipment: ['pullup_bar', 'band'],
         lang: 'fr',
         mesocycleWeek: 1,
       })
       const w4 = prepareSessionForRender({
         session: raw,
         trainingLevel: 'performance',
-        equipment: ['pullup_bar', 'bands'],
+        equipment: ['pullup_bar', 'band'],
         lang: 'fr',
         mesocycleWeek: 4,
       })
@@ -183,7 +182,7 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
       const after = prepareSessionForRender({
         session: raw,
         trainingLevel: 'performance',
-        equipment: ['barbell', 'rack', 'bench'],
+        equipment: ['barbell', 'squat_rack', 'bench'],
         lang: 'fr',
         mesocycleWeek: 3,
       })
@@ -212,6 +211,8 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
         label: '100 kg × 3',
         improvement: '+5 kg',
         metricType: 'load_reps',
+        newValue: 100,
+        previousValue: 95,
       }
       const toast = buildLivePRToastData(pr, 'fr', { beatsPriorSessions: true })
       expect(toast.kind).toBe('personal')
