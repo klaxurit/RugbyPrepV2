@@ -85,6 +85,17 @@ describe('getExerciseVariantOptions', () => {
     )
   })
 
+  it('Speed : sprints 10–20 m restent en Alternatives sans piste déclarée', () => {
+    const undeclared = getExerciseVariantOptions('sprint__falling_start_short')
+    expect(undeclared.map((o) => o.exerciseId)).toContain('sprint__short_acceleration')
+
+    const gymNoTrack = getExerciseVariantOptions('sprint__falling_start_short', {
+      equipment: ['barbell', 'dumbbell', 'band', 'machine', 'cable'],
+    })
+    expect(gymNoTrack.map((o) => o.exerciseId)).toContain('sprint__short_acceleration')
+    expect(gymNoTrack.map((o) => o.exerciseId)).toContain('sprint__free_acceleration')
+  })
+
   it('hasExerciseVariantOptions est vrai dès qu’il y a un choix', () => {
     expect(
       hasExerciseVariantOptions('lower_squat__bulgarian_split_squat__bodyweight', [], {

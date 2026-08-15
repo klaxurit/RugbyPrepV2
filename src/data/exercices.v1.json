@@ -4263,6 +4263,25 @@
     "defaultNotes": "10-20% du poids de corps en résistance. Qualité du mouvement."
   },
   {
+    "id": "sprint__falling_start_short",
+    "name": "Falling Start Sprint",
+    "pattern": "sprint",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [],
+    "level": "beginner",
+    "notes": "Départ penché explosif, 3–5 pas. Si 8 m (couloir), allonge. Pas de piste requise.",
+    "exerciseId": "sprint__falling_start_short",
+    "nameFr": "Départ penché (3–5 pas)",
+    "metricType": "reps",
+    "tags": [
+      "conditioning",
+      "speed"
+    ],
+    "defaultNotes": "Intention max, repos complet. 3–5 pas suffisent en salle."
+  },
+  {
     "id": "agility__shuttle_5_10_5",
     "name": "5-10-5 Shuttle",
     "pattern": "agility",

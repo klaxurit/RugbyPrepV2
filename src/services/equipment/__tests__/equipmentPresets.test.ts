@@ -20,6 +20,14 @@ describe('equipmentPresets', () => {
     expect(inferEquipmentPreset(GYM_PRESET)).toBe('full_gym')
   })
 
+  it('salle complète n’inclut pas de piste', () => {
+    expect(GYM_PRESET).not.toContain('sprint_track')
+  })
+
+  it('legacy profil + piste reste full_gym', () => {
+    expect(inferEquipmentPreset([...GYM_PRESET, 'sprint_track'])).toBe('full_gym')
+  })
+
   it('infer home_gym from home preset', () => {
     expect(inferEquipmentPreset(resolveEquipmentFromPreset('home_gym'))).toBe('home_gym')
   })

@@ -95,7 +95,7 @@ Le 15 min pro **calibre**, il ne devient pas un seuil app.
 |---|---|---|
 | **Canon** | Revue JFMK 2025 | Force + plyo + spécifique ; luge = accel courte |
 | Soutien luge | Cahill 2020 (`energy-systems.md`) + Botter 2025 | Pas un rail %BW |
-| **Décision** | Slot Speed dédié | Vague 3 = accels visibles (B3 revue de cycle) |
+| **Décision** | Slot Speed salle/maison | Runtime : fallback sans piste (`applyGymSpeedFallback`) |
 
 ---
 

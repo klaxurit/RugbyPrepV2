@@ -1,5 +1,5 @@
 import type { Equipment } from '../../types/training'
-import { GYM_PRESET, sameEquipmentSet } from './equipmentPresets'
+import { GYM_PRESET, sameEquipmentSet, withoutSprintTrack } from './equipmentPresets'
 
 /** Une case profil → un ou plusieurs tags `equipment` (ex. cage = rack + barre). */
 export type BodyweightEquipmentCheckId =
@@ -74,7 +74,7 @@ const CHECKLIST_EQUIPMENT = new Set<Equipment>(
 
 export function isFullGymEquipment(equipment: Equipment[] | undefined): boolean {
   if (!equipment?.length) return false
-  return sameEquipmentSet(equipment, GYM_PRESET)
+  return sameEquipmentSet(withoutSprintTrack(equipment), withoutSprintTrack(GYM_PRESET))
 }
 
 /** Profil géré par cases à cocher (programme BW + variantes). */

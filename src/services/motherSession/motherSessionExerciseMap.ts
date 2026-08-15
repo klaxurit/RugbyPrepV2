@@ -208,6 +208,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'short acceleration sprint': 'sprint__short_acceleration',
   'free acceleration sprint': 'sprint__free_acceleration',
   'resisted acceleration': 'sprint__resisted_acceleration',
+  'falling start sprint': 'sprint__falling_start_short',
   '5-10-5 shuttle': 'agility__shuttle_5_10_5',
   'acceleration to lateral shuffle to sprint': 'agility__lateral_shuffle_sprint',
   'reactive start to 45-degree cut': 'agility__reactive_cut_45',

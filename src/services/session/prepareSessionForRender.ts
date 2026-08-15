@@ -17,6 +17,8 @@ import {
   applyProgressiveNordic,
   resolveNordicMesoWeek,
 } from './applyProgressiveNordic'
+import { applyGymSpeedFallback } from './applyGymSpeedFallback'
+import { applyHypertrophyPrimeBump } from './applyHypertrophyPrimeBump'
 
 interface PrepareInputs {
   session: MotherSession
@@ -36,6 +38,8 @@ interface PrepareInputs {
  *  3. Adaptation Equipment (med ball → câble, etc.)
  *  4. Localisation FR
  *  5. Progression NHE (Severo) si Lower éligible
+ *  6. Speed salle/maison : fallback sans piste si pas de `sprint_track`
+ *  7. Hypertrophie off : +1 série sur 2 primes (4→5), hors décharge / starter
  *
  * La session retournée est prête à être passée aux blocs de rendu (`SessionBlocks`)
  * sans qu'ils aient à connaître le système d'adaptations / contenu FR.
@@ -59,7 +63,7 @@ export function prepareSessionForRender({
   const mesoWeek = resolveNordicMesoWeek({ mesocycleWeek, weekNumber })
 
   if (lang !== 'fr') {
-    return applyProgressiveNordic(adaptedEn, mesoWeek)
+    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel)
   }
 
   // 3. Pipeline FR : raw FR → Foundations FR → Equipment FR → merge dans la session.
@@ -73,7 +77,9 @@ export function prepareSessionForRender({
     equipment,
   )
 
-  if (!finalFr) return applyProgressiveNordic(adaptedEn, mesoWeek)
+  if (!finalFr) {
+    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel)
+  }
 
   // Merge des noms FR sur les blocs et exos. Format/coachingNotes/fallbackOptions
   // restent ceux de l'EN si pas surchargés en FR.
@@ -108,7 +114,7 @@ export function prepareSessionForRender({
     }
   })
 
-  return applyProgressiveNordic(
+  return finishPrepared(
     {
       ...adaptedEn,
       blocks,
@@ -129,5 +135,20 @@ export function prepareSessionForRender({
         : adaptedEn.warmUp,
     },
     mesoWeek,
+    equipment,
+    lang,
+    trainingLevel,
   )
+}
+
+function finishPrepared(
+  session: MotherSession,
+  mesoWeek: 1 | 2 | 3 | 4,
+  equipment: Equipment[] | undefined,
+  lang: 'fr' | 'en',
+  trainingLevel: TrainingLevel | undefined,
+): MotherSession {
+  const withNordic = applyProgressiveNordic(session, mesoWeek)
+  const withSpeed = applyGymSpeedFallback(withNordic, equipment, lang)
+  return applyHypertrophyPrimeBump(withSpeed, { mesoWeek, trainingLevel, lang })
 }

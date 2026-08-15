@@ -31,6 +31,15 @@ describe('gymVariantChains + couverture globale', () => {
     expect(ids).not.toContain('lower_lunge__shrimp__bodyweight')
   })
 
+  it('Speed : départ salle propose les accels piste en Alternatives', () => {
+    expect(resolveGymVariantChain('sprint__falling_start_short')).toContain(
+      'sprint__short_acceleration',
+    )
+    expect(
+      hasExerciseVariantOptions('sprint__falling_start_short', { equipment: [] }),
+    ).toBe(true)
+  })
+
   it('filet catalogue : exo hors chaîne a quand même une alternative même pattern', () => {
     // Exemple : face pull cable — pas dans GYM chains dédiées, mais pattern prehab
     const options = getExerciseVariantOptions('prehab_shoulder__face_pull__cable', {

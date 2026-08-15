@@ -139,6 +139,7 @@ export const MS_EXERCISE_FR_MAP: Record<string, string> = {
   "seated leg curl": "Leg Curl assis",
   "serratus reach": "Reach du dentelé",
   "short acceleration sprint": "Sprint court d'accélération",
+  "falling start sprint": "Départ penché (3–5 pas)",
   "short copenhagen hold": "Copenhagen Hold court",
   "side plank": "Gainage latéral",
   "single-arm db press": "Développé haltère unilatéral",

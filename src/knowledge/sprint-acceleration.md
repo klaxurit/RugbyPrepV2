@@ -19,10 +19,17 @@ matériel (Maviel et al. 2026 ; profil Morin/Samozino).
 
 ## Décision RugbyPrep
 
+L’app = **salle + maison**. Pas de piste de course dans le preset salle.
+`sprint_track` seulement si le joueur l’a déclaré.
+
 - Slot Speed dédié ; ne pas l’empiler avec un Lower lourd + club le même jour
   (`product-decisions.md`).
-- Amateur sans luge : 3–6 accels 10–20 m, repos 2–3 min, intention max.
-- Luge %BW : seulement si matériel ; pas un rail 130 % BW (Instagram).
-- Vague 2 : **pas** de rewrite Speed. Vague 3 = B3 de la revue de cycle.
+- **Défaut salle / maison** : mur (wall drill) + départs explosifs 3–5 pas,
+  repos complet. Si 8 m (couloir, parking) : allonger. Jamais 10–20 m imposés.
+- 10–20 m / luge : seulement si `sprint_track` ou matériel déclaré.
+- Luge %BW : pas un rail 130 % BW (Instagram).
+- Runtime : `applyGymSpeedFallback` — pas de rewrite corpus.
+- Les accels 10–20 m restent dans **Alternatives** même sans piste au profil
+  (`sprint_track` = espace, pas un kit qui masque le picker).
 
 *Dernière mise à jour : 2026-08-15*

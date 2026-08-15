@@ -10,6 +10,8 @@
 | 1 | Synthèses KB + cet index | Non | Fait |
 | 2 | Israetel · Severo · Weakley · Hu · Robinson | Oui | **Fait (tests auto)** |
 | 2A | Contact (match week) · Cou (off-season) | Copy only | **Fait (tests auto)** |
+| 3A | Speed salle/maison sans piste | Runtime fallback | **Fait (tests auto)** |
+| 3B | Hyp off +1 série / 2 primes | Runtime 4→5 | **Fait (tests auto)** |
 
 ### Runtime Vague 2 (vérifié)
 
@@ -22,6 +24,8 @@
 | Robinson 2024 | Justifications RER selon cycle + insight fin | `loadSuggestion` `effortZoneRerLabel`, `selectSessionInsight` |
 | World Rugby contact | Tip semaine de match (filler, **avant** Hu) | `buildExplanation` `contactLoadTip` |
 | BJSM 2025 cou | Tip off-season seulement | `buildExplanation` `neckTrainingTip` |
+| Speed salle/maison | Fallback accels sans piste | `prepareSessionForRender` `applyGymSpeedFallback` |
+| Hyp off primes | +1 série 4→5 hors décharge | `prepareSessionForRender` `applyHypertrophyPrimeBump` |
 
 ## Études intégrées (Vague 1)
 

@@ -563,6 +563,12 @@ export const EXERCISE_METRIC_OVERRIDES: Record<string, ExerciseMetricOverride> =
     suggestionTemplate: 'Qualité du mouvement, 10-20% BW.',
     progressionFamily: 'ballistic_iso'
   },
+  'sprint__falling_start_short': {
+    metricType: 'reps',
+    progressionHint: 'speed',
+    suggestionTemplate: 'Intention max, 3–5 pas. Repos complet.',
+    progressionFamily: 'ballistic_iso'
+  },
 
   // ── Sled ────────────────────────────────────────────────────
   'sled__push__standard': {

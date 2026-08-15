@@ -29,8 +29,8 @@ Plafond 3 lignes inchangé. Hu hors match week **inchangé**.
 
 Voir `prepa-ia-cycle-review.md`. Ordre si on continue :
 
-1. Speed : accels 10–20 m visibles (pas burpees)
-2. Hypertrophie off : +1 série sur 2 primes
+1. Speed salle/maison : fallback sans piste (`applyGymSpeedFallback`) — **livré**
+2. Hypertrophie off : +1 série sur 2 primes (`applyHypertrophyPrimeBump`) — **livré**
 3. Mini-bloc cou Upper (protocole `neck-training.md`)
 4. Proxy club déclaré (léger / normal / dur) — UI, pas GPS
 

@@ -30,5 +30,6 @@ describe('bodyweightEquipmentChecklist', () => {
   it('full gym détecté uniquement sur preset complet', () => {
     expect(isFullGymEquipment(GYM_PRESET)).toBe(true)
     expect(isFullGymEquipment(['barbell', 'squat_rack'])).toBe(false)
+    expect(isFullGymEquipment([...GYM_PRESET, 'sprint_track'])).toBe(true)
   })
 })

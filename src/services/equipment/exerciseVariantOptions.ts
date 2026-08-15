@@ -105,15 +105,23 @@ function equipmentSet(equipment: Equipment[] | undefined): Set<Equipment> {
   return new Set(equipment ?? [])
 }
 
+/** Espace (piste) ≠ kit déclaré : on ne masque pas les accels 10–20 m. */
+const SPACE_NOT_KIT: ReadonlySet<Equipment> = new Set(['sprint_track'])
+
+function kitRequirements(requires: Equipment[] | undefined): Equipment[] {
+  return (requires ?? []).filter((item) => item !== 'none' && !SPACE_NOT_KIT.has(item))
+}
+
 function hasRequiredEquipment(
   requires: Equipment[] | undefined,
   available: Set<Equipment>,
-  /** false = profil équipement absent → ne pas filtrer. true = respecter la liste (même vide). */
+  /** false = profil équipement absent → ne pas filtrer. true = respecter le kit (même vide). */
   filterByEquipment: boolean,
 ): boolean {
-  if (!requires?.length) return true
+  const kit = kitRequirements(requires)
+  if (!kit.length) return true
   if (!filterByEquipment) return true
-  return requires.every((item) => available.has(item))
+  return kit.every((item) => available.has(item))
 }
 
 function isBodyweightExercise(exerciseId: string): boolean {
@@ -194,7 +202,7 @@ function catalogSamePatternFallbacks(
     const id = ex.exerciseId ?? ex.id
     if (!id || id === exerciseId || already.has(id)) continue
     if (!patternsCompatible(base.pattern, ex.pattern)) continue
-    const requires = (ex.equipment ?? []).filter((e) => e !== 'none')
+    const requires = kitRequirements(ex.equipment)
     if (!hasRequiredEquipment(requires, available, filterByEquipment)) continue
     const option = toOption(id, 'same', requires)
     if (!option) continue
@@ -250,7 +258,7 @@ export function getExerciseVariantOptions(
       if (altId === exerciseId || byId.has(altId)) continue
       const catalog = getExerciseById(altId)
       if (!catalog) continue
-      const requires = (catalog.equipment ?? []).filter((e) => e !== 'none')
+      const requires = kitRequirements(catalog.equipment)
       if (!hasRequiredEquipment(requires, available, filterByEquipment)) continue
       const option = toOption(altId, 'same', requires)
       if (option) byId.set(option.exerciseId, option)

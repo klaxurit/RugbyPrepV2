@@ -1,10 +1,16 @@
 import type { Equipment } from '../../types/training'
 
-/** Preset salle complète — aligné onboarding et profil. */
+/** Preset salle complète — aligné onboarding et profil.
+ *  Pas de `sprint_track` : une salle n’a pas forcément de piste. */
 export const GYM_PRESET: Equipment[] = [
   'barbell', 'dumbbell', 'bench', 'pullup_bar', 'band', 'box',
-  'machine', 'cable', 'landmine', 'tbar_row', 'ghd', 'med_ball', 'ab_wheel', 'sprint_track',
+  'machine', 'cable', 'landmine', 'tbar_row', 'ghd', 'med_ball', 'ab_wheel',
 ]
+
+/** La piste n’entre pas dans le matching preset (legacy profils / option rare). */
+export function withoutSprintTrack(equipment: Equipment[]): Equipment[] {
+  return equipment.filter((item) => item !== 'sprint_track')
+}
 
 export type EquipmentPreset = 'bodyweight' | 'bands' | 'home_gym' | 'full_gym'
 
@@ -54,7 +60,9 @@ export { sameEquipmentSet }
 export function inferEquipmentPreset(equipment: Equipment[] | undefined): EquipmentPreset {
   if (!equipment?.length) return 'bodyweight'
 
-  if (sameEquipmentSet(equipment, GYM_PRESET)) return 'full_gym'
+  if (sameEquipmentSet(withoutSprintTrack(equipment), withoutSprintTrack(GYM_PRESET))) {
+    return 'full_gym'
+  }
   if (sameEquipmentSet(equipment, resolveEquipmentFromPreset('home_gym'))) return 'home_gym'
   if (sameEquipmentSet(equipment, resolveEquipmentFromPreset('bands'))) return 'bands'
 

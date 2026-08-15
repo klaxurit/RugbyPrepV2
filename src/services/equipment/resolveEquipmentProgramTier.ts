@@ -1,5 +1,5 @@
 import type { Equipment } from '../../types/training'
-import { GYM_PRESET, sameEquipmentSet } from './equipmentPresets'
+import { GYM_PRESET, sameEquipmentSet, withoutSprintTrack } from './equipmentPresets'
 
 /** Tier programme : salle complète vs poids de corps / home minimal. */
 export type EquipmentProgramTier = 'full_gym' | 'bodyweight_minimal'
@@ -15,7 +15,9 @@ export function resolveEquipmentProgramTier(
   if (equipment === undefined) return 'full_gym'
   if (equipment.length === 0) return 'bodyweight_minimal'
   if (equipment.includes('machine') || equipment.includes('cable')) return 'full_gym'
-  if (sameEquipmentSet(equipment, GYM_PRESET)) return 'full_gym'
+  if (sameEquipmentSet(withoutSprintTrack(equipment), withoutSprintTrack(GYM_PRESET))) {
+    return 'full_gym'
+  }
   return 'bodyweight_minimal'
 }
 

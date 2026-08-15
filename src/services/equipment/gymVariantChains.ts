@@ -127,6 +127,15 @@ const CORE_ANTI = [
   'activation__bird_dog__bodyweight',
 ] as const
 
+/** Accel salle/maison ↔ piste. La piste n’est pas un kit profil : toujours proposable. */
+const SPEED_ACCEL = [
+  'sprint__falling_start_short',
+  'warmup__wall_drill_march',
+  'sprint__short_acceleration',
+  'sprint__free_acceleration',
+  'sprint__resisted_acceleration',
+] as const
+
 export const GYM_VARIANT_CHAINS: Readonly<Record<string, GymVariantChain>> = indexChains([
   SQUAT_BILATERAL,
   HINGE_BILATERAL,
@@ -142,6 +151,7 @@ export const GYM_VARIANT_CHAINS: Readonly<Record<string, GymVariantChain>> = ind
   MEDBALL_UPPER,
   MEDBALL_ROTATION,
   CORE_ANTI,
+  SPEED_ACCEL,
 ])
 
 export function resolveGymVariantChain(exerciseId: string): GymVariantChain | null {
