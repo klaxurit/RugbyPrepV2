@@ -32,7 +32,8 @@ Voir `prepa-ia-cycle-review.md`. Ordre si on continue :
 1. Speed salle/maison : fallback sans piste (`applyGymSpeedFallback`) — **livré**
 2. Hypertrophie off : +1 série sur 2 primes (`applyHypertrophyPrimeBump`) — **livré**
 3. Mini-bloc cou Upper (`applyNeckIsometricBlock`) — **livré**
-4. Proxy club déclaré (léger / normal / dur) — UI, pas GPS
+4. Finisher rugby optionnel hors saison (`applyOptionalOffSeasonFinisher`) — **livré**
+5. Proxy club déclaré (léger / normal / dur) — UI, pas GPS
 
 Deload −40 % volume / intensité = : `truncateSessionBlocks` — **livré**.
 

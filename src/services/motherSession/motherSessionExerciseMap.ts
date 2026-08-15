@@ -140,6 +140,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
 
   // ── Carries ─────────────────────────────────────────────────
   'farmer carry': 'carry__farmer_walk__dumbbell',
+  'farmer walk (backpack)': 'carry__farmer_walk__backpack',
   'suitcase carry': 'carry__suitcase_walk__dumbbell',
   'zercher carry': 'carry__zercher_carry__barbell',
   'front rack carry': 'carry__front_rack_carry',
