@@ -127,6 +127,15 @@ const CORE_ANTI = [
   'activation__bird_dog__bodyweight',
 ] as const
 
+const NECK_ISO = [
+  'neck__flexion_iso__bodyweight',
+  'neck__extension_iso__bodyweight',
+  'neck__lateral_flexion_iso__bodyweight',
+  'neck__isometric__band',
+  'neck__flexion_iso__band',
+  'neck__extension_iso__band',
+] as const
+
 /** Accel salle/maison ↔ piste. La piste n’est pas un kit profil : toujours proposable. */
 const SPEED_ACCEL = [
   'sprint__falling_start_short',
@@ -152,6 +161,7 @@ export const GYM_VARIANT_CHAINS: Readonly<Record<string, GymVariantChain>> = ind
   MEDBALL_ROTATION,
   CORE_ANTI,
   SPEED_ACCEL,
+  NECK_ISO,
 ])
 
 export function resolveGymVariantChain(exerciseId: string): GymVariantChain | null {

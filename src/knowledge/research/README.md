@@ -13,6 +13,7 @@
 | 3A | Speed salle/maison sans piste | Runtime fallback | **Fait (tests auto)** |
 | 3B | Hyp off +1 série / 2 primes | Runtime 4→5 | **Fait (tests auto)** |
 | 3C | Deload −40 % vol / intensité = | Truncate intelligent | **Fait (tests auto)** |
+| 3D | Mini-bloc cou Upper | Runtime optionnel | **Fait (tests auto)** |
 
 ### Runtime Vague 2 (vérifié)
 
@@ -27,6 +28,7 @@
 | BJSM 2025 cou | Tip off-season seulement | `buildExplanation` `neckTrainingTip` |
 | Speed salle/maison | Fallback accels sans piste | `prepareSessionForRender` `applyGymSpeedFallback` |
 | Hyp off primes | +1 série 4→5 hors décharge | `prepareSessionForRender` `applyHypertrophyPrimeBump` |
+| Cou Upper | Mini-bloc isométrique optionnel | `prepareSessionForRender` `applyNeckIsometricBlock` |
 
 ## Études intégrées (Vague 1)
 

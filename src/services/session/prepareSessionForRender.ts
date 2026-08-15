@@ -19,6 +19,7 @@ import {
 } from './applyProgressiveNordic'
 import { applyGymSpeedFallback } from './applyGymSpeedFallback'
 import { applyHypertrophyPrimeBump } from './applyHypertrophyPrimeBump'
+import { applyNeckIsometricBlock } from './applyNeckIsometricBlock'
 
 interface PrepareInputs {
   session: MotherSession
@@ -40,6 +41,7 @@ interface PrepareInputs {
  *  5. Progression NHE (Severo) si Lower éligible
  *  6. Speed salle/maison : fallback sans piste si pas de `sprint_track`
  *  7. Hypertrophie off : +1 série sur 2 primes (4→5), hors décharge / starter
+ *  8. Mini-bloc cou Upper (optionnel, coupé en premier)
  *
  * La session retournée est prête à être passée aux blocs de rendu (`SessionBlocks`)
  * sans qu'ils aient à connaître le système d'adaptations / contenu FR.
@@ -150,5 +152,6 @@ function finishPrepared(
 ): MotherSession {
   const withNordic = applyProgressiveNordic(session, mesoWeek)
   const withSpeed = applyGymSpeedFallback(withNordic, equipment, lang)
-  return applyHypertrophyPrimeBump(withSpeed, { mesoWeek, trainingLevel, lang })
+  const withHyp = applyHypertrophyPrimeBump(withSpeed, { mesoWeek, trainingLevel, lang })
+  return applyNeckIsometricBlock(withHyp, { mesoWeek, trainingLevel, lang })
 }

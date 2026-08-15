@@ -229,6 +229,24 @@ export const EXERCISE_METRIC_OVERRIDES: Record<string, ExerciseMetricOverride> =
     suggestionTemplate: 'Bassin stable, ischios engagés.',
     progressionFamily: 'ballistic_iso'
   },
+  'neck__flexion_iso__bodyweight': {
+    metricType: 'seconds',
+    progressionHint: 'quality',
+    suggestionTemplate: 'Main sur le front, menton rentré.',
+    progressionFamily: 'ballistic_iso'
+  },
+  'neck__extension_iso__bodyweight': {
+    metricType: 'seconds',
+    progressionHint: 'quality',
+    suggestionTemplate: 'Main sur la nuque, nuque longue.',
+    progressionFamily: 'ballistic_iso'
+  },
+  'neck__lateral_flexion_iso__bodyweight': {
+    metricType: 'seconds',
+    progressionHint: 'quality',
+    suggestionTemplate: 'Main sur la tempe, pas de compensation.',
+    progressionFamily: 'ballistic_iso'
+  },
   'neck__flexion_iso__band': {
     metricType: 'seconds',
     progressionHint: 'quality',

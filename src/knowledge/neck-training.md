@@ -21,7 +21,8 @@ commotion chez des lycéens rugby (JSAMS 2024).
 
 - Pas de neck harness lourd, pas de séance « cou » dédiée (décision 3× gym).
 - **Vague 2** : tip off-season (Hu ne s’affiche pas).
-- **Vague 3** (si validé) : 1 mini-bloc isométrique en fin d’Upper (2×10–15 s
-  × 3 directions), coupé en premier si truncate.
+- **Vague 3** : mini-bloc isométrique en fin d’Upper (`applyNeckIsometricBlock`)
+  — 2×10–15 s × 3 directions, mains seulement, optionnel, coupé en premier.
+  Pas de doublon si la séance a déjà du cou.
 
 *Dernière mise à jour : 2026-08-15*

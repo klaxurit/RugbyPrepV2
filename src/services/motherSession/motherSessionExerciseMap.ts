@@ -182,7 +182,11 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   // ── Neck ────────────────────────────────────────────────────
   'neck isometric': 'neck__isometric__band',
   'banded neck isometric': 'neck__isometric__band',
+  'neck flexion isometric': 'neck__flexion_iso__bodyweight',
+  'neck flexion isometric (hand)': 'neck__flexion_iso__bodyweight',
   'neck extension isometric': 'neck__extension_iso__bodyweight',
+  'neck extension isometric (hand)': 'neck__extension_iso__bodyweight',
+  'neck lateral flexion isometric (hand)': 'neck__lateral_flexion_iso__bodyweight',
   'banded neck extension': 'neck__extension__band',
 
   // ── Prehab / Shoulder ───────────────────────────────────────

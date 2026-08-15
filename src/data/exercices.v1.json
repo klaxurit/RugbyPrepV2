@@ -4983,6 +4983,27 @@
     "defaultNotes": "Corps aligné, adducteurs actifs. Tenir sans rotation du bassin."
   },
   {
+    "id": "neck__flexion_iso__bodyweight",
+    "exerciseId": "neck__flexion_iso__bodyweight",
+    "name": "Neck Flexion Isometric (hand)",
+    "nameFr": "Isométrie flexion cou (main)",
+    "pattern": "neck",
+    "equipment": [
+      "none"
+    ],
+    "contraindications": [
+      "neck_pain"
+    ],
+    "level": "beginner",
+    "metricType": "seconds",
+    "tags": [
+      "neck",
+      "prehab"
+    ],
+    "notes": "Main sur le front, résister en flexion. Menton rentré, sans douleur.",
+    "defaultNotes": "2×10–15 s. Stop si douleur, vertiges ou fourmillements."
+  },
+  {
     "id": "neck__extension_iso__bodyweight",
     "exerciseId": "neck__extension_iso__bodyweight",
     "name": "Neck Extension Isometric (hand)",
