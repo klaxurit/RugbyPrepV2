@@ -12,6 +12,7 @@
 | 2A | Contact (match week) · Cou (off-season) | Copy only | **Fait (tests auto)** |
 | 3A | Speed salle/maison sans piste | Runtime fallback | **Fait (tests auto)** |
 | 3B | Hyp off +1 série / 2 primes | Runtime 4→5 | **Fait (tests auto)** |
+| 3C | Deload −40 % vol / intensité = | Truncate intelligent | **Fait (tests auto)** |
 
 ### Runtime Vague 2 (vérifié)
 
@@ -69,7 +70,7 @@ Un **rôle par cluster** — détail : `../evidence-clusters.md`. Pas de doublon
 
 - [ ] Stats citées (ex. −51 % NHE) vérifiées sur PubMed / full text
 - [ ] Pas de contradiction avec `evidence-register.md` actuel
-- [ ] Décider si deload −40–50 % Israetel reste la cible vs mother sessions −30 %
+- [x] Deload : −40 % volume, intensité = (`truncateSessionBlocks`, 2026-08-15)
 - [ ] Décider progression NHE product (Severo) vs protocole UEFA actuel
 - [ ] Spec UX feedback Weakley (toasts / PR / encouragement IA)
 

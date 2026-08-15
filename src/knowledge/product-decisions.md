@@ -37,6 +37,7 @@ pas dans le compteur gym. Plafond audit `in_season` = 14 séries/groupe
 | Jours gym / sem | 3 | 3 densifiés, pas 4 par défaut | Empiler gym + vitesse max + club le même jour |
 | Intensité Force-Pont | 85–90 %, RER 1–2 | Idem ; charges vraiment au % | Échec systématique (Robinson = argument, pas un 4e jour) |
 | Isolation / pump | 1 bloc prévention + peu d’armes | Finisher optionnel hors saison | Circuit 100 reps + lourd le même soir |
+| Décharge | −40 % volume, intensité = | Coupe de blocs d’abord ; allège les séries seulement si la coupe ne suffit pas | Deload « séance vide » / baisser les % |
 | Contrastes | 1 lourd de qualité / séance | 2 si Full et budget neural OK | 4+ contrastes / semaine (Bauer + audits) |
 | Vitesse | Slot Speed salle/maison (mur + 3–5 pas) | 8 m couloir si dispo ; 10–20 m seulement si piste déclarée | Piste obligatoire / luge 130 % BW + lower + club |
 | Contact club | Compte dans le budget (proxy semaine de match) | Slider club dur / normal / léger (Vague 3) | Chronométrer 15 min comme un pro |
@@ -53,7 +54,6 @@ calme (off-season / semaine sans match).
 
 - Volume hypertrophie exact (Pelland : dose-réponse). Off hyp : primes salle 5 séries
   (runtime), plafond audit 22 inchangé.
-- Deload −40 % vs −30 % mother sessions (à trancher, voir `research/README.md`).
 - Densité Speed hors saison.
 
 *Dernière mise à jour : 2026-08-15*

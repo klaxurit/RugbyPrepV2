@@ -97,7 +97,7 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
       expect(r.sessions.every((s) => s.maxBlocks === 3)).toBe(true)
     })
 
-    it('pipeline Upper Force-Pont deload : coupe vers 2 blocs + light (~−50 % séries)', () => {
+    it('pipeline Upper Force-Pont deload : coupe vers 2 blocs (~−40 %, intensité gardée)', () => {
       const raw = MOTHER_SESSIONS_BY_ID.UPPER_OFFSEASON_FORCE_BRIDGE_V1
       expect(raw).toBeDefined()
       expect(raw.blocks.length).toBeGreaterThanOrEqual(4)
@@ -113,7 +113,6 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
 
       expect(deload.droppedBlockNumbers).toEqual(expect.arrayContaining([4, 3]))
       expect(deload.session.blocks.map((b) => b.number)).toEqual([1, 2])
-      expect(deload.lightenedBlockNumbers.length).toBeGreaterThan(0)
 
       const countSets = (s: typeof raw) =>
         s.blocks.reduce((acc, b) => {
@@ -127,6 +126,9 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
       const ratio = countSets(deload.session) / countSets(raw)
       expect(ratio).toBeGreaterThanOrEqual(0.35)
       expect(ratio).toBeLessThanOrEqual(0.65)
+      const primeRx = deload.session.blocks[0].exercises[0].prescription
+      expect(primeRx).toMatch(/85|RER/i)
+      expect(primeRx).toMatch(/^4\s*[x×]/i)
     })
 
     it('soft-floor : séance 2 blocs en deload ne perd pas de bloc', () => {

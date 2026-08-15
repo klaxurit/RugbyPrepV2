@@ -34,6 +34,8 @@ Voir `prepa-ia-cycle-review.md`. Ordre si on continue :
 3. Mini-bloc cou Upper (protocole `neck-training.md`)
 4. Proxy club déclaré (léger / normal / dur) — UI, pas GPS
 
+Deload −40 % volume / intensité = : `truncateSessionBlocks` — **livré**.
+
 Chaque item = A/B, tests auto, pas de merge si un audit volume/repos casse.
 
 ## Ce qui ne se fera pas

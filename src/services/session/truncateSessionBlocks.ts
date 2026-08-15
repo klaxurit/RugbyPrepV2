@@ -13,7 +13,7 @@
  */
 
 import type { Block, MotherSession } from '../../types/motherSession'
-import { parseBlockTourCount } from '../ui/blockPresentation'
+import { parseBlockTourCount, parseExerciseSets } from '../ui/blockPresentation'
 
 export interface TruncateOptions {
   /** Nombre de blocs visé. Absent = aucune troncature. */
@@ -37,6 +37,19 @@ export interface TruncateResult {
 
 /** Une séance garde toujours au moins un bloc, quelle que soit la consigne. */
 const MIN_BLOCKS = 1
+
+/** Après coupe de blocs, si le volume restant est déjà ≤ 65 %, pas d’allègement. */
+const DELOAD_REMAINING_CEILING = 0.65
+
+function sessionSetVolume(session: Pick<MotherSession, 'blocks'>): number {
+  let total = 0
+  for (const block of session.blocks) {
+    for (const exercise of block.exercises) {
+      total += parseExerciseSets(exercise.prescription) ?? parseBlockTourCount(block)
+    }
+  }
+  return total
+}
 
 /**
  * Ordre de retrait quand la séance ne déclare pas `reduction_order` :
@@ -127,8 +140,9 @@ export function truncateSessionBlocks(
   let blocks = session.blocks
 
   // Garde-fou séances déjà très courtes (≤ 2 blocs) : on n’arrache pas un
-  // bloc via maxBlocks — seul `light` (−1 tour) s’applique. Les séances à
-  // 3–4+ blocs gardent la troncature Israetel (~−40 %).
+  // bloc via maxBlocks — seul `light` (−1 tour) s’applique.
+  // Cible décharge : ≈ −40 % volume, intensité inchangée. Si la coupe de
+  // blocs suffit (reste ≤ 65 %), on n’allège plus les séries.
   const softFloorShortSession = session.blocks.length <= 2
   const effectiveMaxBlocks =
     softFloorShortSession || maxBlocks == null
@@ -144,7 +158,12 @@ export function truncateSessionBlocks(
   }
 
   const lightenedBlockNumbers: number[] = []
-  if (isLight) {
+  const originalVolume = sessionSetVolume(session)
+  const remainingVolume = sessionSetVolume({ ...session, blocks })
+  const alreadyAtDeloadTarget =
+    originalVolume > 0 && remainingVolume / originalVolume <= DELOAD_REMAINING_CEILING
+
+  if (isLight && !alreadyAtDeloadTarget) {
     blocks = blocks.map((block) => {
       const { block: next, changed } = lightenBlock(block)
       if (changed) lightenedBlockNumbers.push(block.number)

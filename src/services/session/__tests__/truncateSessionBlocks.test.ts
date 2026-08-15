@@ -135,11 +135,20 @@ describe('truncateSessionBlocks — variant light', () => {
     expect(result.session.blocks[0].exercises[0].prescription).toContain('85%')
   })
 
-  it('combine troncature et allègement', () => {
+  it('si la coupe de blocs suffit (~−40 %), on n’allège plus les séries', () => {
     const s = session([block(1), block(2), block(3), block(4)], [4, 3, 2])
     const result = truncateSessionBlocks(s, { maxBlocks: 2, variant: 'light' })
     expect(result.session.blocks.map((b) => b.number)).toEqual([1, 2])
-    expect(result.session.blocks.every((b) => b.format.includes('2 rounds'))).toBe(true)
+    expect(result.lightenedBlockNumbers).toEqual([])
+    expect(result.session.blocks.every((b) => b.format.includes('3 rounds'))).toBe(true)
+  })
+
+  it('coupe d’un bloc seulement → allège encore pour viser −40 %', () => {
+    const s = session([block(1), block(2), block(3), block(4)], [4, 3, 2])
+    const result = truncateSessionBlocks(s, { maxBlocks: 3, variant: 'light' })
+    expect(result.droppedBlockNumbers).toEqual([4])
+    expect(result.lightenedBlockNumbers.length).toBeGreaterThan(0)
+    expect(result.session.blocks[0].format).toContain('2 rounds')
   })
 
   it('ne modifie pas la séance source', () => {
