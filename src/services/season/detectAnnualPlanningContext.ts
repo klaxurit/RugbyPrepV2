@@ -351,6 +351,7 @@ function baseContextFields(
 ): Pick<
   AnnualPlanningContext,
   | 'fatigueLevel'
+  | 'clubContactProxy'
   | 'weeklyFrequency'
   | 'positionGroup'
   | 'identity'
@@ -384,6 +385,7 @@ function baseContextFields(
 
   return {
     fatigueLevel: inputs.fatigueLevel ?? 'normal',
+    clubContactProxy: inputs.clubContactProxy ?? 'normal',
     weeklyFrequency: inputs.weeklyFrequency,
     positionGroup: inputs.positionGroup,
     identity: inputs.identity,

@@ -541,4 +541,34 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(hasNonLight).toBe(true)
     expect(r.warnings.some((w) => w.toLowerCase().includes('reprise'))).toBe(false)
   })
+
+  it('in-season hors match + club dur → séances light, max 3 blocs', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-05')],
+      today: '2025-03-18',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      clubContactProxy: 'hard',
+    })
+    expect(r.planningContext.cycle).toBe('in_season')
+    expect(r.planningContext.isMatchWeek).toBe(false)
+    expect(r.planningContext.clubContactProxy).toBe('hard')
+    expect(r.sessions.length).toBeGreaterThan(0)
+    expect(r.sessions.every((s) => s.variant === 'light')).toBe(true)
+    expect(r.sessions.every((s) => s.maxBlocks === 3)).toBe(true)
+  })
+
+  it('in-season very_high + club dur → recovery, pas de recoupe extra', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-05')],
+      today: '2025-03-18',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      fatigueLevel: 'very_high',
+      clubContactProxy: 'hard',
+    })
+    expect(r.planningContext.loadManagementOverride).toBe('recovery')
+    expect(r.sessions.every((s) => s.sessionId.includes('RECOVERY'))).toBe(true)
+    expect(r.sessions.every((s) => s.variant === undefined && s.maxBlocks === undefined)).toBe(true)
+  })
 })

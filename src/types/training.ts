@@ -302,6 +302,11 @@ export interface UserProfile {
     skipOffSeasonRecoveryIntro?: boolean
     /** Overrides admin / staff — alignés sur AthletePlanningInputs['planningAnchors']. */
     manualCycleOverride?: 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
+    /**
+     * Charge de contact club déclarée pour une semaine ISO (lundi).
+     * Ignorée si `weekStartIso` n’est plus la semaine courante.
+     */
+    clubContactWeek?: { weekStartIso: string; level: 'light' | 'normal' | 'hard' }
     manualOffSeasonWeekOverride?: number
     manualPreSeasonWeekOverride?: number
   }

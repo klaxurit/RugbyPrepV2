@@ -2,6 +2,9 @@ import type { CalendarEvent, Equipment } from './training'
 
 export type AnnualCycle = 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
 
+/** Charge de contact club déclarée pour la semaine (pas de GPS, pas de 15 min). */
+export type ClubContactProxy = 'light' | 'normal' | 'hard'
+
 export type OffSeasonPhase = 1 | 2 | 3 | 4 | 5
 export type PreSeasonPhase = 1 | 2 | 3
 
@@ -36,6 +39,9 @@ export interface AthletePlanningInputs {
   equipment?: Equipment[]
 
   fatigueLevel?: 'normal' | 'high' | 'very_high'
+
+  /** Proxy contact club pour la semaine de `today`. Défaut runtime = normal. */
+  clubContactProxy?: ClubContactProxy
 
   /** État de forme déclaré à l'onboarding. Module la rampe de reprise (cf. onboardingCycleHint). */
   trainingBaseline?: TrainingBaselineInput
@@ -100,6 +106,8 @@ export interface AnnualPlanningContext {
   daysSinceLastMatch: number | null
 
   fatigueLevel: 'normal' | 'high' | 'very_high'
+  /** Proxy contact club (léger / normal / dur). Absent = normal. */
+  clubContactProxy?: ClubContactProxy
   /** Set par le resolver MS quand in_season + very_high fatigue → séances recovery. */
   loadManagementOverride?: 'recovery'
   weeklyFrequency: 2 | 3 | 4

@@ -8,6 +8,7 @@ import {
   mapWeeklySlotsForEquipment,
 } from '../equipment/motherSessionEquipmentMap'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
+import { applyClubContactProxyToSessions } from '../scheduling/clubContactProxy'
 
 /** Entrée alignée sur le contexte annuel (identity, ancres, monitoring). */
 export type ResolveMotherSessionsForWeekParams = AthletePlanningInputs
@@ -149,19 +150,28 @@ export function resolveMotherSessionsForWeek(
   options?: ResolveMotherSessionsForWeekOptions
 ): ResolveMotherSessionsForWeekResult {
   const result = resolveMotherSessionsForWeekCore(params, options)
+  const withClub = applyClubContactToResolvedWeek(result)
 
   // ── Post-process: long-absence adaptation (>28 days) ───────────────
-  const monitoring = result.planningContext.monitoringSnapshot
+  const monitoring = withClub.planningContext.monitoringSnapshot
   const isLongAbsence =
     monitoring?.completedSessionsLast7d === 0 &&
     monitoring?.completedSessionsLast28d === 0 &&
     monitoring?.hasHistoricalLogs === true
 
-  if (isLongAbsence && result.status !== 'missing_session') {
-    return applyLongAbsenceAdaptation(result)
+  if (isLongAbsence && withClub.status !== 'missing_session') {
+    return applyLongAbsenceAdaptation(withClub)
   }
 
-  return result
+  return withClub
+}
+
+function applyClubContactToResolvedWeek(
+  result: ResolveMotherSessionsForWeekResult,
+): ResolveMotherSessionsForWeekResult {
+  const nextSessions = applyClubContactProxyToSessions(result.sessions, result.planningContext)
+  if (nextSessions === result.sessions) return result
+  return { ...result, sessions: nextSessions }
 }
 
 function resolveMotherSessionsForWeekCore(

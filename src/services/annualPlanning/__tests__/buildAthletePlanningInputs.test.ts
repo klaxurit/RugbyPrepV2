@@ -548,4 +548,36 @@ describe('buildAthletePlanningInputs', () => {
     expect(ctx.offSeasonPhase).toBe(3)
     expect(built.inputs.weeklyFrequency).toBe(3)
   })
+
+  it('clubContactWeek de la semaine courante → clubContactProxy', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        rugbyPosition: 'FRONT_ROW',
+        planningAnchors: {
+          clubContactWeek: { weekStartIso: '2025-03-10', level: 'hard' },
+        },
+      }),
+      events: emptyEvents,
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.clubContactProxy).toBe('hard')
+  })
+
+  it('clubContactWeek d’une autre semaine → normal', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({
+        rugbyPosition: 'FRONT_ROW',
+        planningAnchors: {
+          clubContactWeek: { weekStartIso: '2025-03-03', level: 'hard' },
+        },
+      }),
+      events: emptyEvents,
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.clubContactProxy).toBe('normal')
+  })
 })

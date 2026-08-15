@@ -15,6 +15,7 @@
 | 3C | Deload −40 % vol / intensité = | Truncate intelligent | **Fait (tests auto)** |
 | 3D | Mini-bloc cou Upper | Runtime optionnel | **Fait (tests auto)** |
 | 3E | Finisher rugby optionnel hors saison | Runtime portage | **Fait (tests auto)** |
+| 3F | Proxy club léger / normal / dur | UI + coupe salle si dur | **Fait (tests auto)** |
 
 ### Runtime Vague 2 (vérifié)
 
@@ -31,6 +32,7 @@
 | Hyp off primes | +1 série 4→5 hors décharge | `prepareSessionForRender` `applyHypertrophyPrimeBump` |
 | Cou Upper | Mini-bloc isométrique optionnel | `prepareSessionForRender` `applyNeckIsometricBlock` |
 | Finisher off | Farmer 2×20–30 s, optionnel, hors saison | `prepareSessionForRender` `applyOptionalOffSeasonFinisher` |
+| Proxy club | Slider léger / normal / dur (pas de 15 min) | `clubContactProxy` → WeekPage + resolver |
 
 ## Études intégrées (Vague 1)
 

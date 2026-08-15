@@ -973,6 +973,44 @@ describe('buildExplanation', () => {
       expect(result.detailItems.length).toBeLessThanOrEqual(3)
       expect(result.detailItems.some((d) => d.ruleId === 'context:contact_load')).toBe(false)
     })
+
+    it('club dur hors match → tip contact (pas 15 min)', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'in_season',
+          isMatchWeek: false,
+          daysUntilNextMatch: 12,
+          clubContactProxy: 'hard',
+          positionGroup: 'back_three',
+          planningTrace: { resolutionMode: 'calendar_inferred', rulesApplied: [], warnings: [] },
+        }),
+        schedulingMode: 'calendar',
+        presentation: makePres(),
+        corrections: [],
+      })
+      expect(result.detailItems.some((d) => d.ruleId === 'context:contact_load')).toBe(true)
+      expect(result.detailLines.join(' ')).toMatch(/Club dur/)
+      expect(result.detailLines.join(' ')).not.toMatch(/15/)
+      assertNoJargon(result)
+    })
+
+    it('club léger en semaine de match → copy inverse', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'in_season',
+          isMatchWeek: true,
+          daysUntilNextMatch: 3,
+          clubContactProxy: 'light',
+          positionGroup: 'back_three',
+          planningTrace: { resolutionMode: 'calendar_inferred', rulesApplied: [], warnings: [] },
+        }),
+        schedulingMode: 'calendar',
+        presentation: makePres(),
+        corrections: [],
+      })
+      expect(result.detailLines.join(' ')).toMatch(/plus léger/)
+      assertNoJargon(result)
+    })
   })
 
   describe('Cou — tip off-season', () => {

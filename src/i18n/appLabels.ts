@@ -807,6 +807,15 @@ export const APP_LABELS = {
     en: 'Adapt your week automatically around the match — Pro.',
   },
 
+  week_club_contact_label: { fr: 'Club cette semaine', en: 'Club this week' },
+  week_club_contact_hint: {
+    fr: 'Plaquages, mêlée, rucks — pas un chrono. Ça ajuste la salle.',
+    en: 'Tackles, scrum, rucks — no stopwatch. This trims the gym.',
+  },
+  week_club_contact_light: { fr: 'Léger', en: 'Light' },
+  week_club_contact_normal: { fr: 'Normal', en: 'Normal' },
+  week_club_contact_hard: { fr: 'Dur', en: 'Hard' },
+
   // ── Session share (post-save Stories card) ──────────────────────────────
   session_share_aria: {
     fr: 'Partager la séance',

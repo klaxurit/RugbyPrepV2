@@ -18,6 +18,7 @@ import type {
   WeekExplanationDetail,
   WeekPresentation,
 } from '../../types/scheduling'
+import { clubContactLoadTip } from './clubContactProxy'
 
 // ── Public interface ────────────────────────────────────────────────
 
@@ -459,16 +460,15 @@ function buildDetailItems(
 
 /**
  * Charge de contact amateur (World Rugby → proxy, pas le rail 15 min pro).
- * Semaine de match in-season seulement — Hu reste hors match.
+ * Normal = semaine de match ; dur = même hors match ; léger = copy inverse si match.
  */
 export function contactLoadTip(
-  ctx: Pick<AnnualPlanningContext, 'cycle' | 'isMatchWeek' | 'daysUntilNextMatch'>,
+  ctx: Pick<
+    AnnualPlanningContext,
+    'cycle' | 'isMatchWeek' | 'daysUntilNextMatch' | 'clubContactProxy'
+  >,
 ): string | undefined {
-  if (ctx.cycle !== 'in_season') return undefined
-  const matchWeek =
-    ctx.isMatchWeek || (ctx.daysUntilNextMatch != null && ctx.daysUntilNextMatch <= 6)
-  if (!matchWeek) return undefined
-  return 'Le contact au club (plaquages, mêlée, rucks) compte autant que la salle — cette semaine, vise la qualité, pas le volume.'
+  return clubContactLoadTip(ctx)
 }
 
 /**

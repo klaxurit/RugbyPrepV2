@@ -2,7 +2,7 @@ import { useEffect, useMemo, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { Plus, Lock } from 'lucide-react'
-import { WeekViewToggle, WeekMonthView, WeekDailyPlanner } from '../components/week'
+import { WeekViewToggle, WeekMonthView, WeekDailyPlanner, ClubContactProxyControl } from '../components/week'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
@@ -40,6 +40,7 @@ import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
 import type { DatedSession } from '../types/scheduling'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
+import { startOfIsoWeek } from '../services/weeklyBilan/computeWeeklyBilan'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
 import { cyclePhaseLabel, tr } from '../i18n/appLabels'
 import type { CalendarEvent, MatchKind } from '../types/training'
@@ -564,6 +565,25 @@ export function WeekPage() {
                       }
                     : undefined
                 }
+              />
+            )}
+
+            {(surface.planningContext.cycle === 'in_season' ||
+              surface.planningContext.cycle === 'playoffs') && (
+              <ClubContactProxyControl
+                value={surface.planningContext.clubContactProxy ?? 'normal'}
+                lang={lang}
+                onChange={(level) => {
+                  updateProfile({
+                    planningAnchors: {
+                      ...profile.planningAnchors,
+                      clubContactWeek: {
+                        weekStartIso: startOfIsoWeek(today),
+                        level,
+                      },
+                    },
+                  })
+                }}
               />
             )}
 

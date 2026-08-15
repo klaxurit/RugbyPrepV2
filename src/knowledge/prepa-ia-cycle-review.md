@@ -41,7 +41,8 @@ toucher aux mother sessions. Ensuite seulement, une ligne B à la fois :
 1. **B3 Speed** + **B1 hyp** — livrés (runtime, corpus intact).
 2. **B5** deload — livré (−40 % volume, intensité gardée).
 3. **B6** cou — livré (Upper, optionnel). **B7** finisher optionnel — livré (portage hors saison).
-4. Ne pas toucher Force-Pont intensité tant que les logs ne montrent pas des % tenus.
+4. Proxy club léger / normal / dur — livré (UI + coupe salle si dur).
+5. Ne pas toucher Force-Pont intensité tant que les logs ne montrent pas des % tenus.
 
 Prochaine étape humaine : choisir les lignes B à implémenter. Ensuite seulement
 edit mother sessions + audits.

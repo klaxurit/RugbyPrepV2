@@ -17,6 +17,7 @@ import { isRestartRampUpActive } from '../program/restartRampUp'
 import { resolveFatigueLevel } from '../program/resolveFatigueLevel'
 import { shouldAutoManualPlayoffsFromCalendar } from '../calendar/inferMatchKindFromFfrJournee'
 import { sanitizePlanningAnchorsForProgressionDetailed } from '../season/sanitizePlanningAnchors'
+import { resolveClubContactProxy } from '../scheduling/clubContactProxy'
 
 // (`AcwrZoneInput` retiré — on utilise directement `ACWRZone | null | undefined`
 //  depuis le hook canonical `useACWR`.)
@@ -346,6 +347,7 @@ export function buildAthletePlanningInputs(
     identity,
     monitoringSnapshot,
     planningAnchors,
+    clubContactProxy: resolveClubContactProxy(profile.planningAnchors?.clubContactWeek, today),
   }
 
   return {
