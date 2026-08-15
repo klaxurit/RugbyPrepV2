@@ -288,6 +288,10 @@ export function SessionDetailPage() {
       lang,
       mesocycleWeek: planning?.mesocycleWeek,
       weekNumber: planning?.weekNumber,
+      isMatchWeek: planning?.isMatchWeek
+        || (planning?.daysUntilNextMatch != null && planning.daysUntilNextMatch <= 6),
+      isDeloadWeek: planning?.isDeloadWeek,
+      clubContactProxy: planning?.clubContactProxy,
     })
     // Décharge, taper et overrides de fatigue passent tous par ces deux champs.
     return truncateSessionBlocks(prepared, {
@@ -301,6 +305,10 @@ export function SessionDetailPage() {
     lang,
     surface?.planningContext?.mesocycleWeek,
     surface?.planningContext?.weekNumber,
+    surface?.planningContext?.isMatchWeek,
+    surface?.planningContext?.daysUntilNextMatch,
+    surface?.planningContext?.isDeloadWeek,
+    surface?.planningContext?.clubContactProxy,
   ])
 
   /** Set logs + block_logs legacy — source unique pour PR / PREVIOUS / suggestions. */

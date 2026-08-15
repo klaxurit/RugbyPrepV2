@@ -53,7 +53,8 @@ calme (off-season / semaine sans match).
 ## Ce qui n’est pas une décision figée
 
 - Volume hypertrophie exact (Pelland : dose-réponse). Off hyp : primes salle 5 séries
-  (runtime), plafond audit 22 inchangé.
+  (runtime), plafond audit 22 inchangé. In-season hors match : bloc force 4 séries
+  (runtime), plafond audit 14 inchangé.
 - Densité Speed hors saison.
 
 *Dernière mise à jour : 2026-08-15*

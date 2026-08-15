@@ -19,8 +19,10 @@ import {
 } from './applyProgressiveNordic'
 import { applyGymSpeedFallback } from './applyGymSpeedFallback'
 import { applyHypertrophyPrimeBump } from './applyHypertrophyPrimeBump'
+import { applyInSeasonNoMatchPrimeBump } from './applyInSeasonNoMatchPrimeBump'
 import { applyNeckIsometricBlock } from './applyNeckIsometricBlock'
 import { applyOptionalOffSeasonFinisher } from './applyOptionalOffSeasonFinisher'
+import type { ClubContactProxy } from '../../types/annualPlanning'
 
 interface PrepareInputs {
   session: MotherSession
@@ -31,6 +33,9 @@ interface PrepareInputs {
   mesocycleWeek?: 1 | 2 | 3 | 4 | null
   /** Numéro de semaine de cycle (fallback si pas de mésocycle). */
   weekNumber?: number | null
+  isMatchWeek?: boolean
+  isDeloadWeek?: boolean
+  clubContactProxy?: ClubContactProxy
 }
 
 /**
@@ -42,8 +47,9 @@ interface PrepareInputs {
  *  5. Progression NHE (Severo) si Lower éligible
  *  6. Speed salle/maison : fallback sans piste si pas de `sprint_track`
  *  7. Hypertrophie off : +1 série sur 2 primes (4→5), hors décharge / starter
- *  8. Mini-bloc cou Upper (optionnel, coupé en premier)
- *  9. Finisher rugby optionnel hors saison (portage, coupé en premier)
+ *  8. In-season hors match : +1 série bloc force (3→4), hors club dur / décharge
+ *  9. Mini-bloc cou Upper (optionnel, coupé en premier)
+ * 10. Finisher rugby optionnel hors saison (portage, coupé en premier)
  *
  * La session retournée est prête à être passée aux blocs de rendu (`SessionBlocks`)
  * sans qu'ils aient à connaître le système d'adaptations / contenu FR.
@@ -57,6 +63,9 @@ export function prepareSessionForRender({
   lang,
   mesocycleWeek,
   weekNumber,
+  isMatchWeek,
+  isDeloadWeek,
+  clubContactProxy,
 }: PrepareInputs): MotherSession {
   // 1+2. Adaptations EN (Foundations puis Equipment).
   const foundationsSession = isFoundationsLevel(trainingLevel)
@@ -67,7 +76,11 @@ export function prepareSessionForRender({
   const mesoWeek = resolveNordicMesoWeek({ mesocycleWeek, weekNumber })
 
   if (lang !== 'fr') {
-    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel)
+    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel, {
+      isMatchWeek,
+      isDeloadWeek,
+      clubContactProxy,
+    })
   }
 
   // 3. Pipeline FR : raw FR → Foundations FR → Equipment FR → merge dans la session.
@@ -82,7 +95,11 @@ export function prepareSessionForRender({
   )
 
   if (!finalFr) {
-    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel)
+    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel, {
+      isMatchWeek,
+      isDeloadWeek,
+      clubContactProxy,
+    })
   }
 
   // Merge des noms FR sur les blocs et exos. Format/coachingNotes/fallbackOptions
@@ -142,6 +159,7 @@ export function prepareSessionForRender({
     equipment,
     lang,
     trainingLevel,
+    { isMatchWeek, isDeloadWeek, clubContactProxy },
   )
 }
 
@@ -151,11 +169,24 @@ function finishPrepared(
   equipment: Equipment[] | undefined,
   lang: 'fr' | 'en',
   trainingLevel: TrainingLevel | undefined,
+  weekCtx: {
+    isMatchWeek?: boolean
+    isDeloadWeek?: boolean
+    clubContactProxy?: ClubContactProxy
+  } = {},
 ): MotherSession {
   const withNordic = applyProgressiveNordic(session, mesoWeek)
   const withSpeed = applyGymSpeedFallback(withNordic, equipment, lang)
   const withHyp = applyHypertrophyPrimeBump(withSpeed, { mesoWeek, trainingLevel, lang })
-  const withNeck = applyNeckIsometricBlock(withHyp, { mesoWeek, trainingLevel, lang })
+  const withInSeason = applyInSeasonNoMatchPrimeBump(withHyp, {
+    mesoWeek,
+    trainingLevel,
+    lang,
+    isMatchWeek: weekCtx.isMatchWeek,
+    isDeloadWeek: weekCtx.isDeloadWeek,
+    clubContactProxy: weekCtx.clubContactProxy,
+  })
+  const withNeck = applyNeckIsometricBlock(withInSeason, { mesoWeek, trainingLevel, lang })
   return applyOptionalOffSeasonFinisher(withNeck, {
     mesoWeek,
     trainingLevel,

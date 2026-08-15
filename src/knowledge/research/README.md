@@ -16,6 +16,7 @@
 | 3D | Mini-bloc cou Upper | Runtime optionnel | **Fait (tests auto)** |
 | 3E | Finisher rugby optionnel hors saison | Runtime portage | **Fait (tests auto)** |
 | 3F | Proxy club léger / normal / dur | UI + coupe salle si dur | **Fait (tests auto)** |
+| 3G | In-season hors match +1 série force | Runtime 3→4 | **Fait (tests auto)** |
 
 ### Runtime Vague 2 (vérifié)
 
@@ -33,6 +34,7 @@
 | Cou Upper | Mini-bloc isométrique optionnel | `prepareSessionForRender` `applyNeckIsometricBlock` |
 | Finisher off | Farmer 2×20–30 s, optionnel, hors saison | `prepareSessionForRender` `applyOptionalOffSeasonFinisher` |
 | Proxy club | Slider léger / normal / dur (pas de 15 min) | `clubContactProxy` → WeekPage + resolver |
+| In-season hors match | +1 série bloc force 3→4 | `prepareSessionForRender` `applyInSeasonNoMatchPrimeBump` |
 
 ## Études intégrées (Vague 1)
 
