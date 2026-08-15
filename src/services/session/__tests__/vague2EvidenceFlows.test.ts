@@ -268,6 +268,71 @@ describe('Vague 2 — vérification Israetel / Severo / Weakley', () => {
       })
       expect(exp.detailLines.join(' ')).toMatch(/arrière/i)
       expect(exp.detailItems.some((d) => d.ruleId === 'context:hu_position_workload')).toBe(true)
+      expect(exp.detailItems.some((d) => d.ruleId === 'context:contact_load')).toBe(false)
+    })
+  })
+
+  describe('Contact — tip semaine de match', () => {
+    it('in-season match week → tip contact dans explanation', () => {
+      const exp = buildExplanation({
+        planningContext: basePlanning({
+          isMatchWeek: true,
+          daysUntilNextMatch: 3,
+          isDeloadWeek: false,
+          mesocycleWeek: 2,
+          weekNumber: 2,
+          positionGroup: 'back_three',
+          planningTrace: {
+            resolutionMode: 'calendar_inferred',
+            rulesApplied: [],
+            warnings: [],
+          },
+        }),
+        schedulingMode: 'sequential',
+        presentation: {
+          sessions: [],
+          matchEvents: [],
+          unavailableDays: [],
+          clubDays: [],
+          corrections: [],
+          mode: 'sequential',
+        },
+        corrections: [],
+      })
+      expect(exp.detailItems.some((d) => d.ruleId === 'context:contact_load')).toBe(true)
+      expect(exp.detailLines.join(' ')).toMatch(/contact|plaquage|club/i)
+    })
+  })
+
+  describe('Cou — tip off-season', () => {
+    it('off-season → tip cou dans explanation', () => {
+      const exp = buildExplanation({
+        planningContext: basePlanning({
+          cycle: 'off_season',
+          isMatchWeek: false,
+          daysUntilNextMatch: null,
+          isDeloadWeek: false,
+          weekLabel: 'Inter-saison',
+          positionGroup: 'front_row',
+          planningTrace: {
+            resolutionMode: 'calendar_inferred',
+            rulesApplied: [],
+            warnings: [],
+          },
+        }),
+        schedulingMode: 'sequential',
+        presentation: {
+          sessions: [],
+          matchEvents: [],
+          unavailableDays: [],
+          clubDays: [],
+          corrections: [],
+          mode: 'sequential',
+        },
+        corrections: [],
+      })
+      expect(exp.detailItems.some((d) => d.ruleId === 'context:neck_training')).toBe(true)
+      expect(exp.detailItems.some((d) => d.ruleId === 'context:hu_position_workload')).toBe(false)
     })
   })
 

@@ -80,7 +80,9 @@ local.properties
 _bmad/
 _bmad-output/
 .agents/
-.cursor/
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 .claude/
 
 # Programmes perso / achetés — ne jamais pousser (copyright)

@@ -914,4 +914,100 @@ describe('buildExplanation', () => {
       expect(result.detailItems.some((d) => d.ruleId === 'context:hu_position_workload')).toBe(false)
     })
   })
+
+  describe('Contact — tip semaine de match', () => {
+    it('in-season semaine de match → tip contact', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'in_season',
+          isMatchWeek: true,
+          daysUntilNextMatch: 4,
+          positionGroup: 'back_three',
+          planningTrace: { resolutionMode: 'calendar_inferred', rulesApplied: [], warnings: [] },
+        }),
+        schedulingMode: 'calendar',
+        presentation: makePres(),
+        corrections: [],
+      })
+      expect(result.detailItems.some((d) => d.ruleId === 'context:contact_load')).toBe(true)
+      expect(result.detailLines.join(' ')).toMatch(/contact|plaquage|club/i)
+      assertNoJargon(result)
+    })
+
+    it('in-season hors match → pas de tip contact, Hu reste', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'in_season',
+          isMatchWeek: false,
+          daysUntilNextMatch: 10,
+          positionGroup: 'back_three',
+          planningTrace: { resolutionMode: 'calendar_inferred', rulesApplied: [], warnings: [] },
+        }),
+        schedulingMode: 'calendar',
+        presentation: makePres(),
+        corrections: [],
+      })
+      expect(result.detailItems.some((d) => d.ruleId === 'context:contact_load')).toBe(false)
+      expect(result.detailItems.some((d) => d.ruleId === 'context:hu_position_workload')).toBe(true)
+    })
+
+    it('plafond 3 détails : tip contact pas poussé si déjà plein', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'in_season',
+          positionGroup: 'back_three',
+          isMatchWeek: true,
+          daysUntilNextMatch: 3,
+          isDeloadWeek: true,
+          fatigueLevel: 'very_high',
+          planningTrace: {
+            resolutionMode: 'calendar_inferred',
+            rulesApplied: ['rule:in_season_deload_3_1'],
+            warnings: ['Attention récupération limitée cette semaine.'],
+          },
+        }),
+        schedulingMode: 'calendar',
+        presentation: makePres(),
+        corrections: [],
+      })
+      expect(result.detailItems.length).toBeLessThanOrEqual(3)
+      expect(result.detailItems.some((d) => d.ruleId === 'context:contact_load')).toBe(false)
+    })
+  })
+
+  describe('Cou — tip off-season', () => {
+    it('off-season → tip cou, pas de Hu', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'off_season',
+          offSeasonPhase: 3,
+          positionGroup: 'front_row',
+          weekLabel: 'Inter-saison',
+          planningTrace: { resolutionMode: 'calendar_inferred', rulesApplied: [], warnings: [] },
+        }),
+        schedulingMode: 'sequential',
+        presentation: makeSeqPres(),
+        corrections: [],
+      })
+      expect(result.detailItems.some((d) => d.ruleId === 'context:neck_training')).toBe(true)
+      expect(result.detailLines.join(' ')).toMatch(/cou|isométr/i)
+      expect(result.detailItems.some((d) => d.ruleId === 'context:hu_position_workload')).toBe(false)
+      assertNoJargon(result)
+    })
+
+    it('in-season → pas de tip cou', () => {
+      const result = buildExplanation({
+        planningContext: makeCtx({
+          cycle: 'in_season',
+          isMatchWeek: false,
+          positionGroup: 'front_row',
+          planningTrace: { resolutionMode: 'calendar_inferred', rulesApplied: [], warnings: [] },
+        }),
+        schedulingMode: 'calendar',
+        presentation: makePres(),
+        corrections: [],
+      })
+      expect(result.detailItems.some((d) => d.ruleId === 'context:neck_training')).toBe(false)
+    })
+  })
 })

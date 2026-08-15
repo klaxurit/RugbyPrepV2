@@ -429,7 +429,15 @@ function buildDetailItems(
     items.push({ ruleId: 'warning', text: warning })
   }
 
-  // Tip poste (Hu 2024 période tactique) — filler si place libre, pré/in-season only.
+  // Fillers (plafond 3) : contact (semaine de match) → Hu (pré/in) → cou (off).
+  if (items.length < 3) {
+    const tip = contactLoadTip(ctx)
+    if (tip && !seen.has(tip)) {
+      seen.add(tip)
+      items.push({ ruleId: 'context:contact_load', text: tip })
+    }
+  }
+
   if (items.length < 3) {
     const tip = huPositionWorkloadTip(ctx)
     if (tip && !seen.has(tip)) {
@@ -438,7 +446,37 @@ function buildDetailItems(
     }
   }
 
+  if (items.length < 3) {
+    const tip = neckTrainingTip(ctx)
+    if (tip && !seen.has(tip)) {
+      seen.add(tip)
+      items.push({ ruleId: 'context:neck_training', text: tip })
+    }
+  }
+
   return items
+}
+
+/**
+ * Charge de contact amateur (World Rugby → proxy, pas le rail 15 min pro).
+ * Semaine de match in-season seulement — Hu reste hors match.
+ */
+export function contactLoadTip(
+  ctx: Pick<AnnualPlanningContext, 'cycle' | 'isMatchWeek' | 'daysUntilNextMatch'>,
+): string | undefined {
+  if (ctx.cycle !== 'in_season') return undefined
+  const matchWeek =
+    ctx.isMatchWeek || (ctx.daysUntilNextMatch != null && ctx.daysUntilNextMatch <= 6)
+  if (!matchWeek) return undefined
+  return 'Le contact au club (plaquages, mêlée, rucks) compte autant que la salle — cette semaine, vise la qualité, pas le volume.'
+}
+
+/**
+ * Mini-rappel cou (Fownes-Walpole 2025). Off-season seulement : Hu ne s’affiche pas.
+ */
+export function neckTrainingTip(ctx: Pick<AnnualPlanningContext, 'cycle'>): string | undefined {
+  if (ctx.cycle !== 'off_season') return undefined
+  return 'Le cou se prépare aussi : 2–3 isométries courtes (pousser dans les mains, 3 directions) en fin d’Upper, sans harnais.'
 }
 
 /**

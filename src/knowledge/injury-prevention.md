@@ -329,22 +329,17 @@ Preventive effect of eccentric training on acute hamstring injuries in men's
 soccer: a cluster-randomized controlled trial. *American Journal of Sports
 Medicine*, 39(11), 2296-2303.
 
-**Compléments rugby & méta (2021 / 2019)** :
+**Compléments rugby & méta (2021 / 2019)** — rôles distincts, voir
+`evidence-clusters.md` (un seul protocole produit = Severo progressif) :
 
-- **van Dyk et al. (2019, BJSM)** — méta multi-sports (n = 8459) : programmes
-  incluant le NHE réduisent le taux de blessures ischio d’environ **51 %**
-  (RR ≈ 0.49). Ancre statistique pour UX / prévention (au-delà du seul
-  van der Horst soccer).
+- **van Dyk et al. (2019, BJSM)** — **com’** : méta ~−51 % (RR ≈ 0.49). Pas un
+  2e protocole NHE ni une raison d’ajouter des séries.
   https://doi.org/10.1136/bjsports-2018-100045
-- **Chavarro-Nieto et al. (2021)** — revue systématique **Rugby Union** :
-  facteurs de risque (poste, fatigue, antécédents, asymétries, course) ;
-  programmes Nordic progressifs associés à force ↑, épaisseur musculaire ↑,
-  déséquilibres ↓ ; intérêt aussi chez joueuses.
+- **Chavarro-Nieto et al. (2021)** — **contexte** rugby (poste, fatigue,
+  antécédents). Pas de volume extra.
   https://doi.org/10.1080/00913847.2021.1992601
-- **Severo-Silveira et al. (2021, JSCR)** — joueurs rugby : NHE **progressif**
-  (8 sem) > charge constante pour force ischio / ratios H:Q ; les deux
-  allongent les fascicules BFlh. **Vague 2** : envisager progression product
-  (sets/reps montantes) plutôt que dose plate en mother sessions.
+- **Severo-Silveira et al. (2021, JSCR)** — **runtime** : NHE progressif
+  (`applyProgressiveNordic`). Canon produit.
   https://doi.org/10.1519/JSC.0000000000002849
 
 ---

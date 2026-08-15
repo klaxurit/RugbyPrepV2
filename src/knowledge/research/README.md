@@ -9,6 +9,7 @@
 |-------|---------|---------|--------|
 | 1 | Synthèses KB + cet index | Non | Fait |
 | 2 | Israetel · Severo · Weakley · Hu · Robinson | Oui | **Fait (tests auto)** |
+| 2A | Contact (match week) · Cou (off-season) | Copy only | **Fait (tests auto)** |
 
 ### Runtime Vague 2 (vérifié)
 
@@ -19,21 +20,29 @@
 | Weakley | Chip « À battre », toast vs last, insight fin | `SessionDetailPage`, `selectSessionInsight`, `formatLivePRToast` |
 | Hu 2024 | Tip poste pré/in-season (filler détail coach) | `buildExplanation` `huPositionWorkloadTip` |
 | Robinson 2024 | Justifications RER selon cycle + insight fin | `loadSuggestion` `effortZoneRerLabel`, `selectSessionInsight` |
+| World Rugby contact | Tip semaine de match (filler, **avant** Hu) | `buildExplanation` `contactLoadTip` |
+| BJSM 2025 cou | Tip off-season seulement | `buildExplanation` `neckTrainingTip` |
 
 ## Études intégrées (Vague 1)
 
-| Prio | Étude | Fichiers KB touchés | Bénéfice | Runtime futur (Vague 2) |
-|------|-------|---------------------|----------|-------------------------|
-| P0 | Pelland et al. 2025 | `strength-methods.md`, `load-budgeting.md` | Cohérence volume | Recalibrer audits MEV/fractional si écart |
-| P0 | Bauer et al. 2019 | `strength-methods.md` §4.2 | Cohérence contraste | Confirmer budget neural + repos contraste |
-| P0 | Hu et al. 2024 JSCR | `periodization.md`, `team-monitoring.md` | Pertinence pré-saison | Tips microcycle force/endurance/vitesse |
-| P0 | Hu et al. 2024 PLOS One | `periodization.md`, `athletic-testing.md` | Pertinence poste | Affiner messages avants/arrières |
-| P1 | Chavarro-Nieto et al. 2021 | `injury-prevention.md` §5.2 | Pertinence ischios | Copy prévention rugby |
-| P1 | Severo-Silveira et al. 2021 | `injury-prevention.md` §5.2 | Cohérence NHE | Progression Nordic mother sessions |
-| P1 | van Dyk et al. 2019 | `injury-prevention.md` §5.2 | Pertinence | Ancre −51 % UX / landing |
-| P1 | Weakley et al. 2019/2020 | `strength-methods.md` §feedback | Ludique | Prompts / encouragements séance |
-| P2 | Robinson et al. 2024 | `strength-methods.md` (RER) | Cohérence | **Shipped** — justifications RER + insight |
-| P2 | Freitas et al. 2017 | `strength-methods.md` §4.2 | Pertinence | Attentes contrastes amateurs |
+Un **rôle par cluster** — détail : `../evidence-clusters.md`. Pas de doublon de plafond.
+
+| Prio | Étude | Cluster / rôle | Runtime |
+|------|-------|----------------|---------|
+| P0 | Pelland et al. 2025 | Volume — **canon** dose-réponse | Audits fractional (existant) |
+| P0 | Bauer et al. 2019 | Contrastes — **canon** méta | Budget neural existant |
+| P0 | Hu et al. 2024 JSCR | Période — microcycle | Tip `buildExplanation` |
+| P0 | Hu et al. 2024 PLOS | Poste — complémentaire Hu JSCR | Tip poste |
+| P1 | van der Horst 2015 | NHE — **canon** effet | Mother NHE |
+| P1 | Severo-Silveira 2021 | NHE — progressif **runtime** | `applyProgressiveNordic` |
+| P1 | van Dyk 2019 | NHE — **com’** −51 % (pas un 2e protocole) | Copy seulement |
+| P1 | Chavarro-Nieto 2021 | NHE — facteurs rugby | Contexte |
+| P1 | Weakley 2019/2020 | Feedback — un cluster | Chip / toast / insight |
+| P2 | Robinson et al. 2024 | Échec — **canon** | `effortZoneRerLabel` |
+| P2 | Freitas et al. 2017 | Contrastes — attentes amateurs | Copy, pas seuil |
+| P2 | World Rugby Contact Load | Contact — **canon** cadre pro → proxy amateur | Tip semaine de match |
+| P2 | Fownes-Walpole 2025 | Cou — **canon** | Tip off-season |
+| P2 | Revue JFMK 2025 | Accel — **canon** Speed | KB seule (Vague 3 = séances) |
 
 ## Liens DOI
 
@@ -48,6 +57,9 @@
 - Weakley 2020 encouragement : https://doi.org/10.1519/JSC.0000000000002887
 - Robinson 2024 : https://doi.org/10.1007/s40279-024-02069-2
 - Freitas 2017 : https://doi.org/10.1371/journal.pone.0180223
+- Fownes-Walpole 2025 (cou) : https://doi.org/10.1136/bjsports-2024-108847
+- Sprint rugby JFMK 2025 : https://doi.org/10.3390/jfmk10010051
+- World Rugby Contact Load : https://www.world.rugby/the-game/player-welfare/medical/player-load/contact-load
 
 ## Checklist relecture humaine (avant Vague 2)
 

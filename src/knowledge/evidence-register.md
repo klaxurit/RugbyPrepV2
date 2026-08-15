@@ -1,8 +1,11 @@
 # Evidence Register — RugbyPrep Hard Thresholds
 
-> This document records all numerical thresholds ("hard values") used in the app.
-> Each entry specifies the source, evidence level, and last verification date.
-> Purpose: ensure clinical defensibility with professional strength & conditioning coaches.
+> This document records numerical thresholds used in the app.
+> **Rails** = safety / correctness (do not violate in product code).
+> **Range** = literature band (informs, does not cap ambition by itself).
+> **Decision** = RugbyPrep choice — change via `product-decisions.md`, not by piling studies.
+>
+> Study roles: `evidence-clusters.md`. AI coach: `prepa-ia.md`.
 
 ## Evidence Levels
 - **A**: Systematic review / meta-analysis
@@ -21,9 +24,9 @@
 | ACWR red zone | 1.5 | High injury risk — deload | Gabbett 2016 BJSM | B | 2026-03 |
 | ACWR calculation window (acute) | 7 days | Rolling average | Gabbett 2016 BJSM | B | 2026-03 |
 | ACWR calculation window (chronic) | 28 days | Rolling average | Gabbett 2016 BJSM | B | 2026-03 |
-| Session duration cap | 75 min | Diminishing returns threshold | Kraemer & Ratamess 2004 | C | 2026-03 |
-| Match exclusion window (pre) | J-2 to match | No heavy S&C | Team sport consensus | C | 2026-03 |
-| Match exclusion window (post) | J+1 | Rest/mobility only | Team sport consensus | C | 2026-03 |
+| Session duration cap | 75 min | **Decision** (soft) — target 50–60 Performance | Kraemer & Ratamess 2004 | C | 2026-03 |
+| Match exclusion window (pre) | J-2 to match | **Rail** — no heavy S&C | Team sport consensus | C | 2026-03 |
+| Match exclusion window (post) | J+1 | **Rail** — rest/mobility only | Team sport consensus | C | 2026-03 |
 
 ---
 
@@ -34,8 +37,8 @@
 | Deload frequency (hypertrophy) | Week 4 (H4) | Every 4th week | Israetel et al. 2019 | C | 2026-03 |
 | Deload frequency (force) | W4 and W8 | Every 4th week | Israetel et al. 2019 | C | 2026-03 |
 | Deload volume reduction | 40–50% | Of preceding week | Israetel et al. 2019 | C | 2026-03 |
-| Hypertrophy MEV (minimum) | 10 sets/week/MG | Minimum effective volume | Israetel et al. 2019 | C | 2026-03 |
-| Hypertrophy MAV (maximum) | 24 sets/week/MG | Max adaptive volume | Israetel et al. 2019 | C | 2026-03 |
+| Hypertrophy MEV (minimum) | 10 sets/week/MG | **Range** — floor audit hyp off-season only | Israetel et al. 2019 | C | 2026-03 |
+| Hypertrophy MAV (maximum) | 24 sets/week/MG | **Range** — literature; app ceilings are lower (club) | Israetel et al. 2019 | C | 2026-03 |
 | In-season volume maintenance | 6–8 sets/week/MG | Maintain strength level | Naclerio et al. 2013 | C | 2026-03 |
 | Power phase volume | 60–70% of strength | Quality over quantity | Haff & Triplett 2016 | C | 2026-03 |
 
@@ -152,5 +155,5 @@
 
 ---
 
-*Last updated: 2026-08-10*
+*Last updated: 2026-08-14*
 *Maintained by: RugbyPrep development team*

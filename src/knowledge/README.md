@@ -30,7 +30,16 @@ et adaptées au profil du joueur.
 | `medical-red-flags.md` | Drapeaux rouges, stop rules, renvoi médical | 123 lignes | Opérationnel |
 | `double-match-weeks.md` | Gestion d’une double semaine de match | 168 lignes | Opérationnel |
 | `off-season-periodization.md` | Logique off-season et reconstruction | 210 lignes | Opérationnel |
-| `evidence-register.md` | Registre des seuils et sources “dures” | ~140 lignes | Opérationnel |
+| `evidence-register.md` | Seuils durs — **rails** vs ranges | ~155 lignes | Opérationnel |
+| `product-decisions.md` | Enveloppe d’ambition (prépa, pas science) | — | Canonique |
+| `evidence-clusters.md` | 1 rôle par étude, anti-doublon | — | Canonique |
+| `prepa-ia.md` | Mode d’emploi du préparateur physique IA | — | Canonique |
+| `prepa-ia-cycle-review.md` | Première revue A/B/C du cycle annuel | — | Opérationnel |
+| `prepa-ia-roadmap.md` | 3 vagues : KB → copy → séances | — | Opérationnel |
+| `retrieval-index.md` | 1–3 fichiers par situation | — | Opérationnel |
+| `contact-load.md` | Charge de contact (World Rugby → proxy amateur) | — | Canonique |
+| `neck-training.md` | Cou / collision (BJSM 2025) | — | Canonique |
+| `sprint-acceleration.md` | Accels / slot Speed | — | Canonique |
 | `research/README.md` | Index enrichissements études + Vague 2 | — | Opérationnel |
 | `beginner-programming.md` | Principes de programmation starter | 242 lignes | Complémentaire |
 | `beginner-intermediate-training.md` | Progressions starter/builder et supersets | 538 lignes | Complémentaire |
@@ -40,7 +49,15 @@ et adaptées au profil du joueur.
 
 ---
 
-## Architecture d'Utilisation (Claude API)
+## Architecture d'Utilisation (Claude API / Cursor)
+
+**Trois couches** — voir `prepa-ia.md` :
+
+1. Rails (`evidence-register.md` + audits)
+2. Décisions produit (`product-decisions.md`)
+3. Bibliothèque (fichiers domaine + `evidence-clusters.md`)
+
+Ne pas injecter toute la KB. Ne pas traiter une fourchette scientifique comme un plafond produit.
 
 ### Principe : Retrieval Contextuel par Situation
 
@@ -190,7 +207,9 @@ src/knowledge/research/
 - **Saison** : calendrier FFR/Fédérale, septembre → mai
 - **Niveau** : intermédiaire (1-5 ans de pratique S&C structurée)
 - **Langue app** : français
-- **Priorité** : sécurité > performance > convivialité
+- **Priorité** : rails de sécurité > disponibilité club > performance gym.
+  L’ambition hors saison est **négociable** (`product-decisions.md`) — ne pas
+  confondre avec un plancher prudent obligatoire.
 
 ---
 
