@@ -5,6 +5,7 @@ import type { SessionLog } from '../../types/training'
 import { mapMotherSessionType } from '../../services/program/buildProgramSessionLog'
 import { findSessionLogForPlannedSlot } from '../../services/scheduling/mergeDatedSessionCompletion'
 import { Icon, Pill, SectionLabel, type IconName } from '../ui'
+import { plannedSessionCardStats } from './plannedSessionCardStats'
 
 const SESSION_SUBTITLE: Record<MotherSessionType, string> = {
   upper: 'Haut du corps',
@@ -12,36 +13,6 @@ const SESSION_SUBTITLE: Record<MotherSessionType, string> = {
   full: 'Corps complet',
   full_light_primer: 'Activation',
   speed_power: 'Vitesse · Puissance',
-}
-
-/**
- * Parse "50-60 min" → 55, "45 min" → 45. Retourne null si non parsable.
- */
-export function parseTargetDuration(target: string | undefined): number | null {
-  if (!target) return null
-  const match = target.match(/(\d+)(?:\s*-\s*(\d+))?/)
-  if (!match) return null
-  const a = Number.parseInt(match[1], 10)
-  const b = match[2] ? Number.parseInt(match[2], 10) : a
-  if (!Number.isFinite(a) || !Number.isFinite(b)) return null
-  return Math.round((a + b) / 2)
-}
-
-/** Stats carte jour : respecte maxBlocks / variant light (club dur, décharge). */
-export function plannedSessionCardStats(slot: {
-  session: { blocks: readonly unknown[]; metadata: { targetDuration?: string } }
-  maxBlocks?: number
-  variant?: 'normal' | 'light'
-}): { blocs: number; durationMin: number | undefined; isLight: boolean } {
-  const rawBlocks = slot.session.blocks.length
-  const maxBlocks = slot.maxBlocks
-  const blocs = maxBlocks != null ? Math.min(maxBlocks, rawBlocks) : rawBlocks
-  const target = parseTargetDuration(slot.session.metadata.targetDuration) ?? undefined
-  const durationMin =
-    target != null && maxBlocks != null && maxBlocks < rawBlocks && rawBlocks > 0
-      ? Math.round(target * (maxBlocks / rawBlocks))
-      : target
-  return { blocs, durationMin, isLight: slot.variant === 'light' }
 }
 
 const DAY_ORDER: DayOfWeek[] = [1, 2, 3, 4, 5, 6, 0] // Lun → Dim

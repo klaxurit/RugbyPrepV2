@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { plannedSessionCardStats } from '../WeekDailyPlanner'
+import { plannedSessionCardStats } from '../plannedSessionCardStats'
 
 const slot = (over: {
   blockCount?: number

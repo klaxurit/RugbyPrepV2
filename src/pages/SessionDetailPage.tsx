@@ -278,9 +278,9 @@ export function SessionDetailPage() {
     return rawSessions[index] ?? null
   }, [snapshot, msResolution, index])
 
+  const planning = surface?.planningContext
   const preparedSession = useMemo(() => {
     if (!activeSlot) return null
-    const planning = surface?.planningContext
     const prepared = prepareSessionForRender({
       session: activeSlot.session,
       trainingLevel: profile.trainingLevel,
@@ -303,12 +303,7 @@ export function SessionDetailPage() {
     profile.trainingLevel,
     profile.equipment,
     lang,
-    surface?.planningContext?.mesocycleWeek,
-    surface?.planningContext?.weekNumber,
-    surface?.planningContext?.isMatchWeek,
-    surface?.planningContext?.daysUntilNextMatch,
-    surface?.planningContext?.isDeloadWeek,
-    surface?.planningContext?.clubContactProxy,
+    planning,
   ])
 
   /** Set logs + block_logs legacy — source unique pour PR / PREVIOUS / suggestions. */

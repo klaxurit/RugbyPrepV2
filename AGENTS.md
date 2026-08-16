@@ -11,3 +11,12 @@ volume, repos** :
 
 Rails ≠ fourchettes scientifiques ≠ choix produit. Proposer A conservateur et
 B ambitieux ; ne pas réécrire le corpus avant validation.
+
+## Qualité avant push
+
+`npm run check` (= `lint` + `tsc -b` + tests). C’est le sous-ensemble local du
+Quality Gate GitHub (`lint` + TypeScript + tests ; CI ajoute build + e2e).
+
+- Ne pas pousser si `lint` échoue. `tsc` / Vitest seuls ne suffisent pas.
+- Ne pas exporter de helpers depuis un fichier de composants React
+  (`react-refresh/only-export-components`) — fichier `.ts` à part.

@@ -136,7 +136,6 @@ describe('weekly heavy-family duplicates (FULL vs Lower/Upper)', () => {
   it('has no motivating duplicates in gym weeks', () => {
     const dupes = collectDupes(undefined)
     if (dupes.length) {
-      // eslint-disable-next-line no-console
       console.log('\nGYM DUPES:\n' + dupes.join('\n'))
     }
     expect(dupes).toEqual([])
@@ -146,7 +145,6 @@ describe('weekly heavy-family duplicates (FULL vs Lower/Upper)', () => {
     // Profil poids de corps = aucun équipement déclaré (cf. resolveEquipmentProgramTier).
     const dupes = collectDupes([])
     if (dupes.length) {
-      // eslint-disable-next-line no-console
       console.log('\nBW DUPES:\n' + dupes.join('\n'))
     }
     expect(dupes).toEqual([])
