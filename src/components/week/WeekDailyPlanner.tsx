@@ -17,7 +17,7 @@ const SESSION_SUBTITLE: Record<MotherSessionType, string> = {
 /**
  * Parse "50-60 min" → 55, "45 min" → 45. Retourne null si non parsable.
  */
-function parseTargetDuration(target: string | undefined): number | null {
+export function parseTargetDuration(target: string | undefined): number | null {
   if (!target) return null
   const match = target.match(/(\d+)(?:\s*-\s*(\d+))?/)
   if (!match) return null
@@ -25,6 +25,23 @@ function parseTargetDuration(target: string | undefined): number | null {
   const b = match[2] ? Number.parseInt(match[2], 10) : a
   if (!Number.isFinite(a) || !Number.isFinite(b)) return null
   return Math.round((a + b) / 2)
+}
+
+/** Stats carte jour : respecte maxBlocks / variant light (club dur, décharge). */
+export function plannedSessionCardStats(slot: {
+  session: { blocks: readonly unknown[]; metadata: { targetDuration?: string } }
+  maxBlocks?: number
+  variant?: 'normal' | 'light'
+}): { blocs: number; durationMin: number | undefined; isLight: boolean } {
+  const rawBlocks = slot.session.blocks.length
+  const maxBlocks = slot.maxBlocks
+  const blocs = maxBlocks != null ? Math.min(maxBlocks, rawBlocks) : rawBlocks
+  const target = parseTargetDuration(slot.session.metadata.targetDuration) ?? undefined
+  const durationMin =
+    target != null && maxBlocks != null && maxBlocks < rawBlocks && rawBlocks > 0
+      ? Math.round(target * (maxBlocks / rawBlocks))
+      : target
+  return { blocs, durationMin, isLight: slot.variant === 'light' }
 }
 
 const DAY_ORDER: DayOfWeek[] = [1, 2, 3, 4, 5, 6, 0] // Lun → Dim
@@ -76,6 +93,8 @@ interface ResolvedDay {
   durationMin?: number
   /** `true` si `durationMin` vient d'un log réel (séance faite), `false` si prévue. */
   durationIsActual?: boolean
+  /** Club dur / décharge : séance light. */
+  isLight?: boolean
   isCompleted?: boolean
   isSkipped?: boolean
   /** Log historique quand la séance est déjà faite (consultation). */
@@ -206,8 +225,8 @@ export function WeekDailyPlanner({
           })
         : undefined
       const realDuration = matchedLog?.durationMin
-      const targetDuration = session
-        ? (parseTargetDuration(session.sessionSlot.session.metadata.targetDuration) ?? undefined)
+      const cardStats = session
+        ? plannedSessionCardStats(session.sessionSlot)
         : undefined
 
       return {
@@ -225,9 +244,10 @@ export function WeekDailyPlanner({
         sessionSubtitle: session
           ? SESSION_SUBTITLE[session.sessionSlot.session.metadata.sessionType] ?? undefined
           : undefined,
-        blocs: session?.sessionSlot.session.blocks?.length,
-        durationMin: realDuration ?? targetDuration,
+        blocs: cardStats?.blocs,
+        durationMin: realDuration ?? cardStats?.durationMin,
         durationIsActual: realDuration != null,
+        isLight: cardStats?.isLight,
         // « Faite » seulement s'il existe un log rejouable — sinon CTA « Revoir »
         // sans sessionLogId (clic → démarrer) après une annulation partielle.
         isCompleted: matchedLog != null,
@@ -517,9 +537,10 @@ function GymCard({ day, onStart }: { day: ResolvedDay; onStart: () => void }) {
           >
             {day.sessionLabel ?? 'Séance'}
           </div>
-          {day.sessionSubtitle && (
+          {(day.sessionSubtitle || day.isLight) && (
             <div className="mt-2 text-[13px] font-medium opacity-75">
               {day.sessionSubtitle}
+              {day.isLight ? (day.sessionSubtitle ? ' · allégée' : 'Allégée') : ''}
             </div>
           )}
         </div>

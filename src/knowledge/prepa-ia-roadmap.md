@@ -33,7 +33,7 @@ Voir `prepa-ia-cycle-review.md`. Ordre si on continue :
 2. Hypertrophie off : +1 série sur 2 primes (`applyHypertrophyPrimeBump`) — **livré**
 3. Mini-bloc cou Upper (`applyNeckIsometricBlock`) — **livré**
 4. Finisher rugby optionnel hors saison (`applyOptionalOffSeasonFinisher`) — **livré**
-5. Proxy club déclaré (léger / normal / dur) — **livré** (`clubContactProxy`)
+5. Proxy club (séance complète / plus courte) — **livré** (`clubContactProxy`)
 6. In-season hors match : +1 série bloc force (`applyInSeasonNoMatchPrimeBump`) — **livré**
 
 Deload −40 % volume / intensité = : `truncateSessionBlocks` — **livré**.

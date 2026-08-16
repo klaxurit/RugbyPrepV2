@@ -110,6 +110,7 @@ function computeProfileHash(profile: import('../types/training').UserProfile): s
     pa?.manualOffSeasonWeekOverride ?? '',
     pa?.manualCycleOverride ?? '',
     pa?.skipOffSeasonRecoveryIntro ? '1' : '',
+    `contact:${pa?.clubContactWeek?.weekStartIso ?? ''}:${pa?.clubContactWeek?.level ?? ''}`,
     (profile.injuries ?? []).join(','),
     deferral ? `${deferral.eventId}:${deferral.expiresAt}` : '',
     ack ?? '',

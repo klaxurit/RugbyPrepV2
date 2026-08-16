@@ -64,11 +64,11 @@ export function clubContactLoadTip(ctx: {
     ctx.isMatchWeek || (ctx.daysUntilNextMatch != null && ctx.daysUntilNextMatch <= 6)
 
   if (proxy === 'hard') {
-    return 'Club dur cette semaine (plaquages, mêlée, rucks) — la salle reste courte et propre, pas un second match.'
+    return 'Beaucoup de contact au club (plaquages, mêlée, rucks) — la salle reste courte et propre, pas un second match.'
   }
   if (proxy === 'light') {
     if (!matchWeek) return undefined
-    return 'Club plus léger cette semaine — tu peux faire la séance salle complète.'
+    return 'Peu de contact au club — tu peux faire la séance salle complète.'
   }
   if (!matchWeek) return undefined
   return 'Le contact au club (plaquages, mêlée, rucks) compte autant que la salle — cette semaine, vise la qualité, pas le volume.'

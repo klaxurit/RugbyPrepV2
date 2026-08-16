@@ -989,7 +989,7 @@ describe('buildExplanation', () => {
         corrections: [],
       })
       expect(result.detailItems.some((d) => d.ruleId === 'context:contact_load')).toBe(true)
-      expect(result.detailLines.join(' ')).toMatch(/Club dur/)
+      expect(result.detailLines.join(' ')).toMatch(/Beaucoup de contact/)
       expect(result.detailLines.join(' ')).not.toMatch(/15/)
       assertNoJargon(result)
     })
@@ -1008,7 +1008,7 @@ describe('buildExplanation', () => {
         presentation: makePres(),
         corrections: [],
       })
-      expect(result.detailLines.join(' ')).toMatch(/plus léger/)
+      expect(result.detailLines.join(' ')).toMatch(/Peu de contact/)
       assertNoJargon(result)
     })
   })

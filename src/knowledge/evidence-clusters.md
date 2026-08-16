@@ -76,9 +76,9 @@ Complémentaires (période ≠ poste). Un seul tip filler par semaine.
 | Rôle | Étude | Implication |
 |---|---|---|
 | **Canon** cadre pro | World Rugby / IRP Contact Load | Full contact ≤ 15 min / sem (pro) |
-| **Décision** amateur | `contact-load.md` + `product-decisions.md` | Pas de rail 15 min ; proxy = slider léger / normal / dur |
+| **Décision** amateur | `contact-load.md` + `product-decisions.md` | Pas de rail 15 min ; proxy = séance complète / plus courte |
 | Produit Vague 2 | Tip `contactLoadTip` | Copy seulement, 0 rewrite séance |
-| Produit Vague 3 | Slider `clubContactProxy` | Dur → light + max 3 blocs ; pas de GPS |
+| Produit Vague 3 | Slider `clubContactProxy` | Plus courte → light + max 3 blocs ; pas de GPS |
 
 Le 15 min pro **calibre**, il ne devient pas un seuil app.
 

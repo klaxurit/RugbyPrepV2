@@ -40,7 +40,7 @@ pas dans le compteur gym. Plafond audit `in_season` = 14 séries/groupe
 | Décharge | −40 % volume, intensité = | Coupe de blocs d’abord ; allège les séries seulement si la coupe ne suffit pas | Deload « séance vide » / baisser les % |
 | Contrastes | 1 lourd de qualité / séance | 2 si Full et budget neural OK | 4+ contrastes / semaine (Bauer + audits) |
 | Vitesse | Slot Speed salle/maison (mur + 3–5 pas) | 8 m couloir si dispo ; 10–20 m seulement si piste déclarée | Piste obligatoire / luge 130 % BW + lower + club |
-| Contact club | Slider léger / normal / dur (défaut normal) | Semaine de match = normal si non déclaré | Chronométrer 15 min comme un pro |
+| Contact club | 2 boutons : séance complète / plus courte (défaut complète) | Plus courte = club a tapé (light, ≤3 blocs) | Chronométrer 15 min comme un pro |
 | Cou | Tip off-season + mini-bloc Upper (mains, 3 directions) | Élastique en Alternatives | Séance cou dédiée / harnais lourd |
 
 Quand l’utilisateur (ou le prépa IA) demande une **mise à jour programme**,
@@ -57,4 +57,4 @@ calme (off-season / semaine sans match).
   (runtime), plafond audit 14 inchangé.
 - Densité Speed hors saison.
 
-*Dernière mise à jour : 2026-08-15*
+*Dernière mise à jour : 2026-08-16*

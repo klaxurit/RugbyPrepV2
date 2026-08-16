@@ -25,7 +25,7 @@ Le joueur FFR n’a pas de GPS ni de chronomètre contact. Proxy :
 | Signal déjà dans l’app | Lecture prépa |
 |---|---|
 | Semaine de match | Le club (plaquages, mêlée, rucks) **compte** dans le budget ; salle = qualité |
-| Slider club (léger / normal / dur) | Déclaration joueur, semaine ISO ; **dur** allège la salle (light, ≤3 blocs) |
+| Slider club (séance complète / plus courte) | Déclaration joueur, semaine ISO ; **plus courte** allège la salle (light, ≤3 blocs) |
 | J-2 / J-1 | Déjà un rail : pas de lourd |
 | Soir club (calendrier) | Ne pas empiler Lower lourd + contact le même jour (déjà évité par le scheduler) |
 
@@ -35,6 +35,6 @@ club fatigue autant que la salle.
 ## Implication produit
 
 - Vague 2 : tip explanation semaine de match (`contactLoadTip`).
-- Vague 3 : slider « club dur / normal / léger » — **livré** (`clubContactProxy`).
+- Vague 3 : slider club (séance complète / plus courte) — **livré** (`clubContactProxy`).
 
-*Dernière mise à jour : 2026-08-15*
+*Dernière mise à jour : 2026-08-16*

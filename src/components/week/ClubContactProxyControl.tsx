@@ -1,7 +1,6 @@
 import type { Lang } from '../../i18n/appLabels'
 import { tr } from '../../i18n/appLabels'
 import type { ClubContactProxy } from '../../types/annualPlanning'
-import { CLUB_CONTACT_PROXIES } from '../../services/scheduling/clubContactProxy'
 
 interface ClubContactProxyControlProps {
   value: ClubContactProxy
@@ -9,51 +8,62 @@ interface ClubContactProxyControlProps {
   onChange: (next: ClubContactProxy) => void
 }
 
-const OPTION_KEYS = {
-  light: 'week_club_contact_light',
-  normal: 'week_club_contact_normal',
-  hard: 'week_club_contact_hard',
-} as const
+const OPTIONS = [
+  { level: 'normal' as const, testId: 'club-contact-normal', labelKey: 'week_club_contact_full' },
+  { level: 'hard' as const, testId: 'club-contact-hard', labelKey: 'week_club_contact_short' },
+] as const
 
 /**
- * Déclaration hebdo de charge club — léger / normal / dur.
- * Pas de minutes, pas de GPS.
+ * Déclaration hebdo de contact club — 2 actions visibles.
+ * Complet = normal (light historique inclus). Plus courte = hard (light + max 3 blocs).
  */
 export function ClubContactProxyControl({ value, lang, onChange }: ClubContactProxyControlProps) {
+  const cutsGym = value === 'hard'
+  const selected = cutsGym ? 'hard' : 'normal'
+
   return (
-    <div className="space-y-2" data-testid="club-contact-proxy">
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-fg-muted">
+    <div
+      className="relative z-10 space-y-2.5 rounded-[14px] border border-edge-hairline bg-layer-2 px-3.5 py-3"
+      data-testid="club-contact-proxy"
+    >
+      <div className="space-y-1">
+        <p className="text-[13px] font-extrabold leading-snug tracking-[-0.02em] text-fg">
           {tr('week_club_contact_label', lang)}
         </p>
-        <p className="text-[10px] text-fg-muted text-right leading-snug">
+        <p className="text-[11px] leading-snug text-fg-muted">
           {tr('week_club_contact_hint', lang)}
         </p>
       </div>
       <div
         role="radiogroup"
         aria-label={tr('week_club_contact_label', lang)}
-        className="grid grid-cols-3 gap-[3px] rounded-[10px] bg-paper-deep p-[3px]"
+        className="grid grid-cols-2 gap-[3px] rounded-[10px] bg-paper-deep p-[3px]"
       >
-        {CLUB_CONTACT_PROXIES.map((level) => {
-          const isActive = value === level
+        {OPTIONS.map((option) => {
+          const isActive = selected === option.level
           return (
             <button
-              key={level}
+              key={option.level}
               type="button"
               role="radio"
               aria-checked={isActive}
-              data-testid={`club-contact-${level}`}
-              onClick={() => onChange(level)}
-              className={`rounded-[8px] py-1.5 text-[12px] font-bold tracking-[0.02em] transition-colors rf-focus-ring ${
+              data-testid={option.testId}
+              onClick={() => onChange(option.level)}
+              className={`min-h-[44px] rounded-[8px] px-2 py-2 text-[12px] font-bold leading-snug tracking-[0.01em] transition-colors rf-focus-ring ${
                 isActive ? 'bg-brand text-app' : 'bg-transparent text-fg'
               }`}
             >
-              {tr(OPTION_KEYS[level], lang)}
+              {tr(option.labelKey, lang)}
             </button>
           )
         })}
       </div>
+      <p
+        className={`text-[11px] leading-snug ${cutsGym ? 'font-semibold text-fg' : 'text-fg-muted'}`}
+        data-testid="club-contact-result"
+      >
+        {tr(cutsGym ? 'week_club_contact_result_cut' : 'week_club_contact_result_full', lang)}
+      </p>
     </div>
   )
 }

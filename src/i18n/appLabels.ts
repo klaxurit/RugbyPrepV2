@@ -807,14 +807,21 @@ export const APP_LABELS = {
     en: 'Adapt your week automatically around the match — Pro.',
   },
 
-  week_club_contact_label: { fr: 'Club cette semaine', en: 'Club this week' },
+  week_club_contact_label: { fr: 'Contact au club', en: 'Club contact' },
   week_club_contact_hint: {
-    fr: 'Plaquages, mêlée, rucks — pas un chrono. Ça ajuste la salle.',
-    en: 'Tackles, scrum, rucks — no stopwatch. This trims the gym.',
+    fr: 'Plaquages, mêlée, rucks. Si ça a tapé, on raccourcit la salle.',
+    en: 'Tackles, scrum, rucks. If it was a lot, we shorten the gym.',
   },
-  week_club_contact_light: { fr: 'Léger', en: 'Light' },
-  week_club_contact_normal: { fr: 'Normal', en: 'Normal' },
-  week_club_contact_hard: { fr: 'Dur', en: 'Hard' },
+  week_club_contact_full: { fr: 'Séance complète', en: 'Full session' },
+  week_club_contact_short: { fr: 'Séance plus courte', en: 'Shorter session' },
+  week_club_contact_result_full: {
+    fr: 'Séance prévue, sans coupe.',
+    en: 'Planned session, uncut.',
+  },
+  week_club_contact_result_cut: {
+    fr: '3 blocs, moins de tours. Les charges restent.',
+    en: '3 blocks, fewer rounds. Loads stay.',
+  },
 
   // ── Session share (post-save Stories card) ──────────────────────────────
   session_share_aria: {

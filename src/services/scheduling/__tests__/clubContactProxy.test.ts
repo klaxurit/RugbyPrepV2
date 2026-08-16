@@ -83,7 +83,7 @@ describe('clubContactLoadTip', () => {
         daysUntilNextMatch: 12,
         clubContactProxy: 'hard',
       }),
-    ).toMatch(/Club dur/)
+    ).toMatch(/Beaucoup de contact/)
     expect(
       clubContactLoadTip({
         cycle: 'in_season',
@@ -91,7 +91,7 @@ describe('clubContactLoadTip', () => {
         daysUntilNextMatch: 3,
         clubContactProxy: 'light',
       }),
-    ).toMatch(/plus léger/)
+    ).toMatch(/Peu de contact/)
     expect(
       clubContactLoadTip({
         cycle: 'in_season',

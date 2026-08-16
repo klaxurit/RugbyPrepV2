@@ -41,6 +41,7 @@ import type { DatedSession } from '../types/scheduling'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
 import { startOfIsoWeek } from '../services/weeklyBilan/computeWeeklyBilan'
+import { resolveClubContactProxy } from '../services/scheduling/clubContactProxy'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
 import { cyclePhaseLabel, tr } from '../i18n/appLabels'
 import type { CalendarEvent, MatchKind } from '../types/training'
@@ -571,7 +572,7 @@ export function WeekPage() {
             {(surface.planningContext.cycle === 'in_season' ||
               surface.planningContext.cycle === 'playoffs') && (
               <ClubContactProxyControl
-                value={surface.planningContext.clubContactProxy ?? 'normal'}
+                value={resolveClubContactProxy(profile.planningAnchors?.clubContactWeek, today)}
                 lang={lang}
                 onChange={(level) => {
                   updateProfile({
