@@ -472,8 +472,11 @@ export function WeekPage() {
         <h1
           className="font-serif italic text-[34px] font-extrabold leading-[0.95] text-fg [text-wrap:balance]"
           style={{ letterSpacing: '-1.2px' }}
+          data-testid="week-hero-title"
         >
-          Cette<br />semaine.
+          {tr(monthOpen ? 'week_hero_month_l1' : 'week_hero_week_l1', lang)}
+          <br />
+          {tr(monthOpen ? 'week_hero_month_l2' : 'week_hero_week_l2', lang)}
         </h1>
         <div className="mt-4">
           <WeekViewToggle

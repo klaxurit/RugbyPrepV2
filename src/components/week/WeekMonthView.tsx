@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { CalendarEvent, SessionLog, DayOfWeek } from '../../types/training'
 import type { MonthPhaseMarker, MonthPlannedSession, MonthWeekBand } from '../../services/scheduling/resolveMonthProgramGrid'
@@ -7,6 +7,10 @@ import type { Lang } from '../../i18n/appLabels'
 import { Icon, SectionLabel } from '../ui'
 import { ClubAvatar } from '../match/ClubAvatar'
 import { formatTonnage } from '../../services/home/formatTonnage'
+import { getClubLogoUrl, getClubMonogram } from '../../services/ui/clubLogos'
+
+const CREST_OPACITY = 0.42
+const CREST_MONO_OPACITY = 0.5
 
 type CellEvent = 'match' | 'gym' | 'recovery' | 'planned' | 'planned_done' | 'planned_missed' | 'club'
 
@@ -308,83 +312,108 @@ export function WeekMonthView({
               )}
               <div className="grid grid-cols-7 gap-1">
                 {row.map((d, i) => {
-                  if (d === null) return <div key={i} className="min-h-[4.25rem]" />
+                  if (d === null) return <div key={i} className="min-h-[5.5rem]" />
 
                   const iso = ymd(year, month, d)
                   const types = cellTypes.get(d)
                   const isToday = d === todayDayNum
                   const hasMatch = types?.has('match') ?? false
-                  const hasGym = types?.has('gym') ?? false
                   const hasRecovery = types?.has('recovery') ?? false
-                  const hasPlannedPending = types?.has('planned') ?? false
-                  const hasPlannedDone = types?.has('planned_done') ?? false
-                  const hasPlannedMissed = types?.has('planned_missed') ?? false
                   const hasClub = types?.has('club') ?? false
+                  const match = matchByDay.get(d)
                   const planned = plannedSessionsByDate?.get(iso) ?? []
+                  const venueLabel = match
+                    ? match.is_neutral
+                      ? lang === 'fr' ? 'neutre' : 'neutral'
+                      : match.is_home
+                        ? lang === 'fr' ? 'domicile' : 'home'
+                        : lang === 'fr' ? 'extérieur' : 'away'
+                    : null
+                  const kickoff = match?.kickoff_time?.slice(0, 5)
+                  const gymChipCap = match ? 1 : hasClub ? 1 : 2
+
+                  const extras: string[] = []
+                  if (hasMatch && match) {
+                    extras.push(`match ${venueLabel}${match.opponent ? ` vs ${match.opponent}` : ''}${kickoff ? ` ${kickoff}` : ''}`)
+                  }
+                  if (hasClub) extras.push(lang === 'fr' ? 'club' : 'club')
+                  if (planned.length) extras.push(planned.map((p) => p.title).join(', '))
 
                   return (
                     <button
                       key={i}
                       type="button"
                       onClick={() => handleCellClick(d)}
-                      aria-label={`${d} ${monthNames[month]}${hasMatch ? ' — match' : ''}${planned.length ? ` — ${planned.map((p) => p.title).join(', ')}` : ''}`}
-                      className="relative flex min-h-[4.25rem] flex-col items-stretch rounded-[10px] px-0.5 py-1 transition-transform hover:scale-[1.02] active:scale-95 rf-focus-ring"
+                      aria-label={`${d} ${monthNames[month]}${extras.length ? ` — ${extras.join(' · ')}` : ''}`}
+                      data-testid={
+                        hasMatch ? `month-cell-match-${d}` : hasClub ? `month-cell-club-${d}` : undefined
+                      }
+                      className="relative flex min-h-[5.25rem] flex-col items-stretch overflow-hidden rounded-[9px] text-left transition-transform hover:scale-[1.02] active:scale-95 rf-focus-ring"
                       style={{
-                        background: isToday
-                          ? 'var(--color-accent)'
-                          : hasMatch
-                            ? 'var(--color-text-primary)'
-                            : hasGym || hasPlannedDone
-                              ? 'color-mix(in srgb, var(--color-ok-strong) 18%, transparent)'
-                              : hasPlannedMissed
-                                ? 'color-mix(in srgb, var(--color-warn-strong) 12%, transparent)'
-                                : hasPlannedPending
-                                  ? 'color-mix(in srgb, var(--color-accent) 5%, transparent)'
-                                  : 'transparent',
-                        color: isToday || hasMatch ? 'var(--color-bg-app)' : 'var(--color-text-primary)',
-                        border: hasPlannedMissed
-                          ? '1px dashed color-mix(in srgb, var(--color-warn-strong) 55%, transparent)'
-                          : hasPlannedPending && !hasGym && !hasMatch
-                            ? '1px dashed color-mix(in srgb, var(--color-accent) 45%, transparent)'
-                            : hasPlannedDone && !hasMatch
-                              ? '1px solid color-mix(in srgb, var(--color-ok-strong) 35%, transparent)'
-                              : '1px solid transparent',
+                        background: hasMatch ? 'var(--color-cream-soft)' : 'var(--color-surface)',
+                        color: 'var(--color-text-primary)',
+                        border: isToday
+                          ? '1.5px solid var(--color-accent)'
+                          : '1px solid var(--color-cream-deep)',
                       }}
                     >
-                      <div className="flex items-start justify-between px-1">
-                        <span
-                          className="text-[13px] font-extrabold tabular-nums leading-none"
-                          style={{ letterSpacing: '-0.3px' }}
-                        >
-                          {d}
-                        </span>
-                        <div className="flex gap-0.5">
-                          {hasMatch && (
-                            <span className="text-[7px] font-extrabold tracking-wider opacity-90">M</span>
+                      {match && (
+                        <>
+                          <MatchCrestWatermark code={match.opponent_code} name={match.opponent} />
+                          <div
+                            aria-hidden
+                            className="pointer-events-none absolute inset-0 rounded-[9px]"
+                            style={{
+                              background:
+                                'linear-gradient(110deg, color-mix(in srgb, var(--color-cream-soft) 78%, transparent) 22%, color-mix(in srgb, var(--color-cream-soft) 8%, transparent) 78%)',
+                            }}
+                          />
+                        </>
+                      )}
+
+                      <div className="relative flex min-h-[5.25rem] flex-1 flex-col px-1.5 pb-1 pt-1.5">
+                        <div className="flex items-start justify-between gap-0.5">
+                          <span
+                            className="font-serif text-[16px] leading-none tabular-nums"
+                            style={{
+                              color: isToday ? 'var(--color-accent)' : 'var(--color-text-primary)',
+                            }}
+                          >
+                            {d}
+                          </span>
+                          {match ? <VenueTag match={match} lang={lang} /> : null}
+                        </div>
+
+                        <div className="mt-auto flex flex-col gap-0.5">
+                          {hasClub && <StackChip label="Club" tone="club" />}
+                          {planned.slice(0, gymChipCap).map((session, idx) => (
+                            <SessionChip
+                              key={`${session.shortLabel}-${idx}`}
+                              session={session}
+                              lang={lang}
+                            />
+                          ))}
+                          {planned.length > gymChipCap && (
+                            <span className="text-[6px] font-bold opacity-60">+{planned.length - gymChipCap}</span>
                           )}
-                          {hasClub && !hasMatch && (
-                            <span className="text-[7px] font-extrabold tracking-wider text-fg-muted">C</span>
+                          {!planned.length && hasRecovery && !match && (
+                            <StackChip label={lang === 'fr' ? 'Récup' : 'Rec'} tone="rec" />
+                          )}
+                          {match && (
+                            <>
+                              {kickoff && (
+                                <span className="text-[11px] font-semibold tabular-nums leading-none tracking-tight text-brand">
+                                  {kickoff}
+                                </span>
+                              )}
+                              {match.opponent && (
+                                <span className="truncate text-[8px] leading-tight text-fg-muted">
+                                  {match.opponent}
+                                </span>
+                              )}
+                            </>
                           )}
                         </div>
-                      </div>
-
-                      <div className="mt-auto flex flex-col gap-0.5 px-0.5 pb-0.5">
-                        {planned.slice(0, 2).map((session, idx) => (
-                          <SessionChip
-                            key={`${session.shortLabel}-${idx}`}
-                            session={session}
-                            inverted={isToday || hasMatch}
-                            lang={lang}
-                          />
-                        ))}
-                        {planned.length > 2 && (
-                          <span className="text-[6px] font-bold opacity-60">+{planned.length - 2}</span>
-                        )}
-                        {!planned.length && hasRecovery && (
-                          <span className="text-[7px] font-bold opacity-50">
-                            {lang === 'fr' ? 'Récup' : 'Rec'}
-                          </span>
-                        )}
                       </div>
                     </button>
                   )
@@ -400,7 +429,7 @@ export function WeekMonthView({
         <Legend label={lang === 'fr' ? 'Fait' : 'Done'} tone="ok" filled />
         <Legend label={lang === 'fr' ? 'Manqué' : 'Missed'} tone="warn" dashed />
         <Legend label="Match" tone="ink" square />
-        <Legend label="Club" tone="muted" labelOnly />
+        <Legend label="Club" tone="ink" filled />
         <Legend label={lang === 'fr' ? 'Récup' : 'Rec'} tone="brand" faded />
       </div>
 
@@ -458,46 +487,117 @@ export function WeekMonthView({
   )
 }
 
+function MatchCrestWatermark({ code, name }: { code?: string; name?: string }) {
+  const logoUrl = code ? getClubLogoUrl(code) : null
+  const monogram = getClubMonogram(name)
+  const [failed, setFailed] = useState(false)
+  const showLogo = Boolean(logoUrl) && !failed
+
+  return (
+    <div
+      aria-hidden
+      data-testid="month-cell-crest"
+      className="pointer-events-none absolute -bottom-2 -right-1 flex h-[80px] w-[72px] items-end justify-end"
+      style={{
+        maskImage: 'linear-gradient(to left top, transparent 0%, black 38%)',
+        WebkitMaskImage: 'linear-gradient(to left top, transparent 0%, black 38%)',
+      }}
+    >
+      {showLogo ? (
+        <img
+          src={logoUrl ?? undefined}
+          alt=""
+          className="h-full w-full object-contain object-bottom"
+          style={{ opacity: CREST_OPACITY }}
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <span
+          className="pr-0.5 font-serif text-[28px] font-medium leading-none text-fg"
+          style={{ opacity: CREST_MONO_OPACITY }}
+        >
+          {monogram}
+        </span>
+      )}
+    </div>
+  )
+}
+
+function VenueTag({ match, lang }: { match: CalendarEvent; lang: Lang }) {
+  if (match.is_neutral) {
+    return (
+      <span className="rounded-[3px] border border-paper-deep px-0.5 text-[7px] font-bold tracking-[0.06em] text-fg-muted">
+        N
+      </span>
+    )
+  }
+  if (match.is_home) {
+    return (
+      <span className="rounded-[3px] bg-brand px-0.5 text-[7px] font-bold tracking-[0.06em] text-app">
+        {lang === 'fr' ? 'DOM' : 'HOM'}
+      </span>
+    )
+  }
+  return (
+    <span
+      className="rounded-[3px] px-0.5 text-[7px] font-bold tracking-[0.06em] text-brand"
+      style={{ border: '1px solid color-mix(in srgb, var(--color-accent) 35%, transparent)' }}
+    >
+      {lang === 'fr' ? 'EXT' : 'AWY'}
+    </span>
+  )
+}
+
+function StackChip({
+  label,
+  tone,
+}: {
+  label: string
+  tone: 'club' | 'rec'
+}) {
+  return (
+    <span
+      className="block truncate rounded-[3px] px-0.5 py-0.5 text-center text-[7.5px] font-bold uppercase tracking-[0.04em] leading-none"
+      style={{
+        background: tone === 'club' ? 'var(--color-cream-deep)' : 'var(--color-accent-soft)',
+        color: tone === 'club' ? 'var(--color-text-secondary)' : 'var(--color-accent)',
+      }}
+    >
+      {label}
+    </span>
+  )
+}
+
 function SessionChip({
   session,
-  inverted,
   lang,
 }: {
   session: MonthPlannedSession
-  inverted: boolean
   lang: Lang
 }) {
   const status = session.status ?? (session.completionStatus === 'completed' ? 'completed' : 'pending')
-  const baseBg =
+  const palette =
     status === 'completed'
-      ? inverted
-        ? 'color-mix(in srgb, var(--color-bg-app) 28%, transparent)'
-        : 'color-mix(in srgb, var(--color-ok-strong) 22%, transparent)'
+      ? { bg: 'var(--color-ok-bg)', ink: 'var(--color-ok-strong)', border: '1px solid transparent' }
       : status === 'missed'
-        ? inverted
-          ? 'color-mix(in srgb, var(--color-bg-app) 18%, transparent)'
-          : 'color-mix(in srgb, var(--color-warn-strong) 18%, transparent)'
+        ? { bg: 'var(--color-warn-bg)', ink: 'var(--color-warn-strong)', border: '1px solid transparent' }
         : status === 'skipped'
-          ? 'transparent'
-          : inverted
-            ? 'color-mix(in srgb, var(--color-bg-app) 22%, transparent)'
-            : 'color-mix(in srgb, var(--color-accent) 14%, transparent)'
+          ? { bg: 'transparent', ink: 'var(--color-text-muted)', border: 'none' }
+          : {
+              bg: 'transparent',
+              ink: 'var(--color-accent)',
+              border: '1px dashed color-mix(in srgb, var(--color-accent) 55%, transparent)',
+            }
 
   return (
     <span
-      className={`truncate rounded px-0.5 text-[7px] font-bold leading-tight ${
+      className={`block truncate rounded-[3px] px-0.5 py-0.5 text-center text-[7.5px] font-bold uppercase tracking-[0.04em] leading-none ${
         status === 'skipped' ? 'opacity-40 line-through' : ''
-      } ${status === 'missed' ? 'text-warn-strong' : ''} ${status === 'completed' ? 'text-ok-strong' : ''}`}
+      }`}
       style={{
-        background: baseBg,
-        border:
-          status === 'pending'
-            ? `1px dashed ${inverted ? 'color-mix(in srgb, var(--color-bg-app) 50%, transparent)' : 'color-mix(in srgb, var(--color-accent) 40%, transparent)'}`
-            : status === 'missed'
-              ? '1px dashed color-mix(in srgb, var(--color-warn-strong) 50%, transparent)'
-              : status === 'completed'
-                ? '1px solid color-mix(in srgb, var(--color-ok-strong) 40%, transparent)'
-                : 'none',
+        background: palette.bg,
+        color: palette.ink,
+        border: palette.border,
       }}
       title={
         status === 'missed'
@@ -505,7 +605,6 @@ function SessionChip({
           : session.title
       }
     >
-      {status === 'completed' ? '✓ ' : status === 'missed' ? '· ' : ''}
       {session.shortLabel}
     </span>
   )

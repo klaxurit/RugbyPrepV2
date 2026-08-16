@@ -2,6 +2,7 @@ import type { SVGProps } from 'react'
 
 export type IconName =
   | 'home'
+  | 'away'
   | 'dumbbell'
   | 'user'
   | 'walk'
@@ -63,6 +64,13 @@ export function Icon({
         <svg {...common}>
           <path d="M3 11l9-7 9 7" />
           <path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9" />
+        </svg>
+      )
+    case 'away':
+      return (
+        <svg {...common}>
+          <path d="M3 12h14" />
+          <path d="M13 6l6 6-6 6" />
         </svg>
       )
     case 'dumbbell':

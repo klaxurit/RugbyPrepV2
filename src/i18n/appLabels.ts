@@ -801,6 +801,10 @@ export const APP_LABELS = {
   club_no_suggestion: { fr: "Sélectionne tes jours d'entraînement club pour obtenir une suggestion.", en: 'Select your club training days to get a suggestion.' },
 
   // ── WeekPage · upsell match proche ──────────────────────────────────────
+  week_hero_week_l1: { fr: 'Cette', en: 'This' },
+  week_hero_week_l2: { fr: 'semaine.', en: 'week.' },
+  week_hero_month_l1: { fr: 'Ce', en: 'This' },
+  week_hero_month_l2: { fr: 'mois.', en: 'month.' },
   week_upsell_match_title: { fr: 'Match dans les prochains jours', en: 'Match coming up soon' },
   week_upsell_match_body: {
     fr: 'Adapte ta semaine automatiquement en fonction du match — Pro.',
