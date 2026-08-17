@@ -19,6 +19,7 @@ import {
   shouldFreezeOffSeasonWeek,
 } from './sanitizePlanningAnchors'
 import { resolveDefaultFfrSeasonClock, type DefaultFfrSeasonClock } from './defaultFfrSeasonClock'
+import { selectPrimaryMatchDates } from '../calendar/selectPrimaryMatchDates'
 
 type MatchInput = Pick<CalendarEvent, 'date' | 'type' | 'match_kind'>
 type TraceMode = AnnualPlanningContext['planningTrace']['resolutionMode']
@@ -250,14 +251,7 @@ function resolveInSeasonSubMode(
 }
 
 function collectMatchDates(events: MatchInput[]): string[] {
-  const out: string[] = []
-  for (const e of events) {
-    if (e.type !== 'match') continue
-    if (!parseLocalDateOnly(e.date)) continue
-    out.push(e.date)
-  }
-  out.sort()
-  return out
+  return selectPrimaryMatchDates(events)
 }
 
 function hasFutureCupFinalMatch(events: MatchInput[], todayIso: string): boolean {

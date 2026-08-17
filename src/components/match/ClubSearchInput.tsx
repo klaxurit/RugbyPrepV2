@@ -28,10 +28,11 @@ interface ClubSearchInputProps {
   clubCode?: string
   onChange: (name: string, code?: string) => void
   placeholder?: string
+  inputTestId?: string
 }
 
 /** Input autocomplete club FFR — réutilisé dans AddMatchModal + section Mon club. */
-export function ClubSearchInput({ value, clubCode, onChange, placeholder }: ClubSearchInputProps) {
+export function ClubSearchInput({ value, clubCode, onChange, placeholder, inputTestId }: ClubSearchInputProps) {
   const [query, setQuery] = useState(value)
   const [results, setResults] = useState<FfrClub[]>([])
   const [focused, setFocused] = useState(false)
@@ -71,6 +72,7 @@ export function ClubSearchInput({ value, clubCode, onChange, placeholder }: Club
           type="text"
           placeholder={placeholder ?? 'Rechercher un club FFR...'}
           value={query}
+          data-testid={inputTestId}
           onChange={handleInput}
           onFocus={() => { setFocused(true); if (query.length >= 2) setResults(searchClubs(query)) }}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
@@ -102,6 +104,7 @@ export function ClubSearchInput({ value, clubCode, onChange, placeholder }: Club
                 key={club.code}
                 type="button"
                 onMouseDown={() => handleSelect(club)}
+                data-testid={`club-search-result-${club.code}`}
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-layer-5 transition-colors text-left border-b border-border-app last:border-0"
               >
                 <ClubAvatar code={club.code} name={club.name} size="sm" />

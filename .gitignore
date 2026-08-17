@@ -90,6 +90,7 @@ docs/rugby-programs/
 
 # Local / generated artifacts (not for version control)
 /build/
+/artifacts/
 skills-lock.json
 public/images/social/
 scripts/generateSocialPosts.py

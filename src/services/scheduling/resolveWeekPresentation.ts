@@ -23,7 +23,14 @@ import type {
   WeekPresentation,
 } from '../../types/scheduling'
 import type { MotherSessionType } from '../../types/motherSession'
-import { isPostMatchWindow, pickPrimerDay } from './matchWindowPolicy'
+import {
+  dateOfWeekday,
+  isPostMatchWindow,
+  pickPrimerDay,
+  withPreMatchNoHeavyVariant,
+} from './matchWindowPolicy'
+import { selectPrimaryMatchEvents } from '../calendar/selectPrimaryMatchDates'
+import { toIsoDateLocal } from '../dates/localIsoDate'
 
 // ── Public interface ────────────────────────────────────────────────
 
@@ -32,6 +39,7 @@ export interface ResolveWeekPresentationParams {
   schedulingMode: SchedulingMode
   events: Array<Pick<CalendarEvent, 'date' | 'type'> & {
     user_hidden?: boolean
+    match_kind?: CalendarEvent['match_kind']
     opponent?: string
     opponent_code?: string
     is_home?: boolean
@@ -217,10 +225,16 @@ function buildCalendarPresentation(
     if (!isSkipped) usedDays.add(day)
 
     const proximity = computeMatchProximity(day, matchDays)
+    const sessionIso = toIsoDateLocal(dateOfWeekday(day, reference))
+    const sessionSlot = withPreMatchNoHeavyVariant(
+      slot,
+      sessionIso,
+      matchEvents.map((m) => m.date),
+    )
 
     sessions.push({
       kind: 'dated',
-      sessionSlot: slot,
+      sessionSlot,
       dayOfWeek: day,
       dayLabel: DAY_LABELS_FR[day],
       matchProximity: proximity,
@@ -423,21 +437,20 @@ export function getWeekMatchEvents(
   today: string,
 ): PresentedMatchEvent[] {
   const { weekStart, weekEnd } = getISOWeekBounds(today)
-  return events
-    .filter((e) => {
-      if (e.type !== 'match' || e.user_hidden === true) return false
-      const evDate = parseLocalDate(e.date)
-      return evDate >= weekStart && evDate <= weekEnd
-    })
-    .map((e) => ({
-      date: e.date,
-      type: 'match' as const,
-      ...(e.opponent ? { opponent: e.opponent } : {}),
-      ...(e.opponent_code ? { opponent_code: e.opponent_code } : {}),
-      ...(e.is_home != null ? { is_home: e.is_home } : {}),
-      ...(e.is_neutral ? { is_neutral: e.is_neutral } : {}),
-      ...(e.kickoff_time ? { kickoff_time: e.kickoff_time } : {}),
-    }))
+  const inWeek = events.filter((e) => {
+    if (e.type !== 'match' || e.user_hidden === true) return false
+    const evDate = parseLocalDate(e.date)
+    return evDate >= weekStart && evDate <= weekEnd
+  })
+  return selectPrimaryMatchEvents(inWeek).map((e) => ({
+    date: e.date,
+    type: 'match' as const,
+    ...(e.opponent ? { opponent: e.opponent } : {}),
+    ...(e.opponent_code ? { opponent_code: e.opponent_code } : {}),
+    ...(e.is_home != null ? { is_home: e.is_home } : {}),
+    ...(e.is_neutral ? { is_neutral: e.is_neutral } : {}),
+    ...(e.kickoff_time ? { kickoff_time: e.kickoff_time } : {}),
+  }))
 }
 
 /**

@@ -68,6 +68,20 @@ describe('detectAnnualPlanningContext', () => {
     expect(r.planningTrace.rulesApplied).toContain('rule:in_season_from_calendar')
   })
 
+  it('deux matchs la même semaine ISO → un seul compte (championnat > amical)', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [
+        { date: '2025-03-15', type: 'match', match_kind: 'friendly' },
+        { date: '2025-03-16', type: 'match', match_kind: 'league' },
+      ],
+      today: '2025-03-12',
+    })
+    expect(r.isMatchWeek).toBe(true)
+    expect(r.daysUntilNextMatch).toBe(4)
+    expect(r.firstMatchDate).toBe('2025-03-16')
+  })
+
   it('in-season semaine sans match', () => {
     const r = detectAnnualPlanningContext({
       ...baseParams,

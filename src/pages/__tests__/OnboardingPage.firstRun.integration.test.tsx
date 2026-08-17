@@ -236,6 +236,47 @@ describe('OnboardingPage · first run flow', () => {
     expect(call.planningAnchors.manualPlayoffs).toBe(true)
   })
 
+  it('club FFR + date de prochain match optionnels → persistés', () => {
+    renderOnboarding()
+
+    fireEvent.click(screen.getByText('Première ligne'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+    fireEvent.click(screen.getByTestId('onboarding-equipment-full_gym'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+    fireEvent.click(screen.getByText('Performance'))
+    fireEvent.click(screen.getByText('2 séances'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+    fireEvent.click(screen.getByTestId('onboarding-season-in_season'))
+    fireEvent.click(screen.getByTestId('onboarding-baseline-active'))
+    fireEvent.click(screen.getAllByText('Suivant')[0])
+
+    const clubInput = screen.getByTestId('onboarding-club-search')
+    fireEvent.change(clubInput, { target: { value: 'PIRAE' } })
+    fireEvent.focus(clubInput)
+    fireEvent.mouseDown(screen.getByTestId('club-search-result-0001A'))
+    fireEvent.change(screen.getByTestId('onboarding-next-match-date'), {
+      target: { value: '2026-09-12' },
+    })
+    fireEvent.click(screen.getByText(/Pas d'entraînement club/))
+    fireEvent.click(screen.getByText('Passer cette étape'))
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
+
+    const call = updateProfileMock.mock.calls[0][0]
+    expect(call.clubCode).toBe('0001A')
+    expect(call.clubName).toBe('RUGBY CLUB DE PIRAE')
+    expect(call.planningAnchors.firstMatchDateOverride).toBe('2026-09-12')
+  })
+
+  it('skip club et date → pas de clubCode ni firstMatchDateOverride', () => {
+    renderOnboarding()
+    navigateToSummary()
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
+
+    const call = updateProfileMock.mock.calls[0][0]
+    expect(call.clubCode).toBeUndefined()
+    expect(call.planningAnchors.firstMatchDateOverride).toBeUndefined()
+  })
+
   it('onboarding submit enregistre le preset salle complète si choisi', () => {
     renderOnboarding()
     navigateToSummary({ equipmentPreset: 'full_gym' })

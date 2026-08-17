@@ -1,4 +1,5 @@
 import type { DayOfWeek, PresentedMatchEvent } from '../../types/scheduling'
+import { parseLocalDateOnly } from '../dates/localIsoDate'
 
 /**
  * Politique "match window" — règles temporelles autour des matchs.
@@ -99,6 +100,46 @@ export function isPreMatchLightOnlyWindow(
 ): boolean {
   const hours = hoursFromDayToKickoff(dayOfWeek, match, reference)
   return hours > 0 && hours <= PRE_MATCH_HARD_BLOCK_HOURS
+}
+
+/**
+ * Rail registre (niveau C) + règle d'or periodization §4.3 : pas de S&C lourd
+ * de J-2 jusqu'au jour de match, **en jours calendaires**.
+ *
+ * Distinct de `isPreMatchLightOnlyWindow` (48 h depuis midi) : un match
+ * samedi 15 h exclut le jeudi de la fenêtre 48 h (51 h), alors que J-2
+ * calendaire l'inclut. Ne pas fusionner les deux.
+ *
+ * J+1 n'est pas dans cette fenêtre.
+ */
+export function isCalendarPreMatchNoHeavyWindow(
+  sessionIso: string,
+  matchIso: string,
+): boolean {
+  const session = parseLocalDateOnly(sessionIso)
+  const match = parseLocalDateOnly(matchIso)
+  if (!session || !match) return false
+  const days =
+    (match.getTime() - session.getTime()) / (24 * 60 * 60 * 1000)
+  return days >= 0 && days <= 2
+}
+
+/** True si au moins un match réel tombe dans [J-2, jour de match]. */
+export function sessionRequiresPreMatchLight(
+  sessionIso: string,
+  matchDates: readonly string[],
+): boolean {
+  return matchDates.some((matchIso) =>
+    isCalendarPreMatchNoHeavyWindow(sessionIso, matchIso),
+  )
+}
+
+export function withPreMatchNoHeavyVariant<
+  T extends { variant?: 'normal' | 'light' },
+>(slot: T, sessionIso: string, matchDates: readonly string[]): T {
+  if (!sessionRequiresPreMatchLight(sessionIso, matchDates)) return slot
+  if (slot.variant === 'light') return slot
+  return { ...slot, variant: 'light' }
 }
 
 /**

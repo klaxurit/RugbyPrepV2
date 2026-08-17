@@ -11,6 +11,9 @@ import {
   isPostMatchWindow,
   isPrimerWindow,
   isPreMatchLightOnlyWindow,
+  isCalendarPreMatchNoHeavyWindow,
+  sessionRequiresPreMatchLight,
+  withPreMatchNoHeavyVariant,
   pickPrimerDay,
 } from '../matchWindowPolicy'
 import type { DayOfWeek } from '../../../types/scheduling'
@@ -136,6 +139,48 @@ describe('isPreMatchLightOnlyWindow — 48h pré-kickoff', () => {
 
   it('MD+1 hors fenêtre (après le match)', () => {
     expect(isPreMatchLightOnlyWindow(0, match, monday)).toBe(false)
+  })
+})
+
+describe('isCalendarPreMatchNoHeavyWindow — J-2 calendaire (rail registre)', () => {
+  const saturday = '2026-04-11'
+
+  it('jeudi (J-2) inclus — contrairement à la fenêtre 48 h midi', () => {
+    expect(isCalendarPreMatchNoHeavyWindow('2026-04-09', saturday)).toBe(true)
+  })
+
+  it('vendredi (J-1) inclus', () => {
+    expect(isCalendarPreMatchNoHeavyWindow('2026-04-10', saturday)).toBe(true)
+  })
+
+  it('samedi (jour de match) inclus', () => {
+    expect(isCalendarPreMatchNoHeavyWindow(saturday, saturday)).toBe(true)
+  })
+
+  it('mercredi (J-3) hors fenêtre', () => {
+    expect(isCalendarPreMatchNoHeavyWindow('2026-04-08', saturday)).toBe(false)
+  })
+
+  it('dimanche (J+1) hors fenêtre', () => {
+    expect(isCalendarPreMatchNoHeavyWindow('2026-04-12', saturday)).toBe(false)
+  })
+
+  it('ISO invalide → false', () => {
+    expect(isCalendarPreMatchNoHeavyWindow('not-a-date', saturday)).toBe(false)
+    expect(isCalendarPreMatchNoHeavyWindow('2026-04-09', '')).toBe(false)
+  })
+
+  it('sans match → false', () => {
+    expect(sessionRequiresPreMatchLight('2026-04-09', [])).toBe(false)
+  })
+
+  it('withPreMatchNoHeavyVariant tamponne light sans réécrire la mother', () => {
+    const slot = { sessionId: 'LOWER', variant: 'normal' as const }
+    expect(withPreMatchNoHeavyVariant(slot, '2026-04-09', [saturday])).toEqual({
+      sessionId: 'LOWER',
+      variant: 'light',
+    })
+    expect(withPreMatchNoHeavyVariant(slot, '2026-04-08', [saturday])).toBe(slot)
   })
 })
 

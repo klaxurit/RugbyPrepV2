@@ -40,6 +40,8 @@ import type {
   TrainingBaseline,
 } from '../types/training'
 import type { AnnualCycle } from '../types/annualPlanning'
+import { ClubSearchInput } from '../components/match/ClubSearchInput'
+import { sanitizePlanningIsoDate } from '../services/dates/localIsoDate'
 import { computeSCSchedule, TRAINING_DAYS_DEFAULT } from '../services/program/scheduleOptimizer'
 import { startOfIsoWeek } from '../services/weeklyBilan/computeWeeklyBilan'
 import { tr, dayAbbrArray, type Lang } from '../i18n/appLabels'
@@ -290,6 +292,9 @@ export function OnboardingPage() {
   const [matchDay, setMatchDay] = useState<DayOfWeek | null | undefined>(undefined)
   const [scSchedule, setScSchedule] = useState<SCSchedule | undefined>(undefined)
   const [offSeasonGymDays, setOffSeasonGymDays] = useState<Set<DayOfWeek> | null>(null)
+  const [clubQuery, setClubQuery] = useState('')
+  const [clubCode, setClubCode] = useState<string | undefined>(undefined)
+  const [nextMatchDate, setNextMatchDate] = useState('')
   const [heightCm, setHeightCm] = useState<string>('')
   const [weightKg, setWeightKg] = useState<string>('')
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -401,6 +406,9 @@ export function OnboardingPage() {
       if (seasonPhase === 'off_season') {
         const todayIso = new Date().toISOString().slice(0, 10)
         nextAnchors.offSeasonStartAt = startOfIsoWeek(todayIso)
+      } else {
+        const nextMatch = sanitizePlanningIsoDate(nextMatchDate)
+        if (nextMatch) nextAnchors.firstMatchDateOverride = nextMatch
       }
 
       const profilePayload = {
@@ -420,6 +428,9 @@ export function OnboardingPage() {
         scSchedule,
         ageBand,
         populationSegment: derivedPopulationSegment,
+        ...(clubCode && clubQuery.trim()
+          ? { clubCode, clubName: clubQuery.trim() }
+          : {}),
       }
       updateProfile(profilePayload, { source: 'onboarding' })
 
@@ -885,6 +896,37 @@ export function OnboardingPage() {
               sub={tr('step3_club_sub', lang)}
             />
 
+            <div className="space-y-3">
+              <SectionLabel>{tr('step3_section_ffr_club', lang)}</SectionLabel>
+              <ClubSearchInput
+                value={clubQuery}
+                clubCode={clubCode}
+                placeholder={tr('step3_ffr_club_placeholder', lang)}
+                inputTestId="onboarding-club-search"
+                onChange={(name, code) => {
+                  setClubQuery(name)
+                  setClubCode(code)
+                }}
+              />
+              <p className="text-[11px] text-fg-muted leading-relaxed">
+                {tr('step3_ffr_club_hint', lang)}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <SectionLabel>{tr('step3_section_next_match', lang)}</SectionLabel>
+              <input
+                type="date"
+                data-testid="onboarding-next-match-date"
+                value={nextMatchDate}
+                onChange={(e) => setNextMatchDate(e.target.value)}
+                className="w-full h-12 rounded-2xl border-2 border-border-app bg-layer-5 px-4 text-sm font-bold text-fg focus:outline-none focus:border-brand transition-colors rf-focus-ring"
+              />
+              <p className="text-[11px] text-fg-muted leading-relaxed">
+                {tr('step3_next_match_hint', lang)}
+              </p>
+            </div>
+
             {/* Jours club */}
             <div className="space-y-3">
               <SectionLabel>{tr('step3_section_club_days', lang)}</SectionLabel>
@@ -1155,6 +1197,9 @@ export function OnboardingPage() {
                   label={tr('step5_row_gym', lang)}
                   value={scSchedule.sessions.map((s) => DAY_LABELS[s.day]).join(' · ')}
                 />
+              )}
+              {clubCode && clubQuery.trim() && (
+                <SummaryRow label={tr('step5_row_club', lang)} value={clubQuery.trim()} />
               )}
               {validHeight && validWeight && bmi && (
                 <SummaryRow

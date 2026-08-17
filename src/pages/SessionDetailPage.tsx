@@ -39,6 +39,13 @@ import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { prepareSessionForRender } from '../services/session/prepareSessionForRender'
 import { truncateSessionBlocks } from '../services/session/truncateSessionBlocks'
+import { selectPrimaryMatchDates } from '../services/calendar/selectPrimaryMatchDates'
+import { toIsoDateLocal } from '../services/dates/localIsoDate'
+import { parseLocalDate } from '../services/scheduling/parseLocalDate'
+import {
+  dateOfWeekday,
+  sessionRequiresPreMatchLight,
+} from '../services/scheduling/matchWindowPolicy'
 import {
   applyExerciseOverridesToSession,
   buildExerciseOverrideKey,
@@ -293,10 +300,19 @@ export function SessionDetailPage() {
       isDeloadWeek: planning?.isDeloadWeek,
       clubContactProxy: planning?.clubContactProxy,
     })
+    const presented = snapshot?.presentation?.sessions[index]
+    const sessionIso =
+      presented?.kind === 'dated'
+        ? toIsoDateLocal(dateOfWeekday(presented.dayOfWeek, parseLocalDate(today)))
+        : null
+    const railLight =
+      sessionIso != null
+      && sessionRequiresPreMatchLight(sessionIso, selectPrimaryMatchDates(structuralEvents))
     // Décharge, taper et overrides de fatigue passent tous par ces deux champs.
+    // Rail J-2 calendaire : force light même si le slot n’a pas encore été tamponné.
     return truncateSessionBlocks(prepared, {
       maxBlocks: activeSlot.maxBlocks,
-      variant: activeSlot.variant,
+      variant: railLight ? 'light' : activeSlot.variant,
     }).session
   }, [
     activeSlot,
@@ -304,6 +320,10 @@ export function SessionDetailPage() {
     profile.equipment,
     lang,
     planning,
+    snapshot,
+    index,
+    today,
+    structuralEvents,
   ])
 
   /** Set logs + block_logs legacy — source unique pour PR / PREVIOUS / suggestions. */

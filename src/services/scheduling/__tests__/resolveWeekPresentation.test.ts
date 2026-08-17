@@ -434,6 +434,64 @@ describe('resolveWeekPresentation — correction: reschedule', () => {
     if (sessionA.kind === 'dated') {
       expect(sessionA.dayOfWeek).toBe(6) // Honoured — user explicitly chose match day
       expect(sessionA.matchProximity).toBe('Jour de match')
+      expect(sessionA.sessionSlot.variant).toBe('light')
+    }
+  })
+
+  it('rail J-2 calendaire : Lower reschedule jeudi avant samedi → variant light', () => {
+    const result = resolveWeekPresentation({
+      motherSessions: [slot('LOWER', 'early_week')],
+      schedulingMode: 'calendar',
+      events: [match('2026-04-11')],
+      today: TODAY,
+      corrections: [
+        { id: 'c1', type: 'reschedule', sessionId: 'LOWER', toDay: 4, appliedAt: '2026-04-06', reversible: true },
+      ],
+    })
+
+    const session = result.sessions.find(
+      (s) => s.kind === 'dated' && s.sessionSlot.sessionId === 'LOWER',
+    )
+    expect(session?.kind).toBe('dated')
+    if (session?.kind === 'dated') {
+      expect(session.dayOfWeek).toBe(4)
+      expect(session.sessionSlot.variant).toBe('light')
+    }
+  })
+
+  it('rail J-2 calendaire : mercredi (J-3) avant samedi → pas light', () => {
+    const result = resolveWeekPresentation({
+      motherSessions: [slot('LOWER', 'early_week')],
+      schedulingMode: 'calendar',
+      events: [match('2026-04-11')],
+      today: TODAY,
+      corrections: [
+        { id: 'c1', type: 'reschedule', sessionId: 'LOWER', toDay: 3, appliedAt: '2026-04-06', reversible: true },
+      ],
+    })
+
+    const session = result.sessions[0]
+    if (session.kind === 'dated') {
+      expect(session.dayOfWeek).toBe(3)
+      expect(session.sessionSlot.variant).not.toBe('light')
+    }
+  })
+
+  it('rail J-2 calendaire : jeudi sans match → pas light', () => {
+    const result = resolveWeekPresentation({
+      motherSessions: [slot('LOWER', 'early_week')],
+      schedulingMode: 'calendar',
+      events: [],
+      today: TODAY,
+      corrections: [
+        { id: 'c1', type: 'reschedule', sessionId: 'LOWER', toDay: 4, appliedAt: '2026-04-06', reversible: true },
+      ],
+    })
+
+    const session = result.sessions[0]
+    if (session.kind === 'dated') {
+      expect(session.dayOfWeek).toBe(4)
+      expect(session.sessionSlot.variant).not.toBe('light')
     }
   })
 
