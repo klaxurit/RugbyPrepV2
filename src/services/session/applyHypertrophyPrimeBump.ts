@@ -33,9 +33,11 @@ export function applyHypertrophyPrimeBump(
     mesoWeek: 1 | 2 | 3 | 4
     trainingLevel?: TrainingLevel
     lang?: 'fr' | 'en'
+    preMatchNoHeavy?: boolean
   },
 ): MotherSession {
   if (!isHypertrophyPrimeBumpEligible(session.metadata.id)) return session
+  if (opts.preMatchNoHeavy) return session
   if (opts.mesoWeek === 4) return session
   if (isFoundationsLevel(opts.trainingLevel)) return session
 

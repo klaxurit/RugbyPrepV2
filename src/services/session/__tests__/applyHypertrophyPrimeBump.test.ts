@@ -79,6 +79,17 @@ describe('applyHypertrophyPrimeBump', () => {
     expect(applyHypertrophyPrimeBump(s, { mesoWeek: 1, trainingLevel: 'starter' })).toBe(s)
   })
 
+  it('J-2 (preMatchNoHeavy) : pas de bump', () => {
+    const s = session('LOWER_OFFSEASON_HYPERTROPHY_V1', [
+      block(1, 'Back Squat', '4x8-10 @ RER 1-2'),
+    ])
+    expect(applyHypertrophyPrimeBump(s, {
+      mesoWeek: 2,
+      trainingLevel: 'performance',
+      preMatchNoHeavy: true,
+    })).toBe(s)
+  })
+
   it('Full / Nordic : pas de bump', () => {
     const full = session('FULL_OFFSEASON_HYPERTROPHY_V1', [
       block(1, 'Barbell Hip Thrust', '4x8-10 @ RER 1-2'),

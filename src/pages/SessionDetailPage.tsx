@@ -43,6 +43,7 @@ import { selectPrimaryMatchDates } from '../services/calendar/selectPrimaryMatch
 import { toIsoDateLocal } from '../services/dates/localIsoDate'
 import { parseLocalDate } from '../services/scheduling/parseLocalDate'
 import {
+  capPreMatchNoHeavyMaxBlocks,
   dateOfWeekday,
   sessionRequiresPreMatchLight,
 } from '../services/scheduling/matchWindowPolicy'
@@ -288,6 +289,14 @@ export function SessionDetailPage() {
   const planning = surface?.planningContext
   const preparedSession = useMemo(() => {
     if (!activeSlot) return null
+    const presented = snapshot?.presentation?.sessions[index]
+    const sessionIso =
+      presented?.kind === 'dated'
+        ? toIsoDateLocal(dateOfWeekday(presented.dayOfWeek, parseLocalDate(today)))
+        : null
+    const preMatchNoHeavy =
+      sessionIso != null
+      && sessionRequiresPreMatchLight(sessionIso, selectPrimaryMatchDates(structuralEvents))
     const prepared = prepareSessionForRender({
       session: activeSlot.session,
       trainingLevel: profile.trainingLevel,
@@ -296,23 +305,19 @@ export function SessionDetailPage() {
       mesocycleWeek: planning?.mesocycleWeek,
       weekNumber: planning?.weekNumber,
       isMatchWeek: planning?.isMatchWeek
-        || (planning?.daysUntilNextMatch != null && planning.daysUntilNextMatch <= 6),
+        || (planning?.daysUntilNextMatch != null && planning.daysUntilNextMatch <= 6)
+        || preMatchNoHeavy,
       isDeloadWeek: planning?.isDeloadWeek,
       clubContactProxy: planning?.clubContactProxy,
+      preMatchNoHeavy,
     })
-    const presented = snapshot?.presentation?.sessions[index]
-    const sessionIso =
-      presented?.kind === 'dated'
-        ? toIsoDateLocal(dateOfWeekday(presented.dayOfWeek, parseLocalDate(today)))
-        : null
-    const railLight =
-      sessionIso != null
-      && sessionRequiresPreMatchLight(sessionIso, selectPrimaryMatchDates(structuralEvents))
     // Décharge, taper et overrides de fatigue passent tous par ces deux champs.
-    // Rail J-2 calendaire : force light même si le slot n’a pas encore été tamponné.
+    // Rail J-2 : light + plafond 2 blocs, même si le slot n’était pas tamponné.
     return truncateSessionBlocks(prepared, {
-      maxBlocks: activeSlot.maxBlocks,
-      variant: railLight ? 'light' : activeSlot.variant,
+      maxBlocks: preMatchNoHeavy
+        ? capPreMatchNoHeavyMaxBlocks(activeSlot.maxBlocks)
+        : activeSlot.maxBlocks,
+      variant: preMatchNoHeavy ? 'light' : activeSlot.variant,
     }).session
   }, [
     activeSlot,

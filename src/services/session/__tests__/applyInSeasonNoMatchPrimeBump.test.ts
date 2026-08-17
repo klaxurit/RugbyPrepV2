@@ -115,4 +115,18 @@ describe('applyInSeasonNoMatchPrimeBump', () => {
     })
     expect(prepared.blocks[1].exercises[0].prescription).toMatch(/^3\s*[x×]/i)
   })
+
+  it('pipeline J-2 (preMatchNoHeavy) : pas de bump même hors isMatchWeek', () => {
+    const raw = MOTHER_SESSIONS_BY_ID.LOWER_IN_SEASON_FRONT_ROW_V1
+    const prepared = prepareSessionForRender({
+      session: raw,
+      trainingLevel: 'performance',
+      equipment: GYM_PRESET,
+      lang: 'fr',
+      mesocycleWeek: 2,
+      isMatchWeek: false,
+      preMatchNoHeavy: true,
+    })
+    expect(prepared.blocks[1].exercises[0].prescription).toMatch(/^3\s*[x×]/i)
+  })
 })

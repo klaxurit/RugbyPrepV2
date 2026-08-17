@@ -36,6 +36,8 @@ interface PrepareInputs {
   isMatchWeek?: boolean
   isDeloadWeek?: boolean
   clubContactProxy?: ClubContactProxy
+  /** Rail J-2 calendaire : coupe les bumps volume même si isMatchWeek est false. */
+  preMatchNoHeavy?: boolean
 }
 
 /**
@@ -66,6 +68,7 @@ export function prepareSessionForRender({
   isMatchWeek,
   isDeloadWeek,
   clubContactProxy,
+  preMatchNoHeavy,
 }: PrepareInputs): MotherSession {
   // 1+2. Adaptations EN (Foundations puis Equipment).
   const foundationsSession = isFoundationsLevel(trainingLevel)
@@ -80,6 +83,7 @@ export function prepareSessionForRender({
       isMatchWeek,
       isDeloadWeek,
       clubContactProxy,
+      preMatchNoHeavy,
     })
   }
 
@@ -99,6 +103,7 @@ export function prepareSessionForRender({
       isMatchWeek,
       isDeloadWeek,
       clubContactProxy,
+      preMatchNoHeavy,
     })
   }
 
@@ -159,7 +164,7 @@ export function prepareSessionForRender({
     equipment,
     lang,
     trainingLevel,
-    { isMatchWeek, isDeloadWeek, clubContactProxy },
+    { isMatchWeek, isDeloadWeek, clubContactProxy, preMatchNoHeavy },
   )
 }
 
@@ -173,16 +178,22 @@ function finishPrepared(
     isMatchWeek?: boolean
     isDeloadWeek?: boolean
     clubContactProxy?: ClubContactProxy
+    preMatchNoHeavy?: boolean
   } = {},
 ): MotherSession {
   const withNordic = applyProgressiveNordic(session, mesoWeek)
   const withSpeed = applyGymSpeedFallback(withNordic, equipment, lang)
-  const withHyp = applyHypertrophyPrimeBump(withSpeed, { mesoWeek, trainingLevel, lang })
+  const withHyp = applyHypertrophyPrimeBump(withSpeed, {
+    mesoWeek,
+    trainingLevel,
+    lang,
+    preMatchNoHeavy: weekCtx.preMatchNoHeavy,
+  })
   const withInSeason = applyInSeasonNoMatchPrimeBump(withHyp, {
     mesoWeek,
     trainingLevel,
     lang,
-    isMatchWeek: weekCtx.isMatchWeek,
+    isMatchWeek: weekCtx.preMatchNoHeavy ? true : weekCtx.isMatchWeek,
     isDeloadWeek: weekCtx.isDeloadWeek,
     clubContactProxy: weekCtx.clubContactProxy,
   })

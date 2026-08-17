@@ -24,6 +24,9 @@ export const POST_MATCH_BLOCK_HOURS = 24
 /** Blocage pré-match dur (MD-1 non-light = interdit). */
 export const PRE_MATCH_HARD_BLOCK_HOURS = 48
 
+/** Plafond blocs dans [J-2, match] — activation, pas séance complète. */
+export const PRE_MATCH_NO_HEAVY_MAX_BLOCKS = 2
+
 /** Résout le kickoff complet (date + heure) d'un match. Fallback 15h si kickoff_time absent. */
 export function resolveKickoffDate(match: PresentedMatchEvent): Date {
   const [y, m, d] = match.date.split('-').map(Number)
@@ -134,12 +137,18 @@ export function sessionRequiresPreMatchLight(
   )
 }
 
+export function capPreMatchNoHeavyMaxBlocks(current?: number): number {
+  if (current == null) return PRE_MATCH_NO_HEAVY_MAX_BLOCKS
+  return Math.min(current, PRE_MATCH_NO_HEAVY_MAX_BLOCKS)
+}
+
 export function withPreMatchNoHeavyVariant<
-  T extends { variant?: 'normal' | 'light' },
+  T extends { variant?: 'normal' | 'light'; maxBlocks?: number },
 >(slot: T, sessionIso: string, matchDates: readonly string[]): T {
   if (!sessionRequiresPreMatchLight(sessionIso, matchDates)) return slot
-  if (slot.variant === 'light') return slot
-  return { ...slot, variant: 'light' }
+  const maxBlocks = capPreMatchNoHeavyMaxBlocks(slot.maxBlocks)
+  if (slot.variant === 'light' && slot.maxBlocks === maxBlocks) return slot
+  return { ...slot, variant: 'light', maxBlocks }
 }
 
 /**

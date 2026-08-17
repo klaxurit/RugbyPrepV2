@@ -435,6 +435,7 @@ describe('resolveWeekPresentation — correction: reschedule', () => {
       expect(sessionA.dayOfWeek).toBe(6) // Honoured — user explicitly chose match day
       expect(sessionA.matchProximity).toBe('Jour de match')
       expect(sessionA.sessionSlot.variant).toBe('light')
+      expect(sessionA.sessionSlot.maxBlocks).toBe(2)
     }
   })
 
@@ -456,6 +457,7 @@ describe('resolveWeekPresentation — correction: reschedule', () => {
     if (session?.kind === 'dated') {
       expect(session.dayOfWeek).toBe(4)
       expect(session.sessionSlot.variant).toBe('light')
+      expect(session.sessionSlot.maxBlocks).toBe(2)
     }
   })
 
@@ -474,6 +476,7 @@ describe('resolveWeekPresentation — correction: reschedule', () => {
     if (session.kind === 'dated') {
       expect(session.dayOfWeek).toBe(3)
       expect(session.sessionSlot.variant).not.toBe('light')
+      expect(session.sessionSlot.maxBlocks).toBeUndefined()
     }
   })
 
@@ -492,6 +495,7 @@ describe('resolveWeekPresentation — correction: reschedule', () => {
     if (session.kind === 'dated') {
       expect(session.dayOfWeek).toBe(4)
       expect(session.sessionSlot.variant).not.toBe('light')
+      expect(session.sessionSlot.maxBlocks).toBeUndefined()
     }
   })
 

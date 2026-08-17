@@ -174,13 +174,19 @@ describe('isCalendarPreMatchNoHeavyWindow — J-2 calendaire (rail registre)', (
     expect(sessionRequiresPreMatchLight('2026-04-09', [])).toBe(false)
   })
 
-  it('withPreMatchNoHeavyVariant tamponne light sans réécrire la mother', () => {
+  it('withPreMatchNoHeavyVariant tamponne light + maxBlocks 2 sans réécrire la mother', () => {
     const slot = { sessionId: 'LOWER', variant: 'normal' as const }
     expect(withPreMatchNoHeavyVariant(slot, '2026-04-09', [saturday])).toEqual({
       sessionId: 'LOWER',
       variant: 'light',
+      maxBlocks: 2,
     })
     expect(withPreMatchNoHeavyVariant(slot, '2026-04-08', [saturday])).toBe(slot)
+  })
+
+  it('withPreMatchNoHeavyVariant ne remonte pas un maxBlocks déjà plus bas', () => {
+    const slot = { sessionId: 'LOWER', variant: 'light' as const, maxBlocks: 1 }
+    expect(withPreMatchNoHeavyVariant(slot, '2026-04-09', [saturday])).toBe(slot)
   })
 })
 
