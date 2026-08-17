@@ -203,6 +203,43 @@ describe('buildExplanation', () => {
     assertNoJargon(result)
   })
 
+  it('rule:ffr_christmas_deload → trêve allégée', () => {
+    const result = buildExplanation({
+      planningContext: makeCtx({
+        isDeloadWeek: true,
+        planningTrace: {
+          resolutionMode: 'default_ffr_clock',
+          rulesApplied: ['rule:ffr_christmas_deload'],
+          warnings: [],
+        },
+      }),
+      schedulingMode: 'sequential',
+      presentation: makeSeqPres(),
+      corrections: [],
+    })
+
+    expect(result.summaryLine.toLowerCase()).toMatch(/trêve|allégée/)
+    assertNoJargon(result)
+  })
+
+  it('rule:ffr_default_clock → calendrier amateur type', () => {
+    const result = buildExplanation({
+      planningContext: makeCtx({
+        planningTrace: {
+          resolutionMode: 'default_ffr_clock',
+          rulesApplied: ['rule:ffr_default_clock'],
+          warnings: [],
+        },
+      }),
+      schedulingMode: 'sequential',
+      presentation: makeSeqPres(),
+      corrections: [],
+    })
+
+    expect(result.detailLines.some((l) => l.includes('inventé') || l.includes('matchs'))).toBe(true)
+    assertNoJargon(result)
+  })
+
   it('rule:no_first_match_calendar → programme progressif', () => {
     const result = buildExplanation({
       planningContext: makeCtx({

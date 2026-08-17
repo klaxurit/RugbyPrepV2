@@ -310,6 +310,11 @@ export function WeekPage() {
     expireAfterSessions: 5,
     contextHash: planningCtxHash,
   })
+  const ffrClockHint = useHintVisibility('rule:ffr_default_clock', {
+    cooldownDays: 14,
+    expireAfterSessions: 5,
+    contextHash: planningCtxHash,
+  })
   const phase5CtaHint = useHintVisibility('offseason_phase5_cta', {
     cooldownDays: 30,
     contextHash: planningCtxHash,
@@ -319,8 +324,9 @@ export function WeekPage() {
     () => ({
       'rule:onboarding_cycle_hint': onboardingHint,
       'rule:no_first_match_calendar': noMatchHint,
+      'rule:ffr_default_clock': ffrClockHint,
     }),
-    [onboardingHint, noMatchHint],
+    [onboardingHint, noMatchHint, ffrClockHint],
   )
 
   // ── Coach bubble content (extract from warnings + companion + detail items)

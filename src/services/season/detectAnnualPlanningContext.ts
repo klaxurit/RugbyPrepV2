@@ -18,6 +18,7 @@ import {
   sanitizePlanningAnchorsForProgression,
   shouldFreezeOffSeasonWeek,
 } from './sanitizePlanningAnchors'
+import { resolveDefaultFfrSeasonClock, type DefaultFfrSeasonClock } from './defaultFfrSeasonClock'
 
 type MatchInput = Pick<CalendarEvent, 'date' | 'type' | 'match_kind'>
 type TraceMode = AnnualPlanningContext['planningTrace']['resolutionMode']
@@ -58,6 +59,7 @@ const MODE_RANK: Record<TraceMode, number> = {
   explicit_anchors: 4,
   calendar_inferred: 3,
   onboarding_hint: 2,
+  default_ffr_clock: 2,
   backfilled: 1,
 }
 
@@ -419,6 +421,77 @@ function buildOffSeasonContext(
   }
 }
 
+function contextFromFfrClock(
+  clock: DefaultFfrSeasonClock,
+  inputs: AthletePlanningInputs,
+  todayDate: Date,
+  todayIso: string,
+  matchDates: string[],
+  anchors: NonNullable<AthletePlanningInputs['planningAnchors']>,
+  acc: TraceAcc,
+): AnnualPlanningContext {
+  const baseline = inputs.trainingBaseline
+  if (baseline === 'peak') acc.rule('rule:training_baseline_peak')
+  if (baseline === 'restart') acc.rule('rule:training_baseline_restart')
+  acc.rule('rule:ffr_default_clock')
+
+  const base = (t: AnnualPlanningContext['planningTrace']) =>
+    baseContextFields(inputs, todayDate, todayIso, matchDates, null, t)
+
+  if (clock.cycle === 'in_season') {
+    const wn = clock.weekNumber
+    const meso = computeInSeasonMesocycle(wn)
+    if (clock.forceDeload) acc.rule('rule:ffr_christmas_deload')
+    else if (meso.isDeloadWeek) acc.rule('rule:in_season_deload_3_1')
+    const trace = acc.freeze()
+    return {
+      cycle: 'in_season',
+      weekNumber: wn,
+      weekLabel: clock.forceDeload
+        ? `En saison - trêve S${wn}`
+        : `En saison - S${wn} (${meso.mesocycleWeek}/4)`,
+      isDeloadWeek: Boolean(clock.forceDeload) || meso.isDeloadWeek,
+      mesocycleWeek: meso.mesocycleWeek,
+      mesocycleBlock: meso.mesocycleBlock,
+      inSeasonSubMode: 'competition',
+      offSeasonStartAt: null,
+      ...base(trace),
+    }
+  }
+
+  if (clock.cycle === 'pre_season') {
+    const total = clock.effectivePreSeasonWeeks
+    const wn = clock.weekNumber
+    const phase = clock.preSeasonPhase ?? preSeasonPhaseFromWeek(wn, total)
+    const isDeload = wn % 4 === 0 || wn === total
+    const trace = acc.freeze()
+    return {
+      cycle: 'pre_season',
+      preSeasonPhase: phase,
+      weekNumber: wn,
+      weekLabel: preSeasonWeekLabel(wn, phase),
+      isDeloadWeek: isDeload,
+      effectivePreSeasonWeeks: total,
+      offSeasonStartAt: clock.offSeasonStartMondayIso,
+      ...base(trace),
+    }
+  }
+
+  // Transition juin–début juillet : pas de bump hypertrophie (S5), même si « peak ».
+  const startWeek = bumpOffSeasonWeekSkipRecoveryIntro(
+    clock.weekNumber,
+    clock.effectiveOffSeasonWeeks,
+    anchors,
+  )
+  const trace = acc.freeze()
+  return buildOffSeasonContext(
+    startWeek,
+    clock.offSeasonStartMondayIso,
+    base(trace),
+    clock.effectiveOffSeasonWeeks,
+  )
+}
+
 function resolveManualCycle(
   inputs: AthletePlanningInputs,
   todayDate: Date,
@@ -688,76 +761,75 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
     )
   }
 
-  // Bootstrap first-run : si aucun match et hint onboarding présent, utiliser le hint.
-  // Ce hint est injecté uniquement quand events=0 et logs=0 (voir buildAthletePlanningInputs).
-  if (!firstMatchDate && anchors.onboardingCycleHint) {
-    acc.bump('onboarding_hint')
-    acc.rule('rule:onboarding_cycle_hint')
+  // Filet amateur FFR : pas de premier match → horloge saisonnière (aucun match inventé).
+  // Le hint onboarding ne reset plus à S1 s’il est d’accord avec l’horloge.
+  // S’il contredit (ex. « inter-saison » en novembre), on suit le hint (choix à l’inscription).
+  // Blessures / douleur / painFlags : ignorés — ne localisent jamais le cycle (stores).
+  if (!firstMatchDate) {
+    const clock = resolveDefaultFfrSeasonClock(todayDate)
     const hintCycle = anchors.onboardingCycleHint
-    const baseline = inputs.trainingBaseline
+    const hintIsPhase =
+      hintCycle === 'off_season' || hintCycle === 'pre_season' || hintCycle === 'in_season'
 
-    // KB: population-specific.md §3 + periodization.md §4.2
-    // peak → skip la phase d'intro (général/recovery) ; active/restart/unset → démarrage standard.
-    if (baseline === 'peak') acc.rule('rule:training_baseline_peak')
-    if (baseline === 'restart') acc.rule('rule:training_baseline_restart')
+    if (hintIsPhase && hintCycle !== clock.cycle) {
+      acc.bump('onboarding_hint')
+      acc.rule('rule:onboarding_cycle_hint')
+      acc.rule('rule:ffr_clock_hint_mismatch')
+      acc.warn(
+        `Horloge amateur FFR = ${clock.cycle}, hint = ${hintCycle} : on suit le hint (choix à l’inscription, pas de calendrier de match).`,
+      )
+      const baseline = inputs.trainingBaseline
+      if (baseline === 'peak') acc.rule('rule:training_baseline_peak')
+      if (baseline === 'restart') acc.rule('rule:training_baseline_restart')
 
-    if (hintCycle === 'in_season') {
-      const mesoHint = computeInSeasonMesocycle(1)
-      const trace = acc.freeze()
-      return {
-        cycle: 'in_season',
-        weekNumber: 1,
-        weekLabel: 'En saison - S1 (1/4)',
-        isDeloadWeek: mesoHint.isDeloadWeek,
-        mesocycleWeek: mesoHint.mesocycleWeek,
-        mesocycleBlock: mesoHint.mesocycleBlock,
-        offSeasonStartAt: null,
-        ...baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace),
+      if (hintCycle === 'in_season') {
+        const mesoHint = computeInSeasonMesocycle(1)
+        const trace = acc.freeze()
+        return {
+          cycle: 'in_season',
+          weekNumber: 1,
+          weekLabel: 'En saison - S1 (1/4)',
+          isDeloadWeek: mesoHint.isDeloadWeek,
+          mesocycleWeek: mesoHint.mesocycleWeek,
+          mesocycleBlock: mesoHint.mesocycleBlock,
+          offSeasonStartAt: null,
+          ...baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace),
+        }
       }
-    }
 
-    if (hintCycle === 'pre_season') {
-      // peak → démarre phase 2 (force) au lieu de phase 1 (préparation générale).
-      const startPhase: PreSeasonPhase = baseline === 'peak' ? 2 : 1
-      const trace = acc.freeze()
-      return {
-        cycle: 'pre_season',
-        preSeasonPhase: startPhase,
-        weekNumber: 1,
-        weekLabel: preSeasonWeekLabel(1, startPhase),
-        isDeloadWeek: false,
-        offSeasonStartAt: null,
-        ...baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace),
+      if (hintCycle === 'pre_season') {
+        const startPhase: PreSeasonPhase = baseline === 'peak' ? 2 : 1
+        const trace = acc.freeze()
+        return {
+          cycle: 'pre_season',
+          preSeasonPhase: startPhase,
+          weekNumber: 1,
+          weekLabel: preSeasonWeekLabel(1, startPhase),
+          isDeloadWeek: false,
+          offSeasonStartAt: null,
+          ...baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace),
+        }
       }
-    }
 
-    if (hintCycle === 'off_season') {
-      // peak → skip phase 1 (Récupération W1-W2) + phase 2 (Transition W3-W4), démarre W5 (Hypertrophy).
       const startWeekBase = baseline === 'peak' ? 5 : 1
       const startWeek = bumpOffSeasonWeekSkipRecoveryIntro(startWeekBase, OFF_SEASON_WEEKS_V1, anchors)
       const trace = acc.freeze()
       return buildOffSeasonContext(
         startWeek,
         toIsoDate(todayWeekMonday),
-        baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace)
+        baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace),
       )
     }
 
-    // playoffs hint ignoré (pas de sens sans calendrier) → tombe dans le backfill.
-  }
+    if (hintIsPhase) {
+      acc.bump('onboarding_hint')
+      acc.rule('rule:onboarding_cycle_hint')
+    } else {
+      acc.bump('default_ffr_clock')
+      acc.rule('rule:no_first_match_calendar')
+    }
 
-  if (!firstMatchDate) {
-    acc.bump('backfilled')
-    acc.rule('rule:no_first_match_calendar')
-    acc.warn(
-      'Aucune date de premier match (calendrier ni override) : contexte off-season synthétique sur la semaine courante.'
-    )
-    const trace = acc.freeze()
-    return buildOffSeasonContext(
-      bumpOffSeasonWeekSkipRecoveryIntro(1, OFF_SEASON_WEEKS_V1, anchors),
-      toIsoDate(todayWeekMonday),
-      baseContextFields(inputs, todayDate, todayIso, matchDates, null, trace)
-    )
+    return contextFromFfrClock(clock, inputs, todayDate, todayIso, matchDates, anchors, acc)
   }
 
   const firstMatchParsed = parseLocalDateOnly(firstMatchDate)!

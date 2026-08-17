@@ -156,13 +156,14 @@ describe('B4 — detectAnnualPlanningContext invariants', () => {
           'explicit_anchors',
           'calendar_inferred',
           'onboarding_hint',
+          'default_ffr_clock',
           'backfilled',
         ]).toContain(ctx.planningTrace.resolutionMode)
       }),
     )
   })
 
-  it('P3 — in-season mesocycle invariant: weekNumber === 4·(block-1) + week, deload ⇔ week=4', () => {
+  it('P3 — in-season mesocycle invariant: weekNumber === 4·(block-1) + week, deload ⇔ week=4 (sauf trêve Noël)', () => {
     fc.assert(
       fc.property(arbInputs, (inputs) => {
         const ctx = detectAnnualPlanningContext(inputs)
@@ -172,7 +173,8 @@ describe('B4 — detectAnnualPlanningContext invariants', () => {
         expect(ctx.mesocycleBlock).toBeDefined()
         const expectedWeekNumber = (ctx.mesocycleBlock! - 1) * 4 + ctx.mesocycleWeek!
         expect(ctx.weekNumber).toBe(expectedWeekNumber)
-        expect(ctx.isDeloadWeek).toBe(ctx.mesocycleWeek === 4)
+        const christmasDeload = ctx.planningTrace.rulesApplied.includes('rule:ffr_christmas_deload')
+        expect(ctx.isDeloadWeek).toBe(ctx.mesocycleWeek === 4 || christmasDeload)
       }),
     )
   })

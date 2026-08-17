@@ -130,6 +130,7 @@ describe('resolveMotherSessionsForWeek', () => {
       today: '2025-01-01',
       weeklyFrequency: 2,
       positionGroup: 'front_row',
+      planningAnchors: { onboardingCycleHint: 'off_season' },
     })
     expect(r.planningContext.cycle).toBe('off_season')
     expect(r.planningContext.offSeasonPhase).toBe(1)
@@ -151,6 +152,7 @@ describe('resolveMotherSessionsForWeek', () => {
       weeklyFrequency: 2,
       positionGroup: 'front_row',
       equipment: [],
+      planningAnchors: { onboardingCycleHint: 'off_season' },
     })
     expect(r.sessions.map((s) => s.sessionId)).toEqual([
       'FULL_BW_OFFSEASON_RECOVERY_A_V1',

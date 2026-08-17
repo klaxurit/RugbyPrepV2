@@ -159,6 +159,21 @@ const RULE_COPY: Record<string, RuleCopy> = {
     overridesSequential: true,
   },
 
+  'rule:ffr_default_clock': {
+    summary: () => 'Programme calé sur l’année amateur type (juin–mai)',
+    detail: (ctx) => {
+      if (ctx.cycle === 'off_season') return undefined
+      return 'Ajoute tes matchs (ou ton club) pour coller à ta saison réelle — aucun match n’est inventé.'
+    },
+  },
+
+  'rule:ffr_christmas_deload': {
+    summary: () => 'Trêve de fin d’année — semaine allégée',
+    detail: () =>
+      'Petit bloc physique : on coupe le volume, on garde de la qualité. Ajoute tes matchs si le championnat a repris.',
+    overridesSequential: true,
+  },
+
   'rule:onboarding_cycle_hint': {
     summary: () => 'Programme basé sur la période choisie à l\'inscription',
     // En off-season : pas de détail → la saison est terminée, rien à ajouter,

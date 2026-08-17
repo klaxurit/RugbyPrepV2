@@ -59,8 +59,9 @@ export interface AthletePlanningInputs {
     manualPlayoffs?: boolean
     /**
      * Bootstrap first-run : cycle suggéré par l'onboarding.
-     * Utilisé uniquement quand events=0 et logs=0 (profil vierge).
-     * Priorité inférieure au calendrier et aux ancres explicites.
+     * Sans calendrier de match, l'horloge amateur FFR situe la semaine dans
+     * l'année ; le hint ne reset à S1 que s'il contredit cette horloge.
+     * Priorité inférieure au calendrier réel et aux ancres explicites.
      */
     onboardingCycleHint?: AnnualCycle
     /**
@@ -77,6 +78,7 @@ export interface AthletePlanningInputs {
     completedSessionsLast28d?: number
     readinessScore?: number
     jumpTrend?: 'up' | 'flat' | 'down'
+    /** Déclaratif / staff uniquement — ne doit pas piloter le cycle (stores). */
     painFlags?: string[]
     latestRpeLoad?: number
     /** True if the athlete has any session logs in history (distinguishes long absence from first-run). */
@@ -138,6 +140,7 @@ export interface AnnualPlanningContext {
       | 'explicit_anchors'
       | 'calendar_inferred'
       | 'onboarding_hint'
+      | 'default_ffr_clock'
       | 'backfilled'
     rulesApplied: string[]
     warnings: string[]
