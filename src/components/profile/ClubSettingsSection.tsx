@@ -62,7 +62,7 @@ export function ClubSettingsSection({
   const profile = profileProp ?? profileState.profile
   const updateProfile = updateProfileProp ?? profileState.updateProfile
   const seasonMode = effectiveSeasonMode ?? profile.seasonMode
-  const { refreshFromFFR } = useCalendar()
+  const { refreshFromFFR, clearFfrImportedEvents } = useCalendar()
 
   const seasonSyncPatch = useCallback((): Partial<UserProfile> => (
     effectiveSeasonMode && effectiveSeasonMode !== profile.seasonMode
@@ -149,11 +149,12 @@ export function ClubSettingsSection({
       ffrLastSyncAt: undefined,
     })
     void syncMyClubMembership(null)
+    void clearFfrImportedEvents()
     setClubQuery('')
     setFfrCompetitions([])
     setFfrSyncMessage(null)
     setFfrSyncIsError(false)
-  }, [updateProfile])
+  }, [updateProfile, clearFfrImportedEvents])
 
   const handlePickCompetition = useCallback(async (competition: FfrCompetition) => {
     if (!profile.clubCode) return
@@ -434,6 +435,7 @@ export function ClubSettingsSection({
                   type="button"
                   onClick={() => {
                     updateProfile({ ffrCompetitionId: undefined, ffrCompetitionName: undefined, ffrLastSyncAt: undefined })
+                    void clearFfrImportedEvents()
                     setFfrSyncMessage(null)
                     setFfrSyncIsError(false)
                   }}

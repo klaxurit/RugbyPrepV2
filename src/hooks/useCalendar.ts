@@ -7,6 +7,7 @@ import { applyDeferralRules } from '../services/season/deferralRules'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 import type { CalendarEvent, MatchKind } from '../types/training'
 import { calendarRowToEvent } from '../services/calendar/calendarRowToEvent'
+import { deleteFfrImportedMatches, dropFfrImportedEvents } from '../services/calendar/ffrImportedEvents'
 import { useProgramEvolutionSheet } from './useProgramEvolutionSheet'
 import { getToday } from '../services/ui/debugDateOverride'
 
@@ -233,6 +234,21 @@ export function useCalendarSource() {
     [userId, updateProfile]
   )
 
+  const clearFfrImportedEvents = useCallback(async () => {
+    if (userId) {
+      const result = await deleteFfrImportedMatches(userId)
+      if (result.error) {
+        setError(result.error)
+        return
+      }
+    }
+    setEvents((prev) => {
+      const next = dropFfrImportedEvents(prev)
+      saveToStorage(next, userId)
+      return next
+    })
+  }, [userId])
+
   const updateMatchKind = useCallback(
     async (eventId: string, match_kind: MatchKind) => {
       if (userId) {
@@ -442,6 +458,7 @@ export function useCalendarSource() {
     thisWeekEvents,
     addEvent,
     removeEvent,
+    clearFfrImportedEvents,
     updateMatchKind,
     updateMatchLoad,
     setMatchNeutral,

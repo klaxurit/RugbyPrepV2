@@ -23,6 +23,7 @@ const EMPTY_CALENDAR: CalendarContextValue = {
   thisWeekEvents: [],
   addEvent: async () => undefined,
   removeEvent: async () => undefined,
+  clearFfrImportedEvents: async () => undefined,
   updateMatchKind: async () => undefined,
   updateMatchLoad: async () => undefined,
   setMatchNeutral: async () => undefined,

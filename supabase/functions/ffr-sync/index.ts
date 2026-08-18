@@ -154,6 +154,7 @@ interface ExistingEvent {
   duration_min: number | null
   kickoff_time: string | null
   match_kind: string | null
+  competition_id: string | null
 }
 
 // ─── Sync user calendar ───
@@ -169,7 +170,7 @@ async function syncUserCalendar(
 
   const { data: existing } = await serviceClient
     .from('match_calendar')
-    .select('id, date, external_id, opponent_code, source, user_hidden, user_override, notes, rpe, duration_min, match_kind')
+    .select('id, date, external_id, opponent_code, source, user_hidden, user_override, notes, rpe, duration_min, match_kind, competition_id')
     .eq('user_id', userId)
 
   const existingByExtId = new Map<string, ExistingEvent>()
@@ -287,6 +288,19 @@ async function syncUserCalendar(
       .insert(insertRow)
 
     imported++
+  }
+
+  const incomingExternalIds = new Set(matches.map((m) => m.external_id))
+  const staleIds = (existing ?? [])
+    .filter((row) => row.source === 'ffr_import')
+    .filter((row) => {
+      if (row.external_id && incomingExternalIds.has(row.external_id)) return false
+      return row.competition_id !== competitionId
+    })
+    .map((row) => row.id)
+  if (staleIds.length) {
+    console.log('sync_calendar purge other competition', { count: staleIds.length })
+    await serviceClient.from('match_calendar').delete().in('id', staleIds)
   }
 
   return imported
