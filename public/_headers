@@ -56,6 +56,10 @@
 /delete-account
   X-Robots-Tag: noindex, follow
 
+# Le TWA Play ne voit jamais le toast « Recharger » si sw.js est en cache CDN 4 h.
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
