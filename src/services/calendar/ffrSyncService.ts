@@ -1,11 +1,10 @@
 import { supabase } from '../supabase/client'
 import type { FfrCompetition } from '../../types/training'
 import clubFfrIdsData from '../../data/clubFfrIds.json'
-import { mapFfrRencontreToNormalizedMatch, type NormalizedFfrMatch } from './ffrMatchNormalization'
+import { mapFfrRencontreToNormalizedMatch, type FfrJourneeShape, type FfrRencontreShape, type NormalizedFfrMatch } from './ffrMatchNormalization'
+import { postFfrGraphql } from './postFfrGraphql'
 
 const clubFfrIds = clubFfrIdsData as Record<string, number>
-
-const FFR_GRAPHQL_URL = 'https://api-agregateur.ffr.fr/graphql'
 
 // ─── GraphQL Queries ───
 
@@ -69,7 +68,7 @@ const JUNIOR_CLASS_CODES = new Set([
 
 // ─── Public API ───
 
-/** Récupère les compétitions disponibles — appel direct FFR depuis le navigateur */
+/** Récupère les compétitions disponibles — GraphQL FFR (fetch web / HTTP natif iOS). */
 export async function fetchCompetitions(clubCode: string): Promise<{
   competitions: FfrCompetition[]
   error?: string
@@ -78,25 +77,35 @@ export async function fetchCompetitions(clubCode: string): Promise<{
   if (!ffrId) return { competitions: [], error: 'club_not_mapped' }
 
   try {
-    const res = await fetch(FFR_GRAPHQL_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: QUERY_CLUB_COMPETITIONS, variables: { ffrId } }),
-    })
+    const res = await postFfrGraphql(QUERY_CLUB_COMPETITIONS, { ffrId })
     if (!res.ok) return { competitions: [], error: `ffr_http_${res.status}` }
 
-    const json = await res.json()
-    if (json.errors?.length) return { competitions: [], error: `ffr_graphql: ${json.errors[0].message}` }
+    const json = res.json as {
+      errors?: Array<{ message: string }>
+      data?: {
+        Structure?: {
+          Competitions?: Array<{
+            id: string
+            nom: string
+            nomCourt: string
+            Saison: { nom: string }
+            ClasseAge: { code: string }
+            Famille?: { nom: string }
+          }>
+        }
+      }
+    }
+    if (json?.errors?.length) return { competitions: [], error: `ffr_graphql: ${json.errors[0].message}` }
 
-    const structure = json.data?.Structure
+    const structure = json?.data?.Structure
     if (!structure?.Competitions) return { competitions: [], error: 'club_not_found' }
 
     const currentSeason = getCurrentSeason()
     const competitions: FfrCompetition[] = structure.Competitions
-      .filter((c: { Saison: { nom: string }; ClasseAge: { code: string } }) =>
+      .filter((c) =>
         c.Saison.nom === currentSeason && !JUNIOR_CLASS_CODES.has(c.ClasseAge.code)
       )
-      .map((c: { id: string; nom: string; nomCourt: string; Saison: { nom: string }; Famille?: { nom: string } }) => ({
+      .map((c) => ({
         id: c.id,
         name: c.nom,
         season: c.Saison.nom,
@@ -114,31 +123,33 @@ export async function syncCalendar(competitionId: string, clubCode: string): Pro
   imported: number
   error?: string
 }> {
-  // 1. Fetch calendar from FFR (client-side, no 403)
+  // 1. Fetch calendar from FFR (navigateur ou HTTP natif iOS — pas l’Edge Function, 403).
   let matches: NormalizedFfrMatch[]
   try {
     const compIdNum = Number(competitionId)
-    const res = await fetch(FFR_GRAPHQL_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: QUERY_COMPETITION_CALENDAR,
-        variables: { compId: Number.isFinite(compIdNum) ? compIdNum : competitionId },
-      }),
+    const res = await postFfrGraphql(QUERY_COMPETITION_CALENDAR, {
+      compId: Number.isFinite(compIdNum) ? compIdNum : competitionId,
     })
     if (!res.ok) return { imported: 0, error: `ffr_http_${res.status}` }
 
-    const json = await res.json()
-    if (json.errors?.length) return { imported: 0, error: `ffr_graphql: ${json.errors[0].message}` }
+    const json = res.json as {
+      errors?: Array<{ message: string }>
+      data?: {
+        Competition?: {
+          Journees?: Array<FfrJourneeShape & { Rencontres?: FfrRencontreShape[] }>
+        }
+      }
+    }
+    if (json?.errors?.length) return { imported: 0, error: `ffr_graphql: ${json.errors[0].message}` }
 
-    const competition = json.data?.Competition
+    const competition = json?.data?.Competition
     if (!competition?.Journees) return { imported: 0, error: 'competition_not_found' }
 
     const todayStr = new Date().toISOString().slice(0, 10)
     const allClubMatches: NormalizedFfrMatch[] = []
 
     for (const journee of competition.Journees) {
-      for (const r of journee.Rencontres) {
+      for (const r of journee.Rencontres ?? []) {
         const normalized = mapFfrRencontreToNormalizedMatch(r, journee, clubCode)
         if (normalized) allClubMatches.push(normalized)
       }
