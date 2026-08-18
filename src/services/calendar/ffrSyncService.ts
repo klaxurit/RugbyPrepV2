@@ -2,7 +2,7 @@ import { supabase } from '../supabase/client'
 import type { FfrCompetition } from '../../types/training'
 import clubFfrIdsData from '../../data/clubFfrIds.json'
 import { mapFfrRencontreToNormalizedMatch, type FfrJourneeShape, type FfrRencontreShape, type NormalizedFfrMatch } from './ffrMatchNormalization'
-import { postFfrGraphql } from './postFfrGraphql'
+import { isFfrUpstreamSyncError, requestFfrGraphql } from './requestFfrGraphql'
 
 const clubFfrIds = clubFfrIdsData as Record<string, number>
 
@@ -68,7 +68,7 @@ const JUNIOR_CLASS_CODES = new Set([
 
 // ─── Public API ───
 
-/** Récupère les compétitions disponibles — GraphQL FFR (fetch web / HTTP natif iOS). */
+/** Récupère les compétitions disponibles — GraphQL FFR (navigateur, sinon proxy Edge). */
 export async function fetchCompetitions(clubCode: string): Promise<{
   competitions: FfrCompetition[]
   error?: string
@@ -77,7 +77,7 @@ export async function fetchCompetitions(clubCode: string): Promise<{
   if (!ffrId) return { competitions: [], error: 'club_not_mapped' }
 
   try {
-    const res = await postFfrGraphql(QUERY_CLUB_COMPETITIONS, { ffrId })
+    const res = await requestFfrGraphql(QUERY_CLUB_COMPETITIONS, { ffrId })
     if (!res.ok) return { competitions: [], error: `ffr_http_${res.status}` }
 
     const json = res.json as {
@@ -118,65 +118,76 @@ export async function fetchCompetitions(clubCode: string): Promise<{
   }
 }
 
-/** Fetch calendrier FFR + envoi à l'Edge Function pour écriture DB */
+async function invokeSyncCalendar(
+  competitionId: string,
+  clubCode: string,
+  matches?: NormalizedFfrMatch[],
+): Promise<{ imported: number; error?: string }> {
+  await supabase.auth.refreshSession()
+  const { data, error } = await supabase.functions.invoke('ffr-sync', {
+    body: { action: 'sync_calendar', competitionId, clubCode, ...(matches ? { matches } : {}) },
+  })
+  if (error) {
+    const msg = error.message || String(error)
+    console.error('[ffrSync] invoke error:', error)
+    return { imported: 0, error: msg }
+  }
+  if (!data?.success) return { imported: 0, error: data?.error ?? 'unknown_error' }
+  return { imported: data.imported ?? 0 }
+}
+
+async function loadMatchesFromFfr(
+  competitionId: string,
+  clubCode: string,
+): Promise<{ matches: NormalizedFfrMatch[]; error?: string }> {
+  const compIdNum = Number(competitionId)
+  const res = await requestFfrGraphql(QUERY_COMPETITION_CALENDAR, {
+    compId: Number.isFinite(compIdNum) ? compIdNum : competitionId,
+  })
+  if (!res.ok) return { matches: [], error: `ffr_http_${res.status}` }
+
+  const json = res.json as {
+    errors?: Array<{ message: string }>
+    data?: {
+      Competition?: {
+        Journees?: Array<FfrJourneeShape & { Rencontres?: FfrRencontreShape[] }>
+      }
+    }
+  }
+  if (json?.errors?.length) return { matches: [], error: `ffr_graphql: ${json.errors[0].message}` }
+
+  const competition = json?.data?.Competition
+  if (!competition?.Journees) return { matches: [], error: 'competition_not_found' }
+
+  const todayStr = new Date().toISOString().slice(0, 10)
+  const allClubMatches: NormalizedFfrMatch[] = []
+
+  for (const journee of competition.Journees) {
+    for (const r of journee.Rencontres ?? []) {
+      const normalized = mapFfrRencontreToNormalizedMatch(r, journee, clubCode)
+      if (normalized) allClubMatches.push(normalized)
+    }
+  }
+
+  allClubMatches.sort((a, b) => a.match_date.localeCompare(b.match_date))
+  const futureMatches = allClubMatches.filter(m => m.match_date >= todayStr)
+  const lastPast = allClubMatches.filter(m => m.match_date < todayStr).slice(-1)
+  return { matches: [...lastPast, ...futureMatches] }
+}
+
+/** Fetch calendrier FFR + écriture DB. L’Edge Function fetch la FFR (TWA/Play) ; fallback navigateur si besoin. */
 export async function syncCalendar(competitionId: string, clubCode: string): Promise<{
   imported: number
   error?: string
 }> {
-  // 1. Fetch calendar from FFR (navigateur ou HTTP natif iOS — pas l’Edge Function, 403).
-  let matches: NormalizedFfrMatch[]
   try {
-    const compIdNum = Number(competitionId)
-    const res = await postFfrGraphql(QUERY_COMPETITION_CALENDAR, {
-      compId: Number.isFinite(compIdNum) ? compIdNum : competitionId,
-    })
-    if (!res.ok) return { imported: 0, error: `ffr_http_${res.status}` }
+    const serverFirst = await invokeSyncCalendar(competitionId, clubCode)
+    if (!serverFirst.error) return serverFirst
+    if (!isFfrUpstreamSyncError(serverFirst.error)) return serverFirst
 
-    const json = res.json as {
-      errors?: Array<{ message: string }>
-      data?: {
-        Competition?: {
-          Journees?: Array<FfrJourneeShape & { Rencontres?: FfrRencontreShape[] }>
-        }
-      }
-    }
-    if (json?.errors?.length) return { imported: 0, error: `ffr_graphql: ${json.errors[0].message}` }
-
-    const competition = json?.data?.Competition
-    if (!competition?.Journees) return { imported: 0, error: 'competition_not_found' }
-
-    const todayStr = new Date().toISOString().slice(0, 10)
-    const allClubMatches: NormalizedFfrMatch[] = []
-
-    for (const journee of competition.Journees) {
-      for (const r of journee.Rencontres ?? []) {
-        const normalized = mapFfrRencontreToNormalizedMatch(r, journee, clubCode)
-        if (normalized) allClubMatches.push(normalized)
-      }
-    }
-
-    // Keep only future matches + the last past match (for ACWR/charge tracking)
-    allClubMatches.sort((a, b) => a.match_date.localeCompare(b.match_date))
-    const futureMatches = allClubMatches.filter(m => m.match_date >= todayStr)
-    const lastPast = allClubMatches.filter(m => m.match_date < todayStr).slice(-1)
-    matches = [...lastPast, ...futureMatches]
-  } catch (err) {
-    return { imported: 0, error: err instanceof Error ? err.message : 'ffr_unavailable' }
-  }
-
-  // 2. Send matches to Edge Function for DB sync
-  try {
-    await supabase.auth.refreshSession()
-    const { data, error } = await supabase.functions.invoke('ffr-sync', {
-      body: { action: 'sync_calendar', competitionId, clubCode, matches },
-    })
-    if (error) {
-      const msg = error.message || String(error)
-      console.error('[ffrSync] invoke error:', error)
-      return { imported: 0, error: msg }
-    }
-    if (!data?.success) return { imported: 0, error: data?.error ?? 'unknown_error' }
-    return { imported: data.imported ?? 0 }
+    const loaded = await loadMatchesFromFfr(competitionId, clubCode)
+    if (loaded.error) return { imported: 0, error: loaded.error }
+    return await invokeSyncCalendar(competitionId, clubCode, loaded.matches)
   } catch (err) {
     console.error('[ffrSync] invoke threw:', err)
     return { imported: 0, error: err instanceof Error ? err.message : 'network_error' }

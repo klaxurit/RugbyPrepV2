@@ -5,10 +5,11 @@ export const FFR_GRAPHQL_URL = 'https://api-agregateur.ffr.fr/graphql'
 /**
  * POST GraphQL FFR.
  *
- * Sur le web, `fetch` passe (origine https://rugbyforge.fr, CORS FFR OK).
- * Dans WKWebView Capacitor l’origine est `capacitor://localhost` : le même
- * fetch est refusé (Failed to fetch) alors que la connexion est bonne.
- * CapacitorHttp passe par URLSession et n’est pas soumis au CORS WebView.
+ * Sur le web desktop, `fetch` passe (origine https://rugbyforge.fr, CORS FFR OK).
+ * Play/TWA : le fetch FFR peut échouer (CSP SW, DNS opérateur) alors que
+ * Supabase répond — `requestFfrGraphql` proxy alors via l’Edge Function.
+ * WKWebView Capacitor : origine `capacitor://localhost`, CORS bloqué ;
+ * CapacitorHttp passe par URLSession.
  *
  * User-Agent Safari : l’Edge Function Deno se prenait un 403 FFR.
  */
