@@ -509,7 +509,7 @@ export interface ClubTrainingDay {
 
 export interface ClubSchedule {
   clubDays: ClubTrainingDay[]  // Jours d'entraînement club récurrents
-  matchDay?: DayOfWeek          // Jour de match habituel (souvent 6=Samedi)
+  matchDay?: DayOfWeek          // Jour de match habituel (souvent 0=Dimanche amateur FFR)
 }
 
 export interface SCSessionSlot {

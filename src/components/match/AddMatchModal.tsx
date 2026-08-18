@@ -1,15 +1,17 @@
 import { useMemo, useState } from 'react'
 import { Calendar, Home, MapPin, Flag } from 'lucide-react'
-import type { CalendarEvent } from '../../types/training'
+import type { CalendarEvent, DayOfWeek } from '../../types/training'
 import { BottomSheet } from '../ui/BottomSheet'
 import { ClubSearchInput } from './ClubSearchInput'
-import { diffDays, formatDateFR, suggestedMatchSaturdayISO } from './matchDate'
+import { diffDays, formatDateFR, suggestedNextMatchISO } from './matchDate'
 
 interface AddMatchModalProps {
   open: boolean
-  /** Context calendrier (debug override / jour courant) pour le défaut samedi. */
+  /** Context calendrier (debug override / jour courant) pour le défaut dimanche. */
   todayISO: string
   initialDate?: string
+  /** Jour de match habituel club — sinon dimanche amateur FFR. */
+  habitualMatchDay?: DayOfWeek
   existingEvents?: CalendarEvent[]
   onClose: () => void
   onSave: (payload: Omit<CalendarEvent, 'id' | 'created_at'>) => Promise<void>
@@ -18,6 +20,7 @@ interface AddMatchModalProps {
 interface AddMatchFormProps {
   todayISO: string
   initialDate?: string
+  habitualMatchDay?: DayOfWeek
   existingEvents?: CalendarEvent[]
   onClose: () => void
   onSave: (payload: Omit<CalendarEvent, 'id' | 'created_at'>) => Promise<void>
@@ -27,11 +30,14 @@ interface AddMatchFormProps {
 function AddMatchForm({
   todayISO,
   initialDate,
+  habitualMatchDay,
   existingEvents,
   onClose,
   onSave,
 }: AddMatchFormProps) {
-  const [date, setDate] = useState(initialDate ?? suggestedMatchSaturdayISO(todayISO))
+  const [date, setDate] = useState(
+    initialDate ?? suggestedNextMatchISO(todayISO, habitualMatchDay ?? 0),
+  )
   const [kickoffTime, setKickoffTime] = useState('15:00')
   const [opponent, setOpponent] = useState('')
   const [opponentCode, setOpponentCode] = useState<string | undefined>()
@@ -204,6 +210,7 @@ export function AddMatchModal({
   open,
   todayISO,
   initialDate,
+  habitualMatchDay,
   existingEvents,
   onClose,
   onSave,
@@ -225,6 +232,7 @@ export function AddMatchModal({
           key={formKey}
           todayISO={todayISO}
           initialDate={initialDate}
+          habitualMatchDay={habitualMatchDay}
           existingEvents={existingEvents}
           onClose={onClose}
           onSave={onSave}

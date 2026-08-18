@@ -190,6 +190,22 @@ describe('isCalendarPreMatchNoHeavyWindow — J-2 calendaire (rail registre)', (
   })
 })
 
+describe('isCalendarPreMatchNoHeavyWindow — match dimanche (amateur FFR)', () => {
+  const sunday = '2026-04-12'
+
+  it('vendredi (J-2) inclus', () => {
+    expect(isCalendarPreMatchNoHeavyWindow('2026-04-10', sunday)).toBe(true)
+  })
+
+  it('samedi (J-1) inclus', () => {
+    expect(isCalendarPreMatchNoHeavyWindow('2026-04-11', sunday)).toBe(true)
+  })
+
+  it('jeudi (J-3) hors fenêtre — on ne light pas « 2 j. avant samedi »', () => {
+    expect(isCalendarPreMatchNoHeavyWindow('2026-04-09', sunday)).toBe(false)
+  })
+})
+
 describe('pickPrimerDay — sélection optimale MD-1 puis fallback MD-2', () => {
   it('MD-1 disponible → retourne MD-1 (27h avant)', () => {
     const day = pickPrimerDay(match, monday, () => false)

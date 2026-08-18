@@ -31,13 +31,17 @@ export function diffDays(dateStr: string): number {
 }
 
 /**
- * Prochain samedi utile pour pré-remplir l’ajout manuel — même logique que l’ancien
- * formulaire inline « J’ai un match cette semaine » (WeekPage).
+ * Prochaine occurrence du jour de match pour pré-remplir l’ajout manuel.
+ * Amateur FFR : défaut **dimanche** (0). Le jour habituel club prime s’il est posé.
+ * N’invente pas un event — c’est seulement la date proposée dans le formulaire.
  */
-export function suggestedMatchSaturdayISO(todayISO: string): string {
+export function suggestedNextMatchISO(
+  todayISO: string,
+  habitualMatchDay: 0 | 1 | 2 | 3 | 4 | 5 | 6 = 0,
+): string {
   const d = new Date(todayISO + 'T12:00:00')
   const dow = d.getDay()
-  const add = ((6 - dow + 7) % 7 || 7)
+  const add = ((habitualMatchDay - dow + 7) % 7 || 7)
   d.setDate(d.getDate() + add)
   const y = d.getFullYear()
   const mo = String(d.getMonth() + 1).padStart(2, '0')

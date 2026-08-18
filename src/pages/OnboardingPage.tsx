@@ -77,8 +77,8 @@ function getClubDayOptions(lang: Lang): DayOption[] {
 type MatchDayOption = { day: DayOfWeek | null; label: string }
 function getMatchDayOptions(lang: Lang): MatchDayOption[] {
   return [
-    { day: 6,    label: tr('day_saturday', lang) },
     { day: 0,    label: tr('day_sunday', lang) },
+    { day: 6,    label: tr('day_saturday', lang) },
     { day: null, label: tr('match_day_variable', lang) },
   ]
 }

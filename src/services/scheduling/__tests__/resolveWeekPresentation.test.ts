@@ -499,6 +499,57 @@ describe('resolveWeekPresentation — correction: reschedule', () => {
     }
   })
 
+  it('rail J-2 : match dimanche → vendredi light, jeudi pas light', () => {
+    const thursday = resolveWeekPresentation({
+      motherSessions: [slot('LOWER', 'early_week')],
+      schedulingMode: 'calendar',
+      events: [match('2026-04-12')],
+      today: TODAY,
+      corrections: [
+        { id: 'c1', type: 'reschedule', sessionId: 'LOWER', toDay: 4, appliedAt: '2026-04-06', reversible: true },
+      ],
+    })
+    const thu = thursday.sessions[0]
+    if (thu.kind === 'dated') {
+      expect(thu.dayOfWeek).toBe(4)
+      expect(thu.sessionSlot.variant).not.toBe('light')
+    }
+
+    const friday = resolveWeekPresentation({
+      motherSessions: [slot('LOWER', 'early_week')],
+      schedulingMode: 'calendar',
+      events: [match('2026-04-12')],
+      today: TODAY,
+      corrections: [
+        { id: 'c1', type: 'reschedule', sessionId: 'LOWER', toDay: 5, appliedAt: '2026-04-06', reversible: true },
+      ],
+    })
+    const fri = friday.sessions[0]
+    if (fri.kind === 'dated') {
+      expect(fri.dayOfWeek).toBe(5)
+      expect(fri.sessionSlot.variant).toBe('light')
+      expect(fri.sessionSlot.maxBlocks).toBe(2)
+    }
+  })
+
+  it('rail J-2 : jour habituel samedi sans event → pas de light fantôme', () => {
+    const result = resolveWeekPresentation({
+      motherSessions: [slot('LOWER', 'early_week')],
+      schedulingMode: 'calendar',
+      events: [],
+      today: TODAY,
+      clubSchedule: club([2, 4], 6),
+      corrections: [
+        { id: 'c1', type: 'reschedule', sessionId: 'LOWER', toDay: 4, appliedAt: '2026-04-06', reversible: true },
+      ],
+    })
+    const session = result.sessions[0]
+    if (session.kind === 'dated') {
+      expect(session.dayOfWeek).toBe(4)
+      expect(session.sessionSlot.variant).not.toBe('light')
+    }
+  })
+
   it('calendar: reschedule to club day is accepted (club days are constrained, not forbidden)', () => {
     const result = resolveWeekPresentation({
       motherSessions: [slot('A', 'early_week')],

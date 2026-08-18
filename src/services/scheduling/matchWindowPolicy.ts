@@ -111,7 +111,8 @@ export function isPreMatchLightOnlyWindow(
  *
  * Distinct de `isPreMatchLightOnlyWindow` (48 h depuis midi) : un match
  * samedi 15 h exclut le jeudi de la fenêtre 48 h (51 h), alors que J-2
- * calendaire l'inclut. Ne pas fusionner les deux.
+ * calendaire l'inclut. Ancré sur **la date ISO du match**, pas un samedi
+ * par défaut (amateur FFR = souvent dimanche → J-2 = vendredi).
  *
  * J+1 n'est pas dans cette fenêtre.
  */

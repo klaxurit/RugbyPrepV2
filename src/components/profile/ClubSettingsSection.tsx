@@ -21,8 +21,8 @@ const CLUB_DAYS_OPTIONS: { day: DayOfWeek; label: string; short: string }[] = [
 ]
 
 const MATCH_DAY_OPTIONS: { day: DayOfWeek | null; label: string }[] = [
-  { day: 6, label: 'Samedi' },
   { day: 0, label: 'Dimanche' },
+  { day: 6, label: 'Samedi' },
   { day: null, label: 'Pas de jour fixe' },
 ]
 

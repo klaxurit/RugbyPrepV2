@@ -33,7 +33,7 @@ import { NextMatchCard } from '../components/match/NextMatchCard'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 import { AddMatchModal } from '../components/match/AddMatchModal'
 import { MatchKindFollowUpSheet } from '../components/match/MatchKindFollowUpSheet'
-import { suggestedMatchSaturdayISO } from '../components/match/matchDate'
+import { suggestedNextMatchISO } from '../components/match/matchDate'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
 import { SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
@@ -693,7 +693,7 @@ export function WeekPage() {
           <AddMatchInline
             lang={lang}
             onOpen={() => {
-              setAddModalDate(suggestedMatchSaturdayISO(today))
+              setAddModalDate(suggestedNextMatchISO(today, profile.clubSchedule?.matchDay ?? 0))
               setAddModalOpen(true)
             }}
           />
@@ -760,6 +760,7 @@ export function WeekPage() {
         open={addModalOpen}
         todayISO={today}
         initialDate={addModalDate}
+        habitualMatchDay={profile.clubSchedule?.matchDay}
         existingEvents={visibleEvents}
         onClose={() => {
           setAddModalOpen(false)
