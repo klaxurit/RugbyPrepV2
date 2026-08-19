@@ -108,6 +108,27 @@ describe('detectLiveSetPR', () => {
     })
     expect(pr).toBeNull()
   })
+
+  it('ne re-flagge pas un PR sur les tours suivants à la même charge', () => {
+    const pr = detectLiveSetPR({
+      setLogs: [
+        mkSet({ slotSignature: 'past', loadKg: 40, reps: 8 }),
+        mkSet({
+          id: 'tour-0',
+          slotSignature: 'current',
+          tourIndex: 0,
+          loadKg: 50,
+          reps: 8,
+        }),
+      ],
+      exerciseId: 'bench',
+      metricType: 'load_reps',
+      draft: { loadKg: 50, reps: 8 },
+      validatingSet: { slotSignature: 'current', blockNumber: 1, tourIndex: 1 },
+      priorSessionDrafts: [{ loadKg: 50, reps: 8 }],
+    })
+    expect(pr).toBeNull()
+  })
 })
 
 describe('collectPriorSessionDrafts', () => {

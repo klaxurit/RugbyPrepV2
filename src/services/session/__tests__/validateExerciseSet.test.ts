@@ -85,6 +85,9 @@ describe('validateExerciseSetFromBlock', () => {
       blockNumber: 1,
       tourIndex: 0,
       exerciseIndex: 0,
+      exerciseTourLoads: {
+        '1_0_0': { loadKg: 290, reps: 8 },
+      },
     })
     expect(onBlockCompleted).toHaveBeenCalled()
   })

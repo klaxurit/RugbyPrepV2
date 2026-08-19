@@ -74,6 +74,7 @@ interface SessionBlocksProps {
     blockNumber: number
     tourIndex: number
     exerciseIndex: number
+    exerciseTourLoads?: Record<string, { loadKg?: number; reps?: number }>
   }) => void
   /** Langue d'affichage des noms d'exercices (UserProfile.preferredLanguage). Défaut: 'fr'. */
   lang?: Lang

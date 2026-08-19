@@ -40,6 +40,8 @@ export interface ValidateExerciseSetArgs {
     blockNumber: number
     tourIndex: number
     exerciseIndex: number
+    /** Snapshot des charges de la séance, y compris la série qui vient d'être validée. */
+    exerciseTourLoads: Record<string, ExerciseTourLoad>
   }) => void
 }
 
@@ -245,6 +247,7 @@ export function validateExerciseSetFromBlock({
         blockNumber,
         tourIndex,
         exerciseIndex,
+        exerciseTourLoads: snapshot.exerciseTourLoads,
       })
     }
   }

@@ -89,6 +89,7 @@ import { SessionRunProgressBar, SessionStickyCTA, SessionBlocks } from '../compo
 import { SessionPRToast } from '../components/session/SessionPRToast'
 import { detectLiveSetPR, collectPriorSessionDrafts } from '../services/pr/detectLiveSetPR'
 import { buildLivePRToastData, buildVsPreviousToastData, type LivePRToastData } from '../services/pr/formatLivePRToast'
+import { shouldAnnounceLiveSetToast } from '../services/pr/shouldAnnounceLiveSetToast'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
 import { HeroIdle } from '../components/session/blocks'
 import { ExerciseDemoSheet } from '../components/motherSession/ExerciseDemoSheet'
@@ -182,6 +183,7 @@ export function SessionDetailPage() {
   } | null>(null)
   const [livePRToast, setLivePRToast] = useState<LivePRToastData | null>(null)
   const [beatPreviousSession, setBeatPreviousSession] = useState(false)
+  const announcedLiveToastKgByExoRef = useRef<Record<string, number>>({})
   // Note : depuis le passage à SessionBlocks, les sets sont persistés via
   // `upsertSet` (table exercise_set_logs). Le hook `useBlockLogs` ne sert plus
   // sur cette page — il sera ré-introduit en D5/D6 pour la suggestion de charge
@@ -343,6 +345,7 @@ export function SessionDetailPage() {
 
   useEffect(() => {
     setBeatPreviousSession(false)
+    announcedLiveToastKgByExoRef.current = {}
   }, [sessionRunKey])
 
   // Progression par TOURS (pas par série/exo). Un tour est "validé" quand tous
@@ -637,11 +640,20 @@ export function SessionDetailPage() {
       blockNumber: number
       tourIndex: number
       exerciseIndex: number
+      exerciseTourLoads?: Readonly<Record<string, { loadKg?: number; reps?: number }>>
     }) => {
       if (!slotSignature || !isPremium) return
+      if (
+        !shouldAnnounceLiveSetToast(
+          payload.loadKg,
+          announcedLiveToastKgByExoRef.current[payload.exerciseId],
+        )
+      ) {
+        return
+      }
       const metricType = getExerciseMetricType({ exerciseId: payload.exerciseId })
       const priorSessionDrafts = collectPriorSessionDrafts(
-        sessionRun.exerciseTourLoads,
+        payload.exerciseTourLoads ?? sessionRun.exerciseTourLoads,
         payload.blockNumber,
         payload.tourIndex,
         payload.exerciseIndex,
@@ -667,6 +679,9 @@ export function SessionDetailPage() {
             (s.loadKg != null || s.reps != null),
         )
         setLivePRToast(buildLivePRToastData(pr, lang, { beatsPriorSessions }))
+        if (payload.loadKg != null) {
+          announcedLiveToastKgByExoRef.current[payload.exerciseId] = payload.loadKg
+        }
         posthog.capture('session_live_pr', {
           exerciseId: payload.exerciseId,
           metricType,
@@ -700,6 +715,7 @@ export function SessionDetailPage() {
           delta,
         }),
       )
+      announcedLiveToastKgByExoRef.current[payload.exerciseId] = payload.loadKg
       posthog.capture('session_vs_previous', {
         exerciseId: payload.exerciseId,
         metricType,
