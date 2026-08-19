@@ -1,22 +1,30 @@
 # RugbyPrep — instructions agents
 
-Avant toute modification de **séance, mother session, template, périodisation,
-volume, repos** :
+Source unique. Ne pas recopier ces règles ailleurs.
 
-1. Lire `src/knowledge/prepa-ia.md`
-2. Lire `src/knowledge/product-decisions.md`
-3. Pour les études : `src/knowledge/evidence-clusters.md` (un rôle par papier)
-4. Retrieval : `src/knowledge/retrieval-index.md` (1–3 fichiers, pas toute la KB)
-5. Chantier : `src/knowledge/prepa-ia-roadmap.md` — pas de rewrite séances avant Vague 3 validée
+## Qualité
 
-Rails ≠ fourchettes scientifiques ≠ choix produit. Proposer A conservateur et
-B ambitieux ; ne pas réécrire le corpus avant validation.
+Avant commit / push : `npm run check` (`lint` + `tsc -b` + Vitest). Détail CI :
+`.cursor/rules/quality-gate.mdc`.
 
-## Qualité avant push
+Feature UI : après le code, le check + les tests Playwright / composant **déjà là**.
+Pas de campagne screenshots inventée.
 
-`npm run check` (= `lint` + `tsc -b` + tests). C’est le sous-ensemble local du
-Quality Gate GitHub (`lint` + TypeScript + tests ; CI ajoute build + e2e).
+## Features non triviales
 
-- Ne pas pousser si `lint` échoue. `tsc` / Vitest seuls ne suffisent pas.
-- Ne pas exporter de helpers depuis un fichier de composants React
-  (`react-refresh/only-export-components`) — fichier `.ts` à part.
+Plan d’abord (fichiers, risques, critère de done). Code seulement après validation.
+Auth, billing, Runway, landing : **pas** le mode préparateur physique.
+
+## Séances / programme
+
+Si la tâche touche séance, mother session, template, périodisation, volume ou
+repos : `.cursor/rules/prepa-ia-rugby.mdc` + `src/knowledge/prepa-ia.md`.
+Livrer **A** (conservateur) et **B** (ambitieux). Pas de rewrite sans choix humain.
+
+## Erreurs déjà vues (ne pas répéter)
+
+- Helper / constante partagée : fichier `.ts`, jamais un export à côté d’un
+  composant `.tsx` (`react-refresh/only-export-components` casse le job Lint).
+- `tsc` ou Vitest seuls ne suffisent pas : le Quality Gate CI inclut **lint**.
+- Pas de rewrite mother sessions / corpus tant que A/B n’est pas choisi.
+- Ne pas injecter toute la KB : `retrieval-index.md`, 1–3 fichiers.

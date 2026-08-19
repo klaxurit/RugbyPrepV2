@@ -5,9 +5,6 @@ alwaysApply: true
 
 # Quality Gate local
 
-Avant tout commit ou push : `npm run check` (`lint` + `tsc -b` + Vitest).
+Avant commit / push : `npm run check` (`lint` + `tsc -b` + Vitest). `tsc` / tests seuls ne suffisent pas — le job CI **Lint** casse.
 
-Ne pas se contenter de `tsc` et des tests — le job CI **Lint** casse le Quality Gate
-(`react-refresh/only-export-components` si on exporte un helper depuis un `.tsx` de composants).
-
-Helpers / constantes partagées : fichier `.ts` séparé, pas d’export à côté d’un composant React.
+Helpers / constantes partagées : fichier `.ts`, jamais un export depuis un `.tsx` de composant (`react-refresh/only-export-components`).
