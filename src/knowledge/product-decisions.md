@@ -45,6 +45,8 @@ pas dans le compteur gym. Plafond audit `in_season` = 14 séries/groupe
 | Club / 1er match à l’onboarding | Club FFR + date de prochain match **optionnels** sur l’étape planning (hors inter-saison). Skip = horloge. Date → `firstMatchDateOverride` (semaine N, pas de J-2). Sync FFR = profil. | Sync compétition dans le tunnel | Bloquer first-run sur un import FFR |
 | 1 match / semaine | Amateur = toujours 1 match. Deux dates la même semaine ISO = doublon : on garde coupe/championnat, sinon la plus tôt. UI calendrier peut lister les deux. | — | Protocole charge « 2 matchs » / inventer un 2e match |
 | Rail J-2 runtime | Date séance vs **date du match réel** (event calendrier). Dimanche → J-2 = vendredi. Pas le « jour habituel » club, pas un samedi fantôme. `variant: light` + `maxBlocks` ≤ 2, bumps coupés. Sans event → rien. | — | Light 2 j. avant samedi par défaut / fenêtre 48 h midi / light hors calendrier réel |
+| CycleWeek W1 | **Inerte.** L’onboarding n’écrit plus W1 ; le chat / les séances lisent `weekLabel` de l’horloge annuelle. `log.week` reste un champ legacy (cap W8). | — | Choisir les mother sessions via CycleWeek / forcer S1 |
+| Charge d’entrée | **Aucune suggestion de kg** tant que l’utilisateur n’a pas logué un squat avec charge dans l’app. Pas de 1RM à l’onboarding, pas de baseline poste × poids. | Après squat logué : progression sur l’historique de l’exo | Demander un max squat à l’entrée / inventer des kg |
 | Blessures / stores | Pas de diagnostic, protocole rehab, ni localisation du cycle via douleur. L’horloge et `detectAnnualPlanningContext` **ignorent** `injuries` / `painFlags`. Préhab = échauffement général, pas un traitement. | — | App « médicale » (Play / App Store) : suivi de blessure, douleur à l’onboarding, rehab guidé |
 | Cou | Tip off-season + mini-bloc Upper (mains, 3 directions) | Élastique en Alternatives | Séance cou dédiée / harnais lourd |
 
@@ -62,4 +64,4 @@ calme (off-season / semaine sans match).
   (runtime), plafond audit 14 inchangé.
 - Densité Speed hors saison.
 
-*Dernière mise à jour : 2026-08-17*
+*Dernière mise à jour : 2026-08-19*

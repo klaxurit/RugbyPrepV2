@@ -122,4 +122,23 @@ describe('buildSessionLoadSuggestions', () => {
     // bench_press n'a qu'un seul log → G1 → MAINTAIN
     expect(map.get('bench_press')?.decision).toBe('maintain')
   })
+
+  it('ne suggère pas de kg tant qu\'aucun squat n\'est logué', () => {
+    const map = buildSessionLoadSuggestions({
+      allSetLogs: [
+        set({ exerciseId: 'bench_press', slotSignature: 'past-1', loadKg: 60 }),
+        set({ exerciseId: 'bench_press', slotSignature: 'past-2', loadKg: 62.5 }),
+      ],
+      exercises: [{ exerciseId: 'bench_press', prescription: '4x6' }],
+      currentSlotSignature: 'current',
+      week: 'W1',
+      acwr: null,
+      fatigueLevel: 'normal',
+      trainingLevel: 'performance',
+      daysToMatch: null,
+    })
+    const r = map.get('bench_press')
+    expect(r?.decision).toBe('no_data')
+    expect(r?.suggestedWeight).toBeNull()
+  })
 })

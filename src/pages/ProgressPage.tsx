@@ -729,7 +729,7 @@ export function ProgressPage() {
                             )}
                           </p>
                         </div>
-                        {baselineValue !== null && positionLabel && (
+                        {baselineValue !== null && positionLabel && !(card.is1RM && !last) && (
                           features.premiumAnalytics ? (
                             <div className="text-right flex-shrink-0">
                               <p className="text-[10px] text-fg-muted">{tr('progress_test_baseline', lang)} {positionLabel}</p>
@@ -751,7 +751,7 @@ export function ProgressPage() {
                     ) : (
                       <div className="px-4 pb-3">
                         <p className="text-sm text-fg-muted italic">{tr('progress_test_none', lang)}</p>
-                        {features.premiumAnalytics && baselineValue !== null && positionLabel && (
+                        {features.premiumAnalytics && baselineValue !== null && positionLabel && !card.is1RM && (
                           <p className="text-[10px] text-fg-muted mt-1">
                             {tr('progress_test_baseline', lang)} {positionLabel} ({baselineLabel}) : <span className="font-bold">{formatValue(baselineValue, card.type)} {card.unit}</span>
                           </p>

@@ -35,7 +35,7 @@ describe('estimateBodyweightEntryLoadKg', () => {
 })
 
 describe('getLoadSuggestion bodyweight entry', () => {
-  it('suggests entry load from weightKg on first log', () => {
+  it('sans squat logué : pas de charge d\'entrée inventée', () => {
     const r = getLoadSuggestion({
       exerciseId: 'push_horizontal__push_up__decline',
       lastEntry: undefined,
@@ -46,6 +46,24 @@ describe('getLoadSuggestion bodyweight entry', () => {
       isBodyweightProgram: true,
       prescribedRepsLow: 8,
       prescribedRepsHigh: 10,
+      hasSquatData: false,
+    })
+    expect(r.suggestedWeight).toBeNull()
+    expect(r.decision).toBe('no_data')
+  })
+
+  it('suggests entry load from weightKg on first log once squat is logged', () => {
+    const r = getLoadSuggestion({
+      exerciseId: 'push_horizontal__push_up__decline',
+      lastEntry: undefined,
+      week: 'W1',
+      acwr: null,
+      fatigueLevel: 'normal',
+      weightKg: 90,
+      isBodyweightProgram: true,
+      prescribedRepsLow: 8,
+      prescribedRepsHigh: 10,
+      hasSquatData: true,
     })
     expect(r.suggestedWeight).toBe(67.5)
     expect(r.confidence).toBe('high')
@@ -60,6 +78,7 @@ describe('getLoadSuggestion bodyweight entry', () => {
       acwr: null,
       fatigueLevel: 'normal',
       isBodyweightProgram: true,
+      hasSquatData: true,
     })
     expect(r.suggestedWeight).toBeNull()
     expect(r.justification).toContain('Morphologie')

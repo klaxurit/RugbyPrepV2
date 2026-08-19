@@ -3,6 +3,7 @@ import { userScopedKey } from '../services/storage/userScopedStorage'
 
 export const STORAGE_BASE = 'rugbyprep.week'
 export const LAST_NON_DELOAD_BASE = 'rugbyprep.week.lastnon'
+/** Fallback CycleWeek uniquement — le programme réel vient de l'horloge annuelle. */
 export const DEFAULT_WEEK: CycleWeek = 'W1'
 export const WEEK_VALUES: CycleWeek[] = ['H1', 'H2', 'H3', 'H4', 'W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'DELOAD']
 

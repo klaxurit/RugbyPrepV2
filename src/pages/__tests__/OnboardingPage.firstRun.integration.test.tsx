@@ -341,4 +341,12 @@ describe('OnboardingPage · first run flow', () => {
 
     expect(updateProfileMock).toHaveBeenCalled()
   })
+
+  it('n’écrit plus CycleWeek W1 dans localStorage', () => {
+    localStorage.removeItem('rugbyprep.week.v2.u1')
+    renderOnboarding()
+    navigateToSummary()
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
+    expect(localStorage.getItem('rugbyprep.week.v2.u1')).toBeNull()
+  })
 })

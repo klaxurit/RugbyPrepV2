@@ -8,6 +8,7 @@ import type {
 } from '../../types/training'
 import { getLoadSuggestion, type LoadSuggestion } from '../loadSuggestion'
 import { parseExerciseSetSpec } from '../ui/exerciseSetSpec'
+import { hasSquatLoadLog } from './hasSquatTrainingData'
 
 interface ExerciseRefShape {
   exerciseId: string
@@ -67,6 +68,7 @@ export function buildSessionLoadSuggestions({
 }: BuildSessionLoadSuggestionsInputs): Map<string, LoadSuggestion> {
   const result = new Map<string, LoadSuggestion>()
   const nowDate = now ?? new Date()
+  const hasSquatData = hasSquatLoadLog(allSetLogs)
 
   // Pré-filtrer une fois : exclure la séance courante.
   const historical = currentSlotSignature
@@ -105,6 +107,7 @@ export function buildSessionLoadSuggestions({
           weightKg,
           isBodyweightProgram,
           cycle,
+          hasSquatData,
         }),
       )
       continue
@@ -166,6 +169,7 @@ export function buildSessionLoadSuggestions({
         weightKg,
         isBodyweightProgram,
         cycle,
+        hasSquatData,
       }),
     )
   }

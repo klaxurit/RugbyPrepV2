@@ -168,6 +168,24 @@ describe('buildMotherSessionProgramSessionLog', () => {
     expect(log.programContext?.preSeasonPhase).toBe(2)
     expect(log.programContext?.annualWeekCode).toBe('PRE_S08')
   })
+
+  it('weekNumber > 8 : annualWeekCode reste la vérité, CycleWeek legacy plafonne', () => {
+    const slot = makeFakeSlot('LOWER_IN_V1', 'lower')
+    const ctx = makePlanningContext('in_season')
+    ctx.weekNumber = 29
+    ctx.weekLabel = 'En saison - S29 (1/4)'
+
+    const log = buildMotherSessionProgramSessionLog({
+      dateISO: '2026-03-21T10:00:00Z',
+      fatigue: 'OK',
+      slot,
+      planningContext: ctx,
+    })
+
+    expect(log.programContext?.annualWeekCode).toBe('IN_W29')
+    expect(log.programContext?.annualWeekNumber).toBe(29)
+    expect(log.programContext?.weekLabel).toBe('En saison - S29 (1/4)')
+  })
 })
 
 // ── Tests buildAnnualWeekCode ────────────────────────────────────────────────

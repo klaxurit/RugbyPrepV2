@@ -56,6 +56,11 @@ export interface LoadSuggestionContext {
    * la plus conservatrice.
    */
   cycle?: AnnualCycle
+  /**
+   * True si l'utilisateur a déjà logué un squat avec charge.
+   * Sans ça : aucune suggestion de kg (pas de 1RM / baseline poste).
+   */
+  hasSquatData?: boolean
 }
 
 // ─── Zone d'effort cible ────────────────────────────────────
@@ -177,6 +182,7 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
     weightKg,
     isBodyweightProgram,
     cycle,
+    hasSquatData = false,
   } = ctx
   const family = getExerciseFamily(exerciseId)
 
@@ -189,6 +195,18 @@ export function getLoadSuggestion(ctx: LoadSuggestionContext): LoadSuggestion {
       justification: '',
       nextTarget: null,
       confidence: 'high',
+    }
+  }
+
+  // ── Pas de squat logué → aucune suggestion de kg (ni 1RM, ni poids × poste) ──
+  if (!hasSquatData) {
+    return {
+      decision: 'no_data',
+      suggestedWeight: null,
+      suggestedReps: lastEntry?.reps ?? prescribedRepsLow ?? prescribedRepsHigh ?? null,
+      justification: 'Premiere fois — choisis ta charge, on ajustera ensuite.',
+      nextTarget: null,
+      confidence: 'low',
     }
   }
 

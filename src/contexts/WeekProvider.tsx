@@ -29,12 +29,6 @@ export function WeekProvider({ children }: WeekProviderProps) {
   }, [userId])
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem(weekStorageKey(userId), week)
-    } catch { /* ignore */ }
-  }, [week, userId])
-
-  useEffect(() => {
     const currentWeekKey = weekStorageKey(userId)
     const currentLastNonKey = lastNonDeloadStorageKey(userId)
     const onStorage = (e: StorageEvent) => {
@@ -51,6 +45,9 @@ export function WeekProvider({ children }: WeekProviderProps) {
 
   const setWeek = useCallback((next: CycleWeek) => {
     setWeekState(next)
+    try {
+      window.localStorage.setItem(weekStorageKey(userId), next)
+    } catch { /* ignore */ }
     if (next !== 'DELOAD') {
       setLastNonDeloadWeek(next)
       try {

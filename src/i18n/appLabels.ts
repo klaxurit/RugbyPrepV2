@@ -228,7 +228,7 @@ export const APP_LABELS = {
   step3_sessions_per_week: { fr: 'séances par semaine', en: 'sessions per week' },
   step3_skip_club: { fr: "Pas d'entraînement club — passer", en: 'No club training — skip' },
   step4_title: { fr: 'Ta morphologie', en: 'Your morphology' },
-  step4_sub: { fr: "Optionnel — utilisé pour les baselines 1RM et l'IMC rugby.", en: 'Optional — used for 1RM baselines and rugby BMI.' },
+  step4_sub: { fr: "Optionnel — utilisé pour l'IMC rugby.", en: 'Optional — used for rugby BMI.' },
   step4_height: { fr: 'Taille', en: 'Height' },
   step4_weight: { fr: 'Poids', en: 'Weight' },
   step4_height_range_error: { fr: 'Entre 140 et 230 cm', en: 'Between 140 and 230 cm' },

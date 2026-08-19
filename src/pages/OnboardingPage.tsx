@@ -17,7 +17,6 @@ import backThreeImg from '../assets/positions/back-three.webp'
 import rugbyforgeRedLogo from '../assets/rugbyforge-red-full.png'
 import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
-import { weekStorageKey } from '../contexts/weekStorage'
 import { userScopedKey } from '../services/storage/userScopedStorage'
 import { posthog } from '../services/analytics/posthog'
 import { resolvePostOnboardingDestination } from '../services/navigation/resolveAppEntryDestination'
@@ -434,7 +433,6 @@ export function OnboardingPage() {
       }
       updateProfile(profilePayload, { source: 'onboarding' })
 
-      window.localStorage.setItem(weekStorageKey(userId), 'W1')
       window.localStorage.setItem(
         userScopedKey('rugbyprep.onboarding.completedAt', userId),
         new Date().toISOString().slice(0, 10),

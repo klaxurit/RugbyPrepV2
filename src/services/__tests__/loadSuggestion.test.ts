@@ -22,10 +22,20 @@ const baseCtx = (overrides: Partial<LoadSuggestionContext> = {}): LoadSuggestion
   prescribedRepsHigh: 5,
   prescribedRepsLow: 3,
   daysToMatch: null,
+  hasSquatData: true,
   ...overrides,
 })
 
 describe('getLoadSuggestion — garde-fous', () => {
+  describe('squat logué requis', () => {
+    it('sans squat : aucune suggestion de kg', () => {
+      const r = getLoadSuggestion(baseCtx({ hasSquatData: false }))
+      expect(r.decision).toBe('no_data')
+      expect(r.suggestedWeight).toBeNull()
+      expect(r.confidence).toBe('low')
+    })
+  })
+
   describe('G5 — Starter', () => {
     it('renvoie no_suggestion pour trainingLevel="starter"', () => {
       const r = getLoadSuggestion(baseCtx({ trainingLevel: 'starter' }))

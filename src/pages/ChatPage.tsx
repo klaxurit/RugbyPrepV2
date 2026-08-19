@@ -4,7 +4,6 @@ import { Send, Bot, Zap, Lock } from 'lucide-react'
 import { PageHeader } from '../components/PageHeader'
 import { posthog } from '../services/analytics/posthog'
 import { useProfile } from '../hooks/useProfile'
-import { useWeek } from '../hooks/useWeek'
 import { useFatigue } from '../hooks/useFatigue'
 import { useHistory } from '../hooks/useHistory'
 import { useACWR } from '../hooks/useACWR'
@@ -12,7 +11,13 @@ import { useCalendar } from '../hooks/useCalendar'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { useStripeCheckoutReturn } from '../hooks/useStripeCheckoutReturn'
-import { getPhaseForWeek } from '../services/program/programPhases.v1'
+import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
+import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
+import {
+  chatPhaseFromPlanning,
+  chatWeekLabelFromPlanning,
+} from '../services/chat/resolveChatProgramContext'
+import { getToday } from '../services/ui/debugDateOverride'
 import { supabase } from '../services/supabase/client'
 import { FunctionsHttpError } from '@supabase/functions-js'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
@@ -58,7 +63,6 @@ function quickPromptForPhase(phase: string | null | undefined, lang: Lang): stri
 
 export function ChatPage() {
   const { profile } = useProfile()
-  const { week } = useWeek()
   const { fatigue } = useFatigue()
   const { logs } = useHistory()
   const { events: chatEvents, nextMatch: chatNextMatch } = useCalendar()
@@ -103,9 +107,22 @@ export function ChatPage() {
   }, [searchParams])
 
   const lang: Lang = (profile.preferredLanguage as Lang | undefined) ?? 'fr'
-  const phase = getPhaseForWeek(week === 'DELOAD' ? week : week)
+  const today = useMemo(() => getToday(), [])
+  const planningContext = useMemo(() => {
+    const { inputs } = buildAthletePlanningInputs({
+      profile,
+      events: chatEvents,
+      logs,
+      today,
+      fatigue,
+      acwrZone,
+    })
+    return detectAnnualPlanningContext(inputs)
+  }, [profile, chatEvents, logs, today, fatigue, acwrZone])
+  const week = chatWeekLabelFromPlanning(planningContext, lang)
+  const phase = chatPhaseFromPlanning(planningContext)
   const phaseLabel = phaseLabelFor(phase, lang)
-  const isDeload = week === 'DELOAD'
+  const isDeload = planningContext.isDeloadWeek
   const hasPremiumInsights = hasEntitlement('premium_analytics') || hasEntitlement('premium_program_adaptations')
   // Build coach context from current state
   const context = useMemo(() => ({
