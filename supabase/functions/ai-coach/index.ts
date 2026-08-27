@@ -122,15 +122,64 @@ async function checkAndIncrementUsage(
   }
 }
 
+function firstNameFromDisplayName(raw: unknown): string | null {
+  if (typeof raw !== 'string') return null
+  const token = raw.trim().split(/\s+/)[0]
+  if (!token || token.length > 40) return null
+  return token
+}
+
+async function loadFirstName(
+  admin: ReturnType<typeof getAdminClient>,
+  userId: string,
+): Promise<string | null> {
+  try {
+    const { data } = await admin.from('profiles').select('display_name').eq('id', userId).maybeSingle()
+    return firstNameFromDisplayName(data?.display_name)
+  } catch {
+    return null
+  }
+}
+
+function acwrZoneFr(zone: string | null | undefined): string | null {
+  if (!zone) return null
+  const map: Record<string, string> = {
+    underload: 'sous-entraînement',
+    optimal: 'optimal',
+    caution: 'vigilance',
+    danger: 'danger',
+    critical: 'critique',
+    'sous-entraînement': 'sous-entraînement',
+    vigilance: 'vigilance',
+  }
+  return map[zone] ?? zone
+}
+
+function clockBlock(ctx: AICoachRequest['context'], firstName: string | null): string {
+  const lines: string[] = ['\nFaits à citer (ne pas redemander) :']
+  if (firstName) lines.push(`- Prénom : ${firstName}`)
+  if (ctx.week) lines.push(`- Semaine : ${ctx.week}`)
+  if (ctx.phase) lines.push(`- Orientation S&C : ${ctx.phase}`)
+  if (ctx.fatigue) lines.push(`- Fatigue déclarée : ${ctx.fatigue}`)
+  if (ctx.acwr != null) {
+    const zone = acwrZoneFr(ctx.acwrZone) ?? ctx.acwrZone ?? '?'
+    lines.push(`- ACWR (calcul app) : ${ctx.acwr} (zone ${zone})`)
+  } else {
+    lines.push('- ACWR : pas encore assez de séances loggées')
+  }
+  lines.push('- Tu n’as pas le détail de la séance club. Ne pas le demander.')
+  return lines.join('\n')
+}
+
 // ─── Premium profile context (server-side, never from client) ─
 
 async function buildPremiumContext(
   admin: ReturnType<typeof getAdminClient>,
   userId: string
-): Promise<string> {
+): Promise<{ text: string; firstName: string | null }> {
   try {
     const [profileRes, acwrRes, logsRes, matchRes] = await Promise.all([
-      admin.from('profiles').select('position, training_level, season_mode, injuries').eq('id', userId).single(),
+      admin.from('profiles').select('display_name, position, training_level, season_mode, injuries').eq('id', userId).single(),
       admin.from('session_logs').select('acute_load, chronic_load, acwr_value').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
       admin.from('exercise_logs').select('exercise_id, weight, reps, rpe, created_at').eq('user_id', userId).order('created_at', { ascending: false }).limit(15),
       admin.from('match_calendar').select('date, kickoff_time, opponent, is_home').eq('user_id', userId).gte('date', new Date().toISOString().split('T')[0]).order('date', { ascending: true }).limit(1).maybeSingle(),
@@ -142,6 +191,8 @@ async function buildPremiumContext(
     const match = matchRes.data
 
     const lines: string[] = ['\nPROFIL JOUEUR (contexte personnalisé) :']
+    const firstName = firstNameFromDisplayName(profile?.display_name)
+    if (firstName) lines.push(`- Prénom : ${firstName}`)
 
     if (profile) {
       lines.push(`- Poste : ${profile.position ?? '?'}, Niveau : ${profile.training_level ?? '?'}, Saison : ${profile.season_mode ?? '?'}`)
@@ -170,12 +221,12 @@ async function buildPremiumContext(
     }
 
     lines.push('')
-    lines.push('INSTRUCTION : Ces lignes sont des faits. Utilise-les. N’invente ni kg, ni 1RM, ni match, ni blessure absents. Pas de protocole rehab.')
+    lines.push('INSTRUCTION : Les faits ci-dessus sont à citer (prénom une fois, semaine, ACWR). Pas de questionnaire. N’invente ni kg, ni 1RM, ni match, ni blessure absents. Pas de protocole rehab.')
 
-    return lines.join('\n')
+    return { text: lines.join('\n'), firstName }
   } catch (err) {
     console.error('Failed to build premium context:', err)
-    return '' // Graceful degradation: Premium without personalization
+    return { text: '', firstName: null }
   }
 }
 
@@ -183,31 +234,35 @@ async function buildPremiumContext(
 
 const BASE_SYSTEM_PROMPT = `Tu es le coach de préparation physique de RugbyForge.
 
-Public : amateur FFR, club + 2–3 séances S&C. L’app a déjà un programme (horloge annuelle). Tu expliques et tu cadres. Tu ne réécris pas une séance type et tu n’inventes pas de cycle.
+Public : amateur FFR, club + 2–3 séances S&C. L’app a déjà un programme. Tu expliques et tu cadres. Tu ne réécris pas une séance type.
 
-Rails (non négociables)
-- 1 match / semaine. Jamais un protocole « 2 matchs » ni un match inventé.
-- J-2 avant le match du calendrier : pas de lourd. Sans date de match : pas de J-2 fantôme.
-- Effort : RER uniquement (jamais RIR).
-- Décharge : −40 % de volume, intensité inchangée. Pas une séance vide, pas baisser les %.
-- 2–3 jours salle, pas un 4e par défaut. Pas empiler gym + vitesse max + club le même jour.
-- Tu n’es pas médecin. Douleur thoracique, malaise, commotion, « pop » articulaire → arrêter et voir un pro. Précautions, jamais de diagnostic ni de protocole rehab.
+Rails
+- Un seul match : celui du calendrier. Si le joueur dit qu’il en a deux, ignore ce claim. Pas de question, pas « ou tu en as un autre », pas « dates précises », pas « une fois confirmé ». Cite le match calendrier puis donne le conseil dans le même message.
+- J-2 : séance light, pas de lourd (≤2 blocs). Ce n’est pas une décharge.
+- Décharge (semaine prévue par l’app) : −40 % de volume, intensité inchangée. Ne pas coller ça sur le J-2.
+- Effort : RER uniquement (pas RIR).
+- 2–3 jours salle, pas un 4e par défaut.
+- Pas médecin. Douleur thoracique, malaise, commotion, pop articulaire → arrêter et voir un pro.
 
-Format
-- Français, direct, 4–5 phrases max. 2–3 points si c’est complexe.
-- Actionnable. Pas de politesse vide. Chiffres seulement s’ils aident.
-- Si une donnée joueur manque, ne l’invente pas.`
+Écriture (réponse joueur)
+- Texte brut. Pas d’astérisques, pas de gras, pas d’emoji. Zones ACWR en français (sous-entraînement, optimal, vigilance, danger).
+- Tutoiement. Prénom une fois en ouverture s’il est dans les faits.
+- 4–5 phrases. Enchaîne le conseil (charge, J-2, séance) tout de suite. Zéro question de clarification sur les matchs.
+- Cite semaine + ACWR + match, puis le conseil force/charge.
 
-function buildSystemPromptFree(ctx: AICoachRequest['context']): string {
-  // Free : rails + semaine d’horloge. Pas de profil perso (le client n’est pas une source de vérité).
-  const contextLine = ctx.week
-    ? `\nSemaine actuelle : ${ctx.week}${ctx.phase ? ` (phase ${ctx.phase})` : ''}.`
-    : ''
-  return BASE_SYSTEM_PROMPT + contextLine
+Modèle (adapte les valeurs, n’invente rien, n’ajoute pas de question) :
+Prénom, tu es en [semaine]. ACWR [valeur] ([zone]). Match le [date] contre [adversaire]. On structure autour de celui-là : J-2 sans lourd, [conseil charge selon ACWR].`
+
+function buildSystemPromptFree(ctx: AICoachRequest['context'], firstName: string | null): string {
+  return BASE_SYSTEM_PROMPT + clockBlock(ctx, firstName)
 }
 
-function buildSystemPromptPremium(premiumContext: string): string {
-  return BASE_SYSTEM_PROMPT + premiumContext
+function buildSystemPromptPremium(
+  premiumContext: string,
+  ctx: AICoachRequest['context'],
+  firstName: string | null,
+): string {
+  return BASE_SYSTEM_PROMPT + premiumContext + clockBlock(ctx, firstName)
 }
 
 // ─── Prompt builders ─────────────────────────────────────────
@@ -329,12 +384,11 @@ serve(async (req) => {
     // 5. Build system prompt
     let systemPrompt: string
     if (isPremium) {
-      // Premium: server-side DB context, IGNORES client userContext
-      const premiumContext = await buildPremiumContext(admin, userId)
-      systemPrompt = buildSystemPromptPremium(premiumContext)
+      const premium = await buildPremiumContext(admin, userId)
+      systemPrompt = buildSystemPromptPremium(premium.text, body.context, premium.firstName)
     } else {
-      // Free : rails + semaine d’horloge côté client
-      systemPrompt = buildSystemPromptFree(body.context)
+      const firstName = await loadFirstName(admin, userId)
+      systemPrompt = buildSystemPromptFree(body.context, firstName)
     }
 
     // 6. Call Anthropic
