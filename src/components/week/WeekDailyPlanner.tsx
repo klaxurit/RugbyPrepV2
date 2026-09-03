@@ -46,7 +46,7 @@ const DAY_SHORT: Record<DayOfWeek, string> = {
 
 // ─── Types résolus jour par jour ─────────────────────────────────────────────
 
-export type DayType = 'rest' | 'gym' | 'recovery' | 'match' | 'unavailable'
+export type DayType = 'rest' | 'gym' | 'recovery' | 'match' | 'club' | 'unavailable'
 
 interface ResolvedDay {
   dow: DayOfWeek
@@ -174,12 +174,13 @@ export function WeekDailyPlanner({
       const session = dowSessions[0] // 1ère session non-skipped en priorité
       const hasGym = Boolean(session && session.completionStatus !== 'skipped')
       const isClubDay = clubDays.includes(dow)
-      const isUnavailable = unavailableDays.includes(dow) || isClubDay
+      const isUnavailable = unavailableDays.includes(dow) && !isClubDay
 
       let type: DayType
       if (match) type = 'match'
       else if (hasGym) type = 'gym'
       else if (arDoneByDate.has(dateISO) || activeRecoveryEligibleDays.includes(dow)) type = 'recovery'
+      else if (isClubDay) type = 'club'
       else if (isUnavailable) type = 'unavailable'
       else type = 'rest'
 
@@ -409,6 +410,8 @@ function FeatureCardSwitch({
       )
     case 'recovery':
       return <RecoveryCard day={day} onQuickLog={onActiveRecoveryQuick} />
+    case 'club':
+      return <ClubDayCard day={day} />
     case 'unavailable':
       return <UnavailableCard day={day} />
     case 'rest':
@@ -486,30 +489,80 @@ function CardTopMeta({
 
 // ── GymCard
 function GymCard({ day, onStart }: { day: ResolvedDay; onStart: () => void }) {
+  const done = Boolean(day.isCompleted)
   return (
     <div
-      className={`${CARD_BASE} bg-brand text-app`}
-      style={{ boxShadow: '0 12px 32px rgba(123, 13, 30, 0.18)' }}
+      className={
+        done
+          ? `${CARD_BASE} bg-paper-soft text-fg border border-bd-muted`
+          : `${CARD_BASE} bg-brand text-app`
+      }
+      style={
+        done
+          ? { boxShadow: '0 14px 26px -18px rgba(44,24,16,0.18)' }
+          : { boxShadow: '0 18px 32px -16px rgba(123, 13, 30, 0.55)' }
+      }
+      data-session-status={done ? 'completed' : 'pending'}
     >
-      <GhostNumber n={day.dateNum} onWine />
+      <GhostNumber n={day.dateNum} onWine={!done} />
       <div className="relative px-5 pb-6 pt-5">
-        <CardTopMeta
-          tag="Gym · Musculation"
-          isToday={day.isToday}
-        />
+        {/* Tag row + Terminée chip for done state */}
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] ${
+                done
+                  ? 'bg-brand/8 border border-brand/18 text-brand'
+                  : 'bg-app/16 border border-app/28 text-app'
+              }`}
+            >
+              {done ? 'Gym · Faite' : 'Gym · Musculation'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {done && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-ok-bg px-2.5 py-1">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="8" fill="var(--color-ok-fg-strong)" />
+                  <path d="M4.5 8.2L6.8 10.5L11.5 5.5" stroke="var(--color-ok-bg)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span className="text-[10px] font-bold tracking-[0.04em] text-ok-strong">Terminée</span>
+              </span>
+            )}
+            {day.isToday && (
+              <span
+                className={`whitespace-nowrap rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.14em] ${
+                  done ? 'bg-brand text-app' : 'bg-app text-brand'
+                }`}
+              >
+                Auj.
+              </span>
+            )}
+          </div>
+        </div>
 
         <div className="mt-4">
-          <div className="text-[11px] font-bold uppercase tracking-[0.12em] opacity-65">
+          <div
+            className={`text-[11px] font-bold uppercase tracking-[0.12em] ${
+              done ? 'text-muted' : 'opacity-65'
+            }`}
+          >
             {DAY_LONG[day.dow]}
           </div>
           <div
-            className="mt-1 font-extrabold leading-[0.95] text-[34px]"
-            style={{ letterSpacing: '-1.2px' }}
+            className={`mt-1 font-extrabold italic leading-[0.95] text-[30px] ${
+              done ? 'text-fg' : ''
+            }`}
+            style={{ letterSpacing: '-0.3px' }}
           >
             {day.sessionLabel ?? 'Séance'}
           </div>
           {(day.sessionSubtitle || day.isLight) && (
-            <div className="mt-2 text-[13px] font-medium opacity-75">
+            <div
+              className={`mt-2 text-[14px] font-medium ${
+                done ? 'text-fg/65' : 'opacity-75'
+              }`}
+            >
               {day.sessionSubtitle}
               {day.isLight ? (day.sessionSubtitle ? ' · allégée' : 'Allégée') : ''}
             </div>
@@ -518,15 +571,33 @@ function GymCard({ day, onStart }: { day: ResolvedDay; onStart: () => void }) {
 
         {(day.blocs != null || day.durationMin != null) && (
           <div
-            className="mt-4 grid grid-cols-3 border-t pt-3.5 gap-0"
-            style={{ borderColor: 'rgba(245, 242, 238, 0.2)' }}
+            className="mt-4 flex items-center gap-4 border-t pt-3.5"
+            style={{
+              borderColor: done
+                ? 'var(--color-bd-muted)'
+                : 'rgba(245, 242, 238, 0.2)',
+            }}
           >
-            <FStat n={day.blocs != null ? String(day.blocs) : '—'} l="Blocs" />
+            <FStat
+              n={day.blocs != null ? String(day.blocs) : '—'}
+              l="Blocs"
+              muted={done}
+            />
+            {(day.blocs != null && day.durationMin != null) && (
+              <div className="h-[26px] w-px" style={{ background: done ? 'var(--color-bd-muted)' : 'rgba(245,242,238,0.2)' }} />
+            )}
             <FStat
               n={day.durationMin != null ? `${day.durationMin}'` : '—'}
               l={day.durationIsActual ? 'Durée réelle' : 'Durée prévue'}
+              muted={done}
             />
-            <FStat n={day.isCompleted ? 'Faite' : day.isSkipped ? 'Skip' : 'À faire'} l="Statut" />
+            <div className="h-[26px] w-px" style={{ background: done ? 'var(--color-bd-muted)' : 'rgba(245,242,238,0.2)' }} />
+            <FStat
+              n={done ? 'Faite' : day.isSkipped ? 'Skip' : 'À faire'}
+              l="Statut"
+              muted={done}
+              emphasize={done}
+            />
           </div>
         )}
 
@@ -535,10 +606,23 @@ function GymCard({ day, onStart }: { day: ResolvedDay; onStart: () => void }) {
             type="button"
             onClick={onStart}
             disabled={day.sessionIndex == null}
-            className="flex h-[46px] flex-1 items-center justify-center gap-2 rounded-[14px] bg-app text-brand text-[13px] font-extrabold uppercase tracking-[0.04em] active:scale-[0.97] transition-transform disabled:opacity-50 disabled:active:scale-100 rf-focus-ring"
+            className={
+              done
+                ? 'flex h-[46px] flex-1 items-center justify-center gap-2 rounded-[14px] border-[1.5px] border-brand bg-transparent text-brand text-[14px] font-bold tracking-[0.01em] active:scale-[0.97] transition-transform hover:bg-brand/5 disabled:opacity-50 disabled:active:scale-100 rf-focus-ring'
+                : 'flex h-[46px] flex-1 items-center justify-center gap-2 rounded-[14px] bg-app text-brand text-[14px] font-bold tracking-[0.01em] active:scale-[0.97] transition-transform disabled:opacity-50 disabled:active:scale-100 rf-focus-ring'
+            }
+            style={done ? undefined : { boxShadow: '0 8px 18px -8px rgba(0,0,0,0.35)' }}
           >
-            <Icon name="play" size={11} color="var(--color-accent)" />
-            {day.sessionLogId ? 'Revoir la séance' : 'Démarrer'}
+            {done ? (
+              <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
+                <path d="M1 5.2L4.3 8.5L12 1" stroke="var(--color-accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            ) : (
+              <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+                <path d="M1 1L11 7L1 13V1Z" fill="var(--color-accent)" />
+              </svg>
+            )}
+            {done ? 'Revoir la séance' : 'Démarrer'}
           </button>
         </div>
       </div>
@@ -625,6 +709,48 @@ function RestCard({ day }: { day: ResolvedDay }) {
 
         <div className="mt-4 border-t border-fg/10 pt-3 font-serif italic text-[13px] leading-relaxed opacity-70">
           Sommeil · hydratation · nutrition. La récup, c&apos;est l&apos;autre moitié.
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── ClubDayCard
+function ClubDayCard({ day }: { day: ResolvedDay }) {
+  return (
+    <div className={`${CARD_BASE} bg-cream-soft text-fg border-[1.5px] border-brand-border`}>
+      <GhostNumber n={day.dateNum} />
+      <div className="relative px-5 pb-6 pt-5">
+        <CardTopMeta tag="Club · Entraînement" isToday={day.isToday} darkMode />
+
+        <div className="mt-4">
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-brand opacity-70">
+            {DAY_LONG[day.dow]}
+          </div>
+          <div
+            className="mt-1 font-serif italic font-extrabold leading-[0.95] text-[28px]"
+            style={{ letterSpacing: '-0.9px' }}
+          >
+            Entraînement
+            <br />
+            au club
+          </div>
+          <div className="mt-3 text-[13px] font-medium text-fg/65 leading-relaxed">
+            Séance collective programmée. Si tu veux ajouter une séance salle le même jour, ajuste
+            depuis ton profil.
+          </div>
+        </div>
+
+        <div
+          className="mt-4 border-t pt-3"
+          style={{ borderColor: 'color-mix(in srgb, var(--color-accent-border) 60%, transparent)' }}
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-[15px]" aria-hidden>🏟️</span>
+            <span className="text-[11px] font-bold text-fg/55 uppercase tracking-[0.08em]">
+              Jour club — pas bloqué
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -734,16 +860,32 @@ function MatchCard({ day, onClick }: { day: ResolvedDay; onClick: () => void }) 
 }
 
 // ── FStat (used inside cards)
-function FStat({ n, l }: { n: string; l: string }) {
+function FStat({
+  n,
+  l,
+  muted = false,
+  emphasize = false,
+}: {
+  n: string
+  l: string
+  muted?: boolean
+  emphasize?: boolean
+}) {
   return (
     <div className="min-w-0">
       <div
-        className="text-[18px] font-extrabold tabular-nums whitespace-nowrap overflow-hidden text-ellipsis"
+        className={`text-[18px] font-extrabold tabular-nums whitespace-nowrap overflow-hidden text-ellipsis ${
+          emphasize ? 'text-ok-strong' : muted ? 'text-fg' : ''
+        }`}
         style={{ letterSpacing: '-0.5px' }}
       >
         {n}
       </div>
-      <div className="mt-0.5 text-[9px] font-bold uppercase tracking-[0.12em] opacity-60">
+      <div
+        className={`mt-0.5 text-[9px] font-bold uppercase tracking-[0.12em] ${
+          muted ? 'text-fg/55' : 'opacity-60'
+        }`}
+      >
         {l}
       </div>
     </div>
@@ -757,6 +899,7 @@ const TAG_BY_TYPE: Record<DayType, string> = {
   gym: 'Gym',
   recovery: 'Récup',
   match: 'Match',
+  club: 'Club',
   unavailable: 'Bloqué',
 }
 
