@@ -1,4 +1,4 @@
-# UPPER_IN_SEASON_FRONT_ROW_V1
+# UPPER_IN_SEASON_FRONT_ROW_SUPINE_V1
 
 - `status`: validated
 - `version`: V1
@@ -17,7 +17,7 @@
 - Finish with a front-row signature: carry plus controlled neck work.
 
 ## Session Identity
-- Rugby-specific through a readable upper contrast (bench + plyo — rotation lane 1 of 4), strong horizontal pulling, and front-row contact robustness.
+- Rugby-specific through a readable upper contrast (bench + supine throw this mesocycle), strong horizontal pulling, and front-row contact robustness.
 - Front-row specific through bracing, carry, and cervical isometrics rather than speed-biased upper work.
 - Do not dilute this session with arm fluff, multiple explosive blocks, or extra rehab-style filler for healthy players.
 
@@ -40,13 +40,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 1 - Contrast Upper Push
 - Format: `4 rounds`, full rest `3 min` after each round
 - Exercise A: `Bench Press` `4x4 @ 80-85%`
-- Exercise B: `Plyo Push-Up` `4-5 reps`
+- Exercise B: `Supine Med Ball Throw` `3-4 reps`
 - Coaching notes:
   - Bench eccentric stays controlled for `1-2s`.
   - Concentric intent is maximal.
   - No grinding reps.
-  - Plyo push-ups stop as soon as height or stiffness clearly drops.
+  - Supine throw stays ballistic and low-volume — not a sit-up.
   - This is a clean contrast block, not a circuit.
+  - No med ball: landmine, then cable press explosif, then plyo.
+  - Not programmed the same week as the match-week Primer (Dip + Supine).
 
 ### Block 2 - Pull Strength Pair
 - Format: `3 rounds`, `90-120s` rest after the pair
@@ -97,7 +99,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Shoulder Pain
 - Remove:
   - `Bench Press`
-  - `Plyo Push-Up`
+  - `Supine Med Ball Throw`
   - `Landmine Press` if painful
 - Replace with:
   - a safe heavy row variation
@@ -128,7 +130,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ## Coaching Warnings
 - Do not let the bench turn into a grind just to protect the prescribed load.
-- Do not let the plyo push-up become slow fatigue work.
+- Do not let the supine med ball throw become core fatigue work.
 - Do not chase Pendlay volume with sloppy torso position.
 - Keep the finisher specific, not crushing.
 - Best placed early enough in the week to recover before match demands.

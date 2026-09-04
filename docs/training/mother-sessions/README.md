@@ -8,8 +8,8 @@ All mother sessions live as Markdown source files under `docs/training/mother-se
 |-------|-----------------|------:|
 | Off-season | `off-season/*.md` | 25 |
 | Pre-season | `pre-season/*.md` | 14 |
-| In-season | `in-season/*.md` | 8 |
-| **Total** | | **47** |
+| In-season | `in-season/*.md` | 19 |
+| **Total** | | **~73** |
 
 Migration to MD-as-single-source-of-truth was completed during B2 Phase B' (2026-05-08).
 

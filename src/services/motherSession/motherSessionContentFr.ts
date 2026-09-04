@@ -3066,6 +3066,43 @@ export function getSessionFr(sessionId: string): SessionContentFr | undefined {
   return SESSION_CONTENT_FR[sessionId]
 }
 
+/** Mothers contraste in-season : même squelette FR que la base, exo B du bloc 1 adapté. */
+function contrastRotationFrBaseId(sessionId: string): string | null {
+  if (
+    sessionId.startsWith('UPPER_IN_SEASON_FRONT_ROW_') &&
+    sessionId !== 'UPPER_IN_SEASON_FRONT_ROW_V1'
+  ) {
+    return 'UPPER_IN_SEASON_FRONT_ROW_V1'
+  }
+  if (
+    sessionId.startsWith('UPPER_IN_SEASON_BACK_THREE_') &&
+    sessionId !== 'UPPER_IN_SEASON_BACK_THREE_V1'
+  ) {
+    return 'UPPER_IN_SEASON_BACK_THREE_V1'
+  }
+  return null
+}
+
+function adaptContrastVariantFr(
+  base: SessionContentFr,
+  session: MotherSession,
+): SessionContentFr {
+  const contrast = session.blocks[0]?.exercises[1]
+  if (!contrast || !base.blocks[0]) return base
+  const blocks = base.blocks.map((block, index) => {
+    if (index !== 0) return block
+    const exercises = block.exercises.map((exercise, exerciseIndex) => {
+      if (exerciseIndex !== 1) return exercise
+      return {
+        name: translateExerciseNameToFr(contrast.name),
+        prescription: translatePrescriptionToFr(contrast.prescription ?? exercise.prescription),
+      }
+    })
+    return { ...block, exercises }
+  })
+  return { ...base, blocks }
+}
+
 /** Heuristique : anglais résiduel dans une note censée être en français. */
 export function looksLikeFranglais(note: string): boolean {
   if (
@@ -3140,6 +3177,11 @@ export function looksLikeFranglais(note: string): boolean {
 export function getSessionFrOrFallback(session: MotherSession): SessionContentFr | undefined {
   const manual = getSessionFr(session.metadata.id)
   if (manual) return normalizeSessionContentFr(manual)
+  const baseId = contrastRotationFrBaseId(session.metadata.id)
+  if (baseId) {
+    const base = getSessionFr(baseId)
+    if (base) return normalizeSessionContentFr(adaptContrastVariantFr(base, session))
+  }
   if (!MOTHER_SESSIONS_BY_ID[session.metadata.id]) return undefined
   return normalizeSessionContentFr(buildGeneratedFrContent(session))
 }

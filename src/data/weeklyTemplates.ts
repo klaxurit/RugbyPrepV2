@@ -5,6 +5,10 @@
 
 import type { OffSeasonPhase } from '../types/annualPlanning'
 import type { FatigueLevel } from '../types/training'
+import {
+  IN_SEASON_UPPER_BASE_IDS,
+  resolveInSeasonUpperSessionId,
+} from './resolveInSeasonUpperSessionId'
 
 export type Cycle = 'pre_season' | 'in_season'
 export type PreSeasonPhase = 1 | 2 | 3
@@ -54,6 +58,11 @@ export interface GetWeeklyTemplateParams {
   fatigueLevel?: FatigueLevel
   /** For off-season phase 5 maintenance: A/B alternation based on week parity. */
   maintenanceParity?: 'A' | 'B'
+  /**
+   * In-season only: sélectionne la mother Upper (contraste B) selon le
+   * mésocycle 3:1. Absent = IDs de base inchangés (tests / appels legacy).
+   */
+  mesocycleBlock?: number
 }
 
 /** Résolution template : séances + signaux métier (warnings, conditioning compagnon). */
@@ -703,6 +712,19 @@ export function getWeeklyTemplate(params: GetWeeklyTemplateParams): WeeklyTempla
         return s
       })
     }
+  }
+
+  // 3) Rotation contraste Upper in-season (mothers distinctes par mésocycle)
+  if (cycle === 'in_season' && params.mesocycleBlock != null && positionGroup) {
+    const upperId = resolveInSeasonUpperSessionId({
+      positionGroup,
+      mesocycleBlock: params.mesocycleBlock,
+      matchContext,
+    })
+    const baseUpper = IN_SEASON_UPPER_BASE_IDS[positionGroup]
+    slots = slots.map((s) =>
+      s.sessionId === baseUpper ? { ...s, sessionId: upperId } : s,
+    )
   }
 
   return {

@@ -1,4 +1,4 @@
-# UPPER_IN_SEASON_FRONT_ROW_V1
+# UPPER_IN_SEASON_FRONT_ROW_LANDMINE_V1
 
 - `status`: validated
 - `version`: V1
@@ -17,7 +17,7 @@
 - Finish with a front-row signature: carry plus controlled neck work.
 
 ## Session Identity
-- Rugby-specific through a readable upper contrast (bench + plyo — rotation lane 1 of 4), strong horizontal pulling, and front-row contact robustness.
+- Rugby-specific through a readable upper contrast (bench + landmine jammer this mesocycle), strong horizontal pulling, and front-row contact robustness.
 - Front-row specific through bracing, carry, and cervical isometrics rather than speed-biased upper work.
 - Do not dilute this session with arm fluff, multiple explosive blocks, or extra rehab-style filler for healthy players.
 
@@ -40,12 +40,12 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 1 - Contrast Upper Push
 - Format: `4 rounds`, full rest `3 min` after each round
 - Exercise A: `Bench Press` `4x4 @ 80-85%`
-- Exercise B: `Plyo Push-Up` `4-5 reps`
+- Exercise B: `Explosive Landmine Press` `4-5/side`
 - Coaching notes:
   - Bench eccentric stays controlled for `1-2s`.
   - Concentric intent is maximal.
   - No grinding reps.
-  - Plyo push-ups stop as soon as height or stiffness clearly drops.
+  - Landmine within 15-20s — jammer intent, stacked torso, stop if the bar slows.
   - This is a clean contrast block, not a circuit.
 
 ### Block 2 - Pull Strength Pair
@@ -97,8 +97,8 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Shoulder Pain
 - Remove:
   - `Bench Press`
-  - `Plyo Push-Up`
-  - `Landmine Press` if painful
+  - `Explosive Landmine Press`
+  - `Plyo Push-Up` if painful
 - Replace with:
   - a safe heavy row variation
   - scap/trap-focused accessory work
@@ -128,7 +128,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ## Coaching Warnings
 - Do not let the bench turn into a grind just to protect the prescribed load.
-- Do not let the plyo push-up become slow fatigue work.
+- Do not let the landmine press become a grind or a second strength set.
 - Do not chase Pendlay volume with sloppy torso position.
 - Keep the finisher specific, not crushing.
 - Best placed early enough in the week to recover before match demands.

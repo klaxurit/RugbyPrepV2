@@ -1,4 +1,4 @@
-# UPPER_IN_SEASON_BACK_THREE_V1
+# UPPER_IN_SEASON_BACK_THREE_PUSHPRESS_V1
 
 - `status`: validated
 - `version`: V1
@@ -17,7 +17,7 @@
 - Finish with trunk and carry work that supports speed, contact, and open-field robustness.
 
 ## Session Identity
-- Rugby-specific through an upper contrast (bench + chest pass — rotation lane 3 of 4), a clean push/pull strength block, and a short athletic finisher.
+- Rugby-specific through an upper contrast (bench + push press this mesocycle — match-week landmine alternative), a clean push/pull strength block, and a short athletic finisher.
 - Back-three specific through slightly faster force expression, less contact-bracing emphasis than front row, and more trunk/unilateral carry flavor.
 - Do not turn this into a bodybuilding upper day or a rehab circuit.
 
@@ -40,12 +40,13 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 1 - Contrast Upper Speed-Power
 - Format: `4 rounds`, full rest `2 min 30 to 3 min` after each round
 - Exercise A: `Bench Press` `4x3-4 @ 75-80%`
-- Exercise B: `Med Ball Chest Pass` `4-5 reps`
+- Exercise B: `Push Press` `4x3-4 @ 70-75%, max intent`
 - Coaching notes:
   - Bench stays fast and technically clean.
   - Concentric intent is maximal.
   - No grinding reps.
-  - The med ball throw should feel sharp and ballistic, not heavy.
+  - Push press within 15-20s — dip-drive crisp, bar speed first, not a heavy jerk.
+  - Used on match weeks when Landmine is already on the Primer — keeps variety without doubling.
   - This is a speed-biased contrast, not a max-strength cluster.
 
 ### Block 2 - Pull Strength Pair
@@ -89,7 +90,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Shoulder Pain
 - Remove:
   - `Bench Press`
-  - `Med Ball Chest Pass`
+  - `Push Press`
   - `Landmine Press` if painful
 - Replace with:
   - safe heavy row variation
@@ -120,7 +121,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ## Coaching Warnings
 - Do not let the bench lose speed.
-- Do not turn the med ball throw into fatigue work.
+- Do not turn the push press into a heavy strength set.
 - Do not let the row become a torso-compensation exercise.
 - Keep the finisher athletic and crisp.
 - This session should leave the player feeling switched on, not flattened.

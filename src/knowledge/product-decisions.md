@@ -38,7 +38,7 @@ pas dans le compteur gym. Plafond audit `in_season` = 14 séries/groupe
 | Intensité Force-Pont | 85–90 %, RER 1–2 | Idem ; charges vraiment au % | Échec systématique (Robinson = argument, pas un 4e jour) |
 | Isolation / pump | 1 bloc prévention + peu d’armes | Finisher optionnel hors saison | Circuit 100 reps + lourd le même soir |
 | Décharge | −40 % volume, intensité = | Coupe de blocs d’abord ; allège les séries seulement si la coupe ne suffit pas | Deload « séance vide » / baisser les % |
-| Contrastes | 1 lourd de qualité / séance | 2 si Full et budget neural OK | 4+ contrastes / semaine (Bauer + audits) |
+| Contrastes | 1 lourd de qualité / séance ; **in-season Upper** : rotation du B (plyo / chest pass / landmine / throw) sur 4 mésocycles, mothers distinctes | 2 si Full et budget neural OK | 4+ contrastes / semaine · même paire B figée 32 sem. · swap runtime de variété |
 | Vitesse | Slot Speed salle/maison (mur + 3–5 pas) | 8 m couloir si dispo ; 10–20 m seulement si piste déclarée | Piste obligatoire / luge 130 % BW + lower + club |
 | Contact club | 2 boutons : séance complète / plus courte (défaut complète) | Plus courte = club a tapé (light, ≤3 blocs) | Chronométrer 15 min comme un pro |
 | Horloge FFR sans calendrier | Juin–début juil. = transition (récup, **max 4 sem.**, pas d’hypertrophie). Juillet = pré-saison 1 (force + hypertrophie). Août = pré-saison 2–3 (force → puissance). Sept.–mai = en saison. Trêve ~15 déc.–4 janv. = **deload** (pas `treve_deep`). Avril–mai restent en saison (pas de taper playoffs inventé). **Aucun match inventé.** | Idem + CTA club/match | Faux matchs / primers J-2 fantômes / cycle piloté par blessure |

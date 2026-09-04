@@ -240,6 +240,7 @@ function resolveMotherSessionsForWeekCore(
         positionGroup,
         matchContext: cfg.freq === 3 ? 'match_week' : undefined,
         fatigueLevel,
+        mesocycleBlock: planningContext.mesocycleBlock ?? 1,
       })
       taperSlots = tpl.sessions.map((s) => ({
         ...s,
@@ -406,6 +407,7 @@ function resolveMotherSessionsForWeekCore(
       frequency: 2,
       positionGroup,
       fatigueLevel,
+      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
     })
     const deloadSlots = deloadTpl.sessions.map((s) => ({
       ...s,
@@ -434,7 +436,13 @@ function resolveMotherSessionsForWeekCore(
   // ── In-season trêve V2 : utiliser le sous-mode calculé par detectAnnualPlanningContext
   if (planningContext.inSeasonSubMode === 'treve_rampup') {
     resolverWarnings.push('Ramp-up pré-reprise — programme allégé pour ré-acclimation.')
-    const rampTpl = getWeeklyTemplate({ cycle: 'in_season', frequency: 2, positionGroup, fatigueLevel })
+    const rampTpl = getWeeklyTemplate({
+      cycle: 'in_season',
+      frequency: 2,
+      positionGroup,
+      fatigueLevel,
+      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+    })
     const rampSlots = rampTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
     return hydrateSlots(
       rampSlots,
@@ -456,6 +464,7 @@ function resolveMotherSessionsForWeekCore(
       positionGroup,
       matchContext: 'no_match_week',
       fatigueLevel,
+      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
     })
     return hydrateSlots(
       returnTpl.sessions,
@@ -477,6 +486,7 @@ function resolveMotherSessionsForWeekCore(
       positionGroup,
       matchContext: weeklyFrequency === 3 ? 'no_match_week' : undefined,
       fatigueLevel,
+      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
     })
     return hydrateSlots(
       treveTpl.sessions,
@@ -494,7 +504,13 @@ function resolveMotherSessionsForWeekCore(
   // en inter-saison. Fenêtre de décompression — volume réduit, maintien sans surcharge.
   if (planningContext.inSeasonSubMode === 'end_of_season') {
     resolverWarnings.push('Fin de saison — décompression : volume réduit avant la coupure inter-saison.')
-    const eosTpl = getWeeklyTemplate({ cycle: 'in_season', frequency: 2, positionGroup, fatigueLevel })
+    const eosTpl = getWeeklyTemplate({
+      cycle: 'in_season',
+      frequency: 2,
+      positionGroup,
+      fatigueLevel,
+      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+    })
     const eosSlots = eosTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
     return hydrateSlots(
       eosSlots,
@@ -530,6 +546,7 @@ function resolveMotherSessionsForWeekCore(
     positionGroup,
     matchContext: weeklyFrequency === 3 ? matchContext : undefined,
     fatigueLevel,
+    mesocycleBlock: planningContext.mesocycleBlock ?? 1,
   })
 
   // Stimulus variation: alternate session emphasis by mesocycle block

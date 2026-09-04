@@ -10383,6 +10383,809 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "UPPER_IN_SEASON_BACK_THREE_LANDMINE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "40-48 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "UPPER_IN_SEASON_BACK_THREE_LANDMINE_V1",
+    "goal": [
+      "Maintain upper-body force without creating unnecessary fatigue.",
+      "Keep a clear upper-body force -> speed exposure.",
+      "Maintain horizontal pulling strength and scapular control.",
+      "Finish with trunk and carry work that supports speed, contact, and open-field robustness."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through an upper contrast (bench + landmine this mesocycle), a clean push/pull strength block, and a short athletic finisher.",
+      "Back-three specific through slightly faster force expression, less contact-bracing emphasis than front row, and more trunk/unilateral carry flavor.",
+      "Do not turn this into a bodybuilding upper day or a rehab circuit."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8-10"
+        },
+        {
+          "name": "band pull-apart or TYI light",
+          "prescription": "1-2x10"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "If the player already has a reliable upper-body warm-up, they can keep it.",
+        "Keep this short and specific.",
+        "The aim is readiness, not fatigue."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Upper Force-Speed",
+        "format": "`4 rounds`, full rest `2 min 30 to 3 min` after each round",
+        "exercises": [
+          {
+            "name": "Bench Press",
+            "prescription": "4x3-4 @ 75-80%"
+          },
+          {
+            "name": "Explosive Landmine Press",
+            "prescription": "4-5/side"
+          }
+        ],
+        "coachingNotes": [
+          "Bench stays fast and technically clean.",
+          "Concentric intent is maximal.",
+          "No grinding reps.",
+          "Landmine within 15-20s — jammer intent, stacked torso.",
+          "This is a speed-biased contrast, not a max-strength cluster.",
+          "Not programmed the same week as the match-week Primer (Landmine + Plyo)."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Strength Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5 @ RER 2-3"
+          },
+          {
+            "name": "Pendlay Row",
+            "prescription": "3x5-6 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Pull-up : traction lourde, add load if strong enough (ceinture lest).",
+          "Pendlay starts from a dead stop each rep.",
+          "Row stays strong without turning into a lower-back fight.",
+          "Back three : pull-up neutre = transfer plaquage / ruck-over direct. Landmine press est présent en UPPER_PRESEASON_POWER et UPPER_OFFSEASON_HYPERTROPHY — pas besoin en in-season maintenance."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Back Three Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Suitcase Carry",
+            "prescription": "20m/side",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Pallof Press Hold or Neck Isometric",
+            "prescription": "15-20s",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Default version favors trunk control and unilateral stiffness.",
+          "If more contact robustness is needed that week, replace the Pallof hold with neck isometrics.",
+          "This block should reinforce posture and athletic stability, not create heavy residual fatigue."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize speed and quality over loading jumps.",
+      "Bench can progress by `+2.5 kg` only if all sets stay sharp.",
+      "Landmine and row progress gradually when mechanics remain clean and the player keeps `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 if the player still looks fresh enough to move explosively"
+    ],
+    "positionAccent": [
+      "Common skeleton stays the same as the front-row upper session.",
+      "Back-three accent comes from:",
+      "slightly lower pressing load and slightly higher speed intent",
+      "more ballistic upper output",
+      "more trunk/unilateral carry emphasis",
+      "less neck/contact bias than front row by default"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Explosive Landmine Press`",
+          "`Plyo Push-Up` if painful"
+        ],
+        "replaceWith": [
+          "safe heavy row variation",
+          "scap/trap-focused accessory work",
+          "arms only if needed after safer rugby-relevant options are covered"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`",
+          "`scap push-up`",
+          "`serratus reach`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "carry only if it aggravates the player"
+        ],
+        "replaceWith": [
+          "static hold or reduced distance"
+        ],
+        "rehabFinisher": [
+          "none by default in this upper session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "unsupported row variation",
+          "heavy carry if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "chest-supported row",
+          "lighter suitcase carry or anti-rotation hold"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the bench lose speed.",
+      "Do not turn the landmine press into fatigue work.",
+      "Do not let the row become a torso-compensation exercise.",
+      "Keep the finisher athletic and crisp.",
+      "This session should leave the player feeling switched on, not flattened."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[beginner-intermediate-training.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/beginner-intermediate-training.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[upper-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-4.jpg)",
+      "[upper-2.jpeg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-2.jpeg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_IN_SEASON_BACK_THREE_PLYO_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "40-48 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "UPPER_IN_SEASON_BACK_THREE_PLYO_V1",
+    "goal": [
+      "Maintain upper-body force without creating unnecessary fatigue.",
+      "Keep a clear upper-body force -> speed exposure.",
+      "Maintain horizontal pulling strength and scapular control.",
+      "Finish with trunk and carry work that supports speed, contact, and open-field robustness."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through an upper contrast (bench + plyo this mesocycle), a clean push/pull strength block, and a short athletic finisher.",
+      "Back-three specific through slightly faster force expression, less contact-bracing emphasis than front row, and more trunk/unilateral carry flavor.",
+      "Do not turn this into a bodybuilding upper day or a rehab circuit."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8-10"
+        },
+        {
+          "name": "band pull-apart or TYI light",
+          "prescription": "1-2x10"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "If the player already has a reliable upper-body warm-up, they can keep it.",
+        "Keep this short and specific.",
+        "The aim is readiness, not fatigue."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Upper Speed-Power",
+        "format": "`4 rounds`, full rest `2 min 30 to 3 min` after each round",
+        "exercises": [
+          {
+            "name": "Bench Press",
+            "prescription": "4x3-4 @ 75-80%"
+          },
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "4-5 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Bench stays fast and technically clean.",
+          "Concentric intent is maximal.",
+          "No grinding reps.",
+          "Plyo within 15-20s — hands leave the ground, stop if height drops.",
+          "This is a speed-biased contrast, not a max-strength cluster."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Strength Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5 @ RER 2-3"
+          },
+          {
+            "name": "Pendlay Row",
+            "prescription": "3x5-6 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Pull-up : traction lourde, add load if strong enough (ceinture lest).",
+          "Pendlay starts from a dead stop each rep.",
+          "Row stays strong without turning into a lower-back fight.",
+          "Back three : pull-up neutre = transfer plaquage / ruck-over direct. Landmine press est présent en UPPER_PRESEASON_POWER et UPPER_OFFSEASON_HYPERTROPHY — pas besoin en in-season maintenance."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Back Three Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Suitcase Carry",
+            "prescription": "20m/side",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Pallof Press Hold or Neck Isometric",
+            "prescription": "15-20s",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Default version favors trunk control and unilateral stiffness.",
+          "If more contact robustness is needed that week, replace the Pallof hold with neck isometrics.",
+          "This block should reinforce posture and athletic stability, not create heavy residual fatigue."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize speed and quality over loading jumps.",
+      "Bench can progress by `+2.5 kg` only if all sets stay sharp.",
+      "Landmine and row progress gradually when mechanics remain clean and the player keeps `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 if the player still looks fresh enough to move explosively"
+    ],
+    "positionAccent": [
+      "Common skeleton stays the same as the front-row upper session.",
+      "Back-three accent comes from:",
+      "slightly lower pressing load and slightly higher speed intent",
+      "more ballistic upper output",
+      "more trunk/unilateral carry emphasis",
+      "less neck/contact bias than front row by default"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Plyo Push-Up`",
+          "`Landmine Press` if painful"
+        ],
+        "replaceWith": [
+          "safe heavy row variation",
+          "scap/trap-focused accessory work",
+          "arms only if needed after safer rugby-relevant options are covered"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`",
+          "`scap push-up`",
+          "`serratus reach`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "carry only if it aggravates the player"
+        ],
+        "replaceWith": [
+          "static hold or reduced distance"
+        ],
+        "rehabFinisher": [
+          "none by default in this upper session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "unsupported row variation",
+          "heavy carry if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "chest-supported row",
+          "lighter suitcase carry or anti-rotation hold"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the bench lose speed.",
+      "Do not turn the plyo push-up into fatigue work.",
+      "Do not let the row become a torso-compensation exercise.",
+      "Keep the finisher athletic and crisp.",
+      "This session should leave the player feeling switched on, not flattened."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[beginner-intermediate-training.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/beginner-intermediate-training.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[upper-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-4.jpg)",
+      "[upper-2.jpeg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-2.jpeg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_IN_SEASON_BACK_THREE_PUSHPRESS_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "40-48 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "UPPER_IN_SEASON_BACK_THREE_PUSHPRESS_V1",
+    "goal": [
+      "Maintain upper-body force without creating unnecessary fatigue.",
+      "Keep a clear upper-body force -> speed exposure.",
+      "Maintain horizontal pulling strength and scapular control.",
+      "Finish with trunk and carry work that supports speed, contact, and open-field robustness."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through an upper contrast (bench + push press this mesocycle — match-week landmine alternative), a clean push/pull strength block, and a short athletic finisher.",
+      "Back-three specific through slightly faster force expression, less contact-bracing emphasis than front row, and more trunk/unilateral carry flavor.",
+      "Do not turn this into a bodybuilding upper day or a rehab circuit."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8-10"
+        },
+        {
+          "name": "band pull-apart or TYI light",
+          "prescription": "1-2x10"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "If the player already has a reliable upper-body warm-up, they can keep it.",
+        "Keep this short and specific.",
+        "The aim is readiness, not fatigue."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Upper Speed-Power",
+        "format": "`4 rounds`, full rest `2 min 30 to 3 min` after each round",
+        "exercises": [
+          {
+            "name": "Bench Press",
+            "prescription": "4x3-4 @ 75-80%"
+          },
+          {
+            "name": "Push Press",
+            "prescription": "4x3-4 @ 70-75%, max intent"
+          }
+        ],
+        "coachingNotes": [
+          "Bench stays fast and technically clean.",
+          "Concentric intent is maximal.",
+          "No grinding reps.",
+          "Push press within 15-20s — dip-drive crisp, bar speed first, not a heavy jerk.",
+          "Used on match weeks when Landmine is already on the Primer — keeps variety without doubling.",
+          "This is a speed-biased contrast, not a max-strength cluster."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Strength Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5 @ RER 2-3"
+          },
+          {
+            "name": "Pendlay Row",
+            "prescription": "3x5-6 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Pull-up : traction lourde, add load if strong enough (ceinture lest).",
+          "Pendlay starts from a dead stop each rep.",
+          "Row stays strong without turning into a lower-back fight.",
+          "Back three : pull-up neutre = transfer plaquage / ruck-over direct. Landmine press est présent en UPPER_PRESEASON_POWER et UPPER_OFFSEASON_HYPERTROPHY — pas besoin en in-season maintenance."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Back Three Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Suitcase Carry",
+            "prescription": "20m/side",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Pallof Press Hold or Neck Isometric",
+            "prescription": "15-20s",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Default version favors trunk control and unilateral stiffness.",
+          "If more contact robustness is needed that week, replace the Pallof hold with neck isometrics.",
+          "This block should reinforce posture and athletic stability, not create heavy residual fatigue."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize speed and quality over loading jumps.",
+      "Bench can progress by `+2.5 kg` only if all sets stay sharp.",
+      "Landmine and row progress gradually when mechanics remain clean and the player keeps `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 if the player still looks fresh enough to move explosively"
+    ],
+    "positionAccent": [
+      "Common skeleton stays the same as the front-row upper session.",
+      "Back-three accent comes from:",
+      "slightly lower pressing load and slightly higher speed intent",
+      "more ballistic upper output",
+      "more trunk/unilateral carry emphasis",
+      "less neck/contact bias than front row by default"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Push Press`",
+          "`Landmine Press` if painful"
+        ],
+        "replaceWith": [
+          "safe heavy row variation",
+          "scap/trap-focused accessory work",
+          "arms only if needed after safer rugby-relevant options are covered"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`",
+          "`scap push-up`",
+          "`serratus reach`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "carry only if it aggravates the player"
+        ],
+        "replaceWith": [
+          "static hold or reduced distance"
+        ],
+        "rehabFinisher": [
+          "none by default in this upper session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "unsupported row variation",
+          "heavy carry if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "chest-supported row",
+          "lighter suitcase carry or anti-rotation hold"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the bench lose speed.",
+      "Do not turn the push press into a heavy strength set.",
+      "Do not let the row become a torso-compensation exercise.",
+      "Keep the finisher athletic and crisp.",
+      "This session should leave the player feeling switched on, not flattened."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[beginner-intermediate-training.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/beginner-intermediate-training.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[upper-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-4.jpg)",
+      "[upper-2.jpeg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-2.jpeg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_IN_SEASON_BACK_THREE_ROTATIONAL_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "40-48 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "UPPER_IN_SEASON_BACK_THREE_ROTATIONAL_V1",
+    "goal": [
+      "Maintain upper-body force without creating unnecessary fatigue.",
+      "Keep a clear upper-body force -> speed exposure.",
+      "Maintain horizontal pulling strength and scapular control.",
+      "Finish with trunk and carry work that supports speed, contact, and open-field robustness."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through an upper contrast (bench + rotational throw this mesocycle), a clean push/pull strength block, and a short athletic finisher.",
+      "Back-three specific through slightly faster force expression, less contact-bracing emphasis than front row, and more trunk/unilateral carry flavor.",
+      "Do not turn this into a bodybuilding upper day or a rehab circuit."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8-10"
+        },
+        {
+          "name": "band pull-apart or TYI light",
+          "prescription": "1-2x10"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "If the player already has a reliable upper-body warm-up, they can keep it.",
+        "Keep this short and specific.",
+        "The aim is readiness, not fatigue."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Upper Speed-Power",
+        "format": "`4 rounds`, full rest `2 min 30 to 3 min` after each round",
+        "exercises": [
+          {
+            "name": "Bench Press",
+            "prescription": "4x3-4 @ 75-80%"
+          },
+          {
+            "name": "Med Ball Rotational Throw",
+            "prescription": "4-5/side"
+          }
+        ],
+        "coachingNotes": [
+          "Bench stays fast and technically clean.",
+          "Concentric intent is maximal.",
+          "No grinding reps.",
+          "Rotational throw stays sharp and athletic — not a max trunk twist under fatigue.",
+          "This is a speed-biased contrast, not a max-strength cluster.",
+          "No med ball: cable rotation explosive / landmine rotation, then plyo as last resort."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Strength Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5 @ RER 2-3"
+          },
+          {
+            "name": "Pendlay Row",
+            "prescription": "3x5-6 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Pull-up : traction lourde, add load if strong enough (ceinture lest).",
+          "Pendlay starts from a dead stop each rep.",
+          "Row stays strong without turning into a lower-back fight.",
+          "Back three : pull-up neutre = transfer plaquage / ruck-over direct. Landmine press est présent en UPPER_PRESEASON_POWER et UPPER_OFFSEASON_HYPERTROPHY — pas besoin en in-season maintenance."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Back Three Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Suitcase Carry",
+            "prescription": "20m/side",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Pallof Press Hold or Neck Isometric",
+            "prescription": "15-20s",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Default version favors trunk control and unilateral stiffness.",
+          "If more contact robustness is needed that week, replace the Pallof hold with neck isometrics.",
+          "This block should reinforce posture and athletic stability, not create heavy residual fatigue."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize speed and quality over loading jumps.",
+      "Bench can progress by `+2.5 kg` only if all sets stay sharp.",
+      "Landmine and row progress gradually when mechanics remain clean and the player keeps `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 if the player still looks fresh enough to move explosively"
+    ],
+    "positionAccent": [
+      "Common skeleton stays the same as the front-row upper session.",
+      "Back-three accent comes from:",
+      "slightly lower pressing load and slightly higher speed intent",
+      "more ballistic upper output",
+      "more trunk/unilateral carry emphasis",
+      "less neck/contact bias than front row by default"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Med Ball Rotational Throw`",
+          "`Landmine Press` if painful"
+        ],
+        "replaceWith": [
+          "safe heavy row variation",
+          "scap/trap-focused accessory work",
+          "arms only if needed after safer rugby-relevant options are covered"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`",
+          "`scap push-up`",
+          "`serratus reach`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "carry only if it aggravates the player"
+        ],
+        "replaceWith": [
+          "static hold or reduced distance"
+        ],
+        "rehabFinisher": [
+          "none by default in this upper session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "unsupported row variation",
+          "heavy carry if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "chest-supported row",
+          "lighter suitcase carry or anti-rotation hold"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the bench lose speed.",
+      "Do not turn the rotational throw into fatigue work.",
+      "Do not let the row become a torso-compensation exercise.",
+      "Keep the finisher athletic and crisp.",
+      "This session should leave the player feeling switched on, not flattened."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[beginner-intermediate-training.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/beginner-intermediate-training.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[upper-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-4.jpg)",
+      "[upper-2.jpeg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-2.jpeg)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "UPPER_IN_SEASON_BACK_THREE_V1",
       "status": "validated",
       "version": "V1",
@@ -10405,7 +11208,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "Finish with trunk and carry work that supports speed, contact, and open-field robustness."
     ],
     "sessionIdentity": [
-      "Rugby-specific through an upper contrast, a clean push/pull strength block, and a short athletic finisher.",
+      "Rugby-specific through an upper contrast (bench + chest pass — rotation lane 3 of 4), a clean push/pull strength block, and a short athletic finisher.",
       "Back-three specific through slightly faster force expression, less contact-bracing emphasis than front row, and more trunk/unilateral carry flavor.",
       "Do not turn this into a bodybuilding upper day or a rehab circuit."
     ],
@@ -10583,6 +11386,684 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "UPPER_IN_SEASON_FRONT_ROW_CHESTPASS_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row",
+      "equipment": "full_gym",
+      "targetDuration": "42-50 min",
+      "reductionOrder": [
+        4,
+        3,
+        2
+      ]
+    },
+    "title": "UPPER_IN_SEASON_FRONT_ROW_CHESTPASS_V1",
+    "goal": [
+      "Maintain upper-body force useful for contact.",
+      "Keep one clear force -> speed exposure on horizontal push.",
+      "Maintain a strong horizontal pull and trunk/bracing demand.",
+      "Finish with a front-row signature: carry plus controlled neck work."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through a readable upper contrast (bench + chest pass this mesocycle), strong horizontal pulling, and front-row contact robustness.",
+      "Front-row specific through bracing, carry, and cervical isometrics rather than speed-biased upper work.",
+      "Do not dilute this session with arm fluff, multiple explosive blocks, or extra rehab-style filler for healthy players."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8-10"
+        },
+        {
+          "name": "band pull-apart or TYI light",
+          "prescription": "1-2x10"
+        },
+        {
+          "name": "bench press",
+          "prescription": "2 progressive sets"
+        }
+      ],
+      "notes": [
+        "If the player already has a reliable upper-body routine, they can keep it.",
+        "For shoulder-sensitive players, the warm-up becomes strongly recommended.",
+        "Keep this short and specific; it should prepare the session, not become a separate workout."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Upper Push",
+        "format": "`4 rounds`, full rest `3 min` after each round",
+        "exercises": [
+          {
+            "name": "Bench Press",
+            "prescription": "4x4 @ 80-85%"
+          },
+          {
+            "name": "Med Ball Chest Pass",
+            "prescription": "4-5 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Bench eccentric stays controlled for `1-2s`.",
+          "Concentric intent is maximal.",
+          "No grinding reps.",
+          "Med ball pass within 15-20s of the last bench rep — max intent, not a heavy throw.",
+          "This is a clean contrast block, not a circuit.",
+          "No med ball: cable press explosif, then landmine, then plyo (equipment chain)."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Strength Pair",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5 @ RER 2-3"
+          },
+          {
+            "name": "Pendlay Row",
+            "prescription": "3x5-6 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Pull-up : weighted if strong (add dip belt). Traction strict, no kipping.",
+          "Pendlay starts from a dead stop each rep, explosive but technically strict.",
+          "Front row : pull volume critique pour plaquage et maul counter-push. Landmine press reste dans UPPER_PRESEASON_POWER pour l'axe vertical."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Front Row Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Farmer Carry or Zercher Carry",
+            "prescription": "20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Neck Isometric",
+            "prescription": "15-20s",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Carry choice depends on setup and player comfort.",
+          "Rotate neck directions across rounds: flexion, extension, left lateral, right lateral.",
+          "This block should feel specific and robust, not exhausting."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Shoulder Prehab Micro-Block",
+        "format": "`1 round`, `20-30s` rest between drills",
+        "exercises": [
+          {
+            "name": "Band External Rotation",
+            "prescription": "10-12 reps"
+          },
+          {
+            "name": "Serratus Reach",
+            "prescription": "8-10 reps"
+          },
+          {
+            "name": "Scap Push-Up",
+            "prescription": "8 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Optional, but recommended when pushing volume is high or the player has a shoulder history.",
+          "This should take around `2 min`, not become a separate accessory block."
+        ],
+        "isOptional": true
+      }
+    ],
+    "progressionRules": [
+      "Prioritize bar speed and execution quality over loading jumps.",
+      "Bench can progress by `+2.5 kg` only if all four sets stay crisp.",
+      "Landmine and Pendlay can progress gradually when the player keeps `RER 2-3` with clean mechanics.",
+      "If fatigue is high during the week, reduce volume before reducing intensity:",
+      "Block 3 first",
+      "then one round from Block 2",
+      "keep Block 1 as the key quality exposure if possible"
+    ],
+    "positionAccent": [
+      "Common skeleton stays the same as other upper in-season sessions.",
+      "Front-row accent comes from:",
+      "stronger bracing demand",
+      "less speed bias",
+      "more carry/contact robustness",
+      "explicit cervical work"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Med Ball Chest Pass`",
+          "`Landmine Press` if painful"
+        ],
+        "replaceWith": [
+          "a safe heavy row variation",
+          "scap/trap-focused accessory work",
+          "arms only if needed to preserve session density after safer rugby-relevant options are exhausted"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`",
+          "`scap push-up`",
+          "`serratus reach`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "carry only if it aggravates the player"
+        ],
+        "replaceWith": [
+          "static hold or shorter carry distance"
+        ],
+        "rehabFinisher": [
+          "none by default in this upper session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Pendlay Row`",
+          "heavy carry if bracing cannot stay clean"
+        ],
+        "replaceWith": [
+          "chest-supported row",
+          "lighter carry or trunk anti-rotation hold"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the bench turn into a grind just to protect the prescribed load.",
+      "Do not let the med ball chest pass become slow fatigue work.",
+      "Do not chase Pendlay volume with sloppy torso position.",
+      "Keep the finisher specific, not crushing.",
+      "Best placed early enough in the week to recover before match demands."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[beginner-intermediate-training.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/beginner-intermediate-training.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[upper-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-4.jpg)",
+      "[upper-2.jpeg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-2.jpeg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_IN_SEASON_FRONT_ROW_LANDMINE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row",
+      "equipment": "full_gym",
+      "targetDuration": "42-50 min",
+      "reductionOrder": [
+        4,
+        3,
+        2
+      ]
+    },
+    "title": "UPPER_IN_SEASON_FRONT_ROW_LANDMINE_V1",
+    "goal": [
+      "Maintain upper-body force useful for contact.",
+      "Keep one clear force -> speed exposure on horizontal push.",
+      "Maintain a strong horizontal pull and trunk/bracing demand.",
+      "Finish with a front-row signature: carry plus controlled neck work."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through a readable upper contrast (bench + landmine jammer this mesocycle), strong horizontal pulling, and front-row contact robustness.",
+      "Front-row specific through bracing, carry, and cervical isometrics rather than speed-biased upper work.",
+      "Do not dilute this session with arm fluff, multiple explosive blocks, or extra rehab-style filler for healthy players."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8-10"
+        },
+        {
+          "name": "band pull-apart or TYI light",
+          "prescription": "1-2x10"
+        },
+        {
+          "name": "bench press",
+          "prescription": "2 progressive sets"
+        }
+      ],
+      "notes": [
+        "If the player already has a reliable upper-body routine, they can keep it.",
+        "For shoulder-sensitive players, the warm-up becomes strongly recommended.",
+        "Keep this short and specific; it should prepare the session, not become a separate workout."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Upper Push",
+        "format": "`4 rounds`, full rest `3 min` after each round",
+        "exercises": [
+          {
+            "name": "Bench Press",
+            "prescription": "4x4 @ 80-85%"
+          },
+          {
+            "name": "Explosive Landmine Press",
+            "prescription": "4-5/side"
+          }
+        ],
+        "coachingNotes": [
+          "Bench eccentric stays controlled for `1-2s`.",
+          "Concentric intent is maximal.",
+          "No grinding reps.",
+          "Landmine within 15-20s — jammer intent, stacked torso, stop if the bar slows.",
+          "This is a clean contrast block, not a circuit."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Strength Pair",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5 @ RER 2-3"
+          },
+          {
+            "name": "Pendlay Row",
+            "prescription": "3x5-6 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Pull-up : weighted if strong (add dip belt). Traction strict, no kipping.",
+          "Pendlay starts from a dead stop each rep, explosive but technically strict.",
+          "Front row : pull volume critique pour plaquage et maul counter-push. Landmine press reste dans UPPER_PRESEASON_POWER pour l'axe vertical."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Front Row Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Farmer Carry or Zercher Carry",
+            "prescription": "20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Neck Isometric",
+            "prescription": "15-20s",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Carry choice depends on setup and player comfort.",
+          "Rotate neck directions across rounds: flexion, extension, left lateral, right lateral.",
+          "This block should feel specific and robust, not exhausting."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Shoulder Prehab Micro-Block",
+        "format": "`1 round`, `20-30s` rest between drills",
+        "exercises": [
+          {
+            "name": "Band External Rotation",
+            "prescription": "10-12 reps"
+          },
+          {
+            "name": "Serratus Reach",
+            "prescription": "8-10 reps"
+          },
+          {
+            "name": "Scap Push-Up",
+            "prescription": "8 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Optional, but recommended when pushing volume is high or the player has a shoulder history.",
+          "This should take around `2 min`, not become a separate accessory block."
+        ],
+        "isOptional": true
+      }
+    ],
+    "progressionRules": [
+      "Prioritize bar speed and execution quality over loading jumps.",
+      "Bench can progress by `+2.5 kg` only if all four sets stay crisp.",
+      "Landmine and Pendlay can progress gradually when the player keeps `RER 2-3` with clean mechanics.",
+      "If fatigue is high during the week, reduce volume before reducing intensity:",
+      "Block 3 first",
+      "then one round from Block 2",
+      "keep Block 1 as the key quality exposure if possible"
+    ],
+    "positionAccent": [
+      "Common skeleton stays the same as other upper in-season sessions.",
+      "Front-row accent comes from:",
+      "stronger bracing demand",
+      "less speed bias",
+      "more carry/contact robustness",
+      "explicit cervical work"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Explosive Landmine Press`",
+          "`Plyo Push-Up` if painful"
+        ],
+        "replaceWith": [
+          "a safe heavy row variation",
+          "scap/trap-focused accessory work",
+          "arms only if needed to preserve session density after safer rugby-relevant options are exhausted"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`",
+          "`scap push-up`",
+          "`serratus reach`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "carry only if it aggravates the player"
+        ],
+        "replaceWith": [
+          "static hold or shorter carry distance"
+        ],
+        "rehabFinisher": [
+          "none by default in this upper session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Pendlay Row`",
+          "heavy carry if bracing cannot stay clean"
+        ],
+        "replaceWith": [
+          "chest-supported row",
+          "lighter carry or trunk anti-rotation hold"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the bench turn into a grind just to protect the prescribed load.",
+      "Do not let the landmine press become a grind or a second strength set.",
+      "Do not chase Pendlay volume with sloppy torso position.",
+      "Keep the finisher specific, not crushing.",
+      "Best placed early enough in the week to recover before match demands."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[beginner-intermediate-training.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/beginner-intermediate-training.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[upper-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-4.jpg)",
+      "[upper-2.jpeg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-2.jpeg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "UPPER_IN_SEASON_FRONT_ROW_SUPINE_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "upper",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row",
+      "equipment": "full_gym",
+      "targetDuration": "42-50 min",
+      "reductionOrder": [
+        4,
+        3,
+        2
+      ]
+    },
+    "title": "UPPER_IN_SEASON_FRONT_ROW_SUPINE_V1",
+    "goal": [
+      "Maintain upper-body force useful for contact.",
+      "Keep one clear force -> speed exposure on horizontal push.",
+      "Maintain a strong horizontal pull and trunk/bracing demand.",
+      "Finish with a front-row signature: carry plus controlled neck work."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through a readable upper contrast (bench + supine throw this mesocycle), strong horizontal pulling, and front-row contact robustness.",
+      "Front-row specific through bracing, carry, and cervical isometrics rather than speed-biased upper work.",
+      "Do not dilute this session with arm fluff, multiple explosive blocks, or extra rehab-style filler for healthy players."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8-10"
+        },
+        {
+          "name": "band pull-apart or TYI light",
+          "prescription": "1-2x10"
+        },
+        {
+          "name": "bench press",
+          "prescription": "2 progressive sets"
+        }
+      ],
+      "notes": [
+        "If the player already has a reliable upper-body routine, they can keep it.",
+        "For shoulder-sensitive players, the warm-up becomes strongly recommended.",
+        "Keep this short and specific; it should prepare the session, not become a separate workout."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Upper Push",
+        "format": "`4 rounds`, full rest `3 min` after each round",
+        "exercises": [
+          {
+            "name": "Bench Press",
+            "prescription": "4x4 @ 80-85%"
+          },
+          {
+            "name": "Supine Med Ball Throw",
+            "prescription": "3-4 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Bench eccentric stays controlled for `1-2s`.",
+          "Concentric intent is maximal.",
+          "No grinding reps.",
+          "Supine throw stays ballistic and low-volume — not a sit-up.",
+          "This is a clean contrast block, not a circuit.",
+          "No med ball: landmine, then cable press explosif, then plyo.",
+          "Not programmed the same week as the match-week Primer (Dip + Supine)."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Pull Strength Pair",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Neutral-Grip Pull-Up",
+            "prescription": "3x5 @ RER 2-3"
+          },
+          {
+            "name": "Pendlay Row",
+            "prescription": "3x5-6 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Pull-up : weighted if strong (add dip belt). Traction strict, no kipping.",
+          "Pendlay starts from a dead stop each rep, explosive but technically strict.",
+          "Front row : pull volume critique pour plaquage et maul counter-push. Landmine press reste dans UPPER_PRESEASON_POWER pour l'axe vertical."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Front Row Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Farmer Carry or Zercher Carry",
+            "prescription": "20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Neck Isometric",
+            "prescription": "15-20s",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Carry choice depends on setup and player comfort.",
+          "Rotate neck directions across rounds: flexion, extension, left lateral, right lateral.",
+          "This block should feel specific and robust, not exhausting."
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Shoulder Prehab Micro-Block",
+        "format": "`1 round`, `20-30s` rest between drills",
+        "exercises": [
+          {
+            "name": "Band External Rotation",
+            "prescription": "10-12 reps"
+          },
+          {
+            "name": "Serratus Reach",
+            "prescription": "8-10 reps"
+          },
+          {
+            "name": "Scap Push-Up",
+            "prescription": "8 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Optional, but recommended when pushing volume is high or the player has a shoulder history.",
+          "This should take around `2 min`, not become a separate accessory block."
+        ],
+        "isOptional": true
+      }
+    ],
+    "progressionRules": [
+      "Prioritize bar speed and execution quality over loading jumps.",
+      "Bench can progress by `+2.5 kg` only if all four sets stay crisp.",
+      "Landmine and Pendlay can progress gradually when the player keeps `RER 2-3` with clean mechanics.",
+      "If fatigue is high during the week, reduce volume before reducing intensity:",
+      "Block 3 first",
+      "then one round from Block 2",
+      "keep Block 1 as the key quality exposure if possible"
+    ],
+    "positionAccent": [
+      "Common skeleton stays the same as other upper in-season sessions.",
+      "Front-row accent comes from:",
+      "stronger bracing demand",
+      "less speed bias",
+      "more carry/contact robustness",
+      "explicit cervical work"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "`Bench Press`",
+          "`Supine Med Ball Throw`",
+          "`Landmine Press` if painful"
+        ],
+        "replaceWith": [
+          "a safe heavy row variation",
+          "scap/trap-focused accessory work",
+          "arms only if needed to preserve session density after safer rugby-relevant options are exhausted"
+        ],
+        "rehabFinisher": [
+          "`band external rotation`",
+          "`scap push-up`",
+          "`serratus reach`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "carry only if it aggravates the player"
+        ],
+        "replaceWith": [
+          "static hold or shorter carry distance"
+        ],
+        "rehabFinisher": [
+          "none by default in this upper session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Pendlay Row`",
+          "heavy carry if bracing cannot stay clean"
+        ],
+        "replaceWith": [
+          "chest-supported row",
+          "lighter carry or trunk anti-rotation hold"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the bench turn into a grind just to protect the prescribed load.",
+      "Do not let the supine med ball throw become core fatigue work.",
+      "Do not chase Pendlay volume with sloppy torso position.",
+      "Keep the finisher specific, not crushing.",
+      "Best placed early enough in the week to recover before match demands."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[beginner-intermediate-training.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/beginner-intermediate-training.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[upper-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-4.jpg)",
+      "[upper-2.jpeg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-2.jpeg)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "UPPER_IN_SEASON_FRONT_ROW_V1",
       "status": "validated",
       "version": "V1",
@@ -10606,7 +12087,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "Finish with a front-row signature: carry plus controlled neck work."
     ],
     "sessionIdentity": [
-      "Rugby-specific through a readable upper contrast, strong horizontal pulling, and front-row contact robustness.",
+      "Rugby-specific through a readable upper contrast (bench + plyo — rotation lane 1 of 4), strong horizontal pulling, and front-row contact robustness.",
       "Front-row specific through bracing, carry, and cervical isometrics rather than speed-biased upper work.",
       "Do not dilute this session with arm fluff, multiple explosive blocks, or extra rehab-style filler for healthy players."
     ],
