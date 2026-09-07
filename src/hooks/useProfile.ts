@@ -19,8 +19,15 @@ import { mergeProfileFromCache, applyServerAuthoritativeProfileFields } from '..
 import { resolveAvatarUrlFromAuthMetadata, resolveProfileAvatarUrl } from '../services/profile/resolveAvatarUrl'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 import { sanitizePlanningIsoDate } from '../services/dates/localIsoDate'
+import { applyNewsletterFromMetadata } from '../services/auth/accountUpgradePrompts'
+import { peekPasswordNeedsUpgrade } from '../services/auth/passwordUpgradeGate'
 
 const STORAGE_BASE = 'rugbyprep.profile'
+
+function withSessionPasswordUpgrade(profile: UserProfile): UserProfile {
+  if (!peekPasswordNeedsUpgrade()) return profile
+  return { ...profile, passwordNeedsUpgrade: true }
+}
 
 export const DEFAULT_PROFILE: UserProfile = {
   avatarUrl: undefined,
@@ -234,6 +241,10 @@ type ProfileRow = {
   ffr_last_sync_at: string | null
   planning_anchors: unknown | null
   season_transition_state: unknown | null
+  newsletter_opt_in: boolean | null
+  newsletter_opted_at: string | null
+  newsletter_opt_in_source: string | null
+  password_needs_upgrade: boolean | null
 }
 
 export const rowToProfile = (row: ProfileRow): UserProfile => {
@@ -297,6 +308,15 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     ffrLastSyncAt: row.ffr_last_sync_at ?? undefined,
     planningAnchors: normalizePlanningAnchors(row.planning_anchors as UserProfile['planningAnchors']),
     seasonTransitionState: (row.season_transition_state as UserProfile['seasonTransitionState']) ?? undefined,
+    newsletterOptIn: row.newsletter_opt_in,
+    newsletterOptedAt: row.newsletter_opted_at,
+    newsletterOptInSource:
+      row.newsletter_opt_in_source === 'signup' ||
+      row.newsletter_opt_in_source === 'in_app' ||
+      row.newsletter_opt_in_source === 'profile'
+        ? row.newsletter_opt_in_source
+        : undefined,
+    passwordNeedsUpgrade: row.password_needs_upgrade === true,
   })
 }
 
@@ -347,6 +367,9 @@ export const profileToRow = (profile: UserProfile, userId: string) => ({
   ffr_last_sync_at: profile.ffrLastSyncAt ?? null,
   planning_anchors: profile.planningAnchors ?? null,
   season_transition_state: profile.seasonTransitionState ?? null,
+  newsletter_opt_in: profile.newsletterOptIn ?? null,
+  newsletter_opted_at: profile.newsletterOptedAt ?? null,
+  newsletter_opt_in_source: profile.newsletterOptInSource ?? null,
   updated_at: new Date().toISOString(),
 })
 
@@ -472,7 +495,7 @@ export const useProfileSource = () => {
     supabase
       .from('profiles')
       .select(
-        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, display_name, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state'
+        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, display_name, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state, newsletter_opt_in, newsletter_opted_at, newsletter_opt_in_source, password_needs_upgrade'
       )
       .eq('id', userId)
       .single()
@@ -486,14 +509,21 @@ export const useProfileSource = () => {
         if (error) {
           isHydratedRef.current = true
           if (isProfileRowMissingError(error)) {
-            const pending = applyPendingProfilePatches(cached ?? profileRef.current, pendingPatches)
+            const { data: authData } = await supabase.auth.getUser()
+            const pending = withSessionPasswordUpgrade(applyNewsletterFromMetadata(
+              applyPendingProfilePatches(cached ?? profileRef.current, pendingPatches),
+              authData.user?.user_metadata as Record<string, unknown> | undefined,
+            ))
             setProfileState(pending)
             saveLocalProfile(pending, userId)
+            if (pending.newsletterOptIn != null) {
+              await persistRemoteProfile(pending, userId)
+            }
             return
           }
           console.error('[useProfile] Supabase fetch failed:', error.message)
           if (cached) {
-            const pending = applyPendingProfilePatches(cached, pendingPatches)
+            const pending = withSessionPasswordUpgrade(applyPendingProfilePatches(cached, pendingPatches))
             setProfileState(pending)
             saveLocalProfile(pending, userId)
           }
@@ -504,13 +534,13 @@ export const useProfileSource = () => {
 
         if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) {
           const remote = rowToProfile(data as ProfileRow)
-          const pending = applyPendingProfilePatches(
+          const pending = withSessionPasswordUpgrade(applyPendingProfilePatches(
             applyServerAuthoritativeProfileFields(
               loadFromStorage(userId) ?? profileRef.current,
               remote,
             ),
             pendingPatches,
-          )
+          ))
           setProfileState(pending)
           saveLocalProfile(pending, userId)
           return
@@ -544,10 +574,19 @@ export const useProfileSource = () => {
           healAvatar = true
         }
 
+        const beforeNewsletter = loaded
+        loaded = applyNewsletterFromMetadata(
+          loaded,
+          authData.user?.user_metadata as Record<string, unknown> | undefined,
+        )
+        const healNewsletter = loaded.newsletterOptIn !== beforeNewsletter.newsletterOptIn
+
+        loaded = withSessionPasswordUpgrade(loaded)
+
         localEditsSinceLoadRef.current = 0
         setProfileState(loaded)
         saveLocalProfile(loaded, userId)
-        if (healDisplayName || healAvatar || pendingPatches.length > 0) {
+        if (healDisplayName || healAvatar || healNewsletter || pendingPatches.length > 0) {
           await persistRemoteProfile(loaded, userId)
         }
         if (inferCompletedOnboarding(data as unknown as OnboardingStatusRow)) {

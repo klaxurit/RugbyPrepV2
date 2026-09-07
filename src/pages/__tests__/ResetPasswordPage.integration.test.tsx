@@ -21,6 +21,11 @@ vi.mock('../../services/supabase/client', () => ({
       resetPasswordForEmail: (...args: unknown[]) => resetPasswordForEmailMock(...args),
       updateUser: (...args: unknown[]) => updateUserMock(...args),
     },
+    from: () => ({
+      update: () => ({
+        eq: () => Promise.resolve({ error: null }),
+      }),
+    }),
   },
 }))
 
@@ -164,14 +169,40 @@ describe('Reset password flow', () => {
     )
 
     fireEvent.change(screen.getByLabelText('Nouveau mot de passe'), {
-      target: { value: 'abcdef' },
+      target: { value: 'motdepasse1' },
     })
     fireEvent.change(screen.getByLabelText('Confirmer le mot de passe'), {
-      target: { value: 'abcdeg' },
+      target: { value: 'motdepasse2' },
     })
     fireEvent.click(screen.getByText('Mettre à jour mon mot de passe'))
 
     expect(screen.getByText('Les mots de passe ne correspondent pas.')).toBeInTheDocument()
+    expect(updateUserMock).not.toHaveBeenCalled()
+  })
+
+  it('blocks submission when the new password is shorter than 10 characters', () => {
+    useAuthMock.mockReturnValue({
+      authState: { status: 'authenticated', user: { id: 'u1', email: 'test@example.com' } },
+      isInitializing: false,
+    })
+
+    render(
+      <MemoryRouter initialEntries={['/auth/reset-password']}>
+        <Routes>
+          <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fireEvent.change(screen.getByLabelText('Nouveau mot de passe'), {
+      target: { value: 'azerty' },
+    })
+    fireEvent.change(screen.getByLabelText('Confirmer le mot de passe'), {
+      target: { value: 'azerty' },
+    })
+    fireEvent.click(screen.getByText('Mettre à jour mon mot de passe'))
+
+    expect(screen.getByText('Mot de passe trop faible (10 caractères minimum).')).toBeInTheDocument()
     expect(updateUserMock).not.toHaveBeenCalled()
   })
 })

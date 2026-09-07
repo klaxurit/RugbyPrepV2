@@ -5,11 +5,13 @@ import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
 import { CaptchaGate } from '../../components/auth/CaptchaGate'
 import { captchaIsRequired } from '../../components/auth/captchaConfig'
+import { MIN_PASSWORD_LENGTH, passwordTooWeakMessage } from '../../services/auth/passwordPolicy'
+import { tr } from '../../i18n/appLabels'
 
 const authErrorLabel: Record<AuthError, string> = {
   EMAIL_EXISTS: 'Cet email existe déjà.',
   INVALID_CREDENTIALS: 'Impossible de créer le compte pour le moment.',
-  WEAK_PASSWORD: 'Mot de passe trop faible (6 caractères minimum).',
+  WEAK_PASSWORD: passwordTooWeakMessage(),
   INVALID_EMAIL: 'Adresse email invalide.',
   RATE_LIMIT: 'Trop de tentatives. Attends 1 à 2 minutes puis réessaie.',
   EMAIL_CONFIRMATION_REQUIRED: 'Compte créé ! Vérifie ton email pour confirmer ton inscription.',
@@ -27,6 +29,7 @@ export function SignupPage() {
   const [password, setPassword] = useState('')
   const [ageConfirmed, setAgeConfirmed] = useState(false)
   const [medicalConsent, setMedicalConsent] = useState(false)
+  const [newsletterOptIn, setNewsletterOptIn] = useState(false)
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
@@ -59,6 +62,7 @@ export function SignupPage() {
       email,
       password,
       medicalConsentAcceptedAt: new Date().toISOString(),
+      newsletterOptIn,
       captchaToken: captchaToken ?? undefined,
     })
 
@@ -142,8 +146,9 @@ export function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-5 text-fg placeholder:text-fg-faint rf-focus-ring text-sm transition-colors"
-                placeholder="6 caractères minimum"
+                placeholder={tr('password_min_placeholder', 'fr')}
                 autoComplete="new-password"
+                minLength={MIN_PASSWORD_LENGTH}
                 required
               />
             </div>
@@ -176,6 +181,19 @@ export function SignupPage() {
               <span id="medical-consent-text" className="text-[11px] leading-relaxed text-fg-muted">
                 Je comprends que RugbyForge propose des programmes basés sur des règles générales et ne remplace pas l&apos;avis d&apos;un médecin ou d&apos;un kinésithérapeute. Je m&apos;engage à arrêter en cas de douleur.{' '}
                 <Link to="/legal#disclaimer" className="text-brand underline">Lire le détail</Link>
+              </span>
+            </label>
+
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={newsletterOptIn}
+                onChange={(e) => setNewsletterOptIn(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-border-app accent-brand"
+                aria-describedby="newsletter-opt-in-text"
+              />
+              <span id="newsletter-opt-in-text" className="text-[11px] leading-relaxed text-fg-muted">
+                {tr('signup_newsletter_label', 'fr')}
               </span>
             </label>
 

@@ -57,6 +57,10 @@ const makeRow = (overrides: Partial<ProfileRow> = {}): ProfileRow => ({
   ffr_last_sync_at: null,
   planning_anchors: null,
   season_transition_state: null,
+  newsletter_opt_in: null,
+  newsletter_opted_at: null,
+  newsletter_opt_in_source: null,
+  password_needs_upgrade: false,
   ...overrides,
 })
 
@@ -203,6 +207,8 @@ describe('profileToRow defaults vs user data', () => {
     expect(row.height_cm).toBeNull()
     expect(row.weight_kg).toBeNull()
     expect(row.season_mode).toBe('in_season')
+    expect(row.newsletter_opt_in).toBeNull()
+    expect(row).not.toHaveProperty('password_needs_upgrade')
   })
 })
 
@@ -227,6 +233,23 @@ describe('rowToProfile schedule + baseline persistence', () => {
     expect(profile.scSchedule).toEqual(scSchedule)
     expect(profile.trainingBaseline).toBe('active')
     expect(profile.trainingBaselineSetAt).toBe('2026-05-01T10:00:00.000Z')
+  })
+
+  it('maps newsletter null as never-asked and password upgrade from the row', () => {
+    expect(rowToProfile(makeRow({
+      newsletter_opt_in: null,
+      password_needs_upgrade: false,
+    })).newsletterOptIn).toBeNull()
+
+    const opted = rowToProfile(makeRow({
+      newsletter_opt_in: true,
+      newsletter_opted_at: '2026-09-07T12:00:00.000Z',
+      newsletter_opt_in_source: 'signup',
+      password_needs_upgrade: true,
+    }))
+    expect(opted.newsletterOptIn).toBe(true)
+    expect(opted.newsletterOptInSource).toBe('signup')
+    expect(opted.passwordNeedsUpgrade).toBe(true)
   })
 })
 

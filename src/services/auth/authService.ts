@@ -5,6 +5,11 @@ import {
 } from '../profile/resolveAvatarUrl'
 import type { AuthError, AuthUser } from '../../types/auth'
 import type { Result } from '../../types/result'
+import { isPasswordMeetingPolicy } from './passwordPolicy'
+import {
+  clearPasswordNeedsUpgradeNote,
+  notePasswordNeedsUpgrade,
+} from './passwordUpgradeGate'
 
 interface SignUpInput {
   email: string
@@ -12,6 +17,8 @@ interface SignUpInput {
   password: string
   /** ISO timestamp captured when the user ticked the medical disclaimer checkbox at signup. */
   medicalConsentAcceptedAt: string
+  /** Optional product emails — unchecked at signup is an explicit no. */
+  newsletterOptIn: boolean
   /** WS2 — hCaptcha token; required when the dashboard captcha gate is active. */
   captchaToken?: string
 }
@@ -87,15 +94,23 @@ export const onAuthStateChanged = (
   return data.subscription
 }
 
-export const signUp = async ({ email, displayName, password, medicalConsentAcceptedAt, captchaToken }: SignUpInput): Promise<Result<AuthUser, AuthError>> => {
+export const signUp = async ({
+  email,
+  displayName,
+  password,
+  medicalConsentAcceptedAt,
+  newsletterOptIn,
+  captchaToken,
+}: SignUpInput): Promise<Result<AuthUser, AuthError>> => {
   const normalizedEmail = normalizeEmail(email)
   const cleanDisplayName = displayName.trim()
+  const newsletterOptedAt = new Date().toISOString()
 
   if (!normalizedEmail.includes('@')) {
     return { ok: false, error: 'INVALID_EMAIL' }
   }
 
-  if (password.length < 6) {
+  if (!isPasswordMeetingPolicy(password)) {
     return { ok: false, error: 'WEAK_PASSWORD' }
   }
 
@@ -108,6 +123,8 @@ export const signUp = async ({ email, displayName, password, medicalConsentAccep
         // WS9 — mirrors into raw_user_meta_data so the timestamp survives the
         // email-confirmation roundtrip even when no session is available yet.
         medical_consent_accepted_at: medicalConsentAcceptedAt,
+        newsletter_opt_in: newsletterOptIn,
+        newsletter_opted_at: newsletterOptedAt,
       },
       emailRedirectTo: `${window.location.origin}/auth/callback`,
       captchaToken,
@@ -130,13 +147,20 @@ export const signUp = async ({ email, displayName, password, medicalConsentAccep
     return { ok: false, error: 'EMAIL_CONFIRMATION_REQUIRED' }
   }
 
-  // WS9 — persist consent timestamp into profiles when we have an immediate
-  // session (auto-confirm). For email-confirmation flow, the timestamp lives
-  // in raw_user_meta_data and is mirrored on first authenticated session.
-  void supabase
+  // Persist consents when we have an immediate session (auto-confirm).
+  // Email-confirmation flow: values live in raw_user_meta_data and are
+  // mirrored on first authenticated session.
+  await supabase
     .from('profiles')
     .upsert(
-      { id: data.session.user.id, medical_consent_accepted_at: medicalConsentAcceptedAt },
+      {
+        id: data.session.user.id,
+        medical_consent_accepted_at: medicalConsentAcceptedAt,
+        newsletter_opt_in: newsletterOptIn,
+        newsletter_opted_at: newsletterOptedAt,
+        newsletter_opt_in_source: 'signup',
+        password_needs_upgrade: false,
+      },
       { onConflict: 'id' },
     )
 
@@ -150,6 +174,10 @@ export const signIn = async ({ email, password, captchaToken }: SignInInput): Pr
     return { ok: false, error: 'INVALID_EMAIL' }
   }
 
+  // Record before signInWithPassword: onAuthStateChange hydrates the profile
+  // in parallel and would otherwise paint with password_needs_upgrade=false.
+  notePasswordNeedsUpgrade(!isPasswordMeetingPolicy(password))
+
   const { data, error } = await supabase.auth.signInWithPassword({
     email: normalizedEmail,
     password,
@@ -157,13 +185,28 @@ export const signIn = async ({ email, password, captchaToken }: SignInInput): Pr
   })
 
   if (error || !data.user) {
+    clearPasswordNeedsUpgradeNote()
     return { ok: false, error: mapSignInError(error) }
+  }
+
+  const { error: upgradeFlagError } = await supabase
+    .from('profiles')
+    .upsert(
+      {
+        id: data.user.id,
+        password_needs_upgrade: !isPasswordMeetingPolicy(password),
+      },
+      { onConflict: 'id' },
+    )
+  if (upgradeFlagError) {
+    console.warn('[authService] Failed to persist password upgrade flag:', upgradeFlagError.message)
   }
 
   return { ok: true, value: mapSupabaseUserToAuthUser(data.user) }
 }
 
 export const signOut = async (): Promise<void> => {
+  clearPasswordNeedsUpgradeNote()
   await supabase.auth.signOut()
 }
 

@@ -103,6 +103,7 @@ describe('ProfilePage · Préférences', () => {
     fireEvent.click(within(section).getByRole('button'))
 
     expect(screen.getByTestId('profile-section-language')).toBeInTheDocument()
+    expect(screen.getByTestId('profile-section-newsletter')).toBeInTheDocument()
     expect(screen.getByTestId('profile-section-morphology')).toBeInTheDocument()
     expect(screen.getByText('Français')).toBeInTheDocument()
     expect(screen.getByPlaceholderText('182')).toBeInTheDocument()

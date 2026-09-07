@@ -6,6 +6,7 @@ import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
 import { CaptchaGate } from '../../components/auth/CaptchaGate'
 import { captchaIsRequired } from '../../components/auth/captchaConfig'
+import { passwordTooWeakMessage } from '../../services/auth/passwordPolicy'
 
 interface RedirectState {
   from?: {
@@ -17,7 +18,7 @@ interface RedirectState {
 const authErrorLabel: Record<AuthError, string> = {
   EMAIL_EXISTS: 'Cet email existe déjà.',
   INVALID_CREDENTIALS: 'Email ou mot de passe invalide.',
-  WEAK_PASSWORD: 'Mot de passe trop faible (6 caractères minimum).',
+  WEAK_PASSWORD: passwordTooWeakMessage(),
   INVALID_EMAIL: 'Adresse email invalide.',
   RATE_LIMIT: 'Trop de tentatives. Attends 1 à 2 minutes puis réessaie.',
   INVALID_FILE_TYPE: 'Format de fichier invalide.',

@@ -283,6 +283,12 @@ export interface UserProfile {
   healthConsentSource?: HealthConsentSource
   healthConsentAuditTrail?: HealthConsentAuditEvent[]
   healthDataRetentionState?: HealthDataRetentionState
+  /** Product emails. null = never asked (legacy). true/false = explicit choice. */
+  newsletterOptIn?: boolean | null
+  newsletterOptedAt?: string | null
+  newsletterOptInSource?: 'signup' | 'in_app' | 'profile'
+  /** Set at password sign-in when the submitted password is below policy. */
+  passwordNeedsUpgrade?: boolean
   ffrCompetitionId?: string
   ffrCompetitionName?: string
   ffrLastSyncAt?: string

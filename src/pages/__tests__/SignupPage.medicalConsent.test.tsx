@@ -35,7 +35,7 @@ vi.mock('../../components/auth/captchaConfig', () => ({
 function fillForm(opts: { age: boolean; medical: boolean }) {
   fireEvent.change(screen.getByLabelText(/Prénom/i), { target: { value: 'Antoine' } })
   fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'a@test.local' } })
-  fireEvent.change(screen.getByLabelText(/Mot de passe/i), { target: { value: 'azerty12' } })
+  fireEvent.change(screen.getByLabelText(/Mot de passe/i), { target: { value: 'azerty12xx' } })
 
   // Disable HTML5 native validation so we can exercise our own JS guard
   // (otherwise unchecked-required intercepts submit before handleSubmit runs).
@@ -106,10 +106,30 @@ describe('SignupPage — WS9 medical consent hard gate', () => {
     expect(signUpMock).toHaveBeenCalledTimes(1)
     const arg = signUpMock.mock.calls[0]![0]
     expect(arg.email).toBe('a@test.local')
-    expect(arg.password).toBe('azerty12')
+    expect(arg.password).toBe('azerty12xx')
     expect(arg.displayName).toBe('Antoine')
+    expect(arg.newsletterOptIn).toBe(false)
     expect(typeof arg.medicalConsentAcceptedAt).toBe('string')
     // ISO format YYYY-MM-DDTHH:mm:ss.sssZ
     expect(arg.medicalConsentAcceptedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
+  })
+
+  it('signUp receives newsletterOptIn true when the optional box is ticked', async () => {
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route path="/" element={<SignupPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fillForm({ age: true, medical: true })
+    const checkboxes = screen.getAllByRole('checkbox')
+    fireEvent.click(checkboxes[2]!)
+    fireEvent.click(screen.getByRole('button', { name: /Créer mon compte/i }))
+
+    await Promise.resolve()
+    expect(signUpMock).toHaveBeenCalledTimes(1)
+    expect(signUpMock.mock.calls[0]![0].newsletterOptIn).toBe(true)
   })
 })

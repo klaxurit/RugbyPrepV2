@@ -1,7 +1,8 @@
-import { Ruler, Settings2 } from 'lucide-react'
+import { Mail, Ruler, Settings2 } from 'lucide-react'
 import { CollapsibleSection } from '../ui'
 import type { UserProfile } from '../../types/training'
 import { tr, type Lang } from '../../i18n/appLabels'
+import { newsletterPreferencePatch } from '../../services/auth/accountUpgradePrompts'
 
 const LANGUAGE_OPTIONS = [
   { value: 'fr' as const, label: 'Français', sub: 'Programme affiché en français' },
@@ -60,6 +61,42 @@ export function ProfilePreferencesSection({
             )
           })}
         </div>
+      </div>
+
+      <div className="space-y-3 pt-4 border-t border-border-app" data-testid="profile-section-newsletter">
+        <div className="flex items-center gap-2">
+          <Mail className="w-3.5 h-3.5 text-brand" />
+          <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_section_newsletter', lang)}</label>
+        </div>
+        <p className="text-xs text-fg-muted leading-relaxed">{tr('profile_section_newsletter_sub', lang)}</p>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={profile.newsletterOptIn === true}
+          onClick={() => updateProfile(newsletterPreferencePatch(profile.newsletterOptIn !== true, 'profile'))}
+          className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition-colors rf-focus-ring ${
+            profile.newsletterOptIn === true
+              ? 'border-brand/30 bg-brand/10'
+              : 'border-border-app bg-layer-5 hover:border-brand/30'
+          }`}
+        >
+          <span className="text-xs font-black text-fg">
+            {profile.newsletterOptIn === true
+              ? tr('profile_section_newsletter_on', lang)
+              : tr('profile_section_newsletter_off', lang)}
+          </span>
+          <span
+            className={`relative h-6 w-11 rounded-full transition-colors ${
+              profile.newsletterOptIn === true ? 'bg-brand' : 'bg-layer-20'
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                profile.newsletterOptIn === true ? 'left-5' : 'left-0.5'
+              }`}
+            />
+          </span>
+        </button>
       </div>
 
       <div className="space-y-3 pt-4 border-t border-border-app" data-testid="profile-section-morphology">

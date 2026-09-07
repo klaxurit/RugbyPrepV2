@@ -8,6 +8,8 @@ interface SignUpInput {
   password: string
   /** ISO timestamp captured when the user ticked the medical disclaimer checkbox. */
   medicalConsentAcceptedAt: string
+  /** Optional product emails — unchecked at signup is an explicit no. */
+  newsletterOptIn: boolean
   /** WS2 — hCaptcha token; required when VITE_HCAPTCHA_SITEKEY is set. */
   captchaToken?: string
 }

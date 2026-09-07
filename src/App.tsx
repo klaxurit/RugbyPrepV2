@@ -21,6 +21,7 @@ import { useRestEndNotificationHaptic } from './hooks/useRestEndNotificationHapt
 import { CookieConsentBanner } from './components/CookieConsentBanner'
 import { FoundingOffer } from './components/FoundingOffer'
 import { ReturnToClubPromptMount } from './components/ReturnToClubPromptMount'
+import { AccountUpgradeMount } from './components/auth/AccountUpgradeMount'
 
 // Eager : seulement HomePage (default after login, évite un flash sur l'écran principal)
 import { HomePage } from './pages/HomePage'
@@ -242,6 +243,7 @@ function App() {
         <CookieConsentBanner />
         <FoundingOffer />
         <ReturnToClubPromptMount />
+        <AccountUpgradeMount />
         </CoachProvider>
       </BrowserRouter>
       </SessionRunProvider>

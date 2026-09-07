@@ -3,8 +3,9 @@ import { useState } from 'react'
 import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import { useAuth } from '../../hooks/useAuth'
 import { supabase } from '../../services/supabase/client'
-
-const MIN_PASSWORD_LENGTH = 6
+import { MIN_PASSWORD_LENGTH, isPasswordMeetingPolicy, passwordTooWeakMessage } from '../../services/auth/passwordPolicy'
+import { clearPasswordNeedsUpgrade } from '../../services/auth/clearPasswordNeedsUpgrade'
+import { tr } from '../../i18n/appLabels'
 
 const resolvePasswordError = (message: string): string => {
   const normalized = message.toLowerCase()
@@ -13,8 +14,12 @@ const resolvePasswordError = (message: string): string => {
     return 'Choisis un mot de passe différent de l’ancien.'
   }
 
+  if (normalized.includes('leaked') || normalized.includes('pwned') || normalized.includes('data breach')) {
+    return 'Ce mot de passe apparaît dans une fuite de données. Choisis-en un autre.'
+  }
+
   if (normalized.includes('password')) {
-    return 'Mot de passe invalide. Utilise au moins 6 caractères.'
+    return passwordTooWeakMessage()
   }
 
   return 'Impossible de mettre à jour le mot de passe pour le moment.'
@@ -33,8 +38,8 @@ export function ResetPasswordPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (password.length < MIN_PASSWORD_LENGTH) {
-      setError('Mot de passe trop faible (6 caractères minimum).')
+    if (!isPasswordMeetingPolicy(password)) {
+      setError(passwordTooWeakMessage())
       return
     }
 
@@ -52,6 +57,10 @@ export function ResetPasswordPage() {
       setError(resolvePasswordError(updateError.message))
       setIsSubmitting(false)
       return
+    }
+
+    if (authState.status === 'authenticated' && authState.user) {
+      await clearPasswordNeedsUpgrade(authState.user.id)
     }
 
     setPassword('')
@@ -136,7 +145,7 @@ export function ResetPasswordPage() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form onSubmit={handleSubmit} className="space-y-3" noValidate>
               <div className="space-y-1.5">
                 <label htmlFor="new-password" className="text-xs font-bold text-fg-soft uppercase tracking-wider">
                   Nouveau mot de passe
@@ -147,8 +156,9 @@ export function ResetPasswordPage() {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-5 text-fg placeholder:text-fg-faint rf-focus-ring text-sm transition-colors"
-                  placeholder="6 caractères minimum"
+                  placeholder={tr('password_min_placeholder', 'fr')}
                   autoComplete="new-password"
+                  minLength={MIN_PASSWORD_LENGTH}
                   required
                 />
               </div>

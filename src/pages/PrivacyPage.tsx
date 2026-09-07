@@ -16,6 +16,7 @@ const PRIVACY_SECTIONS: Section[] = [
       'Entraînement : historique des séances, tests physiques, calendrier club et matchs.',
       'Coach IA : messages et contexte sportif nécessaires à la réponse (profil, historique récent, zones sensibles).',
       'Notifications : jetons push (FCM) si vous activez les rappels.',
+      'Actualités (optionnel) : votre choix de recevoir ou non les e-mails de mises à jour de l’app et de conseils de prépa rugby.',
       'Analytique : événements d’usage agrégés via PostHog (hébergé en UE), sans revente de données.',
       'Paiements : RugbyForge ne stocke pas vos coordonnées bancaires. Android via Google Play Billing ; web via Stripe.',
     ],
@@ -24,7 +25,7 @@ const PRIVACY_SECTIONS: Section[] = [
     title: '2. Finalités et bases légales',
     content: [
       'Les données sont traitées pour fournir le service (programmes personnalisés, suivi, coach IA), gérer votre compte et, le cas échéant, votre abonnement.',
-      'Base légale : exécution du contrat (CGU) et, pour l’analytique optionnelle, votre consentement via le bandeau cookies.',
+      'Base légale : exécution du contrat (CGU) ; pour l’analytique optionnelle, votre consentement via le bandeau cookies ; pour les actualités produit, votre consentement explicite (case à l’inscription, prompt in-app ou interrupteur du profil).',
     ],
   },
   {
@@ -43,6 +44,10 @@ const RETENTION_ROWS: { type: string; duration: string }[] = [
   {
     type: 'Compte, profil, séances, tests, calendrier, messages Coach IA',
     duration: 'Tant que votre compte est actif. Supprimés sous 30 jours après une demande d’effacement (suppression immédiate via l’outil in-app).',
+  },
+  {
+    type: 'Préférence d’actualités (opt-in / opt-out)',
+    duration: 'Tant que le compte est actif ; effacée avec le compte. Un opt-out est enregistré pour ne plus vous écrire.',
   },
   {
     type: 'Jetons de notification push',
@@ -80,7 +85,7 @@ export function PrivacyPage() {
       <main className="max-w-md mx-auto px-6 py-6 space-y-6 relative">
         <section className="space-y-4">
           <h1 className="text-lg font-black text-fg">Politique de confidentialité</h1>
-          <p className="text-xs text-fg-muted">Dernière mise à jour : mai 2026 · RGPD (UE 2016/679)</p>
+          <p className="text-xs text-fg-muted">Dernière mise à jour : septembre 2026 · RGPD (UE 2016/679)</p>
           <p className="text-sm text-fg-secondary leading-relaxed">
             RugbyForge est édité par <span className="font-bold text-fg">Axurit</span>.
             Cette page décrit quelles données nous collectons, combien de temps nous les conservons
