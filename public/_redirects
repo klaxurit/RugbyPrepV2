@@ -1,8 +1,13 @@
 https://www.rugbyforge.fr/* https://rugbyforge.fr/:splat 301!
 
 # Ancienne URL accentuée (404) → slug canonique
+# Variantes UTF-8 + percent-encoded (Cloudflare Pages ne matche pas toujours les deux)
+/périodisation-rugby        /periodisation-rugby/  301
 /périodisation-rugby/       /periodisation-rugby/  301
 /périodisation-rugby/*      /periodisation-rugby/:splat  301
+/p%C3%A9riodisation-rugby   /periodisation-rugby/  301
+/p%C3%A9riodisation-rugby/  /periodisation-rugby/  301
+/p%C3%A9riodisation-rugby/* /periodisation-rugby/:splat  301
 
 # Routes SPA (rewrite vers index.html, status 200)
 /landing                /index.html  200

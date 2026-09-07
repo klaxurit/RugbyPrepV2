@@ -137,6 +137,19 @@ function getDevStaticTarget(pathname: string) {
   return `${normalizedPath}/index.html`
 }
 
+/** Hard nav — obligatoire pour quitter le shell SPA vers une page HTML statique. */
+function HardRedirect({ to }: { to: string }) {
+  useEffect(() => {
+    window.location.replace(`${to}${window.location.search}${window.location.hash}`)
+  }, [to])
+
+  return (
+    <div className="min-h-screen bg-app flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+}
+
 function StaticPageDevRedirect({ target }: { target: string }) {
   useEffect(() => {
     const suffix = `${window.location.search}${window.location.hash}`
@@ -191,6 +204,9 @@ function App() {
           <Route path="/delete-account" element={<DeleteAccountPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/founding" element={<FoundingTriggerPage />} />
+          {/* Ancienne URL accentuée : hard redirect (Navigate SPA resterait dans le shell) */}
+          <Route path="/périodisation-rugby" element={<HardRedirect to="/periodisation-rugby/" />} />
+          <Route path="/périodisation-rugby/" element={<HardRedirect to="/periodisation-rugby/" />} />
 
           <Route element={<RequireAuth />}>
             <Route path="/home" element={<HomePage />} />

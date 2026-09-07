@@ -53,8 +53,8 @@
 /staff-sandbox
   X-Robots-Tag: noindex, follow
 
-/delete-account
-  X-Robots-Tag: noindex, follow
+# /delete-account : page publique (Play Store + RGPD) — indexable.
+# Ne pas remettre de X-Robots-Tag noindex (conflit avec meta HTML + sitemap).
 
 # Le TWA Play ne voit jamais le toast « Recharger » si sw.js est en cache CDN 4 h.
 /sw.js

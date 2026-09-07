@@ -27,15 +27,21 @@ registerRoute(
     denylist: [
       /^\/legal\/?$/,
       /^\/privacy\/?$/,
+      /^\/delete-account\/?$/,
       /^\/404\.html$/,
       /^\/about\/?$/,
       /^\/blog(\/|$)/,
       /^\/preparation-physique-rugby\/?$/,
       /^\/programme-musculation-rugby\/?$/,
       /^\/acwr-rugby\/?$/,
-      /^\/periodisation-rugby\/?$/,
+      // Slug canonique + ancienne URL accentuée (NFC `é` / NFD `e`+combining).
+      // Sans ça le SW sert la SPA et le catch-all React envoie vers /auth/login.
+      /^\/p[eé]riodisation-rugby\/?$/,
+      /^\/pe\u0301riodisation-rugby\/?$/,
       /^\/tests-physiques-rugby\/?$/,
       /^\/prevention-blessures-rugby\/?$/,
+      // Pages Cloudflare (email obfuscation, etc.) — ne pas les transformer en SPA
+      /^\/cdn-cgi\//,
       /^\/assets\//,
       /^\/icons\//,
       /^\/images\//,
