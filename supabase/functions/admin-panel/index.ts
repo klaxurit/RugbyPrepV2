@@ -136,30 +136,51 @@ async function loadUserDetail(
   serviceClient: Awaited<ReturnType<typeof requireUser>>['serviceClient'],
   userId: string
 ) {
-  const [{ data: authData }, { data: profile }, { data: entitlements }, { data: staff }, { data: athletes }] =
-    await Promise.all([
-      serviceClient.auth.admin.getUserById(userId),
-      serviceClient
-        .from('profiles')
-        .select(
-          'club_code, club_name, weekly_sessions, season_mode, planning_anchors, season_transition_state, onboarding_complete, display_name, avatar_url'
-        )
-        .eq('id', userId)
-        .maybeSingle(),
-      serviceClient
-        .from('user_entitlements')
-        .select('entitlement_key, status, source')
-        .eq('user_id', userId)
-        .eq('status', 'active'),
-      serviceClient
-        .from('club_staff_memberships')
-        .select('club_id, squad_id, role, status')
-        .eq('staff_user_id', userId),
-      serviceClient
-        .from('club_athlete_memberships')
-        .select('club_id, squad_id, status')
-        .eq('athlete_user_id', userId),
-    ])
+  const todayIso = new Date().toISOString().slice(0, 10)
+  const y = Number(todayIso.slice(0, 4))
+  const m = Number(todayIso.slice(5, 7))
+  const currentSeasonStartYear = m < 6 ? y - 1 : y
+  // Saison FFR précédente incluse : un match de mai avant le 1er juin courant
+  // peut encore servir de J1 moteur si on le coupe.
+  const seasonWindowStart = `${currentSeasonStartYear - 1}-06-01`
+  const [
+    { data: authData },
+    { data: profile },
+    { data: entitlements },
+    { data: staff },
+    { data: athletes },
+    { data: matchRows },
+  ] = await Promise.all([
+    serviceClient.auth.admin.getUserById(userId),
+    serviceClient
+      .from('profiles')
+      .select(
+        'club_code, club_name, weekly_sessions, season_mode, planning_anchors, season_transition_state, onboarding_complete, display_name, avatar_url, training_baseline, ffr_competition_name, ffr_last_sync_at'
+      )
+      .eq('id', userId)
+      .maybeSingle(),
+    serviceClient
+      .from('user_entitlements')
+      .select('entitlement_key, status, source')
+      .eq('user_id', userId)
+      .eq('status', 'active'),
+    serviceClient
+      .from('club_staff_memberships')
+      .select('club_id, squad_id, role, status')
+      .eq('staff_user_id', userId),
+    serviceClient
+      .from('club_athlete_memberships')
+      .select('club_id, squad_id, status')
+      .eq('athlete_user_id', userId),
+    serviceClient
+      .from('match_calendar')
+      .select('id, date, opponent, match_kind, source, user_hidden')
+      .eq('user_id', userId)
+      .eq('type', 'match')
+      .gte('date', seasonWindowStart)
+      .order('date', { ascending: true })
+      .limit(80),
+  ])
 
   const premiumHints = new Set([
     'premium_logging',
@@ -174,10 +195,20 @@ async function loadUserDetail(
     .map((e) => e.entitlement_key as string)
     .filter((k) => premiumHints.has(k))
 
+  const matches = (matchRows ?? []).map((row) => ({
+    id: row.id != null ? String(row.id) : null,
+    date: String(row.date),
+    opponent: row.opponent != null ? String(row.opponent) : null,
+    match_kind: row.match_kind != null ? String(row.match_kind) : null,
+    source: row.source != null ? String(row.source) : null,
+    user_hidden: row.user_hidden === true,
+  }))
+
   return {
     userId,
     email: authData.user?.email ?? null,
     profile: profile ?? null,
+    matches,
     premiumEntitlements,
     staffMemberships: staff ?? [],
     athleteMemberships: athletes ?? [],
@@ -267,6 +298,21 @@ Deno.serve(async (req: Request) => {
         }
 
         const { error } = await serviceClient.from('profiles').update(patch).eq('id', userId)
+        if (error) return json({ error: error.message }, 500)
+        return json({ ok: true })
+      }
+
+      case 'set_match_hidden': {
+        const userId = String(body.userId ?? '').trim()
+        const matchId = String(body.matchId ?? '').trim()
+        if (!UUID_RE.test(userId)) return json({ error: 'Invalid userId' }, 400)
+        if (!UUID_RE.test(matchId)) return json({ error: 'Invalid matchId' }, 400)
+        const hidden = body.hidden === true
+        const { error } = await serviceClient
+          .from('match_calendar')
+          .update({ user_hidden: hidden })
+          .eq('id', matchId)
+          .eq('user_id', userId)
         if (error) return json({ error: error.message }, 500)
         return json({ ok: true })
       }

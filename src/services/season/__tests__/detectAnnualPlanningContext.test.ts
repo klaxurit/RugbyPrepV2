@@ -647,4 +647,22 @@ describe('detectAnnualPlanningContext', () => {
       expect(r1.weekLabel).not.toBe(r2.weekLabel)
     }
   })
+
+  it('match de fin de saison précédente avant offSeasonStartAt n’est pas le J1', () => {
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match('2026-05-17'), match('2026-09-27')],
+      today: '2026-09-03',
+      trainingBaseline: 'peak',
+      planningAnchors: {
+        offSeasonStartAt: '2026-05-18',
+        returnToTeamTrainingAt: '2026-08-10',
+        skipOffSeasonRecoveryIntro: true,
+      },
+    })
+    expect(r.cycle).toBe('pre_season')
+    expect(r.firstMatchDate).toBe('2026-09-27')
+    expect(r.weekLabel).toMatch(/^Pré-saison/)
+    expect(r.planningTrace.rulesApplied).toContain('rule:first_match_skips_pre_off_season')
+  })
 })

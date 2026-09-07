@@ -46,6 +46,18 @@ function phaseLabelFor(phase: string | null | undefined, lang: Lang): string | n
   }
 }
 
+function daysUntilISO(todayISO: string, matchISO: string): number | null {
+  const parse = (s: string) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s)
+    if (!m) return null
+    return Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+  }
+  const from = parse(todayISO)
+  const to = parse(matchISO)
+  if (from == null || to == null) return null
+  return Math.round((to - from) / 86_400_000)
+}
+
 function quickPromptForPhase(phase: string | null | undefined, lang: Lang): string | null {
   switch (phase) {
     case 'HYPERTROPHY':
@@ -146,7 +158,14 @@ export function ChatPage() {
       position: profile.position ?? profile.rugbyPosition,
       injuries: profile.injuries,
     },
-  }), [week, phase, acwr, acwrZone, acuteLoad, chronicLoad, fatigue, logs, profile])
+    nextMatch: chatNextMatch
+      ? {
+          date: chatNextMatch.date,
+          opponent: chatNextMatch.opponent ?? null,
+          daysUntil: daysUntilISO(today, chatNextMatch.date),
+        }
+      : null,
+  }), [week, phase, acwr, acwrZone, acuteLoad, chronicLoad, fatigue, logs, profile, chatNextMatch, today])
 
   // Quick prompts based on context
   // Check if match is within 48h for pre-match prompt

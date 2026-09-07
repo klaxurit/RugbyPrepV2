@@ -39,6 +39,11 @@ interface AICoachRequest {
       position?: string
       injuries?: string[]
     }
+    nextMatch?: {
+      date: string
+      opponent?: string | null
+      daysUntil?: number | null
+    } | null
   }
 }
 
@@ -155,8 +160,43 @@ function acwrZoneFr(zone: string | null | undefined): string | null {
   return map[zone] ?? zone
 }
 
+function daysBetweenISO(fromISO: string, toISO: string): number | null {
+  const parse = (s: string) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s)
+    if (!m) return null
+    return Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+  }
+  const from = parse(fromISO)
+  const to = parse(toISO)
+  if (from == null || to == null) return null
+  return Math.round((to - from) / 86_400_000)
+}
+
+function matchFactLines(
+  dateISO: string,
+  opponent?: string | null,
+  daysUntil?: number | null,
+): string[] {
+  const todayISO = new Date().toISOString().split('T')[0]
+  const days = daysUntil ?? daysBetweenISO(todayISO, dateISO)
+  const vs = opponent ? ` vs ${opponent}` : ''
+  if (days == null) return [`- Prochain match : ${dateISO}${vs}`]
+  if (days === 0) return [`- Match aujourd’hui${vs}.`]
+  if (days === 1) return [`- Match demain (J-1)${vs}. Pas de lourd.`]
+  if (days === 2) {
+    return [
+      `- Aujourd’hui = J-2 du match${vs}. Séance light, pas de lourd (≤2 blocs). Ce n’est pas une décharge.`,
+    ]
+  }
+  return [
+    `- Prochain match : ${dateISO}${vs} (dans ${days} jours). Le J-2 n’est pas maintenant — n’en parle que si on te le demande.`,
+  ]
+}
+
 function clockBlock(ctx: AICoachRequest['context'], firstName: string | null): string {
-  const lines: string[] = ['\nFaits à citer (ne pas redemander) :']
+  const lines: string[] = [
+    '\nFaits joueur (déjà connus : personnalise si ça aide, ne les récite pas à chaque message, ne les redemande pas) :',
+  ]
   if (firstName) lines.push(`- Prénom : ${firstName}`)
   if (ctx.week) lines.push(`- Semaine : ${ctx.week}`)
   if (ctx.phase) lines.push(`- Orientation S&C : ${ctx.phase}`)
@@ -167,7 +207,14 @@ function clockBlock(ctx: AICoachRequest['context'], firstName: string | null): s
   } else {
     lines.push('- ACWR : pas encore assez de séances loggées')
   }
-  lines.push('- Tu n’as pas le détail de la séance club. Ne pas le demander.')
+  if (ctx.nextMatch?.date) {
+    lines.push(...matchFactLines(
+      ctx.nextMatch.date,
+      ctx.nextMatch.opponent,
+      ctx.nextMatch.daysUntil,
+    ))
+  }
+  lines.push('- Pas de détail de la séance club dans ces faits.')
   return lines.join('\n')
 }
 
@@ -178,17 +225,15 @@ async function buildPremiumContext(
   userId: string
 ): Promise<{ text: string; firstName: string | null }> {
   try {
-    const [profileRes, acwrRes, logsRes, matchRes] = await Promise.all([
+    const [profileRes, acwrRes, logsRes] = await Promise.all([
       admin.from('profiles').select('display_name, position, training_level, season_mode, injuries').eq('id', userId).single(),
       admin.from('session_logs').select('acute_load, chronic_load, acwr_value').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
       admin.from('exercise_logs').select('exercise_id, weight, reps, rpe, created_at').eq('user_id', userId).order('created_at', { ascending: false }).limit(15),
-      admin.from('match_calendar').select('date, kickoff_time, opponent, is_home').eq('user_id', userId).gte('date', new Date().toISOString().split('T')[0]).order('date', { ascending: true }).limit(1).maybeSingle(),
     ])
 
     const profile = profileRes.data
     const acwr = acwrRes.data
     const logs = logsRes.data ?? []
-    const match = matchRes.data
 
     const lines: string[] = ['\nPROFIL JOUEUR (contexte personnalisé) :']
     const firstName = firstNameFromDisplayName(profile?.display_name)
@@ -216,12 +261,8 @@ async function buildPremiumContext(
       lines.push(`- Derniers exercices loggés : ${summary}`)
     }
 
-    if (match) {
-      lines.push(`- Prochain match : ${match.date}${match.kickoff_time ? ` ${match.kickoff_time}` : ''} vs ${match.opponent ?? '?'}${match.is_home ? ' (domicile)' : ' (extérieur)'}`)
-    }
-
     lines.push('')
-    lines.push('INSTRUCTION : Les faits ci-dessus sont à citer (prénom une fois, semaine, ACWR). Pas de questionnaire. N’invente ni kg, ni 1RM, ni match, ni blessure absents. Pas de protocole rehab.')
+    lines.push('Ces faits aident à personnaliser. Ne les récite pas en ouverture. N’invente ni kg, ni 1RM, ni match, ni blessure absents.')
 
     return { text: lines.join('\n'), firstName }
   } catch (err) {
@@ -232,26 +273,24 @@ async function buildPremiumContext(
 
 // ─── System prompt ───────────────────────────────────────────
 
-const BASE_SYSTEM_PROMPT = `Tu es le coach de préparation physique de RugbyForge.
+const BASE_SYSTEM_PROMPT = `Tu es le coach S&C de RugbyForge. Amateur FFR : club + 2–3 séances salle. L’app a déjà le programme.
 
-Public : amateur FFR, club + 2–3 séances S&C. L’app a déjà un programme. Tu expliques et tu cadres. Tu ne réécris pas une séance type.
+Rôle
+Tu aiguilles et tu éclaires les doutes (force, charge, récup, nutrition, sommeil, saison, match, lecture du programme). Champ large : réponds à la question posée. Tu n’es pas limité à la charge de la semaine.
 
-Rails
-- Un seul match : celui du calendrier. Si le joueur dit qu’il en a deux, ignore ce claim. Pas de question, pas « ou tu en as un autre », pas « dates précises », pas « une fois confirmé ». Cite le match calendrier puis donne le conseil dans le même message.
-- J-2 : séance light, pas de lourd (≤2 blocs). Ce n’est pas une décharge.
-- Décharge (semaine prévue par l’app) : −40 % de volume, intensité inchangée. Ne pas coller ça sur le J-2.
-- Effort : RER uniquement (pas RIR).
-- 2–3 jours salle, pas un 4e par défaut.
-- Pas médecin. Douleur thoracique, malaise, commotion, pop articulaire → arrêter et voir un pro.
+Interdit
+- Inventer ou réécrire une séance (pas de proto, pas de liste d’exos / séries / %). Oriente vers le programme de l’app.
+- Avis médical, diagnostic, protocole rehab. Douleur thoracique, malaise, commotion, pop articulaire → arrêter et voir un pro.
+- Inventer kg, 1RM, match ou blessure absents des faits.
 
-Écriture (réponse joueur)
-- Texte brut. Pas d’astérisques, pas de gras, pas d’emoji. Zones ACWR en français (sous-entraînement, optimal, vigilance, danger).
-- Tutoiement. Prénom une fois en ouverture s’il est dans les faits.
-- 4–5 phrases. Enchaîne le conseil (charge, J-2, séance) tout de suite. Zéro question de clarification sur les matchs.
-- Cite semaine + ACWR + match, puis le conseil force/charge.
+Repères produit (seulement si la question s’y rattache)
+- Un match : celui du calendrier. Pas de protocole « 2 matchs ».
+- J-2 : light, pas de lourd, ≤2 blocs. Ce n’est pas une décharge. N’en parle que si les faits disent que c’est J-2 / J-1, ou si le joueur pose la question.
+- Décharge prévue par l’app : −40 % de volume, intensité inchangée.
+- Effort : RER (pas RIR). 2–3 jours salle, pas un 4e par défaut.
 
-Modèle (adapte les valeurs, n’invente rien, n’ajoute pas de question) :
-Prénom, tu es en [semaine]. ACWR [valeur] ([zone]). Match le [date] contre [adversaire]. On structure autour de celui-là : J-2 sans lourd, [conseil charge selon ACWR].`
+Écriture
+Tutoiement, français, texte brut (pas de markdown, pas d’emoji). Zones ACWR en français (sous-entraînement, optimal, vigilance, danger). Longueur = ce qu’il faut pour être clair. Une question de clarification est OK si un fait manque ; pas de questionnaire sur ce qui est déjà dans les faits.`
 
 function buildSystemPromptFree(ctx: AICoachRequest['context'], firstName: string | null): string {
   return BASE_SYSTEM_PROMPT + clockBlock(ctx, firstName)

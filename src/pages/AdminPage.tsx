@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Shield, Search, Crown, Users, Anchor, ChevronLeft, LayoutGrid } from 'lucide-react'
 import {
@@ -6,6 +6,7 @@ import {
   adminGrantPremium,
   adminRevokePremium,
   adminSearchUser,
+  adminSetMatchHidden,
   adminUpdateProfile,
   adminUpsertAthleteMembership,
   adminUpsertStaffMembership,
@@ -19,7 +20,14 @@ import {
   mergeAdminPlanningPreset,
 } from '../config/adminPlanningAnchors'
 import { buildPlanningAnchorsPatch } from '../services/admin/buildPlanningAnchorsPatch'
+import {
+  buildAdminCycleDiagnostic,
+  type AdminMatchSummary,
+} from '../services/admin/buildAdminCycleDiagnostic'
+import { toIsoDateLocal } from '../services/dates/localIsoDate'
 import { StaffAthleteAvatar } from '../components/staffPlanning/StaffAthleteAvatar'
+import { AdminCycleDiagnosticCard } from '../components/admin/AdminCycleDiagnosticCard'
+import { AdminMatchCalendarList } from '../components/admin/AdminMatchCalendarList'
 
 const SEASON_MODES = ['in_season', 'off_season', 'pre_season', 'playoffs'] as const
 const CYCLE_HINTS = ['off_season', 'pre_season', 'in_season', 'playoffs'] as const
@@ -61,17 +69,24 @@ function syncAnchorsJsonFromForm(form: AnchorForm, currentJson: string): string 
 
 function Field({
   label,
+  hint,
   children,
 }: {
   label: string
+  hint?: string
   children: React.ReactNode
 }) {
   return (
     <label className="block space-y-1">
       <span className="text-xs font-semibold text-fg-muted uppercase tracking-wide">{label}</span>
       {children}
+      {hint ? <span className="block text-[11px] text-fg-muted leading-snug">{hint}</span> : null}
     </label>
   )
+}
+
+function isoDateInputValue(raw: string): string {
+  return raw.slice(0, 10)
 }
 
 export function AdminPage() {
@@ -137,7 +152,7 @@ export function AdminPage() {
       setAnchorsJson(JSON.stringify(merged, null, 2))
       if (preset.seasonMode) setSeasonMode(preset.seasonMode)
     },
-    [user?.profile?.planning_anchors]
+    [user?.profile?.planning_anchors],
   )
 
   const updateAnchorForm = useCallback((patch: Partial<AnchorForm>) => {
@@ -189,6 +204,28 @@ export function AdminPage() {
 
   const hasPremium = (user?.premiumEntitlements.length ?? 0) > 0
   const activeStaff = user?.staffMemberships.filter((m) => m.status === 'active') ?? []
+
+  const diagnostic = useMemo(() => {
+    if (!user) return null
+    const matches = (user.matches ?? []).map(
+      (m): AdminMatchSummary => ({
+        date: m.date,
+        opponent: m.opponent,
+        match_kind: (m.match_kind as AdminMatchSummary['match_kind']) ?? null,
+        source: m.source,
+        user_hidden: m.user_hidden,
+      }),
+    )
+    return buildAdminCycleDiagnostic({
+      todayIso: toIsoDateLocal(new Date()),
+      seasonMode: user.profile?.season_mode ?? null,
+      weeklySessions: user.profile?.weekly_sessions ?? null,
+      onboardingComplete: user.profile?.onboarding_complete ?? null,
+      trainingBaseline: user.profile?.training_baseline ?? null,
+      planningAnchors: user.profile?.planning_anchors ?? null,
+      matches,
+    })
+  }, [user])
 
   return (
     <div className="min-h-screen bg-app text-fg pb-28">
@@ -292,25 +329,76 @@ export function AdminPage() {
                   )}
                 </div>
               </div>
-              <p>
-                Club : {user.profile?.club_name ?? '—'} ({user.profile?.club_code ?? '—'})
-              </p>
-              <p>
-                Mode : {user.profile?.season_mode ?? '—'} · {user.profile?.weekly_sessions ?? '—'} séances/sem.
-              </p>
-              <p>Premium : {hasPremium ? 'Oui' : 'Non'}</p>
-              {activeStaff.length > 0 && (
-                <p>Coach : {activeStaff.map((m) => `${m.role} @ ${m.club_id}`).join(', ')}</p>
-              )}
+              <div className="grid gap-1 text-sm">
+                <p>
+                  Club : {user.profile?.club_name ?? '—'}{' '}
+                  <span className="font-mono text-xs text-fg-muted">({user.profile?.club_code ?? '—'})</span>
+                </p>
+                {user.profile?.ffr_competition_name && (
+                  <p className="text-xs text-fg-muted">{user.profile.ffr_competition_name}</p>
+                )}
+                <p>
+                  {user.profile?.weekly_sessions ?? '—'} séances/sem.
+                  {user.profile?.training_baseline ? ` · baseline ${user.profile.training_baseline}` : ''}
+                  {user.profile?.onboarding_complete === false ? ' · onboarding incomplet' : ''}
+                </p>
+                <p>Premium : {hasPremium ? 'Oui' : 'Non'}</p>
+                {activeStaff.length > 0 && (
+                  <p>Coach : {activeStaff.map((m) => `${m.role} @ ${m.club_id}`).join(', ')}</p>
+                )}
+              </div>
             </section>
+
+            {diagnostic && (
+              <AdminCycleDiagnosticCard
+                diagnostic={diagnostic}
+                alignDisabled={loading}
+                onAlignSeasonMode={() => {
+                  if (!diagnostic.liveCycle) return
+                  void runAction(async () => {
+                    await adminUpdateProfile({
+                      userId: user.userId,
+                      seasonMode: diagnostic.liveCycle!,
+                    })
+                    setSeasonMode(diagnostic.liveCycle!)
+                  }, `season_mode aligné → ${diagnostic.liveCycle}`)
+                }}
+              />
+            )}
+
+            <AdminMatchCalendarList
+              matches={user.matches ?? []}
+              todayIso={toIsoDateLocal(new Date())}
+              firstMatchDate={diagnostic?.firstMatchDate ?? null}
+              offSeasonStartAt={
+                typeof user.profile?.planning_anchors?.offSeasonStartAt === 'string'
+                  ? user.profile.planning_anchors.offSeasonStartAt
+                  : null
+              }
+              disabled={loading}
+              onToggleHidden={(matchId, hidden) => {
+                void runAction(
+                  () => adminSetMatchHidden({ userId: user.userId, matchId, hidden }),
+                  hidden ? 'Match masqué (ne compte plus pour le J1)' : 'Match réaffiché',
+                )
+              }}
+            />
 
             <section className="rounded-2xl border border-brand-border bg-layer-5 p-4 space-y-4">
               <h2 className="font-bold flex items-center gap-2">
                 <Anchor className="w-4 h-4 text-brand-tint" />
-                Profil & ancres
+                Ancres & réglages
               </h2>
+              <p className="text-xs text-fg-muted leading-relaxed">
+                Laisser <span className="font-mono">manualCycleOverride</span> vide sauf debug QA.
+                Avec un calendrier FFR, le cycle live se cale sur le 1er match + reprise club.
+              </p>
+
               <div className="grid grid-cols-2 gap-3">
-                <Field label="season_mode">
+                <Field
+                  label="season_mode (stocké)"
+                  hint="Legacy / onboarding. Le programme lit le cycle live ci-dessus."
+                >
                   <select
                     value={seasonMode}
                     onChange={(e) => setSeasonMode(e.target.value)}
@@ -336,13 +424,13 @@ export function AdminPage() {
                 </Field>
               </div>
 
-              <Field label="Ancre programme (preset)">
+              <Field label="Preset QA (fige une semaine)">
                 <select
                   value={anchorPresetId}
                   onChange={(e) => applyAnchorPreset(e.target.value)}
                   className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
                 >
-                  <option value="">— Choisir une ancre —</option>
+                  <option value="">— Choisir —</option>
                   {ADMIN_PLANNING_ANCHOR_PRESETS.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.label}
@@ -351,14 +439,17 @@ export function AdminPage() {
                 </select>
               </Field>
 
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="manualCycleOverride">
+              <div className="grid gap-3">
+                <Field
+                  label="manualCycleOverride"
+                  hint="Danger : force le macrocycle. Vider pour suivre le calendrier."
+                >
                   <select
                     value={anchorForm.manualCycleOverride}
                     onChange={(e) => updateAnchorForm({ manualCycleOverride: e.target.value })}
                     className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
                   >
-                    <option value="">—</option>
+                    <option value="">— (suivre calendrier) —</option>
                     {SEASON_MODES.map((m) => (
                       <option key={m} value={m}>
                         {m}
@@ -366,34 +457,26 @@ export function AdminPage() {
                     ))}
                   </select>
                 </Field>
-                <Field label="offSeason week (S1–S10)">
-                  <input
-                    type="number"
-                    min={1}
-                    max={12}
-                    value={anchorForm.manualOffSeasonWeekOverride}
-                    onChange={(e) => updateAnchorForm({ manualOffSeasonWeekOverride: e.target.value })}
-                    placeholder="ex. 3 = Transition"
-                    className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
-                  />
-                </Field>
-                <Field label="preSeason week (S1–S12)">
-                  <input
-                    type="number"
-                    min={1}
-                    max={12}
-                    value={anchorForm.manualPreSeasonWeekOverride}
-                    onChange={(e) => updateAnchorForm({ manualPreSeasonWeekOverride: e.target.value })}
-                    className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
-                  />
-                </Field>
-              </div>
-
-              <div className="grid gap-3">
-                <Field label="seasonEndedAt (ISO date)">
+                <Field label="Début inter-saison (offSeasonStartAt)">
                   <input
                     type="date"
-                    value={anchorForm.seasonEndedAt.slice(0, 10)}
+                    value={isoDateInputValue(anchorForm.offSeasonStartAt)}
+                    onChange={(e) => updateAnchorForm({ offSeasonStartAt: e.target.value })}
+                    className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
+                  />
+                </Field>
+                <Field label="Reprise club (returnToTeamTrainingAt)">
+                  <input
+                    type="date"
+                    value={isoDateInputValue(anchorForm.returnToTeamTrainingAt)}
+                    onChange={(e) => updateAnchorForm({ returnToTeamTrainingAt: e.target.value })}
+                    className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
+                  />
+                </Field>
+                <Field label="Fin de saison (seasonEndedAt)">
+                  <input
+                    type="date"
+                    value={isoDateInputValue(anchorForm.seasonEndedAt)}
                     onChange={(e) =>
                       updateAnchorForm({
                         seasonEndedAt: e.target.value ? `${e.target.value}T12:00:00.000Z` : '',
@@ -402,37 +485,65 @@ export function AdminPage() {
                     className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
                   />
                 </Field>
-                <Field label="onboardingCycleHint">
-                  <select
-                    value={anchorForm.onboardingCycleHint}
-                    onChange={(e) => updateAnchorForm({ onboardingCycleHint: e.target.value })}
-                    className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
-                  >
-                    <option value="">—</option>
-                    {CYCLE_HINTS.map((h) => (
-                      <option key={h} value={h}>
-                        {h}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-                <label className="flex items-center gap-2 text-sm">
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Semaine off figée (QA)">
                   <input
-                    type="checkbox"
-                    checked={anchorForm.skipOffSeasonRecoveryIntro}
-                    onChange={(e) => updateAnchorForm({ skipOffSeasonRecoveryIntro: e.target.checked })}
+                    type="number"
+                    min={1}
+                    max={12}
+                    value={anchorForm.manualOffSeasonWeekOverride}
+                    onChange={(e) => updateAnchorForm({ manualOffSeasonWeekOverride: e.target.value })}
+                    placeholder="S1–S10"
+                    className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
                   />
-                  skipOffSeasonRecoveryIntro
-                </label>
-                <Field label="JSON brut (lecture seule — sync auto depuis le formulaire)">
-                  <textarea
-                    value={anchorsJson}
-                    readOnly
-                    rows={4}
-                    className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-xs font-mono text-fg opacity-90"
+                </Field>
+                <Field label="Semaine pré figée (QA)">
+                  <input
+                    type="number"
+                    min={1}
+                    max={12}
+                    value={anchorForm.manualPreSeasonWeekOverride}
+                    onChange={(e) => updateAnchorForm({ manualPreSeasonWeekOverride: e.target.value })}
+                    placeholder="S1–S12"
+                    className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
                   />
                 </Field>
               </div>
+
+              <Field label="onboardingCycleHint">
+                <select
+                  value={anchorForm.onboardingCycleHint}
+                  onChange={(e) => updateAnchorForm({ onboardingCycleHint: e.target.value })}
+                  className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
+                >
+                  <option value="">—</option>
+                  {CYCLE_HINTS.map((h) => (
+                    <option key={h} value={h}>
+                      {h}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={anchorForm.skipOffSeasonRecoveryIntro}
+                  onChange={(e) => updateAnchorForm({ skipOffSeasonRecoveryIntro: e.target.checked })}
+                />
+                Skip 2 semaines récup inter-saison
+              </label>
+
+              <Field label="JSON ancres (lecture)">
+                <textarea
+                  value={anchorsJson}
+                  readOnly
+                  rows={5}
+                  className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-xs font-mono text-fg opacity-90"
+                />
+              </Field>
 
               <button
                 type="button"
@@ -483,10 +594,7 @@ export function AdminPage() {
                   type="button"
                   disabled={loading || hasPremium}
                   onClick={() =>
-                    void runAction(
-                      () => adminGrantPremium(user.userId),
-                      'Premium accordé'
-                    )
+                    void runAction(() => adminGrantPremium(user.userId), 'Premium accordé')
                   }
                   className="flex-1 rounded-xl bg-amber-600 py-3 font-bold text-white disabled:opacity-50"
                 >
@@ -496,10 +604,7 @@ export function AdminPage() {
                   type="button"
                   disabled={loading || !hasPremium}
                   onClick={() =>
-                    void runAction(
-                      () => adminRevokePremium(user.userId),
-                      'Premium révoqué'
-                    )
+                    void runAction(() => adminRevokePremium(user.userId), 'Premium révoqué')
                   }
                   className="flex-1 rounded-xl border border-brand-border py-3 font-bold disabled:opacity-50"
                 >
@@ -514,13 +619,13 @@ export function AdminPage() {
                 Rôle Coach (staff club)
               </h2>
               <p className="text-xs text-fg-muted">
-                Le coach voit les joueurs liés au même <span className="font-mono">club_id</span> (code FFR exact du profil, ex. pas « DUC » mais le code numérique).
+                Le coach voit les joueurs liés au même <span className="font-mono">club_id</span> (code FFR exact).
               </p>
               <Field label="club_id">
                 <input
                   value={staffClubId}
                   onChange={(e) => setStaffClubId(e.target.value)}
-                  placeholder="ex. code FFR / identifiant club"
+                  placeholder="ex. code FFR"
                   className="w-full rounded-xl border border-brand-border bg-layer-10 px-3 py-2 text-sm text-fg"
                 />
               </Field>
@@ -557,7 +662,7 @@ export function AdminPage() {
                         role: staffRole,
                         status: 'active',
                       }),
-                    'Membership coach enregistrée'
+                    'Membership coach enregistrée',
                   )
                 }
                 className="w-full rounded-xl bg-brand py-3 font-bold text-white disabled:opacity-50"
@@ -577,7 +682,7 @@ export function AdminPage() {
                         role: staffRole,
                         status: 'inactive',
                       }),
-                    'Membership coach désactivée'
+                    'Membership coach désactivée',
                   )
                 }
                 className="w-full rounded-xl border border-brand-border py-2 text-sm disabled:opacity-50"
@@ -587,10 +692,8 @@ export function AdminPage() {
             </section>
 
             <section className="rounded-2xl border border-brand-border bg-layer-5 p-4 space-y-3">
-              <h2 className="font-bold text-sm">Lier joueur au club (athlete membership)</h2>
-              <p className="text-xs text-fg-muted">
-                Nécessaire pour que le coach voie ce joueur dans son effectif.
-              </p>
+              <h2 className="font-bold text-sm">Lier joueur au club</h2>
+              <p className="text-xs text-fg-muted">Nécessaire pour que le coach voie ce joueur.</p>
               <Field label="club_id">
                 <input
                   value={athleteClubId}
@@ -609,7 +712,7 @@ export function AdminPage() {
                         clubId: athleteClubId.trim(),
                         status: 'active',
                       }),
-                    'Joueur lié au club'
+                    'Joueur lié au club',
                   )
                 }
                 className="w-full rounded-xl bg-layer-10 border border-brand-border py-3 font-bold disabled:opacity-50"

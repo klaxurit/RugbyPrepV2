@@ -392,7 +392,7 @@ function SessionRow({
             ? 'border border-edge-hairline bg-layer-2 opacity-50'
             : isCompleted
               ? 'border border-ok-bd bg-ok-bg shadow-sm'
-              : 'border border-ok-bd bg-ok-bg hover:shadow-sm'
+              : 'border border-brand-border bg-layer-5 hover:shadow-sm'
         }`}
       >
         <WeekTimelineRow

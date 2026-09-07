@@ -254,6 +254,30 @@ function collectMatchDates(events: MatchInput[]): string[] {
   return selectPrimaryMatchDates(events)
 }
 
+/**
+ * Le J1 moteur est le 1er match de la saison en cours.
+ * Un match encore au calendrier avant `offSeasonStartAt` (fin de saison précédente)
+ * ne doit pas recaler toute l’année — seulement s’il existe un match plus tard
+ * qui peut servir de nouveau J1.
+ */
+function resolveFirstMatchCalendar(
+  matchDates: string[],
+  offSeasonStartAt: string | undefined,
+  acc: TraceAcc,
+): string | null {
+  if (matchDates.length === 0) return null
+  if (!offSeasonStartAt) return matchDates[0]
+  const offStart = offSeasonStartAt.slice(0, 10)
+  const afterOff = matchDates.filter((d) => d >= offStart)
+  const skipped = matchDates.filter((d) => d < offStart)
+  if (skipped.length === 0 || afterOff.length === 0) return matchDates[0]
+  acc.rule('rule:first_match_skips_pre_off_season')
+  acc.warn(
+    `Match(s) avant offSeasonStartAt ${offStart} ignorés pour le J1 (${skipped.join(', ')}). J1 retenu = ${afterOff[0]}.`,
+  )
+  return afterOff[0]
+}
+
 function hasFutureCupFinalMatch(events: MatchInput[], todayIso: string): boolean {
   return events.some(
     (e) =>
@@ -696,7 +720,11 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   }
 
   const matchDates = collectMatchDates(inputs.events)
-  const firstMatchCalendar = matchDates.length > 0 ? matchDates[0] : null
+  const firstMatchCalendar = resolveFirstMatchCalendar(
+    matchDates,
+    anchors.offSeasonStartAt,
+    acc,
+  )
   const firstMatchDate = anchors.firstMatchDateOverride ?? firstMatchCalendar
 
   // Playoffs : only honour the flag during April-May (FFR season).

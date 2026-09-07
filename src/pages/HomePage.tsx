@@ -630,7 +630,7 @@ export function HomePage() {
               }}
               onDismiss={() => dismissSeasonTransition('playoffs_suggested')}
             />
-          ) : seasonTransition ? (
+          ) : seasonTransition && seasonTransition.type !== 'treve_detected' ? (
             seasonTransition.type === 'match_detected_in_offseason' ? (
               <SeasonTransitionBanner
                 transition={seasonTransition}

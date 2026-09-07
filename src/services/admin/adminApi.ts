@@ -2,6 +2,15 @@ import { supabase } from '../supabase/client'
 import type { StaffMembershipRole } from '../staffPlanning/staffMembershipAdmin'
 import { resolveProfileAvatarUrl } from '../profile/resolveAvatarUrl'
 
+export type AdminUserMatch = {
+  id?: string | null
+  date: string
+  opponent: string | null
+  match_kind: string | null
+  source: string | null
+  user_hidden: boolean
+}
+
 export type AdminUserDetail = {
   userId: string
   email: string | null
@@ -15,7 +24,12 @@ export type AdminUserDetail = {
     onboarding_complete: boolean | null
     display_name: string | null
     avatar_url: string | null
+    training_baseline?: string | null
+    ffr_competition_name?: string | null
+    ffr_last_sync_at?: string | null
   } | null
+  /** 1er match + prochains (pour diagnostic cycle). */
+  matches?: AdminUserMatch[]
   premiumEntitlements: string[]
   staffMemberships: Array<{
     club_id: string
@@ -47,6 +61,19 @@ export async function adminSearchUser(query: string): Promise<{ userId: string; 
 
 export async function adminGetUser(userId: string): Promise<AdminUserDetail> {
   return invokeAdmin({ action: 'get_user', userId })
+}
+
+export async function adminSetMatchHidden(params: {
+  userId: string
+  matchId: string
+  hidden: boolean
+}): Promise<{ ok: true }> {
+  return invokeAdmin({
+    action: 'set_match_hidden',
+    userId: params.userId,
+    matchId: params.matchId,
+    hidden: params.hidden,
+  })
 }
 
 export async function adminUpdateProfile(params: {

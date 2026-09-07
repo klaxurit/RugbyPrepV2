@@ -75,6 +75,21 @@ describe('detectSeasonTransitions', () => {
     }
   })
 
+  it('no treve when waiting for season opener (J1 encore à venir)', () => {
+    const r = detectSeasonTransitions({
+      planningContext: {
+        ...baseCtx,
+        firstMatchDate: '2026-09-27',
+        lastMatchDate: '2026-09-27',
+        daysUntilNextMatch: 24,
+        daysSinceLastMatch: null,
+        inSeasonSubMode: 'treve_deep',
+      },
+      today: '2026-09-03',
+    })
+    expect(r).toBeNull()
+  })
+
   it('no treve if next match in 2 weeks', () => {
     const r = detectSeasonTransitions({
       planningContext: { ...baseCtx, daysUntilNextMatch: 14, daysSinceLastMatch: 5 },

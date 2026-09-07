@@ -174,6 +174,16 @@ Direction creative recommandee:
 - 6 captures telephone Android
 - eventuellement 1 video preview plus tard, mais non obligatoire au premier envoi
 
+## Notes de version 1.3.8 (Play Console)
+
+Limite : 500 caracteres. Paragraphe pret a coller (FR) :
+
+```text
+<fr-FR>
+Ton programme suit maintenant tes matchs club : séance allégée en J-2. Nouvelle vue mois avec l’adversaire, et un mode maison si tu t’entraînes au poids de corps.
+</fr-FR>
+```
+
 ## Decisions recommandees pour le premier lancement
 
 - titre: `RugbyForge Prépa Rugby`

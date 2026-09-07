@@ -91,9 +91,14 @@ export function detectSeasonTransitions(params: {
     }
   }
 
-  // UC2: Treve — in_season, any trêve subMode active OR next match > 3 weeks away
+  // UC2: Trêve — trou mid-saison (prochain match > 3 sem.).
+  // Pas une bannière « compte à rebours avant le 1er match » : si le J1
+  // n’a pas encore eu lieu, on est en pré-saison / amorce, pas en trêve.
+  const waitingForSeasonOpener =
+    ctx.firstMatchDate != null && ctx.firstMatchDate >= today
   if (
     !inGracePeriod &&
+    !waitingForSeasonOpener &&
     ctx.cycle === 'in_season' &&
     (ctx.inSeasonSubMode === 'treve_deep' ||
      ctx.inSeasonSubMode === 'treve_return' ||
