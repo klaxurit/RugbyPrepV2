@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import type { StaffMembershipRole } from '../services/staffPlanning/staffMembershipAdmin'
@@ -23,15 +23,24 @@ export function useStaffCoachAccess(): UseStaffCoachAccessResult {
 
   const [loading, setLoading] = useState(!!userId)
   const [memberships, setMemberships] = useState<StaffCoachMembership[]>([])
+  const mountedRef = useRef(true)
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
 
   const refresh = useCallback(async () => {
     if (!userId) {
+      if (!mountedRef.current) return
       setMemberships([])
       setLoading(false)
       return
     }
 
-    setLoading(true)
+    if (mountedRef.current) setLoading(true)
     try {
       const { data, error } = await supabase
         .from('club_staff_memberships')
@@ -39,6 +48,8 @@ export function useStaffCoachAccess(): UseStaffCoachAccessResult {
         .eq('staff_user_id', userId)
         .eq('status', 'active')
         .order('created_at', { ascending: true })
+
+      if (!mountedRef.current) return
 
       if (error) {
         console.error('[useStaffCoachAccess]', error.message)
@@ -49,14 +60,15 @@ export function useStaffCoachAccess(): UseStaffCoachAccessResult {
             clubId: row.club_id as string,
             squadId: (row.squad_id as string | null) ?? null,
             role: row.role as StaffMembershipRole,
-          }))
+          })),
         )
       }
     } catch (e) {
+      if (!mountedRef.current) return
       console.error('[useStaffCoachAccess]', e)
       setMemberships([])
     } finally {
-      setLoading(false)
+      if (mountedRef.current) setLoading(false)
     }
   }, [userId])
 

@@ -43,6 +43,16 @@ vi.mock('../../hooks/useFeatureAccess', () => ({
   useFeatureAccess: () => useFeatureAccessMock(),
 }))
 
+vi.mock('../../hooks/useStaffCoachAccess', () => ({
+  useStaffCoachAccess: () => ({
+    loading: false,
+    isStaffCoach: false,
+    memberships: [],
+    primaryMembership: null,
+    refresh: async () => {},
+  }),
+}))
+
 vi.mock('../../data/fakeDataForProgress', () => ({
   seedDemoData: vi.fn(),
   clearDemoMode: vi.fn(),
