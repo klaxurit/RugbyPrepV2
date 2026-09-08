@@ -1,9 +1,10 @@
-// WS9 — Cookies consent gate for analytics (PostHog).
+// WS9 — Cookies consent gate for analytics (PostHog + Metricool).
 //
 // CNIL recommandation 2020 : pas d'init PostHog tant que l'utilisateur n'a
 // pas explicitement accepté. Refus = aucun cookie analytique posé. Choix
 // révocable depuis /legal.
 
+import { initMetricool } from './metricool'
 import { initPostHog, posthog } from './posthog'
 
 const STORAGE_KEY = 'rugbyprep.cookies.consent'
@@ -43,6 +44,7 @@ export function clearCookieConsent(): void {
 export function initAnalyticsIfConsented(): void {
   if (readCookieConsent() === 'accepted') {
     initPostHog()
+    initMetricool()
   }
 }
 
@@ -54,6 +56,7 @@ export function initAnalyticsIfConsented(): void {
 export function acceptCookies(): void {
   writeCookieConsent('accepted')
   initPostHog()
+  initMetricool()
 }
 
 /**

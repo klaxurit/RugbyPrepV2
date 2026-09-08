@@ -6,11 +6,16 @@ import { MemoryRouter } from 'react-router-dom'
 import { CookieConsentBanner } from '../CookieConsentBanner'
 
 const initPostHogMock = vi.fn()
+const initMetricoolMock = vi.fn()
 const optOutMock = vi.fn()
 
 vi.mock('../../services/analytics/posthog', () => ({
   initPostHog: () => initPostHogMock(),
   posthog: { opt_out_capturing: () => optOutMock() },
+}))
+
+vi.mock('../../services/analytics/metricool', () => ({
+  initMetricool: () => initMetricoolMock(),
 }))
 
 describe('CookieConsentBanner — WS9', () => {
@@ -63,6 +68,7 @@ describe('CookieConsentBanner — WS9', () => {
     fireEvent.click(screen.getByRole('button', { name: /Accepter/i }))
     expect(localStorage.getItem('rugbyprep.cookies.consent')).toBe('accepted')
     expect(initPostHogMock).toHaveBeenCalledTimes(1)
+    expect(initMetricoolMock).toHaveBeenCalledTimes(1)
     expect(container.querySelector('[role="dialog"]')).toBeNull()
   })
 
@@ -75,6 +81,7 @@ describe('CookieConsentBanner — WS9', () => {
     fireEvent.click(screen.getByRole('button', { name: /Refuser/i }))
     expect(localStorage.getItem('rugbyprep.cookies.consent')).toBe('declined')
     expect(initPostHogMock).not.toHaveBeenCalled()
+    expect(initMetricoolMock).not.toHaveBeenCalled()
     expect(container.querySelector('[role="dialog"]')).toBeNull()
   })
 })

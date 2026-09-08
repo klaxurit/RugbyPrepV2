@@ -13,7 +13,7 @@ export function CookieSettingsSection() {
     <section className="bg-layer-5 border border-border-app rounded-[24px] p-5 space-y-3">
       <h2 className="text-sm font-black text-fg">Cookies &amp; analytique</h2>
       <p className="text-sm text-fg-secondary leading-relaxed">
-        PostHog (UE) collecte des données d&apos;usage agrégées pour améliorer l&apos;application.
+        PostHog (UE) et Metricool collectent des données d&apos;usage agrégées pour améliorer l&apos;application.
         Cookies techniques (auth Supabase) toujours actifs — indispensables au service.
       </p>
       <p className="text-xs text-fg-muted">

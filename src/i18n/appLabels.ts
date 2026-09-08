@@ -768,7 +768,7 @@ export const APP_LABELS = {
 
   // ── CookieConsentBanner (CNIL) ──────────────────────────────────────────
   cookie_aria: { fr: 'Préférences cookies', en: 'Cookie preferences' },
-  cookie_body: { fr: "Nous utilisons des cookies techniques (toujours actifs) pour faire fonctionner l'application. Avec ton accord, nous mesurons aussi son usage via PostHog (UE) pour l'améliorer.", en: 'We use technical cookies (always on) to run the app. With your consent, we also measure usage via PostHog (EU) to improve it.' },
+  cookie_body: { fr: "Nous utilisons des cookies techniques (toujours actifs) pour faire fonctionner l'application. Avec ton accord, nous mesurons aussi son usage via PostHog (UE) et Metricool pour l'améliorer.", en: 'We use technical cookies (always on) to run the app. With your consent, we also measure usage via PostHog (EU) and Metricool to improve it.' },
   cookie_learn_more: { fr: 'En savoir plus', en: 'Learn more' },
   cookie_decline: { fr: 'Refuser', en: 'Decline' },
   cookie_accept: { fr: 'Accepter', en: 'Accept' },
