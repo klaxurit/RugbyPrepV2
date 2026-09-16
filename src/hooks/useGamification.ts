@@ -67,100 +67,123 @@ interface WeeklyScoreRow {
   breakdown: Partial<WeeklyScoreBreakdown> | null
 }
 
+interface GamificationSnapshot {
+  profile: GamificationProfile | null
+  currentWeek: WeeklyScore | null
+  badges: UnlockedBadge[]
+  loading: boolean
+}
+
+const EMPTY_SNAPSHOT: GamificationSnapshot = {
+  profile: null,
+  currentWeek: null,
+  badges: [],
+  loading: false,
+}
+
+/**
+ * Fonction de module plutôt que closure du hook : l'instantané est construit
+ * entièrement avant d'être posé en state, en un seul `setState`. Un enchaînement
+ * de `setState` dans le corps d'un effet déclencherait des rendus en cascade.
+ */
+async function fetchSnapshot(
+  userId: string | null,
+  weekStart: string,
+): Promise<GamificationSnapshot> {
+  if (!userId) return EMPTY_SNAPSHOT
+
+  const [profileResult, scoreResult, badgesResult] = await Promise.all([
+    supabase
+      .from('user_gamification_profile')
+      .select(
+        'total_xp, level, current_week_streak, longest_week_streak, freeze_used_at, league_tier',
+      )
+      .eq('user_id', userId)
+      .maybeSingle(),
+    supabase
+      .from('gamification_weekly_scores')
+      .select(
+        'week_start, points, sessions_planned, sessions_completed, deload_respected, acwr_capped, breakdown',
+      )
+      .eq('user_id', userId)
+      .eq('week_start', weekStart)
+      .maybeSingle(),
+    supabase
+      .from('gamification_badges')
+      .select('badge_id, unlocked_at')
+      .eq('user_id', userId)
+      .order('unlocked_at', { ascending: true }),
+  ])
+
+  if (profileResult.error) {
+    console.warn('[useGamification] profil:', profileResult.error.message)
+  }
+  if (scoreResult.error) {
+    console.warn('[useGamification] score:', scoreResult.error.message)
+  }
+
+  const profileRow = profileResult.data as GamificationProfileRow | null
+  const scoreRow = scoreResult.data as WeeklyScoreRow | null
+
+  return {
+    // `social_visibility` vit sur `profiles` (consentement), pas ici : le hook
+    // de profil reste la source unique de cette valeur.
+    profile: profileRow
+      ? {
+          totalXp: profileRow.total_xp,
+          level: resolveLevel(profileRow.total_xp),
+          currentWeekStreak: profileRow.current_week_streak,
+          longestWeekStreak: profileRow.longest_week_streak,
+          freezeUsedAt: profileRow.freeze_used_at,
+          leagueTier: profileRow.league_tier as GamificationProfile['leagueTier'],
+          socialVisibility: 'private',
+        }
+      : null,
+    currentWeek: scoreRow
+      ? {
+          weekStartISO: scoreRow.week_start,
+          points: scoreRow.points,
+          sessionsPlanned: scoreRow.sessions_planned,
+          sessionsCompleted: scoreRow.sessions_completed,
+          deloadRespected: scoreRow.deload_respected,
+          acwrCapped: scoreRow.acwr_capped,
+          breakdown: { ...EMPTY_BREAKDOWN, ...(scoreRow.breakdown ?? {}) },
+        }
+      : null,
+    badges: (badgesResult.data ?? []).map((row) => ({
+      badgeId: row.badge_id as string,
+      unlockedAt: row.unlocked_at as string,
+    })),
+    loading: false,
+  }
+}
+
 export function useGamification(todayISO: string): UseGamificationResult {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  const [profile, setProfile] = useState<GamificationProfile | null>(null)
-  const [currentWeek, setCurrentWeek] = useState<WeeklyScore | null>(null)
-  const [badges, setBadges] = useState<UnlockedBadge[]>([])
-  const [loading, setLoading] = useState(true)
+  const [snapshot, setSnapshot] = useState<GamificationSnapshot>({
+    ...EMPTY_SNAPSHOT,
+    loading: true,
+  })
 
   const weekStart = useMemo(() => weekStartISO(todayISO), [todayISO])
 
   const load = useCallback(async () => {
-    if (!userId) {
-      setProfile(null)
-      setCurrentWeek(null)
-      setBadges([])
-      setLoading(false)
-      return
-    }
-
-    const [profileResult, scoreResult, badgesResult] = await Promise.all([
-      supabase
-        .from('user_gamification_profile')
-        .select(
-          'total_xp, level, current_week_streak, longest_week_streak, freeze_used_at, league_tier',
-        )
-        .eq('user_id', userId)
-        .maybeSingle(),
-      supabase
-        .from('gamification_weekly_scores')
-        .select(
-          'week_start, points, sessions_planned, sessions_completed, deload_respected, acwr_capped, breakdown',
-        )
-        .eq('user_id', userId)
-        .eq('week_start', weekStart)
-        .maybeSingle(),
-      supabase
-        .from('gamification_badges')
-        .select('badge_id, unlocked_at')
-        .eq('user_id', userId)
-        .order('unlocked_at', { ascending: true }),
-    ])
-
-    if (profileResult.error) {
-      console.warn('[useGamification] profil:', profileResult.error.message)
-    }
-    if (scoreResult.error) {
-      console.warn('[useGamification] score:', scoreResult.error.message)
-    }
-
-    const profileRow = profileResult.data as GamificationProfileRow | null
-    // `social_visibility` vit sur `profiles` (consentement), pas ici : le hook
-    // de profil reste la source unique de cette valeur.
-    setProfile(
-      profileRow
-        ? {
-            totalXp: profileRow.total_xp,
-            level: resolveLevel(profileRow.total_xp),
-            currentWeekStreak: profileRow.current_week_streak,
-            longestWeekStreak: profileRow.longest_week_streak,
-            freezeUsedAt: profileRow.freeze_used_at,
-            leagueTier: profileRow.league_tier as GamificationProfile['leagueTier'],
-            socialVisibility: 'private',
-          }
-        : null,
-    )
-
-    const scoreRow = scoreResult.data as WeeklyScoreRow | null
-    setCurrentWeek(
-      scoreRow
-        ? {
-            weekStartISO: scoreRow.week_start,
-            points: scoreRow.points,
-            sessionsPlanned: scoreRow.sessions_planned,
-            sessionsCompleted: scoreRow.sessions_completed,
-            deloadRespected: scoreRow.deload_respected,
-            acwrCapped: scoreRow.acwr_capped,
-            breakdown: { ...EMPTY_BREAKDOWN, ...(scoreRow.breakdown ?? {}) },
-          }
-        : null,
-    )
-
-    setBadges(
-      (badgesResult.data ?? []).map((row) => ({
-        badgeId: row.badge_id as string,
-        unlockedAt: row.unlocked_at as string,
-      })),
-    )
-    setLoading(false)
+    setSnapshot(await fetchSnapshot(userId, weekStart))
   }, [userId, weekStart])
 
   useEffect(() => {
-    void load()
-  }, [load])
+    let cancelled = false
+    void (async () => {
+      const next = await fetchSnapshot(userId, weekStart)
+      if (cancelled) return
+      setSnapshot(next)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [userId, weekStart])
 
   const recompute = useCallback(
     async (payload: RecomputePayload) => {
@@ -178,9 +201,17 @@ export function useGamification(todayISO: string): UseGamificationResult {
   )
 
   const levelProgress = useMemo(
-    () => resolveLevelProgress(profile?.totalXp ?? 0),
-    [profile?.totalXp],
+    () => resolveLevelProgress(snapshot.profile?.totalXp ?? 0),
+    [snapshot.profile?.totalXp],
   )
 
-  return { profile, currentWeek, badges, levelProgress, loading, recompute, refresh: load }
+  return {
+    profile: snapshot.profile,
+    currentWeek: snapshot.currentWeek,
+    badges: snapshot.badges,
+    levelProgress,
+    loading: snapshot.loading,
+    recompute,
+    refresh: load,
+  }
 }

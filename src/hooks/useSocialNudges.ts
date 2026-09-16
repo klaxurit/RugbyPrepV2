@@ -35,59 +35,77 @@ interface NudgeRow {
   consumed_at: string | null
 }
 
+interface NudgeSnapshot {
+  candidates: SocialNudge[]
+  consumedThisWeek: number
+  loading: boolean
+}
+
+const EMPTY_SNAPSHOT: NudgeSnapshot = {
+  candidates: [],
+  consumedThisWeek: 0,
+  loading: false,
+}
+
+async function fetchSnapshot(userId: string | null, lang: Lang): Promise<NudgeSnapshot> {
+  if (!userId) return EMPTY_SNAPSHOT
+
+  const since = new Date(Date.now() - NUDGE_RULES.TTL_HOURS * 3_600_000).toISOString()
+
+  const { data, error } = await supabase
+    .from('social_nudges')
+    .select('id, kind, payload, created_at, consumed_at')
+    .eq('user_id', userId)
+    .gte('created_at', since)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.warn('[useSocialNudges]', error.message)
+    return EMPTY_SNAPSHOT
+  }
+
+  const rows = (data ?? []) as NudgeRow[]
+
+  return {
+    candidates: rows
+      .filter((row) => row.consumed_at == null)
+      // Un nudge dont la mise en mots échoue (payload incomplet, coéquipier
+      // redevenu privé) est écarté plutôt qu'affiché à moitié.
+      .map((row) => nudgeRowToSocialNudge(row, lang))
+      .filter((nudge): nudge is SocialNudge => nudge != null),
+    consumedThisWeek: rows.filter((row) => row.consumed_at != null).length,
+    loading: false,
+  }
+}
+
 export function useSocialNudges(lang: Lang): UseSocialNudgesResult {
   const { authState } = useAuth()
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
-  const [candidates, setCandidates] = useState<SocialNudge[]>([])
-  const [consumedThisWeek, setConsumedThisWeek] = useState(0)
-  const [loading, setLoading] = useState(true)
-
-  const load = useCallback(async () => {
-    if (!userId) {
-      setCandidates([])
-      setConsumedThisWeek(0)
-      setLoading(false)
-      return
-    }
-
-    const since = new Date(Date.now() - NUDGE_RULES.TTL_HOURS * 3_600_000).toISOString()
-
-    const { data, error } = await supabase
-      .from('social_nudges')
-      .select('id, kind, payload, created_at, consumed_at')
-      .eq('user_id', userId)
-      .gte('created_at', since)
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.warn('[useSocialNudges]', error.message)
-      setLoading(false)
-      return
-    }
-
-    const rows = (data ?? []) as NudgeRow[]
-
-    setConsumedThisWeek(rows.filter((row) => row.consumed_at != null).length)
-    setCandidates(
-      rows
-        .filter((row) => row.consumed_at == null)
-        // Un nudge dont la mise en mots échoue (payload incomplet, coéquipier
-        // redevenu privé) est écarté plutôt qu'affiché à moitié.
-        .map((row) => nudgeRowToSocialNudge(row, lang))
-        .filter((nudge): nudge is SocialNudge => nudge != null),
-    )
-    setLoading(false)
-  }, [userId, lang])
+  const [snapshot, setSnapshot] = useState<NudgeSnapshot>({
+    ...EMPTY_SNAPSHOT,
+    loading: true,
+  })
 
   useEffect(() => {
-    void load()
-  }, [load])
+    let cancelled = false
+    void (async () => {
+      const next = await fetchSnapshot(userId, lang)
+      if (cancelled) return
+      setSnapshot(next)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [userId, lang])
 
   const consume = useCallback(
     async (nudgeId: string) => {
-      setCandidates((current) => current.filter((nudge) => nudge.id !== nudgeId))
-      setConsumedThisWeek((current) => current + 1)
+      setSnapshot((current) => ({
+        ...current,
+        candidates: current.candidates.filter((nudge) => nudge.id !== nudgeId),
+        consumedThisWeek: current.consumedThisWeek + 1,
+      }))
       if (!userId) return
       const { error } = await supabase
         .from('social_nudges')
@@ -98,5 +116,10 @@ export function useSocialNudges(lang: Lang): UseSocialNudgesResult {
     [userId],
   )
 
-  return { candidates, consumedThisWeek, loading, consume }
+  return {
+    candidates: snapshot.candidates,
+    consumedThisWeek: snapshot.consumedThisWeek,
+    loading: snapshot.loading,
+    consume,
+  }
 }

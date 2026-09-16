@@ -7,6 +7,7 @@ import {
   type CohortCandidate,
 } from '../../../src/services/gamification/cohortMatchmaking.ts'
 import { promoteTier, relegateTier } from '../../../src/services/gamification/levels.ts'
+import { isSociallyExposable } from '../../../src/services/gamification/socialExposure.ts'
 import { previousWeekStartISO, weekStartISO } from '../../../src/services/gamification/weekStart.ts'
 
 /**
@@ -40,18 +41,6 @@ function normalizeTrainingLevel(value: string | null): TrainingLevel {
   return value === 'starter' || value === 'builder' || value === 'performance'
     ? value
     : 'builder'
-}
-
-/**
- * Même règle que `gamification_is_exposable` en SQL : nom d'affichage
- * renseigné, et consentement santé accordé pour les mineurs.
- */
-function isExposable(row: ParticipantRow): boolean {
-  if (!row.display_name || row.display_name.trim().length === 0) return false
-  if ((row.age_band ?? 'adult') !== 'adult' && row.health_consent_status !== 'granted') {
-    return false
-  }
-  return row.social_visibility === 'cohort'
 }
 
 Deno.serve(async (req: Request) => {
@@ -211,7 +200,9 @@ Deno.serve(async (req: Request) => {
 
     if (participantsError) return json({ error: participantsError.message }, 400)
 
-    const eligible = ((participants ?? []) as ParticipantRow[]).filter(isExposable)
+    const eligible = ((participants ?? []) as ParticipantRow[]).filter((row) =>
+      isSociallyExposable(row, 'cohort'),
+    )
 
     if (eligible.length === 0) {
       return json({ ok: true, closedCohorts, promoted, relegated, createdCohorts: 0 })

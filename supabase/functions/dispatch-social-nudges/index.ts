@@ -2,6 +2,7 @@ import { corsHeaders, json } from '../_shared/http.ts'
 import { captureEdgeException } from '../_shared/sentry.ts'
 import { createClients } from '../_shared/supabase.ts'
 import { NUDGE_RULES } from '../../../src/services/gamification/scoreConstants.ts'
+import { isSociallyExposable } from '../../../src/services/gamification/socialExposure.ts'
 import { weekStartISO } from '../../../src/services/gamification/weekStart.ts'
 
 /**
@@ -39,15 +40,6 @@ interface ProfileRow {
   health_consent_status: string | null
 }
 
-function isExposable(row: ProfileRow, required: 'club' | 'cohort'): boolean {
-  if (!row.display_name || row.display_name.trim().length === 0) return false
-  if ((row.age_band ?? 'adult') !== 'adult' && row.health_consent_status !== 'granted') {
-    return false
-  }
-  if (required === 'cohort') return row.social_visibility === 'cohort'
-  return row.social_visibility === 'club' || row.social_visibility === 'cohort'
-}
-
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
@@ -75,7 +67,7 @@ Deno.serve(async (req: Request) => {
     if (profileError) return json({ error: profileError.message }, 400)
 
     const profiles = ((profileRows ?? []) as ProfileRow[]).filter((row) =>
-      isExposable(row, 'club'),
+      isSociallyExposable(row, 'club'),
     )
     if (profiles.length === 0) return json({ ok: true, created: 0 })
 
@@ -153,7 +145,7 @@ Deno.serve(async (req: Request) => {
       const ranked = ((members ?? []) as CohortMemberRow[])
         .filter((member) => {
           const profile = profileById.get(member.user_id)
-          return profile != null && isExposable(profile, 'cohort')
+          return profile != null && isSociallyExposable(profile, 'cohort')
         })
         .map((member) => ({
           userId: member.user_id,
