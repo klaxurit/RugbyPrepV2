@@ -1,6 +1,7 @@
 import { corsHeaders, json } from '../_shared/http.ts'
 import { captureEdgeException } from '../_shared/sentry.ts'
 import { requireUser } from '../_shared/supabase.ts'
+import { resolveNewBadgeIds } from '../../../src/services/gamification/badgeDefinitions.ts'
 import { computeWeeklyScore } from '../../../src/services/gamification/computeWeeklyScore.ts'
 import { deriveWeeklyScoreInput } from '../../../src/services/gamification/deriveWeeklyScoreInput.ts'
 import { hasLeveledUp, resolveLevel } from '../../../src/services/gamification/levels.ts'
@@ -199,7 +200,9 @@ Deno.serve(async (req: Request) => {
     // qu'incrémentée, pour qu'un recalcul de semaine ne double jamais l'XP.
     const { data: allScores, error: sumError } = await serviceClient
       .from('gamification_weekly_scores')
-      .select('points, week_start, sessions_planned, sessions_completed')
+      .select(
+        'points, week_start, sessions_planned, sessions_completed, deload_respected',
+      )
       .eq('user_id', user.id)
 
     if (sumError) return json({ error: sumError.message }, 400)
@@ -249,9 +252,41 @@ Deno.serve(async (req: Request) => {
       })
     }
 
+    // Badges : le déblocage est persisté avec sa date réelle, plutôt que
+    // recalculé à chaque affichage. C'est ce qui permet de le notifier une
+    // fois et de ne pas voir un jalon « se débloquer » à nouveau après une
+    // correction d'historique.
+    const { data: ownedBadges } = await serviceClient
+      .from('gamification_badges')
+      .select('badge_id')
+      .eq('user_id', user.id)
+
+    const newBadgeIds = resolveNewBadgeIds(
+      {
+        fullPlanWeeks: (allScores ?? []).filter(
+          (row) =>
+            (row.sessions_planned ?? 0) > 0 &&
+            (row.sessions_completed ?? 0) >= (row.sessions_planned ?? 0),
+        ).length,
+        longestWeekStreak: streak.longestWeekStreak,
+        deloadWeeksRespected: (allScores ?? []).filter(
+          (row) => row.deload_respected === true,
+        ).length,
+        level,
+      },
+      ((ownedBadges ?? []) as { badge_id: string }[]).map((row) => row.badge_id),
+    )
+
+    if (newBadgeIds.length > 0) {
+      await serviceClient.from('gamification_badges').insert(
+        newBadgeIds.map((badgeId) => ({ user_id: user.id, badge_id: badgeId })),
+      )
+    }
+
     return json({
       ok: true,
       score,
+      newBadgeIds,
       profile: {
         totalXp,
         level,

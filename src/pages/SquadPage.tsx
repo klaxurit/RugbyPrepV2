@@ -6,6 +6,7 @@ import {
   ClubChallengeCard,
   DuelsSection,
   LeagueBoard,
+  RigorBadgesStrip,
   SocialVisibilityPicker,
 } from '../components/gamification'
 import { Icon, Pill } from '../components/ui'
@@ -33,7 +34,7 @@ export function SquadPage() {
   const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   const today = useMemo(() => getToday(), [])
 
-  const { profile: gamification, currentWeek, levelProgress } = useGamification(today)
+  const { profile: gamification, currentWeek, levelProgress, badges } = useGamification(today)
   const {
     clubLeaderboard,
     cohort,
@@ -91,6 +92,10 @@ export function SquadPage() {
             </p>
           )}
         </section>
+
+        {/* Progression personnelle : indépendante de l'opt-in social, puisque
+            rien ici n'est visible par un coéquipier. */}
+        <RigorBadgesStrip badges={badges} lang={lang} />
 
         {isPrivate ? (
           <section data-testid="squad-optin" className="space-y-3">
