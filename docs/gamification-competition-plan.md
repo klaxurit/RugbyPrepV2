@@ -1,7 +1,13 @@
 # Gamification & compétition entre athlètes — plan
 
-> Statut : **plan, non implémenté**. Deux variantes livrées (A conservateur, B ambitieux).
-> Aucun code produit avant choix humain (`AGENTS.md` § Features non triviales).
+> Statut : **option B implémentée**. Le plan initial proposait A (conservateur) et B
+> (ambitieux) ; l'arbitrage humain a retenu **B**, ainsi que le principe directeur du
+> § 3 (« le score récompense la conformité au plan, pas le volume »).
+>
+> Les § 1 à 9 restent la référence de conception. Le § 10 (recommandation « faire A
+> d'abord ») est **caduc** : il est conservé tel quel pour garder trace du
+> raisonnement soumis à l'arbitrage. Ce qui a effectivement été livré est décrit au
+> § 11.
 
 ---
 
@@ -409,7 +415,10 @@ de rétention.
 
 ---
 
-## 10. Recommandation
+## 10. Recommandation (caduque — conservée pour trace)
+
+> Cette section est celle soumise à l'arbitrage. L'option **B** a été retenue ;
+> ce qui suit ne décrit donc pas ce qui a été livré. Voir § 11.
 
 **Faire A d'abord, en câblant dès A les tables et le service de scoring de façon à
 ce que B soit un ajout et non une réécriture.**
@@ -430,6 +439,88 @@ Trois raisons :
 Le seul élément de B qui mériterait d'être avancé dans A est le **kudos** : coût de
 build faible, boucle de validation documentée, aucun effet compétitif négatif. À
 arbitrer.
+
+---
+
+## 11. Ce qui a été livré (option B)
+
+### Barème et services purs
+
+Tout le calcul vit dans `src/services/gamification/`, sans dépendance React ni DOM,
+et est couvert par Vitest. Les Edge Functions importent ces modules au lieu de
+redéfinir la formule : c'est la seule façon d'éviter que le score affiché diverge du
+score écrit.
+
+| Module | Rôle |
+| --- | --- |
+| `scoreConstants.ts` | Barème, plafonds, seuils d'XP, règles de ligue et de nudge |
+| `computeWeeklyScore.ts` | Score hebdomadaire — conformité, repos prescrit, gel ACWR |
+| `deriveWeeklyScoreInput.ts` | Traduit plan + séances + matchs en entrée de score |
+| `levels.ts` | Palier depuis l'XP cumulée, progression, promotion / relégation |
+| `weekStreak.ts` | Série hebdomadaire et tolérance d'une semaine ratée |
+| `cohortMatchmaking.ts` | Constitution des cohortes, seuils proportionnels |
+| `nudgePriority.ts` | Sélection d'au plus un nudge, quotas d'interruption |
+| `nudgeCopy.ts` / `nudgeFromRow.ts` | Mise en mots d'un fait constaté |
+| `socialExposure.ts` | Règle de consentement, miroir TS de la fonction SQL |
+| `badgeDefinitions.ts` | Jalons de rigueur, aucun indexé sur le volume |
+| `rankLeaderboard.ts` | Rangs avec ex æquo partagés |
+| `buildRecomputePayload.ts` | Charge utile de recalcul + signature de déduplication |
+| `scoreBreakdownRows.ts` | Détail des points, poste par poste |
+
+### Base de données
+
+Quatre migrations : `20260916100000` (types de séance récupération),
+`20260916110000` (socle : profil, scores, badges, `social_visibility`, classement
+club, pouls du club), `20260916120000` (cohortes, duels, kudos, file de nudges),
+`20260916130000` (crons), `20260916140000` (attribution des kudos).
+
+Aucune policy RLS n'ouvre la lecture croisée. Les six RPC de lecture sont
+`SECURITY DEFINER` et appliquent `gamification_is_exposable` plus une liste blanche
+de colonnes ; les tables de score n'ont aucune policy d'écriture pour un
+utilisateur authentifié.
+
+### Edge Functions
+
+- `recompute-gamification` — recalcule la semaine après une séance, recalcule l'XP
+  depuis la table (jamais par incrément, pour qu'un recalcul ne double pas l'XP),
+  persiste les badges nouvellement débloqués et émet le nudge de passage de palier.
+- `assign-league-cohorts` — cron hebdomadaire : clôture, promotions, relégations,
+  puis constitution des cohortes de la semaine suivante.
+- `dispatch-social-nudges` — cron quotidien : ne produit que des nudges adossés à
+  un événement constaté, et applique le quota en base plutôt que dans le client.
+
+### Client
+
+- Hooks : `useGamification`, `useSquad`, `useSocialNudges`.
+- Accueil : `RigorScoreCard` (total, palier, détail par poste, explication du gel
+  ACWR) et `SocialNudgeHost` (au plus une interruption, jamais pendant une séance
+  ni par-dessus un overlay bloquant).
+- Page `/squad` : ligue hebdomadaire, défi collectif de club, classement club,
+  duels, jalons de rigueur, plus l'écran d'opt-in quand l'athlète est `private`.
+- `SocialVisibilityPicker`, monté sur `/squad` et sur `/profile#social`.
+
+### Écarts assumés par rapport au plan
+
+- **Pas de push pour les nudges sociaux.** La file et l'affichage in-app existent,
+  mais rien n'est poussé hors de l'app. Le § 5 fixe un budget d'interruption ; y
+  ajouter du push avant d'avoir observé la réaction aux nudges in-app revient à
+  parier sur le canal le plus intrusif en premier. `sw.ts` est inchangé.
+- **`BadgesStrip` de l'accueil inchangé.** Ses jalons existants sont indexés sur le
+  volume (« 10 séances », « 25 h cumulées »), ce qui contredit le § 3. Les jalons de
+  conformité sont livrés à côté, sur `/squad`, via `RigorBadgesStrip`. Harmoniser les
+  deux demande un arbitrage produit : remplacer des badges déjà acquis par des
+  athlètes n'est pas une décision technique.
+- **Kudos sans identifiant de séance côté client.** La RPC `give_kudos` choisit
+  elle-même la séance saluée, pour ne jamais exposer d'identifiant de `session_logs`
+  d'un coéquipier.
+
+### Reste à faire avant mise en production
+
+- Appliquer les migrations et déployer les trois Edge Functions ; vérifier que
+  `CRON_SHARED_SECRET` est configuré pour les deux crons.
+- Observer les indicateurs d'innocuité du § 9. La formule est le pari du produit :
+  si la part de semaines en ACWR > 1,3 monte après le lancement, c'est le barème
+  qu'il faut revoir, pas l'habillage.
 
 ---
 
