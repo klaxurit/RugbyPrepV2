@@ -1,5 +1,5 @@
 import type { ACWRZone } from '../../hooks/useACWR'
-import type { SessionLog, SessionType } from '../../types/training'
+import type { SessionType } from '../../types/training'
 import type { WeeklyScoreInput } from './computeWeeklyScore'
 import { isInWeek, weekStartISO } from './weekStart'
 
@@ -15,8 +15,8 @@ import { isInWeek, weekStartISO } from './weekStart'
 /** Types de séance qui ne comptent pas comme de l'entraînement ajouté. */
 const RECOVERY_TYPES: readonly SessionType[] = ['RECOVERY', 'ACTIVE_RECOVERY']
 
-function isRecovery(type: SessionType): boolean {
-  return RECOVERY_TYPES.includes(type)
+function isRecovery(type: string): boolean {
+  return (RECOVERY_TYPES as readonly string[]).includes(type)
 }
 
 export interface PlannedSessionRef {
@@ -24,12 +24,26 @@ export interface PlannedSessionRef {
   dateISO: string
 }
 
+/**
+ * Forme minimale d'une séance pour le calcul de conformité.
+ *
+ * Volontairement structurelle et non liée à `SessionLog` : la même dérivation
+ * sert au client (qui manipule des `SessionLog`) et à l'Edge Function (qui lit
+ * des lignes Supabase brutes, où `session_type` est un `string`).
+ */
+export interface ScorableSessionLog {
+  dateISO: string
+  sessionType: string
+  rpe?: number | null
+  durationMin?: number | null
+}
+
 export interface WeeklyConformityInput {
   /** Jour de référence pour déterminer la semaine, YYYY-MM-DD. */
   todayISO: string
   /** Séances prévues au programme pour la semaine. */
   plannedSessions: readonly PlannedSessionRef[]
-  logs: readonly SessionLog[]
+  logs: readonly ScorableSessionLog[]
   /** Dates de match de la semaine et de ses bords, YYYY-MM-DD. */
   matchDatesISO: readonly string[]
   isDeloadWeek: boolean
