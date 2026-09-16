@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Dumbbell, User, Users } from 'lucide-react'
+import { Home, Dumbbell, Shield, User, Users } from 'lucide-react'
 import { useProfile } from '../hooks/useProfile'
 import { useStaffCoachAccess } from '../hooks/useStaffCoachAccess'
 import { tr, type Lang, type AppLabelKey } from '../i18n/appLabels'
@@ -14,6 +14,7 @@ type NavItem = {
 const baseNavItems: NavItem[] = [
   { to: '/home', icon: Home, labelKey: 'nav_home', match: ['/home'] },
   { to: '/week', icon: Dumbbell, labelKey: 'nav_program', match: ['/week'] },
+  { to: '/squad', icon: Shield, labelKey: 'nav_squad', match: ['/squad'] },
   { to: '/profile', icon: User, labelKey: 'nav_profile', match: ['/profile', '/progress'] },
 ]
 

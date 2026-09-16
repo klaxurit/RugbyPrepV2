@@ -38,6 +38,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ defaul
 const HistoryPage = lazy(() => import('./pages/HistoryPage').then(m => ({ default: m.HistoryPage })))
 const ChatPage = lazy(() => import('./pages/ChatPage').then(m => ({ default: m.ChatPage })))
 const ProgramPage = lazy(() => import('./pages/ProgramPage').then(m => ({ default: m.ProgramPage })))
+const SquadPage = lazy(() => import('./pages/SquadPage').then(m => ({ default: m.SquadPage })))
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage').then(m => ({ default: m.OnboardingPage })))
 const StaffPlanningSandboxPage = lazy(() => import('./pages/StaffPlanningSandboxPage').then(m => ({ default: m.StaffPlanningSandboxPage })))
 const StaffClubPage = lazy(() => import('./pages/StaffClubPage').then(m => ({ default: m.StaffClubPage })))
@@ -217,6 +218,7 @@ function App() {
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/program" element={<ProgramPage />} />
+            <Route path="/squad" element={<SquadPage />} />
             <Route path="/session/log/:logId" element={<SessionLogReviewPage />} />
             <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
             <Route path="/chat" element={<ChatPage />} />

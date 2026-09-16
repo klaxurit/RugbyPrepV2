@@ -1,4 +1,6 @@
 // src/types/training.ts
+import type { SocialVisibility } from './gamification'
+
 export type Contra =
   | 'shoulder_pain'
   | 'elbow_pain'
@@ -268,6 +270,12 @@ export interface UserProfile {
   preferredLanguage?: 'fr' | 'en'
   /** Nom affiché (signup / profil). */
   displayName?: string
+  /**
+   * Périmètre de visibilité des données de gamification par les autres
+   * athlètes. `'private'` par défaut. Consentement distinct de la visibilité
+   * staff : exposer son nom à ses coéquipiers est une autre finalité.
+   */
+  socialVisibility?: SocialVisibility
   populationSegment?: PopulationSegment
   ageBand?: AgeBand
   parentalConsentHealthData?: boolean

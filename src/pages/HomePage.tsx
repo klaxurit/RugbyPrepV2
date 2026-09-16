@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
@@ -16,8 +16,13 @@ import {
   moodToFatigue,
   type HeroMood,
 } from '../components/home'
+import { RigorScoreCard, SocialNudgeHost } from '../components/gamification'
 import { useProfile } from '../hooks/useProfile'
 import { useFatigue } from '../hooks/useFatigue'
+import { useGamification } from '../hooks/useGamification'
+import { useSocialNudges } from '../hooks/useSocialNudges'
+import { useSessionRun } from '../contexts/SessionRunContext'
+import { buildRecomputePayload } from '../services/gamification/buildRecomputePayload'
 import { useWeek } from '../hooks/useWeek'
 import { useHistory } from '../hooks/useHistory'
 import { useAuth } from '../hooks/useAuth'
@@ -369,6 +374,55 @@ export function HomePage() {
     [logs, today],
   )
 
+  // ── Gamification : score de rigueur + nudges sociaux ──
+  const {
+    profile: gamificationProfile,
+    currentWeek: gamificationWeek,
+    levelProgress,
+    recompute,
+  } = useGamification(today)
+  const {
+    candidates: nudgeCandidates,
+    consumedThisWeek: nudgesShownThisWeek,
+    consume: consumeNudge,
+  } = useSocialNudges(lang)
+  const { status: sessionRunStatus } = useSessionRun()
+  // Horodatage figé au montage : recalculé à chaque rendu, il ferait repasser
+  // `selectNudge` en boucle sans jamais changer de résultat.
+  const nudgeNowISO = useMemo(() => new Date().toISOString(), [])
+
+  const recomputeRequest = useMemo(
+    () =>
+      buildRecomputePayload({
+        todayISO: today,
+        weekSessions:
+          weekPresentation?.mode === 'calendar'
+            ? weekPresentation.sessions
+                .filter(
+                  (s): s is import('../types/scheduling').DatedSession =>
+                    s.kind === 'dated',
+                )
+                .map((s) => ({ dayOfWeek: s.dayOfWeek }))
+            : [],
+        events: structuralEvents,
+        isDeloadWeek: surface?.planningContext?.isDeloadWeek === true,
+        weeklySessions: profile.weeklySessions,
+        loggedDatesISO: logs.map((log) => log.dateISO),
+      }),
+    [today, weekPresentation, structuralEvents, surface?.planningContext?.isDeloadWeek, profile.weeklySessions, logs],
+  )
+
+  // Un seul recalcul par état réel : la signature ne bouge qu'au changement de
+  // plan ou d'historique de la semaine. Sans ce garde, chaque rendu de
+  // l'accueil déclencherait un appel serveur.
+  const lastRecomputedSignature = useRef<string | null>(null)
+  useEffect(() => {
+    if (!userId) return
+    if (lastRecomputedSignature.current === recomputeRequest.signature) return
+    lastRecomputedSignature.current = recomputeRequest.signature
+    void recompute(recomputeRequest)
+  }, [userId, recomputeRequest, recompute])
+
   // ── Score Premium : insight + pillars + sparkline 7j ──
   const coachInsight = useMemo(
     () =>
@@ -561,6 +615,14 @@ export function HomePage() {
 
         {/* ─── Streak ─── */}
         <StreakCard streak={streak} />
+
+        {/* ─── Score de rigueur (conformité au plan) ─── */}
+        <RigorScoreCard
+          profile={gamificationProfile}
+          currentWeek={gamificationWeek}
+          levelProgress={levelProgress}
+          lang={lang}
+        />
 
         {/* ─── Prochain match (éditorial) ─── */}
         {nextMatch && daysUntilNextMatch != null && daysUntilNextMatch <= 30 && (
@@ -847,6 +909,21 @@ export function HomePage() {
       </main>
 
       <BottomNav />
+
+      {/* Pop-up sociale : au plus une par ouverture, jamais pendant une séance
+          ni par-dessus un overlay bloquant (cf. `selectNudge`). */}
+      <SocialNudgeHost
+        candidates={nudgeCandidates}
+        nudgesShownThisWeek={nudgesShownThisWeek}
+        isSessionRunning={sessionRunStatus === 'running'}
+        hasBlockingOverlay={
+          hasConfirmationRequired || seasonTransition != null || schedulingTransition != null
+        }
+        nowISO={nudgeNowISO}
+        lang={lang}
+        onConsume={consumeNudge}
+      />
+
       <MatchEditDrawer
         event={drawerMatch}
         onClose={() => setDrawerMatch(null)}

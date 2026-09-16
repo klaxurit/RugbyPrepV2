@@ -3,8 +3,9 @@ import { useMemo, useRef, useState, useEffect } from 'react'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity } from 'lucide-react'
+import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Users } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
+import { SocialVisibilityPicker } from '../components/gamification'
 import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
 import { FormeDuMomentSection } from '../components/profile/FormeDuMomentSection'
 import { MaSituationSection } from '../components/profile/MaSituationSection'
@@ -914,6 +915,38 @@ export function ProfilePage() {
             </div>
           )}
         </CollapsibleSection>
+
+        {/* Visibilité sociale — consentement propre, distinct de la visibilité
+            staff et du consentement santé. Ancre `#social` pour les liens
+            venant de la page Groupe. */}
+        <section
+          id="social"
+          data-testid="profile-section-social"
+          className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4 scroll-mt-24"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-2xl bg-brand-soft text-brand-tint border border-brand-border">
+              <Users className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-fg">
+                {lang === 'fr' ? 'Visibilité entre athlètes' : 'Athlete visibility'}
+              </h2>
+              <p className="text-xs text-fg-muted">
+                {lang === 'fr'
+                  ? 'Ce que tes coéquipiers peuvent voir de ta rigueur.'
+                  : 'What teammates can see of your rigor.'}
+              </p>
+            </div>
+          </div>
+
+          <SocialVisibilityPicker
+            value={profile.socialVisibility ?? 'private'}
+            onChange={(next) => updateProfile({ socialVisibility: next })}
+            displayName={profile.displayName ?? null}
+            lang={lang}
+          />
+        </section>
 
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
           <div>

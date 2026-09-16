@@ -18,6 +18,7 @@ const PRIVACY_SECTIONS: Section[] = [
       'Notifications : jetons push (FCM) si vous activez les rappels.',
       'Actualités (optionnel) : votre choix de recevoir ou non les e-mails de mises à jour de l’app et de conseils de prépa rugby.',
       'Analytique : événements d’usage agrégés via PostHog (hébergé en UE) et pixel de mesure Metricool, sans revente de données.',
+      'Visibilité entre athlètes (optionnel) : votre choix d’apparaître ou non dans les classements de rigueur de votre club et des ligues hebdomadaires.',
       'Paiements : RugbyForge ne stocke pas vos coordonnées bancaires. Android via Google Play Billing ; web via Stripe.',
     ],
   },
@@ -26,6 +27,7 @@ const PRIVACY_SECTIONS: Section[] = [
     content: [
       'Les données sont traitées pour fournir le service (programmes personnalisés, suivi, coach IA), gérer votre compte et, le cas échéant, votre abonnement.',
       'Base légale : exécution du contrat (CGU) ; pour l’analytique optionnelle, votre consentement via le bandeau cookies ; pour les actualités produit, votre consentement explicite (case à l’inscription, prompt in-app ou interrupteur du profil).',
+      'Classements entre athlètes : consentement explicite et réversible, recueilli dans « Profil › Visibilité entre athlètes ». Par défaut, aucune donnée n’est visible par un autre utilisateur. Seuls votre nom affiché, votre niveau, vos points de rigueur et votre nombre de séances sont exposés ; vos données de santé (RPE, fatigue, blessures, poids, charges) ne le sont jamais. Les mineurs sont exclus des classements en l’absence de consentement santé.',
     ],
   },
   {
@@ -49,6 +51,10 @@ const RETENTION_ROWS: { type: string; duration: string }[] = [
   {
     type: 'Préférence d’actualités (opt-in / opt-out)',
     duration: 'Tant que le compte est actif ; effacée avec le compte. Un opt-out est enregistré pour ne plus vous écrire.',
+  },
+  {
+    type: 'Scores de rigueur, niveaux, classements et duels',
+    duration: 'Tant que le compte est actif ; effacés avec le compte. Repasser en « Privé » retire immédiatement votre présence des classements.',
   },
   {
     type: 'Jetons de notification push',
