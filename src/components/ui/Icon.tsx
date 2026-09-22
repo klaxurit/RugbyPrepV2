@@ -285,20 +285,17 @@ export function Icon({
         </svg>
       )
     case 'form-hot':
-      // Cadence active : flamme + ovale (pas emoji).
+      // Flamme seule — lisible à 24 px (planche Design V2).
       return (
         <svg {...common}>
           <path d="M12 21c3.5 0 6-2.4 6-5.6 0-2.8-1.6-4.4-3.2-5.8-.4 2.2-1.6 3.2-2.8 3.2 0-2.4 1.2-4.4 2.4-6.2-3.2 1-6.4 3.8-6.4 8.8 0 3.2 2.5 5.6 4 5.6z" />
-          <ellipse cx="12" cy="8" rx="2.2" ry="1.3" transform="rotate(-28 12 8)" />
         </svg>
       )
     case 'form-dormant':
-      // Pause vestiaire : lune + banc (silencieux, pas « loser »).
+      // Lune seule — le banc se lisait comme un crochet à 24 px.
       return (
         <svg {...common}>
           <path d="M15.5 4.2a6.2 6.2 0 1 0 4.3 10.6A5.2 5.2 0 1 1 15.5 4.2z" />
-          <path d="M5 19h14" />
-          <path d="M7 19v-2.5h10V19" />
         </svg>
       )
     case 'badge-plan':

@@ -41,6 +41,21 @@ debug branché ; garder / peaufiner les glyphes `Icon` pour Lot A runtime.
 
 ---
 
+| Tier ID (DB) | FR UI | EN UI | Crest |
+|---|---|---|---|
+| `reserve` | Buvette | Club bar | Chope |
+| `espoirs` | Banc de touche | Sideline | Banc |
+| `premiere` | Titulaires | Starters | XV |
+| `federale` | Capitaines | Captains | Brassard C |
+| `elite` | Bouclier | Shield | Écusson dans écusson |
+
+Sous-titre UI : `Div. 1` … `Div. 5` (`leagueTierDivisionLabel`).
+
+Empty states V2 branchés : `EmptyArtInvite`, `EmptyArtPendingMonday`, `EmptyArtPrivateLock`.
+Form cues : flamme / lune seules (lisibles à 24 px).
+
+---
+
 ## 1. Contexte & ton
 
 | À viser | À éviter |

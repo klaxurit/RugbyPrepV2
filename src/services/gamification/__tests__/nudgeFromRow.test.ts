@@ -29,7 +29,7 @@ describe('nudgeRowToSocialNudge', () => {
     expect(nudgeRowToSocialNudge(row('league_promotion', { tier: 'mondiale' }), 'fr')).toBeNull()
     expect(
       nudgeRowToSocialNudge(row('league_promotion', { tier: 'federale' }), 'fr')?.body,
-    ).toContain('Fédérale')
+    ).toContain('brassard')
   })
 
   it('nomme le coéquipier qui vient de passer devant', () => {

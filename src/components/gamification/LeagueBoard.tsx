@@ -1,7 +1,13 @@
+import type { ReactNode } from 'react'
 import { Heart, Minus, TrendingDown, TrendingUp } from 'lucide-react'
 import { Icon, SectionLabel } from '../ui'
 import { ClubAvatar } from '../match/ClubAvatar'
-import { leagueTierLabel, levelLabel } from '../../services/gamification/labels'
+import { LeagueCrest } from './LeagueCrest'
+import {
+  leagueTierDivisionLabel,
+  leagueTierLabel,
+  levelLabel,
+} from '../../services/gamification/labels'
 import {
   formCueAriaLabel,
   formCueIconName,
@@ -23,6 +29,8 @@ export interface LeagueBoardProps {
   onGiveKudos?: (userId: string) => void
   lang: Lang
   emptyLabel: string
+  /** Illustration optionnelle au-dessus / à la place du texte vide. */
+  emptyArt?: ReactNode
   testId?: string
 }
 
@@ -43,6 +51,7 @@ export function LeagueBoard({
   onGiveKudos,
   lang,
   emptyLabel,
+  emptyArt,
   testId,
 }: LeagueBoardProps) {
   return (
@@ -51,17 +60,29 @@ export function LeagueBoard({
         label={title}
         trailing={
           tier ? (
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-brand">
-              {leagueTierLabel(tier, lang)}
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-brand">
+              <LeagueCrest tier={tier} size={18} />
+              <span>
+                {leagueTierLabel(tier, lang)}
+                <span className="ml-1 font-bold normal-case tracking-normal text-fg/45">
+                  {leagueTierDivisionLabel(tier, lang)}
+                </span>
+              </span>
             </span>
           ) : undefined
         }
       />
 
       {entries.length === 0 ? (
-        <p className="mt-3 rounded-2xl border border-dashed border-fg/25 px-4 py-4 text-[12px] leading-relaxed text-fg/60">
-          {emptyLabel}
-        </p>
+        emptyArt ? (
+          <div className="mt-3 rounded-2xl border border-dashed border-fg/25 px-4 py-4">
+            {emptyArt}
+          </div>
+        ) : (
+          <p className="mt-3 rounded-2xl border border-dashed border-fg/25 px-4 py-4 text-[12px] leading-relaxed text-fg/60">
+            {emptyLabel}
+          </p>
+        )
       ) : (
         <ul className="mt-3 space-y-1.5">
           {entries.map((entry) => {

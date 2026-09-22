@@ -1,7 +1,8 @@
 import type { ACWRZone } from '../../hooks/useACWR'
 import type { Lang } from '../../i18n/appLabels'
 import type { AthleteLevel, LeagueTier, NudgeKind } from '../../types/gamification'
-import { leagueTierLabel, levelLabel } from './labels'
+import { leaguePromotionBody } from './leagueTierCopy'
+import { levelLabel } from './labels'
 
 /**
  * Rédaction des nudges sociaux.
@@ -118,10 +119,7 @@ export function buildLeaguePromotionNudge(tier: LeagueTier, lang: Lang): NudgeCo
   return {
     kind: 'league_promotion',
     title: lang === 'fr' ? 'Promotion' : 'Promotion',
-    body:
-      lang === 'fr'
-        ? `Tu montes en ligue ${leagueTierLabel(tier, 'fr')}.`
-        : `You move up to the ${leagueTierLabel(tier, 'en')} league.`,
+    body: leaguePromotionBody(tier, lang),
     actionHref: '/squad',
     actionLabel: lang === 'fr' ? 'Voir ma ligue' : 'See my league',
   }

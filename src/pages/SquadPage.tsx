@@ -4,7 +4,11 @@ import { PageHeader } from '../components/PageHeader'
 import {
   ClubChallengeCard,
   DuelsSection,
+  EmptyArtInvite,
+  EmptyArtPendingMonday,
+  EmptyArtPrivateLock,
   LeagueBoard,
+  LeagueCrest,
   RigorBadgesStrip,
   SocialVisibilityPicker,
 } from '../components/gamification'
@@ -13,7 +17,11 @@ import { Icon, Pill } from '../components/ui'
 import { useGamification } from '../hooks/useGamification'
 import { useProfile } from '../hooks/useProfile'
 import { useSquad } from '../hooks/useSquad'
-import { leagueTierLabel, levelLabel } from '../services/gamification/labels'
+import {
+  leagueTierDivisionLabel,
+  leagueTierLabel,
+  levelLabel,
+} from '../services/gamification/labels'
 import { getToday } from '../services/ui/debugDateOverride'
 import type { Lang } from '../i18n/appLabels'
 
@@ -72,9 +80,15 @@ export function SquadPage() {
             </div>
             <div className="flex flex-col items-end gap-1.5">
               {gamification && (
-                <Pill tone="wine" size="sm">
-                  {leagueTierLabel(gamification.leagueTier, lang)}
-                </Pill>
+                <span className="inline-flex items-center gap-1.5">
+                  <LeagueCrest tier={gamification.leagueTier} size={22} />
+                  <Pill tone="wine" size="sm">
+                    {leagueTierLabel(gamification.leagueTier, lang)}
+                    <span className="ml-1 opacity-70">
+                      {leagueTierDivisionLabel(gamification.leagueTier, lang)}
+                    </span>
+                  </Pill>
+                </span>
               )}
               <span className="text-[11px] font-bold tabular-nums text-fg/60">
                 {currentWeek?.points ?? 0}
@@ -99,6 +113,12 @@ export function SquadPage() {
 
         {isPrivate ? (
           <section data-testid="squad-optin" className="space-y-3">
+            <div className="rounded-2xl border border-paper-deep bg-paper-soft px-4 py-5 text-center">
+              <EmptyArtPrivateLock size={96} />
+              <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.12em] text-fg/45">
+                {lang === 'fr' ? 'Classement sous clé' : 'Board under lock'}
+              </p>
+            </div>
             <div>
               <h2 className="text-sm font-black text-fg">
                 {lang === 'fr' ? 'Rejoindre le classement' : 'Join the board'}
@@ -140,14 +160,20 @@ export function SquadPage() {
                 {/* Pas encore de cohorte : les cohortes sont formées le lundi par le
                     cron. On l'explique au lieu d'afficher un tableau vide. */}
                 {!cohort && visibility === 'cohort' && (
-                  <p
+                  <div
                     data-testid="squad-league-pending"
-                    className="rounded-2xl border border-dashed border-fg/25 px-4 py-4 text-[12px] leading-relaxed text-fg/60"
+                    className="rounded-2xl border border-dashed border-fg/25 px-4 py-5 text-center"
                   >
-                    {lang === 'fr'
-                      ? 'Ta ligue est constituée lundi matin. D’ici là, tes points de la semaine comptent déjà.'
-                      : 'Your league is formed on Monday morning. Until then, your weekly points already count.'}
-                  </p>
+                    <EmptyArtPendingMonday size={96} />
+                    <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.12em] text-fg/45">
+                      {lang === 'fr' ? 'Classement en préparation' : 'Board cooking'}
+                    </p>
+                    <p className="mt-2 text-[12px] leading-relaxed text-fg/60">
+                      {lang === 'fr'
+                        ? 'Ta ligue est constituée lundi matin. D’ici là, tes points de la semaine comptent déjà.'
+                        : 'Your league is formed on Monday morning. Until then, your weekly points already count.'}
+                    </p>
+                  </div>
                 )}
 
                 {visibility === 'club' && (
@@ -176,10 +202,19 @@ export function SquadPage() {
                   kudosGiven={kudosGiven}
                   onGiveKudos={giveKudos}
                   lang={lang}
-                  emptyLabel={
-                    lang === 'fr'
-                      ? 'Personne d’autre de ton club n’a encore rejoint le classement. Le tableau apparaît dès qu’un coéquipier accepte d’être visible.'
-                      : 'Nobody else from your club has joined yet. The board shows up as soon as a teammate opts in.'
+                  emptyLabel=""
+                  emptyArt={
+                    <div className="px-2 py-3 text-center">
+                      <EmptyArtInvite size={96} />
+                      <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.12em] text-fg/45">
+                        {lang === 'fr' ? 'Invite tes coéquipiers' : 'Invite your teammates'}
+                      </p>
+                      <p className="mt-2 text-[12px] leading-relaxed text-fg/60">
+                        {lang === 'fr'
+                          ? 'Personne d’autre de ton club n’a encore rejoint le classement. Le tableau apparaît dès qu’un coéquipier accepte d’être visible.'
+                          : 'Nobody else from your club has joined yet. The board shows up as soon as a teammate opts in.'}
+                      </p>
+                    </div>
                   }
                 />
 

@@ -73,8 +73,8 @@ const FEATURES: readonly FeatureRow[] = [
       en: 'Monday, everyone starts over',
     },
     detail: {
-      fr: 'Personne ne s’installe en haut. Montées et descentes le dimanche soir.',
-      en: 'Nobody camps at the top. Promotions and relegations Sunday night.',
+      fr: 'Personne ne s’installe en haut. De la Buvette au Bouclier : montées et descentes le dimanche soir.',
+      en: 'Nobody camps at the top. From the club bar to the Shield: promotions and relegations Sunday night.',
     },
   },
 ]
