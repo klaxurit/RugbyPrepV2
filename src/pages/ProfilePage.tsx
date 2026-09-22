@@ -939,6 +939,31 @@ export function ProfilePage() {
             </div>
           </div>
 
+          <div className="space-y-1.5">
+            <label
+              htmlFor="profile-display-name"
+              className="text-xs font-bold text-fg-soft uppercase tracking-wider"
+            >
+              {lang === 'fr' ? 'Nom affiché' : 'Display name'}
+            </label>
+            <input
+              id="profile-display-name"
+              type="text"
+              data-testid="profile-display-name"
+              value={profile.displayName ?? ''}
+              onChange={(e) => updateProfile({ displayName: e.target.value })}
+              maxLength={40}
+              autoComplete="nickname"
+              placeholder={lang === 'fr' ? 'Ex. Jean' : 'e.g. Jean'}
+              className="w-full h-12 rounded-2xl border-2 border-border-app bg-layer-6 px-4 text-sm text-fg placeholder:text-fg-faint rf-focus-ring transition-colors"
+            />
+            <p className="text-[11px] leading-relaxed text-fg-muted">
+              {lang === 'fr'
+                ? 'C’est le prénom / pseudo que voient tes coéquipiers dans les classements. Obligatoire pour apparaître.'
+                : 'First name / nickname teammates see on the boards. Required to appear.'}
+            </p>
+          </div>
+
           <SocialVisibilityPicker
             value={profile.socialVisibility ?? 'private'}
             onChange={(next) => updateProfile({ socialVisibility: next })}
