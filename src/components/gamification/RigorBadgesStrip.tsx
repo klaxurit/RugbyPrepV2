@@ -1,6 +1,6 @@
-import { Medal } from 'lucide-react'
-import { SectionLabel } from '../ui'
+import { Icon, SectionLabel } from '../ui'
 import { badgeDetail, badgeLabel } from '../../services/gamification/badgeDefinitions'
+import { badgeIconFamily, badgeIconName } from '../../services/gamification/badgeIcon'
 import type { Lang } from '../../i18n/appLabels'
 import type { UnlockedBadge } from '../../types/gamification'
 
@@ -39,10 +39,11 @@ export function RigorBadgesStrip({ badges, lang }: RigorBadgesStripProps) {
             <li
               key={badge.badgeId}
               data-testid="rigor-badge"
+              data-badge-family={badgeIconFamily(badge.badgeId)}
               className="flex items-center gap-3 rounded-2xl border border-paper-deep bg-paper-soft px-3.5 py-2.5"
             >
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-pro-soft text-pro">
-                <Medal className="h-4 w-4" strokeWidth={2.2} />
+                <Icon name={badgeIconName(badge.badgeId)} size={16} strokeWidth={2.2} />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13px] font-bold text-fg">

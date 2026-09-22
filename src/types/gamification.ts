@@ -106,7 +106,7 @@ export interface LeaderboardEntry {
   sessionsCompleted: number
   /**
    * Jours depuis la dernière séance loguée. `null` = jamais logué.
-   * Sert uniquement à l'indice 🔥 / 💤 — pas une donnée de santé.
+   * Sert uniquement à l'indice de forme (glyphe hot / dormant) — pas une donnée de santé.
    */
   daysSinceLastSession: number | null
   level: AthleteLevel

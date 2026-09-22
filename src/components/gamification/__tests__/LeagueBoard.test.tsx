@@ -166,7 +166,7 @@ describe('LeagueBoard', () => {
     expect(screen.getByText(/Top 1 promus/i)).toBeInTheDocument()
   })
 
-  it('montre un indice de forme 🔥 ou 💤', () => {
+  it('montre un indice de forme SVG hot ou dormant', () => {
     render(
       <LeagueBoard
         title="Ligue"
@@ -177,6 +177,10 @@ describe('LeagueBoard', () => {
       />,
     )
     const cues = screen.getAllByTestId('league-form-cue')
-    expect(cues.map((node) => node.textContent)).toEqual(['🔥', '🔥', '💤'])
+    expect(cues.map((node) => node.getAttribute('data-form-cue'))).toEqual([
+      'hot',
+      'hot',
+      'dormant',
+    ])
   })
 })

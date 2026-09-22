@@ -108,8 +108,8 @@ Sans attendre le graphiste, livrer le ressenti « feature finie » :
 
 | Priorité | Travail | Effort |
 |---|---|---|
-| P0 | Remplacer 🔥/💤 par 2 pictos SVG brand (`Icon` ou assets) | S |
-| P0 | Mapping badgeId → picto distinct (même Lucide différencié en interim) | S |
+| P0 | Remplacer 🔥/💤 par 2 pictos SVG brand (`Icon` ou assets) | **Fait** (`form-hot` / `form-dormant`) |
+| P0 | Mapping badgeId → picto distinct (même Lucide différencié en interim) | **Fait** (4 familles `badge-*`) |
 | P1 | Empty states illustrés (solo / pending lundi / private) — placeholder SVG simple | M |
 | P1 | Countdown « fin de ligue » (jours restants jusqu’au lundi) | S |
 | P1 | Harmoniser Home `BadgesStrip` (volume) vs `RigorBadgesStrip` — arbitrage produit | M |

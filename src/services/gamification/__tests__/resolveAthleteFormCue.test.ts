@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest'
+import { resolveAthleteFormCue } from '../resolveAthleteFormCue'
 import {
-  athleteFormCueEmoji,
-  resolveAthleteFormCue,
-} from '../resolveAthleteFormCue'
+  badgeIconFamily,
+  badgeIconName,
+  formCueAriaLabel,
+  formCueIconName,
+} from '../badgeIcon'
 
 describe('resolveAthleteFormCue', () => {
   it('marque dormant sans séance ou après 7 jours', () => {
@@ -30,10 +33,23 @@ describe('resolveAthleteFormCue', () => {
   })
 })
 
-describe('athleteFormCueEmoji', () => {
-  it('mappe les cues vers 🔥 / 💤', () => {
-    expect(athleteFormCueEmoji('hot')).toBe('🔥')
-    expect(athleteFormCueEmoji('dormant')).toBe('💤')
-    expect(athleteFormCueEmoji(null)).toBeNull()
+describe('formCueIconName', () => {
+  it('mappe les cues vers des glyphes brand (plus d’émoji)', () => {
+    expect(formCueIconName('hot')).toBe('form-hot')
+    expect(formCueIconName('dormant')).toBe('form-dormant')
+    expect(formCueAriaLabel('hot', 'fr')).toMatch(/Enchaîne/i)
+  })
+})
+
+describe('badgeIconName', () => {
+  it('classe les badges en 4 familles distinctes', () => {
+    expect(badgeIconFamily('plan_week_4')).toBe('plan')
+    expect(badgeIconFamily('streak_8')).toBe('streak')
+    expect(badgeIconFamily('deload_1')).toBe('deload')
+    expect(badgeIconFamily('level_capitaine')).toBe('level')
+    expect(badgeIconName('plan_week_1')).toBe('badge-plan')
+    expect(badgeIconName('streak_16')).toBe('badge-streak')
+    expect(badgeIconName('deload_3')).toBe('badge-deload')
+    expect(badgeIconName('level_legende')).toBe('badge-level')
   })
 })

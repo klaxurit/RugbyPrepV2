@@ -16,6 +16,31 @@ Références produit :
 
 ---
 
+## 0. Interim livré en code (2026-09-22)
+
+Avant le passage graphiste, le runtime n’utilise **plus d’émoji** :
+
+| Surface | Glyphe `Icon` |
+|---|---|
+| Forme hot / dormant | `form-hot`, `form-dormant` |
+| Familles badges | `badge-plan`, `badge-streak`, `badge-deload`, `badge-level` |
+
+Fichiers : `src/components/ui/Icon.tsx`, `src/services/gamification/badgeIcon.ts`.
+Le graphiste peut remplacer ces paths SVG sans changer les `badgeId` en base.
+
+### Outils IA pour la suite
+
+| Outil | Bon pour | Moins bon pour |
+|---|---|---|
+| **Claude Design** (MCP designer) | Empty states, écrans Groupe, crests riches, moodboards | Glyphes système 24 px (souvent trop détaillés) |
+| **Recraft / Magnific Icon** | Packs d’icônes stroke cohérents | Intégration brand exacte sans retouche |
+| **SVG maison dans `Icon.tsx`** | Cohérence stroke avec le reste de l’app | Illustrations empty plein cadre |
+
+Recommandation : **Claude Design pour Lot B/C** (empty + crests) une fois Chrome
+debug branché ; garder / peaufiner les glyphes `Icon` pour Lot A runtime.
+
+---
+
 ## 1. Contexte & ton
 
 | À viser | À éviter |

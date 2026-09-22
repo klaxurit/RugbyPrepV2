@@ -44,13 +44,24 @@ describe('RigorBadgesStrip', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('tolère une date de déblocage invalide sans casser le badge', () => {
+  it('différencie les familles de badges par glyphe', () => {
     render(
       <RigorBadgesStrip
-        badges={[{ badgeId: 'deload_1', unlockedAt: 'pas-une-date' }]}
+        badges={[
+          { badgeId: 'plan_week_1', unlockedAt: '2026-09-14T10:00:00.000Z' },
+          { badgeId: 'streak_4', unlockedAt: '2026-09-14T10:00:00.000Z' },
+          { badgeId: 'deload_1', unlockedAt: '2026-09-14T10:00:00.000Z' },
+          { badgeId: 'level_cadre', unlockedAt: '2026-09-14T10:00:00.000Z' },
+        ]}
         lang="fr"
       />,
     )
-    expect(screen.getByTestId('rigor-badge')).toHaveTextContent('Décharge assumée')
+    const rows = screen.getAllByTestId('rigor-badge')
+    expect(rows.map((node) => node.getAttribute('data-badge-family'))).toEqual([
+      'plan',
+      'streak',
+      'deload',
+      'level',
+    ])
   })
 })

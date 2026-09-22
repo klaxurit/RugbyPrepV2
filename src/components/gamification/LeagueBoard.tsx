@@ -1,10 +1,11 @@
 import { Heart, Minus, TrendingDown, TrendingUp } from 'lucide-react'
-import { SectionLabel } from '../ui'
+import { Icon, SectionLabel } from '../ui'
 import { ClubAvatar } from '../match/ClubAvatar'
 import { leagueTierLabel, levelLabel } from '../../services/gamification/labels'
 import {
-  athleteFormCueEmoji,
-} from '../../services/gamification/resolveAthleteFormCue'
+  formCueAriaLabel,
+  formCueIconName,
+} from '../../services/gamification/badgeIcon'
 import { formCueForEntry } from '../../services/gamification/rankLeaderboard'
 import type { Lang } from '../../i18n/appLabels'
 import type { LeaderboardEntry, LeagueTier } from '../../types/gamification'
@@ -29,7 +30,7 @@ export interface LeagueBoardProps {
  * Tableau de classement — cohorte de ligue ou club.
  *
  *  1. Totaux seulement, jamais d'écarts (« −40 pts »).
- *  2. Logo club + indice 🔥/💤 à côté du pseudo.
+ *  2. Logo club + indice de forme SVG (enchaîne / en pause) à côté du pseudo.
  *  3. Kudos sur chaque ligne (sauf soi).
  */
 export function LeagueBoard({
@@ -67,7 +68,7 @@ export function LeagueBoard({
             const promoted = promotionCutoff > 0 && entry.rank <= promotionCutoff
             const relegated = relegationCutoff > 0 && entry.rank >= relegationCutoff
             const kudosSent = kudosGiven.has(entry.userId)
-            const formEmoji = athleteFormCueEmoji(formCueForEntry(entry))
+            const formCue = formCueForEntry(entry)
 
             return (
               <li
@@ -102,21 +103,16 @@ export function LeagueBoard({
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-1 truncate text-[13px] font-bold text-fg">
                     <span className="truncate">{entry.displayName}</span>
-                    {formEmoji && (
+                    {formCue && (
                       <span
-                        className="shrink-0 text-[12px] leading-none"
-                        aria-label={
-                          formEmoji === '🔥'
-                            ? lang === 'fr'
-                              ? 'Enchaîne bien'
-                              : 'On a streak'
-                            : lang === 'fr'
-                              ? 'Peu actif récemment'
-                              : 'Quiet lately'
-                        }
+                        className={`inline-flex shrink-0 ${
+                          formCue === 'hot' ? 'text-pro' : 'text-fg/45'
+                        }`}
+                        aria-label={formCueAriaLabel(formCue, lang)}
                         data-testid="league-form-cue"
+                        data-form-cue={formCue}
                       >
-                        {formEmoji}
+                        <Icon name={formCueIconName(formCue)} size={12} strokeWidth={2.2} />
                       </span>
                     )}
                     {entry.isSelf && (
