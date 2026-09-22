@@ -97,20 +97,20 @@ export const BADGE_DEFINITIONS: readonly BadgeDefinition[] = [
   },
   {
     id: 'level_cadre',
-    label: { fr: 'Cadre', en: 'Senior' },
-    detail: { fr: 'Palier Cadre atteint', en: 'Reached the Senior level' },
+    label: { fr: 'Titulaires', en: 'Starters' },
+    detail: { fr: 'Palier Titulaires atteint', en: 'Reached the Starters level' },
     isUnlocked: (facts) => levelAtLeast(facts.level, 'cadre'),
   },
   {
     id: 'level_capitaine',
-    label: { fr: 'Capitaine', en: 'Captain' },
-    detail: { fr: 'Palier Capitaine atteint', en: 'Reached the Captain level' },
+    label: { fr: 'Capitaines', en: 'Captains' },
+    detail: { fr: 'Palier Capitaines atteint', en: 'Reached the Captains level' },
     isUnlocked: (facts) => levelAtLeast(facts.level, 'capitaine'),
   },
   {
     id: 'level_legende',
-    label: { fr: 'Légende', en: 'Legend' },
-    detail: { fr: 'Palier Légende atteint', en: 'Reached the Legend level' },
+    label: { fr: 'Bouclier', en: 'Shield' },
+    detail: { fr: 'Palier Bouclier atteint', en: 'Reached the Shield level' },
     isUnlocked: (facts) => levelAtLeast(facts.level, 'legende'),
   },
 ]

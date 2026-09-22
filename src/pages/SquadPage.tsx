@@ -69,42 +69,43 @@ export function SquadPage() {
           data-testid="squad-identity"
           className="rounded-[20px] border border-paper-deep bg-paper-soft px-[18px] py-4"
         >
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-fg/45">
-                {lang === 'fr' ? 'Ton palier' : 'Your level'}
-              </p>
-              <p className="mt-0.5 text-[18px] font-black leading-tight text-fg">
-                {levelLabel(levelProgress.level, lang)}
-              </p>
-            </div>
-            <div className="flex flex-col items-end gap-1.5">
-              {gamification && (
-                <span className="inline-flex items-center gap-1.5">
-                  <LeagueCrest tier={gamification.leagueTier} size={22} />
+          <div className="flex items-center gap-3.5">
+            {gamification && (
+              <LeagueCrest tier={gamification.leagueTier} size={56} />
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-fg/45">
+                    {lang === 'fr' ? 'Ton palier' : 'Your level'}
+                  </p>
+                  <p className="mt-0.5 text-[18px] font-black leading-tight text-fg">
+                    {levelLabel(levelProgress.level, lang)}
+                  </p>
+                </div>
+                {gamification && (
                   <Pill tone="wine" size="sm">
                     {leagueTierLabel(gamification.leagueTier, lang)}
                     <span className="ml-1 opacity-70">
                       {leagueTierDivisionLabel(gamification.leagueTier, lang)}
                     </span>
                   </Pill>
-                </span>
-              )}
-              <span className="text-[11px] font-bold tabular-nums text-fg/60">
+                )}
+              </div>
+              <p className="mt-1.5 text-[11px] font-bold tabular-nums text-fg/60">
                 {currentWeek?.points ?? 0}
                 {lang === 'fr' ? ' pts cette semaine' : ' pts this week'}
-              </span>
+              </p>
+              {gamification && gamification.currentWeekStreak > 0 && (
+                <p className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-pro">
+                  <Icon name="flame" size={12} strokeWidth={2.4} />
+                  {lang === 'fr'
+                    ? `${gamification.currentWeekStreak} semaines de suite`
+                    : `${gamification.currentWeekStreak} weeks in a row`}
+                </p>
+              )}
             </div>
           </div>
-
-          {gamification && gamification.currentWeekStreak > 0 && (
-            <p className="mt-2.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-pro">
-              <Icon name="flame" size={12} strokeWidth={2.4} />
-              {lang === 'fr'
-                ? `${gamification.currentWeekStreak} semaines de suite`
-                : `${gamification.currentWeekStreak} weeks in a row`}
-            </p>
-          )}
         </section>
 
         {/* Progression personnelle : indépendante de l'opt-in social, puisque

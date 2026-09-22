@@ -58,7 +58,7 @@ export function LeagueBoard({
         trailing={
           tier ? (
             <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-brand">
-              <LeagueCrest tier={tier} size={18} />
+              <LeagueCrest tier={tier} size={24} />
               <span>
                 {leagueTierLabel(tier, lang)}
                 <span className="ml-1 font-bold normal-case tracking-normal text-fg/45">

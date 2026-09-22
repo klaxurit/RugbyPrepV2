@@ -40,8 +40,8 @@ const FEATURES: readonly FeatureRow[] = [
       en: 'Your consistency',
     },
     detail: {
-      fr: 'Tes 14 derniers jours et ton palier (d’Espoir à Légende) sont sur la carte d’accueil. Un coup d’œil et tu sais où tu en es.',
-      en: 'Your last 14 days and your level (Prospect to Legend) live on the Home card. One glance and you know where you stand.',
+      fr: 'Tes 14 derniers jours et ton palier (de la Buvette au Bouclier) sont sur la carte d’accueil. Un coup d’œil et tu sais où tu en es.',
+      en: 'Your last 14 days and your level (Club bar to Shield) live on the Home card. One glance and you know where you stand.',
     },
   },
   {

@@ -11,13 +11,13 @@ describe('nudgeRowToSocialNudge', () => {
   it('met en mots un passage de palier', () => {
     const nudge = nudgeRowToSocialNudge(row('level_up', { level: 'cadre' }), 'fr')
     expect(nudge?.kind).toBe('level_up')
-    expect(nudge?.body).toContain('Cadre')
+    expect(nudge?.body).toContain('Titulaires')
     expect(nudge?.createdAt).toBe(CREATED_AT)
   })
 
   it('suit la langue demandée', () => {
     const nudge = nudgeRowToSocialNudge(row('level_up', { level: 'cadre' }), 'en')
-    expect(nudge?.body).toContain('Senior')
+    expect(nudge?.body).toContain('Starters')
   })
 
   it('écarte un palier inconnu plutôt que d’afficher un libellé vide', () => {

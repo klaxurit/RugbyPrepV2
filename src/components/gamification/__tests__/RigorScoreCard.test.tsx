@@ -71,7 +71,8 @@ describe('RigorScoreCard', () => {
     renderCard()
     const card = screen.getByTestId('rigor-score-card')
     expect(card).toHaveTextContent('85')
-    expect(card).toHaveTextContent('Titulaire')
+    expect(card).toHaveTextContent('Banc de touche')
+    expect(screen.getByTestId('league-crest')).toHaveAttribute('data-tier', 'espoirs')
   })
 
   it('détaille les postes au lieu d’un total opaque', () => {

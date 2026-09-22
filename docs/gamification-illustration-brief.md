@@ -51,8 +51,10 @@ debug branché ; garder / peaufiner les glyphes `Icon` pour Lot A runtime.
 
 Sous-titre UI : `Div. 1` … `Div. 5` (`leagueTierDivisionLabel`).
 
-Empty states V2 branchés : `EmptyArtInvite`, `EmptyArtPendingMonday`, `EmptyArtPrivateLock`.
-Form cues : flamme / lune seules (lisibles à 24 px).
+Empty states : SVG vectoriels (`EmptyArtInvite`, `EmptyArtPendingMonday`,
+`EmptyArtPrivateLock`).
+Crests : SVG fournis dans `assets/divisions/` (import URL, net à toute taille).
+Form cues : SVG inline (flamme / lune).
 
 ---
 

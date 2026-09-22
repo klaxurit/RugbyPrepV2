@@ -9,25 +9,34 @@ import { LEAGUE_TIER_ORDER } from './scoreConstants'
  * un `.tsx` de composant casserait `react-refresh/only-export-components`, et
  * donc le job Lint de la CI.
  *
- * Les **IDs** de ligue (`reserve`…`elite`) restent stables en base. Les
- * libellés UI suivent la direction « vie de club » (Buvette → Bouclier).
+ * Les **IDs** (`espoir`…`legende`, `reserve`…`elite`) restent stables en base.
+ * Les libellés UI suivent la direction « vie de club » (Buvette → Bouclier) —
+ * mêmes noms pour le palier XP perso et la division de ligue.
  */
 
+/** Ordre partagé : palier XP et division de ligue. */
+const VIE_DE_CLUB_LABELS = [
+  { fr: 'Buvette', en: 'Club bar' },
+  { fr: 'Banc de touche', en: 'Sideline' },
+  { fr: 'Titulaires', en: 'Starters' },
+  { fr: 'Capitaines', en: 'Captains' },
+  { fr: 'Bouclier', en: 'Shield' },
+] as const
+
 const LEVEL_LABELS: Record<AthleteLevel, { fr: string; en: string }> = {
-  espoir: { fr: 'Espoir', en: 'Prospect' },
-  titulaire: { fr: 'Titulaire', en: 'Starter' },
-  cadre: { fr: 'Cadre', en: 'Senior' },
-  capitaine: { fr: 'Capitaine', en: 'Captain' },
-  legende: { fr: 'Légende', en: 'Legend' },
+  espoir: VIE_DE_CLUB_LABELS[0],
+  titulaire: VIE_DE_CLUB_LABELS[1],
+  cadre: VIE_DE_CLUB_LABELS[2],
+  capitaine: VIE_DE_CLUB_LABELS[3],
+  legende: VIE_DE_CLUB_LABELS[4],
 }
 
-/** Noms fun — progression vestiaire, pas championnat officiel. */
 const LEAGUE_TIER_LABELS: Record<LeagueTier, { fr: string; en: string }> = {
-  reserve: { fr: 'Buvette', en: 'Club bar' },
-  espoirs: { fr: 'Banc de touche', en: 'Sideline' },
-  premiere: { fr: 'Titulaires', en: 'Starters' },
-  federale: { fr: 'Capitaines', en: 'Captains' },
-  elite: { fr: 'Bouclier', en: 'Shield' },
+  reserve: VIE_DE_CLUB_LABELS[0],
+  espoirs: VIE_DE_CLUB_LABELS[1],
+  premiere: VIE_DE_CLUB_LABELS[2],
+  federale: VIE_DE_CLUB_LABELS[3],
+  elite: VIE_DE_CLUB_LABELS[4],
 }
 
 export function levelLabel(level: AthleteLevel, lang: Lang): string {

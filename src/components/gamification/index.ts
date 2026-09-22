@@ -10,7 +10,7 @@ export {
   EmptyArtInvite,
   EmptyArtPendingMonday,
   EmptyArtPrivateLock,
-} from './LeagueCrest'
+} from './SquadEmptyArt'
 export { ClubChallengeCard, type ClubChallengeCardProps } from './ClubChallengeCard'
 export { DuelsSection, type DuelsSectionProps } from './DuelsSection'
 export { RigorBadgesStrip, type RigorBadgesStripProps } from './RigorBadgesStrip'

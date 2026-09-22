@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { AlertTriangle } from 'lucide-react'
 import { Icon, Pill, SectionLabel } from '../ui'
+import { LeagueCrest } from './LeagueCrest'
 import { levelLabel } from '../../services/gamification/labels'
 import { buildScoreBreakdownRows } from '../../services/gamification/scoreBreakdownRows'
 import type { LevelProgress } from '../../services/gamification/levels'
@@ -47,36 +48,44 @@ export function RigorScoreCard({
       <SectionLabel label={lang === 'fr' ? 'Ta rigueur' : 'Your rigor'} />
 
       <div className="relative mt-3 overflow-hidden rounded-[20px] border-2 border-brand bg-paper-soft px-[22px] py-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-fg/55">
-              {lang === 'fr' ? 'Cette semaine' : 'This week'}
-            </p>
-            <p className="mt-1 text-[34px] font-black leading-none tabular-nums text-fg">
-              {points}
-              <span className="ml-1.5 text-[13px] font-bold text-fg/55">
-                {lang === 'fr' ? 'pts' : 'pts'}
-              </span>
-            </p>
-          </div>
+        <div className="flex items-start gap-3.5">
+          {profile && (
+            <LeagueCrest tier={profile.leagueTier} size={52} className="mt-0.5 shrink-0" />
+          )}
 
-          <div className="flex flex-col items-end gap-1.5">
-            <Pill tone="gold" size="sm">
-              {levelLabel(levelProgress.level, lang)}
-            </Pill>
-            {weekStreak > 0 && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-pro tabular-nums">
-                <Icon name="flame" size={11} strokeWidth={2.4} />
-                {weekStreak}
-                {lang === 'fr'
-                  ? weekStreak > 1
-                    ? ' semaines'
-                    : ' semaine'
-                  : weekStreak > 1
-                    ? ' weeks'
-                    : ' week'}
-              </span>
-            )}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-fg/55">
+                  {lang === 'fr' ? 'Cette semaine' : 'This week'}
+                </p>
+                <p className="mt-1 text-[34px] font-black leading-none tabular-nums text-fg">
+                  {points}
+                  <span className="ml-1.5 text-[13px] font-bold text-fg/55">
+                    {lang === 'fr' ? 'pts' : 'pts'}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex flex-col items-end gap-1.5">
+                <Pill tone="gold" size="sm">
+                  {levelLabel(levelProgress.level, lang)}
+                </Pill>
+                {weekStreak > 0 && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-pro tabular-nums">
+                    <Icon name="flame" size={11} strokeWidth={2.4} />
+                    {weekStreak}
+                    {lang === 'fr'
+                      ? weekStreak > 1
+                        ? ' semaines'
+                        : ' semaine'
+                      : weekStreak > 1
+                        ? ' weeks'
+                        : ' week'}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
