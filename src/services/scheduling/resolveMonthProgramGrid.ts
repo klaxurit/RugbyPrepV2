@@ -110,6 +110,8 @@ export interface MonthPlannedSession {
   shortLabel: string
   sessionType: MotherSessionType
   status: MonthSessionStatus
+  /** Identifiant mother session — alimente l’aperçu mois. */
+  motherSessionId: string
   /** @deprecated use status */
   completionStatus?: 'skipped' | 'completed'
 }
@@ -463,6 +465,7 @@ export function resolveMonthProgramGrid(params: ResolveMonthProgramGridParams): 
         shortLabel: shortLabelForSession(sessionType, motherSessionId, lang),
         sessionType,
         status,
+        motherSessionId,
         ...(status === 'completed' || status === 'skipped'
           ? { completionStatus: status }
           : {}),

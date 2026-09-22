@@ -2,7 +2,7 @@ import { useEffect, useMemo, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { Plus, Lock } from 'lucide-react'
-import { WeekViewToggle, WeekMonthView, WeekDailyPlanner, ClubContactProxyControl } from '../components/week'
+import { WeekViewToggle, WeekMonthView, WeekDailyPlanner, ClubContactProxyControl, SessionMonthPreviewSheet } from '../components/week'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
@@ -37,6 +37,7 @@ import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToas
 import { SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
 import type { DatedSession } from '../types/scheduling'
+import type { MonthPlannedSession } from '../services/scheduling/resolveMonthProgramGrid'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
 import { startOfIsoWeek } from '../services/weeklyBilan/computeWeeklyBilan'
@@ -79,6 +80,7 @@ export function WeekPage() {
 
   // Match edit drawer + monthly grid toggle + add match modal
   const [drawerMatch, setDrawerMatch] = useState<typeof visibleEvents[number] | null>(null)
+  const [previewSession, setPreviewSession] = useState<MonthPlannedSession | null>(null)
   const [monthOpen, setMonthOpen] = useState(false)
   const [monthView, setMonthView] = useState(() => {
     const d = new Date(`${getToday()}T12:00:00`)
@@ -674,7 +676,10 @@ export function WeekPage() {
                   lang={lang}
                   monthlyTonnageKg={monthlyTonnageKg}
                   isPremium={weekIsPremium}
+                  clubCode={profile.clubCode}
+                  clubName={profile.clubName}
                   onSelectMatch={(e) => setDrawerMatch(e)}
+                  onSelectPlannedSession={(session) => setPreviewSession(session)}
                   onSelectSessionLog={(log) => navigate(`/session/log/${log.id}`)}
                   onAddForDate={(dateISO) => {
                     setAddModalDate(dateISO)
@@ -752,6 +757,13 @@ export function WeekPage() {
               }
             : undefined
         }
+      />
+      <SessionMonthPreviewSheet
+        session={previewSession}
+        onClose={() => setPreviewSession(null)}
+        lang={lang}
+        trainingLevel={profile.trainingLevel}
+        equipment={profile.equipment}
       />
       <AddMatchModal
         open={addModalOpen}

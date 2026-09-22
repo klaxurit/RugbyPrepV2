@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
-import { afterEach, describe, expect, it } from 'vitest'
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { WeekMonthView } from '../WeekMonthView'
 import type { CalendarEvent, DayOfWeek } from '../../../types/training'
@@ -23,16 +23,23 @@ const upperPending: MonthPlannedSession = {
   shortLabel: 'Haut',
   sessionType: 'upper',
   status: 'pending',
+  motherSessionId: 'test-upper-id',
 }
 
 function renderMonth({
   events = [awayMatch],
   clubDays,
   planned,
+  clubCode,
+  clubName,
+  onSelectPlannedSession,
 }: {
   events?: CalendarEvent[]
   clubDays?: DayOfWeek[]
   planned?: ReadonlyMap<string, readonly MonthPlannedSession[]>
+  clubCode?: string
+  clubName?: string
+  onSelectPlannedSession?: (session: MonthPlannedSession) => void
 } = {}) {
   return render(
     <MemoryRouter>
@@ -46,6 +53,9 @@ function renderMonth({
         month={7}
         onMonthChange={() => {}}
         lang="fr"
+        clubCode={clubCode}
+        clubName={clubName}
+        onSelectPlannedSession={onSelectPlannedSession}
       />
     </MemoryRouter>,
   )
@@ -77,22 +87,53 @@ describe('WeekMonthView — cases match', () => {
   })
 })
 
-describe('WeekMonthView — club et jours mixtes', () => {
-  it('affiche une pastille Club sur un jour d’entraînement club', () => {
-    renderMonth({ events: [], clubDays: [6] })
+describe('WeekMonthView — club et séances décorées', () => {
+  it('case club seule : tag CLUB, filigrane, libellé Entraînement', () => {
+    renderMonth({
+      events: [],
+      clubDays: [6],
+      clubCode: '4207Y',
+      clubName: 'Dieppe UC',
+    })
     const cell = screen.getByTestId('month-cell-club-15')
     expect(cell.getAttribute('aria-label')).toMatch(/club/i)
-    expect(within(cell).getByText('Club')).toBeTruthy()
+    expect(within(cell).getByText('CLUB')).toBeTruthy()
+    expect(within(cell).getByText('Entraînement')).toBeTruthy()
+    expect(within(cell).getByTestId('month-cell-crest')).toBeTruthy()
   })
 
-  it('salle + club : les deux pastilles dans la même case', () => {
+  it('case séance : tag HAUT, art de fond, titre et statut', () => {
+    renderMonth({
+      events: [],
+      planned: new Map([['2026-08-15', [upperPending]]]),
+    })
+    const cell = screen.getByTestId('month-cell-session-15')
+    expect(within(cell).getByText('HAUT')).toBeTruthy()
+    expect(within(cell).getByText('Haut du corps')).toBeTruthy()
+    expect(within(cell).getByText('À faire')).toBeTruthy()
+    expect(within(cell).getByTestId('month-cell-session-art')).toBeTruthy()
+  })
+
+  it('salle + club : déco séance prioritaire, mention Club', () => {
     renderMonth({
       events: [],
       clubDays: [6],
       planned: new Map([['2026-08-15', [upperPending]]]),
     })
-    const cell = screen.getByTestId('month-cell-club-15')
+    const cell = screen.getByTestId('month-cell-session-15')
+    expect(within(cell).getByText('HAUT')).toBeTruthy()
     expect(within(cell).getByText('Club')).toBeTruthy()
-    expect(within(cell).getByText('Haut')).toBeTruthy()
+    expect(within(cell).getByTestId('month-cell-session-art')).toBeTruthy()
+  })
+
+  it('clic séance appelle onSelectPlannedSession', () => {
+    const onSelect = vi.fn()
+    renderMonth({
+      events: [],
+      planned: new Map([['2026-08-15', [upperPending]]]),
+      onSelectPlannedSession: onSelect,
+    })
+    fireEvent.click(screen.getByTestId('month-cell-session-15'))
+    expect(onSelect).toHaveBeenCalledWith(upperPending)
   })
 })

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { CalendarEvent, SessionLog, DayOfWeek } from '../../types/training'
+import type { MotherSessionType } from '../../types/motherSession'
 import type { MonthPhaseMarker, MonthPlannedSession, MonthWeekBand } from '../../services/scheduling/resolveMonthProgramGrid'
 import { startOfIsoWeek } from '../../services/weeklyBilan/computeWeeklyBilan'
 import type { Lang } from '../../i18n/appLabels'
@@ -8,9 +9,29 @@ import { Icon, SectionLabel } from '../ui'
 import { ClubAvatar } from '../match/ClubAvatar'
 import { formatTonnage } from '../../services/home/formatTonnage'
 import { getClubLogoUrl, getClubMonogram } from '../../services/ui/clubLogos'
+import monthSessionLower from '../../assets/month-sessions/bas.png'
+import monthSessionUpper from '../../assets/month-sessions/haut.png'
+import monthSessionFull from '../../assets/month-sessions/full.png'
+import monthSessionPrimer from '../../assets/month-sessions/primer.png'
 
 const CREST_OPACITY = 0.42
 const CREST_MONO_OPACITY = 0.5
+
+/** Art de fond des cases séance (filigrane). `speed_power` reste en monogramme. */
+const SESSION_ART: Partial<Record<MotherSessionType, string>> = {
+  lower: monthSessionLower,
+  upper: monthSessionUpper,
+  full: monthSessionFull,
+  full_light_primer: monthSessionPrimer,
+}
+
+const SESSION_WATERMARK: Record<MotherSessionType, string> = {
+  lower: 'BAS',
+  upper: 'HAUT',
+  full: 'FULL',
+  full_light_primer: 'PRI',
+  speed_power: 'VIT',
+}
 
 type CellEvent = 'match' | 'gym' | 'recovery' | 'planned' | 'planned_done' | 'planned_missed' | 'club'
 
@@ -29,7 +50,11 @@ interface WeekMonthViewProps {
   lang?: Lang
   monthlyTonnageKg?: number | null
   isPremium?: boolean
+  /** Crest club pour les cases entraînement club. */
+  clubCode?: string | null
+  clubName?: string | null
   onSelectMatch?: (event: CalendarEvent) => void
+  onSelectPlannedSession?: (session: MonthPlannedSession) => void
   onSelectSessionLog?: (log: SessionLog) => void
   onAddForDate?: (dateISO: string) => void
 }
@@ -71,7 +96,10 @@ export function WeekMonthView({
   lang = 'fr',
   monthlyTonnageKg,
   isPremium = false,
+  clubCode,
+  clubName,
   onSelectMatch,
+  onSelectPlannedSession,
   onSelectSessionLog,
   onAddForDate,
 }: WeekMonthViewProps) {
@@ -221,12 +249,18 @@ export function WeekMonthView({
       onSelectMatch(match)
       return
     }
+    const iso = ymd(year, month, day)
+    const planned = plannedSessionsByDate?.get(iso) ?? []
+    if (planned[0] && onSelectPlannedSession) {
+      onSelectPlannedSession(planned[0])
+      return
+    }
     const gymLog = gymLogByDay.get(day)
     if (gymLog && onSelectSessionLog) {
       onSelectSessionLog(gymLog)
       return
     }
-    if (onAddForDate) onAddForDate(ymd(year, month, day))
+    if (onAddForDate) onAddForDate(iso)
   }
 
   return (
@@ -330,7 +364,11 @@ export function WeekMonthView({
                         : lang === 'fr' ? 'extérieur' : 'away'
                     : null
                   const kickoff = match?.kickoff_time?.slice(0, 5)
-                  const gymChipCap = match ? 1 : hasClub ? 1 : 2
+                  const gymChipCap = match ? 1 : hasClub && planned.length ? 1 : 2
+                  const primarySession = !hasMatch ? planned[0] ?? null : null
+                  const decorateSession = primarySession != null
+                  const decorateClub = !hasMatch && !decorateSession && hasClub
+                  const creamCell = hasMatch || decorateSession || decorateClub
 
                   const extras: string[] = []
                   if (hasMatch && match) {
@@ -346,11 +384,17 @@ export function WeekMonthView({
                       onClick={() => handleCellClick(d)}
                       aria-label={`${d} ${monthNames[month]}${extras.length ? ` — ${extras.join(' · ')}` : ''}`}
                       data-testid={
-                        hasMatch ? `month-cell-match-${d}` : hasClub ? `month-cell-club-${d}` : undefined
+                        hasMatch
+                          ? `month-cell-match-${d}`
+                          : decorateSession
+                            ? `month-cell-session-${d}`
+                            : hasClub
+                              ? `month-cell-club-${d}`
+                              : undefined
                       }
                       className="relative flex min-h-[5.25rem] flex-col items-stretch overflow-hidden rounded-[9px] text-left transition-transform hover:scale-[1.02] active:scale-95 rf-focus-ring"
                       style={{
-                        background: hasMatch ? 'var(--color-cream-soft)' : 'var(--color-surface)',
+                        background: creamCell ? 'var(--color-cream-soft)' : 'var(--color-surface)',
                         color: 'var(--color-text-primary)',
                         border: isToday
                           ? '1.5px solid var(--color-accent)'
@@ -359,15 +403,20 @@ export function WeekMonthView({
                     >
                       {match && (
                         <>
-                          <MatchCrestWatermark code={match.opponent_code} name={match.opponent} />
-                          <div
-                            aria-hidden
-                            className="pointer-events-none absolute inset-0 rounded-[9px]"
-                            style={{
-                              background:
-                                'linear-gradient(110deg, color-mix(in srgb, var(--color-cream-soft) 78%, transparent) 22%, color-mix(in srgb, var(--color-cream-soft) 8%, transparent) 78%)',
-                            }}
-                          />
+                          <CellWatermark code={match.opponent_code} name={match.opponent} />
+                          <CreamWash />
+                        </>
+                      )}
+                      {decorateSession && primarySession && (
+                        <>
+                          <SessionArtWatermark sessionType={primarySession.sessionType} />
+                          <CreamWash />
+                        </>
+                      )}
+                      {decorateClub && (
+                        <>
+                          <CellWatermark code={clubCode ?? undefined} name={clubName ?? 'Club'} />
+                          <CreamWash />
                         </>
                       )}
 
@@ -381,22 +430,33 @@ export function WeekMonthView({
                           >
                             {d}
                           </span>
-                          {match ? <VenueTag match={match} lang={lang} /> : null}
+                          {match ? (
+                            <VenueTag match={match} lang={lang} />
+                          ) : decorateSession && primarySession ? (
+                            <SessionTypeTag session={primarySession} lang={lang} />
+                          ) : decorateClub ? (
+                            <span className="rounded-[3px] bg-brand px-0.5 text-[7px] font-bold tracking-[0.06em] text-app">
+                              CLUB
+                            </span>
+                          ) : null}
                         </div>
 
                         <div className="mt-auto flex flex-col gap-0.5">
-                          {hasClub && <StackChip label="Club" tone="club" />}
-                          {planned.slice(0, gymChipCap).map((session, idx) => (
-                            <SessionChip
-                              key={`${session.shortLabel}-${idx}`}
-                              session={session}
-                              lang={lang}
-                            />
-                          ))}
-                          {planned.length > gymChipCap && (
-                            <span className="text-[6px] font-bold opacity-60">+{planned.length - gymChipCap}</span>
+                          {hasMatch && hasClub && <StackChip label="Club" tone="club" />}
+                          {hasMatch &&
+                            planned.slice(0, gymChipCap).map((session, idx) => (
+                              <SessionChip
+                                key={`${session.shortLabel}-${idx}`}
+                                session={session}
+                                lang={lang}
+                              />
+                            ))}
+                          {hasMatch && planned.length > gymChipCap && (
+                            <span className="text-[6px] font-bold opacity-60">
+                              +{planned.length - gymChipCap}
+                            </span>
                           )}
-                          {!planned.length && hasRecovery && !match && (
+                          {!planned.length && hasRecovery && !match && !decorateClub && (
                             <StackChip label={lang === 'fr' ? 'Récup' : 'Rec'} tone="rec" />
                           )}
                           {match && (
@@ -412,6 +472,24 @@ export function WeekMonthView({
                                 </span>
                               )}
                             </>
+                          )}
+                          {decorateSession && primarySession && (
+                            <>
+                              {hasClub && (
+                                <span className="truncate text-[7px] font-bold uppercase tracking-[0.06em] text-fg-muted">
+                                  Club
+                                </span>
+                              )}
+                              <span className="truncate text-[8px] leading-tight text-fg-muted">
+                                {primarySession.title}
+                              </span>
+                              <SessionStatusLine status={primarySession.status} lang={lang} />
+                            </>
+                          )}
+                          {decorateClub && (
+                            <span className="truncate text-[8px] leading-tight text-fg-muted">
+                              {lang === 'fr' ? 'Entraînement' : 'Training'}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -487,11 +565,62 @@ export function WeekMonthView({
   )
 }
 
-function MatchCrestWatermark({ code, name }: { code?: string; name?: string }) {
+function CreamWash() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 rounded-[9px]"
+      style={{
+        background:
+          'linear-gradient(110deg, color-mix(in srgb, var(--color-cream-soft) 78%, transparent) 22%, color-mix(in srgb, var(--color-cream-soft) 8%, transparent) 78%)',
+      }}
+    />
+  )
+}
+
+/**
+ * Fond art séance en filigrane bas-droite (comme le crest match).
+ * Assets sans fond noir. Sans asset (ex. vitesse) : monogramme texte.
+ */
+function SessionArtWatermark({ sessionType }: { sessionType: MotherSessionType }) {
+  const artSrc = SESSION_ART[sessionType]
+  if (!artSrc) {
+    return <CellWatermark monogram={SESSION_WATERMARK[sessionType]} />
+  }
+
+  return (
+    <div
+      aria-hidden
+      data-testid="month-cell-session-art"
+      className="pointer-events-none absolute -bottom-2 -right-1 flex h-[80px] w-[72px] items-end justify-end"
+      style={{
+        maskImage: 'linear-gradient(to left top, transparent 0%, black 38%)',
+        WebkitMaskImage: 'linear-gradient(to left top, transparent 0%, black 38%)',
+      }}
+    >
+      <img
+        src={artSrc}
+        alt=""
+        className="h-full w-full object-contain object-bottom"
+        style={{ opacity: CREST_OPACITY }}
+      />
+    </div>
+  )
+}
+
+function CellWatermark({
+  code,
+  name,
+  monogram: monogramOverride,
+}: {
+  code?: string
+  name?: string
+  monogram?: string
+}) {
   const logoUrl = code ? getClubLogoUrl(code) : null
-  const monogram = getClubMonogram(name)
+  const monogram = monogramOverride ?? getClubMonogram(name)
   const [failed, setFailed] = useState(false)
-  const showLogo = Boolean(logoUrl) && !failed
+  const showLogo = Boolean(logoUrl) && !failed && !monogramOverride
 
   return (
     <div
@@ -544,6 +673,82 @@ function VenueTag({ match, lang }: { match: CalendarEvent; lang: Lang }) {
       style={{ border: '1px solid color-mix(in srgb, var(--color-accent) 35%, transparent)' }}
     >
       {lang === 'fr' ? 'EXT' : 'AWY'}
+    </span>
+  )
+}
+
+function SessionTypeTag({
+  session,
+  lang,
+}: {
+  session: MonthPlannedSession
+  lang: Lang
+}) {
+  const status = session.status
+  const style =
+    status === 'completed'
+      ? { background: 'var(--color-ok-bg)', color: 'var(--color-ok-strong)', border: '1px solid transparent' }
+      : status === 'missed'
+        ? { background: 'var(--color-warn-bg)', color: 'var(--color-warn-strong)', border: '1px solid transparent' }
+        : status === 'skipped'
+          ? { background: 'transparent', color: 'var(--color-text-muted)', border: '1px solid var(--color-cream-deep)' }
+          : {
+              background: 'transparent',
+              color: 'var(--color-accent)',
+              border: '1px dashed color-mix(in srgb, var(--color-accent) 55%, transparent)',
+            }
+
+  return (
+    <span
+      className={`rounded-[3px] px-0.5 text-[7px] font-bold tracking-[0.06em] ${
+        status === 'skipped' ? 'opacity-50 line-through' : ''
+      }`}
+      style={style}
+      title={
+        status === 'missed'
+          ? `${session.title} — ${lang === 'fr' ? 'non réalisée' : 'not completed'}`
+          : session.title
+      }
+    >
+      {session.shortLabel.toUpperCase()}
+    </span>
+  )
+}
+
+function SessionStatusLine({
+  status,
+  lang,
+}: {
+  status: MonthPlannedSession['status']
+  lang: Lang
+}) {
+  const label =
+    lang === 'fr'
+      ? status === 'completed'
+        ? 'Faite'
+        : status === 'missed'
+          ? 'Manquée'
+          : status === 'skipped'
+            ? 'Passée'
+            : 'À faire'
+      : status === 'completed'
+        ? 'Done'
+        : status === 'missed'
+          ? 'Missed'
+          : status === 'skipped'
+            ? 'Skipped'
+            : 'Planned'
+
+  const color =
+    status === 'completed'
+      ? 'var(--color-ok-strong)'
+      : status === 'missed'
+        ? 'var(--color-warn-strong)'
+        : 'var(--color-accent)'
+
+  return (
+    <span className="text-[7px] font-bold uppercase tracking-[0.06em]" style={{ color }}>
+      {label}
     </span>
   )
 }
