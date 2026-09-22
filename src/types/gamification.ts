@@ -99,8 +99,16 @@ export interface LeaderboardEntry {
   userId: string
   displayName: string
   avatarUrl: string | null
+  /** Code FFR du club — sert au logo ; null si profil sans club. */
+  clubCode: string | null
+  clubName: string | null
   points: number
   sessionsCompleted: number
+  /**
+   * Jours depuis la dernière séance loguée. `null` = jamais logué.
+   * Sert uniquement à l'indice 🔥 / 💤 — pas une donnée de santé.
+   */
+  daysSinceLastSession: number | null
   level: AthleteLevel
   /** Rang dans le périmètre interrogé, 1-indexé. */
   rank: number

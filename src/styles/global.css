@@ -342,6 +342,18 @@ input[type='date']::-webkit-calendar-picker-indicator {
   animation: rfPop 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+/* Play Console / a11y : respecter prefers-reduced-motion (CWV + TalkBack). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Scrollbars cachées pour les strips horizontaux (badges, days) */
 @utility scrollbar-none {
   scrollbar-width: none;

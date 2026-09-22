@@ -1,7 +1,7 @@
-import type { ACWRZone } from '../../hooks/useACWR'
-import type { SessionType } from '../../types/training'
-import type { WeeklyScoreInput } from './computeWeeklyScore'
-import { isInWeek, weekStartISO } from './weekStart'
+import type { ACWRZone } from '../../types/acwr.ts'
+import type { SessionType } from '../../types/training.ts'
+import type { WeeklyScoreInput } from './computeWeeklyScore.ts'
+import { isInWeek, weekStartISO } from './weekStart.ts'
 
 /**
  * Traduit les données brutes (plan de la semaine, `session_logs`, calendrier

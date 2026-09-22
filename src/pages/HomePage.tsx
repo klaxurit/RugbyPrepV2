@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { posthog } from '../services/analytics/posthog'
 import { AlertTriangle } from 'lucide-react'
@@ -8,7 +7,6 @@ import { Icon } from '../components/ui'
 import {
   HeroDayAfter,
   HeroNormal,
-  StreakCard,
   NextMatchEditorialCard,
   BadgesStrip,
   PlayoffsThinBanner,
@@ -16,10 +14,15 @@ import {
   moodToFatigue,
   type HeroMood,
 } from '../components/home'
-import { RigorScoreCard, SocialNudgeHost } from '../components/gamification'
+import {
+  GamificationIntroSheet,
+  RigorScoreCard,
+  SocialNudgeHost,
+} from '../components/gamification'
 import { useProfile } from '../hooks/useProfile'
 import { useFatigue } from '../hooks/useFatigue'
 import { useGamification } from '../hooks/useGamification'
+import { useHintVisibility } from '../hooks/useHintVisibility'
 import { useSocialNudges } from '../hooks/useSocialNudges'
 import { useSessionRun } from '../contexts/SessionRunContext'
 import { buildRecomputePayload } from '../services/gamification/buildRecomputePayload'
@@ -36,6 +39,7 @@ import { useAthleteTests } from '../hooks/useAthleteTests'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { ScoreDeFormeTeaser } from '../components/ScoreDeFormeTeaser'
 import { ScoreDeFormeCard } from '../components/ScoreDeFormeCard'
+import { ReadinessScoreSkeleton, RigorScoreSkeleton } from '../components/SkeletonCard'
 import { SeasonTransitionBanner, SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
@@ -379,6 +383,7 @@ export function HomePage() {
     profile: gamificationProfile,
     currentWeek: gamificationWeek,
     levelProgress,
+    loading: gamificationLoading,
     recompute,
   } = useGamification(today)
   const {
@@ -386,6 +391,12 @@ export function HomePage() {
     consumedThisWeek: nudgesShownThisWeek,
     consume: consumeNudge,
   } = useSocialNudges(lang)
+  const {
+    visible: gamificationIntroVisible,
+    dismiss: dismissGamificationIntro,
+    loading: gamificationIntroLoading,
+  } = useHintVisibility('gamification_intro_v1')
+  const showGamificationIntro = gamificationIntroVisible && !gamificationIntroLoading
   const { status: sessionRunStatus } = useSessionRun()
   // Horodatage figé au montage : recalculé à chaque rendu, il ferait repasser
   // `selectNudge` en boucle sans jamais changer de résultat.
@@ -613,16 +624,18 @@ export function HomePage() {
           )}
         </div>
 
-        {/* ─── Streak ─── */}
-        <StreakCard streak={streak} />
-
-        {/* ─── Score de rigueur (conformité au plan) ─── */}
-        <RigorScoreCard
-          profile={gamificationProfile}
-          currentWeek={gamificationWeek}
-          levelProgress={levelProgress}
-          lang={lang}
-        />
+        {/* ─── Rigueur : score conformité + cadence (fusion Design) ─── */}
+        {gamificationLoading ? (
+          <RigorScoreSkeleton />
+        ) : (
+          <RigorScoreCard
+            profile={gamificationProfile}
+            currentWeek={gamificationWeek}
+            levelProgress={levelProgress}
+            streak={streak}
+            lang={lang}
+          />
+        )}
 
         {/* ─── Prochain match (éditorial) ─── */}
         {nextMatch && daysUntilNextMatch != null && daysUntilNextMatch <= 30 && (
@@ -640,6 +653,7 @@ export function HomePage() {
 
         {/* ─── Score de forme (free → teaser flouté · premium → vraie card) ─── */}
         <div className="px-[22px] pt-6">
+          {!premiumResolved && <ReadinessScoreSkeleton />}
           {premiumResolved && !isPremium && <ScoreDeFormeTeaser />}
           {premiumResolved && isPremium && (
             <ScoreDeFormeCard
@@ -908,7 +922,12 @@ export function HomePage() {
         </div>
       </main>
 
-      <BottomNav />
+
+      <GamificationIntroSheet
+        open={showGamificationIntro}
+        onClose={dismissGamificationIntro}
+        lang={lang}
+      />
 
       {/* Pop-up sociale : au plus une par ouverture, jamais pendant une séance
           ni par-dessus un overlay bloquant (cf. `selectNudge`). */}
@@ -917,7 +936,10 @@ export function HomePage() {
         nudgesShownThisWeek={nudgesShownThisWeek}
         isSessionRunning={sessionRunStatus === 'running'}
         hasBlockingOverlay={
-          hasConfirmationRequired || seasonTransition != null || schedulingTransition != null
+          showGamificationIntro ||
+          hasConfirmationRequired ||
+          seasonTransition != null ||
+          schedulingTransition != null
         }
         nowISO={nudgeNowISO}
         lang={lang}

@@ -1,6 +1,11 @@
 import { Heart, Minus, TrendingDown, TrendingUp } from 'lucide-react'
 import { SectionLabel } from '../ui'
+import { ClubAvatar } from '../match/ClubAvatar'
 import { leagueTierLabel, levelLabel } from '../../services/gamification/labels'
+import {
+  athleteFormCueEmoji,
+} from '../../services/gamification/resolveAthleteFormCue'
+import { formCueForEntry } from '../../services/gamification/rankLeaderboard'
 import type { Lang } from '../../i18n/appLabels'
 import type { LeaderboardEntry, LeagueTier } from '../../types/gamification'
 
@@ -23,13 +28,9 @@ export interface LeagueBoardProps {
 /**
  * Tableau de classement — cohorte de ligue ou club.
  *
- * Deux partis pris d'interface :
- *
- *  1. La ligne de l'athlète est mise en valeur mais **jamais** son écart aux
- *     autres : on affiche des totaux, pas des « −40 pts sur le premier ».
- *  2. Le bouton kudos est présent sur chaque ligne. Pouvoir saluer un
- *     coéquipier au lieu de seulement se comparer à lui est ce qui rend un
- *     classement tenable dans une équipe qui se croise à l'entraînement.
+ *  1. Totaux seulement, jamais d'écarts (« −40 pts »).
+ *  2. Logo club + indice 🔥/💤 à côté du pseudo.
+ *  3. Kudos sur chaque ligne (sauf soi).
  */
 export function LeagueBoard({
   title,
@@ -66,18 +67,19 @@ export function LeagueBoard({
             const promoted = promotionCutoff > 0 && entry.rank <= promotionCutoff
             const relegated = relegationCutoff > 0 && entry.rank >= relegationCutoff
             const kudosSent = kudosGiven.has(entry.userId)
+            const formEmoji = athleteFormCueEmoji(formCueForEntry(entry))
 
             return (
               <li
                 key={entry.userId}
                 data-testid={entry.isSelf ? 'league-row-self' : 'league-row'}
-                className={`flex items-center gap-3 rounded-2xl border px-3 py-2.5 ${
+                className={`flex items-center gap-2.5 rounded-2xl border px-3 py-2.5 ${
                   entry.isSelf
                     ? 'border-brand bg-brand-soft'
                     : 'border-paper-deep bg-paper-soft'
                 }`}
               >
-                <span className="w-6 shrink-0 text-center text-[13px] font-black tabular-nums text-fg/70">
+                <span className="w-5 shrink-0 text-center text-[13px] font-black tabular-nums text-fg/70">
                   {entry.rank}
                 </span>
 
@@ -91,11 +93,34 @@ export function LeagueBoard({
                   )}
                 </span>
 
+                <ClubAvatar
+                  code={entry.clubCode ?? undefined}
+                  name={entry.clubName ?? entry.displayName}
+                  size="sm"
+                />
+
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13px] font-bold text-fg">
-                    {entry.displayName}
+                  <span className="flex items-center gap-1 truncate text-[13px] font-bold text-fg">
+                    <span className="truncate">{entry.displayName}</span>
+                    {formEmoji && (
+                      <span
+                        className="shrink-0 text-[12px] leading-none"
+                        aria-label={
+                          formEmoji === '🔥'
+                            ? lang === 'fr'
+                              ? 'Enchaîne bien'
+                              : 'On a streak'
+                            : lang === 'fr'
+                              ? 'Peu actif récemment'
+                              : 'Quiet lately'
+                        }
+                        data-testid="league-form-cue"
+                      >
+                        {formEmoji}
+                      </span>
+                    )}
                     {entry.isSelf && (
-                      <span className="ml-1.5 text-[10px] font-extrabold uppercase tracking-[0.1em] text-brand">
+                      <span className="ml-0.5 shrink-0 text-[10px] font-extrabold uppercase tracking-[0.1em] text-brand">
                         {lang === 'fr' ? 'toi' : 'you'}
                       </span>
                     )}

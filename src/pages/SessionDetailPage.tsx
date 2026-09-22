@@ -81,7 +81,6 @@ import { isBodyweightProgramTier } from '../services/equipment/resolveEquipmentP
 import { bodyweightProgramMissingMorphology } from '../services/bodyweight/bodyweightMorphologyWarning'
 import { BodyweightMorphologyBanner } from '../components/profile/BodyweightMorphologyBanner'
 import { resolveFatigueLevel } from '../services/program/resolveFatigueLevel'
-import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { getPrehab, CONTRA_LABELS } from '../services/ui/getPrehab'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
@@ -1006,7 +1005,6 @@ export function SessionDetailPage() {
             </p>
           </div>
         </main>
-        <BottomNav />
       </div>
     )
   }

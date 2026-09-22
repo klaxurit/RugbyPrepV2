@@ -8,8 +8,11 @@ function entry(overrides: Partial<LeaderboardEntry> & { userId: string }): Leade
   return {
     displayName: `Athlète ${overrides.userId}`,
     avatarUrl: null,
+    clubCode: '4207Y',
+    clubName: 'Test RFC',
     points: 0,
     sessionsCompleted: 0,
+    daysSinceLastSession: 1,
     level: 'espoir',
     rank: 1,
     isSelf: false,
@@ -18,9 +21,31 @@ function entry(overrides: Partial<LeaderboardEntry> & { userId: string }): Leade
 }
 
 const entries: LeaderboardEntry[] = [
-  entry({ userId: 'a', displayName: 'Léo Martin', points: 80, rank: 1 }),
-  entry({ userId: 'b', displayName: 'Anna Roux', points: 55, rank: 2, isSelf: true }),
-  entry({ userId: 'c', displayName: 'Hugo Blanc', points: 20, rank: 3 }),
+  entry({
+    userId: 'a',
+    displayName: 'Léo Martin',
+    points: 80,
+    rank: 1,
+    sessionsCompleted: 3,
+    daysSinceLastSession: 0,
+  }),
+  entry({
+    userId: 'b',
+    displayName: 'Anna Roux',
+    points: 55,
+    rank: 2,
+    isSelf: true,
+    sessionsCompleted: 2,
+    daysSinceLastSession: 1,
+  }),
+  entry({
+    userId: 'c',
+    displayName: 'Hugo Blanc',
+    points: 20,
+    rank: 3,
+    sessionsCompleted: 0,
+    daysSinceLastSession: 12,
+  }),
 ]
 
 afterEach(() => cleanup())
@@ -139,5 +164,19 @@ describe('LeagueBoard', () => {
       />,
     )
     expect(screen.getByText(/Top 1 promus/i)).toBeInTheDocument()
+  })
+
+  it('montre un indice de forme 🔥 ou 💤', () => {
+    render(
+      <LeagueBoard
+        title="Ligue"
+        entries={entries}
+        kudosGiven={new Set()}
+        lang="fr"
+        emptyLabel=""
+      />,
+    )
+    const cues = screen.getAllByTestId('league-form-cue')
+    expect(cues.map((node) => node.textContent)).toEqual(['🔥', '🔥', '💤'])
   })
 })

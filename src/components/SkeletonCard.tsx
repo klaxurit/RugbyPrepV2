@@ -62,6 +62,59 @@ export function WeeklySummarySkeleton() {
   )
 }
 
+/** Matches RigorScoreCard (score + cadence fusionnés). */
+export function RigorScoreSkeleton() {
+  return (
+    <section className="px-[22px] pt-6" data-testid="rigor-score-skeleton" aria-hidden>
+      <Pulse className="h-3 w-24" />
+      <div className="mt-3 space-y-4 rounded-[20px] border-2 border-paper-deep bg-paper-soft px-[22px] py-5">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <Pulse className="h-3 w-20" />
+            <Pulse className="h-9 w-24" />
+          </div>
+          <Pulse className="h-6 w-16 rounded-full" />
+        </div>
+        <Pulse className="h-2 w-full rounded-full" />
+        <div className="flex items-center gap-3 border-t border-paper-deep pt-4">
+          <Pulse className="h-9 w-9 rounded-full" />
+          <Pulse className="h-4 w-40" />
+        </div>
+        <div className="flex gap-1">
+          {Array.from({ length: 14 }, (_, i) => (
+            <Pulse key={i} className="h-2 flex-1 rounded-sm" />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/** Matches LeagueBoard rows while squad RPCs load. */
+export function LeagueBoardSkeleton({ rows = 4 }: { rows?: number }) {
+  return (
+    <section className="space-y-3" data-testid="league-board-skeleton" aria-hidden>
+      <Pulse className="h-3 w-36" />
+      <ul className="space-y-1.5">
+        {Array.from({ length: rows }, (_, i) => (
+          <li
+            key={i}
+            className="flex items-center gap-2.5 rounded-2xl border border-paper-deep bg-paper-soft px-3 py-2.5"
+          >
+            <Pulse className="h-4 w-4" />
+            <Pulse className="h-8 w-8 rounded-xl" />
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <Pulse className="h-3.5 w-28" />
+              <Pulse className="h-2.5 w-20" />
+            </div>
+            <Pulse className="h-4 w-8" />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
 /** Generic small card skeleton for ProgressPage sections */
 export function ProgressCurveSkeleton() {
   return (

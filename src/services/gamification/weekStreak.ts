@@ -1,4 +1,4 @@
-import { previousWeekStartISO } from './weekStart'
+import { previousWeekStartISO } from './weekStart.ts'
 
 /**
  * Transition du streak hebdomadaire.

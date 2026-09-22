@@ -115,4 +115,16 @@ describe('RigorScoreCard', () => {
     renderCard()
     expect(screen.getByTestId('rigor-score-squad-link')).toHaveAttribute('href', '/squad')
   })
+
+  it('fusionne la cadence dans la même carte', () => {
+    renderCard({
+      streak: {
+        count: 3,
+        weekHistory: Array.from({ length: 14 }, (_, i) => i >= 11),
+        caption: 'Le rythme commence.',
+      },
+    })
+    expect(screen.getByTestId('rigor-cadence')).toHaveTextContent('Le rythme commence.')
+    expect(screen.queryByText('Ta cadence')).toBeNull()
+  })
 })

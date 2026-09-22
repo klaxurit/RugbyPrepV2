@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import {
   ClubChallengeCard,
@@ -9,6 +8,7 @@ import {
   RigorBadgesStrip,
   SocialVisibilityPicker,
 } from '../components/gamification'
+import { LeagueBoardSkeleton } from '../components/SkeletonCard'
 import { Icon, Pill } from '../components/ui'
 import { useGamification } from '../hooks/useGamification'
 import { useProfile } from '../hooks/useProfile'
@@ -118,74 +118,80 @@ export function SquadPage() {
           </section>
         ) : (
           <>
-            {cohort && (
-              <LeagueBoard
-                testId="squad-league"
-                title={lang === 'fr' ? 'Ligue de la semaine' : 'This week’s league'}
-                entries={cohort.entries}
-                tier={cohort.tier}
-                promotionCutoff={cohort.promotionCutoff}
-                relegationCutoff={cohort.relegationCutoff}
-                kudosGiven={kudosGiven}
-                onGiveKudos={giveKudos}
-                lang={lang}
-                emptyLabel=""
-              />
+            {loading ? (
+              <LeagueBoardSkeleton rows={5} />
+            ) : (
+              <>
+                {cohort && (
+                  <LeagueBoard
+                    testId="squad-league"
+                    title={lang === 'fr' ? 'Ligue de la semaine' : 'This week’s league'}
+                    entries={cohort.entries}
+                    tier={cohort.tier}
+                    promotionCutoff={cohort.promotionCutoff}
+                    relegationCutoff={cohort.relegationCutoff}
+                    kudosGiven={kudosGiven}
+                    onGiveKudos={giveKudos}
+                    lang={lang}
+                    emptyLabel=""
+                  />
+                )}
+
+                {/* Pas encore de cohorte : les cohortes sont formées le lundi par le
+                    cron. On l'explique au lieu d'afficher un tableau vide. */}
+                {!cohort && visibility === 'cohort' && (
+                  <p
+                    data-testid="squad-league-pending"
+                    className="rounded-2xl border border-dashed border-fg/25 px-4 py-4 text-[12px] leading-relaxed text-fg/60"
+                  >
+                    {lang === 'fr'
+                      ? 'Ta ligue est constituée lundi matin. D’ici là, tes points de la semaine comptent déjà.'
+                      : 'Your league is formed on Monday morning. Until then, your weekly points already count.'}
+                  </p>
+                )}
+
+                {visibility === 'club' && (
+                  <p
+                    data-testid="squad-league-locked"
+                    className="rounded-2xl border border-dashed border-fg/25 px-4 py-4 text-[12px] leading-relaxed text-fg/60"
+                  >
+                    {lang === 'fr'
+                      ? 'Les ligues hebdomadaires demandent la visibilité « Club + ligue hebdo ».'
+                      : 'Weekly leagues require the “Club + weekly league” visibility.'}
+                    <Link
+                      to="/profile#social"
+                      className="ml-1 font-bold text-brand underline underline-offset-2"
+                    >
+                      {lang === 'fr' ? 'Modifier' : 'Change'}
+                    </Link>
+                  </p>
+                )}
+
+                {challenge && <ClubChallengeCard challenge={challenge} lang={lang} />}
+
+                <LeagueBoard
+                  testId="squad-club"
+                  title={lang === 'fr' ? 'Classement du club' : 'Club board'}
+                  entries={clubLeaderboard}
+                  kudosGiven={kudosGiven}
+                  onGiveKudos={giveKudos}
+                  lang={lang}
+                  emptyLabel={
+                    lang === 'fr'
+                      ? 'Personne d’autre de ton club n’a encore rejoint le classement. Le tableau apparaît dès qu’un coéquipier accepte d’être visible.'
+                      : 'Nobody else from your club has joined yet. The board shows up as soon as a teammate opts in.'
+                  }
+                />
+
+                <DuelsSection
+                  duels={duels}
+                  candidates={duelCandidates}
+                  onChallenge={challengeAthlete}
+                  onRespond={respondToDuel}
+                  lang={lang}
+                />
+              </>
             )}
-
-            {/* Pas encore de cohorte : les cohortes sont formées le lundi par le
-                cron. On l'explique au lieu d'afficher un tableau vide. */}
-            {!cohort && visibility === 'cohort' && !loading && (
-              <p
-                data-testid="squad-league-pending"
-                className="rounded-2xl border border-dashed border-fg/25 px-4 py-4 text-[12px] leading-relaxed text-fg/60"
-              >
-                {lang === 'fr'
-                  ? 'Ta ligue est constituée lundi matin. D’ici là, tes points de la semaine comptent déjà.'
-                  : 'Your league is formed on Monday morning. Until then, your weekly points already count.'}
-              </p>
-            )}
-
-            {visibility === 'club' && (
-              <p
-                data-testid="squad-league-locked"
-                className="rounded-2xl border border-dashed border-fg/25 px-4 py-4 text-[12px] leading-relaxed text-fg/60"
-              >
-                {lang === 'fr'
-                  ? 'Les ligues hebdomadaires demandent la visibilité « Club + ligue hebdo ».'
-                  : 'Weekly leagues require the “Club + weekly league” visibility.'}
-                <Link
-                  to="/profile#social"
-                  className="ml-1 font-bold text-brand underline underline-offset-2"
-                >
-                  {lang === 'fr' ? 'Modifier' : 'Change'}
-                </Link>
-              </p>
-            )}
-
-            {challenge && <ClubChallengeCard challenge={challenge} lang={lang} />}
-
-            <LeagueBoard
-              testId="squad-club"
-              title={lang === 'fr' ? 'Classement du club' : 'Club board'}
-              entries={clubLeaderboard}
-              kudosGiven={kudosGiven}
-              onGiveKudos={giveKudos}
-              lang={lang}
-              emptyLabel={
-                lang === 'fr'
-                  ? 'Personne d’autre de ton club n’a encore rejoint le classement. Le tableau apparaît dès qu’un coéquipier accepte d’être visible.'
-                  : 'Nobody else from your club has joined yet. The board shows up as soon as a teammate opts in.'
-              }
-            />
-
-            <DuelsSection
-              duels={duels}
-              candidates={duelCandidates}
-              onChallenge={challengeAthlete}
-              onRespond={respondToDuel}
-              lang={lang}
-            />
 
             <Link
               to="/profile#social"
@@ -201,7 +207,6 @@ export function SquadPage() {
         )}
       </main>
 
-      <BottomNav />
     </div>
   )
 }

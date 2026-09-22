@@ -1,6 +1,6 @@
-import type { ACWRZone } from '../../hooks/useACWR'
-import type { WeeklyScore, WeeklyScoreBreakdown } from '../../types/gamification'
-import { SCORE_CAPS, SCORE_POINTS } from './scoreConstants'
+import type { ACWRZone } from '../../types/acwr.ts'
+import type { WeeklyScore, WeeklyScoreBreakdown } from '../../types/gamification.ts'
+import { SCORE_CAPS, SCORE_POINTS } from './scoreConstants.ts'
 
 /**
  * Entrées du score hebdomadaire.

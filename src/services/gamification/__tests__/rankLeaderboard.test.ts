@@ -60,6 +60,9 @@ describe('rankLeaderboard', () => {
     ])
     expect(Object.keys(entries[0]).sort()).toEqual([
       'avatarUrl',
+      'clubCode',
+      'clubName',
+      'daysSinceLastSession',
       'displayName',
       'isSelf',
       'level',

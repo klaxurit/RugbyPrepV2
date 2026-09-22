@@ -25,7 +25,6 @@ import { useFoundingCohortAvailability } from '../hooks/useFoundingCohortAvailab
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
 import { useIsAdmin } from '../hooks/useIsAdmin'
-import { BottomNav } from '../components/BottomNav'
 import { useCalendar } from '../hooks/useCalendar'
 import { useFatigue } from '../hooks/useFatigue'
 import { useACWR } from '../hooks/useACWR'
@@ -1131,7 +1130,6 @@ export function ProfilePage() {
         <p className="text-[10px] text-fg-ghost">RugbyForge v1.0</p>
       </footer>
 
-      <BottomNav />
     </div>
   )
 }

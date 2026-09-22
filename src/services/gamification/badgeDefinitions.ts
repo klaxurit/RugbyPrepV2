@@ -1,6 +1,6 @@
-import type { Lang } from '../../i18n/appLabels'
-import type { AthleteLevel } from '../../types/gamification'
-import { LEVEL_THRESHOLDS } from './scoreConstants'
+import type { Lang } from '../../i18n/appLabels.ts'
+import type { AthleteLevel } from '../../types/gamification.ts'
+import { LEVEL_THRESHOLDS } from './scoreConstants.ts'
 
 /**
  * Badges de rigueur.

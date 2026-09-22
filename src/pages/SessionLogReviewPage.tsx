@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { MOTHER_SESSIONS_BY_ID } from '../data/motherSessions.generated'
-import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { HeroCompleted } from '../components/session/blocks/HeroCompleted'
 import { SessionLogReviewBlocks } from '../components/session/SessionLogReviewBlocks'
@@ -92,7 +91,6 @@ export function SessionLogReviewPage() {
             {lang === 'fr' ? 'Retour à la semaine' : 'Back to week'}
           </Link>
         </main>
-        <BottomNav />
       </div>
     )
   }
@@ -179,7 +177,6 @@ export function SessionLogReviewPage() {
         </div>
       </main>
 
-      <BottomNav />
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { Icon, Pill, SectionLabel } from '../ui'
 import { levelLabel } from '../../services/gamification/labels'
 import { buildScoreBreakdownRows } from '../../services/gamification/scoreBreakdownRows'
 import type { LevelProgress } from '../../services/gamification/levels'
+import type { StreakResult } from '../../services/home/computeStreak'
 import type { Lang } from '../../i18n/appLabels'
 import type { GamificationProfile, WeeklyScore } from '../../types/gamification'
 
@@ -12,35 +13,40 @@ export interface RigorScoreCardProps {
   currentWeek: WeeklyScore | null
   levelProgress: LevelProgress
   lang: Lang
+  /**
+   * Cadence 14 j (ex-StreakCard). Fusionnée ici pour une seule composition
+   * « Ta rigueur » : score de conformité + rythme récent.
+   */
+  streak?: StreakResult | null
 }
 
 /**
- * Carte « Score de rigueur » de l'accueil.
+ * Carte « Score de rigueur » de l'accueil — fusion score + cadence.
  *
- * Affiche le détail poste par poste plutôt qu'un total seul : un score opaque
- * ne dit pas à l'athlète quoi faire, alors que « repos prescrit : +10 » lui
- * apprend que le repos rapporte. C'est ce détail qui empêche le système d'être
- * lu comme une prime au volume.
+ * Une seule card (design Claude Design) : points / palier / XP en tête,
+ * puis flamme + caption italic + mini-barres 14 j, puis détail poste par
+ * poste. Le détail empêche de lire le score comme une prime au volume.
  */
 export function RigorScoreCard({
   profile,
   currentWeek,
   levelProgress,
   lang,
+  streak = null,
 }: RigorScoreCardProps) {
-  // Sans profil de gamification ni score, il n'y a rien de vrai à afficher.
-  // On préfère ne rien monter à un état vide décoratif.
-  if (!profile && !currentWeek) return null
+  const hasScore = Boolean(profile || currentWeek)
+  const hasStreak = Boolean(streak)
+  if (!hasScore && !hasStreak) return null
 
   const points = currentWeek?.points ?? 0
   const rows = currentWeek ? buildScoreBreakdownRows(currentWeek, lang) : []
-  const streak = profile?.currentWeekStreak ?? 0
+  const weekStreak = profile?.currentWeekStreak ?? 0
 
   return (
     <section className="px-[22px] pt-6" data-testid="rigor-score-card">
       <SectionLabel label={lang === 'fr' ? 'Ta rigueur' : 'Your rigor'} />
 
-      <div className="mt-3 rounded-[20px] border border-paper-deep bg-paper-soft px-[22px] py-5">
+      <div className="relative mt-3 overflow-hidden rounded-[20px] border-2 border-brand bg-paper-soft px-[22px] py-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-fg/55">
@@ -58,15 +64,15 @@ export function RigorScoreCard({
             <Pill tone="gold" size="sm">
               {levelLabel(levelProgress.level, lang)}
             </Pill>
-            {streak > 0 && (
+            {weekStreak > 0 && (
               <span className="inline-flex items-center gap-1 text-[11px] font-bold text-pro tabular-nums">
                 <Icon name="flame" size={11} strokeWidth={2.4} />
-                {streak}
+                {weekStreak}
                 {lang === 'fr'
-                  ? streak > 1
+                  ? weekStreak > 1
                     ? ' semaines'
                     : ' semaine'
-                  : streak > 1
+                  : weekStreak > 1
                     ? ' weeks'
                     : ' week'}
               </span>
@@ -74,9 +80,6 @@ export function RigorScoreCard({
           </div>
         </div>
 
-        {/* Progression vers le palier suivant. Au dernier niveau, la barre
-            n'a plus de sens : on n'affiche rien plutôt qu'une barre pleine
-            sans horizon. */}
         {levelProgress.nextLevel && levelProgress.xpForLevel != null && (
           <div className="mt-4">
             <div className="flex items-baseline justify-between text-[10px] font-bold text-fg/55">
@@ -104,6 +107,39 @@ export function RigorScoreCard({
           </div>
         )}
 
+        {streak && (
+          <div className="mt-4 border-t border-paper-deep pt-4" data-testid="rigor-cadence">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-pro-soft">
+                <Icon name="flame" size={18} color="var(--color-gold)" strokeWidth={2.2} />
+              </div>
+              <p
+                className="min-w-0 font-serif text-[14.5px] font-medium italic leading-snug text-fg/90 [text-wrap:balance]"
+                aria-label={`${streak.count} ${
+                  streak.count > 1
+                    ? lang === 'fr'
+                      ? 'séances'
+                      : 'sessions'
+                    : lang === 'fr'
+                      ? 'séance'
+                      : 'session'
+                } ${lang === 'fr' ? 'sur 14 jours' : 'in 14 days'}`}
+              >
+                {streak.caption}
+              </p>
+            </div>
+            <div className="mt-3 flex gap-1">
+              {streak.weekHistory.map((on, i) => (
+                <div
+                  key={i}
+                  className={`h-2 flex-1 rounded-sm ${on ? 'bg-brand' : 'bg-paper-deep'}`}
+                  style={on ? { opacity: 0.45 + i * 0.04 } : undefined}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {rows.length > 0 && (
           <ul className="mt-4 space-y-1.5 border-t border-paper-deep pt-3">
             {rows.map((row) => (
@@ -118,8 +154,6 @@ export function RigorScoreCard({
           </ul>
         )}
 
-        {/* Gel des gains en surcharge : on l'explique, sinon l'athlète voit un
-            score amputé sans savoir pourquoi et soupçonne un bug. */}
         {currentWeek?.acwrCapped && (
           <p className="mt-3 flex items-start gap-1.5 text-[11px] leading-relaxed text-warn-body">
             <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-warn" />

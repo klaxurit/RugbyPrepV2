@@ -1,5 +1,5 @@
-import type { LeagueTier } from '../../types/gamification'
-import { LEAGUE_RULES, LEAGUE_TIER_ORDER } from './scoreConstants'
+import type { LeagueTier } from '../../types/gamification.ts'
+import { LEAGUE_RULES, LEAGUE_TIER_ORDER } from './scoreConstants.ts'
 
 /**
  * Appariement des cohortes de ligue hebdomadaires.

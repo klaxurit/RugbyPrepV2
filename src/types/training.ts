@@ -1,5 +1,5 @@
 // src/types/training.ts
-import type { SocialVisibility } from './gamification'
+import type { SocialVisibility } from './gamification.ts'
 
 export type Contra =
   | 'shoulder_pain'

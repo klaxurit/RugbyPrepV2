@@ -1,5 +1,5 @@
-import type { AthleteLevel, LeagueTier } from '../../types/gamification'
-import { LEAGUE_TIER_ORDER, LEVEL_THRESHOLDS } from './scoreConstants'
+import type { AthleteLevel, LeagueTier } from '../../types/gamification.ts'
+import { LEAGUE_TIER_ORDER, LEVEL_THRESHOLDS } from './scoreConstants.ts'
 
 export interface LevelProgress {
   level: AthleteLevel
