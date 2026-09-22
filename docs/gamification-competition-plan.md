@@ -516,11 +516,18 @@ utilisateur authentifié.
 
 ### Reste à faire avant mise en production
 
-- Appliquer les migrations et déployer les trois Edge Functions ; vérifier que
-  `CRON_SHARED_SECRET` est configuré pour les deux crons.
-- Observer les indicateurs d'innocuité du § 9. La formule est le pari du produit :
-  si la part de semaines en ACWR > 1,3 monte après le lancement, c'est le barème
-  qu'il faut revoir, pas l'habillage.
+Voir la checklist opérationnelle :
+[`gamification-prod-launch.md`](./gamification-prod-launch.md).
+
+Résumé :
+
+- [x] Appliquer les migrations et déployer les trois Edge Functions.
+- [ ] Vérifier que `CRON_SHARED_SECRET` est configuré pour les deux crons.
+- [ ] Soft launch + observer les indicateurs d'innocuité du § 9. La formule
+  est le pari du produit : si la part de semaines en ACWR > 1,3 monte après
+  le lancement, c'est le barème qu'il faut revoir, pas l'habillage.
+- [ ] Assets graphiste (second temps) :
+  [`gamification-illustration-brief.md`](./gamification-illustration-brief.md).
 
 ---
 
