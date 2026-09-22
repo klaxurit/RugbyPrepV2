@@ -155,6 +155,7 @@ export const signUp = async ({
     .upsert(
       {
         id: data.session.user.id,
+        display_name: cleanDisplayName || normalizedEmail.split('@')[0] || 'Joueur',
         medical_consent_accepted_at: medicalConsentAcceptedAt,
         newsletter_opt_in: newsletterOptIn,
         newsletter_opted_at: newsletterOptedAt,
