@@ -5,7 +5,7 @@ import type { SocialVisibility } from '../../types/gamification'
 export interface SocialVisibilityPickerProps {
   value: SocialVisibility
   onChange: (next: SocialVisibility) => void
-  /** Nom affiché courant. Sans nom renseigné, l'opt-in n'a aucun effet. */
+  /** Prénom courant. Sans prénom, l'opt-in n'a aucun effet. */
   displayName: string | null
   lang: Lang
 }
@@ -107,8 +107,8 @@ export function SocialVisibilityPicker({
           <Lock className="mt-0.5 h-3 w-3 shrink-0 text-warn" />
           <span>
             {lang === 'fr'
-              ? 'Renseigne ton nom affiché pour apparaître dans les classements. Sans nom, tu restes invisible.'
-              : 'Set your display name to appear in the boards. Without a name, you stay hidden.'}
+              ? 'Indique ton prénom ci-dessus pour apparaître dans les classements.'
+              : 'Add your first name above to appear on the boards.'}
           </span>
         </p>
       )}

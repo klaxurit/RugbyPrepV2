@@ -56,18 +56,18 @@ describe('SocialVisibilityPicker', () => {
     expect(onChange).toHaveBeenCalledWith('cohort')
   })
 
-  it('prévient qu’un opt-in sans nom affiché reste sans effet', () => {
+  it('prévient qu’un opt-in sans prénom reste sans effet', () => {
     render(
       <SocialVisibilityPicker value="club" onChange={vi.fn()} displayName="  " lang="fr" />,
     )
-    expect(screen.getByText(/nom affiché/i)).toBeInTheDocument()
+    expect(screen.getByText(/prénom/i)).toBeInTheDocument()
   })
 
   it('n’affiche pas cet avertissement en mode privé', () => {
     render(
       <SocialVisibilityPicker value="private" onChange={vi.fn()} displayName={null} lang="fr" />,
     )
-    expect(screen.queryByText(/nom affiché/i)).toBeNull()
+    expect(screen.queryByText(/prénom/i)).toBeNull()
   })
 
   it('annonce qu’aucune donnée de santé n’est partagée', () => {

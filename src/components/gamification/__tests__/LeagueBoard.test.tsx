@@ -94,7 +94,7 @@ describe('LeagueBoard', () => {
     expect(container.textContent).not.toMatch(/[−+-]\d+\s*pts/)
   })
 
-  it('ne propose pas de kudos à soi-même', () => {
+  it('ne propose un kudos que pour une séance du jour (pas soi, pas vieux log)', () => {
     render(
       <LeagueBoard
         title="Ligue"
@@ -105,7 +105,9 @@ describe('LeagueBoard', () => {
         emptyLabel=""
       />,
     )
-    expect(screen.getAllByTestId('kudos-button')).toHaveLength(2)
+    // Léo (récence 0) oui ; Anna (soi) non ; Hugo (12 j) non.
+    expect(screen.getAllByTestId('kudos-button')).toHaveLength(1)
+    expect(screen.getByLabelText(/Saluer la séance de Léo Martin/i)).toBeInTheDocument()
   })
 
   it('n’affiche aucun bouton kudos sans gestionnaire (classement en lecture)', () => {
@@ -132,9 +134,8 @@ describe('LeagueBoard', () => {
         emptyLabel=""
       />,
     )
-    const buttons = screen.getAllByTestId('kudos-button')
-    expect(buttons[0]).toBeDisabled()
-    expect(buttons[1]).toBeEnabled()
+    const button = screen.getByTestId('kudos-button')
+    expect(button).toBeDisabled()
   })
 
   it('annonce les seuils uniquement quand des mouvements sont prévus', () => {

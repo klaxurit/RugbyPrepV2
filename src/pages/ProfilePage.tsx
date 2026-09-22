@@ -944,7 +944,7 @@ export function ProfilePage() {
               htmlFor="profile-display-name"
               className="text-xs font-bold text-fg-soft uppercase tracking-wider"
             >
-              {lang === 'fr' ? 'Nom affiché' : 'Display name'}
+              {lang === 'fr' ? 'Prénom' : 'First name'}
             </label>
             <input
               id="profile-display-name"
@@ -953,14 +953,14 @@ export function ProfilePage() {
               value={profile.displayName ?? ''}
               onChange={(e) => updateProfile({ displayName: e.target.value })}
               maxLength={40}
-              autoComplete="nickname"
+              autoComplete="given-name"
               placeholder={lang === 'fr' ? 'Ex. Jean' : 'e.g. Jean'}
               className="w-full h-12 rounded-2xl border-2 border-border-app bg-layer-6 px-4 text-sm text-fg placeholder:text-fg-faint rf-focus-ring transition-colors"
             />
             <p className="text-[11px] leading-relaxed text-fg-muted">
               {lang === 'fr'
-                ? 'C’est le prénom / pseudo que voient tes coéquipiers dans les classements. Obligatoire pour apparaître.'
-                : 'First name / nickname teammates see on the boards. Required to appear.'}
+                ? 'Celui de l’inscription — visible dans les classements. Change-le seulement si tu veux.'
+                : 'From signup — shown on the boards. Change only if you want.'}
             </p>
           </div>
 

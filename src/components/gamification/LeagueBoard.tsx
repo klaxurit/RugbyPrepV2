@@ -40,7 +40,7 @@ export interface LeagueBoardProps {
  *
  *  1. Totaux seulement, jamais d'écarts (« −40 pts »).
  *  2. Logo club + indice de forme SVG (enchaîne / en pause) à côté du pseudo.
- *  3. Kudos sur chaque ligne (sauf soi).
+ *  3. Kudos uniquement sur une séance **du jour** (récence 0), sauf soi.
  */
 export function LeagueBoard({
   title,
@@ -168,7 +168,9 @@ export function LeagueBoard({
                   {entry.points}
                 </span>
 
-                {onGiveKudos && !entry.isSelf && (
+                {onGiveKudos &&
+                  !entry.isSelf &&
+                  entry.daysSinceLastSession === 0 && (
                   <button
                     type="button"
                     data-testid="kudos-button"

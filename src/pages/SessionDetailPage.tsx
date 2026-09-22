@@ -24,6 +24,8 @@ import { useWeekSnapshotConfirmationSheet } from '../hooks/useWeekSnapshotConfir
 import { useAuth } from '../hooks/useAuth'
 import { useExerciseSetLogs } from '../hooks/useExerciseSetLogs'
 import { useBlockLogs } from '../hooks/useBlockLogs'
+import { useGamification } from '../hooks/useGamification'
+import { buildRecomputePayload } from '../services/gamification/buildRecomputePayload'
 import { mergeExerciseHistoryLogs } from '../services/session/mergeExerciseHistoryLogs'
 import { flushSessionExerciseSets } from '../services/session/flushSessionExerciseSets'
 import { buildSlotSignature } from '../services/motherSession/slotSignature'
@@ -200,6 +202,7 @@ export function SessionDetailPage() {
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
+  const { recompute } = useGamification(today)
   const nextMatchDate = useMemo(() => {
     const fm = structuralEvents
       .filter((e) => e.type === 'match' && e.date >= today)
@@ -1154,7 +1157,9 @@ export function SessionDetailPage() {
       }
 
       const log = buildMotherSessionProgramSessionLog({
-        dateISO: new Date().toISOString(),
+        // Jour calendaire (YYYY-MM-DD), pas un timestamp : le score de
+        // conformité rattache la séance au plan du jour.
+        dateISO: today,
         fatigue: payload.fatigue,
         notes: noteText,
         rpe: payload.rpe,
@@ -1169,6 +1174,25 @@ export function SessionDetailPage() {
       if (savedLog?.id && slotSignature) {
         await linkToSessionLog(slotSignature, savedLog.id)
       }
+
+      // Recalcul immédiat : sinon le classement reste à 0 tant qu’on n’a pas
+      // rouvré l’Accueil (seul endroit qui déclenchait recompute).
+      const presentationSessions = snapshot?.presentation?.sessions ?? []
+      const loggedDates = [...logs.map((l) => l.dateISO), today]
+      void recompute(
+        buildRecomputePayload({
+          todayISO: today,
+          weekSessions: presentationSessions
+            .filter(
+              (s): s is Extract<typeof s, { kind: 'dated' }> => s.kind === 'dated',
+            )
+            .map((s) => ({ dayOfWeek: s.dayOfWeek })),
+          events: structuralEvents,
+          isDeloadWeek: surface.planningContext.isDeloadWeek === true,
+          weeklySessions: profile.weeklySessions,
+          loggedDatesISO: loggedDates,
+        }),
+      )
 
       // Snapshot avant stop() — stop vide exerciseTourLoads / completedExercises.
       const loadsSnapshot = { ...sessionRun.exerciseTourLoads }
