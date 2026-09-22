@@ -1,17 +1,14 @@
 import type { ReactNode } from 'react'
 import { Heart, Minus, TrendingDown, TrendingUp } from 'lucide-react'
-import { Icon, SectionLabel } from '../ui'
+import { SectionLabel } from '../ui'
 import { ClubAvatar } from '../match/ClubAvatar'
-import { LeagueCrest } from './LeagueCrest'
+import { LeagueCrest, FormCueIcon } from './LeagueCrest'
 import {
   leagueTierDivisionLabel,
   leagueTierLabel,
   levelLabel,
 } from '../../services/gamification/labels'
-import {
-  formCueAriaLabel,
-  formCueIconName,
-} from '../../services/gamification/badgeIcon'
+import { formCueAriaLabel } from '../../services/gamification/badgeIcon'
 import { formCueForEntry } from '../../services/gamification/rankLeaderboard'
 import type { Lang } from '../../i18n/appLabels'
 import type { LeaderboardEntry, LeagueTier } from '../../types/gamification'
@@ -126,14 +123,12 @@ export function LeagueBoard({
                     <span className="truncate">{entry.displayName}</span>
                     {formCue && (
                       <span
-                        className={`inline-flex shrink-0 ${
-                          formCue === 'hot' ? 'text-pro' : 'text-fg/45'
-                        }`}
+                        className="inline-flex shrink-0"
                         aria-label={formCueAriaLabel(formCue, lang)}
                         data-testid="league-form-cue"
                         data-form-cue={formCue}
                       >
-                        <Icon name={formCueIconName(formCue)} size={12} strokeWidth={2.2} />
+                        <FormCueIcon cue={formCue} size={14} />
                       </span>
                     )}
                     {entry.isSelf && (

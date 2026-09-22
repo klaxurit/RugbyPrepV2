@@ -5,12 +5,12 @@ export {
 } from './GamificationIntroSheet'
 export { SocialNudgeHost, type SocialNudgeHostProps } from './SocialNudgeHost'
 export { LeagueBoard, type LeagueBoardProps } from './LeagueBoard'
-export { LeagueCrest } from './LeagueCrest'
+export { LeagueCrest, FormCueIcon } from './LeagueCrest'
 export {
   EmptyArtInvite,
   EmptyArtPendingMonday,
   EmptyArtPrivateLock,
-} from './SquadEmptyArt'
+} from './LeagueCrest'
 export { ClubChallengeCard, type ClubChallengeCardProps } from './ClubChallengeCard'
 export { DuelsSection, type DuelsSectionProps } from './DuelsSection'
 export { RigorBadgesStrip, type RigorBadgesStripProps } from './RigorBadgesStrip'
