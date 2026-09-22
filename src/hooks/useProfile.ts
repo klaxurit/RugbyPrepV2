@@ -221,6 +221,7 @@ type ProfileRow = {
   performance_focus: UserProfile['performanceFocus'] | null
   preferred_language: string | null
   display_name: string | null
+  social_visibility: string | null
   population_segment: UserProfile['populationSegment'] | null
   age_band: UserProfile['ageBand'] | null
   parental_consent_health_data: boolean | null
@@ -288,6 +289,10 @@ export const rowToProfile = (row: ProfileRow): UserProfile => {
     performanceFocus: (row.performance_focus as PerformanceFocus | null) ?? undefined,
     preferredLanguage: (row.preferred_language as 'fr' | 'en' | null) ?? 'fr',
     displayName: row.display_name?.trim() || undefined,
+    socialVisibility:
+      row.social_visibility === 'club' || row.social_visibility === 'cohort'
+        ? row.social_visibility
+        : 'private',
     populationSegment: (row.population_segment as PopulationSegment | null) ?? undefined,
     ageBand: row.age_band ?? undefined,
     parentalConsentHealthData: row.parental_consent_health_data ?? undefined,
@@ -347,6 +352,7 @@ export const profileToRow = (profile: UserProfile, userId: string) => ({
   performance_focus: profile.performanceFocus ?? null,
   preferred_language: profile.preferredLanguage ?? 'fr',
   display_name: profile.displayName?.trim() || null,
+  social_visibility: profile.socialVisibility ?? 'private',
   population_segment: profile.populationSegment ?? null,
   age_band: profile.ageBand ?? null,
   parental_consent_health_data: profile.parentalConsentHealthData ?? null,
@@ -495,7 +501,7 @@ export const useProfileSource = () => {
     supabase
       .from('profiles')
       .select(
-        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, display_name, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state, newsletter_opt_in, newsletter_opted_at, newsletter_opt_in_source, password_needs_upgrade'
+        'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, display_name, social_visibility, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state, newsletter_opt_in, newsletter_opted_at, newsletter_opt_in_source, password_needs_upgrade'
       )
       .eq('id', userId)
       .single()

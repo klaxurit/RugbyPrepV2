@@ -8,7 +8,6 @@ import {
   type SortKey,
   type StaffRosterFilters,
 } from '../components/staffPlanning/staffRosterModel'
-import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { useSquadWeeklyOverview } from '../hooks/useSquadWeeklyOverview'
 import { useStaffCoachAccess } from '../hooks/useStaffCoachAccess'
@@ -166,7 +165,6 @@ export function StaffClubPage() {
         theme="app"
       />
 
-      <BottomNav />
     </div>
   )
 }

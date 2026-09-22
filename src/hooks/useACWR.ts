@@ -14,10 +14,11 @@
  * Source : Hulin B.T. et al. (2016). BJSM, 50(4), 231-236.
  */
 import { useMemo } from 'react'
+import type { ACWRZone } from '../types/acwr'
 import type { CalendarEvent, SessionLog } from '../types/training'
 import { RULE_CONSTANTS_V1 } from '../services/program/policies/ruleConstants.v1'
 
-export type ACWRZone = 'underload' | 'optimal' | 'caution' | 'danger' | 'critical'
+export type { ACWRZone } from '../types/acwr'
 
 export interface ACWRResult {
   acwr: number | null      // null si pas assez de données

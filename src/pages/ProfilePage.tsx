@@ -3,8 +3,9 @@ import { useMemo, useRef, useState, useEffect } from 'react'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity } from 'lucide-react'
+import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Users } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
+import { SocialVisibilityPicker } from '../components/gamification'
 import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
 import { FormeDuMomentSection } from '../components/profile/FormeDuMomentSection'
 import { MaSituationSection } from '../components/profile/MaSituationSection'
@@ -24,7 +25,6 @@ import { useFoundingCohortAvailability } from '../hooks/useFoundingCohortAvailab
 import { useUpsellTiming, isDismissed, dismissUpsell } from '../hooks/useUpsellTiming'
 import { useNotifications } from '../hooks/useNotifications'
 import { useIsAdmin } from '../hooks/useIsAdmin'
-import { BottomNav } from '../components/BottomNav'
 import { useCalendar } from '../hooks/useCalendar'
 import { useFatigue } from '../hooks/useFatigue'
 import { useACWR } from '../hooks/useACWR'
@@ -915,6 +915,63 @@ export function ProfilePage() {
           )}
         </CollapsibleSection>
 
+        {/* Visibilité sociale — consentement propre, distinct de la visibilité
+            staff et du consentement santé. Ancre `#social` pour les liens
+            venant de la page Groupe. */}
+        <section
+          id="social"
+          data-testid="profile-section-social"
+          className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4 scroll-mt-24"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-2xl bg-brand-soft text-brand-tint border border-brand-border">
+              <Users className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-fg">
+                {lang === 'fr' ? 'Visibilité entre athlètes' : 'Athlete visibility'}
+              </h2>
+              <p className="text-xs text-fg-muted">
+                {lang === 'fr'
+                  ? 'Ce que tes coéquipiers peuvent voir de ta rigueur.'
+                  : 'What teammates can see of your rigor.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label
+              htmlFor="profile-display-name"
+              className="text-xs font-bold text-fg-soft uppercase tracking-wider"
+            >
+              {lang === 'fr' ? 'Prénom' : 'First name'}
+            </label>
+            <input
+              id="profile-display-name"
+              type="text"
+              data-testid="profile-display-name"
+              value={profile.displayName ?? ''}
+              onChange={(e) => updateProfile({ displayName: e.target.value })}
+              maxLength={40}
+              autoComplete="given-name"
+              placeholder={lang === 'fr' ? 'Ex. Jean' : 'e.g. Jean'}
+              className="w-full h-12 rounded-2xl border-2 border-border-app bg-layer-6 px-4 text-sm text-fg placeholder:text-fg-faint rf-focus-ring transition-colors"
+            />
+            <p className="text-[11px] leading-relaxed text-fg-muted">
+              {lang === 'fr'
+                ? 'Celui de l’inscription — visible dans les classements. Change-le seulement si tu veux.'
+                : 'From signup — shown on the boards. Change only if you want.'}
+            </p>
+          </div>
+
+          <SocialVisibilityPicker
+            value={profile.socialVisibility ?? 'private'}
+            onChange={(next) => updateProfile({ socialVisibility: next })}
+            displayName={profile.displayName ?? null}
+            lang={lang}
+          />
+        </section>
+
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-5 space-y-4">
           <div>
             <p className="text-sm font-black text-fg">{tr('profile_section_account', lang)}</p>
@@ -1098,7 +1155,6 @@ export function ProfilePage() {
         <p className="text-[10px] text-fg-ghost">RugbyForge v1.0</p>
       </footer>
 
-      <BottomNav />
     </div>
   )
 }

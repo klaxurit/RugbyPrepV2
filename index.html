@@ -48,18 +48,18 @@
       href="/fonts/gontserrat-regular.woff2"
       crossorigin="anonymous"
     />
-    <!-- Preload du LCP hero (mockup téléphone rugbyforge_home_game) — gain ~1.5s LCP mobile -->
+    <!-- Preload du LCP hero (WebP ~170 Ko vs PNG 1.7 Mo) -->
     <link
       rel="preload"
       as="image"
-      type="image/png"
-      href="/images/landing/rugbyforge_home_game.png"
+      type="image/webp"
+      href="/images/landing/rugbyforge_home_game.webp"
       fetchpriority="high"
     />
     <!-- Réserve la zone du hero React pour limiter le CLS pendant l'hydration -->
     <style>
       #root {
-        min-height: 100vh;
+        min-height: 100dvh;
         background-color: #f5f2ee;
       }
     </style>
@@ -174,7 +174,7 @@
             "name": "RugbyForge",
             "url": "https://rugbyforge.fr/",
             "applicationCategory": "HealthApplication",
-            "operatingSystem": "Web",
+            "operatingSystem": "Android, Web",
             "inLanguage": "fr",
             "description": "Application web progressive de préparation physique rugby avec programmes personnalisés par poste et niveau, suivi ACWR, tests physiques et prévention blessures.",
             "screenshot": "https://rugbyforge.fr/images/landing/app-week.webp",
@@ -356,7 +356,7 @@
             semaine après semaine, sans devoir copier un modèle professionnel
             impossible à tenir en club.
           </p>
-          <div>
+          <div
             style="
               display: grid;
               grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

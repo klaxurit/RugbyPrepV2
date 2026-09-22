@@ -30,6 +30,18 @@ export type IconName =
   | 'rugby-ball'
   | 'heart'
   | 'eye'
+  /** Forme classement : enchaîne (remplace 🔥). */
+  | 'form-hot'
+  /** Forme classement : en pause (remplace 💤). */
+  | 'form-dormant'
+  /** Famille badge : plan tenu. */
+  | 'badge-plan'
+  /** Famille badge : streak semaines. */
+  | 'badge-streak'
+  /** Famille badge : décharge respectée. */
+  | 'badge-deload'
+  /** Famille badge : palier athlète. */
+  | 'badge-level'
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name' | 'stroke'> {
   name: IconName
@@ -270,6 +282,60 @@ export function Icon({
         <svg {...common}>
           <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
           <circle cx="12" cy="12" r="3" />
+        </svg>
+      )
+    case 'form-hot':
+      // Flamme seule — lisible à 24 px (planche Design V2).
+      return (
+        <svg {...common}>
+          <path d="M12 21c3.5 0 6-2.4 6-5.6 0-2.8-1.6-4.4-3.2-5.8-.4 2.2-1.6 3.2-2.8 3.2 0-2.4 1.2-4.4 2.4-6.2-3.2 1-6.4 3.8-6.4 8.8 0 3.2 2.5 5.6 4 5.6z" />
+        </svg>
+      )
+    case 'form-dormant':
+      // Lune seule — le banc se lisait comme un crochet à 24 px.
+      return (
+        <svg {...common}>
+          <path d="M15.5 4.2a6.2 6.2 0 1 0 4.3 10.6A5.2 5.2 0 1 1 15.5 4.2z" />
+        </svg>
+      )
+    case 'badge-plan':
+      // Semaine tenue : calendrier + check.
+      return (
+        <svg {...common}>
+          <rect x="3" y="5" width="18" height="16" rx="2" />
+          <path d="M3 10h18" />
+          <path d="M8 3v4" />
+          <path d="M16 3v4" />
+          <path d="M8.5 15.5l2.2 2.2 4.8-5" />
+        </svg>
+      )
+    case 'badge-streak':
+      // Chaîne de semaines : maillons + flamme courte.
+      return (
+        <svg {...common}>
+          <path d="M8 10a3 3 0 0 1 0-6h2a3 3 0 0 1 0 6" />
+          <path d="M14 20a3 3 0 0 1 0-6h2a3 3 0 0 1 0 6" />
+          <path d="M10 7h4" />
+          <path d="M10 17h4" />
+        </svg>
+      )
+    case 'badge-deload':
+      // Décharge assumée : feuille + pause.
+      return (
+        <svg {...common}>
+          <path d="M6 14c0-5 4-9 10-10-1 6-4 10-10 10z" />
+          <path d="M6 14c2-1 4-3 5-6" />
+          <path d="M15 17v4" />
+          <path d="M18 17v4" />
+        </svg>
+      )
+    case 'badge-level':
+      // Palier : brassard capitaine stylisé.
+      return (
+        <svg {...common}>
+          <path d="M4 9h16v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9z" />
+          <path d="M4 9l2-4h12l2 4" />
+          <path d="M12 12.2l.9 1.8 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2-1.5-1.4 2-.3.9-1.8z" />
         </svg>
       )
   }

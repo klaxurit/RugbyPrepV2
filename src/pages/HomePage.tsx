@@ -1,6 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { posthog } from '../services/analytics/posthog'
 import { AlertTriangle } from 'lucide-react'
@@ -8,16 +7,25 @@ import { Icon } from '../components/ui'
 import {
   HeroDayAfter,
   HeroNormal,
-  StreakCard,
   NextMatchEditorialCard,
-  BadgesStrip,
   PlayoffsThinBanner,
   fatigueToMood,
   moodToFatigue,
   type HeroMood,
 } from '../components/home'
+import {
+  GamificationIntroSheet,
+  RigorBadgesStrip,
+  RigorScoreCard,
+  SocialNudgeHost,
+} from '../components/gamification'
 import { useProfile } from '../hooks/useProfile'
 import { useFatigue } from '../hooks/useFatigue'
+import { useGamification } from '../hooks/useGamification'
+import { useHintVisibility } from '../hooks/useHintVisibility'
+import { useSocialNudges } from '../hooks/useSocialNudges'
+import { useSessionRun } from '../contexts/SessionRunContext'
+import { buildRecomputePayload } from '../services/gamification/buildRecomputePayload'
 import { useWeek } from '../hooks/useWeek'
 import { useHistory } from '../hooks/useHistory'
 import { useAuth } from '../hooks/useAuth'
@@ -31,6 +39,7 @@ import { useAthleteTests } from '../hooks/useAthleteTests'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { ScoreDeFormeTeaser } from '../components/ScoreDeFormeTeaser'
 import { ScoreDeFormeCard } from '../components/ScoreDeFormeCard'
+import { ReadinessScoreSkeleton, RigorScoreSkeleton } from '../components/SkeletonCard'
 import { SeasonTransitionBanner, SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSeasonTransitions } from '../hooks/useSeasonTransitions'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
@@ -45,7 +54,6 @@ import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 import { useRegisterCoachContext } from '../contexts/CoachContext'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 import { computeStreak } from '../services/home/computeStreak'
-import { computeMilestones } from '../services/home/computeMilestones'
 import { selectCoachInsight } from '../services/home/coachInsights'
 import { resolveFatigueLevel } from '../services/program/resolveFatigueLevel'
 import { computePillars } from '../services/home/computePillars'
@@ -362,12 +370,65 @@ export function HomePage() {
     seasonEnded: Boolean(profile.planningAnchors?.seasonEndedAt),
   })
 
-  // ── Streak + Milestones ──
+  // ── Streak (cadence 14 j, fusionnée dans RigorScoreCard) ──
   const streak = useMemo(() => computeStreak(logs, today), [logs, today])
-  const milestones = useMemo(
-    () => computeMilestones({ logs, todayISO: today }),
-    [logs, today],
+
+  // ── Gamification : score de rigueur + nudges sociaux ──
+  const {
+    profile: gamificationProfile,
+    currentWeek: gamificationWeek,
+    levelProgress,
+    badges: rigorBadges,
+    loading: gamificationLoading,
+    recompute,
+  } = useGamification(today)
+  const {
+    candidates: nudgeCandidates,
+    consumedThisWeek: nudgesShownThisWeek,
+    consume: consumeNudge,
+  } = useSocialNudges(lang)
+  const {
+    visible: gamificationIntroVisible,
+    dismiss: dismissGamificationIntro,
+    loading: gamificationIntroLoading,
+  } = useHintVisibility('gamification_intro_v1')
+  const showGamificationIntro = gamificationIntroVisible && !gamificationIntroLoading
+  const { status: sessionRunStatus } = useSessionRun()
+  // Horodatage figé au montage : recalculé à chaque rendu, il ferait repasser
+  // `selectNudge` en boucle sans jamais changer de résultat.
+  const nudgeNowISO = useMemo(() => new Date().toISOString(), [])
+
+  const recomputeRequest = useMemo(
+    () =>
+      buildRecomputePayload({
+        todayISO: today,
+        weekSessions:
+          weekPresentation?.mode === 'calendar'
+            ? weekPresentation.sessions
+                .filter(
+                  (s): s is import('../types/scheduling').DatedSession =>
+                    s.kind === 'dated',
+                )
+                .map((s) => ({ dayOfWeek: s.dayOfWeek }))
+            : [],
+        events: structuralEvents,
+        isDeloadWeek: surface?.planningContext?.isDeloadWeek === true,
+        weeklySessions: profile.weeklySessions,
+        loggedDatesISO: logs.map((log) => log.dateISO),
+      }),
+    [today, weekPresentation, structuralEvents, surface?.planningContext?.isDeloadWeek, profile.weeklySessions, logs],
   )
+
+  // Un seul recalcul par état réel : la signature ne bouge qu'au changement de
+  // plan ou d'historique de la semaine. Sans ce garde, chaque rendu de
+  // l'accueil déclencherait un appel serveur.
+  const lastRecomputedSignature = useRef<string | null>(null)
+  useEffect(() => {
+    if (!userId) return
+    if (lastRecomputedSignature.current === recomputeRequest.signature) return
+    lastRecomputedSignature.current = recomputeRequest.signature
+    void recompute(recomputeRequest)
+  }, [userId, recomputeRequest, recompute])
 
   // ── Score Premium : insight + pillars + sparkline 7j ──
   const coachInsight = useMemo(
@@ -559,8 +620,18 @@ export function HomePage() {
           )}
         </div>
 
-        {/* ─── Streak ─── */}
-        <StreakCard streak={streak} />
+        {/* ─── Rigueur : score conformité + cadence (fusion Design) ─── */}
+        {gamificationLoading ? (
+          <RigorScoreSkeleton />
+        ) : (
+          <RigorScoreCard
+            profile={gamificationProfile}
+            currentWeek={gamificationWeek}
+            levelProgress={levelProgress}
+            streak={streak}
+            lang={lang}
+          />
+        )}
 
         {/* ─── Prochain match (éditorial) ─── */}
         {nextMatch && daysUntilNextMatch != null && daysUntilNextMatch <= 30 && (
@@ -573,11 +644,16 @@ export function HomePage() {
           </div>
         )}
 
-        {/* ─── Jalons / Badges ─── */}
-        <BadgesStrip milestones={milestones} />
+        {/* ─── Jalons de rigueur (conformité, pas volume) ─── */}
+        {!gamificationLoading && rigorBadges.length > 0 && (
+          <div className="px-[22px] pt-6">
+            <RigorBadgesStrip badges={rigorBadges} lang={lang} />
+          </div>
+        )}
 
         {/* ─── Score de forme (free → teaser flouté · premium → vraie card) ─── */}
         <div className="px-[22px] pt-6">
+          {!premiumResolved && <ReadinessScoreSkeleton />}
           {premiumResolved && !isPremium && <ScoreDeFormeTeaser />}
           {premiumResolved && isPremium && (
             <ScoreDeFormeCard
@@ -846,7 +922,30 @@ export function HomePage() {
         </div>
       </main>
 
-      <BottomNav />
+
+      <GamificationIntroSheet
+        open={showGamificationIntro}
+        onClose={dismissGamificationIntro}
+        lang={lang}
+      />
+
+      {/* Pop-up sociale : au plus une par ouverture, jamais pendant une séance
+          ni par-dessus un overlay bloquant (cf. `selectNudge`). */}
+      <SocialNudgeHost
+        candidates={nudgeCandidates}
+        nudgesShownThisWeek={nudgesShownThisWeek}
+        isSessionRunning={sessionRunStatus === 'running'}
+        hasBlockingOverlay={
+          showGamificationIntro ||
+          hasConfirmationRequired ||
+          seasonTransition != null ||
+          schedulingTransition != null
+        }
+        nowISO={nudgeNowISO}
+        lang={lang}
+        onConsume={consumeNudge}
+      />
+
       <MatchEditDrawer
         event={drawerMatch}
         onClose={() => setDrawerMatch(null)}

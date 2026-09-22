@@ -21,7 +21,6 @@ import { getToday } from '../services/ui/debugDateOverride'
 import { supabase } from '../services/supabase/client'
 import { FunctionsHttpError } from '@supabase/functions-js'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
-import { BottomNav } from '../components/BottomNav'
 import { tr, type Lang } from '../i18n/appLabels'
 
 // ─── Types ────────────────────────────────────────────────────
@@ -508,7 +507,6 @@ export function ChatPage() {
         </p>
       </div>
 
-      <BottomNav />
     </div>
   )
 }

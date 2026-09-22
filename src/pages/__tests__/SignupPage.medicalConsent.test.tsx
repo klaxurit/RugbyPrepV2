@@ -132,4 +132,26 @@ describe('SignupPage — WS9 medical consent hard gate', () => {
     expect(signUpMock).toHaveBeenCalledTimes(1)
     expect(signUpMock.mock.calls[0]![0].newsletterOptIn).toBe(true)
   })
+
+  it('redirige vers login quand la confirmation email est requise', async () => {
+    signUpMock.mockResolvedValueOnce({ ok: false, error: 'EMAIL_CONFIRMATION_REQUIRED' })
+
+    render(
+      <MemoryRouter initialEntries={['/auth/signup']}>
+        <Routes>
+          <Route path="/auth/signup" element={<SignupPage />} />
+          <Route
+            path="/auth/login"
+            element={<div data-testid="login-page">Login</div>}
+          />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fillForm({ age: true, medical: true })
+    fireEvent.click(screen.getByRole('button', { name: /Créer mon compte/i }))
+
+    await screen.findByTestId('login-page')
+    expect(screen.getByTestId('login-page')).toBeInTheDocument()
+  })
 })

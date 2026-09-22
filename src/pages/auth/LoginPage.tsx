@@ -13,6 +13,8 @@ interface RedirectState {
     pathname?: string
     search?: string
   }
+  /** Compte créé, confirmation email requise — message sur la page login. */
+  justSignedUp?: boolean
 }
 
 const authErrorLabel: Record<AuthError, string> = {
@@ -38,6 +40,7 @@ export function LoginPage() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const justSignedUp = Boolean(state?.justSignedUp)
 
   const redirectPath = useMemo(() => {
     const raw = state?.from?.pathname
@@ -127,6 +130,18 @@ export function LoginPage() {
               onVerify={(token) => setCaptchaToken(token)}
               onExpire={() => setCaptchaToken(null)}
             />
+
+            {justSignedUp && !error && (
+              <div
+                data-testid="login-just-signed-up"
+                className="p-3.5 bg-ok-bg-muted border border-ok-bd rounded-2xl"
+              >
+                <p className="text-xs text-ok font-medium">
+                  Compte créé ! Vérifie ton email pour confirmer ton inscription,
+                  puis connecte-toi ici.
+                </p>
+              </div>
+            )}
 
             {error && (
               <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">
