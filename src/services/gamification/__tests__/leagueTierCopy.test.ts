@@ -5,6 +5,7 @@ import {
   leagueTierLabel,
 } from '../labels'
 import {
+  leagueCountdownLabel,
   leagueDeloadFreezeBody,
   leagueHoldBody,
   leaguePromotionBody,
@@ -42,5 +43,11 @@ describe('leagueTierCopy', () => {
     expect(leagueHoldBody('elite', 'fr')).toMatch(/sommet/i)
     expect(leagueHoldBody('premiere', 'fr')).toMatch(/Titulaires/)
     expect(leagueDeloadFreezeBody('fr')).toMatch(/gelée/i)
+  })
+
+  it('formule le countdown fin de ligue', () => {
+    expect(leagueCountdownLabel(7, 'fr')).toBe('Fin de ligue dans 7 j')
+    expect(leagueCountdownLabel(1, 'fr')).toBe('Fin de ligue demain')
+    expect(leagueCountdownLabel(1, 'en')).toBe('League ends tomorrow')
   })
 })

@@ -102,3 +102,19 @@ export function leagueDeloadFreezeBody(lang: Lang): string {
     ? 'Semaine de décharge respectée : ta place est gelée.'
     : 'Deload week respected: your place is frozen.'
 }
+
+/**
+ * Countdown fin de ligue — `days` = résultat de `daysUntilNextWeekStart`.
+ * 1 → demain ; 7 → semaine pleine.
+ */
+export function leagueCountdownLabel(days: number, lang: Lang): string {
+  const n = Math.max(0, Math.trunc(days))
+  if (lang === 'fr') {
+    if (n <= 0) return 'Fin de ligue aujourd’hui'
+    if (n === 1) return 'Fin de ligue demain'
+    return `Fin de ligue dans ${n} j`
+  }
+  if (n <= 0) return 'League ends today'
+  if (n === 1) return 'League ends tomorrow'
+  return `League ends in ${n} days`
+}

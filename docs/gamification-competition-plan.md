@@ -505,11 +505,10 @@ utilisateur authentifié.
   mais rien n'est poussé hors de l'app. Le § 5 fixe un budget d'interruption ; y
   ajouter du push avant d'avoir observé la réaction aux nudges in-app revient à
   parier sur le canal le plus intrusif en premier. `sw.ts` est inchangé.
-- **`BadgesStrip` de l'accueil inchangé.** Ses jalons existants sont indexés sur le
-  volume (« 10 séances », « 25 h cumulées »), ce qui contredit le § 3. Les jalons de
-  conformité sont livrés à côté, sur `/squad`, via `RigorBadgesStrip`. Harmoniser les
-  deux demande un arbitrage produit : remplacer des badges déjà acquis par des
-  athlètes n'est pas une décision technique.
+- **`BadgesStrip` volume retiré de l’accueil.** Les jalons de conformité
+  (`RigorBadgesStrip`) sont sur Accueil et `/squad`. `BadgesStrip` /
+  `computeMilestones` restent dans le code pour un éventuel écran Historique,
+  mais ne contredisent plus le § 3 sur la home.
 - **Kudos sans identifiant de séance côté client.** La RPC `give_kudos` choisit
   elle-même la séance saluée, pour ne jamais exposer d'identifiant de `session_logs`
   d'un coéquipier.

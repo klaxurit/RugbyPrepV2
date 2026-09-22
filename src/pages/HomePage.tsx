@@ -8,7 +8,6 @@ import {
   HeroDayAfter,
   HeroNormal,
   NextMatchEditorialCard,
-  BadgesStrip,
   PlayoffsThinBanner,
   fatigueToMood,
   moodToFatigue,
@@ -16,6 +15,7 @@ import {
 } from '../components/home'
 import {
   GamificationIntroSheet,
+  RigorBadgesStrip,
   RigorScoreCard,
   SocialNudgeHost,
 } from '../components/gamification'
@@ -54,7 +54,6 @@ import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 import { useRegisterCoachContext } from '../contexts/CoachContext'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 import { computeStreak } from '../services/home/computeStreak'
-import { computeMilestones } from '../services/home/computeMilestones'
 import { selectCoachInsight } from '../services/home/coachInsights'
 import { resolveFatigueLevel } from '../services/program/resolveFatigueLevel'
 import { computePillars } from '../services/home/computePillars'
@@ -371,18 +370,15 @@ export function HomePage() {
     seasonEnded: Boolean(profile.planningAnchors?.seasonEndedAt),
   })
 
-  // ── Streak + Milestones ──
+  // ── Streak (cadence 14 j, fusionnée dans RigorScoreCard) ──
   const streak = useMemo(() => computeStreak(logs, today), [logs, today])
-  const milestones = useMemo(
-    () => computeMilestones({ logs, todayISO: today }),
-    [logs, today],
-  )
 
   // ── Gamification : score de rigueur + nudges sociaux ──
   const {
     profile: gamificationProfile,
     currentWeek: gamificationWeek,
     levelProgress,
+    badges: rigorBadges,
     loading: gamificationLoading,
     recompute,
   } = useGamification(today)
@@ -648,8 +644,12 @@ export function HomePage() {
           </div>
         )}
 
-        {/* ─── Jalons / Badges ─── */}
-        <BadgesStrip milestones={milestones} />
+        {/* ─── Jalons de rigueur (conformité, pas volume) ─── */}
+        {!gamificationLoading && rigorBadges.length > 0 && (
+          <div className="px-[22px] pt-6">
+            <RigorBadgesStrip badges={rigorBadges} lang={lang} />
+          </div>
+        )}
 
         {/* ─── Score de forme (free → teaser flouté · premium → vraie card) ─── */}
         <div className="px-[22px] pt-6">

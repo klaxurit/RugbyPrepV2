@@ -110,10 +110,10 @@ Sans attendre le graphiste, livrer le ressenti « feature finie » :
 |---|---|---|
 | P0 | Remplacer 🔥/💤 par 2 pictos SVG brand (`Icon` ou assets) | **Fait** (`form-hot` / `form-dormant`) |
 | P0 | Mapping badgeId → picto distinct (même Lucide différencié en interim) | **Fait** (4 familles `badge-*`) |
-| P1 | Empty states illustrés (solo / pending lundi / private) — placeholder SVG simple | M |
-| P1 | Countdown « fin de ligue » (jours restants jusqu’au lundi) | S |
-| P1 | Harmoniser Home `BadgesStrip` (volume) vs `RigorBadgesStrip` — arbitrage produit | M |
-| P2 | Crests de paliers ligue (Réserve…Élite) | attendre brief graphiste |
+| P1 | Empty states illustrés (solo / pending lundi / private) — placeholder SVG simple | **Fait** (SVG) |
+| P1 | Countdown « fin de ligue » (jours restants jusqu’au lundi) | **Fait** |
+| P1 | Harmoniser Home `BadgesStrip` (volume) vs `RigorBadgesStrip` — arbitrage produit | **Fait** (Accueil = rigueur uniquement) |
+| P2 | Crests de paliers ligue (Réserve…Élite) | **Fait** (`assets/divisions/` SVG) |
 | P2 | Push nudges sociaux | **non** avant observation in-app |
 
 ### Phase 3 — Annonce / store

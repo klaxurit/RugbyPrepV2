@@ -8,6 +8,8 @@ import {
   leagueTierLabel,
   levelLabel,
 } from '../../services/gamification/labels'
+import { leagueCountdownLabel } from '../../services/gamification/leagueTierCopy'
+import { daysUntilNextWeekStart } from '../../services/gamification/weekStart'
 import { formCueAriaLabel } from '../../services/gamification/badgeIcon'
 import { formCueForEntry } from '../../services/gamification/rankLeaderboard'
 import type { Lang } from '../../i18n/appLabels'
@@ -28,6 +30,8 @@ export interface LeagueBoardProps {
   emptyLabel: string
   /** Illustration optionnelle au-dessus / à la place du texte vide. */
   emptyArt?: ReactNode
+  /** Jour courant (YYYY-MM-DD) pour le countdown fin de ligue. */
+  todayISO?: string
   testId?: string
 }
 
@@ -49,8 +53,14 @@ export function LeagueBoard({
   lang,
   emptyLabel,
   emptyArt,
+  todayISO,
   testId,
 }: LeagueBoardProps) {
+  const countdown =
+    tier && todayISO
+      ? leagueCountdownLabel(daysUntilNextWeekStart(todayISO), lang)
+      : null
+
   return (
     <section data-testid={testId}>
       <SectionLabel
@@ -69,6 +79,15 @@ export function LeagueBoard({
           ) : undefined
         }
       />
+
+      {countdown && (
+        <p
+          data-testid="league-countdown"
+          className="mt-1.5 text-[11px] font-bold tabular-nums text-fg/55"
+        >
+          {countdown}
+        </p>
+      )}
 
       {entries.length === 0 ? (
         emptyArt ? (

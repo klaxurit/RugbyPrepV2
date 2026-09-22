@@ -183,4 +183,33 @@ describe('LeagueBoard', () => {
       'dormant',
     ])
   })
+
+  it('affiche le countdown fin de ligue quand un palier et une date sont fournis', () => {
+    render(
+      <LeagueBoard
+        title="Ligue"
+        entries={entries}
+        tier="premiere"
+        todayISO="2026-09-16"
+        kudosGiven={new Set()}
+        lang="fr"
+        emptyLabel=""
+      />,
+    )
+    expect(screen.getByTestId('league-countdown')).toHaveTextContent('Fin de ligue dans 5 j')
+  })
+
+  it('n’affiche pas le countdown sur le classement club (sans tier)', () => {
+    render(
+      <LeagueBoard
+        title="Club"
+        entries={entries}
+        todayISO="2026-09-16"
+        kudosGiven={new Set()}
+        lang="fr"
+        emptyLabel=""
+      />,
+    )
+    expect(screen.queryByTestId('league-countdown')).toBeNull()
+  })
 })

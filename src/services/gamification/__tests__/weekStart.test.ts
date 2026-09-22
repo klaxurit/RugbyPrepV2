@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { isInWeek, previousWeekStartISO, weekEndISO, weekStartISO } from '../weekStart'
+import {
+  daysUntilNextWeekStart,
+  isInWeek,
+  previousWeekStartISO,
+  weekEndISO,
+  weekStartISO,
+} from '../weekStart'
 
 // Lundi 2026-09-14 → dimanche 2026-09-20.
 const MONDAY = '2026-09-14'
@@ -46,6 +52,21 @@ describe('previousWeekStartISO', () => {
 
   it('traverse un changement de mois', () => {
     expect(previousWeekStartISO('2026-09-02')).toBe('2026-08-24')
+  })
+})
+
+describe('daysUntilNextWeekStart', () => {
+  it('compte 7 jours le lundi (semaine pleine devant soi)', () => {
+    expect(daysUntilNextWeekStart(MONDAY)).toBe(7)
+  })
+
+  it('compte 1 jour le dimanche (reset demain)', () => {
+    expect(daysUntilNextWeekStart(SUNDAY)).toBe(1)
+  })
+
+  it('décroît au fil de la semaine', () => {
+    expect(daysUntilNextWeekStart('2026-09-16')).toBe(5)
+    expect(daysUntilNextWeekStart('2026-09-19')).toBe(2)
   })
 })
 

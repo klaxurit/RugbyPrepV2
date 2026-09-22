@@ -29,6 +29,19 @@ export function previousWeekStartISO(dateISO: string): string {
   return monday.toISOString().slice(0, 10)
 }
 
+/**
+ * Jours restants jusqu’au prochain lundi (reset ligue / nouvelles cohortes).
+ *
+ * Lundi → 7 (semaine pleine devant soi). Dimanche → 1 (reset demain).
+ */
+export function daysUntilNextWeekStart(dateISO: string): number {
+  const day = dateISO.slice(0, 10)
+  const nextMonday = new Date(`${weekStartISO(day)}T12:00:00`)
+  nextMonday.setDate(nextMonday.getDate() + 7)
+  const today = new Date(`${day}T12:00:00`)
+  return Math.round((nextMonday.getTime() - today.getTime()) / 86_400_000)
+}
+
 /** True si `dateISO` tombe dans la semaine commençant le lundi `mondayISO`. */
 export function isInWeek(dateISO: string, mondayISO: string): boolean {
   const day = dateISO.slice(0, 10)

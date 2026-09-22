@@ -22,6 +22,8 @@ import {
   leagueTierLabel,
   levelLabel,
 } from '../services/gamification/labels'
+import { leagueCountdownLabel } from '../services/gamification/leagueTierCopy'
+import { daysUntilNextWeekStart } from '../services/gamification/weekStart'
 import { getToday } from '../services/ui/debugDateOverride'
 import type { Lang } from '../i18n/appLabels'
 
@@ -155,6 +157,7 @@ export function SquadPage() {
                     onGiveKudos={giveKudos}
                     lang={lang}
                     emptyLabel=""
+                    todayISO={today}
                   />
                 )}
 
@@ -173,6 +176,12 @@ export function SquadPage() {
                       {lang === 'fr'
                         ? 'Ta ligue est constituée lundi matin. D’ici là, tes points de la semaine comptent déjà.'
                         : 'Your league is formed on Monday morning. Until then, your weekly points already count.'}
+                    </p>
+                    <p
+                      data-testid="league-countdown"
+                      className="mt-2 text-[11px] font-bold tabular-nums text-fg/55"
+                    >
+                      {leagueCountdownLabel(daysUntilNextWeekStart(today), lang)}
                     </p>
                   </div>
                 )}
