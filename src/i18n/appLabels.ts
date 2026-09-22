@@ -711,6 +711,7 @@ export const APP_LABELS = {
   // ── BottomNav ───────────────────────────────────────────────────────────
   nav_home: { fr: 'Accueil', en: 'Home' },
   nav_program: { fr: 'Semaine', en: 'Week' },
+  nav_squad: { fr: 'Groupe', en: 'Squad' },
   nav_profile: { fr: 'Profil', en: 'Profile' },
   nav_coach: { fr: 'Coach', en: 'Coach' },
 

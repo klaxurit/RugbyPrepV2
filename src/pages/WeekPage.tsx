@@ -22,7 +22,6 @@ import { computeMonthlyTonnage } from '../services/home/computeMonthlyTonnage'
 import { PremiumUpsellCard } from '../components/PremiumUpsellCard'
 import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramHardBlock'
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
-import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
 import { useRegisterCoachContext, type CoachInfoMessage } from '../contexts/CoachContext'
@@ -454,7 +453,6 @@ export function WeekPage() {
             </p>
           </div>
         </main>
-        <BottomNav />
       </div>
     )
   }
@@ -741,7 +739,6 @@ export function WeekPage() {
       </main>
 
       <WeekCorrectionToast message={toastMessage} onDismiss={clearToast} />
-      <BottomNav />
 
       <MatchEditDrawer
         event={drawerMatch}

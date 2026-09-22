@@ -113,3 +113,6 @@ docs/*
 !docs/b1-*.md
 !docs/v1-1-*.md
 !docs/release-v1-1-plan.md
+!docs/gamification-competition-plan.md
+!docs/gamification-prod-launch.md
+!docs/gamification-illustration-brief.md

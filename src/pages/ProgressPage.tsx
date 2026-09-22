@@ -26,7 +26,6 @@ import {
   getBaselineLevelLabel,
 } from '../services/athleticTesting/getPositionBaseline'
 import { PageHeader } from '../components/PageHeader'
-import { BottomNav } from '../components/BottomNav'
 import { PremiumBlurredPreview } from '../components/PremiumBlurredPreview'
 import { WeeklyBilanCard } from '../components/WeeklyBilanCard'
 import { computeWeeklyBilan } from '../services/weeklyBilan/computeWeeklyBilan'
@@ -1055,7 +1054,6 @@ export function ProgressPage() {
         </div>
       )}
 
-      <BottomNav />
     </div>
   )
 }

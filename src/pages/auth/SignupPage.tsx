@@ -32,7 +32,6 @@ export function SignupPage() {
   const [newsletterOptIn, setNewsletterOptIn] = useState(false)
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [info, setInfo] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (authState.status === 'authenticated' && authState.user) {
@@ -42,7 +41,6 @@ export function SignupPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError(null)
-    setInfo(null)
     setIsSubmitting(true)
 
     if (!medicalConsent || !ageConfirmed) {
@@ -68,10 +66,10 @@ export function SignupPage() {
 
     if (!result.ok) {
       if (result.error === 'EMAIL_CONFIRMATION_REQUIRED') {
-        setInfo(authErrorLabel[result.error])
-        setDisplayName('')
-        setEmail('')
-        setPassword('')
+        navigate('/auth/login', {
+          replace: true,
+          state: { justSignedUp: true },
+        })
         setIsSubmitting(false)
         return
       }
@@ -205,11 +203,6 @@ export function SignupPage() {
             {error && (
               <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">
                 <p className="text-xs text-danger font-medium">{error}</p>
-              </div>
-            )}
-            {info && (
-              <div className="p-3.5 bg-ok-bg-muted border border-ok-bd rounded-2xl">
-                <p className="text-xs text-ok font-medium">{info}</p>
               </div>
             )}
 

@@ -34,6 +34,15 @@ verify_jwt = false
 [functions.dispatch-push-queue]
 verify_jwt = false
 
+# Clôture et constitution des cohortes de ligue (lundi), et génération des
+# nudges sociaux (quotidien). Auth par x-cron-secret dans le corps de la
+# fonction.
+[functions.assign-league-cohorts]
+verify_jwt = false
+
+[functions.dispatch-social-nudges]
+verify_jwt = false
+
 # ─── User-initiated functions (require Supabase user JWT) ─────────────
 # These are called from the React client with the signed-in user's JWT.
 # The function calls requireUser(req) to extract user_id and scope writes.
@@ -78,6 +87,12 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.sync-club-membership]
+verify_jwt = true
+
+# Recalcul du score de gamification. Appelée par le client après
+# l'enregistrement d'une séance ; le user_id vient du JWT, jamais d'un
+# paramètre.
+[functions.recompute-gamification]
 verify_jwt = true
 
 # ─── notify-training — REMOVED (Decision #24 fix, 2026-05-07) ─────────

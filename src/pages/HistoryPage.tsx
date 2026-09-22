@@ -8,7 +8,6 @@ import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useProfile } from '../hooks/useProfile'
 import { getExerciseName } from '../data/exercises'
 import { localizeBlockName } from '../services/motherSession/motherSessionBlockLabels'
-import { BottomNav } from '../components/BottomNav'
 import { PageHeader } from '../components/PageHeader'
 import { getProgramHistorySummary } from '../services/program/programHistoryAnalytics'
 import {
@@ -253,7 +252,6 @@ export function HistoryPage() {
 
       </main>
 
-      <BottomNav />
     </div>
   )
 }

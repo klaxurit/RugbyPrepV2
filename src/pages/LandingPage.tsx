@@ -225,32 +225,55 @@ function PhoneMockup({
   loading = 'lazy',
   fetchPriority,
 }: PhoneMockupProps) {
+  const webpSrc =
+    src === '/images/landing/rugbyforge_home_game.png'
+      ? '/images/landing/rugbyforge_home_game.webp'
+      : null
+
   return (
     <div className="relative w-[260px] sm:w-[290px]">
       {/* Phone frame — thin bezel, modern */}
-      <div className="relative bg-[#1a1a1a] rounded-[2.5rem] p-[5px] shadow-[0_12px_40px_rgb(0_0_0/0.25)]">
+      <div className="relative rounded-[2.5rem] bg-[#1a1a1a] p-[5px] shadow-[0_12px_40px_rgb(0_0_0/0.25)]">
         {/* Camera dot */}
-        <div className="absolute top-[12px] left-1/2 -translate-x-1/2 w-[10px] h-[10px] bg-[#1a1a1a] rounded-full z-10" />
-        {/* Screen */}
-        <div className="relative rounded-[2.1rem] overflow-hidden bg-app">
-          {/* Screen content — no fake status bar, screenshots include the real navbar */}
-          <div className="relative max-h-[560px] overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-            <img
-              src={src}
-              alt={alt}
-              loading={loading}
-              fetchPriority={fetchPriority}
-              decoding="async"
-              className="w-full"
-              onError={(e) => { e.currentTarget.style.display = 'none' }}
-            />
+        <div className="absolute left-1/2 top-[12px] z-10 h-[10px] w-[10px] -translate-x-1/2 rounded-full bg-[#1a1a1a]" />
+        {/* Screen — ratio téléphone réservé (anti-CLS LCP) */}
+        <div className="relative aspect-[9/19.5] max-h-[560px] overflow-hidden rounded-[2.1rem] bg-app">
+          <div className="relative h-full overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+            {webpSrc ? (
+              <picture>
+                <source srcSet={webpSrc} type="image/webp" />
+                <img
+                  src={src}
+                  alt={alt}
+                  width={390}
+                  height={844}
+                  loading={loading}
+                  fetchPriority={fetchPriority}
+                  decoding="async"
+                  className="h-auto w-full"
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
+              </picture>
+            ) : (
+              <img
+                src={src}
+                alt={alt}
+                width={390}
+                height={844}
+                loading={loading}
+                fetchPriority={fetchPriority}
+                decoding="async"
+                className="h-auto w-full"
+                onError={(e) => { e.currentTarget.style.display = 'none' }}
+              />
+            )}
           </div>
           {/* Bottom fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-app to-transparent pointer-events-none" />
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-app to-transparent" />
         </div>
       </div>
       {/* Home indicator */}
-      <div className="absolute bottom-[8px] left-1/2 -translate-x-1/2 w-[80px] h-[3px] bg-white/25 rounded-full" />
+      <div className="absolute bottom-[8px] left-1/2 h-[3px] w-[80px] -translate-x-1/2 rounded-full bg-white/25" />
     </div>
   )
 }

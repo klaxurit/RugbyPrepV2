@@ -10,6 +10,8 @@ import { ProgramEvolutionSheetProvider } from './contexts/ProgramEvolutionSheetC
 import { RequireAuth } from './components/auth/RequireAuth'
 import { RequireAdmin } from './components/auth/RequireAdmin'
 import { RequireStaffCoach } from './components/auth/RequireStaffCoach'
+import { AuthenticatedShell } from './components/AuthenticatedShell'
+import { BrandLoadingFallback } from './components/BrandLoadingFallback'
 import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useAuth } from './hooks/useAuth'
@@ -38,6 +40,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ defaul
 const HistoryPage = lazy(() => import('./pages/HistoryPage').then(m => ({ default: m.HistoryPage })))
 const ChatPage = lazy(() => import('./pages/ChatPage').then(m => ({ default: m.ChatPage })))
 const ProgramPage = lazy(() => import('./pages/ProgramPage').then(m => ({ default: m.ProgramPage })))
+const SquadPage = lazy(() => import('./pages/SquadPage').then(m => ({ default: m.SquadPage })))
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage').then(m => ({ default: m.OnboardingPage })))
 const StaffPlanningSandboxPage = lazy(() => import('./pages/StaffPlanningSandboxPage').then(m => ({ default: m.StaffPlanningSandboxPage })))
 const StaffClubPage = lazy(() => import('./pages/StaffClubPage').then(m => ({ default: m.StaffClubPage })))
@@ -79,18 +82,10 @@ function hasAuthCallbackParams(): boolean {
   return false
 }
 
-function rootRouteSpinner() {
-  return (
-    <div className="min-h-screen bg-app flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
-    </div>
-  )
-}
-
 function RootRouteBody() {
   const { authState, isInitializing } = useAuth()
 
-  if (isInitializing) return rootRouteSpinner()
+  if (isInitializing) return <BrandLoadingFallback label="Initialisation" />
 
   if (authState.status === 'authenticated' && authState.user) {
     return <Navigate to="/home" replace />
@@ -144,11 +139,7 @@ function HardRedirect({ to }: { to: string }) {
     window.location.replace(`${to}${window.location.search}${window.location.hash}`)
   }, [to])
 
-  return (
-    <div className="min-h-screen bg-app flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
-    </div>
-  )
+  return <BrandLoadingFallback label="Redirection" />
 }
 
 function StaticPageDevRedirect({ target }: { target: string }) {
@@ -189,7 +180,7 @@ function App() {
       <BrowserRouter>
         <CoachProvider>
         <ScrollToTop />
-        <Suspense fallback={<div className="min-h-screen bg-app flex items-center justify-center"><div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" /></div>}>
+        <Suspense fallback={<BrandLoadingFallback label="Chargement" />}>
         <Routes>
           <Route path="/" element={<RootRoute />} />
           <Route path="/landing" element={<LandingPage />} />
@@ -210,22 +201,25 @@ function App() {
           <Route path="/périodisation-rugby/" element={<HardRedirect to="/periodisation-rugby/" />} />
 
           <Route element={<RequireAuth />}>
-            <Route path="/home" element={<HomePage />} />
+            <Route element={<AuthenticatedShell />}>
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/week" element={<WeekPage />} />
+              <Route path="/history" element={<HistoryPage />} />
+              <Route path="/progress" element={<ProgressPage />} />
+              <Route path="/squad" element={<SquadPage />} />
+              <Route path="/session/log/:logId" element={<SessionLogReviewPage />} />
+              <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route element={<RequireStaffCoach />}>
+                <Route path="/staff" element={<StaffClubPage />} />
+              </Route>
+            </Route>
             <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/week" element={<WeekPage />} />
-            <Route path="/history" element={<HistoryPage />} />
-            <Route path="/progress" element={<ProgressPage />} />
             <Route path="/program" element={<ProgramPage />} />
-            <Route path="/session/log/:logId" element={<SessionLogReviewPage />} />
-            <Route path="/session/:sessionIndex" element={<SessionDetailPage />} />
-            <Route path="/chat" element={<ChatPage />} />
             {import.meta.env.DEV && (
               <Route path="/staff-sandbox" element={<StaffPlanningSandboxPage />} />
             )}
-            <Route element={<RequireStaffCoach />}>
-              <Route path="/staff" element={<StaffClubPage />} />
-            </Route>
             <Route element={<RequireAdmin />}>
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/admin/users" element={<AdminUsersPage />} />
