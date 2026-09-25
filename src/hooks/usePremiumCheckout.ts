@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { supabase } from '../services/supabase/client'
 import { isPlayBillingAvailable, isStandaloneMode, usePlayBilling } from './usePlayBilling'
+import { shouldBlockStandaloneWithoutPlayBilling } from './checkoutPlatform'
 import { isUserCancelledError, mapCheckoutError } from './checkoutErrorMessages'
 
 type CheckoutResponse = {
@@ -71,9 +72,15 @@ export function usePremiumCheckout() {
       }
     }
 
-    // In standalone mode (TWA/PWA) but Digital Goods API unavailable :
-    // app sideloaded ou pas installée depuis le Play Store.
-    if (isStandaloneMode) {
+    // Android standalone sans Digital Goods = sideload / hors Play Store.
+    // iOS PWA standalone et navigateur desktop → Stripe (ne pas bloquer).
+    if (
+      shouldBlockStandaloneWithoutPlayBilling({
+        standalone: isStandaloneMode,
+        playBillingAvailable: isPlayBillingAvailable(),
+        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+      })
+    ) {
       setState({
         loading: false,
         error: 'Pour souscrire depuis cette installation, ouvre l\'application via le Play Store ou utilise rugbyforge.fr dans ton navigateur.',
@@ -82,7 +89,7 @@ export function usePremiumCheckout() {
       return null
     }
 
-    // Fallback to Stripe checkout for web (iOS PWA + desktop)
+    // Fallback Stripe : web, iOS Safari, iOS PWA « Ajouter à l’écran d’accueil »
     try {
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {

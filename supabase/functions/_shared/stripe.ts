@@ -16,9 +16,8 @@ type StripePriceConfig = {
 const DEFAULT_PRICE_CONFIG: StripePriceConfig = {
   monthly: 'price_1TXH8jAFlfRVQSqAJ8oNMUIe',
   yearly: 'price_1TXHABAFlfRVQSqABB9wVTCu',
-  // WS0 — must be set via STRIPE_PRICE_FOUNDING_YEARLY secret. Defaults null
-  // so a misconfigured env returns a clear "not configured" error rather than
-  // billing the wrong amount.
+  // Founding 49€/an — prod Stripe `prod_UWJoXMpGjMgdUS` / price ci-dessous.
+  // Override possible via secret STRIPE_PRICE_FOUNDING_YEARLY.
   founding_yearly: 'price_1TXHB0AFlfRVQSqAV80BPNhD',
 }
 
