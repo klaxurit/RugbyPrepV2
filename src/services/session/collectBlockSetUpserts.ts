@@ -17,6 +17,8 @@ export type BlockSetUpsertInput = {
   tourIndex: number
   loadKg?: number
   reps?: number
+  seconds?: number
+  meters?: number
 }
 
 /**
@@ -45,7 +47,15 @@ export function collectBlockSetUpserts(params: {
       if (!completedExercises.has(key)) continue
 
       const own = exerciseTourLoads[key]
-      if (!own || (own.loadKg == null && own.reps == null)) continue
+      if (
+        !own ||
+        (own.loadKg == null &&
+          own.reps == null &&
+          own.seconds == null &&
+          own.meters == null)
+      ) {
+        continue
+      }
 
       upserts.push({
         blockNumber,
@@ -53,6 +63,8 @@ export function collectBlockSetUpserts(params: {
         tourIndex: tour,
         loadKg: own.loadKg,
         reps: own.reps,
+        seconds: own.seconds,
+        meters: own.meters,
       })
     }
   })

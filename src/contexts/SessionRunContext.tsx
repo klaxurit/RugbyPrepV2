@@ -26,6 +26,10 @@ export type SessionRunStatus = 'idle' | 'running'
 export interface ExerciseTourLoad {
   loadKg?: number
   reps?: number
+  /** Hold / iso (ex. Copenhagen) — saisie souvent en fin d’EMOM. */
+  seconds?: number
+  /** Distance (sled, carry) — optionnelle en fin d’EMOM. */
+  meters?: number
 }
 
 export interface RestTimerState {

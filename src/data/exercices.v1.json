@@ -4941,8 +4941,8 @@
   {
     "id": "groin_adductors__copenhagen_plank__foot_elevated",
     "exerciseId": "groin_adductors__copenhagen_plank__foot_elevated",
-    "name": "Copenhagen Plank (top foot elevated)",
-    "nameFr": "Copenhagen — pied haut sur chaise",
+    "name": "Copenhagen Plank",
+    "nameFr": "Copenhagen Plank",
     "pattern": "groin_adductors",
     "equipment": [
       "none"

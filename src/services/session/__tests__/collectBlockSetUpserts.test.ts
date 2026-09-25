@@ -42,4 +42,39 @@ describe('collectBlockSetUpserts', () => {
 
     expect(upserts.map((u) => u.reps)).toEqual([15, 13, 12])
   })
+
+  it('persiste seconds et meters pour un finisher EMOM', () => {
+    const finisher: Block = {
+      number: 4,
+      name: 'Finisher',
+      format: "`EMOM 8'`",
+      exercises: [
+        { name: 'Sled Push', exerciseId: 'sled__push__standard', prescription: '20m' },
+        {
+          name: 'Copenhagen',
+          exerciseId: 'groin_adductors__copenhagen_plank__long',
+          prescription: '20s',
+        },
+      ],
+      coachingNotes: [],
+    }
+    const upserts = collectBlockSetUpserts({
+      block: finisher,
+      blockNumber: 4,
+      exerciseTourLoads: {
+        '4_0_0': { loadKg: 50, meters: 20 },
+        '4_0_1': { seconds: 18 },
+      },
+      completedExercises: new Set(['4_0_0', '4_0_1']),
+    })
+    expect(upserts).toEqual([
+      { blockNumber: 4, exerciseId: 'sled__push__standard', tourIndex: 0, loadKg: 50, meters: 20 },
+      {
+        blockNumber: 4,
+        exerciseId: 'groin_adductors__copenhagen_plank__long',
+        tourIndex: 0,
+        seconds: 18,
+      },
+    ])
+  })
 })

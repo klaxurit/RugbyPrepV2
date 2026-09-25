@@ -160,6 +160,16 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
             >
               {localizeMotherSessionExerciseName(currentExo.name, lang)}
             </div>
+            {currentExo.prescription && (
+              <div className="mt-0.5 text-[12px] font-medium text-fg-muted">
+                {currentExo.prescription}
+              </div>
+            )}
+            <p className="mt-2 text-[11px] leading-snug text-fg/55">
+              {lang === 'fr'
+                ? 'Tu finis l’exo — le reste de la minute = repos.'
+                : 'Finish the work — the rest of the minute is rest.'}
+            </p>
             {nextExo && (
               <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-fg-muted">
                 <span className="font-bold opacity-60 text-fg">Ensuite :</span>

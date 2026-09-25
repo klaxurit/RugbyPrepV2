@@ -101,6 +101,8 @@ import {
   IsoOverlay,
   type IsoOverlayState,
 } from '../components/session/timers'
+import { EmomRecapSheet, type EmomRecapDraft } from '../components/session/EmomRecapSheet'
+import { buildEmomRecapFields } from '../services/session/buildEmomRecapFields'
 
 // (MS_TYPE_TO_SESSION_TYPE retiré : plus de mapping local nécessaire après
 //  remplacement de MotherSessionView par SessionBlocks. Le type SessionType
@@ -439,6 +441,8 @@ export function SessionDetailPage() {
   // ── États des overlays timer (D5) ────────────────────────────────────────
   // EMOM/Tabata : bloc en chrono actif
   const [emomBlockNumber, setEmomBlockNumber] = useState<number | null>(null)
+  /** Bloc dont le chrono EMOM vient de finir → sheet récap perfs. */
+  const [emomRecapBlockNumber, setEmomRecapBlockNumber] = useState<number | null>(null)
   // Iso : exo en chrono actif (avec contexte pour pouvoir le marquer fait)
   const [isoTrigger, setIsoTrigger] = useState<{
     blockNumber: number
@@ -765,6 +769,8 @@ export function SessionDetailPage() {
           tourIndex: row.tourIndex,
           loadKg: row.loadKg,
           reps: row.reps,
+          seconds: row.seconds,
+          meters: row.meters,
         })
       }
     },
@@ -987,6 +993,65 @@ export function SessionDetailPage() {
     [slotSignature, preparedSession, resolveSlotExerciseId, sessionRun, lang],
   )
 
+  const finalizeEmomBlock = useCallback(
+    (blockNumber: number, draft?: EmomRecapDraft) => {
+      if (!adaptedSession) return
+      const block = adaptedSession.blocks.find((b) => b.number === blockNumber)
+      if (!block) return
+
+      const loads: Record<string, import('../contexts/SessionRunContext').ExerciseTourLoad> = {
+        ...sessionRun.exerciseTourLoads,
+      }
+      const completed = new Set(sessionRun.completedExercises)
+
+      block.exercises.forEach((exo, exerciseIndex) => {
+        if (!exo.exerciseId && !exo.name) return
+        const key = buildExerciseTourKey(blockNumber, 0, exerciseIndex)
+        completed.add(key)
+        sessionRun.markExerciseDone(key)
+
+        if (!draft) return
+        const exerciseId = resolveExerciseIdForSessionRun(exo.name, exo.exerciseId)
+        if (!exerciseId) return
+        const row = draft[exerciseId]
+        if (!row) return
+        if (
+          row.loadKg == null &&
+          row.reps == null &&
+          row.seconds == null &&
+          row.meters == null
+        ) {
+          return
+        }
+        loads[key] = { ...loads[key], ...row }
+        sessionRun.setExerciseTourLoad(key, row)
+      })
+
+      handleBlockCompleted(blockNumber, {
+        exerciseTourLoads: loads,
+        completedExercises: completed,
+      })
+      setEmomRecapBlockNumber(null)
+    },
+    [adaptedSession, sessionRun, handleBlockCompleted],
+  )
+
+  const emomRecapFields = useMemo(() => {
+    if (emomRecapBlockNumber == null || !adaptedSession) return []
+    const block = adaptedSession.blocks.find((b) => b.number === emomRecapBlockNumber)
+    if (!block) return []
+
+    const previousByExerciseId = new Map<
+      string,
+      import('../services/session/buildPreviousSessionSetMap').PreviousSessionSetRef
+    >()
+    for (const field of buildEmomRecapFields(block)) {
+      const prev = getPreviousSessionSet(field.exerciseId, 0)
+      if (prev) previousByExerciseId.set(field.exerciseId, prev)
+    }
+    return buildEmomRecapFields(block, previousByExerciseId)
+  }, [emomRecapBlockNumber, adaptedSession, getPreviousSessionSet])
+
   if (hasHardBlock) {
     return (
       <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav">
@@ -1041,18 +1106,10 @@ export function SessionDetailPage() {
 
   const handleEmomComplete = () => {
     if (emomBlockNumber == null) return
-    if (adaptedSession) {
-      const block = adaptedSession.blocks.find((b) => b.number === emomBlockNumber)
-      if (block) {
-        block.exercises.forEach((exo, exerciseIndex) => {
-          if (!exo.exerciseId && !exo.name) return
-          const key = buildExerciseTourKey(emomBlockNumber, 0, exerciseIndex)
-          sessionRun.markExerciseDone(key)
-        })
-        handleBlockCompleted(emomBlockNumber)
-      }
-    }
+    const blockNumber = emomBlockNumber
     setEmomBlockNumber(null)
+    // Ouvre le récap post-chrono (saisie kg / secondes) — pattern SugarWOD.
+    setEmomRecapBlockNumber(blockNumber)
   }
 
   const handlePlayDemo = (blockNumber: number, exerciseIndex: number) => {
@@ -1635,6 +1692,22 @@ export function SessionDetailPage() {
           />
         </div>
       )}
+
+      <EmomRecapSheet
+        key={emomRecapBlockNumber ?? 'emom-recap-closed'}
+        open={emomRecapBlockNumber != null}
+        fields={emomRecapFields}
+        isPremium={isPremium}
+        lang={lang}
+        onConfirm={(draft) => {
+          if (emomRecapBlockNumber == null) return
+          finalizeEmomBlock(emomRecapBlockNumber, draft)
+        }}
+        onSkip={() => {
+          if (emomRecapBlockNumber == null) return
+          finalizeEmomBlock(emomRecapBlockNumber)
+        }}
+      />
 
       {/* Sticky CTA running contextuel (D6).
           - `validate-exo` tant que findCurrentPending retourne un cursor
