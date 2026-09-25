@@ -9,6 +9,7 @@ import {
   levelLabel,
 } from '../../services/gamification/labels'
 import { leagueCountdownLabel } from '../../services/gamification/leagueTierCopy'
+import { leagueSoloBoardLabel } from '../../services/gamification/leagueSoloCopy'
 import { daysUntilNextWeekStart } from '../../services/gamification/weekStart'
 import { formCueAriaLabel } from '../../services/gamification/badgeIcon'
 import { formCueForEntry } from '../../services/gamification/rankLeaderboard'
@@ -60,6 +61,7 @@ export function LeagueBoard({
     tier && todayISO
       ? leagueCountdownLabel(daysUntilNextWeekStart(todayISO), lang)
       : null
+  const soloNotice = tier ? leagueSoloBoardLabel(entries.length, lang) : null
 
   return (
     <section data-testid={testId}>
@@ -202,6 +204,15 @@ export function LeagueBoard({
             )
           })}
         </ul>
+      )}
+
+      {soloNotice && (
+        <p
+          data-testid="league-solo-notice"
+          className="mt-2 rounded-2xl border border-dashed border-fg/25 px-3 py-2.5 text-[12px] leading-relaxed text-fg/60"
+        >
+          {soloNotice}
+        </p>
       )}
 
       {entries.length > 0 && promotionCutoff > 0 && (

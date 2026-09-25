@@ -3,16 +3,18 @@ import { captureEdgeException } from '../_shared/sentry.ts'
 import { createClients } from '../_shared/supabase.ts'
 import {
   buildCohorts,
+  planMidWeekRefill,
   resolveLeagueCutoffs,
   type CohortCandidate,
+  type ExistingCohortSnapshot,
 } from '../../../src/services/gamification/cohortMatchmaking.ts'
 import { promoteTier, relegateTier } from '../../../src/services/gamification/levels.ts'
 import { isSociallyExposable } from '../../../src/services/gamification/socialExposure.ts'
 import { previousWeekStartISO, weekStartISO } from '../../../src/services/gamification/weekStart.ts'
 
 /**
- * Cron hebdomadaire des ligues : clôture la semaine écoulée puis constitue les
- * cohortes de la semaine qui commence.
+ * Cron des ligues : clôture la semaine écoulée (lundi) puis constitue ou
+ * recharge les cohortes de la semaine courante.
  *
  * Deux propriétés portées par `cohortMatchmaking` (testé côté Vitest) :
  *  - personne ne se retrouve seul dans sa ligue (fusion des paliers et des
@@ -20,6 +22,10 @@ import { previousWeekStartISO, weekStartISO } from '../../../src/services/gamifi
  *  - les zones de promotion et de relégation sont proportionnelles à la taille
  *    réelle de la cohorte, donc une cohorte à moitié pleine ne voit pas la
  *    moitié de son tableau changer de palier.
+ *
+ * Mid-week : si les cohortes existent déjà, `planMidWeekRefill` y ajoute les
+ * nouveaux opt-in `cohort` et fusionne les ligues solo — plus d’early-return
+ * « déjà constituées ».
  *
  * Seuls les athlètes en visibilité `cohort` participent : le consentement est
  * filtré ici, la fonction d'appariement n'en fait aucun contrôle.
@@ -170,26 +176,16 @@ Deno.serve(async (req: Request) => {
       closedCohorts += 1
     }
 
-    // ─── 2. Cohortes de la semaine qui commence ─────────────────
+    // ─── 2. Cohortes de la semaine courante ─────────────────────
+    // Lundi : création. Mid-week : refill des opt-in tardifs + fusion anti-solo.
 
-    const { data: existing, error: existingError } = await serviceClient
+    const { data: existingRows, error: existingError } = await serviceClient
       .from('league_cohorts')
-      .select('id')
+      .select('id, tier')
       .eq('week_start', currentWeek)
-      .limit(1)
+      .is('closed_at', null)
 
     if (existingError) return json({ error: existingError.message }, 400)
-
-    if ((existing ?? []).length > 0) {
-      return json({
-        ok: true,
-        closedCohorts,
-        promoted,
-        relegated,
-        createdCohorts: 0,
-        note: 'Cohortes déjà constituées pour cette semaine',
-      })
-    }
 
     const { data: participants, error: participantsError } = await serviceClient
       .from('profiles')
@@ -205,7 +201,7 @@ Deno.serve(async (req: Request) => {
     )
 
     if (eligible.length === 0) {
-      return json({ ok: true, closedCohorts, promoted, relegated, createdCohorts: 0 })
+      return json({ ok: true, closedCohorts, promoted, relegated, createdCohorts: 0, filled: 0 })
     }
 
     const { data: tiers, error: tiersError } = await serviceClient
@@ -240,6 +236,128 @@ Deno.serve(async (req: Request) => {
       plannedWeeklySessions: row.weekly_sessions ?? 3,
       priorWeekPoints: priorPointsByUser.get(row.id) ?? 0,
     }))
+
+    // ─── 2a. Refill mid-week si des cohortes existent déjà ──────
+
+    if ((existingRows ?? []).length > 0) {
+      const existingSnapshots: ExistingCohortSnapshot[] = []
+      const assignedIds = new Set<string>()
+
+      for (const row of existingRows ?? []) {
+        const { data: members, error: membersError } = await serviceClient
+          .from('league_cohort_members')
+          .select('user_id')
+          .eq('cohort_id', row.id)
+
+        if (membersError) return json({ error: membersError.message }, 400)
+
+        const memberIds = (members ?? []).map((m) => m.user_id as string)
+        for (const id of memberIds) assignedIds.add(id)
+        existingSnapshots.push({
+          cohortId: row.id as string,
+          tier: (row.tier as CohortCandidate['tier']) ?? 'reserve',
+          memberIds,
+        })
+      }
+
+      const unassigned = candidates.filter((c) => !assignedIds.has(c.userId))
+      const plan = planMidWeekRefill(existingSnapshots, unassigned)
+
+      let filled = 0
+      let merged = 0
+      let createdCohorts = 0
+
+      for (const merge of plan.merges) {
+        for (const userId of merge.userIds) {
+          const { error: moveError } = await serviceClient
+            .from('league_cohort_members')
+            .update({ cohort_id: merge.toCohortId })
+            .eq('cohort_id', merge.fromCohortId)
+            .eq('user_id', userId)
+
+          if (moveError) return json({ error: moveError.message }, 400)
+          merged += 1
+        }
+      }
+
+      for (const addition of plan.additions) {
+        if (addition.userIds.length === 0) continue
+        const { error: memberError } = await serviceClient
+          .from('league_cohort_members')
+          .insert(
+            addition.userIds.map((userId) => ({
+              cohort_id: addition.cohortId,
+              user_id: userId,
+            })),
+          )
+
+        if (memberError) return json({ error: memberError.message }, 400)
+        filled += addition.userIds.length
+      }
+
+      for (const assignment of plan.newCohorts) {
+        const cutoffs = resolveLeagueCutoffs(assignment.memberIds.length)
+        const { data: created, error: createError } = await serviceClient
+          .from('league_cohorts')
+          .insert({
+            week_start: currentWeek,
+            tier: assignment.tier,
+            promotion_cutoff: cutoffs.promotionCutoff,
+            relegation_cutoff: cutoffs.relegationCutoff,
+          })
+          .select('id')
+          .single()
+
+        if (createError) return json({ error: createError.message }, 400)
+
+        const { error: memberError } = await serviceClient
+          .from('league_cohort_members')
+          .insert(
+            assignment.memberIds.map((userId) => ({
+              cohort_id: created.id,
+              user_id: userId,
+            })),
+          )
+
+        if (memberError) return json({ error: memberError.message }, 400)
+        createdCohorts += 1
+        filled += assignment.memberIds.length
+      }
+
+      // Recalcule les seuils affichés pour les cohortes encore ouvertes
+      // dont la taille a changé (refill / merge).
+      for (const snap of existingSnapshots) {
+        const { count, error: countError } = await serviceClient
+          .from('league_cohort_members')
+          .select('user_id', { count: 'exact', head: true })
+          .eq('cohort_id', snap.cohortId)
+
+        if (countError) return json({ error: countError.message }, 400)
+        const size = count ?? 0
+        if (size === 0) continue
+        const cutoffs = resolveLeagueCutoffs(size)
+        await serviceClient
+          .from('league_cohorts')
+          .update({
+            promotion_cutoff: cutoffs.promotionCutoff,
+            relegation_cutoff: cutoffs.relegationCutoff,
+          })
+          .eq('id', snap.cohortId)
+      }
+
+      return json({
+        ok: true,
+        closedCohorts,
+        promoted,
+        relegated,
+        createdCohorts,
+        filled,
+        merged,
+        note: 'Refill mid-week appliqué',
+      })
+    }
+
+    // ─── 2b. Première constitution de la semaine ────────────────
 
     const assignments = buildCohorts(candidates)
     let createdCohorts = 0

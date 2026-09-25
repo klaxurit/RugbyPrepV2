@@ -165,3 +165,186 @@ export function buildCohorts(candidates: readonly CohortCandidate[]): CohortAssi
   }
   return assignments
 }
+
+/** Snapshot d'une cohorte déjà en base pour un refill mid-week. */
+export interface ExistingCohortSnapshot {
+  cohortId: string
+  tier: LeagueTier
+  memberIds: string[]
+}
+
+export interface MidWeekAddition {
+  cohortId: string
+  userIds: string[]
+}
+
+export interface MidWeekMerge {
+  fromCohortId: string
+  toCohortId: string
+  userIds: string[]
+}
+
+export interface MidWeekRefillPlan {
+  /** Nouveaux opt-in à coller dans des cohortes déjà ouvertes. */
+  additions: MidWeekAddition[]
+  /** Reliquats qui ne rentrent nulle part → nouvelles cohortes. */
+  newCohorts: CohortAssignment[]
+  /** Fusion anti-solo : déplacer les membres d'une cohorte trop petite. */
+  merges: MidWeekMerge[]
+}
+
+function sortCohortsForPlacement<
+  T extends { cohortId: string; tier: LeagueTier; memberIds: string[] },
+>(cohorts: readonly T[], preferredTier: LeagueTier): T[] {
+  return [...cohorts].sort((a, b) => {
+    const sameA = a.tier === preferredTier ? 0 : 1
+    const sameB = b.tier === preferredTier ? 0 : 1
+    if (sameA !== sameB) return sameA - sameB
+    if (a.memberIds.length !== b.memberIds.length) {
+      return a.memberIds.length - b.memberIds.length
+    }
+    return a.cohortId.localeCompare(b.cohortId)
+  })
+}
+
+/**
+ * Plan de refill mid-week : les cohortes du lundi restent, on y ajoute les
+ * athlètes passés en `cohort` après le cron, et on fusionne les ligues solo
+ * quand un absorbeur a de la place.
+ *
+ * Ne crée / ne détruit aucune ligne — le cron applique le plan. Déterministe
+ * à entrée égale (`userId` / `cohortId` triés).
+ */
+export function planMidWeekRefill(
+  existing: readonly ExistingCohortSnapshot[],
+  unassigned: readonly CohortCandidate[],
+): MidWeekRefillPlan {
+  const cohorts = existing.map((c) => ({
+    cohortId: c.cohortId,
+    tier: LEAGUE_TIER_ORDER.includes(c.tier) ? c.tier : LEAGUE_TIER_ORDER[0],
+    memberIds: [...c.memberIds],
+    originalMemberIds: new Set(c.memberIds),
+  }))
+
+  const additionsMap = new Map<string, string[]>()
+  const stillUnassigned: CohortCandidate[] = []
+
+  const queue = [...unassigned].sort((a, b) => a.userId.localeCompare(b.userId))
+  for (const candidate of queue) {
+    const preferredTier = LEAGUE_TIER_ORDER.includes(candidate.tier)
+      ? candidate.tier
+      : LEAGUE_TIER_ORDER[0]
+    const withRoom = sortCohortsForPlacement(
+      cohorts.filter((c) => c.memberIds.length < LEAGUE_RULES.MAX_COHORT_SIZE),
+      preferredTier,
+    )
+    const target = withRoom[0]
+    if (!target) {
+      stillUnassigned.push(candidate)
+      continue
+    }
+    target.memberIds.push(candidate.userId)
+    const list = additionsMap.get(target.cohortId) ?? []
+    list.push(candidate.userId)
+    additionsMap.set(target.cohortId, list)
+  }
+
+  let newCohorts = stillUnassigned.length > 0 ? buildCohorts(stillUnassigned) : []
+
+  // Un reliquat trop petit rejoint une cohorte existante plutôt que de
+  // créer une ligue fantôme à côté d'un tableau déjà ouvert.
+  const keptNew: CohortAssignment[] = []
+  for (const nc of newCohorts) {
+    if (nc.memberIds.length >= LEAGUE_RULES.MIN_VIABLE_COHORT_SIZE) {
+      keptNew.push(nc)
+      continue
+    }
+    const absorber = sortCohortsForPlacement(
+      cohorts.filter(
+        (c) =>
+          c.memberIds.length > 0 &&
+          c.memberIds.length + nc.memberIds.length <= LEAGUE_RULES.MAX_COHORT_SIZE,
+      ),
+      nc.tier,
+    )[0]
+    if (!absorber) {
+      keptNew.push(nc)
+      continue
+    }
+    absorber.memberIds.push(...nc.memberIds)
+    const list = additionsMap.get(absorber.cohortId) ?? []
+    list.push(...nc.memberIds)
+    additionsMap.set(absorber.cohortId, list)
+  }
+  newCohorts = keptNew
+
+  const merges: MidWeekMerge[] = []
+  const bySize = [...cohorts].sort(
+    (a, b) =>
+      a.memberIds.length - b.memberIds.length || a.cohortId.localeCompare(b.cohortId),
+  )
+
+  for (const tiny of bySize) {
+    if (tiny.memberIds.length === 0) continue
+    if (tiny.memberIds.length >= LEAGUE_RULES.MIN_VIABLE_COHORT_SIZE) continue
+
+    const absorber = [...cohorts]
+      .filter(
+        (c) =>
+          c.cohortId !== tiny.cohortId &&
+          c.memberIds.length > 0 &&
+          c.memberIds.length + tiny.memberIds.length <= LEAGUE_RULES.MAX_COHORT_SIZE,
+      )
+      .sort((a, b) => {
+        const sameA = a.tier === tiny.tier ? 0 : 1
+        const sameB = b.tier === tiny.tier ? 0 : 1
+        if (sameA !== sameB) return sameA - sameB
+        if (b.memberIds.length !== a.memberIds.length) {
+          return b.memberIds.length - a.memberIds.length
+        }
+        return a.cohortId.localeCompare(b.cohortId)
+      })[0]
+    if (!absorber) continue
+
+    const movingOriginal = tiny.memberIds.filter((id) => tiny.originalMemberIds.has(id))
+    const movingAdded = tiny.memberIds.filter((id) => !tiny.originalMemberIds.has(id))
+
+    if (movingAdded.length > 0) {
+      const tinyAdds = additionsMap.get(tiny.cohortId) ?? []
+      const remainingAdds = tinyAdds.filter((id) => !movingAdded.includes(id))
+      if (remainingAdds.length === 0) additionsMap.delete(tiny.cohortId)
+      else additionsMap.set(tiny.cohortId, remainingAdds)
+
+      const absAdds = additionsMap.get(absorber.cohortId) ?? []
+      absAdds.push(...movingAdded)
+      additionsMap.set(absorber.cohortId, absAdds)
+    }
+
+    if (movingOriginal.length > 0) {
+      merges.push({
+        fromCohortId: tiny.cohortId,
+        toCohortId: absorber.cohortId,
+        userIds: [...movingOriginal].sort((a, b) => a.localeCompare(b)),
+      })
+    }
+
+    absorber.memberIds.push(...tiny.memberIds)
+    tiny.memberIds = []
+  }
+
+  const additions: MidWeekAddition[] = [...additionsMap.entries()]
+    .map(([cohortId, userIds]) => ({
+      cohortId,
+      userIds: [...new Set(userIds)].sort((a, b) => a.localeCompare(b)),
+    }))
+    .filter((a) => a.userIds.length > 0)
+    .sort((a, b) => a.cohortId.localeCompare(b.cohortId))
+
+  merges.sort(
+    (a, b) =>
+      a.fromCohortId.localeCompare(b.fromCohortId) ||
+      a.toCohortId.localeCompare(b.toCohortId),
+  )
+
+  return { additions, newCohorts, merges }
+}

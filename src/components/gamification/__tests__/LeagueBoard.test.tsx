@@ -213,4 +213,18 @@ describe('LeagueBoard', () => {
     )
     expect(screen.queryByTestId('league-countdown')).toBeNull()
   })
+
+  it('explique le solo quand la ligue n’a qu’un membre', () => {
+    render(
+      <LeagueBoard
+        title="Ligue"
+        entries={[entry({ userId: 'solo', displayName: 'Hugo', isSelf: true, rank: 1 })]}
+        tier="reserve"
+        kudosGiven={new Set()}
+        lang="fr"
+        emptyLabel=""
+      />,
+    )
+    expect(screen.getByTestId('league-solo-notice')).toHaveTextContent(/1 athlète/)
+  })
 })

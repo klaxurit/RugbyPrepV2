@@ -23,6 +23,7 @@ import {
   levelLabel,
 } from '../services/gamification/labels'
 import { leagueCountdownLabel } from '../services/gamification/leagueTierCopy'
+import { leaguePendingBoardLabel } from '../services/gamification/leagueSoloCopy'
 import { daysUntilNextWeekStart } from '../services/gamification/weekStart'
 import { getToday } from '../services/ui/debugDateOverride'
 import type { Lang } from '../i18n/appLabels'
@@ -173,9 +174,7 @@ export function SquadPage() {
                       {lang === 'fr' ? 'Classement en préparation' : 'Board cooking'}
                     </p>
                     <p className="mt-2 text-[12px] leading-relaxed text-fg/60">
-                      {lang === 'fr'
-                        ? 'Ta ligue est constituée lundi matin. D’ici là, tes points de la semaine comptent déjà.'
-                        : 'Your league is formed on Monday morning. Until then, your weekly points already count.'}
+                      {leaguePendingBoardLabel(lang)}
                     </p>
                     <p
                       data-testid="league-countdown"

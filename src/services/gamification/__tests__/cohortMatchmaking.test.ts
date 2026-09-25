@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildCohorts,
+  planMidWeekRefill,
   resolveLeagueCutoffs,
   type CohortCandidate,
 } from '../cohortMatchmaking'
@@ -131,5 +132,57 @@ describe('buildCohorts', () => {
     )
     expect(cohorts).toHaveLength(1)
     expect(cohorts[0].tier).toBe('reserve')
+  })
+})
+
+describe('planMidWeekRefill', () => {
+  it('ajoute les nouveaux opt-in à une cohorte solo plutôt que d’attendre lundi', () => {
+    const plan = planMidWeekRefill(
+      [{ cohortId: 'c1', tier: 'reserve', memberIds: ['hugo'] }],
+      [candidate('flora'), candidate('jean')],
+    )
+    expect(plan.newCohorts).toEqual([])
+    expect(plan.merges).toEqual([])
+    expect(plan.additions).toEqual([
+      { cohortId: 'c1', userIds: ['flora', 'jean'] },
+    ])
+  })
+
+  it('fusionne deux cohortes solo quand un absorbeur a de la place', () => {
+    const plan = planMidWeekRefill(
+      [
+        { cohortId: 'c-a', tier: 'reserve', memberIds: ['alice'] },
+        { cohortId: 'c-b', tier: 'reserve', memberIds: ['bob'] },
+      ],
+      [],
+    )
+    expect(plan.additions).toEqual([])
+    expect(plan.newCohorts).toEqual([])
+    expect(plan.merges).toEqual([
+      { fromCohortId: 'c-a', toCohortId: 'c-b', userIds: ['alice'] },
+    ])
+  })
+
+  it('crée une nouvelle cohorte seulement si les existantes sont pleines', () => {
+    const full = Array.from({ length: LEAGUE_RULES.MAX_COHORT_SIZE }, (_, i) => `u${i}`)
+    const plan = planMidWeekRefill(
+      [{ cohortId: 'full', tier: 'reserve', memberIds: full }],
+      manyCandidates(8).map((c) => ({ ...c, userId: `new-${c.userId}` })),
+    )
+    expect(plan.additions).toEqual([])
+    expect(plan.merges).toEqual([])
+    expect(plan.newCohorts).toHaveLength(1)
+    expect(plan.newCohorts[0].memberIds).toHaveLength(8)
+  })
+
+  it('est déterministe à entrée égale', () => {
+    const existing = [
+      { cohortId: 'c2', tier: 'reserve' as const, memberIds: ['z', 'y'] },
+      { cohortId: 'c1', tier: 'reserve' as const, memberIds: ['a'] },
+    ]
+    const unassigned = [candidate('m'), candidate('b')]
+    expect(planMidWeekRefill(existing, unassigned)).toEqual(
+      planMidWeekRefill(existing, unassigned),
+    )
   })
 })
