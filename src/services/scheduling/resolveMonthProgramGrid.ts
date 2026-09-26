@@ -50,9 +50,10 @@ function buildMonthProjectionBase(
     // y compris quand un override manuel diverge du calendrier seasonEndedAt.
     anchors.offSeasonStartAt = addDaysISO(currentMonday, -(anchorCtx.weekNumber - 1) * 7)
     delete anchors.manualOffSeasonWeekOverride
-  } else if (anchorCtx?.offSeasonStartAt) {
-    anchors.offSeasonStartAt = anchorCtx.offSeasonStartAt
   }
+  // Ne pas promouvoir le offSeasonStartAt *dérivé* du contexte live (reporting)
+  // en ancre explicite quand on est déjà en saison / pré-saison : ça pollue la
+  // projection des semaines futures.
 
   const baseProfile: UserProfile = {
     ...params.profile,

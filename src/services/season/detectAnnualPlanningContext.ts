@@ -1037,22 +1037,39 @@ export function detectAnnualPlanningContext(inputs: AthletePlanningInputs): Annu
   // Auto-transition: if no future match and last match > 28 days ago,
   // the season is effectively over — fall back to off-season rather than
   // staying stuck in in_season indefinitely (dead-end after dismiss).
+  //
+  // Exception : calendrier creux en pleine fenêtre FFR « en saison »
+  // (sept→mai). Sans seasonEndedAt explicite, on ne bascule pas — sinon une
+  // athlète avec 1–2 matchs manuels (sync FFR absente) passe en inter-saison
+  // dès J+28 alors que sa saison club continue.
   const AUTO_SEASON_END_DAYS = 28
   const base = baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, acc.freeze())
-  if (
+  const sparseCalendarPastLastMatch =
     base.daysUntilNextMatch == null &&
     base.daysSinceLastMatch != null &&
     base.daysSinceLastMatch >= AUTO_SEASON_END_DAYS
-  ) {
-    acc.bump('calendar_inferred')
-    acc.rule('rule:auto_season_ended_28d')
-    acc.warn('Aucun match futur et dernier match > 28j : basculement automatique en off-season.')
-    const autoTrace = acc.freeze()
-    return buildOffSeasonContext(
-      bumpOffSeasonWeekSkipRecoveryIntro(1, OFF_SEASON_WEEKS_V1, anchors),
-      toIsoDate(todayWeekMonday),
-      baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, autoTrace)
-    )
+
+  if (sparseCalendarPastLastMatch) {
+    const clock = resolveDefaultFfrSeasonClock(todayDate)
+    const explicitOffSeasonEnd =
+      Boolean(anchors.seasonEndedAt) || anchors.manualCycleOverride === 'off_season'
+
+    if (clock.cycle === 'in_season' && !explicitOffSeasonEnd) {
+      acc.rule('rule:auto_season_end_suppressed_ffr_clock')
+      acc.warn(
+        'Aucun match futur et dernier match > 28j, mais horloge FFR encore en saison : on reste en saison (calendrier probablement incomplet).',
+      )
+    } else {
+      acc.bump('calendar_inferred')
+      acc.rule('rule:auto_season_ended_28d')
+      acc.warn('Aucun match futur et dernier match > 28j : basculement automatique en off-season.')
+      const autoTrace = acc.freeze()
+      return buildOffSeasonContext(
+        bumpOffSeasonWeekSkipRecoveryIntro(1, OFF_SEASON_WEEKS_V1, anchors),
+        toIsoDate(todayWeekMonday),
+        baseContextFields(inputs, todayDate, todayIso, matchDates, firstMatchDate, autoTrace),
+      )
+    }
   }
 
   const inSeasonWeekNumber =

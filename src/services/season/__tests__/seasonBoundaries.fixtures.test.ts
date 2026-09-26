@@ -264,24 +264,34 @@ describe('B4 — in-season subMode boundaries', () => {
 // ─── F13 — Auto season-end boundary (DSL=27 vs 28) ────────────────────
 
 describe('B4 — auto season-end boundary', () => {
-  it('F13 — DSL=27 + DUN=null → in_season ; DSL=28 → off_season', () => {
-    // For DSL=27, last match must be 2026-08-18 (Tue), today=2026-09-14 → in_season W5.
-    // For DSL=28, last match must be 2026-08-17 (Mon), today=2026-09-14 → auto-end → off_season.
+  it('F13 — DSL=27 → in_season ; DSL=28 en juin (FFR off) → off_season ; DSL=28 en sept (FFR in) → suppressed', () => {
+    // Septembre : horloge FFR encore en saison → le filet 28j est inhibé.
     const stillIn = detectAnnualPlanningContext({
       ...baseInputs,
       today: '2026-09-14',
       events: makeMatches('2026-08-18'),
     })
-    const flipped = detectAnnualPlanningContext({
+    const suppressedInSeason = detectAnnualPlanningContext({
       ...baseInputs,
       today: '2026-09-14',
       events: makeMatches('2026-08-17'),
     })
+    // Juin : horloge FFR = off_season → auto-28j s’applique.
+    const flippedInJune = detectAnnualPlanningContext({
+      ...baseInputs,
+      today: '2026-06-15',
+      events: makeMatches('2026-05-10'),
+      planningAnchors: { firstMatchDateOverride: '2026-05-03' },
+    })
     expect(stillIn.cycle).toBe('in_season')
     expect(stillIn.daysSinceLastMatch).toBe(27)
-    expect(flipped.cycle).toBe('off_season')
-    expect(flipped.daysSinceLastMatch).toBe(28)
-    expect(flipped.planningTrace.rulesApplied).toContain('rule:auto_season_ended_28d')
+    expect(suppressedInSeason.cycle).toBe('in_season')
+    expect(suppressedInSeason.daysSinceLastMatch).toBe(28)
+    expect(suppressedInSeason.planningTrace.rulesApplied).toContain(
+      'rule:auto_season_end_suppressed_ffr_clock',
+    )
+    expect(flippedInJune.cycle).toBe('off_season')
+    expect(flippedInJune.planningTrace.rulesApplied).toContain('rule:auto_season_ended_28d')
   })
 })
 

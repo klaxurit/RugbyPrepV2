@@ -243,15 +243,27 @@ describe('detectAnnualPlanningContext', () => {
     expect(r.cycle).not.toBe('playoffs') // flag is stale, should fall through
   })
 
-  it('auto season-end after 28 days without match', () => {
-    // Last match was March 15, today is May 15 — 61 days since last match, no future match
+  it('auto season-end after 28 days without match (horloge FFR hors saison)', () => {
+    // Juin = transition FFR (off_season). Calendrier creux → auto-28j s’applique.
     const r = detectAnnualPlanningContext({
       ...baseParams,
-      events: [match(FIRST_MATCH)], // only past match
-      today: '2025-05-15',
+      events: [match('2025-05-10')],
+      today: '2025-06-15',
     })
     expect(r.cycle).toBe('off_season')
     expect(r.planningTrace.rulesApplied).toContain('rule:auto_season_ended_28d')
+  })
+
+  it('ne bascule pas en inter-saison sur calendrier creux si horloge FFR encore en saison', () => {
+    // Mai = encore en saison FFR. 2 mois sans match futur → on reste en saison.
+    const r = detectAnnualPlanningContext({
+      ...baseParams,
+      events: [match(FIRST_MATCH)],
+      today: '2025-05-15',
+    })
+    expect(r.cycle).toBe('in_season')
+    expect(r.planningTrace.rulesApplied).toContain('rule:auto_season_end_suppressed_ffr_clock')
+    expect(r.planningTrace.rulesApplied).not.toContain('rule:auto_season_ended_28d')
   })
 
   it('override manuel off-season (semaine S4)', () => {
