@@ -53,6 +53,7 @@ import { userScopedKey } from '../services/storage/userScopedStorage'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 import { useRegisterCoachContext } from '../contexts/CoachContext'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
+import { MatchLoadSheet } from '../components/match/MatchLoadSheet'
 import { computeStreak } from '../services/home/computeStreak'
 import { selectCoachInsight } from '../services/home/coachInsights'
 import { resolveFatigueLevel } from '../services/program/resolveFatigueLevel'
@@ -218,6 +219,8 @@ export function HomePage() {
     nextStructuralMatch,
     isMatchDay,
     hideImportedEvent,
+    updateMatchLoad,
+    updateMatchParticipation,
   } = useCalendar()
 
   const acwr = useACWR(logs, structuralEvents)
@@ -469,6 +472,7 @@ export function HomePage() {
   const injuryAlertNow = useMemo(() => new Date(`${today}T12:00:00`).getTime(), [today])
   const [injuryDismissed, setInjuryDismissed] = useState(false)
   const [drawerMatch, setDrawerMatch] = useState<typeof nextMatch>(null)
+  const [loadMatch, setLoadMatch] = useState<typeof nextMatch>(null)
 
   // ── Coach context ──
   const coachZone = acwr.hasSufficientData ? acwr.zone : null
@@ -949,6 +953,7 @@ export function HomePage() {
       <MatchEditDrawer
         event={drawerMatch}
         onClose={() => setDrawerMatch(null)}
+        onRequestLoadLog={(ev) => setLoadMatch(ev)}
         matchKindProfileContext={
           surface?.planningContext
             ? {
@@ -958,6 +963,14 @@ export function HomePage() {
               }
             : undefined
         }
+      />
+      <MatchLoadSheet
+        event={loadMatch}
+        open={loadMatch != null}
+        onClose={() => setLoadMatch(null)}
+        lang={lang}
+        onSaveLoad={updateMatchLoad}
+        onSaveAbsence={updateMatchParticipation}
       />
     </div>
   )

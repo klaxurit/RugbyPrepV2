@@ -90,6 +90,11 @@ export interface WeekCorrection {
   addedEventId?: string
   /** For add_match: the date of the added match (enables precise local undo binding). */
   matchDate?: string
+  /**
+   * Motif joueur (coach-ready). Ex. `missed_club` sur `unavailable_day`
+   * = « je n’y vais pas » un soir club, one-shot.
+   */
+  reason?: 'missed_club'
 }
 
 // ─── Week Snapshot (Slice 2) ───────────────────────────────────────

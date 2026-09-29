@@ -72,7 +72,7 @@ export interface UseWeekSnapshotResult {
   // ── Category A light corrections ──
   rescheduleSession: (sessionId: string, toDay: DayOfWeek) => void
   skipSession: (sessionId: string) => void
-  markDayUnavailable: (day: DayOfWeek) => void
+  markDayUnavailable: (day: DayOfWeek, reason?: 'missed_club') => void
   undoCorrection: (correctionId: string) => void
   // ── Heavy corrections (re-run engine) ──
   setFatigue: (fatigue: 'OK' | 'FATIGUE') => void
@@ -291,11 +291,18 @@ export function useWeekSnapshot(
     )
   }, [applyCorrection])
 
-  const markDayUnavailable = useCallback((day: DayOfWeek) => {
+  const markDayUnavailable = useCallback((day: DayOfWeek, reason?: 'missed_club') => {
     const p = paramsRef.current
     const lang = p ? profileLang(p.profile) : 'fr'
     applyCorrection(
-      { id: nextCorrectionId(), type: 'unavailable_day', toDay: day, appliedAt: new Date().toISOString(), reversible: true },
+      {
+        id: nextCorrectionId(),
+        type: 'unavailable_day',
+        toDay: day,
+        appliedAt: new Date().toISOString(),
+        reversible: true,
+        ...(reason ? { reason } : {}),
+      },
       weekSnapshotLabel('toast_unavailable', lang),
     )
   }, [applyCorrection])

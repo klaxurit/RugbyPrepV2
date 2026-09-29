@@ -11,6 +11,8 @@ export interface BottomSheetProps {
   eyebrow?: string
   /** Titre principal — ex. "Bas du corps · Hypertrophie". */
   title?: string
+  /** Sous-titre sous le titre (même colonne, même padding) — ex. date du match. */
+  subtitle?: string
   /** Bouton de fermeture visible (par défaut true). */
   showClose?: boolean
   /** Désactive le swipe-down dismiss (cas formulaire à compléter forcé). */
@@ -39,6 +41,7 @@ export function BottomSheet({
   ariaLabel,
   eyebrow,
   title,
+  subtitle,
   showClose = true,
   disableSwipeDismiss = false,
   disableBackdropDismiss = false,
@@ -80,7 +83,7 @@ export function BottomSheet({
           >
             <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-layer-15" />
             {!hideDefaultHeader && (
-              <div className="flex items-center gap-2 px-4 pb-2">
+              <div className="flex items-start gap-2 px-4 pb-2">
                 <div className="min-w-0 flex-1">
                   {eyebrow && (
                     <p className="text-[10px] font-bold uppercase tracking-wider text-fg-muted leading-none">
@@ -92,13 +95,18 @@ export function BottomSheet({
                       {title}
                     </p>
                   )}
+                  {subtitle && (
+                    <p className="mt-0.5 truncate text-xs font-semibold text-fg-muted leading-snug">
+                      {subtitle}
+                    </p>
+                  )}
                 </div>
                 {showClose && (
                   <button
                     type="button"
                     onClick={onClose}
                     aria-label="Fermer"
-                    className="rounded-xl p-2 text-fg-muted hover:bg-layer-7 rf-focus-ring"
+                    className="shrink-0 rounded-xl p-2 text-fg-muted hover:bg-layer-7 rf-focus-ring"
                   >
                     <X className="h-4 w-4" />
                   </button>

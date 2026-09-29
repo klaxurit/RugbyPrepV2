@@ -30,9 +30,11 @@ import { useWeekSnapshotConfirmationSheet } from '../hooks/useWeekSnapshotConfir
 import { useHintVisibility } from '../hooks/useHintVisibility'
 import { NextMatchCard } from '../components/match/NextMatchCard'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
+import { MatchLoadSheet } from '../components/match/MatchLoadSheet'
 import { AddMatchModal } from '../components/match/AddMatchModal'
 import { MatchKindFollowUpSheet } from '../components/match/MatchKindFollowUpSheet'
 import { suggestedNextMatchISO } from '../components/match/matchDate'
+import { findMatchNeedingLoadNudge } from '../services/calendar/matchLoadNudge'
 import { WeekCorrectionToast } from '../components/scheduling/WeekCorrectionToast'
 import { SchedulingTransitionBanner } from '../components/SeasonTransitionBanner'
 import { useSchedulingTransition } from '../hooks/useSchedulingTransition'
@@ -66,7 +68,7 @@ export function WeekPage() {
   const { week, lastNonDeloadWeek } = useWeek()
   const { fatigue } = useFatigue()
   const { logs, addLog } = useHistory()
-  const { visibleEvents, structuralEvents, addEvent, updateMatchKind } = useCalendar()
+  const { visibleEvents, structuralEvents, addEvent, updateMatchKind, updateMatchLoad, updateMatchParticipation } = useCalendar()
   const navigate = useNavigate()
 
   const acwrResult = useACWR(logs, structuralEvents)
@@ -80,6 +82,7 @@ export function WeekPage() {
 
   // Match edit drawer + monthly grid toggle + add match modal
   const [drawerMatch, setDrawerMatch] = useState<typeof visibleEvents[number] | null>(null)
+  const [loadMatch, setLoadMatch] = useState<typeof visibleEvents[number] | null>(null)
   const [previewSession, setPreviewSession] = useState<MonthPlannedSession | null>(null)
   const [monthOpen, setMonthOpen] = useState(false)
   const [monthView, setMonthView] = useState(() => {
@@ -103,13 +106,11 @@ export function WeekPage() {
     markWeekViewed(userId)
   }, [userId])
 
-  // Match non chargé hier → bannière rappel + suggestion mobilité
-  const yesterday = new Date()
-  yesterday.setDate(yesterday.getDate() - 1)
-  const yesterdayStr = yesterday.toISOString().split('T')[0]
-  const unmatchedYesterdayMatch = visibleEvents.find(
-    (e) => e.type === 'match' && e.date === yesterdayStr && !e.rpe
-  ) ?? null
+  // Match passé J−1 / J−2 sans charge ni absence → bannière « Enregistrer ma charge »
+  const unmatchedRecentMatch = useMemo(
+    () => findMatchNeedingLoadNudge(visibleEvents, getToday()),
+    [visibleEvents],
+  )
   // (isRecoveryDay supprimé : la nouvelle WeekDailyPlanner détermine la récup
   // jour par jour via activeRecoveryEligibleDays + activeRecoveryDates.)
 
@@ -158,6 +159,7 @@ export function WeekPage() {
     surface, snapshot,
     confirmPendingUpdate,
     addMatch,
+    markDayUnavailable,
     hasConfirmationRequired,
     toastMessage, clearToast,
   } = useWeekSnapshot(surfaceParams)
@@ -530,14 +532,15 @@ export function WeekPage() {
             aria-label="Programme de la semaine"
           >
             {/* Match joué — ligne compacte avec CTA "Enregistrer ma charge" */}
-            {unmatchedYesterdayMatch && (
+            {unmatchedRecentMatch && (
               <button
                 type="button"
-                onClick={() => setDrawerMatch(unmatchedYesterdayMatch)}
+                onClick={() => setLoadMatch(unmatchedRecentMatch)}
                 className="block w-full text-left rf-focus-ring"
+                data-testid="match-load-nudge"
               >
                 <NextMatchCard
-                  event={unmatchedYesterdayMatch}
+                  event={unmatchedRecentMatch}
                   variant="past"
                   size="mini"
                   ctaLabel="Enregistrer ma charge →"
@@ -647,6 +650,7 @@ export function WeekPage() {
                   navigate(`/session/${index}`)
                 }}
                 onSelectMatchByDate={openMatchByDate}
+                onMissClubDay={(day) => markDayUnavailable(day, 'missed_club')}
                 onActiveRecoveryQuick={(activity, dateISO) => {
                   addLog({
                     dateISO: `${dateISO}T12:00:00.000Z`,
@@ -748,6 +752,7 @@ export function WeekPage() {
       <MatchEditDrawer
         event={drawerMatch}
         onClose={() => setDrawerMatch(null)}
+        onRequestLoadLog={(ev) => setLoadMatch(ev)}
         matchKindProfileContext={
           surface?.planningContext
             ? {
@@ -757,6 +762,14 @@ export function WeekPage() {
               }
             : undefined
         }
+      />
+      <MatchLoadSheet
+        event={loadMatch}
+        open={loadMatch != null}
+        onClose={() => setLoadMatch(null)}
+        lang={lang}
+        onSaveLoad={updateMatchLoad}
+        onSaveAbsence={updateMatchParticipation}
       />
       <SessionMonthPreviewSheet
         session={previewSession}

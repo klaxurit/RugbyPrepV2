@@ -5,7 +5,7 @@ import { useProfile } from './useProfile'
 import { syncCalendar } from '../services/calendar/ffrSyncService'
 import { applyDeferralRules } from '../services/season/deferralRules'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
-import type { CalendarEvent, MatchKind } from '../types/training'
+import type { CalendarEvent, MatchKind, MatchParticipationStatus } from '../types/training'
 import { calendarRowToEvent } from '../services/calendar/calendarRowToEvent'
 import { deleteFfrImportedMatches, dropFfrImportedEvents } from '../services/calendar/ffrImportedEvents'
 import { useProgramEvolutionSheet } from './useProgramEvolutionSheet'
@@ -14,7 +14,7 @@ import { getToday } from '../services/ui/debugDateOverride'
 const STORAGE_BASE = 'rugbyprep.calendar'
 const AUTO_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24h
 const CALENDAR_SELECT =
-  'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, journee_name, match_status, venue, user_hidden, user_override, synced_at, match_kind'
+  'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, journee_name, match_status, venue, user_hidden, user_override, synced_at, match_kind, participation_status'
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -266,20 +266,65 @@ export function useCalendarSource() {
   const updateMatchLoad = useCallback(
     async (eventId: string, rpe: number, durationMin: number) => {
       if (userId) {
-        await supabase
+        const { error: dbError } = await supabase
           .from('match_calendar')
-          .update({ rpe, duration_min: durationMin })
+          .update({
+            rpe,
+            duration_min: durationMin,
+            participation_status: 'played',
+          })
           .eq('id', eventId)
+        if (dbError) throw dbError
       }
       setEvents((prev) => {
         const next = prev.map((e) =>
-          e.id === eventId ? { ...e, rpe, duration_min: durationMin } : e
+          e.id === eventId
+            ? {
+                ...e,
+                rpe,
+                duration_min: durationMin,
+                participation_status: 'played' as const,
+              }
+            : e,
         )
         saveToStorage(next, userId)
         return next
       })
     },
-    [userId]
+    [userId],
+  )
+
+  const updateMatchParticipation = useCallback(
+    async (eventId: string, status: Exclude<MatchParticipationStatus, 'played'>) => {
+      // Absence → charge 0 (pas de session-RPE Foster).
+      const patch = {
+        participation_status: status,
+        rpe: null as number | null,
+        duration_min: 0,
+      }
+      if (userId) {
+        const { error: dbError } = await supabase
+          .from('match_calendar')
+          .update(patch)
+          .eq('id', eventId)
+        if (dbError) throw dbError
+      }
+      setEvents((prev) => {
+        const next = prev.map((e) =>
+          e.id === eventId
+            ? {
+                ...e,
+                participation_status: status,
+                rpe: undefined,
+                duration_min: 0,
+              }
+            : e,
+        )
+        saveToStorage(next, userId)
+        return next
+      })
+    },
+    [userId],
   )
 
   const setMatchNeutral = useCallback(
@@ -461,6 +506,7 @@ export function useCalendarSource() {
     clearFfrImportedEvents,
     updateMatchKind,
     updateMatchLoad,
+    updateMatchParticipation,
     setMatchNeutral,
     hideImportedEvent,
     unhideImportedEvent,

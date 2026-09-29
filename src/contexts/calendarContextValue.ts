@@ -26,6 +26,7 @@ const EMPTY_CALENDAR: CalendarContextValue = {
   clearFfrImportedEvents: async () => undefined,
   updateMatchKind: async () => undefined,
   updateMatchLoad: async () => undefined,
+  updateMatchParticipation: async () => undefined,
   setMatchNeutral: async () => undefined,
   hideImportedEvent: async () => undefined,
   unhideImportedEvent: async () => undefined,

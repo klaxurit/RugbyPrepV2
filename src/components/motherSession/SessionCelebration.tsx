@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronDown, Dumbbell, Clock, Hash } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import type { FatigueStatus } from '../../types/training'
+import { PerceivedIntensitySlider } from '../ui/PerceivedIntensitySlider'
 
 interface SessionCelebrationStats {
   /** Durée totale en minutes. */
@@ -20,19 +21,6 @@ interface SessionCelebrationProps {
   onClose: () => void
   onConfirm: (payload: { fatigue: FatigueStatus; rpe: number; durationMin: number; notes: string }) => void | Promise<void>
   isSubmitting?: boolean
-}
-
-const RPE_LABEL: Record<number, string> = {
-  1: 'Très léger',
-  2: 'Léger',
-  3: 'Modéré léger',
-  4: 'Modéré',
-  5: 'Modéré+',
-  6: 'Un peu dur',
-  7: 'Dur',
-  8: 'Très dur',
-  9: 'Extrême',
-  10: 'Maximal',
 }
 
 function vibrate(pattern: number | number[]) {
@@ -154,30 +142,8 @@ export function SessionCelebration({
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="space-y-3"
               >
-                <div className="flex items-baseline justify-between">
-                  <label className="text-xs font-black uppercase tracking-wider text-fg-muted">
-                    Intensité ressentie (RPE)
-                  </label>
-                  <span className="text-xs font-bold text-fg">
-                    {rpe} / 10 — <span className="text-fg-muted">{RPE_LABEL[rpe]}</span>
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min={1}
-                  max={10}
-                  step={1}
-                  value={rpe}
-                  onChange={(e) => setRpe(Number(e.target.value))}
-                  className="w-full h-2 rounded-full accent-[var(--color-brand)] bg-layer-10 cursor-pointer rf-focus-ring"
-                  aria-label="Échelle RPE de 1 à 10"
-                />
-                <div className="flex justify-between text-[10px] text-fg-faint">
-                  <span>Facile</span>
-                  <span>Maximal</span>
-                </div>
+                <PerceivedIntensitySlider value={rpe} onChange={setRpe} />
               </motion.section>
 
               <motion.section

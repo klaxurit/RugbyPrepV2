@@ -26,6 +26,7 @@ export type MatchCalendarRow = {
   user_override?: CalendarEvent['user_override']
   synced_at?: string | null
   match_kind?: CalendarEvent['match_kind']
+  participation_status?: CalendarEvent['participation_status']
 }
 
 function formatKickoffTime(raw: string | null | undefined): string | undefined {
@@ -69,5 +70,6 @@ export function calendarRowToEvent(row: MatchCalendarRow): CalendarEvent {
     user_hidden: row.user_hidden ?? undefined,
     user_override: row.user_override ?? undefined,
     synced_at: row.synced_at ?? undefined,
+    participation_status: row.participation_status ?? undefined,
   }
 }

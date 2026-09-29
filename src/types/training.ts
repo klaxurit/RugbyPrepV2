@@ -548,6 +548,12 @@ export type SeasonPhase = 'off-season' | 'pre-season' | 'in-season' | 'playoffs'
 /** Après ajout manuel : pilote reprise saison / play-offs / statu quo (amical). */
 export type MatchKind = 'league' | 'friendly' | 'cup_final'
 
+/**
+ * Participation match — charge 0 si `not_selected` / `did_not_play`.
+ * `played` (ou absent) = charge via rpe × duration_min.
+ */
+export type MatchParticipationStatus = 'played' | 'not_selected' | 'did_not_play'
+
 export interface CalendarEvent {
   id: string
   date: string           // YYYY-MM-DD
@@ -561,8 +567,10 @@ export interface CalendarEvent {
   /** Terrain neutre (ex: finale playoffs). Si true, prend priorité sur is_home. */
   is_neutral?: boolean
   notes?: string
-  rpe?: number           // RPE 1-10 du match (pour ACWR)
+  rpe?: number           // RPE 1-10 du match (pour ACWR) — intensité ressentie UI
   duration_min?: number  // Durée en minutes (pour ACWR)
+  /** Absence / non-jeu — distinct de rpe manquant (relance J+1/J+2). */
+  participation_status?: MatchParticipationStatus | null
   created_at?: string
   source?: 'manual' | 'ffr_import'
   external_id?: string

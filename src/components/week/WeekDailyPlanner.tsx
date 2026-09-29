@@ -117,6 +117,8 @@ export interface WeekDailyPlannerProps {
   onSessionSelect: (index: number, options?: { reviewLogId?: string }) => void
   onSelectMatchByDate: (dateISO: string) => void
   onActiveRecoveryQuick?: (activity: string, dateISO: string) => void
+  /** Club : « Je n’y vais pas » → correction unavailable_day + reason missed_club. */
+  onMissClubDay?: (day: DayOfWeek) => void
 }
 
 /**
@@ -143,6 +145,7 @@ export function WeekDailyPlanner({
   onSessionSelect,
   onSelectMatchByDate,
   onActiveRecoveryQuick,
+  onMissClubDay,
 }: WeekDailyPlannerProps) {
   // ─── Résolution des 7 jours de la semaine en cours ───
   const days: ResolvedDay[] = useMemo(() => {
@@ -257,6 +260,7 @@ export function WeekDailyPlanner({
         onSessionSelect={onSessionSelect}
         onSelectMatchByDate={onSelectMatchByDate}
         onActiveRecoveryQuick={onActiveRecoveryQuick}
+        onMissClubDay={onMissClubDay}
       />
 
       <div className="pt-2">
@@ -383,13 +387,16 @@ interface FeatureCardSwitchProps {
   onSessionSelect: (index: number, options?: { reviewLogId?: string }) => void
   onSelectMatchByDate: (dateISO: string) => void
   onActiveRecoveryQuick?: (activity: string, dateISO: string) => void
+  onMissClubDay?: (day: DayOfWeek) => void
 }
 
 function FeatureCardSwitch({
   day,
+  lang,
   onSessionSelect,
   onSelectMatchByDate,
   onActiveRecoveryQuick,
+  onMissClubDay,
 }: FeatureCardSwitchProps) {
   switch (day.type) {
     case 'match':
@@ -411,7 +418,7 @@ function FeatureCardSwitch({
     case 'recovery':
       return <RecoveryCard day={day} onQuickLog={onActiveRecoveryQuick} />
     case 'club':
-      return <ClubDayCard day={day} />
+      return <ClubDayCard day={day} lang={lang} onMissClubDay={onMissClubDay} />
     case 'unavailable':
       return <UnavailableCard day={day} />
     case 'rest':
@@ -716,7 +723,18 @@ function RestCard({ day }: { day: ResolvedDay }) {
 }
 
 // ── ClubDayCard
-function ClubDayCard({ day }: { day: ResolvedDay }) {
+function ClubDayCard({
+  day,
+  lang,
+  onMissClubDay,
+}: {
+  day: ResolvedDay
+  lang: 'fr' | 'en'
+  onMissClubDay?: (day: DayOfWeek) => void
+}) {
+  const [confirmMiss, setConfirmMiss] = useState(false)
+  const dayLong = lang === 'en' ? DAY_LONG_EN[day.dow] : DAY_LONG[day.dow]
+
   return (
     <div className={`${CARD_BASE} bg-cream-soft text-fg border-[1.5px] border-brand-border`}>
       <GhostNumber n={day.dateNum} />
@@ -725,33 +743,89 @@ function ClubDayCard({ day }: { day: ResolvedDay }) {
 
         <div className="mt-4">
           <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-brand opacity-70">
-            {DAY_LONG[day.dow]}
+            {dayLong}
           </div>
           <div
             className="mt-1 font-serif italic font-extrabold leading-[0.95] text-[28px]"
             style={{ letterSpacing: '-0.9px' }}
           >
-            Entraînement
-            <br />
-            au club
+            {lang === 'en' ? (
+              <>
+                Club
+                <br />
+                training
+              </>
+            ) : (
+              <>
+                Entraînement
+                <br />
+                au club
+              </>
+            )}
           </div>
           <div className="mt-3 text-[13px] font-medium text-fg/65 leading-relaxed">
-            Séance collective programmée. Si tu veux ajouter une séance salle le même jour, ajuste
-            depuis ton profil.
+            {lang === 'en'
+              ? 'Collective session scheduled. To add a gym session the same day, adjust from your profile.'
+              : 'Séance collective programmée. Si tu veux ajouter une séance salle le même jour, ajuste depuis ton profil.'}
           </div>
         </div>
 
-        <div
-          className="mt-4 border-t pt-3"
-          style={{ borderColor: 'color-mix(in srgb, var(--color-accent-border) 60%, transparent)' }}
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-[15px]" aria-hidden>🏟️</span>
-            <span className="text-[11px] font-bold text-fg/55 uppercase tracking-[0.08em]">
-              Jour club — pas bloqué
-            </span>
+        {onMissClubDay ? (
+          <div className="mt-4 space-y-2">
+            {!confirmMiss ? (
+              <button
+                type="button"
+                data-testid="club-miss-toggle"
+                onClick={() => setConfirmMiss(true)}
+                className="w-full rounded-2xl border border-border-app bg-layer-5 px-4 py-3 text-left text-sm font-black text-fg hover:border-brand-border transition-colors rf-focus-ring"
+              >
+                {lang === 'en' ? 'I’m not going' : 'Je n’y vais pas'}
+              </button>
+            ) : (
+              <div className="rounded-2xl border border-warn-bd/40 bg-warn-bg/20 px-4 py-3 space-y-3">
+                <p className="text-[12px] font-semibold text-fg-muted leading-snug">
+                  {lang === 'en'
+                    ? 'This club night won’t count as training load. Gym sessions that day can be reopened.'
+                    : 'Ce soir club ne comptera pas comme charge. Les séances salle du jour pourront être réouvertes.'}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setConfirmMiss(false)}
+                    className="flex-1 rounded-xl border border-border-app bg-layer-5 py-2.5 text-xs font-bold text-fg-muted rf-focus-ring"
+                  >
+                    {lang === 'en' ? 'Cancel' : 'Annuler'}
+                  </button>
+                  <button
+                    type="button"
+                    data-testid="club-miss-confirm"
+                    onClick={() => {
+                      onMissClubDay(day.dow)
+                      setConfirmMiss(false)
+                    }}
+                    className="flex-1 rounded-xl bg-warn-bg-strong py-2.5 text-xs font-black text-warn rf-focus-ring"
+                  >
+                    {lang === 'en' ? 'Confirm' : 'Confirmer'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        ) : (
+          <div
+            className="mt-4 border-t pt-3"
+            style={{ borderColor: 'color-mix(in srgb, var(--color-accent-border) 60%, transparent)' }}
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-[15px]" aria-hidden>
+                🏟️
+              </span>
+              <span className="text-[11px] font-bold text-fg/55 uppercase tracking-[0.08em]">
+                {lang === 'en' ? 'Club day — not blocked' : 'Jour club — pas bloqué'}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -7,7 +7,6 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  CheckCircle2,
   Undo2,
 } from 'lucide-react'
 import type { AnnualPlanningContext } from '../../types/annualPlanning'
@@ -20,6 +19,8 @@ import { useCalendar } from '../../hooks/useCalendar'
 import { useProfile } from '../../hooks/useProfile'
 import { buildProfileUpdatesForManualMatchKind } from '../../services/season/buildProfileUpdatesForManualMatchKind'
 import { MatchKindPicker } from './MatchKindPicker'
+import { matchNeedsLoadLog } from '../../services/calendar/matchLoadNudge'
+import { getToday } from '../../services/ui/debugDateOverride'
 
 const MATCH_KIND_UI: Record<'fr' | 'en', { section: string; hint: string }> = {
   fr: {
@@ -41,16 +42,20 @@ interface MatchEditDrawerProps {
     schedulingMode: SchedulingMode
     today: string
   }
+  /** Ouvre le sheet charge dédié (match passé sans log). */
+  onRequestLoadLog?: (event: CalendarEvent) => void
 }
 
 /**
  * Édition d’un match — même coque {@link BottomSheet} que l’ajout de match
  * (handle, swipe, fond, safe-area) et en-tête aligné sur {@link AddMatchModal}.
+ * La charge match (minutes + intensité) vit dans {@link MatchLoadSheet}.
  */
 export function MatchEditDrawer({
   event,
   onClose,
   matchKindProfileContext,
+  onRequestLoadLog,
 }: MatchEditDrawerProps) {
   const { profile, updateProfile } = useProfile()
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
@@ -60,7 +65,6 @@ export function MatchEditDrawer({
     setMatchNeutral,
     hideImportedEvent,
     unhideImportedEvent,
-    updateMatchLoad,
     updateMatchKind,
     removeEvent,
   } = useCalendar()
@@ -72,21 +76,14 @@ export function MatchEditDrawer({
       : null
   const open = match !== null
 
-  const [rpeInput, setRpeInput] = useState<number>(7)
-  const [durationInput, setDurationInput] = useState<number>(80)
-  const [saving, setSaving] = useState(false)
   const [asyncBusy, setAsyncBusy] = useState(false)
-  const [savedRecently, setSavedRecently] = useState(false)
 
   useEffect(() => {
-    if (match) {
-      setRpeInput(match.rpe ?? 7)
-      setDurationInput(match.duration_min ?? 80)
-      setSavedRecently(false)
-    }
-  }, [match])
+    // Reset busy when event changes
+    setAsyncBusy(false)
+  }, [match?.id])
 
-  const blocking = saving || asyncBusy
+  const blocking = asyncBusy
 
   const handleSheetClose = () => {
     if (blocking) return
@@ -95,12 +92,9 @@ export function MatchEditDrawer({
 
   const isFFR = match?.source === 'ffr_import'
   const isHidden = match?.user_hidden === true
-  const daysDiff = match
-    ? Math.round(
-        (new Date(match.date + 'T12:00:00').getTime() - new Date().setHours(0, 0, 0, 0)) / 86_400_000,
-      )
-    : 0
-  const isPast = match ? daysDiff < 0 : false
+  const todayISO = getToday()
+  const isPast = match ? match.date < todayISO : false
+  const showLoadCta = Boolean(match && isPast && matchNeedsLoadLog(match) && onRequestLoadLog)
 
   const handleToggleNeutral = async () => {
     if (!match || blocking) return
@@ -120,18 +114,6 @@ export function MatchEditDrawer({
       else await hideImportedEvent(match.id)
     } finally {
       setAsyncBusy(false)
-    }
-  }
-
-  const handleSaveLoad = async () => {
-    if (!match) return
-    setSaving(true)
-    try {
-      await updateMatchLoad(match.id, rpeInput, durationInput)
-      setSavedRecently(true)
-      window.setTimeout(() => setSavedRecently(false), 1500)
-    } finally {
-      setSaving(false)
     }
   }
 
@@ -209,6 +191,20 @@ export function MatchEditDrawer({
           </div>
 
           <div className="mt-5 space-y-5">
+            {showLoadCta && match ? (
+              <button
+                type="button"
+                data-testid="drawer-open-load-sheet"
+                onClick={() => {
+                  onRequestLoadLog?.(match)
+                  onClose()
+                }}
+                className="w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-colors shadow-lg shadow-brand-float rf-focus-ring"
+              >
+                {lang === 'fr' ? 'Enregistrer ma charge' : 'Log my match load'}
+              </button>
+            ) : null}
+
             <div>
               <span className="text-xs font-black text-fg-muted uppercase tracking-wide mb-2 block">
                 {ui.section}
@@ -298,48 +294,6 @@ export function MatchEditDrawer({
                 </div>
               </div>
             </div>
-
-            {isPast && (
-              <div>
-                <span className="text-xs font-black text-fg-muted uppercase tracking-wide mb-2 block">
-                  Charge du match
-                </span>
-                <div className="grid grid-cols-2 gap-3">
-                  <label className="space-y-1.5 block">
-                    <span className="text-[10px] font-bold text-fg-muted">RPE (1-10)</span>
-                    <input
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={rpeInput}
-                      onChange={(e) => setRpeInput(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-border-app bg-layer-5 px-4 py-3 text-lg font-black text-fg focus:outline-none focus:border-brand rf-focus-ring"
-                    />
-                  </label>
-                  <label className="space-y-1.5 block">
-                    <span className="text-[10px] font-bold text-fg-muted">Durée (min)</span>
-                    <input
-                      type="number"
-                      min={10}
-                      max={240}
-                      value={durationInput}
-                      onChange={(e) => setDurationInput(Number(e.target.value))}
-                      className="w-full rounded-2xl border border-border-app bg-layer-5 px-4 py-3 text-lg font-black text-fg focus:outline-none focus:border-brand rf-focus-ring"
-                    />
-                  </label>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleSaveLoad}
-                  disabled={saving}
-                  data-testid="drawer-save-load"
-                  className="mt-4 w-full py-4 rounded-2xl bg-brand hover:bg-brand-hover text-on-brand font-black uppercase italic tracking-wide transition-colors shadow-lg shadow-brand-glow disabled:opacity-50 rf-focus-ring flex items-center justify-center gap-2"
-                >
-                  {savedRecently ? <CheckCircle2 className="w-4 h-4" /> : null}
-                  {savedRecently ? 'Charge enregistrée' : saving ? 'Enregistrement…' : 'Enregistrer la charge'}
-                </button>
-              </div>
-            )}
 
             <div className="space-y-3 border-t border-border-app pt-5">
               {isFFR ? (
