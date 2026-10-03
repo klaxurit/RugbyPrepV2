@@ -1,9 +1,16 @@
+import { useEffect, useState } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { messageSW } from 'workbox-window'
 import { RefreshCcw, X } from 'lucide-react'
 import { resolveSafeReloadTarget } from './updatePromptReload'
-import { shouldShowUpdatePrompt } from './updatePromptVisibility'
+import {
+  readUpdatePromptLastPresentedAt,
+  shouldShowUpdatePrompt,
+  writeUpdatePromptLastPresentedAt,
+} from './updatePromptVisibility'
 import { useAuth } from '../hooks/useAuth'
+import { useProgramEvolutionSheet } from '../hooks/useProgramEvolutionSheet'
+import { useProfile } from '../hooks/useProfile'
 
 /**
  * Double envoi SKIP_WAITING : workbox-window (via virtual:pwa-register) appelle
@@ -26,14 +33,23 @@ function postSkipWaitingToBrowserWaitingWorker(): void {
 /**
  * Toast haut-de-page (sous la PageHeader) qui apparaît quand un nouveau
  * Service Worker est en `waiting`. Au tap sur "Recharger", on envoie
- * SKIP_WAITING au SW (que `src/sw.ts` traite en appelant
- * `self.skipWaiting()`) puis la page se recharge avec le nouveau bundle.
+ * SKIP_WAITING au SW puis la page se recharge avec le nouveau bundle.
  *
- * Visible uniquement dans l’app authentifiée — jamais sur la landing marketing
- * ni le funnel login/signup.
+ * Visible uniquement dans l’app authentifiée — jamais sur la landing.
+ * Plafonné à 1× / 24 h, et masqué quand une sheet programme est ouverte.
  */
 export function UpdatePrompt() {
   const { authState } = useAuth()
+  const { profile } = useProfile()
+  const lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'
+  const { isProgramEvolutionOpen } = useProgramEvolutionSheet()
+  const [lastPresentedAt, setLastPresentedAt] = useState<number | null>(() =>
+    readUpdatePromptLastPresentedAt(),
+  )
+  /** Garde le toast ouvert pendant le cycle d’affichage courant (sinon le write cooldown le referme). */
+  const [presentedThisCycle, setPresentedThisCycle] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
+
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
@@ -64,7 +80,43 @@ export function UpdatePrompt() {
     },
   })
 
-  if (!shouldShowUpdatePrompt(needRefresh, authState.status)) return null
+  const eligible = shouldShowUpdatePrompt(needRefresh, authState.status, {
+    suppressForProgramSheet: isProgramEvolutionOpen,
+    lastPresentedAt: presentedThisCycle ? null : lastPresentedAt,
+  })
+
+  const visible =
+    !dismissed &&
+    (eligible ||
+      (presentedThisCycle &&
+        needRefresh &&
+        authState.status === 'authenticated' &&
+        !isProgramEvolutionOpen))
+
+  useEffect(() => {
+    if (!eligible || presentedThisCycle) return
+    const now = Date.now()
+    writeUpdatePromptLastPresentedAt(now)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync cooldown localStorage → état UI pour ce cycle d'affichage
+    setLastPresentedAt(now)
+    setPresentedThisCycle(true)
+  }, [eligible, presentedThisCycle])
+
+  if (!visible) return null
+
+  const eyebrow = lang === 'fr' ? 'Mise à jour utile' : 'Helpful update'
+  const body =
+    lang === 'fr'
+      ? 'On a amélioré ton programme et corrigé des points importants. Recharge pour en profiter — ça prend une seconde.'
+      : 'We improved your program and fixed important bits. Reload to get them — it takes a second.'
+
+  const dismiss = () => {
+    writeUpdatePromptLastPresentedAt(Date.now())
+    setLastPresentedAt(Date.now())
+    setPresentedThisCycle(false)
+    setDismissed(true)
+    setNeedRefresh(false)
+  }
 
   return (
     <div
@@ -76,15 +128,14 @@ export function UpdatePrompt() {
     >
       <div className="flex-1 min-w-0">
         <p className="text-[10px] font-black uppercase tracking-widest text-fg-muted">
-          Nouvelle version
+          {eyebrow}
         </p>
-        <p className="text-sm font-bold text-fg leading-tight">
-          Une mise à jour est disponible.
-        </p>
+        <p className="text-sm font-bold text-fg leading-tight">{body}</p>
       </div>
       <button
         type="button"
         onClick={() => {
+          dismiss()
           const reloadTarget = resolveSafeReloadTarget()
           postSkipWaitingToBrowserWaitingWorker()
 
@@ -103,12 +154,12 @@ export function UpdatePrompt() {
         className="inline-flex items-center gap-1.5 rounded-xl bg-brand text-on-brand px-3 py-2 text-xs font-black uppercase italic tracking-wide rf-focus-ring"
       >
         <RefreshCcw className="w-3.5 h-3.5" strokeWidth={3} />
-        Recharger
+        {lang === 'fr' ? 'Recharger' : 'Reload'}
       </button>
       <button
         type="button"
-        onClick={() => setNeedRefresh(false)}
-        aria-label="Fermer la notification"
+        onClick={dismiss}
+        aria-label={lang === 'fr' ? 'Fermer la notification' : 'Dismiss notification'}
         className="rounded-xl border border-border-app bg-layer-5 text-fg-muted hover:text-fg w-9 h-9 flex items-center justify-center rf-focus-ring"
       >
         <X className="w-3.5 h-3.5" strokeWidth={2.5} />

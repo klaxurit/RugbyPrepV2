@@ -8,6 +8,7 @@
  *   - mesocycle phase shift                    [info,    postponable]
  *   - ACWR critical/danger zone                [critical, not postponable]
  *   - upcoming match within 7 days             [info,    not postponable]
+ *   - feature one-shot (ex. variété in-season) [info, only if nothing above]
  *
  * The caller (the React hook) is responsible for filtering against
  * acknowledged/postponed state.
@@ -35,6 +36,7 @@ import {
   programNoticePreSeasonPhaseTitle,
 } from '../../i18n/programSurfaces'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
+import { buildInSeasonVarietyNotice } from './inSeasonVarietyNotice'
 
 const SEVERITY_RANK: Record<ProgramChangeSeverity, number> = {
   info: 1,
@@ -257,6 +259,12 @@ export function detectProgramChange(inputs: DetectProgramChangeInputs): ProgramC
 
   const matchNotice = buildMatchNotice(calendarEvents, today, lang)
   if (matchNotice) candidates.push(matchNotice)
+
+  // Feature notices never compete with match / cycle / phase / ACWR.
+  if (candidates.length === 0 && current) {
+    const featureNotice = buildInSeasonVarietyNotice(current, today, lang)
+    if (featureNotice) candidates.push(featureNotice)
+  }
 
   if (candidates.length === 0) return null
   candidates.sort((a, b) => SEVERITY_RANK[b.severity] - SEVERITY_RANK[a.severity])

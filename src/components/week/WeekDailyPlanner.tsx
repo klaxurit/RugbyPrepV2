@@ -60,6 +60,8 @@ interface ResolvedDay {
   sessionIndex?: number
   sessionLabel?: string
   sessionSubtitle?: string
+  /** Séance mother absente de la semaine précédente (variété in-season). */
+  isNovelThisBlock?: boolean
   blocs?: number
   durationMin?: number
   /** `true` si `durationMin` vient d'un log réel (séance faite), `false` si prévue. */
@@ -113,6 +115,11 @@ export interface WeekDailyPlannerProps {
   lang: 'fr' | 'en'
   /** Renvoie un titre formaté à partir d'un sessionSlot (mère-séance ID). */
   formatSessionTitle: (motherSessionId: string) => string
+  /**
+   * Mother session IDs nouvelles vs semaine précédente (chip « Nouveau ce bloc »).
+   * Optionnel — vide = pas de chip.
+   */
+  novelMotherSessionIds?: ReadonlySet<string>
 
   onSessionSelect: (index: number, options?: { reviewLogId?: string }) => void
   onSelectMatchByDate: (dateISO: string) => void
@@ -142,6 +149,7 @@ export function WeekDailyPlanner({
   todayISO,
   lang,
   formatSessionTitle,
+  novelMotherSessionIds,
   onSessionSelect,
   onSelectMatchByDate,
   onActiveRecoveryQuick,
@@ -219,6 +227,9 @@ export function WeekDailyPlanner({
         sessionSubtitle: session
           ? SESSION_SUBTITLE[session.sessionSlot.session.metadata.sessionType] ?? undefined
           : undefined,
+        isNovelThisBlock: session
+          ? Boolean(novelMotherSessionIds?.has(session.sessionSlot.sessionId))
+          : undefined,
         blocs: cardStats?.blocs,
         durationMin: realDuration ?? cardStats?.durationMin,
         durationIsActual: realDuration != null,
@@ -243,6 +254,7 @@ export function WeekDailyPlanner({
     logs,
     todayISO,
     formatSessionTitle,
+    novelMotherSessionIds,
   ])
 
   // ─── Active day = today by default ───
@@ -525,6 +537,18 @@ function GymCard({ day, onStart }: { day: ResolvedDay; onStart: () => void }) {
             >
               {done ? 'Gym · Faite' : 'Gym · Musculation'}
             </span>
+            {day.isNovelThisBlock && (
+              <span
+                data-testid="session-novel-chip"
+                className={`inline-flex items-center rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.1em] ${
+                  done
+                    ? 'bg-ok-bg border border-ok-strong/25 text-ok-strong'
+                    : 'bg-app text-brand border border-app/40'
+                }`}
+              >
+                Nouveau ce bloc
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {done && (
@@ -1006,6 +1030,11 @@ function IndexLine({ num, day, onClick }: { num: number; day: ResolvedDay; onCli
           <span className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-fg/45">
             {DAY_LONG[day.dow].toUpperCase()} · {tag.toUpperCase()}
           </span>
+          {day.type === 'gym' && day.isNovelThisBlock && (
+            <span className="rounded-sm border border-brand/40 bg-brand/8 px-1.5 py-px text-[9px] font-extrabold uppercase tracking-[0.08em] text-brand">
+              Nouveau
+            </span>
+          )}
           {day.type === 'match' && day.match?.is_home && (
             <span className="rounded-sm border border-brand px-1.5 py-px text-[9px] font-extrabold uppercase tracking-[0.08em] text-brand">
               Home

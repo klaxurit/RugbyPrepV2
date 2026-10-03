@@ -28,7 +28,7 @@ const SUPPRESS_PATHS = new Set([
 /**
  * Global mount for program-change notices.
  *
- * Toutes les notices (match, phase, cycle, ACWR) passent par la même
+ * Toutes les notices (match, phase, cycle, ACWR, feature) passent par la même
  * {@link ProgramEvolutionSheet} / {@link BottomSheet} que l’ajout de match
  * ou la fin de séance — swipe, backdrop, bouton fermer, collée en bas.
  *
@@ -78,6 +78,10 @@ export function ProgramChangeMount() {
 
     openProgramEvolution({
       programNoticeId: notice.id,
+      eyebrow:
+        notice.type === 'feature'
+          ? programModalLabel('eyebrow_feature', lang)
+          : undefined,
       sectionTitle: notice.title,
       summary: notice.summary,
       bullets: notice.bullets,

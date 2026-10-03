@@ -10,18 +10,17 @@ const baseInputs = {
 }
 
 describe('detectProgramChange', () => {
-  it('returns null when nothing changes between today and next Monday', () => {
-    // Fully in-season, mid-block — no transition pending.
+  it('emits in-season variety feature notice when nothing higher-priority is pending', () => {
+    // Heuristique calendaire → in_season mid-block, sans match / ACWR / transition.
     const today = '2026-04-15' // Wednesday, mid-week
     const result = detectProgramChange({
       ...baseInputs,
       today,
-      planningAnchors: {
-        manualCycleOverride: 'in_season',
-      },
       calendarEvents: [],
     })
-    expect(result).toBeNull()
+    expect(result?.type).toBe('feature')
+    expect(result?.id).toBe('feature:in_season_variety_v1')
+    expect(result?.severity).toBe('info')
   })
 
   it('emits a cycle notice when off_season → pre_season transitions next Monday', () => {
@@ -90,12 +89,11 @@ describe('detectProgramChange', () => {
     expect(result?.id).toBe(`match:${matchDate}`)
   })
 
-  it('returns null when planning context cannot be resolved (missing anchors)', () => {
-    const today = '2026-04-15'
+  it('returns null in off-season when nothing notable is pending', () => {
+    const today = '2030-06-01'
     const result = detectProgramChange({
       ...baseInputs,
       today,
-      // No anchors, no calendar events → detector throws and we return null.
       calendarEvents: [],
     })
     expect(result).toBeNull()

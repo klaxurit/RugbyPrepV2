@@ -50,6 +50,18 @@ import type { CalendarEvent, MatchKind } from '../types/training'
 import { buildProfileUpdatesForManualMatchKind } from '../services/season/buildProfileUpdatesForManualMatchKind'
 import { hasPendingOffseasonMatchDecision } from '../services/season/hasPendingOffseasonMatchDecision'
 import { planProgramEvolutionAfterManualMatch } from '../services/calendar/planProgramEvolutionAfterManualMatch'
+import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
+import { resolveMotherSessionsForWeek } from '../services/motherSession/resolveMotherSessionsForWeek'
+import { novelMotherSessionIds } from '../services/program/inSeasonVarietyNotice'
+
+function shiftIsoDate(iso: string, days: number): string {
+  const d = new Date(`${iso}T12:00:00`)
+  d.setDate(d.getDate() + days)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
 
 function localizeWeekLabel(label: string, lang: 'fr' | 'en'): string {
   let out = label
@@ -400,6 +412,43 @@ export function WeekPage() {
     return mergeDatedSessionCompletion(dated, logs, today)
   }, [weekPresentation, logs, today])
 
+  /** Mother sessions absentes de la semaine précédente → chip « Nouveau ce bloc ». */
+  const novelMotherIds = useMemo(() => {
+    if (!msResolution || surface?.planningContext.cycle !== 'in_season') {
+      return new Set<string>()
+    }
+    const currentIds = msResolution.sessions.map((s) => s.sessionId)
+    try {
+      const { inputs } = buildAthletePlanningInputs({
+        profile,
+        events: structuralEvents,
+        logs,
+        today: shiftIsoDate(today, -7),
+        fatigue,
+        acwrZone: acwrResult.hasSufficientData ? acwrResult.zone : null,
+        readinessScore: readinessResult.score,
+      })
+      const previous = resolveMotherSessionsForWeek(inputs)
+      return novelMotherSessionIds(
+        currentIds,
+        previous.sessions.map((s) => s.sessionId),
+      )
+    } catch {
+      return new Set<string>()
+    }
+  }, [
+    msResolution,
+    surface?.planningContext.cycle,
+    profile,
+    structuralEvents,
+    logs,
+    today,
+    fatigue,
+    acwrResult.hasSufficientData,
+    acwrResult.zone,
+    readinessResult.score,
+  ])
+
   const hasWeekMatch = (weekPresentation?.matchEvents.length ?? 0) > 0
   const arGlobalOk = !isUnavailable
     && readinessResult.score >= 40
@@ -642,6 +691,7 @@ export function WeekPage() {
                 todayISO={today}
                 lang={lang}
                 formatSessionTitle={(id) => formatTitleFromMotherSessionId(id, lang)}
+                novelMotherSessionIds={novelMotherIds}
                 onSessionSelect={(index, options) => {
                   if (options?.reviewLogId) {
                     navigate(`/session/log/${options.reviewLogId}`)

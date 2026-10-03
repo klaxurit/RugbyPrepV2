@@ -17,6 +17,10 @@ function pick(entry: L, lang: Lang): string {
 
 export const programModalLabels = {
   eyebrow: { fr: 'Ton programme évolue', en: 'Your program is evolving' },
+  eyebrow_feature: {
+    fr: 'Pour toi · nouveauté programme',
+    en: 'For you · program update',
+  },
   cta_ack: { fr: "C'est compris, on y va", en: "Got it, let's go" },
   cta_postpone: { fr: "Reporter d'une semaine", en: 'Postpone one week' },
   already_postponed: {

@@ -3,13 +3,14 @@
  * modal that surfaces upcoming/active program shifts to the user.
  *
  * Trigger families:
- *   - cycle  : annual cycle change (off → pre → in)
- *   - phase  : mesocycle phase shift inside the current cycle
- *   - acwr   : acute:chronic workload ratio entered danger/critical zone
- *   - match  : a match in the next 7 days reshapes the upcoming week
+ *   - cycle   : annual cycle change (off → pre → in)
+ *   - phase   : mesocycle phase shift inside the current cycle
+ *   - acwr    : acute:chronic workload ratio entered danger/critical zone
+ *   - match   : a match in the next 7 days reshapes the upcoming week
+ *   - feature : one-shot produit (ex. variété in-season) — info, jamais devant match/cycle
  */
 
-export type ProgramChangeType = 'cycle' | 'phase' | 'acwr' | 'match'
+export type ProgramChangeType = 'cycle' | 'phase' | 'acwr' | 'match' | 'feature'
 export type ProgramChangeSeverity = 'info' | 'warning' | 'critical'
 
 export interface ProgramChangeNotice {
