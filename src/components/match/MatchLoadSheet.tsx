@@ -100,10 +100,14 @@ export function MatchLoadSheet({
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [savedFlash, setSavedFlash] = useState(false)
+  const [absenceReason, setAbsenceReason] = useState<
+    Exclude<MatchParticipationStatus, 'played'> | null
+  >(null)
 
   useEffect(() => {
     if (!open || !event) return
     setMode('played')
+    setAbsenceReason(null)
     setRpe(clampPerceivedIntensity(event.rpe ?? 7))
     setDurationMin(
       event.duration_min && event.duration_min > 0
@@ -169,6 +173,23 @@ export function MatchLoadSheet({
     }
   }
 
+  const handleSaveAbsence = async () => {
+    if (!absenceReason) return
+    await handleAbsence(absenceReason)
+  }
+
+  const goToAbsenceMode = () => {
+    setAbsenceReason(null)
+    setError(null)
+    setMode('absence')
+  }
+
+  const goToPlayedMode = () => {
+    setAbsenceReason(null)
+    setError(null)
+    setMode('played')
+  }
+
   const title = event?.opponent ? `vs ${event.opponent}` : copy.titleFallback
   const subtitle = event
     ? `${formatDateFR(event.date)}${event.kickoff_time ? ` · ${event.kickoff_time.slice(0, 5)}` : ''}`
@@ -201,6 +222,18 @@ export function MatchLoadSheet({
           />
 
           <div className="relative z-[1]">
+            {mode === 'absence' ? (
+              <button
+                type="button"
+                onClick={goToPlayedMode}
+                disabled={busy}
+                data-testid="match-load-back-played"
+                className="mb-3.5 flex items-center gap-1.5 self-start border-0 bg-transparent p-0 pb-3.5 text-[12px] font-extrabold uppercase tracking-[0.14em] text-brand disabled:opacity-50 rf-focus-ring rounded"
+              >
+                {copy.backPlayed}
+              </button>
+            ) : null}
+
             <div className="inline-flex items-center gap-2">
               <span className="flex h-[22px] w-[22px] items-center justify-center rounded-[7px] bg-brand text-on-brand">
                 <Calendar className="h-3 w-3" strokeWidth={2.5} />
@@ -273,10 +306,10 @@ export function MatchLoadSheet({
 
                 <button
                   type="button"
-                  onClick={() => setMode('absence')}
+                  onClick={goToAbsenceMode}
                   disabled={busy}
                   data-testid="match-load-absence-toggle"
-                  className="flex min-h-[48px] w-full items-center justify-center rounded-[18px] border border-paper-deep bg-paper-soft px-4 py-3 text-[14px] font-extrabold text-fg transition-colors hover:border-brand-border hover:bg-brand-soft/20 disabled:opacity-50 rf-focus-ring"
+                  className="self-center border-0 bg-transparent px-3 pb-1 pt-2.5 text-[14px] font-bold text-fg-muted underline decoration-paper-deep underline-offset-4 disabled:opacity-50 rf-focus-ring rounded-lg"
                 >
                   {copy.absenceToggle}
                 </button>
@@ -291,9 +324,12 @@ export function MatchLoadSheet({
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-fg-muted">
                     {copy.estimated}
                   </span>
-                  <span className="text-[15px] font-extrabold text-fg tabular-nums">
+                  <span className="whitespace-nowrap text-[15px] font-extrabold text-fg tabular-nums">
                     {estimatedLoad}{' '}
-                    <span className="text-[11px] font-bold tracking-[0.12em] text-fg-muted">{copy.ua}</span>
+                    <span className="text-[11px] font-bold tracking-[0.12em] text-fg-muted">{copy.ua}</span>{' '}
+                    <span className="text-[12px] font-semibold text-fg-muted">
+                      ({clampMinutes(durationMin)}×{clampPerceivedIntensity(rpe)})
+                    </span>
                   </span>
                 </div>
 
@@ -308,39 +344,39 @@ export function MatchLoadSheet({
                 </button>
               </div>
             ) : (
-              <div className="mt-[22px] space-y-3">
-                <button
-                  type="button"
-                  onClick={() => setMode('played')}
+              <div className="mt-6 space-y-2.5 px-0">
+                <AbsenceOption
+                  testId="match-absence-not-selected"
+                  label={copy.notSelected}
+                  hint={copy.notSelectedHint}
+                  selected={absenceReason === 'not_selected'}
                   disabled={busy}
-                  data-testid="match-load-back-played"
-                  className="flex min-h-[48px] w-full items-center justify-center rounded-[18px] border border-paper-deep bg-paper-soft px-4 py-3 text-[14px] font-extrabold text-fg transition-colors hover:border-brand-border hover:bg-brand-soft/20 disabled:opacity-50 rf-focus-ring"
-                >
-                  {copy.backPlayed}
-                </button>
-
-                <div className="space-y-2">
-                  <AbsenceOption
-                    testId="match-absence-not-selected"
-                    label={copy.notSelected}
-                    hint={copy.notSelectedHint}
-                    disabled={busy}
-                    onClick={() => void handleAbsence('not_selected')}
-                  />
-                  <AbsenceOption
-                    testId="match-absence-did-not-play"
-                    label={copy.didNotPlay}
-                    hint={copy.didNotPlayHint}
-                    disabled={busy}
-                    onClick={() => void handleAbsence('did_not_play')}
-                  />
-                </div>
+                  onClick={() => setAbsenceReason('not_selected')}
+                />
+                <AbsenceOption
+                  testId="match-absence-did-not-play"
+                  label={copy.didNotPlay}
+                  hint={copy.didNotPlayHint}
+                  selected={absenceReason === 'did_not_play'}
+                  disabled={busy}
+                  onClick={() => setAbsenceReason('did_not_play')}
+                />
 
                 {error ? (
-                  <p className="text-sm font-semibold text-danger" role="alert">
+                  <p className="text-sm font-semibold text-danger" role="alert" data-testid="match-load-error">
                     {error}
                   </p>
                 ) : null}
+
+                <button
+                  type="button"
+                  onClick={() => void handleSaveAbsence()}
+                  disabled={busy || absenceReason == null}
+                  data-testid="match-load-save"
+                  className="mt-3 flex h-[58px] w-full items-center justify-center rounded-[18px] bg-brand text-[15px] font-black uppercase italic tracking-[0.14em] text-on-brand shadow-[0_10px_24px_-10px_rgba(123,13,30,0.6)] transition-colors hover:bg-brand-hover disabled:opacity-40 rf-focus-ring"
+                >
+                  {savedFlash ? copy.saved : busy ? copy.saving : copy.save}
+                </button>
               </div>
             )}
           </div>
@@ -353,12 +389,14 @@ export function MatchLoadSheet({
 function AbsenceOption({
   label,
   hint,
+  selected,
   onClick,
   disabled,
   testId,
 }: {
   label: string
   hint: string
+  selected: boolean
   onClick: () => void
   disabled?: boolean
   testId: string
@@ -369,10 +407,29 @@ function AbsenceOption({
       onClick={onClick}
       disabled={disabled}
       data-testid={testId}
-      className="flex w-full flex-col gap-0.5 rounded-[18px] border border-paper-deep bg-app px-4 py-4 text-left transition-colors hover:border-brand-border hover:bg-brand-soft/25 disabled:opacity-50 rf-focus-ring"
+      aria-pressed={selected}
+      className={`flex min-h-[84px] w-full items-center gap-3.5 rounded-[18px] border-[1.5px] p-[18px] text-left transition-[border-color,background-color] duration-150 disabled:opacity-50 rf-focus-ring ${
+        selected
+          ? 'border-brand bg-white'
+          : 'border-paper-deep bg-app hover:border-brand-border/80'
+      }`}
     >
-      <span className="text-[15px] font-black text-fg leading-tight">{label}</span>
-      <span className="mt-0.5 text-[12px] font-semibold text-fg-muted leading-snug">{hint}</span>
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="text-[17px] font-extrabold leading-tight tracking-[-0.2px] text-fg">
+          {label}
+        </span>
+        <span className="text-[14px] font-medium leading-[1.35] text-fg-muted">{hint}</span>
+      </div>
+      <span
+        className={`flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border-[1.5px] ${
+          selected ? 'border-brand bg-brand' : 'border-[#CFC3B2] bg-transparent'
+        }`}
+        aria-hidden
+      >
+        <span
+          className={`h-2 w-2 rounded-full bg-paper-soft ${selected ? 'opacity-100' : 'opacity-0'}`}
+        />
+      </span>
     </button>
   )
 }
