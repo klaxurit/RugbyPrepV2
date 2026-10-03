@@ -1,4 +1,8 @@
 import { getWeeklyTemplate, type WeeklySessionSlot } from '../../data/weeklyTemplates'
+import {
+  resolveInSeasonFullBodySessionId,
+  resolveInSeasonPrimerSessionId,
+} from '../../data/resolveInSeasonFullVariantSessionId'
 import { MOTHER_SESSIONS_BY_ID } from '../../data/motherSessions.generated'
 import type { AthletePlanningInputs, AnnualPlanningContext, PlayoffTaperPhase } from '../../types/annualPlanning'
 import type { MotherSession } from '../../types/motherSession'
@@ -183,6 +187,12 @@ function resolveMotherSessionsForWeekCore(
   const { weeklyFrequency, positionGroup, fatigueLevel } = planningContext
   const { equipment } = params
 
+  const varietyParams = {
+    mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+    mesocycleWeek: planningContext.mesocycleWeek,
+    trainingLevel: params.trainingLevel,
+  }
+
   const resolverWarnings: string[] = []
 
   // ── Playoffs V2 : taper phasé (Mujika & Padilla 2003)
@@ -216,17 +226,22 @@ function resolveMotherSessionsForWeekCore(
     let tplWarnings: string[] = []
 
     if (taperPhase === 'match_week') {
-      const posSuffix = positionGroup === 'front_row' ? 'FRONT_ROW' : 'BACK_THREE'
       taperSlots = [
         {
-          sessionId: `FULL_BODY_IN_SEASON_${posSuffix}_V1`,
+          sessionId: resolveInSeasonFullBodySessionId({
+            positionGroup,
+            ...varietyParams,
+          }),
           role: 'primary',
           dayPreference: 'early_week',
           variant: cfg.variant,
           maxBlocks: 3,
         },
         {
-          sessionId: `FULL_LIGHT_PRIMER_IN_SEASON_${posSuffix}_V1`,
+          sessionId: resolveInSeasonPrimerSessionId({
+            positionGroup,
+            ...varietyParams,
+          }),
           role: 'primary',
           dayPreference: 'pre_match',
           variant: cfg.variant,
@@ -240,7 +255,7 @@ function resolveMotherSessionsForWeekCore(
         positionGroup,
         matchContext: cfg.freq === 3 ? 'match_week' : undefined,
         fatigueLevel,
-        mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+        ...varietyParams,
       })
       taperSlots = tpl.sessions.map((s) => ({
         ...s,
@@ -407,7 +422,7 @@ function resolveMotherSessionsForWeekCore(
       frequency: 2,
       positionGroup,
       fatigueLevel,
-      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+      ...varietyParams,
     })
     const deloadSlots = deloadTpl.sessions.map((s) => ({
       ...s,
@@ -441,7 +456,7 @@ function resolveMotherSessionsForWeekCore(
       frequency: 2,
       positionGroup,
       fatigueLevel,
-      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+      ...varietyParams,
     })
     const rampSlots = rampTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
     return hydrateSlots(
@@ -464,7 +479,7 @@ function resolveMotherSessionsForWeekCore(
       positionGroup,
       matchContext: 'no_match_week',
       fatigueLevel,
-      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+      ...varietyParams,
     })
     return hydrateSlots(
       returnTpl.sessions,
@@ -486,7 +501,7 @@ function resolveMotherSessionsForWeekCore(
       positionGroup,
       matchContext: weeklyFrequency === 3 ? 'no_match_week' : undefined,
       fatigueLevel,
-      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+      ...varietyParams,
     })
     return hydrateSlots(
       treveTpl.sessions,
@@ -509,7 +524,7 @@ function resolveMotherSessionsForWeekCore(
       frequency: 2,
       positionGroup,
       fatigueLevel,
-      mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+      ...varietyParams,
     })
     const eosSlots = eosTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
     return hydrateSlots(
@@ -546,7 +561,7 @@ function resolveMotherSessionsForWeekCore(
     positionGroup,
     matchContext: weeklyFrequency === 3 ? matchContext : undefined,
     fatigueLevel,
-    mesocycleBlock: planningContext.mesocycleBlock ?? 1,
+    ...varietyParams,
   })
 
   // Stimulus variation: alternate session emphasis by mesocycle block

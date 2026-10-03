@@ -59,7 +59,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Block 3 - Front Row Finisher
 - Format: `EMOM 8'`
-- Exercise A: minute 1 `Farmer Carry or Zercher Carry` `20m`
+- Exercise A: minute 1 `Suitcase Carry` `20m/side`
 - Exercise B: minute 2 `Neck Isometric` `15-20s`
 - Coaching notes:
   - Carry choice depends on setup and player comfort.

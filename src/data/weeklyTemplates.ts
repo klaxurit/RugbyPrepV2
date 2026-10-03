@@ -9,6 +9,17 @@ import {
   IN_SEASON_UPPER_BASE_IDS,
   resolveInSeasonUpperSessionId,
 } from './resolveInSeasonUpperSessionId'
+import {
+  IN_SEASON_LOWER_BASE_IDS,
+  resolveInSeasonLowerSessionId,
+} from './resolveInSeasonLowerSessionId'
+import {
+  IN_SEASON_FULL_BODY_BASE_IDS,
+  IN_SEASON_PRIMER_BASE_IDS,
+  resolveInSeasonFullBodySessionId,
+  resolveInSeasonPrimerSessionId,
+} from './resolveInSeasonFullVariantSessionId'
+import type { InSeasonVarietyTrainingLevel } from './inSeasonVarietyLane'
 
 export type Cycle = 'pre_season' | 'in_season'
 export type PreSeasonPhase = 1 | 2 | 3
@@ -59,10 +70,14 @@ export interface GetWeeklyTemplateParams {
   /** For off-season phase 5 maintenance: A/B alternation based on week parity. */
   maintenanceParity?: 'A' | 'B'
   /**
-   * In-season only: sélectionne la mother Upper (contraste B) selon le
-   * mésocycle 3:1. Absent = IDs de base inchangés (tests / appels legacy).
+   * In-season only: sélectionne les mothers variées (Upper / Lower / Primer / Full).
+   * Absent = IDs de base inchangés (tests / appels legacy).
    */
   mesocycleBlock?: number
+  /** Semaine dans le mésocycle 3:1 — cadence Performance (2 sem.). */
+  mesocycleWeek?: 1 | 2 | 3 | 4
+  /** Fondations = rotation lente ; Performance = plus vive. */
+  trainingLevel?: InSeasonVarietyTrainingLevel
 }
 
 /** Résolution template : séances + signaux métier (warnings, conditioning compagnon). */
@@ -714,17 +729,30 @@ export function getWeeklyTemplate(params: GetWeeklyTemplateParams): WeeklyTempla
     }
   }
 
-  // 3) Rotation contraste Upper in-season (mothers distinctes par mésocycle)
+  // 3) Rotation in-season planifiée (Upper / Lower / Primer / Full)
   if (cycle === 'in_season' && params.mesocycleBlock != null && positionGroup) {
-    const upperId = resolveInSeasonUpperSessionId({
+    const variety = {
       positionGroup,
       mesocycleBlock: params.mesocycleBlock,
+      mesocycleWeek: params.mesocycleWeek,
+      trainingLevel: params.trainingLevel,
       matchContext,
-    })
+    }
+    const upperId = resolveInSeasonUpperSessionId(variety)
+    const lowerId = resolveInSeasonLowerSessionId(variety)
+    const primerId = resolveInSeasonPrimerSessionId(variety)
+    const fullId = resolveInSeasonFullBodySessionId(variety)
     const baseUpper = IN_SEASON_UPPER_BASE_IDS[positionGroup]
-    slots = slots.map((s) =>
-      s.sessionId === baseUpper ? { ...s, sessionId: upperId } : s,
-    )
+    const baseLower = IN_SEASON_LOWER_BASE_IDS[positionGroup]
+    const basePrimer = IN_SEASON_PRIMER_BASE_IDS[positionGroup]
+    const baseFull = IN_SEASON_FULL_BODY_BASE_IDS[positionGroup]
+    slots = slots.map((s) => {
+      if (s.sessionId === baseUpper) return { ...s, sessionId: upperId }
+      if (s.sessionId === baseLower) return { ...s, sessionId: lowerId }
+      if (s.sessionId === basePrimer) return { ...s, sessionId: primerId }
+      if (s.sessionId === baseFull) return { ...s, sessionId: fullId }
+      return s
+    })
   }
 
   return {

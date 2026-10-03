@@ -3066,7 +3066,7 @@ export function getSessionFr(sessionId: string): SessionContentFr | undefined {
   return SESSION_CONTENT_FR[sessionId]
 }
 
-/** Mothers contraste in-season : même squelette FR que la base, exo B du bloc 1 adapté. */
+/** Mothers variété in-season : même squelette FR que la base, exos adaptés depuis le corpus EN. */
 function contrastRotationFrBaseId(sessionId: string): string | null {
   if (
     sessionId.startsWith('UPPER_IN_SEASON_FRONT_ROW_') &&
@@ -3080,6 +3080,30 @@ function contrastRotationFrBaseId(sessionId: string): string | null {
   ) {
     return 'UPPER_IN_SEASON_BACK_THREE_V1'
   }
+  if (
+    sessionId.startsWith('LOWER_IN_SEASON_FRONT_ROW_') &&
+    sessionId !== 'LOWER_IN_SEASON_FRONT_ROW_V1'
+  ) {
+    return 'LOWER_IN_SEASON_FRONT_ROW_V1'
+  }
+  if (
+    sessionId.startsWith('LOWER_IN_SEASON_BACK_THREE_') &&
+    sessionId !== 'LOWER_IN_SEASON_BACK_THREE_V1'
+  ) {
+    return 'LOWER_IN_SEASON_BACK_THREE_V1'
+  }
+  if (sessionId === 'FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_B_V1') {
+    return 'FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1'
+  }
+  if (sessionId === 'FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_B_V1') {
+    return 'FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1'
+  }
+  if (sessionId === 'FULL_BODY_IN_SEASON_FRONT_ROW_B_V1') {
+    return 'FULL_BODY_IN_SEASON_FRONT_ROW_V1'
+  }
+  if (sessionId === 'FULL_BODY_IN_SEASON_BACK_THREE_B_V1') {
+    return 'FULL_BODY_IN_SEASON_BACK_THREE_V1'
+  }
   return null
 }
 
@@ -3087,17 +3111,27 @@ function adaptContrastVariantFr(
   base: SessionContentFr,
   session: MotherSession,
 ): SessionContentFr {
-  const contrast = session.blocks[0]?.exercises[1]
-  if (!contrast || !base.blocks[0]) return base
   const blocks = base.blocks.map((block, index) => {
-    if (index !== 0) return block
+    const enBlock = session.blocks[index]
+    if (!enBlock?.exercises?.length) return block
     const exercises = block.exercises.map((exercise, exerciseIndex) => {
-      if (exerciseIndex !== 1) return exercise
+      const enEx = enBlock.exercises[exerciseIndex]
+      if (!enEx) return exercise
       return {
-        name: translateExerciseNameToFr(contrast.name),
-        prescription: translatePrescriptionToFr(contrast.prescription ?? exercise.prescription),
+        name: translateExerciseNameToFr(enEx.name),
+        prescription: translatePrescriptionToFr(enEx.prescription ?? exercise.prescription),
       }
     })
+    // Si le corpus EN a plus d'exos que le FR de base, ajouter les manquants
+    if (enBlock.exercises.length > block.exercises.length) {
+      for (let i = block.exercises.length; i < enBlock.exercises.length; i += 1) {
+        const enEx = enBlock.exercises[i]
+        exercises.push({
+          name: translateExerciseNameToFr(enEx.name),
+          prescription: translatePrescriptionToFr(enEx.prescription ?? ''),
+        })
+      }
+    }
     return { ...block, exercises }
   })
   return { ...base, blocks }

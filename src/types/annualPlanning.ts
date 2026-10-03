@@ -1,4 +1,4 @@
-import type { CalendarEvent, Equipment } from './training'
+import type { CalendarEvent, Equipment, TrainingLevel } from './training'
 
 export type AnnualCycle = 'off_season' | 'pre_season' | 'in_season' | 'playoffs'
 
@@ -35,6 +35,8 @@ export interface AthletePlanningInputs {
 
   weeklyFrequency: 2 | 3 | 4
   positionGroup: 'front_row' | 'back_three'
+  /** Niveau S&C — cadence de variété in-season (Fondations vs Performance). */
+  trainingLevel?: TrainingLevel
   /** Matériel déclaré — pilote mother sessions BW vs full_gym. */
   equipment?: Equipment[]
 

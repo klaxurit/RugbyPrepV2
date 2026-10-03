@@ -62,7 +62,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 ### Block 3 - Back Three Finisher
 - Format: `EMOM 8'`
 - Exercise A: minute 1 `Suitcase Carry` `20m/side`
-- Exercise B: minute 2 `Pallof Press Hold or Neck Isometric` `15-20s`
+- Exercise B: minute 2 `Neck Isometric` `15-20s`
 - Coaching notes:
   - Default version favors trunk control and unilateral stiffness.
   - If more contact robustness is needed that week, replace the Pallof hold with neck isometrics.

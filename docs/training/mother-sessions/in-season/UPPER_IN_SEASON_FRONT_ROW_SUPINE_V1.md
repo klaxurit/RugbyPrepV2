@@ -70,9 +70,9 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 
 ### Optional Block 4 - Shoulder Prehab Micro-Block
 - Format: `1 round`, `20-30s` rest between drills
-- Exercise A: `Band External Rotation` `10-12 reps`
-- Exercise B: `Serratus Reach` `8-10 reps`
-- Exercise C: `Scap Push-Up` `8 reps`
+- Exercise A: `Face Pull` `10-12 reps`
+- Exercise B: `Band External Rotation` `10-12 reps`
+- Exercise C: `Band Pull-Apart` `10 reps`
 - Coaching notes:
   - Optional, but recommended when pushing volume is high or the player has a shoulder history.
   - This should take around `2 min`, not become a separate accessory block.

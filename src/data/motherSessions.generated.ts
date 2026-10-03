@@ -9,6 +9,262 @@ import type { MotherSession } from '../types/motherSession'
 export const MOTHER_SESSIONS: MotherSession[] = [
   {
     "metadata": {
+      "id": "FULL_BODY_IN_SEASON_BACK_THREE_B_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "full",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "50-65 min",
+      "reductionOrder": [
+        5,
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "title": "FULL_BODY_IN_SEASON_BACK_THREE_B_V1",
+    "goal": [
+      "Maintain whole-body force and power in weeks without a match.",
+      "Keep a clear athletic identity with slightly more muscular support than the primer session.",
+      "Expose the player to one lower power pairing, one upper push/pull strength block, one posterior-chain support block, and a small accessory finish.",
+      "Keep the session readable and transferable to rugby."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through one lower power pairing, useful push/pull work, posterior-chain support, and lower-leg/groin resilience.",
+      "Back-three specific through speed bias, unilateral control, posterior-chain support, and a slightly more enjoyable renfo feel in non-match weeks.",
+      "Do not turn this into a long accumulation day, but do allow a little more muscular work than a primer."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "low pogo hops",
+          "prescription": "1x10"
+        },
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive prep sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Keep it short and specific.",
+        "The player can keep their own full-body prep if it covers ankle, trunk, and upper-body readiness."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Lower Power Pair",
+        "format": "`3 rounds`, full rest `3 min`",
+        "exercises": [
+          {
+            "name": "Trap Bar Deadlift",
+            "prescription": "3x2-3 @ 70-75%"
+          },
+          {
+            "name": "Countermovement Jump",
+            "prescription": "3 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Trap bar stays sharp and technically clean — lighter than lower-day contrast.",
+          "Bar speed matters more than load here.",
+          "The jump stays crisp and explosive.",
+          "This block opens the session with force and elastic output, without excessive volume."
+        ],
+        "fallbackOptions": [
+          "A: `Goblet Squat`",
+          "B: `Drop Jump`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Upper Push/Pull Strength",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Parallel Bar Dip",
+            "prescription": "3x6-8 @ RER 2-3"
+          },
+          {
+            "name": "Single-Arm Row",
+            "prescription": "3x6-8/side @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "This is your main push/pull renfo block.",
+          "Dips into a single-arm row — unilateral pull without repeating heavy upper-day pendlay.",
+          "Automatic alternative if no dip bars: `Chair Dip` or `Landmine Press`."
+        ],
+        "fallbackOptions": [
+          "A: `Chair Dip`",
+          "B: `Chest-Supported Row`"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Posterior Chain / Rotation Support",
+        "format": "`3 rounds`, `75-90s` rest",
+        "exercises": [
+          {
+            "name": "Single-Leg RDL",
+            "prescription": "3x6-8/side @ RER 2-3"
+          },
+          {
+            "name": "Med Ball Rotational Throw",
+            "prescription": "2-3x3/side"
+          }
+        ],
+        "coachingNotes": [
+          "Single-leg RDL (LOWER already covers trap bar / hip thrust this week): support speed without two days of soreness.",
+          "Rotational med-ball throw stays crisp, low volume, high intent."
+        ],
+        "fallbackOptions": [
+          "A: `Kickstand RDL`"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Lower Leg / Groin Support",
+        "format": "`2-3 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Weighted Calf Raise",
+            "prescription": "10-12 reps"
+          },
+          {
+            "name": "Tibialis Raise",
+            "prescription": "10-12 reps"
+          },
+          {
+            "name": "Copenhagen Hold",
+            "prescription": "20-30s"
+          }
+        ],
+        "coachingNotes": [
+          "This block supports ankle stiffness, lower-leg resilience, and groin robustness.",
+          "Keep it clean and simple.",
+          "If the player is already tired, reduce this block first."
+        ]
+      },
+      {
+        "number": 5,
+        "name": "Arm Pump / Reward Block",
+        "format": "`2-3 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Alternating DB Curl",
+            "prescription": "10-12 reps"
+          },
+          {
+            "name": "Skull Crusher",
+            "prescription": "10-12 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Optional only.",
+          "This block gives the player a little reward without changing the identity of the session.",
+          "Stop short of failure and avoid next-day soreness."
+        ],
+        "isOptional": true,
+        "fallbackOptions": [
+          "A: `Hammer Curl`",
+          "B: `Rope Pressdown`"
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Progress load only if speed and execution stay high.",
+      "Keep total volume stable before adding work.",
+      "If fatigue rises, remove optional Block 5 first, then reduce Block 4, then reduce one round from Block 3."
+    ],
+    "positionAccent": [
+      "Common full-body skeleton can be shared across positions.",
+      "Back-three accent comes from:",
+      "lower-body power first",
+      "upper push/pull strength without huge CNS cost",
+      "posterior-chain and ankle support",
+      "lower total collision emphasis than front row"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "incline press if painful",
+          "optional arm work if it aggravates symptoms"
+        ],
+        "replaceWith": [
+          "landmine if tolerated",
+          "row/scap/trunk-focused alternative"
+        ],
+        "rehabFinisher": [
+          "`serratus reach`",
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "jump if painful",
+          "back squat if painful"
+        ],
+        "replaceWith": [
+          "hip-dominant alternative",
+          "reduced-range unilateral pattern if tolerated"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "unsupported row if posture breaks",
+          "RDL if posture breaks",
+          "landmine rotation if it aggravates symptoms"
+        ],
+        "replaceWith": [
+          "supported upper pull",
+          "lighter trunk alternative"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "This is not an off-season volume session.",
+      "Do not let the opening power block become slow or noisy.",
+      "Do not stack lower fatigue mindlessly if the week already has field speed exposure.",
+      "The optional arm block should stay enjoyable, not costly.",
+      "The athlete should still feel athletic at the end."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[fullbody.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/fullbody.jpg)",
+      "[fullbody-power-renfo.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/fullbody-power-renfo.jpg)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "FULL_BODY_IN_SEASON_BACK_THREE_V1",
       "status": "validated",
       "version": "V1",
@@ -261,6 +517,270 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
       "[fullbody.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/fullbody.jpg)",
       "[fullbody-power-renfo.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/fullbody-power-renfo.jpg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "FULL_BODY_IN_SEASON_FRONT_ROW_B_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "full",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row",
+      "equipment": "full_gym",
+      "targetDuration": "55-70 min",
+      "reductionOrder": [
+        5,
+        3,
+        2,
+        1
+      ]
+    },
+    "title": "FULL_BODY_IN_SEASON_FRONT_ROW_B_V1",
+    "goal": [
+      "Maintain whole-body force and useful muscle support in weeks without a match.",
+      "Keep a clear athletic identity with slightly more muscular support than the primer session.",
+      "Expose the player to one lower power pairing, one upper push/pull strength block, one posterior-chain support block, and one front-row support block.",
+      "Keep the session readable, useful, and still compatible with in-season recovery."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through lower power, strong push/pull work, hinge support, and front-row contact robustness.",
+      "Front-row specific through stronger bracing, heavier horizontal/upper-body bias, adductor/neck/contact support, and a small optional reward block.",
+      "Do not turn this into an off-season accumulation day."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive prep sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Keep it short and specific.",
+        "The player can keep their own full-body prep if it covers hips, trunk, and upper-body readiness."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Lower Power Pair",
+        "format": "`3 rounds`, full rest `3 min`",
+        "exercises": [
+          {
+            "name": "Goblet Squat",
+            "prescription": "3x5 @ RER 2-3"
+          },
+          {
+            "name": "Jump Step-Up",
+            "prescription": "3/side"
+          }
+        ],
+        "coachingNotes": [
+          "Goblet squat light (not heavy lower-day squat): sharp, upright, braced.",
+          "Jump step-up stays crisp and explosive.",
+          "This block opens with unilateral force + athletic output without duplicating the lower-day opening."
+        ],
+        "fallbackOptions": [
+          "A: `Front Squat` light",
+          "B: `Countermovement Jump`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Upper Push/Pull Strength",
+        "format": "`3 rounds`, `90-120s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Parallel Bar Dip",
+            "prescription": "3x5-6 @ RER 2-3"
+          },
+          {
+            "name": "Chest-Supported Row",
+            "prescription": "3x6-8 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "This is the main upper renfo block.",
+          "Dips into a chest-supported row — less lumbar fatigue than cable half-kneeling.",
+          "Automatic alternative if no dip bars: `Chair Dip` or `Landmine Press`."
+        ],
+        "fallbackOptions": [
+          "A: `Chair Dip`",
+          "B: `Single-Arm Row`"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Posterior Chain / Trunk Support",
+        "format": "`3 rounds`, `75-90s` rest",
+        "exercises": [
+          {
+            "name": "Single-Leg RDL",
+            "prescription": "3x6-8/side @ RER 2-3"
+          },
+          {
+            "name": "Pallof Press",
+            "prescription": "2-3x8/side @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Single-leg RDL (LOWER already covers bilateral hinge this week): support contact robustness without extra soreness.",
+          "Pallof keeps anti-rotation without stacking landmine patterns."
+        ],
+        "fallbackOptions": [
+          "A: `Kickstand RDL`",
+          "B: `Ab Wheel`"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Front Row Support",
+        "format": "`2-3 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Sled March",
+            "prescription": "15-20m"
+          },
+          {
+            "name": "Copenhagen Hold",
+            "prescription": "20-30s"
+          },
+          {
+            "name": "Neck Isometric",
+            "prescription": "15-20s"
+          }
+        ],
+        "coachingNotes": [
+          "This block supports horizontal force, groin robustness, and cervical readiness.",
+          "Keep it useful and controlled.",
+          "If the player is already tired, reduce this block first."
+        ],
+        "fallbackOptions": [
+          "A: `Farmer Carry` or `Zercher Carry`",
+          "C: `Banded Neck Extension`"
+        ]
+      },
+      {
+        "number": 5,
+        "name": "Arm Pump / Reward Block",
+        "format": "`2-3 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Hammer Curl",
+            "prescription": "10-12 reps"
+          },
+          {
+            "name": "French Press",
+            "prescription": "10-12 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Optional only.",
+          "This block gives the player a small reward without changing the identity of the session.",
+          "Stop short of failure and avoid next-day soreness."
+        ],
+        "isOptional": true,
+        "fallbackOptions": [
+          "B: `Rope Pressdown` or `Skull Crusher`"
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Progress load only if speed and execution stay high.",
+      "Keep total volume stable before adding work.",
+      "If fatigue rises, remove optional Block 5 first, then reduce Block 4, then reduce one round from Block 3.",
+      "On dense rugby weeks, keep the session near the low end of the duration target:",
+      "skip Block 5 by default",
+      "keep Block 4 at `2 rounds`"
+    ],
+    "positionAccent": [
+      "Common full-body skeleton can be shared across positions.",
+      "Front-row accent comes from:",
+      "lower-body projection with more force bias",
+      "stronger upper push/pull support",
+      "hinge and trunk robustness",
+      "adductor, neck, and contact support"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "bench if painful",
+          "optional arm work if it aggravates symptoms",
+          "sled if hand/arm position is irritating"
+        ],
+        "replaceWith": [
+          "landmine if tolerated",
+          "row/scap/trunk-focused alternative"
+        ],
+        "rehabFinisher": [
+          "`serratus reach`",
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "jump if painful",
+          "box squat if painful",
+          "sled if aggravating"
+        ],
+        "replaceWith": [
+          "hip-dominant alternative",
+          "reduced-range lower option if tolerated"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "unsupported row if posture breaks",
+          "RDL if posture breaks",
+          "landmine rotation if it aggravates symptoms"
+        ],
+        "replaceWith": [
+          "supported upper pull",
+          "lighter trunk alternative"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "This is not an off-season volume session.",
+      "Do not let the opening power block become slow or noisy.",
+      "Do not let the support block become a random conditioning circuit.",
+      "The optional reward block should stay enjoyable, not costly.",
+      "The athlete should still feel robust and athletic at the end."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[fullbody.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/fullbody.jpg)",
+      "[upper-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/upper-4.jpg)"
     ]
   },
   {
@@ -2109,6 +2629,239 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_B_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "full_light_primer",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "25-40 min",
+      "reductionOrder": [
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "title": "FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_B_V1",
+    "goal": [
+      "Prime the nervous system without creating fatigue.",
+      "Keep short lower- and upper-body explosive exposures with maximal intent.",
+      "Reinforce stiffness, projection, and rotational readiness for open-field actions.",
+      "Leave the player feeling sharp, not trained down."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through low-volume explosive pairings, long enough rest, and zero junk fatigue.",
+      "Back-three specific through speed bias, stiffness, projection, and ballistic upper-body output.",
+      "Do not turn this into a strength session, conditioning circuit, or mini full-body day."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "low pogo hops",
+          "prescription": "1x10"
+        },
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive prep sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Keep this brief.",
+        "The player can keep their own primer routine if it covers ankle stiffness, trunk position, and upper-body readiness."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Lower Neural Pair",
+        "format": "`3 rounds`, full rest `2-3 min`",
+        "exercises": [
+          {
+            "name": "Reverse Lunge",
+            "prescription": "3x3/side @ light-moderate, max intent"
+          },
+          {
+            "name": "Countermovement Jump",
+            "prescription": "3 reps"
+          }
+        ],
+        "coachingNotes": [
+          "This block is about intent and fast force production, not fatigue.",
+          "Rest must be long enough to keep each rep sharp.",
+          "Reverse lunge light (not hip thrust — reserved for LOWER this week when on that lane): crisp and stable.",
+          "The jump should stay crisp and elastic without creating excessive eccentric stress before match day."
+        ],
+        "fallbackOptions": [
+          "A: `Barbell Hip Thrust` light `3x3`",
+          "B: `Drop to Stick`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Upper Push Primer",
+        "format": "`3 rounds`, full rest `2-3 min`",
+        "exercises": [
+          {
+            "name": "Push Press",
+            "prescription": "3x3 @ light-moderate, max intent"
+          },
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "3x3-5"
+          }
+        ],
+        "coachingNotes": [
+          "This block should feel aggressive and clean.",
+          "Push press stays fast and crisp — no grind before match day.",
+          "The push-up variation stops the moment reactivity drops."
+        ],
+        "fallbackOptions": [
+          "A: `Explosive Landmine Press`",
+          "B: `Depth Push-Up`"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Pull / Rotation Primer",
+        "format": "`3 rounds`, full rest `90-120s`",
+        "exercises": [
+          {
+            "name": "Face Pull",
+            "prescription": "3x8-10 @ RER 3-4"
+          },
+          {
+            "name": "Med Ball Rotational Throw",
+            "prescription": "2-3 reps/side"
+          }
+        ],
+        "coachingNotes": [
+          "Face pull (not a heavy row — UPPER already covers rowing this week): scapular priming.",
+          "Keep the throw/rotation low in volume and high in intent.",
+          "No fatigue chasing here."
+        ],
+        "fallbackOptions": [
+          "A: `Band Pull-Apart`",
+          "B: `Med Ball Scoop Throw` or `Landmine Rotation`"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Arm Pump / Confidence Block",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Hammer Curl",
+            "prescription": "2x10 @ RER 3-4"
+          },
+          {
+            "name": "French Press",
+            "prescription": "2x10 @ RER 3-4"
+          }
+        ],
+        "coachingNotes": [
+          "Optional only.",
+          "Use this when the player enjoys the feeling of a small arm pump before match exposure and is recovering well.",
+          "Stop well before failure.",
+          "This block should boost confidence, not create soreness."
+        ],
+        "isOptional": true,
+        "fallbackOptions": [
+          "B: `Rope Pressdown` or `Band Pressdown`"
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Progress only if the player stays explosive from start to finish.",
+      "Do not increase volume first; keep the same small dose and progress only when quality is consistently high.",
+      "On a real match week, it is acceptable to keep only two pairings if needed.",
+      "The optional arm block is never mandatory and should be removed before any neural work is reduced."
+    ],
+    "positionAccent": [
+      "Common full-light primer skeleton can be shared across positions.",
+      "Back-three accent comes from:",
+      "lower-limb projection and stiffness",
+      "speed of movement",
+      "low total fatigue",
+      "ballistic upper work over brute-force contact emphasis"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "explosive press if painful",
+          "reactive push-up if painful"
+        ],
+        "replaceWith": [
+          "lighter landmine speed press if tolerated",
+          "scap/trunk alternative"
+        ],
+        "rehabFinisher": [
+          "`serratus reach`",
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "jump variation if painful",
+          "trap-bar setup only if it clearly aggravates symptoms"
+        ],
+        "replaceWith": [
+          "hip-dominant explosive option",
+          "reduced-range projection work"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "unsupported row if posture cannot stay clean",
+          "rotational throw if it aggravates symptoms"
+        ],
+        "replaceWith": [
+          "chest-supported row",
+          "Pallof-style anti-rotation alternative"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Primer quality drops fast if the player is already fatigued.",
+      "Do not let any loaded movement become a grind.",
+      "Do not turn the session into a conditioning challenge.",
+      "Do not use high-drop reactive plyometrics here just to make the session feel more \"advanced\".",
+      "The optional pump block must stay psychologically useful and physiologically cheap.",
+      "The athlete should leave the session feeling more switched on than tired."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[Screenshot_2026-03-16-14-18-19-865_com.instagram.android-edit.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/Screenshot_2026-03-16-14-18-19-865_com.instagram.android-edit.jpg)",
+      "[speed-session-warmup.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/speed-session-warmup.png)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1",
       "status": "validated",
       "version": "V1",
@@ -2338,6 +3091,245 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
       "[Screenshot_2026-03-16-14-18-19-865_com.instagram.android-edit.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/Screenshot_2026-03-16-14-18-19-865_com.instagram.android-edit.jpg)",
       "[speed-session-warmup.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/speed-session-warmup.png)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_B_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "full_light_primer",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row",
+      "equipment": "full_gym",
+      "targetDuration": "25-40 min",
+      "reductionOrder": [
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "title": "FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_B_V1",
+    "goal": [
+      "Prime the nervous system without creating fatigue.",
+      "Keep short lower- and upper-body explosive exposures with a front-row force/bracing bias.",
+      "Reinforce contact posture, projection, and upper-body stiffness.",
+      "Leave the player feeling switched on and physically ready for contact."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through low-volume explosive pairings, enough rest, and zero junk fatigue.",
+      "Front-row specific through box-squat force intent, horizontal push power, strong upper pulling, and optional neck/contact confidence work.",
+      "Do not turn this into a strength session, a long warm-up, or a conditioning block."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "thoracic rotation",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "scap push-up",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive prep sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "Keep this short.",
+        "The player can keep their own primer routine if it prepares lower-body position, trunk stiffness, and upper-body readiness."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Lower Neural Pair",
+        "format": "`3 rounds`, full rest `2-3 min`",
+        "exercises": [
+          {
+            "name": "Step-Up",
+            "prescription": "3x3/side @ light-moderate, max intent"
+          },
+          {
+            "name": "Banded KB Swing",
+            "prescription": "3x5"
+          }
+        ],
+        "coachingNotes": [
+          "This block is about intent and fast force production, not fatigue.",
+          "Step-up light (not reverse lunge — reserved for LOWER this week when on that lane): crisp drive, quiet landing.",
+          "Load should allow maximal concentric speed on every rep."
+        ],
+        "fallbackOptions": [
+          "A: `Rear-Foot Elevated Split Squat` light",
+          "B: `Broad Jump`"
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Upper Push Primer",
+        "format": "`3 rounds`, full rest `2-3 min`",
+        "exercises": [
+          {
+            "name": "Parallel Bar Dip",
+            "prescription": "3x5 @ controlled, crisp"
+          },
+          {
+            "name": "Plyo Push-Up",
+            "prescription": "3x3"
+          }
+        ],
+        "coachingNotes": [
+          "Dips (not football-bar/flat bench — reserved for the UPPER session this week): sharp and technically clean.",
+          "Plyo push-up stays ballistic and low-volume — stop when reactivity drops.",
+          "This is a true game-week push primer, not a heavy bench block.",
+          "Automatic alternative if no dip bars: `Chair Dip` or `Explosive Landmine Press`."
+        ],
+        "fallbackOptions": [
+          "A: `Chair Dip`",
+          "B: `Med Ball Chest Pass` (if shoulders prefer throw over plyo)"
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Pull / Trunk Primer",
+        "format": "`3 rounds`, full rest `90-120s`",
+        "exercises": [
+          {
+            "name": "Face Pull",
+            "prescription": "3x8-10 @ RER 3-4"
+          },
+          {
+            "name": "Pallof Press",
+            "prescription": "3x8/side @ RER 3-4"
+          }
+        ],
+        "coachingNotes": [
+          "Face pull (not a heavy row — UPPER already covers rowing this week): posture and scapular priming.",
+          "Pallof keeps anti-rotation without stacking landmine patterns.",
+          "No fatigue chasing."
+        ],
+        "fallbackOptions": [
+          "A: `Band Pull-Apart`",
+          "B: `Landmine Rotation`"
+        ]
+      },
+      {
+        "number": 4,
+        "name": "Contact Confidence / Pump",
+        "format": "`2 rounds`, `45-60s` rest",
+        "exercises": [
+          {
+            "name": "Hammer Curl",
+            "prescription": "2x10 @ RER 3-4"
+          },
+          {
+            "name": "Rope Pressdown",
+            "prescription": "2x10 @ RER 3-4"
+          },
+          {
+            "name": "Banded Neck Extension",
+            "prescription": "2x10 @ RER 3-4"
+          }
+        ],
+        "coachingNotes": [
+          "Optional only.",
+          "Use this when the player likes a small arm pump and a little neck/contact confidence before match exposure.",
+          "Stop well before failure.",
+          "This block should create confidence, not fatigue or soreness."
+        ],
+        "isOptional": true,
+        "fallbackOptions": [
+          "B: `French Press` or `Band Pressdown`",
+          "C: `Neck Isometric`"
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Progress only if the player stays explosive from start to finish.",
+      "Do not increase volume first; keep the same small dose and progress only when quality is consistently high.",
+      "On a real match week, it is acceptable to keep only two pairings if needed.",
+      "The optional confidence block is never mandatory and should be removed before any neural work is reduced."
+    ],
+    "positionAccent": [
+      "Common full-light primer skeleton can be shared across positions.",
+      "Front-row accent comes from:",
+      "stronger lower-body force intent",
+      "horizontal push power",
+      "stronger pull/bracing feel",
+      "optional neck/contact confidence work"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "bench if painful",
+          "med ball throw if painful",
+          "landmine press/row if arm path aggravates symptoms"
+        ],
+        "replaceWith": [
+          "safer row variation",
+          "scap/trunk alternative"
+        ],
+        "rehabFinisher": [
+          "`serratus reach`",
+          "`band external rotation`"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "box squat if painful",
+          "swing if knee angle/setup aggravates symptoms"
+        ],
+        "replaceWith": [
+          "hip-dominant explosive option",
+          "reduced-range squat if tolerated"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "banded Anderson box squat if bracing cannot stay clean",
+          "swing if hinge aggravates symptoms",
+          "unsupported row if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "supported lower-body power option",
+          "chest-supported row",
+          "Pallof-style anti-rotation alternative"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Primer quality drops fast if the player is already fatigued.",
+      "Do not let any loaded movement become a grind.",
+      "Do not let the confidence block turn into a bodybuilding finisher.",
+      "The athlete should leave the session feeling more ready than tired."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[Screenshot_2026-03-16-14-18-19-865_com.instagram.android-edit.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/Screenshot_2026-03-16-14-18-19-865_com.instagram.android-edit.jpg)"
     ]
   },
   {
@@ -6132,6 +7124,615 @@ export const MOTHER_SESSIONS: MotherSession[] = [
   },
   {
     "metadata": {
+      "id": "LOWER_IN_SEASON_BACK_THREE_RDL_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "lower",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "40-50 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "LOWER_IN_SEASON_BACK_THREE_RDL_V1",
+    "goal": [
+      "Maintain lower-body force useful for acceleration, speed support, and open-field contact.",
+      "Keep one clear lower-body force -> projection exposure without creating heavy residual fatigue.",
+      "Maintain posterior-chain strength and unilateral control.",
+      "Finish with a short athletic block that supports stiffness, trunk control, and acceleration qualities."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through a readable lower contrast, strong posterior-chain work, unilateral control, and a short field-transfer finisher.",
+      "Back-three specific through slightly more speed bias, more unilateral emphasis, and less collision-bracing emphasis than front row.",
+      "Do not dilute this session with too much volume, too many jumps, or slow grinding strength work."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "low pogo hops",
+          "prescription": "1x10"
+        },
+        {
+          "name": "single-leg glute bridge",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "The player can keep their own lower-body warm-up if it prepares ankles, hips, and posterior chain.",
+        "Keep this short and specific.",
+        "The goal is readiness and stiffness, not fatigue."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Lower Speed-Projection",
+        "format": "`4 rounds`, full rest `2 min 30 to 3 min` after each round",
+        "exercises": [
+          {
+            "name": "Barbell Romanian Deadlift",
+            "prescription": "4x3 @ 75-80%"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "3 reps"
+          }
+        ],
+        "coachingNotes": [
+          "RDL reps must stay sharp, braced, and posterior-chain dominant.",
+          "No grinding reps.",
+          "Broad jumps should be powerful and crisp, not chased once quality drops.",
+          "This is a force -> projection contrast with a slightly faster profile than the front-row version."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Posterior Chain + Unilateral Strength Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Barbell Hip Thrust",
+            "prescription": "3x5-6 @ RER 2-3"
+          },
+          {
+            "name": "Walking Lunge",
+            "prescription": "3x5/side @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Hip thrust stays powerful and clean, with a hard lockout and no lumbar overextension.",
+          "The unilateral pattern supports sprint mechanics, force application, and change-of-direction robustness.",
+          "In a `2x/week` format, the RDL contrast remains the primary hinge exposure of the week, so keep Block 1 sharp before chasing more support volume here.",
+          "This block should feel athletic and useful, not like a heavy bodybuilding lower day."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Back Three Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Light Sled Push",
+            "prescription": "15-20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Copenhagen Hold",
+            "prescription": "15-20s/side",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Sled load stays light enough to preserve speed and posture.",
+          "Copenhagen should reinforce adductors, trunk control, and change-of-direction robustness without becoming a fatigue contest.",
+          "If adductor load is already high that week, replace with `Pallof Hold` or `Side Plank`.",
+          "If no sled is available, replace with `Suitcase Carry` `20m/side`."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize movement speed and projection quality over load jumps.",
+      "RDL can progress by `+2.5 to +5 kg` only if all sets stay sharp.",
+      "Hip thrust and unilateral work progress gradually while keeping `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 if the player is still moving explosively"
+    ],
+    "positionAccent": [
+      "Common lower skeleton stays shared with the front-row lower session.",
+      "Back-three accent comes from:",
+      "slightly faster force profile",
+      "more unilateral and posterior-chain emphasis",
+      "lighter horizontal projection work",
+      "less collision/bracing bias than front row"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "sled only if arm position is aggravating"
+        ],
+        "replaceWith": [
+          "shorter sled distance",
+          "`Suitcase Carry` only if tolerated"
+        ],
+        "rehabFinisher": [
+          "none by default in this lower session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "jump",
+          "unilateral knee-dominant pattern if painful"
+        ],
+        "replaceWith": [
+          "`Hip Thrust`",
+          "reduced-range split squat or box-supported variation if tolerated"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Trap Bar Deadlift`",
+          "`Hip Thrust`",
+          "heavy sled if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "`Glute Bridge`",
+          "supported unilateral pattern",
+          "lighter anti-rotation/trunk option"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the trap bar deadlift become slow survival work.",
+      "Do not chase broad jump distance once take-off quality drops.",
+      "Do not turn the hip thrust into lumbar hyperextension.",
+      "Keep the sled fast enough to stay athletic.",
+      "On match weeks, place this session early enough to recover fully before the weekend."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[lower.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower.png)",
+      "[lower-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower-4.jpg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_IN_SEASON_BACK_THREE_SHRUG_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "lower",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "40-50 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "LOWER_IN_SEASON_BACK_THREE_SHRUG_V1",
+    "goal": [
+      "Maintain lower-body force useful for acceleration, speed support, and open-field contact.",
+      "Keep one clear lower-body force -> projection exposure without creating heavy residual fatigue.",
+      "Maintain posterior-chain strength and unilateral control.",
+      "Finish with a short athletic block that supports stiffness, trunk control, and acceleration qualities."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through a readable lower contrast, strong posterior-chain work, unilateral control, and a short field-transfer finisher.",
+      "Back-three specific through slightly more speed bias, more unilateral emphasis, and less collision-bracing emphasis than front row.",
+      "Do not dilute this session with too much volume, too many jumps, or slow grinding strength work."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "low pogo hops",
+          "prescription": "1x10"
+        },
+        {
+          "name": "single-leg glute bridge",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "The player can keep their own lower-body warm-up if it prepares ankles, hips, and posterior chain.",
+        "Keep this short and specific.",
+        "The goal is readiness and stiffness, not fatigue."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Lower Speed-Projection",
+        "format": "`4 rounds`, full rest `2 min 30 to 3 min` after each round",
+        "exercises": [
+          {
+            "name": "Trap Bar Jump Shrug",
+            "prescription": "4x3 @ light-moderate, max intent"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "3 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Trap bar jump shrug: light load, violent extension, soft catch — power not grind.",
+          "No grinding reps.",
+          "Broad jumps should be powerful and crisp, not chased once quality drops.",
+          "This is a speed-strength contrast: projection through the trap bar shrug, not maximal pulling."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Posterior Chain + Unilateral Strength Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Barbell Hip Thrust",
+            "prescription": "3x5-6 @ RER 2-3"
+          },
+          {
+            "name": "Cossack Squat",
+            "prescription": "3x5/side @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Hip thrust stays powerful and clean, with a hard lockout and no lumbar overextension.",
+          "The unilateral pattern supports sprint mechanics, force application, and change-of-direction robustness.",
+          "In a `2x/week` format, the jump-shrug contrast remains the primary power-hinge exposure of the week, so keep Block 1 sharp before chasing more support volume here.",
+          "This block should feel athletic and useful, not like a heavy bodybuilding lower day."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Back Three Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Light Sled Push",
+            "prescription": "15-20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Copenhagen Hold",
+            "prescription": "15-20s/side",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Sled load stays light enough to preserve speed and posture.",
+          "Copenhagen should reinforce adductors, trunk control, and change-of-direction robustness without becoming a fatigue contest.",
+          "If adductor load is already high that week, replace with `Pallof Hold` or `Side Plank`.",
+          "If no sled is available, replace with `Suitcase Carry` `20m/side`."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize movement speed and projection quality over load jumps.",
+      "Jump shrug progresses only if bar speed stays maximal — prefer intent over load.",
+      "Hip thrust and unilateral work progress gradually while keeping `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 if the player is still moving explosively"
+    ],
+    "positionAccent": [
+      "Common lower skeleton stays shared with the front-row lower session.",
+      "Back-three accent comes from:",
+      "slightly faster force profile",
+      "more unilateral and posterior-chain emphasis",
+      "lighter horizontal projection work",
+      "less collision/bracing bias than front row"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "sled only if arm position is aggravating"
+        ],
+        "replaceWith": [
+          "shorter sled distance",
+          "`Suitcase Carry` only if tolerated"
+        ],
+        "rehabFinisher": [
+          "none by default in this lower session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "jump",
+          "unilateral knee-dominant pattern if painful"
+        ],
+        "replaceWith": [
+          "`Hip Thrust`",
+          "reduced-range split squat or box-supported variation if tolerated"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Trap Bar Deadlift`",
+          "`Hip Thrust`",
+          "heavy sled if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "`Glute Bridge`",
+          "supported unilateral pattern",
+          "lighter anti-rotation/trunk option"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the trap bar deadlift become slow survival work.",
+      "Do not chase broad jump distance once take-off quality drops.",
+      "Do not turn the hip thrust into lumbar hyperextension.",
+      "Keep the sled fast enough to stay athletic.",
+      "On match weeks, place this session early enough to recover fully before the weekend."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[lower.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower.png)",
+      "[lower-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower-4.jpg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_IN_SEASON_BACK_THREE_SLHIP_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "lower",
+      "targetLevel": "performance",
+      "targetPositionGroup": "back_three",
+      "equipment": "full_gym",
+      "targetDuration": "40-50 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "LOWER_IN_SEASON_BACK_THREE_SLHIP_V1",
+    "goal": [
+      "Maintain lower-body force useful for acceleration, speed support, and open-field contact.",
+      "Keep one clear lower-body force -> projection exposure without creating heavy residual fatigue.",
+      "Maintain posterior-chain strength and unilateral control.",
+      "Finish with a short athletic block that supports stiffness, trunk control, and acceleration qualities."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through a readable lower contrast, strong posterior-chain work, unilateral control, and a short field-transfer finisher.",
+      "Back-three specific through slightly more speed bias, more unilateral emphasis, and less collision-bracing emphasis than front row.",
+      "Do not dilute this session with too much volume, too many jumps, or slow grinding strength work."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "low pogo hops",
+          "prescription": "1x10"
+        },
+        {
+          "name": "single-leg glute bridge",
+          "prescription": "1x6/side"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "The player can keep their own lower-body warm-up if it prepares ankles, hips, and posterior chain.",
+        "Keep this short and specific.",
+        "The goal is readiness and stiffness, not fatigue."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Lower Speed-Projection",
+        "format": "`4 rounds`, full rest `2 min 30 to 3 min` after each round",
+        "exercises": [
+          {
+            "name": "Trap Bar Deadlift",
+            "prescription": "4x3 @ 75-80%"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "3 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Trap bar reps must stay sharp and technically clean.",
+          "No grinding reps.",
+          "Broad jumps should be powerful and crisp, not chased once quality drops.",
+          "This is a force -> projection contrast with a slightly faster profile than the front-row version."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Posterior Chain + Unilateral Strength Pair",
+        "format": "`3 rounds`, `75-90s` rest after the pair",
+        "exercises": [
+          {
+            "name": "Single-Leg Hip Thrust",
+            "prescription": "3x5-6/side @ RER 2-3"
+          },
+          {
+            "name": "Rear-Foot Elevated Split Squat or Reverse Lunge",
+            "prescription": "3x5/side @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Single-leg hip thrust stays powerful and clean, with a hard lockout and no lumbar overextension.",
+          "The unilateral pattern supports sprint mechanics, force application, and change-of-direction robustness.",
+          "In a `2x/week` format, the trap bar contrast remains the primary hinge exposure of the week, so keep Block 1 sharp before chasing more support volume here.",
+          "This block should feel athletic and useful, not like a heavy bodybuilding lower day."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Back Three Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Sled March",
+            "prescription": "15-20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Copenhagen Hold",
+            "prescription": "15-20s/side",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Sled march load stays light enough to preserve speed and posture.",
+          "Copenhagen should reinforce adductors, trunk control, and change-of-direction robustness without becoming a fatigue contest.",
+          "If adductor load is already high that week, replace with `Pallof Hold` or `Side Plank`.",
+          "If no sled is available, replace with `Suitcase Carry` `20m/side`."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize movement speed and projection quality over load jumps.",
+      "Trap bar can progress by `+2.5 to +5 kg` only if all sets stay sharp.",
+      "Hip thrust and unilateral work progress gradually while keeping `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 if the player is still moving explosively"
+    ],
+    "positionAccent": [
+      "Common lower skeleton stays shared with the front-row lower session.",
+      "Back-three accent comes from:",
+      "slightly faster force profile",
+      "more unilateral and posterior-chain emphasis",
+      "lighter horizontal projection work",
+      "less collision/bracing bias than front row"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "sled only if arm position is aggravating"
+        ],
+        "replaceWith": [
+          "shorter sled distance",
+          "`Suitcase Carry` only if tolerated"
+        ],
+        "rehabFinisher": [
+          "none by default in this lower session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "jump",
+          "unilateral knee-dominant pattern if painful"
+        ],
+        "replaceWith": [
+          "`Hip Thrust`",
+          "reduced-range split squat or box-supported variation if tolerated"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Trap Bar Deadlift`",
+          "`Hip Thrust`",
+          "heavy sled if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "`Glute Bridge`",
+          "supported unilateral pattern",
+          "lighter anti-rotation/trunk option"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the trap bar deadlift become slow survival work.",
+      "Do not chase broad jump distance once take-off quality drops.",
+      "Do not turn the hip thrust into lumbar hyperextension.",
+      "Keep the sled fast enough to stay athletic.",
+      "On match weeks, place this session early enough to recover fully before the weekend."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[lower.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower.png)",
+      "[lower-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower-4.jpg)"
+    ]
+  },
+  {
+    "metadata": {
       "id": "LOWER_IN_SEASON_BACK_THREE_V1",
       "status": "validated",
       "version": "V1",
@@ -6321,6 +7922,639 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       "Do not chase broad jump distance once take-off quality drops.",
       "Do not turn the hip thrust into lumbar hyperextension.",
       "Keep the sled fast enough to stay athletic.",
+      "On match weeks, place this session early enough to recover fully before the weekend."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[lower.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower.png)",
+      "[lower-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower-4.jpg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_IN_SEASON_FRONT_ROW_FRONTSQUAT_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "lower",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row",
+      "equipment": "full_gym",
+      "targetDuration": "42-52 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "LOWER_IN_SEASON_FRONT_ROW_FRONTSQUAT_V1",
+    "goal": [
+      "Maintain lower-body force useful for scrum, contact, and short-force actions.",
+      "Keep one clean lower-body force -> power exposure without creating excessive fatigue.",
+      "Maintain posterior-chain strength and unilateral control.",
+      "Finish with front-row trunk/carry/adductor work that supports collision robustness."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through a readable lower contrast, strong hinge/bracing work, and a front-row finisher.",
+      "Front-row specific through force expression, trunk stiffness, adductor robustness, and carry demand rather than speed bias.",
+      "Do not dilute this session with too much plyometric volume or bodybuilding accessory work."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "The player can keep their own lower-body warm-up if it prepares ankles, hips, adductors, and trunk.",
+        "Keep this short and specific.",
+        "The goal is readiness, not volume."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Lower Force-Power",
+        "format": "`4 rounds`, full rest `3 min` after each round",
+        "exercises": [
+          {
+            "name": "Front Squat",
+            "prescription": "4x3 @ 75-80%"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "3 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Front squat must stay fast and technically clean.",
+          "No grinding reps.",
+          "Broad jumps should be powerful and crisp, never sloppy.",
+          "Front rack reinforces trunk stiffness useful for scrum and contact.",
+          "This is a force -> projection contrast, not a fatigue block."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Lower Strength Triplet",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
+        "exercises": [
+          {
+            "name": "Barbell Romanian Deadlift",
+            "prescription": "3x5-6 @ RER 2-3"
+          },
+          {
+            "name": "Walking Lunge",
+            "prescription": "3x5/side @ RER 2-3"
+          },
+          {
+            "name": "Barbell Hip Thrust",
+            "prescription": "3x6-8 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "RDL stays strict, braced, and posterior-chain dominant.",
+          "The unilateral pattern keeps hip and groin control without turning the session into a quad-volume day.",
+          "Hip Thrust : ajouté pour équilibrer quad:ham (ratio 2.33 → 1.17). Transfer scrum direct pour front row (extension hanche lourde).",
+          "This triplet should feel strong and useful, not draining — keep rest tight (90-120s) across the 3 exos."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Front Row Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Sled Push",
+            "prescription": "15-20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Copenhagen Plank",
+            "prescription": "15-20s/side",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Sled push reinforces horizontal force, bracing, and scrum-like projection without adding much eccentric fatigue.",
+          "Copenhagen plank gives useful adductor/trunk exposure for scrum and collision demands.",
+          "This block should feel robust, not exhaustive.",
+          "If no sled is available, replace with `Zercher Carry` or `Farmer Carry` over `20m`."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize bar speed and position quality over load jumps.",
+      "Squat can progress by `+2.5 to +5 kg` only if all sets stay sharp.",
+      "Box height should remain consistent before load is progressed.",
+      "RDL and unilateral work progress gradually while keeping `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 as the key quality exposure if the player is still fresh enough"
+    ],
+    "positionAccent": [
+      "Common lower skeleton will stay shared with other positions.",
+      "Front-row accent comes from:",
+      "slightly higher force bias",
+      "more trunk/bracing emphasis",
+      "adductor/contact robustness",
+      "less speed-reactive bias than back three"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "sled only if arm position or grip is aggravating"
+        ],
+        "replaceWith": [
+          "shorter sled distance",
+          "`Farmer Carry` only if tolerated"
+        ],
+        "rehabFinisher": [
+          "none by default in this lower session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "`Front Squat`",
+          "unilateral knee-dominant pattern if painful"
+        ],
+        "replaceWith": [
+          "`Hip Thrust`",
+          "`RDL`",
+          "box squat or reduced-range squat if tolerated"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Front Squat`",
+          "`RDL`",
+          "heavy sled or carry if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "belt squat or supported squat variation if available",
+          "hip thrust",
+          "reduced-load unilateral pattern"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the front squat become slow survival work.",
+      "Do not chase broad jump distance once take-off quality drops.",
+      "Do not let the RDL become a low-back exercise.",
+      "Keep the finisher specific and controlled.",
+      "Sled push should stay crisp and powerful; if speed collapses, the load is too heavy.",
+      "On match weeks, place this session early enough to recover fully before the weekend."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[lower.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower.png)",
+      "[lower-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower-4.jpg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_IN_SEASON_FRONT_ROW_PAUSEJUMP_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "lower",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row",
+      "equipment": "full_gym",
+      "targetDuration": "42-52 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "LOWER_IN_SEASON_FRONT_ROW_PAUSEJUMP_V1",
+    "goal": [
+      "Maintain lower-body force useful for scrum, contact, and short-force actions.",
+      "Keep one clean lower-body force -> power exposure without creating excessive fatigue.",
+      "Maintain posterior-chain strength and unilateral control.",
+      "Finish with front-row trunk/carry/adductor work that supports collision robustness."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through a readable lower contrast, strong hinge/bracing work, and a front-row finisher.",
+      "Front-row specific through force expression, trunk stiffness, adductor robustness, and carry demand rather than speed bias.",
+      "Do not dilute this session with too much plyometric volume or bodybuilding accessory work."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "The player can keep their own lower-body warm-up if it prepares ankles, hips, adductors, and trunk.",
+        "Keep this short and specific.",
+        "The goal is readiness, not volume."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Lower Force-Power",
+        "format": "`4 rounds`, full rest `3 min` after each round",
+        "exercises": [
+          {
+            "name": "Pause Box Squat",
+            "prescription": "4x3 @ 75-80%"
+          },
+          {
+            "name": "Jump Step-Up",
+            "prescription": "3/side"
+          }
+        ],
+        "coachingNotes": [
+          "Pause box squat: 2s sit on the box, then explode up — keep intent maximal.",
+          "No grinding reps.",
+          "Jump step-up (bodyweight): crisp drive, soft landing, no rebound spam.",
+          "The pause removes stretch-reflex cheating and builds scrum-like starting force.",
+          "This is a force -> projection contrast, not a fatigue block."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Lower Strength Triplet",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
+        "exercises": [
+          {
+            "name": "Barbell Romanian Deadlift",
+            "prescription": "3x5-6 @ RER 2-3"
+          },
+          {
+            "name": "Step-Up",
+            "prescription": "3x5/side @ RER 2-3"
+          },
+          {
+            "name": "Barbell Hip Thrust",
+            "prescription": "3x6-8 @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "RDL stays strict, braced, and posterior-chain dominant.",
+          "The unilateral pattern keeps hip and groin control without turning the session into a quad-volume day.",
+          "Hip Thrust : ajouté pour équilibrer quad:ham (ratio 2.33 → 1.17). Transfer scrum direct pour front row (extension hanche lourde).",
+          "This triplet should feel strong and useful, not draining — keep rest tight (90-120s) across the 3 exos."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Front Row Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Sled Push",
+            "prescription": "15-20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Copenhagen Plank",
+            "prescription": "15-20s/side",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Sled push reinforces horizontal force, bracing, and scrum-like projection without adding much eccentric fatigue.",
+          "Copenhagen plank gives useful adductor/trunk exposure for scrum and collision demands.",
+          "This block should feel robust, not exhaustive.",
+          "If no sled is available, replace with `Zercher Carry` or `Farmer Carry` over `20m`."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize bar speed and position quality over load jumps.",
+      "Squat can progress by `+2.5 to +5 kg` only if all sets stay sharp.",
+      "Box height should remain consistent before load is progressed.",
+      "RDL and unilateral work progress gradually while keeping `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 as the key quality exposure if the player is still fresh enough"
+    ],
+    "positionAccent": [
+      "Common lower skeleton will stay shared with other positions.",
+      "Front-row accent comes from:",
+      "slightly higher force bias",
+      "more trunk/bracing emphasis",
+      "adductor/contact robustness",
+      "less speed-reactive bias than back three"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "sled only if arm position or grip is aggravating"
+        ],
+        "replaceWith": [
+          "shorter sled distance",
+          "`Farmer Carry` only if tolerated"
+        ],
+        "rehabFinisher": [
+          "none by default in this lower session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "`Box Squat`",
+          "unilateral knee-dominant pattern if painful"
+        ],
+        "replaceWith": [
+          "`Hip Thrust`",
+          "`RDL`",
+          "box squat or reduced-range squat if tolerated"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Box Squat`",
+          "`RDL`",
+          "heavy sled or carry if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "belt squat or supported squat variation if available",
+          "hip thrust",
+          "reduced-load unilateral pattern"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the box squat become slow survival work.",
+      "Do not chase jump step-up height once take-off quality drops.",
+      "Do not let the RDL become a low-back exercise.",
+      "Keep the finisher specific and controlled.",
+      "Sled push should stay crisp and powerful; if speed collapses, the load is too heavy.",
+      "On match weeks, place this session early enough to recover fully before the weekend."
+    ],
+    "sourceReferences": [
+      "[strength-methods.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/strength-methods.md)",
+      "[injury-prevention.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/injury-prevention.md)",
+      "[periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/periodization.md)",
+      "[off-season-periodization.md](/Users/junca/Projets/RugbyPrepV2/src/knowledge/off-season-periodization.md)",
+      "[positionPreferences.v1.ts](/Users/junca/Projets/RugbyPrepV2/src/services/program/positionPreferences.v1.ts)",
+      "[lower.png](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower.png)",
+      "[lower-4.jpg](/Users/junca/Projets/RugbyPrepV2/docs/training/Pre%CC%81paration%20Physique/lower-4.jpg)"
+    ]
+  },
+  {
+    "metadata": {
+      "id": "LOWER_IN_SEASON_FRONT_ROW_TBRDL_V1",
+      "status": "validated",
+      "version": "V1",
+      "cycle": "in_season",
+      "sessionType": "lower",
+      "targetLevel": "performance",
+      "targetPositionGroup": "front_row",
+      "equipment": "full_gym",
+      "targetDuration": "42-52 min",
+      "reductionOrder": [
+        3,
+        2
+      ]
+    },
+    "title": "LOWER_IN_SEASON_FRONT_ROW_TBRDL_V1",
+    "goal": [
+      "Maintain lower-body force useful for scrum, contact, and short-force actions.",
+      "Keep one clean lower-body force -> power exposure without creating excessive fatigue.",
+      "Maintain posterior-chain strength and unilateral control.",
+      "Finish with front-row trunk/carry/adductor work that supports collision robustness."
+    ],
+    "sessionIdentity": [
+      "Rugby-specific through a readable lower contrast, strong hinge/bracing work, and a front-row finisher.",
+      "Front-row specific through force expression, trunk stiffness, adductor robustness, and carry demand rather than speed bias.",
+      "Do not dilute this session with too much plyometric volume or bodybuilding accessory work."
+    ],
+    "warmUp": {
+      "exercises": [
+        {
+          "name": "ankle rocks",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "adductor rock-back",
+          "prescription": "1x8/side"
+        },
+        {
+          "name": "glute bridge",
+          "prescription": "1x8"
+        },
+        {
+          "name": "bodyweight squat",
+          "prescription": "1x8"
+        },
+        {
+          "name": "2 progressive ramp-up sets",
+          "prescription": ""
+        }
+      ],
+      "notes": [
+        "The player can keep their own lower-body warm-up if it prepares ankles, hips, adductors, and trunk.",
+        "Keep this short and specific.",
+        "The goal is readiness, not volume."
+      ]
+    },
+    "blocks": [
+      {
+        "number": 1,
+        "name": "Contrast Lower Force-Power",
+        "format": "`4 rounds`, full rest `3 min` after each round",
+        "exercises": [
+          {
+            "name": "Box Squat",
+            "prescription": "4x3 @ 80-85%"
+          },
+          {
+            "name": "Broad Jump",
+            "prescription": "3 reps"
+          }
+        ],
+        "coachingNotes": [
+          "Box squat must stay fast and technically clean.",
+          "No grinding reps.",
+          "Broad jumps should be powerful and crisp, never sloppy.",
+          "Use the box to standardize depth and reinforce force output from a stable position.",
+          "This is a force -> projection contrast, not a fatigue block."
+        ]
+      },
+      {
+        "number": 2,
+        "name": "Lower Strength Triplet",
+        "format": "`3 rounds`, `90-120s` rest after the triplet",
+        "exercises": [
+          {
+            "name": "Trap Bar RDL",
+            "prescription": "3x5-6 @ RER 2-3"
+          },
+          {
+            "name": "Rear-Foot Elevated Split Squat or Reverse Lunge",
+            "prescription": "3x5/side @ RER 2-3"
+          },
+          {
+            "name": "Single-Leg Hip Thrust",
+            "prescription": "3x6-8/side @ RER 2-3"
+          }
+        ],
+        "coachingNotes": [
+          "Trap Bar RDL stays strict, braced, and posterior-chain dominant.",
+          "The unilateral pattern keeps hip and groin control without turning the session into a quad-volume day.",
+          "Single-Leg Hip Thrust : ajouté pour équilibrer quad:ham (ratio 2.33 → 1.17). Transfer scrum direct pour front row (extension hanche lourde).",
+          "This triplet should feel strong and useful, not draining — keep rest tight (90-120s) across the 3 exos."
+        ]
+      },
+      {
+        "number": 3,
+        "name": "Front Row Finisher",
+        "format": "`EMOM 8'`",
+        "exercises": [
+          {
+            "name": "Sled March",
+            "prescription": "15-20m",
+            "slotLabel": "minute 1"
+          },
+          {
+            "name": "Copenhagen Plank",
+            "prescription": "15-20s/side",
+            "slotLabel": "minute 2"
+          }
+        ],
+        "coachingNotes": [
+          "Sled march reinforces horizontal force, bracing, and scrum-like projection without adding much eccentric fatigue.",
+          "Copenhagen plank gives useful adductor/trunk exposure for scrum and collision demands.",
+          "This block should feel robust, not exhaustive.",
+          "If no sled is available, replace with `Zercher Carry` or `Farmer Carry` over `20m`."
+        ]
+      }
+    ],
+    "progressionRules": [
+      "Prioritize bar speed and position quality over load jumps.",
+      "Squat can progress by `+2.5 to +5 kg` only if all sets stay sharp.",
+      "Box height should remain consistent before load is progressed.",
+      "RDL and unilateral work progress gradually while keeping `RER 2-3`.",
+      "If weekly fatigue is high:",
+      "reduce Block 3 first",
+      "then reduce one round from Block 2",
+      "keep Block 1 as the key quality exposure if the player is still fresh enough"
+    ],
+    "positionAccent": [
+      "Common lower skeleton will stay shared with other positions.",
+      "Front-row accent comes from:",
+      "slightly higher force bias",
+      "more trunk/bracing emphasis",
+      "adductor/contact robustness",
+      "less speed-reactive bias than back three"
+    ],
+    "injurySubstitutions": [
+      {
+        "area": "shoulder_pain",
+        "remove": [
+          "sled only if arm position or grip is aggravating"
+        ],
+        "replaceWith": [
+          "shorter sled distance",
+          "`Farmer Carry` only if tolerated"
+        ],
+        "rehabFinisher": [
+          "none by default in this lower session unless symptoms require it"
+        ]
+      },
+      {
+        "area": "knee_pain",
+        "remove": [
+          "`Box Squat`",
+          "unilateral knee-dominant pattern if painful"
+        ],
+        "replaceWith": [
+          "`Hip Thrust`",
+          "`RDL`",
+          "box squat or reduced-range squat if tolerated"
+        ],
+        "rehabFinisher": [
+          "light knee-control work if needed"
+        ]
+      },
+      {
+        "area": "low_back_pain",
+        "remove": [
+          "`Box Squat`",
+          "`RDL`",
+          "heavy sled or carry if posture cannot stay clean"
+        ],
+        "replaceWith": [
+          "belt squat or supported squat variation if available",
+          "hip thrust",
+          "reduced-load unilateral pattern"
+        ],
+        "rehabFinisher": [
+          "breathing + trunk stiffness work"
+        ]
+      }
+    ],
+    "coachingWarnings": [
+      "Do not let the box squat become slow survival work.",
+      "Do not chase broad jump distance once take-off quality drops.",
+      "Do not let the RDL become a low-back exercise.",
+      "Keep the finisher specific and controlled.",
+      "Sled march should stay crisp and powerful; if speed collapses, the load is too heavy.",
       "On match weeks, place this session early enough to recover fully before the weekend."
     ],
     "sourceReferences": [
@@ -10685,8 +12919,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`EMOM 8'`",
         "exercises": [
           {
-            "name": "Suitcase Carry",
-            "prescription": "20m/side",
+            "name": "Farmer Carry",
+            "prescription": "20m",
             "slotLabel": "minute 1"
           },
           {
@@ -11092,7 +13326,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
             "slotLabel": "minute 1"
           },
           {
-            "name": "Pallof Press Hold or Neck Isometric",
+            "name": "Neck Isometric",
             "prescription": "15-20s",
             "slotLabel": "minute 2"
           }
@@ -11488,7 +13722,7 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`EMOM 8'`",
         "exercises": [
           {
-            "name": "Farmer Carry or Zercher Carry",
+            "name": "Zercher Carry",
             "prescription": "20m",
             "slotLabel": "minute 1"
           },
@@ -11510,16 +13744,16 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`1 round`, `20-30s` rest between drills",
         "exercises": [
           {
+            "name": "Face Pull",
+            "prescription": "10-12 reps"
+          },
+          {
             "name": "Band External Rotation",
             "prescription": "10-12 reps"
           },
           {
-            "name": "Serratus Reach",
-            "prescription": "8-10 reps"
-          },
-          {
-            "name": "Scap Push-Up",
-            "prescription": "8 reps"
+            "name": "Band Pull-Apart",
+            "prescription": "10 reps"
           }
         ],
         "coachingNotes": [
@@ -11713,8 +13947,8 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`EMOM 8'`",
         "exercises": [
           {
-            "name": "Farmer Carry or Zercher Carry",
-            "prescription": "20m",
+            "name": "Suitcase Carry",
+            "prescription": "20m/side",
             "slotLabel": "minute 1"
           },
           {
@@ -11962,16 +14196,16 @@ export const MOTHER_SESSIONS: MotherSession[] = [
         "format": "`1 round`, `20-30s` rest between drills",
         "exercises": [
           {
+            "name": "Face Pull",
+            "prescription": "10-12 reps"
+          },
+          {
             "name": "Band External Rotation",
             "prescription": "10-12 reps"
           },
           {
-            "name": "Serratus Reach",
-            "prescription": "8-10 reps"
-          },
-          {
-            "name": "Scap Push-Up",
-            "prescription": "8 reps"
+            "name": "Band Pull-Apart",
+            "prescription": "10 reps"
           }
         ],
         "coachingNotes": [

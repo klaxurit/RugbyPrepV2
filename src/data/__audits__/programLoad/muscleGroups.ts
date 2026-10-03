@@ -90,6 +90,7 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
   // ── Squat ───────────────────────────────────────────────────
   'back squat': SQUAT_PATTERN,
   'box squat': SQUAT_PATTERN,
+  'pause box squat': SQUAT_PATTERN,
   'pin back squat': SQUAT_PATTERN,
   'front squat': { quads: 1, glutes: 0.5, trunk: 0.5 },
   'goblet squat': SQUAT_PATTERN,
@@ -98,6 +99,9 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
   'rear-foot elevated split squat': SQUAT_PATTERN,
   'reverse lunge': SQUAT_PATTERN,
   'reverse lunge bodyweight': SQUAT_PATTERN,
+  'walking lunge': SQUAT_PATTERN,
+  'cossack squat': SQUAT_PATTERN,
+  'step-up': SQUAT_PATTERN,
   'leg extension': { quads: 1 },
 
   // ── Hinge / chaîne postérieure ──────────────────────────────
@@ -107,11 +111,14 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
   'single-leg romanian deadlift': HINGE_PATTERN,
   'kickstand rdl': HINGE_PATTERN,
   'trap bar deadlift': { quads: 1, glutes: 0.5, hamstrings: 0.5, back: 0.5 },
+  'trap bar rdl': HINGE_PATTERN,
+  'trap bar jump shrug': NOT_HYPERTROPHY_VOLUME,
   'good morning': HINGE_PATTERN,
   'lying leg curl': { hamstrings: 1 },
   'nordic curl': { hamstrings: 1 },
   'nordic eccentric': { hamstrings: 1 },
   'barbell hip thrust': HIP_DOMINANT,
+  'single-leg hip thrust': HIP_DOMINANT,
   'glute bridge': HIP_DOMINANT,
   'single-leg glute bridge': HIP_DOMINANT,
   'banded kb swing': HIP_DOMINANT,
@@ -122,11 +129,13 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
   'squat jump': NOT_HYPERTROPHY_VOLUME,
   'countermovement jump': NOT_HYPERTROPHY_VOLUME,
   'broad jump': NOT_HYPERTROPHY_VOLUME,
+  'jump step-up': NOT_HYPERTROPHY_VOLUME,
   'lateral bound': NOT_HYPERTROPHY_VOLUME,
   'band-assisted split jump': NOT_HYPERTROPHY_VOLUME,
   'low pogo hops': NOT_HYPERTROPHY_VOLUME,
   'light sled push': NOT_HYPERTROPHY_VOLUME,
   'sled push': NOT_HYPERTROPHY_VOLUME,
+  'sled march': NOT_HYPERTROPHY_VOLUME,
 
   // ── Poussée horizontale ─────────────────────────────────────
   'bench press': HORIZONTAL_PUSH,
@@ -153,6 +162,7 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
   'seated cable row': ROW_PATTERN,
   'half-kneeling cable row': ROW_PATTERN,
   'single-arm db row': ROW_PATTERN,
+  'single-arm row': ROW_PATTERN,
   'pendlay row': ROW_PATTERN,
   't-bar row': ROW_PATTERN,
   'inverted row': ROW_PATTERN,
@@ -166,6 +176,7 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
   'face pull': { back: 1, shoulders: 0.5 },
   'face pull band': { back: 1, shoulders: 0.5 },
   'band external rotation': { shoulders: 1 },
+  'band pull-apart': { shoulders: 1, back: 0.5 },
   't-y-i incline bench': { shoulders: 1, back: 0.5 },
   'scap push-up': { shoulders: 0.5, back: 0.5 },
   'serratus reach': { shoulders: 0.5, trunk: 0.5 },
@@ -187,6 +198,7 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
 
   // ── Tronc / portés ──────────────────────────────────────────
   'pallof press hold': { trunk: 1 },
+  'pallof press': { trunk: 1 },
   'dead bug': { trunk: 1 },
   'bird dog': { trunk: 1 },
   'side plank': { trunk: 1 },

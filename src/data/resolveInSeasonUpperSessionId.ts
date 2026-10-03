@@ -1,20 +1,26 @@
 /**
  * Rotation du contraste Upper in-season (intention de cycle — corpus, pas runtime).
  *
- * 4 lanes sur mesocycleBlock (1→lane0 … 4→lane3, puis 5→0…).
- * Bench reste l’exo A ; seul le B change.
+ * Bench reste l’exo A ; seul le B change (4 lanes).
+ * Cadence : Fondations = 1 lane / mésocycle ; Performance = 1 lane / 2 semaines
+ * (`inSeasonVarietyLane`).
  *
  * Collisions Primer (semaine de match, fréquence 3) :
- * - avants lane 3 : éviter Supine (déjà au Primer) → Landmine
- * - arrières lane 0 : éviter Landmine (déjà au Primer) → Push Press
+ * - avants lane 3 : éviter Supine (déjà au Primer A) → Landmine
+ * - arrières lane 0 : éviter Landmine (déjà au Primer A) → Push Press
  *
  * Fallbacks matos (med ball → cable → landmine → plyo) restent
  * `gymVariantChains` — hors de ce module.
  */
 
 import type { MatchContext, PositionGroup } from './weeklyTemplates'
+import {
+  inSeasonVarietyLane,
+  type InSeasonVarietyLane,
+  type InSeasonVarietyTrainingLevel,
+} from './inSeasonVarietyLane'
 
-export type InSeasonUpperContrastLane = 0 | 1 | 2 | 3
+export type InSeasonUpperContrastLane = InSeasonVarietyLane
 
 export const IN_SEASON_UPPER_BASE_IDS = {
   front_row: 'UPPER_IN_SEASON_FRONT_ROW_V1',
@@ -34,19 +40,25 @@ export const IN_SEASON_UPPER_SESSION_IDS = [
   'UPPER_IN_SEASON_BACK_THREE_PUSHPRESS_V1',
 ] as const
 
+/** @deprecated Préférer `inSeasonVarietyLane` — conservé pour tests legacy. */
 export function inSeasonUpperContrastLane(mesocycleBlock: number): InSeasonUpperContrastLane {
-  const block =
-    Number.isFinite(mesocycleBlock) && mesocycleBlock >= 1 ? Math.floor(mesocycleBlock) : 1
-  return ((block - 1) % 4) as InSeasonUpperContrastLane
+  return inSeasonVarietyLane({ mesocycleBlock, trainingLevel: 'starter' })
 }
 
 export function resolveInSeasonUpperSessionId(params: {
   positionGroup: PositionGroup
   mesocycleBlock: number
+  mesocycleWeek?: 1 | 2 | 3 | 4
+  trainingLevel?: InSeasonVarietyTrainingLevel | null
   /** Absent en fréquence 2 (deload) → pas de collision Primer. */
   matchContext?: MatchContext
 }): string {
-  const lane = inSeasonUpperContrastLane(params.mesocycleBlock)
+  const lane = inSeasonVarietyLane({
+    mesocycleBlock: params.mesocycleBlock,
+    mesocycleWeek: params.mesocycleWeek,
+    // Sans niveau explicite : cadence mésocycle (compat tests / appels legacy)
+    trainingLevel: params.trainingLevel ?? 'starter',
+  })
   const matchWeek = params.matchContext === 'match_week'
 
   if (params.positionGroup === 'front_row') {
@@ -58,7 +70,7 @@ export function resolveInSeasonUpperSessionId(params: {
       case 2:
         return 'UPPER_IN_SEASON_FRONT_ROW_LANDMINE_V1'
       case 3:
-        // Primer avants = Dip + Supine — éviter double Supine en semaine de match
+        // Primer avants A = Dip + Supine — éviter double Supine en semaine de match
         return matchWeek
           ? 'UPPER_IN_SEASON_FRONT_ROW_LANDMINE_V1'
           : 'UPPER_IN_SEASON_FRONT_ROW_SUPINE_V1'
@@ -67,7 +79,7 @@ export function resolveInSeasonUpperSessionId(params: {
 
   switch (lane) {
     case 0:
-      // Primer 3/4 = Landmine + Plyo — Push Press hors Primer
+      // Primer 3/4 A = Landmine + Plyo — Push Press hors Primer
       return matchWeek
         ? 'UPPER_IN_SEASON_BACK_THREE_PUSHPRESS_V1'
         : 'UPPER_IN_SEASON_BACK_THREE_LANDMINE_V1'
