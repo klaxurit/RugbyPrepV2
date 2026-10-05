@@ -21,6 +21,9 @@ export type MatchCalendarRow = {
   match_day?: number | null
   journee_name?: string | null
   match_status?: string | null
+  ffr_score_locale?: number | null
+  ffr_score_visiteur?: number | null
+  ffr_score_valid?: boolean | null
   venue?: string | null
   user_hidden?: boolean | null
   user_override?: CalendarEvent['user_override']
@@ -66,6 +69,9 @@ export function calendarRowToEvent(row: MatchCalendarRow): CalendarEvent {
     match_day: row.match_day ?? undefined,
     journee_name: row.journee_name ?? undefined,
     match_status: row.match_status ?? undefined,
+    ffr_score_locale: row.ffr_score_locale ?? undefined,
+    ffr_score_visiteur: row.ffr_score_visiteur ?? undefined,
+    ffr_score_valid: row.ffr_score_valid ?? undefined,
     venue: row.venue ?? undefined,
     user_hidden: row.user_hidden ?? undefined,
     user_override: row.user_override ?? undefined,

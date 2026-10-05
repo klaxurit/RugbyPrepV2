@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { PageHeader } from '../components/PageHeader'
 import { posthog } from '../services/analytics/posthog'
 import { AlertTriangle } from 'lucide-react'
@@ -54,6 +54,8 @@ import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
 import { useRegisterCoachContext } from '../contexts/CoachContext'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 import { MatchLoadSheet } from '../components/match/MatchLoadSheet'
+import { matchNeedsLoadLog } from '../services/calendar/matchLoadNudge'
+import { matchFfrDisplayScore } from '../services/calendar/matchFfrDisplayScore'
 import { computeStreak } from '../services/home/computeStreak'
 import { selectCoachInsight } from '../services/home/coachInsights'
 import { resolveFatigueLevel } from '../services/program/resolveFatigueLevel'
@@ -207,6 +209,7 @@ function buildNormalHero(
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 export function HomePage() {
+  const navigate = useNavigate()
   const { profile, updateProfile } = useProfile()
   const { authState } = useAuth()
   const { fatigue, setFatigue } = useFatigue()
@@ -602,7 +605,22 @@ export function HomePage() {
                       OU carte cream + bordure bordeaux (état du jour). */}
         <div className="pt-1" data-testid="home-hero-card">
           {isPostMatchWindow && lastMatch ? (
-            <HeroDayAfter match={lastMatch} />
+            <HeroDayAfter
+              match={lastMatch}
+              score={matchFfrDisplayScore(lastMatch)}
+              ctaLabel={
+                matchNeedsLoadLog(lastMatch)
+                  ? 'Enregistrer mon match'
+                  : 'Récup active du jour'
+              }
+              onCtaPress={() => {
+                if (matchNeedsLoadLog(lastMatch)) {
+                  setLoadMatch(lastMatch)
+                  return
+                }
+                navigate('/week')
+              }}
+            />
           ) : (
             <HeroNormal
               eyebrow={normalHeroCopy.eyebrow}

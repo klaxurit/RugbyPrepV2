@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { Icon } from '../ui'
 import type { CalendarEvent } from '../../types/training'
 
@@ -7,9 +6,16 @@ interface HeroDayAfterProps {
   match: CalendarEvent
   /**
    * Score du match si connu (à venir : API FFR). Si absent, on n'affiche pas
-   * le bloc score géant — la carte reste centrée sur la citation et le CTA récup.
+   * le bloc score géant — la carte reste centrée sur la citation et le CTA.
    */
   score?: { home: number; away: number }
+  /**
+   * CTA principal — en pratique ouvre la MatchLoadSheet (joué / pas joué / RPE)
+   * ou mène à la récup active une fois la charge notée.
+   */
+  onCtaPress: () => void
+  /** Libellé du CTA (charge match vs récup). */
+  ctaLabel: string
 }
 
 function formatMatchMeta(event: CalendarEvent): string {
@@ -22,11 +28,11 @@ function formatMatchMeta(event: CalendarEvent): string {
 
 /**
  * Hero "lendemain de match" — carte bordeaux pleine, score géant (si connu),
- * citation italic Playfair, stats inline, CTA "Récup active du jour".
+ * citation italic Playfair, stats inline, CTA post-match (charge puis récup).
  *
  * Affiché tant que le dernier match a eu lieu dans les 48 dernières heures.
  */
-export function HeroDayAfter({ match, score }: HeroDayAfterProps) {
+export function HeroDayAfter({ match, score, onCtaPress, ctaLabel }: HeroDayAfterProps) {
   const isHome = match.is_home === true
   const venueLabel = match.is_neutral ? 'Neutre' : isHome ? 'Dom.' : 'Ext.'
   // Résultat : V/N/D si on a un score, sinon '—'
@@ -107,17 +113,19 @@ export function HeroDayAfter({ match, score }: HeroDayAfterProps) {
             <Stat value={venueLabel} label={isHome ? 'À domicile' : 'À l’extérieur'} />
           </div>
 
-          {/* CTA récup active */}
-          <Link
-            to="/mobility"
+          {/* CTA : charge match d’abord, puis récup active */}
+          <button
+            type="button"
+            data-testid="hero-day-after-cta"
+            onClick={onCtaPress}
             className="flex w-full items-center justify-between rounded-xl bg-app text-brand px-4 py-3.5 text-[13px] font-extrabold uppercase tracking-[0.04em] active:scale-[0.98] transition-transform rf-focus-ring"
           >
             <span className="inline-flex items-center gap-2.5">
               <Icon name="leaf" size={14} strokeWidth={2.4} />
-              Récup active du jour
+              {ctaLabel}
             </span>
             <Icon name="arrow-right" size={14} strokeWidth={2.4} />
-          </Link>
+          </button>
         </div>
       </div>
     </div>

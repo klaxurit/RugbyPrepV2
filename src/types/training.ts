@@ -581,6 +581,10 @@ export interface CalendarEvent {
   journee_name?: string
   /** État FFR de la rencontre (ex. Jouée, Programmée). */
   match_status?: string
+  /** Score officiel FFR (locale / visiteur au bulletin). */
+  ffr_score_locale?: number | null
+  ffr_score_visiteur?: number | null
+  ffr_score_valid?: boolean
   venue?: string
   user_hidden?: boolean
   user_override?: {

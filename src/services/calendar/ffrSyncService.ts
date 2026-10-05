@@ -30,7 +30,9 @@ const QUERY_COMPETITION_CALENDAR = `
       Journees {
         id nom numero
         Rencontres {
-          id dateOfficielle dateEffective forfait
+          id dateOfficielle dateEffective forfait scoreValide
+          RencontreResultatLocale { pointsDeMarque }
+          RencontreResultatVisiteuse { pointsDeMarque }
           Etat { nom }
           Journee { id nom numero }
           CompetitionEquipeLocale {

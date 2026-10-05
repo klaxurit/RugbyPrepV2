@@ -3,6 +3,7 @@ import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { useProfile } from './useProfile'
 import { syncCalendar } from '../services/calendar/ffrSyncService'
+import { shouldAutoSyncFfrCalendar } from '../services/calendar/shouldAutoSyncFfrCalendar'
 import { applyDeferralRules } from '../services/season/deferralRules'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 import type { CalendarEvent, MatchKind, MatchParticipationStatus } from '../types/training'
@@ -12,9 +13,8 @@ import { useProgramEvolutionSheet } from './useProgramEvolutionSheet'
 import { getToday } from '../services/ui/debugDateOverride'
 
 const STORAGE_BASE = 'rugbyprep.calendar'
-const AUTO_SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24h
 const CALENDAR_SELECT =
-  'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, journee_name, match_status, venue, user_hidden, user_override, synced_at, match_kind, participation_status'
+  'id, date, type, kickoff_time, opponent, opponent_code, is_home, is_neutral, notes, rpe, duration_min, created_at, source, external_id, competition_id, competition_name, match_day, journee_name, match_status, ffr_score_locale, ffr_score_visiteur, ffr_score_valid, venue, user_hidden, user_override, synced_at, match_kind, participation_status'
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -102,16 +102,24 @@ export function useCalendarSource() {
       })
   }, [userId])
 
-  // ── Auto-sync FFR calendar if stale (>24h since last sync) ──
+  // Reset one-shot auto-sync when the signed-in user changes.
   useEffect(() => {
-    if (!userId || autoSyncRanRef.current) return
+    autoSyncRanRef.current = false
+  }, [userId])
+
+  // ── Auto-sync FFR : stale (>24h) OU post-match sans score validé (>6h) ──
+  useEffect(() => {
+    if (!userId || autoSyncRanRef.current || loading) return
     const competitionId = profile.ffrCompetitionId
     const clubCode = profile.clubCode
     if (!competitionId || !clubCode) return
 
-    const lastSync = profile.ffrLastSyncAt ? new Date(profile.ffrLastSyncAt).getTime() : 0
-    const isStale = Date.now() - lastSync > AUTO_SYNC_INTERVAL_MS
-    if (!isStale) return
+    const reason = shouldAutoSyncFfrCalendar({
+      lastSyncAt: profile.ffrLastSyncAt,
+      events,
+      todayISO: getToday(),
+    })
+    if (!reason) return
 
     autoSyncRanRef.current = true
 
@@ -133,10 +141,10 @@ export function useCalendarSource() {
         setEvents(loaded)
         saveToStorage(loaded, userId)
 
-        // Compare to detect new matches
+        // Compare to detect new matches (stale sync only — not score refresh)
         const afterCount = loaded.filter(e => e.source === 'ffr_import' && !e.user_hidden).length
         const diff = afterCount - beforeCount
-        if (diff > 0) {
+        if (reason === 'stale' && diff > 0) {
           const todayStr = getToday()
           const nextMatch = loaded.find(
             (e) => e.type === 'match' && !e.user_hidden && e.date >= todayStr,
@@ -152,7 +160,7 @@ export function useCalendarSource() {
       updateProfile({ ffrLastSyncAt: new Date().toISOString() })
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, profile.ffrCompetitionId, profile.clubCode])
+  }, [userId, loading, profile.ffrCompetitionId, profile.clubCode, profile.ffrLastSyncAt, events])
 
   const addEvent = useCallback(
     async (payload: Omit<CalendarEvent, 'id' | 'created_at'>): Promise<CalendarEvent | undefined> => {

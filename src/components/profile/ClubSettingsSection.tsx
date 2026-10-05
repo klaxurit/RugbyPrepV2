@@ -410,7 +410,7 @@ export function ClubSettingsSection({
                 <p className="text-sm font-bold text-fg">{profile.ffrCompetitionName}</p>
                 <p className="text-[10px] text-fg-muted mt-0.5">
                   {profile.ffrLastSyncAt
-                    ? `Synchronisé ${new Date(profile.ffrLastSyncAt).toLocaleDateString('fr-FR')} · auto-sync quotidien`
+                    ? `Synchronisé ${new Date(profile.ffrLastSyncAt).toLocaleDateString('fr-FR')} · auto-sync (app + week-end)`
                     : 'Synchronisation automatique activée'}
                 </p>
               </div>

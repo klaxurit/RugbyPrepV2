@@ -43,6 +43,11 @@ verify_jwt = false
 [functions.dispatch-social-nudges]
 verify_jwt = false
 
+# Resync calendrier FFR + scores (dimanche soir / lundi matin / lundi ~20h).
+# Auth par x-cron-secret dans le corps de la fonction.
+[functions.ffr-sync-batch]
+verify_jwt = false
+
 # ─── User-initiated functions (require Supabase user JWT) ─────────────
 # These are called from the React client with the signed-in user's JWT.
 # The function calls requireUser(req) to extract user_id and scope writes.

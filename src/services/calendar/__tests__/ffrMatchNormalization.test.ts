@@ -56,4 +56,35 @@ describe('mapFfrRencontreToNormalizedMatch', () => {
     )
     expect(row?.match_status).toBe('unknown')
   })
+
+  it('mappe le score validé FFR', () => {
+    const row = mapFfrRencontreToNormalizedMatch(
+      {
+        ...baseRencontre,
+        scoreValide: 'validé',
+        RencontreResultatLocale: { pointsDeMarque: 50 },
+        RencontreResultatVisiteuse: { pointsDeMarque: 12 },
+      },
+      { nom: 'Journée 2', numero: 2 },
+      clubCode,
+    )
+    expect(row).toMatchObject({
+      score_locale: 50,
+      score_visiteur: 12,
+      score_valid: true,
+    })
+  })
+
+  it('ignore le score si scoreValide absent', () => {
+    const row = mapFfrRencontreToNormalizedMatch(
+      {
+        ...baseRencontre,
+        RencontreResultatLocale: { pointsDeMarque: 20 },
+        RencontreResultatVisiteuse: { pointsDeMarque: 10 },
+      },
+      { nom: 'Journée 2' },
+      clubCode,
+    )
+    expect(row?.score_valid).toBe(false)
+  })
 })

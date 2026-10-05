@@ -18,7 +18,9 @@ export const QUERY_COMPETITION_CALENDAR = `
       Journees {
         id nom numero
         Rencontres {
-          id dateOfficielle dateEffective forfait
+          id dateOfficielle dateEffective forfait scoreValide
+          RencontreResultatLocale { pointsDeMarque }
+          RencontreResultatVisiteuse { pointsDeMarque }
           Etat { nom }
           Journee { id nom numero }
           CompetitionEquipeLocale {
@@ -80,10 +82,17 @@ interface FfrEquipeShape {
   nom?: string
 }
 
+interface FfrRencontreResultatShape {
+  pointsDeMarque?: number | null
+}
+
 interface FfrRencontreShape {
   id: string
   dateOfficielle?: string
   dateEffective?: string
+  scoreValide?: string | null
+  RencontreResultatLocale?: FfrRencontreResultatShape | null
+  RencontreResultatVisiteuse?: FfrRencontreResultatShape | null
   Etat?: { nom?: string } | null
   Journee?: { id?: string; nom?: string; numero?: number } | null
   CompetitionEquipeLocale: FfrEquipeShape
@@ -109,6 +118,30 @@ export interface NormalizedFfrMatch {
   journee_name?: string
   venue?: string
   match_status: string
+  score_locale?: number | null
+  score_visiteur?: number | null
+  score_valid?: boolean
+}
+
+function parseFfrRencontreScores(rencontre: FfrRencontreShape): {
+  score_locale: number | null
+  score_visiteur: number | null
+  score_valid: boolean
+} {
+  const locale = rencontre.RencontreResultatLocale?.pointsDeMarque
+  const visiteur = rencontre.RencontreResultatVisiteuse?.pointsDeMarque
+  const scoreLocale = typeof locale === 'number' && Number.isFinite(locale) ? locale : null
+  const scoreVisiteur = typeof visiteur === 'number' && Number.isFinite(visiteur) ? visiteur : null
+  const validated = (rencontre.scoreValide ?? '').trim().toLowerCase()
+  const scoreValid =
+    (validated === 'validé' || validated === 'valide') &&
+    scoreLocale != null &&
+    scoreVisiteur != null
+  return {
+    score_locale: scoreLocale,
+    score_visiteur: scoreVisiteur,
+    score_valid: scoreValid,
+  }
 }
 
 function getClubCode(equipe: FfrEquipeShape): string {
@@ -155,6 +188,8 @@ function mapFfrRencontreToNormalizedMatch(
         ? journee.numero
         : undefined
 
+  const scores = parseFfrRencontreScores(rencontre)
+
   return {
     external_id: rencontre.id,
     match_date: matchDate,
@@ -167,6 +202,9 @@ function mapFfrRencontreToNormalizedMatch(
     journee_name: journeeName?.trim() || undefined,
     venue,
     match_status: rencontre.Etat?.nom?.trim() || 'unknown',
+    score_locale: scores.score_locale,
+    score_visiteur: scores.score_visiteur,
+    score_valid: scores.score_valid,
   }
 }
 
