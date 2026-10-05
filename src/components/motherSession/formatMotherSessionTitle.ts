@@ -16,6 +16,20 @@ const POSITION_CYCLE_SKIP = new Set(
     'COMMON',
     'BASE',
     'PHASE',
+    // Variantes A/B ou rotation in-season : pas de valeur pour le joueur dans le titre.
+    'B',
+    'TBRDL',
+    'FRONTSQUAT',
+    'PAUSEJUMP',
+    'RDL',
+    'SLHIP',
+    'SHRUG',
+    'CHESTPASS',
+    'LANDMINE',
+    'SUPINE',
+    'PLYO',
+    'ROTATIONAL',
+    'PUSHPRESS',
   ].map((s) => s.toUpperCase())
 )
 
@@ -37,9 +51,13 @@ const TOKEN_FR: Record<string, string> = {
 
 const TITLE_OVERRIDES: Record<string, Record<AppLang, string>> = {
   FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1:  { fr: 'Power-up · Avants',                  en: 'Light Primer · Front Row' },
+  FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_B_V1:{ fr: 'Power-up · Avants',                  en: 'Light Primer · Front Row' },
   FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1: { fr: 'Power-up · Ligne arrière',           en: 'Light Primer · Back Three' },
+  FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_B_V1:{ fr: 'Power-up · Ligne arrière',          en: 'Light Primer · Back Three' },
   FULL_BODY_IN_SEASON_FRONT_ROW_V1:          { fr: 'Corps complet · Avants',              en: 'Full Body · Front Row' },
+  FULL_BODY_IN_SEASON_FRONT_ROW_B_V1:        { fr: 'Corps complet · Avants',              en: 'Full Body · Front Row' },
   FULL_BODY_IN_SEASON_BACK_THREE_V1:         { fr: 'Corps complet · Ligne arrière',       en: 'Full Body · Back Three' },
+  FULL_BODY_IN_SEASON_BACK_THREE_B_V1:       { fr: 'Corps complet · Ligne arrière',       en: 'Full Body · Back Three' },
   // Recovery sessions — titre correct pour off-season ET recovery override in-season.
   FULL_OFFSEASON_RECOVERY_A_V1:              { fr: 'Récupération · Début de semaine',     en: 'Recovery · Early week' },
   FULL_OFFSEASON_RECOVERY_B_V1:              { fr: 'Récupération · Fin de semaine',       en: 'Recovery · Late week' },

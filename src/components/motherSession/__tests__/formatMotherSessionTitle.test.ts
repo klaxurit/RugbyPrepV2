@@ -28,6 +28,29 @@ describe('formatTitleFromMotherSessionId', () => {
       const result = formatTitleFromMotherSessionId('LOWER_IN_SEASON_FRONT_ROW_V1', 'fr')
       expect(result).toBe('Bas du corps')
     })
+
+    it('variantes in-season lower : pas de suffixe cryptique (Tbrdl, etc.)', () => {
+      expect(formatTitleFromMotherSessionId('LOWER_IN_SEASON_FRONT_ROW_TBRDL_V1', 'fr'))
+        .toBe('Bas du corps')
+      expect(formatTitleFromMotherSessionId('LOWER_IN_SEASON_FRONT_ROW_FRONTSQUAT_V1', 'fr'))
+        .toBe('Bas du corps')
+      expect(formatTitleFromMotherSessionId('LOWER_IN_SEASON_BACK_THREE_RDL_V1', 'fr'))
+        .toBe('Bas du corps')
+      expect(formatTitleFromMotherSessionId('LOWER_IN_SEASON_BACK_THREE_SLHIP_V1', 'fr'))
+        .toBe('Bas du corps')
+    })
+
+    it('variantes in-season upper : Haut du corps sans Landmine / Plyo…', () => {
+      expect(formatTitleFromMotherSessionId('UPPER_IN_SEASON_FRONT_ROW_LANDMINE_V1', 'fr'))
+        .toBe('Haut du corps')
+      expect(formatTitleFromMotherSessionId('UPPER_IN_SEASON_BACK_THREE_PUSHPRESS_V1', 'fr'))
+        .toBe('Haut du corps')
+    })
+
+    it('variante Full B : même titre que A', () => {
+      expect(formatTitleFromMotherSessionId('FULL_BODY_IN_SEASON_FRONT_ROW_B_V1', 'fr'))
+        .toBe('Corps complet · Avants')
+    })
   })
 
   describe('EN', () => {
