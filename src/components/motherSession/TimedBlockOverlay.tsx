@@ -77,6 +77,7 @@ export function TimedBlockOverlay({
 
   const { snapshot, start, pause, stop, skipInterval, incrementAmrapRound } = useBlockTimer({
     format,
+    persistKey: `timed-block-${block.number}`,
     onComplete: () => {
       onFinish({
         elapsedSec: snapshot.elapsedSec,
@@ -86,7 +87,7 @@ export function TimedBlockOverlay({
     },
   })
 
-  // ── Countdown 3→2→1→GO! avant de lancer le chrono principal ───────────
+  // ── Countdown 3→2→1→GO! — sauté si le chrono a déjà repris après remount ──
   useEffect(() => {
     if (!isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reset overlay state on close
@@ -95,12 +96,14 @@ export function TimedBlockOverlay({
       if (snapshot.status !== 'idle') stop()
       return
     }
-    // Déjà en running : le hook ticke, rien à planifier.
+    // Remount mid-run : sync phase UI sans rejouer le countdown ni reset.
+    if (snapshot.status === 'running' || snapshot.status === 'paused') {
+      if (phase !== 'running') setPhase('running')
+      return
+    }
     if (phase === 'running') return
 
-    // On est en countdown. Tick chaque seconde.
     if (countdown <= 0) {
-      // GO → démarrage du chrono principal.
       vibrate([60, 40, 120])
       setPhase('running')
       start()

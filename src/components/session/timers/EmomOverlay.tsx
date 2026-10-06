@@ -34,9 +34,12 @@ interface EmomOverlayProps {
 export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOverlayProps) {
   const format = useMemo(() => (block ? parseBlockFormat(block.format) : null), [block])
   const { enabled: beepEnabled } = useRestBeepPref()
+  const persistKey = block != null ? `emom-block-${block.number}` : null
+  const blockNumber = block?.number ?? null
 
   const { snapshot, start, pause, stop, skipInterval } = useBlockTimer({
     format: format ?? { type: 'rounds' },
+    persistKey,
     onIntervalBoundary: () => {
       if (beepEnabled) playRestEndBeep()
     },
@@ -47,15 +50,13 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
     },
   })
 
-  // Auto-start au mount.
+  // Auto-start au montage / ouverture. Ne PAS stop() au cleanup : un remount
+  // (retour d'arrière-plan) doit reprendre via persistKey, pas repartir à 0.
   useEffect(() => {
-    if (!block) return
+    if (blockNumber == null) return
     start()
-    return () => {
-      stop()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- start/stop dépendent du status mais on veut juste auto-start au mount
-  }, [block])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- start change with status; only gate on block number
+  }, [blockNumber])
 
   if (!block || !format) return null
 
@@ -86,6 +87,11 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
     else pause()
   }
 
+  const handleClose = () => {
+    stop()
+    onClose()
+  }
+
   return (
     <div
       className="mx-[14px] mb-3 overflow-hidden rounded-[22px] border border-paper-deep bg-app animate-rf-slide-up"
@@ -106,7 +112,7 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Fermer le chrono"
             className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-paper-deep bg-transparent rf-focus-ring"
           >
@@ -203,7 +209,7 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
           </button>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="ml-auto flex h-11 items-center rounded-full border-[1.5px] border-brand bg-transparent text-brand px-5 text-[12px] font-extrabold uppercase tracking-[0.06em] hover:bg-brand-soft transition-colors rf-focus-ring"
           >
             Stop

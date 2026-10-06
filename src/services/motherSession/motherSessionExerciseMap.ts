@@ -90,7 +90,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'trap bar rdl': 'hinge__rdl__hex_bar',
   'trap bar romanian deadlift': 'hinge__rdl__hex_bar',
   'single-leg rdl': 'hinge__rdl__single_leg__dumbbell',
-  'single-leg hip thrust': 'hamstring__bridge_iso__single_leg',
+  'single-leg hip thrust': 'hinge__hip_thrust__bodyweight',
   'jump shrug': 'upper_trap__shrug__barbell',
   'trap bar jump shrug': 'hinge__deadlift__trap_bar',
   'pause box squat': 'squat__box_squat__barbell',
@@ -101,7 +101,10 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'lying leg curl': 'hamstring__leg_curl__machine',
   'leg curl machine': 'hamstring__leg_curl__machine',
   'glute bridge': 'hinge__glute_bridge__bodyweight',
+  // Tenue isométrique (prescrite en secondes) — distinct du hip thrust dynamique.
   'single-leg glute bridge': 'hamstring__bridge_iso__single_leg',
+  'isometric single-leg bridge': 'hamstring__bridge_iso__single_leg',
+  'single-leg bridge hold': 'hamstring__bridge_iso__single_leg',
 
   // ── Squat Variants ──────────────────────────────────────────
   'goblet squat': 'squat__goblet_squat__dumbbell',

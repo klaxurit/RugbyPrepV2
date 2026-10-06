@@ -11,6 +11,7 @@ import {
 } from '../motherSession/equipmentAlternativeAdaptations'
 import { adaptMotherSessionForBodyweightEquipment } from '../motherSession/bodyweightEquipmentAdaptations'
 import { getSessionFrOrFallback } from '../motherSession/motherSessionContentFr'
+import { localizeMotherSessionExerciseName } from '../motherSession/localizeMotherSessionExerciseName'
 import { getExerciseName } from '../../data/exercises'
 import { resolveExerciseIdForSessionRun } from '../motherSession/motherSessionExerciseMap'
 import {
@@ -123,8 +124,15 @@ export function prepareSessionForRender({
       exercises: block.exercises.map((exo, exoIndex) => {
         const catalogId = resolveExerciseIdForSessionRun(exo.name, exo.exerciseId)
         const frExo = frBlock.exercises[exoIndex]
-        const localizedName =
-          catalogId != null ? getExerciseName(catalogId, 'fr') : frExo?.name
+        const lexiconFr = localizeMotherSessionExerciseName(exo.name, 'fr')
+        const lexiconTranslated =
+          Boolean(lexiconFr) &&
+          lexiconFr.trim().toLowerCase() !== exo.name.trim().toLowerCase()
+        const localizedName = lexiconTranslated
+          ? lexiconFr
+          : catalogId != null
+            ? getExerciseName(catalogId, 'fr')
+            : frExo?.name
         if (!frExo) {
           return catalogId ? { ...exo, exerciseId: catalogId } : exo
         }
