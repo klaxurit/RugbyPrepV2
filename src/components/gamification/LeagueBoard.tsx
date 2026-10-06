@@ -40,7 +40,7 @@ export interface LeagueBoardProps {
  * Tableau de classement — cohorte de ligue ou club.
  *
  *  1. Totaux seulement, jamais d'écarts (« −40 pts »).
- *  2. Logo club + indice de forme SVG (enchaîne / en pause) à côté du pseudo.
+ *  2. Logo club + indice de forme emoji (🔥 / 🌙) à côté du pseudo.
  *  3. Kudos uniquement sur une séance **du jour** (récence 0), sauf soi.
  */
 export function LeagueBoard({

@@ -4,6 +4,7 @@ import {
   badgeIconFamily,
   badgeIconName,
   formCueAriaLabel,
+  formCueEmoji,
   formCueIconName,
 } from '../badgeIcon'
 
@@ -34,9 +35,14 @@ describe('resolveAthleteFormCue', () => {
 })
 
 describe('formCueIconName', () => {
-  it('mappe les cues vers des glyphes brand (plus d’émoji)', () => {
+  it('conserve le mapping SVG legacy', () => {
     expect(formCueIconName('hot')).toBe('form-hot')
     expect(formCueIconName('dormant')).toBe('form-dormant')
+  })
+
+  it('expose des émojis lisibles pour le classement', () => {
+    expect(formCueEmoji('hot')).toBe('🔥')
+    expect(formCueEmoji('dormant')).toBe('🌙')
     expect(formCueAriaLabel('hot', 'fr')).toMatch(/Enchaîne/i)
   })
 })

@@ -6,8 +6,7 @@
  * seulement la récence d'une séance loguée et le volume de la semaine
  * courante déjà exposé via le classement.
  *
- * Visuel : glyphes `form-hot` / `form-dormant` via `formCueIconName` — plus
- * d'émoji runtime.
+ * Visuel : émojis (`formCueEmoji`) — 🔥 / 🌙.
  */
 
 export type AthleteFormCue = 'hot' | 'dormant'

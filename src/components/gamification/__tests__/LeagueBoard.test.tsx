@@ -167,7 +167,7 @@ describe('LeagueBoard', () => {
     expect(screen.getByText(/Top 1 promus/i)).toBeInTheDocument()
   })
 
-  it('montre un indice de forme SVG hot ou dormant', () => {
+  it('montre un indice de forme emoji hot ou dormant', () => {
     render(
       <LeagueBoard
         title="Ligue"
@@ -183,6 +183,8 @@ describe('LeagueBoard', () => {
       'hot',
       'dormant',
     ])
+    expect(cues[0]).toHaveTextContent('🔥')
+    expect(cues[2]).toHaveTextContent('🌙')
   })
 
   it('affiche le countdown fin de ligue quand un palier et une date sont fournis', () => {

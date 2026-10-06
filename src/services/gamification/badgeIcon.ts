@@ -5,8 +5,8 @@ import type { AthleteFormCue } from './resolveAthleteFormCue'
 /**
  * Mapping badge / form cue → glyphe brand.
  *
- * Interim : SVG dans `Icon` (pas d'émoji). Les assets graphiste du brief
- * pourront remplacer ces noms sans changer les `badgeId` en base.
+ * Badges : SVG dans `Icon` (interim). Form cues classement : émojis natifs
+ * (`formCueEmoji`) — les SVG stroke à petite taille se lisaient comme « ( ».
  */
 
 export type BadgeIconFamily = 'plan' | 'streak' | 'deload' | 'level'
@@ -30,8 +30,13 @@ export function badgeIconName(badgeId: string): IconName {
   return FAMILY_ICON[badgeIconFamily(badgeId)]
 }
 
+/** @deprecated Prefer `formCueEmoji` — conservé pour tests / callers legacy. */
 export function formCueIconName(cue: AthleteFormCue): IconName {
   return cue === 'hot' ? 'form-hot' : 'form-dormant'
+}
+
+export function formCueEmoji(cue: AthleteFormCue): string {
+  return cue === 'hot' ? '🔥' : '🌙'
 }
 
 export function formCueAriaLabel(cue: AthleteFormCue, lang: Lang): string {

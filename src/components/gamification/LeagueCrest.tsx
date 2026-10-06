@@ -1,6 +1,7 @@
-import type { ImgHTMLAttributes, SVGProps } from 'react'
+import type { HTMLAttributes, ImgHTMLAttributes } from 'react'
 import type { LeagueTier } from '../../types/gamification'
 import type { AthleteFormCue } from '../../services/gamification/resolveAthleteFormCue'
+import { formCueEmoji } from '../../services/gamification/badgeIcon'
 
 import tierBuvette from '../../../assets/divisions/01-buvette.svg'
 import tierBanc from '../../../assets/divisions/02-banc-de-touche.svg'
@@ -51,40 +52,25 @@ export function LeagueCrest({ tier, size = 40, className, style, ...rest }: Cres
   )
 }
 
-const INK = '#7B0D1E'
-
-type FormCueProps = Omit<SVGProps<SVGSVGElement>, 'children'> & {
+type FormCueProps = Omit<HTMLAttributes<HTMLSpanElement>, 'children'> & {
   cue: AthleteFormCue
+  /** Taille du glyphe emoji (px). */
   size?: number
 }
 
-/** Indice de forme (flamme / lune) — SVG inline. */
-export function FormCueIcon({ cue, size = 14, className, ...rest }: FormCueProps) {
+/**
+ * Indice de forme à côté du pseudo.
+ * Émojis natifs : les SVG stroke à 14 px se lisaient comme « ( » / flamme ratée.
+ */
+export function FormCueIcon({ cue, size = 14, className, style, ...rest }: FormCueProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 40 40"
-      fill="none"
-      className={className ?? 'shrink-0'}
+    <span
+      className={className ?? 'inline-flex shrink-0 items-center leading-none'}
+      style={{ fontSize: size, ...style }}
       aria-hidden
       {...rest}
     >
-      {cue === 'hot' ? (
-        <path
-          d="M20 6 C24 12 26 16 22 22 C24 20 27 20 27 24 C27 30 24 34 20 34 C16 34 13 30 13 24 C13 20 16 20 18 22 C14 16 16 12 20 6 Z"
-          stroke={INK}
-          strokeWidth={2.4}
-          strokeLinejoin="round"
-        />
-      ) : (
-        <path
-          d="M24 8 C18 8 14 13 14 19 C14 25 18 30 24 30 C20 30 16 25 16 19 C16 13 20 8 24 8 Z"
-          stroke={INK}
-          strokeWidth={2.4}
-          strokeLinejoin="round"
-        />
-      )}
-    </svg>
+      {formCueEmoji(cue)}
+    </span>
   )
 }
