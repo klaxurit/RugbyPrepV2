@@ -6,7 +6,11 @@ import { expect, test } from '@playwright/test'
  */
 test('accueil affiche la landing (lien Connexion)', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('link', { name: 'Connexion' }).first()).toBeVisible({
+  await expect(page.getByRole('link', { name: 'Se connecter' }).first()).toBeVisible({
     timeout: 30_000,
   })
+  await expect(page.getByTestId('store-badges').first()).toBeVisible()
+  await expect(
+    page.getByRole('link', { name: 'Télécharger sur Google Play' }).first(),
+  ).toHaveAttribute('href', /play\.google\.com\/store\/apps/)
 })

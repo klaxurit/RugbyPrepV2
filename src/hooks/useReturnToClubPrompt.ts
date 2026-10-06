@@ -6,8 +6,6 @@ import { useCalendar } from './useCalendar'
 import { useHistory } from './useHistory'
 import { useACWR } from './useACWR'
 import { useHintVisibility } from './useHintVisibility'
-import { useFoundingOfferEligibility } from './useFoundingOfferEligibility'
-import { useProgramEvolutionSheet } from './useProgramEvolutionSheet'
 import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
 import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
 import { hasPendingOffseasonMatchDecision } from '../services/season/hasPendingOffseasonMatchDecision'
@@ -46,8 +44,6 @@ export function useReturnToClubPrompt() {
   const acwr = useACWR(logs, visibleEvents)
   const location = useLocation()
   const today = getToday()
-  const { eligible: foundingOfferOpen } = useFoundingOfferEligibility()
-  const { isProgramEvolutionOpen } = useProgramEvolutionSheet()
   const [saving, setSaving] = useState(false)
 
   const { visible: hintVisible, dismiss: dismissForWeek, loading: hintLoading } = useHintVisibility(
@@ -96,9 +92,8 @@ export function useReturnToClubPrompt() {
     authState.status === 'authenticated' &&
     needsPrompt &&
     hintVisible &&
-    !hintLoading &&
-    !foundingOfferOpen &&
-    !isProgramEvolutionOpen
+    !hintLoading
+  // Founding / program evolution : OverlayGate (priorités), pas de double check ici.
 
   const lang: Lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'
   const needsClub = !profile.clubCode

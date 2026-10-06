@@ -68,10 +68,12 @@ ACWR = Acute Load (7-day) / Chronic Load (28-day rolling average)
 ### Implementation in `buildWeekProgram`
 
 ```ts
-// Current implementation
-// danger   -> replace last session with RECOVERY_MOBILITY_V1
-// critical -> keep only the first session
-// underload/optimal/caution -> no automatic structural override yet
+// Current implementation (joueur au contrôle — fatigueLoadChoice)
+// caution  → notice + choix : self_manage | lighten_volume (−20–30 %)
+// danger   → notice + choix : lighten_volume | drop_session (≥3×) | self_manage
+// critical → notice + défaut drop_session (≥3×) ou lighten ; self_manage en opt-out
+// underload/optimal → pas de notice ACWR
+// truncateSessionBlocks honore variant/maxBlocks via reduction_order
 ```
 
 ---

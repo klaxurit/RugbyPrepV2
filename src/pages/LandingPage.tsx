@@ -1,968 +1,617 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import {
-  Dumbbell,
-  Brain,
-  Shield,
-  TrendingUp,
-  Calendar,
-  MessageCircle,
-  Activity,
-  Target,
-  BookOpen,
-  Check,
-  Menu,
-  X,
-  ArrowRight,
-  Star,
-  Zap,
-} from 'lucide-react'
-import { RugbyForgeLogo } from '../components/RugbyForgeLogo'
 import { SignupOrInstallCTA } from '../components/SignupOrInstallCTA'
-import { AnnualCycleDiagram } from '../components/landing/AnnualCycleDiagram'
+import { StoreBadges } from '../components/landing/StoreBadges'
+import { LandingPhoneFrame } from '../components/landing/LandingPhoneFrame'
+import { LANDING_DESIGN } from '../landing/designAssets'
 
-// ─── Sub-components ──────────────────────────────────────────
+const LANDING_FONTS =
+  'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;600&display=swap'
 
-function LandingNavbar() {
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const navRef = useRef<HTMLElement>(null)
+const FEATURES = [
+  {
+    n: '01',
+    kicker: 'J-2 · Primers',
+    title: 'Semaine de match',
+    body: 'Ta semaine se cale sur le coup d’envoi : volume réduit à J-2, primers neuromusculaires la veille, récupération planifiée le lendemain.',
+  },
+  {
+    n: '02',
+    kicker: 'Avants · Trois-quarts',
+    title: 'Programme par poste',
+    body: 'Pilier, demi de mêlée ou ailier : exercices, volumes et qualités physiques calibrés sur les exigences de ton poste.',
+  },
+  {
+    n: '03',
+    kicker: 'ACWR',
+    title: 'Charge & fatigue',
+    body: 'Ton ratio charge aiguë / chronique est suivi en continu. Quand ça monte, c’est toi qui décides :',
+    pills: [
+      { label: 'Garder', primary: true },
+      { label: 'Alléger', primary: false },
+      { label: 'Sauter', primary: false },
+    ],
+  },
+  {
+    n: '04',
+    kicker: 'Progression',
+    title: 'Ton programme évolue',
+    body: 'Chaque séance validée ajuste la suivante. Charges, volume et progression suivent ta forme réelle, semaine après semaine.',
+  },
+  {
+    n: '05',
+    kicker: 'Blocs · Chrono · Bilan',
+    title: 'Séance guidée',
+    body: 'Des blocs clairs, un chrono de repos intégré et un bilan en fin de séance. Tu n’as plus qu’à pousser.',
+  },
+  {
+    n: '06',
+    kicker: 'IA · Tests physiques',
+    title: 'Coach IA + tests',
+    body: 'Pose tes questions au coach IA, à toute heure. Mesure ta force, ta vitesse et ton endurance avec des tests réguliers.',
+  },
+] as const
 
-  useEffect(() => {
-    if (!mobileOpen) return
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileOpen(false)
-    }
-    const handleClickOutside = (e: MouseEvent) => {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setMobileOpen(false)
-      }
-    }
-    document.addEventListener('keydown', handleEscape)
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('keydown', handleEscape)
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [mobileOpen])
+const GALLERY = [
+  { src: LANDING_DESIGN.screens.accueil, caption: 'Accueil', nav: true },
+  { src: LANDING_DESIGN.screens.semaine, caption: 'Semaine', nav: true },
+  { src: LANDING_DESIGN.screens.mois, caption: 'Mois', nav: true },
+  { src: LANDING_DESIGN.screens.seance, caption: 'Séance du jour', nav: false },
+  { src: LANDING_DESIGN.screens.seanceBlocs, caption: 'Séance en blocs', nav: false },
+  { src: LANDING_DESIGN.screens.chronoEmom, caption: 'Chrono EMOM', nav: false },
+  { src: LANDING_DESIGN.screens.ligue, caption: 'Ligue du club', nav: true },
+] as const
 
-  const navLinks = [
-    { label: 'Fonctionnalités', href: '#features' },
-    { label: 'Ta saison', href: '#annual-cycle' },
-    { label: 'La Science', href: '#science' },
-    { label: 'Tarifs', href: '#pricing' },
-    { label: 'Blog', href: '/blog/' },
-    { label: 'À propos', href: '/about/' },
-  ]
+const STEPS = [
+  {
+    n: '01',
+    title: 'Ton contexte',
+    body: 'Poste, matériel disponible, calendrier club et niveau d’expérience. Deux minutes, pas plus.',
+  },
+  {
+    n: '02',
+    title: 'Ton programme',
+    body: 'RugbyForge construit un cycle de musculation adapté à ta phase de saison et à ta semaine de club.',
+  },
+  {
+    n: '03',
+    title: 'Tes ajustements',
+    body: 'Charge, tests physiques et fraîcheur avant match : le plan se réajuste chaque semaine.',
+  },
+] as const
 
+const GUIDES = [
+  {
+    title: 'Préparation physique rugby',
+    description: 'Le cadre global : charge, saison, priorités par poste.',
+    href: '/preparation-physique-rugby/',
+  },
+  {
+    title: 'Programme musculation rugby',
+    description: 'Organiser ses séances par poste et par saison.',
+    href: '/programme-musculation-rugby/',
+  },
+  {
+    title: 'ACWR rugby',
+    description: 'Lire simplement le ratio charge aiguë / chronique.',
+    href: '/acwr-rugby/',
+  },
+  {
+    title: 'Périodisation rugby',
+    description: 'Blocs, DUP et logique de saison.',
+    href: '/periodisation-rugby/',
+  },
+  {
+    title: 'Tests physiques rugby',
+    description: 'CMJ, sprint 10 m, YYIR1 et estimation du 1RM.',
+    href: '/tests-physiques-rugby/',
+  },
+] as const
+
+const FAQS = [
+  {
+    q: 'À qui s’adresse RugbyForge ?',
+    a: 'Aux joueurs, coachs et staffs qui veulent structurer la préparation physique avec des repères lisibles sur la charge, les tests, la musculation et la récupération.',
+    open: true,
+  },
+  {
+    q: 'Faut-il une salle complète ?',
+    a: 'Non. Les cycles s’adaptent à ton matériel, à ta semaine de club et à la proximité du match. Une préparation réaliste, pas un programme impossible à suivre.',
+    open: false,
+  },
+  {
+    q: 'Que peut-on suivre pendant la saison ?',
+    a: 'La charge et l’ACWR, les tests physiques utiles et les priorités par poste — pour piloter la semaine, la fraîcheur et la progression sur la durée.',
+    open: false,
+  },
+  {
+    q: 'Par où commencer ?',
+    a: 'Crée ton compte gratuitement, renseigne ton profil, et ta première semaine est prête. Pour aller plus loin, commence par le guide préparation physique rugby.',
+    open: false,
+  },
+] as const
+
+function LandingHeader() {
   return (
-    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-shell/95 backdrop-blur-xl shadow-[0_4px_16px_rgb(44_24_16/0.15)] pt-[env(safe-area-inset-top)]">
-      <div className="max-w-7xl mx-auto px-[max(1rem,env(safe-area-inset-left))] sm:px-[max(1.5rem,env(safe-area-inset-left))] lg:px-[max(2rem,env(safe-area-inset-left))]">
-        <div className="flex items-center justify-between h-16 ios:h-12">
-          <Link to="/">
-            <RugbyForgeLogo size="md" />
-          </Link>
-
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-shell-text-muted hover:text-shell-text transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-            <Link
-              to="/auth/login"
-              className="text-sm font-medium text-shell-text-muted hover:text-shell-text transition-colors"
-            >
-              Connexion
-            </Link>
-            <SignupOrInstallCTA
-              className="bg-on-brand hover:bg-white text-brand text-sm font-semibold px-5 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5"
-            />
-          </div>
-
-          {/* Mobile hamburger */}
-          <button
-            type="button"
-            className="md:hidden text-shell-text p-2"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-          >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
+    <header className="relative z-[2] flex items-center justify-between gap-4">
+      <div className="flex items-center gap-2.5">
+        <img
+          src={LANDING_DESIGN.rufoIcon}
+          alt="RUFO"
+          width={36}
+          height={36}
+          className="block h-9 w-9 rounded-[9px] shadow-[0_0_0_1px_rgba(242,232,216,0.12)]"
+        />
+        <img
+          src={LANDING_DESIGN.wordmark}
+          alt="RugbyForge"
+          width={160}
+          height={20}
+          className="block h-5 w-auto"
+        />
       </div>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-shell/95 backdrop-blur-xl border-b border-shell-bd px-4 pb-4"
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="block w-full text-left py-3 text-sm font-medium text-shell-text-muted hover:text-shell-text transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
-          <Link
-            to="/auth/login"
-            onClick={() => setMobileOpen(false)}
-            className="block py-3 text-sm font-medium text-shell-text-muted hover:text-shell-text transition-colors"
-          >
-            Connexion
-          </Link>
-          <SignupOrInstallCTA
-            className="mt-2 bg-on-brand hover:bg-white text-brand text-sm font-semibold px-5 py-3 rounded-xl transition-colors inline-flex items-center justify-center gap-1.5 w-full"
-            onSignupClick={() => setMobileOpen(false)}
-          />
-        </motion.div>
-      )}
-    </nav>
-  )
-}
-
-interface FeatureCardProps {
-  icon: React.ReactNode
-  title: string
-  description: string
-  delay: number
-}
-
-function FeatureCard({ icon, title, description, delay }: FeatureCardProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.5 }}
-      whileHover={{ y: -4 }}
-      className="bg-layer-5 border border-border-app rounded-[24px] p-6 hover:bg-layer-7 transition-colors"
-    >
-      <div className="w-12 h-12 bg-brand-soft rounded-2xl flex items-center justify-center mb-4">
-        {icon}
-      </div>
-      <h3 className="text-lg font-bold text-fg mb-2">{title}</h3>
-      <p className="text-sm text-fg-muted leading-relaxed">{description}</p>
-    </motion.div>
-  )
-}
-
-interface PricingCardProps {
-  title: string
-  price: string
-  period: string
-  features: string[]
-  highlighted?: boolean
-  cta: string
-  ctaLink?: string
-}
-
-function PricingCard({ title, price, period, features, highlighted, cta, ctaLink = '/auth/signup' }: PricingCardProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -4 }}
-      className={`relative rounded-[24px] p-8 border transition-colors ${
-        highlighted
-          ? 'bg-brand-soft border-brand-border-strong scale-105'
-          : 'bg-layer-5 border-border-app hover:bg-layer-7'
-      }`}
-    >
-      {highlighted && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand text-on-brand text-xs font-bold uppercase tracking-wider px-4 py-1 rounded-full">
-          Recommandé
-        </div>
-      )}
-      <h3 className="text-lg font-bold text-fg mb-1">{title}</h3>
-      <div className="mb-4">
-        <span className="text-4xl font-black text-fg">{price}</span>
-        <span className="text-sm text-fg-muted ml-1">{period}</span>
-      </div>
-      <ul className="space-y-3 mb-8">
-        {features.map((f) => (
-          <li key={f} className="flex items-start gap-2 text-sm text-fg-secondary">
-            <Check className="w-4 h-4 text-brand-tint mt-0.5 shrink-0" />
-            {f}
-          </li>
-        ))}
-      </ul>
       <Link
-        to={ctaLink}
-        className={`block text-center py-3 rounded-xl font-semibold text-sm transition-colors ${
-          highlighted
-            ? 'bg-brand hover:bg-brand-hover text-on-brand'
-            : 'bg-layer-10 hover:bg-layer-15 text-fg'
-        }`}
+        to="/auth/login"
+        className="lm-mono rounded-full border border-[rgba(242,232,216,0.22)] px-3.5 py-2.5 text-xs uppercase tracking-[0.06em] text-[#F2E8D8] transition-colors hover:border-[#F2E8D8] hover:text-[#F2E8D8]"
       >
-        {cta}
+        Se connecter
       </Link>
-    </motion.div>
+    </header>
   )
 }
-
-interface PhoneMockupProps {
-  src: string
-  alt: string
-  loading?: 'eager' | 'lazy'
-  fetchPriority?: 'high' | 'low' | 'auto'
-}
-
-function PhoneMockup({
-  src,
-  alt,
-  loading = 'lazy',
-  fetchPriority,
-}: PhoneMockupProps) {
-  const webpSrc =
-    src === '/images/landing/rugbyforge_home_game.png'
-      ? '/images/landing/rugbyforge_home_game.webp'
-      : null
-
-  return (
-    <div className="relative w-[260px] sm:w-[290px]">
-      {/* Phone frame — thin bezel, modern */}
-      <div className="relative rounded-[2.5rem] bg-[#1a1a1a] p-[5px] shadow-[0_12px_40px_rgb(0_0_0/0.25)]">
-        {/* Camera dot */}
-        <div className="absolute left-1/2 top-[12px] z-10 h-[10px] w-[10px] -translate-x-1/2 rounded-full bg-[#1a1a1a]" />
-        {/* Screen — ratio téléphone réservé (anti-CLS LCP) */}
-        <div className="relative aspect-[9/19.5] max-h-[560px] overflow-hidden rounded-[2.1rem] bg-app">
-          <div className="relative h-full overflow-y-auto scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
-            {webpSrc ? (
-              <picture>
-                <source srcSet={webpSrc} type="image/webp" />
-                <img
-                  src={src}
-                  alt={alt}
-                  width={390}
-                  height={844}
-                  loading={loading}
-                  fetchPriority={fetchPriority}
-                  decoding="async"
-                  className="h-auto w-full"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
-                />
-              </picture>
-            ) : (
-              <img
-                src={src}
-                alt={alt}
-                width={390}
-                height={844}
-                loading={loading}
-                fetchPriority={fetchPriority}
-                decoding="async"
-                className="h-auto w-full"
-                onError={(e) => { e.currentTarget.style.display = 'none' }}
-              />
-            )}
-          </div>
-          {/* Bottom fade */}
-          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-app to-transparent" />
-        </div>
-      </div>
-      {/* Home indicator */}
-      <div className="absolute bottom-[8px] left-1/2 h-[3px] w-[80px] -translate-x-1/2 rounded-full bg-white/25" />
-    </div>
-  )
-}
-
-const PREMIUM_MONTHLY_PRICE = '5,99€'
-const PREMIUM_YEARLY_PRICE = '64,99€'
-const FOUNDING_PRICE = '49€'
-
-const FREE_PLAN_FEATURES = [
-  'Programme complet adapté à ta saison',
-  'Séances consultables (exercices + démos)',
-  'Calendrier club',
-  'Prévention et mobilité intégrées',
-  'Chat IA (3 messages/jour)',
-]
-
-const PREMIUM_FEATURES = [
-  'Tout le plan Free',
-  'Suivi des charges et séries',
-  'Historique complet des séances',
-  'Score de forme et bilan de semaine',
-  'Suggestions de charge calibrées sur tes derniers logs',
-  'Records personnels et courbes de progrès',
-  'Chat IA illimité',
-]
-
-const FOUNDING_FEATURES = [
-  'Tout le plan Pro, à vie',
-  'Tarif Founding bloqué : 49€/an même quand on monte les prix',
-  'Réservé aux 100 premiers utilisateurs',
-  'Badge Founding dans ton profil',
-  'Accès prioritaire aux nouvelles fonctionnalités',
-]
-
-// ─── Main Landing Page ───────────────────────────────────────
 
 export function LandingPage() {
-  const resources = [
-    {
-      title: 'Préparation physique rugby',
-      description:
-        "Le guide pilier pour comprendre la charge, les priorités par poste, la pré-saison et la semaine type.",
-      href: '/preparation-physique-rugby/',
-      cta: 'Lire le guide pilier',
-    },
-    {
-      title: 'Programme musculation rugby',
-      description:
-        "Une base concrète pour répartir les séances selon le poste, la phase de saison et la proximité du match.",
-      href: '/programme-musculation-rugby/',
-      cta: 'Voir le programme',
-    },
-    {
-      title: 'Charge, fatigue et tests',
-      description:
-        "Des repères concrets pour mieux gérer ta charge et suivre ta progression.",
-      href: '/blog/',
-      cta: 'Explorer les ressources',
-    },
-  ]
-
-  const faqs = [
-    {
-      question: "À qui s'adresse RugbyForge ?",
-      answer:
-        "Aux joueurs et staffs qui veulent structurer leur prépa physique rugby avec des repères clairs sur la charge, la musculation, les tests et la récupération.",
-    },
-    {
-      question: "Faut-il une salle complète pour utiliser l'application ?",
-      answer:
-        "Non. Le programme s'adapte à ton matériel, ta semaine de club et ton niveau pour rester réaliste et tenable.",
-    },
-    {
-      question: 'Que suit RugbyForge pendant la saison ?',
-      answer:
-        "Ta charge de travail, tes tests physiques (force, vitesse, détente), tes priorités par poste et l'évolution de ta saison.",
-    },
-    {
-      question: 'Quelle différence entre Free et Pro ?',
-      answer:
-        "Le Free donne accès au programme complet, aux séances consultables, au calendrier et à la prévention. Le Pro débloque le suivi des charges, l'historique complet, le score de forme, les suggestions de charge, les courbes de progression et le chat IA illimité.",
-    },
-    {
-      question: 'Par où commencer si je découvre RugbyForge ?',
-      answer:
-        "Crée ton compte gratuit et laisse-toi guider. Le blog te permet aussi d'approfondir la charge, les tests physiques et la musculation rugby.",
-    },
-  ]
+  useEffect(() => {
+    const id = 'landing-design-fonts'
+    if (document.getElementById(id)) return
+    const link = document.createElement('link')
+    link.id = id
+    link.rel = 'stylesheet'
+    link.href = LANDING_FONTS
+    document.head.appendChild(link)
+  }, [])
 
   return (
-    <div className="min-h-screen bg-app text-fg overflow-x-hidden">
-      <LandingNavbar />
+    <div className="landing-marketing min-h-screen overflow-x-hidden bg-[#14100E] text-[#F2E8D8]">
+      {/* 01 Hero — landing.dc.html */}
+      <section className="relative mx-auto max-w-[1320px] px-[clamp(20px,4vw,56px)] pt-[clamp(20px,3vw,32px)]">
+        <LandingHeader />
 
-      {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative pt-32 pb-24 px-4 bg-app overflow-hidden">
-        {/* Decorative grid */}
-        <div
-          className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(var(--color-grid-dot)_1px,transparent_1px)] [background-size:32px_32px]"
-        />
-        {/* Glow bordeaux en haut à droite */}
-        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] bg-brand rounded-full blur-[120px] opacity-[0.08]" />
-        {/* Glow bordeaux en bas à gauche */}
-        <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] bg-brand rounded-full blur-[100px] opacity-[0.06]" />
+        <div className="relative grid items-center gap-[clamp(28px,4vw,72px)] pb-[clamp(40px,5vw,72px)] pt-[clamp(40px,7vw,88px)] [grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))]">
+          <div className="relative z-[2] flex flex-col gap-7 pb-[clamp(0px,4vw,72px)]">
+            <div className="lm-mono flex items-center gap-2.5 text-xs uppercase tracking-[0.12em] text-[#B5A898]">
+              <span className="h-2 w-2 rounded-full bg-[#C8303F]" />
+              Préparation physique · Rugby à XV
+            </div>
 
-        <div className="relative max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-            >
-              <div className="inline-flex items-center gap-2 bg-brand-soft border border-brand-border rounded-full px-4 py-1.5 mb-6">
-                <Zap className="w-4 h-4 text-brand" />
-                <span className="text-sm font-medium text-brand">
-                  Préparation physique rugby
-                </span>
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.05] mb-6 text-fg">
-                <span className="text-brand">Forge</span> ton physique<br />
-                pour le rugby
-              </h1>
-              <p className="text-lg text-fg-muted max-w-xl mb-8 leading-relaxed">
-                Programme hebdo qui s'adapte à ton calendrier club, ton niveau et ton matériel.
-                Gratuit pour démarrer, illimité dès la première séance.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <SignupOrInstallCTA
-                  withArrow
-                  className="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors shadow-[0_4px_16px_rgb(123_13_30/0.2)]"
-                />
-                <a
-                  href="#features"
-                  className="inline-flex items-center gap-2 bg-layer-10 hover:bg-layer-15 text-fg font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
-                >
-                  Découvrir RugbyForge
-                </a>
-              </div>
-            </motion.div>
+            <img
+              src={LANDING_DESIGN.wordmark}
+              alt=""
+              width={620}
+              height={80}
+              className="-ml-[0.6%] block h-auto w-full max-w-[620px]"
+              aria-hidden
+            />
 
-            {/* Phone mockup */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="relative flex justify-center"
-            >
-              <div className="absolute w-80 h-80 bg-brand rounded-full blur-[80px] opacity-[0.08] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-              <div className="absolute w-48 h-48 bg-brand rounded-full blur-[60px] opacity-[0.06] top-0 right-0" />
-              <PhoneMockup
-                src="/images/landing/rugbyforge_home_game.png"
-                alt="RugbyForge — tableau de bord, score de forme et prochain match"
-                loading="eager"
-                fetchPriority="high"
+            <h1 className="m-0 max-w-[16ch] text-balance text-[clamp(28px,3.4vw,44px)] font-bold leading-[1.04] tracking-[-0.025em] [font-stretch:100%]">
+              <span className="text-[#C8303F]">Forge</span> ton physique pour le rugby
+            </h1>
+
+            <p className="m-0 max-w-[44ch] text-pretty text-[clamp(16px,1.35vw,19px)] leading-normal text-[#C9BDAD]">
+              Un programme hebdo adapté à ton calendrier club, à ton poste, à tes matchs réels et
+              au matériel dont tu disposes. Gratuit pour démarrer.
+            </p>
+
+            <div className="flex flex-col items-start gap-[22px]">
+              <SignupOrInstallCTA
+                withArrow
+                className="inline-flex items-center gap-3 rounded-[14px] bg-[#7B0D1E] px-[26px] py-[18px] text-[17px] font-bold tracking-[-0.005em] text-[#F2E8D8] shadow-[inset_0_0_0_1px_rgba(242,232,216,0.08),0_10px_30px_-12px_rgba(123,13,30,0.9)] transition-[transform,filter] hover:translate-y-[-1px] hover:brightness-110"
               />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Stats ────────────────────────────────────────── */}
-      <section className="py-12 border-y border-border-app">
-        <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[
-            { value: '186+', label: 'Références scientifiques' },
-            { value: '207', label: 'Exercices disponibles' },
-            { value: '2', label: 'Niveaux de progression' },
-            { value: '4 à 12', label: 'Semaines par programme' },
-          ].map((stat) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="text-3xl font-black text-brand">{stat.value}</div>
-              <div className="text-xs font-bold uppercase tracking-wider text-fg-muted mt-1">
-                {stat.label}
+              <div className="flex w-full max-w-[500px] flex-col gap-2">
+                <span className="lm-mono text-[11px] uppercase tracking-[0.1em] text-[#8A7E71]">
+                  Ou télécharge l’app
+                </span>
+                <StoreBadges variant="segmented" className="w-full" />
               </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+            </div>
+          </div>
 
-      {/* ── Features ─────────────────────────────────────── */}
-      <section id="features" className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
-              Tout pour ta prépa physique
-            </h2>
-            <p className="text-fg-muted max-w-2xl mx-auto">
-              Des outils concrets pour structurer ta prépa, suivre ta charge et progresser chaque semaine.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FeatureCard
-              icon={<Dumbbell className="w-6 h-6 text-brand-tint" />}
-              title="Programme adapté à ta saison"
-              description="Le programme s'adapte à ta saison, ton niveau et ton matériel. Les séances évoluent en force, puissance et volume au fil des semaines."
-              delay={0}
+          <div className="relative flex items-end justify-center pb-[clamp(40px,5vw,72px)]">
+            <div
+              className="pointer-events-none absolute left-1/2 top-[48%] h-[min(720px,140vw)] w-[min(720px,140vw)] -translate-x-1/2 -translate-y-1/2] bg-[radial-gradient(closest-side,rgba(123,13,30,0.55),rgba(123,13,30,0.18)_55%,rgba(20,16,14,0)_100%)]"
+              aria-hidden
             />
-            <FeatureCard
-              icon={<Activity className="w-6 h-6 text-brand-tint" />}
-              title="Suivi de charge"
-              description="Consulte ton score ACWR et repère les semaines à risque. Le Pro débloque le suivi des charges exercice par exercice."
-              delay={0.1}
-            />
-            <FeatureCard
-              icon={<Shield className="w-6 h-6 text-brand-tint" />}
-              title="Prévention blessures"
-              description="Échauffement adapté, mobilité et alertes quand la fatigue s'accumule."
-              delay={0.2}
-            />
-            <FeatureCard
-              icon={<Brain className="w-6 h-6 text-brand-tint" />}
-              title="Coach IA"
-              description="Pose tes questions sur la nutrition, la récup ou ta semaine de match. 3 messages/jour en Free, illimité en Pro."
-              delay={0.3}
-            />
-            <FeatureCard
-              icon={<Calendar className="w-6 h-6 text-brand-tint" />}
-              title="Calendrier club"
-              description="Synchronise tes matchs FFR et tes entraînements club. Le programme s'adapte automatiquement."
-              delay={0.4}
-            />
-            <FeatureCard
-              icon={<TrendingUp className="w-6 h-6 text-brand-tint" />}
-              title="Tests & progression"
-              description="Mesure ta force, ta vitesse et ta détente. Le Pro débloque l'historique complet et les courbes de progression."
-              delay={0.5}
+            <LandingPhoneFrame
+              screenSrc={LANDING_DESIGN.screens.accueil}
+              alt="Écran d’accueil RugbyForge"
+              showNavBar
+              size="hero"
+              loading="eager"
+              fetchPriority="high"
             />
           </div>
         </div>
       </section>
 
-      <AnnualCycleDiagram />
-
-      {/* ── App screenshots ──────────────────────────────── */}
-      <section className="py-20 px-4 bg-layer-2">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
-              De la planif à la séance guidée
+      {/* 02 Features */}
+      <section
+        id="features"
+        className="relative z-[2] border-t border-[rgba(242,232,216,0.1)] bg-[#14100E]"
+      >
+        <div className="mx-auto max-w-[1320px] px-[clamp(20px,4vw,56px)] py-[clamp(64px,9vw,120px)]">
+          <div className="mb-[clamp(36px,5vw,64px)] flex flex-wrap items-end justify-between gap-6">
+            <h2 className="m-0 max-w-[14ch] text-balance text-[clamp(32px,4.6vw,60px)] font-extrabold leading-[0.95] tracking-[-0.04em] [font-stretch:118%]">
+              Pensé pour la vraie vie d’un joueur
             </h2>
-            <p className="text-fg-muted max-w-2xl mx-auto">
-              Calendrier mensuel, blocs structurés, chrono repos et bilan automatique — pensé pour
-              une vraie semaine de rugby.
+            <p className="m-0 max-w-[38ch] text-base leading-normal text-[#B5A898]">
+              Entraînements club, matchs, fatigue, matériel limité : le programme s’adapte, pas
+              l’inverse.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
-            {[
-              {
-                src: '/images/landing/rugbyforge_month_planning.png',
-                alt: 'Vue mois — séances, matchs et charge',
-                caption: 'Vue mois — séances, matchs et charge cumulée',
-              },
-              {
-                src: '/images/landing/rugbyforge_session_not_started.png',
-                alt: 'Détail séance par blocs avant démarrage',
-                caption: 'Séance structurée par blocs — force, puissance, spécifique poste',
-              },
-              {
-                src: '/images/landing/rugbyforge_session_rest.png',
-                alt: 'Chrono repos et saisie des charges',
-                caption: 'Repos chronométré et saisie des charges entre les séries',
-              },
-              {
-                src: '/images/landing/rugbyforge_session_chrono.png',
-                alt: 'Timers et isométries guidés en séance',
-                caption: 'Timers et isométries guidés pendant la séance',
-              },
-              {
-                src: '/images/landing/rugbyforge_session_ended.png',
-                alt: 'Bilan fin de séance avec RPE',
-                caption: 'Bilan automatique — durée, tonnage, effort ressenti',
-              },
-            ].map((shot, index) => (
-              <motion.div
-                key={shot.src}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.08 }}
-                className="flex flex-col items-center max-w-[290px]"
+          <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))] [column-gap:clamp(24px,3vw,48px)]">
+            {FEATURES.map((f) => (
+              <div
+                key={f.n}
+                className="flex flex-col gap-3 border-t border-[rgba(242,232,216,0.14)] py-7 pb-9"
               >
-                <PhoneMockup src={shot.src} alt={shot.alt} />
-                <p className="text-sm text-fg-muted text-center mt-5">{shot.caption}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Science ───────────────────────────────────────── */}
-      <section id="science" className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
-              Fondé sur la science du sport
-            </h2>
-            <p className="text-fg-muted max-w-2xl mx-auto">
-              Chaque décision de programmation s'appuie sur des recherches publiées en préparation
-              physique et sciences du sport.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0 }}
-              className="bg-layer-5 border border-border-app rounded-[24px] p-6"
-            >
-              <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
-                <BookOpen className="w-6 h-6 text-brand-tint" />
-              </div>
-              <h3 className="text-lg font-bold text-fg mb-2">Périodisation par blocs</h3>
-              <p className="text-sm text-fg-muted leading-relaxed">
-                Cycles Hypertrophie → Force → Puissance basés sur les travaux de Bompa, Issurin et
-                les recommandations NSCA.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="bg-layer-5 border border-border-app rounded-[24px] p-6"
-            >
-              <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
-                <Target className="w-6 h-6 text-brand-tint" />
-              </div>
-              <h3 className="text-lg font-bold text-fg mb-2">Seuils de charge validés</h3>
-              <p className="text-sm text-fg-muted leading-relaxed">
-                Zones de charge optimale (0.8–1.3) et alertes surcharge ({">"} 1.5) basées sur les
-                travaux de Gabbett (2016).
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="bg-layer-5 border border-border-app rounded-[24px] p-6"
-            >
-              <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
-                <Star className="w-6 h-6 text-brand-tint" />
-              </div>
-              <h3 className="text-lg font-bold text-fg mb-2">Tests physiques</h3>
-              <p className="text-sm text-fg-muted leading-relaxed">
-                Estimation de ta force max, tests de détente par poste, protocoles endurance et
-                vitesse.
-              </p>
-            </motion.div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-12 text-center"
-          >
-            <p className="text-sm text-fg-ghost">
-              Basé sur plus de 186 références en sciences du sport — force, récupération,
-              prévention et nutrition
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── Pricing ──────────────────────────────────────── */}
-      <section id="pricing" className="py-20 px-4 bg-layer-2">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
-              Des tarifs simples et transparents
-            </h2>
-            <p className="text-fg-muted max-w-xl mx-auto">
-              Commence gratuitement avec tout le socle d'entraînement. Passe en Pro quand tu
-              veux débloquer les charges suggérées, le coach IA enrichi et les lectures
-              intelligentes de ta semaine.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
-            <PricingCard
-              title="Free"
-              price="0€"
-              period="pour toujours"
-              features={FREE_PLAN_FEATURES}
-              cta="Créer mon compte Free"
-            />
-            <PricingCard
-              title="Pro Mensuel"
-              price={PREMIUM_MONTHLY_PRICE}
-              period="/mois"
-              features={PREMIUM_FEATURES}
-              cta="Activer Pro"
-              ctaLink="/auth/signup?plan=premium&billing=monthly"
-            />
-            <PricingCard
-              title="Pro Annuel"
-              price={PREMIUM_YEARLY_PRICE}
-              period="/an"
-              features={[...PREMIUM_FEATURES, 'Économise ~10% par rapport au mensuel']}
-              cta="Activer Pro"
-              ctaLink="/auth/signup?plan=premium&billing=annual"
-            />
-            <PricingCard
-              title="Founding"
-              price={FOUNDING_PRICE}
-              period="/an à vie"
-              features={FOUNDING_FEATURES}
-              highlighted
-              cta="Devenir Founding"
-              ctaLink="/auth/signup?plan=founding"
-            />
-          </div>
-          <p className="text-center text-xs text-fg-muted mt-6">
-            Le tarif Founding est réservé aux 100 premiers utilisateurs ayant complété leur première
-            séance. L'offre apparaît automatiquement dans ton tableau de bord après ton signup.
-          </p>
-        </div>
-      </section>
-
-      {/* ── Ressources ───────────────────────────────────── */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
-              Des ressources publiques pour aller plus loin
-            </h2>
-            <p className="text-fg-muted max-w-2xl mx-auto">
-              Des guides pratiques sur la préparation physique rugby, la charge, les tests et la musculation.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {resources.map((resource, index) => (
-              <motion.div
-                key={resource.href}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.08 }}
-                className="bg-layer-5 border border-border-app rounded-[24px] p-6 hover:bg-layer-7 transition-colors"
-              >
-                <div className="w-12 h-12 bg-brand-medium rounded-2xl flex items-center justify-center mb-4">
-                  <BookOpen className="w-6 h-6 text-brand-tint" />
+                <div className="flex items-center justify-between">
+                  <span className="lm-mono text-xs text-[#C8303F]">{f.n}</span>
+                  <span className="lm-mono text-[11px] uppercase tracking-[0.08em] text-[#8A7E71]">
+                    {f.kicker}
+                  </span>
                 </div>
-                <h3 className="text-lg font-bold text-fg mb-2">{resource.title}</h3>
-                <p className="text-sm text-fg-muted leading-relaxed mb-6">{resource.description}</p>
-                <a
-                  href={resource.href}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-brand-tint hover:text-fg transition-colors"
-                >
-                  {resource.cta}
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ─────────────────────────────────────────── */}
-      <section className="py-20 px-4 bg-layer-2">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
-              Questions fréquentes
-            </h2>
-            <p className="text-fg-muted max-w-2xl mx-auto">
-              Des réponses rapides pour comprendre à qui s&apos;adresse RugbyForge et comment l&apos;application
-              s&apos;intègre dans une vraie semaine de rugby.
-            </p>
-          </motion.div>
-
-          <div className="grid gap-4">
-            {faqs.map((item, index) => (
-              <motion.div
-                key={item.question}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.06 }}
-                className="bg-layer-5 border border-border-app rounded-[24px] p-6"
-              >
-                <h3 className="text-lg font-bold text-fg mb-2">{item.question}</h3>
-                <p className="text-sm text-fg-muted leading-relaxed">{item.answer}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA Final ────────────────────────────────────── */}
-      <section className="py-20 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-4">
-              Prêt à passer au niveau supérieur ?
-            </h2>
-            <p className="text-fg-muted max-w-xl mx-auto mb-8">
-              Rejoins les joueurs qui utilisent RugbyForge pour progresser sur le terrain.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-                <SignupOrInstallCTA
-                  withArrow
-                  className="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-on-brand font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
-                />
-                <Link
-                  to="/auth/login"
-                  className="inline-flex items-center gap-2 bg-layer-10 hover:bg-layer-15 text-fg font-semibold px-8 py-4 rounded-xl text-lg transition-colors"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Se connecter
-                </Link>
+                <h3 className="m-0 text-2xl font-extrabold tracking-[-0.03em] [font-stretch:112%]">
+                  {f.title}
+                </h3>
+                <p className="m-0 max-w-[36ch] text-pretty text-[15.5px] leading-[1.55] text-[#C9BDAD]">
+                  {f.body}
+                </p>
+                {'pills' in f && f.pills && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {f.pills.map((p) => (
+                      <span
+                        key={p.label}
+                        className={
+                          p.primary
+                            ? 'rounded-full bg-[#F2E8D8] px-[11px] py-1.5 text-[13px] font-semibold text-[#14100E]'
+                            : 'rounded-full border border-[rgba(242,232,216,0.3)] px-[11px] py-1.5 text-[13px] font-semibold'
+                        }
+                      >
+                        {p.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-            </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="border-t border-border-app py-12 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            <div>
-              <RugbyForgeLogo size="sm" />
-              <p className="text-sm text-fg-ghost mt-3">
-                Préparation physique rugby, fondée sur la science du sport.
-              </p>
+      {/* 03 Gallery */}
+      <section id="captures" className="border-t border-[rgba(242,232,216,0.08)] bg-[#1A1412]">
+        <div className="mx-auto flex max-w-[1320px] flex-wrap items-end justify-between gap-5 px-[clamp(20px,4vw,56px)] pb-6 pt-[clamp(64px,9vw,112px)]">
+          <h2 className="m-0 max-w-[15ch] text-balance text-[clamp(32px,4.6vw,60px)] font-extrabold leading-[0.95] tracking-[-0.04em] [font-stretch:118%]">
+            Une semaine, <span className="text-[#C8303F]">écran par écran</span>
+          </h2>
+          <span className="lm-mono text-xs uppercase tracking-[0.08em] text-[#8A7E71]">
+            Fais défiler →
+          </span>
+        </div>
+
+        <div className="overflow-x-auto pb-[clamp(64px,8vw,104px)] [-webkit-overflow-scrolling:touch] [scroll-padding-inline:max(clamp(20px,4vw,56px),calc((100vw-1320px)/2+56px))] [scroll-snap-type:x_proximity]">
+          <div className="flex w-max gap-[clamp(16px,2vw,28px)] px-[max(clamp(20px,4vw,56px),calc((100vw-1320px)/2+56px))] py-4">
+            {GALLERY.map((shot, index) => (
+              <figure
+                key={shot.caption}
+                className="m-0 flex snap-start flex-col gap-4"
+              >
+                <LandingPhoneFrame
+                  screenSrc={shot.src}
+                  alt={shot.caption}
+                  showNavBar={shot.nav}
+                />
+                <figcaption className="flex items-baseline gap-2.5">
+                  <span className="lm-mono text-xs text-[#C8303F]">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className="text-[17px] font-bold tracking-[-0.02em]">{shot.caption}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 04 Comment ça marche */}
+      <section id="how" className="bg-[#F2E8D8] text-[#14100E]">
+        <div className="mx-auto max-w-[1320px] px-[clamp(20px,4vw,56px)] py-[clamp(64px,9vw,120px)]">
+          <div className="mb-[clamp(36px,5vw,64px)] flex flex-wrap items-end justify-between gap-6">
+            <h2 className="m-0 max-w-[13ch] text-balance text-[clamp(32px,4.6vw,60px)] font-extrabold leading-[0.95] tracking-[-0.04em] [font-stretch:118%]">
+              Trois étapes, <span className="text-[#7B0D1E]">zéro programme générique</span>
+            </h2>
+            <p className="m-0 max-w-[38ch] text-base leading-normal text-[#4A403A]">
+              RugbyForge part de ta vraie semaine, pas d’un modèle pro impossible à tenir en club.
+            </p>
+          </div>
+
+          <div className="grid gap-[clamp(20px,3vw,40px)] [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))]">
+            {STEPS.map((s) => (
+              <div
+                key={s.n}
+                className="flex flex-col gap-3.5 border-t-2 border-[#14100E] pt-6"
+              >
+                <span className="text-[clamp(64px,7vw,96px)] font-black leading-[0.8] tracking-[-0.06em] text-[#7B0D1E] [font-stretch:125%]">
+                  {s.n}
+                </span>
+                <h3 className="m-0 text-2xl font-extrabold tracking-[-0.03em] [font-stretch:112%]">
+                  {s.title}
+                </h3>
+                <p className="m-0 max-w-[34ch] text-pretty text-[15.5px] leading-[1.55] text-[#4A403A]">
+                  {s.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 05 Pourquoi */}
+      <section id="why" className="bg-[#14100E]">
+        <div className="mx-auto grid max-w-[1320px] items-start gap-[clamp(40px,6vw,96px)] px-[clamp(20px,4vw,56px)] py-[clamp(72px,10vw,136px)] [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))]">
+          <div className="flex flex-col gap-6">
+            <span className="lm-mono text-xs uppercase tracking-[0.12em] text-[#C8303F]">
+              Pourquoi RugbyForge
+            </span>
+            <p className="m-0 text-pretty text-[clamp(26px,3.2vw,42px)] font-bold leading-[1.12] tracking-[-0.03em] [font-stretch:108%]">
+              Un joueur n’a pas seulement besoin d’un plan de salle. Il a besoin d’un cadre qui
+              relie{' '}
+              <span className="text-[#C8303F]">la muscu, le terrain, la récup</span> et le match du
+              week-end.
+            </p>
+            <p className="m-0 max-w-[52ch] text-base leading-[1.6] text-[#B5A898]">
+              Périodisation, lecture de la charge, priorités par poste, repères de tests, prévention
+              des hausses de volume mal absorbées : de meilleures décisions, semaine après semaine.
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-[20px] border border-[rgba(242,232,216,0.14)]">
+            <div className="flex items-baseline gap-4 bg-[#7B0D1E] p-7">
+              <span className="text-[clamp(56px,6vw,80px)] font-black leading-[0.85] tracking-[-0.05em] [font-stretch:125%]">
+                186+
+              </span>
+              <span className="max-w-[20ch] text-[15px] leading-snug text-[#F2D9DC]">
+                références en sciences du sport derrière chaque recommandation
+              </span>
             </div>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted mb-3">
+            <div className="flex flex-col gap-3.5 bg-[#1D1714] p-7">
+              <span className="lm-mono text-[11px] uppercase tracking-[0.1em] text-[#8A7E71]">
+                Tests physiques intégrés
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {['CMJ', 'Sprint 10 m', 'YYIR1', '1RM estimé'].map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-full border border-[rgba(242,232,216,0.24)] px-3.5 py-2 text-[15px] font-bold"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-3.5 border-t border-[rgba(242,232,216,0.1)] bg-[#1D1714] p-7">
+              <span className="lm-mono text-[11px] uppercase tracking-[0.1em] text-[#8A7E71]">
+                Prévention
+              </span>
+              <span className="text-base leading-normal text-[#C9BDAD]">
+                Préhab, récupération et suivi ACWR pour limiter les pics de charge brutaux.
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 06 Guides */}
+      <section id="guides" className="border-t border-[rgba(242,232,216,0.08)] bg-[#1A1412]">
+        <div className="mx-auto grid max-w-[1320px] items-start gap-[clamp(32px,5vw,80px)] px-[clamp(20px,4vw,56px)] py-[clamp(64px,9vw,112px)] [grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))]">
+          <div className="flex flex-col gap-5">
+            <h2 className="m-0 text-balance text-[clamp(32px,4.6vw,60px)] font-extrabold leading-[0.95] tracking-[-0.04em] [font-stretch:118%]">
+              Les guides
+            </h2>
+            <p className="m-0 max-w-[36ch] text-base leading-[1.55] text-[#B5A898]">
+              Des formats longs et gratuits pour rendre la préparation physique rugby plus
+              concrète.
+            </p>
+            <a
+              href="/blog/"
+              className="lm-mono inline-flex items-center gap-2 text-xs uppercase tracking-[0.08em] text-[#F2E8D8] hover:text-[#E9B8BF]"
+            >
+              Tout le blog <span className="text-[#C8303F]">→</span>
+            </a>
+          </div>
+
+          <div className="flex flex-col">
+            {GUIDES.map((g) => (
+              <a
+                key={g.href}
+                href={g.href}
+                className="group flex items-center justify-between gap-5 border-t border-[rgba(242,232,216,0.12)] py-[22px] text-[#F2E8D8] transition-[padding] hover:pl-2.5"
+              >
+                <span className="flex flex-col gap-1">
+                  <span className="text-xl font-extrabold tracking-[-0.025em] [font-stretch:110%]">
+                    {g.title}
+                  </span>
+                  <span className="text-[14.5px] text-[#A89A8A]">{g.description}</span>
+                </span>
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[rgba(242,232,216,0.2)] text-[#C8303F]">
+                  →
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 07 FAQ */}
+      <section id="faq" className="border-t border-[rgba(242,232,216,0.08)] bg-[#14100E]">
+        <div className="mx-auto flex max-w-[900px] flex-col gap-[clamp(28px,4vw,48px)] px-[clamp(20px,4vw,56px)] py-[clamp(64px,9vw,112px)]">
+          <h2 className="m-0 text-[clamp(32px,4.6vw,60px)] font-extrabold leading-[0.95] tracking-[-0.04em] [font-stretch:118%]">
+            Questions fréquentes
+          </h2>
+          <div className="flex flex-col">
+            {FAQS.map((item, i) => (
+              <details
+                key={item.q}
+                open={item.open}
+                className={`border-t border-[rgba(242,232,216,0.14)] ${i === FAQS.length - 1 ? 'border-b' : ''}`}
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-5 py-6 text-[clamp(18px,1.8vw,22px)] font-bold tracking-[-0.02em] [&::-webkit-details-marker]:hidden">
+                  {item.q}
+                  <span className="shrink-0 text-[22px] font-normal text-[#C8303F]">+</span>
+                </summary>
+                <p className="m-0 max-w-[62ch] pb-[26px] text-base leading-[1.6] text-[#C9BDAD]">
+                  {item.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 08 CTA */}
+      <section className="relative overflow-hidden bg-[#7B0D1E]">
+        <div className="relative mx-auto flex max-w-[1320px] flex-col items-start gap-7 px-[clamp(20px,4vw,56px)] py-[clamp(72px,10vw,128px)]">
+          <img
+            src={LANDING_DESIGN.rufoMark}
+            alt=""
+            className="pointer-events-none absolute right-[clamp(-120px,-4vw,-20px)] top-1/2 h-[clamp(220px,34vw,460px)] w-auto -translate-y-1/2 opacity-10"
+            aria-hidden
+          />
+          <h2 className="relative m-0 max-w-[12ch] text-balance text-[clamp(40px,6.4vw,88px)] font-black leading-[0.9] tracking-[-0.045em] [font-stretch:122%]">
+            Ta saison se prépare cette semaine.
+          </h2>
+          <p className="relative m-0 max-w-[40ch] text-lg leading-normal text-[#F2D9DC]">
+            Crée ton compte, renseigne ton poste et ton calendrier : ta première semaine est prête.
+          </p>
+          <SignupOrInstallCTA
+            withArrow
+            desktopLabel="Commencer gratuitement"
+            className="relative inline-flex items-center gap-3 rounded-[14px] bg-[#F2E8D8] px-[26px] py-[18px] text-[17px] font-extrabold text-[#7B0D1E] transition-transform hover:translate-y-[-2px]"
+          />
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-[rgba(242,232,216,0.08)] bg-[#0F0C0B]">
+        <div className="mx-auto flex max-w-[1320px] flex-col gap-[clamp(48px,6vw,72px)] px-[clamp(20px,4vw,56px)] pb-8 pt-[clamp(56px,7vw,88px)]">
+          <div className="grid gap-x-[clamp(24px,3vw,48px)] gap-y-8 [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))]">
+            <div className="col-span-full flex flex-wrap items-center justify-between gap-8 border-b border-[rgba(242,232,216,0.08)] pb-[clamp(40px,5vw,56px)]">
+              <div className="flex max-w-[36ch] flex-col gap-[18px]">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={LANDING_DESIGN.rufoIcon}
+                    alt="RUFO"
+                    width={44}
+                    height={44}
+                    className="block h-11 w-11 rounded-[11px]"
+                  />
+                  <img
+                    src={LANDING_DESIGN.wordmark}
+                    alt="RugbyForge"
+                    width={180}
+                    height={24}
+                    className="block h-6 w-auto"
+                  />
+                </div>
+                <p className="m-0 text-[15px] leading-[1.55] text-[#A89A8A]">
+                  La préparation physique rugby, calée sur ton poste, ton club et ton match.
+                </p>
+              </div>
+              <StoreBadges variant="segmented" className="w-full max-w-[460px]" />
+            </div>
+
+            <div className="flex flex-col gap-3.5">
+              <span className="lm-mono text-[11px] uppercase tracking-[0.12em] text-[#8A7E71]">
                 Produit
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#features" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    Fonctionnalités
-                  </a>
-                </li>
-                <li>
-                  <a href="#pricing" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    Tarifs
-                  </a>
-                </li>
-                <li>
-                  <a href="#science" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    La Science
-                  </a>
-                </li>
-                <li>
-                  <a href="/blog/" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    Ressources
-                  </a>
-                </li>
-                <li>
-                  <a href="/preparation-physique-rugby/" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    Guide preparation rugby
-                  </a>
-                </li>
-                <li>
-                  <a href="/about/" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    À propos
-                  </a>
-                </li>
-              </ul>
+              </span>
+              <div className="flex flex-col gap-2.5">
+                <Link to="/auth/signup" className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]">
+                  Commencer gratuitement
+                </Link>
+                <a href="/about/" className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]">
+                  À propos
+                </a>
+                <a href="/blog/" className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]">
+                  Blog
+                </a>
+              </div>
             </div>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted mb-3">
-                Légal
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link to="/legal" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    Mentions Légales
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/legal" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    Confidentialité
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/legal" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    CGU / CGV
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/delete-account" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    Suppression de compte
-                  </Link>
-                </li>
-              </ul>
+
+            <div className="flex flex-col gap-3.5">
+              <span className="lm-mono text-[11px] uppercase tracking-[0.12em] text-[#8A7E71]">
+                Guides
+              </span>
+              <div className="flex flex-col gap-2.5">
+                <a
+                  href="/preparation-physique-rugby/"
+                  className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]"
+                >
+                  Préparation physique
+                </a>
+                <a
+                  href="/programme-musculation-rugby/"
+                  className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]"
+                >
+                  Programme musculation
+                </a>
+                <a
+                  href="/periodisation-rugby/"
+                  className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]"
+                >
+                  Périodisation
+                </a>
+              </div>
             </div>
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted mb-3">
+
+            <div className="flex flex-col gap-3.5">
+              <span className="lm-mono text-[11px] uppercase tracking-[0.12em] text-[#8A7E71]">
+                Outils
+              </span>
+              <div className="flex flex-col gap-2.5">
+                <a href="/acwr-rugby/" className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]">
+                  ACWR rugby
+                </a>
+                <a
+                  href="/tests-physiques-rugby/"
+                  className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]"
+                >
+                  Tests physiques
+                </a>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3.5">
+              <span className="lm-mono text-[11px] uppercase tracking-[0.12em] text-[#8A7E71]">
                 Contact
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="mailto:bonjour@rugbyforge.fr" className="text-sm text-fg-ghost hover:text-fg transition-colors">
-                    bonjour@rugbyforge.fr
-                  </a>
-                </li>
-              </ul>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-fg-muted mb-3 mt-6">
-                Réseaux sociaux
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="https://www.reddit.com/user/RugbyForge/"
-                    className="text-sm text-fg-ghost hover:text-fg transition-colors"
-                    rel="me noopener noreferrer"
-                    target="_blank"
-                  >
-                    Reddit
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.instagram.com/rugbyforge/"
-                    className="text-sm text-fg-ghost hover:text-fg transition-colors"
-                    rel="me noopener noreferrer"
-                    target="_blank"
-                  >
-                    Instagram
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://www.facebook.com/profile.php?id=61586887983497"
-                    className="text-sm text-fg-ghost hover:text-fg transition-colors"
-                    rel="me noopener noreferrer"
-                    target="_blank"
-                  >
-                    Facebook
-                  </a>
-                </li>
-              </ul>
+              </span>
+              <a
+                href="mailto:bonjour@rugbyforge.fr"
+                className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]"
+              >
+                bonjour@rugbyforge.fr
+              </a>
             </div>
           </div>
 
-          <div className="border-t border-border-app pt-8 text-center">
-            <p className="text-[10px] text-fg-ghost">
-              © 2026 RugbyForge, édité par Axurit. v1.0
-            </p>
+          <div className="flex flex-wrap items-start justify-between gap-4 border-t border-[rgba(242,232,216,0.08)] pt-6 text-[13px] leading-[1.55] text-[#8A7E71]">
+            <span className="max-w-[72ch]">
+              Ressource éducative. Les contenus RugbyForge ne remplacent pas un avis médical ni le
+              suivi d’un professionnel de santé ou d’un préparateur physique de terrain.
+            </span>
+            <span className="lm-mono shrink-0 text-xs tracking-[0.04em]">
+              © 2026 RugbyForge · Fait en France
+            </span>
           </div>
         </div>
       </footer>

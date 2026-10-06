@@ -23,6 +23,8 @@ import { useProfile } from '../hooks/useProfile'
 import { useFatigue } from '../hooks/useFatigue'
 import { useGamification } from '../hooks/useGamification'
 import { useHintVisibility } from '../hooks/useHintVisibility'
+import { useOverlayGate } from '../hooks/useOverlayGate'
+import { useOverlayPermission } from '../hooks/useOverlayPermission'
 import { useSocialNudges } from '../hooks/useSocialNudges'
 import { useSessionRun } from '../contexts/SessionRunContext'
 import { buildRecomputePayload } from '../services/gamification/buildRecomputePayload'
@@ -31,6 +33,7 @@ import { useHistory } from '../hooks/useHistory'
 import { useAuth } from '../hooks/useAuth'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
+import { useFatigueLoadDecisionRevision } from '../hooks/useFatigueLoadDecisionRevision'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { useWeekSnapshotConfirmationSheet } from '../hooks/useWeekSnapshotConfirmationSheet'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
@@ -243,6 +246,7 @@ export function HomePage() {
   })
 
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
+  const fatigueDecisionRevision = useFatigueLoadDecisionRevision()
   const surfaceParams = useMemo(
     () => ({
       profile,
@@ -258,6 +262,7 @@ export function HomePage() {
       featureFlags: programFeatureFlags,
       readinessScore: readinessResult.score,
       userId,
+      fatigueDecisionRevision,
     }),
     [
       profile,
@@ -271,6 +276,7 @@ export function HomePage() {
       programFeatureFlags,
       readinessResult.score,
       userId,
+      fatigueDecisionRevision,
     ],
   )
   const lang = (profile.preferredLanguage as 'fr' | 'en' | undefined) ?? 'fr'
@@ -398,7 +404,12 @@ export function HomePage() {
     dismiss: dismissGamificationIntro,
     loading: gamificationIntroLoading,
   } = useHintVisibility('gamification_intro_v1')
-  const showGamificationIntro = gamificationIntroVisible && !gamificationIntroLoading
+  const showGamificationIntroNatural = gamificationIntroVisible && !gamificationIntroLoading
+  const showGamificationIntro = useOverlayPermission(
+    'gamification_intro',
+    showGamificationIntroNatural,
+  )
+  const { hasBlockingOverlay } = useOverlayGate()
   const { status: sessionRunStatus } = useSessionRun()
   // Horodatage figé au montage : recalculé à chaque rendu, il ferait repasser
   // `selectNudge` en boucle sans jamais changer de résultat.
@@ -958,7 +969,7 @@ export function HomePage() {
         nudgesShownThisWeek={nudgesShownThisWeek}
         isSessionRunning={sessionRunStatus === 'running'}
         hasBlockingOverlay={
-          showGamificationIntro ||
+          hasBlockingOverlay ||
           hasConfirmationRequired ||
           seasonTransition != null ||
           schedulingTransition != null

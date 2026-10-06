@@ -12,14 +12,21 @@ import {
   type PersistedProgramNoticeState,
 } from '../services/program/programNoticeAck'
 import { hasPendingOffseasonMatchDecision } from '../services/season/hasPendingOffseasonMatchDecision'
+import { resolvePositionGroup } from '../services/annualPlanning/buildAthletePlanningInputs'
+import {
+  FATIGUE_LOAD_DECISION_UPDATED_EVENT,
+  readFatigueLoadDecisionForDay,
+} from '../services/program/fatigueLoadChoice'
 
 const PREVIEW_KEY = 'rf.programNotice.preview.v1'
 
 /**
  * Dev-only preview hook: read a synthetic notice from localStorage so the
  * modal can be exercised without driving the real detector. Set via:
- *   localStorage.setItem('rf.programNotice.preview.v1', 'cycle' | 'phase' | 'deload' | 'acwr-critical' | 'acwr-danger' | 'match')
- * and reload. Clear with `localStorage.removeItem('rf.programNotice.preview.v1')`.
+ *   localStorage.setItem('rf.programNotice.preview.v1', 'cycle' | 'phase' | 'deload' | 'acwr-caution' | 'acwr-critical' | 'acwr-danger' | 'match')
+ * then reload. Si le sheet ne pop pas : clear les acks preview —
+ *   localStorage.removeItem('rf.programNotice.v1')
+ * Clear preview : localStorage.removeItem('rf.programNotice.preview.v1').
  */
 function readPreviewNotice(): ProgramChangeNotice | null {
   if (typeof window === 'undefined') return null
@@ -73,20 +80,45 @@ function readPreviewNotice(): ProgramChangeNotice | null {
           postponable: true,
           effectiveDate: '2099-01-01',
         }
+      case 'acwr-caution':
+        return {
+          id: 'preview:acwr-caution',
+          type: 'acwr',
+          severity: 'info',
+          title: 'Charge à surveiller',
+          summary:
+            'Tu es en zone de vigilance (ACWR 1.38). Qualité avant quantité cette semaine.',
+          bullets: [
+            'Recommandé : alléger le volume (−20–30 %) sans changer les séances',
+            'Ou garder le programme et t’autoréguler',
+            'Pas de séance en plus tant que le ratio redescend',
+          ],
+          postponable: false,
+          effectiveDate: '2099-01-01',
+          acwrRatio: 1.38,
+          fatigueLoadZone: 'caution',
+          weeklyFrequency: 3,
+          defaultFatigueLoadChoice: 'lighten_volume',
+        }
       case 'acwr-critical':
         return {
           id: 'preview:acwr-critical',
           type: 'acwr',
           severity: 'critical',
           title: 'Charge d\'entraînement très élevée',
-          summary: 'Ton ratio aigu/chronique est en zone critique. Le programme va réduire la charge cette semaine.',
+          summary:
+            'Ton ratio aigu/chronique est en zone critique (ACWR 2.15). Choisis comment protéger ta semaine.',
           bullets: [
-            '1 séance maximum cette semaine',
-            'Privilégie mobilité et sommeil',
-            'Reprise progressive la semaine prochaine',
+            'Défaut recommandé : retirer 1 séance (souvent le Primer)',
+            'Ou alléger le volume (−20–30 %) en gardant Lower / Upper / Primer',
+            'Tu peux aussi gérer toi-même — avec un risque plus élevé',
           ],
           postponable: false,
           effectiveDate: '2099-01-01',
+          acwrRatio: 2.15,
+          fatigueLoadZone: 'critical',
+          weeklyFrequency: 3,
+          defaultFatigueLoadChoice: 'drop_session',
         }
       case 'acwr-danger':
         return {
@@ -94,14 +126,19 @@ function readPreviewNotice(): ProgramChangeNotice | null {
           type: 'acwr',
           severity: 'warning',
           title: 'Charge d\'entraînement élevée',
-          summary: 'Ton ratio aigu/chronique est en zone à risque. On retire une séance cette semaine.',
+          summary:
+            'Ton ratio aigu/chronique est en zone à risque (ACWR 1.62). Adapte ta semaine — à toi de choisir.',
           bullets: [
-            '−1 séance par rapport au programme prévu',
-            'Garde de l\'intensité mais réduit le volume',
-            'Surveille ton sommeil et tes courbatures',
+            'Recommandé : alléger les séances (−20–30 % de volume)',
+            'Ou retirer 1 séance (Primer) si tu es à 3× / semaine',
+            'Ou gérer toi-même (RPE, sommeil, courbatures)',
           ],
           postponable: false,
           effectiveDate: '2099-01-01',
+          acwrRatio: 1.62,
+          fatigueLoadZone: 'danger',
+          weeklyFrequency: 3,
+          defaultFatigueLoadChoice: 'lighten_volume',
         }
       case 'match':
         return {
@@ -158,6 +195,8 @@ interface UseProgramChangeNoticeArgs {
   profile: UserProfile | null
   calendarEvents: CalendarEvent[]
   acwrZone: ACWRZone | null
+  acwrRatio?: number | null
+  hasSufficientAcwrData?: boolean
   today: string
 }
 
@@ -176,10 +215,11 @@ export interface UseProgramChangeNoticeResult {
  * that, the postpone option is gone (user must acknowledge to dismiss).
  */
 export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UseProgramChangeNoticeResult {
-  const { profile, calendarEvents, acwrZone, today } = args
+  const { profile, calendarEvents, acwrZone, acwrRatio, hasSufficientAcwrData, today } = args
   const [persisted, setPersisted] = useState<PersistedProgramNoticeState>(() =>
     typeof window === 'undefined' ? EMPTY : readProgramNoticePersisted(),
   )
+  const [decisionTick, setDecisionTick] = useState(0)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -187,11 +227,14 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
       if (event.key === PROGRAM_NOTICE_STORAGE_KEY) setPersisted(readProgramNoticePersisted())
     }
     const onLocalBump = () => setPersisted(readProgramNoticePersisted())
+    const onDecision = () => setDecisionTick((n) => n + 1)
     window.addEventListener('storage', onStorage)
     window.addEventListener(PROGRAM_NOTICE_UPDATED_EVENT, onLocalBump)
+    window.addEventListener(FATIGUE_LOAD_DECISION_UPDATED_EVENT, onDecision)
     return () => {
       window.removeEventListener('storage', onStorage)
       window.removeEventListener(PROGRAM_NOTICE_UPDATED_EVENT, onLocalBump)
+      window.removeEventListener(FATIGUE_LOAD_DECISION_UPDATED_EVENT, onDecision)
     }
   }, [])
 
@@ -202,20 +245,31 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
     if (!profile.weeklySessions || !profile.position) return null
     try {
       const lang = (profile.preferredLanguage === 'en' ? 'en' : 'fr') satisfies Lang
+      const weeklyFrequency = (profile.weeklySessions === 2 ||
+      profile.weeklySessions === 3 ||
+      profile.weeklySessions === 4
+        ? profile.weeklySessions
+        : 3) as 2 | 3 | 4
+      const positionGroup = resolvePositionGroup(profile, [])
+      // `decisionTick` force le re-read localStorage après choix / undo.
+      const alreadyChoseLoad =
+        decisionTick >= 0 && Boolean(readFatigueLoadDecisionForDay(today))
       return detectProgramChange({
         today,
-        weeklyFrequency: (profile.weeklySessions ?? 3) as 2 | 3 | 4,
-        positionGroup: 'back_three',
+        weeklyFrequency,
+        positionGroup,
         planningAnchors: profile.planningAnchors,
         trainingBaseline: profile.trainingBaseline,
-        acwrZone,
+        acwrZone: alreadyChoseLoad ? null : acwrZone,
+        acwrRatio: alreadyChoseLoad ? null : acwrRatio,
+        hasSufficientAcwrData,
         calendarEvents,
         lang,
       })
     } catch {
       return null
     }
-  }, [profile, calendarEvents, acwrZone, today])
+  }, [profile, calendarEvents, acwrZone, acwrRatio, hasSufficientAcwrData, today, decisionTick])
 
   const visible = useMemo<VisibleProgramChangeNotice | null>(() => {
     if (!detected) return null

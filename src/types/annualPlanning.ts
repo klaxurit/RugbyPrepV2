@@ -42,6 +42,13 @@ export interface AthletePlanningInputs {
 
   fatigueLevel?: 'normal' | 'high' | 'very_high'
 
+  /**
+   * Choix joueur face à une zone ACWR caution/danger/critical
+   * (`self_manage` | `lighten_volume` | `drop_session`).
+   * Absent = pas encore décidé ; le resolver n'applique pas de swap récup auto.
+   */
+  fatigueLoadChoice?: 'self_manage' | 'lighten_volume' | 'drop_session'
+
   /** Proxy contact club pour la semaine de `today`. Défaut runtime = normal. */
   clubContactProxy?: ClubContactProxy
 
@@ -112,8 +119,13 @@ export interface AnnualPlanningContext {
   fatigueLevel: 'normal' | 'high' | 'very_high'
   /** Proxy contact club (léger / normal / dur). Absent = normal. */
   clubContactProxy?: ClubContactProxy
-  /** Set par le resolver MS quand in_season + very_high fatigue → séances recovery. */
+  /**
+   * Legacy : recovery swap auto (very_high). Conservé pour tests / staff view,
+   * mais le chemin joueur passe désormais par `fatigueLoadChoice`.
+   */
   loadManagementOverride?: 'recovery'
+  /** Choix joueur appliqué cette semaine (ACWR). */
+  fatigueLoadChoiceApplied?: 'self_manage' | 'lighten_volume' | 'drop_session'
   weeklyFrequency: 2 | 3 | 4
   positionGroup: 'front_row' | 'back_three'
 

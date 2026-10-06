@@ -1,0 +1,73 @@
+/* Marketing forge — dark charcoal (Claude Design landing refresh).
+ * Scoped: apply `.landing-marketing` on the React landing root so app cream stays intact. */
+.landing-marketing {
+  font-family: 'Archivo', system-ui, sans-serif;
+  --color-bg-app: #14100e;
+  --color-surface: #1a1513;
+  --color-surface-glass: rgb(26 21 19 / 0.92);
+  --color-text-primary: #f2e8d8;
+  --color-text-secondary: #c9bdad;
+  --color-text-muted: #b5a898;
+  --color-text-faint: #9c8f80;
+  --color-text-soft: rgb(242 232 216 / 0.75);
+  --color-text-emphasis: rgb(242 232 216 / 0.9);
+  --color-text-ghost: rgb(242 232 216 / 0.35);
+  --color-border: rgb(242 232 216 / 0.12);
+  --color-border-dashed: rgb(242 232 216 / 0.16);
+  --color-surface-a02: #1a1513;
+  --color-surface-a05: #1e1917;
+  --color-surface-a07: #221c1a;
+  --color-surface-a10: rgb(242 232 216 / 0.08);
+  --color-surface-a15: rgb(242 232 216 / 0.12);
+  --color-surface-a20: rgb(242 232 216 / 0.16);
+  --color-edge-faint: rgb(242 232 216 / 0.05);
+  --color-edge-muted: rgb(242 232 216 / 0.08);
+  --color-edge-soft: rgb(242 232 216 / 0.1);
+  --color-accent-soft: rgb(123 13 30 / 0.22);
+  --color-accent-medium: rgb(123 13 30 / 0.32);
+  --color-accent-border: rgb(123 13 30 / 0.4);
+  --color-accent-border-strong: rgb(123 13 30 / 0.55);
+  --color-accent-tint: #c8303f;
+  --color-on-accent: #f2e8d8;
+  --color-cream-soft: #1e1917;
+  --color-cream-deep: #2a2420;
+  --color-surface-paper: #1a1513;
+  --color-fg-on-paper: #f2e8d8;
+  --color-shadow-elevated: 0 4px 24px rgb(0 0 0 / 0.35);
+  --color-logo-fg: #f2e8d8;
+  --color-shell-bg: transparent;
+  --color-shell-fg: #f2e8d8;
+  --color-shell-fg-muted: rgb(242 232 216 / 0.55);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-app);
+}
+
+.landing-marketing .text-brand-tint {
+  color: #c8303f;
+}
+
+.landing-marketing .scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.landing-marketing .scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.landing-marketing .lm-mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.landing-marketing a:hover {
+  color: #e9b8bf;
+}
+
+.landing-marketing summary::-webkit-details-marker {
+  display: none;
+}
+
+.landing-marketing ::selection {
+  background: #7b0d1e;
+  color: #f2e8d8;
+}

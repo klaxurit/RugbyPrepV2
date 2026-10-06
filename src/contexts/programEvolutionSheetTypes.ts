@@ -1,3 +1,5 @@
+import type { FatigueLoadChoiceOption } from '../services/program/fatigueLoadChoice'
+
 export type ProgramEvolutionOpenArgs = {
   matchDateISO?: string
   summary?: string
@@ -20,6 +22,12 @@ export type ProgramEvolutionOpenArgs = {
   onSecondaryPress?: () => void
   /** Texte informatif sous les CTA (ex. report déjà consommé). */
   secondaryHint?: string
+  /** Options de choix joueur (ACWR fatigue) — radio list. */
+  choices?: FatigueLoadChoiceOption[]
+  defaultChoiceId?: string
+  /** Appelé avec l’id sélectionné avant l’ack (quand `choices` est présent). */
+  onChoice?: (choiceId: string) => void | Promise<void>
+  recommendedBadgeLabel?: string
 }
 
 export type ResolvedProgramEvolutionPayload = ProgramEvolutionOpenArgs & {

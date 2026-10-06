@@ -48,19 +48,18 @@
       href="/fonts/gontserrat-regular.woff2"
       crossorigin="anonymous"
     />
-    <!-- Preload du LCP hero (WebP ~170 Ko vs PNG 1.7 Mo) -->
+    <!-- Preload LCP hero (Claude Design screen-accueil) -->
     <link
       rel="preload"
       as="image"
-      type="image/webp"
-      href="/images/landing/rugbyforge_home_game.webp"
+      href="/images/landing/design/screen-accueil.png"
       fetchpriority="high"
     />
     <!-- Réserve la zone du hero React pour limiter le CLS pendant l'hydration -->
     <style>
       #root {
         min-height: 100dvh;
-        background-color: #f5f2ee;
+        background-color: #14100e;
       }
     </style>
     <meta property="og:type" content="website" />

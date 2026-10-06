@@ -59,18 +59,51 @@ describe('detectProgramChange', () => {
     expect(result.postponable).toBe(false)
   })
 
+  it('emits a caution ACWR notice with player-choice metadata', () => {
+    const today = '2026-04-15'
+    const result = detectProgramChange({
+      ...baseInputs,
+      today,
+      acwrZone: 'caution',
+      acwrRatio: 1.38,
+      hasSufficientAcwrData: true,
+      planningAnchors: { manualCycleOverride: 'in_season' },
+    })
+    expect(result?.type).toBe('acwr')
+    expect(result?.severity).toBe('info')
+    expect(result?.fatigueLoadZone).toBe('caution')
+    expect(result?.defaultFatigueLoadChoice).toBe('lighten_volume')
+    expect(result?.summary).toMatch(/1\.38|vigilance|caution/i)
+  })
+
+  it('skips ACWR notice when data is insufficient', () => {
+    const today = '2026-04-15'
+    const result = detectProgramChange({
+      ...baseInputs,
+      today,
+      acwrZone: 'danger',
+      hasSufficientAcwrData: false,
+      planningAnchors: { manualCycleOverride: 'in_season' },
+    })
+    expect(result?.type).not.toBe('acwr')
+  })
+
   it('emits a danger ACWR notice (warning, not postponable)', () => {
     const today = '2026-04-15'
     const result = detectProgramChange({
       ...baseInputs,
       today,
       acwrZone: 'danger',
+      acwrRatio: 1.62,
+      hasSufficientAcwrData: true,
       planningAnchors: { manualCycleOverride: 'in_season' },
     })
     expect(result?.type).toBe('acwr')
     expect(result?.severity).toBe('warning')
     expect(result?.postponable).toBe(false)
     expect(result?.id).toContain('acwr:danger')
+    expect(result?.defaultFatigueLoadChoice).toBe('lighten_volume')
+    expect(result?.summary).toMatch(/1\.62|choisir|call/i)
   })
 
   it('emits a match-week notice when a match falls in the next 7 days', () => {

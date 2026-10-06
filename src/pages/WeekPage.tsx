@@ -12,6 +12,7 @@ import { useWeek } from '../hooks/useWeek'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
 import { useAuth } from '../hooks/useAuth'
+import { useFatigueLoadDecisionRevision } from '../hooks/useFatigueLoadDecisionRevision'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { useMonthProgramGrid } from '../hooks/useMonthProgramGrid'
@@ -152,6 +153,7 @@ export function WeekPage() {
     nextMatchDate,
     today,
   })
+  const fatigueDecisionRevision = useFatigueLoadDecisionRevision()
   const surfaceParams = useMemo(() => ({
     profile,
     events: structuralEvents,
@@ -166,7 +168,8 @@ export function WeekPage() {
     featureFlags: programFeatureFlags,
     readinessScore: readinessResult.score,
     userId,
-  }), [profile, structuralEvents, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId])
+    fatigueDecisionRevision,
+  }), [profile, structuralEvents, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId, fatigueDecisionRevision])
   const {
     surface, snapshot,
     confirmPendingUpdate,

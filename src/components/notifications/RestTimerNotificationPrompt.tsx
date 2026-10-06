@@ -10,6 +10,7 @@ import {
   dismissNotificationPrompt,
 } from '../../services/notifications/notificationPromptStorage'
 import { canOfferRestTimerNotificationOptIn } from '../../services/notifications/notificationOptInEligibility'
+import { useOverlayPermission } from '../../hooks/useOverlayPermission'
 import { posthog } from '../../services/analytics/posthog'
 import type { Lang } from '../../i18n/appLabels'
 
@@ -29,6 +30,7 @@ export function RestTimerNotificationPrompt() {
   const [isLoading, setIsLoading] = useState(false)
   const promptedThisSessionRef = useRef(false)
   const hadRestTimerRef = useRef(false)
+  const allowed = useOverlayPermission('notification_opt_in', open)
 
   useEffect(() => {
     if (!restTimer) {
@@ -81,7 +83,7 @@ export function RestTimerNotificationPrompt() {
 
   return (
     <NotificationOptInSheet
-      open={open}
+      open={allowed}
       variant="rest_timer"
       lang={lang}
       isLoading={isLoading}

@@ -9,6 +9,12 @@ import { useProgramChangeNotice } from '../hooks/useProgramChangeNotice'
 import { useProgramEvolutionSheet } from '../hooks/useProgramEvolutionSheet'
 import { getToday } from '../services/ui/debugDateOverride'
 import { programModalLabel } from '../i18n/programSurfaces'
+import {
+  fatigueLoadChoiceOptions,
+  isoWeekMondayKey,
+  persistFatigueLoadDecision,
+  type FatigueLoadChoice,
+} from '../services/program/fatigueLoadChoice'
 
 const SUPPRESS_PATHS = new Set([
   '/onboarding',
@@ -32,6 +38,8 @@ const SUPPRESS_PATHS = new Set([
  * {@link ProgramEvolutionSheet} / {@link BottomSheet} que l’ajout de match
  * ou la fin de séance — swipe, backdrop, bouton fermer, collée en bas.
  *
+ * Notices ACWR : sheet de décision joueur (self / alléger / −1 séance).
+ *
  * Suppressed during onboarding and on auth/legal pages — those have their
  * own focus and a blocking modal would derail them. Otherwise rides on top
  * of every authenticated route.
@@ -51,6 +59,8 @@ export function ProgramChangeMount() {
     profile: authState.status === 'authenticated' ? profile : null,
     calendarEvents: visibleEvents,
     acwrZone: acwr.zone,
+    acwrRatio: acwr.acwr,
+    hasSufficientAcwrData: acwr.hasSufficientData,
     today,
   })
 
@@ -72,6 +82,39 @@ export function ProgramChangeMount() {
       openProgramEvolution({
         matchDateISO: fromId,
         programNoticeId: notice.id,
+      })
+      return
+    }
+
+    if (notice.type === 'acwr' && notice.fatigueLoadZone) {
+      const weeklyFrequency = (notice.weeklyFrequency ??
+        (profile.weeklySessions === 2 || profile.weeklySessions === 3 || profile.weeklySessions === 4
+          ? profile.weeklySessions
+          : 3)) as 2 | 3 | 4
+      const choices = fatigueLoadChoiceOptions(
+        notice.fatigueLoadZone,
+        weeklyFrequency,
+        lang,
+        notice.acwrRatio,
+      )
+      openProgramEvolution({
+        programNoticeId: notice.id,
+        sectionTitle: notice.title,
+        summary: notice.summary,
+        bullets: notice.bullets,
+        choices,
+        defaultChoiceId: notice.defaultFatigueLoadChoice ?? choices.find((c) => c.recommended)?.id,
+        primaryCtaLabel: programModalLabel('cta_apply_choice', lang),
+        recommendedBadgeLabel: programModalLabel('choice_recommended', lang),
+        onChoice: async (choiceId) => {
+          persistFatigueLoadDecision({
+            weekKey: isoWeekMondayKey(today),
+            zone: notice.fatigueLoadZone!,
+            choice: choiceId as FatigueLoadChoice,
+            chosenAt: new Date().toISOString(),
+            acwrRatio: notice.acwrRatio,
+          })
+        },
       })
       return
     }
@@ -101,6 +144,8 @@ export function ProgramChangeMount() {
     openProgramEvolution,
     postpone,
     lang,
+    profile.weeklySessions,
+    today,
   ])
 
   return null

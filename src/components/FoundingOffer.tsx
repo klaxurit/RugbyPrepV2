@@ -3,6 +3,7 @@ import { posthog } from '../services/analytics/posthog'
 import { useFoundingOfferEligibility, consumeFoundingForceShow } from '../hooks/useFoundingOfferEligibility'
 import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { useProfile } from '../hooks/useProfile'
+import { useOverlayPermission } from '../hooks/useOverlayPermission'
 import { tr, type Lang } from '../i18n/appLabels'
 
 /**
@@ -25,12 +26,13 @@ export function FoundingOffer() {
   const { profile } = useProfile()
   const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   const trackedRef = useRef(false)
+  const allowed = useOverlayPermission('founding_offer', eligible)
 
   // Fire founding_offer_shown once per session when the modal first becomes
   // visible. Also consume the /founding force-show flag (one-shot) so the
   // subsequent renders fall back to the normal eligibility gates.
   useEffect(() => {
-    if (eligible && !trackedRef.current) {
+    if (allowed && !trackedRef.current) {
       trackedRef.current = true
       consumeFoundingForceShow()
       try {
@@ -39,9 +41,9 @@ export function FoundingOffer() {
         /* posthog might be disabled (no consent) */
       }
     }
-  }, [eligible])
+  }, [allowed])
 
-  if (!eligible) return null
+  if (!allowed) return null
 
   const handleAccept = async () => {
     if (cohortFull) return

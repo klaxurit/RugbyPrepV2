@@ -24,6 +24,7 @@ import { resolveSchedulingMode } from '../scheduling/resolveSchedulingMode'
 import { buildSafeSequentialFallback } from '../scheduling/buildSafeSequentialFallback'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
 import type { ProgramFeatureFlags } from './policies/featureFlags'
+import { readFatigueLoadDecisionForDay } from './fatigueLoadChoice'
 
 // ── Types publics ────────────────────────────────────────────────────────────
 
@@ -44,6 +45,10 @@ export interface ResolveWeeklyProgramSurfaceParams {
   featureFlags?: Partial<ProgramFeatureFlags>
   readinessScore?: number
   jumpTrend?: 'up' | 'flat' | 'down'
+  /** Choix joueur ACWR (persisté) — sinon lu depuis le storage semaine. */
+  fatigueLoadChoice?: 'self_manage' | 'lighten_volume' | 'drop_session' | null
+  /** Invalide le cache quand une décision fatigue est écrite / annulée. */
+  fatigueDecisionRevision?: number
 }
 
 export interface WeeklyProgramSurfaceResult {
@@ -73,7 +78,17 @@ export function resolveWeeklyProgramSurface(
     acwrZone,
     readinessScore,
     jumpTrend,
+    ignoreAcwrOverload,
+    hasSufficientACWRData,
+    fatigueLoadChoice: fatigueLoadChoiceParam,
   } = params
+
+  // ACWR insuffisant ou override joueur (toggle « je me sens bien ») → ignorer la zone.
+  const effectiveAcwrZone =
+    ignoreAcwrOverload || hasSufficientACWRData === false ? undefined : acwrZone
+
+  const storedChoice = readFatigueLoadDecisionForDay(today)?.choice
+  const fatigueLoadChoice = fatigueLoadChoiceParam ?? storedChoice ?? null
 
   // 1. Résoudre le contexte annuel (planning inputs + detection)
   const { inputs, warnings: planningInputWarnings } = buildAthletePlanningInputs({
@@ -82,10 +97,11 @@ export function resolveWeeklyProgramSurface(
     logs,
     today,
     fatigue,
-    acwrZone,
+    acwrZone: effectiveAcwrZone,
     athleteIdentity: undefined,
     readinessScore,
     jumpTrend,
+    fatigueLoadChoice,
   })
 
   // 1b. Pre-resolve cycle for scheduling mode gating (lightweight, no session resolution)

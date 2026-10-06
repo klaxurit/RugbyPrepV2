@@ -22,11 +22,16 @@ export const programModalLabels = {
     en: 'For you · program update',
   },
   cta_ack: { fr: "C'est compris, on y va", en: "Got it, let's go" },
+  cta_apply_choice: { fr: 'Continuer', en: 'Continue' },
+  cta_confirm_choice: { fr: 'Oui, confirmer', en: 'Yes, confirm' },
+  cta_back_choice: { fr: 'Modifier mon choix', en: 'Change my choice' },
+  confirm_choice_title: { fr: 'Es-tu sûr de ton choix ?', en: 'Sure about this choice?' },
   cta_postpone: { fr: "Reporter d'une semaine", en: 'Postpone one week' },
   already_postponed: {
     fr: 'Tu as déjà reporté ce changement la semaine dernière.',
     en: 'You already postponed this change last week.',
   },
+  choice_recommended: { fr: 'Recommandé', en: 'Recommended' },
 } as const satisfies Record<string, L>
 
 export function programModalLabel(key: keyof typeof programModalLabels, lang: Lang): string {
@@ -279,57 +284,103 @@ export function programNoticeDeloadBullets(lang: Lang): string[] {
       ]
 }
 
-export function programNoticeAcwrCritical(lang: Lang): {
+export function programNoticeAcwrCritical(
+  lang: Lang,
+  acwrRatio?: number | null,
+): {
   title: string
   summary: string
   bullets: string[]
 } {
+  const ratio =
+    acwrRatio != null && Number.isFinite(acwrRatio)
+      ? lang === 'fr'
+        ? ` (ACWR ${acwrRatio.toFixed(2)})`
+        : ` (ACWR ${acwrRatio.toFixed(2)})`
+      : ''
   return lang === 'fr'
     ? {
         title: "Charge d'entraînement très élevée",
-        summary:
-          'Ton ratio aigu/chronique est en zone critique. Le programme va réduire la charge cette semaine.',
+        summary: `Ton ratio aigu/chronique est en zone critique${ratio}. Choisis comment protéger ta semaine.`,
         bullets: [
-          '1 séance maximum cette semaine',
-          'Privilégie mobilité et sommeil',
-          'Reprise progressive la semaine prochaine',
+          'Défaut recommandé : retirer 1 séance (souvent le Primer)',
+          'Ou alléger le volume (−20–30 %) en gardant Lower / Upper / Primer',
+          'Tu peux aussi gérer toi-même — avec un risque plus élevé',
         ],
       }
     : {
         title: 'Very high training load',
-        summary:
-          'Your acute/chronic ratio is critical. The program will reduce load this week.',
+        summary: `Your acute/chronic ratio is critical${ratio}. Choose how to protect this week.`,
         bullets: [
-          '1 session maximum this week',
-          'Prioritize mobility and sleep',
-          'Progressive return next week',
+          'Recommended default: drop 1 session (usually Primer)',
+          'Or lighten volume (−20–30%) keeping Lower / Upper / Primer',
+          'You can also self-manage — higher risk',
         ],
       }
 }
 
-export function programNoticeAcwrDanger(lang: Lang): {
+export function programNoticeAcwrDanger(
+  lang: Lang,
+  acwrRatio?: number | null,
+): {
   title: string
   summary: string
   bullets: string[]
 } {
+  const ratio =
+    acwrRatio != null && Number.isFinite(acwrRatio)
+      ? ` (ACWR ${acwrRatio.toFixed(2)})`
+      : ''
   return lang === 'fr'
     ? {
         title: "Charge d'entraînement élevée",
-        summary:
-          'Ton ratio aigu/chronique est en zone à risque. On retire une séance cette semaine.',
+        summary: `Ton ratio aigu/chronique est en zone à risque${ratio}. Adapte ta semaine — à toi de choisir.`,
         bullets: [
-          '−1 séance par rapport au programme prévu',
-          "Garde de l'intensité mais réduit le volume",
-          'Surveille ton sommeil et tes courbatures',
+          'Recommandé : alléger les séances (−20–30 % de volume)',
+          'Ou retirer 1 séance (Primer) si tu es à 3× / semaine',
+          'Ou gérer toi-même (RPE, sommeil, courbatures)',
         ],
       }
     : {
         title: 'High training load',
-        summary: 'Your acute/chronic ratio is at risk. One session removed this week.',
+        summary: `Your acute/chronic ratio is at risk${ratio}. Adapt your week — your call.`,
         bullets: [
-          '−1 session vs planned program',
-          'Keep intensity but reduce volume',
-          'Watch sleep and soreness',
+          'Recommended: lighten sessions (−20–30% volume)',
+          'Or drop 1 session (Primer) if you train 3× / week',
+          'Or self-manage (RPE, sleep, soreness)',
+        ],
+      }
+}
+
+export function programNoticeAcwrCaution(
+  lang: Lang,
+  acwrRatio?: number | null,
+): {
+  title: string
+  summary: string
+  bullets: string[]
+} {
+  const ratio =
+    acwrRatio != null && Number.isFinite(acwrRatio)
+      ? ` (ACWR ${acwrRatio.toFixed(2)})`
+      : ''
+  return lang === 'fr'
+    ? {
+        title: 'Charge à surveiller',
+        summary: `Tu es en zone de vigilance${ratio}. Qualité avant quantité cette semaine.`,
+        bullets: [
+          'Recommandé : alléger le volume (−20–30 %) sans changer les séances',
+          'Ou garder le programme et t’autoréguler',
+          'Pas de séance en plus tant que le ratio redescend',
+        ],
+      }
+    : {
+        title: 'Load to watch',
+        summary: `You’re in the caution zone${ratio}. Quality over quantity this week.`,
+        bullets: [
+          'Recommended: lighten volume (−20–30%) without changing sessions',
+          'Or keep the program and self-regulate',
+          'No extra sessions until the ratio settles',
         ],
       }
 }

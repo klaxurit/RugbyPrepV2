@@ -17,6 +17,7 @@ import { useHistory } from '../hooks/useHistory'
 import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
 import { useAcwrOverride } from '../hooks/useAcwrOverride'
+import { useFatigueLoadDecisionRevision } from '../hooks/useFatigueLoadDecisionRevision'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useWeeklyProgramSurface } from '../hooks/useWeeklyProgramSurface'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
@@ -201,6 +202,7 @@ export function SessionDetailPage() {
   const { zone: acwrZone, hasSufficientData: acwrHasData } = useACWR(logs, structuralEvents)
   const { ignoreAcwrOverload } = useAcwrOverride()
   const { featureFlags: programFeatureFlags } = useProgramFeatureFlags()
+  const fatigueDecisionRevision = useFatigueLoadDecisionRevision()
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
@@ -233,6 +235,7 @@ export function SessionDetailPage() {
       featureFlags: programFeatureFlags,
       readinessScore: readinessResult.score,
       userId,
+      fatigueDecisionRevision,
     }),
     [
       profile,
@@ -248,6 +251,7 @@ export function SessionDetailPage() {
       programFeatureFlags,
       readinessResult.score,
       userId,
+      fatigueDecisionRevision,
     ],
   )
   const { surface: rawSurface } = useWeeklyProgramSurface(surfaceParams)

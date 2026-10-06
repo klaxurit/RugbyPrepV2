@@ -12,6 +12,7 @@ import {
 import { resolvePasswordNeedsUpgrade } from '../../services/auth/passwordUpgradeGate'
 import { PasswordUpgradeSheet } from './PasswordUpgradeSheet'
 import { NewsletterOptInSheet } from './NewsletterOptInSheet'
+import { useOverlayPermission } from '../../hooks/useOverlayPermission'
 
 function resolvePasswordUpdateError(message: string): string {
   const normalized = message.toLowerCase()
@@ -37,15 +38,21 @@ export function AccountUpgradeMount() {
   const lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'
 
   const passwordNeedsUpgrade = resolvePasswordNeedsUpgrade(profile.passwordNeedsUpgrade)
-  const showPassword = authenticated && shouldPromptPasswordUpgrade({
+  const showPasswordNatural = authenticated && shouldPromptPasswordUpgrade({
     pathname: location.pathname,
     passwordNeedsUpgrade,
   })
-  const showNewsletter = authenticated && shouldPromptNewsletterOptIn({
+  const showNewsletterNatural = authenticated && shouldPromptNewsletterOptIn({
     pathname: location.pathname,
     passwordNeedsUpgrade,
     newsletterOptIn: profile.newsletterOptIn,
   })
+
+  const showPassword = useOverlayPermission('password_upgrade', showPasswordNatural)
+  const showNewsletter = useOverlayPermission(
+    'newsletter',
+    !showPasswordNatural && showNewsletterNatural,
+  )
 
   const handlePasswordSubmit = useCallback(async (password: string) => {
     if (!userId) return
@@ -82,7 +89,7 @@ export function AccountUpgradeMount() {
         onSubmit={handlePasswordSubmit}
       />
       <NewsletterOptInSheet
-        open={!showPassword && showNewsletter}
+        open={showNewsletter}
         lang={lang}
         isLoading={newsletterSaving}
         onAccept={() => handleNewsletterChoice(true)}

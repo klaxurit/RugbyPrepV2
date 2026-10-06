@@ -13,6 +13,10 @@ import {
 } from '../equipment/motherSessionEquipmentMap'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
 import { applyClubContactProxyToSessions } from '../scheduling/clubContactProxy'
+import {
+  applyFatigueLoadChoiceToSessions,
+  effectiveFatigueLevelForTemplates,
+} from '../program/fatigueLoadChoice'
 
 /** Entrée alignée sur le contexte annuel (identity, ancres, monitoring). */
 export type ResolveMotherSessionsForWeekParams = AthletePlanningInputs
@@ -163,11 +167,50 @@ export function resolveMotherSessionsForWeek(
     monitoring?.completedSessionsLast28d === 0 &&
     monitoring?.hasHistoricalLogs === true
 
+  let next = withClub
   if (isLongAbsence && withClub.status !== 'missing_session') {
-    return applyLongAbsenceAdaptation(withClub)
+    next = applyLongAbsenceAdaptation(withClub)
   }
 
-  return withClub
+  // ── Post-process: choix joueur ACWR (alléger / −1 séance / self) ──
+  if (params.fatigueLoadChoice && next.status !== 'missing_session') {
+    next = applyFatigueLoadChoiceAdaptation(next, params.fatigueLoadChoice)
+  }
+
+  return next
+}
+
+function applyFatigueLoadChoiceAdaptation(
+  result: ResolveMotherSessionsForWeekResult,
+  choice: NonNullable<ResolveMotherSessionsForWeekParams['fatigueLoadChoice']>,
+): ResolveMotherSessionsForWeekResult {
+  const applied = applyFatigueLoadChoiceToSessions(result.sessions, choice)
+  const templateContext = result.templateContext
+    ? {
+        ...result.templateContext,
+        effectiveFrequency: Math.max(
+          2,
+          Math.min(4, applied.sessions.length),
+        ) as 2 | 3 | 4,
+      }
+    : result.templateContext
+
+  return {
+    ...result,
+    sessions: applied.sessions,
+    templateContext,
+    warnings: [...result.warnings, ...applied.warnings],
+    status:
+      applied.warnings.length > 0 || result.status === 'resolved_with_warnings'
+        ? 'resolved_with_warnings'
+        : result.status,
+    planningContext: {
+      ...result.planningContext,
+      fatigueLoadChoiceApplied: applied.applied,
+      // Plus de recovery swap forcé — le choix joueur pilote la structure.
+      loadManagementOverride: undefined,
+    },
+  }
 }
 
 function applyClubContactToResolvedWeek(
@@ -184,7 +227,11 @@ function resolveMotherSessionsForWeekCore(
 ): ResolveMotherSessionsForWeekResult {
   const sessionsById = options?.sessionsById ?? MOTHER_SESSIONS_BY_ID
   const planningContext = detectAnnualPlanningContext(params)
-  const { weeklyFrequency, positionGroup, fatigueLevel } = planningContext
+  const { weeklyFrequency, positionGroup, fatigueLevel: rawFatigueLevel } = planningContext
+  const fatigueLevel = effectiveFatigueLevelForTemplates(
+    rawFatigueLevel,
+    params.fatigueLoadChoice,
+  )
   const { equipment } = params
 
   const varietyParams = {
@@ -388,31 +435,10 @@ function resolveMotherSessionsForWeekCore(
     )
   }
 
-  // ── In-season recovery override : very_high fatigue → séances de récupération
-  // Le cycle reste in_season côté affichage. Seul loadManagementOverride change.
-  if (planningContext.fatigueLevel === 'very_high') {
-    const recoverySlots: WeeklySessionSlot[] = [
-      { sessionId: 'FULL_OFFSEASON_RECOVERY_A_V1', role: 'primary', dayPreference: 'early_week' },
-      { sessionId: 'FULL_OFFSEASON_RECOVERY_B_V1', role: 'primary', dayPreference: 'late_week' },
-    ]
-    const recoveryContext: ResolvedWeeklyTemplateContext = {
-      cycle: 'in_season',
-      requestedFrequency: weeklyFrequency,
-      effectiveFrequency: 2,
-      positionGroup,
-      fatigueLevel,
-    }
-    return hydrateSlots(
-      recoverySlots,
-      { ...planningContext, loadManagementOverride: 'recovery' },
-      recoveryContext,
-      [],
-      ['2x 20-30 min zone 2 (marche, vélo, jogging léger)'],
-      resolverWarnings,
-      sessionsById,
-      equipment,
-    )
-  }
+  // ── In-season ACWR very_high : plus de swap récup auto.
+  // Le joueur choisit (self / lighten / drop) via fatigueLoadChoice ; sans choix,
+  // on reste sur le template in-season avec fatigue `high` (primer allégé).
+  // Voir `applyFatigueLoadChoiceToSessions` en post-process.
 
   // ── In-season deload week (3:1 mesocycle) — volume réduit, intensité maintenue
   if (planningContext.isDeloadWeek) {
@@ -540,9 +566,10 @@ function resolveMotherSessionsForWeekCore(
   }
 
   // ── Monitoring micro-modulation V2 : readinessScore et jumpTrend
+  // Si le joueur a choisi self_manage, on ne force pas maxBlocks (il assume).
   const monitoring = planningContext.monitoringSnapshot
   let microMaxBlocksOverride: number | undefined
-  if (monitoring) {
+  if (monitoring && params.fatigueLoadChoice !== 'self_manage') {
     if (monitoring.readinessScore != null && monitoring.readinessScore < 50) {
       resolverWarnings.push('Readiness basse — volume réduit cette semaine.')
       microMaxBlocksOverride = 2

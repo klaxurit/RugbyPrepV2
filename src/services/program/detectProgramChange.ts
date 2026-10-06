@@ -6,7 +6,7 @@
  * surfaces the highest-priority change among:
  *   - cycle change (off → pre → in)            [warning, postponable]
  *   - mesocycle phase shift                    [info,    postponable]
- *   - ACWR critical/danger zone                [critical, not postponable]
+ *   - ACWR caution/danger/critical zone     [info→critical, choice sheet]
  *   - upcoming match within 7 days             [info,    not postponable]
  *   - feature one-shot (ex. variété in-season) [info, only if nothing above]
  *
@@ -26,6 +26,7 @@ import {
   phaseBulletsForNotice,
   programNoticeAcwrCritical,
   programNoticeAcwrDanger,
+  programNoticeAcwrCaution,
   programNoticeDeloadBullets,
   programNoticeDeloadSummary,
   programNoticeDeloadTitle,
@@ -37,6 +38,10 @@ import {
 } from '../../i18n/programSurfaces'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
 import { buildInSeasonVarietyNotice } from './inSeasonVarietyNotice'
+import {
+  defaultFatigueLoadChoice,
+  type FatigueLoadZone,
+} from './fatigueLoadChoice'
 
 const SEVERITY_RANK: Record<ProgramChangeSeverity, number> = {
   info: 1,
@@ -47,6 +52,10 @@ const SEVERITY_RANK: Record<ProgramChangeSeverity, number> = {
 export type DetectProgramChangeInputs = Omit<AthletePlanningInputs, 'today' | 'events'> & {
   today: string
   acwrZone: ACWRZone | null
+  /** Ratio ACWR brut (affiché dans la notice). */
+  acwrRatio?: number | null
+  /** Si false, aucune notice ACWR (données insuffisantes). */
+  hasSufficientAcwrData?: boolean
   /** Visible (non-hidden) calendar events. */
   calendarEvents: CalendarEvent[]
   /** UI language for notice copy. */
@@ -161,11 +170,22 @@ function buildPhaseNotice(
   return null
 }
 
-function buildAcwrNotice(zone: ACWRZone | null, today: string, lang: Lang): ProgramChangeNotice | null {
-  if (zone !== 'critical' && zone !== 'danger') return null
+function buildAcwrNotice(
+  zone: ACWRZone | null,
+  today: string,
+  lang: Lang,
+  weeklyFrequency: 2 | 3 | 4,
+  acwrRatio?: number | null,
+  hasSufficientAcwrData?: boolean,
+): ProgramChangeNotice | null {
+  if (hasSufficientAcwrData === false) return null
+  if (zone !== 'critical' && zone !== 'danger' && zone !== 'caution') return null
   const isoWeek = isoWeekKey(today)
+  const fatigueLoadZone = zone as FatigueLoadZone
+  const defaultChoice = defaultFatigueLoadChoice(fatigueLoadZone, weeklyFrequency)
+
   if (zone === 'critical') {
-    const copy = programNoticeAcwrCritical(lang)
+    const copy = programNoticeAcwrCritical(lang, acwrRatio)
     return {
       id: `acwr:critical:${isoWeek}`,
       type: 'acwr',
@@ -175,18 +195,43 @@ function buildAcwrNotice(zone: ACWRZone | null, today: string, lang: Lang): Prog
       bullets: copy.bullets,
       postponable: false,
       effectiveDate: today,
+      acwrRatio,
+      fatigueLoadZone,
+      weeklyFrequency,
+      defaultFatigueLoadChoice: defaultChoice,
     }
   }
-  const copy = programNoticeAcwrDanger(lang)
+  if (zone === 'danger') {
+    const copy = programNoticeAcwrDanger(lang, acwrRatio)
+    return {
+      id: `acwr:danger:${isoWeek}`,
+      type: 'acwr',
+      severity: 'warning',
+      title: copy.title,
+      summary: copy.summary,
+      bullets: copy.bullets,
+      postponable: false,
+      effectiveDate: today,
+      acwrRatio,
+      fatigueLoadZone,
+      weeklyFrequency,
+      defaultFatigueLoadChoice: defaultChoice,
+    }
+  }
+  const copy = programNoticeAcwrCaution(lang, acwrRatio)
   return {
-    id: `acwr:danger:${isoWeek}`,
+    id: `acwr:caution:${isoWeek}`,
     type: 'acwr',
-    severity: 'warning',
+    severity: 'info',
     title: copy.title,
     summary: copy.summary,
     bullets: copy.bullets,
     postponable: false,
     effectiveDate: today,
+    acwrRatio,
+    fatigueLoadZone,
+    weeklyFrequency,
+    defaultFatigueLoadChoice: defaultChoice,
   }
 }
 
@@ -232,10 +277,20 @@ function isoWeekKey(iso: string): string {
  * context cannot be resolved (missing season anchors, etc.).
  */
 export function detectProgramChange(inputs: DetectProgramChangeInputs): ProgramChangeNotice | null {
-  const { today, acwrZone, calendarEvents, lang = 'fr', ...rest } = inputs
+  const {
+    today,
+    acwrZone,
+    acwrRatio,
+    hasSufficientAcwrData,
+    calendarEvents,
+    lang = 'fr',
+    weeklyFrequency,
+    ...rest
+  } = inputs
 
   const baseInputs: AthletePlanningInputs = {
     ...rest,
+    weeklyFrequency,
     events: calendarEvents.map((e) => ({ date: e.date, type: e.type })),
     today,
   }
@@ -254,7 +309,14 @@ export function detectProgramChange(inputs: DetectProgramChangeInputs): ProgramC
     if (phaseNotice) candidates.push(phaseNotice)
   }
 
-  const acwrNotice = buildAcwrNotice(acwrZone, today, lang)
+  const acwrNotice = buildAcwrNotice(
+    acwrZone,
+    today,
+    lang,
+    weeklyFrequency,
+    acwrRatio,
+    hasSufficientAcwrData,
+  )
   if (acwrNotice) candidates.push(acwrNotice)
 
   const matchNotice = buildMatchNotice(calendarEvents, today, lang)

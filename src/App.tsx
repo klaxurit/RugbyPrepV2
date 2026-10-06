@@ -7,6 +7,7 @@ import { SessionRunProvider } from './contexts/SessionRunContext'
 import { CoachProvider } from './contexts/CoachContext'
 import { CalendarProvider } from './contexts/CalendarContext'
 import { ProgramEvolutionSheetProvider } from './contexts/ProgramEvolutionSheetContext'
+import { OverlayGateProvider } from './contexts/OverlayGateProvider'
 import { RequireAuth } from './components/auth/RequireAuth'
 import { RequireAdmin } from './components/auth/RequireAdmin'
 import { RequireStaffCoach } from './components/auth/RequireStaffCoach'
@@ -174,6 +175,7 @@ function App() {
     <AuthProvider>
       <EntitlementsProvider>
       <ProfileProvider>
+      <OverlayGateProvider>
       <ProgramEvolutionSheetProvider>
       <CalendarProvider>
       <SessionRunProvider>
@@ -243,6 +245,7 @@ function App() {
       </SessionRunProvider>
       </CalendarProvider>
       </ProgramEvolutionSheetProvider>
+      </OverlayGateProvider>
       </ProfileProvider>
       </EntitlementsProvider>
     </AuthProvider>

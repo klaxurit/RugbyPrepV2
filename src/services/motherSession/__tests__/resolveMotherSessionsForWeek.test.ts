@@ -560,7 +560,7 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.sessions.every((s) => s.maxBlocks === 3)).toBe(true)
   })
 
-  it('in-season very_high + club dur → recovery, pas de recoupe extra', () => {
+  it('in-season very_high + club dur → plus de recovery auto ; club hard allège encore', () => {
     const r = resolveMotherSessionsForWeek({
       events: [match(FIRST_MATCH), match('2025-04-05')],
       today: '2025-03-18',
@@ -569,8 +569,24 @@ describe('resolveMotherSessionsForWeek', () => {
       fatigueLevel: 'very_high',
       clubContactProxy: 'hard',
     })
-    expect(r.planningContext.loadManagementOverride).toBe('recovery')
-    expect(r.sessions.every((s) => s.sessionId.includes('RECOVERY'))).toBe(true)
-    expect(r.sessions.every((s) => s.variant === undefined && s.maxBlocks === undefined)).toBe(true)
+    expect(r.planningContext.loadManagementOverride).toBeUndefined()
+    expect(r.sessions.every((s) => s.sessionId.includes('RECOVERY'))).toBe(false)
+    expect(r.sessions.length).toBeGreaterThanOrEqual(2)
+    // Club hard continue d’alléger (variant light) sur le programme in-season.
+    expect(r.sessions.every((s) => s.variant === 'light')).toBe(true)
+  })
+
+  it('in-season very_high + drop_session → −1 séance, pas de recovery', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-05')],
+      today: '2025-03-18',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      fatigueLevel: 'very_high',
+      fatigueLoadChoice: 'drop_session',
+    })
+    expect(r.sessions.length).toBe(2)
+    expect(r.planningContext.fatigueLoadChoiceApplied).toBe('drop_session')
+    expect(r.planningContext.loadManagementOverride).toBeUndefined()
   })
 })

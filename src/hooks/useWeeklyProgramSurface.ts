@@ -36,6 +36,8 @@ export interface UseWeeklyProgramSurfaceParams {
   jumpTrend?: 'up' | 'flat' | 'down'
   /** Required for block progression (localStorage scoping). */
   userId?: string | null
+  /** Bust memo when fatigue load decision changes. */
+  fatigueDecisionRevision?: number
 }
 
 export interface UseWeeklyProgramSurfaceResult {

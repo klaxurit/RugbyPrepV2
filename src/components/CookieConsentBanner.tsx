@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { acceptCookies, declineCookies, readCookieConsent } from '../services/analytics/cookieConsent'
+import { useOverlayPermission } from '../hooks/useOverlayPermission'
 import { tr, type Lang } from '../i18n/appLabels'
 
 /**
@@ -24,8 +25,9 @@ export function CookieConsentBanner() {
   // Lazy init from localStorage : suffit (single source of truth, sync read).
   const [hasChoice, setHasChoice] = useState<boolean>(() => readCookieConsent() !== null)
   const [lang] = useState<Lang>(() => detectInitialLang())
+  const open = useOverlayPermission('cookie_consent', !hasChoice)
 
-  if (hasChoice) return null
+  if (!open) return null
 
   const handleAccept = () => {
     acceptCookies()

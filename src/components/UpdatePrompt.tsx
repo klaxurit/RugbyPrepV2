@@ -9,7 +9,7 @@ import {
   writeUpdatePromptLastPresentedAt,
 } from './updatePromptVisibility'
 import { useAuth } from '../hooks/useAuth'
-import { useProgramEvolutionSheet } from '../hooks/useProgramEvolutionSheet'
+import { useOverlayGate } from '../hooks/useOverlayGate'
 import { useProfile } from '../hooks/useProfile'
 
 /**
@@ -42,7 +42,7 @@ export function UpdatePrompt() {
   const { authState } = useAuth()
   const { profile } = useProfile()
   const lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'
-  const { isProgramEvolutionOpen } = useProgramEvolutionSheet()
+  const { hasBlockingOverlay } = useOverlayGate()
   const [lastPresentedAt, setLastPresentedAt] = useState<number | null>(() =>
     readUpdatePromptLastPresentedAt(),
   )
@@ -81,7 +81,7 @@ export function UpdatePrompt() {
   })
 
   const eligible = shouldShowUpdatePrompt(needRefresh, authState.status, {
-    suppressForProgramSheet: isProgramEvolutionOpen,
+    suppressForProgramSheet: hasBlockingOverlay,
     lastPresentedAt: presentedThisCycle ? null : lastPresentedAt,
   })
 
@@ -91,7 +91,7 @@ export function UpdatePrompt() {
       (presentedThisCycle &&
         needRefresh &&
         authState.status === 'authenticated' &&
-        !isProgramEvolutionOpen))
+        !hasBlockingOverlay))
 
   useEffect(() => {
     if (!eligible || presentedThisCycle) return

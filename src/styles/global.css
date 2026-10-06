@@ -1,4 +1,5 @@
 @import './theme-tokens.css';
+@import './landing-marketing.css';
 @import 'tailwindcss';
 
 /* Variants plateforme — activés par `initPlatformClass` sur <html>.

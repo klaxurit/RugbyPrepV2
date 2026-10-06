@@ -1,0 +1,106 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 390px;
+  height: 844px;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #110D0C;
+  color: #F2E8D8;
+  -webkit-font-smoothing: antialiased;
+}
+.screen {
+  width: 390px;
+  height: 844px;
+  padding: 54px 18px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background:
+    radial-gradient(ellipse 80% 40% at 80% 0%, rgba(123,13,30,0.28), transparent 60%),
+    #110D0C;
+}
+.mono {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: #9C8F80;
+  font-weight: 600;
+}
+.card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(242,232,216,0.1);
+  border-radius: 20px;
+  padding: 14px 16px;
+}
+.brand { color: #C8303F; }
+.btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: #7B0D1E;
+  color: #F2E8D8;
+  font-weight: 800;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 16px;
+  border-radius: 16px;
+  border: none;
+  font-size: 13px;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #E9B8BF;
+}
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #7B0D1E;
+  display: grid;
+  place-items: center;
+  font-size: 8px;
+}
+.choice {
+  width: 100%;
+  text-align: left;
+  border-radius: 16px;
+  border: 1px solid rgba(242,232,216,0.12);
+  background: rgba(255,255,255,0.03);
+  padding: 12px 14px;
+  color: inherit;
+  margin-bottom: 8px;
+}
+.choice.selected {
+  border-color: #7B0D1E;
+  background: rgba(123,13,30,0.18);
+}
+.choice strong { display: block; font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+.choice span { font-size: 11px; color: #B5A898; font-weight: 600; line-height: 1.35; }
+.badge {
+  float: right;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(123,13,30,0.25);
+  color: #E9B8BF;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.muted { color: #B5A898; }
+.serif {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+}

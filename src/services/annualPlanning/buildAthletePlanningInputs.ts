@@ -33,6 +33,11 @@ export interface BuildAthletePlanningInputsParams {
   athleteIdentity?: AthleteIdentityContext
   readinessScore?: number
   jumpTrend?: 'up' | 'flat' | 'down'
+  /**
+   * Choix joueur ACWR pour la semaine (persisté hors profil).
+   * Absent = pas encore décidé.
+   */
+  fatigueLoadChoice?: 'self_manage' | 'lighten_volume' | 'drop_session' | null
 }
 
 export interface BuildAthletePlanningInputsResult {
@@ -56,7 +61,7 @@ function normalizePositionToken(raw: string | undefined): string | undefined {
   return raw.trim().toUpperCase().replace(/\s+/g, '_')
 }
 
-function resolvePositionGroup(
+export function resolvePositionGroup(
   profile: UserProfile,
   warnings: string[]
 ): 'front_row' | 'back_three' {
@@ -267,7 +272,7 @@ export function buildAthletePlanningInputs(
   params: BuildAthletePlanningInputsParams
 ): BuildAthletePlanningInputsResult {
   const warnings: string[] = []
-  const { profile, events, logs, today, fatigue, acwrZone, athleteIdentity, readinessScore, jumpTrend } = params
+  const { profile, events, logs, today, fatigue, acwrZone, athleteIdentity, readinessScore, jumpTrend, fatigueLoadChoice } = params
   const visibleEvents = events.filter((event) => event.user_hidden !== true)
 
   const resolvedPositionGroup = resolvePositionGroup(profile, warnings)
@@ -344,6 +349,7 @@ export function buildAthletePlanningInputs(
     trainingLevel: profile.trainingLevel,
     equipment: profile.equipment,
     fatigueLevel,
+    ...(fatigueLoadChoice ? { fatigueLoadChoice } : {}),
     trainingBaseline: profile.trainingBaseline,
     identity,
     monitoringSnapshot,
