@@ -125,11 +125,164 @@ const FAQS = [
     open: false,
   },
   {
+    q: 'Combien ça coûte ?',
+    a: 'Le Free est gratuit pour toujours. Pro est à 5,99€/mois ou 64,99€/an. L’offre Founding (49€/an à vie) est réservée aux 100 premiers utilisateurs après leur première séance.',
+    open: false,
+  },
+  {
     q: 'Par où commencer ?',
     a: 'Crée ton compte gratuitement, renseigne ton profil, et ta première semaine est prête. Pour aller plus loin, commence par le guide préparation physique rugby.',
     open: false,
   },
 ] as const
+
+const PREMIUM_MONTHLY_PRICE = '5,99€'
+const PREMIUM_YEARLY_PRICE = '64,99€'
+const FOUNDING_PRICE = '49€'
+
+const FREE_PLAN_FEATURES = [
+  'Programme complet adapté à ta saison',
+  'Séances consultables (exercices + démos)',
+  'Calendrier club',
+  'Prévention et mobilité intégrées',
+  'Chat IA (3 messages/jour)',
+]
+
+const PREMIUM_FEATURES = [
+  'Tout le plan Free',
+  'Suivi des charges et séries',
+  'Historique complet des séances',
+  'Score de forme et bilan de semaine',
+  'Suggestions de charge calibrées sur tes derniers logs',
+  'Records personnels et courbes de progrès',
+  'Chat IA illimité',
+]
+
+const FOUNDING_FEATURES = [
+  'Tout le plan Pro, à vie',
+  'Tarif Founding bloqué : 49€/an même quand on monte les prix',
+  'Réservé aux 100 premiers utilisateurs',
+  'Badge Founding dans ton profil',
+  'Accès prioritaire aux nouvelles fonctionnalités',
+]
+
+interface PricingPlan {
+  title: string
+  price: string
+  period: string
+  features: string[]
+  cta: string
+  ctaLink: string
+  highlighted?: boolean
+  badge?: string
+}
+
+const PRICING_PLANS: PricingPlan[] = [
+  {
+    title: 'Free',
+    price: '0€',
+    period: 'pour toujours',
+    features: FREE_PLAN_FEATURES,
+    cta: 'Créer mon compte Free',
+    ctaLink: '/auth/signup',
+  },
+  {
+    title: 'Pro Mensuel',
+    price: PREMIUM_MONTHLY_PRICE,
+    period: '/mois',
+    features: PREMIUM_FEATURES,
+    cta: 'Activer Pro',
+    ctaLink: '/auth/signup?plan=premium&billing=monthly',
+  },
+  {
+    title: 'Pro Annuel',
+    price: PREMIUM_YEARLY_PRICE,
+    period: '/an',
+    features: [...PREMIUM_FEATURES, 'Économise ~10% par rapport au mensuel'],
+    cta: 'Activer Pro',
+    ctaLink: '/auth/signup?plan=premium&billing=annual',
+  },
+  {
+    title: 'Founding',
+    price: FOUNDING_PRICE,
+    period: '/an à vie',
+    features: FOUNDING_FEATURES,
+    highlighted: true,
+    badge: 'Recommandé',
+    cta: 'Devenir Founding',
+    ctaLink: '/auth/signup?plan=founding',
+  },
+]
+
+function PricingCard({
+  title,
+  price,
+  period,
+  features,
+  cta,
+  ctaLink,
+  highlighted,
+  badge,
+}: PricingPlan) {
+  return (
+    <div
+      className={
+        highlighted
+          ? 'relative flex h-full flex-col gap-5 rounded-[20px] border border-[#7B0D1E] bg-[#7B0D1E] p-7 text-[#F2E8D8] shadow-[0_24px_48px_-28px_rgba(123,13,30,0.9)]'
+          : 'relative flex h-full flex-col gap-5 rounded-[20px] border border-[rgba(242,232,216,0.14)] bg-[#1D1714] p-7 text-[#F2E8D8]'
+      }
+    >
+      {badge && (
+        <span className="lm-mono absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#F2E8D8] px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#7B0D1E]">
+          {badge}
+        </span>
+      )}
+      <div className="flex flex-col gap-1">
+        <span
+          className={`lm-mono text-[11px] uppercase tracking-[0.12em] ${highlighted ? 'text-[#F2D9DC]' : 'text-[#8A7E71]'}`}
+        >
+          {title}
+        </span>
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-[clamp(36px,4vw,48px)] font-black leading-none tracking-[-0.04em] [font-stretch:118%]">
+            {price}
+          </span>
+          <span
+            className={`text-sm ${highlighted ? 'text-[#F2D9DC]' : 'text-[#A89A8A]'}`}
+          >
+            {period}
+          </span>
+        </div>
+      </div>
+      <ul className="flex flex-1 flex-col gap-3">
+        {features.map((f) => (
+          <li
+            key={f}
+            className={`flex items-start gap-2.5 text-[14.5px] leading-snug ${highlighted ? 'text-[#F2D9DC]' : 'text-[#C9BDAD]'}`}
+          >
+            <span
+              className={`mt-0.5 shrink-0 ${highlighted ? 'text-[#F2E8D8]' : 'text-[#C8303F]'}`}
+              aria-hidden
+            >
+              ✓
+            </span>
+            {f}
+          </li>
+        ))}
+      </ul>
+      <Link
+        to={ctaLink}
+        className={
+          highlighted
+            ? 'mt-auto block rounded-[14px] bg-[#F2E8D8] px-5 py-3.5 text-center text-[15px] font-extrabold text-[#7B0D1E] transition-transform hover:translate-y-[-1px] hover:text-[#7B0D1E]'
+            : 'mt-auto block rounded-[14px] border border-[rgba(242,232,216,0.22)] bg-transparent px-5 py-3.5 text-center text-[15px] font-bold text-[#F2E8D8] transition-colors hover:border-[#F2E8D8] hover:text-[#F2E8D8]'
+        }
+      >
+        {cta}
+      </Link>
+    </div>
+  )
+}
 
 function LandingHeader() {
   return (
@@ -412,8 +565,38 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 06 Guides */}
-      <section id="guides" className="border-t border-[rgba(242,232,216,0.08)] bg-[#1A1412]">
+      {/* 06 Tarifs */}
+      <section
+        id="pricing"
+        className="border-t border-[rgba(242,232,216,0.08)] bg-[#1A1412]"
+      >
+        <div className="mx-auto max-w-[1320px] px-[clamp(20px,4vw,56px)] py-[clamp(64px,9vw,120px)]">
+          <div className="mb-[clamp(36px,5vw,64px)] flex flex-wrap items-end justify-between gap-6">
+            <h2 className="m-0 max-w-[14ch] text-balance text-[clamp(32px,4.6vw,60px)] font-extrabold leading-[0.95] tracking-[-0.04em] [font-stretch:118%]">
+              Des tarifs <span className="text-[#C8303F]">simples</span>
+            </h2>
+            <p className="m-0 max-w-[40ch] text-base leading-normal text-[#B5A898]">
+              Commence gratuitement. Passe en Pro pour les charges, le coach IA enrichi et les
+              lectures intelligentes de ta semaine.
+            </p>
+          </div>
+
+          <div className="grid items-stretch gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))]">
+            {PRICING_PLANS.map((plan) => (
+              <PricingCard key={plan.title} {...plan} />
+            ))}
+          </div>
+
+          <p className="m-0 mt-8 max-w-[72ch] text-[13px] leading-[1.55] text-[#8A7E71]">
+            Le tarif Founding est réservé aux 100 premiers utilisateurs ayant complété leur
+            première séance. L’offre apparaît automatiquement dans ton tableau de bord après ton
+            signup.
+          </p>
+        </div>
+      </section>
+
+      {/* 07 Guides */}
+      <section id="guides" className="border-t border-[rgba(242,232,216,0.08)] bg-[#14100E]">
         <div className="mx-auto grid max-w-[1320px] items-start gap-[clamp(32px,5vw,80px)] px-[clamp(20px,4vw,56px)] py-[clamp(64px,9vw,112px)] [grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))]">
           <div className="flex flex-col gap-5">
             <h2 className="m-0 text-balance text-[clamp(32px,4.6vw,60px)] font-extrabold leading-[0.95] tracking-[-0.04em] [font-stretch:118%]">
@@ -453,8 +636,8 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 07 FAQ */}
-      <section id="faq" className="border-t border-[rgba(242,232,216,0.08)] bg-[#14100E]">
+      {/* 08 FAQ */}
+      <section id="faq" className="border-t border-[rgba(242,232,216,0.08)] bg-[#1A1412]">
         <div className="mx-auto flex max-w-[900px] flex-col gap-[clamp(28px,4vw,48px)] px-[clamp(20px,4vw,56px)] py-[clamp(64px,9vw,112px)]">
           <h2 className="m-0 text-[clamp(32px,4.6vw,60px)] font-extrabold leading-[0.95] tracking-[-0.04em] [font-stretch:118%]">
             Questions fréquentes
@@ -479,7 +662,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 08 CTA */}
+      {/* 09 CTA */}
       <section className="relative overflow-hidden bg-[#7B0D1E]">
         <div className="relative mx-auto flex max-w-[1320px] flex-col items-start gap-7 px-[clamp(20px,4vw,56px)] py-[clamp(72px,10vw,128px)]">
           <img
@@ -539,6 +722,9 @@ export function LandingPage() {
                 <Link to="/auth/signup" className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]">
                   Commencer gratuitement
                 </Link>
+                <a href="#pricing" className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]">
+                  Tarifs
+                </a>
                 <a href="/about/" className="text-[15px] text-[#C9BDAD] hover:text-[#F2E8D8]">
                   À propos
                 </a>
