@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   ChevronLeft, ChevronRight, CheckCircle2, Check,
@@ -19,6 +19,7 @@ import { useProfile, markOnboardingComplete } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { userScopedKey } from '../services/storage/userScopedStorage'
 import { posthog } from '../services/analytics/posthog'
+import { trackOnboardingStep } from '../services/analytics/activationEvents'
 import { resolvePostOnboardingDestination } from '../services/navigation/resolveAppEntryDestination'
 import { NotificationOptInSheet } from '../components/notifications/NotificationOptInSheet'
 import { useNotifications } from '../hooks/useNotifications'
@@ -279,6 +280,11 @@ export function OnboardingPage() {
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
 
   const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    trackOnboardingStep(step)
+  }, [step])
+
   const [position, setPosition] = useState<PositionValue | null>(null)
   const [equipmentPreset, setEquipmentPreset] = useState<EquipmentPreset | null>(null)
   const [trainingLevel, setTrainingLevel] = useState<TrainingLevel | null>(null)

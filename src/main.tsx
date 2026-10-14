@@ -25,6 +25,11 @@ initPlatformClass()
 initAnalyticsIfConsented()
 void initStatusBar()
 
+// C1 — first open once per install (no-op if PostHog not consented / no key).
+void import('./services/analytics/activationEvents').then(({ trackAppFirstOpen }) => {
+  trackAppFirstOpen()
+})
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

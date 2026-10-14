@@ -13,6 +13,7 @@ import {
 } from '../services/auth/authService'
 import { AuthContext } from './authContextValue'
 import { posthog } from '../services/analytics/posthog'
+import { trackSignupCompletedWithAttribution } from '../services/analytics/activationEvents'
 import { clearLegacyUserStorage, clearUserStorage, clearUserStorageForUser } from '../services/storage/clearUserStorage'
 import { shouldClearUserStorageOnAuthChange } from '../services/storage/syncUserStoragePolicy'
 
@@ -109,7 +110,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     writeLastUserId(result.value.id)
     setAuthState({ status: 'authenticated', user: result.value })
     posthog.identify(result.value.id)
-    posthog.capture('signup_completed')
+    trackSignupCompletedWithAttribution()
     return result
   }, [])
 

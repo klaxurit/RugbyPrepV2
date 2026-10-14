@@ -14,6 +14,10 @@ import { supabase } from '../services/supabase/client'
 import { IosInstallSheet } from './landing/IosInstallSheet'
 import { PLAY_STORE_URL } from './landing/playStoreUrl'
 import { useEscapeAndScrollLock } from '../hooks/useEscapeAndScrollLock'
+import {
+  trackLandingCtaClicked,
+  type LandingCtaLocation,
+} from '../services/analytics/activationEvents'
 
 type Platform = 'desktop' | 'ios' | 'android'
 
@@ -23,6 +27,8 @@ interface Props {
   desktopLabel?: string
   withArrow?: boolean
   onSignupClick?: () => void
+  /** PostHog funnel location for landing_cta_clicked. */
+  location?: LandingCtaLocation
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -57,6 +63,7 @@ export function SignupOrInstallCTA({
   desktopLabel = 'Commencer gratuitement',
   withArrow = false,
   onSignupClick,
+  location,
 }: Props) {
   const [platform] = useState<Platform>(() => detectPlatform(forcePlatform))
   const [, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
@@ -73,6 +80,7 @@ export function SignupOrInstallCTA({
   }, [])
 
   const handleClick = () => {
+    if (location) trackLandingCtaClicked(location)
     onSignupClick?.()
     if (platform === 'ios') {
       setIosSheetOpen(true)

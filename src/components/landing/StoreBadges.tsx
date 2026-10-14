@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { PLAY_STORE_URL } from './playStoreUrl'
 import { IosInstallSheet } from './IosInstallSheet'
+import { trackStoreBadgeClicked } from '../../services/analytics/activationEvents'
 
 interface StoreBadgesProps {
   className?: string
@@ -17,7 +18,10 @@ export function StoreBadges({ className = '', variant = 'default' }: StoreBadges
   const iosButton = (
     <button
       type="button"
-      onClick={() => setIosSheetOpen(true)}
+      onClick={() => {
+        trackStoreBadgeClicked('ios')
+        setIosSheetOpen(true)
+      }}
       className={
         variant === 'segmented'
           ? 'lm-store-cell group flex min-w-[210px] flex-1 items-center gap-3 bg-[#1D1714] px-[9px] py-[9px] pl-[9px] pr-[14px] text-left text-[#F2E8D8] transition-colors hover:bg-[#2A221F]'
@@ -61,6 +65,7 @@ export function StoreBadges({ className = '', variant = 'default' }: StoreBadges
       href={PLAY_STORE_URL}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => trackStoreBadgeClicked('play')}
       className={
         variant === 'segmented'
           ? 'lm-store-cell group flex min-w-[210px] flex-1 items-center gap-3 bg-[#1D1714] px-[9px] py-[9px] pl-[9px] pr-[14px] text-left text-[#F2E8D8] transition-colors hover:bg-[#2A221F]'

@@ -1,9 +1,15 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { SignupOrInstallCTA } from '../components/SignupOrInstallCTA'
 import { StoreBadges } from '../components/landing/StoreBadges'
 import { LandingPhoneFrame } from '../components/landing/LandingPhoneFrame'
 import { LANDING_DESIGN } from '../landing/designAssets'
+import { captureLandingAttributionOnce } from '../services/analytics/attribution'
+import {
+  trackLandingCtaClicked,
+  trackPricingViewed,
+  type LandingCtaLocation,
+} from '../services/analytics/activationEvents'
 
 const LANDING_FONTS =
   'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;600&display=swap'
@@ -173,6 +179,7 @@ interface PricingPlan {
   features: string[]
   cta: string
   ctaLink: string
+  ctaLocation: LandingCtaLocation
   highlighted?: boolean
   badge?: string
 }
@@ -185,6 +192,7 @@ const PRICING_PLANS: PricingPlan[] = [
     features: FREE_PLAN_FEATURES,
     cta: 'Créer mon compte Free',
     ctaLink: '/auth/signup',
+    ctaLocation: 'pricing_free',
   },
   {
     title: 'Pro Mensuel',
@@ -193,6 +201,7 @@ const PRICING_PLANS: PricingPlan[] = [
     features: PREMIUM_FEATURES,
     cta: 'Activer Pro',
     ctaLink: '/auth/signup?plan=premium&billing=monthly',
+    ctaLocation: 'pricing_pro_monthly',
   },
   {
     title: 'Pro Annuel',
@@ -201,6 +210,7 @@ const PRICING_PLANS: PricingPlan[] = [
     features: [...PREMIUM_FEATURES, 'Économise ~10% par rapport au mensuel'],
     cta: 'Activer Pro',
     ctaLink: '/auth/signup?plan=premium&billing=annual',
+    ctaLocation: 'pricing_pro_yearly',
   },
   {
     title: 'Founding',
@@ -211,6 +221,7 @@ const PRICING_PLANS: PricingPlan[] = [
     badge: 'Recommandé',
     cta: 'Devenir Founding',
     ctaLink: '/auth/signup?plan=founding',
+    ctaLocation: 'pricing_founding',
   },
 ]
 
@@ -221,6 +232,7 @@ function PricingCard({
   features,
   cta,
   ctaLink,
+  ctaLocation,
   highlighted,
   badge,
 }: PricingPlan) {
@@ -272,6 +284,7 @@ function PricingCard({
       </ul>
       <Link
         to={ctaLink}
+        onClick={() => trackLandingCtaClicked(ctaLocation)}
         className={
           highlighted
             ? 'mt-auto block rounded-[14px] bg-[#F2E8D8] px-5 py-3.5 text-center text-[15px] font-extrabold text-[#7B0D1E] transition-transform hover:translate-y-[-1px] hover:text-[#7B0D1E]'
@@ -314,6 +327,8 @@ function LandingHeader() {
 }
 
 export function LandingPage() {
+  const pricingRef = useRef<HTMLElement | null>(null)
+
   useEffect(() => {
     const id = 'landing-design-fonts'
     if (document.getElementById(id)) return
@@ -322,6 +337,26 @@ export function LandingPage() {
     link.rel = 'stylesheet'
     link.href = LANDING_FONTS
     document.head.appendChild(link)
+  }, [])
+
+  useEffect(() => {
+    captureLandingAttributionOnce()
+  }, [])
+
+  useEffect(() => {
+    const el = pricingRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          trackPricingViewed()
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.25 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -357,6 +392,7 @@ export function LandingPage() {
 
             <div className="flex flex-col items-start gap-[22px]">
               <SignupOrInstallCTA
+                location="hero"
                 withArrow
                 className="inline-flex items-center gap-3 rounded-[14px] bg-[#7B0D1E] px-[26px] py-[18px] text-[17px] font-bold tracking-[-0.005em] text-[#F2E8D8] shadow-[inset_0_0_0_1px_rgba(242,232,216,0.08),0_10px_30px_-12px_rgba(123,13,30,0.9)] transition-[transform,filter] hover:translate-y-[-1px] hover:brightness-110"
               />
@@ -568,6 +604,7 @@ export function LandingPage() {
       {/* 06 Tarifs */}
       <section
         id="pricing"
+        ref={pricingRef}
         className="border-t border-[rgba(242,232,216,0.08)] bg-[#1A1412]"
       >
         <div className="mx-auto max-w-[1320px] px-[clamp(20px,4vw,56px)] py-[clamp(64px,9vw,120px)]">
@@ -678,6 +715,7 @@ export function LandingPage() {
             Crée ton compte, renseigne ton poste et ton calendrier : ta première semaine est prête.
           </p>
           <SignupOrInstallCTA
+            location="final_cta"
             withArrow
             desktopLabel="Commencer gratuitement"
             className="relative inline-flex items-center gap-3 rounded-[14px] bg-[#F2E8D8] px-[26px] py-[18px] text-[17px] font-extrabold text-[#7B0D1E] transition-transform hover:translate-y-[-2px]"

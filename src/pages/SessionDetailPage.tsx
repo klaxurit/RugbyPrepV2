@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
+import { trackFirstSessionCompleted } from '../services/analytics/activationEvents'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, X } from 'lucide-react'
 import { useSessionRun, buildExerciseTourKey } from '../contexts/SessionRunContext'
 import { findCurrentPending } from '../services/motherSession/findCurrentPending'
@@ -1231,6 +1232,7 @@ export function SessionDetailPage() {
         slotSignature: slotSignature ?? undefined,
       })
 
+      const wasFirstSession = logs.length === 0
       const savedLog = await addLog(log)
       if (savedLog?.id && slotSignature) {
         await linkToSessionLog(slotSignature, savedLog.id)
@@ -1348,6 +1350,7 @@ export function SessionDetailPage() {
         hasTonnage: celebrationStats.tonnageKg != null,
         isPremium,
       })
+      trackFirstSessionCompleted(wasFirstSession)
     } catch (error) {
       console.error('session_detail_complete_failed', error)
       setMsSaveError("La séance n'a pas pu être enregistrée. Réessaie dans quelques instants.")
