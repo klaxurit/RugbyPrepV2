@@ -5,8 +5,10 @@ import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
 import { CaptchaGate } from '../../components/auth/CaptchaGate'
 import { PasswordField } from '../../components/auth/PasswordField'
+import { GoogleAuthButton, AuthOrDivider } from '../../components/auth/GoogleAuthButton'
 import { captchaIsRequired } from '../../components/auth/captchaConfig'
 import { MIN_PASSWORD_LENGTH, passwordTooWeakMessage } from '../../services/auth/passwordPolicy'
+import { clearPendingOauthConsent, notePendingOauthConsent } from '../../services/auth/oauthLegalConsent'
 import { tr } from '../../i18n/appLabels'
 
 const authErrorLabel: Record<AuthError, string> = {
@@ -22,7 +24,7 @@ const authErrorLabel: Record<AuthError, string> = {
 }
 
 export function SignupPage() {
-  const { authState, signUp } = useAuth()
+  const { authState, signUp, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
 
   const [displayName, setDisplayName] = useState('')
@@ -34,6 +36,7 @@ export function SignupPage() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [googleSubmitting, setGoogleSubmitting] = useState(false)
 
   if (authState.status === 'authenticated' && authState.user) {
     return <Navigate to="/program" replace />
@@ -84,6 +87,25 @@ export function SignupPage() {
     setIsSubmitting(false)
   }
 
+  const handleGoogle = async () => {
+    setError(null)
+    // Google is its own path: no captcha, no pre-tick. If the email-form
+    // boxes happen to be ticked already, skip the post-OAuth sheet.
+    if (ageConfirmed && medicalConsent) {
+      notePendingOauthConsent({
+        medicalConsentAcceptedAt: new Date().toISOString(),
+        newsletterOptIn,
+      })
+    }
+    setGoogleSubmitting(true)
+    const result = await signInWithGoogle()
+    if (!result.ok) {
+      clearPendingOauthConsent()
+      setError(result.error === 'RATE_LIMIT' ? authErrorLabel.RATE_LIMIT : tr('google_error', 'fr'))
+      setGoogleSubmitting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-app flex flex-col px-6 py-12">
       {/* Decorative dot grid */}
@@ -101,6 +123,25 @@ export function SignupPage() {
 
         {/* Form */}
         <div className="space-y-4">
+
+          <div className="space-y-2">
+            <GoogleAuthButton
+              onClick={() => void handleGoogle()}
+              disabled={isSubmitting}
+              isLoading={googleSubmitting}
+            />
+            <p className="text-center text-[11px] leading-relaxed text-fg-faint">
+              {tr('google_consent_hint', 'fr')}
+            </p>
+          </div>
+
+          {error && (
+            <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">
+              <p className="text-xs text-danger font-medium">{error}</p>
+            </div>
+          )}
+
+          <AuthOrDivider />
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="space-y-1.5">
@@ -195,15 +236,9 @@ export function SignupPage() {
               onExpire={() => setCaptchaToken(null)}
             />
 
-            {error && (
-              <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">
-                <p className="text-xs text-danger font-medium">{error}</p>
-              </div>
-            )}
-
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || googleSubmitting}
               className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-brand-float disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {isSubmitting ? 'Création…' : 'Créer mon compte'}

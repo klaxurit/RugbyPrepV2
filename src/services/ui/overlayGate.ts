@@ -6,6 +6,7 @@
  */
 
 export type OverlayKind =
+  | 'legal_consent'
   | 'password_upgrade'
   | 'cookie_consent'
   | 'program_evolution'
@@ -17,6 +18,7 @@ export type OverlayKind =
 
 /** Plus haut = plus prioritaire. */
 export const OVERLAY_PRIORITY: Record<OverlayKind, number> = {
+  legal_consent: 110,
   password_upgrade: 100,
   cookie_consent: 95,
   program_evolution: 90,

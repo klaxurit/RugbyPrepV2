@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { useOnboardingStatus } from '../../hooks/useProfile'
 
 /**
- * Page de callback après confirmation d'email Supabase.
+ * Page de callback après confirmation d'email ou OAuth Google.
  * Le client Supabase échange automatiquement le ?code= contre une session.
  * On attend que l'AuthContext soit prêt puis on route vers la bonne page.
  */
@@ -33,7 +33,7 @@ export function CallbackPage() {
   return (
     <div className="min-h-screen bg-app font-sans flex flex-col items-center justify-center gap-4">
       <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
-      <p className="text-sm font-bold text-fg-muted">Confirmation en cours…</p>
+      <p className="text-sm font-bold text-fg-muted">Connexion en cours…</p>
     </div>
   )
 }

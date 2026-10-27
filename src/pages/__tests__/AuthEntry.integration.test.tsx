@@ -54,6 +54,7 @@ describe('Auth entry flow', () => {
       authState: { status: 'anonymous' },
       isInitializing: false,
       signIn: vi.fn(),
+      signInWithGoogle: vi.fn(),
     })
     useOnboardingStatusMock.mockReturnValue('loading')
 
@@ -61,6 +62,7 @@ describe('Auth entry flow', () => {
 
     // Should be on login page
     expect(screen.getByText('Se connecter')).toBeInTheDocument()
+    expect(screen.getByTestId('google-auth-button')).toBeInTheDocument()
   })
 
   it('login réussi + onboarding complet + pas d\'intention → /program', () => {

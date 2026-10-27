@@ -7,10 +7,12 @@ import { SignupPage } from '../auth/SignupPage'
 
 // useAuth().signUp must receive medicalConsentAcceptedAt — that's the WS9 contract.
 const signUpMock = vi.fn()
+const signInWithGoogleMock = vi.fn()
 const useAuthMock = vi.fn(() => ({
   authState: { status: 'anonymous' as const, user: null },
   isInitializing: false,
   signUp: signUpMock,
+  signInWithGoogle: signInWithGoogleMock,
 }))
 
 vi.mock('../../hooks/useAuth', () => ({
@@ -153,5 +155,39 @@ describe('SignupPage — WS9 medical consent hard gate', () => {
 
     await screen.findByTestId('login-page')
     expect(screen.getByTestId('login-page')).toBeInTheDocument()
+  })
+
+  it('Google part sans cases ni captcha — le consentement vient après OAuth', async () => {
+    signInWithGoogleMock.mockResolvedValue({ ok: true, value: undefined })
+
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route path="/" element={<SignupPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByTestId('google-auth-button'))
+    await Promise.resolve()
+    expect(signInWithGoogleMock).toHaveBeenCalledTimes(1)
+    expect(screen.queryByText(/Merci d'accepter les deux engagements/i)).toBeNull()
+  })
+
+  it('Google part aussi quand les deux engagements du formulaire email sont déjà cochés', async () => {
+    signInWithGoogleMock.mockResolvedValue({ ok: true, value: undefined })
+
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route path="/" element={<SignupPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fillForm({ age: true, medical: true })
+    fireEvent.click(screen.getByTestId('google-auth-button'))
+    await Promise.resolve()
+    expect(signInWithGoogleMock).toHaveBeenCalledTimes(1)
   })
 })

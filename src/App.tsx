@@ -25,6 +25,7 @@ import { CookieConsentBanner } from './components/CookieConsentBanner'
 import { FoundingOffer } from './components/FoundingOffer'
 import { ReturnToClubPromptMount } from './components/ReturnToClubPromptMount'
 import { AccountUpgradeMount } from './components/auth/AccountUpgradeMount'
+import { OauthLegalConsentMount } from './components/auth/OauthLegalConsentMount'
 
 // Eager : seulement HomePage (default after login, évite un flash sur l'écran principal)
 import { HomePage } from './pages/HomePage'
@@ -239,6 +240,7 @@ function App() {
         <CookieConsentBanner />
         <FoundingOffer />
         <ReturnToClubPromptMount />
+        <OauthLegalConsentMount />
         <AccountUpgradeMount />
         </CoachProvider>
       </BrowserRouter>

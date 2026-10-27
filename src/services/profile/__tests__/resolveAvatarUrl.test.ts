@@ -43,4 +43,11 @@ describe('resolveAvatarUrlFromAuthMetadata', () => {
     expect(r.avatarPath).toBe('u1/p.png')
     expect(r.avatarUrl).toContain('u1/p.png')
   })
+
+  it('accepte picture (Google OAuth) si avatar_url est absent', () => {
+    const r = resolveAvatarUrlFromAuthMetadata({
+      picture: 'https://lh3.googleusercontent.com/a/photo',
+    })
+    expect(r.avatarUrl).toBe('https://lh3.googleusercontent.com/a/photo')
+  })
 })

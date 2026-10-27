@@ -8,6 +8,7 @@ import {
 
 describe('overlayGate', () => {
   it('priorités : password > cookie > program > founding > gamification', () => {
+    expect(overlayPriority('legal_consent')).toBeGreaterThan(overlayPriority('password_upgrade'))
     expect(overlayPriority('password_upgrade')).toBeGreaterThan(overlayPriority('cookie_consent'))
     expect(overlayPriority('cookie_consent')).toBeGreaterThan(overlayPriority('program_evolution'))
     expect(overlayPriority('program_evolution')).toBeGreaterThan(overlayPriority('return_to_club'))

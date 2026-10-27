@@ -40,12 +40,19 @@ const resolveAvatarUrl = (user: User): string | undefined => {
   return fromMeta.avatarUrl
 }
 
+function resolveDisplayName(user: User): string {
+  const meta = user.user_metadata ?? {}
+  for (const key of ['display_name', 'full_name', 'name'] as const) {
+    const value = meta[key]
+    if (typeof value === 'string' && value.trim()) return value.trim()
+  }
+  return user.email ? user.email.split('@')[0] : 'Joueur'
+}
+
 export const mapSupabaseUserToAuthUser = (user: User): AuthUser => ({
   id: user.id,
   email: user.email ?? '',
-  displayName:
-    (typeof user.user_metadata.display_name === 'string' && user.user_metadata.display_name.trim()) ||
-    (user.email ? user.email.split('@')[0] : 'Joueur'),
+  displayName: resolveDisplayName(user),
   createdAt: new Date(user.created_at).getTime(),
   avatarUrl: resolveAvatarUrl(user),
 })
@@ -204,6 +211,25 @@ export const signIn = async ({ email, password, captchaToken }: SignInInput): Pr
   }
 
   return { ok: true, value: mapSupabaseUserToAuthUser(data.user) }
+}
+
+export const signInWithGoogle = async (): Promise<Result<void, AuthError>> => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+      queryParams: {
+        prompt: 'select_account',
+      },
+    },
+  })
+
+  if (error) {
+    if (error.status === 429) return { ok: false, error: 'RATE_LIMIT' }
+    return { ok: false, error: 'INVALID_CREDENTIALS' }
+  }
+
+  return { ok: true, value: undefined }
 }
 
 export const signOut = async (): Promise<void> => {

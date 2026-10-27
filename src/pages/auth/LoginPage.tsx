@@ -6,8 +6,10 @@ import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
 import { CaptchaGate } from '../../components/auth/CaptchaGate'
 import { PasswordField } from '../../components/auth/PasswordField'
+import { GoogleAuthButton, AuthOrDivider } from '../../components/auth/GoogleAuthButton'
 import { captchaIsRequired } from '../../components/auth/captchaConfig'
 import { passwordTooWeakMessage } from '../../services/auth/passwordPolicy'
+import { tr } from '../../i18n/appLabels'
 
 interface RedirectState {
   from?: {
@@ -31,7 +33,7 @@ const authErrorLabel: Record<AuthError, string> = {
 }
 
 export function LoginPage() {
-  const { authState, signIn } = useAuth()
+  const { authState, signIn, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const state = location.state as RedirectState | null
@@ -41,6 +43,7 @@ export function LoginPage() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [googleSubmitting, setGoogleSubmitting] = useState(false)
   const justSignedUp = Boolean(state?.justSignedUp)
 
   const redirectPath = useMemo(() => {
@@ -76,6 +79,16 @@ export function LoginPage() {
     setIsSubmitting(false)
   }
 
+  const handleGoogle = async () => {
+    setError(null)
+    setGoogleSubmitting(true)
+    const result = await signInWithGoogle()
+    if (!result.ok) {
+      setError(result.error === 'RATE_LIMIT' ? authErrorLabel.RATE_LIMIT : tr('google_error', 'fr'))
+      setGoogleSubmitting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-app flex flex-col px-6 py-12">
       {/* Decorative dot grid */}
@@ -93,6 +106,13 @@ export function LoginPage() {
 
         {/* Form card */}
         <div className="space-y-4">
+
+          <GoogleAuthButton
+            onClick={() => void handleGoogle()}
+            disabled={isSubmitting}
+            isLoading={googleSubmitting}
+          />
+          <AuthOrDivider />
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="space-y-1.5">
@@ -146,7 +166,7 @@ export function LoginPage() {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || googleSubmitting}
               className="w-full h-14 rounded-full bg-brand hover:bg-brand-hover text-on-brand font-bold text-sm tracking-wide transition-all active:scale-[0.98] shadow-lg shadow-brand-float disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {isSubmitting ? 'Connexion…' : 'Se connecter'}

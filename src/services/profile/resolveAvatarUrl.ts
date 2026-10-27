@@ -34,7 +34,11 @@ export function resolveAvatarUrlFromAuthMetadata(
   const avatarPath =
     typeof metadata.avatar_path === 'string' ? metadata.avatar_path.trim() : undefined
   const rawUrl =
-    typeof metadata.avatar_url === 'string' ? metadata.avatar_url.trim() : undefined
+    typeof metadata.avatar_url === 'string'
+      ? metadata.avatar_url.trim()
+      : typeof metadata.picture === 'string'
+        ? metadata.picture.trim()
+        : undefined
   const avatarUrl = rawUrl ? normalizeStorageAvatarUrl(rawUrl) : undefined
   if (avatarUrl || avatarPath) {
     return {

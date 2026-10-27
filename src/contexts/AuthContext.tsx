@@ -7,6 +7,7 @@ import {
   mapSupabaseUserToAuthUser,
   onAuthStateChanged,
   signIn as signInService,
+  signInWithGoogle as signInWithGoogleService,
   signOut as signOutService,
   signUp as signUpService,
   updateAvatar as updateAvatarService,
@@ -14,6 +15,7 @@ import {
 import { AuthContext } from './authContextValue'
 import { posthog } from '../services/analytics/posthog'
 import { trackSignupCompletedWithAttribution } from '../services/analytics/activationEvents'
+import { maybeTrackGoogleSignup } from '../services/auth/maybeTrackGoogleSignup'
 import { clearLegacyUserStorage, clearUserStorage, clearUserStorageForUser } from '../services/storage/clearUserStorage'
 import { shouldClearUserStorageOnAuthChange } from '../services/storage/syncUserStoragePolicy'
 
@@ -79,7 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     void restoreSession()
 
-    const subscription = onAuthStateChanged((_event, session) => {
+    const subscription = onAuthStateChanged((event, session) => {
       const newUserId = session?.user?.id ?? null
       syncUserStorage(newUserId)
       if (!session?.user) {
@@ -89,6 +91,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           status: 'authenticated',
           user: mapSupabaseUserToAuthUser(session.user),
         })
+        if (event === 'SIGNED_IN') {
+          posthog.identify(session.user.id)
+          maybeTrackGoogleSignup(session.user)
+        }
       }
       setIsInitializing(false)
     })
@@ -125,6 +131,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return result
   }, [])
 
+  const signInWithGoogle = useCallback<AuthContextValue['signInWithGoogle']>(async () => {
+    return signInWithGoogleService()
+  }, [])
+
   const signOut = useCallback<AuthContextValue['signOut']>(async () => {
     const signingOutUserId =
       authState.status === 'authenticated' ? authState.user?.id ?? null : readLastUserId()
@@ -147,8 +157,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   const value = useMemo<AuthContextValue>(
-    () => ({ authState, isInitializing, signUp, signIn, signOut, updateAvatar }),
-    [authState, isInitializing, signIn, signOut, signUp, updateAvatar],
+    () => ({ authState, isInitializing, signUp, signIn, signInWithGoogle, signOut, updateAvatar }),
+    [authState, isInitializing, signIn, signInWithGoogle, signOut, signUp, updateAvatar],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

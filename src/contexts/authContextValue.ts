@@ -26,6 +26,7 @@ export interface AuthContextValue {
   isInitializing: boolean  // true tant que la session n'a pas encore été vérifiée
   signUp: (input: SignUpInput) => Promise<Result<AuthUser, AuthError>>
   signIn: (input: SignInInput) => Promise<Result<AuthUser, AuthError>>
+  signInWithGoogle: () => Promise<Result<void, AuthError>>
   signOut: () => Promise<void>
   updateAvatar: (file: File) => Promise<Result<AuthUser, AuthError>>
 }
