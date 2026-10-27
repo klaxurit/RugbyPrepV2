@@ -25,6 +25,7 @@ import { getGlobalProgramHardBlock } from '../services/program/hasGlobalProgramH
 import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
+import { CompleteProfileCards } from '../components/profile/CompleteProfileCards'
 import { useRegisterCoachContext, type CoachInfoMessage } from '../contexts/CoachContext'
 import { useProgramEvolutionSheet } from '../hooks/useProgramEvolutionSheet'
 import { useWeekSnapshotConfirmationSheet } from '../hooks/useWeekSnapshotConfirmationSheet'
@@ -547,6 +548,8 @@ export function WeekPage() {
       </div>
 
       <main className="px-6 pt-5 space-y-5 max-w-md mx-auto relative">
+
+        {!monthOpen && <CompleteProfileCards />}
 
         {isUnavailable && (
           <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-3">

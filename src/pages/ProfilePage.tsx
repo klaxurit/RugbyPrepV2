@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { useMemo, useRef, useState, useEffect } from 'react'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
@@ -232,7 +232,10 @@ function getAvatarErrorLabel(error: AuthError, lang: Lang): string {
 
 export function ProfilePage() {
   const [searchParams] = useSearchParams()
+  const location = useLocation()
   const checkoutCanceled = searchParams.get('checkout') === 'cancel'
+  const openClubFromHash = location.hash === '#club'
+  const openMorphoFromHash = location.hash === '#morpho'
   const { profile, updateProfile, resetProfile } = useProfile()
   const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   const POSITION_OPTIONS = getPositionOptions(lang)
@@ -276,18 +279,24 @@ export function ProfilePage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
   const [heightInput, setHeightInput] = useState(profile.heightCm?.toString() ?? '')
   const [weightInput, setWeightInput] = useState(profile.weightKg?.toString() ?? '')
-  // Scroll vers la zone Premium (#premium ou retour Stripe)
+  // Scroll vers la zone Premium (#premium ou retour Stripe) ou deep-link club/morpho.
   useEffect(() => {
     const q = new URLSearchParams(window.location.search)
-    const needsPremiumScroll =
-      window.location.hash === '#premium' ||
-      q.get('checkout') === 'success' ||
-      q.get('checkout') === 'cancel'
-    if (!needsPremiumScroll) return
-    setTimeout(() => {
-      document.getElementById('premium')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    const hash = location.hash
+    const targetId =
+      hash === '#premium' || q.get('checkout') === 'success' || q.get('checkout') === 'cancel'
+        ? 'premium'
+        : hash === '#club'
+          ? 'club'
+          : hash === '#morpho'
+            ? 'morpho'
+            : null
+    if (!targetId) return
+    const timer = window.setTimeout(() => {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 300)
-  }, [])
+    return () => window.clearTimeout(timer)
+  }, [location.hash])
 
   // Sync inputs quand le profil charge depuis Supabase
   useEffect(() => {
@@ -670,6 +679,7 @@ export function ProfilePage() {
           onHeightInputChange={setHeightInput}
           onWeightInputChange={setWeightInput}
           morphoBmi={morphoBmi}
+          defaultOpen={openMorphoFromHash}
         />
 
         <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-4">
@@ -700,6 +710,8 @@ export function ProfilePage() {
           icon={<Calendar className="w-4 h-4" />}
           iconClassName="bg-ok-bg-muted text-ok border border-ok-bd"
           testId="profile-section-club"
+          id="club"
+          defaultOpen={openClubFromHash}
         >
           <ClubSettingsSection
             profile={profile}

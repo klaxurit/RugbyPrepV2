@@ -259,7 +259,9 @@ export function OnboardingPage() {
       const derivedPopulationSegment: PopulationSegment =
         existingSegment === 'female_senior' || existingSegment === 'u18_female'
           ? existingSegment
-          : 'male_senior'
+          : existingSegment && existingSegment !== 'unknown'
+            ? existingSegment
+            : 'unknown'
 
       const seasonPhase = resolveOnboardingSeasonPhase()
       const derivedSeasonMode: SeasonMode = seasonPhase

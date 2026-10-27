@@ -14,6 +14,8 @@ interface CollapsibleSectionProps {
   defaultOpen?: boolean
   /** data-testid appliqué sur la section. */
   testId?: string
+  /** id HTML pour deep-link / hash. */
+  id?: string
   /** Classes supplémentaires de la section wrapper. */
   className?: string
   children: ReactNode
@@ -32,12 +34,13 @@ export function CollapsibleSection({
   trailing,
   defaultOpen = false,
   testId,
+  id,
   className = 'bg-layer-5 border border-border-app rounded-[24px] overflow-hidden',
   children,
 }: CollapsibleSectionProps) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <section className={className} data-testid={testId}>
+    <section className={className} data-testid={testId} id={id}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}

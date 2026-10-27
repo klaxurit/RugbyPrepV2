@@ -211,6 +211,9 @@ const BASE_PROFILE = {
   trainingLevel: 'builder',
   performanceFocus: 'balanced',
   populationSegment: 'male_senior',
+  clubCode: '5143R',
+  heightCm: 180,
+  weightKg: 90,
   parentalConsentHealthData: false,
   healthConsentStatus: 'not_required',
   healthDataRetentionState: 'active',
@@ -953,6 +956,18 @@ describe('WeekPage · convergence moteurs', () => {
 
     expect(screen.getByTestId('week-match-banner')).toBeInTheDocument()
     expect(screen.getByText(/Rouen/)).toBeInTheDocument()
+  })
+
+  it('propose d’ajouter le club si le profil n’en a pas', () => {
+    useProfileMock.mockReturnValue({
+      profile: { ...BASE_PROFILE, clubCode: undefined },
+      updateProfile: vi.fn(),
+    })
+    useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season')))
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.getByTestId('complete-profile-card')).toBeInTheDocument()
+    expect(screen.getByText(/Ajoute ton club/i)).toBeInTheDocument()
   })
 
   it.skip('off-season: no match bandeau when match is deferred (not in structuralEvents)', () => {

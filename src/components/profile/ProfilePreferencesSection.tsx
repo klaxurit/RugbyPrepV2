@@ -18,6 +18,7 @@ type ProfilePreferencesSectionProps = {
   onHeightInputChange: (value: string) => void
   onWeightInputChange: (value: string) => void
   morphoBmi: number | null
+  defaultOpen?: boolean
 }
 
 export function ProfilePreferencesSection({
@@ -29,6 +30,7 @@ export function ProfilePreferencesSection({
   onHeightInputChange,
   onWeightInputChange,
   morphoBmi,
+  defaultOpen = false,
 }: ProfilePreferencesSectionProps) {
   return (
     <CollapsibleSection
@@ -37,7 +39,8 @@ export function ProfilePreferencesSection({
       icon={<Settings2 className="w-4 h-4" />}
       iconClassName="bg-layer-10 text-fg-soft border border-border-app"
       testId="profile-section-preferences"
-      defaultOpen={false}
+      id="morpho"
+      defaultOpen={defaultOpen}
     >
       <div className="space-y-3" data-testid="profile-section-language">
         <label className="text-xs font-bold text-fg-muted uppercase tracking-wider">{tr('profile_section_lang', lang)}</label>

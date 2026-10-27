@@ -154,7 +154,7 @@ describe('OnboardingPage · first run flow', () => {
     expect(screen.getByText('Matériel')).toBeTruthy()
   })
 
-  it('n’affiche plus le genre et écrit male_senior par défaut', () => {
+  it('n’affiche plus le genre et laisse unknown (carte profil plus tard)', () => {
     renderOnboarding()
     navigateToSummary()
 
@@ -164,7 +164,7 @@ describe('OnboardingPage · first run flow', () => {
     fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
 
     expect(updateProfileMock).toHaveBeenCalledWith(
-      expect.objectContaining({ populationSegment: 'male_senior' }),
+      expect.objectContaining({ populationSegment: 'unknown' }),
       expect.anything(),
     )
   })

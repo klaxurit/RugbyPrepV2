@@ -151,7 +151,11 @@ describe('Reset password flow', () => {
       expect(updateUserMock).toHaveBeenCalledWith({ password: 'nouveau-mot-de-passe' })
     })
 
-    expect(screen.getByText("Mot de passe mis à jour. Tu peux continuer dans l'application.")).toBeInTheDocument()
+    await waitFor(() => {
+      expect(
+        screen.getByText("Mot de passe mis à jour. Tu peux continuer dans l'application."),
+      ).toBeInTheDocument()
+    })
   })
 
   it('blocks submission when passwords do not match', async () => {
