@@ -30,7 +30,7 @@ const QUERY_COMPETITION_CALENDAR = `
       Journees {
         id nom numero
         Rencontres {
-          id dateOfficielle dateEffective forfait scoreValide
+          id dateOfficielle dateEffective scoreValide
           RencontreResultatLocale { pointsDeMarque }
           RencontreResultatVisiteuse { pointsDeMarque }
           Etat { nom }
@@ -97,10 +97,14 @@ export async function fetchCompetitions(clubCode: string): Promise<{
         }
       }
     }
-    if (json?.errors?.length) return { competitions: [], error: `ffr_graphql: ${json.errors[0].message}` }
-
     const structure = json?.data?.Structure
-    if (!structure?.Competitions) return { competitions: [], error: 'club_not_found' }
+    if (!structure?.Competitions) {
+      if (json?.errors?.length) return { competitions: [], error: `ffr_graphql: ${json.errors[0].message}` }
+      return { competitions: [], error: 'club_not_found' }
+    }
+    if (json?.errors?.length) {
+      console.warn('[ffrSync] competitions GraphQL partiel', json.errors[0]?.message)
+    }
 
     const currentSeason = getCurrentSeason()
     const competitions: FfrCompetition[] = structure.Competitions
@@ -156,10 +160,14 @@ async function loadMatchesFromFfr(
       }
     }
   }
-  if (json?.errors?.length) return { matches: [], error: `ffr_graphql: ${json.errors[0].message}` }
-
   const competition = json?.data?.Competition
-  if (!competition?.Journees) return { matches: [], error: 'competition_not_found' }
+  if (!competition?.Journees) {
+    if (json?.errors?.length) return { matches: [], error: `ffr_graphql: ${json.errors[0].message}` }
+    return { matches: [], error: 'competition_not_found' }
+  }
+  if (json?.errors?.length) {
+    console.warn('[ffrSync] calendar GraphQL partiel', json.errors[0]?.message)
+  }
 
   const todayStr = new Date().toISOString().slice(0, 10)
   const allClubMatches: NormalizedFfrMatch[] = []
@@ -177,19 +185,26 @@ async function loadMatchesFromFfr(
   return { matches: [...lastPast, ...futureMatches] }
 }
 
-/** Fetch calendrier FFR + écriture DB. L’Edge Function fetch la FFR (TWA/Play) ; fallback navigateur si besoin. */
+/**
+ * Fetch calendrier FFR + écriture DB.
+ * Le navigateur (ou CapacitorHttp) lit la FFR d’abord : l’Edge Supabase
+ * se prend un 403 datacenter. L’Edge ne fetch plus que si le client échoue.
+ */
 export async function syncCalendar(competitionId: string, clubCode: string): Promise<{
   imported: number
   error?: string
 }> {
   try {
-    const serverFirst = await invokeSyncCalendar(competitionId, clubCode)
-    if (!serverFirst.error) return serverFirst
-    if (!isFfrUpstreamSyncError(serverFirst.error)) return serverFirst
-
     const loaded = await loadMatchesFromFfr(competitionId, clubCode)
-    if (loaded.error) return { imported: 0, error: loaded.error }
-    return await invokeSyncCalendar(competitionId, clubCode, loaded.matches)
+    if (!loaded.error) {
+      if (!loaded.matches.length) return { imported: 0, error: 'missing_matches' }
+      return await invokeSyncCalendar(competitionId, clubCode, loaded.matches)
+    }
+
+    const server = await invokeSyncCalendar(competitionId, clubCode)
+    if (!server.error) return server
+    if (!isFfrUpstreamSyncError(server.error)) return server
+    return { imported: 0, error: loaded.error }
   } catch (err) {
     console.error('[ffrSync] invoke threw:', err)
     return { imported: 0, error: err instanceof Error ? err.message : 'network_error' }

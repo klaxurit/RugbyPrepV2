@@ -18,7 +18,7 @@ export const QUERY_COMPETITION_CALENDAR = `
       Journees {
         id nom numero
         Rencontres {
-          id dateOfficielle dateEffective forfait scoreValide
+          id dateOfficielle dateEffective scoreValide
           RencontreResultatLocale { pointsDeMarque }
           RencontreResultatVisiteuse { pointsDeMarque }
           Etat { nom }
@@ -220,10 +220,14 @@ export function extractClubMatchesFromCalendarJson(
       }
     }
   }
-  if (payload?.errors?.length) return { error: `ffr_graphql: ${payload.errors[0].message}` }
-
   const competition = payload?.data?.Competition
-  if (!competition?.Journees) return { error: 'competition_not_found' }
+  if (!competition?.Journees) {
+    if (payload?.errors?.length) return { error: `ffr_graphql: ${payload.errors[0].message}` }
+    return { error: 'competition_not_found' }
+  }
+  if (payload.errors?.length) {
+    console.warn('ffr calendar GraphQL partiel', payload.errors[0]?.message)
+  }
 
   const todayStr = new Date().toISOString().slice(0, 10)
   const allClubMatches: NormalizedFfrMatch[] = []
