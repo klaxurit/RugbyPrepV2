@@ -4,6 +4,7 @@
  */
 
 const DEFAULT_DESTINATION = '/home'
+const POST_ONBOARDING_DESTINATION = '/session/0'
 
 /** Routes that must never be a post-auth destination (would cause loops or are meaningless). */
 const EXCLUDED_DESTINATIONS = new Set([
@@ -69,11 +70,11 @@ export function resolveAuthenticatedAppDestination(
 /**
  * After onboarding completes, decide where to send the user.
  * - Valid requestedPath → that path
- * - Otherwise → /program
+ * - Otherwise → first gym session (`/session/0`)
  */
 export function resolvePostOnboardingDestination(
   requestedPath?: string | null,
 ): string {
   const sanitized = sanitizeRequestedAppPath(requestedPath)
-  return sanitized ?? DEFAULT_DESTINATION
+  return sanitized ?? POST_ONBOARDING_DESTINATION
 }

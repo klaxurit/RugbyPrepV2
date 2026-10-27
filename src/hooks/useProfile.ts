@@ -16,6 +16,7 @@ import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { applyHealthConsentLifecycle } from '../services/privacy/healthConsentLifecycle'
 import { mergeProfileFromCache, applyServerAuthoritativeProfileFields } from '../services/profile/mergeProfileFromCache'
+import { persistOnboardingComplete } from '../services/profile/persistOnboardingComplete'
 import { resolveAvatarUrlFromAuthMetadata, resolveProfileAvatarUrl } from '../services/profile/resolveAvatarUrl'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 import { sanitizePlanningIsoDate } from '../services/dates/localIsoDate'
@@ -65,10 +66,9 @@ export function isOnboardingComplete(userId: string): boolean {
 
 export function markOnboardingComplete(userId: string) {
   localStorage.setItem(onboardingKey(userId), '1')
-  // Persist to Supabase for multi-device support (fire and forget)
-  void supabase
-    .from('profiles')
-    .upsert({ id: userId, onboarding_complete: true }, { onConflict: 'id' })
+  // Fire-and-forget: persistOnboardingComplete awaits the PostgREST builder,
+  // so the request actually starts. Do not replace with a bare `.upsert()`.
+  void persistOnboardingComplete(userId)
 }
 
 type OnboardingStatusRow = {
@@ -108,9 +108,7 @@ export async function resolveOnboardingComplete(userId: string): Promise<boolean
     localStorage.setItem(onboardingKey(userId), '1')
 
     if (!(data as OnboardingStatusRow | null)?.onboarding_complete) {
-      void supabase
-        .from('profiles')
-        .upsert({ id: userId, onboarding_complete: true }, { onConflict: 'id' })
+      void persistOnboardingComplete(userId)
     }
   }
 

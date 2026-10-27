@@ -35,7 +35,7 @@ vi.mock('../../components/auth/captchaConfig', () => ({
 function fillForm(opts: { age: boolean; medical: boolean }) {
   fireEvent.change(screen.getByLabelText(/Prénom/i), { target: { value: 'Antoine' } })
   fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'a@test.local' } })
-  fireEvent.change(screen.getByLabelText(/Mot de passe/i), { target: { value: 'azerty12xx' } })
+  fireEvent.change(screen.getByLabelText('Mot de passe', { exact: true }), { target: { value: 'azerty12xx' } })
 
   // Disable HTML5 native validation so we can exercise our own JS guard
   // (otherwise unchecked-required intercepts submit before handleSubmit runs).

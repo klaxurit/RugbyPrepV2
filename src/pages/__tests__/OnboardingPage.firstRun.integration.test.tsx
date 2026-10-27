@@ -56,6 +56,14 @@ vi.mock('../../services/program/scheduleOptimizer', () => ({
   TRAINING_DAYS_DEFAULT: { 2: [2, 4], 3: [1, 3, 5] },
 }))
 
+vi.mock('../../services/onboarding/onboardingDefaults', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../services/onboarding/onboardingDefaults')>()
+  return {
+    ...actual,
+    resolveOnboardingSeasonPhase: () => 'in_season',
+  }
+})
+
 function renderOnboarding(state?: Record<string, unknown>) {
   return render(
     <MemoryRouter initialEntries={[{ pathname: '/onboarding', state }]}>
@@ -84,17 +92,6 @@ function navigateToSummary(options?: { equipmentPreset?: 'bodyweight' | 'bands' 
   }
   fireEvent.click(screen.getByText('2 séances'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
-
-  // Step 3: Situation → En saison + Actif
-  fireEvent.click(screen.getByTestId('onboarding-season-in_season'))
-  fireEvent.click(screen.getByTestId('onboarding-baseline-active'))
-  fireEvent.click(screen.getAllByText('Suivant')[0])
-
-  // Step 4: Planning club → skip
-  fireEvent.click(screen.getByText(/Pas d'entraînement club/))
-
-  // Step 5: Morphologie → skip
-  fireEvent.click(screen.getByText('Passer cette étape'))
 }
 
 describe('OnboardingPage · first run flow', () => {
@@ -107,16 +104,16 @@ describe('OnboardingPage · first run flow', () => {
     cleanup()
   })
 
-  it('fin d\'onboarding standard → navigate(/home)', () => {
+  it('fin d\'onboarding standard → navigate(/session/0)', () => {
     renderOnboarding()
     navigateToSummary()
 
     const finishBtn = screen.getByTestId('onboarding-finish-btn')
-    expect(finishBtn).toHaveTextContent('Voir mon programme')
+    expect(finishBtn).toHaveTextContent('Démarrer ma 1re séance')
     expect(finishBtn).not.toBeDisabled()
     fireEvent.click(finishBtn)
 
-    expect(navigateMock).toHaveBeenCalledWith('/home', { replace: true })
+    expect(navigateMock).toHaveBeenCalledWith('/session/0', { replace: true })
     expect(markOnboardingCompleteMock).toHaveBeenCalledWith('u1')
   })
 
@@ -157,37 +154,37 @@ describe('OnboardingPage · first run flow', () => {
     expect(screen.getByText('Matériel')).toBeTruthy()
   })
 
-  it('question genre visible et dérive le bon populationSegment', () => {
+  it('n’affiche plus le genre et écrit male_senior par défaut', () => {
     renderOnboarding()
+    navigateToSummary()
 
-    fireEvent.click(screen.getByText('Première ligne'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
+    expect(screen.queryByText('Joueur')).toBeNull()
+    expect(screen.queryByText('Joueuse')).toBeNull()
 
-    fireEvent.click(screen.getByTestId('onboarding-equipment-full_gym'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
+    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
 
-    fireEvent.click(screen.getByText('Performance'))
-    fireEvent.click(screen.getByText('2 séances'))
+    expect(updateProfileMock).toHaveBeenCalledWith(
+      expect.objectContaining({ populationSegment: 'male_senior' }),
+      expect.anything(),
+    )
+  })
 
-    fireEvent.click(screen.getByText('Joueuse'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
+  it('préserve female_senior déjà présent sur le profil', () => {
+    mockProfile = {
+      equipment: [],
+      injuries: [],
+      weeklySessions: 2,
+      level: 'intermediate',
+      populationSegment: 'female_senior',
+    }
 
-    // Step 2: Situation → Inter-saison + Actif
-    fireEvent.click(screen.getByTestId('onboarding-season-off_season'))
-    fireEvent.click(screen.getByTestId('onboarding-baseline-active'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-
-    // Step 3: Planning (off-season: gym day selector, no skip button)
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-    // Step 4: Morphologie → skip
-    fireEvent.click(screen.getByText('Passer cette étape'))
-
-    // Finish
+    renderOnboarding()
+    navigateToSummary()
     fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
 
     expect(updateProfileMock).toHaveBeenCalledWith(
       expect.objectContaining({ populationSegment: 'female_senior' }),
-      expect.anything()
+      expect.anything(),
     )
   })
 
@@ -196,7 +193,7 @@ describe('OnboardingPage · first run flow', () => {
     navigateToSummary()
 
     const finishBtn = screen.getByTestId('onboarding-finish-btn')
-    expect(finishBtn).toHaveTextContent('Voir mon programme')
+    expect(finishBtn).toHaveTextContent('Démarrer ma 1re séance')
     expect(finishBtn).not.toBeDisabled()
   })
 
@@ -212,59 +209,25 @@ describe('OnboardingPage · first run flow', () => {
     expect(call.planningAnchors?.onboardingCycleHint).toBe('in_season')
   })
 
-  it('playoffs onboarding choice → seasonMode=in_season + manualPlayoffs=true', () => {
+  it('écrit un scSchedule auto aligné sur les jours salle par défaut', () => {
     renderOnboarding()
-
-    fireEvent.click(screen.getByText('Première ligne'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-    fireEvent.click(screen.getByTestId('onboarding-equipment-full_gym'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-    fireEvent.click(screen.getByText('Performance'))
-    fireEvent.click(screen.getByText('2 séances'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-    fireEvent.click(screen.getByTestId('onboarding-season-playoffs'))
-    fireEvent.click(screen.getByTestId('onboarding-baseline-peak'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-    fireEvent.click(screen.getByText(/Pas d'entraînement club/))
-    fireEvent.click(screen.getByText('Passer cette étape'))
+    navigateToSummary()
     fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
 
     const call = updateProfileMock.mock.calls[0][0]
-    expect(call.seasonMode).toBe('in_season')
-    expect(call.trainingBaseline).toBe('peak')
-    expect(call.planningAnchors.onboardingCycleHint).toBe('playoffs')
-    expect(call.planningAnchors.manualPlayoffs).toBe(true)
+    expect(call.scSchedule.source).toBe('auto')
+    expect(call.scSchedule.sessions.map((s: { day: number }) => s.day)).toEqual([2, 4])
   })
 
-  it('club FFR + date de prochain match optionnels → persistés', () => {
+  it('ne demande plus club, morpho ni saison dans le tunnel', () => {
     renderOnboarding()
+    navigateToSummary()
 
-    fireEvent.click(screen.getByText('Première ligne'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-    fireEvent.click(screen.getByTestId('onboarding-equipment-full_gym'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-    fireEvent.click(screen.getByText('Performance'))
-    fireEvent.click(screen.getByText('2 séances'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-    fireEvent.click(screen.getByTestId('onboarding-season-in_season'))
-    fireEvent.click(screen.getByTestId('onboarding-baseline-active'))
-    fireEvent.click(screen.getAllByText('Suivant')[0])
-
-    const clubInput = screen.getByTestId('onboarding-club-search')
-    fireEvent.change(clubInput, { target: { value: 'PIRAE' } })
-    fireEvent.focus(clubInput)
-    fireEvent.mouseDown(screen.getByTestId('club-search-result-0001A'))
-    fireEvent.change(screen.getByTestId('onboarding-next-match-date'), {
-      target: { value: '2026-09-12' },
-    })
-    fireEvent.click(screen.getByText(/Pas d'entraînement club/))
-    fireEvent.click(screen.getByText('Passer cette étape'))
-    fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
-
-    const call = updateProfileMock.mock.calls[0][0]
-    expect(call.clubCode).toBe('0001A')
-    expect(call.clubName).toBe('RUGBY CLUB DE PIRAE')
-    expect(call.planningAnchors.firstMatchDateOverride).toBe('2026-09-12')
+    expect(screen.queryByText(/Pas d'entraînement club/)).toBeNull()
+    expect(screen.queryByText('Passer cette étape')).toBeNull()
+    expect(screen.queryByTestId('onboarding-club-search')).toBeNull()
+    expect(screen.queryByTestId('onboarding-season-in_season')).toBeNull()
+    expect(screen.getByTestId('onboarding-finish-btn')).toBeTruthy()
   })
 
   it('skip club et date → pas de clubCode ni firstMatchDateOverride', () => {

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Lock } from 'lucide-react'
 import { BottomSheet } from '../ui/BottomSheet'
+import { PasswordField } from './PasswordField'
 import { tr, type Lang } from '../../i18n/appLabels'
 import { MIN_PASSWORD_LENGTH, isPasswordMeetingPolicy, passwordTooWeakMessage } from '../../services/auth/passwordPolicy'
 
@@ -63,38 +64,30 @@ export function PasswordUpgradeSheet({
         </p>
 
         <div className="space-y-3">
-          <div className="space-y-1.5">
-            <label htmlFor="upgrade-password" className="text-xs font-bold text-fg-soft uppercase tracking-wider">
-              {tr('password_upgrade_new', lang)}
-            </label>
-            <input
-              id="upgrade-password"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="w-full h-12 rounded-2xl border-2 border-border-app bg-layer-5 px-4 text-fg placeholder:text-fg-faint rf-focus-ring text-sm"
-              placeholder={tr('password_min_placeholder', lang)}
-              autoComplete="new-password"
-              minLength={MIN_PASSWORD_LENGTH}
-              required
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label htmlFor="upgrade-password-confirm" className="text-xs font-bold text-fg-soft uppercase tracking-wider">
-              {tr('password_upgrade_confirm', lang)}
-            </label>
-            <input
-              id="upgrade-password-confirm"
-              type="password"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              className="w-full h-12 rounded-2xl border-2 border-border-app bg-layer-5 px-4 text-fg placeholder:text-fg-faint rf-focus-ring text-sm"
-              placeholder={tr('password_upgrade_confirm_placeholder', lang)}
-              autoComplete="new-password"
-              minLength={MIN_PASSWORD_LENGTH}
-              required
-            />
-          </div>
+          <PasswordField
+            id="upgrade-password"
+            label={tr('password_upgrade_new', lang)}
+            value={password}
+            onChange={setPassword}
+            lang={lang}
+            fieldSize="md"
+            placeholder={tr('password_min_placeholder', lang)}
+            autoComplete="new-password"
+            minLength={MIN_PASSWORD_LENGTH}
+            required
+          />
+          <PasswordField
+            id="upgrade-password-confirm"
+            label={tr('password_upgrade_confirm', lang)}
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            lang={lang}
+            fieldSize="md"
+            placeholder={tr('password_upgrade_confirm_placeholder', lang)}
+            autoComplete="new-password"
+            minLength={MIN_PASSWORD_LENGTH}
+            required
+          />
         </div>
 
         {(localError || error) && (

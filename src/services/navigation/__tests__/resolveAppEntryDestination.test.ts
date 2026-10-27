@@ -96,16 +96,16 @@ describe('resolveAuthenticatedAppDestination', () => {
 })
 
 describe('resolvePostOnboardingDestination', () => {
-  it('sans intention → /home', () => {
-    expect(resolvePostOnboardingDestination()).toBe('/home')
-    expect(resolvePostOnboardingDestination(null)).toBe('/home')
+  it('sans intention → première séance', () => {
+    expect(resolvePostOnboardingDestination()).toBe('/session/0')
+    expect(resolvePostOnboardingDestination(null)).toBe('/session/0')
   })
 
   it('avec intention valide → destination conservée', () => {
     expect(resolvePostOnboardingDestination('/progress')).toBe('/progress')
   })
 
-  it('avec intention invalide → /home', () => {
-    expect(resolvePostOnboardingDestination('/auth/login')).toBe('/home')
+  it('avec intention invalide → première séance', () => {
+    expect(resolvePostOnboardingDestination('/auth/login')).toBe('/session/0')
   })
 })

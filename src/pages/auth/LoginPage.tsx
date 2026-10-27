@@ -5,6 +5,7 @@ import { sanitizeRequestedAppPath } from '../../services/navigation/resolveAppEn
 import rugbyforgeLogo from '../../assets/rugbyforge-red-full.png'
 import type { AuthError } from '../../types/auth'
 import { CaptchaGate } from '../../components/auth/CaptchaGate'
+import { PasswordField } from '../../components/auth/PasswordField'
 import { captchaIsRequired } from '../../components/auth/captchaConfig'
 import { passwordTooWeakMessage } from '../../services/auth/passwordPolicy'
 
@@ -110,21 +111,15 @@ export function LoginPage() {
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="password" className="text-xs font-bold text-fg-soft uppercase tracking-wider">
-                Mot de passe
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-5 text-fg placeholder:text-fg-faint rf-focus-ring text-sm transition-colors"
-                placeholder="••••••••"
-                autoComplete="current-password"
-                required
-              />
-            </div>
+            <PasswordField
+              id="password"
+              label="Mot de passe"
+              value={password}
+              onChange={setPassword}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              required
+            />
 
             <CaptchaGate
               onVerify={(token) => setCaptchaToken(token)}

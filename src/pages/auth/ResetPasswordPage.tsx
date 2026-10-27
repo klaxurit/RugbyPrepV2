@@ -5,6 +5,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { supabase } from '../../services/supabase/client'
 import { MIN_PASSWORD_LENGTH, isPasswordMeetingPolicy, passwordTooWeakMessage } from '../../services/auth/passwordPolicy'
 import { clearPasswordNeedsUpgrade } from '../../services/auth/clearPasswordNeedsUpgrade'
+import { PasswordField } from '../../components/auth/PasswordField'
 import { tr } from '../../i18n/appLabels'
 
 const resolvePasswordError = (message: string): string => {
@@ -146,38 +147,26 @@ export function ResetPasswordPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-3" noValidate>
-              <div className="space-y-1.5">
-                <label htmlFor="new-password" className="text-xs font-bold text-fg-soft uppercase tracking-wider">
-                  Nouveau mot de passe
-                </label>
-                <input
-                  id="new-password"
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-5 text-fg placeholder:text-fg-faint rf-focus-ring text-sm transition-colors"
-                  placeholder={tr('password_min_placeholder', 'fr')}
-                  autoComplete="new-password"
-                  minLength={MIN_PASSWORD_LENGTH}
-                  required
-                />
-              </div>
+              <PasswordField
+                id="new-password"
+                label="Nouveau mot de passe"
+                value={password}
+                onChange={setPassword}
+                placeholder={tr('password_min_placeholder', 'fr')}
+                autoComplete="new-password"
+                minLength={MIN_PASSWORD_LENGTH}
+                required
+              />
 
-              <div className="space-y-1.5">
-                <label htmlFor="confirm-password" className="text-xs font-bold text-fg-soft uppercase tracking-wider">
-                  Confirmer le mot de passe
-                </label>
-                <input
-                  id="confirm-password"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  className="w-full h-14 rounded-2xl border-2 border-border-app bg-layer-5 px-5 text-fg placeholder:text-fg-faint rf-focus-ring text-sm transition-colors"
-                  placeholder="Répète ton mot de passe"
-                  autoComplete="new-password"
-                  required
-                />
-              </div>
+              <PasswordField
+                id="confirm-password"
+                label="Confirmer le mot de passe"
+                value={confirmPassword}
+                onChange={setConfirmPassword}
+                placeholder="Répète ton mot de passe"
+                autoComplete="new-password"
+                required
+              />
 
               {error && (
                 <div className="p-3.5 bg-danger-bg border border-danger-bd rounded-2xl">

@@ -9,23 +9,18 @@ export async function loginWithPassword(page: Page, email: string, password: str
   await expect(page).not.toHaveURL(/\/auth\/login/)
 }
 
-/** Parcours onboarding FR minimal (position → résumé → fin). */
+/** Parcours onboarding FR minimal (poste → matériel → rythme → fin). */
 export async function completeOnboardingWizard(page: Page): Promise<void> {
   await expect(page).toHaveURL(/\/onboarding/)
 
   await page.getByRole('button', { name: /Première ligne/i }).click()
   await page.getByRole('button', { name: 'Suivant' }).first().click()
 
+  await page.getByTestId('onboarding-equipment-full_gym').click()
+  await page.getByRole('button', { name: 'Suivant' }).first().click()
+
   await page.getByRole('button', { name: 'Fondations' }).click()
   await page.getByRole('button', { name: '2 séances' }).click()
-  await page.getByRole('button', { name: 'Suivant' }).first().click()
-
-  await page.getByRole('button', { name: 'En saison' }).click()
-  await page.getByRole('button', { name: /Je reprends/i }).click()
-  await page.getByRole('button', { name: 'Suivant' }).first().click()
-
-  await page.getByRole('button', { name: 'Suivant' }).first().click()
-
   await page.getByRole('button', { name: 'Suivant' }).first().click()
 
   await page.getByTestId('onboarding-finish-btn').click()
