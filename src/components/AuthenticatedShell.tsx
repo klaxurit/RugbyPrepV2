@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { BottomNav } from './BottomNav'
 import { BrandLoadingFallback } from './BrandLoadingFallback'
+import { EmailConfirmBanner } from './auth/EmailConfirmBanner'
 import { shouldShowAuthenticatedBottomNav } from '../services/navigation/bottomNavVisibility'
 
 /**
@@ -20,6 +21,7 @@ export function AuthenticatedShell() {
 
   return (
     <>
+      <EmailConfirmBanner />
       <Suspense
         fallback={
           <BrandLoadingFallback

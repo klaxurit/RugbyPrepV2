@@ -55,6 +55,7 @@ export const mapSupabaseUserToAuthUser = (user: User): AuthUser => ({
   displayName: resolveDisplayName(user),
   createdAt: new Date(user.created_at).getTime(),
   avatarUrl: resolveAvatarUrl(user),
+  emailConfirmed: Boolean(user.email_confirmed_at),
 })
 
 const isEmailExistsError = (error: SupabaseAuthError | null, user: User | null): boolean => {

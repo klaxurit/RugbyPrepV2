@@ -48,8 +48,22 @@ describe('signInWithGoogle', () => {
       id: 'u1',
       email: 'antoine@gmail.com',
       created_at: '2026-10-27T12:00:00.000Z',
+      email_confirmed_at: '2026-10-27T12:00:00.000Z',
       user_metadata: { full_name: 'Antoine Dupont' },
     } as unknown as User
-    expect(mapSupabaseUserToAuthUser(user).displayName).toBe('Antoine Dupont')
+    const mapped = mapSupabaseUserToAuthUser(user)
+    expect(mapped.displayName).toBe('Antoine Dupont')
+    expect(mapped.emailConfirmed).toBe(true)
+  })
+
+  it('marque emailConfirmed=false si email_confirmed_at est absent', async () => {
+    const { mapSupabaseUserToAuthUser } = await import('../authService')
+    const user = {
+      id: 'u2',
+      email: 'nouveau@club.fr',
+      created_at: '2026-10-27T12:00:00.000Z',
+      user_metadata: {},
+    } as unknown as User
+    expect(mapSupabaseUserToAuthUser(user).emailConfirmed).toBe(false)
   })
 })

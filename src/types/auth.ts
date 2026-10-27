@@ -4,6 +4,8 @@ export interface AuthUser {
   displayName: string
   createdAt: number
   avatarUrl?: string
+  /** false seulement si Confirm email est requis et pas encore cliqué. */
+  emailConfirmed?: boolean
 }
 
 export interface AuthState {
