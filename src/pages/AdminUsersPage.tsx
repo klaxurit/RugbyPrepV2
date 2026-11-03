@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, LayoutGrid, Search, Shield } from 'lucide-react'
+import { Activity, ChevronLeft, ChevronRight, LayoutGrid, Search, Shield } from 'lucide-react'
 import { adminListUsers, type AdminUserListPage } from '../services/admin/adminApi'
 import { AdminUserCard } from '../components/admin/AdminUserCard'
 
@@ -57,6 +57,13 @@ export function AdminUsersPage() {
               </p>
             )}
           </div>
+          <Link
+            to="/admin/insights"
+            className="inline-flex items-center gap-1 rounded-xl border border-brand-border px-2.5 py-1 text-[11px] font-semibold"
+          >
+            <Activity className="h-3.5 w-3.5" />
+            Insights
+          </Link>
           <Shield className="h-4 w-4 text-fg-muted" />
         </div>
       </header>

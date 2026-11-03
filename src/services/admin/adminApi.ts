@@ -186,6 +186,10 @@ function mapAdminUserListRow(raw: Record<string, unknown>): AdminUserListItem {
   }
 }
 
+export async function adminFetchProductInsights(days = 30): Promise<import('./interpretProductInsights').ProductInsightsPayload> {
+  return invokeAdmin({ action: 'product_insights', days })
+}
+
 export async function adminListUsers(params: {
   page?: number
   pageSize?: number

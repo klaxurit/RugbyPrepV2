@@ -417,6 +417,15 @@ Deno.serve(async (req: Request) => {
         return json(data ?? { page, pageSize, total: 0, users: [] })
       }
 
+      case 'product_insights': {
+        const days = Math.max(7, Math.min(180, Math.round(Number(body.days ?? 30))))
+        const { data, error } = await serviceClient.rpc('admin_product_insights', {
+          p_days: days,
+        })
+        if (error) return json({ error: error.message }, 500)
+        return json(data ?? {})
+      }
+
       default:
         return json({ error: `Unknown action: ${action}` }, 400)
     }

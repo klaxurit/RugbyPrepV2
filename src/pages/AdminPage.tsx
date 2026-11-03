@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Shield, Search, Crown, Users, Anchor, ChevronLeft, LayoutGrid } from 'lucide-react'
+import { Shield, Search, Crown, Users, Anchor, ChevronLeft, LayoutGrid, Activity } from 'lucide-react'
 import {
   adminGetUser,
   adminGrantPremium,
@@ -235,13 +235,22 @@ export function AdminPage() {
         </Link>
         <Shield className="w-5 h-5 text-brand-tint" />
         <h1 className="text-lg font-bold">Admin</h1>
-        <Link
-          to="/admin/users"
-          className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-brand-border bg-layer-5 px-3 py-1.5 text-xs font-semibold text-fg hover:bg-layer-10"
-        >
-          <LayoutGrid className="h-3.5 w-3.5" />
-          Tous les joueurs
-        </Link>
+        <div className="ml-auto flex items-center gap-2">
+          <Link
+            to="/admin/insights"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-brand-border bg-layer-5 px-3 py-1.5 text-xs font-semibold text-fg hover:bg-layer-10"
+          >
+            <Activity className="h-3.5 w-3.5" />
+            Insights
+          </Link>
+          <Link
+            to="/admin/users"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-brand-border bg-layer-5 px-3 py-1.5 text-xs font-semibold text-fg hover:bg-layer-10"
+          >
+            <LayoutGrid className="h-3.5 w-3.5" />
+            Joueurs
+          </Link>
+        </div>
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">

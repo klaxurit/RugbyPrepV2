@@ -201,7 +201,10 @@ export function SessionDetailPage() {
   // sur cette page — il sera ré-introduit en D5/D6 pour la suggestion de charge
   // Premium (lecture du dernier entry par exo).
 
+  const sessionCompletedRef = useRef(false)
+
   useEffect(() => {
+    sessionCompletedRef.current = false
     posthog.capture('session_viewed', { index })
     window.scrollTo(0, 0)
   }, [index])
@@ -1093,6 +1096,11 @@ export function SessionDetailPage() {
 
   const handleQuitRunningSession = () => {
     if (window.confirm('Quitter la séance en cours ? Les cases cochées seront perdues.')) {
+      posthog.capture('session_abandoned', {
+        index,
+        reason: 'quit',
+        sessionId: activeSlot?.session.metadata.id,
+      })
       sessionRun.stop()
     }
   }
@@ -1338,6 +1346,7 @@ export function SessionDetailPage() {
       }
       setSharePayload(nextSharePayload)
       setShareOpen(true)
+      sessionCompletedRef.current = true
       posthog.capture('session_completed', {
         index,
         sessionId: sessionIdForShare,
