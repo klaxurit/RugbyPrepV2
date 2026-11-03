@@ -69,6 +69,12 @@ export interface WeeklyScore {
   breakdown: WeeklyScoreBreakdown
 }
 
+/**
+ * Pause compétition déclarée. « Blessé » gèle les malus / relégations
+ * d'inactivité — ce n'est pas un suivi médical.
+ */
+export type CompetitionPauseKind = 'blesse'
+
 /** État cumulatif d'un athlète. Une ligne par athlète. */
 export interface GamificationProfile {
   totalXp: number
@@ -83,6 +89,10 @@ export interface GamificationProfile {
   freezeUsedAt: string | null
   leagueTier: LeagueTier
   socialVisibility: SocialVisibility
+  /** Pause compétition (« Blessé ») — null si inactive / expirée. */
+  competitionPauseKind: CompetitionPauseKind | null
+  competitionPauseStartedOn: string | null
+  competitionPauseEndsOn: string | null
 }
 
 /** Badge débloqué, avec la date réelle de déblocage. */

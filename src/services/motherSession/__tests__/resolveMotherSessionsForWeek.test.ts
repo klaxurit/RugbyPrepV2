@@ -293,7 +293,7 @@ describe('resolveMotherSessionsForWeek', () => {
     })
     expect(r.planningContext.playoffTaperPhase).toBe('match_week')
     const sessionIds = r.sessions.map((s) => s.session.metadata.id)
-    expect(sessionIds).toContain('FULL_BW_BODY_IN_SEASON_V1')
+    expect(sessionIds).toContain('FULL_BW_PLAYOFF_ACTIVATION_V1')
     expect(sessionIds).toContain('FULL_BW_LIGHT_PRIMER_IN_SEASON_V1')
     expect(r.sessions.every((s) => s.session.metadata.equipment === 'bodyweight')).toBe(true)
   })

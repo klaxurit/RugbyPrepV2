@@ -62,6 +62,8 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'inverted row standard': 'pull_horizontal__inverted_row__standard',
   'inverted row feet elevated': 'pull_horizontal__inverted_row__feet_elevated',
   'rowing inversé pieds surélevés': 'pull_horizontal__inverted_row__feet_elevated',
+  'rowing explosif': 'pull_horizontal__inverted_row__standard',
+  'explosive inverted row': 'pull_horizontal__inverted_row__standard',
   'single-arm db row': 'pull_horizontal__one_arm_row__dumbbell',
   'single-arm row': 'pull_horizontal__one_arm_row__dumbbell',
   'one-arm row': 'pull_horizontal__one_arm_row__dumbbell',

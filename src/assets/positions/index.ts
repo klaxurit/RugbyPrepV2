@@ -9,7 +9,9 @@ import type { UserProfile } from '../../types/training'
 type PositionValue = NonNullable<UserProfile['position']>
 
 export const POSITION_ILLUSTRATIONS: Record<PositionValue, string> = {
-  FRONT_ROW: frontRow,
+  PROP: frontRow,
+  HOOKER: frontRow,
+  FRONT_ROW: frontRow, // legacy
   SECOND_ROW: secondRow,
   BACK_ROW: backRow,
   HALF_BACKS: halfBacks,

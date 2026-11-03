@@ -55,7 +55,7 @@
 
 ## 4. Priorités correctifs (phase B)
 
-1. **P0** — Upper Force-Pont BW B2 : rétablir contraste pull (force + explosif).
+1. **P0** — Upper Force-Pont BW B2 : contraste pull (force + rowing explosif) — **fait 2026-11**.
 2. **P0** — Lower Hypertrophie BW B2 : remplacer le 2ᵉ Bulgarian par fente arrière.
 3. **P1** — Documenter progression pull sans barre + coaching Upper FB.
 4. **P1** — Playoffs : pas de map manquante pour les IDs émis ; orphelin `FULL_BW_PLAYOFF_ACTIVATION_V1` laissé hors resolver (activation dédiée future).

@@ -53,7 +53,13 @@ export interface BuildAthletePlanningInputsResult {
 
 type PlanningAnchorsResult = AthletePlanningInputs['planningAnchors']
 
-const FRONT_ROW_GROUPS: RugbyPositionGroup[] = ['FRONT_ROW', 'SECOND_ROW', 'BACK_ROW']
+const FRONT_ROW_GROUPS: RugbyPositionGroup[] = [
+  'PROP',
+  'HOOKER',
+  'FRONT_ROW', // legacy
+  'SECOND_ROW',
+  'BACK_ROW',
+]
 const BACK_THREE_GROUPS: RugbyPositionGroup[] = ['HALF_BACKS', 'CENTERS', 'BACK_THREE']
 
 function normalizePositionToken(raw: string | undefined): string | undefined {

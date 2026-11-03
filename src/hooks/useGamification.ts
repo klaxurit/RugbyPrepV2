@@ -3,7 +3,9 @@ import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { resolveLevel, resolveLevelProgress } from '../services/gamification/levels'
 import { weekStartISO } from '../services/gamification/weekStart'
+import { isCompetitionPauseActive } from '../services/gamification/competitionPause'
 import type {
+  CompetitionPauseKind,
   GamificationProfile,
   UnlockedBadge,
   WeeklyScore,
@@ -42,10 +44,14 @@ export interface UseGamificationResult {
   currentWeek: WeeklyScore | null
   badges: UnlockedBadge[]
   levelProgress: ReturnType<typeof resolveLevelProgress>
+  /** Pause compétition active aujourd'hui (après expiration calendaire). */
+  competitionPauseActive: boolean
   loading: boolean
   /** Déclenche un recalcul serveur puis rafraîchit l'état local. */
   recompute: (payload: RecomputePayload) => Promise<void>
   refresh: () => Promise<void>
+  /** Active ou lève la pause « Blessé » (RPC — pas de donnée médicale). */
+  setCompetitionPause: (active: boolean) => Promise<boolean>
 }
 
 interface GamificationProfileRow {
@@ -55,6 +61,9 @@ interface GamificationProfileRow {
   longest_week_streak: number
   freeze_used_at: string | null
   league_tier: string
+  competition_pause_kind: string | null
+  competition_pause_started_on: string | null
+  competition_pause_ends_on: string | null
 }
 
 interface WeeklyScoreRow {
@@ -96,7 +105,7 @@ async function fetchSnapshot(
     supabase
       .from('user_gamification_profile')
       .select(
-        'total_xp, level, current_week_streak, longest_week_streak, freeze_used_at, league_tier',
+        'total_xp, level, current_week_streak, longest_week_streak, freeze_used_at, league_tier, competition_pause_kind, competition_pause_started_on, competition_pause_ends_on',
       )
       .eq('user_id', userId)
       .maybeSingle(),
@@ -137,6 +146,12 @@ async function fetchSnapshot(
           freezeUsedAt: profileRow.freeze_used_at,
           leagueTier: profileRow.league_tier as GamificationProfile['leagueTier'],
           socialVisibility: 'private',
+          competitionPauseKind:
+            profileRow.competition_pause_kind === 'blesse'
+              ? ('blesse' as CompetitionPauseKind)
+              : null,
+          competitionPauseStartedOn: profileRow.competition_pause_started_on,
+          competitionPauseEndsOn: profileRow.competition_pause_ends_on,
         }
       : null,
     currentWeek: scoreRow
@@ -200,18 +215,49 @@ export function useGamification(todayISO: string): UseGamificationResult {
     [userId, load],
   )
 
+  const setCompetitionPause = useCallback(
+    async (active: boolean) => {
+      if (!userId) return false
+      const { error } = await supabase.rpc('set_competition_pause', {
+        p_active: active,
+      })
+      if (error) {
+        console.warn('[useGamification] set_competition_pause:', error.message)
+        return false
+      }
+      await load()
+      return true
+    },
+    [userId, load],
+  )
+
   const levelProgress = useMemo(
     () => resolveLevelProgress(snapshot.profile?.totalXp ?? 0),
     [snapshot.profile?.totalXp],
   )
+
+  const competitionPauseActive = useMemo(() => {
+    const p = snapshot.profile
+    if (!p) return false
+    return isCompetitionPauseActive(
+      {
+        kind: p.competitionPauseKind,
+        startedOn: p.competitionPauseStartedOn,
+        endsOn: p.competitionPauseEndsOn,
+      },
+      todayISO,
+    )
+  }, [snapshot.profile, todayISO])
 
   return {
     profile: snapshot.profile,
     currentWeek: snapshot.currentWeek,
     badges: snapshot.badges,
     levelProgress,
+    competitionPauseActive,
     loading: snapshot.loading,
     recompute,
     refresh: load,
+    setCompetitionPause,
   }
 }

@@ -53,7 +53,8 @@ type PositionValue = NonNullable<UserProfile['position']>
 type PositionDef = { value: PositionValue; label: string; sub: string; illustration: string }
 function getPositions(lang: Lang): PositionDef[] {
   return [
-    { value: 'FRONT_ROW',   label: tr('pos_front_row', lang),    sub: tr('pos_front_row_sub', lang),    illustration: frontRowImg  },
+    { value: 'PROP',        label: tr('pos_prop', lang),         sub: tr('pos_prop_sub', lang),         illustration: frontRowImg  },
+    { value: 'HOOKER',      label: tr('pos_hooker', lang),       sub: tr('pos_hooker_sub', lang),       illustration: frontRowImg  },
     { value: 'SECOND_ROW',  label: tr('pos_second_row', lang),   sub: tr('pos_second_row_sub', lang),   illustration: secondRowImg },
     { value: 'BACK_ROW',    label: tr('pos_back_row', lang),     sub: tr('pos_back_row_sub', lang),     illustration: backRowImg   },
     { value: 'HALF_BACKS',  label: tr('pos_half_backs', lang),   sub: tr('pos_half_backs_sub', lang),   illustration: halfBacksImg },

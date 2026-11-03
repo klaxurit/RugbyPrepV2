@@ -9,7 +9,9 @@ import type { PhysicalTestType, PositionBaseline } from '../../types/athleticTes
 // ─── CMJ baselines (cm) — higher is better ───────────────────────────────────
 // Pro = Top 14/Premiership, Amateur = Fed3/Regional, Beginner = −25–30% vs pro
 const CMJ_BASELINES: Record<RugbyPositionGroup, { pro: number; amateur: number; beginner: number }> = {
-  FRONT_ROW:   { pro: 35, amateur: 29, beginner: 25 },
+  PROP:        { pro: 35, amateur: 29, beginner: 25 },
+  HOOKER:      { pro: 35, amateur: 29, beginner: 25 },
+  FRONT_ROW:   { pro: 35, amateur: 29, beginner: 25 }, // legacy
   SECOND_ROW:  { pro: 41, amateur: 34, beginner: 29 },
   BACK_ROW:    { pro: 43, amateur: 36, beginner: 31 },
   HALF_BACKS:  { pro: 44, amateur: 37, beginner: 32 },
@@ -20,7 +22,9 @@ const CMJ_BASELINES: Record<RugbyPositionGroup, { pro: number; amateur: number; 
 // ─── Sprint 10m baselines (secondes) — lower is better ───────────────────────
 // Amateur = +0.10–0.15s vs pro, Beginner = +0.20–0.30s vs pro
 const SPRINT_10M_BASELINES: Record<RugbyPositionGroup, { pro: number; amateur: number; beginner: number }> = {
-  FRONT_ROW:   { pro: 1.88, amateur: 1.98, beginner: 2.10 },
+  PROP:        { pro: 1.88, amateur: 1.98, beginner: 2.10 },
+  HOOKER:      { pro: 1.88, amateur: 1.98, beginner: 2.10 },
+  FRONT_ROW:   { pro: 1.88, amateur: 1.98, beginner: 2.10 }, // legacy
   SECOND_ROW:  { pro: 1.78, amateur: 1.88, beginner: 2.00 },
   BACK_ROW:    { pro: 1.74, amateur: 1.84, beginner: 1.96 },
   HALF_BACKS:  { pro: 1.70, amateur: 1.80, beginner: 1.92 },
@@ -31,7 +35,9 @@ const SPRINT_10M_BASELINES: Record<RugbyPositionGroup, { pro: number; amateur: n
 // ─── YYIR1 baselines (mètres) — higher is better ─────────────────────────────
 // Midpoint of pro range; Amateur = −25%, Beginner = −35%
 const YYIR1_BASELINES: Record<RugbyPositionGroup, { pro: number; amateur: number; beginner: number }> = {
-  FRONT_ROW:   { pro: 1080, amateur: 810,  beginner: 700 },
+  PROP:        { pro: 1080, amateur: 810,  beginner: 700 },
+  HOOKER:      { pro: 1080, amateur: 810,  beginner: 700 },
+  FRONT_ROW:   { pro: 1080, amateur: 810,  beginner: 700 }, // legacy
   SECOND_ROW:  { pro: 1240, amateur: 930,  beginner: 810 },
   BACK_ROW:    { pro: 1440, amateur: 1080, beginner: 940 },
   HALF_BACKS:  { pro: 1640, amateur: 1230, beginner: 1070 },
@@ -53,7 +59,7 @@ function getOneRMSquatBaseline(
   _trainingLevel: TrainingLevel,
   weightKg: number
 ): { pro: number; amateur: number; beginner: number } {
-  const isForward = ['FRONT_ROW', 'SECOND_ROW', 'BACK_ROW'].includes(position)
+  const isForward = ['PROP', 'HOOKER', 'FRONT_ROW', 'SECOND_ROW', 'BACK_ROW'].includes(position)
   // ratios : [beginner, amateur/intermediate, pro/advanced]
   const ratios = isForward
     ? { beginner: 1.0, amateur: 1.5, pro: 2.0 }
@@ -70,7 +76,7 @@ function getOneRMBenchBaseline(
   _trainingLevel: TrainingLevel,
   weightKg: number
 ): { pro: number; amateur: number; beginner: number } {
-  const isForward = ['FRONT_ROW', 'SECOND_ROW', 'BACK_ROW'].includes(position)
+  const isForward = ['PROP', 'HOOKER', 'FRONT_ROW', 'SECOND_ROW', 'BACK_ROW'].includes(position)
   const isBack = ['BACK_THREE'].includes(position)
   const ratios = isForward
     ? { beginner: 0.8, amateur: 1.1, pro: 1.4 }
@@ -89,7 +95,7 @@ function getOneRMDeadliftBaseline(
   _trainingLevel: TrainingLevel,
   weightKg: number
 ): { pro: number; amateur: number; beginner: number } {
-  const isForward = ['FRONT_ROW', 'SECOND_ROW', 'BACK_ROW'].includes(position)
+  const isForward = ['PROP', 'HOOKER', 'FRONT_ROW', 'SECOND_ROW', 'BACK_ROW'].includes(position)
   const ratios = isForward
     ? { beginner: 1.3, amateur: 1.7, pro: 2.1 }
     : { beginner: 1.2, amateur: 1.6, pro: 1.9 }

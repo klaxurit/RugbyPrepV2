@@ -11,6 +11,7 @@ import {
   bodyweightSessionFallbackWarning,
   mapWeeklySlotsForEquipment,
 } from '../equipment/motherSessionEquipmentMap'
+import { isBodyweightProgramTier } from '../equipment/resolveEquipmentProgramTier'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
 import { applyClubContactProxyToSessions } from '../scheduling/clubContactProxy'
 import {
@@ -273,22 +274,28 @@ function resolveMotherSessionsForWeekCore(
     let tplWarnings: string[] = []
 
     if (taperPhase === 'match_week') {
+      // BW : activation playoffs dédiée (plus légère que Full in-season BW).
+      const bwPlayoffs = isBodyweightProgramTier(equipment as never)
       taperSlots = [
         {
-          sessionId: resolveInSeasonFullBodySessionId({
-            positionGroup,
-            ...varietyParams,
-          }),
+          sessionId: bwPlayoffs
+            ? 'FULL_BW_PLAYOFF_ACTIVATION_V1'
+            : resolveInSeasonFullBodySessionId({
+                positionGroup,
+                ...varietyParams,
+              }),
           role: 'primary',
           dayPreference: 'early_week',
           variant: cfg.variant,
           maxBlocks: 3,
         },
         {
-          sessionId: resolveInSeasonPrimerSessionId({
-            positionGroup,
-            ...varietyParams,
-          }),
+          sessionId: bwPlayoffs
+            ? 'FULL_BW_LIGHT_PRIMER_IN_SEASON_V1'
+            : resolveInSeasonPrimerSessionId({
+                positionGroup,
+                ...varietyParams,
+              }),
           role: 'primary',
           dayPreference: 'pre_match',
           variant: cfg.variant,

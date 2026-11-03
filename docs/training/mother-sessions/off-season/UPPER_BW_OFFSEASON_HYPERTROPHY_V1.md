@@ -74,8 +74,20 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
 - Difficulty ↑ via angle, load, or reps — not incline push-up regression.
 
 ## Position Accent
-- `Front_row`: neck isometric 2x10s/direction after main work if tolerated.
-- `Back_three`: add lateral bound or shuffle finisher 2x5m if space allows.
+Runtime V1 (`applyPositionAccentBlock`) — **added on top**, never replaces Blocks 1–4.
+
+| Pack | Transfer | Typical slots (house: chair + towel) |
+|------|----------|--------------------------------------|
+| `PROP` | Scrummage / contact | Neck (if not already) · Copenhagen · farmer / dips chair |
+| `HOOKER` | Lineout throw | Neck (if not) · diamond push-up · chair triceps extension |
+| `SECOND_ROW` | Maul + lineout jump | Neck (if not) · towel grip · vertical jump intent |
+| `BACK_ROW` | Tackle / ruck | Pull · carry · COD |
+| `HALF_BACKS` | Pass / COD | Anti-rot · COD · light pull |
+| `CENTERS` | Contact + offload | Unilateral / T-push · pull · anti-rot |
+| `BACK_THREE` | Space / tackle | COD · anti-rot · pull |
+
+Legacy `FRONT_ROW` maps to `PROP` until the athlete reselects Pilier / Talonneur.
+Cut this block first under fatigue (`reductionOrder`).
 
 ## Coaching Warnings
 - Not a bench ego session or accessory festival.

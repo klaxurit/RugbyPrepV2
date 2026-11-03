@@ -28,6 +28,9 @@ const profile: GamificationProfile = {
   freezeUsedAt: null,
   leagueTier: 'espoirs',
   socialVisibility: 'private',
+  competitionPauseKind: null,
+  competitionPauseStartedOn: null,
+  competitionPauseEndsOn: null,
 }
 
 function week(overrides: Partial<WeeklyScore> = {}): WeeklyScore {

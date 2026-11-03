@@ -43,6 +43,14 @@ import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { prepareSessionForRender } from '../services/session/prepareSessionForRender'
 import { truncateSessionBlocks } from '../services/session/truncateSessionBlocks'
+import { isPositionAccentEligible } from '../services/session/applyPositionAccentBlock'
+import {
+  readPositionAccentFocus,
+  writePositionAccentFocus,
+} from '../services/session/positionAccentFocusStorage'
+import type { PositionAccentFocus } from '../services/equipment/positionAccentTheme'
+import { isFoundationsLevel } from '../services/motherSession/foundationsSessionAdaptations'
+import { PositionAccentFocusPicker } from '../components/session/PositionAccentFocusPicker'
 import { selectPrimaryMatchDates } from '../services/calendar/selectPrimaryMatchDates'
 import { toIsoDateLocal } from '../services/dates/localIsoDate'
 import { parseLocalDate } from '../services/scheduling/parseLocalDate'
@@ -90,9 +98,8 @@ import { getPrehab, CONTRA_LABELS } from '../services/ui/getPrehab'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { SessionRunProgressBar, SessionStickyCTA, SessionBlocks } from '../components/session'
 import { SessionPRToast } from '../components/session/SessionPRToast'
-import { detectLiveSetPR, collectPriorSessionDrafts } from '../services/pr/detectLiveSetPR'
-import { buildLivePRToastData, buildVsPreviousToastData, type LivePRToastData } from '../services/pr/formatLivePRToast'
-import { shouldAnnounceLiveSetToast } from '../services/pr/shouldAnnounceLiveSetToast'
+import { resolveLiveSetFeedback } from '../services/pr/resolveLiveSetFeedback'
+import type { LivePRToastData } from '../services/pr/formatLivePRToast'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
 import { HeroIdle } from '../components/session/blocks'
 import { ExerciseDemoSheet } from '../components/motherSession/ExerciseDemoSheet'
@@ -298,6 +305,47 @@ export function SessionDetailPage() {
   }, [snapshot, msResolution, index])
 
   const planning = surface?.planningContext
+  const accentFocusDayIso = useMemo(() => {
+    const presented = snapshot?.presentation?.sessions[index]
+    if (presented?.kind === 'dated') {
+      return toIsoDateLocal(dateOfWeekday(presented.dayOfWeek, parseLocalDate(today)))
+    }
+    return today
+  }, [snapshot, index, today])
+
+  const [positionAccentFocus, setPositionAccentFocus] = useState<PositionAccentFocus>('a')
+  useEffect(() => {
+    const id = activeSlot?.session.metadata.id
+    if (!id) {
+      setPositionAccentFocus('a')
+      return
+    }
+    setPositionAccentFocus(readPositionAccentFocus(id, accentFocusDayIso))
+  }, [activeSlot?.session.metadata.id, accentFocusDayIso])
+
+  const handleAccentFocusChange = useCallback(
+    (focus: PositionAccentFocus) => {
+      const id = activeSlot?.session.metadata.id
+      if (id) writePositionAccentFocus(id, accentFocusDayIso, focus)
+      setPositionAccentFocus(focus)
+    },
+    [activeSlot?.session.metadata.id, accentFocusDayIso],
+  )
+
+  const showAccentFocusPicker = Boolean(
+    activeSlot &&
+      isPositionAccentEligible(activeSlot.session) &&
+      planning?.mesocycleWeek != null &&
+      planning.mesocycleWeek !== 4 &&
+      !isFoundationsLevel(profile.trainingLevel) &&
+      (profile.rugbyPosition ?? profile.position) &&
+      !(
+        activeSlot.session.metadata.sessionType === 'full' &&
+        (planning?.isMatchWeek ||
+          (planning?.daysUntilNextMatch != null && planning.daysUntilNextMatch <= 6))
+      ),
+  )
+
   const preparedSession = useMemo(() => {
     if (!activeSlot) return null
     const presented = snapshot?.presentation?.sessions[index]
@@ -321,6 +369,8 @@ export function SessionDetailPage() {
       isDeloadWeek: planning?.isDeloadWeek,
       clubContactProxy: planning?.clubContactProxy,
       preMatchNoHeavy,
+      rugbyPosition: profile.rugbyPosition ?? profile.position,
+      positionAccentFocus: showAccentFocusPicker ? positionAccentFocus : 'a',
     })
     // Décharge, taper et overrides de fatigue passent tous par ces deux champs.
     // Rail J-2 : light + plafond 2 blocs, même si le slot n’était pas tamponné.
@@ -334,12 +384,16 @@ export function SessionDetailPage() {
     activeSlot,
     profile.trainingLevel,
     profile.equipment,
+    profile.rugbyPosition,
+    profile.position,
     lang,
     planning,
     snapshot,
     index,
     today,
     structuralEvents,
+    positionAccentFocus,
+    showAccentFocusPicker,
   ])
 
   /** Set logs + block_logs legacy — source unique pour PR / PREVIOUS / suggestions. */
@@ -653,93 +707,37 @@ export function SessionDetailPage() {
       exerciseIndex: number
       exerciseTourLoads?: Readonly<Record<string, { loadKg?: number; reps?: number }>>
     }) => {
-      if (!slotSignature || !isPremium) return
-      if (
-        !shouldAnnounceLiveSetToast(
-          payload.loadKg,
-          announcedLiveToastKgByExoRef.current[payload.exerciseId],
-        )
-      ) {
-        return
-      }
+      // Weakley : feedback immédiat pour tous (pas un paywall) — suggestions kg restent Premium.
+      if (!slotSignature) return
       const metricType = getExerciseMetricType({ exerciseId: payload.exerciseId })
-      const priorSessionDrafts = collectPriorSessionDrafts(
-        payload.exerciseTourLoads ?? sessionRun.exerciseTourLoads,
-        payload.blockNumber,
-        payload.tourIndex,
-        payload.exerciseIndex,
-        buildExerciseTourKey,
-      )
-      const pr = detectLiveSetPR({
-        setLogs: historyLogs,
+      const feedback = resolveLiveSetFeedback({
         exerciseId: payload.exerciseId,
+        loadKg: payload.loadKg,
+        reps: payload.reps,
+        blockNumber: payload.blockNumber,
+        tourIndex: payload.tourIndex,
+        exerciseIndex: payload.exerciseIndex,
+        slotSignature,
         metricType,
-        draft: { loadKg: payload.loadKg, reps: payload.reps },
-        validatingSet: {
-          slotSignature,
-          blockNumber: payload.blockNumber,
-          tourIndex: payload.tourIndex,
-        },
-        priorSessionDrafts,
+        lang,
+        historyLogs,
+        exerciseTourLoads: payload.exerciseTourLoads ?? sessionRun.exerciseTourLoads,
+        buildTourKey: buildExerciseTourKey,
+        getPreviousSessionSet,
+        alreadyAnnouncedKg: announcedLiveToastKgByExoRef.current[payload.exerciseId],
       })
-      if (pr) {
-        const beatsPriorSessions = historyLogs.some(
-          (s) =>
-            s.exerciseId === payload.exerciseId &&
-            s.slotSignature !== slotSignature &&
-            (s.loadKg != null || s.reps != null),
-        )
-        setLivePRToast(buildLivePRToastData(pr, lang, { beatsPriorSessions }))
-        if (payload.loadKg != null) {
-          announcedLiveToastKgByExoRef.current[payload.exerciseId] = payload.loadKg
-        }
-        posthog.capture('session_live_pr', {
-          exerciseId: payload.exerciseId,
-          metricType,
-        })
-        return
+      if (!feedback) return
+      if (feedback.beatPreviousSession) setBeatPreviousSession(true)
+      setLivePRToast(feedback.toast)
+      if (payload.loadKg != null) {
+        announcedLiveToastKgByExoRef.current[payload.exerciseId] = payload.loadKg
       }
-
-      const previous = getPreviousSessionSet(payload.exerciseId, payload.tourIndex)
-      if (!previous || previous.loadKg == null || payload.loadKg == null) return
-      const beatLoad = payload.loadKg > previous.loadKg
-      const beatReps =
-        payload.loadKg === previous.loadKg &&
-        payload.reps != null &&
-        previous.reps != null &&
-        payload.reps > previous.reps
-      if (!beatLoad && !beatReps) return
-
-      setBeatPreviousSession(true)
-      const setLabel =
-        payload.reps != null
-          ? `${payload.loadKg} kg × ${payload.reps}`
-          : `${payload.loadKg} kg`
-      const delta = beatLoad
-        ? `+${Math.round((payload.loadKg - previous.loadKg) * 10) / 10} kg`
-        : `+${payload.reps! - previous.reps!} reps`
-      setLivePRToast(
-        buildVsPreviousToastData({
-          exerciseId: payload.exerciseId,
-          lang,
-          setLabel,
-          delta,
-        }),
-      )
-      announcedLiveToastKgByExoRef.current[payload.exerciseId] = payload.loadKg
-      posthog.capture('session_vs_previous', {
+      posthog.capture(feedback.event, {
         exerciseId: payload.exerciseId,
         metricType,
       })
     },
-    [
-      slotSignature,
-      isPremium,
-      historyLogs,
-      lang,
-      sessionRun.exerciseTourLoads,
-      getPreviousSessionSet,
-    ],
+    [slotSignature, historyLogs, lang, sessionRun.exerciseTourLoads, getPreviousSessionSet],
   )
 
   const showBodyweightMorphoWarning = useMemo(
@@ -1578,6 +1576,14 @@ export function SessionDetailPage() {
             {/* Blocs typés (Warmup/Tours/Emom/Prehab) — design éditorial v4-pro. */}
             {adaptedSession && (
               <div data-testid="mother-session-detail">
+                {showAccentFocusPicker && planning?.mesocycleWeek != null && (
+                  <PositionAccentFocusPicker
+                    mesoWeek={planning.mesocycleWeek}
+                    focus={positionAccentFocus}
+                    onChange={handleAccentFocusChange}
+                    lang={lang}
+                  />
+                )}
                 <SessionBlocks
                   session={adaptedSession}
                   phase="idle"

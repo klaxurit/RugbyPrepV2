@@ -45,13 +45,15 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Upgrade A: `Bench Press` dumbbell heavy if DB + bench available.
   - Upgrade B: weighted dips on parallettes if available.
 
-### Block 2 - Pull Force
-- Format: `4 work sets`, `2-3 min` rest between sets
+### Block 2 - Pull Force + Speed Intent
+- Format: `4 rounds`, `2-3 min` rest between rounds
 - Exercise A: `Rowing inversé pieds surélevés` `4x4-6 @ RER 1-2`
+- Exercise B: `Rowing explosif` `4x3-4, max speed` (vitesse — **pas** un 2ᵉ contraste PAP tagué ; couper si CNS)
 - Coaching notes:
-  - Force-grade, strict, full ROM — backpack on chest or slow tempo.
-  - Pas de 2e contraste pull : le contraste press est déjà en B1 (limite neurale hebdo).
-  - Upgrade : `Neutral-Grip Pull-Up` chargé (sac) si barre disponible.
+  - A force : strict, amplitude complète — sac lesté ou tempo lent.
+  - B dans les 15–20 s après A — tirage explosif, descente contrôlée (miroir salle).
+  - Couper B si la qualité plyo du bloc 1 a déjà chuté (budget neural hebdo).
+  - Upgrade A : traction prise neutre chargée (sac) si barre disponible.
 
 ### Block 3 - Vertical Press / Rear Delt Support
 - Format: `3 rounds`, `90s` rest after the pair

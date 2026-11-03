@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { PageHeader } from '../components/PageHeader'
 import {
   ClubChallengeCard,
+  CompetitionPauseCard,
   DuelsSection,
   EmptyArtInvite,
   EmptyArtPendingMonday,
@@ -45,7 +46,14 @@ export function SquadPage() {
   const lang: Lang = ((profile?.preferredLanguage as Lang | undefined) ?? 'fr')
   const today = useMemo(() => getToday(), [])
 
-  const { profile: gamification, currentWeek, levelProgress, badges } = useGamification(today)
+  const {
+    profile: gamification,
+    currentWeek,
+    levelProgress,
+    badges,
+    competitionPauseActive,
+    setCompetitionPause,
+  } = useGamification(today)
   const {
     clubLeaderboard,
     cohort,
@@ -114,6 +122,19 @@ export function SquadPage() {
         {/* Progression personnelle : indépendante de l'opt-in social, puisque
             rien ici n'est visible par un coéquipier. */}
         <RigorBadgesStrip badges={badges} lang={lang} />
+
+        {visibility === 'cohort' && (
+          <CompetitionPauseCard
+            active={competitionPauseActive}
+            endsOn={
+              competitionPauseActive
+                ? (gamification?.competitionPauseEndsOn ?? null)
+                : null
+            }
+            onToggle={setCompetitionPause}
+            lang={lang}
+          />
+        )}
 
         {isPrivate ? (
           <section data-testid="squad-optin" className="space-y-3">

@@ -11869,18 +11869,23 @@ export const MOTHER_SESSIONS: MotherSession[] = [
       },
       {
         "number": 2,
-        "name": "Pull Force",
-        "format": "`4 work sets`, `2-3 min` rest between sets",
+        "name": "Pull Force + Speed Intent",
+        "format": "`4 rounds`, `2-3 min` rest between rounds",
         "exercises": [
           {
             "name": "Rowing inversé pieds surélevés",
             "prescription": "4x4-6 @ RER 1-2"
+          },
+          {
+            "name": "Rowing explosif",
+            "prescription": "4x3-4, max speed"
           }
         ],
         "coachingNotes": [
-          "Force-grade, strict, full ROM — backpack on chest or slow tempo.",
-          "Pas de 2e contraste pull : le contraste press est déjà en B1 (limite neurale hebdo).",
-          "Upgrade : `Neutral-Grip Pull-Up` chargé (sac) si barre disponible."
+          "A force : strict, amplitude complète — sac lesté ou tempo lent.",
+          "B dans les 15–20 s après A — tirage explosif, descente contrôlée (miroir salle).",
+          "Couper B si la qualité plyo du bloc 1 a déjà chuté (budget neural hebdo).",
+          "Upgrade A : traction prise neutre chargée (sac) si barre disponible."
         ]
       },
       {

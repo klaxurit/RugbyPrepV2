@@ -34,6 +34,7 @@ import type { ExerciseSessionJournal } from '../../../services/session/buildExer
 import { ExerciseSessionJournalPanel } from '../ExerciseSessionJournal'
 import { ExercisePrefillChip } from '../ExercisePrefillChip'
 import type { ExerciseSetLog } from '../../../types/training'
+import { pickBlockTransferCue } from '../../../services/session/pickBlockTransferCue'
 
 /**
  * Per-exo gate for the eye/demo button. Aligné sur `resolveExerciseIdForSessionRun`
@@ -162,6 +163,7 @@ export function ToursBlock(props: ToursBlockProps) {
 
   const displayTour = state === 'done' ? totalTours : Math.min(currentTourIdx + 1, totalTours)
   const [expandedDoneTours, setExpandedDoneTours] = useState<Set<number>>(() => new Set())
+  const transferCue = pickBlockTransferCue(block.coachingNotes)
 
   const toggleDoneTour = (tourIdx: number) => {
     setExpandedDoneTours((prev) => {
@@ -186,6 +188,14 @@ export function ToursBlock(props: ToursBlockProps) {
 
       {expanded && (
         <div className="flex flex-col gap-3 px-1">
+          {transferCue ? (
+            <p
+              className="px-1.5 text-[11px] leading-snug text-fg-muted"
+              data-testid="block-transfer-cue"
+            >
+              {transferCue}
+            </p>
+          ) : null}
           <div className="flex items-center justify-between px-1.5">
             <span className="text-[11px] font-medium text-fg/60">
               {totalTours} {totalTours > 1 ? tr('tours_meta_round_plural', lang) : tr('tours_meta_round_single', lang)}

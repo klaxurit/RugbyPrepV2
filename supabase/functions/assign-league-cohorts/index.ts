@@ -8,7 +8,12 @@ import {
   type CohortCandidate,
   type ExistingCohortSnapshot,
 } from '../../../src/services/gamification/cohortMatchmaking.ts'
+import { isCompetitionPauseActive } from '../../../src/services/gamification/competitionPause.ts'
 import { promoteTier, relegateTier } from '../../../src/services/gamification/levels.ts'
+import {
+  countPriorConsecutiveInactiveWeeks,
+  resolveLeagueWeekOutcome,
+} from '../../../src/services/gamification/resolveLeagueWeekOutcome.ts'
 import { isSociallyExposable } from '../../../src/services/gamification/socialExposure.ts'
 import { previousWeekStartISO, weekStartISO } from '../../../src/services/gamification/weekStart.ts'
 
@@ -94,16 +99,63 @@ Deno.serve(async (req: Request) => {
 
       const { data: scores, error: scoresError } = await serviceClient
         .from('gamification_weekly_scores')
-        .select('user_id, points')
-        .eq('week_start', closingWeek)
+        .select('user_id, points, sessions_completed, week_start')
         .in('user_id', memberIds)
+        .gte('week_start', previousWeekStartISO(previousWeekStartISO(closingWeek)))
+        .lte('week_start', closingWeek)
 
       if (scoresError) return json({ error: scoresError.message }, 400)
 
       const pointsByUser = new Map<string, number>()
-      for (const id of memberIds) pointsByUser.set(id, 0)
+      const sessionsByUser = new Map<string, number>()
+      const historyByUser = new Map<
+        string,
+        Array<{ weekStartISO: string; sessionsCompleted: number }>
+      >()
+      for (const id of memberIds) {
+        pointsByUser.set(id, 0)
+        sessionsByUser.set(id, 0)
+        historyByUser.set(id, [])
+      }
       for (const row of scores ?? []) {
-        pointsByUser.set(row.user_id as string, (row.points as number) ?? 0)
+        const uid = row.user_id as string
+        const week = row.week_start as string
+        const sessions = (row.sessions_completed as number) ?? 0
+        historyByUser.get(uid)?.push({
+          weekStartISO: week,
+          sessionsCompleted: sessions,
+        })
+        if (week === closingWeek) {
+          pointsByUser.set(uid, (row.points as number) ?? 0)
+          sessionsByUser.set(uid, sessions)
+        }
+      }
+
+      const { data: pauseRows, error: pauseError } = await serviceClient
+        .from('user_gamification_profile')
+        .select(
+          'user_id, league_tier, competition_pause_kind, competition_pause_started_on, competition_pause_ends_on',
+        )
+        .in('user_id', memberIds)
+
+      if (pauseError) return json({ error: pauseError.message }, 400)
+
+      const pauseByUser = new Map<
+        string,
+        {
+          leagueTier: string
+          kind: string | null
+          startedOn: string | null
+          endsOn: string | null
+        }
+      >()
+      for (const row of pauseRows ?? []) {
+        pauseByUser.set(row.user_id as string, {
+          leagueTier: (row.league_tier as string) ?? 'reserve',
+          kind: (row.competition_pause_kind as string | null) ?? null,
+          startedOn: (row.competition_pause_started_on as string | null) ?? null,
+          endsOn: (row.competition_pause_ends_on as string | null) ?? null,
+        })
       }
 
       // Tri par points décroissants, puis par identifiant pour que le
@@ -118,13 +170,28 @@ Deno.serve(async (req: Request) => {
       for (let i = 0; i < ranked.length; i++) {
         const [userId, points] = ranked[i]
         const rank = i + 1
-
-        const outcome = (() => {
-          if (cutoffs.promotionCutoff === 0) return 'stayed'
-          if (rank <= cutoffs.promotionCutoff) return 'promoted'
-          if (rank >= cutoffs.relegationCutoff) return 'relegated'
-          return 'stayed'
-        })()
+        const pause = pauseByUser.get(userId)
+        // Bouclier évalué au jour de clôture (lundi courant), pas au lundi
+        // de la semaine fermée — une pause déclarée en cours de semaine compte.
+        const isPaused = isCompetitionPauseActive(
+          {
+            kind: pause?.kind === 'blesse' ? 'blesse' : null,
+            startedOn: pause?.startedOn ?? null,
+            endsOn: pause?.endsOn ?? null,
+          },
+          todayISO,
+        )
+        const outcome = resolveLeagueWeekOutcome({
+          rank,
+          promotionCutoff: cutoffs.promotionCutoff,
+          relegationCutoff: cutoffs.relegationCutoff,
+          sessionsCompleted: sessionsByUser.get(userId) ?? 0,
+          priorConsecutiveInactiveWeeks: countPriorConsecutiveInactiveWeeks(
+            historyByUser.get(userId) ?? [],
+            closingWeek,
+          ),
+          isPaused,
+        })
 
         await serviceClient
           .from('league_cohort_members')
@@ -134,13 +201,7 @@ Deno.serve(async (req: Request) => {
 
         if (outcome === 'stayed') continue
 
-        const { data: gamificationRow } = await serviceClient
-          .from('user_gamification_profile')
-          .select('league_tier')
-          .eq('user_id', userId)
-          .maybeSingle()
-
-        const tier = (gamificationRow?.league_tier ?? 'reserve') as Parameters<
+        const tier = (pause?.leagueTier ?? 'reserve') as Parameters<
           typeof promoteTier
         >[0]
         const nextTier = outcome === 'promoted' ? promoteTier(tier) : relegateTier(tier)

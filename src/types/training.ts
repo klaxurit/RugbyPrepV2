@@ -112,6 +112,9 @@ export interface QualityScorecard {
 }
 
 export type RugbyPositionGroup =
+  | 'PROP'
+  | 'HOOKER'
+  /** @deprecated Prefer PROP | HOOKER — kept for profiles créés avant le split. */
   | 'FRONT_ROW'
   | 'SECOND_ROW'
   | 'BACK_ROW'

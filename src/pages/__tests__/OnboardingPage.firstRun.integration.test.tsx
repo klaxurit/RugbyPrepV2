@@ -78,8 +78,8 @@ function renderOnboarding(state?: Record<string, unknown>) {
 function navigateToSummary(options?: { equipmentPreset?: 'bodyweight' | 'bands' | 'home_gym' | 'full_gym' }) {
   const equipmentPreset = options?.equipmentPreset ?? 'full_gym'
 
-  // Step 0: Position → Première ligne
-  fireEvent.click(screen.getByText('Première ligne'))
+  // Step 0: Position → Pilier
+  fireEvent.click(screen.getByText('Pilier'))
   fireEvent.click(screen.getAllByText('Suivant')[0])
 
   // Step 1: Matériel
@@ -130,7 +130,7 @@ describe('OnboardingPage · first run flow', () => {
     renderOnboarding()
 
     // Step 0: Position
-    fireEvent.click(screen.getByText('Première ligne'))
+    fireEvent.click(screen.getByText('Pilier'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
 
     // Step 1: Matériel salle (pour afficher le niveau)
@@ -253,7 +253,7 @@ describe('OnboardingPage · first run flow', () => {
   it('masque le niveau en salle hors preset salle complète', () => {
     renderOnboarding()
 
-    fireEvent.click(screen.getByText('Première ligne'))
+    fireEvent.click(screen.getByText('Pilier'))
     fireEvent.click(screen.getAllByText('Suivant')[0])
     fireEvent.click(screen.getByTestId('onboarding-equipment-bodyweight'))
     fireEvent.click(screen.getAllByText('Suivant')[0])

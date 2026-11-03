@@ -370,6 +370,8 @@ relégation quand la ligue n'est pas pleine — même principe à reprendre).
 | Séances de récup non enregistrées en base | Moyenne | Migration préalable du CHECK `session_type` (§ 1) |
 | Cohortes sous-remplies | Moyenne (B) | Fusion de cohortes, zone de relégation proportionnelle |
 | Divergence score client / serveur | Moyenne | Scoring dans un service pur unique, partagé et testé ; le serveur reste l'autorité |
+| Inactivité / ghosting ligue | Moyenne | 0 pt → bas du tableau ; **2ᵉ semaine à 0 séance** → relégation forcée (`resolveLeagueWeekOutcome`). Pause déclarée « Blessé » (max 28 j., non médicale) = bouclier |
+| Abus pause « Blessé » | Moyenne | Cap 28 j. ; RPC seule écriture ; statut **jamais** exposé aux pairs |
 
 ---
 

@@ -72,6 +72,11 @@ export const APP_LABELS = {
   feedback_send_success: { fr: 'Merci ! Ton retour a bien été envoyé.', en: 'Thanks! Your feedback was sent.' },
 
   // ── Onboarding · positions rugby ────────────────────────────────────────
+  pos_prop: { fr: 'Pilier', en: 'Prop' },
+  pos_prop_sub: { fr: '1 · 3 — mêlée / contact', en: '1 · 3 — scrum / contact' },
+  pos_hooker: { fr: 'Talonneur', en: 'Hooker' },
+  pos_hooker_sub: { fr: '2 — lancer touche / mêlée', en: '2 — lineout throw / scrum' },
+  /** @deprecated Prefer pos_prop / pos_hooker */
   pos_front_row: { fr: 'Première ligne', en: 'Front row' },
   pos_front_row_sub: { fr: 'Pilier · Talonneur', en: 'Prop · Hooker' },
   pos_second_row: { fr: 'Deuxième ligne', en: 'Second row' },
@@ -372,6 +377,8 @@ export const APP_LABELS = {
     en: 'Session logged.\nRead-only review.',
   },
 
+  progress_pos_prop: { fr: 'Pilier', en: 'Prop' },
+  progress_pos_hooker: { fr: 'Talonneur', en: 'Hooker' },
   progress_pos_front_row: { fr: '1ère ligne', en: 'Front row' },
   progress_pos_second_row: { fr: '2ème ligne', en: 'Second row' },
   progress_pos_back_row: { fr: '3ème ligne', en: 'Back row' },
@@ -1091,6 +1098,8 @@ export function dayAbbrArray(lang: Lang = 'fr'): readonly string[] {
 // ── Position helpers (rugby positions short form, used in ProgressPage) ────
 
 const POSITION_SHORT_KEY: Record<string, AppLabelKey> = {
+  PROP: 'progress_pos_prop',
+  HOOKER: 'progress_pos_hooker',
   FRONT_ROW: 'progress_pos_front_row',
   SECOND_ROW: 'progress_pos_second_row',
   BACK_ROW: 'progress_pos_back_row',

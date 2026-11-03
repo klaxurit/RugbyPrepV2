@@ -41,10 +41,14 @@ import { getCroppedImageFile } from '../services/ui/imageCrop'
 import { supabase } from '../services/supabase/client'
 import { tr, type Lang } from '../i18n/appLabels'
 
-type PositionOption = { value: 'FRONT_ROW' | 'SECOND_ROW' | 'BACK_ROW' | 'HALF_BACKS' | 'CENTERS' | 'BACK_THREE'; label: string }
+type PositionOption = {
+  value: 'PROP' | 'HOOKER' | 'FRONT_ROW' | 'SECOND_ROW' | 'BACK_ROW' | 'HALF_BACKS' | 'CENTERS' | 'BACK_THREE'
+  label: string
+}
 function getPositionOptions(lang: Lang): readonly PositionOption[] {
   return [
-    { value: 'FRONT_ROW',  label: tr('pos_front_row', lang) },
+    { value: 'PROP',       label: tr('pos_prop', lang) },
+    { value: 'HOOKER',     label: tr('pos_hooker', lang) },
     { value: 'SECOND_ROW', label: tr('pos_second_row', lang) },
     { value: 'BACK_ROW',   label: tr('pos_back_row', lang) },
     { value: 'HALF_BACKS', label: tr('pos_half_backs', lang) },

@@ -150,6 +150,8 @@ export function ProfilePreferencesSection({
         {morphoBmi != null && (() => {
           const bmi = morphoBmi
           const isForward =
+            profile.rugbyPosition === 'PROP' ||
+            profile.rugbyPosition === 'HOOKER' ||
             profile.rugbyPosition === 'FRONT_ROW' ||
             profile.rugbyPosition === 'SECOND_ROW' ||
             profile.rugbyPosition === 'BACK_ROW'

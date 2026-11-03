@@ -168,6 +168,8 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
   'inverted row': ROW_PATTERN,
   'inverted row standard': ROW_PATTERN,
   'rowing inversé pieds surélevés': ROW_PATTERN,
+  'rowing explosif': ROW_PATTERN,
+  'explosive inverted row': ROW_PATTERN,
   'neutral-grip lat pulldown': ROW_PATTERN,
   'neutral-grip pull-up': ROW_PATTERN,
 

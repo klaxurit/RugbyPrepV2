@@ -1,5 +1,5 @@
 import type { MotherSession } from '../../types/motherSession'
-import type { Equipment, TrainingLevel } from '../../types/training'
+import type { Equipment, RugbyPositionGroup, TrainingLevel } from '../../types/training'
 import {
   adaptMotherSessionForFoundations,
   adaptSessionContentFrForFoundations,
@@ -23,7 +23,9 @@ import { applyHypertrophyPrimeBump } from './applyHypertrophyPrimeBump'
 import { applyInSeasonNoMatchPrimeBump } from './applyInSeasonNoMatchPrimeBump'
 import { applyNeckIsometricBlock } from './applyNeckIsometricBlock'
 import { applyOptionalOffSeasonFinisher } from './applyOptionalOffSeasonFinisher'
+import { applyPositionAccentBlock } from './applyPositionAccentBlock'
 import type { ClubContactProxy } from '../../types/annualPlanning'
+import type { PositionAccentFocus } from '../equipment/positionAccentTheme'
 
 interface PrepareInputs {
   session: MotherSession
@@ -39,6 +41,10 @@ interface PrepareInputs {
   clubContactProxy?: ClubContactProxy
   /** Rail J-2 calendaire : coupe les bumps volume même si isMatchWeek est false. */
   preMatchNoHeavy?: boolean
+  /** Pack poste fin (PROP / HOOKER / …) — accent runtime V1. */
+  rugbyPosition?: RugbyPositionGroup | string | null
+  /** Micro-choix focus accent (A = thème semaine, B = complémentaire). */
+  positionAccentFocus?: PositionAccentFocus
 }
 
 /**
@@ -53,6 +59,7 @@ interface PrepareInputs {
  *  8. In-season hors match : +1 série bloc force (3→4), hors club dur / décharge
  *  9. Mini-bloc cou Upper (optionnel, coupé en premier)
  * 10. Finisher rugby optionnel hors saison (portage, coupé en premier)
+ * 11. Accent poste fin (Upper/Lower BW + salle) — ajouté, theme-week + focus A/B
  *
  * La session retournée est prête à être passée aux blocs de rendu (`SessionBlocks`)
  * sans qu'ils aient à connaître le système d'adaptations / contenu FR.
@@ -70,6 +77,8 @@ export function prepareSessionForRender({
   isDeloadWeek,
   clubContactProxy,
   preMatchNoHeavy,
+  rugbyPosition,
+  positionAccentFocus,
 }: PrepareInputs): MotherSession {
   // 1+2. Adaptations EN (Foundations puis Equipment).
   const foundationsSession = isFoundationsLevel(trainingLevel)
@@ -78,14 +87,17 @@ export function prepareSessionForRender({
   const bodyweightSession = adaptMotherSessionForBodyweightEquipment(foundationsSession, equipment)
   const adaptedEn = adaptMotherSessionForEquipmentAlternatives(bodyweightSession, equipment)
   const mesoWeek = resolveNordicMesoWeek({ mesocycleWeek, weekNumber })
+  const weekCtx = {
+    isMatchWeek,
+    isDeloadWeek,
+    clubContactProxy,
+    preMatchNoHeavy,
+    rugbyPosition,
+    positionAccentFocus,
+  }
 
   if (lang !== 'fr') {
-    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel, {
-      isMatchWeek,
-      isDeloadWeek,
-      clubContactProxy,
-      preMatchNoHeavy,
-    })
+    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel, weekCtx)
   }
 
   // 3. Pipeline FR : raw FR → Foundations FR → Equipment FR → merge dans la session.
@@ -100,12 +112,7 @@ export function prepareSessionForRender({
   )
 
   if (!finalFr) {
-    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel, {
-      isMatchWeek,
-      isDeloadWeek,
-      clubContactProxy,
-      preMatchNoHeavy,
-    })
+    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel, weekCtx)
   }
 
   // Merge des noms FR sur les blocs et exos. Format/coachingNotes/fallbackOptions
@@ -172,7 +179,7 @@ export function prepareSessionForRender({
     equipment,
     lang,
     trainingLevel,
-    { isMatchWeek, isDeloadWeek, clubContactProxy, preMatchNoHeavy },
+    weekCtx,
   )
 }
 
@@ -187,6 +194,8 @@ function finishPrepared(
     isDeloadWeek?: boolean
     clubContactProxy?: ClubContactProxy
     preMatchNoHeavy?: boolean
+    rugbyPosition?: RugbyPositionGroup | string | null
+    positionAccentFocus?: PositionAccentFocus
   } = {},
 ): MotherSession {
   const withNordic = applyProgressiveNordic(session, mesoWeek)
@@ -206,10 +215,19 @@ function finishPrepared(
     clubContactProxy: weekCtx.clubContactProxy,
   })
   const withNeck = applyNeckIsometricBlock(withInSeason, { mesoWeek, trainingLevel, lang })
-  return applyOptionalOffSeasonFinisher(withNeck, {
+  const withFinisher = applyOptionalOffSeasonFinisher(withNeck, {
     mesoWeek,
     trainingLevel,
     equipment,
     lang,
+  })
+  return applyPositionAccentBlock(withFinisher, {
+    rugbyPosition: weekCtx.rugbyPosition,
+    mesoWeek,
+    trainingLevel,
+    lang,
+    positionAccentFocus: weekCtx.positionAccentFocus,
+    isMatchWeek: weekCtx.isMatchWeek,
+    preMatchNoHeavy: weekCtx.preMatchNoHeavy,
   })
 }

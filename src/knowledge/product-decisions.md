@@ -39,7 +39,9 @@ pas dans le compteur gym. Plafond audit `in_season` = 14 séries/groupe
 | Isolation / pump | 1 bloc prévention + peu d’armes | Finisher optionnel hors saison | Circuit 100 reps + lourd le même soir |
 | Décharge | −40 % volume, intensité = | Coupe de blocs d’abord ; allège les séries seulement si la coupe ne suffit pas | Deload « séance vide » / baisser les % |
 | Contrastes | 1 lourd de qualité / séance ; **in-season Upper** : rotation du B (plyo / chest pass / landmine / throw) sur 4 lanes | 2 si Full et budget neural OK | 4+ contrastes / semaine · même paire B figée 32 sem. · random session-by-session |
-| Variété in-season (exos) | Pools **planifiés** (mothers distinctes) : Lower 4 lanes / poste, Primer A/B, Full A/B, finishers Upper. Cadence **Fondations = 4 sem.**, **Performance = 2 sem.** Ancres (Bench, squat/hinge pattern) stables. | Affinage 1ʳᵉ vs 3ᵉ ligne (sled Push vs March) ; focus perf futur | Muscle confusion aléatoire · rewrite runtime hors mothers · varier les gros lifts chaque semaine |
+| Variété in-season (exos) | Pools **planifiés** (mothers distinctes) : Lower 4 lanes / poste, Primer A/B, Full A/B, finishers Upper. Cadence **Fondations = 4 sem.**, **Performance = 2 sem.** Ancres (Bench, squat/hinge pattern) stables. Affinage 1ʳᵉ vs 3ᵉ : PROP sled push · BACK_ROW farmer / sled drag. | Focus perf futur (VBT) | Muscle confusion aléatoire · rewrite runtime hors mothers · varier les gros lifts chaque semaine |
+| Accents poste | Packs fins runtime — Upper/Lower BW+salle + **Full allégé** (≤2 slots, hors Primer/Recovery/match). Theme-week + Focus A/B. `gymExerciseIds`. Nuque Fownes-Walpole ; pas de doublon. Legacy `FRONT_ROW` → PROP. | Theme packs plus fins | Soustraire du principal · 15 mothers × poste · harnais cou · accent Primer |
+| Feedback Weakley | Toasts live **tous users** : PR / vs dernière séance / vs série préc. (isolation). Puces « À battre ». Suggestions kg restent Premium. | VBT barre | Paywall sur le feedback set |
 | Vitesse | Slot Speed salle/maison (mur + 3–5 pas) | 8 m couloir si dispo ; 10–20 m seulement si piste déclarée | Piste obligatoire / luge 130 % BW + lower + club |
 | Contact club | 2 boutons : séance complète / plus courte (défaut complète) | Plus courte = club a tapé (light, ≤3 blocs) | Chronométrer 15 min comme un pro |
 | Horloge FFR sans calendrier | Juin–début juil. = transition (récup, **max 4 sem.**, pas d’hypertrophie). Juillet = pré-saison 1 (force + hypertrophie). Août = pré-saison 2–3 (force → puissance). Sept.–mai = en saison. Trêve ~15 déc.–4 janv. = **deload** (pas `treve_deep`). Avril–mai restent en saison (pas de taper playoffs inventé). **Aucun match inventé.** | Idem + CTA club/match | Faux matchs / primers J-2 fantômes / cycle piloté par blessure |
@@ -49,6 +51,7 @@ pas dans le compteur gym. Plafond audit `in_season` = 14 séries/groupe
 | CycleWeek W1 | **Inerte.** L’onboarding n’écrit plus W1 ; le chat / les séances lisent `weekLabel` de l’horloge annuelle. `log.week` reste un champ legacy (cap W8). | — | Choisir les mother sessions via CycleWeek / forcer S1 |
 | Charge d’entrée | **Aucune suggestion de kg** tant que l’utilisateur n’a pas logué un squat avec charge dans l’app. Pas de 1RM à l’onboarding, pas de baseline poste × poids. | Après squat logué : progression sur l’historique de l’exo | Demander un max squat à l’entrée / inventer des kg |
 | Blessures / stores | Pas de diagnostic, protocole rehab, ni localisation du cycle via douleur. L’horloge et `detectAnnualPlanningContext` **ignorent** `injuries` / `painFlags`. Préhab = échauffement général, pas un traitement. | — | App « médicale » (Play / App Store) : suivi de blessure, douleur à l’onboarding, rehab guidé |
+| Ligue — inactivité / « Blessé » | 0 pt si pas d’entraînement → bas du tableau. **2ᵉ semaine consécutive à 0 séance** → relégation forcée. Pause déclarée **« Blessé »** (max 28 j., RPC) = bouclier promo/relég, **non médical**, jamais exposé aux pairs. | — | Suivi médical / piloter le cycle via pause / XP décroissante |
 | Cou | Tip off-season + mini-bloc Upper (mains, 3 directions) | Élastique en Alternatives | Séance cou dédiée / harnais lourd |
 
 Quand l’utilisateur (ou le prépa IA) demande une **mise à jour programme**,
@@ -65,4 +68,4 @@ calme (off-season / semaine sans match).
   (runtime), plafond audit 14 inchangé.
 - Densité Speed hors saison.
 
-*Dernière mise à jour : 2026-08-19*
+*Dernière mise à jour : 2026-11-03*

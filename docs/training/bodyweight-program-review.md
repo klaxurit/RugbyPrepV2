@@ -146,62 +146,37 @@ Source : `src/knowledge/load-budgeting.md`
 
 ---
 
-## 4. Accents par poste — Framework V1
+## 4. Accents par poste — Runtime V2 (2026-11)
 
-### 4.1 Groupes (aligné `buildAthletePlanningInputs.ts`)
+Source de vérité : `positionAccentRegistry.ts` + `applyPositionAccentBlock`.
 
-| Groupe | Postes rugby |
-|--------|--------------|
-| `front_row` | Pilier, talonneur, deuxième ligne, troisième ligne |
-| `back_three` | Demis, centres, arrières |
+### 4.1 Packs fins (profil) + binôme planning
 
-### 4.2 Priorités transfert rugby
+| Pack profil | Planning mothers |
+|-------------|------------------|
+| `PROP` · `HOOKER` · `SECOND_ROW` · `BACK_ROW` | `front_row` |
+| `HALF_BACKS` · `CENTERS` · `BACK_THREE` | `back_three` |
 
-| Besoin | front_row | back_three |
-|--------|-----------|------------|
-| **Nuque / contact** | ★★★★★ | ★★☆☆☆ |
-| **Adducteurs / mêlée** | ★★★★★ | ★★★☆☆ |
-| **Push horizontal / mêlée** | ★★★★★ | ★★★☆☆ |
-| **Carry / grip** | ★★★★☆ | ★★★☆☆ |
-| **Sprint / COD** | ★★★☆☆ | ★★★★★ |
-| **Pull / plaquage** | ★★★★☆ | ★★★★★ |
-| **Rotation / offload** | ★★★☆☆ | ★★★★☆ |
+Legacy `FRONT_ROW` → pack `PROP`.
 
-### 4.3 Bloc Position standard (à ajouter en fin de séance)
+### 4.2 Règles runtime
 
-**Format commun** : `2 tours`, repos `45–60s`, **réduire en premier si fatigue**.
+- **Additif** : finisher en plus, jamais soustractif ; coupé en premier.
+- **Éligible** : Upper/Lower BW + 35 Upper/Lower `full_gym` ; Full allégé (hors Primer / hors match) ; Primer = skip.
+- **Theme-week** : W1 Contact · W2 Puissance · W3 Technique + Focus A/B.
+- **Salle** : `gymExerciseIds` (PROP sled push · BACK_ROW farmer/drag · HOOKER skull/OHP…).
+- **Nuque** omise si mini-bloc cou déjà présent.
 
-#### front_row — `BLOC_POSITION_FRONT_ROW`
+### 4.3 Checklist coach (validation humaine)
 
-| Slot | Exercice (tier 0 → upgrade) | Prescription |
-|------|----------------------------|--------------|
-| A — Nuque | Flexion iso main → extension iso → latéral (10s/direction) | `2×10s/direction` |
-| B — Adducteurs | Copenhagen genou → Copenhagen long (banc) | `2×15–20s/côté` |
-| C — Contact / grip | Farmer sac → dips lestés | `2×20m` ou `2×30s` |
-
-*Upgrade bande* : `neck__flexion_iso__band`, `neck__extension_iso__band`, etc.
-
-#### back_three — `BLOC_POSITION_BACK_THREE`
-
-| Slot | Exercice | Prescription |
-|------|----------|--------------|
-| A — COD / vitesse | Shuffle défensif → bound latéral | `2×5m` ou `2×3/côté` |
-| B — Trunk | Pallof bande → planche latérale | `2×15s/côté` |
-| C — Pull rugby | Tractions / rowing explosif | `2×5` qualité |
-
-*Nuque* : optionnel 1×10s flexion si plaquage fréquent.
-
-### 4.4 Où placer le Bloc Position
-
-| Cycle / séance | front_row | back_three |
-|----------------|-----------|------------|
-| Recovery | Optionnel léger (nuque 1 tour) | Skip |
-| Transition | 1 tour nuque FR | Skip |
-| Hypertrophie | Bloc 4 ou 5 (remplace bras optionnel FR) | Bloc 5 optionnel COD |
-| Force-pont | Bloc 4 complet FR | Bloc 4 back_three |
-| Pré-saison force | Bloc 4 | Bloc 4 allégé |
-| In-season Full | Bloc 4 (comme full_gym FR) | EMOM finisher existant |
-| Primer | Nuque 1 tour FR option | Skip |
+- [ ] Sets durs dans la fourchette §2
+- [ ] 6 patterns rugby couverts ou justifiés
+- [ ] Accent poste présent Transition→in-season Upper/Lower (hors deload / starter)
+- [ ] Avants : nuque + adducteurs ≥1×/sem (accent ou mother)
+- [ ] Arrières : COD/vitesse ≥1×/sem pré ou in-season
+- [ ] Durée tenable club (≤45 min in-season, ≤55 min off hyp)
+- [ ] Deload W4 : truncate −40 %
+- [ ] Matériel profil OK pour les exos affichés
 
 ---
 

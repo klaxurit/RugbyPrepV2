@@ -80,27 +80,31 @@ Référence : `docs/training/bodyweight-program-review.md` + `load-budgeting.md`
 
 ## 2ter. Accents par poste — Bloc Position
 
-Groupes : `front_row` (piliers, talonneurs, 2e/3e ligne) · `back_three` (demis, centres, arrières).
+Packs fins (profil) : `PROP` · `HOOKER` · `SECOND_ROW` · `BACK_ROW` · `HALF_BACKS` · `CENTERS` · `BACK_THREE`.  
+Legacy `FRONT_ROW` → `PROP`. Planning mothers reste binôme `front_row` / `back_three`.
 
-Ajouter **en fin de séance** (sauf Recovery A) sauf indication. Réduire ce bloc **en premier** si fatigue.
+**Règle** : le bloc poste est **ajouté** en fin de séance — on ne retire rien du skeleton pour le caser. Réduire ce bloc **en premier** si fatigue.
 
-### BLOC_POSITION_FRONT_ROW (2 tours, repos 45–60s)
+Registre runtime : `src/services/equipment/positionAccentRegistry.ts` + `applyPositionAccentBlock`.  
+**Branché** :
+- BW : toutes les `UPPER_BW_*` / `LOWER_BW_*` (transition → in-season)
+- Salle : **35** Upper/Lower `full_gym` du cycle (off / pré / in), y compris mothers `*_FRONT_ROW_*` et `*_BACK_THREE_*` — le pack suit le **poste profil** (overlay, jamais soustractif). Full body / primer : hors scope accent.
 
-| Slot | Prescription | Variantes |
-|------|--------------|-----------|
-| A — Nuque | `2×10s/direction` (flexion, extension, latéral) | BW : isométrie main → B : `neck__*_iso__band` |
-| B — Adducteurs | `2×15–20s/côté` | BW : Copenhagen pied surélevé → B : Copenhagen assisté → banc : Copenhagen long |
-| C — Grip / contact | `2×20m` ou `2×30s` | BW : farmer walk sac → DB : farmer walk → PA : dips |
+Sur `full_gym`, `gymExerciseIds` prime (ex. HOOKER skull crusher + OHP ; 2e ligne farmer hold + box jump ; PROP sled push vs BACK_ROW farmer/drag).
 
-### BLOC_POSITION_BACK_THREE (2 tours, repos 45–60s)
+**Theme-week (runtime)** : W1 Contact · W2 Puissance · W3 Technique — réordonne les slots du finisher (cap 3). **Focus du jour** A/B sur la fiche séance = thème de la semaine ou complémentaire. Ne touche pas aux blocs principaux.
 
-| Slot | Prescription | Variantes |
-|------|--------------|-----------|
-| A — COD / vitesse | `2×5m` shuffle → sprint OU `2×3/côté` bound latéral | BW |
-| B — Trunk anti-rot | `2×15s/côté` | B : Pallof → BW : planche latérale |
-| C — Pull plaquage | `2×5` qualité | PB : tractions → BW : rowing explosif |
+| Pack | Transfert | BW (maison) | Salle (`gymExerciseIds`) |
+|------|-----------|-------------|--------------------------|
+| PROP | Mêlée / contact | Nuque* · Copenhagen · farmer / dips chaise | Copenhagen lesté · dips parallèles · farmer DB |
+| HOOKER | Lancer touche | Nuque* · diamant · ext. chaise · pike | Dips · skull crusher EZ · OHP / push press |
+| SECOND_ROW | Maul + saut touche | Nuque* · poigne serviette · vertical jump | Farmer hold DB · Copenhagen lesté · box jump |
+| BACK_ROW | Plaquage / ruck | Pull · T-push · farmer · COD | Pull-up / row DB · landmine rot · farmer DB |
+| HALF_BACKS | Passes / COD | Anti-rot · T-push · COD · fente | Pallof · landmine rot · cable row · fente DB |
+| CENTERS | Contact + offload | Archer · pull · anti-rot · bound | Bench DB · row unilat · fente / farmer DB |
+| BACK_THREE | Espace / plaquage | Pull · T · bound · sprint | Pull-up · medball rot · box jump · sprint |
 
-*Nuque back_three* : optionnel `1×10s` flexion si plaquage lourd cette semaine.
+\*Nuque omise si le mini-bloc cou Upper est déjà présent (Fownes-Walpole 2025).
 
 ### Placement par cycle
 
@@ -1223,7 +1227,7 @@ Reprendre **LOWER_BW_IN_SEASON** et **UPPER_BW_IN_SEASON** avec :
 | UPPER_BW_IN_SEASON_V1 | UPPER_IN_SEASON_*_V1 |
 | FULL_BW_BODY_IN_SEASON_V1 | FULL_BODY_IN_SEASON_*_V1 |
 | FULL_BW_LIGHT_PRIMER_IN_SEASON_V1 | FULL_LIGHT_PRIMER_IN_SEASON_*_V1 |
-| FULL_BW_PLAYOFF_ACTIVATION_V1 | (activation playoffs — dataset publié, resolver à brancher) |
+| FULL_BW_PLAYOFF_ACTIVATION_V1 | Match-week playoffs BW (resolver branché) |
 
 **Playoffs taper (J-11 à J-6)** : réutilise `LOWER_BW_IN_SEASON_V1` / `UPPER_BW_IN_SEASON_V1` avec réduction de blocs via le resolver (`maxBlocks` 2–3), pas de mother session dédiée.
 
@@ -1235,5 +1239,5 @@ Les variantes `front_row` / `back_three` utilisent le **Bloc Position** (§2ter)
 
 1. ~~Convertir séances validées en mother sessions MD~~ — cycle annuel BW couvert (off-season → playoffs activation).
 2. Enrichir `patternExerciseRegistry.ts` sur les patterns restants.
-3. Brancher `FULL_BW_PLAYOFF_ACTIVATION_V1` dans le resolver playoffs si slot dédié J-5→J-2.
+3. ~~Brancher `FULL_BW_PLAYOFF_ACTIVATION_V1` dans le resolver playoffs~~ — fait (match-week BW).
 4. Merger `feature/bodyweight-minimal-equipment-program` → `main`.

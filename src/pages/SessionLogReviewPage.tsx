@@ -47,6 +47,7 @@ export function SessionLogReviewPage() {
       trainingLevel: profile.trainingLevel,
       equipment: profile.equipment,
       lang,
+      rugbyPosition: profile.rugbyPosition ?? profile.position,
     })
     // La revue doit montrer la séance telle qu'elle a été servie ce jour-là,
     // décharge ou taper compris, pas la version intégrale du dataset.
@@ -54,7 +55,15 @@ export function SessionLogReviewPage() {
       maxBlocks: log?.programContext?.maxBlocks,
       variant: log?.programContext?.variant,
     }).session
-  }, [motherSession, profile.trainingLevel, profile.equipment, lang, log])
+  }, [
+    motherSession,
+    profile.trainingLevel,
+    profile.equipment,
+    profile.rugbyPosition,
+    profile.position,
+    lang,
+    log,
+  ])
 
   const sets = useMemo(
     () => (log ? getSetsForSessionLog(log) : []),

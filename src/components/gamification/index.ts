@@ -18,3 +18,7 @@ export {
   SocialVisibilityPicker,
   type SocialVisibilityPickerProps,
 } from './SocialVisibilityPicker'
+export {
+  CompetitionPauseCard,
+  type CompetitionPauseCardProps,
+} from './CompetitionPauseCard'
