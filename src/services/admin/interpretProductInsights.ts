@@ -10,6 +10,10 @@ export interface ProductInsightsFunnel {
   onboarded_window: number
   activated_total: number
   activated_window: number
+  /** 1ʳᵉ séance ≤ 7 j après signup (KPI activation figé). */
+  activated_within_7d: number
+  onboarded_activated_within_7d: number
+  activated_beyond_7d: number
   onboarded_never_trained: number
   one_and_done: number
   returned_at_least_once: number
@@ -22,6 +26,11 @@ export interface ProductInsightsFunnel {
 export interface ProductInsightsPayload {
   windowDays: number
   generatedAt: string
+  definitions?: {
+    activation?: string
+    activationWindowDays?: number
+    schemaDoc?: string
+  }
   funnel: ProductInsightsFunnel
   breakdowns: {
     equipmentOnboarded: Record<string, number>
@@ -76,9 +85,18 @@ function worstActivationGap(
   return worst
 }
 
+function withActivationDefaults(funnel: ProductInsightsFunnel): ProductInsightsFunnel {
+  return {
+    ...funnel,
+    activated_within_7d: funnel.activated_within_7d ?? 0,
+    onboarded_activated_within_7d: funnel.onboarded_activated_within_7d ?? 0,
+    activated_beyond_7d: funnel.activated_beyond_7d ?? 0,
+  }
+}
+
 /** Produit les findings classés par sévérité (critique d’abord). */
 export function interpretProductInsights(data: ProductInsightsPayload): ProductInsightFinding[] {
-  const f = data.funnel
+  const f = withActivationDefaults(data.funnel)
   const findings: ProductInsightFinding[] = []
 
   const onboardRate = pct(f.onboarded_total, f.profiles_total)
@@ -96,7 +114,18 @@ export function interpretProductInsights(data: ProductInsightsPayload): ProductI
       severity: 'watch',
       area: 'onboarding',
       title: 'Onboarding encore poreux',
-      detail: `${rateLabel(f.onboarded_total, f.profiles_total)} terminent l’onboarding. Surveiller les steps PostHog \`onboarding_step_completed\`.`,
+      detail: `${rateLabel(f.onboarded_total, f.profiles_total)} terminent l’onboarding. Surveiller les steps PostHog \`onboarding_step\`.`,
+    })
+  }
+
+  const activate7d = pct(f.onboarded_activated_within_7d, f.onboarded_total)
+  if (activate7d != null && activate7d < 40) {
+    findings.push({
+      id: 'activation-7d',
+      severity: 'critical',
+      area: 'activation',
+      title: 'Activation ≤7 j trop basse',
+      detail: `${rateLabel(f.onboarded_activated_within_7d, f.onboarded_total)} des onboardés ont une 1ʳᵉ séance dans les 7 j (définition produit). ${f.activated_beyond_7d} s’activent plus tard · ${f.onboarded_never_trained} jamais. Priorité : CTA Accueil / 1ʳᵉ séance le jour J.`,
     })
   }
 
@@ -188,6 +217,7 @@ export function funnelRateCards(funnel: ProductInsightsFunnel): Array<{
   value: string
   hint: string
 }> {
+  funnel = withActivationDefaults(funnel)
   return [
     {
       label: 'Comptes',
@@ -200,9 +230,14 @@ export function funnelRateCards(funnel: ProductInsightsFunnel): Array<{
       hint: `${funnel.onboarded_window} dans la fenêtre`,
     },
     {
-      label: '1ʳᵉ séance',
+      label: 'Activation ≤7 j',
+      value: rateLabel(funnel.onboarded_activated_within_7d, funnel.onboarded_total),
+      hint: 'KPI produit figé',
+    },
+    {
+      label: '1ʳᵉ séance (ever)',
       value: rateLabel(funnel.activated_total, funnel.onboarded_total),
-      hint: `${funnel.onboarded_never_trained} jamais entraînés`,
+      hint: `${funnel.onboarded_never_trained} jamais · ${funnel.activated_beyond_7d} tardifs`,
     },
     {
       label: 'Retour ≥2',

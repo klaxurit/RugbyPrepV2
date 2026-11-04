@@ -18,6 +18,7 @@ import { useAuth } from '../hooks/useAuth'
 import { userScopedKey } from '../services/storage/userScopedStorage'
 import { posthog } from '../services/analytics/posthog'
 import { trackOnboardingStep } from '../services/analytics/activationEvents'
+import { trackProduct } from '../services/analytics/trackProduct'
 import { resolvePostOnboardingDestination } from '../services/navigation/resolveAppEntryDestination'
 import { NotificationOptInSheet } from '../components/notifications/NotificationOptInSheet'
 import { useNotifications } from '../hooks/useNotifications'
@@ -300,8 +301,10 @@ export function OnboardingPage() {
       )
 
       if (userId) void markOnboardingComplete(userId)
-      posthog.capture('onboarding_completed', {
-        position, trainingLevel: resolvedTrainingLevel, ageBand,
+      trackProduct('onboarding_completed', {
+        position,
+        trainingLevel: resolvedTrainingLevel,
+        ageBand,
         populationSegment: derivedPopulationSegment,
         performanceFocus: 'balanced',
         sessions,

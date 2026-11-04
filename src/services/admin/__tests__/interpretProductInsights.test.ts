@@ -16,6 +16,9 @@ function base(overrides: Partial<ProductInsightsPayload['funnel']> = {}): Produc
       onboarded_window: 20,
       activated_total: 20,
       activated_window: 8,
+      activated_within_7d: 10,
+      onboarded_activated_within_7d: 10,
+      activated_beyond_7d: 10,
       onboarded_never_trained: 40,
       one_and_done: 12,
       returned_at_least_once: 8,
@@ -42,6 +45,7 @@ describe('interpretProductInsights', () => {
   it('signale onboarding + activation + one-and-done', () => {
     const findings = interpretProductInsights(base())
     expect(findings.some((f) => f.id === 'onboarding-drop')).toBe(true)
+    expect(findings.some((f) => f.id === 'activation-7d')).toBe(true)
     expect(findings.some((f) => f.id === 'activation-gap')).toBe(true)
     expect(findings.some((f) => f.id === 'one-and-done')).toBe(true)
     expect(findings[0].severity).toBe('critical')
@@ -53,6 +57,9 @@ describe('interpretProductInsights', () => {
         profiles_total: 50,
         onboarded_total: 45,
         activated_total: 40,
+        activated_within_7d: 38,
+        onboarded_activated_within_7d: 38,
+        activated_beyond_7d: 2,
         onboarded_never_trained: 5,
         one_and_done: 2,
         returned_at_least_once: 38,
@@ -65,7 +72,8 @@ describe('interpretProductInsights', () => {
 
   it('expose des cartes de taux', () => {
     const cards = funnelRateCards(base().funnel)
-    expect(cards).toHaveLength(6)
+    expect(cards).toHaveLength(7)
     expect(cards[0].label).toBe('Comptes')
+    expect(cards.some((c) => c.label === 'Activation ≤7 j')).toBe(true)
   })
 })

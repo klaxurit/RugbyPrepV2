@@ -121,7 +121,10 @@ describe('activationEvents', () => {
 
   it('trackOnboardingStep emits n', () => {
     trackOnboardingStep(2)
-    expect(capture).toHaveBeenCalledWith('onboarding_step', { n: 2 })
+    expect(capture).toHaveBeenCalledWith(
+      'onboarding_step',
+      expect.objectContaining({ n: 2, schema_version: 1 }),
+    )
   })
 
   it('trackFirstSessionCompleted fires once when first', () => {
@@ -130,7 +133,10 @@ describe('activationEvents', () => {
     trackFirstSessionCompleted(true)
     trackFirstSessionCompleted(true)
     expect(capture).toHaveBeenCalledTimes(1)
-    expect(capture).toHaveBeenCalledWith('first_session_completed', expect.any(Object))
+    expect(capture).toHaveBeenCalledWith(
+      'first_session_completed',
+      expect.objectContaining({ schema_version: 1 }),
+    )
     expect(localStorage.getItem(FIRST_SESSION_COMPLETED_STORAGE_KEY)).toBe('1')
   })
 
@@ -145,7 +151,7 @@ describe('activationEvents', () => {
     )
     expect(capture).toHaveBeenCalledWith(
       'signup_completed',
-      expect.objectContaining({ utm_source: 'newsletter' }),
+      expect.objectContaining({ utm_source: 'newsletter', schema_version: 1 }),
     )
   })
 })

@@ -10,6 +10,9 @@ import {
 } from '../services/admin/interpretProductInsights'
 
 const POSTHOG_PROJECT_URL = 'https://eu.posthog.com/project/325661'
+const POSTHOG_FRICTION_URL =
+  'https://eu.posthog.com/project/325661/activity/explore#q=%7B%22kind%22%3A%22EventsQuery%22%2C%22event%22%3A%22friction_feedback%22%7D'
+const POSTHOG_REPLAY_URL = 'https://eu.posthog.com/project/325661/replay/home'
 
 function severityClass(severity: ProductInsightFinding['severity']): string {
   if (severity === 'critical') return 'border-warn/40 bg-warn/10 text-warn'
@@ -132,6 +135,34 @@ export function AdminInsightsPage() {
             PostHog
             <ExternalLink className="h-3 w-3" />
           </a>
+          <a
+            href={POSTHOG_REPLAY_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 rounded-xl border border-brand-border px-3 py-1.5 text-xs font-semibold text-fg"
+          >
+            Replays
+            <ExternalLink className="h-3 w-3" />
+          </a>
+          <a
+            href={POSTHOG_FRICTION_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 rounded-xl border border-brand-border px-3 py-1.5 text-xs font-semibold text-fg"
+          >
+            Friction
+            <ExternalLink className="h-3 w-3" />
+          </a>
+        </section>
+
+        <section className="rounded-2xl border border-brand-border bg-layer-5 px-4 py-3 text-[12px] leading-relaxed text-fg-muted">
+          <p className="font-bold text-fg">Définition stable</p>
+          <p className="mt-1">
+            Activation = 1ʳᵉ séance loguée ≤ 7 j après signup. Taxonomie :{' '}
+            <code className="text-[11px] text-fg">docs/product-analytics.md</code>
+            . SQL first-party ici · pourquoi UX → replays + event{' '}
+            <code className="text-[11px] text-fg">friction_feedback</code>.
+          </p>
         </section>
 
         {error && (

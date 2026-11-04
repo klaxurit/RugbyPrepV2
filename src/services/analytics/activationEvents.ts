@@ -4,6 +4,7 @@ import {
   captureLandingAttributionOnce,
   getAttribution,
 } from './attribution'
+import { trackProduct } from './trackProduct'
 
 export type LandingCtaLocation =
   | 'hero'
@@ -135,7 +136,7 @@ export function trackAppFirstOpen(
 }
 
 export function trackOnboardingStep(n: number): void {
-  capture('onboarding_step', { n })
+  trackProduct('onboarding_step', { n })
 }
 
 /**
@@ -146,7 +147,7 @@ export function trackFirstSessionCompleted(wasFirstSession: boolean): void {
   if (!wasFirstSession) return
   if (readLocal(FIRST_SESSION_COMPLETED_STORAGE_KEY) === '1') return
   writeLocal(FIRST_SESSION_COMPLETED_STORAGE_KEY, '1')
-  capture('first_session_completed', attributionAsEventProps())
+  trackProduct('first_session_completed', attributionAsEventProps())
 }
 
 /** Attach first-touch attribution to signup_completed (+ person props). */
@@ -160,5 +161,5 @@ export function trackSignupCompletedWithAttribution(): void {
   } catch {
     /* ignore */
   }
-  capture('signup_completed', props)
+  trackProduct('signup_completed', props)
 }

@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { posthog } from '../services/analytics/posthog'
 import { trackFirstSessionCompleted } from '../services/analytics/activationEvents'
+import { trackProduct } from '../services/analytics/trackProduct'
+import { FrictionSurveySheet } from '../components/analytics/FrictionSurveySheet'
 import { ChevronLeft, ShieldCheck, ChevronDown, CheckCircle2, X } from 'lucide-react'
 import { useSessionRun, buildExerciseTourKey } from '../contexts/SessionRunContext'
 import { findCurrentPending } from '../services/motherSession/findCurrentPending'
@@ -184,6 +186,7 @@ export function SessionDetailPage() {
   const [completionOpen, setCompletionOpen] = useState(false)
   const [celebrationOpen, setCelebrationOpen] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
+  const [frictionSurveyOpen, setFrictionSurveyOpen] = useState(false)
   const [sharePayload, setSharePayload] = useState<SessionSharePayload | null>(null)
   const [msSaveError, setMsSaveError] = useState<string | null>(null)
   const [isSavingSession, setIsSavingSession] = useState(false)
@@ -205,7 +208,7 @@ export function SessionDetailPage() {
 
   useEffect(() => {
     sessionCompletedRef.current = false
-    posthog.capture('session_viewed', { index })
+    trackProduct('session_viewed', { index })
     window.scrollTo(0, 0)
   }, [index])
 
@@ -1091,17 +1094,21 @@ export function SessionDetailPage() {
   const handleStartSession = () => {
     if (!sessionRunKey) return
     sessionRun.start(sessionRunKey)
-    posthog.capture('session_started', { index, sessionId: activeSlot?.session.metadata.id })
+    trackProduct('session_started', {
+      index,
+      sessionId: activeSlot?.session.metadata.id ?? null,
+    })
   }
 
   const handleQuitRunningSession = () => {
     if (window.confirm('Quitter la séance en cours ? Les cases cochées seront perdues.')) {
-      posthog.capture('session_abandoned', {
+      trackProduct('session_abandoned', {
         index,
         reason: 'quit',
-        sessionId: activeSlot?.session.metadata.id,
+        sessionId: activeSlot?.session.metadata.id ?? null,
       })
       sessionRun.stop()
+      setFrictionSurveyOpen(true)
     }
   }
 
@@ -1347,7 +1354,7 @@ export function SessionDetailPage() {
       setSharePayload(nextSharePayload)
       setShareOpen(true)
       sessionCompletedRef.current = true
-      posthog.capture('session_completed', {
+      trackProduct('session_completed', {
         index,
         sessionId: sessionIdForShare,
         durationMin: payload.durationMin,
@@ -1823,6 +1830,14 @@ export function SessionDetailPage() {
           setShareOpen(false)
           navigate('/week')
         }}
+      />
+
+      <FrictionSurveySheet
+        open={frictionSurveyOpen}
+        trigger="session_abandon"
+        sessionIndex={index}
+        sessionId={activeSlot?.session.metadata.id}
+        onClose={() => setFrictionSurveyOpen(false)}
       />
 
       {/* B3 — exercise demo sheet (bouton œil). Rendu à la racine pour overlay plein écran. */}
