@@ -1410,7 +1410,8 @@ export function SessionDetailPage() {
       setMsNotes('')
       setMsSaved(true)
       if (slotSignature) sessionRun.clearExerciseOverridesForSlot(slotSignature)
-      sessionRun.stop()
+      // Ne pas stop() ici : stop vide completedExercises et remet « Terminé 0/N »
+      // derrière la carte partage. Nettoyage à la sortie de l’écran uniquement.
       sessionCompletedRef.current = true
       trackProduct('session_completed', {
         index,
@@ -1900,6 +1901,7 @@ export function SessionDetailPage() {
         lang={lang}
         onContinue={() => {
           setShareOpen(false)
+          sessionRun.stop()
           navigate('/week')
         }}
       />
