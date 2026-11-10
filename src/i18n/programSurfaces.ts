@@ -51,8 +51,8 @@ export const programEvolutionDefaults = {
     en: 'Load tapers as match day approaches',
   },
   bullet_2: {
-    fr: 'Dernière séance au moins 48h avant',
-    en: 'Last session at least 48h before kickoff',
+    fr: 'Dernière séance lourde au moins 48h avant le match. La veille : activation légère uniquement.',
+    en: 'Last heavy session at least 48h before kickoff. Eve of match: light activation only.',
   },
   bullet_3: {
     fr: 'Mobilité et activation ajoutées',

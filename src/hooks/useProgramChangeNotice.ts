@@ -149,7 +149,7 @@ function readPreviewNotice(): ProgramChangeNotice | null {
           summary: 'Match prévu samedi — la semaine est calée pour arriver frais.',
           bullets: [
             'Charge réduite à mesure qu\'on approche du match',
-            'Dernière séance au moins 48h avant',
+            'Dernière séance lourde au moins 48h avant le match. La veille : activation légère uniquement.',
             'Mobilité et activation ajoutées',
           ],
           postponable: false,
