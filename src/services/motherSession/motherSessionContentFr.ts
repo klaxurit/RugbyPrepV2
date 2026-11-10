@@ -254,7 +254,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
       'Finir avec un travail de tronc/carry/adducteurs spécifique premières lignes pour la robustesse au contact.',
     ],
     sessionIdentity: [
-      'Spécifique au rugby par un contraste lower lisible, un travail solide hinge/gainage, et un finisher premières lignes.',
+      'Spécifique au rugby par un contraste lower lisible, un travail solide hinge/gainage, et un finisher pack.',
       'Spécifique premières lignes par l\'expression de force, la raideur du tronc, la robustesse des adducteurs et la demande de portage plutôt que de vitesse.',
       'Ne pas diluer cette session avec trop de volume pliométrique ou de travail d\'accessoire type bodybuilding.',
     ],
@@ -302,7 +302,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Finisher Premières Lignes',
+        name: 'Finisher Pack',
         format: '`EMOM 8\'`',
         exercises: [
           { name: 'Sled Push', prescription: '15-20m' },
@@ -497,7 +497,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Finisher Premières Lignes',
+        name: 'Finisher Pack',
         format: '`EMOM 8\'`',
         exercises: [
           { name: 'Farmer Carry or Zercher Carry', prescription: '20m' },
@@ -1883,8 +1883,12 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Front Row Upper Power Cluster': 'Cluster puissance haut du corps avants',
   'Back Three Upper Power Cluster': 'Cluster puissance haut du corps ligne arrière',
   'Full-Body Force-Projection Pair': 'Force / projection corps complet',
-  'Front Row Support': 'Support avants',
-  'Front Row Finisher': 'Finisher Premières lignes',
+  'Front Row Support': 'Support Pack',
+  'Front Row Finisher': 'Finisher Pack',
+  'Back Row Support': 'Support 3ème ligne',
+  'Back Row Finisher': 'Finisher 3ème ligne',
+  'Second Row Support': 'Support 2ème ligne',
+  'Second Row Finisher': 'Finisher 2ème ligne',
   'Back Three Finisher': 'Finisher ligne arrière',
   'Contact Confidence / Pump': 'Confiance contact / pump',
   'Arm Pump / Confidence Block': 'Pump bras / confiance',
@@ -3068,29 +3072,17 @@ export function getSessionFr(sessionId: string): SessionContentFr | undefined {
 
 /** Mothers variété in-season : même squelette FR que la base, exos adaptés depuis le corpus EN. */
 function contrastRotationFrBaseId(sessionId: string): string | null {
-  if (
-    sessionId.startsWith('UPPER_IN_SEASON_FRONT_ROW_') &&
-    sessionId !== 'UPPER_IN_SEASON_FRONT_ROW_V1'
-  ) {
-    return 'UPPER_IN_SEASON_FRONT_ROW_V1'
+  if (/^UPPER_IN_SEASON_(FRONT_ROW|SECOND_ROW|BACK_ROW)/.test(sessionId)) {
+    if (sessionId !== 'UPPER_IN_SEASON_FRONT_ROW_V1') return 'UPPER_IN_SEASON_FRONT_ROW_V1'
   }
-  if (
-    sessionId.startsWith('UPPER_IN_SEASON_BACK_THREE_') &&
-    sessionId !== 'UPPER_IN_SEASON_BACK_THREE_V1'
-  ) {
-    return 'UPPER_IN_SEASON_BACK_THREE_V1'
+  if (/^UPPER_IN_SEASON_(BACK_THREE|HALF_BACKS|CENTERS)/.test(sessionId)) {
+    if (sessionId !== 'UPPER_IN_SEASON_BACK_THREE_V1') return 'UPPER_IN_SEASON_BACK_THREE_V1'
   }
-  if (
-    sessionId.startsWith('LOWER_IN_SEASON_FRONT_ROW_') &&
-    sessionId !== 'LOWER_IN_SEASON_FRONT_ROW_V1'
-  ) {
-    return 'LOWER_IN_SEASON_FRONT_ROW_V1'
+  if (/^LOWER_IN_SEASON_(FRONT_ROW|SECOND_ROW|BACK_ROW)/.test(sessionId)) {
+    if (sessionId !== 'LOWER_IN_SEASON_FRONT_ROW_V1') return 'LOWER_IN_SEASON_FRONT_ROW_V1'
   }
-  if (
-    sessionId.startsWith('LOWER_IN_SEASON_BACK_THREE_') &&
-    sessionId !== 'LOWER_IN_SEASON_BACK_THREE_V1'
-  ) {
-    return 'LOWER_IN_SEASON_BACK_THREE_V1'
+  if (/^LOWER_IN_SEASON_(BACK_THREE|HALF_BACKS|CENTERS)/.test(sessionId)) {
+    if (sessionId !== 'LOWER_IN_SEASON_BACK_THREE_V1') return 'LOWER_IN_SEASON_BACK_THREE_V1'
   }
   if (sessionId === 'FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_B_V1') {
     return 'FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1'
@@ -3132,7 +3124,9 @@ function adaptContrastVariantFr(
         })
       }
     }
-    return { ...block, exercises }
+    // Garder le nom de bloc EN→FR de la mother famille (pas le libellé 1ère ligne du base).
+    const name = enBlock.name ? translateBlockNameToFr(enBlock.name) : block.name
+    return { ...block, name, exercises }
   })
   return { ...base, blocks }
 }

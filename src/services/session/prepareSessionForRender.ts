@@ -24,8 +24,20 @@ import { applyInSeasonNoMatchPrimeBump } from './applyInSeasonNoMatchPrimeBump'
 import { applyNeckIsometricBlock } from './applyNeckIsometricBlock'
 import { applyOptionalOffSeasonFinisher } from './applyOptionalOffSeasonFinisher'
 import { applyPositionAccentBlock } from './applyPositionAccentBlock'
+import {
+  applyBenchWavePrescription,
+  type BenchWaveDayPreference,
+} from './applyBenchWavePrescription'
+import {
+  applyPackPorteurAdaptation,
+  isPackPorteurEligibleSession,
+  isPackPorteurFamily,
+} from './applyPackPorteurAdaptation'
+import { applyContentFamilyCopyPolish } from './applyContentFamilyCopyPolish'
+import { applySprintTrackCodBlock } from './applySprintTrackCodBlock'
 import type { ClubContactProxy } from '../../types/annualPlanning'
 import type { PositionAccentFocus } from '../equipment/positionAccentTheme'
+import { resolveContentFamily, type ContentFamily } from '../../data/contentFamily'
 
 interface PrepareInputs {
   session: MotherSession
@@ -45,6 +57,19 @@ interface PrepareInputs {
   rugbyPosition?: RugbyPositionGroup | string | null
   /** Micro-choix focus accent (A = thème semaine, B = complémentaire). */
   positionAccentFocus?: PositionAccentFocus
+  /** Préférence jour du slot (match week → SPEED/DELOAD). */
+  dayPreference?: BenchWaveDayPreference | null
+  contentFamily?: ContentFamily | null
+}
+
+/** Prefer explicit family; else derive from onboarding poste (Plan A copy). */
+function resolveRenderContentFamily(
+  contentFamily: ContentFamily | null | undefined,
+  rugbyPosition: RugbyPositionGroup | string | null | undefined,
+): ContentFamily | null {
+  if (contentFamily) return contentFamily
+  if (!rugbyPosition) return null
+  return resolveContentFamily(rugbyPosition).family
 }
 
 /**
@@ -57,9 +82,12 @@ interface PrepareInputs {
  *  6. Speed salle/maison : fallback sans piste si pas de `sprint_track`
  *  7. Hypertrophie off : +1 série sur 2 primes (4→5), hors décharge / starter
  *  8. In-season hors match : +1 série bloc force (3→4), hors club dur / décharge
- *  9. Mini-bloc cou Upper (optionnel, coupé en premier)
- * 10. Finisher rugby optionnel hors saison (portage, coupé en premier)
- * 11. Accent poste fin (Upper/Lower BW + salle) — ajouté, theme-week + focus A/B
+ *  9. Vague Bench in-season (overlay meso week — ancre stable)
+ * 10. Mini-bloc cou Upper (optionnel, coupé en premier)
+ * 11. Finisher rugby optionnel hors saison (portage, coupé en premier)
+ * 12. Pack porteur (2ᵉ/3ᵉ ligne) — DNA pré Power / Primer / Full FRONT_ROW, silencieux
+ * 13. COD piste si `sprint_track` (off/pré ; Full hors match) — silencieux
+ * 14. Accent poste fin (Upper/Lower BW + salle) — ajouté, theme-week + focus A/B
  *
  * La session retournée est prête à être passée aux blocs de rendu (`SessionBlocks`)
  * sans qu'ils aient à connaître le système d'adaptations / contenu FR.
@@ -79,7 +107,11 @@ export function prepareSessionForRender({
   preMatchNoHeavy,
   rugbyPosition,
   positionAccentFocus,
+  dayPreference,
+  contentFamily: contentFamilyInput,
 }: PrepareInputs): MotherSession {
+  const contentFamily = resolveRenderContentFamily(contentFamilyInput, rugbyPosition)
+
   // 1+2. Adaptations EN (Foundations puis Equipment).
   const foundationsSession = isFoundationsLevel(trainingLevel)
     ? adaptMotherSessionForFoundations(session, equipment)
@@ -94,13 +126,28 @@ export function prepareSessionForRender({
     preMatchNoHeavy,
     rugbyPosition,
     positionAccentFocus,
+    dayPreference,
+    contentFamily,
   }
 
+  // Pack porteur sur noms EN (avant FR) — sinon les libellés FR cassent les swaps.
+  const porteurEn = applyPackPorteurAdaptation(adaptedEn, {
+    contentFamily,
+    lang: 'en',
+  })
+  const copyPolishedEn = applyContentFamilyCopyPolish(porteurEn, {
+    contentFamily,
+    lang: 'en',
+  })
+
   if (lang !== 'fr') {
-    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel, weekCtx)
+    return finishPrepared(copyPolishedEn, mesoWeek, equipment, lang, trainingLevel, weekCtx)
   }
 
   // 3. Pipeline FR : raw FR → Foundations FR → Equipment FR → merge dans la session.
+  // Skip merge FR indexé seulement si les exos ont été swapés (pré/Full/Primer FRONT_ROW).
+  const porteurMutated =
+    isPackPorteurFamily(contentFamily) && isPackPorteurEligibleSession(adaptedEn)
   const rawFr = getSessionFrOrFallback(session)
   const foundationsFr = isFoundationsLevel(trainingLevel)
     ? adaptSessionContentFrForFoundations(session, rawFr, equipment)
@@ -112,7 +159,7 @@ export function prepareSessionForRender({
   )
 
   if (!finalFr) {
-    return finishPrepared(adaptedEn, mesoWeek, equipment, lang, trainingLevel, weekCtx)
+    return finishPrepared(copyPolishedEn, mesoWeek, equipment, lang, trainingLevel, weekCtx)
   }
 
   // Merge des noms FR sur les blocs et exos. Format/coachingNotes/fallbackOptions
@@ -121,16 +168,15 @@ export function prepareSessionForRender({
   // ⚠️ Toujours résoudre `exerciseId` depuis le nom EN *avant* d'appliquer le libellé FR :
   // le catalogue / MS_EXERCISE_MAP est anglophone ; sans ça, lang=fr casse le moteur
   // (`findCurrentPending` → pas de « Valider ») et les démos (bouton œil).
-  const blocks = adaptedEn.blocks.map((block, blockIndex) => {
-    const frBlock = finalFr.blocks[blockIndex]
-    if (!frBlock) return block
+  const blocksMerged = copyPolishedEn.blocks.map((block, blockIndex) => {
+    const frBlock = !porteurMutated ? finalFr.blocks[blockIndex] : undefined
     return {
       ...block,
-      name: frBlock.name || block.name,
-      format: frBlock.format || block.format,
+      name: frBlock?.name || block.name,
+      format: frBlock?.format || block.format,
       exercises: block.exercises.map((exo, exoIndex) => {
         const catalogId = resolveExerciseIdForSessionRun(exo.name, exo.exerciseId)
-        const frExo = frBlock.exercises[exoIndex]
+        const frExo = frBlock?.exercises[exoIndex]
         const lexiconFr = localizeMotherSessionExerciseName(exo.name, 'fr')
         const lexiconTranslated =
           Boolean(lexiconFr) &&
@@ -141,7 +187,11 @@ export function prepareSessionForRender({
             ? getExerciseName(catalogId, 'fr')
             : frExo?.name
         if (!frExo) {
-          return catalogId ? { ...exo, exerciseId: catalogId } : exo
+          return {
+            ...exo,
+            name: localizedName || exo.name,
+            ...(catalogId ? { exerciseId: catalogId } : {}),
+          }
         }
         return {
           ...exo,
@@ -150,20 +200,21 @@ export function prepareSessionForRender({
           ...(catalogId ? { exerciseId: catalogId } : {}),
         }
       }),
-      coachingNotes: frBlock.coachingNotes ?? block.coachingNotes,
-      fallbackOptions: frBlock.fallbackOptions ?? block.fallbackOptions,
+      coachingNotes: frBlock?.coachingNotes ?? block.coachingNotes,
+      fallbackOptions: frBlock?.fallbackOptions ?? block.fallbackOptions,
     }
   })
 
-  return finishPrepared(
+  // Re-polish FR : le merge FR peut réintroduire « Premières Lignes » depuis le corpus.
+  const frPolished = applyContentFamilyCopyPolish(
     {
-      ...adaptedEn,
-      blocks,
-      warmUp: adaptedEn.warmUp
+      ...copyPolishedEn,
+      blocks: blocksMerged,
+      warmUp: copyPolishedEn.warmUp
         ? {
-            ...adaptedEn.warmUp,
-            notes: finalFr.warmUpNotes.length > 0 ? finalFr.warmUpNotes : adaptedEn.warmUp.notes,
-            exercises: adaptedEn.warmUp.exercises.map((exo, i) => {
+            ...copyPolishedEn.warmUp,
+            notes: finalFr.warmUpNotes.length > 0 ? finalFr.warmUpNotes : copyPolishedEn.warmUp.notes,
+            exercises: copyPolishedEn.warmUp.exercises.map((exo, i) => {
               const frExo = finalFr.warmUpExercises[i]
               if (!frExo) return exo
               return {
@@ -173,14 +224,16 @@ export function prepareSessionForRender({
               }
             }),
           }
-        : adaptedEn.warmUp,
+        : copyPolishedEn.warmUp,
+      goal: finalFr.goals?.length ? finalFr.goals : copyPolishedEn.goal,
+      sessionIdentity: finalFr.sessionIdentity?.length
+        ? finalFr.sessionIdentity
+        : copyPolishedEn.sessionIdentity,
     },
-    mesoWeek,
-    equipment,
-    lang,
-    trainingLevel,
-    weekCtx,
+    { contentFamily, lang: 'fr' },
   )
+
+  return finishPrepared(frPolished, mesoWeek, equipment, lang, trainingLevel, weekCtx)
 }
 
 function finishPrepared(
@@ -196,6 +249,8 @@ function finishPrepared(
     preMatchNoHeavy?: boolean
     rugbyPosition?: RugbyPositionGroup | string | null
     positionAccentFocus?: PositionAccentFocus
+    dayPreference?: BenchWaveDayPreference | null
+    contentFamily?: ContentFamily | null
   } = {},
 ): MotherSession {
   const withNordic = applyProgressiveNordic(session, mesoWeek)
@@ -214,14 +269,30 @@ function finishPrepared(
     isDeloadWeek: weekCtx.isDeloadWeek,
     clubContactProxy: weekCtx.clubContactProxy,
   })
-  const withNeck = applyNeckIsometricBlock(withInSeason, { mesoWeek, trainingLevel, lang })
+  const withBenchWave = applyBenchWavePrescription(withInSeason, {
+    mesocycleWeek: mesoWeek,
+    lang,
+    isDeloadWeek: weekCtx.isDeloadWeek,
+    isMatchWeek: weekCtx.isMatchWeek,
+    preMatchNoHeavy: weekCtx.preMatchNoHeavy,
+    dayPreference: weekCtx.dayPreference,
+    contentFamily: weekCtx.contentFamily,
+    rugbyPosition: weekCtx.rugbyPosition,
+  })
+  const withNeck = applyNeckIsometricBlock(withBenchWave, { mesoWeek, trainingLevel, lang })
   const withFinisher = applyOptionalOffSeasonFinisher(withNeck, {
     mesoWeek,
     trainingLevel,
     equipment,
     lang,
   })
-  return applyPositionAccentBlock(withFinisher, {
+  // Pack porteur déjà appliqué en amont (noms EN). Ici : COD piste seulement.
+  const withSprintCod = applySprintTrackCodBlock(withFinisher, {
+    equipment,
+    isMatchWeek: weekCtx.isMatchWeek,
+    lang,
+  })
+  return applyPositionAccentBlock(withSprintCod, {
     rugbyPosition: weekCtx.rugbyPosition,
     mesoWeek,
     trainingLevel,
