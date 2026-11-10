@@ -71,7 +71,7 @@ describe('EmomRecapSheet', () => {
     )
   })
 
-  it('Free : pas de confirm, skip disponible', () => {
+  it('Free : consigne verrou Pro avant les champs, pas de confirm', () => {
     const onSkip = vi.fn()
     render(
       <EmomRecapSheet
@@ -83,6 +83,10 @@ describe('EmomRecapSheet', () => {
         onSkip={onSkip}
       />,
     )
+    expect(screen.getByTestId('emom-recap-pro-lock')).toHaveTextContent(
+      /suivi des charges est réservé au/i,
+    )
+    expect(screen.queryByText(/Note ce que tu as fait/i)).toBeNull()
     expect(screen.queryByTestId('emom-recap-confirm')).toBeNull()
     fireEvent.click(screen.getByTestId('emom-recap-skip'))
     expect(onSkip).toHaveBeenCalled()

@@ -67,22 +67,25 @@ export function EmomRecapSheet({
       disableBackdropDismiss
     >
       <div className="px-5 pb-2 space-y-4" data-testid="emom-recap-sheet">
-        <p className="text-[13px] leading-relaxed text-fg-muted">
-          {lang === 'fr'
-            ? 'Note ce que tu as fait — pour progresser la prochaine fois. Tu peux passer si tu préfères.'
-            : 'Log what you did — so next time you can progress. You can skip if you prefer.'}
-        </p>
-
-        {!isPremium && (
-          <p className="rounded-xl border border-brand-border bg-brand-soft/50 px-3 py-2.5 text-[12px] leading-relaxed text-fg">
+        {isPremium ? (
+          <p className="text-[13px] leading-relaxed text-fg-muted">
+            {lang === 'fr'
+              ? 'Note ce que tu as fait — pour progresser la prochaine fois. Tu peux passer si tu préfères.'
+              : 'Log what you did — so next time you can progress. You can skip if you prefer.'}
+          </p>
+        ) : (
+          <p
+            className="rounded-xl border border-brand-border bg-brand-soft/50 px-3 py-2.5 text-[13px] leading-relaxed text-fg"
+            data-testid="emom-recap-pro-lock"
+          >
             {lang === 'fr' ? (
               <>
-                Noter kg / temps tenu pour la prochaine fois — inclus dans{' '}
+                Le suivi des charges est réservé au{' '}
                 <strong className="text-brand">Pro</strong>.
               </>
             ) : (
               <>
-                Log kg / hold time for next time — included in{' '}
+                Load tracking is reserved for{' '}
                 <strong className="text-brand">Pro</strong>.
               </>
             )}

@@ -858,10 +858,22 @@ function ExerciseRow({
       )}
 
       {isCurrent && hasRepScheme && !premium && (
-        <div className="flex items-center gap-2 border-t border-dashed border-brand/25 pt-2.5 text-[11px] text-fg-muted italic">
+        <div
+          className="flex items-center gap-2 border-t border-dashed border-brand/25 pt-2.5 text-[11px] text-fg-muted"
+          data-testid="exercise-pro-lock"
+        >
           <Icon name="lock" size={12} color="var(--color-accent)" strokeWidth={1.8} />
           <span>
-            {tr('exercise_premium_tracking_pre', lang)} <strong className="not-italic text-brand">Pro</strong>
+            {lang === 'fr' ? (
+              <>
+                Le suivi des charges est réservé au{' '}
+                <strong className="text-brand">Pro</strong>
+              </>
+            ) : (
+              <>
+                Load tracking is reserved for <strong className="text-brand">Pro</strong>
+              </>
+            )}
           </span>
         </div>
       )}
