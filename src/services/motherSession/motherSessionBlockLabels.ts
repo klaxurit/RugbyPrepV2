@@ -29,14 +29,34 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Lower Neural Pair': 'Paire neurale bas du corps',
   'Upper Push Primer': 'Primer poussée haut du corps',
   'Pull Strength Pair': 'Paire force tirage',
-  'Front Row Support': 'Support première ligne',
+  'Front Row Support': 'Support Pack',
   'Pull / Rotation Primer': 'Primer tirage / rotation',
   'Arm Pump / Confidence Block': 'Pump bras / bloc confiance',
   'Pull / Trunk Primer': 'Primer tirage / tronc',
   'Contact Confidence / Pump': 'Confiance contact / pump',
-  'Front Row Finisher': 'Finisher première ligne',
+  'Front Row Finisher': 'Finisher Pack',
   'Back Three Finisher': 'Finisher arrières',
   'Contrast Lower Speed-Projection': 'Contraste bas vitesse-projection',
+  'Contrast Lower': 'Contraste bas du corps',
+  'Contrast Upper': 'Contraste haut du corps',
+  'Contrast Push': 'Contraste poussée',
+  'Contrast Hinge + Jump': 'Contraste hinge + saut',
+  'Speed Contrast Lower': 'Contraste vitesse bas du corps',
+  'Speed Push Contrast': 'Contraste vitesse poussée',
+  'Full Body Contrast': 'Contraste corps complet',
+  'Contrasted Acceleration': 'Contraste accélération',
+  'Hinge Force + Jump Contrast': 'Force hinge + contraste saut',
+  'Neural Lower': 'Neural bas du corps',
+  'Upper Primer': 'Primer haut du corps',
+  'Upper Ballistic': 'Balistique haut du corps',
+  'Upper Force Support': 'Support force haut du corps',
+  'Push Strength': 'Force poussée',
+  'Pull / Scap Strength Pair': 'Paire force tirage / scapula',
+  'Lower-Leg Support (optional)': 'Support mollets (optionnel)',
+  // Alias franglais déjà mergés dans le corpus FR (avant localizeBlockName).
+  'Contraste Lower': 'Contraste bas du corps',
+  'Contraste Upper': 'Contraste haut du corps',
+  'Triplet Force Lower': 'Triplet force bas du corps',
   'Posterior Chain + Unilateral Strength Pair': 'Paire chaîne postérieure + force unilatérale',
   'Contrast Lower Force-Power': 'Contraste bas force-puissance',
   'Contrast Upper Speed-Power': 'Contraste haut vitesse-puissance',
@@ -103,7 +123,7 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Position Support Finisher': 'Finisher support poste',
   'Upper Power Pair': 'Paire puissance haut',
   'Pull / Posterior Cluster': 'Cluster tirage / postérieur',
-  'Lower Strength Triplet': 'Triplet force bas',
+  'Lower Strength Triplet': 'Triplet force bas du corps',
   'Posterior Chain Force Maintenance': 'Maintien force chaîne postérieure',
   'Athletic Finisher': 'Finisher athlétique',
   'Optional Lower-Leg Support': 'Support mollets optionnel',
@@ -120,7 +140,7 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Posterior Chain / Lower Leg Support': 'Support chaîne postérieure / mollets',
   'Back Three Power Cluster': 'Cluster puissance arrières',
   'Hamstring / Lower-Leg Micro-Dose': 'Micro-dose ischios / mollets',
-  'Front Row Power Cluster': 'Cluster puissance première ligne',
+  'Front Row Power Cluster': 'Cluster puissance Pack',
   'Hamstring Micro-Dose': 'Micro-dose ischios',
   'Sprint / Acceleration': 'Sprint / accélération',
   'Jumps / Plyometrics': 'Sauts / pliométrie',
@@ -133,17 +153,24 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Contrast Upper Force-Speed': 'Contraste haut force-vitesse',
   'Main Upper Force': 'Force haut principale',
   'Back Three Upper Power Cluster': 'Cluster puissance haut arrières',
-  'Front Row Upper Power Cluster': 'Cluster puissance haut première ligne',
+  'Front Row Upper Power Cluster': 'Cluster puissance haut Pack',
+}
+
+/** Titres de bloc : jamais de ponctuation finale (copy / i18n). */
+export function stripBlockTitlePunctuation(name: string): string {
+  return name.replace(/[.!?…]+$/u, '').trim()
 }
 
 /**
  * Renvoie le nom d'un bloc dans la langue voulue.
  * Fallback : nom brut (EN par convention dans la source MD).
+ * Lookup après strip de ponctuation finale (translateTextToFr peut en ajouter).
  */
 export function localizeBlockName(name: string | undefined, lang: Lang = 'fr'): string {
   if (!name) return ''
-  if (lang === 'en') return name
-  return BLOCK_NAME_FR[name] ?? name
+  const cleaned = stripBlockTitlePunctuation(name)
+  if (lang === 'en') return cleaned
+  return BLOCK_NAME_FR[cleaned] ?? BLOCK_NAME_FR[name] ?? cleaned
 }
 
 /**

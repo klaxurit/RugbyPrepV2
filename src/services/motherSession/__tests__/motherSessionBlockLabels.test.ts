@@ -6,7 +6,14 @@ describe('localizeBlockName', () => {
     it('traduit un nom mappé', () => {
       expect(localizeBlockName('Lower Power Pair', 'fr')).toBe('Paire de puissance bas du corps')
       expect(localizeBlockName('Upper Push/Pull Strength', 'fr')).toBe('Force pousser/tirer haut du corps')
-      expect(localizeBlockName('Front Row Finisher', 'fr')).toBe('Finisher première ligne')
+      expect(localizeBlockName('Front Row Finisher', 'fr')).toBe('Finisher Pack')
+      expect(localizeBlockName('Contrast Lower', 'fr')).toBe('Contraste bas du corps')
+      expect(localizeBlockName('Lower Strength Triplet', 'fr')).toBe('Triplet force bas du corps')
+    })
+    it('retire la ponctuation finale et mappe les alias franglais', () => {
+      expect(localizeBlockName('Lower Strength Triplet.', 'fr')).toBe('Triplet force bas du corps')
+      expect(localizeBlockName('Contraste Lower', 'fr')).toBe('Contraste bas du corps')
+      expect(localizeBlockName('Triplet Force Lower', 'fr')).toBe('Triplet force bas du corps')
     })
     it('fallback sur le nom brut EN si non mappé', () => {
       expect(localizeBlockName('Some Unknown Block', 'fr')).toBe('Some Unknown Block')
@@ -17,9 +24,10 @@ describe('localizeBlockName', () => {
   })
 
   describe('lang = en', () => {
-    it("renvoie le nom brut tel quel (la source MD est en EN)", () => {
+    it("renvoie le nom brut sans ponctuation finale", () => {
       expect(localizeBlockName('Lower Power Pair', 'en')).toBe('Lower Power Pair')
       expect(localizeBlockName('Upper Push/Pull Strength', 'en')).toBe('Upper Push/Pull Strength')
+      expect(localizeBlockName('Lower Strength Triplet.', 'en')).toBe('Lower Strength Triplet')
     })
   })
 

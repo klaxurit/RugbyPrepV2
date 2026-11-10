@@ -272,7 +272,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Contraste Lower',
+        name: 'Contraste bas du corps',
         format: '4 tours, repos complet `3 min` après chaque tour',
         exercises: [
           { name: 'Box Squat', prescription: '4x3 @ 80-85%' },
@@ -287,7 +287,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Triplet Force Lower',
+        name: 'Triplet force bas du corps',
         format: '3 tours, `90-120s` de repos après le triplet',
         exercises: [
           { name: 'Barbell Romanian Deadlift', prescription: '3x5-6' },
@@ -373,7 +373,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Contraste Lower',
+        name: 'Contraste bas du corps',
         format: '4 tours, repos complet `2 min 30 à 3 min` après chaque tour',
         exercises: [
           { name: 'Trap Bar Deadlift', prescription: '4x3 @ 75-80%' },
@@ -469,7 +469,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Contraste Upper',
+        name: 'Contraste haut du corps',
         format: '4 tours, repos complet `3 min` après chaque tour',
         exercises: [
           { name: 'Bench Press', prescription: '4x4 @ 80-85%' },
@@ -577,7 +577,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Contraste Upper',
+        name: 'Contraste haut du corps',
         format: '4 tours, repos complet `2 min 30 à 3 min` après chaque tour',
         exercises: [
           { name: 'Bench Press', prescription: '4x3-4 @ 75-80%' },
@@ -942,7 +942,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Neural Lower',
+        name: 'Neural bas du corps',
         format: '3 tours, repos complet `2-3 min`',
         exercises: [
           { name: 'Banded Anderson Box Squat', prescription: '3x3 @ ~75-80% + tension élastique' },
@@ -1066,7 +1066,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
     ],
     blocks: [
       {
-        name: 'Neural Lower',
+        name: 'Neural bas du corps',
         format: '3 tours, repos complet `2-3 min`',
         exercises: [
           { name: 'Trap Bar Deadlift', prescription: '3x2-3 @ ~70-75%' },
@@ -1872,12 +1872,17 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Squat / Hinge Re-Entry': 'Reprise squat / hinge',
   'Trunk / Mobility / Tissue Reset': 'Tronc / mobilité / reset tissulaire',
   'Unilateral / Locomotion Reset': 'Unilatéral / locomotion',
-  'Contrast Lower Force-Power': 'Contraste Lower',
-  'Contrast Lower Force-Projection': 'Contraste Lower',
-  'Contrast Lower Speed-Projection': 'Contraste Lower',
-  'Contrast Upper Force-Speed': 'Contraste Upper',
-  'Contrast Upper Push': 'Contraste Upper',
-  'Contrast Upper Speed-Power': 'Contraste Upper',
+  'Contrast Lower': 'Contraste bas du corps',
+  'Contrast Lower Force-Power': 'Contraste bas du corps',
+  'Contrast Lower Force-Projection': 'Contraste bas du corps',
+  'Contrast Lower Speed-Projection': 'Contraste bas du corps',
+  'Contrast Upper': 'Contraste haut du corps',
+  'Contrast Upper Force-Speed': 'Contraste haut du corps',
+  'Contrast Upper Push': 'Contraste haut du corps',
+  'Contrast Upper Speed-Power': 'Contraste haut du corps',
+  'Lower Strength Triplet': 'Triplet force bas du corps',
+  'Neural Lower': 'Neural bas du corps',
+  'Upper Primer': 'Primer haut du corps',
   'Back Three Power Cluster': 'Cluster puissance ligne arrière',
   'Front Row Power Cluster': 'Cluster puissance avants',
   'Front Row Upper Power Cluster': 'Cluster puissance haut du corps avants',
@@ -3029,7 +3034,10 @@ function normalizeSessionContentFr(content: SessionContentFr): SessionContentFr 
 }
 
 export function translateBlockNameToFr(name: string): string {
-  return BLOCK_NAME_FR[name] ?? translateTextToFr(name)
+  const mapped = BLOCK_NAME_FR[name]
+  if (mapped) return mapped
+  // Titres : pas de ponctuation finale (normalizeFrenchSentence en ajoute sinon).
+  return translateTextToFr(name).replace(/[.!?…]+$/u, '').trim()
 }
 
 function translateFormatToFr(format: string): string {

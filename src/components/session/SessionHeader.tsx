@@ -56,7 +56,7 @@ interface ProgressBarProps {
   /** Index du bloc courant (0-based). */
   currentBlockIdx: number
   totalBlocks: number
-  /** Libellé italique sous la barre (ex: "Triplet Force Lower · Tour 2/3"). */
+  /** Libellé italique sous la barre (ex: "Triplet force bas du corps · Tour 2/3"). */
   label?: string
   /** Temps écoulé formaté (ex: "12 MIN"). */
   elapsedLabel?: string
