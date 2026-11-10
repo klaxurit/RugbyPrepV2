@@ -288,7 +288,7 @@ const SESSION_CONTENT_FR: Record<string, SessionContentFr> = {
         ],
       },
       {
-        name: 'Triplet force bas du corps',
+        name: 'Triplé force bas du corps',
         format: '3 tours, `90-120s` de repos après le triplet',
         exercises: [
           { name: 'Barbell Romanian Deadlift', prescription: '3x5-6' },
@@ -1881,7 +1881,7 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Contrast Upper Force-Speed': 'Contraste haut du corps',
   'Contrast Upper Push': 'Contraste haut du corps',
   'Contrast Upper Speed-Power': 'Contraste haut du corps',
-  'Lower Strength Triplet': 'Triplet force bas du corps',
+  'Lower Strength Triplet': 'Triplé force bas du corps',
   'Neural Lower': 'Neural bas du corps',
   'Upper Primer': 'Primer haut du corps',
   'Back Three Power Cluster': 'Cluster puissance ligne arrière',

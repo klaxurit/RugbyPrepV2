@@ -86,7 +86,7 @@ export const TRAINING_GLOSSARY: readonly GlossaryEntry[] = [
     id: 'primer',
     label: { fr: 'Activation', en: 'Primer' },
     definition: {
-      fr: 'Séance d’activation courte (Power-up) avant un match ou une charge club.',
+      fr: 'Séance d’activation courte avant un match ou une charge club.',
       en: 'Short activation session (primer) before a match or club load.',
     },
     match: /\bPrimer\b|\bPower-up\b|\bActivation\b/i,

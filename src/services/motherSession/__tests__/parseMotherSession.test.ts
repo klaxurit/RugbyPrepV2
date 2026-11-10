@@ -234,7 +234,7 @@ describe('formatTitleFromMotherSessionId', () => {
   it('ne réduit pas un primer full_light à seulement Full', () => {
     // Override dict returns a more specific title for this ID in EN
     expect(formatTitleFromMotherSessionId('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1')).toBe(
-      'Light Primer · Pack'
+      'Activation · Pack'
     )
   })
 

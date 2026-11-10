@@ -17,17 +17,17 @@ describe('formatTitleFromMotherSessionId', () => {
       expect(result).not.toContain('_V1')
     })
 
-    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Power-up · Pack', () => {
+    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Activation · Pack', () => {
       expect(formatTitleFromMotherSessionId('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1', 'fr'))
-        .toBe('Power-up · Pack')
+        .toBe('Activation · Pack')
     })
 
-    it('contentFamily back_row → Power-up · 3ème ligne', () => {
+    it('contentFamily back_row → Activation · 3ème ligne', () => {
       expect(
         formatTitleFromMotherSessionId('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1', 'fr', {
           contentFamily: 'back_row',
         }),
-      ).toBe('Power-up · 3ème ligne')
+      ).toBe('Activation · 3ème ligne')
     })
 
     it('contentFamily second_row sur pré Power → suffixe 2ème ligne', () => {
@@ -78,9 +78,9 @@ describe('formatTitleFromMotherSessionId', () => {
         .toBe('Lower - Force')
     })
 
-    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Light Primer · Pack', () => {
+    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Activation · Pack', () => {
       expect(formatTitleFromMotherSessionId('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1', 'en'))
-        .toBe('Light Primer · Pack')
+        .toBe('Activation · Pack')
     })
   })
 

@@ -462,7 +462,7 @@ describe('WeekPage · convergence moteurs', () => {
     // Calendar timeline uses formatTitleFromMotherSessionId, not raw IDs or badge labels
     expect(screen.queryByText(/FULL_LIGHT_PRIMER/i)).toBeNull()
     // Should show formatted title instead
-    expect(screen.getByText(/Power-up/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Activation/).length).toBeGreaterThan(0)
   })
 
   // ── S5 — dual layout tests ──────────────────────────────────────────────

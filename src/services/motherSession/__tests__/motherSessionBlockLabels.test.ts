@@ -13,10 +13,10 @@ describe('localizeBlockName', () => {
       expect(localizeBlockName('Half-Backs Finisher', 'fr')).toBe('Finisher Demis')
       expect(localizeBlockName('CENTERS Finisher', 'fr')).toBe('Finisher Centres')
       expect(localizeBlockName('Contrast Lower', 'fr')).toBe('Contraste bas du corps')
-      expect(localizeBlockName('Lower Strength Triplet', 'fr')).toBe('Triplet force bas du corps')
+      expect(localizeBlockName('Lower Strength Triplet', 'fr')).toBe('Triplé force bas du corps')
     })
     it('retire la ponctuation finale et mappe les alias franglais', () => {
-      expect(localizeBlockName('Lower Strength Triplet.', 'fr')).toBe('Triplet force bas du corps')
+      expect(localizeBlockName('Lower Strength Triplet.', 'fr')).toBe('Triplé force bas du corps')
       expect(localizeBlockName('Contraste Lower', 'fr')).toBe('Contraste bas du corps')
       expect(localizeBlockName('Triplet Force Lower', 'fr')).toBe('Triplé force bas du corps')
     })
