@@ -1169,6 +1169,18 @@ const POSITION_SHORT_KEY: Record<string, AppLabelKey> = {
 /** Short form for rugby position used in tests baseline display ("1ère ligne"). */
 export function positionShortLabel(value: string | null | undefined, lang: Lang = 'fr'): string | null {
   if (!value) return null
-  const key = POSITION_SHORT_KEY[value]
-  return key ? tr(key, lang) : null
+  const normalized = String(value).trim().toUpperCase().replace(/\s+/g, '_')
+  const fromToken = POSITION_SHORT_KEY[normalized] ?? POSITION_SHORT_KEY[value]
+  if (fromToken) return tr(fromToken, lang)
+  // contentFamily snake_case (back_row) → même libellé joueur
+  const fromFamily: Record<string, AppLabelKey> = {
+    front_row: 'progress_pos_front_row',
+    second_row: 'progress_pos_second_row',
+    back_row: 'progress_pos_back_row',
+    half_backs: 'progress_pos_half_backs',
+    centers: 'progress_pos_centers',
+    back_three: 'progress_pos_back_three',
+  }
+  const familyKey = fromFamily[String(value).trim().toLowerCase()]
+  return familyKey ? tr(familyKey, lang) : null
 }

@@ -9,6 +9,7 @@
  */
 
 import { getExerciseName } from '../../data/exercises'
+import { scrubPlayerFacingPositionCopy } from '../../data/contentFamily'
 import { MOTHER_SESSIONS_BY_ID } from '../../data/motherSessions.generated'
 import type { MotherSession } from '../../types/motherSession'
 import { resolveExerciseId } from './motherSessionExerciseMap'
@@ -1889,12 +1890,23 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Back Three Upper Power Cluster': 'Cluster puissance haut du corps ligne arrière',
   'Full-Body Force-Projection Pair': 'Force / projection corps complet',
   'Front Row Support': 'Support Pack',
+  'FRONT ROW Support': 'Support Pack',
   'Front Row Finisher': 'Finisher Pack',
+  'FRONT ROW Finisher': 'Finisher Pack',
   'Back Row Support': 'Support 3ème ligne',
+  'BACK ROW Support': 'Support 3ème ligne',
   'Back Row Finisher': 'Finisher 3ème ligne',
+  'BACK ROW Finisher': 'Finisher 3ème ligne',
   'Second Row Support': 'Support 2ème ligne',
+  'SECOND ROW Support': 'Support 2ème ligne',
   'Second Row Finisher': 'Finisher 2ème ligne',
-  'Back Three Finisher': 'Finisher ligne arrière',
+  'SECOND ROW Finisher': 'Finisher 2ème ligne',
+  'Half-Backs Finisher': 'Finisher Demis',
+  'HALF BACKS Finisher': 'Finisher Demis',
+  'Centres Finisher': 'Finisher Centres',
+  'CENTERS Finisher': 'Finisher Centres',
+  'Back Three Finisher': 'Finisher Arrières',
+  'BACK THREE Finisher': 'Finisher Arrières',
   'Contact Confidence / Pump': 'Confiance contact / pump',
   'Arm Pump / Confidence Block': 'Pump bras / confiance',
   'Arm Pump / Reward Block': 'Pump bras / récompense',
@@ -3035,9 +3047,12 @@ function normalizeSessionContentFr(content: SessionContentFr): SessionContentFr 
 
 export function translateBlockNameToFr(name: string): string {
   const mapped = BLOCK_NAME_FR[name]
-  if (mapped) return mapped
+  if (mapped) return scrubPlayerFacingPositionCopy(mapped, 'fr')
   // Titres : pas de ponctuation finale (normalizeFrenchSentence en ajoute sinon).
-  return translateTextToFr(name).replace(/[.!?…]+$/u, '').trim()
+  return scrubPlayerFacingPositionCopy(
+    translateTextToFr(name).replace(/[.!?…]+$/u, '').trim(),
+    'fr',
+  )
 }
 
 function translateFormatToFr(format: string): string {

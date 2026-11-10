@@ -13,6 +13,7 @@ import {
   resolveMotherSessionsForWeek,
   type ResolveMotherSessionsForWeekOptions,
 } from '../motherSession/resolveMotherSessionsForWeek'
+import { formatTitleFromMotherSessionId } from '../../components/motherSession/formatMotherSessionTitle'
 
 const COMPLETION_RATIO_CAP = 5
 
@@ -96,7 +97,9 @@ function buildMotherSummary(
   }
 
   const sessionIds = sessions.map((s) => s.sessionId)
-  const sessionTitles = sessions.map((s) => s.session.title ?? s.session.metadata.id)
+  const sessionTitles = sessions.map((s) =>
+    formatTitleFromMotherSessionId(s.session.metadata.id, 'fr'),
+  )
   const motherSessions = sessions.map((s) => s.session)
 
   return {

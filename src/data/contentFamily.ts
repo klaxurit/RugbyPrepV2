@@ -131,6 +131,33 @@ export function contentFamilyLabel(family: ContentFamily, lang: 'fr' | 'en' = 'f
   }
 }
 
+/**
+ * Remplace tokens techniques / EN poste par libellés joueur.
+ * Couvre BACK_ROW, back_row, « Back Row », « HALF BACKS », etc.
+ * Chaque token mappe vers son propre poste (pas la famille du joueur courant).
+ */
+export function scrubPlayerFacingPositionCopy(
+  text: string,
+  lang: 'fr' | 'en' = 'fr',
+): string {
+  if (!text) return text
+  const L = (family: ContentFamily) => contentFamilyLabel(family, lang)
+  // Plus longs / spécifiques d’abord (HALF_BACKS avant BACK, BACK_THREE avant BACK_ROW).
+  return text
+    .replace(/\bHALF[_\s-]?BACKS\b/gi, L('half_backs'))
+    .replace(/\bBACK[_\s-]?THREE\b/gi, L('back_three'))
+    .replace(/\bSECOND[_\s-]?ROW\b/gi, L('second_row'))
+    .replace(/\bFRONT[_\s-]?ROW\b/gi, L('front_row'))
+    .replace(/\bBACK[_\s-]?ROW\b/gi, L('back_row'))
+    .replace(/\bhalf_backs\b/gi, L('half_backs'))
+    .replace(/\bback_three\b/gi, L('back_three'))
+    .replace(/\bsecond_row\b/gi, L('second_row'))
+    .replace(/\bfront_row\b/gi, L('front_row'))
+    .replace(/\bback_row\b/gi, L('back_row'))
+    .replace(/\bCENTERS\b/g, L('centers'))
+    .replace(/\bcenters\b/g, L('centers'))
+}
+
 /** Intent lane Upper B (sous-titre UI). */
 export function upperContrastLaneLabel(
   laneToken: string | null | undefined,

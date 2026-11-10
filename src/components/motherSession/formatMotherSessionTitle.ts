@@ -2,6 +2,7 @@ import type { AppLang } from '../../services/motherSession/motherSessionLabels'
 import {
   contentFamilyLabel,
   parseUpperLaneTokenFromSessionId,
+  scrubPlayerFacingPositionCopy,
   upperContrastLaneLabel,
   type ContentFamily,
 } from '../../data/contentFamily'
@@ -55,7 +56,7 @@ const TOKEN_FR: Record<string, string> = {
   FORCE: 'Force',
   POWER: 'Puissance',
   RECOVERY: 'Récupération',
-  PRIMER: 'Préparation',
+  PRIMER: 'Activation',
   LIGHT: 'Léger',
   SPEED: 'Vitesse',
   HYPERTROPHY: 'Hypertrophie',
@@ -66,10 +67,10 @@ const TOKEN_FR: Record<string, string> = {
 
 const TITLE_OVERRIDES: Record<string, Record<AppLang, string>> = {
   // Pack = lane avants 1–8 (pas « 1ère ligne »). Affiné via contentFamily (3ème / 2ème ligne).
-  FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1:  { fr: 'Power-up · Pack',                    en: 'Light Primer · Pack' },
-  FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_B_V1:{ fr: 'Power-up · Pack',                    en: 'Light Primer · Pack' },
-  FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1: { fr: 'Power-up · Ligne arrière',           en: 'Light Primer · Back Three' },
-  FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_B_V1:{ fr: 'Power-up · Ligne arrière',          en: 'Light Primer · Back Three' },
+  FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1:  { fr: 'Activation · Pack',                    en: 'Activation · Pack' },
+  FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_B_V1:{ fr: 'Activation · Pack',                    en: 'Activation · Pack' },
+  FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_V1: { fr: 'Activation · Ligne arrière',           en: 'Activation · Back three' },
+  FULL_LIGHT_PRIMER_IN_SEASON_BACK_THREE_B_V1:{ fr: 'Activation · Ligne arrière',          en: 'Activation · Back three' },
   FULL_BODY_IN_SEASON_FRONT_ROW_V1:          { fr: 'Corps complet · Pack',                en: 'Full Body · Pack' },
   FULL_BODY_IN_SEASON_FRONT_ROW_B_V1:        { fr: 'Corps complet · Pack',                en: 'Full Body · Pack' },
   FULL_BODY_IN_SEASON_BACK_THREE_V1:         { fr: 'Corps complet · Ligne arrière',       en: 'Full Body · Back Three' },
@@ -164,7 +165,7 @@ export function formatTitleFromMotherSessionId(
       const restMeaningful = rest.filter(
         (t) => !/^\d+$/.test(t) && !POSITION_CYCLE_SKIP.has(t.toUpperCase())
       )
-      const primer = lang === 'fr' ? 'Power-up' : 'Full - Light Primer'
+      const primer = lang === 'fr' ? 'Activation' : 'Activation'
       if (restMeaningful.length === 0) {
         title = primer
       } else {
@@ -190,7 +191,8 @@ export function formatTitleFromMotherSessionId(
     }
   }
 
-  return refineFrontRowPackTitle(title, id, lang, opts?.contentFamily)
+  const refined = refineFrontRowPackTitle(title, id, lang, opts?.contentFamily)
+  return scrubPlayerFacingPositionCopy(refined, lang === 'en' ? 'en' : 'fr')
 }
 
 const FAMILY_FROM_ID: Record<string, ContentFamily> = {

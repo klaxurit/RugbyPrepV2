@@ -17,6 +17,7 @@
  */
 
 import type { Lang } from '../../i18n/appLabels'
+import { scrubPlayerFacingPositionCopy } from '../../data/contentFamily'
 
 const BLOCK_NAME_FR: Record<string, string> = {
   // ── In-season ──────────────────────────────────────────────────────────
@@ -27,15 +28,35 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Arm Pump / Reward Block': 'Pump bras / bloc bonus',
   'Posterior Chain / Trunk Support': 'Support chaîne postérieure / tronc',
   'Lower Neural Pair': 'Paire neurale bas du corps',
-  'Upper Push Primer': 'Primer poussée haut du corps',
+  'Upper Push Primer': 'Activation poussée haut du corps',
   'Pull Strength Pair': 'Paire force tirage',
   'Front Row Support': 'Support Pack',
-  'Pull / Rotation Primer': 'Primer tirage / rotation',
+  'FRONT ROW Support': 'Support Pack',
+  'Back Row Support': 'Support 3ème ligne',
+  'BACK ROW Support': 'Support 3ème ligne',
+  'Second Row Support': 'Support 2ème ligne',
+  'SECOND ROW Support': 'Support 2ème ligne',
+  'Pull / Rotation Primer': 'Activation tirage / rotation',
   'Arm Pump / Confidence Block': 'Pump bras / bloc confiance',
-  'Pull / Trunk Primer': 'Primer tirage / tronc',
+  'Pull / Trunk Primer': 'Activation tirage / tronc',
   'Contact Confidence / Pump': 'Confiance contact / pump',
   'Front Row Finisher': 'Finisher Pack',
-  'Back Three Finisher': 'Finisher arrières',
+  'FRONT ROW Finisher': 'Finisher Pack',
+  'Back Row Finisher': 'Finisher 3ème ligne',
+  'BACK ROW Finisher': 'Finisher 3ème ligne',
+  'BACK_ROW Finisher': 'Finisher 3ème ligne',
+  'Second Row Finisher': 'Finisher 2ème ligne',
+  'SECOND ROW Finisher': 'Finisher 2ème ligne',
+  'SECOND_ROW Finisher': 'Finisher 2ème ligne',
+  'Half-Backs Finisher': 'Finisher Demis',
+  'HALF BACKS Finisher': 'Finisher Demis',
+  'HALF_BACKS Finisher': 'Finisher Demis',
+  'Centres Finisher': 'Finisher Centres',
+  'CENTERS Finisher': 'Finisher Centres',
+  'Back Three Finisher': 'Finisher Arrières',
+  'BACK THREE Finisher': 'Finisher Arrières',
+  'BACK_THREE Finisher': 'Finisher Arrières',
+  'FRONT_ROW Finisher': 'Finisher Pack',
   'Contrast Lower Speed-Projection': 'Contraste bas vitesse-projection',
   'Contrast Lower': 'Contraste bas du corps',
   'Contrast Upper': 'Contraste haut du corps',
@@ -47,7 +68,7 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Contrasted Acceleration': 'Contraste accélération',
   'Hinge Force + Jump Contrast': 'Force hinge + contraste saut',
   'Neural Lower': 'Neural bas du corps',
-  'Upper Primer': 'Primer haut du corps',
+  'Upper Primer': 'Activation haut du corps',
   'Upper Ballistic': 'Balistique haut du corps',
   'Upper Force Support': 'Support force haut du corps',
   'Push Strength': 'Force poussée',
@@ -56,7 +77,7 @@ const BLOCK_NAME_FR: Record<string, string> = {
   // Alias franglais déjà mergés dans le corpus FR (avant localizeBlockName).
   'Contraste Lower': 'Contraste bas du corps',
   'Contraste Upper': 'Contraste haut du corps',
-  'Triplet Force Lower': 'Triplet force bas du corps',
+  'Triplet Force Lower': 'Triplé force bas du corps',
   'Posterior Chain + Unilateral Strength Pair': 'Paire chaîne postérieure + force unilatérale',
   'Contrast Lower Force-Power': 'Contraste bas force-puissance',
   'Contrast Upper Speed-Power': 'Contraste haut vitesse-puissance',
@@ -123,7 +144,7 @@ const BLOCK_NAME_FR: Record<string, string> = {
   'Position Support Finisher': 'Finisher support poste',
   'Upper Power Pair': 'Paire puissance haut',
   'Pull / Posterior Cluster': 'Cluster tirage / postérieur',
-  'Lower Strength Triplet': 'Triplet force bas du corps',
+  'Lower Strength Triplet': 'Triplé force bas du corps',
   'Posterior Chain Force Maintenance': 'Maintien force chaîne postérieure',
   'Athletic Finisher': 'Finisher athlétique',
   'Optional Lower-Leg Support': 'Support mollets optionnel',
@@ -169,8 +190,11 @@ export function stripBlockTitlePunctuation(name: string): string {
 export function localizeBlockName(name: string | undefined, lang: Lang = 'fr'): string {
   if (!name) return ''
   const cleaned = stripBlockTitlePunctuation(name)
-  if (lang === 'en') return cleaned
-  return BLOCK_NAME_FR[cleaned] ?? BLOCK_NAME_FR[name] ?? cleaned
+  if (lang === 'en') {
+    return scrubPlayerFacingPositionCopy(cleaned, 'en')
+  }
+  const mapped = BLOCK_NAME_FR[cleaned] ?? BLOCK_NAME_FR[name] ?? cleaned
+  return scrubPlayerFacingPositionCopy(mapped, 'fr')
 }
 
 /**

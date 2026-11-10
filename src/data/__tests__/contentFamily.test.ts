@@ -3,6 +3,7 @@ import {
   contentFamilyLabel,
   contentFamilyToPositionGroup,
   resolveContentFamily,
+  scrubPlayerFacingPositionCopy,
 } from '../contentFamily'
 import { resolveInSeasonLowerSessionId } from '../resolveInSeasonLowerSessionId'
 import { resolveInSeasonUpperSessionId } from '../resolveInSeasonUpperSessionId'
@@ -39,6 +40,15 @@ describe('resolveContentFamily', () => {
     expect(contentFamilyLabel('back_row', 'fr')).toBe('3ème ligne')
     expect(contentFamilyLabel('back_row', 'fr')).not.toMatch(/BACK_ROW/)
     expect(contentFamilyLabel('back_three', 'fr')).toBe('Arrières')
+  })
+
+  it('scrubPlayerFacingPositionCopy : tokens techniques → poste joueur', () => {
+    expect(scrubPlayerFacingPositionCopy('BACK_ROW Finisher', 'fr')).toBe('3ème ligne Finisher')
+    expect(scrubPlayerFacingPositionCopy('Back Row accent', 'fr')).toBe('3ème ligne accent')
+    expect(scrubPlayerFacingPositionCopy('for back_row.', 'fr')).toBe('for 3ème ligne.')
+    expect(scrubPlayerFacingPositionCopy('HALF BACKS Finisher', 'fr')).toBe('Demis Finisher')
+    expect(scrubPlayerFacingPositionCopy('CENTERS Finisher', 'fr')).toBe('Centres Finisher')
+    expect(scrubPlayerFacingPositionCopy('BACK_ROW', 'fr')).not.toMatch(/BACK_ROW/)
   })
 })
 

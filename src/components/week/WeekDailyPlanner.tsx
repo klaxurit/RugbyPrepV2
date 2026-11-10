@@ -937,7 +937,7 @@ function MatchCard({ day, onClick }: { day: ResolvedDay; onClick: () => void }) 
               aria-hidden
             />
             <span className="text-[9px] font-extrabold uppercase tracking-[0.16em]">
-              Match-day
+              Jour de match
             </span>
           </div>
           <span className="text-[9px] font-extrabold uppercase tracking-[0.14em] opacity-70">
@@ -972,7 +972,7 @@ function MatchCard({ day, onClick }: { day: ResolvedDay; onClick: () => void }) 
         >
           <FStat n={m.kickoff_time ? m.kickoff_time.slice(0, 5) : '—'} l="Coup d'envoi" />
           <FStat n={venueLabel} l="Lieu" />
-          <FStat n="J0" l="J-day" />
+          <FStat n="J0" l="Jour J" />
         </div>
 
         <div className="mt-4 flex gap-2">

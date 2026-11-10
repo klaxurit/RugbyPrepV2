@@ -162,7 +162,7 @@ const SESSION_SHORT: Record<MotherSessionType, { fr: string; en: string }> = {
   lower: { fr: 'Bas', en: 'Lo' },
   upper: { fr: 'Haut', en: 'Up' },
   full: { fr: 'Full', en: 'Full' },
-  full_light_primer: { fr: 'Primer', en: 'Primer' },
+  full_light_primer: { fr: 'Activation', en: 'Activation' },
   speed_power: { fr: 'Vitesse', en: 'Spd' },
 }
 
