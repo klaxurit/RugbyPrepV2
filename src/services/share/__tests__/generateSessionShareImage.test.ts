@@ -89,14 +89,33 @@ const render = (patch: Partial<SessionSharePayload> = {}, a: Parameters<typeof b
   buildSessionShareCardHtml(buildSessionShareCardModel({ ...payload, ...patch }, a))
 
 describe('buildSessionShareCardHtml (v2)', () => {
-  it('record battu en héros : exercice, charge, delta, tampon (carré auto)', () => {
+  it('record battu en héros : exercice, charge, delta, pastille (carré auto)', () => {
     const html = render()
     expect(html).toContain('rf-share-card is-square no-photo')
     expect(html).toContain('class="hero hero-record"')
     expect(html).toContain('>Bench Press</h1>')
     expect(html).toContain('<span class="big" style="font-size:113px">90</span>')
     expect(html).toContain('<b>+5 kg</b><span>vs 85 kg</span>')
-    expect(html).toContain('class="stamp"')
+    expect(html).toContain('class="record-pill"')
+    expect(html).toContain('record-pill-label">RECORD</span>')
+    expect(html).not.toContain('record-pill-count')
+  })
+
+  it('plusieurs records : pastille avec compteur +N', () => {
+    const html = render({
+      prs: [
+        { exerciseName: 'Bench Press', newBestKg: 90, previousBestKg: 85 },
+        { exerciseName: 'Squat', newBestKg: 140, previousBestKg: 135 },
+        { exerciseName: 'Deadlift', newBestKg: 180, previousBestKg: 170 },
+      ],
+    })
+    expect(html).toContain('class="record-pill"')
+    expect(html).toContain('record-pill-count">+2</span>')
+  })
+
+  it('sans record : pas de pastille', () => {
+    const html = render({ prs: [] })
+    expect(html).not.toContain('record-pill')
   })
 
   it('jamais le tonnage en héros ; il peut être en chip', () => {
@@ -150,7 +169,13 @@ describe('buildSessionShareCardHtml (v2)', () => {
     const html = render({ showClub: false, competitionName: 'Régionale 2' })
     expect(html).not.toContain('JO Pradéenne')
     expect(html).not.toContain('Régionale')
-    expect(html).not.toContain('footer-crest')
+    expect(html).not.toContain('footer-crest-wrap')
+  })
+
+  it('logo club dans un wrap rond', () => {
+    const html = render({ prs: [], competitionName: 'Régionale 2' })
+    expect(html).toContain('class="footer-crest-wrap"')
+    expect(html).toContain('class="footer-crest"')
   })
 
   it('sans photo : fond de marque (trame terrain) ; avec photo : panneau + liseré', () => {

@@ -29,7 +29,7 @@ Le payload est construit dans `src/pages/SessionDetailPage.tsx`. La feuille de p
 
 ### Un seul héros, choisi par priorité
 
-1. **Record battu** (`prs[0]`) : exercice + charge + écart avec l'ancien record (« +5 kg / vs 75 kg »), tampon RECORD. Sans ancien record : « 1er record ».
+1. **Record battu** (`prs[0]`) : exercice + charge + écart avec l'ancien record (« +5 kg / vs 75 kg »), pastille RECORD. Sans ancien record : « 1er record ».
 2. **Semaine de match** : match à J-1…J-7 (calendrier, matchs masqués exclus). J-X + adversaire nettoyé (« Rugby Club Hérouvillais » → « Hérouvillais ») + DOM./EXT. + frise J-7 → poteaux.
 3. **Progression** (`payload.progression`) : charge ≥ +5 % sur 4 semaines, sinon série ≥ 3 semaines complètes d'affilée.
 4. **Par défaut** : nom de la séance + durée + focus (dernier segment du libellé, ex. « Bas du corps · Explosivité »).
@@ -46,7 +46,8 @@ Si record et match tombent la même semaine, le record reste le héros et « J-X
 - **Poste** en chip en haut à gauche uniquement (plus dans le pied).
 - **Pied** : « Prénom · [écusson] Club · R2 » + wordmark, toujours sur une ligne. Si la place manque : niveau abrégé, puis ellipse sur le nom du club.
 - **Aucune donnée inventée** : un champ absent est omis, séparateurs compris (jamais « · · »). Pas de niveau par défaut, pas de blason généré.
-- **Logo club** : uniquement les URL déjà stockées (`getClubLogoUrl`). Échec CORS ou absence → écusson de secours aux initiales.
+- **Logo club** : uniquement les URL déjà stockées (`getClubLogoUrl`), affiché dans un **rond**. Échec CORS ou absence → écusson de secours aux initiales (déjà circulaire).
+- **Pastille RECORD** : si `prs.length > 0`, petite pastille (pas le grand tampon).
 - **Toggle « Afficher mon club »** : activé par défaut, mémorisé dans `localStorage` (`rf.share.showClub`). Désactivé → ni logo, ni club, ni niveau.
 - **Contraste** : texte sur panneau bordeaux ≥ 4,5:1 même sur une photo blanche (panneau à 85 %).
 
@@ -71,7 +72,7 @@ Si record et match tombent la même semaine, le record reste le héros et « J-X
 1. ~~**Calculer `payload.progression`**~~ — `computeShareProgression.ts` (load vs S−4, sinon streak gamification), branché dans `SessionDetailPage.tsx`.
 2. ~~**Photo de séance**~~ — `prepareSharePhoto.ts` + UI caméra/galerie dans `SessionShareSheet` (`photoUrl`, warning non bloquant si côté court &lt; 1080, changer/retirer). Point focal CSS inchangé (`object-position: 50% 35%`).
 3. ~~**Format carré 1:1**~~ — `resolveShareCardFormat.ts` (auto square pour record/session), CSS `.is-square`, toggle UI si héros éligible, export 1080×1080.
-4. **Nom court du club** : `buildShareCardData` accepte `clubShortName` (prioritaire sur `clubName`) dès qu'une source existe.
+4. ~~**Nom court du club**~~ — API prête (`clubShortName` prioritaire dans `buildShareCardData`) ; **aucune source produit** dans le repo pour l’instant (pas d’heuristique inventée).
 
 ## Vérifier
 

@@ -31,10 +31,10 @@
 .rf-share-card.has-photo .hchip.left{background:var(--cream);color:var(--bordeaux)}
 .rf-share-card.has-photo .hchip.right{background:rgba(18,3,6,.6);color:var(--cream)}
 
-/* ── Tampon RECORD (à cheval sur la coupe, côté droit) ── */
-.rf-share-card .stamp{position:absolute;left:804px;top:968px;width:220px;height:220px;border-radius:50%;background:var(--bordeaux);border:5px solid var(--cream);box-shadow:inset 0 0 0 8px var(--bordeaux),inset 0 0 0 10px var(--cream),0 14px 30px rgba(18,3,6,.35);transform:rotate(-10deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
-.rf-share-card .stamp .s1{font-size:15px;font-weight:800;letter-spacing:.28em;color:var(--cream)}
-.rf-share-card .stamp .s2{font-size:48px;line-height:1;font-style:italic;font-weight:900;letter-spacing:-.03em;color:#fff}
+/* ── Pastille RECORD (si prs.length > 0), à cheval sur la coupe ── */
+.rf-share-card .record-pill{position:absolute;right:72px;top:1120px;z-index:2;height:56px;padding:0 26px;border-radius:999px;background:var(--cream);color:var(--bordeaux);box-shadow:0 10px 24px rgba(18,3,6,.28);display:flex;align-items:center;gap:12px;transform:rotate(-6deg)}
+.rf-share-card .record-pill-label{font-size:26px;line-height:1;font-style:italic;font-weight:900;letter-spacing:.04em}
+.rf-share-card .record-pill-count{height:32px;min-width:32px;padding:0 10px;border-radius:999px;background:var(--bordeaux);color:var(--cream);font-size:18px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
 
 /* ── Bloc texte compact, ancré en bas (fin à y 1640) ── */
 .rf-share-card .content{position:absolute;left:72px;width:936px;bottom:280px;display:flex;flex-direction:column}
@@ -91,7 +91,8 @@
 .rf-share-card .footer-id .seg-club-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .rf-share-card .footer-id .seg-level{flex:0 0 auto;font-weight:800;letter-spacing:.04em;color:var(--cream)}
 .rf-share-card .footer-id .sep{flex:0 0 auto;opacity:.6}
-.rf-share-card .footer-crest{width:44px;height:44px;flex:0 0 44px;object-fit:contain;display:block}
+.rf-share-card .footer-crest-wrap{width:44px;height:44px;flex:0 0 44px;border-radius:50%;overflow:hidden;background:rgba(244,235,221,.14);display:inline-flex;align-items:center;justify-content:center}
+.rf-share-card .footer-crest{width:100%;height:100%;object-fit:cover;display:block}
 .rf-share-card .footer-logo{height:30px;width:auto;flex:0 0 auto;display:block}
 
 /* ── Format carré 1:1 (1080×1080) — héros record / séance ── */
@@ -105,9 +106,9 @@
 .rf-share-card.is-square .panel{top:520px;height:560px;clip-path:polygon(0 72px,100% 0,100% 100%,0 100%)}
 .rf-share-card.is-square .edge{top:516px;height:80px;clip-path:polygon(0 72px,100% 0,100% 6px,0 78px)}
 .rf-share-card.is-square .hchip{top:40px;height:48px;font-size:18px;max-width:400px;padding:0 20px}
-.rf-share-card.is-square .stamp{left:840px;top:440px;width:160px;height:160px}
-.rf-share-card.is-square .stamp .s1{font-size:12px;letter-spacing:.22em}
-.rf-share-card.is-square .stamp .s2{font-size:34px}
+.rf-share-card.is-square .record-pill{right:64px;top:540px;height:48px;padding:0 22px}
+.rf-share-card.is-square .record-pill-label{font-size:22px}
+.rf-share-card.is-square .record-pill-count{height:28px;min-width:28px;font-size:16px}
 .rf-share-card.is-square .content{bottom:48px}
 .rf-share-card.is-square .kicker{font-size:18px;letter-spacing:.14em}
 .rf-share-card.is-square .hero-num .big{font-size:120px}
@@ -123,5 +124,5 @@
 .rf-share-card.is-square .footer-row{margin-top:14px;height:56px;padding-top:10px}
 .rf-share-card.is-square .footer-id{font-size:20px;gap:10px}
 .rf-share-card.is-square .footer-id .seg-name{font-size:26px}
-.rf-share-card.is-square .footer-crest{width:36px;height:36px;flex:0 0 36px}
+.rf-share-card.is-square .footer-crest-wrap{width:36px;height:36px;flex:0 0 36px}
 .rf-share-card.is-square .footer-logo{height:24px}
