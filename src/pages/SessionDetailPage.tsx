@@ -15,6 +15,10 @@ import {
   countLoggableSessionSets,
 } from '../services/session/countLoggableSessionSets'
 import { resolveSessionRunProgress } from '../services/session/resolveSessionRunProgress'
+import {
+  captureSessionRunDisplaySnapshot,
+  type SessionRunDisplaySnapshot,
+} from '../services/session/sessionRunDisplaySnapshot'
 import { parseExerciseSetSpec } from '../services/ui/exerciseSetSpec'
 import { parseBlockFormat } from '../services/ui/parseBlockFormat'
 import { useWakeLock } from '../hooks/useWakeLock'
@@ -192,6 +196,11 @@ export function SessionDetailPage() {
   const [msSaved, setMsSaved] = useState(false)
   const [completionOpen, setCompletionOpen] = useState(false)
   const [celebrationOpen, setCelebrationOpen] = useState(false)
+  /** Freeze sets validés pour l’UI completed (évite Terminé 0/N après save). */
+  const [runDisplayFreeze, setRunDisplayFreeze] = useState<SessionRunDisplaySnapshot | null>(null)
+  const [completedSessionFreeze, setCompletedSessionFreeze] = useState<
+    import('../types/motherSession').MotherSession | null
+  >(null)
   const [shareOpen, setShareOpen] = useState(false)
   const [frictionSurveyOpen, setFrictionSurveyOpen] = useState(false)
   const [sharePayload, setSharePayload] = useState<SessionSharePayload | null>(null)
@@ -1209,6 +1218,14 @@ export function SessionDetailPage() {
       setFatigue(payload.fatigue)
       const noteText = (payload.notes != null ? payload.notes : msNotes).trim() || undefined
 
+      // Freeze AVANT addLog / refetch planning : l’UI completed lit ce snapshot.
+      const displayFreeze = captureSessionRunDisplaySnapshot({
+        completedExercises: sessionRun.completedExercises,
+        exerciseTourLoads: sessionRun.exerciseTourLoads,
+      })
+      setRunDisplayFreeze(displayFreeze)
+      if (adaptedSession) setCompletedSessionFreeze(adaptedSession)
+
       if (adaptedSession && slotSignature) {
         await flushSessionExerciseSets({
           session: adaptedSession,
@@ -1216,8 +1233,11 @@ export function SessionDetailPage() {
           motherSessionId: adaptedSession.metadata.id,
           weekLabel: surface.planningContext.weekLabel ?? 'unknown',
           sessionIndex: index,
-          exerciseTourLoads: sessionRun.exerciseTourLoads,
-          completedExercises: sessionRun.completedExercises,
+          exerciseTourLoads: displayFreeze.exerciseTourLoads as Record<
+            string,
+            import('../contexts/SessionRunContext').ExerciseTourLoad
+          >,
+          completedExercises: displayFreeze.completedExercises as Set<string>,
           upsertSet,
         })
       }
@@ -1688,12 +1708,13 @@ export function SessionDetailPage() {
             les blocs validés visibles en arrière-plan (toutes les coches
             vertes — satisfaction visuelle + référence si l'utilisateur ferme
             la sheet). Évite l'écran blanc derrière la sheet. */}
-        {!isUnavailable && activeSlot && phase === 'completed' && adaptedSession && (
+        {!isUnavailable && activeSlot && phase === 'completed' && (completedSessionFreeze ?? adaptedSession) && (
           <div data-testid="mother-session-detail">
             <SessionBlocks
-              session={adaptedSession}
+              session={(completedSessionFreeze ?? adaptedSession)!}
               phase="completed"
               isPremium={isPremium}
+              runDisplayFreeze={runDisplayFreeze}
               onPlayDemo={handlePlayDemo}
               lang={lang}
               foundationsDisplay={isFoundationsLevel(profile.trainingLevel)}
@@ -1853,6 +1874,8 @@ export function SessionDetailPage() {
         lang={lang}
         onContinue={() => {
           setShareOpen(false)
+          setRunDisplayFreeze(null)
+          setCompletedSessionFreeze(null)
           sessionRun.stop()
           navigate('/week')
         }}

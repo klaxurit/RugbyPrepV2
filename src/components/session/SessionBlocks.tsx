@@ -34,6 +34,10 @@ import type { LoadSuggestion } from '../../services/loadSuggestion'
 import type { PreviousSessionSetRef } from '../../services/session/buildPreviousSessionSetMap'
 import type { Lang } from '../../services/motherSession/localizeMotherSessionExerciseName'
 import type { ExerciseSetLog } from '../../types/training'
+import {
+  resolveSessionRunDisplayData,
+  type SessionRunDisplaySnapshot,
+} from '../../services/session/sessionRunDisplaySnapshot'
 
 export type SessionPhase = 'idle' | 'running' | 'completed'
 
@@ -42,6 +46,11 @@ interface SessionBlocksProps {
   session: MotherSession
   phase: SessionPhase
   isPremium: boolean
+  /**
+   * Freeze des sets validés pour phase completed (évite Terminé 0/N après save
+   * / refetch planning).
+   */
+  runDisplayFreeze?: SessionRunDisplaySnapshot | null
   /** Notifie le parent qu'un bloc vient d'être validé (autosave par bloc). */
   onBlockCompleted?: (blockNumber: number, snapshot?: BlockCompletionSnapshot) => void
   /** Demande au parent d'ouvrir l'overlay EMOM/Tabata/AMRAP/For Time pour ce bloc. */
@@ -107,6 +116,7 @@ export function SessionBlocks({
   session,
   phase,
   isPremium,
+  runDisplayFreeze = null,
   onBlockCompleted,
   onStartEmomTimer,
   onStartIsoTimer,
@@ -131,6 +141,22 @@ export function SessionBlocks({
   const sessionRun = useSessionRun()
   const blocks = session.blocks
 
+  const displayRun = useMemo(
+    () =>
+      resolveSessionRunDisplayData({
+        phase,
+        liveCompletedExercises: sessionRun.completedExercises,
+        liveExerciseTourLoads: sessionRun.exerciseTourLoads,
+        freeze: runDisplayFreeze,
+      }),
+    [
+      phase,
+      sessionRun.completedExercises,
+      sessionRun.exerciseTourLoads,
+      runDisplayFreeze,
+    ],
+  )
+
   // ── Warm-up : synthétisé depuis session.warmUp (champ séparé des blocks). ─
   // Rendu en tête de séance, jamais "active" (pas de validation set-par-set).
   // Reste invisible pour findCurrentPending (qui n'itère que session.blocks).
@@ -148,8 +174,11 @@ export function SessionBlocks({
 
   // ── Curseur pendant : où en est le user ? ──────────────────────────────
   const cursor = useMemo(
-    () => (phase === 'running' ? findCurrentPending(session, sessionRun.completedExercises) : null),
-    [phase, session, sessionRun.completedExercises],
+    () =>
+      phase === 'running'
+        ? findCurrentPending(session, displayRun.completedExercises)
+        : null,
+    [phase, session, displayRun.completedExercises],
   )
 
   // ── État expand par bloc : par défaut, expand le bloc actif en running. ─
@@ -189,7 +218,7 @@ export function SessionBlocks({
           block,
           phase,
           cursor,
-          completedExercises: sessionRun.completedExercises,
+          completedExercises: displayRun.completedExercises,
         })
         const defaultExpanded = phase === 'running' ? blockState === 'active' : i === 0
         const expanded = isExpanded(block.number, defaultExpanded)
@@ -260,7 +289,11 @@ export function SessionBlocks({
         }
 
         if (kind === 'prehab') {
-          const validatedByIdx = buildPrehabValidatedMap(block.number, block, sessionRun.completedExercises)
+          const validatedByIdx = buildPrehabValidatedMap(
+            block.number,
+            block,
+            displayRun.completedExercises,
+          )
           const currentExoIdx = isCursorBlock ? cursor?.exerciseIndex : undefined
           return (
             <PrehabBlock
@@ -317,8 +350,8 @@ export function SessionBlocks({
         const tourData = buildToursTourData({
           block,
           totalTours,
-          completedExercises: sessionRun.completedExercises,
-          exerciseTourLoads: sessionRun.exerciseTourLoads,
+          completedExercises: displayRun.completedExercises,
+          exerciseTourLoads: displayRun.exerciseTourLoads,
         })
         const currentTourIdx = isCursorBlock ? cursor?.tourIndex : undefined
         const currentExoIdx = isCursorBlock ? cursor?.exerciseIndex : undefined
@@ -406,7 +439,7 @@ interface ComputeBlockStateArgs {
   block: MotherSession['blocks'][number]
   phase: SessionPhase
   cursor: ReturnType<typeof findCurrentPending>
-  completedExercises: Set<string>
+  completedExercises: ReadonlySet<string>
 }
 
 function computeBlockState({
@@ -447,8 +480,8 @@ function computeBlockState({
 interface BuildToursDataArgs {
   block: MotherSession['blocks'][number]
   totalTours: number
-  completedExercises: Set<string>
-  exerciseTourLoads: Record<string, { loadKg?: number; reps?: number }>
+  completedExercises: ReadonlySet<string>
+  exerciseTourLoads: Readonly<Record<string, { loadKg?: number; reps?: number }>>
 }
 
 function buildToursTourData({
@@ -476,7 +509,7 @@ function buildToursTourData({
 function buildPrehabValidatedMap(
   blockNumber: number,
   block: MotherSession['blocks'][number],
-  completedExercises: Set<string>,
+  completedExercises: ReadonlySet<string>,
 ): Record<number, boolean> {
   const out: Record<number, boolean> = {}
   for (let e = 0; e < block.exercises.length; e++) {

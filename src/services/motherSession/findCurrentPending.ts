@@ -55,7 +55,7 @@ export function isTimedBlockComplete(
  */
 export function findCurrentPending(
   session: MotherSession,
-  completedExercises: Set<string>,
+  completedExercises: ReadonlySet<string>,
 ): PendingCursor | null {
   const blocks = session.blocks
   for (let b = 0; b < blocks.length; b++) {
