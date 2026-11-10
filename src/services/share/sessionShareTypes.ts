@@ -15,6 +15,17 @@ export interface SessionShareExerciseMax {
   maxKg: number
 }
 
+export interface ShareNextMatch {
+  /** Jours avant le match (1 à 7 pour être affiché). */
+  daysUntil: number
+  opponent: string | null
+  isHome: boolean | null
+}
+
+export type ShareProgression =
+  | { kind: 'load'; percent: number; weeks: number; exerciseName?: string | null }
+  | { kind: 'streak'; weeks: number }
+
 /** Données pour générer / partager une carte post-séance. */
 export interface SessionSharePayload {
   sessionLabel: string
@@ -52,6 +63,12 @@ export interface SessionSharePayload {
   competitionName?: string | null
   /** Toggle « Afficher mon club » (défaut true). false → ni logo, ni club, ni niveau. */
   showClub?: boolean
+  /** Prochain match à J-1…J-7 (calendrier). Héros b si aucun record. */
+  nextMatch?: ShareNextMatch | null
+  /** Progression charge / régularité (héros c) — optionnel tant que non calculé. */
+  progression?: ShareProgression | null
+  /** Photo de séance choisie par le joueur (fond de carte). Absente → fond de marque. */
+  photoUrl?: string | null
   /** Date longue (ex. « Vendredi 8 mai »). */
   dateLabel?: string | null
   /** Semaine programme (ex. « Semaine 19 »). */

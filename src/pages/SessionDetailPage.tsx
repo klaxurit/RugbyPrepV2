@@ -86,6 +86,7 @@ import type { SessionSharePayload } from '../services/share/sessionShareTypes'
 import { buildSessionShareIntent } from '../services/share/buildSessionShareIntent'
 import { collectSessionExerciseMaxLoads } from '../services/share/collectSessionExerciseMaxLoads'
 import { resolveShareFirstName } from '../services/share/resolveSessionShareDifficulty'
+import { findShareNextMatch } from '../services/share/selectShareHero'
 import { getExerciseName } from '../data/exercises'
 import { computeSessionTonnage } from '../services/session/computeSessionTonnage'
 import { detectSessionPRs } from '../services/session/detectSessionPRs'
@@ -1403,6 +1404,7 @@ export function SessionDetailPage() {
         clubName: profile.clubName?.trim() || null,
         clubCode: profile.clubCode?.trim() || null,
         competitionName: profile.ffrCompetitionName?.trim() || null,
+        nextMatch: findShareNextMatch(structuralEvents, today),
         dateLabel,
         weekLabel,
         sessionOrdinalLabel,

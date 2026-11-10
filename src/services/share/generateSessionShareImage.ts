@@ -1,6 +1,6 @@
 /**
- * Carte Stories post-séance — rasterisation DOM du mockup
- * `docs/Séance Récap Social - Standalone.html` (HTML/CSS exact, sauf browse image).
+ * Carte Stories post-séance v2 — rasterisation DOM de la maquette Claude Design
+ * « Carte de fin de séance v2 » (héros par priorité, coupe diagonale, pied club).
  */
 import { toBlob } from 'html-to-image'
 import logoCreamUrl from '../../assets/rugbyforge-full.png'
@@ -12,7 +12,11 @@ import {
 } from './buildSessionShareCardHtml'
 import type { ShareCardData } from './buildShareCardData'
 import { buildFallbackCrestDataUrl } from './shareClubCrest'
-import { resolveSessionShareDifficulty } from './resolveSessionShareDifficulty'
+import inter500 from '@fontsource/inter/files/inter-latin-500-normal.woff2?url'
+import inter700 from '@fontsource/inter/files/inter-latin-700-normal.woff2?url'
+import inter800 from '@fontsource/inter/files/inter-latin-800-normal.woff2?url'
+import inter800i from '@fontsource/inter/files/inter-latin-800-italic.woff2?url'
+import inter900i from '@fontsource/inter/files/inter-latin-900-italic.woff2?url'
 import {
   SESSION_SHARE_HEIGHT,
   SESSION_SHARE_WIDTH,
@@ -41,21 +45,40 @@ async function toDataUrl(src: string): Promise<string> {
   })
 }
 
-async function resolvePortraitSrc(payload: SessionSharePayload): Promise<string> {
-  const difficulty = resolveSessionShareDifficulty(
-    payload.rpe,
-    payload.lang,
-    payload.firstName,
-  )
-  const avatarUrl = payload.avatarUrl?.trim()
-  if (avatarUrl) {
-    try {
-      return await toDataUrl(avatarUrl)
-    } catch {
-      // CORS / 404 → Rufo
-    }
+const CARD_FONTS: ReadonlyArray<[string, number, 'normal' | 'italic']> = [
+  [inter500, 500, 'normal'],
+  [inter700, 700, 'normal'],
+  [inter800, 800, 'normal'],
+  [inter800i, 800, 'italic'],
+  [inter900i, 900, 'italic'],
+]
+
+let fontFaceCssPromise: Promise<string> | null = null
+
+/** @font-face Inter en data URL : la rasterisation embarque la police sans dépendre du réseau. */
+function loadCardFontFaceCss(): Promise<string> {
+  fontFaceCssPromise ??= Promise.all(
+    CARD_FONTS.map(async ([src, weight, style]) => {
+      try {
+        const data = await toDataUrl(src)
+        return `@font-face{font-family:'RF Inter';src:url(${data}) format('woff2');font-weight:${weight};font-style:${style};font-display:block}`
+      } catch {
+        return ''
+      }
+    }),
+  ).then((rules) => rules.join('\n'))
+  return fontFaceCssPromise
+}
+
+/** Photo de séance choisie par le joueur ; échec de chargement → fond de marque. */
+async function resolvePhotoSrc(payload: SessionSharePayload): Promise<string | null> {
+  const photoUrl = payload.photoUrl?.trim()
+  if (!photoUrl) return null
+  try {
+    return await toDataUrl(photoUrl)
+  } catch {
+    return null
   }
-  return toDataUrl(difficulty.imageSrc)
 }
 
 /**
@@ -120,14 +143,15 @@ export async function generateSessionShareImageWithMeta(
   payload: SessionSharePayload,
 ): Promise<{ blob: Blob; meta: SessionShareImageMeta }> {
   const identity = buildSessionShareIdentity(payload)
-  const [portraitSrc, logoSrc, crest] = await Promise.all([
-    resolvePortraitSrc(payload),
+  const [photoSrc, logoSrc, crest, fontCss] = await Promise.all([
+    resolvePhotoSrc(payload),
     toDataUrl(logoCreamUrl),
     resolveShareClubCrest(identity),
+    loadCardFontFaceCss(),
   ])
   const model = buildSessionShareCardModel(
     payload,
-    { logoSrc, portraitSrc, crestSrc: crest.src },
+    { logoSrc, crestSrc: crest.src, photoSrc },
     identity,
   )
   const meta: SessionShareImageMeta = {
@@ -151,8 +175,8 @@ export async function generateSessionShareImageWithMeta(
   ].join(';')
 
   const style = document.createElement('style')
-  // blur() casse parfois la rasterisation html-to-image → neutre pour la capture.
-  style.textContent = `${shareCardCss}\n.rf-share-card .glow{filter:none !important}`
+  // Police Inter embarquée en data URL + CSS de la carte v2.
+  style.textContent = `${fontCss}\n${shareCardCss}`
   host.appendChild(style)
 
   const mount = document.createElement('div')
@@ -168,7 +192,11 @@ export async function generateSessionShareImageWithMeta(
 
   try {
     await waitForImages(card)
-    // Laisse le layout/fonts peindre (Inter → system fallback).
+    try {
+      await document.fonts?.ready
+    } catch {
+      // pas d’API FontFaceSet (jsdom) : on continue
+    }
     await new Promise<void>((r) =>
       requestAnimationFrame(() => requestAnimationFrame(() => r())),
     )

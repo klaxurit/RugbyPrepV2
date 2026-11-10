@@ -11,7 +11,6 @@ import {
 import {
   buildSessionShareCardHtml,
   buildSessionShareCardModel,
-  formatShareTitleHtml,
 } from '../buildSessionShareCardHtml'
 
 vi.mock('html-to-image', () => ({
@@ -84,90 +83,84 @@ function mockShareAssets() {
   } as unknown as typeof Image)
 }
 
-describe('formatShareTitleHtml', () => {
-  it('casse le titre mockup sur 2 lignes', () => {
-    expect(formatShareTitleHtml('Bas du corps · Puissance')).toBe(
-      'Bas du corps<br>Puissance.',
-    )
+const assets = { logoSrc: '/logo.png', crestSrc: 'data:image/svg+xml,x' }
+const render = (patch: Partial<SessionSharePayload> = {}, a: Parameters<typeof buildSessionShareCardModel>[1] = assets) =>
+  buildSessionShareCardHtml(buildSessionShareCardModel({ ...payload, ...patch }, a))
+
+describe('buildSessionShareCardHtml (v2)', () => {
+  it('record battu en héros : exercice, charge, delta, tampon', () => {
+    const html = render()
+    expect(html).toContain('class="hero hero-record"')
+    expect(html).toContain('>Bench Press</h1>')
+    expect(html).toContain('<span class="big" style="font-size:176px">90</span>')
+    expect(html).toContain('<b>+5 kg</b><span>vs 85 kg</span>')
+    expect(html).toContain('class="stamp"')
   })
-})
 
-describe('buildSessionShareCardHtml', () => {
-  it('reproduit la structure du mockup (stats plates, quote, footer CTA)', () => {
-    const model = buildSessionShareCardModel(payload, {
-      logoSrc: '/logo.png',
-      portraitSrc: '/avatar.png',
+  it('jamais le tonnage en héros ; il peut être en chip', () => {
+    const html = render({ prs: [] })
+    expect(html).toContain('class="hero hero-session"')
+    expect(html).toContain('>Haut du corps</h1>')
+    expect(html).not.toContain('Force.</h1>')
+    expect(html).toContain('<div class="chip">3,1 t soulevées</div>')
+    expect(html).not.toMatch(/class="big"[^>]*>3,1/)
+  })
+
+  it('semaine de match en héros si aucun record', () => {
+    const html = render({
+      prs: [],
+      nextMatch: { daysUntil: 5, opponent: 'Rugby Club Hérouvillais', isHome: false },
     })
-    const html = buildSessionShareCardHtml(model)
+    expect(html).toContain('class="hero hero-match"')
+    expect(html).toContain('<div class="jx">J-5</div>')
+    expect(html).toContain('PROCHAIN MATCH · EXT.')
+    expect(html).toContain('>Hérouvillais</span>')
+    expect(html.match(/class="day /g)).toHaveLength(7)
+  })
 
-    expect(html).toContain('class="rf-share-card"')
-    expect(html).toContain('Séance terminée')
-    expect(html).toContain('Haut du corps<br>Force.')
-    expect(html).toContain('Vendredi 8 mai · Semaine 19 · Séance 3/5')
-    expect(html).toContain('class="tag gold"')
-    expect(html).toContain('class="stats"')
-    expect(html).toContain('class="stat"')
-    expect(html).toContain('Record de séance')
-    // RPE 8 → « À fond, Jean. »
-    expect(html).toContain('&quot;À fond, Jean.&quot;')
-    expect(html).toContain('class="rpe-dots"')
-    expect(html).toContain('Jean Dupont')
-    // Poste en chip en haut, club dans le pied (plus de doublon).
-    expect(html).toContain('<div class="position-chip">1ère ligne</div>')
-    expect(html).not.toContain('1ère ligne · JO Pradéenne')
+  it('record + match : le J-X remplace la date en en-tête', () => {
+    const html = render({ nextMatch: { daysUntil: 3, opponent: 'RC Caen', isHome: true } })
+    expect(html).toContain('class="hero hero-record"')
+    expect(html).toContain('<div class="hchip right">J-3 · Caen</div>')
+  })
+
+  it('poste en chip haut, pas dans le pied ; pied club + niveau', () => {
+    const html = render({ prs: [], competitionName: 'Régionale 2 - Poule 4' })
+    expect(html).toContain('<div class="hchip left">1ère ligne</div>')
     expect(html).toContain('<span class="seg-name">Jean</span>')
     expect(html).toContain('<span class="seg-club-name">JO Pradéenne</span>')
-    expect(html).toContain('footer-cta')
-    expect(html).toContain('rugbyforge.fr')
-    // Pas de filigrane jour (ex. « 28 ») ni UI browse
-    expect(html).not.toContain('font-size:420px')
-    expect(html).not.toContain('browse')
-    expect(html).not.toContain('image-slot')
+    expect(html).toContain('<span class="seg-level">Régionale 2</span>')
+    expect(html.match(/class="sep"/g)).toHaveLength(2)
+    expect(html).not.toMatch(/seg-[a-z-]+">1ère ligne/)
   })
 
-  it('pied sans club ni niveau quand le toggle est désactivé', () => {
-    const model = buildSessionShareCardModel(
-      { ...payload, showClub: false, competitionName: 'Régionale 2' },
-      { logoSrc: '/logo.png', portraitSrc: '/avatar.png', crestSrc: 'data:image/svg+xml,x' },
-    )
-    const html = buildSessionShareCardHtml(model)
+  it('max 3 chips, une seule info de régularité', () => {
+    const html = render({ prs: [], sessionOrdinalLabel: 'Séance 5/5' })
+    expect(html.match(/class="chip[" ]/g)).toHaveLength(3)
+    expect(html).toContain('<div class="chip">Semaine 5/5</div>')
+    expect(html).not.toContain('Séance 5/5')
+  })
+
+  it('toggle club désactivé : ni club, ni niveau, ni écusson', () => {
+    const html = render({ showClub: false, competitionName: 'Régionale 2' })
     expect(html).not.toContain('JO Pradéenne')
     expect(html).not.toContain('Régionale')
     expect(html).not.toContain('footer-crest')
-    expect(html).toContain('<span class="seg-name">Jean</span>')
   })
 
-  it('pied complet : écusson + club + niveau, séparateurs sans trou', () => {
-    const model = buildSessionShareCardModel(
-      { ...payload, competitionName: 'Régionale 2 - Poule 4' },
-      { logoSrc: '/logo.png', portraitSrc: '/avatar.png', crestSrc: 'data:image/svg+xml,x' },
-    )
-    const html = buildSessionShareCardHtml(model)
-    expect(html).toContain('class="footer-crest"')
-    expect(html).toContain('<span class="seg-level">Régionale 2</span>')
-    expect(html.match(/class="sep"/g)).toHaveLength(2)
+  it('sans photo : fond de marque (trame terrain) ; avec photo : panneau + liseré', () => {
+    expect(render()).toContain('rf-share-card no-photo')
+    expect(render()).toContain('class="pitch"')
+    const withPhoto = render({}, { ...assets, photoSrc: 'data:image/jpeg;base64,AAA' })
+    expect(withPhoto).toContain('rf-share-card has-photo')
+    expect(withPhoto).toContain('class="edge"')
   })
 
-  it('aucune identité : wordmark seul, pas de séparateur', () => {
-    const model = buildSessionShareCardModel(
-      { ...payload, firstName: null, displayName: null, clubName: null, positionLabel: null },
-      { logoSrc: '/logo.png', portraitSrc: '/avatar.png' },
-    )
-    const html = buildSessionShareCardHtml(model)
+  it('aucune identité : wordmark seul, pas de séparateur ni de chip poste', () => {
+    const html = render({ firstName: null, displayName: null, clubName: null, positionLabel: null })
     expect(html).toContain('footer-row solo')
     expect(html).not.toContain('class="sep"')
-    expect(html).not.toContain('position-chip')
-  })
-
-  it('n’affiche pas la bannière record sans vrai PR', () => {
-    const model = buildSessionShareCardModel(
-      { ...payload, prs: [] },
-      { logoSrc: '/logo.png', portraitSrc: '/avatar.png' },
-    )
-    expect(model.sessionRecord).toBeNull()
-    const html = buildSessionShareCardHtml(model)
-    expect(html).not.toContain('class="pr"')
-    expect(html).not.toContain('Record de séance')
+    expect(html).not.toContain('hchip left')
   })
 })
 

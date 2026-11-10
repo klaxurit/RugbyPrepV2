@@ -1,10 +1,10 @@
+/**
+ * Carte de partage v2 (Stories 1080×1920) — maquette Claude Design « Carte de
+ * fin de séance v2 » : un seul héros choisi par priorité, bloc texte compact
+ * ancré en bas au-dessus de la safe zone Instagram (250 px), coupe diagonale,
+ * pied « Prénom · [écusson] Club · R2 » + wordmark.
+ */
 import type { SessionSharePayload } from './sessionShareTypes'
-import {
-  formatShareFatigue,
-  formatShareSets,
-  formatShareTonnage,
-} from './buildSessionShareCopy'
-import { resolveSessionShareDifficulty } from './resolveSessionShareDifficulty'
 import {
   buildShareCardData,
   buildShareFooterSegments,
@@ -12,8 +12,15 @@ import {
   type ShareCardData,
   type ShareFooterSegment,
 } from './buildShareCardData'
-
-const TROPHY_SVG = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1A1015" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v3a5 5 0 0 1-10 0V4z"></path><path d="M5 4H3v2a3 3 0 0 0 3 3"></path><path d="M19 4h2v2a3 3 0 0 1-3 3"></path><path d="M10 13h4l-1 4h-2l-1-4z"></path><path d="M9 21h6"></path></svg>`
+import {
+  buildShareChips,
+  formatShareLoad,
+  normalizeOpponentName,
+  pickTitleSize,
+  selectShareHero,
+  type ShareChip,
+  type ShareHero,
+} from './selectShareHero'
 
 function escapeHtml(text: string): string {
   return text
@@ -23,172 +30,24 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;')
 }
 
-function ensurePeriod(text: string): string {
-  const t = text.trim()
-  if (!t) return t
-  return /[.!?…]$/.test(t) ? t : `${t}.`
-}
-
-/** Titre mockup : « Bas du corps<br>Puissance. » */
-export function formatShareTitleHtml(label: string): string {
-  const raw = label.trim()
-  if (!raw) return '—'
-  const parts = raw.split(/\s*[·•|]\s*|\s+-\s+/).map((p) => p.trim()).filter(Boolean)
-  if (parts.length >= 2) {
-    const head = escapeHtml(parts.slice(0, -1).join(' '))
-    const tail = escapeHtml(ensurePeriod(parts[parts.length - 1]!))
-    return `${head}<br>${tail}`
-  }
-  return escapeHtml(ensurePeriod(raw))
-}
-
-function splitTonnage(tonnage: string): { main: string; suffix: string } {
-  const m = /^(.+?)\s*kg$/i.exec(tonnage.trim())
-  if (m) return { main: m[1]!.trim(), suffix: 'kg' }
-  return { main: tonnage, suffix: '' }
-}
-
-function resolveSessionRecord(payload: SessionSharePayload): {
-  exerciseName: string
-  kg: number
-} | null {
-  // Bannière or uniquement pour un vrai PR de séance (pas un simple max).
-  if (!payload.isPremium) return null
-  const pr = payload.prs[0]
-  if (!pr) return null
-  return { exerciseName: pr.exerciseName, kg: pr.newBestKg }
-}
+const POSTS_SVG = (color: string, size = 22) =>
+  `<svg width="${size}" height="${Math.round(size * 1.18)}" viewBox="0 0 24 28" aria-hidden="true"><path d="M5 2v24M19 2v24M5 17h14" stroke="${color}" stroke-width="3.5" fill="none" stroke-linecap="round"></path></svg>`
 
 export interface SessionShareCardModel {
+  lang: SessionSharePayload['lang']
   logoSrc: string
-  portraitSrc: string
-  eyebrow: string
-  titleHtml: string
-  dateLine: string | null
-  tagDuration: string
-  tagSets: string
-  tagVolume: string
-  durationValue: string
-  durationGhost: string
-  setsValue: string
-  setsGhost: string
-  volumeMain: string
-  volumeSuffix: string | null
-  volumeGhost: string
-  volumeLabel: string
-  formValue: string
-  formColor: string | null
-  formGhost: string
-  formLabel: string
-  /** Vrai PR uniquement — sinon la bannière n’est pas rendue. */
-  sessionRecord: { exerciseName: string; kg: number; label: string } | null
-  quote: string
-  rpeFilled: number
-  displayName: string | null
-  /** Poste en chip en haut de carte (plus dans le pied). */
+  /** Photo de séance (data URL). null → fond de marque crème / bordeaux. */
+  photoSrc: string | null
+  /** Logo club ou écusson de secours ; null → pas d’écusson. */
+  crestSrc: string | null
+  /** Poste en chip haut gauche. */
   positionChip: string | null
+  /** Chip haut droite : date, ou « J-5 · ADVERSAIRE » si le match n’est pas le héros. */
+  headerRight: string | null
+  hero: ShareHero
+  chips: ShareChip[]
   /** Pied « Prénom · [écusson] Club · R2 » — segments absents omis. */
   footerSegments: ShareFooterSegment[]
-  /** Logo club (data URL) ou écusson de secours ; null → pas d’écusson. */
-  crestSrc: string | null
-  footerTag: string
-  labels: {
-    duration: string
-    sets: string
-  }
-}
-
-export function buildSessionShareCardModel(
-  payload: SessionSharePayload,
-  assets: { logoSrc: string; portraitSrc: string; crestSrc?: string | null },
-  identity: ShareCardData = buildSessionShareIdentity(payload),
-): SessionShareCardModel {
-  const fr = payload.lang !== 'en'
-  const difficulty = resolveSessionShareDifficulty(
-    payload.rpe,
-    payload.lang,
-    payload.firstName,
-  )
-  const durationMin = Math.max(0, Math.round(payload.durationMin))
-  const setsValue = formatShareSets(payload.completedSets, payload.totalSets)
-  const tonnage = formatShareTonnage(payload.tonnageKg)
-  const formValue = formatShareFatigue(payload.fatigue, payload.lang)
-
-  let volumeMain: string
-  let volumeSuffix: string | null
-  let volumeGhost: string
-  let volumeLabel: string
-  let tagVolume: string
-  if (payload.isPremium && tonnage) {
-    const split = splitTonnage(tonnage)
-    volumeMain = split.main
-    volumeSuffix = split.suffix || null
-    volumeGhost = split.main.replace(/K$/i, '') || split.main
-    volumeLabel = fr ? 'Volume soulevé' : 'Volume lifted'
-    tagVolume = `${split.main} kg volume`
-  } else {
-    volumeMain = String(Math.max(1, Math.round(payload.rpe)))
-    volumeSuffix = null
-    volumeGhost = volumeMain
-    volumeLabel = 'RPE'
-    tagVolume = `RPE ${volumeMain}`
-  }
-
-  const metaParts = [
-    payload.dateLabel,
-    payload.weekLabel,
-    payload.sessionOrdinalLabel,
-  ].filter((p): p is string => Boolean(p?.trim()))
-
-  const sessionRecord = resolveSessionRecord(payload)
-  const displayName =
-    payload.displayName?.trim() || payload.firstName?.trim() || null
-  const crestSrc = assets.crestSrc ?? null
-  const footerSegments = buildShareFooterSegments(identity).map((segment) =>
-    segment.kind === 'club' ? { ...segment, withCrest: Boolean(crestSrc) } : segment,
-  )
-
-  return {
-    logoSrc: assets.logoSrc,
-    portraitSrc: assets.portraitSrc,
-    eyebrow: fr ? 'Séance terminée' : 'Session complete',
-    titleHtml: formatShareTitleHtml(payload.sessionLabel),
-    dateLine: metaParts.length > 0 ? metaParts.join(' · ') : null,
-    tagDuration: `${durationMin} min`,
-    tagSets: `${setsValue} sets`,
-    tagVolume,
-    durationValue: `${durationMin}'`,
-    durationGhost: String(durationMin),
-    setsValue,
-    setsGhost: setsValue.split('/')[0] ?? setsValue,
-    volumeMain,
-    volumeSuffix,
-    volumeGhost,
-    volumeLabel,
-    formValue,
-    formColor: payload.fatigue === 'OK' ? '#8FD19E' : null,
-    formGhost: payload.fatigue === 'OK' ? '✓' : '!',
-    formLabel: fr ? 'État post-séance' : 'Post-session form',
-    sessionRecord: sessionRecord
-      ? {
-          ...sessionRecord,
-          label: fr ? 'Record de séance' : 'Session record',
-        }
-      : null,
-    quote: `"${ensurePeriod(difficulty.label)}"`,
-    rpeFilled: Math.min(10, Math.max(0, Math.round(payload.rpe))),
-    displayName,
-    positionChip: identity.positionLabel,
-    footerSegments,
-    crestSrc,
-    footerTag: fr
-      ? 'Forge ta prépa, séance après séance.'
-      : 'Forge your prep, session after session.',
-    labels: {
-      duration: fr ? 'Durée' : 'Duration',
-      sets: fr ? 'Sets validés' : 'Sets done',
-    },
-  }
 }
 
 /** Identité club / niveau dérivée du payload (respecte le toggle showClub). */
@@ -201,6 +60,38 @@ export function buildSessionShareIdentity(payload: SessionSharePayload): ShareCa
     competitionName: payload.competitionName,
     showClub: payload.showClub,
   })
+}
+
+export function buildSessionShareCardModel(
+  payload: SessionSharePayload,
+  assets: { logoSrc: string; crestSrc?: string | null; photoSrc?: string | null },
+  identity: ShareCardData = buildSessionShareIdentity(payload),
+): SessionShareCardModel {
+  const hero = selectShareHero(payload)
+  const crestSrc = assets.crestSrc ?? null
+  const footerSegments = buildShareFooterSegments(identity).map((segment) =>
+    segment.kind === 'club' ? { ...segment, withCrest: Boolean(crestSrc) } : segment,
+  )
+
+  let headerRight = payload.dateLabel?.trim() || null
+  const match = payload.nextMatch
+  if (hero.kind !== 'match' && match && match.daysUntil >= 1 && match.daysUntil <= 7) {
+    headerRight = [`J-${match.daysUntil}`, normalizeOpponentName(match.opponent)]
+      .filter(Boolean)
+      .join(' · ')
+  }
+
+  return {
+    lang: payload.lang,
+    logoSrc: assets.logoSrc,
+    photoSrc: assets.photoSrc ?? null,
+    crestSrc,
+    positionChip: identity.positionLabel,
+    headerRight,
+    hero,
+    chips: buildShareChips(payload, hero),
+    footerSegments,
+  }
 }
 
 function buildFooterIdentityHtml(model: SessionShareCardModel): string {
@@ -222,110 +113,135 @@ function buildFooterIdentityHtml(model: SessionShareCardModel): string {
   return `<div class="footer-id">${parts.join(sep)}</div>`
 }
 
-/** Markup HTML identique au mockup Claude Design. */
-export function buildSessionShareCardHtml(model: SessionShareCardModel): string {
-  const dots = Array.from({ length: 10 }, (_, i) =>
-    i < model.rpeFilled ? '<i class="on"></i>' : '<i></i>',
-  ).join('')
+function buildHeroHtml(model: SessionShareCardModel): string {
+  const en = model.lang === 'en'
+  const hero = model.hero
 
-  const volumeVal = model.volumeSuffix
-    ? `${escapeHtml(model.volumeMain)}<span style="font-size:26px">${escapeHtml(model.volumeSuffix)}</span>`
-    : escapeHtml(model.volumeMain)
+  if (hero.kind === 'record') {
+    const size = pickTitleSize(hero.exerciseName, [[14, 96], [18, 80]], 72)
+    const load = formatShareLoad(hero.kg)
+    const bigSize = load.length > 3 ? 150 : 176
+    const delta = hero.deltaKg != null
+      ? `<div class="delta"><b>+${escapeHtml(formatShareLoad(hero.deltaKg))} kg</b>${
+          hero.previousKg != null ? `<span>vs ${escapeHtml(formatShareLoad(hero.previousKg))} kg</span>` : ''
+        }</div>`
+      : `<div class="delta"><b>${en ? '1st record' : '1er record'}</b></div>`
+    return `<div class="hero hero-record">
+  <h1 class="hero-title" style="font-size:${size}px">${escapeHtml(hero.exerciseName)}</h1>
+  <div class="hero-row">
+    <div class="hero-num"><span class="big" style="font-size:${bigSize}px">${escapeHtml(load)}</span><span class="unit">kg</span></div>
+    ${delta}
+  </div>
+</div>`
+  }
 
-  const formStyle = model.formColor ? ` style="color:${model.formColor}"` : ''
-
-  const prHtml = model.sessionRecord
-    ? `<div class="pr">
-    <div class="icon">${TROPHY_SVG}</div>
-    <div class="txt">
-      <div class="lbl">${escapeHtml(model.sessionRecord.label)}</div>
-      <div class="name">${escapeHtml(model.sessionRecord.exerciseName)}</div>
+  if (hero.kind === 'match') {
+    const venue = hero.venue === 'home' ? (en ? 'HOME' : 'DOM.') : hero.venue === 'away' ? (en ? 'AWAY' : 'EXT.') : null
+    const kicker = [en ? 'NEXT MATCH' : 'PROCHAIN MATCH', venue].filter(Boolean).join(' · ')
+    const opponentSize = hero.opponent ? pickTitleSize(hero.opponent, [[12, 64], [16, 52]], 52) : 64
+    const days = Array.from({ length: 7 }, (_, i) => 7 - i)
+      .map((k) => {
+        const state = k === hero.daysUntil ? 'today' : k > hero.daysUntil ? 'past' : 'next'
+        const label = state === 'today' ? (en ? 'TODAY' : 'AUJ.') : `J-${k}`
+        return `<div class="day ${state}"><i></i><span>${label}</span></div>`
+      })
+      .join('')
+    return `<div class="hero hero-match">
+  <div class="hero-row">
+    <div class="jx">J-${hero.daysUntil}</div>
+    <div class="opp">
+      <div class="kicker">${escapeHtml(kicker)}</div>
+      ${hero.opponent ? `<div class="opp-name"><span class="vs">vs</span><span class="name" style="font-size:${opponentSize}px">${escapeHtml(hero.opponent)}</span></div>` : ''}
     </div>
-    <div class="kg">${model.sessionRecord.kg} kg</div>
-  </div>`
-    : ''
+  </div>
+  <div class="frise">${days}<div class="goal">${POSTS_SVG('#FFFFFF', 30)}<span>MATCH</span></div></div>
+</div>`
+  }
 
-  const dateHtml = model.dateLine
-    ? `<div class="date">${escapeHtml(model.dateLine)}</div>`
-    : ''
+  if (hero.kind === 'progression') {
+    const p = hero.progression
+    if (p.kind === 'load') {
+      const bars = [62, 74, 86, 104]
+        .map((h, i) => `<div class="bar${i === 3 ? ' on' : ''}" style="height:${h}px"></div>`)
+        .join('')
+      const kicker = p.exerciseName
+        ? `${en ? 'PROGRESS' : 'PROGRESSION'} — ${p.exerciseName.toUpperCase()}`
+        : en ? 'PROGRESS' : 'PROGRESSION'
+      return `<div class="hero hero-progress">
+  <div class="kicker">${escapeHtml(kicker)}</div>
+  <div class="hero-row"><div class="hero-num"><span class="big">+${Math.round(p.percent)}</span><span class="unit">%</span></div><div class="bars">${bars}</div></div>
+  <div class="hero-sub">${en ? `load in ${p.weeks} weeks` : `de charge en ${p.weeks} semaines`}</div>
+</div>`
+    }
+    const shown = Math.min(8, p.weeks)
+    const posts = Array.from({ length: 8 }, (_, i) =>
+      POSTS_SVG(i >= 8 - shown ? '#F5EFE6' : 'rgba(245,239,230,0.25)', 28),
+    ).join('')
+    return `<div class="hero hero-progress">
+  <div class="kicker">${en ? 'CONSISTENCY — LAST 8 WEEKS' : 'RÉGULARITÉ — 8 DERNIÈRES SEMAINES'}</div>
+  <div class="hero-row"><div class="hero-num"><span class="big">${p.weeks}</span><span class="unit">${en ? 'th' : 'e'}</span></div><div class="posts">${posts}</div></div>
+  <div class="hero-sub">${en ? 'full week in a row' : 'semaine complète d’affilée'}</div>
+</div>`
+  }
 
-  const nameHtml = model.displayName
-    ? `<div class="avatar-name">${escapeHtml(model.displayName)}</div>`
-    : ''
-  const positionHtml = model.positionChip
-    ? `<div class="position-row"><div class="position-chip">${escapeHtml(model.positionChip)}</div></div>`
+  const size = pickTitleSize(hero.title, [[12, 132], [15, 112]], 96)
+  const sub = [`<span class="w">${hero.durationMin} min</span>`]
+  if (hero.focus) sub.push(`<span class="dot">·</span><span class="c">${escapeHtml(hero.focus)}</span>`)
+  return `<div class="hero hero-session">
+  <div class="kicker">${en ? 'SESSION COMPLETE' : 'SÉANCE TERMINÉE'}</div>
+  <h1 class="hero-title" style="font-size:${size}px">${escapeHtml(hero.title)}</h1>
+  <div class="hero-sub">${sub.join('')}</div>
+</div>`
+}
+
+function buildBackgroundHtml(model: SessionShareCardModel): string {
+  if (model.photoSrc) {
+    return `<img class="photo" src="${escapeHtml(model.photoSrc)}" alt="" crossorigin="anonymous" />
+<div class="veil-top"></div>
+<div class="veil-grad"></div>
+<div class="panel"></div>
+<div class="edge"></div>`
+  }
+  return `<div class="pitch" aria-hidden="true">
+  <i class="l solid" style="top:1040px;height:4px"></i>
+  <i class="l dash" style="top:880px"></i>
+  <i class="l solid" style="top:600px"></i>
+  <i class="l dash" style="top:400px"></i>
+  <i class="v" style="left:120px"></i>
+  <i class="v" style="left:957px"></i>
+  <svg class="posts-bg" width="440" height="720" viewBox="0 0 440 720"><path d="M40 10v700M400 10v700M40 470h360" stroke="rgba(123,13,30,0.20)" stroke-width="22" fill="none" stroke-linecap="round"></path><rect x="22" y="600" width="36" height="110" rx="6" fill="rgba(123,13,30,0.20)"></rect><rect x="382" y="600" width="36" height="110" rx="6" fill="rgba(123,13,30,0.20)"></rect></svg>
+</div>
+<div class="panel solid"></div>`
+}
+
+export function buildSessionShareCardHtml(model: SessionShareCardModel): string {
+  const hasPhoto = Boolean(model.photoSrc)
+  const chipsHtml = model.chips.length
+    ? `<div class="chips">${model.chips
+        .map(
+          (chip) =>
+            `<div class="chip${chip.filled ? ' filled' : ''}">${chip.posts ? POSTS_SVG('#7B0D1E') : ''}${escapeHtml(chip.text)}</div>`,
+        )
+        .join('')}</div>`
     : ''
   const footerIdHtml = buildFooterIdentityHtml(model)
+  const stamp =
+    model.hero.kind === 'record'
+      ? `<div class="stamp"><span class="s1">— PERSO —</span><span class="s2">RECORD</span></div>`
+      : ''
 
-  return `<div class="rf-share-card" id="rf-share-card">
-<div class="texture"></div>
-<div class="glow" style="width:640px;height:640px;top:-220px;right:-180px;background:radial-gradient(circle,rgba(217,166,63,.35),transparent 70%)"></div>
-<div class="glow" style="width:520px;height:520px;bottom:120px;left:-200px;background:radial-gradient(circle,rgba(217,166,63,.12),transparent 70%)"></div>
-
-<div class="wrap">
-  <div class="logo-row">
-    <img src="${escapeHtml(model.logoSrc)}" alt="RugbyForge" style="height:64px;width:auto" crossorigin="anonymous" />
-  </div>
-  ${positionHtml}
-
-  <div class="eyebrow" role="presentation">
-    <div class="line" aria-hidden="true"></div>
-    <div class="txt">${escapeHtml(model.eyebrow)}</div>
-    <div class="line" aria-hidden="true"></div>
-  </div>
-  <h1>${model.titleHtml}</h1>
-  ${dateHtml}
-
-  <div class="tags">
-    <div class="tag gold">${escapeHtml(model.tagDuration)}</div>
-    <div class="tag">${escapeHtml(model.tagSets)}</div>
-    <div class="tag">${escapeHtml(model.tagVolume)}</div>
-  </div>
-
-  <div class="stats">
-    <div class="stat">
-      <div class="ghost sghost">${escapeHtml(model.durationGhost)}</div>
-      <div class="val">${escapeHtml(model.durationValue)}</div>
-      <div class="lbl">${escapeHtml(model.labels.duration)}</div>
-    </div>
-    <div class="stat">
-      <div class="ghost sghost">${escapeHtml(model.setsGhost)}</div>
-      <div class="val">${escapeHtml(model.setsValue)}</div>
-      <div class="lbl">${escapeHtml(model.labels.sets)}</div>
-    </div>
-    <div class="stat">
-      <div class="ghost sghost">${escapeHtml(model.volumeGhost)}</div>
-      <div class="val">${volumeVal}</div>
-      <div class="lbl">${escapeHtml(model.volumeLabel)}</div>
-    </div>
-    <div class="stat">
-      <div class="ghost sghost">${escapeHtml(model.formGhost)}</div>
-      <div class="val"${formStyle}>${escapeHtml(model.formValue)}</div>
-      <div class="lbl">${escapeHtml(model.formLabel)}</div>
-    </div>
-  </div>
-
-  ${prHtml}
-
-  <div class="quote">${escapeHtml(model.quote)}</div>
-  <div class="rpe-dots">${dots}</div>
-
-  <div class="avatar-row">
-    <div class="avatar-ring">
-      <img class="avatar-photo" src="${escapeHtml(model.portraitSrc)}" alt="" width="172" height="172" crossorigin="anonymous" />
-    </div>
-    ${nameHtml}
-  </div>
-</div>
-
-<div class="footer">
-  <div class="footer-rule"></div>
+  return `<div class="rf-share-card ${hasPhoto ? 'has-photo' : 'no-photo'}" id="rf-share-card">
+${buildBackgroundHtml(model)}
+${model.positionChip ? `<div class="hchip left">${escapeHtml(model.positionChip)}</div>` : ''}
+${model.headerRight ? `<div class="hchip right">${escapeHtml(model.headerRight)}</div>` : ''}
+${stamp}
+<div class="content">
+  ${buildHeroHtml(model)}
+  ${chipsHtml}
   <div class="footer-row${footerIdHtml ? '' : ' solo'}">
     ${footerIdHtml}
     <img class="footer-logo" src="${escapeHtml(model.logoSrc)}" alt="RugbyForge" crossorigin="anonymous" />
   </div>
-  <div class="footer-tag">${escapeHtml(model.footerTag)}</div>
-  <div class="footer-cta">rugbyforge.fr</div>
 </div>
 </div>`
 }
