@@ -168,6 +168,7 @@ const MS_EXERCISE_MAP: Record<string, string> = {
   'front rack carry': 'carry__front_rack_carry',
   'light sled push': 'carry__sled_push__light',
   'sled push': 'sled__push__standard',
+  'sled drag backward': 'carry__sled_drag__backward',
   'sled march': 'carry__sled_push__light',
   'light sled march': 'carry__sled_push__light',
 

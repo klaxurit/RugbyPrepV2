@@ -135,6 +135,7 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
   'low pogo hops': NOT_HYPERTROPHY_VOLUME,
   'light sled push': NOT_HYPERTROPHY_VOLUME,
   'sled push': NOT_HYPERTROPHY_VOLUME,
+  'sled drag backward': NOT_HYPERTROPHY_VOLUME,
   'sled march': NOT_HYPERTROPHY_VOLUME,
 
   // ── Poussée horizontale ─────────────────────────────────────
@@ -142,6 +143,7 @@ export const EXERCISE_MUSCLE_MAP: Readonly<Record<string, Contribution>> = {
   'db bench press': HORIZONTAL_PUSH,
   'football bar bench press': HORIZONTAL_PUSH,
   'incline db bench press': HORIZONTAL_PUSH,
+  'push-up': HORIZONTAL_PUSH,
   'decline push-up': HORIZONTAL_PUSH,
   'incline push-up': HORIZONTAL_PUSH,
   'archer push-up': HORIZONTAL_PUSH,
