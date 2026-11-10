@@ -103,17 +103,65 @@ function pickFoundationsReplacementId(
   return undefined
 }
 
+function uniqueNonEmpty(values: Array<string | undefined>): string[] {
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const value of values) {
+    const trimmed = value?.trim()
+    if (!trimmed) continue
+    const key = trimmed.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(trimmed)
+  }
+  return out
+}
+
+/**
+ * Remplace toutes les formes du nom d'origine (EN, FR, casse catalogue)
+ * pour que notes / fallback suivent la variante prescrite après swap.
+ */
 function applyStringReplacements(
   value: string,
   replacements: AdaptedExercise[],
   mode: 'en' | 'fr',
 ): string {
   return replacements.reduce((next, replacement) => {
-    const source = mode === 'fr' ? replacement.sourceNameFr : replacement.sourceName
-    const target = mode === 'fr' ? replacement.replacementNameFr : replacement.replacementName
-    if (!source) return next
-    return next.split(source).join(target)
+    const target =
+      mode === 'fr' ? replacement.replacementNameFr : replacement.replacementName
+    const sources = uniqueNonEmpty([
+      mode === 'fr' ? replacement.sourceNameFr : replacement.sourceName,
+      replacement.sourceName,
+      replacement.sourceNameFr,
+    ])
+    let result = next
+    for (const source of sources) {
+      if (!source) continue
+      result = result.split(source).join(target)
+      // Corpus FR : souvent `Box Squat` (EN) alors que le libellé exo est « Box squat barre ».
+      const escaped = source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      result = result.replace(new RegExp(escaped, 'gi'), target)
+    }
+    return result
   }, value)
+}
+
+/** Notes spécifiques box squat → inutiles / trompeuses après swap Goblet / leg press. */
+function scrubNotesForSwappedPattern(
+  notes: string[],
+  replacements: AdaptedExercise[],
+): string[] {
+  const droppedBoxSquat = replacements.some((r) =>
+    /^box squat$/i.test(r.sourceName.trim()),
+  )
+  if (!droppedBoxSquat) return notes
+
+  return notes.filter((note) => {
+    if (/utiliser le box|use the box|hauteur du box|box to standardize|sit on the box/i.test(note)) {
+      return false
+    }
+    return true
+  })
 }
 
 function adaptExercise(
@@ -182,14 +230,15 @@ export function adaptMotherSessionForFoundations(
       return block
     }
 
+    const renamedNotes = scrubNotesForSwappedPattern(
+      block.coachingNotes.map((note) => applyStringReplacements(note, replacements, 'en')),
+      replacements,
+    )
+
     return {
       ...block,
       exercises,
-      coachingNotes: withFoundationsNote(
-        block.coachingNotes.map((note) => applyStringReplacements(note, replacements, 'en')),
-        'en',
-        replacements,
-      ),
+      coachingNotes: withFoundationsNote(renamedNotes, 'en', replacements),
       fallbackOptions: block.fallbackOptions?.map((opt) =>
         applyStringReplacements(opt, replacements, 'en'),
       ),
@@ -239,14 +288,15 @@ export function adaptSessionContentFrForFoundations(
         return block
       }
 
+      const renamedNotes = scrubNotesForSwappedPattern(
+        block.coachingNotes.map((note) => applyStringReplacements(note, replacements, 'fr')),
+        replacements,
+      )
+
       return {
         ...block,
         exercises,
-        coachingNotes: withFoundationsNote(
-          block.coachingNotes.map((note) => applyStringReplacements(note, replacements, 'fr')),
-          'fr',
-          replacements,
-        ),
+        coachingNotes: withFoundationsNote(renamedNotes, 'fr', replacements),
         fallbackOptions: block.fallbackOptions?.map((opt) =>
           applyStringReplacements(opt, replacements, 'fr'),
         ),

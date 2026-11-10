@@ -156,4 +156,30 @@ describe('foundationsSessionAdaptations', () => {
     expect(fr?.blocks[4].exercises[0].name).toBe('Chop au câble')
     expect(fr?.blocks[0].coachingNotes.at(-1)).toMatch(/Version Fondations/i)
   })
+
+  it('notes FR : remplace Box Squat EN dans les backticks même si le libellé exo est FR', () => {
+    const session = makeSession()
+    const frContent = makeFrContent()
+    frContent.blocks[2] = {
+      ...frContent.blocks[2],
+      exercises: [
+        { name: 'Box squat barre', prescription: '3x5-6' },
+        { name: 'Soulevé de terre roumain barre', prescription: '3x6' },
+      ],
+      coachingNotes: [
+        'Le `Box Squat` doit rester rapide et techniquement propre.',
+        'Utiliser le box pour standardiser la profondeur.',
+        'Box Squat et Barbell Romanian Deadlift doivent rester propres.',
+      ],
+    }
+
+    const fr = adaptSessionContentFrForFoundations(session, frContent, ['dumbbell'])
+    const notes = (fr?.blocks[2].coachingNotes ?? []).join(' | ')
+
+    expect(fr?.blocks[2].exercises[0].name).toBe('Goblet squat haltère')
+    expect(notes).toMatch(/Goblet squat haltère/i)
+    expect(notes).not.toMatch(/Box Squat/i)
+    expect(notes).not.toMatch(/Utiliser le box/i)
+    expect(notes).toMatch(/Soulevé de terre jambes tendues haltères \(RDL\)/i)
+  })
 })
