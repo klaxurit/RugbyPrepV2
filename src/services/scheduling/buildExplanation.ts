@@ -379,6 +379,51 @@ const PRE_SEASON_PHASE_LABELS: Record<PreSeasonPhase, string> = {
   3: 'Puissance-Vitesse',
 }
 
+/** Résumé qui ne fait qu’annoncer la phase (doublon / conflit avec weekLabel). */
+export function isPhaseOnlySummaryLine(summary: string): boolean {
+  const s = summary.trim().toLowerCase()
+  return (
+    s === 'inter-saison' ||
+    s === 'en saison' ||
+    s === 'pré-saison' ||
+    s === 'pre-saison' ||
+    /^inter-saison\b/.test(s) ||
+    /^en saison\b/.test(s) ||
+    /^pré-saison\b/.test(s) ||
+    /^off-season\b/.test(s) ||
+    /^in[- ]season\b/.test(s) ||
+    /^pre[- ]season\b/.test(s)
+  )
+}
+
+/** Refuse un résumé de phase qui contredit le cycle résolu (SoT). */
+export function summaryConflictsWithResolvedCycle(
+  summary: string,
+  cycle: AnnualPlanningContext['cycle'],
+): boolean {
+  const s = summary.toLowerCase()
+  const saysOff = s.includes('inter-saison') || s.includes('off-season')
+  const saysIn = /\ben saison\b/.test(s) || s.includes('in-season') || s.includes('in season')
+  const saysPre = s.includes('pré-saison') || s.includes('pre-saison') || s.includes('pre-season')
+  if (saysOff && cycle !== 'off_season') return true
+  if (saysIn && cycle !== 'in_season') return true
+  if (saysPre && cycle !== 'pre_season') return true
+  return false
+}
+
+function pickCalendarSummary(
+  explanations: Explanation[],
+  ctx: AnnualPlanningContext,
+): string | null {
+  for (const exp of explanations) {
+    if (summaryConflictsWithResolvedCycle(exp.summary, ctx.cycle)) continue
+    // weekLabel (badge) porte déjà la phase → ne pas la répéter / contredire.
+    if (ctx.weekLabel && isPhaseOnlySummaryLine(exp.summary)) continue
+    return exp.summary
+  }
+  return null
+}
+
 function buildSummaryLine(
   explanations: Explanation[],
   ctx: AnnualPlanningContext,
@@ -390,7 +435,9 @@ function buildSummaryLine(
     // Surface dominant reason if it is structurally marked as overriding sequential wording
     const dominant = explanations[0]
     if (dominant?.overridesSequential) {
-      return dominant.summary
+      if (!summaryConflictsWithResolvedCycle(dominant.summary, ctx.cycle)) {
+        return dominant.summary
+      }
     }
     const sessionCount = presentation.sessions.length
     const qualityLabel = getQualityLabel(ctx)
@@ -400,10 +447,8 @@ function buildSummaryLine(
     return `${sessionCount} séance${sessionCount > 1 ? 's' : ''} cette semaine — fais-les à ton rythme`
   }
 
-  // Calendar mode: use dominant explanation
-  if (explanations.length > 0) {
-    return explanations[0].summary
-  }
+  const picked = pickCalendarSummary(explanations, ctx)
+  if (picked) return picked
 
   // Fallback
   const sessionCount = presentation.sessions.length

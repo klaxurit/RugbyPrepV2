@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { buildExplanation } from '../buildExplanation'
+import {
+  buildExplanation,
+  isPhaseOnlySummaryLine,
+  summaryConflictsWithResolvedCycle,
+} from '../buildExplanation'
 import type { AnnualPlanningContext } from '../../../types/annualPlanning'
 import type { DayOfWeek, WeekPresentation } from '../../../types/scheduling'
 import type { ResolvedMotherSessionSlot } from '../../motherSession/resolveMotherSessionsForWeek'
@@ -1084,5 +1088,27 @@ describe('buildExplanation', () => {
       })
       expect(result.detailItems.some((d) => d.ruleId === 'context:neck_training')).toBe(false)
     })
+  })
+
+  it('calendar : n’affiche pas Inter-saison si le cycle résolu est en saison', () => {
+    const result = buildExplanation({
+      planningContext: makeCtx({
+        cycle: 'in_season',
+        weekLabel: 'En saison - S2 (2/4)',
+        planningTrace: {
+          resolutionMode: 'calendar_inferred',
+          rulesApplied: ['rule:off_season_start_at', 'context:match_week'],
+          warnings: [],
+        },
+        isMatchWeek: true,
+        daysUntilNextMatch: 3,
+      }),
+      schedulingMode: 'calendar',
+      presentation: makePres(3),
+      corrections: [],
+    })
+    expect(result.summaryLine.toLowerCase()).not.toContain('inter-saison')
+    expect(summaryConflictsWithResolvedCycle('Inter-saison', 'in_season')).toBe(true)
+    expect(isPhaseOnlySummaryLine('Inter-saison')).toBe(true)
   })
 })
