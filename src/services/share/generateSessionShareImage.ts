@@ -8,11 +8,15 @@ import shareCardCss from './sessionShareCard.css?raw'
 import {
   buildSessionShareCardHtml,
   buildSessionShareCardModel,
+  buildSessionShareIdentity,
 } from './buildSessionShareCardHtml'
+import type { ShareCardData } from './buildShareCardData'
+import { buildFallbackCrestDataUrl } from './shareClubCrest'
 import { resolveSessionShareDifficulty } from './resolveSessionShareDifficulty'
 import {
   SESSION_SHARE_HEIGHT,
   SESSION_SHARE_WIDTH,
+  type SessionShareImageMeta,
   type SessionSharePayload,
 } from './sessionShareTypes'
 
@@ -54,6 +58,29 @@ async function resolvePortraitSrc(payload: SessionSharePayload): Promise<string>
   return toDataUrl(difficulty.imageSrc)
 }
 
+/**
+ * Logo club : uniquement l’URL déjà stockée (FFR / datasets club), chargée en
+ * CORS pour le canvas. Échec ou absence → écusson de secours aux initiales.
+ */
+export async function resolveShareClubCrest(
+  identity: ShareCardData,
+  load: (src: string) => Promise<string> = toDataUrl,
+): Promise<{ src: string | null; source: SessionShareImageMeta['logoSource'] }> {
+  const club = identity.club
+  if (!club) return { src: null, source: 'none' }
+  if (club.logoUrl) {
+    try {
+      return { src: await load(club.logoUrl), source: 'ffr' }
+    } catch {
+      // CORS / 404 → écusson de secours
+    }
+  }
+  if (club.shortCode) {
+    return { src: buildFallbackCrestDataUrl(club.shortCode), source: 'fallback' }
+  }
+  return { src: null, source: 'none' }
+}
+
 function waitForImages(root: HTMLElement): Promise<void> {
   const images = Array.from(root.querySelectorAll('img'))
   return Promise.all(
@@ -85,14 +112,28 @@ function waitForImages(root: HTMLElement): Promise<void> {
 export async function generateSessionShareImage(
   payload: SessionSharePayload,
 ): Promise<Blob> {
-  const [portraitSrc, logoSrc] = await Promise.all([
+  return (await generateSessionShareImageWithMeta(payload)).blob
+}
+
+/** Idem + ce qui a réellement été rendu (club affiché, source du logo). */
+export async function generateSessionShareImageWithMeta(
+  payload: SessionSharePayload,
+): Promise<{ blob: Blob; meta: SessionShareImageMeta }> {
+  const identity = buildSessionShareIdentity(payload)
+  const [portraitSrc, logoSrc, crest] = await Promise.all([
     resolvePortraitSrc(payload),
     toDataUrl(logoCreamUrl),
+    resolveShareClubCrest(identity),
   ])
-  const model = buildSessionShareCardModel(payload, {
-    logoSrc,
-    portraitSrc,
-  })
+  const model = buildSessionShareCardModel(
+    payload,
+    { logoSrc, portraitSrc, crestSrc: crest.src },
+    identity,
+  )
+  const meta: SessionShareImageMeta = {
+    clubShown: identity.clubShown,
+    logoSource: crest.source,
+  }
 
   const host = document.createElement('div')
   host.setAttribute('data-rf-share-host', '1')
@@ -148,7 +189,7 @@ export async function generateSessionShareImage(
     })
 
     if (!blob) throw new Error('Failed to encode share image')
-    return blob
+    return { blob, meta }
   } finally {
     host.remove()
   }

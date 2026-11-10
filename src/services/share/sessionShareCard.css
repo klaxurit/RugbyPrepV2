@@ -47,3 +47,18 @@
 .rf-share-card .footer-logo{height:34px;width:auto;opacity:.95}
 .rf-share-card .footer-tag{font-size:15px;font-weight:600;letter-spacing:.5px;opacity:.55;margin-top:10px}
 .rf-share-card .footer-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:22px;margin-left:auto;margin-right:auto;background:var(--goldLight);color:var(--ink);font-size:16px;font-weight:800;letter-spacing:.6px;padding:14px 30px;border-radius:999px}
+
+/* Poste en chip haut de carte */
+.rf-share-card .position-row{display:flex;justify-content:center;margin-top:28px}
+.rf-share-card .position-chip{font-size:18px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:10px 22px;border-radius:999px;background:var(--cream);color:var(--wineDeep);line-height:1}
+/* Pied : « Prénom · [écusson] Club · R2 » à gauche, wordmark à droite — une seule ligne */
+.rf-share-card .footer-row{display:flex;align-items:center;justify-content:space-between;gap:24px;text-align:left}
+.rf-share-card .footer-row.solo{justify-content:center}
+.rf-share-card .footer-id{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;font-size:24px;font-weight:600;line-height:1.2;color:var(--cream)}
+.rf-share-card .footer-id .seg-name{flex:0 0 auto;font-weight:800;font-style:italic}
+.rf-share-card .footer-id .seg-club{display:flex;align-items:center;gap:10px;min-width:0;flex:0 1 auto}
+.rf-share-card .footer-id .seg-club-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.rf-share-card .footer-id .seg-level{flex:0 0 auto;font-weight:800;letter-spacing:.5px;color:var(--goldLight)}
+.rf-share-card .footer-id .sep{flex:0 0 auto;opacity:.5}
+.rf-share-card .footer-crest{width:44px;height:44px;flex:0 0 44px;object-fit:contain;display:block}
+.rf-share-card .footer-row .footer-logo{flex:0 0 auto}

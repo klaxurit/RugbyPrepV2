@@ -1401,6 +1401,8 @@ export function SessionDetailPage() {
           lang,
         ),
         clubName: profile.clubName?.trim() || null,
+        clubCode: profile.clubCode?.trim() || null,
+        competitionName: profile.ffrCompetitionName?.trim() || null,
         dateLabel,
         weekLabel,
         sessionOrdinalLabel,

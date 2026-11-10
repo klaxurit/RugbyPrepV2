@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Download, Share2 } from 'lucide-react'
 import { BottomSheet } from '../ui/BottomSheet'
 import { tr, type Lang } from '../../i18n/appLabels'
@@ -11,6 +11,24 @@ import {
   createSessionSharePreviewUrl,
   shareSessionResult,
 } from '../../services/share/shareSessionResult'
+
+const SHOW_CLUB_STORAGE_KEY = 'rf.share.showClub'
+
+function readShowClubPreference(): boolean {
+  try {
+    return window.localStorage.getItem(SHOW_CLUB_STORAGE_KEY) !== '0'
+  } catch {
+    return true
+  }
+}
+
+function writeShowClubPreference(value: boolean): void {
+  try {
+    window.localStorage.setItem(SHOW_CLUB_STORAGE_KEY, value ? '1' : '0')
+  } catch {
+    // stockage indisponible (navigation privée) : préférence non mémorisée
+  }
+}
 
 export interface SessionShareSheetProps {
   open: boolean
@@ -32,8 +50,21 @@ export function SessionShareSheet({
   const [previewError, setPreviewError] = useState(false)
   const [busy, setBusy] = useState(false)
   const [hint, setHint] = useState<string | null>(null)
+  const [showClub, setShowClub] = useState<boolean>(readShowClubPreference)
+
+  const hasClub = Boolean(payload?.clubName?.trim())
+  const effectivePayload = useMemo<SessionSharePayload | null>(
+    () => (payload ? { ...payload, showClub: hasClub && showClub } : null),
+    [payload, hasClub, showClub],
+  )
+
+  const toggleShowClub = (next: boolean) => {
+    setShowClub(next)
+    writeShowClubPreference(next)
+  }
 
   useEffect(() => {
+    const payload = effectivePayload
     if (!open || !payload) return
 
     let cancelled = false
@@ -67,9 +98,10 @@ export function SessionShareSheet({
       cancelled = true
       if (objectUrl) URL.revokeObjectURL(objectUrl)
     }
-  }, [open, payload])
+  }, [open, effectivePayload])
 
   const runShare = async (target: SessionShareTarget) => {
+    const payload = effectivePayload
     if (!payload || busy) return
     setBusy(true)
     setHint(null)
@@ -80,6 +112,7 @@ export function SessionShareSheet({
       fatigue: payload.fatigue,
       prCount: payload.prs.length,
       isPremium: payload.isPremium,
+      club_shown: payload.showClub === true,
     })
 
     const outcome = await shareSessionResult(payload, target)
@@ -90,6 +123,8 @@ export function SessionShareSheet({
         method: outcome.method,
         target: outcome.target,
         sessionLabel: payload.sessionLabel,
+        club_shown: outcome.meta?.clubShown ?? false,
+        logo_source: outcome.meta?.logoSource ?? 'none',
       })
       if (outcome.method === 'download') {
         setHint(tr('session_share_saved_hint', lang))
@@ -159,6 +194,23 @@ export function SessionShareSheet({
             </div>
           )}
         </div>
+
+        {hasClub && (
+          <label className="mt-3 flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border-app bg-layer-5 px-4 py-2.5">
+            <span className="text-xs font-extrabold uppercase tracking-wide text-fg">
+              {tr('session_share_show_club', lang)}
+            </span>
+            <input
+              type="checkbox"
+              role="switch"
+              data-testid="session-share-show-club"
+              checked={showClub}
+              disabled={busy}
+              onChange={(event) => toggleShowClub(event.target.checked)}
+              className="h-5 w-5 accent-brand rf-focus-ring"
+            />
+          </label>
+        )}
 
         {hint && (
           <p className="mt-3 text-xs font-bold text-ok" data-testid="session-share-hint">

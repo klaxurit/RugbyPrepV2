@@ -112,13 +112,51 @@ describe('buildSessionShareCardHtml', () => {
     expect(html).toContain('&quot;À fond, Jean.&quot;')
     expect(html).toContain('class="rpe-dots"')
     expect(html).toContain('Jean Dupont')
-    expect(html).toContain('1ère ligne · JO Pradéenne')
+    // Poste en chip en haut, club dans le pied (plus de doublon).
+    expect(html).toContain('<div class="position-chip">1ère ligne</div>')
+    expect(html).not.toContain('1ère ligne · JO Pradéenne')
+    expect(html).toContain('<span class="seg-name">Jean</span>')
+    expect(html).toContain('<span class="seg-club-name">JO Pradéenne</span>')
     expect(html).toContain('footer-cta')
     expect(html).toContain('rugbyforge.fr')
     // Pas de filigrane jour (ex. « 28 ») ni UI browse
     expect(html).not.toContain('font-size:420px')
     expect(html).not.toContain('browse')
     expect(html).not.toContain('image-slot')
+  })
+
+  it('pied sans club ni niveau quand le toggle est désactivé', () => {
+    const model = buildSessionShareCardModel(
+      { ...payload, showClub: false, competitionName: 'Régionale 2' },
+      { logoSrc: '/logo.png', portraitSrc: '/avatar.png', crestSrc: 'data:image/svg+xml,x' },
+    )
+    const html = buildSessionShareCardHtml(model)
+    expect(html).not.toContain('JO Pradéenne')
+    expect(html).not.toContain('Régionale')
+    expect(html).not.toContain('footer-crest')
+    expect(html).toContain('<span class="seg-name">Jean</span>')
+  })
+
+  it('pied complet : écusson + club + niveau, séparateurs sans trou', () => {
+    const model = buildSessionShareCardModel(
+      { ...payload, competitionName: 'Régionale 2 - Poule 4' },
+      { logoSrc: '/logo.png', portraitSrc: '/avatar.png', crestSrc: 'data:image/svg+xml,x' },
+    )
+    const html = buildSessionShareCardHtml(model)
+    expect(html).toContain('class="footer-crest"')
+    expect(html).toContain('<span class="seg-level">Régionale 2</span>')
+    expect(html.match(/class="sep"/g)).toHaveLength(2)
+  })
+
+  it('aucune identité : wordmark seul, pas de séparateur', () => {
+    const model = buildSessionShareCardModel(
+      { ...payload, firstName: null, displayName: null, clubName: null, positionLabel: null },
+      { logoSrc: '/logo.png', portraitSrc: '/avatar.png' },
+    )
+    const html = buildSessionShareCardHtml(model)
+    expect(html).toContain('footer-row solo')
+    expect(html).not.toContain('class="sep"')
+    expect(html).not.toContain('position-chip')
   })
 
   it('n’affiche pas la bannière record sans vrai PR', () => {

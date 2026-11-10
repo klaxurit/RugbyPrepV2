@@ -1000,6 +1000,10 @@ export const APP_LABELS = {
     fr: 'Partage impossible pour le moment. Réessaie.',
     en: 'Sharing failed for now. Try again.',
   },
+  session_share_show_club: {
+    fr: 'Afficher mon club',
+    en: 'Show my club',
+  },
   session_share_congrats_fallback: {
     fr: 'Bravo pour ta séance !',
     en: 'Nice work — session done.',

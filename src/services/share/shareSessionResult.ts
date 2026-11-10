@@ -2,7 +2,7 @@ import {
   buildSessionShareFilename,
   buildSessionShareText,
 } from './buildSessionShareCopy'
-import { generateSessionShareImage } from './generateSessionShareImage'
+import { generateSessionShareImageWithMeta } from './generateSessionShareImage'
 import {
   SESSION_SHARE_LANDING_URL,
   type SessionShareOutcome,
@@ -72,14 +72,14 @@ export async function shareSessionResult(
       return downloadSessionShareImage(payload)
     }
 
-    const blob = await generateSessionShareImage(payload)
+    const { blob, meta } = await generateSessionShareImageWithMeta(payload)
     const filename = buildSessionShareFilename(payload)
     const file = new File([blob], filename, { type: 'image/png' })
     const text = buildSessionShareText(payload)
 
     const web = await shareViaWebShare(file, text)
     if (web === 'shared') {
-      return { status: 'shared', method: 'web-share', target: 'system' }
+      return { status: 'shared', method: 'web-share', target: 'system', meta }
     }
     if (web === 'cancelled') {
       return { status: 'cancelled' }
@@ -87,7 +87,7 @@ export async function shareSessionResult(
 
     // Desktop / Web Share indisponible : même geste familier Qu’« Enregistrer ».
     triggerDownload(blob, filename)
-    return { status: 'shared', method: 'download', target: 'system' }
+    return { status: 'shared', method: 'download', target: 'system', meta }
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'unknown'
     return { status: 'failed', reason }
@@ -97,7 +97,7 @@ export async function shareSessionResult(
 export async function createSessionSharePreviewUrl(
   payload: SessionSharePayload,
 ): Promise<string> {
-  const blob = await generateSessionShareImage(payload)
+  const { blob } = await generateSessionShareImageWithMeta(payload)
   return URL.createObjectURL(blob)
 }
 
@@ -105,9 +105,9 @@ export async function downloadSessionShareImage(
   payload: SessionSharePayload,
 ): Promise<SessionShareOutcome> {
   try {
-    const blob = await generateSessionShareImage(payload)
+    const { blob, meta } = await generateSessionShareImageWithMeta(payload)
     triggerDownload(blob, buildSessionShareFilename(payload))
-    return { status: 'shared', method: 'download', target: 'download' }
+    return { status: 'shared', method: 'download', target: 'download', meta }
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'unknown'
     return { status: 'failed', reason }

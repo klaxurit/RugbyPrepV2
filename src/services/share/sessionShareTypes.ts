@@ -46,6 +46,12 @@ export interface SessionSharePayload {
   positionLabel?: string | null
   /** Club (ex. « JO Pradéenne… »). */
   clubName?: string | null
+  /** Code FFR du club (clé des logos déjà stockés). */
+  clubCode?: string | null
+  /** Compétition choisie à la synchro FFR (ex. « Régionale 2 - Poule 3 »). */
+  competitionName?: string | null
+  /** Toggle « Afficher mon club » (défaut true). false → ni logo, ni club, ni niveau. */
+  showClub?: boolean
   /** Date longue (ex. « Vendredi 8 mai »). */
   dateLabel?: string | null
   /** Semaine programme (ex. « Semaine 19 »). */
@@ -56,8 +62,19 @@ export interface SessionSharePayload {
 
 export type SessionShareTarget = 'system' | 'download'
 
+/** Ce qui a réellement été rendu sur l’image (analytics). */
+export interface SessionShareImageMeta {
+  clubShown: boolean
+  logoSource: 'ffr' | 'fallback' | 'none'
+}
+
 export type SessionShareOutcome =
-  | { status: 'shared'; method: 'web-share' | 'download'; target: SessionShareTarget }
+  | {
+      status: 'shared'
+      method: 'web-share' | 'download'
+      target: SessionShareTarget
+      meta?: SessionShareImageMeta
+    }
   | { status: 'cancelled' }
   | { status: 'unsupported' }
   | { status: 'failed'; reason: string }

@@ -5,6 +5,13 @@ import {
   formatShareTonnage,
 } from './buildSessionShareCopy'
 import { resolveSessionShareDifficulty } from './resolveSessionShareDifficulty'
+import {
+  buildShareCardData,
+  buildShareFooterSegments,
+  SHARE_FOOTER_SEPARATOR,
+  type ShareCardData,
+  type ShareFooterSegment,
+} from './buildShareCardData'
 
 const TROPHY_SVG = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1A1015" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v3a5 5 0 0 1-10 0V4z"></path><path d="M5 4H3v2a3 3 0 0 0 3 3"></path><path d="M19 4h2v2a3 3 0 0 1-3 3"></path><path d="M10 13h4l-1 4h-2l-1-4z"></path><path d="M9 21h6"></path></svg>`
 
@@ -78,7 +85,12 @@ export interface SessionShareCardModel {
   quote: string
   rpeFilled: number
   displayName: string | null
-  roleLine: string | null
+  /** Poste en chip en haut de carte (plus dans le pied). */
+  positionChip: string | null
+  /** Pied « Prénom · [écusson] Club · R2 » — segments absents omis. */
+  footerSegments: ShareFooterSegment[]
+  /** Logo club (data URL) ou écusson de secours ; null → pas d’écusson. */
+  crestSrc: string | null
   footerTag: string
   labels: {
     duration: string
@@ -88,7 +100,8 @@ export interface SessionShareCardModel {
 
 export function buildSessionShareCardModel(
   payload: SessionSharePayload,
-  assets: { logoSrc: string; portraitSrc: string },
+  assets: { logoSrc: string; portraitSrc: string; crestSrc?: string | null },
+  identity: ShareCardData = buildSessionShareIdentity(payload),
 ): SessionShareCardModel {
   const fr = payload.lang !== 'en'
   const difficulty = resolveSessionShareDifficulty(
@@ -130,9 +143,10 @@ export function buildSessionShareCardModel(
   const sessionRecord = resolveSessionRecord(payload)
   const displayName =
     payload.displayName?.trim() || payload.firstName?.trim() || null
-  const roleParts = [payload.positionLabel, payload.clubName]
-    .map((p) => p?.trim())
-    .filter((p): p is string => Boolean(p))
+  const crestSrc = assets.crestSrc ?? null
+  const footerSegments = buildShareFooterSegments(identity).map((segment) =>
+    segment.kind === 'club' ? { ...segment, withCrest: Boolean(crestSrc) } : segment,
+  )
 
   return {
     logoSrc: assets.logoSrc,
@@ -164,7 +178,9 @@ export function buildSessionShareCardModel(
     quote: `"${ensurePeriod(difficulty.label)}"`,
     rpeFilled: Math.min(10, Math.max(0, Math.round(payload.rpe))),
     displayName,
-    roleLine: roleParts.length > 0 ? roleParts.join(' · ') : null,
+    positionChip: identity.positionLabel,
+    footerSegments,
+    crestSrc,
     footerTag: fr
       ? 'Forge ta prépa, séance après séance.'
       : 'Forge your prep, session after session.',
@@ -173,6 +189,37 @@ export function buildSessionShareCardModel(
       sets: fr ? 'Sets validés' : 'Sets done',
     },
   }
+}
+
+/** Identité club / niveau dérivée du payload (respecte le toggle showClub). */
+export function buildSessionShareIdentity(payload: SessionSharePayload): ShareCardData {
+  return buildShareCardData({
+    firstName: payload.firstName,
+    positionLabel: payload.positionLabel,
+    clubName: payload.clubName,
+    clubCode: payload.clubCode,
+    competitionName: payload.competitionName,
+    showClub: payload.showClub,
+  })
+}
+
+function buildFooterIdentityHtml(model: SessionShareCardModel): string {
+  if (model.footerSegments.length === 0) return ''
+  const sep = `<span class="sep" aria-hidden="true">${SHARE_FOOTER_SEPARATOR.trim()}</span>`
+  const parts = model.footerSegments.map((segment) => {
+    if (segment.kind === 'name') {
+      return `<span class="seg-name">${escapeHtml(segment.text)}</span>`
+    }
+    if (segment.kind === 'club') {
+      const crest =
+        segment.withCrest && model.crestSrc
+          ? `<img class="footer-crest" src="${escapeHtml(model.crestSrc)}" alt="" crossorigin="anonymous" />`
+          : ''
+      return `<span class="seg-club">${crest}<span class="seg-club-name">${escapeHtml(segment.text)}</span></span>`
+    }
+    return `<span class="seg-level">${escapeHtml(segment.text)}</span>`
+  })
+  return `<div class="footer-id">${parts.join(sep)}</div>`
 }
 
 /** Markup HTML identique au mockup Claude Design. */
@@ -205,9 +252,10 @@ export function buildSessionShareCardHtml(model: SessionShareCardModel): string 
   const nameHtml = model.displayName
     ? `<div class="avatar-name">${escapeHtml(model.displayName)}</div>`
     : ''
-  const roleHtml = model.roleLine
-    ? `<div class="avatar-role">${escapeHtml(model.roleLine)}</div>`
+  const positionHtml = model.positionChip
+    ? `<div class="position-row"><div class="position-chip">${escapeHtml(model.positionChip)}</div></div>`
     : ''
+  const footerIdHtml = buildFooterIdentityHtml(model)
 
   return `<div class="rf-share-card" id="rf-share-card">
 <div class="texture"></div>
@@ -218,6 +266,7 @@ export function buildSessionShareCardHtml(model: SessionShareCardModel): string 
   <div class="logo-row">
     <img src="${escapeHtml(model.logoSrc)}" alt="RugbyForge" style="height:64px;width:auto" crossorigin="anonymous" />
   </div>
+  ${positionHtml}
 
   <div class="eyebrow" role="presentation">
     <div class="line" aria-hidden="true"></div>
@@ -266,13 +315,13 @@ export function buildSessionShareCardHtml(model: SessionShareCardModel): string 
       <img class="avatar-photo" src="${escapeHtml(model.portraitSrc)}" alt="" width="172" height="172" crossorigin="anonymous" />
     </div>
     ${nameHtml}
-    ${roleHtml}
   </div>
 </div>
 
 <div class="footer">
   <div class="footer-rule"></div>
-  <div class="footer-brand">
+  <div class="footer-row${footerIdHtml ? '' : ' solo'}">
+    ${footerIdHtml}
     <img class="footer-logo" src="${escapeHtml(model.logoSrc)}" alt="RugbyForge" crossorigin="anonymous" />
   </div>
   <div class="footer-tag">${escapeHtml(model.footerTag)}</div>
