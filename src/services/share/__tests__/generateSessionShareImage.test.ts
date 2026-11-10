@@ -95,12 +95,13 @@ describe('buildSessionShareCardHtml (v2)', () => {
     expect(html).toContain('rf-share-card is-square no-photo')
     expect(html).toContain('class="hero hero-record"')
     expect(html).toContain('>Bench Press</h1>')
-    expect(html).toContain('<span class="big" style="font-size:113px">90</span>')
-    expect(html).toContain('<b>+5 kg</b><span>vs 85 kg</span>')
+    expect(html).toContain('<span class="big" style="font-size:200px">90</span>')
+    expect(html).toContain('<b>+5 kg</b>')
+    expect(html).toContain('Ancien · 85 kg')
     expect(html).toContain('class="stamp"')
-    expect(html).toContain('>— PERSO —</span>')
-    expect(html).toContain('>RECORD</span>')
-    expect(html).toContain('>08 · 05 · 26</span>')
+    expect(html).toContain('— PERSO —')
+    expect(html).toContain('>RECORD</text>')
+    expect(html).toContain('08 · 05 · 26')
   })
 
   it('sans record : pas de tampon', () => {
@@ -114,11 +115,12 @@ describe('buildSessionShareCardHtml (v2)', () => {
     expect(html).toContain('class="hero hero-session"')
     expect(html).toContain('>Haut du corps</h1>')
     expect(html).not.toContain('Force.</h1>')
-    expect(html).toContain('<div class="chip">3,1 t soulevées</div>')
+    expect(html).toContain('3,1 t soulevées')
+    expect(html).toContain('class="chip')
     expect(html).not.toMatch(/class="big"[^>]*>3,1/)
   })
 
-  it('semaine de match en héros si aucun record — story forcée', () => {
+  it('semaine de match en héros si aucun record — story forcée + frise', () => {
     const html = render({
       prs: [],
       nextMatch: { daysUntil: 5, opponent: 'Rugby Club Hérouvillais', isHome: false },
@@ -126,21 +128,27 @@ describe('buildSessionShareCardHtml (v2)', () => {
     })
     expect(html).toContain('rf-share-card is-story no-photo')
     expect(html).toContain('class="hero hero-match"')
-    expect(html).toContain('<div class="jx">J-5</div>')
-    expect(html).toContain('PROCHAIN MATCH · EXT.')
+    expect(html).toContain('>J-5</div>')
+    expect(html).toContain('PROCHAIN MATCH · EXTÉRIEUR')
     expect(html).toContain('>Hérouvillais</span>')
-    expect(html.match(/class="day /g)).toHaveLength(7)
+    expect(html).toContain('class="week-strip"')
+    expect(html.match(/class="week-day /g)).toHaveLength(7)
+    expect(html).toContain('is-salle')
+    expect(html).toContain('is-match')
   })
 
-  it('record + match : le J-X remplace la date en en-tête', () => {
+  it('record + match : ticket garde poste + date (pas J-X en en-tête)', () => {
     const html = render({ nextMatch: { daysUntil: 3, opponent: 'RC Caen', isHome: true } })
     expect(html).toContain('class="hero hero-record"')
-    expect(html).toContain('<div class="hchip right">J-3 · Caen</div>')
+    expect(html).toContain('class="hticket"')
+    expect(html).toContain('>08.05.26</span>')
+    expect(html).not.toContain('J-3 · Caen')
   })
 
-  it('poste en chip haut, pas dans le pied ; pied club + niveau', () => {
+  it('poste dans le ticket haut, pas dans le pied ; pied club + niveau', () => {
     const html = render({ prs: [], competitionName: 'Régionale 2 - Poule 4' })
-    expect(html).toContain('<div class="hchip left">1ère ligne</div>')
+    expect(html).toContain('hticket-poste')
+    expect(html).toContain('>1ère ligne</span>')
     expect(html).toContain('<span class="seg-name">Jean</span>')
     expect(html).toContain('<span class="seg-club-name">JO Pradéenne</span>')
     expect(html).toContain('<span class="seg-level">Régionale 2</span>')
@@ -150,8 +158,8 @@ describe('buildSessionShareCardHtml (v2)', () => {
 
   it('max 3 chips, une seule info de régularité', () => {
     const html = render({ prs: [], sessionOrdinalLabel: 'Séance 5/5' })
-    expect(html.match(/class="chip[" ]/g)).toHaveLength(3)
-    expect(html).toContain('<div class="chip">Semaine 5/5</div>')
+    expect(html.match(/class="chip(?:\s|")/g)).toHaveLength(3)
+    expect(html).toContain('Semaine 5/5')
     expect(html).not.toContain('Séance 5/5')
   })
 
@@ -179,14 +187,21 @@ describe('buildSessionShareCardHtml (v2)', () => {
   it('préférence story respecte le format même pour un record', () => {
     const html = render({ cardFormat: 'story' })
     expect(html).toContain('rf-share-card is-story no-photo')
-    expect(html).toContain('style="font-size:176px">90</span>')
+    expect(html).toContain('style="font-size:300px">90</span>')
   })
 
-  it('aucune identité : wordmark seul, pas de séparateur ni de chip poste', () => {
-    const html = render({ firstName: null, displayName: null, clubName: null, positionLabel: null })
+  it('aucune identité : wordmark seul, pas de séparateur ni de ticket poste', () => {
+    const html = render({
+      firstName: null,
+      displayName: null,
+      clubName: null,
+      positionLabel: null,
+      sessionDateISO: null,
+      dateLabel: null,
+    })
     expect(html).toContain('footer-row solo')
     expect(html).not.toContain('class="sep"')
-    expect(html).not.toContain('hchip left')
+    expect(html).not.toContain('hticket-poste')
   })
 })
 

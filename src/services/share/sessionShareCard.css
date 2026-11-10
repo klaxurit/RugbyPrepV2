@@ -1,132 +1,157 @@
-/* Carte de partage v2 — maquette Claude Design « Carte de fin de séance v2 ».
-   Story 1080×1920 : rien d’important dans les 250 px du haut et du bas. */
+/* Carte de partage v2 — handoff Claude Design share-card-breathing (A + B). */
 .rf-share-card{--bordeaux:#7B0D1E;--cream:#F4EBDD;--muted:#E6CEC8;--ink:#120306;width:1080px;height:1920px;position:relative;overflow:hidden;font-family:'RF Inter','Inter',system-ui,sans-serif;color:var(--cream);background:var(--bordeaux);box-sizing:border-box;margin:0;padding:0}
 .rf-share-card *,.rf-share-card *::before,.rf-share-card *::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ── Fond sans photo : crème + trame de terrain + poteaux ── */
+/* ── Fond sans photo : crème + trame terrain ── */
 .rf-share-card.no-photo{background:var(--cream)}
-.rf-share-card .pitch{position:absolute;left:0;top:0;width:1080px;height:1200px}
-.rf-share-card .pitch .l{position:absolute;left:0;width:1080px;height:3px}
-.rf-share-card .pitch .l.solid{background:rgba(123,13,30,.12)}
-.rf-share-card .pitch .l.dash{background-image:repeating-linear-gradient(90deg,rgba(123,13,30,.12) 0,rgba(123,13,30,.12) 28px,transparent 28px,transparent 52px)}
-.rf-share-card .pitch .v{position:absolute;top:0;width:3px;height:1200px;background-image:repeating-linear-gradient(180deg,rgba(123,13,30,.10) 0,rgba(123,13,30,.10) 28px,transparent 28px,transparent 52px)}
-.rf-share-card .pitch .posts-bg{position:absolute;left:320px;top:340px}
+.rf-share-card .pitch{position:absolute;left:0;top:0;width:1080px;height:1000px;background-image:repeating-linear-gradient(180deg,transparent 0 176px,rgba(123,13,30,.08) 176px 180px)}
+.rf-share-card .pitch .rail{position:absolute;background:rgba(123,13,30,.07)}
+.rf-share-card .pitch .r1{left:760px;top:120px;width:16px;height:560px}
+.rf-share-card .pitch .r2{left:960px;top:120px;width:16px;height:560px}
+.rf-share-card .pitch .rh{left:760px;top:430px;width:216px;height:16px}
+.rf-share-card .pitch .posts-bg{position:absolute;left:760px;top:120px;opacity:.9}
 
-/* ── Fond photo : photo naturelle + dégradé bordeaux 0 → 55 % puis panneau 85 % ── */
-.rf-share-card .photo{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;object-position:50% 35%;display:block}
-.rf-share-card .veil-top{position:absolute;left:0;top:0;width:1080px;height:420px;background:linear-gradient(180deg,rgba(18,3,6,.45),rgba(18,3,6,0))}
-.rf-share-card .veil-grad{position:absolute;left:0;top:720px;width:1080px;height:520px;background:linear-gradient(180deg,rgba(123,13,30,0),rgba(123,13,30,.55))}
+/* ── Fond photo ── */
+.rf-share-card .photo{position:absolute;left:0;top:0;width:1080px;height:980px;object-fit:cover;object-position:50% 35%;display:block}
+.rf-share-card .veil{position:absolute;left:0;top:0;width:1080px;height:980px;pointer-events:none;background:linear-gradient(180deg,rgba(18,3,6,.44) 0%,rgba(18,3,6,.2) 50%,rgba(18,3,6,.55) 100%)}
 
-/* ── Coupe diagonale : y 1212 (gauche) → 1092 (droite) = photo sur 60 % ── */
-.rf-share-card .panel{position:absolute;left:0;top:1092px;width:1080px;height:828px;background:rgba(123,13,30,.85);clip-path:polygon(0 120px,100% 0,100% 100%,0 100%)}
-.rf-share-card .panel.solid{background:var(--bordeaux);background-image:repeating-linear-gradient(180deg,rgba(244,235,221,.05) 0,rgba(244,235,221,.05) 2px,transparent 2px,transparent 150px)}
-.rf-share-card .edge{position:absolute;left:0;top:1086px;width:1080px;height:132px;background:var(--cream);clip-path:polygon(0 120px,100% 0,100% 6px,0 126px)}
+/* ── Coupe diagonale Story : crème 756 → panneau 780 (clip 190 px) ── */
+.rf-share-card .edge{position:absolute;left:0;top:756px;width:1080px;height:1164px;background:var(--cream);clip-path:polygon(0 190px,100% 0,100% 100%,0 100%);z-index:1}
+.rf-share-card .panel{position:absolute;left:0;top:780px;width:1080px;height:1140px;background:rgba(123,13,30,.92);clip-path:polygon(0 190px,100% 0,100% 100%,0 100%);z-index:2}
+.rf-share-card .panel.solid{background:var(--bordeaux)}
+.rf-share-card .panel-shade{position:absolute;left:0;top:806px;width:1080px;height:1114px;background:var(--ink);opacity:.18;clip-path:polygon(0 190px,100% 0,100% 10px,0 200px);z-index:3;pointer-events:none}
 
-/* ── En-tête (y 272, sous la safe zone) ── */
-.rf-share-card .hchip{position:absolute;top:272px;height:56px;padding:0 24px;border-radius:999px;display:flex;align-items:center;font-size:22px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;max-width:460px;overflow:hidden;text-overflow:ellipsis;line-height:1}
-.rf-share-card .hchip.left{left:72px}
-.rf-share-card .hchip.right{right:72px;font-weight:700}
-.rf-share-card.no-photo .hchip.left{background:var(--bordeaux);color:var(--cream)}
-.rf-share-card.no-photo .hchip.right{border:2px solid var(--bordeaux);color:var(--bordeaux)}
-.rf-share-card.has-photo .hchip.left{background:var(--cream);color:var(--bordeaux)}
-.rf-share-card.has-photo .hchip.right{background:rgba(18,3,6,.6);color:var(--cream)}
+/* ── Ticket haut (poste + date, skew) ── */
+.rf-share-card .hticket{position:absolute;left:80px;top:150px;z-index:5;display:flex;transform:skewX(-14deg);transform-origin:left bottom;box-shadow:0 12px 26px rgba(18,3,6,.22)}
+.rf-share-card .hticket-poste,.rf-share-card .hticket-date{height:72px;padding:0 32px;display:flex;align-items:center}
+.rf-share-card .hticket-poste{background:var(--bordeaux)}
+.rf-share-card .hticket-date{background:var(--ink);padding:0 30px}
+.rf-share-card .hticket-poste span,.rf-share-card .hticket-date span{transform:skewX(14deg);color:var(--cream);text-transform:uppercase;white-space:nowrap;line-height:1}
+.rf-share-card .hticket-poste span{font:italic 900 30px/1 'RF Inter','Inter',sans-serif;letter-spacing:.08em}
+.rf-share-card .hticket-date span{font:600 26px/1 'RF Inter','Inter',sans-serif;letter-spacing:.16em;font-variant-numeric:tabular-nums}
+.rf-share-card .hticket-tip{width:20px;height:72px;margin-left:8px;background:var(--bordeaux)}
+.rf-share-card.no-photo .hticket-poste{background:var(--bordeaux)}
+.rf-share-card.has-photo .hticket-poste{background:var(--bordeaux)}
 
-/* ── Tampon RECORD Claude Design : à cheval sur la coupe (photo + panneau), hors flux ── */
-.rf-share-card .stamp{position:absolute;left:804px;top:968px;z-index:6;width:220px;height:220px;box-sizing:border-box;border-radius:50%;background:var(--bordeaux);border:5px solid var(--cream);box-shadow:inset 0 0 0 8px var(--bordeaux),inset 0 0 0 10px var(--cream),0 14px 30px rgba(18,3,6,.4);transform:rotate(-10deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none;margin:0;padding:0}
-.rf-share-card .stamp .s1{font-size:15px;font-weight:800;letter-spacing:.28em;color:var(--cream)}
-.rf-share-card .stamp .s2{font-size:48px;line-height:1;font-style:italic;font-weight:900;letter-spacing:-.03em;color:#fff}
-.rf-share-card .stamp .s3{font-size:15px;font-weight:800;letter-spacing:.22em;color:var(--cream)}
+/* ── Tampon RECORD SVG (RFStamp) — à cheval sur la coupe ── */
+.rf-share-card .stamp{position:absolute;left:690px;top:668px;z-index:6;width:290px;height:290px;transform:rotate(-12deg);filter:drop-shadow(0 16px 28px rgba(18,3,6,.38));pointer-events:none}
+.rf-share-card .stamp svg{display:block;overflow:visible;font-family:'RF Inter','Inter',sans-serif}
 
-/* ── Bloc texte compact, ancré en bas (fin à y 1640) — inchangé avec/sans tampon ── */
-.rf-share-card .content{position:absolute;left:72px;width:936px;bottom:280px;display:flex;flex-direction:column;z-index:1}
-.rf-share-card .kicker{font-size:22px;font-weight:700;letter-spacing:.18em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rf-share-card .hero-title{font-style:italic;font-weight:900;letter-spacing:-.035em;line-height:.92;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
-.rf-share-card .hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
-.rf-share-card .hero-num{display:flex;align-items:baseline;color:#fff;white-space:nowrap}
-.rf-share-card .hero-num .big{font-size:190px;line-height:.82;font-style:italic;font-weight:900;letter-spacing:-.045em;padding-right:8px;font-feature-settings:"tnum"}
-.rf-share-card .hero-num .unit{font-size:64px;line-height:1;font-style:italic;font-weight:900;margin-left:8px}
+/* ── Contenu panneau : respiration space-between ── */
+.rf-share-card .content{position:absolute;left:80px;right:80px;top:1020px;bottom:110px;display:flex;flex-direction:column;justify-content:space-between;z-index:4}
+.rf-share-card .kicker{font-size:22px;font-weight:700;letter-spacing:.18em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase}
+.rf-share-card .kicker-row{display:flex;align-items:center;gap:16px}
+.rf-share-card .kicker-row i{width:44px;height:4px;background:var(--muted);flex:0 0 auto}
+.rf-share-card .kicker-row span{font:700 26px/1 'RF Inter','Inter',sans-serif;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rf-share-card .hero-title{font-style:italic;font-weight:900;letter-spacing:-.02em;line-height:.9;color:var(--cream);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
+.rf-share-card .hero-row{display:flex;align-items:flex-end;gap:24px}
+.rf-share-card .hero-num{display:flex;align-items:flex-end;color:var(--cream);white-space:nowrap}
+.rf-share-card .hero-num .big{line-height:.8;font-style:italic;font-weight:900;letter-spacing:-.05em;padding-right:8px;font-feature-settings:"tnum"}
+.rf-share-card .hero-num .unit{line-height:1;font-style:italic;font-weight:900;letter-spacing:-.02em;color:var(--muted);padding-bottom:4px}
 .rf-share-card .hero-sub{display:flex;align-items:baseline;gap:16px;font-size:52px;line-height:1;font-style:italic;font-weight:900;letter-spacing:-.02em;white-space:nowrap;margin-top:12px;color:var(--cream)}
 .rf-share-card .hero-sub .w{color:#fff}
 .rf-share-card .hero-sub .dot{color:var(--muted)}
 
-.rf-share-card .hero-session .hero-title{margin-top:14px}
-.rf-share-card .hero-record .hero-title{color:var(--cream)}
-.rf-share-card .hero-record .hero-row{margin-top:10px}
-.rf-share-card .hero-record .hero-num .big{font-size:176px}
-.rf-share-card .delta{display:flex;flex-direction:column;justify-content:center;gap:4px;height:104px;padding:0 28px;border-radius:22px;background:var(--cream);color:var(--bordeaux);margin-bottom:4px;white-space:nowrap}
-.rf-share-card .delta b{font-size:46px;line-height:1;font-style:italic;font-weight:900;letter-spacing:-.02em}
-.rf-share-card .delta span{font-size:20px;font-weight:700}
+.rf-share-card .hero-session .hero-title{margin-top:14px;text-transform:none}
+.rf-share-card .hero-record .hero-title{margin-top:26px}
+.rf-share-card .hero-record .hero-row{margin-top:34px}
+.rf-share-card .delta{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:12px;padding-bottom:10px;white-space:nowrap}
+.rf-share-card .delta b{background:var(--cream);color:var(--bordeaux);font:italic 900 72px/1 'RF Inter','Inter',sans-serif;letter-spacing:-.02em;padding:6px 22px 10px}
+.rf-share-card .delta span{font:700 26px/1 'RF Inter','Inter',sans-serif;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
 
-.rf-share-card .hero-match .hero-row{align-items:center;justify-content:flex-start;gap:36px}
-.rf-share-card .hero-match .jx{font-size:210px;line-height:.82;font-style:italic;font-weight:900;letter-spacing:-.05em;color:#fff;padding-right:10px;white-space:nowrap;flex:0 0 auto}
-.rf-share-card .hero-match .opp{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1 1 auto}
-.rf-share-card .hero-match .opp-name{display:flex;align-items:baseline;gap:14px;white-space:nowrap;min-width:0}
-.rf-share-card .hero-match .vs{font-size:40px;font-style:italic;font-weight:800;color:var(--muted);flex:0 0 auto}
-.rf-share-card .hero-match .name{line-height:1.05;font-style:italic;font-weight:900;letter-spacing:-.03em;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.rf-share-card .frise{display:flex;align-items:flex-start;gap:10px;margin-top:22px}
-.rf-share-card .frise .day{flex:1 1 0;display:flex;flex-direction:column;gap:8px}
-.rf-share-card .frise .day i{display:block;height:12px;border-radius:6px;border:2px solid rgba(244,235,221,.55)}
-.rf-share-card .frise .day.past i{background:rgba(244,235,221,.4);border-color:transparent}
-.rf-share-card .frise .day.today i{background:#fff;border-color:#fff}
-.rf-share-card .frise .day span{font-size:18px;font-weight:800;letter-spacing:.08em;color:var(--muted)}
-.rf-share-card .frise .day.today span{color:#fff}
-.rf-share-card .frise .goal{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:-22px;font-size:18px;font-weight:800;letter-spacing:.08em;color:#fff}
+.rf-share-card .hero-match .hero-row{margin-top:40px;gap:32px;align-items:flex-end}
+.rf-share-card .hero-match .jx{line-height:.8;font-style:italic;font-weight:900;letter-spacing:-.06em;color:var(--cream);white-space:nowrap;flex:0 0 auto;font-feature-settings:"tnum"}
+.rf-share-card .hero-match .opp{display:flex;flex-direction:column;gap:14px;padding-bottom:8px;min-width:0;flex:1 1 auto}
+.rf-share-card .hero-match .vs{font:italic 800 40px/1 'RF Inter','Inter',sans-serif;color:var(--muted)}
+.rf-share-card .hero-match .name{line-height:.9;font-style:italic;font-weight:900;letter-spacing:-.02em;color:var(--cream);text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 .rf-share-card .hero-progress .hero-row{margin-top:14px}
-.rf-share-card .hero-progress .hero-num .unit{font-size:96px}
+.rf-share-card .hero-progress .hero-num .unit{font-size:96px;padding-bottom:0}
 .rf-share-card .bars,.rf-share-card .posts{display:flex;align-items:flex-end;gap:12px;padding-bottom:6px}
 .rf-share-card .bars .bar{width:34px;border-radius:6px 6px 2px 2px;background:rgba(244,235,221,.45)}
 .rf-share-card .bars .bar.on{background:#fff}
 
-/* ── Chips secondaires (3 max) ── */
-.rf-share-card .chips{display:flex;gap:14px;margin-top:22px;overflow:hidden}
-.rf-share-card .chip{height:60px;padding:0 26px;border-radius:999px;border:2px solid rgba(244,235,221,.55);display:flex;align-items:center;gap:10px;font-size:24px;font-weight:700;white-space:nowrap;flex:0 0 auto;color:var(--cream)}
-.rf-share-card .chip.filled{background:var(--cream);color:var(--bordeaux);border-color:var(--cream);font-weight:800;padding-left:20px}
+/* ── Chips (cartes bordées, max 3) ── */
+.rf-share-card .chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.rf-share-card .chip{border:2px solid rgba(230,206,200,.4);padding:24px 26px;display:flex;align-items:center;gap:12px;min-width:0}
+.rf-share-card .chip.filled{background:rgba(244,235,221,.12)}
+.rf-share-card .chip-val{font:italic 900 44px/1 'RF Inter','Inter',sans-serif;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* ── Pied : « Prénom · [écusson] Club · R2 » + wordmark — une seule ligne ── */
-.rf-share-card .footer-row{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:22px;padding-top:14px;border-top:2px solid rgba(244,235,221,.22);height:72px}
+/* ── Frise semaine Club design (Salle / Repos / Match) ── */
+.rf-share-card .week-strip{display:flex;flex-direction:column;gap:14px}
+.rf-share-card .week-marks,.rf-share-card .week-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
+.rf-share-card .week-mark{height:30px;display:flex;align-items:flex-end;justify-content:center}
+.rf-share-card .week-mark span{background:var(--cream);color:var(--bordeaux);font:italic 900 20px/1 'RF Inter','Inter',sans-serif;letter-spacing:.1em;padding:5px 10px;text-transform:uppercase}
+.rf-share-card .week-day{height:214px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:22px 0 20px;box-sizing:border-box}
+.rf-share-card .week-day .wd{font:700 20px/1 'RF Inter','Inter',sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.rf-share-card .week-day .wn{font:italic 900 68px/1 'RF Inter','Inter',sans-serif;font-variant-numeric:tabular-nums}
+.rf-share-card .week-day .wl{font:800 19px/1 'RF Inter','Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.rf-share-card .week-day.is-salle{background:var(--cream);color:var(--bordeaux)}
+.rf-share-card .week-day.is-salle .wd,.rf-share-card .week-day.is-salle .wn,.rf-share-card .week-day.is-salle .wl{color:var(--bordeaux)}
+.rf-share-card .week-day.is-match{background:var(--ink);box-shadow:0 0 0 3px var(--cream);color:var(--cream)}
+.rf-share-card .week-day.is-match .wl{font-style:italic;font-weight:900;letter-spacing:.08em}
+.rf-share-card .week-day.is-repos{border:2px dashed rgba(230,206,200,.45);color:var(--muted)}
+
+/* ── Pied ── */
+.rf-share-card .footer-row{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:34px;border-top:2px solid rgba(230,206,200,.28)}
 .rf-share-card .footer-row.solo{justify-content:flex-end}
-.rf-share-card .footer-id{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;font-size:24px;font-weight:500;line-height:1.2;color:var(--muted)}
-.rf-share-card .footer-id .seg-name{flex:0 0 auto;font-size:32px;font-weight:900;font-style:italic;color:#fff}
-.rf-share-card .footer-id .seg-club{display:flex;align-items:center;gap:10px;min-width:0;flex:0 1 auto}
+.rf-share-card .footer-id{display:flex;align-items:center;gap:18px;min-width:0;flex:1 1 auto;white-space:nowrap;overflow:hidden;font-size:28px;font-weight:500;line-height:1.2;color:var(--muted)}
+.rf-share-card .footer-id .seg-name{flex:0 0 auto;font-size:34px;font-weight:800;color:var(--cream)}
+.rf-share-card .footer-id .seg-club{display:flex;align-items:center;gap:14px;min-width:0;flex:0 1 auto}
 .rf-share-card .footer-id .seg-club-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
-.rf-share-card .footer-id .seg-level{flex:0 0 auto;font-weight:800;letter-spacing:.04em;color:var(--cream)}
-.rf-share-card .footer-id .sep{flex:0 0 auto;opacity:.6}
-.rf-share-card .footer-crest-wrap{width:44px;height:44px;flex:0 0 44px;border-radius:50%;overflow:hidden;background:rgba(244,235,221,.14);display:inline-flex;align-items:center;justify-content:center}
+.rf-share-card .footer-id .seg-level{flex:0 0 auto;border:2px solid rgba(230,206,200,.55);padding:5px 10px;font-size:22px;font-weight:800;letter-spacing:.04em;color:var(--cream)}
+.rf-share-card .footer-id .sep{flex:0 0 auto;opacity:.7;font-size:30px;font-weight:600;color:var(--muted)}
+.rf-share-card .footer-crest-wrap{width:58px;height:58px;flex:0 0 58px;border-radius:50%;overflow:hidden;background:var(--cream);display:inline-flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 3px var(--bordeaux),inset 0 0 0 5px var(--cream)}
 .rf-share-card .footer-crest{width:100%;height:100%;object-fit:cover;display:block}
-.rf-share-card .footer-logo{height:30px;width:auto;flex:0 0 auto;display:block}
+.rf-share-card .footer-logo{height:34px;width:auto;flex:0 0 auto;display:block}
 
-/* ── Format carré 1:1 (1080×1080) — héros record / séance ── */
+/* ── Format carré 1:1 ── */
 .rf-share-card.is-square{height:1080px}
-.rf-share-card.is-square .photo{height:1080px}
-.rf-share-card.is-square .pitch{height:640px}
-.rf-share-card.is-square .pitch .v{height:640px}
-.rf-share-card.is-square .pitch .posts-bg{left:340px;top:120px}
-.rf-share-card.is-square .veil-top{height:220px}
-.rf-share-card.is-square .veil-grad{top:360px;height:280px}
-.rf-share-card.is-square .panel{top:520px;height:560px;clip-path:polygon(0 72px,100% 0,100% 100%,0 100%)}
-.rf-share-card.is-square .edge{top:516px;height:80px;clip-path:polygon(0 72px,100% 0,100% 6px,0 78px)}
-.rf-share-card.is-square .hchip{top:40px;height:48px;font-size:18px;max-width:400px;padding:0 20px}
-/* Coupe carré ~y 520 à droite → tampon centré sur la coupe (moitié photo / moitié panneau). */
-.rf-share-card.is-square .stamp{left:850px;top:435px;width:170px;height:170px;border-width:4px;box-shadow:inset 0 0 0 6px var(--bordeaux),inset 0 0 0 8px var(--cream),0 10px 24px rgba(18,3,6,.4);gap:2px}
-.rf-share-card.is-square .stamp .s1{font-size:12px;letter-spacing:.26em}
-.rf-share-card.is-square .stamp .s2{font-size:38px}
-.rf-share-card.is-square .stamp .s3{font-size:12px;letter-spacing:.2em}
-/* Ancré sous la coupe : plus de grand vide entre tampon et héros. */
-.rf-share-card.is-square .content{top:610px;bottom:40px;justify-content:flex-start}
-.rf-share-card.is-square .kicker{font-size:18px;letter-spacing:.14em}
-.rf-share-card.is-square .hero-num .big{font-size:120px}
-.rf-share-card.is-square .hero-num .unit{font-size:42px}
-.rf-share-card.is-square .hero-record .hero-num .big{font-size:112px}
+.rf-share-card.is-square .photo{height:520px}
+.rf-share-card.is-square .veil{height:520px}
+.rf-share-card.is-square .pitch{height:520px;background-image:repeating-linear-gradient(180deg,transparent 0 116px,rgba(123,13,30,.08) 116px 119px)}
+.rf-share-card.is-square .pitch .r1{left:780px;top:40px;width:12px;height:300px}
+.rf-share-card.is-square .pitch .r2{left:940px;top:40px;width:12px;height:300px}
+.rf-share-card.is-square .pitch .rh{left:780px;top:210px;width:172px;height:12px}
+.rf-share-card.is-square .pitch .posts-bg{left:780px;top:40px}
+.rf-share-card.is-square .edge{top:362px;height:718px;clip-path:polygon(0 130px,100% 0,100% 100%,0 100%)}
+.rf-share-card.is-square .panel{top:380px;height:700px;clip-path:polygon(0 130px,100% 0,100% 100%,0 100%)}
+.rf-share-card.is-square .panel-shade{top:398px;height:682px;clip-path:polygon(0 130px,100% 0,100% 8px,0 138px)}
+.rf-share-card.is-square .hticket{left:64px;top:56px;box-shadow:0 10px 22px rgba(18,3,6,.22)}
+.rf-share-card.is-square .hticket-poste,.rf-share-card.is-square .hticket-date{height:54px;padding:0 24px}
+.rf-share-card.is-square .hticket-date{padding:0 22px}
+.rf-share-card.is-square .hticket-poste span{font-size:24px}
+.rf-share-card.is-square .hticket-date span{font-size:21px}
+.rf-share-card.is-square .hticket-tip{width:16px;height:54px;margin-left:6px}
+.rf-share-card.is-square .stamp{left:760px;top:300px;width:210px;height:210px}
+.rf-share-card.is-square .content{left:64px;right:64px;top:540px;bottom:52px}
+.rf-share-card.is-square .kicker-row span{font-size:19px}
+.rf-share-card.is-square .kicker-row i{width:28px;height:3px}
+.rf-share-card.is-square .hero-record .hero-title{margin-top:0}
+.rf-share-card.is-square .hero-record .kicker-row{display:none}
+.rf-share-card.is-square .hero-record .hero-row{margin-top:20px;gap:18px}
+.rf-share-card.is-square .delta{gap:10px;padding-bottom:6px}
+.rf-share-card.is-square .delta b{font-size:52px;padding:4px 16px 8px}
+.rf-share-card.is-square .delta span{font-size:19px}
+.rf-share-card.is-square .hero-match .kicker-row{display:none}
+.rf-share-card.is-square .hero-match .hero-row{margin-top:0;gap:30px}
+.rf-share-card.is-square .hero-match .vs{font-size:28px}
 .rf-share-card.is-square .hero-sub{font-size:36px;margin-top:8px;gap:12px}
-.rf-share-card.is-square .delta{height:72px;padding:0 20px;border-radius:16px}
-.rf-share-card.is-square .delta b{font-size:32px}
-.rf-share-card.is-square .delta span{font-size:16px}
-.rf-share-card.is-square .chips{margin-top:14px;gap:10px}
-.rf-share-card.is-square .chip{height:48px;padding:0 20px;font-size:20px}
-.rf-share-card.is-square .chip.filled{padding-left:16px}
-.rf-share-card.is-square .footer-row{margin-top:auto;height:56px;padding-top:10px}
-.rf-share-card.is-square .footer-id{font-size:20px;gap:10px}
-.rf-share-card.is-square .footer-id .seg-name{font-size:26px}
-.rf-share-card.is-square .footer-crest-wrap{width:36px;height:36px;flex:0 0 36px}
-.rf-share-card.is-square .footer-logo{height:24px}
+.rf-share-card.is-square .chips{gap:12px}
+.rf-share-card.is-square .chip{padding:15px 18px}
+.rf-share-card.is-square .chip-val{font-size:32px}
+.rf-share-card.is-square .week-strip{gap:10px}
+.rf-share-card.is-square .week-marks,.rf-share-card.is-square .week-days{gap:10px}
+.rf-share-card.is-square .week-mark{height:24px}
+.rf-share-card.is-square .week-mark span{font-size:15px;padding:4px 8px}
+.rf-share-card.is-square .week-day{height:140px;padding:15px 0 14px}
+.rf-share-card.is-square .week-day .wd{font-size:15px}
+.rf-share-card.is-square .week-day .wn{font-size:46px}
+.rf-share-card.is-square .week-day .wl{font-size:14px}
+.rf-share-card.is-square .footer-row{padding-top:22px;gap:20px}
+.rf-share-card.is-square .footer-id{font-size:22px;gap:14px}
+.rf-share-card.is-square .footer-id .seg-name{font-size:27px}
+.rf-share-card.is-square .footer-id .seg-level{font-size:18px;padding:4px 8px}
+.rf-share-card.is-square .footer-id .sep{font-size:24px}
+.rf-share-card.is-square .footer-crest-wrap{width:46px;height:46px;flex:0 0 46px;box-shadow:inset 0 0 0 2px var(--bordeaux),inset 0 0 0 4px var(--cream)}
+.rf-share-card.is-square .footer-logo{height:27px}

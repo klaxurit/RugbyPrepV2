@@ -30,11 +30,11 @@ Le payload est construit dans `src/pages/SessionDetailPage.tsx`. La feuille de p
 ### Un seul héros, choisi par priorité
 
 1. **Record battu** (`prs[0]`) : exercice + charge + écart avec l'ancien record (« +5 kg / vs 75 kg »). Sans ancien record : « 1er record ».
-2. **Semaine de match** : match à J-1…J-7 (calendrier, matchs masqués exclus). J-X + adversaire nettoyé (« Rugby Club Hérouvillais » → « Hérouvillais ») + DOM./EXT. + frise J-7 → poteaux.
+2. **Semaine de match** : match à J-1…J-7 (calendrier, matchs masqués exclus). J-X + adversaire nettoyé (« Rugby Club Hérouvillais » → « Hérouvillais ») + domicile/extérieur + frise 7 jours (Salle le jour de séance, Match le jour J, Repos sinon — pas de Club inventé).
 3. **Progression** (`payload.progression`) : charge ≥ +5 % sur 4 semaines, sinon série ≥ 3 semaines complètes d'affilée.
 4. **Par défaut** : nom de la séance + durée + focus (dernier segment du libellé, ex. « Bas du corps · Explosivité »).
 
-Si record et match tombent la même semaine, le record reste le héros par défaut et « J-X · Adversaire » remplace la date dans la chip en haut à droite. La feuille de partage propose un toggle **Exercice / Semaine de match** (`heroPreference`) quand les deux sont possibles.
+Si record et match tombent la même semaine, le record reste le héros par défaut ; le ticket haut garde **poste + date** (pas de J-X en en-tête). La feuille de partage propose un toggle **Exercice / Semaine de match** (`heroPreference`) quand les deux sont possibles.
 
 ### Le reste
 
@@ -43,21 +43,20 @@ Si record et match tombent la même semaine, le record reste le héros par défa
 - **Un seul indicateur de régularité** : « N sem. d'affilée » (≥ 2) › « Semaine n/n » (semaine complète) › « Séance i/n ».
 - **Pas de point final** dans les titres.
 - **Safe zones Instagram** : rien d'important dans les 250 px du haut et du bas. En-tête à y 272, bloc texte qui s'arrête à y 1640.
-- **Poste** en chip en haut à gauche uniquement (plus dans le pied).
+- **Poste + date** en ticket skew haut (Claude Design), pas dans le pied.
 - **Pied** : « Prénom · [écusson] Club · R2 » + wordmark, toujours sur une ligne. Si la place manque : niveau abrégé, puis ellipse sur le nom du club.
-- **Aucune donnée inventée** : un champ absent est omis, séparateurs compris (jamais « · · »). Pas de niveau par défaut, pas de blason généré.
+- **Aucune donnée inventée** : un champ absent est omis, séparateurs compris (jamais « · · »). Pas de niveau par défaut, pas de blason généré, pas de séances Club inventées sur la frise.
 - **Logo club** : uniquement les URL déjà stockées (`getClubLogoUrl`), affiché dans un **rond**. Échec CORS ou absence → écusson de secours aux initiales (déjà circulaire).
-- **Tampon RECORD** (Claude Design, 220 px story / 170 px carré) : uniquement si `prs.length > 0` — `— PERSO —` / RECORD / date `DD · MM · YY`. Hors flux, à cheval sur la coupe (déborde sur la photo + le panneau), sans padding ajouté au bloc bas.
+- **Tampon RECORD** (SVG Claude Design RFStamp, 290 px story / 210 px carré) : uniquement si `prs.length > 0` — `— PERSO —` / RECORD / date `DD · MM · YY`. Hors flux, à cheval sur la coupe, sans padding ajouté au bloc bas.
 - **Toggle « Afficher mon club »** : activé par défaut, mémorisé dans `localStorage` (`rf.share.showClub`). Désactivé → ni logo, ni club, ni niveau.
 - **Contraste** : texte sur panneau bordeaux ≥ 4,5:1 même sur une photo blanche (panneau à 85 %).
 
 ### Géométrie
 
 **Story 1080×1920** (match / progression, ou préférence UI) :
-- Marges latérales 72 px. Coupe diagonale : y 1212 à gauche → 1092 à droite (photo sur ~60 % de la hauteur), liseré crème 6 px.
-- Safe zones Instagram : en-tête y 272, contenu au-dessus de y 1640.
+- Marges 80 px. Coupe : edge y 756 / panneau y 780 (clip 190 px). Contenu `top: 1020` / `bottom: 110`, `space-between`. Tampon y 668 × 290.
 
-**Carré 1080×1080** (auto pour record / séance) : même vocabulaire, panneau depuis ~y 520, contenu ancré sous la coupe (`top: 610`), typo et tampon réduits (`.is-square`).
+**Carré 1080×1080** (auto pour record / séance) : edge y 362 / panneau y 380, contenu `top: 540` / `bottom: 52`, tampon y 300 × 210 (`.is-square`).
 
 - Avec photo : photo naturelle, voile haut, dégradé bordeaux, panneau 85 % sous la coupe.
 - Sans photo : fond crème, trame de terrain, poteaux en filigrane, panneau bordeaux plein.

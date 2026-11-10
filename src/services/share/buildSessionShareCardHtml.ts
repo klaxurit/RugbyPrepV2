@@ -1,8 +1,6 @@
 /**
- * Carte de partage v2 (Stories 1080×1920) — maquette Claude Design « Carte de
- * fin de séance v2 » : un seul héros choisi par priorité, bloc texte compact
- * ancré en bas au-dessus de la safe zone Instagram (250 px), coupe diagonale,
- * pied « Prénom · [écusson] Club · R2 » + wordmark.
+ * Carte de partage v2 — handoff Claude Design « share-card-breathing »
+ * (ticket haut, tampon SVG, respiration panneau, frise semaine).
  */
 import type { SessionSharePayload, ShareCardFormat } from './sessionShareTypes'
 import {
@@ -12,12 +10,12 @@ import {
   type ShareCardData,
   type ShareFooterSegment,
 } from './buildShareCardData'
-import { formatShareStampDate } from './formatShareStampDate'
+import { buildShareWeekStrip, type ShareWeekDay } from './buildShareWeekStrip'
+import { formatShareStampDate, formatShareTicketDate } from './formatShareStampDate'
 import { resolveShareCardFormat } from './resolveShareCardFormat'
 import {
   buildShareChips,
   formatShareLoad,
-  normalizeOpponentName,
   pickTitleSize,
   selectShareHero,
   type ShareChip,
@@ -51,12 +49,14 @@ export interface SessionShareCardModel {
   recordCount: number
   /** Date courte du tampon (« DD · MM · YY »), absente → ligne date omise. */
   stampDate: string | null
-  /** Poste en chip haut gauche. */
+  /** Poste dans le ticket haut. */
   positionChip: string | null
-  /** Chip haut droite : date, ou « J-5 · ADVERSAIRE » si le match n’est pas le héros. */
-  headerRight: string | null
+  /** Date ticket (« DD.MM.YY ») ; fallback dateLabel. */
+  ticketDate: string | null
   hero: ShareHero
   chips: ShareChip[]
+  /** Frise semaine (héros match uniquement). */
+  weekStrip: ShareWeekDay[] | null
   /** Pied « Prénom · [écusson] Club · R2 » — segments absents omis. */
   footerSegments: ShareFooterSegment[]
 }
@@ -85,13 +85,13 @@ export function buildSessionShareCardModel(
     segment.kind === 'club' ? { ...segment, withCrest: Boolean(crestSrc) } : segment,
   )
 
-  let headerRight = payload.dateLabel?.trim() || null
-  const match = payload.nextMatch
-  if (hero.kind !== 'match' && match && match.daysUntil >= 1 && match.daysUntil <= 7) {
-    headerRight = [`J-${match.daysUntil}`, normalizeOpponentName(match.opponent)]
-      .filter(Boolean)
-      .join(' · ')
-  }
+  const ticketDate =
+    formatShareTicketDate(payload.sessionDateISO) || payload.dateLabel?.trim() || null
+
+  const weekStrip =
+    hero.kind === 'match'
+      ? buildShareWeekStrip(payload.sessionDateISO, hero.daysUntil, payload.lang)
+      : null
 
   return {
     lang: payload.lang,
@@ -102,9 +102,10 @@ export function buildSessionShareCardModel(
     recordCount: payload.prs.length,
     stampDate: formatShareStampDate(payload.sessionDateISO),
     positionChip: identity.positionLabel,
-    headerRight,
+    ticketDate,
     hero,
-    chips: buildShareChips(payload, hero),
+    chips: hero.kind === 'match' ? [] : buildShareChips(payload, hero),
+    weekStrip,
     footerSegments,
   }
 }
@@ -128,49 +129,110 @@ function buildFooterIdentityHtml(model: SessionShareCardModel): string {
   return `<div class="footer-id">${parts.join(sep)}</div>`
 }
 
+function buildTicketHtml(model: SessionShareCardModel): string {
+  if (!model.positionChip && !model.ticketDate) return ''
+  const poste = model.positionChip
+    ? `<div class="hticket-poste"><span>${escapeHtml(model.positionChip)}</span></div>`
+    : ''
+  const date = model.ticketDate
+    ? `<div class="hticket-date"><span>${escapeHtml(model.ticketDate)}</span></div>`
+    : ''
+  return `<div class="hticket">${poste}${date}<div class="hticket-tip" aria-hidden="true"></div></div>`
+}
+
+function buildStampHtml(model: SessionShareCardModel): string {
+  if (model.recordCount <= 0) return ''
+  const date = model.stampDate ? escapeHtml(model.stampDate) : ''
+  return `<div class="stamp" data-testid="share-record-stamp">
+  <svg viewBox="0 0 200 200" width="100%" height="100%" aria-hidden="true">
+    <defs>
+      <path id="rf-stamp-top" d="M 24 100 A 76 76 0 0 1 176 100"></path>
+      <path id="rf-stamp-bot" d="M 12 100 A 88 88 0 0 0 188 100"></path>
+    </defs>
+    <circle cx="100" cy="100" r="98" fill="#F4EBDD"></circle>
+    <circle cx="100" cy="100" r="93" fill="none" stroke="#7B0D1E" stroke-width="3.5"></circle>
+    <circle cx="100" cy="100" r="70" fill="none" stroke="#7B0D1E" stroke-width="1.5"></circle>
+    <text class="stamp-arc" font-size="14" font-weight="800" letter-spacing="5" fill="#7B0D1E"><textPath href="#rf-stamp-top" startOffset="50%" text-anchor="middle">— PERSO —</textPath></text>
+    ${date ? `<text class="stamp-arc" font-size="13" font-weight="700" letter-spacing="3" fill="#7B0D1E"><textPath href="#rf-stamp-bot" startOffset="50%" text-anchor="middle">${date}</textPath></text>` : ''}
+    <rect x="14" y="80" width="172" height="40" fill="#7B0D1E"></rect>
+    <text x="100" y="111" text-anchor="middle" font-size="31" font-weight="900" font-style="italic" letter-spacing="1" fill="#F4EBDD">RECORD</text>
+    <rect x="96" y="40" width="8" height="8" fill="#7B0D1E" transform="rotate(45 100 44)"></rect>
+    <rect x="96" y="152" width="8" height="8" fill="#7B0D1E" transform="rotate(45 100 156)"></rect>
+  </svg>
+</div>`
+}
+
+function buildWeekStripHtml(model: SessionShareCardModel): string {
+  const days = model.weekStrip
+  if (!days?.length) return ''
+  const en = model.lang === 'en'
+  const markers = days
+    .map((d) =>
+      d.isToday
+        ? `<div class="week-mark"><span>${en ? 'Today' : 'Auj.'}</span></div>`
+        : `<div class="week-mark"></div>`,
+    )
+    .join('')
+  const cells = days
+    .map((d) => {
+      const label =
+        d.kind === 'match' ? (en ? 'Match' : 'Match') : d.kind === 'salle' ? (en ? 'Gym' : 'Salle') : en ? 'Rest' : 'Repos'
+      return `<div class="week-day is-${d.kind}"><span class="wd">${escapeHtml(d.dayLabel)}</span><span class="wn">${d.dayNumber}</span><span class="wl">${label}</span></div>`
+    })
+    .join('')
+  return `<div class="week-strip"><div class="week-marks">${markers}</div><div class="week-days">${cells}</div></div>`
+}
+
 function buildHeroHtml(model: SessionShareCardModel): string {
   const en = model.lang === 'en'
   const hero = model.hero
   const format = model.format
+  const square = format === 'square'
 
   if (hero.kind === 'record') {
-    const size = scaleType(pickTitleSize(hero.exerciseName, [[14, 96], [18, 80]], 72), format)
+    const size = square
+      ? pickTitleSize(hero.exerciseName, [[14, 62], [18, 52]], 44)
+      : pickTitleSize(hero.exerciseName, [[14, 96], [18, 80]], 72)
     const load = formatShareLoad(hero.kg)
-    const bigSize = scaleType(load.length > 3 ? 150 : 176, format)
+    const bigSize = square ? (load.length > 3 ? 160 : 200) : load.length > 3 ? 240 : 300
+    const unitSize = square ? 72 : 104
     const delta = hero.deltaKg != null
       ? `<div class="delta"><b>+${escapeHtml(formatShareLoad(hero.deltaKg))} kg</b>${
-          hero.previousKg != null ? `<span>vs ${escapeHtml(formatShareLoad(hero.previousKg))} kg</span>` : ''
+          hero.previousKg != null
+            ? `<span>${en ? 'Prev' : 'Ancien'} · ${escapeHtml(formatShareLoad(hero.previousKg))} kg</span>`
+            : ''
         }</div>`
-      : `<div class="delta"><b>${en ? '1st record' : '1er record'}</b></div>`
+      : `<div class="delta"><b>${en ? '1st record' : '1er record'}</b><span>${en ? 'Baseline set' : 'Référence posée'}</span></div>`
     return `<div class="hero hero-record">
+  <div class="kicker-row"><i></i><span>${en ? 'Personal best' : 'Record perso'}</span></div>
   <h1 class="hero-title" style="font-size:${size}px">${escapeHtml(hero.exerciseName)}</h1>
   <div class="hero-row">
-    <div class="hero-num"><span class="big" style="font-size:${bigSize}px">${escapeHtml(load)}</span><span class="unit">kg</span></div>
+    <div class="hero-num"><span class="big" style="font-size:${bigSize}px">${escapeHtml(load)}</span><span class="unit" style="font-size:${unitSize}px">kg</span></div>
     ${delta}
   </div>
 </div>`
   }
 
   if (hero.kind === 'match') {
-    const venue = hero.venue === 'home' ? (en ? 'HOME' : 'DOM.') : hero.venue === 'away' ? (en ? 'AWAY' : 'EXT.') : null
-    const kicker = [en ? 'NEXT MATCH' : 'PROCHAIN MATCH', venue].filter(Boolean).join(' · ')
-    const opponentSize = hero.opponent ? pickTitleSize(hero.opponent, [[12, 64], [16, 52]], 52) : 64
-    const days = Array.from({ length: 7 }, (_, i) => 7 - i)
-      .map((k) => {
-        const state = k === hero.daysUntil ? 'today' : k > hero.daysUntil ? 'past' : 'next'
-        const label = state === 'today' ? (en ? 'TODAY' : 'AUJ.') : `J-${k}`
-        return `<div class="day ${state}"><i></i><span>${label}</span></div>`
-      })
-      .join('')
+    const venue = hero.venue === 'home' ? (en ? 'Home' : 'Domicile') : hero.venue === 'away' ? (en ? 'Away' : 'Extérieur') : null
+    const kicker = [en ? 'Next match' : 'Prochain match', venue].filter(Boolean).join(' · ')
+    const opponentSize = square
+      ? hero.opponent
+        ? pickTitleSize(hero.opponent, [[12, 54], [16, 44]], 40)
+        : 54
+      : hero.opponent
+        ? pickTitleSize(hero.opponent, [[12, 76], [16, 64]], 52)
+        : 76
+    const jxSize = square ? 196 : 280
     return `<div class="hero hero-match">
+  <div class="kicker-row"><i></i><span>${escapeHtml(kicker.toUpperCase())}</span></div>
   <div class="hero-row">
-    <div class="jx">J-${hero.daysUntil}</div>
+    <div class="jx" style="font-size:${jxSize}px">J-${hero.daysUntil}</div>
     <div class="opp">
-      <div class="kicker">${escapeHtml(kicker)}</div>
-      ${hero.opponent ? `<div class="opp-name"><span class="vs">vs</span><span class="name" style="font-size:${opponentSize}px">${escapeHtml(hero.opponent)}</span></div>` : ''}
+      <span class="vs">vs</span>
+      ${hero.opponent ? `<span class="name" style="font-size:${opponentSize}px">${escapeHtml(hero.opponent)}</span>` : ''}
     </div>
   </div>
-  <div class="frise">${days}<div class="goal">${POSTS_SVG('#FFFFFF', 30)}<span>MATCH</span></div></div>
 </div>`
   }
 
@@ -213,62 +275,52 @@ function buildHeroHtml(model: SessionShareCardModel): string {
 function buildBackgroundHtml(model: SessionShareCardModel): string {
   if (model.photoSrc) {
     return `<img class="photo" src="${escapeHtml(model.photoSrc)}" alt="" crossorigin="anonymous" />
-<div class="veil-top"></div>
-<div class="veil-grad"></div>
+<div class="veil"></div>
+<div class="edge"></div>
 <div class="panel"></div>
-<div class="edge"></div>`
+<div class="panel-shade"></div>`
   }
   const square = model.format === 'square'
-  const lines = square
-    ? `<i class="l solid" style="top:560px;height:4px"></i>
-  <i class="l dash" style="top:460px"></i>
-  <i class="l solid" style="top:320px"></i>
-  <i class="l dash" style="top:200px"></i>`
-    : `<i class="l solid" style="top:1040px;height:4px"></i>
-  <i class="l dash" style="top:880px"></i>
-  <i class="l solid" style="top:600px"></i>
-  <i class="l dash" style="top:400px"></i>`
-  const postsH = square ? 420 : 720
+  const postsH = square ? 300 : 560
   return `<div class="pitch" aria-hidden="true">
-  ${lines}
-  <i class="v" style="left:120px"></i>
-  <i class="v" style="left:957px"></i>
-  <svg class="posts-bg" width="440" height="${postsH}" viewBox="0 0 440 720"><path d="M40 10v700M400 10v700M40 470h360" stroke="rgba(123,13,30,0.20)" stroke-width="22" fill="none" stroke-linecap="round"></path><rect x="22" y="600" width="36" height="110" rx="6" fill="rgba(123,13,30,0.20)"></rect><rect x="382" y="600" width="36" height="110" rx="6" fill="rgba(123,13,30,0.20)"></rect></svg>
+  <i class="rail r1"></i>
+  <i class="rail r2"></i>
+  <i class="rail rh"></i>
+  <svg class="posts-bg" width="216" height="${postsH}" viewBox="0 0 216 560"><path d="M20 10v540M196 10v540M20 340h176" stroke="rgba(123,13,30,0.14)" stroke-width="16" fill="none" stroke-linecap="round"></path></svg>
 </div>
-<div class="panel solid"></div>`
+<div class="edge"></div>
+<div class="panel solid"></div>
+<div class="panel-shade"></div>`
+}
+
+function buildChipsHtml(chips: ShareChip[]): string {
+  if (!chips.length) return ''
+  return `<div class="chips">${chips
+    .map((chip) => {
+      const posts = chip.posts ? POSTS_SVG('#F4EBDD', 18) : ''
+      return `<div class="chip${chip.filled ? ' filled' : ''}">${posts}<span class="chip-val">${escapeHtml(chip.text)}</span></div>`
+    })
+    .join('')}</div>`
 }
 
 export function buildSessionShareCardHtml(model: SessionShareCardModel): string {
   const hasPhoto = Boolean(model.photoSrc)
   const formatClass = model.format === 'square' ? 'is-square' : 'is-story'
-  const chipsHtml = model.chips.length
-    ? `<div class="chips">${model.chips
-        .map(
-          (chip) =>
-            `<div class="chip${chip.filled ? ' filled' : ''}">${chip.posts ? POSTS_SVG('#7B0D1E') : ''}${escapeHtml(chip.text)}</div>`,
-        )
-        .join('')}</div>`
-    : ''
   const footerIdHtml = buildFooterIdentityHtml(model)
-  const stamp =
-    model.recordCount > 0
-      ? `<div class="stamp" data-testid="share-record-stamp"><span class="s1">— PERSO —</span><span class="s2">RECORD</span>${
-          model.stampDate ? `<span class="s3">${escapeHtml(model.stampDate)}</span>` : ''
-        }</div>`
-      : ''
+  const mid =
+    model.hero.kind === 'match' ? buildWeekStripHtml(model) : buildChipsHtml(model.chips)
 
   return `<div class="rf-share-card ${formatClass} ${hasPhoto ? 'has-photo' : 'no-photo'}" id="rf-share-card">
 ${buildBackgroundHtml(model)}
-${model.positionChip ? `<div class="hchip left">${escapeHtml(model.positionChip)}</div>` : ''}
-${model.headerRight ? `<div class="hchip right">${escapeHtml(model.headerRight)}</div>` : ''}
+${buildTicketHtml(model)}
 <div class="content">
   ${buildHeroHtml(model)}
-  ${chipsHtml}
+  ${mid}
   <div class="footer-row${footerIdHtml ? '' : ' solo'}">
     ${footerIdHtml}
     <img class="footer-logo" src="${escapeHtml(model.logoSrc)}" alt="RugbyForge" crossorigin="anonymous" />
   </div>
 </div>
-${stamp}
+${buildStampHtml(model)}
 </div>`
 }
