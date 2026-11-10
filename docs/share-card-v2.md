@@ -61,10 +61,7 @@ Si record et match tombent la même semaine, le record reste le héros et « J-X
 
 ## Reste à faire
 
-1. **Calculer `payload.progression`** dans `SessionDetailPage.tsx` :
-   - `{ kind: 'load', percent, weeks: 4, exerciseName }` à partir de l'historique des charges sur un exercice principal ;
-   - `{ kind: 'streak', weeks }` = nombre de semaines complètes d'affilée.
-   Le rendu (mini-barres S-3 → S, ou 8 poteaux) est déjà prêt.
+1. ~~**Calculer `payload.progression`**~~ — `computeShareProgression.ts` (load vs S−4, sinon streak gamification), branché dans `SessionDetailPage.tsx`.
 2. **Photo de séance** : permettre de prendre ou d'importer une photo et la passer dans `payload.photoUrl`. Afficher un avertissement non bloquant « Photo un peu petite, le rendu peut être flou » si le côté court fait moins de 1080 px, avec l'option de changer de photo. Point focal : le bas des visages doit rester au moins 80 px au-dessus de la coupe (aujourd'hui `object-position: 50% 35%`).
 3. **Format carré 1:1** (1080×1080) pour les héros record et par défaut : maquettes sur le canevas, pas encore codé.
 4. **Nom court du club** : `buildShareCardData` accepte `clubShortName` (prioritaire sur `clubName`) dès qu'une source existe.
