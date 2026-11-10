@@ -56,7 +56,7 @@ Si record et match tombent la même semaine, le record reste le héros par défa
 **Story 1080×1920** (match / progression, ou préférence UI) :
 - Marges 80 px. Coupe : edge y 756 / panneau y 780 (clip 190 px). Contenu `top: 1020` / `bottom: 110`, `space-between`. Tampon y 668 × 290.
 
-**Carré 1080×1080** (auto pour record / séance) : edge y 362 / panneau y 380, contenu `top: 540` / `bottom: 52`, tampon y 300 × 210 (`.is-square`).
+**Carré 1080×1080** (auto pour record / séance ; match aussi via toggle UI, auto story) : edge y 362 / panneau y 380, contenu `top: 540` / `bottom: 52`, tampon y 300 × 210 (`.is-square`).
 
 - Avec photo : photo naturelle, voile haut, dégradé bordeaux, panneau 85 % sous la coupe.
 - Sans photo : fond crème, trame de terrain, poteaux en filigrane, panneau bordeaux plein.
@@ -70,7 +70,7 @@ Si record et match tombent la même semaine, le record reste le héros par défa
 
 1. ~~**Calculer `payload.progression`**~~ — `computeShareProgression.ts` (load vs S−4, sinon streak gamification), branché dans `SessionDetailPage.tsx`.
 2. ~~**Photo de séance**~~ — `prepareSharePhoto.ts` + UI caméra/galerie dans `SessionShareSheet` (`photoUrl`, warning non bloquant si côté court &lt; 1080, changer/retirer). Point focal CSS inchangé (`object-position: 50% 35%`).
-3. ~~**Format carré 1:1**~~ — `resolveShareCardFormat.ts` (auto square pour record/session), CSS `.is-square`, toggle UI si héros éligible, export 1080×1080.
+3. ~~**Format carré 1:1**~~ — `resolveShareCardFormat.ts` (auto square record/session ; match autorisé au toggle, auto story), CSS `.is-square`, export 1080×1080.
 4. ~~**Nom court du club**~~ — API prête (`clubShortName` prioritaire dans `buildShareCardData`) ; **aucune source produit** dans le repo pour l’instant (pas d’heuristique inventée).
 
 ## Vérifier

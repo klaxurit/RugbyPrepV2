@@ -11,29 +11,31 @@ import {
 } from '../sessionShareTypes'
 
 describe('shareCardAllowsSquare', () => {
-  it('autorise record et session uniquement', () => {
+  it('autorise record, session et match ; pas progression', () => {
     expect(shareCardAllowsSquare('record')).toBe(true)
     expect(shareCardAllowsSquare('session')).toBe(true)
-    expect(shareCardAllowsSquare('match')).toBe(false)
+    expect(shareCardAllowsSquare('match')).toBe(true)
     expect(shareCardAllowsSquare('progression')).toBe(false)
   })
 })
 
 describe('resolveShareCardFormat', () => {
-  it('force story pour match / progression', () => {
-    expect(resolveShareCardFormat('match', 'square')).toBe('story')
+  it('force story pour progression même si préférence carré', () => {
     expect(resolveShareCardFormat('progression', 'square')).toBe('story')
-    expect(resolveShareCardFormat('match', null)).toBe('story')
+    expect(resolveShareCardFormat('progression', null)).toBe('story')
   })
 
-  it('auto = square pour record / session', () => {
+  it('auto = square pour record / session, story pour match', () => {
     expect(resolveShareCardFormat('record')).toBe('square')
     expect(resolveShareCardFormat('session', null)).toBe('square')
+    expect(resolveShareCardFormat('match', null)).toBe('story')
   })
 
   it('respecte la préférence UI quand le héros autorise le carré', () => {
     expect(resolveShareCardFormat('record', 'story')).toBe('story')
     expect(resolveShareCardFormat('session', 'square')).toBe('square')
+    expect(resolveShareCardFormat('match', 'square')).toBe('square')
+    expect(resolveShareCardFormat('match', 'story')).toBe('story')
   })
 })
 

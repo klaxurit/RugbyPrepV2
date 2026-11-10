@@ -120,13 +120,13 @@ describe('buildSessionShareCardHtml (v2)', () => {
     expect(html).not.toMatch(/class="big"[^>]*>3,1/)
   })
 
-  it('semaine de match en héros si aucun record — story forcée + frise', () => {
+  it('semaine de match en héros si aucun record — carré 1:1 + frise', () => {
     const html = render({
       prs: [],
       nextMatch: { daysUntil: 5, opponent: 'Rugby Club Hérouvillais', isHome: false },
       cardFormat: 'square',
     })
-    expect(html).toContain('rf-share-card is-story no-photo')
+    expect(html).toContain('rf-share-card is-square no-photo')
     expect(html).toContain('class="hero hero-match"')
     expect(html).toContain('>J-5</div>')
     expect(html).toContain('PROCHAIN MATCH · EXTÉRIEUR')
@@ -135,6 +135,16 @@ describe('buildSessionShareCardHtml (v2)', () => {
     expect(html.match(/class="week-day /g)).toHaveLength(7)
     expect(html).toContain('is-salle')
     expect(html).toContain('is-match')
+  })
+
+  it('semaine de match sans préférence format → story (auto)', () => {
+    const html = render({
+      prs: [],
+      nextMatch: { daysUntil: 5, opponent: 'Hérouville', isHome: true },
+      cardFormat: null,
+    })
+    expect(html).toContain('rf-share-card is-story no-photo')
+    expect(html).toContain('class="hero hero-match"')
   })
 
   it('record + match : ticket garde poste + date (pas J-X en en-tête)', () => {
