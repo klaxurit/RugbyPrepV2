@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Icon } from '../ui'
+import { formatPlayerFacingNote } from '../../services/session/formatPlayerFacingNote'
+import type { Lang } from '../../i18n/appLabels'
 
 interface SessionNotesProps {
   notes: readonly string[]
@@ -7,6 +9,7 @@ interface SessionNotesProps {
   defaultOpen?: boolean
   /** Libellé du toggle (par défaut "Notes de coaching"). */
   label?: string
+  lang?: Lang
 }
 
 /**
@@ -17,6 +20,7 @@ export function SessionNotes({
   notes,
   defaultOpen = false,
   label = 'Notes de coaching',
+  lang = 'fr',
 }: SessionNotesProps) {
   const [open, setOpen] = useState(defaultOpen)
 
@@ -49,7 +53,7 @@ export function SessionNotes({
               <span aria-hidden className="flex-shrink-0 font-bold text-brand">
                 —
               </span>
-              <span>{note}</span>
+              <span>{formatPlayerFacingNote(note, lang)}</span>
             </div>
           ))}
         </div>

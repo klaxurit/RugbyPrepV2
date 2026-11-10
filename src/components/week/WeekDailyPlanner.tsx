@@ -224,9 +224,23 @@ export function WeekDailyPlanner({
         sessionLabel: session
           ? formatTitle(formatSessionTitle(session.sessionSlot.session.metadata.id))
           : undefined,
-        sessionSubtitle: session
-          ? SESSION_SUBTITLE[session.sessionSlot.session.metadata.sessionType] ?? undefined
-          : undefined,
+        sessionSubtitle: (() => {
+          if (!session) return undefined
+          const typeLabel =
+            SESSION_SUBTITLE[session.sessionSlot.session.metadata.sessionType] ?? undefined
+          const title = formatTitle(formatSessionTitle(session.sessionSlot.session.metadata.id))
+          // Évite « Bas du corps » en titre et sous-titre : durée / focus utile.
+          if (
+            typeLabel &&
+            title &&
+            typeLabel.localeCompare(title, undefined, { sensitivity: 'accent' }) === 0
+          ) {
+            if (cardStats?.durationMin != null) return `~${cardStats.durationMin} min`
+            if (cardStats?.blocs != null) return `${cardStats.blocs} blocs`
+            return undefined
+          }
+          return typeLabel
+        })(),
         isNovelThisBlock: session
           ? Boolean(novelMotherSessionIds?.has(session.sessionSlot.sessionId))
           : undefined,

@@ -2,16 +2,19 @@
  * 1 ligne « pourquoi ce bloc » pour l’UI — première note courte / transfert rugby.
  */
 
+import { formatPlayerFacingNote } from './formatPlayerFacingNote'
+
 const TRANSFER_HINT =
-  /transfert|rugby|mêlée|melee|plaquage|tackle|scrum|lineout|touche|sprint|cod|contact|maul|ruck|carry|lockout|lancer/i
+  /transfert|transfer|rugby|mêlée|melee|plaquage|tackle|scrum|lineout|touche|sprint|cod|contact|maul|ruck|carry|lockout|lancer/i
 
 export function pickBlockTransferCue(
   coachingNotes: readonly string[] | undefined | null,
   maxLen = 110,
+  lang: 'fr' | 'en' = 'fr',
 ): string | null {
   if (!coachingNotes || coachingNotes.length === 0) return null
   const cleaned = coachingNotes
-    .map((n) => n.replace(/`/g, '').replace(/\s+/g, ' ').trim())
+    .map((n) => formatPlayerFacingNote(n, lang))
     .filter(Boolean)
   if (cleaned.length === 0) return null
 

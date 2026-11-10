@@ -111,7 +111,7 @@ export const TRAINING_GLOSSARY: readonly GlossaryEntry[] = [
   },
   {
     id: 'transfer',
-    label: { fr: 'Transfer', en: 'Transfer' },
+    label: { fr: 'Transfert', en: 'Transfer' },
     definition: {
       fr: 'Transfert : ce que le geste apporte sur le terrain (mêlée, contact, sprint…).',
       en: 'Transfer: how the lift carries over to the pitch (scrum, contact, sprint…).',

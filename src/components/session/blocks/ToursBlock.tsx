@@ -37,6 +37,7 @@ import { ExerciseSessionJournalPanel } from '../ExerciseSessionJournal'
 import { ExercisePrefillChip } from '../ExercisePrefillChip'
 import type { ExerciseSetLog } from '../../../types/training'
 import { pickBlockTransferCue } from '../../../services/session/pickBlockTransferCue'
+import { exerciseDisplayLabels } from '../../../services/session/formatPlayerFacingNote'
 
 /**
  * Per-exo gate for the eye/demo button. Aligné sur `resolveExerciseIdForSessionRun`.
@@ -168,7 +169,7 @@ export function ToursBlock(props: ToursBlockProps) {
 
   const displayTour = state === 'done' ? totalTours : Math.min(currentTourIdx + 1, totalTours)
   const [expandedDoneTours, setExpandedDoneTours] = useState<Set<number>>(() => new Set())
-  const transferCue = pickBlockTransferCue(block.coachingNotes)
+  const transferCue = pickBlockTransferCue(block.coachingNotes, 110, lang)
 
   const toggleDoneTour = (tourIdx: number) => {
     setExpandedDoneTours((prev) => {
@@ -278,6 +279,7 @@ export function ToursBlock(props: ToursBlockProps) {
               notes={notes}
               defaultOpen={state === 'active'}
               label={tr('session_coaching_notes', lang)}
+              lang={lang}
             />
           )}
           {(fallbackOptions?.length || preparedExercises) && (
@@ -653,6 +655,10 @@ function ExerciseRow({
     lang,
   })
   const glossaryScan = `${exo.prescription} ${exo.name}`
+  const nameLabels = exerciseDisplayLabels(
+    localizeMotherSessionExerciseName(exo.name, lang),
+    lang,
+  )
   const showLoadInputs =
     hasRepScheme &&
     premium &&
@@ -767,11 +773,14 @@ function ExerciseRow({
               opacity: validated ? 0.6 : 1,
             }}
           >
-            <span className="truncate">{localizeMotherSessionExerciseName(exo.name, lang)}</span>
+            <span className="truncate">{nameLabels.title}</span>
             {premium && suggestion && isCurrent && !validated && (
               <SuggestionBadge suggestion={suggestion} />
             )}
           </div>
+          {nameLabels.subtitle ? (
+            <div className="mt-0.5 text-[11px] text-fg/45">{nameLabels.subtitle}</div>
+          ) : null}
           <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
             <span className="text-[12px] tabular-nums text-fg/55">{prescriptionLabel}</span>
             <GlossaryHint text={glossaryScan} lang={lang} />
@@ -926,6 +935,10 @@ function PreviewExerciseRow({
     lang,
   })
   const glossaryScan = `${exo.prescription} ${exo.name}`
+  const nameLabels = exerciseDisplayLabels(
+    localizeMotherSessionExerciseName(exo.name, lang),
+    lang,
+  )
   return (
     <div className="flex items-center gap-2.5 rounded-[14px] border border-paper-deep bg-app px-3 py-3">
       <div className="min-w-0 flex-1">
@@ -933,8 +946,11 @@ function PreviewExerciseRow({
           className="text-[14px] font-bold leading-[1.25] text-fg"
           style={{ letterSpacing: '-0.2px' }}
         >
-          {localizeMotherSessionExerciseName(exo.name, lang)}
+          {nameLabels.title}
         </div>
+        {nameLabels.subtitle ? (
+          <div className="mt-0.5 text-[11px] text-fg/45">{nameLabels.subtitle}</div>
+        ) : null}
         <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
           <span className="text-[12px] tabular-nums text-fg/55">{prescriptionLabel}</span>
           <GlossaryHint text={glossaryScan} lang={lang} />
