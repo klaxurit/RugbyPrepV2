@@ -1,6 +1,7 @@
 import exercises from './exercices.v1.json'
-import type { Exercise } from '../types/training'
+import type { Equipment, Exercise } from '../types/training'
 import { EXERCISE_DEMOS, type ExerciseDemoLang } from './exerciseDemos'
+import { exerciseDemoFallbackHelper } from '../i18n/exerciseDemoCopy'
 
 export const exercisesList = exercises as Exercise[]
 
@@ -32,11 +33,21 @@ export interface ExerciseDemoContent {
   youtubeWatchUrl: string | null
   isCurated: boolean
   equipment: Exercise['equipment']
-  /** Vidéo d’une variante proche (ex. bilatéral pour unilatéral). */
+  /** Vidéo / consignes d’une variante proche (ex. bilatéral pour unilatéral). */
   isFallbackVariant?: boolean
+  /** Id de l’exo prescrit quand le contenu affiché vient du fallback. */
   fallbackOfId?: string
+  /** Libellé de l’exo prescrit (si différent du titre résolu). */
+  prescribedLabel?: string
+  /** Helper contextuel (copy i18n), pas des consignes techniques. */
+  helperNote?: string
   /** Pas de vidéo : consignes texte seulement. */
   textOnly?: boolean
+}
+
+export type GetExerciseDemoOptions = {
+  /** Profil matériel : n’utilise un fallback vidéo que s’il est cohérent avec le kit. */
+  equipment?: Equipment[]
 }
 
 /** Variantes sans démo → démo bilatérale / proche. */
@@ -170,38 +181,71 @@ function buildDemoContent(
   }
 }
 
+/** Le fallback vidéo n’est proposé que si le kit du profil le permet (ou si non fourni). */
+export function isDemoFallbackEquipmentCoherent(
+  fallbackId: string,
+  equipment?: Equipment[],
+): boolean {
+  if (equipment === undefined) return true
+  const exercise = getExerciseById(fallbackId)
+  if (!exercise) return false
+  const kit = (exercise.equipment ?? []).filter((item) => item !== 'none')
+  if (kit.length === 0) return true
+  const available = new Set(equipment)
+  return kit.every((item) => available.has(item))
+}
+
 /**
- * Démo de l’exo, sinon variante bilatérale, sinon consignes texte.
- * Toujours un contenu joueur quand l’exo existe.
+ * Source unique pour la fiche démo : titre, consignes, matériel et vidéo
+ * viennent du même `contentId` (prescrit s’il a une vidéo, sinon fallback cohérent).
+ */
+export function resolveExerciseDemoContentId(
+  id: string,
+  options?: GetExerciseDemoOptions,
+): { contentId: string; isFallback: boolean } {
+  const direct = buildDemoContent(id, 'fr')
+  if (direct && !direct.textOnly) return { contentId: id, isFallback: false }
+
+  const fallbackId = resolveDemoFallbackId(id)
+  if (
+    fallbackId &&
+    fallbackId !== id &&
+    isDemoFallbackEquipmentCoherent(fallbackId, options?.equipment)
+  ) {
+    const fallback = buildDemoContent(fallbackId, 'fr')
+    if (fallback && !fallback.textOnly) {
+      return { contentId: fallbackId, isFallback: true }
+    }
+  }
+
+  return { contentId: id, isFallback: false }
+}
+
+/**
+ * Démo de l’exo, sinon variante filmée cohérente avec le matériel, sinon consignes texte.
+ * Une seule variante résolue pour titre / notes / cues / vidéo (pas de mélange).
  */
 export const getExerciseDemo = (
   id: string,
   lang: ExerciseDemoLang = 'fr',
+  options?: GetExerciseDemoOptions,
 ): ExerciseDemoContent | null => {
-  const direct = buildDemoContent(id, lang)
-  if (direct && !direct.textOnly) return direct
+  const { contentId, isFallback } = resolveExerciseDemoContentId(id, options)
+  const content = buildDemoContent(
+    contentId,
+    lang,
+    isFallback ? { isFallbackVariant: true, fallbackOfId: id } : undefined,
+  )
+  if (!content) return null
 
-  const fallbackId = resolveDemoFallbackId(id)
-  if (fallbackId) {
-    const fallback = buildDemoContent(fallbackId, lang, {
-      isFallbackVariant: true,
-      fallbackOfId: id,
-    })
-    if (fallback && !fallback.textOnly) {
-      const original = getExerciseById(id)
-      return {
-        ...fallback,
-        title: getExerciseName(id, lang),
-        notes:
-          (lang === 'fr'
-            ? `Variante proche : ${getExerciseName(fallbackId, 'fr')}. Même intention, un appui ou charge différente.`
-            : `Close variant: ${getExerciseName(fallbackId, 'en')}. Same intent, different stance or load.`) +
-          (original?.defaultNotes || original?.notes
-            ? `\n${original.defaultNotes ?? original.notes}`
-            : ''),
-      }
-    }
+  if (!isFallback) return content
+
+  const prescribedLabel = getExerciseName(id, lang)
+  return {
+    ...content,
+    // Titre = variante résolue (celle de la vidéo / des consignes), pas l’id prescrit.
+    title: getExerciseName(contentId, lang),
+    prescribedLabel: prescribedLabel !== getExerciseName(contentId, lang) ? prescribedLabel : undefined,
+    helperNote: exerciseDemoFallbackHelper(prescribedLabel, lang),
   }
-
-  return direct
 }

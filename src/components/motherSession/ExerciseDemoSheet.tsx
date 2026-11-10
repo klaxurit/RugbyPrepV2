@@ -6,6 +6,8 @@ import type { Equipment } from '../../types/training'
 type ExerciseDemoSheetProps = {
   exerciseId: string | null
   lang: 'fr' | 'en'
+  /** Profil matériel : évite une vidéo / consignes d’une variante hors kit. */
+  equipment?: Equipment[]
   onClose: () => void
 }
 
@@ -35,9 +37,10 @@ const EQUIPMENT_LABELS: Record<Equipment, { fr: string; en: string }> = {
 export function ExerciseDemoSheet({
   exerciseId,
   lang,
+  equipment,
   onClose,
 }: ExerciseDemoSheetProps) {
-  const demo = exerciseId ? getExerciseDemo(exerciseId, lang) : null
+  const demo = exerciseId ? getExerciseDemo(exerciseId, lang, { equipment }) : null
 
   useEffect(() => {
     if (!exerciseId) return
@@ -64,14 +67,12 @@ export function ExerciseDemoSheet({
       lang === 'fr'
         ? `Vidéo de la variante : ${demo.fallbackOfId ? getExerciseName(demo.exerciseId, lang) : ''}`
         : `Variant video: ${demo.fallbackOfId ? getExerciseName(demo.exerciseId, lang) : ''}`,
-    helper: demo.textOnly
-      ? lang === 'fr'
-        ? 'Pas de vidéo pour cet exercice — suis les consignes ci-dessous.'
-        : 'No video for this exercise — follow the cues below.'
-      : demo.isFallbackVariant
+    helper: demo.helperNote
+      ? demo.helperNote
+      : demo.textOnly
         ? lang === 'fr'
-          ? 'Vidéo d’une variante proche (même intention). Lis aussi les consignes spécifiques.'
-          : 'Video of a close variant (same intent). Also read the specific cues.'
+          ? 'Pas de vidéo pour cet exercice — suis les consignes ci-dessous.'
+          : 'No video for this exercise — follow the cues below.'
         : lang === 'fr'
           ? 'Regarde d’abord l’exécution, puis garde les repères rapides en tête pendant ta série.'
           : 'Watch the execution first, then keep the quick cues in mind during your set.',

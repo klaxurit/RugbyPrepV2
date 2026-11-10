@@ -3,6 +3,7 @@ import { Eye, RefreshCw, X } from 'lucide-react'
 import { hasExerciseDemo } from '../../data/exercises'
 import type { ExerciseVariantOption } from '../../services/equipment/exerciseVariantOptions'
 import type { Lang } from '../../i18n/appLabels'
+import type { Equipment } from '../../types/training'
 import { ExerciseDemoSheet } from '../motherSession/ExerciseDemoSheet'
 
 type ExerciseVariantPickerSheetProps = {
@@ -11,6 +12,7 @@ type ExerciseVariantPickerSheetProps = {
   options: ExerciseVariantOption[]
   currentExerciseId: string
   prescribedExerciseId: string
+  equipment?: Equipment[]
   onSelect: (exerciseId: string) => void
   onResetToPrescribed: () => void
   onClose: () => void
@@ -34,6 +36,7 @@ export function ExerciseVariantPickerSheet({
   options,
   currentExerciseId,
   prescribedExerciseId,
+  equipment,
   onSelect,
   onResetToPrescribed,
   onClose,
@@ -179,6 +182,7 @@ export function ExerciseVariantPickerSheet({
       <ExerciseDemoSheet
         exerciseId={activeDemoId}
         lang={lang}
+        equipment={equipment}
         onClose={() => setDemoExerciseId(null)}
       />
     </>

@@ -1923,6 +1923,7 @@ export function SessionDetailPage() {
       <ExerciseDemoSheet
         exerciseId={demoExerciseId}
         lang={lang}
+        equipment={profile.equipment}
         onClose={() => setDemoExerciseId(null)}
       />
 
@@ -1932,6 +1933,7 @@ export function SessionDetailPage() {
         options={variantPickerOptions}
         currentExerciseId={variantPickerCurrentId}
         prescribedExerciseId={variantPickerPrescribedId}
+        equipment={profile.equipment}
         onSelect={handleSelectVariant}
         onResetToPrescribed={handleResetVariant}
         onClose={() => setVariantPicker(null)}
