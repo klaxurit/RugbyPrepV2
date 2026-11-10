@@ -82,6 +82,8 @@ interface SessionBlocksProps {
   historyLogs?: readonly ExerciseSetLog[]
   /** Signature de la séance courante (pour filtrer l'historique). */
   slotSignature?: string
+  /** Affichage Fondations : % → RER (display only) + glossaire. */
+  foundationsDisplay?: boolean
 }
 
 /**
@@ -118,6 +120,7 @@ export function SessionBlocks({
   lang = 'fr',
   historyLogs,
   slotSignature,
+  foundationsDisplay = false,
 }: SessionBlocksProps) {
   const sessionRun = useSessionRun()
   const blocks = session.blocks
@@ -359,6 +362,7 @@ export function SessionBlocks({
             hasVariants={
               hasVariants ? (exoIdx) => hasVariants(block.number, exoIdx) : undefined
             }
+            foundationsDisplay={foundationsDisplay}
             onSelectVariant={
               onSelectVariant
                 ? (exoIdx, exerciseId) => onSelectVariant(block.number, exoIdx, exerciseId)

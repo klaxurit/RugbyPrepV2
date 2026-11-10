@@ -12,8 +12,10 @@ import { BlockAlternativesPanel } from '../BlockAlternativesPanel'
 import type { VariantPhaseContext } from '../../../services/equipment/exerciseVariantOptions'
 import type { Equipment } from '../../../types/training'
 import type { LoadSuggestion } from '../../../services/loadSuggestion'
-import { hasExerciseDemo } from '../../../data/exercises'
+import { getExerciseDemo } from '../../../data/exercises'
 import { resolveExerciseIdForSessionRun } from '../../../services/motherSession/motherSessionExerciseMap'
+import { formatPrescriptionDisplay } from '../../../i18n/trainingGlossary'
+import { GlossaryHint } from '../../ui/GlossaryHint'
 import {
   localizeMotherSessionExerciseName,
   type Lang,
@@ -37,12 +39,12 @@ import type { ExerciseSetLog } from '../../../types/training'
 import { pickBlockTransferCue } from '../../../services/session/pickBlockTransferCue'
 
 /**
- * Per-exo gate for the eye/demo button. Aligné sur `resolveExerciseIdForSessionRun`
- * (moteur sticky + sessionRun). N'affiche l'œil que si le catalogue a une `videoUrl`.
+ * Per-exo gate for the eye/demo button. Aligné sur `resolveExerciseIdForSessionRun`.
+ * Inclut fallback variante / consignes texte (getExerciseDemo).
  */
 const exerciseHasDemo = (exo: Exercise): boolean => {
   const exoId = resolveExerciseIdForSessionRun(exo.name ?? '', exo.exerciseId)
-  return Boolean(exoId && hasExerciseDemo(exoId))
+  return Boolean(exoId && getExerciseDemo(exoId))
 }
 
 export interface ExoTourData {
@@ -104,6 +106,8 @@ interface ToursBlockProps {
   historyLogs?: readonly ExerciseSetLog[]
   slotSignature?: string
   blockNumber?: number
+  /** Affichage Fondations : % → repère RER (display only). */
+  foundationsDisplay?: boolean
 }
 
 const TOUR_STATE_FROM_BLOCK = (
@@ -159,6 +163,7 @@ export function ToursBlock(props: ToursBlockProps) {
     historyLogs,
     slotSignature,
     blockNumber,
+    foundationsDisplay = false,
   } = props
 
   const displayTour = state === 'done' ? totalTours : Math.min(currentTourIdx + 1, totalTours)
@@ -190,10 +195,11 @@ export function ToursBlock(props: ToursBlockProps) {
         <div className="flex flex-col gap-3 px-1">
           {transferCue ? (
             <p
-              className="px-1.5 text-[11px] leading-snug text-fg-muted"
+              className="flex flex-wrap items-center gap-1.5 px-1.5 text-[11px] leading-snug text-fg-muted"
               data-testid="block-transfer-cue"
             >
-              {transferCue}
+              <span>{transferCue}</span>
+              <GlossaryHint text={transferCue} lang={lang} />
             </p>
           ) : null}
           <div className="flex items-center justify-between px-1.5">
@@ -218,6 +224,7 @@ export function ToursBlock(props: ToursBlockProps) {
                     onOpenVariants && hasVariants?.(i) ? () => onOpenVariants(i) : undefined
                   }
                   lang={lang}
+                  foundationsDisplay={foundationsDisplay}
                 />
               ))}
             </div>
@@ -259,6 +266,7 @@ export function ToursBlock(props: ToursBlockProps) {
                     blockNumber={blockNumber ?? number}
                     totalTours={totalTours}
                     allTourData={tourData}
+                    foundationsDisplay={foundationsDisplay}
                   />
                 )
               })}
@@ -324,6 +332,7 @@ interface TourGroupProps {
   blockNumber: number
   totalTours: number
   allTourData?: TourDataMap
+  foundationsDisplay?: boolean
 }
 
 const TOUR_HEADER_CLASS: Record<BlockState, string> = {
@@ -365,6 +374,7 @@ function TourGroup({
   blockNumber,
   totalTours,
   allTourData,
+  foundationsDisplay = false,
 }: TourGroupProps) {
   const validatedCount = Object.values(exoData).filter((d) => d.validated).length
   const headerLabel = state === 'active'
@@ -536,6 +546,7 @@ function TourGroup({
                 }
                 onStartIso={onStartIso ? () => onStartIso(i) : undefined}
                 lang={lang}
+                foundationsDisplay={foundationsDisplay}
               />
             )
           })}
@@ -594,6 +605,7 @@ interface ExerciseRowProps {
   onOpenVariants?: () => void
   onStartIso?: () => void
   lang: Lang
+  foundationsDisplay?: boolean
 }
 
 function isoChronoLabel(prescription: string): string | null {
@@ -628,6 +640,7 @@ function ExerciseRow({
   onOpenVariants,
   onStartIso,
   lang,
+  foundationsDisplay = false,
 }: ExerciseRowProps) {
   // Inputs Premium n'apparaissent que si l'exo a une CHARGE (sets×reps).
   // Pour les exos en temps (iso, planks), pas d'inputs kg/reps — un bouton iso
@@ -635,6 +648,11 @@ function ExerciseRow({
   const spec = parseExerciseSetSpec(exo.prescription)
   const hasRepScheme = spec.kind === 'reps'
   const isoLabel = isoChronoLabel(exo.prescription)
+  const prescriptionLabel = formatPrescriptionDisplay(exo.prescription, {
+    foundations: foundationsDisplay,
+    lang,
+  })
+  const glossaryScan = `${exo.prescription} ${exo.name}`
   const showLoadInputs =
     hasRepScheme &&
     premium &&
@@ -754,7 +772,10 @@ function ExerciseRow({
               <SuggestionBadge suggestion={suggestion} />
             )}
           </div>
-          <div className="mt-0.5 text-[12px] tabular-nums text-fg/55">{exo.prescription}</div>
+          <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+            <span className="text-[12px] tabular-nums text-fg/55">{prescriptionLabel}</span>
+            <GlossaryHint text={glossaryScan} lang={lang} />
+          </div>
         </div>
 
         {isoLabel != null && isCurrent && !validated && onStartIso && (
@@ -886,13 +907,25 @@ interface PreviewExerciseRowProps {
   onPlayDemo?: () => void
   onOpenVariants?: () => void
   lang: Lang
+  foundationsDisplay?: boolean
 }
 
 /**
  * Variante "preview" d'un exo (mode pending/idle) — pas de checkbox de validation,
  * pas d'inputs Premium ; juste le nom + prescription + bouton démo optionnel.
  */
-function PreviewExerciseRow({ exo, onPlayDemo, onOpenVariants, lang }: PreviewExerciseRowProps) {
+function PreviewExerciseRow({
+  exo,
+  onPlayDemo,
+  onOpenVariants,
+  lang,
+  foundationsDisplay = false,
+}: PreviewExerciseRowProps) {
+  const prescriptionLabel = formatPrescriptionDisplay(exo.prescription, {
+    foundations: foundationsDisplay,
+    lang,
+  })
+  const glossaryScan = `${exo.prescription} ${exo.name}`
   return (
     <div className="flex items-center gap-2.5 rounded-[14px] border border-paper-deep bg-app px-3 py-3">
       <div className="min-w-0 flex-1">
@@ -902,7 +935,10 @@ function PreviewExerciseRow({ exo, onPlayDemo, onOpenVariants, lang }: PreviewEx
         >
           {localizeMotherSessionExerciseName(exo.name, lang)}
         </div>
-        <div className="mt-0.5 text-[12px] tabular-nums text-fg/55">{exo.prescription}</div>
+        <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+          <span className="text-[12px] tabular-nums text-fg/55">{prescriptionLabel}</span>
+          <GlossaryHint text={glossaryScan} lang={lang} />
+        </div>
       </div>
       {onOpenVariants && (
         <button

@@ -7,13 +7,13 @@ import {
   type Lang,
 } from '../../../services/motherSession/localizeMotherSessionExerciseName'
 import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
-import { hasExerciseDemo } from '../../../data/exercises'
+import { getExerciseDemo } from '../../../data/exercises'
 import { resolveExerciseIdForSessionRun } from '../../../services/motherSession/motherSessionExerciseMap'
 import { tr } from '../../../i18n/appLabels'
 
 function warmupExerciseHasDemo(exo: Pick<Exercise, 'name' | 'exerciseId'>): boolean {
   const exoId = resolveExerciseIdForSessionRun(exo.name ?? '', exo.exerciseId)
-  return Boolean(exoId && hasExerciseDemo(exoId))
+  return Boolean(exoId && getExerciseDemo(exoId))
 }
 
 interface WarmupBlockProps {

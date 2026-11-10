@@ -106,7 +106,7 @@ import type { LivePRToastData } from '../services/pr/formatLivePRToast'
 import { getExerciseMetricType } from '../services/ui/exerciseMetrics'
 import { HeroIdle } from '../components/session/blocks'
 import { ExerciseDemoSheet } from '../components/motherSession/ExerciseDemoSheet'
-import { hasExerciseDemo } from '../data/exercises'
+import { getExerciseDemo } from '../data/exercises'
 import {
   RestOverlay,
   EmomOverlay,
@@ -1140,7 +1140,7 @@ export function SessionDetailPage() {
     const rawExerciseId =
       'exerciseId' in exercise ? (exercise as { exerciseId?: string }).exerciseId : undefined
     const exoId = resolveExerciseIdForSessionRun(exercise.name ?? '', rawExerciseId)
-    if (!exoId || !hasExerciseDemo(exoId)) return
+    if (!exoId || !getExerciseDemo(exoId)) return
     setDemoExerciseId(exoId)
   }
 
@@ -1622,6 +1622,7 @@ export function SessionDetailPage() {
                   historyLogs={historyLogs}
                   slotSignature={slotSignature ?? undefined}
                   lang={lang}
+                  foundationsDisplay={isFoundationsLevel(profile.trainingLevel)}
                 />
               </div>
             )}
@@ -1668,6 +1669,7 @@ export function SessionDetailPage() {
               historyLogs={historyLogs}
               slotSignature={slotSignature ?? undefined}
               lang={lang}
+              foundationsDisplay={isFoundationsLevel(profile.trainingLevel)}
             />
           </div>
         )}
@@ -1684,6 +1686,7 @@ export function SessionDetailPage() {
               isPremium={isPremium}
               onPlayDemo={handlePlayDemo}
               lang={lang}
+              foundationsDisplay={isFoundationsLevel(profile.trainingLevel)}
             />
           </div>
         )}

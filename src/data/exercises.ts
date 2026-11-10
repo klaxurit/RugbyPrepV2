@@ -28,10 +28,20 @@ export interface ExerciseDemoContent {
   title: string
   notes?: string
   cues: string[]
-  youtubeEmbedUrl: string
-  youtubeWatchUrl: string
+  youtubeEmbedUrl: string | null
+  youtubeWatchUrl: string | null
   isCurated: boolean
   equipment: Exercise['equipment']
+  /** Vidéo d’une variante proche (ex. bilatéral pour unilatéral). */
+  isFallbackVariant?: boolean
+  fallbackOfId?: string
+  /** Pas de vidéo : consignes texte seulement. */
+  textOnly?: boolean
+}
+
+/** Variantes sans démo → démo bilatérale / proche. */
+const DEMO_FALLBACK_BY_ID: Record<string, string> = {
+  hinge__hip_thrust__bodyweight: 'hinge__hip_thrust__barbell',
 }
 
 function extractYouTubeVideoId(url: string): string | null {
@@ -90,35 +100,108 @@ function buildYouTubeWatchUrl(url: string, startSeconds?: number): string {
   return watch.toString()
 }
 
-export const getExerciseDemo = (
+export const hasExerciseDemo = (id: string): boolean => {
+  if (EXERCISE_DEMOS[id]?.youtubeUrl) return true
+  const exercise = getExerciseById(id)
+  return Boolean(exercise?.videoUrl)
+}
+
+export function resolveDemoFallbackId(exerciseId: string): string | null {
+  if (DEMO_FALLBACK_BY_ID[exerciseId]) return DEMO_FALLBACK_BY_ID[exerciseId]
+  const stripped = exerciseId
+    .replace(/__single_leg(?:__|$)/, '__')
+    .replace(/__unilateral(?:__|$)/, '__')
+    .replace(/_single_leg$/, '')
+    .replace(/__$/, '')
+  if (stripped !== exerciseId && hasExerciseDemo(stripped)) return stripped
+  return null
+}
+
+/** Corpus sans démo vidéo (curated ni videoUrl). */
+export function listExercisesMissingDemo(): Exercise[] {
+  return exercisesList.filter((ex) => {
+    const id = ex.exerciseId ?? ex.id
+    return id ? !hasExerciseDemo(id) : true
+  })
+}
+
+function buildDemoContent(
   id: string,
-  lang: ExerciseDemoLang = 'fr',
-): ExerciseDemoContent | null => {
+  lang: ExerciseDemoLang,
+  opts?: { isFallbackVariant?: boolean; fallbackOfId?: string },
+): ExerciseDemoContent | null {
   const exercise = getExerciseById(id)
   if (!exercise) return null
 
   const demo = EXERCISE_DEMOS[id]
-  // Curated demo (with cues) takes priority, then fall back to videoUrl from exercise data
   const youtubeUrl = demo?.youtubeUrl ?? exercise.videoUrl
-  if (!youtubeUrl) return null
-
   const fallbackLang: ExerciseDemoLang = lang === 'fr' ? 'en' : 'fr'
   const cues = demo?.cues?.[lang] ?? demo?.cues?.[fallbackLang] ?? []
+  const notes = exercise.defaultNotes ?? exercise.notes
+
+  if (!youtubeUrl) {
+    if (!notes && cues.length === 0) return null
+    return {
+      exerciseId: id,
+      title: getExerciseName(id, lang),
+      notes,
+      cues,
+      youtubeEmbedUrl: null,
+      youtubeWatchUrl: null,
+      isCurated: false,
+      equipment: exercise.equipment,
+      textOnly: true,
+      isFallbackVariant: opts?.isFallbackVariant,
+      fallbackOfId: opts?.fallbackOfId,
+    }
+  }
 
   return {
     exerciseId: id,
     title: getExerciseName(id, lang),
-    notes: exercise.defaultNotes ?? exercise.notes,
+    notes,
     cues,
     youtubeEmbedUrl: buildYouTubeEmbedUrl(youtubeUrl, demo?.startSeconds),
     youtubeWatchUrl: buildYouTubeWatchUrl(youtubeUrl, demo?.startSeconds),
     isCurated: Boolean(demo?.youtubeUrl),
     equipment: exercise.equipment,
+    isFallbackVariant: opts?.isFallbackVariant,
+    fallbackOfId: opts?.fallbackOfId,
   }
 }
 
-export const hasExerciseDemo = (id: string): boolean => {
-  if (EXERCISE_DEMOS[id]?.youtubeUrl) return true
-  const exercise = getExerciseById(id)
-  return Boolean(exercise?.videoUrl)
+/**
+ * Démo de l’exo, sinon variante bilatérale, sinon consignes texte.
+ * Toujours un contenu joueur quand l’exo existe.
+ */
+export const getExerciseDemo = (
+  id: string,
+  lang: ExerciseDemoLang = 'fr',
+): ExerciseDemoContent | null => {
+  const direct = buildDemoContent(id, lang)
+  if (direct && !direct.textOnly) return direct
+
+  const fallbackId = resolveDemoFallbackId(id)
+  if (fallbackId) {
+    const fallback = buildDemoContent(fallbackId, lang, {
+      isFallbackVariant: true,
+      fallbackOfId: id,
+    })
+    if (fallback && !fallback.textOnly) {
+      const original = getExerciseById(id)
+      return {
+        ...fallback,
+        title: getExerciseName(id, lang),
+        notes:
+          (lang === 'fr'
+            ? `Variante proche : ${getExerciseName(fallbackId, 'fr')}. Même intention, un appui ou charge différente.`
+            : `Close variant: ${getExerciseName(fallbackId, 'en')}. Same intent, different stance or load.`) +
+          (original?.defaultNotes || original?.notes
+            ? `\n${original.defaultNotes ?? original.notes}`
+            : ''),
+      }
+    }
+  }
+
+  return direct
 }

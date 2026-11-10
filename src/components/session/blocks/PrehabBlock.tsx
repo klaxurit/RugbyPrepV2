@@ -15,11 +15,11 @@ import {
 import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
 import { tr } from '../../../i18n/appLabels'
 import { resolveExerciseIdForSessionRun } from '../../../services/motherSession/motherSessionExerciseMap'
-import { hasExerciseDemo } from '../../../data/exercises'
+import { getExerciseDemo } from '../../../data/exercises'
 
 function prehabExerciseHasDemo(exo: Pick<Exercise, 'name' | 'exerciseId'>): boolean {
   const exoId = resolveExerciseIdForSessionRun(exo.name ?? '', exo.exerciseId)
-  return Boolean(exoId && hasExerciseDemo(exoId))
+  return Boolean(exoId && getExerciseDemo(exoId))
 }
 
 interface PrehabBlockProps {

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { ExternalLink, X } from 'lucide-react'
-import { getExerciseDemo } from '../../data/exercises'
+import { getExerciseDemo, getExerciseName } from '../../data/exercises'
 import type { Equipment } from '../../types/training'
 
 type ExerciseDemoSheetProps = {
@@ -59,9 +59,22 @@ export function ExerciseDemoSheet({
     equipment: lang === 'fr' ? 'Matériel' : 'Equipment',
     openVideo: lang === 'fr' ? 'Ouvrir sur YouTube' : 'Open on YouTube',
     video: lang === 'fr' ? 'Vidéo' : 'Video',
-    helper: lang === 'fr'
-      ? 'Regarde d’abord l’exécution, puis garde les repères rapides en tête pendant ta série.'
-      : 'Watch the execution first, then keep the quick cues in mind during your set.',
+    textOnly: lang === 'fr' ? 'Consignes' : 'Guidance',
+    fallbackBadge:
+      lang === 'fr'
+        ? `Vidéo de la variante : ${demo.fallbackOfId ? getExerciseName(demo.exerciseId, lang) : ''}`
+        : `Variant video: ${demo.fallbackOfId ? getExerciseName(demo.exerciseId, lang) : ''}`,
+    helper: demo.textOnly
+      ? lang === 'fr'
+        ? 'Pas de vidéo pour cet exercice — suis les consignes ci-dessous.'
+        : 'No video for this exercise — follow the cues below.'
+      : demo.isFallbackVariant
+        ? lang === 'fr'
+          ? 'Vidéo d’une variante proche (même intention). Lis aussi les consignes spécifiques.'
+          : 'Video of a close variant (same intent). Also read the specific cues.'
+        : lang === 'fr'
+          ? 'Regarde d’abord l’exécution, puis garde les repères rapides en tête pendant ta série.'
+          : 'Watch the execution first, then keep the quick cues in mind during your set.',
   }
 
   return (
@@ -101,24 +114,40 @@ export function ExerciseDemoSheet({
         </div>
 
         <div className="max-h-[70vh] space-y-5 overflow-y-auto px-5 py-5">
-          <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-fg-faint">
-              {labels.video}
-            </p>
-            <div className="overflow-hidden rounded-[20px] border border-border-app bg-black">
-              <div className="aspect-video">
-                <iframe
-                  src={demo.youtubeEmbedUrl}
-                  title={`${demo.title} video`}
-                  className="h-full w-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                />
+          {demo.youtubeEmbedUrl ? (
+            <div className="space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-fg-faint">
+                {labels.video}
+                {demo.isFallbackVariant ? (
+                  <span className="ml-2 font-bold normal-case tracking-normal text-brand">
+                    {lang === 'fr' ? '(variante proche)' : '(close variant)'}
+                  </span>
+                ) : null}
+              </p>
+              <div className="overflow-hidden rounded-[20px] border border-border-app bg-black">
+                <div className="aspect-video">
+                  <iframe
+                    src={demo.youtubeEmbedUrl}
+                    title={`${demo.title} video`}
+                    className="h-full w-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div
+              className="rounded-[20px] border border-dashed border-border-app bg-layer-5 px-4 py-6 text-center text-sm text-fg-muted"
+              data-testid="exercise-demo-text-only"
+            >
+              {lang === 'fr'
+                ? 'Aucune vidéo — consignes texte ci-dessous.'
+                : 'No video — text cues below.'}
+            </div>
+          )}
 
           {demo.equipment.length > 0 ? (
             <div className="space-y-2">
@@ -161,21 +190,27 @@ export function ExerciseDemoSheet({
               <p className="text-[10px] font-black uppercase tracking-[0.22em] text-fg-faint">
                 {labels.notes}
               </p>
-              <div className="rounded-[20px] border border-brand-border bg-brand-soft px-4 py-3 text-sm leading-relaxed text-fg-secondary">
+              <div className="whitespace-pre-line rounded-[20px] border border-brand-border bg-brand-soft px-4 py-3 text-sm leading-relaxed text-fg-secondary">
                 {demo.notes}
               </div>
             </div>
           ) : null}
 
-          <a
-            href={demo.youtubeWatchUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center justify-center gap-2 rounded-[1.2rem] bg-brand px-4 py-3 text-sm font-black text-on-brand shadow-lg shadow-brand-glow transition-colors hover:bg-brand-hover"
-          >
-            {labels.openVideo}
-            <ExternalLink className="h-3.5 w-3.5" />
-          </a>
+          {demo.youtubeWatchUrl ? (
+            <a
+              href={demo.youtubeWatchUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 rounded-[1.2rem] bg-brand px-4 py-3 text-sm font-black text-on-brand shadow-lg shadow-brand-glow transition-colors hover:bg-brand-hover"
+            >
+              {demo.isFallbackVariant
+                ? lang === 'fr'
+                  ? 'Ouvrir la variante sur YouTube'
+                  : 'Open variant on YouTube'
+                : labels.openVideo}
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          ) : null}
         </div>
       </div>
     </div>

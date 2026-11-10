@@ -11,11 +11,13 @@ import { tr, type Lang } from '../../../i18n/appLabels'
 import { localizeBlockName } from '../../../services/motherSession/motherSessionBlockLabels'
 import { localizeMotherSessionExerciseName } from '../../../services/motherSession/localizeMotherSessionExerciseName'
 import { resolveExerciseIdForSessionRun } from '../../../services/motherSession/motherSessionExerciseMap'
-import { hasExerciseDemo } from '../../../data/exercises'
+import { getExerciseDemo } from '../../../data/exercises'
+import { GlossaryHint } from '../../ui/GlossaryHint'
+import { formatPrescriptionDisplay } from '../../../i18n/trainingGlossary'
 
 function emomExerciseHasDemo(exo: Pick<Exercise, 'name' | 'exerciseId'>): boolean {
   const exoId = resolveExerciseIdForSessionRun(exo.name ?? '', exo.exerciseId)
-  return Boolean(exoId && hasExerciseDemo(exoId))
+  return Boolean(exoId && getExerciseDemo(exoId))
 }
 
 interface EmomBlockProps {
@@ -88,6 +90,7 @@ export function EmomBlock({
             <div className="mb-2 inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand">
               <Icon name="circle" size={10} color="var(--color-accent)" strokeWidth={2} />
               {tr('emom_chrono_block', lang)}
+              <GlossaryHint text="EMOM" lang={lang} />
             </div>
             <p className="mb-3 text-[12px] leading-[1.5] text-fg-secondary">
               {totalMinutes} {tr('emom_minutes_intro_pre', lang)}
@@ -105,7 +108,9 @@ export function EmomBlock({
                   <span className="min-w-0 flex-1 text-[13px] text-fg">
                     <strong>{localizeMotherSessionExerciseName(p.exercise.name, lang)}</strong>
                     {p.detail && (
-                      <span className="ml-1 font-medium text-fg-muted">{p.detail}</span>
+                      <span className="ml-1 font-medium text-fg-muted">
+                        {formatPrescriptionDisplay(p.detail, { lang })}
+                      </span>
                     )}
                   </span>
                   {onOpenVariants && hasVariants?.(p.exerciseIndex) ? (
