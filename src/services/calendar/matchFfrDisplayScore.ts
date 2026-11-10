@@ -16,3 +16,10 @@ export function matchFfrDisplayScore(
   if (event.is_home === false) return { home: visiteur, away: locale }
   return { home: locale, away: visiteur }
 }
+
+/** Ligne compacte « 37–16 » (nous–adversaire), ou undefined si pas de score validé. */
+export function formatMatchFfrScoreLine(event: CalendarEvent): string | undefined {
+  const score = matchFfrDisplayScore(event)
+  if (!score) return undefined
+  return `${score.home}–${score.away}`
+}

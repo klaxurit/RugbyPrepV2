@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { matchFfrDisplayScore } from '../matchFfrDisplayScore'
+import { formatMatchFfrScoreLine, matchFfrDisplayScore } from '../matchFfrDisplayScore'
 import type { CalendarEvent } from '../../../types/training'
 
 function base(over: Partial<CalendarEvent>): CalendarEvent {
@@ -49,5 +49,18 @@ describe('matchFfrDisplayScore', () => {
         }),
       ),
     ).toEqual({ home: 12, away: 50 })
+  })
+
+  it('formatMatchFfrScoreLine : compact nous–adversaire', () => {
+    expect(
+      formatMatchFfrScoreLine(
+        base({
+          ffr_score_valid: true,
+          ffr_score_locale: 37,
+          ffr_score_visiteur: 16,
+          is_home: true,
+        }),
+      ),
+    ).toBe('37–16')
   })
 })

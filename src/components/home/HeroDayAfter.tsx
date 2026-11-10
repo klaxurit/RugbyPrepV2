@@ -5,8 +5,8 @@ interface HeroDayAfterProps {
   /** Le match passé (≤ 48h) qui déclenche ce variant. */
   match: CalendarEvent
   /**
-   * Score du match si connu (à venir : API FFR). Si absent, on n'affiche pas
-   * le bloc score géant — la carte reste centrée sur la citation et le CTA.
+   * Score FFR validé (nous–adversaire). Absent → pas de score géant,
+   * la carte reste centrée sur la citation et le CTA.
    */
   score?: { home: number; away: number }
   /**
@@ -30,7 +30,7 @@ function formatMatchMeta(event: CalendarEvent): string {
  * Hero "lendemain de match" — carte bordeaux pleine, score géant (si connu),
  * citation italic Playfair, stats inline, CTA post-match (charge puis récup).
  *
- * Affiché tant que le dernier match a eu lieu dans les 48 dernières heures.
+ * Affiché tant que le dernier match a eu lieu dans les ~48 h (J+1 / J+2).
  */
 export function HeroDayAfter({ match, score, onCtaPress, ctaLabel }: HeroDayAfterProps) {
   const isHome = match.is_home === true

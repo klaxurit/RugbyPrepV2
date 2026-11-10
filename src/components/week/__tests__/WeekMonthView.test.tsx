@@ -85,6 +85,26 @@ describe('WeekMonthView — cases match', () => {
     expect(within(cell).getByText('DOM')).toBeTruthy()
     expect(within(cell).queryByText('EXT')).toBeNull()
   })
+
+  it('Matchs du mois : score FFR validé à la place du coup d’envoi', () => {
+    renderMonth({
+      events: [
+        {
+          ...awayMatch,
+          date: '2026-08-08',
+          is_home: true,
+          opponent: 'R C ST LOIS',
+          ffr_score_valid: true,
+          ffr_score_locale: 37,
+          ffr_score_visiteur: 16,
+          kickoff_time: '15:00',
+        },
+      ],
+      // today after the match so list still shows August fixtures
+    })
+    expect(screen.getByTestId('month-match-score-2026-08-08').textContent).toBe('37–16')
+    expect(screen.queryByText('15:00')).toBeNull()
+  })
 })
 
 describe('WeekMonthView — club et séances décorées', () => {

@@ -8,6 +8,7 @@ import type { Lang } from '../../i18n/appLabels'
 import { Icon, SectionLabel } from '../ui'
 import { ClubAvatar } from '../match/ClubAvatar'
 import { formatTonnage } from '../../services/home/formatTonnage'
+import { formatMatchFfrScoreLine } from '../../services/calendar/matchFfrDisplayScore'
 import { getClubLogoUrl, getClubMonogram } from '../../services/ui/clubLogos'
 import monthSessionLower from '../../assets/month-sessions/bas.png'
 import monthSessionUpper from '../../assets/month-sessions/haut.png'
@@ -364,6 +365,8 @@ export function WeekMonthView({
                         : lang === 'fr' ? 'extérieur' : 'away'
                     : null
                   const kickoff = match?.kickoff_time?.slice(0, 5)
+                  const scoreLine = match ? formatMatchFfrScoreLine(match) : undefined
+                  const matchTimeOrScore = scoreLine ?? kickoff
                   const gymChipCap = match ? 1 : hasClub && planned.length ? 1 : 2
                   const primarySession = !hasMatch ? planned[0] ?? null : null
                   const decorateSession = primarySession != null
@@ -372,7 +375,11 @@ export function WeekMonthView({
 
                   const extras: string[] = []
                   if (hasMatch && match) {
-                    extras.push(`match ${venueLabel}${match.opponent ? ` vs ${match.opponent}` : ''}${kickoff ? ` ${kickoff}` : ''}`)
+                    extras.push(
+                      `match ${venueLabel}${match.opponent ? ` vs ${match.opponent}` : ''}${
+                        matchTimeOrScore ? ` ${matchTimeOrScore}` : ''
+                      }`,
+                    )
                   }
                   if (hasClub) extras.push(lang === 'fr' ? 'club' : 'club')
                   if (planned.length) extras.push(planned.map((p) => p.title).join(', '))
@@ -461,9 +468,9 @@ export function WeekMonthView({
                           )}
                           {match && (
                             <>
-                              {kickoff && (
+                              {matchTimeOrScore && (
                                 <span className="text-[11px] font-semibold tabular-nums leading-none tracking-tight text-brand">
-                                  {kickoff}
+                                  {matchTimeOrScore}
                                 </span>
                               )}
                               {match.opponent && (
@@ -515,7 +522,9 @@ export function WeekMonthView({
         <section>
           <SectionLabel label={lang === 'fr' ? 'Matchs du mois' : 'Matches this month'} />
           <ul className="mt-2.5">
-            {upcomingMatches.map((m, idx) => (
+            {upcomingMatches.map((m, idx) => {
+              const scoreLine = formatMatchFfrScoreLine(m)
+              return (
               <li
                 key={m.id ?? `${m.date}-${idx}`}
                 className={idx < upcomingMatches.length - 1 ? 'border-b border-paper-deep' : ''}
@@ -548,16 +557,25 @@ export function WeekMonthView({
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    {m.kickoff_time && (
+                    {scoreLine ? (
+                      <span
+                        className="text-[15px] font-extrabold tabular-nums text-fg"
+                        style={{ letterSpacing: '-0.3px' }}
+                        data-testid={`month-match-score-${m.date}`}
+                      >
+                        {scoreLine}
+                      </span>
+                    ) : m.kickoff_time ? (
                       <span className="text-[13px] font-bold tabular-nums text-fg">
                         {m.kickoff_time.slice(0, 5)}
                       </span>
-                    )}
+                    ) : null}
                     <ClubAvatar code={m.opponent_code} name={m.opponent} size="sm" />
                   </div>
                 </button>
               </li>
-            ))}
+              )
+            })}
           </ul>
         </section>
       )}
