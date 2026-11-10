@@ -10,7 +10,10 @@ import { findCurrentPending } from '../services/motherSession/findCurrentPending
 import { getRestAfterExerciseSet } from '../services/motherSession/interTourRest'
 import { isDirectiveText, resolveExerciseIdForSessionRun } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
-import { countLoggableSessionSets } from '../services/session/countLoggableSessionSets'
+import {
+  countCompletedLoggableSets,
+  countLoggableSessionSets,
+} from '../services/session/countLoggableSessionSets'
 import { parseExerciseSetSpec } from '../services/ui/exerciseSetSpec'
 import { parseBlockFormat } from '../services/ui/parseBlockFormat'
 import { useWakeLock } from '../hooks/useWakeLock'
@@ -605,10 +608,11 @@ export function SessionDetailPage() {
     const durationMin = startedAt
       ? Math.max(1, Math.round((Date.now() - startedAt) / 60000))
       : null
-    const completedSets = sessionRun.completedExercises.size
-
-    // Aligné sur les clés réellement marquées (EMOM = 1/exo ; warmUp exclu).
+    // Même SoT que le dénominateur : warmUp exclu, EMOM = 1/exo si finalisé.
     const totalSets = preparedSession ? countLoggableSessionSets(preparedSession) : 0
+    const completedSets = preparedSession
+      ? countCompletedLoggableSets(preparedSession, sessionRun.completedExercises)
+      : sessionRun.completedExercises.size
 
     let tonnageKg: number | null = null
     if (slotSignature) {
