@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Download, Share2 } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
+import { Camera, Download, ImagePlus, Share2, Trash2 } from 'lucide-react'
 import { BottomSheet } from '../ui/BottomSheet'
 import { tr, type Lang } from '../../i18n/appLabels'
 import { posthog } from '../../services/analytics/posthog'
@@ -11,6 +11,10 @@ import {
   createSessionSharePreviewUrl,
   shareSessionResult,
 } from '../../services/share/shareSessionResult'
+import {
+  prepareSharePhoto,
+  revokeSharePhotoUrl,
+} from '../../services/share/prepareSharePhoto'
 
 const SHOW_CLUB_STORAGE_KEY = 'rf.share.showClub'
 
@@ -51,17 +55,43 @@ export function SessionShareSheet({
   const [busy, setBusy] = useState(false)
   const [hint, setHint] = useState<string | null>(null)
   const [showClub, setShowClub] = useState<boolean>(readShowClubPreference)
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [photoTooSmall, setPhotoTooSmall] = useState(false)
+  const [photoError, setPhotoError] = useState(false)
+  const [photoBusy, setPhotoBusy] = useState(false)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
+  const libraryInputRef = useRef<HTMLInputElement>(null)
 
   const hasClub = Boolean(payload?.clubName?.trim())
   const effectivePayload = useMemo<SessionSharePayload | null>(
-    () => (payload ? { ...payload, showClub: hasClub && showClub } : null),
-    [payload, hasClub, showClub],
+    () =>
+      payload
+        ? {
+            ...payload,
+            showClub: hasClub && showClub,
+            photoUrl: photoUrl ?? payload.photoUrl ?? null,
+          }
+        : null,
+    [payload, hasClub, showClub, photoUrl],
   )
 
   const toggleShowClub = (next: boolean) => {
     setShowClub(next)
     writeShowClubPreference(next)
   }
+
+  const clearPhoto = () => {
+    setPhotoUrl(null)
+    setPhotoTooSmall(false)
+    setPhotoError(false)
+  }
+
+  // Revoke blob URL on change/unmount (pas de setState ici).
+  useEffect(() => {
+    return () => {
+      revokeSharePhotoUrl(photoUrl)
+    }
+  }, [photoUrl])
 
   useEffect(() => {
     const payload = effectivePayload
@@ -82,7 +112,6 @@ export function SessionShareSheet({
           return objectUrl
         })
         setPreviewError(false)
-        setHint(null)
       } catch {
         if (!cancelled) {
           setPreviewError(true)
@@ -100,6 +129,26 @@ export function SessionShareSheet({
     }
   }, [open, effectivePayload])
 
+  const applyPhotoFile = async (file: File | undefined) => {
+    if (!file || photoBusy) return
+    setPhotoBusy(true)
+    setPhotoError(false)
+    const result = await prepareSharePhoto(file)
+    setPhotoBusy(false)
+    if (!result.ok) {
+      setPhotoError(true)
+      return
+    }
+    setPhotoUrl(result.objectUrl)
+    setPhotoTooSmall(result.tooSmall)
+  }
+
+  const onPhotoInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    void applyPhotoFile(file)
+  }
+
   const runShare = async (target: SessionShareTarget) => {
     const payload = effectivePayload
     if (!payload || busy) return
@@ -113,6 +162,7 @@ export function SessionShareSheet({
       prCount: payload.prs.length,
       isPremium: payload.isPremium,
       club_shown: payload.showClub === true,
+      has_photo: Boolean(payload.photoUrl),
     })
 
     const outcome = await shareSessionResult(payload, target)
@@ -125,6 +175,7 @@ export function SessionShareSheet({
         sessionLabel: payload.sessionLabel,
         club_shown: outcome.meta?.clubShown ?? false,
         logo_source: outcome.meta?.logoSource ?? 'none',
+        has_photo: Boolean(payload.photoUrl),
       })
       if (outcome.method === 'download') {
         setHint(tr('session_share_saved_hint', lang))
@@ -145,11 +196,16 @@ export function SessionShareSheet({
   }
 
   const handleContinue = () => {
+    clearPhoto()
+    setPhotoBusy(false)
+    setHint(null)
     posthog.capture?.('session_share_dismissed')
     onContinue()
   }
 
   const showPreview = open && payload != null
+  const hasPhoto = Boolean(photoUrl)
+  const actionsDisabled = busy || photoBusy || !payload
 
   return (
     <BottomSheet
@@ -195,6 +251,96 @@ export function SessionShareSheet({
           )}
         </div>
 
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="sr-only"
+          data-testid="session-share-photo-camera-input"
+          onChange={onPhotoInputChange}
+        />
+        <input
+          ref={libraryInputRef}
+          type="file"
+          accept="image/*"
+          className="sr-only"
+          data-testid="session-share-photo-library-input"
+          onChange={onPhotoInputChange}
+        />
+
+        {!hasPhoto ? (
+          <div className="mt-3 grid grid-cols-2 gap-2" data-testid="session-share-photo-empty">
+            <button
+              type="button"
+              data-testid="session-share-photo-camera"
+              disabled={actionsDisabled}
+              onClick={() => cameraInputRef.current?.click()}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-border-app bg-layer-5 px-3 text-[11px] font-extrabold uppercase tracking-wide text-fg transition-colors hover:border-brand-border disabled:opacity-50 rf-focus-ring"
+            >
+              <Camera className="h-4 w-4 shrink-0" />
+              {tr('session_share_photo_camera', lang)}
+            </button>
+            <button
+              type="button"
+              data-testid="session-share-photo-library"
+              disabled={actionsDisabled}
+              onClick={() => libraryInputRef.current?.click()}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-border-app bg-layer-5 px-3 text-[11px] font-extrabold uppercase tracking-wide text-fg transition-colors hover:border-brand-border disabled:opacity-50 rf-focus-ring"
+            >
+              <ImagePlus className="h-4 w-4 shrink-0" />
+              {tr('session_share_photo_library', lang)}
+            </button>
+          </div>
+        ) : (
+          <div className="mt-3 flex gap-2" data-testid="session-share-photo-actions">
+            <button
+              type="button"
+              data-testid="session-share-photo-change"
+              disabled={actionsDisabled}
+              onClick={() => libraryInputRef.current?.click()}
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl border border-border-app bg-layer-5 px-3 text-[11px] font-extrabold uppercase tracking-wide text-fg transition-colors hover:border-brand-border disabled:opacity-50 rf-focus-ring"
+            >
+              <ImagePlus className="h-4 w-4 shrink-0" />
+              {tr('session_share_photo_change', lang)}
+            </button>
+            <button
+              type="button"
+              data-testid="session-share-photo-remove"
+              disabled={actionsDisabled}
+              onClick={clearPhoto}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-border-app bg-layer-5 px-3 text-[11px] font-extrabold uppercase tracking-wide text-fg-muted transition-colors hover:border-brand-border hover:text-fg disabled:opacity-50 rf-focus-ring"
+              aria-label={tr('session_share_photo_remove', lang)}
+            >
+              <Trash2 className="h-4 w-4 shrink-0" />
+            </button>
+          </div>
+        )}
+
+        {photoTooSmall && hasPhoto && (
+          <p
+            className="mt-2 text-xs font-bold text-fg-muted"
+            data-testid="session-share-photo-too-small"
+          >
+            {tr('session_share_photo_too_small', lang)}
+            {' · '}
+            <button
+              type="button"
+              className="underline rf-focus-ring"
+              disabled={actionsDisabled}
+              onClick={() => libraryInputRef.current?.click()}
+            >
+              {tr('session_share_photo_change', lang)}
+            </button>
+          </p>
+        )}
+
+        {photoError && (
+          <p className="mt-2 text-xs font-bold text-danger" data-testid="session-share-photo-error">
+            {tr('session_share_photo_error', lang)}
+          </p>
+        )}
+
         {hasClub && (
           <label className="mt-3 flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border-app bg-layer-5 px-4 py-2.5">
             <span className="text-xs font-extrabold uppercase tracking-wide text-fg">
@@ -205,7 +351,7 @@ export function SessionShareSheet({
               role="switch"
               data-testid="session-share-show-club"
               checked={showClub}
-              disabled={busy}
+              disabled={busy || photoBusy}
               onChange={(event) => toggleShowClub(event.target.checked)}
               className="h-5 w-5 accent-brand rf-focus-ring"
             />
@@ -221,7 +367,7 @@ export function SessionShareSheet({
         <button
           type="button"
           data-testid="session-share-system"
-          disabled={busy || !payload}
+          disabled={actionsDisabled}
           onClick={() => void runShare('system')}
           className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-brand text-sm font-black uppercase tracking-wide text-on-brand shadow-md transition-opacity disabled:opacity-50 rf-focus-ring"
         >
@@ -232,7 +378,7 @@ export function SessionShareSheet({
         <button
           type="button"
           data-testid="session-share-download"
-          disabled={busy || !payload}
+          disabled={actionsDisabled}
           onClick={() => void runShare('download')}
           className="mt-2.5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-border-app bg-layer-5 text-xs font-extrabold uppercase tracking-wide text-fg transition-colors hover:border-brand-border disabled:opacity-50 rf-focus-ring"
         >
@@ -243,7 +389,7 @@ export function SessionShareSheet({
         <button
           type="button"
           data-testid="session-share-continue"
-          disabled={busy}
+          disabled={busy || photoBusy}
           onClick={handleContinue}
           className="mt-1 inline-flex h-11 w-full items-center justify-center rounded-2xl text-xs font-extrabold uppercase tracking-wide text-fg-muted transition-colors hover:text-fg rf-focus-ring"
         >

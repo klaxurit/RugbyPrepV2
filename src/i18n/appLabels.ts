@@ -1008,6 +1008,30 @@ export const APP_LABELS = {
     fr: 'Bravo pour ta séance !',
     en: 'Nice work — session done.',
   },
+  session_share_photo_camera: {
+    fr: 'Prendre une photo',
+    en: 'Take a photo',
+  },
+  session_share_photo_library: {
+    fr: 'Choisir dans la galerie',
+    en: 'Choose from gallery',
+  },
+  session_share_photo_change: {
+    fr: 'Changer de photo',
+    en: 'Change photo',
+  },
+  session_share_photo_remove: {
+    fr: 'Retirer la photo',
+    en: 'Remove photo',
+  },
+  session_share_photo_too_small: {
+    fr: 'Photo un peu petite, le rendu peut être flou',
+    en: 'Photo a bit small — the card may look soft',
+  },
+  session_share_photo_error: {
+    fr: 'Impossible d’utiliser cette image. Réessaie avec une autre.',
+    en: 'Couldn’t use that image. Try another one.',
+  },
 } as const satisfies Record<string, LabelEntry>
 
 export type AppLabelKey = keyof typeof APP_LABELS
