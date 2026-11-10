@@ -768,6 +768,9 @@ export function WeekPage() {
                 clubDays={weekPresentation?.clubDays ?? []}
                 activeRecoveryDates={activeRecoveryDates}
                 activeRecoveryEligibleDays={activeRecoveryEligibleDays}
+                preferredTrainingDays={
+                  profile.scSchedule?.sessions?.map((s) => s.day) ?? [1, 3, 5]
+                }
                 logs={logs}
                 todayISO={today}
                 lang={lang}

@@ -10,6 +10,7 @@ import {
   isGymSessionLogType,
   resolveWeekDayType,
 } from '../../services/scheduling/resolveWeekDayType'
+import { formatDisplacedSessionLabel } from '../../services/scheduling/displacedSessionLabel'
 
 const SESSION_SUBTITLE: Record<MotherSessionType, string> = {
   upper: 'Haut du corps',
@@ -72,6 +73,8 @@ interface ResolvedDay {
   durationIsActual?: boolean
   /** Club dur / décharge : séance light. */
   isLight?: boolean
+  /** Séance hors jours habituels à cause du match (ex. ven → sam). */
+  displaceLabel?: string
   isCompleted?: boolean
   isSkipped?: boolean
   /** Log historique quand la séance est déjà faite (consultation). */
@@ -110,6 +113,8 @@ export interface WeekDailyPlannerProps {
   clubDays: readonly DayOfWeek[]
   activeRecoveryDates: readonly string[]
   activeRecoveryEligibleDays: readonly DayOfWeek[]
+  /** Jours SC choisis à l’onboarding (pour libellé « Déplacée »). */
+  preferredTrainingDays?: readonly DayOfWeek[]
   /**
    * Logs de séances — utilisés pour afficher la durée RÉELLE quand une séance
    * est loguée (à la place de la durée prévue de la mother session).
@@ -149,7 +154,8 @@ export function WeekDailyPlanner({
   clubDays,
   activeRecoveryDates,
   activeRecoveryEligibleDays,
-  logs,
+  preferredTrainingDays = [],
+  logs = [],
   todayISO,
   lang,
   formatSessionTitle,
@@ -163,6 +169,10 @@ export function WeekDailyPlanner({
   const days: ResolvedDay[] = useMemo(() => {
     const monday = getMondayOfWeek(todayISO)
     const matchByDate = new Map(matchEvents.map((m) => [m.date, m]))
+    const weekMatchDow =
+      matchEvents.length > 0
+        ? (new Date(`${matchEvents[0]!.date}T12:00:00`).getDay() as DayOfWeek)
+        : null
     const arDoneByDate = new Set(activeRecoveryDates)
     const sessionsByDow = new Map<DayOfWeek, DatedSession[]>()
     for (const s of sessions) {
@@ -262,6 +272,14 @@ export function WeekDailyPlanner({
         durationMin: realDuration ?? cardStats?.durationMin,
         durationIsActual: realDuration != null,
         isLight: cardStats?.isLight,
+        displaceLabel: session
+          ? formatDisplacedSessionLabel({
+              sessionDayOfWeek: dow,
+              matchDayOfWeek: weekMatchDow,
+              preferredTrainingDays,
+              lang,
+            }) ?? undefined
+          : undefined,
         // « Faite » seulement s'il existe un log rejouable — sinon CTA « Revoir »
         // sans sessionLogId (clic → démarrer) après une annulation partielle.
         isCompleted: displayLog != null,
@@ -279,8 +297,10 @@ export function WeekDailyPlanner({
     clubDays,
     activeRecoveryDates,
     activeRecoveryEligibleDays,
+    preferredTrainingDays,
     logs,
     todayISO,
+    lang,
     formatSessionTitle,
     novelMotherSessionIds,
   ])
@@ -616,7 +636,7 @@ function GymCard({ day, onStart }: { day: ResolvedDay; onStart: () => void }) {
           >
             {day.sessionLabel ?? 'Séance'}
           </div>
-          {(day.sessionSubtitle || day.isLight) && (
+          {(day.sessionSubtitle || day.isLight || day.displaceLabel) && (
             <div
               className={`mt-2 text-[14px] font-medium ${
                 done ? 'text-fg/65' : 'opacity-75'
@@ -624,6 +644,9 @@ function GymCard({ day, onStart }: { day: ResolvedDay; onStart: () => void }) {
             >
               {day.sessionSubtitle}
               {day.isLight ? (day.sessionSubtitle ? ' · allégée' : 'Allégée') : ''}
+              {day.displaceLabel
+                ? `${day.sessionSubtitle || day.isLight ? ' · ' : ''}${day.displaceLabel}`
+                : ''}
             </div>
           )}
         </div>
