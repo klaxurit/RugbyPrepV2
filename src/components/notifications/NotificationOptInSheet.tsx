@@ -2,7 +2,7 @@ import { Bell, Timer } from 'lucide-react'
 import { BottomSheet } from '../ui/BottomSheet'
 import { tr, type Lang } from '../../i18n/appLabels'
 
-export type NotificationOptInVariant = 'onboarding' | 'rest_timer'
+export type NotificationOptInVariant = 'onboarding' | 'rest_timer' | 'combined'
 
 interface NotificationOptInSheetProps {
   open: boolean
@@ -21,16 +21,16 @@ export function NotificationOptInSheet({
   onEnable,
   onLater,
 }: NotificationOptInSheetProps) {
-  const isOnboarding = variant === 'onboarding'
-  const Icon = isOnboarding ? Bell : Timer
+  const isCombined = variant === 'onboarding' || variant === 'combined'
+  const Icon = isCombined ? Bell : Timer
 
   return (
     <BottomSheet
       open={open}
       onClose={onLater}
-      ariaLabel={tr(isOnboarding ? 'notif_prompt_onboarding_aria' : 'notif_prompt_rest_aria', lang)}
-      eyebrow={tr(isOnboarding ? 'notif_prompt_onboarding_eyebrow' : 'notif_prompt_rest_eyebrow', lang)}
-      title={tr(isOnboarding ? 'notif_prompt_onboarding_title' : 'notif_prompt_rest_title', lang)}
+      ariaLabel={tr(isCombined ? 'notif_prompt_onboarding_aria' : 'notif_prompt_rest_aria', lang)}
+      eyebrow={tr(isCombined ? 'notif_prompt_onboarding_eyebrow' : 'notif_prompt_rest_eyebrow', lang)}
+      title={tr(isCombined ? 'notif_prompt_onboarding_title' : 'notif_prompt_rest_title', lang)}
       disableBackdropDismiss
       disableSwipeDismiss
       showClose={false}
@@ -43,10 +43,10 @@ export function NotificationOptInSheet({
         </div>
 
         <p className="text-center text-sm leading-relaxed text-fg-muted [text-wrap:balance]">
-          {tr(isOnboarding ? 'notif_prompt_onboarding_body' : 'notif_prompt_rest_body', lang)}
+          {tr(isCombined ? 'notif_prompt_onboarding_body' : 'notif_prompt_rest_body', lang)}
         </p>
 
-        {isOnboarding && (
+        {isCombined && (
           <ul className="space-y-2 rounded-2xl border border-border-app bg-layer-5 px-4 py-3 text-xs text-fg-muted">
             <li>{tr('notif_prompt_onboarding_bullet_training', lang)}</li>
             <li>{tr('notif_prompt_onboarding_bullet_rest', lang)}</li>
@@ -63,7 +63,7 @@ export function NotificationOptInSheet({
           >
             {isLoading
               ? tr('notif_prompt_enabling', lang)
-              : tr(isOnboarding ? 'notif_prompt_enable' : 'notif_prompt_enable_rest', lang)}
+              : tr(isCombined ? 'notif_prompt_enable' : 'notif_prompt_enable_rest', lang)}
           </button>
           <button
             type="button"

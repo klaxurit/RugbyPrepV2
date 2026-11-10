@@ -25,7 +25,7 @@ import { useNotifications } from '../hooks/useNotifications'
 import { DEFAULT_PROFILE } from '../hooks/useProfile'
 import {
   canShowNotificationPrompt,
-  dismissNotificationPrompt,
+  dismissOnboardingNotificationPrompt,
 } from '../services/notifications/notificationPromptStorage'
 import { canOfferTrainingReminderOptIn } from '../services/notifications/notificationOptInEligibility'
 import type {
@@ -345,7 +345,7 @@ export function OnboardingPage() {
   }
 
   const handleNotifPromptLater = () => {
-    dismissNotificationPrompt(userId, 'onboarding')
+    dismissOnboardingNotificationPrompt(userId)
     posthog.capture('notification_prompt_dismissed', { kind: 'onboarding' })
     finishAfterNotifPrompt()
   }
