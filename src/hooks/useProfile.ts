@@ -19,6 +19,10 @@ import { mergeProfileFromCache, applyServerAuthoritativeProfileFields } from '..
 import { persistOnboardingComplete } from '../services/profile/persistOnboardingComplete'
 import { resolveAvatarUrlFromAuthMetadata, resolveProfileAvatarUrl } from '../services/profile/resolveAvatarUrl'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
+import {
+  subscribeRefetchOnDocumentVisible,
+  subscribeUserScopedStorageKey,
+} from '../services/storage/subscribeUserScopedStorageSync'
 import { sanitizePlanningIsoDate } from '../services/dates/localIsoDate'
 import { applyNewsletterFromMetadata } from '../services/auth/accountUpgradePrompts'
 import { peekPasswordNeedsUpgrade } from '../services/auth/passwordUpgradeGate'
@@ -602,6 +606,51 @@ export const useProfileSource = () => {
       cancelled = true
     }
   }, [userId, isInitializing, persistRemoteProfile, saveLocalProfile])
+
+  // Multi-onglets : club / FFR écrits ailleurs → recharger le profil (LS + focus).
+  useEffect(() => {
+    if (!userId || isInitializing) return
+
+    const applyFromStorage = () => {
+      if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) return
+      const cached = loadFromStorage(userId)
+      if (!cached) return
+      setProfileState(normalizeLegacyProfile(cached))
+    }
+
+    const unsubStorage = subscribeUserScopedStorageKey(STORAGE_BASE, userId, () => {
+      applyFromStorage()
+    })
+
+    const unsubFocus = subscribeRefetchOnDocumentVisible(() => {
+      if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) return
+      void supabase
+        .from('profiles')
+        .select(
+          'avatar_url, avatar_path, level, weekly_sessions, equipment, injuries, position, rugby_position, league_level, club_code, club_name, club_ligue, club_department_code, height_cm, weight_kg, onboarding_complete, club_schedule, sc_schedule, training_level, level_modifier_profile, season_mode, training_baseline, training_baseline_set_at, performance_focus, preferred_language, display_name, social_visibility, population_segment, age_band, parental_consent_health_data, adult_play_eligibility_approved, maturity_status, cycle_tracking_opt_in, cycle_symptom_score_today, prevention_sessions_week, weekly_load_context, health_consent_status, health_consent_granted_at, health_consent_revoked_at, health_consent_source, health_consent_audit_trail, health_data_retention_state, ffr_competition_id, ffr_competition_name, ffr_last_sync_at, planning_anchors, season_transition_state, newsletter_opt_in, newsletter_opted_at, newsletter_opt_in_source, password_needs_upgrade',
+        )
+        .eq('id', userId)
+        .single()
+        .then(({ data, error }) => {
+          if (error || !data) {
+            applyFromStorage()
+            return
+          }
+          if (!shouldApplyRemoteProfile(localEditsSinceLoadRef.current)) return
+          const remote = rowToProfile(data as ProfileRow)
+          const cached = loadFromStorage(userId)
+          const { profile: merged } = mergeProfileFromCache(remote, cached)
+          const loaded = withSessionPasswordUpgrade(normalizeLegacyProfile(merged))
+          setProfileState(loaded)
+          saveLocalProfile(loaded, userId)
+        })
+    })
+
+    return () => {
+      unsubStorage()
+      unsubFocus()
+    }
+  }, [userId, isInitializing, saveLocalProfile])
 
   useEffect(() => {
     if (!userId || !isHydratedRef.current) return

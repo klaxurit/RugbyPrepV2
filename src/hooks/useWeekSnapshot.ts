@@ -117,6 +117,8 @@ function computeProfileHash(profile: import('../types/training').UserProfile): s
     `sc:${scDays}`,
     `club:${clubDays}`,
     `match:${matchDay}`,
+    `clubCode:${profile.clubCode ?? ''}`,
+    `ffr:${profile.ffrCompetitionId ?? ''}:${profile.ffrLastSyncAt ?? ''}`,
   ].join('|')
 }
 

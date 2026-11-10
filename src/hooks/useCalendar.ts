@@ -6,6 +6,10 @@ import { syncCalendar } from '../services/calendar/ffrSyncService'
 import { shouldAutoSyncFfrCalendar } from '../services/calendar/shouldAutoSyncFfrCalendar'
 import { applyDeferralRules } from '../services/season/deferralRules'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
+import {
+  subscribeRefetchOnDocumentVisible,
+  subscribeUserScopedStorageKey,
+} from '../services/storage/subscribeUserScopedStorageSync'
 import type { CalendarEvent, MatchKind, MatchParticipationStatus } from '../types/training'
 import { calendarRowToEvent } from '../services/calendar/calendarRowToEvent'
 import { deleteFfrImportedMatches, dropFfrImportedEvents } from '../services/calendar/ffrImportedEvents'
@@ -78,14 +82,10 @@ export function useCalendarSource() {
   const profileRef: MutableRefObject<typeof profile> = useRef(profile)
   profileRef.current = profile
 
-  // Sync from Supabase when authenticated — and re-seed state from the new
-  // user's cache first so the current render doesn't keep the previous user's
-  // events visible between userId change and Supabase response.
-  useEffect(() => {
-    setEvents(readFromStorage(userId))
+  const refetchMatchCalendar = useCallback(() => {
     if (!userId) return
     setLoading(true)
-    supabase
+    void supabase
       .from('match_calendar')
       .select(CALENDAR_SELECT)
       .eq('user_id', userId)
@@ -101,6 +101,31 @@ export function useCalendarSource() {
         saveToStorage(loaded, userId)
       })
   }, [userId])
+
+  // Sync from Supabase when authenticated — and re-seed state from the new
+  // user's cache first so the current render doesn't keep the previous user's
+  // events visible between userId change and Supabase response.
+  useEffect(() => {
+    setEvents(readFromStorage(userId))
+    if (!userId) return
+    refetchMatchCalendar()
+  }, [userId, refetchMatchCalendar])
+
+  // Multi-onglets : autre onglet écrit le calendrier → recharger depuis LS ;
+  // retour de focus → refetch Supabase (matchs importés ailleurs).
+  useEffect(() => {
+    if (!userId) return
+    const unsubStorage = subscribeUserScopedStorageKey(STORAGE_BASE, userId, () => {
+      setEvents(readFromStorage(userId))
+    })
+    const unsubFocus = subscribeRefetchOnDocumentVisible(() => {
+      refetchMatchCalendar()
+    })
+    return () => {
+      unsubStorage()
+      unsubFocus()
+    }
+  }, [userId, refetchMatchCalendar])
 
   // Reset one-shot auto-sync when the signed-in user changes.
   useEffect(() => {
