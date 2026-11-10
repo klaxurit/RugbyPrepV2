@@ -39,8 +39,9 @@ pas dans le compteur gym. Plafond audit `in_season` = 14 séries/groupe
 | Isolation / pump | 1 bloc prévention + peu d’armes | Finisher optionnel hors saison | Circuit 100 reps + lourd le même soir |
 | Décharge | −40 % volume, intensité = | Coupe de blocs d’abord ; allège les séries seulement si la coupe ne suffit pas | Deload « séance vide » / baisser les % |
 | Contrastes | 1 lourd de qualité / séance ; **in-season Upper** : rotation du B (plyo / chest pass / landmine / throw) sur 4 lanes | 2 si Full et budget neural OK | 4+ contrastes / semaine · même paire B figée 32 sem. · random session-by-session |
-| Variété in-season (exos) | Pools **planifiés** (mothers distinctes) : Lower 4 lanes / poste, Primer A/B, Full A/B, finishers Upper. Cadence **Fondations = 4 sem.**, **Performance = 2 sem.** Ancres (Bench, squat/hinge pattern) stables. Affinage 1ʳᵉ vs 3ᵉ : PROP sled push · BACK_ROW farmer / sled drag. | Focus perf futur (VBT) | Muscle confusion aléatoire · rewrite runtime hors mothers · varier les gros lifts chaque semaine |
-| Accents poste | Packs fins runtime — Upper/Lower BW+salle + **Full allégé** (≤2 slots, hors Primer/Recovery/match). Theme-week + Focus A/B. `gymExerciseIds`. Nuque Fownes-Walpole ; pas de doublon. Legacy `FRONT_ROW` → PROP. | Theme packs plus fins | Soustraire du principal · 15 mothers × poste · harnais cou · accent Primer |
+| Variété in-season (exos) | Pools **planifiés** (mothers distinctes) : **6 familles** Lower/Upper salle + **BW 6 familles × A/B**. 4 lanes Upper B gym. **Vague Bench V1** = overlay `mesocycleWeek` (même exo, S1 force / S2 volume / S3 vitesse / S4 deload ; pack≠backs). Match week : SPEED ou DELOAD seulement (`pre_match` / J-2 → DELOAD). Primer A/B, Full A/B. | Focus perf futur (VBT) ; swap ancre rare (floor/incline) ; vague Lower | Muscle confusion · rewrite mother pour un % · VOLUME en match week |
+| Accents poste | Packs fins runtime — différentiel Contact/Puissance + Focus A/B **par-dessus** la mother famille. Upper/Lower BW+salle + **Full allégé** (≤2 slots, hors Primer/Recovery/match). `gymExerciseIds`. Nuque Fownes-Walpole ; pas de doublon. Legacy `FRONT_ROW` → PROP. | Theme packs plus fins | Soustraire du principal · déléguer l’identité poste à l’accent · harnais cou · accent Primer |
+| Pack porteur (Plan A) | `contentFamily` 2ᵉ/3ᵉ ligne : overlay runtime sur pré Power + Primer + **Full** `*_FRONT_ROW*` (trap bar / broad / split jump / farmer / rotation ; pas Zercher/neck-first). Titres UI : **Pack** / **3ème ligne** / **2ème ligne** — jamais « Avants ». `sprint_track` → bloc COD silencieux off/pré (+ Full hors match). **0 clic joueur.** | Mothers `*_BACK_ROW` dédiées (Plan B) | Picker poste · modal variante · DNA pilier figé pour 6–7–8 |
 | Feedback Weakley | Toasts live **tous users** : PR / vs dernière séance / vs série préc. (isolation). Puces « À battre ». Suggestions kg restent Premium. | VBT barre | Paywall sur le feedback set |
 | Vitesse | Slot Speed salle/maison (mur + 3–5 pas) | 8 m couloir si dispo ; 10–20 m seulement si piste déclarée | Piste obligatoire / luge 130 % BW + lower + club |
 | Contact club | 2 boutons : séance complète / plus courte (défaut complète) | Plus courte = club a tapé (light, ≤3 blocs) | Chronométrer 15 min comme un pro |
@@ -68,4 +69,4 @@ calme (off-season / semaine sans match).
   (runtime), plafond audit 14 inchangé.
 - Densité Speed hors saison.
 
-*Dernière mise à jour : 2026-11-03*
+*Dernière mise à jour : 2026-11-06*

@@ -78,6 +78,8 @@ export interface GetWeeklyTemplateParams {
   mesocycleWeek?: 1 | 2 | 3 | 4
   /** Fondations = rotation lente ; Performance = plus vive. */
   trainingLevel?: InSeasonVarietyTrainingLevel
+  /** Famille mother (6) — Lower/Upper in-season. */
+  contentFamily?: import('./contentFamily').ContentFamily | null
 }
 
 /** Résolution template : séances + signaux métier (warnings, conditioning compagnon). */
@@ -733,6 +735,7 @@ export function getWeeklyTemplate(params: GetWeeklyTemplateParams): WeeklyTempla
   if (cycle === 'in_season' && params.mesocycleBlock != null && positionGroup) {
     const variety = {
       positionGroup,
+      contentFamily: params.contentFamily,
       mesocycleBlock: params.mesocycleBlock,
       mesocycleWeek: params.mesocycleWeek,
       trainingLevel: params.trainingLevel,

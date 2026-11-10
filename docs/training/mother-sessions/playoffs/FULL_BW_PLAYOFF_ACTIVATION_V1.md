@@ -44,6 +44,7 @@ Warm-up is stored as a collapsible recommendation rather than a mandatory visibl
   - Tout doit rester explosif et facile — arrêter si la qualité baisse.
   - Variante C : tractions rapides si barre de traction disponible.
   - Variante E : `Banded Neck Isometric` si élastique disponible.
+  - Arrières (demis, centres, trois-quarts) : l'exercice E (cou) est optionnel — à ignorer par défaut ; à garder via accent Contact si besoin.
   - Repos complet entre chaque exercice du circuit.
   - Pas de séries au-delà de 3 reps — primer neural uniquement.
 

@@ -29,8 +29,8 @@ export function PositionAccentFocusPicker({ mesoWeek, focus, onChange, lang }: P
   const title = lang === 'en' ? 'Today’s focus' : 'Focus du jour'
   const subtitle =
     lang === 'en'
-      ? 'Optional finisher bias — main lifts stay the same.'
-      : 'Biais optionnel du finisher — les blocs principaux ne changent pas.'
+      ? 'Changes the position accent block only — main lifts stay the same.'
+      : 'Change uniquement le bloc Accent poste — les blocs principaux restent identiques.'
 
   return (
     <div

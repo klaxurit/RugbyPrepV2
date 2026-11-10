@@ -12,12 +12,15 @@ import {
   mapWeeklySlotsForEquipment,
 } from '../equipment/motherSessionEquipmentMap'
 import { isBodyweightProgramTier } from '../equipment/resolveEquipmentProgramTier'
+import { isBacksContentFamily } from '../equipment/resolveBodyweightMotherSessionId'
+import type { ContentFamily } from '../../data/contentFamily'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
 import { applyClubContactProxyToSessions } from '../scheduling/clubContactProxy'
 import {
   applyFatigueLoadChoiceToSessions,
   effectiveFatigueLevelForTemplates,
 } from '../program/fatigueLoadChoice'
+import { detectVolumeLighteningReasons } from '../program/volumeConfidenceBypass'
 
 /** Entrée alignée sur le contexte annuel (identity, ancres, monitoring). */
 export type ResolveMotherSessionsForWeekParams = AthletePlanningInputs
@@ -81,12 +84,27 @@ function finalizeStatus(
   return 'resolved'
 }
 
+/** Playoffs BW : neck optionnel pour backs — retiré du défaut. */
+function maybeOmitPlayoffNeckForBacks(
+  session: MotherSession,
+  contentFamily: ContentFamily | null | undefined,
+): MotherSession {
+  if (session.metadata.id !== 'FULL_BW_PLAYOFF_ACTIVATION_V1') return session
+  if (!isBacksContentFamily(contentFamily ?? null)) return session
+  const blocks = session.blocks.map((block) => ({
+    ...block,
+    exercises: block.exercises.filter((exo) => !/neck/i.test(exo.name)),
+  }))
+  return { ...session, blocks }
+}
+
 function applyEquipmentProgramToSlots(
   slots: WeeklySessionSlot[],
   equipment: AthletePlanningInputs['equipment'],
   resolverWarnings: string[],
+  contentFamily?: AthletePlanningInputs['contentFamily'],
 ): WeeklySessionSlot[] {
-  const mapped = mapWeeklySlotsForEquipment(slots, equipment)
+  const mapped = mapWeeklySlotsForEquipment(slots, equipment, { contentFamily })
   for (let i = 0; i < slots.length; i += 1) {
     const warning = bodyweightSessionFallbackWarning(slots[i].sessionId, mapped[i].sessionId, equipment)
     if (warning) resolverWarnings.push(warning)
@@ -104,15 +122,22 @@ function hydrateSlots(
   sessionsById: Record<string, MotherSession>,
   equipment?: Equipment[],
 ): ResolveMotherSessionsForWeekResult {
-  const resolvedSlots = applyEquipmentProgramToSlots(slots, equipment, resolverWarnings)
+  const contentFamily = planningContext.contentFamily
+  const resolvedSlots = applyEquipmentProgramToSlots(
+    slots,
+    equipment,
+    resolverWarnings,
+    contentFamily,
+  )
   const missingSessionIds: string[] = []
   const sessions: ResolvedMotherSessionSlot[] = []
 
   for (const slot of resolvedSlots) {
-    const session = sessionsById[slot.sessionId]
-    if (!session) {
+    const raw = sessionsById[slot.sessionId]
+    if (!raw) {
       missingSessionIds.push(slot.sessionId)
     } else {
+      const session = maybeOmitPlayoffNeckForBacks(raw, contentFamily)
       sessions.push({
         sessionId: slot.sessionId,
         session,
@@ -154,6 +179,39 @@ function hydrateSlots(
  * Détermine les mother sessions pour la semaine de `today` via le contexte annuel,
  * templates hebdo (pré / in / off / playoffs V1) et dataset consolidé.
  */
+function withVolumeConfidenceMeta(
+  result: ResolveMotherSessionsForWeekResult,
+  params: ResolveMotherSessionsForWeekParams,
+): ResolveMotherSessionsForWeekResult {
+  const ctx = result.planningContext
+  const todayIso =
+    typeof params.today === 'string'
+      ? params.today
+      : params.today.toISOString().slice(0, 10)
+  const reasons = detectVolumeLighteningReasons({
+    profile: {
+      trainingBaseline: params.trainingBaseline,
+      trainingBaselineSetAt: params.trainingBaselineSetAt,
+    },
+    today: todayIso,
+    completedSessionsLast7d: ctx.monitoringSnapshot?.completedSessionsLast7d,
+    completedSessionsLast28d: ctx.monitoringSnapshot?.completedSessionsLast28d,
+    hasHistoricalLogs: ctx.monitoringSnapshot?.hasHistoricalLogs,
+    inSeasonSubMode: ctx.inSeasonSubMode,
+    isDeloadWeek: ctx.isDeloadWeek,
+  })
+  return {
+    ...result,
+    planningContext: {
+      ...ctx,
+      volumeLighteningReasons: reasons,
+      ...(params.volumeConfidenceBypass
+        ? { volumeConfidenceBypassApplied: true }
+        : {}),
+    },
+  }
+}
+
 export function resolveMotherSessionsForWeek(
   params: ResolveMotherSessionsForWeekParams,
   options?: ResolveMotherSessionsForWeekOptions
@@ -169,7 +227,11 @@ export function resolveMotherSessionsForWeek(
     monitoring?.hasHistoricalLogs === true
 
   let next = withClub
-  if (isLongAbsence && withClub.status !== 'missing_session') {
+  if (
+    isLongAbsence &&
+    withClub.status !== 'missing_session' &&
+    !params.volumeConfidenceBypass
+  ) {
     next = applyLongAbsenceAdaptation(withClub)
   }
 
@@ -178,7 +240,7 @@ export function resolveMotherSessionsForWeek(
     next = applyFatigueLoadChoiceAdaptation(next, params.fatigueLoadChoice)
   }
 
-  return next
+  return withVolumeConfidenceMeta(next, params)
 }
 
 function applyFatigueLoadChoiceAdaptation(
@@ -222,6 +284,46 @@ function applyClubContactToResolvedWeek(
   return { ...result, sessions: nextSessions }
 }
 
+/**
+ * Décharge et reprise coupent le volume (2 séances light). Le primer est une
+ * activation, pas une charge : on le garde dès qu'un match tombe dans la
+ * semaine et que le joueur est à 3 séances ou plus.
+ */
+function appendMatchWeekActivationPrimer(
+  slots: WeeklySessionSlot[],
+  planningContext: AnnualPlanningContext,
+  weeklyFrequency: number,
+  positionGroup: 'front_row' | 'back_three',
+  varietyParams: {
+    mesocycleBlock: number
+    mesocycleWeek?: 1 | 2 | 3 | 4
+    trainingLevel?: ResolveMotherSessionsForWeekParams['trainingLevel']
+  },
+): { slots: WeeklySessionSlot[]; kept: boolean } {
+  if (!planningContext.isMatchWeek || weeklyFrequency < 3) {
+    return { slots, kept: false }
+  }
+  if (slots.some((slot) => slot.sessionId.includes('PRIMER'))) {
+    return { slots, kept: true }
+  }
+  return {
+    kept: true,
+    slots: [
+      ...slots,
+      {
+        sessionId: resolveInSeasonPrimerSessionId({
+          positionGroup,
+          ...varietyParams,
+        }),
+        role: 'primary',
+        dayPreference: 'pre_match',
+        variant: 'light',
+        maxBlocks: 2,
+      },
+    ],
+  }
+}
+
 function resolveMotherSessionsForWeekCore(
   params: ResolveMotherSessionsForWeekParams,
   options?: ResolveMotherSessionsForWeekOptions
@@ -239,6 +341,7 @@ function resolveMotherSessionsForWeekCore(
     mesocycleBlock: planningContext.mesocycleBlock ?? 1,
     mesocycleWeek: planningContext.mesocycleWeek,
     trainingLevel: params.trainingLevel,
+    contentFamily: planningContext.contentFamily ?? params.contentFamily,
   }
 
   const resolverWarnings: string[] = []
@@ -457,20 +560,31 @@ function resolveMotherSessionsForWeekCore(
       fatigueLevel,
       ...varietyParams,
     })
-    const deloadSlots = deloadTpl.sessions.map((s) => ({
+    const deloadBase = deloadTpl.sessions.map((s) => ({
       ...s,
       variant: 'light' as const,
       maxBlocks: 2,
     }))
+    const deloadPrimer = appendMatchWeekActivationPrimer(
+      deloadBase,
+      planningContext,
+      weeklyFrequency,
+      positionGroup,
+      varietyParams,
+    )
+    if (deloadPrimer.kept) {
+      resolverWarnings.push('Primer d\'activation conservé avant le match.')
+    }
     const deloadContext: ResolvedWeeklyTemplateContext = {
       cycle: 'in_season',
       requestedFrequency: weeklyFrequency,
-      effectiveFrequency: 2,
+      effectiveFrequency: deloadPrimer.kept ? 3 : 2,
       positionGroup,
+      ...(deloadPrimer.kept ? { matchContext: 'match_week' as const } : {}),
       fatigueLevel,
     }
     return hydrateSlots(
-      deloadSlots,
+      deloadPrimer.slots,
       { ...planningContext, loadManagementOverride: 'recovery' },
       deloadContext,
       deloadTpl.warnings,
@@ -482,7 +596,11 @@ function resolveMotherSessionsForWeekCore(
   }
 
   // ── In-season trêve V2 : utiliser le sous-mode calculé par detectAnnualPlanningContext
-  if (planningContext.inSeasonSubMode === 'treve_rampup') {
+  // Bypass volume : on saute le plafond 2× light et on tombe sur le chemin in-season normal.
+  if (
+    planningContext.inSeasonSubMode === 'treve_rampup' &&
+    !params.volumeConfidenceBypass
+  ) {
     resolverWarnings.push('Ramp-up pré-reprise — programme allégé pour ré-acclimation.')
     const rampTpl = getWeeklyTemplate({
       cycle: 'in_season',
@@ -491,16 +609,41 @@ function resolveMotherSessionsForWeekCore(
       fatigueLevel,
       ...varietyParams,
     })
-    const rampSlots = rampTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
+    const rampBase = rampTpl.sessions.map((s) => ({ ...s, variant: 'light' as const, maxBlocks: 2 }))
+    const rampPrimer = appendMatchWeekActivationPrimer(
+      rampBase,
+      planningContext,
+      weeklyFrequency,
+      positionGroup,
+      varietyParams,
+    )
+    if (rampPrimer.kept) {
+      resolverWarnings.push('Primer d\'activation conservé avant le match.')
+    }
     return hydrateSlots(
-      rampSlots,
+      rampPrimer.slots,
       { ...planningContext, loadManagementOverride: 'recovery' },
-      { cycle: 'in_season', requestedFrequency: weeklyFrequency, effectiveFrequency: 2, positionGroup, fatigueLevel },
+      {
+        cycle: 'in_season',
+        requestedFrequency: weeklyFrequency,
+        effectiveFrequency: rampPrimer.kept ? 3 : 2,
+        positionGroup,
+        ...(rampPrimer.kept ? { matchContext: 'match_week' as const } : {}),
+        fatigueLevel,
+      },
       rampTpl.warnings,
       ['Activation neuromusculaire + mobilité avant la reprise des matchs'],
       resolverWarnings,
       sessionsById,
       equipment,
+    )
+  }
+  if (
+    planningContext.inSeasonSubMode === 'treve_rampup' &&
+    params.volumeConfidenceBypass
+  ) {
+    resolverWarnings.push(
+      'Ramp-up contourné — volume normal à ta demande (rails match inchangés).',
     )
   }
 

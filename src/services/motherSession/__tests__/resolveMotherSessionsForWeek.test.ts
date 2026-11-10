@@ -275,10 +275,12 @@ describe('resolveMotherSessionsForWeek', () => {
     })
     expect(r.planningContext.cycle).toBe('in_season')
     expect(r.sessions.map((s) => s.sessionId)).toEqual([
-      'LOWER_BW_IN_SEASON_V1',
-      'UPPER_BW_IN_SEASON_V1',
+      expect.stringMatching(/^LOWER_BW_IN_SEASON_FRONT_ROW_[AB]_V1$/),
+      expect.stringMatching(/^UPPER_BW_IN_SEASON_FRONT_ROW_[AB]_V1$/),
     ])
-    expect(r.sessions[0].session.blocks[0].exercises[0].name).toMatch(/bulgarian split squat/i)
+    expect(r.sessions[0].session.blocks[0].exercises[0].name).toMatch(
+      /bulgarian split squat|kickstand rdl/i,
+    )
     expect(r.sessions[0].session.metadata.equipment).toBe('bodyweight')
   })
 
@@ -398,20 +400,106 @@ describe('resolveMotherSessionsForWeek', () => {
     expect(r.sessions.length).toBeGreaterThan(0)
   })
 
-  it('V2 treve_rampup: freq plafonnée à 2, variant light', () => {
+  it('V2 treve_rampup sans match cette semaine : freq plafonnée à 2, variant light', () => {
     const r = resolveMotherSessionsForWeek({
-      events: [match(FIRST_MATCH), match('2025-04-01'), match('2025-04-20')],
-      today: '2025-04-16', // 4 days until match, 15 days since last → rampup
+      events: [match(FIRST_MATCH), match('2025-04-01'), match('2025-04-23')],
+      today: '2025-04-18', // vendredi, match mercredi suivant — reprise, pas cette semaine
       weeklyFrequency: 3,
       positionGroup: 'front_row',
     })
     expect(r.planningContext.inSeasonSubMode).toBe('treve_rampup')
+    expect(r.planningContext.isMatchWeek).toBe(false)
     expect(r.warnings.some((w) => /ramp-up|ré-acclimation/i.test(w))).toBe(true)
-    expect(r.sessions).toHaveLength(2) // capped at 2
+    expect(r.sessions).toHaveLength(2)
+    expect(r.sessions.some((s) => s.session.metadata.sessionType === 'full_light_primer')).toBe(false)
     for (const s of r.sessions) {
       expect(s.variant).toBe('light')
       expect(s.maxBlocks).toBe(2)
     }
+  })
+
+  it('V2 treve_rampup avec match cette semaine : primer d\'activation conservé', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-01'), match('2025-04-20')],
+      today: '2025-04-16', // mercredi, match dimanche — même semaine ISO
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+    })
+    expect(r.planningContext.inSeasonSubMode).toBe('treve_rampup')
+    expect(r.planningContext.isMatchWeek).toBe(true)
+    expect(r.planningContext.volumeLighteningReasons).toContain('treve_rampup')
+    expect(r.sessions).toHaveLength(3)
+    expect(r.templateContext?.effectiveFrequency).toBe(3)
+    const primer = r.sessions.find((s) => s.session.metadata.sessionType === 'full_light_primer')
+    expect(primer?.dayPreference).toBe('pre_match')
+    expect(primer?.variant).toBe('light')
+    expect(primer?.maxBlocks).toBe(2)
+    const gym = r.sessions.filter((s) => s.session.metadata.sessionType !== 'full_light_primer')
+    expect(gym).toHaveLength(2)
+    for (const s of gym) {
+      expect(s.variant).toBe('light')
+      expect(s.maxBlocks).toBe(2)
+    }
+  })
+
+  it('V2 treve_rampup + bypass volume : programme match week normal', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-01'), match('2025-04-20')],
+      today: '2025-04-16',
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+      volumeConfidenceBypass: true,
+    })
+    expect(r.planningContext.inSeasonSubMode).toBe('treve_rampup')
+    expect(r.planningContext.volumeConfidenceBypassApplied).toBe(true)
+    expect(r.sessions).toHaveLength(3)
+    expect(r.templateContext?.matchContext).toBe('match_week')
+    expect(r.sessions.some((s) => s.session.metadata.sessionType === 'full_light_primer')).toBe(true)
+    const gym = r.sessions.filter((s) => s.session.metadata.sessionType !== 'full_light_primer')
+    expect(gym.some((s) => s.variant !== 'light')).toBe(true)
+  })
+
+  it('décharge in-season sans match : 2 séances light', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-13')],
+      today: '2025-04-02', // S4 (4/4)
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+    })
+    expect(r.planningContext.isDeloadWeek).toBe(true)
+    expect(r.planningContext.isMatchWeek).toBe(false)
+    expect(r.sessions).toHaveLength(2)
+    expect(r.sessions.some((s) => s.session.metadata.sessionType === 'full_light_primer')).toBe(false)
+  })
+
+  it('décharge in-season avec match : primer d\'activation conservé', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-06')],
+      today: '2025-04-02', // S4, match dimanche 6 avril
+      weeklyFrequency: 3,
+      positionGroup: 'front_row',
+    })
+    expect(r.planningContext.isDeloadWeek).toBe(true)
+    expect(r.planningContext.isMatchWeek).toBe(true)
+    expect(r.sessions).toHaveLength(3)
+    expect(r.templateContext?.effectiveFrequency).toBe(3)
+    const primer = r.sessions.find((s) => s.session.metadata.sessionType === 'full_light_primer')
+    expect(primer?.dayPreference).toBe('pre_match')
+    expect(primer?.variant).toBe('light')
+    expect(primer?.maxBlocks).toBe(2)
+  })
+
+  it('décharge in-season, fréquence 2 : pas de primer ajouté', () => {
+    const r = resolveMotherSessionsForWeek({
+      events: [match(FIRST_MATCH), match('2025-04-06')],
+      today: '2025-04-02',
+      weeklyFrequency: 2,
+      positionGroup: 'front_row',
+    })
+    expect(r.planningContext.isDeloadWeek).toBe(true)
+    expect(r.planningContext.isMatchWeek).toBe(true)
+    expect(r.sessions).toHaveLength(2)
+    expect(r.sessions.some((s) => s.session.metadata.sessionType === 'full_light_primer')).toBe(false)
   })
 
   it('V2 end_of_season: décompression — variant light, maxBlocks 2', () => {

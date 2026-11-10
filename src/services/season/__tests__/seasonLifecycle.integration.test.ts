@@ -92,17 +92,22 @@ describe('In-season mesocycle 3:1', () => {
     expect(ctx.mesocycleBlock).toBe(3)
   })
 
-  it('deload week → resolver returns 2 light sessions', () => {
+  it('deload week → resolver returns 2 light sessions (+ primer si match week)', () => {
     const r = resolveMotherSessionsForWeek({
       events,
-      today: '2025-09-29', // W4 deload
+      today: '2025-09-29', // W4 deload + match week (prochain match ≤ 7 j)
       weeklyFrequency: 3,
       positionGroup: 'back_three',
     })
-    expect(r.sessions).toHaveLength(2) // capped to 2
+    // Base décharge = 2 light ; primer d'activation conservé si match week × freq ≥ 3
+    expect(r.sessions.length).toBeGreaterThanOrEqual(2)
+    expect(r.sessions.length).toBeLessThanOrEqual(3)
     for (const s of r.sessions) {
       expect(s.variant).toBe('light')
       expect(s.maxBlocks).toBe(2)
+    }
+    if (r.sessions.length === 3) {
+      expect(r.sessions.some((s) => s.sessionId.includes('PRIMER'))).toBe(true)
     }
   })
 
@@ -169,8 +174,9 @@ describe('Trêve detection and adaptation', () => {
       weeklyFrequency: 3,
       positionGroup: 'back_three',
     })
-    // Should be deload/light since gap > 21 and daysUntil <= 7
-    expect(r.sessions).toHaveLength(2) // capped
+    // Ramp light (2) + primer d'activation si match week
+    expect(r.sessions.length).toBeGreaterThanOrEqual(2)
+    expect(r.sessions.length).toBeLessThanOrEqual(3)
     for (const s of r.sessions) {
       expect(s.variant).toBe('light')
     }

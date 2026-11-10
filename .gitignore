@@ -37,6 +37,15 @@ dev-dist
 # Video / Remotion artifacts
 video/build
 video/out
+# Marketing / scratch locaux — jamais en prod
+brag-output/
+tuto-output/
+scripts/tuto-carousel-a/
+assets/duc-*
+assets/bas.png
+assets/haut.png
+assets/full.png
+assets/primer.png
 
 # Supabase CLI local artifacts
 supabase/.temp/
