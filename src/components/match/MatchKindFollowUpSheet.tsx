@@ -1,6 +1,7 @@
 import { BottomSheet } from '../ui/BottomSheet'
 import { MatchKindPicker } from './MatchKindPicker'
 import type { MatchKind } from '../../types/training'
+import { useOverlayPermission } from '../../hooks/useOverlayPermission'
 
 export interface MatchKindFollowUpSheetProps {
   open: boolean
@@ -33,10 +34,12 @@ export function MatchKindFollowUpSheet({
     opponent && matchDateISO
       ? `${opponent} · ${matchDateISO}`
       : opponent ?? matchDateISO ?? ''
+  // Bloque « Ton programme évolue » tant que le kind n’est pas choisi.
+  const sheetOpen = useOverlayPermission('match_kind', open)
 
   return (
     <BottomSheet
-      open={open}
+      open={sheetOpen}
       onClose={() => {}}
       ariaLabel={c.title}
       eyebrow={lang === 'fr' ? 'Calendrier' : 'Calendar'}

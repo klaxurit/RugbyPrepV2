@@ -7,14 +7,20 @@ import {
 } from '../overlayGate'
 
 describe('overlayGate', () => {
-  it('priorités : password > cookie > program > founding > gamification', () => {
+  it('priorités : password > cookie > match_kind > program > founding > gamification', () => {
     expect(overlayPriority('legal_consent')).toBeGreaterThan(overlayPriority('password_upgrade'))
     expect(overlayPriority('password_upgrade')).toBeGreaterThan(overlayPriority('cookie_consent'))
-    expect(overlayPriority('cookie_consent')).toBeGreaterThan(overlayPriority('program_evolution'))
+    expect(overlayPriority('cookie_consent')).toBeGreaterThan(overlayPriority('match_kind'))
+    expect(overlayPriority('match_kind')).toBeGreaterThan(overlayPriority('program_evolution'))
     expect(overlayPriority('program_evolution')).toBeGreaterThan(overlayPriority('return_to_club'))
     expect(overlayPriority('return_to_club')).toBeGreaterThan(overlayPriority('founding_offer'))
     expect(overlayPriority('founding_offer')).toBe(overlayPriority('newsletter'))
     expect(overlayPriority('founding_offer')).toBeGreaterThan(overlayPriority('gamification_intro'))
+  })
+
+  it('match_kind bloque program_evolution (file match manuel)', () => {
+    expect(canClaimOverlay('match_kind', 'program_evolution')).toBe(false)
+    expect(applyOverlayClaim('match_kind', 'program_evolution')).toBe('match_kind')
   })
 
   it('claim libre → ok', () => {

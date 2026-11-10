@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useCallback } from 'react'
+import { useEffect, useMemo, useCallback, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
 import { Plus, Lock } from 'lucide-react'
 import { WeekViewToggle, WeekMonthView, WeekDailyPlanner, ClubContactProxyControl, SessionMonthPreviewSheet } from '../components/week'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
@@ -54,6 +53,7 @@ import type { CalendarEvent, MatchKind } from '../types/training'
 import { buildProfileUpdatesForManualMatchKind } from '../services/season/buildProfileUpdatesForManualMatchKind'
 import { hasPendingOffseasonMatchDecision } from '../services/season/hasPendingOffseasonMatchDecision'
 import { planProgramEvolutionAfterManualMatch } from '../services/calendar/planProgramEvolutionAfterManualMatch'
+import { resolveProgramEvolutionOpenAfterMatchKind } from '../services/calendar/manualMatchModalQueue'
 import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
 import { resolveMotherSessionsForWeek } from '../services/motherSession/resolveMotherSessionsForWeek'
 import { novelMotherSessionIds } from '../services/program/inSeasonVarietyNotice'
@@ -228,6 +228,8 @@ export function WeekPage() {
   const planningCtxForMatchKind = surface?.planningContext
   const schedulingModeForMatchKind = surface?.schedulingMode ?? 'calendar'
 
+  const pendingEvolutionAfterKindRef = useRef<string | null>(null)
+
   const finalizeManualMatchKind = useCallback(
     async (kind: MatchKind, created: CalendarEvent) => {
       if (!created.id) return
@@ -246,18 +248,23 @@ export function WeekPage() {
         )
       }
       addMatch(merged)
-      setPendingManualMatch(null)
       const evolutionPlan = planProgramEvolutionAfterManualMatch({
         matchDate: merged.date,
         today,
         kind,
         snapshotWeekId: snapshot?.weekId,
       })
+      // Ferme d’abord « Type de match » ; l’évolution s’ouvre au tick suivant
+      // (effet ci-dessous) pour éviter la superposition.
       if (evolutionPlan.action === 'open_sheet') {
-        onMatchAddedProgramEvolution(evolutionPlan.matchDateISO)
-      } else if (evolutionPlan.dismissSchedulingBanner) {
-        dismissCalendarSchedulingIfNeeded()
+        pendingEvolutionAfterKindRef.current = evolutionPlan.matchDateISO
+      } else {
+        pendingEvolutionAfterKindRef.current = null
+        if (evolutionPlan.dismissSchedulingBanner) {
+          dismissCalendarSchedulingIfNeeded()
+        }
       }
+      setPendingManualMatch(null)
     },
     [
       updateMatchKind,
@@ -268,10 +275,27 @@ export function WeekPage() {
       updateProfile,
       addMatch,
       snapshot?.weekId,
-      onMatchAddedProgramEvolution,
       dismissCalendarSchedulingIfNeeded,
     ],
   )
+
+  useEffect(() => {
+    if (pendingManualMatch != null) return
+    const queued = pendingEvolutionAfterKindRef.current
+    if (!queued) return
+    const decision = resolveProgramEvolutionOpenAfterMatchKind({
+      matchKindSheetOpen: false,
+      plan: {
+        action: 'open_sheet',
+        matchDateISO: queued,
+        dismissSchedulingBanner: true,
+      },
+    })
+    pendingEvolutionAfterKindRef.current = null
+    if (decision.open && decision.matchDateISO) {
+      onMatchAddedProgramEvolution(decision.matchDateISO)
+    }
+  }, [pendingManualMatch, onMatchAddedProgramEvolution])
 
   // Coordination cross-page : si un match futur en off-season attend
   // la décision de l'utilisateur (Oui/Non/Pas mon équipe sur le banner

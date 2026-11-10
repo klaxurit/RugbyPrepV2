@@ -9,6 +9,7 @@ export type OverlayKind =
   | 'legal_consent'
   | 'password_upgrade'
   | 'cookie_consent'
+  | 'match_kind'
   | 'program_evolution'
   | 'return_to_club'
   | 'founding_offer'
@@ -21,6 +22,8 @@ export const OVERLAY_PRIORITY: Record<OverlayKind, number> = {
   legal_consent: 110,
   password_upgrade: 100,
   cookie_consent: 95,
+  /** Avant « Ton programme évolue » : file séquentielle match manuel. */
+  match_kind: 92,
   program_evolution: 90,
   return_to_club: 70,
   founding_offer: 50,
