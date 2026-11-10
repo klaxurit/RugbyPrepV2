@@ -93,3 +93,35 @@
 .rf-share-card .footer-id .sep{flex:0 0 auto;opacity:.6}
 .rf-share-card .footer-crest{width:44px;height:44px;flex:0 0 44px;object-fit:contain;display:block}
 .rf-share-card .footer-logo{height:30px;width:auto;flex:0 0 auto;display:block}
+
+/* ── Format carré 1:1 (1080×1080) — héros record / séance ── */
+.rf-share-card.is-square{height:1080px}
+.rf-share-card.is-square .photo{height:1080px}
+.rf-share-card.is-square .pitch{height:640px}
+.rf-share-card.is-square .pitch .v{height:640px}
+.rf-share-card.is-square .pitch .posts-bg{left:340px;top:120px}
+.rf-share-card.is-square .veil-top{height:220px}
+.rf-share-card.is-square .veil-grad{top:360px;height:280px}
+.rf-share-card.is-square .panel{top:520px;height:560px;clip-path:polygon(0 72px,100% 0,100% 100%,0 100%)}
+.rf-share-card.is-square .edge{top:516px;height:80px;clip-path:polygon(0 72px,100% 0,100% 6px,0 78px)}
+.rf-share-card.is-square .hchip{top:40px;height:48px;font-size:18px;max-width:400px;padding:0 20px}
+.rf-share-card.is-square .stamp{left:840px;top:440px;width:160px;height:160px}
+.rf-share-card.is-square .stamp .s1{font-size:12px;letter-spacing:.22em}
+.rf-share-card.is-square .stamp .s2{font-size:34px}
+.rf-share-card.is-square .content{bottom:48px}
+.rf-share-card.is-square .kicker{font-size:18px;letter-spacing:.14em}
+.rf-share-card.is-square .hero-num .big{font-size:120px}
+.rf-share-card.is-square .hero-num .unit{font-size:42px}
+.rf-share-card.is-square .hero-record .hero-num .big{font-size:112px}
+.rf-share-card.is-square .hero-sub{font-size:36px;margin-top:8px;gap:12px}
+.rf-share-card.is-square .delta{height:72px;padding:0 20px;border-radius:16px}
+.rf-share-card.is-square .delta b{font-size:32px}
+.rf-share-card.is-square .delta span{font-size:16px}
+.rf-share-card.is-square .chips{margin-top:14px;gap:10px}
+.rf-share-card.is-square .chip{height:48px;padding:0 20px;font-size:20px}
+.rf-share-card.is-square .chip.filled{padding-left:16px}
+.rf-share-card.is-square .footer-row{margin-top:14px;height:56px;padding-top:10px}
+.rf-share-card.is-square .footer-id{font-size:20px;gap:10px}
+.rf-share-card.is-square .footer-id .seg-name{font-size:26px}
+.rf-share-card.is-square .footer-crest{width:36px;height:36px;flex:0 0 36px}
+.rf-share-card.is-square .footer-logo{height:24px}

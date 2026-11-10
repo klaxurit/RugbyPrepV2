@@ -17,12 +17,8 @@ import inter700 from '@fontsource/inter/files/inter-latin-700-normal.woff2?url'
 import inter800 from '@fontsource/inter/files/inter-latin-800-normal.woff2?url'
 import inter800i from '@fontsource/inter/files/inter-latin-800-italic.woff2?url'
 import inter900i from '@fontsource/inter/files/inter-latin-900-italic.woff2?url'
-import {
-  SESSION_SHARE_HEIGHT,
-  SESSION_SHARE_WIDTH,
-  type SessionShareImageMeta,
-  type SessionSharePayload,
-} from './sessionShareTypes'
+import { shareCardDimensions } from './resolveShareCardFormat'
+import type { SessionShareImageMeta, SessionSharePayload } from './sessionShareTypes'
 
 /** Évite canvas tainted / CORS : on embarque les images en data URL avant capture. */
 async function toDataUrl(src: string): Promise<string> {
@@ -130,7 +126,7 @@ function waitForImages(root: HTMLElement): Promise<void> {
 }
 
 /**
- * Monte le markup mockup hors écran, capture en PNG 1080×1920.
+ * Monte le markup mockup hors écran, capture en PNG (story 1080×1920 ou carré 1080×1080).
  */
 export async function generateSessionShareImage(
   payload: SessionSharePayload,
@@ -154,6 +150,7 @@ export async function generateSessionShareImageWithMeta(
     { logoSrc, crestSrc: crest.src, photoSrc },
     identity,
   )
+  const { width, height } = shareCardDimensions(model.format)
   const meta: SessionShareImageMeta = {
     clubShown: identity.clubShown,
     logoSource: crest.source,
@@ -166,8 +163,8 @@ export async function generateSessionShareImageWithMeta(
     'position:fixed',
     'left:0',
     'top:0',
-    'width:1080px',
-    'height:1920px',
+    `width:${width}px`,
+    `height:${height}px`,
     'overflow:hidden',
     'pointer-events:none',
     'z-index:-1',
@@ -202,15 +199,15 @@ export async function generateSessionShareImageWithMeta(
     )
 
     const blob = await toBlob(card, {
-      width: SESSION_SHARE_WIDTH,
-      height: SESSION_SHARE_HEIGHT,
+      width,
+      height,
       pixelRatio: 1,
       cacheBust: true,
       preferredFontFormat: 'woff2',
       style: {
         // Force dimensions exactes pour la capture.
-        width: `${SESSION_SHARE_WIDTH}px`,
-        height: `${SESSION_SHARE_HEIGHT}px`,
+        width: `${width}px`,
+        height: `${height}px`,
         transform: 'none',
         opacity: '1',
       },

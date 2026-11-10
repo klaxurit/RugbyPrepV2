@@ -1032,6 +1032,18 @@ export const APP_LABELS = {
     fr: 'Impossible d’utiliser cette image. Réessaie avec une autre.',
     en: 'Couldn’t use that image. Try another one.',
   },
+  session_share_format_label: {
+    fr: 'Format',
+    en: 'Format',
+  },
+  session_share_format_story: {
+    fr: 'Story 9:16',
+    en: 'Story 9:16',
+  },
+  session_share_format_square: {
+    fr: 'Carré 1:1',
+    en: 'Square 1:1',
+  },
 } as const satisfies Record<string, LabelEntry>
 
 export type AppLabelKey = keyof typeof APP_LABELS

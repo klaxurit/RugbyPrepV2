@@ -13,6 +13,8 @@ Tout est dans `src/services/share/` :
 | Fichier | Rôle |
 | --- | --- |
 | `selectShareHero.ts` | Choix du héros par priorité, chips (3 max), nettoyage du nom de l'adversaire, prochain match (`findShareNextMatch`). Fonctions pures. |
+| `resolveShareCardFormat.ts` | Story vs carré selon le héros (+ préférence UI). |
+| `prepareSharePhoto.ts` | Photo locale → object URL + dims + warning côté court &lt; 1080. |
 | `buildShareCardData.ts` | Identité : prénom, poste, club (nom affiché, initiales), logo stocké, niveau FFR (R1–R3, F1–F3, N2), segments du pied. Fonctions pures. |
 | `buildSessionShareCardHtml.ts` | Modèle de la carte + gabarit HTML (avec ou sans photo). |
 | `sessionShareCard.css` | Styles de la carte (positions fixes, 1080×1920). |
@@ -48,11 +50,16 @@ Si record et match tombent la même semaine, le record reste le héros et « J-X
 - **Toggle « Afficher mon club »** : activé par défaut, mémorisé dans `localStorage` (`rf.share.showClub`). Désactivé → ni logo, ni club, ni niveau.
 - **Contraste** : texte sur panneau bordeaux ≥ 4,5:1 même sur une photo blanche (panneau à 85 %).
 
-### Géométrie (story 1080×1920)
+### Géométrie
 
+**Story 1080×1920** (match / progression, ou préférence UI) :
 - Marges latérales 72 px. Coupe diagonale : y 1212 à gauche → 1092 à droite (photo sur ~60 % de la hauteur), liseré crème 6 px.
-- Avec photo : photo naturelle, voile haut noir 45 % → 0, dégradé bordeaux 0 → 55 % de y 720 à la coupe, panneau à 85 % sous la coupe.
-- Sans photo : fond crème, trame de terrain bordeaux (lignes pleines et pointillées), poteaux en filigrane, panneau bordeaux plein.
+- Safe zones Instagram : en-tête y 272, contenu au-dessus de y 1640.
+
+**Carré 1080×1080** (auto pour record / séance) : même vocabulaire, panneau depuis ~y 520, typo et tampon réduits (`.is-square`).
+
+- Avec photo : photo naturelle, voile haut, dégradé bordeaux, panneau 85 % sous la coupe.
+- Sans photo : fond crème, trame de terrain, poteaux en filigrane, panneau bordeaux plein.
 
 ## Analytics (PostHog)
 
@@ -63,7 +70,7 @@ Si record et match tombent la même semaine, le record reste le héros et « J-X
 
 1. ~~**Calculer `payload.progression`**~~ — `computeShareProgression.ts` (load vs S−4, sinon streak gamification), branché dans `SessionDetailPage.tsx`.
 2. ~~**Photo de séance**~~ — `prepareSharePhoto.ts` + UI caméra/galerie dans `SessionShareSheet` (`photoUrl`, warning non bloquant si côté court &lt; 1080, changer/retirer). Point focal CSS inchangé (`object-position: 50% 35%`).
-3. **Format carré 1:1** (1080×1080) pour les héros record et par défaut : maquettes sur le canevas, pas encore codé.
+3. ~~**Format carré 1:1**~~ — `resolveShareCardFormat.ts` (auto square pour record/session), CSS `.is-square`, toggle UI si héros éligible, export 1080×1080.
 4. **Nom court du club** : `buildShareCardData` accepte `clubShortName` (prioritaire sur `clubName`) dès qu'une source existe.
 
 ## Vérifier

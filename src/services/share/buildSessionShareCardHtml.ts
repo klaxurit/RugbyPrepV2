@@ -4,7 +4,7 @@
  * ancré en bas au-dessus de la safe zone Instagram (250 px), coupe diagonale,
  * pied « Prénom · [écusson] Club · R2 » + wordmark.
  */
-import type { SessionSharePayload } from './sessionShareTypes'
+import type { SessionSharePayload, ShareCardFormat } from './sessionShareTypes'
 import {
   buildShareCardData,
   buildShareFooterSegments,
@@ -12,6 +12,7 @@ import {
   type ShareCardData,
   type ShareFooterSegment,
 } from './buildShareCardData'
+import { resolveShareCardFormat } from './resolveShareCardFormat'
 import {
   buildShareChips,
   formatShareLoad,
@@ -21,6 +22,10 @@ import {
   type ShareChip,
   type ShareHero,
 } from './selectShareHero'
+
+function scaleType(px: number, format: ShareCardFormat): number {
+  return format === 'square' ? Math.max(28, Math.round(px * 0.64)) : px
+}
 
 function escapeHtml(text: string): string {
   return text
@@ -35,6 +40,7 @@ const POSTS_SVG = (color: string, size = 22) =>
 
 export interface SessionShareCardModel {
   lang: SessionSharePayload['lang']
+  format: ShareCardFormat
   logoSrc: string
   /** Photo de séance (data URL). null → fond de marque crème / bordeaux. */
   photoSrc: string | null
@@ -68,6 +74,7 @@ export function buildSessionShareCardModel(
   identity: ShareCardData = buildSessionShareIdentity(payload),
 ): SessionShareCardModel {
   const hero = selectShareHero(payload)
+  const format = resolveShareCardFormat(hero.kind, payload.cardFormat)
   const crestSrc = assets.crestSrc ?? null
   const footerSegments = buildShareFooterSegments(identity).map((segment) =>
     segment.kind === 'club' ? { ...segment, withCrest: Boolean(crestSrc) } : segment,
@@ -83,6 +90,7 @@ export function buildSessionShareCardModel(
 
   return {
     lang: payload.lang,
+    format,
     logoSrc: assets.logoSrc,
     photoSrc: assets.photoSrc ?? null,
     crestSrc,
@@ -116,11 +124,12 @@ function buildFooterIdentityHtml(model: SessionShareCardModel): string {
 function buildHeroHtml(model: SessionShareCardModel): string {
   const en = model.lang === 'en'
   const hero = model.hero
+  const format = model.format
 
   if (hero.kind === 'record') {
-    const size = pickTitleSize(hero.exerciseName, [[14, 96], [18, 80]], 72)
+    const size = scaleType(pickTitleSize(hero.exerciseName, [[14, 96], [18, 80]], 72), format)
     const load = formatShareLoad(hero.kg)
-    const bigSize = load.length > 3 ? 150 : 176
+    const bigSize = scaleType(load.length > 3 ? 150 : 176, format)
     const delta = hero.deltaKg != null
       ? `<div class="delta"><b>+${escapeHtml(formatShareLoad(hero.deltaKg))} kg</b>${
           hero.previousKg != null ? `<span>vs ${escapeHtml(formatShareLoad(hero.previousKg))} kg</span>` : ''
@@ -184,7 +193,7 @@ function buildHeroHtml(model: SessionShareCardModel): string {
 </div>`
   }
 
-  const size = pickTitleSize(hero.title, [[12, 132], [15, 112]], 96)
+  const size = scaleType(pickTitleSize(hero.title, [[12, 132], [15, 112]], 96), format)
   const sub = [`<span class="w">${hero.durationMin} min</span>`]
   if (hero.focus) sub.push(`<span class="dot">·</span><span class="c">${escapeHtml(hero.focus)}</span>`)
   return `<div class="hero hero-session">
@@ -202,20 +211,29 @@ function buildBackgroundHtml(model: SessionShareCardModel): string {
 <div class="panel"></div>
 <div class="edge"></div>`
   }
-  return `<div class="pitch" aria-hidden="true">
-  <i class="l solid" style="top:1040px;height:4px"></i>
+  const square = model.format === 'square'
+  const lines = square
+    ? `<i class="l solid" style="top:560px;height:4px"></i>
+  <i class="l dash" style="top:460px"></i>
+  <i class="l solid" style="top:320px"></i>
+  <i class="l dash" style="top:200px"></i>`
+    : `<i class="l solid" style="top:1040px;height:4px"></i>
   <i class="l dash" style="top:880px"></i>
   <i class="l solid" style="top:600px"></i>
-  <i class="l dash" style="top:400px"></i>
+  <i class="l dash" style="top:400px"></i>`
+  const postsH = square ? 420 : 720
+  return `<div class="pitch" aria-hidden="true">
+  ${lines}
   <i class="v" style="left:120px"></i>
   <i class="v" style="left:957px"></i>
-  <svg class="posts-bg" width="440" height="720" viewBox="0 0 440 720"><path d="M40 10v700M400 10v700M40 470h360" stroke="rgba(123,13,30,0.20)" stroke-width="22" fill="none" stroke-linecap="round"></path><rect x="22" y="600" width="36" height="110" rx="6" fill="rgba(123,13,30,0.20)"></rect><rect x="382" y="600" width="36" height="110" rx="6" fill="rgba(123,13,30,0.20)"></rect></svg>
+  <svg class="posts-bg" width="440" height="${postsH}" viewBox="0 0 440 720"><path d="M40 10v700M400 10v700M40 470h360" stroke="rgba(123,13,30,0.20)" stroke-width="22" fill="none" stroke-linecap="round"></path><rect x="22" y="600" width="36" height="110" rx="6" fill="rgba(123,13,30,0.20)"></rect><rect x="382" y="600" width="36" height="110" rx="6" fill="rgba(123,13,30,0.20)"></rect></svg>
 </div>
 <div class="panel solid"></div>`
 }
 
 export function buildSessionShareCardHtml(model: SessionShareCardModel): string {
   const hasPhoto = Boolean(model.photoSrc)
+  const formatClass = model.format === 'square' ? 'is-square' : 'is-story'
   const chipsHtml = model.chips.length
     ? `<div class="chips">${model.chips
         .map(
@@ -230,7 +248,7 @@ export function buildSessionShareCardHtml(model: SessionShareCardModel): string 
       ? `<div class="stamp"><span class="s1">— PERSO —</span><span class="s2">RECORD</span></div>`
       : ''
 
-  return `<div class="rf-share-card ${hasPhoto ? 'has-photo' : 'no-photo'}" id="rf-share-card">
+  return `<div class="rf-share-card ${formatClass} ${hasPhoto ? 'has-photo' : 'no-photo'}" id="rf-share-card">
 ${buildBackgroundHtml(model)}
 ${model.positionChip ? `<div class="hchip left">${escapeHtml(model.positionChip)}</div>` : ''}
 ${model.headerRight ? `<div class="hchip right">${escapeHtml(model.headerRight)}</div>` : ''}

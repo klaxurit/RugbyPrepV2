@@ -6,6 +6,7 @@ import { posthog } from '../../services/analytics/posthog'
 import type {
   SessionSharePayload,
   SessionShareTarget,
+  ShareCardFormat,
 } from '../../services/share/sessionShareTypes'
 import {
   createSessionSharePreviewUrl,
@@ -15,8 +16,11 @@ import {
   prepareSharePhoto,
   revokeSharePhotoUrl,
 } from '../../services/share/prepareSharePhoto'
+import { shareCardAllowsSquare } from '../../services/share/resolveShareCardFormat'
+import { selectShareHero } from '../../services/share/selectShareHero'
 
 const SHOW_CLUB_STORAGE_KEY = 'rf.share.showClub'
+const CARD_FORMAT_STORAGE_KEY = 'rf.share.cardFormat'
 
 function readShowClubPreference(): boolean {
   try {
@@ -31,6 +35,24 @@ function writeShowClubPreference(value: boolean): void {
     window.localStorage.setItem(SHOW_CLUB_STORAGE_KEY, value ? '1' : '0')
   } catch {
     // stockage indisponible (navigation privée) : préférence non mémorisée
+  }
+}
+
+function readCardFormatPreference(): ShareCardFormat {
+  try {
+    const raw = window.localStorage.getItem(CARD_FORMAT_STORAGE_KEY)
+    if (raw === 'story' || raw === 'square') return raw
+  } catch {
+    // ignore
+  }
+  return 'square'
+}
+
+function writeCardFormatPreference(value: ShareCardFormat): void {
+  try {
+    window.localStorage.setItem(CARD_FORMAT_STORAGE_KEY, value)
+  } catch {
+    // ignore
   }
 }
 
@@ -59,10 +81,16 @@ export function SessionShareSheet({
   const [photoTooSmall, setPhotoTooSmall] = useState(false)
   const [photoError, setPhotoError] = useState(false)
   const [photoBusy, setPhotoBusy] = useState(false)
+  const [cardFormat, setCardFormat] = useState<ShareCardFormat>(readCardFormatPreference)
   const cameraInputRef = useRef<HTMLInputElement>(null)
   const libraryInputRef = useRef<HTMLInputElement>(null)
 
   const hasClub = Boolean(payload?.clubName?.trim())
+  const heroKind = useMemo(
+    () => (payload ? selectShareHero(payload).kind : null),
+    [payload],
+  )
+  const formatToggleVisible = heroKind != null && shareCardAllowsSquare(heroKind)
   const effectivePayload = useMemo<SessionSharePayload | null>(
     () =>
       payload
@@ -70,10 +98,16 @@ export function SessionShareSheet({
             ...payload,
             showClub: hasClub && showClub,
             photoUrl: photoUrl ?? payload.photoUrl ?? null,
+            cardFormat: formatToggleVisible ? cardFormat : 'story',
           }
         : null,
-    [payload, hasClub, showClub, photoUrl],
+    [payload, hasClub, showClub, photoUrl, cardFormat, formatToggleVisible],
   )
+
+  const setFormatPreference = (next: ShareCardFormat) => {
+    setCardFormat(next)
+    writeCardFormatPreference(next)
+  }
 
   const toggleShowClub = (next: boolean) => {
     setShowClub(next)
@@ -163,6 +197,7 @@ export function SessionShareSheet({
       isPremium: payload.isPremium,
       club_shown: payload.showClub === true,
       has_photo: Boolean(payload.photoUrl),
+      card_format: payload.cardFormat ?? 'story',
     })
 
     const outcome = await shareSessionResult(payload, target)
@@ -176,6 +211,7 @@ export function SessionShareSheet({
         club_shown: outcome.meta?.clubShown ?? false,
         logo_source: outcome.meta?.logoSource ?? 'none',
         has_photo: Boolean(payload.photoUrl),
+        card_format: payload.cardFormat ?? 'story',
       })
       if (outcome.method === 'download') {
         setHint(tr('session_share_saved_hint', lang))
@@ -339,6 +375,49 @@ export function SessionShareSheet({
           <p className="mt-2 text-xs font-bold text-danger" data-testid="session-share-photo-error">
             {tr('session_share_photo_error', lang)}
           </p>
+        )}
+
+        {formatToggleVisible && (
+          <div
+            className="mt-3"
+            data-testid="session-share-format-toggle"
+            role="group"
+            aria-label={tr('session_share_format_label', lang)}
+          >
+            <p className="mb-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-fg-muted">
+              {tr('session_share_format_label', lang)}
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                data-testid="session-share-format-square"
+                disabled={actionsDisabled}
+                aria-pressed={cardFormat === 'square'}
+                onClick={() => setFormatPreference('square')}
+                className={`inline-flex h-11 items-center justify-center rounded-2xl border text-[11px] font-extrabold uppercase tracking-wide transition-colors disabled:opacity-50 rf-focus-ring ${
+                  cardFormat === 'square'
+                    ? 'border-brand bg-brand text-on-brand'
+                    : 'border-border-app bg-layer-5 text-fg hover:border-brand-border'
+                }`}
+              >
+                {tr('session_share_format_square', lang)}
+              </button>
+              <button
+                type="button"
+                data-testid="session-share-format-story"
+                disabled={actionsDisabled}
+                aria-pressed={cardFormat === 'story'}
+                onClick={() => setFormatPreference('story')}
+                className={`inline-flex h-11 items-center justify-center rounded-2xl border text-[11px] font-extrabold uppercase tracking-wide transition-colors disabled:opacity-50 rf-focus-ring ${
+                  cardFormat === 'story'
+                    ? 'border-brand bg-brand text-on-brand'
+                    : 'border-border-app bg-layer-5 text-fg hover:border-brand-border'
+                }`}
+              >
+                {tr('session_share_format_story', lang)}
+              </button>
+            </div>
+          </div>
         )}
 
         {hasClub && (

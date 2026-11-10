@@ -26,6 +26,9 @@ export type ShareProgression =
   | { kind: 'load'; percent: number; weeks: number; exerciseName?: string | null }
   | { kind: 'streak'; weeks: number }
 
+/** Formats d’export carte (Story 9:16 ou carré feed 1:1). */
+export type ShareCardFormat = 'story' | 'square'
+
 /** Données pour générer / partager une carte post-séance. */
 export interface SessionSharePayload {
   sessionLabel: string
@@ -69,6 +72,11 @@ export interface SessionSharePayload {
   progression?: ShareProgression | null
   /** Photo de séance choisie par le joueur (fond de carte). Absente → fond de marque. */
   photoUrl?: string | null
+  /**
+   * Préférence format carte (UI). Résolue avec le héros via `resolveShareCardFormat`
+   * (carré seulement pour record / séance par défaut).
+   */
+  cardFormat?: ShareCardFormat | null
   /** Date longue (ex. « Vendredi 8 mai »). */
   dateLabel?: string | null
   /** Semaine programme (ex. « Semaine 19 »). */
@@ -102,3 +110,5 @@ export const SESSION_SHARE_LANDING_URL =
 /** Format Stories / Snap / IG — standard industrie fitness. */
 export const SESSION_SHARE_WIDTH = 1080
 export const SESSION_SHARE_HEIGHT = 1920
+/** Format carré feed (record / séance par défaut). */
+export const SESSION_SHARE_SQUARE_HEIGHT = 1080

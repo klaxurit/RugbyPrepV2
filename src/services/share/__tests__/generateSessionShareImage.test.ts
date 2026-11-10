@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { generateSessionShareImage } from '../generateSessionShareImage'
 import {
   SESSION_SHARE_HEIGHT,
+  SESSION_SHARE_SQUARE_HEIGHT,
   SESSION_SHARE_WIDTH,
   type SessionSharePayload,
 } from '../sessionShareTypes'
@@ -88,17 +89,19 @@ const render = (patch: Partial<SessionSharePayload> = {}, a: Parameters<typeof b
   buildSessionShareCardHtml(buildSessionShareCardModel({ ...payload, ...patch }, a))
 
 describe('buildSessionShareCardHtml (v2)', () => {
-  it('record battu en héros : exercice, charge, delta, tampon', () => {
+  it('record battu en héros : exercice, charge, delta, tampon (carré auto)', () => {
     const html = render()
+    expect(html).toContain('rf-share-card is-square no-photo')
     expect(html).toContain('class="hero hero-record"')
     expect(html).toContain('>Bench Press</h1>')
-    expect(html).toContain('<span class="big" style="font-size:176px">90</span>')
+    expect(html).toContain('<span class="big" style="font-size:113px">90</span>')
     expect(html).toContain('<b>+5 kg</b><span>vs 85 kg</span>')
     expect(html).toContain('class="stamp"')
   })
 
   it('jamais le tonnage en héros ; il peut être en chip', () => {
     const html = render({ prs: [] })
+    expect(html).toContain('rf-share-card is-square no-photo')
     expect(html).toContain('class="hero hero-session"')
     expect(html).toContain('>Haut du corps</h1>')
     expect(html).not.toContain('Force.</h1>')
@@ -106,11 +109,13 @@ describe('buildSessionShareCardHtml (v2)', () => {
     expect(html).not.toMatch(/class="big"[^>]*>3,1/)
   })
 
-  it('semaine de match en héros si aucun record', () => {
+  it('semaine de match en héros si aucun record — story forcée', () => {
     const html = render({
       prs: [],
       nextMatch: { daysUntil: 5, opponent: 'Rugby Club Hérouvillais', isHome: false },
+      cardFormat: 'square',
     })
+    expect(html).toContain('rf-share-card is-story no-photo')
     expect(html).toContain('class="hero hero-match"')
     expect(html).toContain('<div class="jx">J-5</div>')
     expect(html).toContain('PROCHAIN MATCH · EXT.')
@@ -149,11 +154,17 @@ describe('buildSessionShareCardHtml (v2)', () => {
   })
 
   it('sans photo : fond de marque (trame terrain) ; avec photo : panneau + liseré', () => {
-    expect(render()).toContain('rf-share-card no-photo')
+    expect(render()).toContain('rf-share-card is-square no-photo')
     expect(render()).toContain('class="pitch"')
     const withPhoto = render({}, { ...assets, photoSrc: 'data:image/jpeg;base64,AAA' })
-    expect(withPhoto).toContain('rf-share-card has-photo')
+    expect(withPhoto).toContain('rf-share-card is-square has-photo')
     expect(withPhoto).toContain('class="edge"')
+  })
+
+  it('préférence story respecte le format même pour un record', () => {
+    const html = render({ cardFormat: 'story' })
+    expect(html).toContain('rf-share-card is-story no-photo')
+    expect(html).toContain('style="font-size:176px">90</span>')
   })
 
   it('aucune identité : wordmark seul, pas de séparateur ni de chip poste', () => {
@@ -170,7 +181,7 @@ describe('generateSessionShareImage', () => {
     document.querySelectorAll('[data-rf-share-host]').forEach((n) => n.remove())
   })
 
-  it('monte le mockup DOM et encode un PNG Stories', async () => {
+  it('monte le mockup DOM et encode un PNG carré pour un record', async () => {
     mockShareAssets()
     const { toBlob } = await import('html-to-image')
     const blob = await generateSessionShareImage(payload)
@@ -178,8 +189,27 @@ describe('generateSessionShareImage', () => {
     expect(toBlob).toHaveBeenCalled()
     const cardArg = vi.mocked(toBlob).mock.calls[0]?.[0] as HTMLElement
     expect(cardArg.classList.contains('rf-share-card')).toBe(true)
+    expect(cardArg.classList.contains('is-square')).toBe(true)
     expect(blob.type).toBe('image/png')
 
+    const opts = vi.mocked(toBlob).mock.calls[0]?.[1] as {
+      width: number
+      height: number
+    }
+    expect(opts.width).toBe(SESSION_SHARE_WIDTH)
+    expect(opts.height).toBe(SESSION_SHARE_SQUARE_HEIGHT)
+  })
+
+  it('encode un PNG Stories pour un héros match', async () => {
+    mockShareAssets()
+    const { toBlob } = await import('html-to-image')
+    vi.mocked(toBlob).mockClear()
+    const blob = await generateSessionShareImage({
+      ...payload,
+      prs: [],
+      nextMatch: { daysUntil: 2, opponent: 'DUC', isHome: true },
+    })
+    expect(blob.type).toBe('image/png')
     const opts = vi.mocked(toBlob).mock.calls[0]?.[1] as {
       width: number
       height: number
