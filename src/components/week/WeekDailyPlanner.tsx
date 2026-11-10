@@ -6,6 +6,10 @@ import { mapMotherSessionType } from '../../services/program/buildProgramSession
 import { findSessionLogForPlannedSlot } from '../../services/scheduling/mergeDatedSessionCompletion'
 import { Icon, Pill, SectionLabel, type IconName } from '../ui'
 import { plannedSessionCardStats } from './plannedSessionCardStats'
+import {
+  isGymSessionLogType,
+  resolveWeekDayType,
+} from '../../services/scheduling/resolveWeekDayType'
 
 const SESSION_SUBTITLE: Record<MotherSessionType, string> = {
   upper: 'Haut du corps',
@@ -186,14 +190,22 @@ export function WeekDailyPlanner({
       const hasGym = Boolean(session && session.completionStatus !== 'skipped')
       const isClubDay = clubDays.includes(dow)
       const isUnavailable = unavailableDays.includes(dow) && !isClubDay
+      const dayGymLog = logs.find(
+        (l) =>
+          l.dateISO.slice(0, 10) === dateISO &&
+          isGymSessionLogType(l.sessionType),
+      )
+      const hasGymLogOnDate = Boolean(dayGymLog)
 
-      let type: DayType
-      if (match) type = 'match'
-      else if (hasGym) type = 'gym'
-      else if (arDoneByDate.has(dateISO) || activeRecoveryEligibleDays.includes(dow)) type = 'recovery'
-      else if (isClubDay) type = 'club'
-      else if (isUnavailable) type = 'unavailable'
-      else type = 'rest'
+      const type = resolveWeekDayType({
+        hasMatch: Boolean(match),
+        hasPlannedGym: hasGym,
+        hasGymLogOnDate,
+        activeRecoveryDone: arDoneByDate.has(dateISO),
+        activeRecoveryEligible: activeRecoveryEligibleDays.includes(dow),
+        isClubDay,
+        isUnavailable,
+      })
 
       // Log de la séance PLANIFIÉE (par motherSessionId), pas « n'importe quel
       // log du jour » — sinon Haut planifié + Bas fait le même jour → revue inversée.
@@ -207,7 +219,9 @@ export function WeekDailyPlanner({
             ),
           })
         : undefined
-      const realDuration = matchedLog?.durationMin
+      // 1re séance le jour J hors slot planifié (après onboarding) → log du jour.
+      const displayLog = matchedLog ?? (!session ? dayGymLog : undefined)
+      const realDuration = displayLog?.durationMin
       const cardStats = session
         ? plannedSessionCardStats(session.sessionSlot)
         : undefined
@@ -218,12 +232,12 @@ export function WeekDailyPlanner({
         dateNum: String(dateObj.getDate()),
         isToday,
         type,
-        hasGym,
+        hasGym: hasGym || hasGymLogOnDate,
         isClubDay,
         sessionIndex: session ? sessionIndexByDow.get(dow) : undefined,
         sessionLabel: session
           ? formatTitle(formatSessionTitle(session.sessionSlot.session.metadata.id))
-          : undefined,
+          : displayLog?.sessionLabel ?? undefined,
         sessionSubtitle: (() => {
           if (!session) return undefined
           const typeLabel =
@@ -250,12 +264,12 @@ export function WeekDailyPlanner({
         isLight: cardStats?.isLight,
         // « Faite » seulement s'il existe un log rejouable — sinon CTA « Revoir »
         // sans sessionLogId (clic → démarrer) après une annulation partielle.
-        isCompleted: matchedLog != null,
+        isCompleted: displayLog != null,
         isSkipped: session?.completionStatus === 'skipped',
-        sessionLogId: matchedLog?.id,
+        sessionLogId: displayLog?.id,
         match: match ?? undefined,
         arDone: arDoneByDate.has(dateISO),
-        arEligible: activeRecoveryEligibleDays.includes(dow),
+        arEligible: activeRecoveryEligibleDays.includes(dow) && !hasGymLogOnDate,
       }
     })
   }, [
@@ -432,12 +446,12 @@ function FeatureCardSwitch({
         <GymCard
           day={day}
           onStart={() => {
-            if (day.sessionIndex == null) return
             if (day.isCompleted && day.sessionLogId) {
-              onSessionSelect(day.sessionIndex, { reviewLogId: day.sessionLogId })
-            } else {
-              onSessionSelect(day.sessionIndex)
+              onSessionSelect(day.sessionIndex ?? 0, { reviewLogId: day.sessionLogId })
+              return
             }
+            if (day.sessionIndex == null) return
+            onSessionSelect(day.sessionIndex)
           }}
         />
       )
@@ -650,7 +664,7 @@ function GymCard({ day, onStart }: { day: ResolvedDay; onStart: () => void }) {
           <button
             type="button"
             onClick={onStart}
-            disabled={day.sessionIndex == null}
+            disabled={day.sessionIndex == null && !(day.isCompleted && day.sessionLogId)}
             className={
               done
                 ? 'flex h-[46px] flex-1 items-center justify-center gap-2 rounded-[14px] border-[1.5px] border-brand bg-transparent text-brand text-[14px] font-bold tracking-[0.01em] active:scale-[0.97] transition-transform hover:bg-brand/5 disabled:opacity-50 disabled:active:scale-100 rf-focus-ring'

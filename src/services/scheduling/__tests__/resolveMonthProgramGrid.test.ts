@@ -208,4 +208,28 @@ describe('resolveMonthProgramGrid', () => {
     expect(bands.some((l) => l.includes('En saison') || l.includes('Affûtage') || l.includes('Phase'))).toBe(true)
     expect(bands.filter((l) => l.includes('Affûtage') && l.includes('semaine 8')).length).toBeLessThanOrEqual(1)
   })
+
+  it('n’émet pas de séances avant programVisibleFromISO (pas de Manquée pré-compte)', () => {
+    const grid = resolveMonthProgramGrid({
+      profile: baseProfile,
+      events: [],
+      logs: [],
+      today: '2026-06-15',
+      fatigue: 'OK',
+      week: 'W1',
+      lastNonDeloadWeek: 'W1',
+      year: 2026,
+      month: 5,
+      lang: 'fr',
+      programVisibleFromISO: '2026-06-10',
+    })
+
+    const dates = [...grid.sessionsByDate.keys()]
+    expect(dates.every((d) => d >= '2026-06-10')).toBe(true)
+    expect(dates.some((d) => d < '2026-06-10')).toBe(false)
+
+    for (const sessions of grid.sessionsByDate.values()) {
+      expect(sessions.every((s) => s.status !== 'missed' || s.dateISO >= '2026-06-10')).toBe(true)
+    }
+  })
 })

@@ -27,6 +27,10 @@ import {
   projectMonthWeekContext,
   resolvePreSeasonStartMonday,
 } from './projectMonthWeekContext'
+import {
+  isBeforeProgramVisibleFrom,
+  resolvePlannedSessionMissedStatus,
+} from './programVisibility'
 
 /** Ancres figées depuis la semaine réelle + début implicite si override manuel. */
 function buildMonthProjectionBase(
@@ -147,6 +151,11 @@ export type ResolveMonthProgramGridParams = ResolveWeeklyProgramSurfaceParams & 
   /** 0-indexed (JS Date month). */
   month: number
   lang?: Lang
+  /**
+   * YYYY-MM-DD : début d’horizon joueur (fin d’onboarding / création compte).
+   * Séances strictement antérieures : non émises (donc pas « Manquée »).
+   */
+  programVisibleFromISO?: string | null
 }
 
 const SESSION_SHORT: Record<MotherSessionType, { fr: string; en: string }> = {
@@ -262,11 +271,15 @@ function resolveMonthSessionStatus(
   todayISO: string,
   slotStatus: DatedSession['completionStatus'] | undefined,
   hasGymLogOnDate: boolean,
+  programVisibleFromISO?: string | null,
 ): MonthSessionStatus {
-  if (slotStatus === 'skipped') return 'skipped'
-  if (slotStatus === 'completed' || hasGymLogOnDate) return 'completed'
-  if (dateISO < todayISO) return 'missed'
-  return 'pending'
+  return resolvePlannedSessionMissedStatus({
+    dateISO,
+    todayISO,
+    programVisibleFromISO,
+    slotStatus: slotStatus ?? null,
+    hasGymLogOnDate,
+  })
 }
 
 function detectPhaseMarkers(
@@ -450,6 +463,8 @@ export function resolveMonthProgramGrid(params: ResolveMonthProgramGridParams): 
     for (const session of merged) {
       const dateISO = isoDateFromWeekMonday(weekMonday, session.dayOfWeek)
       if (dateISO < first || dateISO > last) continue
+      // Hors horizon programme : ni génération ni « Manquée ».
+      if (isBeforeProgramVisibleFrom(dateISO, params.programVisibleFromISO)) continue
 
       const meta = session.sessionSlot.session.metadata
       const sessionType = meta.sessionType
@@ -459,6 +474,7 @@ export function resolveMonthProgramGrid(params: ResolveMonthProgramGridParams): 
         params.today,
         session.completionStatus,
         gymLogDates.has(dateISO),
+        params.programVisibleFromISO,
       )
       const entry: MonthPlannedSession = {
         dateISO,

@@ -57,6 +57,8 @@ import { planProgramEvolutionAfterManualMatch } from '../services/calendar/planP
 import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
 import { resolveMotherSessionsForWeek } from '../services/motherSession/resolveMotherSessionsForWeek'
 import { novelMotherSessionIds } from '../services/program/inSeasonVarietyNotice'
+import { resolveProgramVisibleFromISO } from '../services/scheduling/programVisibility'
+import { userScopedKey } from '../services/storage/userScopedStorage'
 
 function shiftIsoDate(iso: string, days: number): string {
   const d = new Date(`${iso}T12:00:00`)
@@ -286,11 +288,33 @@ export function WeekPage() {
   // ── Hard-block global ──────────────────────────────────────────────────────
   const { hasHardBlock, hardBlockReasons } = getGlobalProgramHardBlock(profile)
 
+  const programVisibleFromISO = useMemo(() => {
+    let onboardingCompletedAtYmd: string | null = null
+    try {
+      onboardingCompletedAtYmd = window.localStorage.getItem(
+        userScopedKey('rugbyprep.onboarding.completedAt', userId),
+      )
+    } catch {
+      onboardingCompletedAtYmd = null
+    }
+    const createdAt =
+      authState.status === 'authenticated' ? authState.user?.createdAt : null
+    const accountCreatedYmd =
+      typeof createdAt === 'number' && Number.isFinite(createdAt) && createdAt > 0
+        ? new Date(createdAt).toISOString().slice(0, 10)
+        : null
+    return resolveProgramVisibleFromISO({
+      onboardingCompletedAtYmd,
+      accountCreatedYmd,
+    })
+  }, [authState, userId])
+
   const monthProgram = useMonthProgramGrid(surfaceParams, {
     year: monthView.year,
     month: monthView.month,
     lang,
     enabled: monthOpen && !hasHardBlock,
+    programVisibleFromISO,
   })
 
   useEffect(() => {

@@ -10,9 +10,11 @@ export function useMonthProgramGrid(
     month: number
     lang: Lang
     enabled?: boolean
+    /** Fin d’onboarding / création compte — cutoff « Manquée ». */
+    programVisibleFromISO?: string | null
   },
 ): MonthProgramGrid | null {
-  const { year, month, lang, enabled = true } = opts
+  const { year, month, lang, enabled = true, programVisibleFromISO = null } = opts
   const {
     profile,
     events,
@@ -48,12 +50,14 @@ export function useMonthProgramGrid(
       year,
       month,
       lang,
+      programVisibleFromISO,
     })
   }, [
     enabled,
     year,
     month,
     lang,
+    programVisibleFromISO,
     profile,
     events,
     logs,
