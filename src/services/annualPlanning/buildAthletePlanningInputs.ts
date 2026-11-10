@@ -15,9 +15,13 @@ import type {
 import type { ACWRZone } from '../../hooks/useACWR'
 import { isRestartRampUpActive } from '../program/restartRampUp'
 import { resolveFatigueLevel } from '../program/resolveFatigueLevel'
+import { detectVolumeLighteningReasons } from '../program/volumeConfidenceBypass'
 import { shouldAutoManualPlayoffsFromCalendar } from '../calendar/inferMatchKindFromFfrJournee'
 import { sanitizePlanningAnchorsForProgressionDetailed } from '../season/sanitizePlanningAnchors'
 import { resolveClubContactProxy } from '../scheduling/clubContactProxy'
+import { resolveContentFamily } from '../../data/contentFamily'
+
+export { resolveContentFamily } from '../../data/contentFamily'
 
 // (`AcwrZoneInput` retiré — on utilise directement `ACWRZone | null | undefined`
 //  depuis le hook canonical `useACWR`.)
@@ -38,6 +42,10 @@ export interface BuildAthletePlanningInputsParams {
    * Absent = pas encore décidé.
    */
   fatigueLoadChoice?: 'self_manage' | 'lighten_volume' | 'drop_session' | null
+  /**
+   * Bypass volume (reprise / absence) — ignore le bump fatigue du restart ramp.
+   */
+  volumeConfidenceBypass?: boolean | null
 }
 
 export interface BuildAthletePlanningInputsResult {
@@ -278,7 +286,19 @@ export function buildAthletePlanningInputs(
   params: BuildAthletePlanningInputsParams
 ): BuildAthletePlanningInputsResult {
   const warnings: string[] = []
-  const { profile, events, logs, today, fatigue, acwrZone, athleteIdentity, readinessScore, jumpTrend, fatigueLoadChoice } = params
+  const {
+    profile,
+    events,
+    logs,
+    today,
+    fatigue,
+    acwrZone,
+    athleteIdentity,
+    readinessScore,
+    jumpTrend,
+    fatigueLoadChoice,
+    volumeConfidenceBypass,
+  } = params
   const visibleEvents = events.filter((event) => event.user_hidden !== true)
 
   const resolvedPositionGroup = resolvePositionGroup(profile, warnings)
@@ -288,11 +308,15 @@ export function buildAthletePlanningInputs(
   // Rampe de reprise (trainingBaseline = 'restart' < 14j) : bump 'normal' → 'high'
   // pour réduire le volume sur les 2 premières semaines (KB population-specific.md §3).
   // Aucune action si fatigue déjà 'high' ou 'very_high' (déjà couvert par ACWR/RPE).
+  // Bypass joueur : on ignore ce bump (volume normal demandé).
   const rampUpActive = isRestartRampUpActive(profile, new Date(`${today}T12:00:00`))
-  const fatigueLevel: typeof baseFatigueLevel =
-    rampUpActive && baseFatigueLevel === 'normal' ? 'high' : baseFatigueLevel
-  if (rampUpActive && baseFatigueLevel === 'normal') {
+  const applyRestartBump =
+    rampUpActive && baseFatigueLevel === 'normal' && !volumeConfidenceBypass
+  const fatigueLevel: typeof baseFatigueLevel = applyRestartBump ? 'high' : baseFatigueLevel
+  if (applyRestartBump) {
     warnings.push('Mode reprise actif : volume W1-W2 réduit (-40 à 50%).')
+  } else if (rampUpActive && volumeConfidenceBypass) {
+    warnings.push('Mode reprise contourné — volume normal à ta demande.')
   }
 
   const completedSessionsLast7d = countCompletedInRollingDays(logs, today, 7)
@@ -343,6 +367,9 @@ export function buildAthletePlanningInputs(
   const { anchors: planningAnchors, didMigrateFrozenWeek } =
     sanitizePlanningAnchorsForProgressionDetailed(planningAnchorsRaw, today)
 
+  const familyResolved = resolveContentFamily(profile.rugbyPosition, profile.position)
+  if (familyResolved.warning) warnings.push(familyResolved.warning)
+
   const inputs: AthletePlanningInputs = {
     events: visibleEvents.map((e) => ({
       date: e.date,
@@ -352,11 +379,23 @@ export function buildAthletePlanningInputs(
     today,
     weeklyFrequency,
     positionGroup: resolvedPositionGroup,
+    contentFamily: familyResolved.family,
     trainingLevel: profile.trainingLevel,
     equipment: profile.equipment,
     fatigueLevel,
     ...(fatigueLoadChoice ? { fatigueLoadChoice } : {}),
+    ...(volumeConfidenceBypass ? { volumeConfidenceBypass: true } : {}),
     trainingBaseline: profile.trainingBaseline,
+    trainingBaselineSetAt: profile.trainingBaselineSetAt,
+    // Sous-mode trêve connu seulement après detectAnnualPlanningContext —
+    // on pré-remplit restart + absence ; le resolver complète treve_rampup.
+    volumeLighteningReasons: detectVolumeLighteningReasons({
+      profile,
+      today,
+      completedSessionsLast7d: monitoringSnapshot.completedSessionsLast7d,
+      completedSessionsLast28d: monitoringSnapshot.completedSessionsLast28d,
+      hasHistoricalLogs: monitoringSnapshot.hasHistoricalLogs,
+    }),
     identity,
     monitoringSnapshot,
     planningAnchors,

@@ -159,7 +159,15 @@ export function useWeekSnapshot(
     const snapshotStorage = params.snapshotStorage
 
     // Dedup: don't re-resolve if we already resolved this weekId for this identity + profile
-    const resolvedKey = `${userId ?? 'anon'}:${currentWeekId}:${profileHash}`
+    // Inclut les revisions joueur (ACWR / volume) pour forcer un fresh resolve
+    // quand le bypass change sans toucher au profil.
+    const resolvedKey = [
+      userId ?? 'anon',
+      currentWeekId,
+      profileHash,
+      `fl${params.fatigueDecisionRevision ?? 0}`,
+      `vc${params.volumeConfidenceRevision ?? 0}`,
+    ].join(':')
     if (resolvedWeekRef.current === resolvedKey && snapshot?.weekId === currentWeekId) {
       return
     }
@@ -180,7 +188,11 @@ export function useWeekSnapshot(
           upstream.surface.planningContext.weekNumber &&
         persisted.surface.planningContext.weekLabel ===
           upstream.surface.planningContext.weekLabel &&
-        persisted.surface.planningContext.cycle === upstream.surface.planningContext.cycle
+        persisted.surface.planningContext.cycle === upstream.surface.planningContext.cycle &&
+        Boolean(persisted.surface.planningContext.volumeConfidenceBypassApplied) ===
+          Boolean(upstream.surface.planningContext.volumeConfidenceBypassApplied) &&
+        (persisted.surface.motherSession?.sessions.length ?? 0) ===
+          (upstream.surface.motherSession?.sessions.length ?? 0)
       ) {
         // Migrate old snapshots to current schema (explanation, clubDays, schemaVersion)
         const profileClubDays = (params.profile.clubSchedule?.clubDays ?? []).map(

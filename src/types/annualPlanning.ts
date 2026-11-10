@@ -35,6 +35,17 @@ export interface AthletePlanningInputs {
 
   weeklyFrequency: 2 | 3 | 4
   positionGroup: 'front_row' | 'back_three'
+  /**
+   * Famille mother Lower/Upper in-season (6).
+   * Distincte du binôme `positionGroup` (calendrier / Primer / Full).
+   */
+  contentFamily?:
+    | 'front_row'
+    | 'second_row'
+    | 'back_row'
+    | 'half_backs'
+    | 'centers'
+    | 'back_three'
   /** Niveau S&C — cadence de variété in-season (Fondations vs Performance). */
   trainingLevel?: TrainingLevel
   /** Matériel déclaré — pilote mother sessions BW vs full_gym. */
@@ -49,11 +60,25 @@ export interface AthletePlanningInputs {
    */
   fatigueLoadChoice?: 'self_manage' | 'lighten_volume' | 'drop_session'
 
+  /**
+   * Bypass joueur : volume normal malgré reprise / absence / ramp-up trêve.
+   * Rails match / décharge 3:1 inchangés.
+   */
+  volumeConfidenceBypass?: boolean
+
+  /**
+   * Raisons d'allègement volume détectées en amont (bandeau + resolver).
+   * Recalculées après `detectAnnualPlanningContext` si absentes.
+   */
+  volumeLighteningReasons?: Array<'restart_ramp' | 'long_absence' | 'treve_rampup'>
+
   /** Proxy contact club pour la semaine de `today`. Défaut runtime = normal. */
   clubContactProxy?: ClubContactProxy
 
   /** État de forme déclaré à l'onboarding. Module la rampe de reprise (cf. onboardingCycleHint). */
   trainingBaseline?: TrainingBaselineInput
+  /** ISO d'activation du baseline — pour détecter la rampe restart active. */
+  trainingBaselineSetAt?: string | null
 
   identity?: AthleteIdentityContext
 
@@ -126,8 +151,23 @@ export interface AnnualPlanningContext {
   loadManagementOverride?: 'recovery'
   /** Choix joueur appliqué cette semaine (ACWR). */
   fatigueLoadChoiceApplied?: 'self_manage' | 'lighten_volume' | 'drop_session'
+  /**
+   * Raisons qui allègent le volume (reprise / absence / trêve).
+   * Vide si décharge 3:1 (rail) ou aucune cause bypassable.
+   */
+  volumeLighteningReasons?: Array<'restart_ramp' | 'long_absence' | 'treve_rampup'>
+  /** Bypass volume actif (joueur a choisi « repasser en normal »). */
+  volumeConfidenceBypassApplied?: boolean
   weeklyFrequency: 2 | 3 | 4
   positionGroup: 'front_row' | 'back_three'
+  /** Famille mother (6) — sélection Lower/Upper in-season. */
+  contentFamily?:
+    | 'front_row'
+    | 'second_row'
+    | 'back_row'
+    | 'half_backs'
+    | 'centers'
+    | 'back_three'
 
   /**
    * Sous-mode in-season (trêve, compétition normale, fin de saison). Absent si cycle ≠ in_season.

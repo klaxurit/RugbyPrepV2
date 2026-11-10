@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { formatTitleFromMotherSessionId } from '../formatMotherSessionTitle'
+import {
+  formatMotherSessionSubtitle,
+  formatTitleFromMotherSessionId,
+} from '../formatMotherSessionTitle'
 
 describe('formatTitleFromMotherSessionId', () => {
   describe('FR', () => {
@@ -14,9 +17,25 @@ describe('formatTitleFromMotherSessionId', () => {
       expect(result).not.toContain('_V1')
     })
 
-    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Power-up · Avants', () => {
+    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Power-up · Pack', () => {
       expect(formatTitleFromMotherSessionId('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1', 'fr'))
-        .toBe('Power-up · Avants')
+        .toBe('Power-up · Pack')
+    })
+
+    it('contentFamily back_row → Power-up · 3ème ligne', () => {
+      expect(
+        formatTitleFromMotherSessionId('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1', 'fr', {
+          contentFamily: 'back_row',
+        }),
+      ).toBe('Power-up · 3ème ligne')
+    })
+
+    it('contentFamily second_row sur pré Power → suffixe 2ème ligne', () => {
+      expect(
+        formatTitleFromMotherSessionId('LOWER_PRESEASON_POWER_FRONT_ROW_V1', 'fr', {
+          contentFamily: 'second_row',
+        }),
+      ).toMatch(/2ème ligne/)
     })
 
     it('override: FULL_BODY_IN_SEASON_BACK_THREE_V1 → Corps complet · Ligne arrière', () => {
@@ -49,7 +68,7 @@ describe('formatTitleFromMotherSessionId', () => {
 
     it('variante Full B : même titre que A', () => {
       expect(formatTitleFromMotherSessionId('FULL_BODY_IN_SEASON_FRONT_ROW_B_V1', 'fr'))
-        .toBe('Corps complet · Avants')
+        .toBe('Corps complet · Pack')
     })
   })
 
@@ -59,9 +78,9 @@ describe('formatTitleFromMotherSessionId', () => {
         .toBe('Lower - Force')
     })
 
-    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Light Primer · Front Row', () => {
+    it('override: FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1 → Light Primer · Pack', () => {
       expect(formatTitleFromMotherSessionId('FULL_LIGHT_PRIMER_IN_SEASON_FRONT_ROW_V1', 'en'))
-        .toBe('Light Primer · Front Row')
+        .toBe('Light Primer · Pack')
     })
   })
 
@@ -80,6 +99,36 @@ describe('formatTitleFromMotherSessionId', () => {
 
     it('empty string returns itself', () => {
       expect(formatTitleFromMotherSessionId('', 'fr')).toBe('')
+    })
+
+    it('nouveaux IDs famille : titre sans BACK_ROW / SECOND_ROW brut', () => {
+      expect(formatTitleFromMotherSessionId('LOWER_IN_SEASON_BACK_ROW_V1', 'fr')).toBe(
+        'Bas du corps',
+      )
+      expect(formatTitleFromMotherSessionId('UPPER_IN_SEASON_SECOND_ROW_LANDMINE_V1', 'fr')).toBe(
+        'Haut du corps',
+      )
+      expect(formatTitleFromMotherSessionId('UPPER_IN_SEASON_HALF_BACKS_CHESTPASS_V1', 'fr')).not.toMatch(
+        /BACK_ROW|HALF_BACKS|SECOND_ROW/,
+      )
+    })
+  })
+
+  describe('formatMotherSessionSubtitle', () => {
+    it('BACK_ROW → 3ème ligne, jamais le token technique', () => {
+      const sub = formatMotherSessionSubtitle('UPPER_IN_SEASON_BACK_ROW_LANDMINE_V1', 'fr', {
+        mesocycleWeek: 3,
+        trainingLevel: 'performance',
+      })
+      expect(sub).toMatch(/3ème ligne/)
+      expect(sub).not.toMatch(/BACK_ROW/)
+      expect(sub).toMatch(/landmine|Landmine|Contraste/i)
+    })
+
+    it('CENTERS Lower → Centres sans lane token', () => {
+      const sub = formatMotherSessionSubtitle('LOWER_IN_SEASON_CENTERS_V1', 'fr')
+      expect(sub).toMatch(/Centres/)
+      expect(sub).not.toMatch(/CENTERS|BACK_ROW/)
     })
   })
 })

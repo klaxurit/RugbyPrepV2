@@ -23,6 +23,7 @@ describe('buildAthletePlanningInputs', () => {
     })
     expect(r.derived.resolvedPositionGroup).toBe('front_row')
     expect(r.inputs.positionGroup).toBe('front_row')
+    expect(r.inputs.contentFamily).toBe('front_row')
   })
 
   it('BACK_THREE -> back_three', () => {
@@ -34,9 +35,10 @@ describe('buildAthletePlanningInputs', () => {
       fatigue: 'OK',
     })
     expect(r.derived.resolvedPositionGroup).toBe('back_three')
+    expect(r.inputs.contentFamily).toBe('back_three')
   })
 
-  it('SECOND_ROW (avant non première ligne) -> front_row', () => {
+  it('SECOND_ROW (avant non première ligne) -> front_row planning + second_row family', () => {
     const r = buildAthletePlanningInputs({
       profile: baseProfile({ rugbyPosition: 'SECOND_ROW' }),
       events: emptyEvents,
@@ -45,6 +47,32 @@ describe('buildAthletePlanningInputs', () => {
       fatigue: 'OK',
     })
     expect(r.derived.resolvedPositionGroup).toBe('front_row')
+    expect(r.inputs.positionGroup).toBe('front_row')
+    expect(r.inputs.contentFamily).toBe('second_row')
+  })
+
+  it('BACK_ROW → planning front_row + contentFamily back_row', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({ rugbyPosition: 'BACK_ROW' }),
+      events: emptyEvents,
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.positionGroup).toBe('front_row')
+    expect(r.inputs.contentFamily).toBe('back_row')
+  })
+
+  it('CENTERS → planning back_three + contentFamily centers', () => {
+    const r = buildAthletePlanningInputs({
+      profile: baseProfile({ rugbyPosition: 'CENTERS' }),
+      events: emptyEvents,
+      logs: [],
+      today: TODAY,
+      fatigue: 'OK',
+    })
+    expect(r.inputs.positionGroup).toBe('back_three')
+    expect(r.inputs.contentFamily).toBe('centers')
   })
 
   it('poste absent -> back_three + warning', () => {

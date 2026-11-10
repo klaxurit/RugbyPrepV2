@@ -38,6 +38,8 @@ export interface UseWeeklyProgramSurfaceParams {
   userId?: string | null
   /** Bust memo when fatigue load decision changes. */
   fatigueDecisionRevision?: number
+  /** Bust memo when volume confidence bypass changes. */
+  volumeConfidenceRevision?: number
 }
 
 export interface UseWeeklyProgramSurfaceResult {

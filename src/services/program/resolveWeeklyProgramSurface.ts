@@ -25,6 +25,7 @@ import { buildSafeSequentialFallback } from '../scheduling/buildSafeSequentialFa
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
 import type { ProgramFeatureFlags } from './policies/featureFlags'
 import { readFatigueLoadDecisionForDay } from './fatigueLoadChoice'
+import { reconcileVolumeConfidenceBypass } from './volumeConfidenceBypass'
 
 // ── Types publics ────────────────────────────────────────────────────────────
 
@@ -49,6 +50,10 @@ export interface ResolveWeeklyProgramSurfaceParams {
   fatigueLoadChoice?: 'self_manage' | 'lighten_volume' | 'drop_session' | null
   /** Invalide le cache quand une décision fatigue est écrite / annulée. */
   fatigueDecisionRevision?: number
+  /** Bypass volume (persisté) — sinon lu depuis le storage. */
+  volumeConfidenceBypass?: boolean | null
+  /** Invalide le cache quand le bypass volume change. */
+  volumeConfidenceRevision?: number
 }
 
 export interface WeeklyProgramSurfaceResult {
@@ -81,6 +86,7 @@ export function resolveWeeklyProgramSurface(
     ignoreAcwrOverload,
     hasSufficientACWRData,
     fatigueLoadChoice: fatigueLoadChoiceParam,
+    volumeConfidenceBypass: volumeConfidenceBypassParam,
   } = params
 
   // ACWR insuffisant ou override joueur (toggle « je me sens bien ») → ignorer la zone.
@@ -89,6 +95,9 @@ export function resolveWeeklyProgramSurface(
 
   const storedChoice = readFatigueLoadDecisionForDay(today)?.choice
   const fatigueLoadChoice = fatigueLoadChoiceParam ?? storedChoice ?? null
+  const storedVolumeBypass = reconcileVolumeConfidenceBypass(today, logs)
+  const volumeConfidenceBypass =
+    volumeConfidenceBypassParam ?? (storedVolumeBypass != null)
 
   // 1. Résoudre le contexte annuel (planning inputs + detection)
   const { inputs, warnings: planningInputWarnings } = buildAthletePlanningInputs({
@@ -102,6 +111,7 @@ export function resolveWeeklyProgramSurface(
     readinessScore,
     jumpTrend,
     fatigueLoadChoice,
+    volumeConfidenceBypass,
   })
 
   // 1b. Pre-resolve cycle for scheduling mode gating (lightweight, no session resolution)

@@ -374,6 +374,7 @@ function baseContextFields(
   | 'clubContactProxy'
   | 'weeklyFrequency'
   | 'positionGroup'
+  | 'contentFamily'
   | 'identity'
   | 'monitoringSnapshot'
   | 'firstMatchDate'
@@ -408,6 +409,7 @@ function baseContextFields(
     clubContactProxy: inputs.clubContactProxy ?? 'normal',
     weeklyFrequency: inputs.weeklyFrequency,
     positionGroup: inputs.positionGroup,
+    ...(inputs.contentFamily ? { contentFamily: inputs.contentFamily } : {}),
     identity: inputs.identity,
     monitoringSnapshot: inputs.monitoringSnapshot,
     firstMatchDate,
