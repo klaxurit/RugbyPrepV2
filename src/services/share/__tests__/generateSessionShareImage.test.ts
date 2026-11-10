@@ -48,7 +48,16 @@ const payload: SessionSharePayload = {
   sessionOrdinalLabel: 'Séance 3/5',
 }
 
-function mockImageLoad() {
+function mockShareAssets() {
+  const pngBytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])
+  vi.spyOn(globalThis, 'fetch').mockImplementation(async () =>
+    ({
+      ok: true,
+      status: 200,
+      headers: { get: () => 'image/png' },
+      arrayBuffer: async () => pngBytes.buffer.slice(0),
+    }) as unknown as Response,
+  )
   vi.spyOn(globalThis, 'Image').mockImplementation(function MockImage(this: {
     onload: ((ev: Event) => void) | null
     onerror: ((ev: Event) => void) | null
@@ -131,7 +140,7 @@ describe('generateSessionShareImage', () => {
   })
 
   it('monte le mockup DOM et encode un PNG Stories', async () => {
-    mockImageLoad()
+    mockShareAssets()
     const { toBlob } = await import('html-to-image')
     const blob = await generateSessionShareImage(payload)
 
@@ -149,7 +158,7 @@ describe('generateSessionShareImage', () => {
   })
 
   it('accepte un payload free sans PR', async () => {
-    mockImageLoad()
+    mockShareAssets()
     const blob = await generateSessionShareImage({
       ...payload,
       tonnageKg: null,

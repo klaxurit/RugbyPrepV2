@@ -34,10 +34,19 @@ export function SessionShareSheet({
   const [hint, setHint] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!open || !payload) return
+    if (!open || !payload) {
+      setPreviewUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev)
+        return null
+      })
+      setPreviewError(false)
+      return
+    }
 
     let cancelled = false
     let objectUrl: string | null = null
+    setPreviewError(false)
+    setHint(null)
 
     void (async () => {
       try {
@@ -51,9 +60,14 @@ export function SessionShareSheet({
           return objectUrl
         })
         setPreviewError(false)
-        setHint(null)
       } catch {
-        if (!cancelled) setPreviewError(true)
+        if (!cancelled) {
+          setPreviewError(true)
+          setPreviewUrl((prev) => {
+            if (prev) URL.revokeObjectURL(prev)
+            return null
+          })
+        }
       }
     })()
 

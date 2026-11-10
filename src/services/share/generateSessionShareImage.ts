@@ -16,13 +16,24 @@ import {
   type SessionSharePayload,
 } from './sessionShareTypes'
 
-function loadImage(src: string, crossOrigin?: 'anonymous'): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    if (crossOrigin) img.crossOrigin = crossOrigin
-    img.onload = () => resolve(img)
-    img.onerror = () => reject(new Error(`Failed to load image: ${src}`))
-    img.src = src
+/** Évite canvas tainted / CORS : on embarque les images en data URL avant capture. */
+async function toDataUrl(src: string): Promise<string> {
+  if (src.startsWith('data:')) return src
+  const absolute =
+    src.startsWith('http://') || src.startsWith('https://') || src.startsWith('blob:')
+      ? src
+      : new URL(src, window.location.origin).href
+  const res = await fetch(absolute, { mode: 'cors', credentials: 'omit' })
+  if (!res.ok) throw new Error(`Failed to fetch image: ${src} (${res.status})`)
+  const buffer = await res.arrayBuffer()
+  const blob = new Blob([buffer], {
+    type: res.headers.get('Content-Type') || 'image/png',
+  })
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(new Error(`Failed to read image: ${src}`))
+    reader.readAsDataURL(blob)
   })
 }
 
@@ -35,13 +46,12 @@ async function resolvePortraitSrc(payload: SessionSharePayload): Promise<string>
   const avatarUrl = payload.avatarUrl?.trim()
   if (avatarUrl) {
     try {
-      await loadImage(avatarUrl, 'anonymous')
-      return avatarUrl
+      return await toDataUrl(avatarUrl)
     } catch {
       // CORS / 404 → Rufo
     }
   }
-  return difficulty.imageSrc
+  return toDataUrl(difficulty.imageSrc)
 }
 
 function waitForImages(root: HTMLElement): Promise<void> {
@@ -50,7 +60,8 @@ function waitForImages(root: HTMLElement): Promise<void> {
     images.map(
       (img) =>
         new Promise<void>((resolve) => {
-          if (img.complete && img.naturalWidth > 0) {
+          const src = img.currentSrc || img.src || ''
+          if (src.startsWith('data:') || (img.complete && img.naturalWidth > 0)) {
             resolve()
             return
           }
@@ -62,8 +73,7 @@ function waitForImages(root: HTMLElement): Promise<void> {
           }
           img.addEventListener('load', done)
           img.addEventListener('error', done)
-          // jsdom / CORS : ne jamais bloquer la capture
-          window.setTimeout(done, 120)
+          window.setTimeout(done, 2000)
         }),
     ),
   ).then(() => undefined)
@@ -75,28 +85,33 @@ function waitForImages(root: HTMLElement): Promise<void> {
 export async function generateSessionShareImage(
   payload: SessionSharePayload,
 ): Promise<Blob> {
-  const portraitSrc = await resolvePortraitSrc(payload)
+  const [portraitSrc, logoSrc] = await Promise.all([
+    resolvePortraitSrc(payload),
+    toDataUrl(logoCreamUrl),
+  ])
   const model = buildSessionShareCardModel(payload, {
-    logoSrc: logoCreamUrl,
+    logoSrc,
     portraitSrc,
   })
 
   const host = document.createElement('div')
   host.setAttribute('data-rf-share-host', '1')
+  // opacity:0 + left:0 (pas -10000px) : html-to-image rate souvent les hosts hors viewport.
   host.style.cssText = [
     'position:fixed',
-    'left:-10000px',
+    'left:0',
     'top:0',
     'width:1080px',
     'height:1920px',
     'overflow:hidden',
     'pointer-events:none',
     'z-index:-1',
-    'opacity:1',
+    'opacity:0',
   ].join(';')
 
   const style = document.createElement('style')
-  style.textContent = shareCardCss
+  // blur() casse parfois la rasterisation html-to-image → neutre pour la capture.
+  style.textContent = `${shareCardCss}\n.rf-share-card .glow{filter:none !important}`
   host.appendChild(style)
 
   const mount = document.createElement('div')
@@ -113,7 +128,9 @@ export async function generateSessionShareImage(
   try {
     await waitForImages(card)
     // Laisse le layout/fonts peindre (Inter → system fallback).
-    await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())))
+    await new Promise<void>((r) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => r())),
+    )
 
     const blob = await toBlob(card, {
       width: SESSION_SHARE_WIDTH,
@@ -126,6 +143,7 @@ export async function generateSessionShareImage(
         width: `${SESSION_SHARE_WIDTH}px`,
         height: `${SESSION_SHARE_HEIGHT}px`,
         transform: 'none',
+        opacity: '1',
       },
     })
 

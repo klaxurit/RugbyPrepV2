@@ -796,11 +796,14 @@ export function SessionDetailPage() {
   //  `loadSuggestion` reste disponible.)
 
   // ── Phase visuelle dérivée ─────────────────────────────────────────────────
-  const phase: 'idle' | 'running' | 'completed' = celebrationOpen
-    ? 'completed'
-    : isRunning
-      ? 'running'
-      : 'idle'
+  // `shareOpen` garde « completed » pendant l’enregistrement → sheet partage
+  // (évite un flash idle / Commencer quand stop() vide le run).
+  const phase: 'idle' | 'running' | 'completed' =
+    celebrationOpen || shareOpen
+      ? 'completed'
+      : isRunning
+        ? 'running'
+        : 'idle'
 
   // ── Sticky CTA contextuel running (D6) ────────────────────────────────────
   // Calcule la prochaine série à valider via `findCurrentPending`.
@@ -1272,13 +1275,6 @@ export function SessionDetailPage() {
       const completedSnapshot = new Set(sessionRun.completedExercises)
       const sessionIdForShare = activeSlot.session.metadata.id
 
-      setCompletionOpen(false)
-      setCelebrationOpen(false)
-      setMsNotes('')
-      setMsSaved(true)
-      if (slotSignature) sessionRun.clearExerciseOverridesForSlot(slotSignature)
-      sessionRun.stop()
-
       const sessionLabel = formatTitleFromMotherSessionId(sessionIdForShare, lang)
       const intent = buildSessionShareIntent(sessionIdForShare, lang)
       const exerciseMaxLoads =
@@ -1348,8 +1344,16 @@ export function SessionDetailPage() {
         weekLabel,
         sessionOrdinalLabel,
       }
+
+      // Ouvre le partage AVANT stop() pour garder phase=completed (pas de flash idle).
       setSharePayload(nextSharePayload)
       setShareOpen(true)
+      setCompletionOpen(false)
+      setCelebrationOpen(false)
+      setMsNotes('')
+      setMsSaved(true)
+      if (slotSignature) sessionRun.clearExerciseOverridesForSlot(slotSignature)
+      sessionRun.stop()
       sessionCompletedRef.current = true
       trackProduct('session_completed', {
         index,
