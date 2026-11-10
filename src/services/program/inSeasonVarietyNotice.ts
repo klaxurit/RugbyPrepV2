@@ -24,11 +24,30 @@ export type FeatureNoveltyGate = {
 }
 
 /**
+ * Gate centralisé « prompts produit » (annonces, newsletter in-app, …) :
+ * pas avant au moins 1 séance gym terminée (hors récup).
+ */
+export function hasCompletedGymSessionForProductPrompts(
+  gate: Pick<FeatureNoveltyGate, 'completedGymSessionCount'>,
+): boolean {
+  return gate.completedGymSessionCount >= 1
+}
+
+/** Comptage partagé avec ProgramChangeMount / AccountUpgradeMount. */
+export function countCompletedGymSessionsForProductPrompts(
+  logs: ReadonlyArray<{ sessionType?: string | null }>,
+): number {
+  return logs.filter(
+    (l) => l.sessionType !== 'ACTIVE_RECOVERY' && l.sessionType !== 'RECOVERY',
+  ).length
+}
+
+/**
  * Nouveautés produit : uniquement après au moins 1 séance terminée,
  * et seulement pour les comptes créés **avant** le lancement de la feature.
  */
 export function canOfferFeatureNoveltyNotice(gate: FeatureNoveltyGate): boolean {
-  if (gate.completedGymSessionCount < 1) return false
+  if (!hasCompletedGymSessionForProductPrompts(gate)) return false
   const created = gate.accountCreatedYmd?.slice(0, 10)
   if (!created || !/^\d{4}-\d{2}-\d{2}$/.test(created)) return false
   return created < IN_SEASON_VARIETY_NOTICE_LAUNCH_YMD

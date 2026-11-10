@@ -1,4 +1,5 @@
 import type { UserProfile } from '../../types/training'
+import { hasCompletedGymSessionForProductPrompts } from '../program/inSeasonVarietyNotice'
 
 export type NewsletterOptInSource = 'signup' | 'in_app' | 'profile'
 
@@ -32,10 +33,17 @@ export function shouldPromptNewsletterOptIn(input: {
   pathname: string
   passwordNeedsUpgrade: boolean | null | undefined
   newsletterOptIn: boolean | null | undefined
+  /** Même gate que les annonces nouveauté : ≥1 séance gym terminée. */
+  completedGymSessionCount: number
 }): boolean {
   if (isAccountUpgradeSuppressedPath(input.pathname)) return false
   if (input.pathname === '/onboarding') return false
   if (input.passwordNeedsUpgrade === true) return false
+  if (!hasCompletedGymSessionForProductPrompts({
+    completedGymSessionCount: input.completedGymSessionCount,
+  })) {
+    return false
+  }
   // null = existing account, never asked. undefined = not hydrated yet — don't flash.
   return input.newsletterOptIn === null
 }

@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useHistory } from '../../hooks/useHistory'
 import { useProfile } from '../../hooks/useProfile'
 import { supabase } from '../../services/supabase/client'
 import { clearPasswordNeedsUpgrade } from '../../services/auth/clearPasswordNeedsUpgrade'
@@ -10,6 +11,7 @@ import {
   shouldPromptPasswordUpgrade,
 } from '../../services/auth/accountUpgradePrompts'
 import { resolvePasswordNeedsUpgrade } from '../../services/auth/passwordUpgradeGate'
+import { countCompletedGymSessionsForProductPrompts } from '../../services/program/inSeasonVarietyNotice'
 import { PasswordUpgradeSheet } from './PasswordUpgradeSheet'
 import { NewsletterOptInSheet } from './NewsletterOptInSheet'
 import { useOverlayPermission } from '../../hooks/useOverlayPermission'
@@ -28,6 +30,7 @@ function resolvePasswordUpdateError(message: string): string {
 export function AccountUpgradeMount() {
   const { authState } = useAuth()
   const { profile, updateProfile } = useProfile()
+  const { logs } = useHistory()
   const location = useLocation()
   const [passwordSaving, setPasswordSaving] = useState(false)
   const [passwordError, setPasswordError] = useState<string | null>(null)
@@ -36,6 +39,7 @@ export function AccountUpgradeMount() {
   const authenticated = authState.status === 'authenticated' && Boolean(authState.user)
   const userId = authenticated ? authState.user?.id : undefined
   const lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'
+  const completedGymSessionCount = countCompletedGymSessionsForProductPrompts(logs)
 
   const passwordNeedsUpgrade = resolvePasswordNeedsUpgrade(profile.passwordNeedsUpgrade)
   const showPasswordNatural = authenticated && shouldPromptPasswordUpgrade({
@@ -46,6 +50,7 @@ export function AccountUpgradeMount() {
     pathname: location.pathname,
     passwordNeedsUpgrade,
     newsletterOptIn: profile.newsletterOptIn,
+    completedGymSessionCount,
   })
 
   const showPassword = useOverlayPermission('password_upgrade', showPasswordNatural)

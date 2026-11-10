@@ -16,6 +16,7 @@ import {
   type FatigueLoadChoice,
 } from '../services/program/fatigueLoadChoice'
 import { userScopedKey } from '../services/storage/userScopedStorage'
+import { countCompletedGymSessionsForProductPrompts } from '../services/program/inSeasonVarietyNotice'
 
 const SUPPRESS_PATHS = new Set([
   '/onboarding',
@@ -56,9 +57,7 @@ export function ProgramChangeMount() {
   const { openProgramEvolution } = useProgramEvolutionSheet()
   const delegatedNoticeRef = useRef<string | null>(null)
 
-  const completedGymSessionCount = logs.filter(
-    (l) => l.sessionType !== 'ACTIVE_RECOVERY' && l.sessionType !== 'RECOVERY',
-  ).length
+  const completedGymSessionCount = countCompletedGymSessionsForProductPrompts(logs)
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
   const accountCreatedYmd = (() => {
     try {

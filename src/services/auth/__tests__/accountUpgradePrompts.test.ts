@@ -18,12 +18,24 @@ describe('shouldPromptPasswordUpgrade', () => {
 })
 
 describe('shouldPromptNewsletterOptIn', () => {
-  it('asks existing accounts (null) once the password is ok', () => {
+  const afterFirstSession = { completedGymSessionCount: 1 }
+
+  it('asks existing accounts (null) once the password is ok and ≥1 séance', () => {
     expect(shouldPromptNewsletterOptIn({
       pathname: '/home',
       passwordNeedsUpgrade: false,
       newsletterOptIn: null,
+      ...afterFirstSession,
     })).toBe(true)
+  })
+
+  it('refuse avant la 1re séance (même gate que les annonces)', () => {
+    expect(shouldPromptNewsletterOptIn({
+      pathname: '/home',
+      passwordNeedsUpgrade: false,
+      newsletterOptIn: null,
+      completedGymSessionCount: 0,
+    })).toBe(false)
   })
 
   it('does not ask new accounts that already chose at signup', () => {
@@ -31,11 +43,13 @@ describe('shouldPromptNewsletterOptIn', () => {
       pathname: '/home',
       passwordNeedsUpgrade: false,
       newsletterOptIn: false,
+      ...afterFirstSession,
     })).toBe(false)
     expect(shouldPromptNewsletterOptIn({
       pathname: '/home',
       passwordNeedsUpgrade: false,
       newsletterOptIn: true,
+      ...afterFirstSession,
     })).toBe(false)
   })
 
@@ -44,16 +58,19 @@ describe('shouldPromptNewsletterOptIn', () => {
       pathname: '/home',
       passwordNeedsUpgrade: undefined,
       newsletterOptIn: null,
+      ...afterFirstSession,
     })).toBe(true)
     expect(shouldPromptNewsletterOptIn({
       pathname: '/home',
       passwordNeedsUpgrade: true,
       newsletterOptIn: null,
+      ...afterFirstSession,
     })).toBe(false)
     expect(shouldPromptNewsletterOptIn({
       pathname: '/home',
       passwordNeedsUpgrade: false,
       newsletterOptIn: undefined,
+      ...afterFirstSession,
     })).toBe(false)
   })
 
@@ -62,11 +79,13 @@ describe('shouldPromptNewsletterOptIn', () => {
       pathname: '/onboarding',
       passwordNeedsUpgrade: false,
       newsletterOptIn: null,
+      ...afterFirstSession,
     })).toBe(false)
     expect(shouldPromptNewsletterOptIn({
       pathname: '/privacy',
       passwordNeedsUpgrade: false,
       newsletterOptIn: null,
+      ...afterFirstSession,
     })).toBe(false)
   })
 })

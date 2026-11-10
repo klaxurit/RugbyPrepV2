@@ -3,6 +3,8 @@ import type { AnnualPlanningContext } from '../../../types/annualPlanning'
 import {
   buildInSeasonVarietyNotice,
   canOfferFeatureNoveltyNotice,
+  countCompletedGymSessionsForProductPrompts,
+  hasCompletedGymSessionForProductPrompts,
   IN_SEASON_VARIETY_NOTICE_ID,
   IN_SEASON_VARIETY_NOTICE_LAUNCH_YMD,
   novelMotherSessionIds,
@@ -21,6 +23,24 @@ const legacyGate = {
   completedGymSessionCount: 2,
   accountCreatedYmd: '2026-01-15',
 }
+
+describe('hasCompletedGymSessionForProductPrompts', () => {
+  it('gate centralisé ≥1 séance gym', () => {
+    expect(hasCompletedGymSessionForProductPrompts({ completedGymSessionCount: 0 })).toBe(false)
+    expect(hasCompletedGymSessionForProductPrompts({ completedGymSessionCount: 1 })).toBe(true)
+  })
+
+  it('compte hors récup', () => {
+    expect(
+      countCompletedGymSessionsForProductPrompts([
+        { sessionType: 'LOWER' },
+        { sessionType: 'RECOVERY' },
+        { sessionType: 'ACTIVE_RECOVERY' },
+        { sessionType: 'UPPER' },
+      ]),
+    ).toBe(2)
+  })
+})
 
 describe('canOfferFeatureNoveltyNotice', () => {
   it('refuse avant la 1re séance', () => {
