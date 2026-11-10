@@ -65,6 +65,7 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
   const isTabata = format.type === 'tabata'
 
   const totalUnits = isEmom ? format.rounds : isTabata ? format.rounds : 0
+  const emomFinished = Boolean(isEmom && snapshot.emomFinished)
   const currentUnit = isEmom ? snapshot.currentMinute ?? 0 : isTabata ? snapshot.currentRound ?? 0 : 0
   const remainingInUnit = snapshot.remainingInIntervalSec ?? 0
   const totalRemainingSec =
@@ -72,14 +73,20 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
 
   const mm = Math.floor(remainingInUnit / 60)
   const ss = String(Math.floor(remainingInUnit % 60)).padStart(2, '0')
-  const progressPct =
-    isEmom && format.type === 'emom'
+  const progressPct = emomFinished
+    ? 100
+    : isEmom && format.type === 'emom'
       ? ((format.intervalSeconds - remainingInUnit) / format.intervalSeconds) * 100
       : isTabata && format.type === 'tabata'
         ? ((format.workSeconds - remainingInUnit) / format.workSeconds) * 100
         : 0
 
-  const { currentExo, nextExo } = pickEmomCurrentExos(block.exercises, currentUnit)
+  const { currentExo, nextExo } = pickEmomCurrentExos(
+    block.exercises,
+    currentUnit,
+    totalUnits,
+    emomFinished,
+  )
 
   const isPaused = snapshot.status === 'paused'
   const handleTogglePause = () => {
@@ -103,11 +110,24 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
         {/* Header : eyebrow + croix */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand">
-              {isEmom ? `EMOM · Minute ${currentUnit + 1}/${totalUnits}` : 'Chrono'}
+            <div
+              className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-brand"
+              data-testid="emom-header-minute"
+            >
+              {emomFinished
+                ? lang === 'fr'
+                  ? 'EMOM terminé'
+                  : 'EMOM complete'
+                : isEmom
+                  ? `EMOM · Minute ${currentUnit + 1}/${totalUnits}`
+                  : 'Chrono'}
             </div>
             <div className="mt-0.5 text-[11px] tabular-nums text-fg-muted">
-              Temps total restant : {formatTotalRemaining(totalRemainingSec)}
+              {emomFinished
+                ? lang === 'fr'
+                  ? 'Temps total restant : 0:00'
+                  : 'Total time left: 0:00'
+                : `Temps total restant : ${formatTotalRemaining(totalRemainingSec)}`}
             </div>
           </div>
           <button
@@ -154,8 +174,22 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
           </div>
         )}
 
-        {/* Exo en cours / suivant */}
-        {currentExo && (
+        {/* Exo en cours / suivant — même source que l’en-tête (snapshot). */}
+        {emomFinished ? (
+          <div
+            className="mt-3.5 rounded-xl border border-win/40 bg-win-soft px-3.5 py-3"
+            data-testid="emom-finished-state"
+          >
+            <div className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-win">
+              {lang === 'fr' ? 'EMOM terminé' : 'EMOM complete'}
+            </div>
+            <p className="mt-1 text-[13px] font-medium text-fg">
+              {lang === 'fr'
+                ? `Les ${totalUnits} minutes sont finies — valide le bloc quand tu es prêt.`
+                : `All ${totalUnits} minutes are done — validate the block when ready.`}
+            </p>
+          </div>
+        ) : currentExo ? (
           <div className="mt-3.5 rounded-xl border border-paper-deep bg-app px-3.5 py-3">
             <div className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-brand">
               En cours
@@ -183,7 +217,7 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
               </div>
             )}
           </div>
-        )}
+        ) : null}
 
         {/* Controls */}
         <div className="mt-3.5 flex items-center gap-2.5">
@@ -235,13 +269,17 @@ function formatTotalRemaining(sec: number): string {
 function pickEmomCurrentExos(
   exercises: readonly Exercise[],
   currentUnit: number,
+  totalUnits: number,
+  finished: boolean,
 ): { currentExo: Exercise | null; nextExo: Exercise | null } {
-  if (exercises.length === 0) return { currentExo: null, nextExo: null }
+  if (finished || exercises.length === 0) return { currentExo: null, nextExo: null }
   const idx = currentUnit % exercises.length
-  const nextIdx = (currentUnit + 1) % exercises.length
+  const hasNextMinute = currentUnit + 1 < totalUnits
   return {
     currentExo: exercises[idx] ?? null,
-    nextExo: exercises[nextIdx] ?? null,
+    nextExo: hasNextMinute
+      ? exercises[(currentUnit + 1) % exercises.length] ?? null
+      : null,
   }
 }
 

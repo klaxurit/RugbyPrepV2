@@ -260,11 +260,17 @@ function OverlayBody({
     return 0
   })()
 
+  const emomFinished = Boolean(isEmom && snapshot.emomFinished)
   const emomExerciseLabels = (() => {
-    if (!isEmom || loggableCount === 0) return null
-    const idx = (snapshot.currentMinute ?? 0) % loggableCount
-    const next = (idx + 1) % loggableCount
-    return { current: resolveName(idx), next: resolveName(next) }
+    if (!isEmom || emomFinished || loggableCount === 0) return null
+    const minute = snapshot.currentMinute ?? 0
+    const totalMinutes = snapshot.totalMinutes ?? 0
+    const idx = minute % loggableCount
+    const hasNext = minute + 1 < totalMinutes
+    return {
+      current: resolveName(idx),
+      next: hasNext ? resolveName((minute + 1) % loggableCount) : null,
+    }
   })()
 
   const totalRemainingSec = snapshot.totalSec != null
@@ -272,6 +278,7 @@ function OverlayBody({
     : null
 
   const headerLabel = (() => {
+    if (isEmom && emomFinished) return 'EMOM terminé'
     if (isEmom) {
       return `EMOM · Minute ${(snapshot.currentMinute ?? 0) + 1}/${snapshot.totalMinutes ?? 0}`
     }
@@ -371,14 +378,22 @@ function OverlayBody({
         </div>
       )}
 
-      {/* Exo courant / suivant (EMOM) */}
+      {/* Exo courant / suivant (EMOM) — même snapshot que l’en-tête */}
+      {isEmom && emomFinished && (
+        <div className="mt-3 space-y-1" data-testid="emom-finished-state">
+          <p className="text-[11px] font-bold text-win uppercase tracking-wider">EMOM terminé</p>
+          <p className="text-sm font-medium text-fg">Valide le bloc quand tu es prêt.</p>
+        </div>
+      )}
       {isEmom && emomExerciseLabels && (
         <div className="mt-3 space-y-1">
           <p className="text-[11px] font-bold text-fg-muted uppercase tracking-wider">En cours</p>
           <p className="text-sm font-black text-fg leading-tight">{emomExerciseLabels.current}</p>
-          <p className="text-[11px] text-fg-muted">
-            Ensuite : <span className="font-bold">{emomExerciseLabels.next}</span>
-          </p>
+          {emomExerciseLabels.next != null && (
+            <p className="text-[11px] text-fg-muted">
+              Ensuite : <span className="font-bold">{emomExerciseLabels.next}</span>
+            </p>
+          )}
         </div>
       )}
 

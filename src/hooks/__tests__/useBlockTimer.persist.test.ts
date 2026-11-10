@@ -87,4 +87,49 @@ describe('useBlockTimer persistKey', () => {
     expect(second.result.current.snapshot.elapsedSec).toBe(0)
     second.unmount()
   })
+
+  it('EMOM à 8/8 → remaining 0 + emomFinished (pas 1:00)', () => {
+    const { result } = renderHook(() =>
+      useBlockTimer({ format: emomFormat, persistKey: 'emom-end' }),
+    )
+    act(() => {
+      result.current.start()
+    })
+    act(() => {
+      vi.advanceTimersByTime(480_000)
+    })
+    expect(result.current.snapshot.emomFinished).toBe(true)
+    expect(result.current.snapshot.remainingInIntervalSec).toBe(0)
+    expect(result.current.snapshot.currentMinute).toBe(7)
+    expect(result.current.snapshot.elapsedSec).toBe(480)
+  })
+
+  it('reprise après visibilitychange recalcule sur horodatage', () => {
+    const key = 'emom-bg'
+    const { result } = renderHook(() =>
+      useBlockTimer({ format: emomFormat, persistKey: key }),
+    )
+    act(() => {
+      result.current.start()
+    })
+    act(() => {
+      vi.advanceTimersByTime(30_000)
+    })
+    const beforeBg = result.current.snapshot.elapsedSec
+    expect(beforeBg).toBeGreaterThanOrEqual(30)
+
+    act(() => {
+      // Wall clock + visibility : recalcul horodatage (pas un compteur de ticks).
+      vi.advanceTimersByTime(90_000)
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'visible',
+      })
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+
+    const afterBg = result.current.snapshot.elapsedSec
+    expect(afterBg).toBeGreaterThanOrEqual(beforeBg + 85)
+    expect(result.current.snapshot.currentMinute).toBe(Math.floor(afterBg / 60))
+  })
 })

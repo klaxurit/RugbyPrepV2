@@ -26,6 +26,8 @@ export interface TimerSnapshot {
   totalMinutes?: number
   /** Pour EMOM/Tabata : secondes restantes dans l'intervalle courant. */
   remainingInIntervalSec?: number
+  /** EMOM : true quand toutes les minutes sont écoulées. */
+  emomFinished?: boolean
   /** Pour Tabata : phase de l'intervalle courant. */
   tabataPhase?: 'work' | 'rest'
   /** Pour Tabata : index 0-based du round courant. */
@@ -198,15 +200,36 @@ export function useBlockTimer({
       case 'emom': {
         const totalMinutes = format.rounds
         const interval = format.intervalSeconds
-        const currentMinute = Math.min(totalMinutes - 1, Math.floor(elapsedSec / interval))
-        const remainingInIntervalSec = interval - (elapsedSec % interval)
+        const plannedTotal = totalMinutes * interval
+        const cappedElapsed = Math.min(elapsedSec, plannedTotal)
+        const emomFinished =
+          status === 'completed' || (plannedTotal > 0 && elapsedSec >= plannedTotal)
+        if (emomFinished) {
+          return {
+            status: status === 'completed' ? 'completed' : status,
+            elapsedSec: cappedElapsed,
+            totalSec,
+            currentMinute: Math.max(0, totalMinutes - 1),
+            totalMinutes,
+            remainingInIntervalSec: 0,
+            emomFinished: true,
+          }
+        }
+        const currentMinute = Math.min(
+          totalMinutes - 1,
+          Math.floor(cappedElapsed / interval),
+        )
+        const intoInterval = cappedElapsed % interval
+        // Début de minute (into=0) → interval entier restant ; jamais 0 tant que non fini.
+        const remainingInIntervalSec = intoInterval === 0 ? interval : interval - intoInterval
         return {
           status,
-          elapsedSec,
+          elapsedSec: cappedElapsed,
           totalSec,
           currentMinute,
           totalMinutes,
           remainingInIntervalSec,
+          emomFinished: false,
         }
       }
       case 'tabata': {
