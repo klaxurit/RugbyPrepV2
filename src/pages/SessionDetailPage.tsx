@@ -10,6 +10,7 @@ import { findCurrentPending } from '../services/motherSession/findCurrentPending
 import { getRestAfterExerciseSet } from '../services/motherSession/interTourRest'
 import { isDirectiveText, resolveExerciseIdForSessionRun } from '../services/motherSession/motherSessionExerciseMap'
 import { parseBlockTourCount } from '../services/ui/blockPresentation'
+import { countLoggableSessionSets } from '../services/session/countLoggableSessionSets'
 import { parseExerciseSetSpec } from '../services/ui/exerciseSetSpec'
 import { parseBlockFormat } from '../services/ui/parseBlockFormat'
 import { useWakeLock } from '../hooks/useWakeLock'
@@ -377,6 +378,8 @@ export function SessionDetailPage() {
       preMatchNoHeavy,
       rugbyPosition: profile.rugbyPosition ?? profile.position,
       positionAccentFocus: showAccentFocusPicker ? positionAccentFocus : 'a',
+      dayPreference: activeSlot.dayPreference,
+      contentFamily: planning?.contentFamily,
     })
     // Décharge, taper et overrides de fatigue passent tous par ces deux champs.
     // Rail J-2 : light + plafond 2 blocs, même si le slot n’était pas tamponné.
@@ -574,14 +577,8 @@ export function SessionDetailPage() {
       : null
     const completedSets = sessionRun.completedExercises.size
 
-    let totalSets = 0
-    if (preparedSession) {
-      for (const block of preparedSession.blocks) {
-        const tourCount = parseBlockTourCount(block)
-        const loggable = block.exercises.filter((e) => e && !isDirectiveText(e.name)).length
-        totalSets += loggable * tourCount
-      }
-    }
+    // Aligné sur les clés réellement marquées (EMOM = 1/exo ; warmUp exclu).
+    const totalSets = preparedSession ? countLoggableSessionSets(preparedSession) : 0
 
     let tonnageKg: number | null = null
     if (slotSignature) {
@@ -1375,7 +1372,9 @@ export function SessionDetailPage() {
 
   // ── Title ────────────────────────────────────────────────────────────────
   const pageTitle = activeSlot
-    ? formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang)
+    ? formatTitleFromMotherSessionId(activeSlot.session.metadata.id, lang, {
+        contentFamily: planning?.contentFamily,
+      })
     : sessionPageTitle
 
   // (`adaptedSession` + `phase` + `runningCursor` + auto-scroll : déplacés au-dessus
