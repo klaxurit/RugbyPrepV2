@@ -85,7 +85,9 @@ import { SessionShareSheet } from '../components/session/SessionShareSheet'
 import type { SessionSharePayload } from '../services/share/sessionShareTypes'
 import { buildSessionShareIntent } from '../services/share/buildSessionShareIntent'
 import { collectSessionExerciseMaxLoads } from '../services/share/collectSessionExerciseMaxLoads'
+import { computeShareProgression } from '../services/share/computeShareProgression'
 import { resolveShareFirstName } from '../services/share/resolveSessionShareDifficulty'
+import { findShareNextMatch } from '../services/share/selectShareHero'
 import { getExerciseName } from '../data/exercises'
 import { computeSessionTonnage } from '../services/session/computeSessionTonnage'
 import { detectSessionPRs } from '../services/session/detectSessionPRs'
@@ -224,7 +226,7 @@ export function SessionDetailPage() {
 
   // ── Surface unifiée ────────────────────────────────────────────────────────
   const today = useMemo(() => getToday(), [])
-  const { recompute } = useGamification(today)
+  const { recompute, profile: gamificationProfile } = useGamification(today)
   const nextMatchDate = useMemo(() => {
     const fm = structuralEvents
       .filter((e) => e.type === 'match' && e.date >= today)
@@ -1401,6 +1403,16 @@ export function SessionDetailPage() {
           lang,
         ),
         clubName: profile.clubName?.trim() || null,
+        clubCode: profile.clubCode?.trim() || null,
+        competitionName: profile.ffrCompetitionName?.trim() || null,
+        nextMatch: findShareNextMatch(structuralEvents, today),
+        progression: computeShareProgression({
+          todayISO: today,
+          currentLoads: exerciseMaxLoads,
+          history: historyLogs,
+          weekStreak: gamificationProfile?.currentWeekStreak,
+        }),
+        sessionDateISO: today,
         dateLabel,
         weekLabel,
         sessionOrdinalLabel,

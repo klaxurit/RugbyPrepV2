@@ -1000,9 +1000,61 @@ export const APP_LABELS = {
     fr: 'Partage impossible pour le moment. Réessaie.',
     en: 'Sharing failed for now. Try again.',
   },
+  session_share_show_club: {
+    fr: 'Afficher mon club',
+    en: 'Show my club',
+  },
   session_share_congrats_fallback: {
     fr: 'Bravo pour ta séance !',
     en: 'Nice work — session done.',
+  },
+  session_share_photo_camera: {
+    fr: 'Prendre une photo',
+    en: 'Take a photo',
+  },
+  session_share_photo_library: {
+    fr: 'Choisir dans la galerie',
+    en: 'Choose from gallery',
+  },
+  session_share_photo_change: {
+    fr: 'Changer de photo',
+    en: 'Change photo',
+  },
+  session_share_photo_remove: {
+    fr: 'Retirer la photo',
+    en: 'Remove photo',
+  },
+  session_share_photo_too_small: {
+    fr: 'Photo un peu petite, le rendu peut être flou',
+    en: 'Photo a bit small — the card may look soft',
+  },
+  session_share_photo_error: {
+    fr: 'Impossible d’utiliser cette image. Réessaie avec une autre.',
+    en: 'Couldn’t use that image. Try another one.',
+  },
+  session_share_format_label: {
+    fr: 'Format',
+    en: 'Format',
+  },
+  session_share_format_story: {
+    fr: 'Story 9:16',
+    en: 'Story 9:16',
+  },
+  session_share_format_square: {
+    fr: 'Carré 1:1',
+    en: 'Square 1:1',
+  },
+  session_share_hero_label: {
+    fr: 'À la une',
+    en: 'Featured',
+  },
+  session_share_hero_exercise: {
+    fr: 'Exercice',
+    en: 'Exercise',
+  },
+  session_share_hero_match: {
+    fr: 'Semaine de match',
+    en: 'Match week',
   },
 } as const satisfies Record<string, LabelEntry>
 

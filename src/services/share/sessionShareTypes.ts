@@ -15,6 +15,26 @@ export interface SessionShareExerciseMax {
   maxKg: number
 }
 
+export interface ShareNextMatch {
+  /** Jours avant le match (1 à 7 pour être affiché). */
+  daysUntil: number
+  opponent: string | null
+  isHome: boolean | null
+}
+
+export type ShareProgression =
+  | { kind: 'load'; percent: number; weeks: number; exerciseName?: string | null }
+  | { kind: 'streak'; weeks: number }
+
+/** Formats d’export carte (Story 9:16 ou carré feed 1:1). */
+export type ShareCardFormat = 'story' | 'square'
+
+/**
+ * Choix UI du héros quand exercice et semaine de match sont tous deux possibles.
+ * `auto` = priorité produit (record › match › …).
+ */
+export type ShareHeroPreference = 'auto' | 'exercise' | 'match'
+
 /** Données pour générer / partager une carte post-séance. */
 export interface SessionSharePayload {
   sessionLabel: string
@@ -46,6 +66,27 @@ export interface SessionSharePayload {
   positionLabel?: string | null
   /** Club (ex. « JO Pradéenne… »). */
   clubName?: string | null
+  /** Code FFR du club (clé des logos déjà stockés). */
+  clubCode?: string | null
+  /** Compétition choisie à la synchro FFR (ex. « Régionale 2 - Poule 3 »). */
+  competitionName?: string | null
+  /** Toggle « Afficher mon club » (défaut true). false → ni logo, ni club, ni niveau. */
+  showClub?: boolean
+  /** Prochain match à J-1…J-7 (calendrier). Héros b si aucun record. */
+  nextMatch?: ShareNextMatch | null
+  /** Progression charge / régularité (héros c) — optionnel tant que non calculé. */
+  progression?: ShareProgression | null
+  /** Photo de séance choisie par le joueur (fond de carte). Absente → fond de marque. */
+  photoUrl?: string | null
+  /**
+   * Préférence format carte (UI). Résolue avec le héros via `resolveShareCardFormat`
+   * (carré seulement pour record / séance par défaut).
+   */
+  cardFormat?: ShareCardFormat | null
+  /** Préférence héros UI : exercice (record/séance) vs semaine de match. */
+  heroPreference?: ShareHeroPreference | null
+  /** Date ISO YYYY-MM-DD (tampon RECORD « DD · MM · YY »). */
+  sessionDateISO?: string | null
   /** Date longue (ex. « Vendredi 8 mai »). */
   dateLabel?: string | null
   /** Semaine programme (ex. « Semaine 19 »). */
@@ -56,8 +97,19 @@ export interface SessionSharePayload {
 
 export type SessionShareTarget = 'system' | 'download'
 
+/** Ce qui a réellement été rendu sur l’image (analytics). */
+export interface SessionShareImageMeta {
+  clubShown: boolean
+  logoSource: 'ffr' | 'fallback' | 'none'
+}
+
 export type SessionShareOutcome =
-  | { status: 'shared'; method: 'web-share' | 'download'; target: SessionShareTarget }
+  | {
+      status: 'shared'
+      method: 'web-share' | 'download'
+      target: SessionShareTarget
+      meta?: SessionShareImageMeta
+    }
   | { status: 'cancelled' }
   | { status: 'unsupported' }
   | { status: 'failed'; reason: string }
@@ -68,3 +120,5 @@ export const SESSION_SHARE_LANDING_URL =
 /** Format Stories / Snap / IG — standard industrie fitness. */
 export const SESSION_SHARE_WIDTH = 1080
 export const SESSION_SHARE_HEIGHT = 1920
+/** Format carré feed (record / séance par défaut). */
+export const SESSION_SHARE_SQUARE_HEIGHT = 1080
