@@ -196,7 +196,7 @@ export function ToursBlock(props: ToursBlockProps) {
         <div className="flex flex-col gap-3 px-1">
           {transferCue ? (
             <p
-              className="flex flex-wrap items-center gap-1.5 px-1.5 text-[11px] leading-snug text-fg-muted"
+              className="flex flex-wrap items-center gap-1.5 px-1.5 text-sm leading-snug text-fg-muted"
               data-testid="block-transfer-cue"
             >
               <span>{transferCue}</span>
@@ -204,7 +204,7 @@ export function ToursBlock(props: ToursBlockProps) {
             </p>
           ) : null}
           <div className="flex items-center justify-between px-1.5">
-            <span className="text-[11px] font-medium text-fg/60">
+            <span className="text-sm font-medium text-fg/60">
               {totalTours} {totalTours > 1 ? tr('tours_meta_round_plural', lang) : tr('tours_meta_round_single', lang)}
               {restLabel != null && ` · ${tr('tours_meta_rest_prefix', lang)} ${restLabel}`}
             </span>
@@ -782,7 +782,7 @@ function ExerciseRow({
             <div className="mt-0.5 text-[11px] text-fg/45">{nameLabels.subtitle}</div>
           ) : null}
           <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
-            <span className="text-[12px] tabular-nums text-fg/55">{prescriptionLabel}</span>
+            <span className="text-sm tabular-nums text-fg/55">{prescriptionLabel}</span>
             <GlossaryHint text={glossaryScan} lang={lang} />
           </div>
         </div>

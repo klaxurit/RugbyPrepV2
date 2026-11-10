@@ -13,6 +13,8 @@ import { useCalendar } from '../hooks/useCalendar'
 import { useACWR } from '../hooks/useACWR'
 import { useAuth } from '../hooks/useAuth'
 import { useFatigueLoadDecisionRevision } from '../hooks/useFatigueLoadDecisionRevision'
+import { useVolumeConfidenceRevision } from '../hooks/useVolumeConfidenceRevision'
+import { VolumeConfidenceBanner } from '../components/week/VolumeConfidenceBanner'
 import { useProgramFeatureFlags } from '../hooks/useProgramFeatureFlags'
 import { useWeekSnapshot } from '../hooks/useWeekSnapshot'
 import { useMonthProgramGrid } from '../hooks/useMonthProgramGrid'
@@ -155,6 +157,7 @@ export function WeekPage() {
     today,
   })
   const fatigueDecisionRevision = useFatigueLoadDecisionRevision()
+  const volumeConfidenceRevision = useVolumeConfidenceRevision()
   const surfaceParams = useMemo(() => ({
     profile,
     events: structuralEvents,
@@ -170,7 +173,8 @@ export function WeekPage() {
     readinessScore: readinessResult.score,
     userId,
     fatigueDecisionRevision,
-  }), [profile, structuralEvents, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId, fatigueDecisionRevision])
+    volumeConfidenceRevision,
+  }), [profile, structuralEvents, logs, today, fatigue, acwrResult.hasSufficientData, acwrResult.zone, week, lastNonDeloadWeek, programFeatureFlags, readinessResult.score, userId, fatigueDecisionRevision, volumeConfidenceRevision])
   const {
     surface, snapshot,
     confirmPendingUpdate,
@@ -494,7 +498,7 @@ export function WeekPage() {
     return (
       <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav">
         <PageHeader title={hardBlockTitle} backTo="/home" />
-        <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
+        <main className="max-w-app mx-auto px-4 pt-6 space-y-4">
           <div className="bg-warn-bg border border-warn-bd-strong rounded-2xl p-5 space-y-3">
             <p className="font-bold text-warn-strong">Programme temporairement indisponible</p>
             <ul className="space-y-2">
@@ -523,7 +527,7 @@ export function WeekPage() {
       {/* Bandeau éditorial : eyebrow phase + H1 italic + toggle Semaine/Mois.
           Refonte UI mai 2026 — donne l'identité "magazine" à la page sans
           casser PageHeader (cohérence inter-pages). */}
-      <div className="px-[22px] pt-5 max-w-md mx-auto">
+      <div className="px-[22px] pt-5 max-w-app mx-auto">
         <div className="flex items-center gap-2 mb-1.5">
           <div className="h-[1.5px] w-6 bg-brand" />
           <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brand">
@@ -547,7 +551,7 @@ export function WeekPage() {
         </div>
       </div>
 
-      <main className="px-6 pt-5 space-y-5 max-w-md mx-auto relative">
+      <main className="px-6 pt-5 space-y-5 max-w-app mx-auto relative">
 
         {!monthOpen && <CompleteProfileCards />}
 
@@ -636,24 +640,47 @@ export function WeekPage() {
               />
             )}
 
-            {(surface.planningContext.cycle === 'in_season' ||
-              surface.planningContext.cycle === 'playoffs') && (
-              <ClubContactProxyControl
-                value={resolveClubContactProxy(profile.planningAnchors?.clubContactWeek, today)}
-                lang={lang}
-                onChange={(level) => {
-                  updateProfile({
-                    planningAnchors: {
-                      ...profile.planningAnchors,
-                      clubContactWeek: {
-                        weekStartIso: startOfIsoWeek(today),
-                        level,
-                      },
-                    },
-                  })
-                }}
-              />
-            )}
+            {(() => {
+              const showVolume =
+                (surface.planningContext.volumeLighteningReasons?.length ?? 0) > 0 ||
+                Boolean(surface.planningContext.volumeConfidenceBypassApplied)
+              const showClub =
+                surface.planningContext.cycle === 'in_season' ||
+                surface.planningContext.cycle === 'playoffs'
+              if (!showVolume && !showClub) return null
+              return (
+                <div className="space-y-2" data-testid="week-modulation-stack">
+                  <p className="px-0.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-fg-muted">
+                    {lang === 'en' ? 'This week' : 'Cette semaine'}
+                  </p>
+                  {/* Contact club d’abord = décision terrain. Volume = status/CTA secondaire. */}
+                  {showClub ? (
+                    <ClubContactProxyControl
+                      value={resolveClubContactProxy(profile.planningAnchors?.clubContactWeek, today)}
+                      lang={lang}
+                      onChange={(level) => {
+                        updateProfile({
+                          planningAnchors: {
+                            ...profile.planningAnchors,
+                            clubContactWeek: {
+                              weekStartIso: startOfIsoWeek(today),
+                              level,
+                            },
+                          },
+                        })
+                      }}
+                    />
+                  ) : null}
+                  {showVolume ? (
+                    <VolumeConfidenceBanner
+                      reasons={surface.planningContext.volumeLighteningReasons ?? []}
+                      bypassApplied={Boolean(surface.planningContext.volumeConfidenceBypassApplied)}
+                      lang={lang}
+                    />
+                  ) : null}
+                </div>
+              )
+            })()}
 
             {/* Maintenance CTA — dismissable, réapparaît après 30j ou si phase change */}
             {surface?.planningContext?.cycle === 'off_season' &&

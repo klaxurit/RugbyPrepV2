@@ -55,7 +55,7 @@ function GlossaryTermButton({ entry, lang }: { entry: GlossaryEntry; lang: Lang 
         <span
           id={tipId}
           role="tooltip"
-          className="absolute left-0 top-full z-20 mt-1 w-56 rounded-xl border border-border-app bg-app px-3 py-2 text-[12px] font-medium leading-snug text-fg shadow-lg"
+          className="absolute left-0 top-full z-20 mt-1 w-56 rounded-xl border border-border-app bg-app px-3 py-2 text-sm font-medium leading-snug text-fg shadow-lg"
         >
           {definition}
           <button

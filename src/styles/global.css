@@ -221,6 +221,16 @@
   padding-bottom: calc(4rem + env(safe-area-inset-bottom) + 3rem);
 }
 
+/* Colonne app desktop (~672 px) — plus large que max-w-md (448 px). */
+@utility max-w-app {
+  max-width: 42rem;
+}
+
+/* Padding bas = hauteur bouton fixe onboarding / sticky CTA séance. */
+@utility pb-fixed-cta {
+  padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+}
+
 .page {
   max-width: 720px;
   margin: 0 auto;

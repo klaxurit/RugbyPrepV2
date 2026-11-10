@@ -603,7 +603,7 @@ export function HomePage() {
         }
       />
 
-      <main className="relative max-w-md mx-auto pt-5 pb-6">
+      <main className="relative max-w-app mx-auto pt-5 pb-6">
         {/* Méta-ligne (date · cycle/phase · niveau) */}
         <p className="px-[22px] pb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-fg/55">
           {metaLine}

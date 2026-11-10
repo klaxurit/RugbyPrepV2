@@ -49,7 +49,7 @@ export function SessionNotes({
       {open && (
         <div className="flex flex-col gap-2 px-3.5 pb-3.5">
           {notes.map((note, i) => (
-            <div key={i} className="flex gap-2 text-[12px] leading-[1.5] text-fg-secondary">
+            <div key={i} className="flex gap-2 text-sm leading-[1.5] text-fg-secondary">
               <span aria-hidden className="flex-shrink-0 font-bold text-brand">
                 —
               </span>

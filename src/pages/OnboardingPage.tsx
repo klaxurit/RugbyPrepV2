@@ -411,7 +411,7 @@ export function OnboardingPage() {
       </header>
 
       {/* Contenu */}
-      <main className="flex-1 px-5 pt-4 pb-36 max-w-md mx-auto w-full space-y-7 relative">
+      <main className="flex-1 px-5 pt-4 pb-fixed-cta max-w-app mx-auto w-full space-y-7 relative">
 
         {/* ── Step 0 : Position ── */}
         {step === 0 && (
@@ -663,7 +663,7 @@ export function OnboardingPage() {
 
       {!isSummaryStep && (
         <div className="fixed bottom-0 left-0 right-0 px-5 pb-8 pt-5 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
-          <div className="max-w-md mx-auto pointer-events-auto">
+          <div className="max-w-app mx-auto pointer-events-auto">
             <button
               type="button"
               onClick={() => setStep((s) => s + 1)}

@@ -1065,7 +1065,7 @@ export function SessionDetailPage() {
     return (
       <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav">
         <PageHeader title={sessionPageTitle} backTo="/week" />
-        <main className="max-w-md mx-auto px-4 pt-6 space-y-4">
+        <main className="max-w-app mx-auto px-4 pt-6 space-y-4">
           <div className="bg-warn-bg border border-warn-bd-strong rounded-2xl p-5 space-y-3">
             <p className="font-bold text-warn-strong">Programme temporairement indisponible</p>
             <ul className="space-y-2">
@@ -1474,7 +1474,7 @@ export function SessionDetailPage() {
 
       {phase === 'running' && (
         <div className="bg-brand text-app px-[18px] py-3.5">
-          <div className="max-w-md mx-auto">
+          <div className="max-w-app mx-auto">
             <SessionRunProgressBar
               currentBlockIdx={Math.max(0, runProgress.activeBlockIndex - 1)}
               totalBlocks={runProgress.totalBlocks}
@@ -1494,7 +1494,7 @@ export function SessionDetailPage() {
       )}
 
       {phase === 'idle' && activeSlot && (
-        <div className="max-w-md mx-auto pt-5 pb-3 space-y-3 px-[18px]">
+        <div className="max-w-app mx-auto pt-5 pb-3 space-y-3 px-[18px]">
           {showBodyweightMorphoWarning ? (
             <BodyweightMorphologyBanner lang={lang} compact />
           ) : null}
@@ -1511,7 +1511,7 @@ export function SessionDetailPage() {
           seule étape de récap (le sticky CTA "Voir le récap" ouvre la sheet
           enrichie). Évite la double-page récap avant la saisie RPE. */}
 
-      <main className="px-4 pt-4 pb-3 space-y-4 max-w-md mx-auto relative">
+      <main className="px-4 pt-4 pb-fixed-cta space-y-4 max-w-app mx-auto relative">
         {isUnavailable && (
           <section className="rounded-[24px] border border-warn-bd bg-warn-bg-muted p-5 space-y-3">
             <p className="text-sm font-bold text-warn">Séance introuvable</p>
@@ -1694,7 +1694,7 @@ export function SessionDetailPage() {
 
       {/* Sticky CTA contextuel selon phase. */}
       {!isUnavailable && activeSlot && phase === 'idle' && (
-        <div className="fixed left-0 right-0 z-40 bottom-0 max-w-md mx-auto">
+        <div className="fixed left-0 right-0 z-40 bottom-0 max-w-app mx-auto">
           <SessionStickyCTA
             variant={{
               kind: 'start',
@@ -1709,7 +1709,7 @@ export function SessionDetailPage() {
       {/* Overlays timer en mode running — lecture du sessionRun pour Rest,
           états locaux pour EMOM et Iso. Empilés au-dessus du sticky CTA. */}
       {!isUnavailable && activeSlot && phase === 'running' && (
-        <div className="fixed left-0 right-0 z-40 bottom-[88px] max-w-md mx-auto">
+        <div className="fixed left-0 right-0 z-40 bottom-[88px] max-w-app mx-auto">
           <RestOverlay />
           {emomBlockNumber != null && adaptedSession && (
             <EmomOverlay
@@ -1748,7 +1748,7 @@ export function SessionDetailPage() {
           - `validate-exo` tant que findCurrentPending retourne un cursor
           - `finish` quand toute la séance est validée → ouvre la célébration */}
       {!isUnavailable && activeSlot && phase === 'running' && (
-        <div className="fixed left-0 right-0 z-30 bottom-0 max-w-md mx-auto">
+        <div className="fixed left-0 right-0 z-30 bottom-0 max-w-app mx-auto">
           {runningCursor ? (
             runningCursor.isTimedBlock ? (
               <SessionStickyCTA
