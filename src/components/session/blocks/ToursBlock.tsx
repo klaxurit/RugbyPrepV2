@@ -952,7 +952,7 @@ function PreviewExerciseRow({
           <div className="mt-0.5 text-[11px] text-fg/45">{nameLabels.subtitle}</div>
         ) : null}
         <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
-          <span className="text-[12px] tabular-nums text-fg/55">{prescriptionLabel}</span>
+          <span className="text-sm tabular-nums text-fg/55">{prescriptionLabel}</span>
           <GlossaryHint text={glossaryScan} lang={lang} />
         </div>
       </div>
