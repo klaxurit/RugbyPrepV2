@@ -34,7 +34,7 @@ Le payload est construit dans `src/pages/SessionDetailPage.tsx`. La feuille de p
 3. **Progression** (`payload.progression`) : charge ≥ +5 % sur 4 semaines, sinon série ≥ 3 semaines complètes d'affilée.
 4. **Par défaut** : nom de la séance + durée + focus (dernier segment du libellé, ex. « Bas du corps · Explosivité »).
 
-Si record et match tombent la même semaine, le record reste le héros et « J-X · Adversaire » remplace la date dans la chip en haut à droite.
+Si record et match tombent la même semaine, le record reste le héros par défaut et « J-X · Adversaire » remplace la date dans la chip en haut à droite. La feuille de partage propose un toggle **Exercice / Semaine de match** (`heroPreference`) quand les deux sont possibles.
 
 ### Le reste
 
@@ -57,7 +57,7 @@ Si record et match tombent la même semaine, le record reste le héros et « J-X
 - Marges latérales 72 px. Coupe diagonale : y 1212 à gauche → 1092 à droite (photo sur ~60 % de la hauteur), liseré crème 6 px.
 - Safe zones Instagram : en-tête y 272, contenu au-dessus de y 1640.
 
-**Carré 1080×1080** (auto pour record / séance) : même vocabulaire, panneau depuis ~y 520, typo et tampon réduits (`.is-square`).
+**Carré 1080×1080** (auto pour record / séance) : même vocabulaire, panneau depuis ~y 520, contenu ancré sous la coupe (`top: 610`), typo et tampon réduits (`.is-square`).
 
 - Avec photo : photo naturelle, voile haut, dégradé bordeaux, panneau 85 % sous la coupe.
 - Sans photo : fond crème, trame de terrain, poteaux en filigrane, panneau bordeaux plein.

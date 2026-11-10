@@ -112,7 +112,8 @@
 .rf-share-card.is-square .stamp .s1{font-size:12px;letter-spacing:.26em}
 .rf-share-card.is-square .stamp .s2{font-size:38px}
 .rf-share-card.is-square .stamp .s3{font-size:12px;letter-spacing:.2em}
-.rf-share-card.is-square .content{bottom:48px}
+/* Ancré sous la coupe : plus de grand vide entre tampon et héros. */
+.rf-share-card.is-square .content{top:610px;bottom:40px;justify-content:flex-start}
 .rf-share-card.is-square .kicker{font-size:18px;letter-spacing:.14em}
 .rf-share-card.is-square .hero-num .big{font-size:120px}
 .rf-share-card.is-square .hero-num .unit{font-size:42px}
@@ -124,7 +125,7 @@
 .rf-share-card.is-square .chips{margin-top:14px;gap:10px}
 .rf-share-card.is-square .chip{height:48px;padding:0 20px;font-size:20px}
 .rf-share-card.is-square .chip.filled{padding-left:16px}
-.rf-share-card.is-square .footer-row{margin-top:14px;height:56px;padding-top:10px}
+.rf-share-card.is-square .footer-row{margin-top:auto;height:56px;padding-top:10px}
 .rf-share-card.is-square .footer-id{font-size:20px;gap:10px}
 .rf-share-card.is-square .footer-id .seg-name{font-size:26px}
 .rf-share-card.is-square .footer-crest-wrap{width:36px;height:36px;flex:0 0 36px}

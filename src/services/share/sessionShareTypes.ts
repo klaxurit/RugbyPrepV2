@@ -29,6 +29,12 @@ export type ShareProgression =
 /** Formats d’export carte (Story 9:16 ou carré feed 1:1). */
 export type ShareCardFormat = 'story' | 'square'
 
+/**
+ * Choix UI du héros quand exercice et semaine de match sont tous deux possibles.
+ * `auto` = priorité produit (record › match › …).
+ */
+export type ShareHeroPreference = 'auto' | 'exercise' | 'match'
+
 /** Données pour générer / partager une carte post-séance. */
 export interface SessionSharePayload {
   sessionLabel: string
@@ -77,6 +83,8 @@ export interface SessionSharePayload {
    * (carré seulement pour record / séance par défaut).
    */
   cardFormat?: ShareCardFormat | null
+  /** Préférence héros UI : exercice (record/séance) vs semaine de match. */
+  heroPreference?: ShareHeroPreference | null
   /** Date ISO YYYY-MM-DD (tampon RECORD « DD · MM · YY »). */
   sessionDateISO?: string | null
   /** Date longue (ex. « Vendredi 8 mai »). */

@@ -1044,6 +1044,18 @@ export const APP_LABELS = {
     fr: 'Carré 1:1',
     en: 'Square 1:1',
   },
+  session_share_hero_label: {
+    fr: 'À la une',
+    en: 'Featured',
+  },
+  session_share_hero_exercise: {
+    fr: 'Exercice',
+    en: 'Exercise',
+  },
+  session_share_hero_match: {
+    fr: 'Semaine de match',
+    en: 'Match week',
+  },
 } as const satisfies Record<string, LabelEntry>
 
 export type AppLabelKey = keyof typeof APP_LABELS

@@ -7,6 +7,7 @@ import type {
   SessionSharePayload,
   SessionShareTarget,
   ShareCardFormat,
+  ShareHeroPreference,
 } from '../../services/share/sessionShareTypes'
 import {
   createSessionSharePreviewUrl,
@@ -17,10 +18,14 @@ import {
   revokeSharePhotoUrl,
 } from '../../services/share/prepareSharePhoto'
 import { shareCardAllowsSquare } from '../../services/share/resolveShareCardFormat'
-import { selectShareHero } from '../../services/share/selectShareHero'
+import {
+  selectShareHero,
+  shareHeroChoiceAvailability,
+} from '../../services/share/selectShareHero'
 
 const SHOW_CLUB_STORAGE_KEY = 'rf.share.showClub'
 const CARD_FORMAT_STORAGE_KEY = 'rf.share.cardFormat'
+const HERO_PREF_STORAGE_KEY = 'rf.share.heroPreference'
 
 function readShowClubPreference(): boolean {
   try {
@@ -56,6 +61,24 @@ function writeCardFormatPreference(value: ShareCardFormat): void {
   }
 }
 
+function readHeroPreference(): ShareHeroPreference {
+  try {
+    const raw = window.localStorage.getItem(HERO_PREF_STORAGE_KEY)
+    if (raw === 'exercise' || raw === 'match' || raw === 'auto') return raw
+  } catch {
+    // ignore
+  }
+  return 'auto'
+}
+
+function writeHeroPreference(value: ShareHeroPreference): void {
+  try {
+    window.localStorage.setItem(HERO_PREF_STORAGE_KEY, value)
+  } catch {
+    // ignore
+  }
+}
+
 export interface SessionShareSheetProps {
   open: boolean
   payload: SessionSharePayload | null
@@ -82,31 +105,50 @@ export function SessionShareSheet({
   const [photoError, setPhotoError] = useState(false)
   const [photoBusy, setPhotoBusy] = useState(false)
   const [cardFormat, setCardFormat] = useState<ShareCardFormat>(readCardFormatPreference)
+  const [heroPreference, setHeroPreference] = useState<ShareHeroPreference>(readHeroPreference)
   const cameraInputRef = useRef<HTMLInputElement>(null)
   const libraryInputRef = useRef<HTMLInputElement>(null)
 
   const hasClub = Boolean(payload?.clubName?.trim())
-  const heroKind = useMemo(
-    () => (payload ? selectShareHero(payload).kind : null),
+  const heroChoices = useMemo(
+    () => (payload ? shareHeroChoiceAvailability(payload) : { exercise: false, match: false }),
     [payload],
   )
-  const formatToggleVisible = heroKind != null && shareCardAllowsSquare(heroKind)
-  const effectivePayload = useMemo<SessionSharePayload | null>(
-    () =>
-      payload
-        ? {
-            ...payload,
-            showClub: hasClub && showClub,
-            photoUrl: photoUrl ?? payload.photoUrl ?? null,
-            cardFormat: formatToggleVisible ? cardFormat : 'story',
-          }
-        : null,
-    [payload, hasClub, showClub, photoUrl, cardFormat, formatToggleVisible],
-  )
+  const heroToggleVisible = heroChoices.exercise && heroChoices.match
+  const effectiveHeroPreference: ShareHeroPreference = heroToggleVisible
+    ? heroPreference === 'match'
+      ? 'match'
+      : 'exercise'
+    : 'auto'
+
+  const effectivePayload = useMemo<SessionSharePayload | null>(() => {
+    if (!payload) return null
+    const withHero: SessionSharePayload = {
+      ...payload,
+      showClub: hasClub && showClub,
+      photoUrl: photoUrl ?? payload.photoUrl ?? null,
+      heroPreference: effectiveHeroPreference,
+    }
+    const kind = selectShareHero(withHero).kind
+    return {
+      ...withHero,
+      cardFormat: shareCardAllowsSquare(kind) ? cardFormat : 'story',
+    }
+  }, [payload, hasClub, showClub, photoUrl, cardFormat, effectiveHeroPreference])
+
+  const formatToggleVisible = useMemo(() => {
+    if (!effectivePayload) return false
+    return shareCardAllowsSquare(selectShareHero(effectivePayload).kind)
+  }, [effectivePayload])
 
   const setFormatPreference = (next: ShareCardFormat) => {
     setCardFormat(next)
     writeCardFormatPreference(next)
+  }
+
+  const setHeroPreferenceAndStore = (next: 'exercise' | 'match') => {
+    setHeroPreference(next)
+    writeHeroPreference(next)
   }
 
   const toggleShowClub = (next: boolean) => {
@@ -375,6 +417,49 @@ export function SessionShareSheet({
           <p className="mt-2 text-xs font-bold text-danger" data-testid="session-share-photo-error">
             {tr('session_share_photo_error', lang)}
           </p>
+        )}
+
+        {heroToggleVisible && (
+          <div
+            className="mt-3"
+            data-testid="session-share-hero-toggle"
+            role="group"
+            aria-label={tr('session_share_hero_label', lang)}
+          >
+            <p className="mb-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-fg-muted">
+              {tr('session_share_hero_label', lang)}
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                data-testid="session-share-hero-exercise"
+                disabled={actionsDisabled}
+                aria-pressed={effectiveHeroPreference === 'exercise'}
+                onClick={() => setHeroPreferenceAndStore('exercise')}
+                className={`inline-flex h-11 items-center justify-center rounded-2xl border text-[11px] font-extrabold uppercase tracking-wide transition-colors disabled:opacity-50 rf-focus-ring ${
+                  effectiveHeroPreference === 'exercise'
+                    ? 'border-brand bg-brand text-on-brand'
+                    : 'border-border-app bg-layer-5 text-fg hover:border-brand-border'
+                }`}
+              >
+                {tr('session_share_hero_exercise', lang)}
+              </button>
+              <button
+                type="button"
+                data-testid="session-share-hero-match"
+                disabled={actionsDisabled}
+                aria-pressed={effectiveHeroPreference === 'match'}
+                onClick={() => setHeroPreferenceAndStore('match')}
+                className={`inline-flex h-11 items-center justify-center rounded-2xl border text-[11px] font-extrabold uppercase tracking-wide transition-colors disabled:opacity-50 rf-focus-ring ${
+                  effectiveHeroPreference === 'match'
+                    ? 'border-brand bg-brand text-on-brand'
+                    : 'border-border-app bg-layer-5 text-fg hover:border-brand-border'
+                }`}
+              >
+                {tr('session_share_hero_match', lang)}
+              </button>
+            </div>
+          </div>
         )}
 
         {formatToggleVisible && (

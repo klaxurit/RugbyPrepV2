@@ -45,6 +45,39 @@ describe('selectShareHero — priorité', () => {
     })
   })
 
+  it('préférence match : force la semaine de match même avec un record', () => {
+    const hero = selectShareHero({
+      ...base,
+      heroPreference: 'match',
+      prs: [{ exerciseName: 'Box squat', newBestKg: 80, previousBestKg: 75 }],
+      nextMatch: { daysUntil: 5, opponent: 'Rugby Club Hérouvillais', isHome: false },
+    })
+    expect(hero).toEqual({
+      kind: 'match',
+      daysUntil: 5,
+      opponent: 'Hérouvillais',
+      venue: 'away',
+    })
+  })
+
+  it('préférence exercise : ignore le match, garde record puis séance', () => {
+    expect(
+      selectShareHero({
+        ...base,
+        heroPreference: 'exercise',
+        nextMatch: { daysUntil: 3, opponent: 'DUC', isHome: true },
+      }).kind,
+    ).toBe('session')
+    expect(
+      selectShareHero({
+        ...base,
+        heroPreference: 'exercise',
+        prs: [{ exerciseName: 'Bench', newBestKg: 90, previousBestKg: 85 }],
+        nextMatch: { daysUntil: 3, opponent: 'DUC', isHome: true },
+      }).kind,
+    ).toBe('record')
+  })
+
   it('a) premier record : pas de delta', () => {
     const hero = selectShareHero({
       ...base,

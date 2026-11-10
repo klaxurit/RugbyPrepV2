@@ -6,9 +6,14 @@
  * Le tonnage n’est jamais le héros : il peut seulement apparaître en chip.
  */
 import type { Lang } from '../../i18n/appLabels'
-import type { SessionSharePayload, ShareNextMatch, ShareProgression } from './sessionShareTypes'
+import type {
+  SessionSharePayload,
+  ShareHeroPreference,
+  ShareNextMatch,
+  ShareProgression,
+} from './sessionShareTypes'
 
-export type { ShareNextMatch, ShareProgression }
+export type { ShareNextMatch, ShareProgression, ShareHeroPreference }
 
 export type ShareHero =
   | {
@@ -107,31 +112,33 @@ export function findShareNextMatch(
   return best
 }
 
-export function selectShareHero(payload: SessionSharePayload): ShareHero {
+function buildRecordHero(payload: SessionSharePayload): Extract<ShareHero, { kind: 'record' }> | null {
   const pr = payload.prs[0]
-  if (pr && pr.newBestKg > 0) {
-    const previous = pr.previousBestKg > 0 ? pr.previousBestKg : null
-    const delta = previous != null ? Math.round((pr.newBestKg - previous) * 10) / 10 : null
-    return {
-      kind: 'record',
-      exerciseName: stripFinalPeriod(pr.exerciseName),
-      kg: pr.newBestKg,
-      deltaKg: delta != null && delta > 0 ? delta : null,
-      previousKg: previous,
-      extraRecords: Math.max(0, payload.prs.length - 1),
-    }
+  if (!pr || !(pr.newBestKg > 0)) return null
+  const previous = pr.previousBestKg > 0 ? pr.previousBestKg : null
+  const delta = previous != null ? Math.round((pr.newBestKg - previous) * 10) / 10 : null
+  return {
+    kind: 'record',
+    exerciseName: stripFinalPeriod(pr.exerciseName),
+    kg: pr.newBestKg,
+    deltaKg: delta != null && delta > 0 ? delta : null,
+    previousKg: previous,
+    extraRecords: Math.max(0, payload.prs.length - 1),
   }
+}
 
+function buildMatchHero(payload: SessionSharePayload): Extract<ShareHero, { kind: 'match' }> | null {
   const match = payload.nextMatch
-  if (match && match.daysUntil >= 1 && match.daysUntil <= 7) {
-    return {
-      kind: 'match',
-      daysUntil: match.daysUntil,
-      opponent: normalizeOpponentName(match.opponent),
-      venue: match.isHome == null ? null : match.isHome ? 'home' : 'away',
-    }
+  if (!match || match.daysUntil < 1 || match.daysUntil > 7) return null
+  return {
+    kind: 'match',
+    daysUntil: match.daysUntil,
+    opponent: normalizeOpponentName(match.opponent),
+    venue: match.isHome == null ? null : match.isHome ? 'home' : 'away',
   }
+}
 
+function buildProgressionOrSessionHero(payload: SessionSharePayload): ShareHero {
   const progression = payload.progression
   if (progression) {
     if (progression.kind === 'load' && progression.percent >= 5) {
@@ -141,7 +148,6 @@ export function selectShareHero(payload: SessionSharePayload): ShareHero {
       return { kind: 'progression', progression }
     }
   }
-
   const { title, focus } = splitSessionLabel(payload.sessionLabel)
   return {
     kind: 'session',
@@ -149,6 +155,34 @@ export function selectShareHero(payload: SessionSharePayload): ShareHero {
     focus,
     durationMin: Math.max(0, Math.round(payload.durationMin)),
   }
+}
+
+/** Options UI : exercice (record / séance) vs semaine de match J-1…J-7. */
+export function shareHeroChoiceAvailability(payload: SessionSharePayload): {
+  exercise: boolean
+  match: boolean
+} {
+  return {
+    exercise: true,
+    match: buildMatchHero(payload) != null,
+  }
+}
+
+export function selectShareHero(payload: SessionSharePayload): ShareHero {
+  const preference: ShareHeroPreference = payload.heroPreference ?? 'auto'
+  const record = buildRecordHero(payload)
+  const match = buildMatchHero(payload)
+
+  if (preference === 'match' && match) return match
+  if (preference === 'exercise') {
+    if (record) return record
+    return buildProgressionOrSessionHero(payload)
+  }
+
+  // auto : record › match › progression › séance
+  if (record) return record
+  if (match) return match
+  return buildProgressionOrSessionHero(payload)
 }
 
 function formatKg(kg: number): string {
