@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { SessionLog, SessionLogProgramContext } from '../types/training'
+import { HISTORY_CHANGED_EVENT } from '../services/history/historyEvents'
 import { supabase } from '../services/supabase/client'
 import { useAuth } from './useAuth'
 import { readUserScoped, writeUserScoped } from '../services/storage/userScopedStorage'
 
+export { HISTORY_CHANGED_EVENT }
+
 const STORAGE_BASE = 'rugbyprep.history'
 const DELETED_IDS_BASE = 'rugbyprep.history.deleted'
-const HISTORY_CHANGED_EVENT = 'rf.history.changed'
 
 const sortNewestFirst = (logs: SessionLog[]): SessionLog[] =>
   [...logs].sort(

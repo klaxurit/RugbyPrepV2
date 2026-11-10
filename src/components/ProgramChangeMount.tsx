@@ -16,7 +16,8 @@ import {
   type FatigueLoadChoice,
 } from '../services/program/fatigueLoadChoice'
 import { userScopedKey } from '../services/storage/userScopedStorage'
-import { countCompletedGymSessionsForProductPrompts } from '../services/program/inSeasonVarietyNotice'
+import { useProductPromptSessionGate } from '../hooks/useProductPromptSessionGate'
+import { productPromptSessionCountFromState } from '../services/program/productPromptSessionGate'
 
 const SUPPRESS_PATHS = new Set([
   '/onboarding',
@@ -57,8 +58,9 @@ export function ProgramChangeMount() {
   const { openProgramEvolution } = useProgramEvolutionSheet()
   const delegatedNoticeRef = useRef<string | null>(null)
 
-  const completedGymSessionCount = countCompletedGymSessionsForProductPrompts(logs)
   const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
+  const sessionGate = useProductPromptSessionGate(userId)
+  const completedGymSessionCount = productPromptSessionCountFromState(sessionGate)
   const accountCreatedYmd = (() => {
     try {
       const ts = authState.status === 'authenticated' ? authState.user?.createdAt : null

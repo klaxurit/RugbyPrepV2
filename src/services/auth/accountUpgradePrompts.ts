@@ -1,5 +1,8 @@
 import type { UserProfile } from '../../types/training'
-import { hasCompletedGymSessionForProductPrompts } from '../program/inSeasonVarietyNotice'
+import {
+  isProductPromptSessionGateOpen,
+  type ProductPromptSessionGateState,
+} from '../program/productPromptSessionGate'
 
 export type NewsletterOptInSource = 'signup' | 'in_app' | 'profile'
 
@@ -21,6 +24,18 @@ export function isAccountUpgradeSuppressedPath(pathname: string): boolean {
   return AUTH_LEGAL_PATHS.has(pathname)
 }
 
+/**
+ * Chemins où les prompts produit (newsletter, …) ne doivent pas interrompre :
+ * auth/legal, onboarding, et séance live (`/session/:id`, pas `/session/log/…`).
+ */
+export function isProductPromptSuppressedPath(pathname: string): boolean {
+  if (isAccountUpgradeSuppressedPath(pathname)) return true
+  if (pathname === '/onboarding') return true
+  if (!pathname.startsWith('/session/')) return false
+  if (pathname.startsWith('/session/log/')) return false
+  return true
+}
+
 export function shouldPromptPasswordUpgrade(input: {
   pathname: string
   passwordNeedsUpgrade: boolean | null | undefined
@@ -33,17 +48,15 @@ export function shouldPromptNewsletterOptIn(input: {
   pathname: string
   passwordNeedsUpgrade: boolean | null | undefined
   newsletterOptIn: boolean | null | undefined
-  /** Même gate que les annonces nouveauté : ≥1 séance gym terminée. */
-  completedGymSessionCount: number
+  /**
+   * Gate centralisé hydraté depuis le serveur (`session_logs`).
+   * Pas de prompt tant que status ≠ ready, même sur `/profile`.
+   */
+  sessionGate: ProductPromptSessionGateState
 }): boolean {
-  if (isAccountUpgradeSuppressedPath(input.pathname)) return false
-  if (input.pathname === '/onboarding') return false
+  if (isProductPromptSuppressedPath(input.pathname)) return false
   if (input.passwordNeedsUpgrade === true) return false
-  if (!hasCompletedGymSessionForProductPrompts({
-    completedGymSessionCount: input.completedGymSessionCount,
-  })) {
-    return false
-  }
+  if (!isProductPromptSessionGateOpen(input.sessionGate)) return false
   // null = existing account, never asked. undefined = not hydrated yet — don't flash.
   return input.newsletterOptIn === null
 }

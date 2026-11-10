@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { UserProfile } from '../../../types/training'
 import {
   applyNewsletterFromMetadata,
+  isProductPromptSuppressedPath,
   newsletterPreferencePatch,
   shouldPromptNewsletterOptIn,
   shouldPromptPasswordUpgrade,
@@ -17,24 +18,59 @@ describe('shouldPromptPasswordUpgrade', () => {
   })
 })
 
-describe('shouldPromptNewsletterOptIn', () => {
-  const afterFirstSession = { completedGymSessionCount: 1 }
+describe('isProductPromptSuppressedPath', () => {
+  it('supprime auth, onboarding et séance live — pas /profile ni revue de log', () => {
+    expect(isProductPromptSuppressedPath('/onboarding')).toBe(true)
+    expect(isProductPromptSuppressedPath('/auth/login')).toBe(true)
+    expect(isProductPromptSuppressedPath('/session/0')).toBe(true)
+    expect(isProductPromptSuppressedPath('/session/12')).toBe(true)
+    expect(isProductPromptSuppressedPath('/session/log/abc')).toBe(false)
+    expect(isProductPromptSuppressedPath('/profile')).toBe(false)
+    expect(isProductPromptSuppressedPath('/home')).toBe(false)
+  })
+})
 
-  it('asks existing accounts (null) once the password is ok and ≥1 séance', () => {
+describe('shouldPromptNewsletterOptIn', () => {
+  const afterFirstSession = {
+    sessionGate: { status: 'ready' as const, completedGymSessionCount: 1 },
+  }
+
+  it('asks existing accounts (null) once the password is ok and ≥1 séance serveur', () => {
     expect(shouldPromptNewsletterOptIn({
       pathname: '/home',
       passwordNeedsUpgrade: false,
       newsletterOptIn: null,
       ...afterFirstSession,
     })).toBe(true)
+    expect(shouldPromptNewsletterOptIn({
+      pathname: '/profile',
+      passwordNeedsUpgrade: false,
+      newsletterOptIn: null,
+      ...afterFirstSession,
+    })).toBe(true)
   })
 
-  it('refuse avant la 1re séance (même gate que les annonces)', () => {
+  it('refuse avant la 1re séance — y compris /profile (SoT serveur)', () => {
+    expect(shouldPromptNewsletterOptIn({
+      pathname: '/profile',
+      passwordNeedsUpgrade: false,
+      newsletterOptIn: null,
+      sessionGate: { status: 'ready', completedGymSessionCount: 0 },
+    })).toBe(false)
+  })
+
+  it('refuse tant que le comptage serveur n’est pas ready (pas de flash local)', () => {
+    expect(shouldPromptNewsletterOptIn({
+      pathname: '/profile',
+      passwordNeedsUpgrade: false,
+      newsletterOptIn: null,
+      sessionGate: { status: 'loading' },
+    })).toBe(false)
     expect(shouldPromptNewsletterOptIn({
       pathname: '/home',
       passwordNeedsUpgrade: false,
       newsletterOptIn: null,
-      completedGymSessionCount: 0,
+      sessionGate: { status: 'idle' },
     })).toBe(false)
   })
 
@@ -74,7 +110,7 @@ describe('shouldPromptNewsletterOptIn', () => {
     })).toBe(false)
   })
 
-  it('does not interrupt onboarding or auth screens', () => {
+  it('does not interrupt onboarding, auth, or live session', () => {
     expect(shouldPromptNewsletterOptIn({
       pathname: '/onboarding',
       passwordNeedsUpgrade: false,
@@ -83,6 +119,12 @@ describe('shouldPromptNewsletterOptIn', () => {
     })).toBe(false)
     expect(shouldPromptNewsletterOptIn({
       pathname: '/privacy',
+      passwordNeedsUpgrade: false,
+      newsletterOptIn: null,
+      ...afterFirstSession,
+    })).toBe(false)
+    expect(shouldPromptNewsletterOptIn({
+      pathname: '/session/0',
       passwordNeedsUpgrade: false,
       newsletterOptIn: null,
       ...afterFirstSession,
