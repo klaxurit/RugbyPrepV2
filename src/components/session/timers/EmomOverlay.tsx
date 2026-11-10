@@ -64,13 +64,14 @@ export function EmomOverlay({ block, onComplete, onClose, onSnapshot, lang = 'fr
     // eslint-disable-next-line react-hooks/exhaustive-deps -- start change with status; only gate on block number
   }, [blockNumber])
 
-  if (!block || !format) return null
-
-  // Format-specific data.
-  const isEmom = format.type === 'emom'
-  const isTabata = format.type === 'tabata'
-
-  const totalUnits = isEmom ? format.rounds : isTabata ? format.rounds : 0
+  // Format-specific data (hooks avant tout return — rules-of-hooks).
+  const isEmom = format?.type === 'emom'
+  const isTabata = format?.type === 'tabata'
+  const totalUnits = isEmom && format?.type === 'emom'
+    ? format.rounds
+    : isTabata && format?.type === 'tabata'
+      ? format.rounds
+      : 0
   const emomFinished = Boolean(isEmom && snapshot.emomFinished)
   const currentUnit = isEmom ? snapshot.currentMinute ?? 0 : isTabata ? snapshot.currentRound ?? 0 : 0
   const remainingInUnit = snapshot.remainingInIntervalSec ?? 0
@@ -93,6 +94,8 @@ export function EmomOverlay({ block, onComplete, onClose, onSnapshot, lang = 'fr
     snapshot.totalMinutes,
     totalUnits,
   ])
+
+  if (!block || !format) return null
 
   const mm = Math.floor(remainingInUnit / 60)
   const ss = String(Math.floor(remainingInUnit % 60)).padStart(2, '0')

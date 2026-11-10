@@ -1097,6 +1097,20 @@ export function SessionDetailPage() {
     return buildEmomRecapFields(block, previousByExerciseId)
   }, [emomRecapBlockNumber, adaptedSession, getPreviousSessionSet])
 
+  const handleEmomSnapshot = useCallback(
+    (snap: { displayMinute: number; totalMinutes: number; emomFinished: boolean }) => {
+      if (emomBlockNumber == null) return
+      setEmomLive({
+        blockNumber: emomBlockNumber,
+        displayMinute: snap.displayMinute,
+        totalMinutes: snap.totalMinutes,
+        emomFinished: snap.emomFinished,
+      })
+      if (snap.emomFinished) setFinishedEmomBlockNumber(emomBlockNumber)
+    },
+    [emomBlockNumber],
+  )
+
   if (hasHardBlock) {
     return (
       <div className="min-h-screen bg-app font-sans text-fg pb-bottom-nav">
@@ -1176,20 +1190,6 @@ export function SessionDetailPage() {
     // Ouvre le récap post-chrono (saisie kg / secondes) — pattern SugarWOD.
     setEmomRecapBlockNumber(blockNumber)
   }
-
-  const handleEmomSnapshot = useCallback(
-    (snap: { displayMinute: number; totalMinutes: number; emomFinished: boolean }) => {
-      if (emomBlockNumber == null) return
-      setEmomLive({
-        blockNumber: emomBlockNumber,
-        displayMinute: snap.displayMinute,
-        totalMinutes: snap.totalMinutes,
-        emomFinished: snap.emomFinished,
-      })
-      if (snap.emomFinished) setFinishedEmomBlockNumber(emomBlockNumber)
-    },
-    [emomBlockNumber],
-  )
 
   const handlePlayDemo = (blockNumber: number, exerciseIndex: number) => {
     if (!adaptedSession) return
