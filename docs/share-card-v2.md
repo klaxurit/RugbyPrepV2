@@ -29,7 +29,7 @@ Le payload est construit dans `src/pages/SessionDetailPage.tsx`. La feuille de p
 
 ### Un seul héros, choisi par priorité
 
-1. **Record battu** (`prs[0]`) : exercice + charge + écart avec l'ancien record (« +5 kg / vs 75 kg »), pastille RECORD. Sans ancien record : « 1er record ».
+1. **Record battu** (`prs[0]`) : exercice + charge + écart avec l'ancien record (« +5 kg / vs 75 kg »). Sans ancien record : « 1er record ».
 2. **Semaine de match** : match à J-1…J-7 (calendrier, matchs masqués exclus). J-X + adversaire nettoyé (« Rugby Club Hérouvillais » → « Hérouvillais ») + DOM./EXT. + frise J-7 → poteaux.
 3. **Progression** (`payload.progression`) : charge ≥ +5 % sur 4 semaines, sinon série ≥ 3 semaines complètes d'affilée.
 4. **Par défaut** : nom de la séance + durée + focus (dernier segment du libellé, ex. « Bas du corps · Explosivité »).
@@ -47,7 +47,7 @@ Si record et match tombent la même semaine, le record reste le héros et « J-X
 - **Pied** : « Prénom · [écusson] Club · R2 » + wordmark, toujours sur une ligne. Si la place manque : niveau abrégé, puis ellipse sur le nom du club.
 - **Aucune donnée inventée** : un champ absent est omis, séparateurs compris (jamais « · · »). Pas de niveau par défaut, pas de blason généré.
 - **Logo club** : uniquement les URL déjà stockées (`getClubLogoUrl`), affiché dans un **rond**. Échec CORS ou absence → écusson de secours aux initiales (déjà circulaire).
-- **Pastille RECORD** : si `prs.length > 0`, petite pastille (pas le grand tampon).
+- **Tampon RECORD** (Claude Design, 220 px story / 170 px carré) : uniquement si `prs.length > 0` — `— PERSO —` / RECORD / date `DD · MM · YY`.
 - **Toggle « Afficher mon club »** : activé par défaut, mémorisé dans `localStorage` (`rf.share.showClub`). Désactivé → ni logo, ni club, ni niveau.
 - **Contraste** : texte sur panneau bordeaux ≥ 4,5:1 même sur une photo blanche (panneau à 85 %).
 

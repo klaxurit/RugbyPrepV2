@@ -12,6 +12,7 @@ import {
   type ShareCardData,
   type ShareFooterSegment,
 } from './buildShareCardData'
+import { formatShareStampDate } from './formatShareStampDate'
 import { resolveShareCardFormat } from './resolveShareCardFormat'
 import {
   buildShareChips,
@@ -46,8 +47,10 @@ export interface SessionShareCardModel {
   photoSrc: string | null
   /** Logo club ou écusson de secours ; null → pas d’écusson. */
   crestSrc: string | null
-  /** Nombre de records de la séance (pastille RECORD si > 0). */
+  /** Nombre de records de la séance (tampon Claude Design si > 0). */
   recordCount: number
+  /** Date courte du tampon (« DD · MM · YY »), absente → ligne date omise. */
+  stampDate: string | null
   /** Poste en chip haut gauche. */
   positionChip: string | null
   /** Chip haut droite : date, ou « J-5 · ADVERSAIRE » si le match n’est pas le héros. */
@@ -97,6 +100,7 @@ export function buildSessionShareCardModel(
     photoSrc: assets.photoSrc ?? null,
     crestSrc,
     recordCount: payload.prs.length,
+    stampDate: formatShareStampDate(payload.sessionDateISO),
     positionChip: identity.positionLabel,
     headerRight,
     hero,
@@ -246,12 +250,10 @@ export function buildSessionShareCardHtml(model: SessionShareCardModel): string 
         .join('')}</div>`
     : ''
   const footerIdHtml = buildFooterIdentityHtml(model)
-  const recordPill =
+  const stamp =
     model.recordCount > 0
-      ? `<div class="record-pill" data-testid="share-record-pill"><span class="record-pill-label">RECORD</span>${
-          model.recordCount > 1
-            ? `<span class="record-pill-count">+${model.recordCount - 1}</span>`
-            : ''
+      ? `<div class="stamp" data-testid="share-record-stamp"><span class="s1">— PERSO —</span><span class="s2">RECORD</span>${
+          model.stampDate ? `<span class="s3">${escapeHtml(model.stampDate)}</span>` : ''
         }</div>`
       : ''
 
@@ -259,7 +261,7 @@ export function buildSessionShareCardHtml(model: SessionShareCardModel): string 
 ${buildBackgroundHtml(model)}
 ${model.positionChip ? `<div class="hchip left">${escapeHtml(model.positionChip)}</div>` : ''}
 ${model.headerRight ? `<div class="hchip right">${escapeHtml(model.headerRight)}</div>` : ''}
-${recordPill}
+${stamp}
 <div class="content">
   ${buildHeroHtml(model)}
   ${chipsHtml}

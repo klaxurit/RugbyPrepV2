@@ -1412,6 +1412,7 @@ export function SessionDetailPage() {
           history: historyLogs,
           weekStreak: gamificationProfile?.currentWeekStreak,
         }),
+        sessionDateISO: today,
         dateLabel,
         weekLabel,
         sessionOrdinalLabel,

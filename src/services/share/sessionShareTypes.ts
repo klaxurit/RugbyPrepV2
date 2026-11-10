@@ -77,6 +77,8 @@ export interface SessionSharePayload {
    * (carré seulement pour record / séance par défaut).
    */
   cardFormat?: ShareCardFormat | null
+  /** Date ISO YYYY-MM-DD (tampon RECORD « DD · MM · YY »). */
+  sessionDateISO?: string | null
   /** Date longue (ex. « Vendredi 8 mai »). */
   dateLabel?: string | null
   /** Semaine programme (ex. « Semaine 19 »). */

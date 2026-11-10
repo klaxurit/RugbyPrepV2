@@ -43,6 +43,7 @@ const payload: SessionSharePayload = {
   displayName: 'Jean Dupont',
   positionLabel: '1ère ligne',
   clubName: 'JO Pradéenne',
+  sessionDateISO: '2026-05-08',
   dateLabel: 'Vendredi 8 mai',
   weekLabel: 'Semaine 19',
   sessionOrdinalLabel: 'Séance 3/5',
@@ -89,33 +90,22 @@ const render = (patch: Partial<SessionSharePayload> = {}, a: Parameters<typeof b
   buildSessionShareCardHtml(buildSessionShareCardModel({ ...payload, ...patch }, a))
 
 describe('buildSessionShareCardHtml (v2)', () => {
-  it('record battu en héros : exercice, charge, delta, pastille (carré auto)', () => {
+  it('record battu en héros : exercice, charge, delta, tampon Claude Design (carré auto)', () => {
     const html = render()
     expect(html).toContain('rf-share-card is-square no-photo')
     expect(html).toContain('class="hero hero-record"')
     expect(html).toContain('>Bench Press</h1>')
     expect(html).toContain('<span class="big" style="font-size:113px">90</span>')
     expect(html).toContain('<b>+5 kg</b><span>vs 85 kg</span>')
-    expect(html).toContain('class="record-pill"')
-    expect(html).toContain('record-pill-label">RECORD</span>')
-    expect(html).not.toContain('record-pill-count')
+    expect(html).toContain('class="stamp"')
+    expect(html).toContain('>— PERSO —</span>')
+    expect(html).toContain('>RECORD</span>')
+    expect(html).toContain('>08 · 05 · 26</span>')
   })
 
-  it('plusieurs records : pastille avec compteur +N', () => {
-    const html = render({
-      prs: [
-        { exerciseName: 'Bench Press', newBestKg: 90, previousBestKg: 85 },
-        { exerciseName: 'Squat', newBestKg: 140, previousBestKg: 135 },
-        { exerciseName: 'Deadlift', newBestKg: 180, previousBestKg: 170 },
-      ],
-    })
-    expect(html).toContain('class="record-pill"')
-    expect(html).toContain('record-pill-count">+2</span>')
-  })
-
-  it('sans record : pas de pastille', () => {
+  it('sans record : pas de tampon', () => {
     const html = render({ prs: [] })
-    expect(html).not.toContain('record-pill')
+    expect(html).not.toContain('class="stamp"')
   })
 
   it('jamais le tonnage en héros ; il peut être en chip', () => {
