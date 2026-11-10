@@ -123,6 +123,7 @@ docs/*
 !docs/v1-1-*.md
 !docs/release-v1-1-plan.md
 !docs/gamification-competition-plan.md
+!docs/share-card-v2.md
 !docs/gamification-prod-launch.md
 !docs/gamification-illustration-brief.md
 !docs/product-analytics.md
