@@ -122,7 +122,7 @@ export function EmomBlock({
                     <strong>{localizeMotherSessionExerciseName(p.exercise.name, lang)}</strong>
                     {p.detail && (
                       <span className="ml-1 font-medium text-fg-muted">
-                        {formatPrescriptionDisplay(p.detail, { lang })}
+                        {formatPrescriptionDisplay(p.detail, { lang }).label}
                       </span>
                     )}
                   </span>

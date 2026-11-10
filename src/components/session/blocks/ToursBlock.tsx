@@ -650,11 +650,11 @@ function ExerciseRow({
   const spec = parseExerciseSetSpec(exo.prescription)
   const hasRepScheme = spec.kind === 'reps'
   const isoLabel = isoChronoLabel(exo.prescription)
-  const prescriptionLabel = formatPrescriptionDisplay(exo.prescription, {
+  const formattedRx = formatPrescriptionDisplay(exo.prescription, {
     foundations: foundationsDisplay,
     lang,
   })
-  const glossaryScan = `${exo.prescription} ${exo.name}`
+  const prescriptionLabel = formattedRx.label
   const nameLabels = exerciseDisplayLabels(
     localizeMotherSessionExerciseName(exo.name, lang),
     lang,
@@ -783,7 +783,7 @@ function ExerciseRow({
           ) : null}
           <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
             <span className="text-sm tabular-nums text-fg/55">{prescriptionLabel}</span>
-            <GlossaryHint text={glossaryScan} lang={lang} />
+            <GlossaryHint termIds={formattedRx.glossaryKeys} lang={lang} />
           </div>
         </div>
 
@@ -930,11 +930,11 @@ function PreviewExerciseRow({
   lang,
   foundationsDisplay = false,
 }: PreviewExerciseRowProps) {
-  const prescriptionLabel = formatPrescriptionDisplay(exo.prescription, {
+  const formattedRx = formatPrescriptionDisplay(exo.prescription, {
     foundations: foundationsDisplay,
     lang,
   })
-  const glossaryScan = `${exo.prescription} ${exo.name}`
+  const prescriptionLabel = formattedRx.label
   const nameLabels = exerciseDisplayLabels(
     localizeMotherSessionExerciseName(exo.name, lang),
     lang,
@@ -953,7 +953,7 @@ function PreviewExerciseRow({
         ) : null}
         <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
           <span className="text-sm tabular-nums text-fg/55">{prescriptionLabel}</span>
-          <GlossaryHint text={glossaryScan} lang={lang} />
+          <GlossaryHint termIds={formattedRx.glossaryKeys} lang={lang} />
         </div>
       </div>
       {onOpenVariants && (

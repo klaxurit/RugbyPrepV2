@@ -136,20 +136,35 @@ export function glossaryDefinition(entry: GlossaryEntry, lang: Lang): string {
   return entry.definition[lang === 'en' ? 'en' : 'fr']
 }
 
+export type FormattedPrescription = {
+  /** Texte affiché (éventuellement remappé Fondations). */
+  label: string
+  /**
+   * Termes glossaire dérivés du **label affiché** — jamais de la prescription
+   * brute (évite « % » alors que l’UI montre RER).
+   */
+  glossaryKeys: GlossaryTermId[]
+}
+
 /**
  * Affichage Fondations : remplace « 80-85% » par un repère RER lisible
  * (la prescription source reste inchangée côté moteur).
+ * Retourne aussi les clés glossaire alignées sur le label.
  */
 export function formatPrescriptionDisplay(
   prescription: string,
-  opts: { foundations?: boolean; lang?: Lang },
-): string {
-  if (!opts.foundations) return prescription
+  opts: { foundations?: boolean; lang?: Lang } = {},
+): FormattedPrescription {
   const lang = opts.lang === 'en' ? 'en' : 'fr'
-  return prescription.replace(
-    /(\d+\s*[-–]\s*\d+|\d+)\s*%/g,
-    lang === 'en' ? 'RIR 2–3 (no max yet)' : 'RER 2–3 (sans max connu)',
-  )
+  const label =
+    opts.foundations
+      ? prescription.replace(
+          /(\d+\s*[-–]\s*\d+|\d+)\s*%/g,
+          lang === 'en' ? 'RIR 2–3 (no max yet)' : 'RER 2–3 (sans max connu)',
+        )
+      : prescription
+  const glossaryKeys = findGlossaryMatches(label).map((e) => e.id)
+  return { label, glossaryKeys }
 }
 
 /** Libellés FR joueur pour types de séance (onboarding / récap). */

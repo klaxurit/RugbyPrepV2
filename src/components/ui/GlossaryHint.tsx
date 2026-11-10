@@ -3,13 +3,20 @@ import type { Lang } from '../../i18n/appLabels'
 import {
   findGlossaryMatches,
   glossaryDefinition,
+  glossaryEntryById,
   glossaryLabel,
   type GlossaryEntry,
+  type GlossaryTermId,
 } from '../../i18n/trainingGlossary'
 
 type GlossaryHintProps = {
   /** Texte scanné pour détecter les termes (prescription, note…). */
-  text: string
+  text?: string
+  /**
+   * Termes imposés par le formatteur d’affichage (prioritaire sur `text`).
+   * Évite le décalage Fondations % → RER.
+   */
+  termIds?: readonly GlossaryTermId[]
   lang?: Lang
   className?: string
 }
@@ -17,8 +24,13 @@ type GlossaryHintProps = {
 /**
  * Petits « ? » en ligne — 0 nouvel écran (popover ancré au bouton).
  */
-export function GlossaryHint({ text, lang = 'fr', className }: GlossaryHintProps) {
-  const matches = findGlossaryMatches(text)
+export function GlossaryHint({ text, termIds, lang = 'fr', className }: GlossaryHintProps) {
+  const matches: GlossaryEntry[] =
+    termIds && termIds.length > 0
+      ? termIds.map((id) => glossaryEntryById(id))
+      : text
+        ? findGlossaryMatches(text)
+        : []
   if (matches.length === 0) return null
 
   return (
