@@ -14,6 +14,7 @@ import {
   countCompletedLoggableSets,
   countLoggableSessionSets,
 } from '../services/session/countLoggableSessionSets'
+import { resolveSessionRunProgress } from '../services/session/resolveSessionRunProgress'
 import { parseExerciseSetSpec } from '../services/ui/exerciseSetSpec'
 import { parseBlockFormat } from '../services/ui/parseBlockFormat'
 import { useWakeLock } from '../hooks/useWakeLock'
@@ -438,8 +439,7 @@ export function SessionDetailPage() {
     emomFinished: boolean
   } | null>(null)
 
-  // Progression par TOURS (pas par série/exo). Un tour est "validé" quand tous
-  // les exos loggables du bloc sont cochés pour ce tourIndex.
+  // Progression séance : une dérivation pure (sets validés + snapshot EMOM).
   const runProgress = useMemo(() => {
     if (!activeSlot) {
       return {
@@ -450,88 +450,16 @@ export function SessionDetailPage() {
         activeBlockName: '',
         activeTourIndex: null as number | null,
         activeBlockTourCount: 0,
-        activeBlockUnitLabel: 'Tour' as 'Tour' | 'Minute' | 'Round' | 'For Time',
+        activeBlockUnitLabel: 'Tour' as const,
       }
     }
-    const blocks = preparedSession?.blocks ?? activeSlot.session.blocks
-    let totalTours = 0
-    let completedTours = 0
-    let activeBlockIndex = 0
-    let activeBlockName = ''
-    let activeTourIndex: number | null = null
-    let activeBlockTourCount = 0
-    let activeBlockUnitLabel: 'Tour' | 'Minute' | 'Round' | 'For Time' = 'Tour'
-    for (let b = 0; b < blocks.length; b++) {
-      const block = blocks[b]
-      const loggableIdx: number[] = []
-      block.exercises.forEach((ex, i) => {
-        if (isDirectiveText(ex.name)) return
-        if (!(resolveExerciseIdForSessionRun(ex.name, ex.exerciseId))) return
-        loggableIdx.push(i)
-      })
-      const fmt = parseBlockFormat(block.format)
-      const unitCount =
-        fmt.type === 'emom' || fmt.type === 'tabata' ? fmt.rounds : parseBlockTourCount(block)
-      if (loggableIdx.length === 0) continue
-      totalTours += unitCount
-      let blockCompletedTours = 0
-      let blockActiveTour: number | null = null
-      if (fmt.type === 'rounds') {
-        for (let t = 0; t < unitCount; t++) {
-          const allDone = loggableIdx.every((i) =>
-            sessionRun.completedExercises.has(buildExerciseTourKey(block.number, t, i)),
-          )
-          if (allDone) blockCompletedTours += 1
-          else if (blockActiveTour === null) blockActiveTour = t
-        }
-      } else if (
-        fmt.type === 'emom' &&
-        (emomLive?.blockNumber === block.number || finishedEmomBlockNumber === block.number)
-      ) {
-        const finished =
-          emomLive?.blockNumber === block.number
-            ? emomLive.emomFinished
-            : finishedEmomBlockNumber === block.number
-        blockActiveTour = finished ? unitCount - 1 : Math.max(0, (emomLive?.displayMinute ?? 1) - 1)
-        if (finished) blockCompletedTours = unitCount
-      } else {
-        blockActiveTour = 0
-      }
-      completedTours += blockCompletedTours
-      if (activeBlockIndex === 0 && blockActiveTour !== null) {
-        activeBlockIndex = b + 1
-        activeBlockName = localizeBlockName(block.name, lang)
-        activeTourIndex =
-          fmt.type === 'emom' && emomLive?.blockNumber === block.number
-            ? emomLive.displayMinute
-            : fmt.type === 'emom' && finishedEmomBlockNumber === block.number
-              ? unitCount
-              : blockActiveTour + 1
-        activeBlockTourCount = unitCount
-        activeBlockUnitLabel =
-          fmt.type === 'emom'
-            ? 'Minute'
-            : fmt.type === 'tabata'
-              ? 'Round'
-              : fmt.type === 'for_time'
-                ? 'For Time'
-                : 'Tour'
-      }
-    }
-    if (activeBlockIndex === 0 && blocks.length > 0) {
-      activeBlockIndex = blocks.length
-      activeBlockName = localizeBlockName(blocks[blocks.length - 1].name, lang)
-    }
-    return {
-      totalTours,
-      completedTours,
-      activeBlockIndex,
-      totalBlocks: blocks.length,
-      activeBlockName,
-      activeTourIndex,
-      activeBlockTourCount,
-      activeBlockUnitLabel,
-    }
+    return resolveSessionRunProgress({
+      blocks: preparedSession?.blocks ?? activeSlot.session.blocks,
+      completedExercises: sessionRun.completedExercises,
+      lang,
+      emomLive,
+      finishedEmomBlockNumber,
+    })
   }, [
     activeSlot,
     preparedSession,
@@ -1797,7 +1725,15 @@ export function SessionDetailPage() {
             <EmomOverlay
               block={adaptedSession.blocks.find((b) => b.number === emomBlockNumber) ?? null}
               onComplete={handleEmomComplete}
-              onClose={() => setEmomBlockNumber(null)}
+              onClose={() => {
+                // Fermeture manuelle : si déjà finished via snapshot, garder
+                // finishedEmom pour le corps / l’en-tête jusqu’au récap.
+                if (emomLive?.blockNumber === emomBlockNumber && emomLive.emomFinished) {
+                  setFinishedEmomBlockNumber(emomBlockNumber)
+                  setEmomRecapBlockNumber(emomBlockNumber)
+                }
+                setEmomBlockNumber(null)
+              }}
               onSnapshot={handleEmomSnapshot}
               lang={lang}
             />

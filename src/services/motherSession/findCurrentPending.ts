@@ -33,7 +33,10 @@ export interface PendingCursor {
 }
 
 /** Bloc chronométré entièrement validé (tous les exos loggables au tour 0). */
-export function isTimedBlockComplete(block: Block, completedExercises: Set<string>): boolean {
+export function isTimedBlockComplete(
+  block: Block,
+  completedExercises: ReadonlySet<string>,
+): boolean {
   const loggable = collectLoggableExercises(block)
   if (loggable.length === 0) return true
   return loggable.every(({ originalIndex }) =>

@@ -104,6 +104,23 @@ describe('useBlockTimer persistKey', () => {
     expect(result.current.snapshot.elapsedSec).toBe(480)
   })
 
+  it('skip minute par minute jusqu’à la fin → finished', () => {
+    const { result } = renderHook(() =>
+      useBlockTimer({ format: emomFormat, persistKey: 'emom-skip-end' }),
+    )
+    act(() => {
+      result.current.start()
+    })
+    for (let i = 0; i < 8; i++) {
+      act(() => {
+        result.current.skipInterval()
+      })
+    }
+    expect(result.current.snapshot.emomFinished).toBe(true)
+    expect(result.current.snapshot.elapsedSec).toBe(480)
+    expect(result.current.snapshot.remainingInIntervalSec).toBe(0)
+  })
+
   it('rechargement après fin naturelle → toujours finished (pas idle Minute 1)', () => {
     const key = 'emom-reload-finished'
     const first = renderHook(() => useBlockTimer({ format: emomFormat, persistKey: key }))

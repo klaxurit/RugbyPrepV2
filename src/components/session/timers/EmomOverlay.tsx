@@ -121,7 +121,9 @@ export function EmomOverlay({ block, onComplete, onClose, onSnapshot, lang = 'fr
   }
 
   const handleClose = () => {
-    stop()
+    // Ne pas stop() si finished : stop efface le persist completed → corps
+    // « Démarrer le chrono » / en-tête Minute 1 pendant que l’UI dit terminé.
+    if (!emomFinished) stop()
     onClose()
   }
 
