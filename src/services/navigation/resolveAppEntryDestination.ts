@@ -68,13 +68,21 @@ export function resolveAuthenticatedAppDestination(
 }
 
 /**
- * After onboarding completes, decide where to send the user.
- * - Valid requestedPath → that path
- * - Otherwise → first gym session (`/session/0`)
+ * After onboarding CTA (« Démarrer ma 1re séance »), always open the first
+ * session preview. Deep-links `/session/*` are kept; other intended paths
+ * (ex. `/home`, `/progress`) must not divert away from the 1st séance.
  */
 export function resolvePostOnboardingDestination(
   requestedPath?: string | null,
 ): string {
   const sanitized = sanitizeRequestedAppPath(requestedPath)
-  return sanitized ?? POST_ONBOARDING_DESTINATION
+  if (
+    sanitized &&
+    (sanitized === '/session' ||
+      sanitized.startsWith('/session/') ||
+      sanitized.startsWith('/session?'))
+  ) {
+    return sanitized
+  }
+  return POST_ONBOARDING_DESTINATION
 }

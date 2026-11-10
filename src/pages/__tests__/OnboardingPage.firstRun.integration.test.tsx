@@ -117,13 +117,13 @@ describe('OnboardingPage · first run flow', () => {
     expect(markOnboardingCompleteMock).toHaveBeenCalledWith('u1')
   })
 
-  it('fin d\'onboarding avec intention transmise → destination conservée', () => {
+  it('fin d\'onboarding avec intention non-séance → toujours /session/0', () => {
     renderOnboarding({ intendedPath: '/progress' })
     navigateToSummary()
 
     fireEvent.click(screen.getByTestId('onboarding-finish-btn'))
 
-    expect(navigateMock).toHaveBeenCalledWith('/progress', { replace: true })
+    expect(navigateMock).toHaveBeenCalledWith('/session/0', { replace: true })
   })
 
   it('ne montre pas performanceFocus dans le tunnel', () => {

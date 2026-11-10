@@ -101,8 +101,14 @@ describe('resolvePostOnboardingDestination', () => {
     expect(resolvePostOnboardingDestination(null)).toBe('/session/0')
   })
 
-  it('avec intention valide → destination conservée', () => {
-    expect(resolvePostOnboardingDestination('/progress')).toBe('/progress')
+  it('intention non-séance (home/progress) → 1re séance', () => {
+    expect(resolvePostOnboardingDestination('/progress')).toBe('/session/0')
+    expect(resolvePostOnboardingDestination('/home')).toBe('/session/0')
+  })
+
+  it('deep-link séance conservé', () => {
+    expect(resolvePostOnboardingDestination('/session/0')).toBe('/session/0')
+    expect(resolvePostOnboardingDestination('/session/1')).toBe('/session/1')
   })
 
   it('avec intention invalide → première séance', () => {
