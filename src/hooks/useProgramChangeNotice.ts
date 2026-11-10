@@ -198,6 +198,10 @@ interface UseProgramChangeNoticeArgs {
   acwrRatio?: number | null
   hasSufficientAcwrData?: boolean
   today: string
+  /** Nombre de séances gym terminées (gate nouveautés). */
+  completedGymSessionCount?: number
+  /** Date création compte / onboarding YYYY-MM-DD. */
+  accountCreatedYmd?: string | null
 }
 
 export interface UseProgramChangeNoticeResult {
@@ -215,7 +219,16 @@ export interface UseProgramChangeNoticeResult {
  * that, the postpone option is gone (user must acknowledge to dismiss).
  */
 export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UseProgramChangeNoticeResult {
-  const { profile, calendarEvents, acwrZone, acwrRatio, hasSufficientAcwrData, today } = args
+  const {
+    profile,
+    calendarEvents,
+    acwrZone,
+    acwrRatio,
+    hasSufficientAcwrData,
+    today,
+    completedGymSessionCount = 0,
+    accountCreatedYmd = null,
+  } = args
   const [persisted, setPersisted] = useState<PersistedProgramNoticeState>(() =>
     typeof window === 'undefined' ? EMPTY : readProgramNoticePersisted(),
   )
@@ -265,11 +278,25 @@ export function useProgramChangeNotice(args: UseProgramChangeNoticeArgs): UsePro
         hasSufficientAcwrData,
         calendarEvents,
         lang,
+        featureNoveltyGate: {
+          completedGymSessionCount,
+          accountCreatedYmd,
+        },
       })
     } catch {
       return null
     }
-  }, [profile, calendarEvents, acwrZone, acwrRatio, hasSufficientAcwrData, today, decisionTick])
+  }, [
+    profile,
+    calendarEvents,
+    acwrZone,
+    acwrRatio,
+    hasSufficientAcwrData,
+    today,
+    decisionTick,
+    completedGymSessionCount,
+    accountCreatedYmd,
+  ])
 
   const visible = useMemo<VisibleProgramChangeNotice | null>(() => {
     if (!detected) return null

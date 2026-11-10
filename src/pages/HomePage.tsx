@@ -404,7 +404,14 @@ export function HomePage() {
     dismiss: dismissGamificationIntro,
     loading: gamificationIntroLoading,
   } = useHintVisibility('gamification_intro_v1')
-  const showGamificationIntroNatural = gamificationIntroVisible && !gamificationIntroLoading
+  const completedGymSessionsForIntro = logs.filter(
+    (l) => l.sessionType !== 'ACTIVE_RECOVERY' && l.sessionType !== 'RECOVERY',
+  ).length
+  // Groupe / gamification : après la 1re séance seulement (tout est nouveau avant).
+  const showGamificationIntroNatural =
+    gamificationIntroVisible &&
+    !gamificationIntroLoading &&
+    completedGymSessionsForIntro >= 1
   const showGamificationIntro = useOverlayPermission(
     'gamification_intro',
     showGamificationIntroNatural,

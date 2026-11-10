@@ -66,39 +66,39 @@ export const TRAINING_GLOSSARY: readonly GlossaryEntry[] = [
   },
   {
     id: 'lower',
-    label: { fr: 'Lower', en: 'Lower' },
+    label: { fr: 'Bas du corps', en: 'Lower' },
     definition: {
       fr: 'Séance bas du corps (jambes, hanches, chaîne postérieure).',
       en: 'Lower-body session (legs, hips, posterior chain).',
     },
-    match: /\bLower\b/,
+    match: /\bLower\b|\bBas du corps\b/i,
   },
   {
     id: 'upper',
-    label: { fr: 'Upper', en: 'Upper' },
+    label: { fr: 'Haut du corps', en: 'Upper' },
     definition: {
       fr: 'Séance haut du corps (poussée, tirage, épaules).',
       en: 'Upper-body session (push, pull, shoulders).',
     },
-    match: /\bUpper\b/,
+    match: /\bUpper\b|\bHaut du corps\b/i,
   },
   {
     id: 'primer',
-    label: { fr: 'Primer', en: 'Primer' },
+    label: { fr: 'Activation', en: 'Primer' },
     definition: {
       fr: 'Séance d’activation courte (Power-up) avant un match ou une charge club.',
       en: 'Short activation session (primer) before a match or club load.',
     },
-    match: /\bPrimer\b|\bPower-up\b/i,
+    match: /\bPrimer\b|\bPower-up\b|\bActivation\b/i,
   },
   {
     id: 'full',
-    label: { fr: 'Full', en: 'Full' },
+    label: { fr: 'Complète', en: 'Full' },
     definition: {
       fr: 'Séance corps complet (bas + haut dans la même session).',
       en: 'Full-body session (lower + upper in one workout).',
     },
-    match: /\bFull(?:\s*Body)?\b/i,
+    match: /\bFull(?:\s*Body)?\b|\bComplète\b|\bCorps complet\b/i,
   },
   {
     id: 'quad_ham',

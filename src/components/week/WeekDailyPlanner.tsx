@@ -10,7 +10,7 @@ import { plannedSessionCardStats } from './plannedSessionCardStats'
 const SESSION_SUBTITLE: Record<MotherSessionType, string> = {
   upper: 'Haut du corps',
   lower: 'Bas du corps',
-  full: 'Corps complet',
+  full: 'Complète',
   full_light_primer: 'Activation',
   speed_power: 'Vitesse · Puissance',
 }

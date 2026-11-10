@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import type { AnnualPlanningContext } from '../../../types/annualPlanning'
 import {
   buildInSeasonVarietyNotice,
+  canOfferFeatureNoveltyNotice,
   IN_SEASON_VARIETY_NOTICE_ID,
+  IN_SEASON_VARIETY_NOTICE_LAUNCH_YMD,
   novelMotherSessionIds,
 } from '../inSeasonVarietyNotice'
 
@@ -15,9 +17,44 @@ function ctx(cycle: AnnualPlanningContext['cycle']): AnnualPlanningContext {
   } as AnnualPlanningContext
 }
 
+const legacyGate = {
+  completedGymSessionCount: 2,
+  accountCreatedYmd: '2026-01-15',
+}
+
+describe('canOfferFeatureNoveltyNotice', () => {
+  it('refuse avant la 1re séance', () => {
+    expect(
+      canOfferFeatureNoveltyNotice({
+        completedGymSessionCount: 0,
+        accountCreatedYmd: '2026-01-15',
+      }),
+    ).toBe(false)
+  })
+
+  it('refuse les comptes créés à la date de lancement ou après', () => {
+    expect(
+      canOfferFeatureNoveltyNotice({
+        completedGymSessionCount: 3,
+        accountCreatedYmd: IN_SEASON_VARIETY_NOTICE_LAUNCH_YMD,
+      }),
+    ).toBe(false)
+    expect(
+      canOfferFeatureNoveltyNotice({
+        completedGymSessionCount: 3,
+        accountCreatedYmd: '2026-11-10',
+      }),
+    ).toBe(false)
+  })
+
+  it('accepte un compte legacy après au moins 1 séance', () => {
+    expect(canOfferFeatureNoveltyNotice(legacyGate)).toBe(true)
+  })
+})
+
 describe('buildInSeasonVarietyNotice', () => {
-  it('émet une notice feature en in-season', () => {
-    const notice = buildInSeasonVarietyNotice(ctx('in_season'), '2026-04-15', 'fr')
+  it('émet une notice feature en in-season (compte legacy)', () => {
+    const notice = buildInSeasonVarietyNotice(ctx('in_season'), '2026-04-15', 'fr', legacyGate)
     expect(notice).not.toBeNull()
     expect(notice?.id).toBe(IN_SEASON_VARIETY_NOTICE_ID)
     expect(notice?.type).toBe('feature')
@@ -25,11 +62,22 @@ describe('buildInSeasonVarietyNotice', () => {
     expect(notice?.postponable).toBe(true)
     expect(notice?.title.toLowerCase()).toContain('vivant')
     expect(notice?.bullets.length).toBeGreaterThanOrEqual(2)
+    expect(notice?.bullets.some((b) => /Bas du corps/i.test(b))).toBe(true)
+    expect(notice?.bullets.every((b) => !/\bLower\b|\bPrimer\b/.test(b))).toBe(true)
   })
 
   it('ne s’affiche pas hors in-season', () => {
-    expect(buildInSeasonVarietyNotice(ctx('pre_season'), '2026-04-15', 'fr')).toBeNull()
-    expect(buildInSeasonVarietyNotice(ctx('off_season'), '2026-04-15', 'en')).toBeNull()
+    expect(buildInSeasonVarietyNotice(ctx('pre_season'), '2026-04-15', 'fr', legacyGate)).toBeNull()
+    expect(buildInSeasonVarietyNotice(ctx('off_season'), '2026-04-15', 'en', legacyGate)).toBeNull()
+  })
+
+  it('ne s’affiche pas pour un compte neuf (0 séance)', () => {
+    expect(
+      buildInSeasonVarietyNotice(ctx('in_season'), '2026-11-10', 'fr', {
+        completedGymSessionCount: 0,
+        accountCreatedYmd: '2026-11-10',
+      }),
+    ).toBeNull()
   })
 })
 

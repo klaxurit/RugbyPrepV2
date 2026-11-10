@@ -15,6 +15,7 @@ import {
   persistFatigueLoadDecision,
   type FatigueLoadChoice,
 } from '../services/program/fatigueLoadChoice'
+import { userScopedKey } from '../services/storage/userScopedStorage'
 
 const SUPPRESS_PATHS = new Set([
   '/onboarding',
@@ -55,6 +56,25 @@ export function ProgramChangeMount() {
   const { openProgramEvolution } = useProgramEvolutionSheet()
   const delegatedNoticeRef = useRef<string | null>(null)
 
+  const completedGymSessionCount = logs.filter(
+    (l) => l.sessionType !== 'ACTIVE_RECOVERY' && l.sessionType !== 'RECOVERY',
+  ).length
+  const userId = authState.status === 'authenticated' ? authState.user?.id ?? null : null
+  const accountCreatedYmd = (() => {
+    try {
+      const ts = authState.status === 'authenticated' ? authState.user?.createdAt : null
+      if (typeof ts === 'number' && Number.isFinite(ts) && ts > 0) {
+        return new Date(ts).toISOString().slice(0, 10)
+      }
+      const raw = window.localStorage.getItem(
+        userScopedKey('rugbyprep.onboarding.completedAt', userId),
+      )
+      return raw?.slice(0, 10) ?? null
+    } catch {
+      return null
+    }
+  })()
+
   const { notice, postpone } = useProgramChangeNotice({
     profile: authState.status === 'authenticated' ? profile : null,
     calendarEvents: visibleEvents,
@@ -62,6 +82,8 @@ export function ProgramChangeMount() {
     acwrRatio: acwr.acwr,
     hasSufficientAcwrData: acwr.hasSufficientData,
     today,
+    completedGymSessionCount,
+    accountCreatedYmd,
   })
 
   const lang = profile.preferredLanguage === 'en' ? 'en' : 'fr'

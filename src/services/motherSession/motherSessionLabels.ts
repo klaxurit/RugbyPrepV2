@@ -60,8 +60,8 @@ export function msCycleLabel(cycle: string, lang: AppLang): string {
 const SESSION_TYPE_LABELS: Record<string, Record<AppLang, string>> = {
   upper:             { fr: 'Haut du corps',       en: 'Upper' },
   lower:             { fr: 'Bas du corps',         en: 'Lower' },
-  full:              { fr: 'Corps complet',        en: 'Full' },
-  full_light_primer: { fr: 'Power-up',             en: 'Full (light primer)' },
+  full:              { fr: 'Complète',             en: 'Full' },
+  full_light_primer: { fr: 'Activation',           en: 'Activation' },
   speed_power:       { fr: 'Vitesse / puissance',  en: 'Speed / power' },
 }
 

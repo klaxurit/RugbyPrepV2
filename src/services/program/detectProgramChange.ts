@@ -37,7 +37,10 @@ import {
   programNoticePreSeasonPhaseTitle,
 } from '../../i18n/programSurfaces'
 import { detectAnnualPlanningContext } from '../season/detectAnnualPlanningContext'
-import { buildInSeasonVarietyNotice } from './inSeasonVarietyNotice'
+import {
+  buildInSeasonVarietyNotice,
+  type FeatureNoveltyGate,
+} from './inSeasonVarietyNotice'
 import {
   defaultFatigueLoadChoice,
   type FatigueLoadZone,
@@ -60,6 +63,8 @@ export type DetectProgramChangeInputs = Omit<AthletePlanningInputs, 'today' | 'e
   calendarEvents: CalendarEvent[]
   /** UI language for notice copy. */
   lang?: Lang
+  /** Gate nouveautés produit (après 1re séance + compte antérieur au lancement). */
+  featureNoveltyGate?: FeatureNoveltyGate
 }
 
 /** Add `days` to an ISO date string (YYYY-MM-DD). Pure local-date arithmetic. */
@@ -324,7 +329,12 @@ export function detectProgramChange(inputs: DetectProgramChangeInputs): ProgramC
 
   // Feature notices never compete with match / cycle / phase / ACWR.
   if (candidates.length === 0 && current) {
-    const featureNotice = buildInSeasonVarietyNotice(current, today, lang)
+    const featureNotice = buildInSeasonVarietyNotice(
+      current,
+      today,
+      lang,
+      inputs.featureNoveltyGate,
+    )
     if (featureNotice) candidates.push(featureNotice)
   }
 
