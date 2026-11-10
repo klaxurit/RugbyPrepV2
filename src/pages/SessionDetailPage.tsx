@@ -420,6 +420,19 @@ export function SessionDetailPage() {
     announcedLiveToastKgByExoRef.current = {}
   }, [sessionRunKey])
 
+  // ── États des overlays timer (D5) — avant runProgress pour une seule SoT EMOM
+  const [emomBlockNumber, setEmomBlockNumber] = useState<number | null>(null)
+  /** Bloc dont le chrono EMOM vient de finir → sheet récap perfs. */
+  const [emomRecapBlockNumber, setEmomRecapBlockNumber] = useState<number | null>(null)
+  /** Chrono EMOM terminé : corps + barre restent en finished tant que le récap n’a pas validé. */
+  const [finishedEmomBlockNumber, setFinishedEmomBlockNumber] = useState<number | null>(null)
+  const [emomLive, setEmomLive] = useState<{
+    blockNumber: number
+    displayMinute: number
+    totalMinutes: number
+    emomFinished: boolean
+  } | null>(null)
+
   // Progression par TOURS (pas par série/exo). Un tour est "validé" quand tous
   // les exos loggables du bloc sont cochés pour ce tourIndex.
   const runProgress = useMemo(() => {
@@ -466,6 +479,16 @@ export function SessionDetailPage() {
           if (allDone) blockCompletedTours += 1
           else if (blockActiveTour === null) blockActiveTour = t
         }
+      } else if (
+        fmt.type === 'emom' &&
+        (emomLive?.blockNumber === block.number || finishedEmomBlockNumber === block.number)
+      ) {
+        const finished =
+          emomLive?.blockNumber === block.number
+            ? emomLive.emomFinished
+            : finishedEmomBlockNumber === block.number
+        blockActiveTour = finished ? unitCount - 1 : Math.max(0, (emomLive?.displayMinute ?? 1) - 1)
+        if (finished) blockCompletedTours = unitCount
       } else {
         blockActiveTour = 0
       }
@@ -473,7 +496,12 @@ export function SessionDetailPage() {
       if (activeBlockIndex === 0 && blockActiveTour !== null) {
         activeBlockIndex = b + 1
         activeBlockName = localizeBlockName(block.name, lang)
-        activeTourIndex = blockActiveTour + 1
+        activeTourIndex =
+          fmt.type === 'emom' && emomLive?.blockNumber === block.number
+            ? emomLive.displayMinute
+            : fmt.type === 'emom' && finishedEmomBlockNumber === block.number
+              ? unitCount
+              : blockActiveTour + 1
         activeBlockTourCount = unitCount
         activeBlockUnitLabel =
           fmt.type === 'emom'
@@ -499,18 +527,20 @@ export function SessionDetailPage() {
       activeBlockTourCount,
       activeBlockUnitLabel,
     }
-  }, [activeSlot, preparedSession, sessionRun.completedExercises, lang])
+  }, [
+    activeSlot,
+    preparedSession,
+    sessionRun.completedExercises,
+    lang,
+    emomLive,
+    finishedEmomBlockNumber,
+  ])
 
   // (handleCursorChange retiré : l'auto-scroll vers la série courante sera
   //  réintégré en D6 via le sticky CTA contextuel `validate-exo`.)
 
   useWakeLock(isRunning)
 
-  // ── États des overlays timer (D5) ────────────────────────────────────────
-  // EMOM/Tabata : bloc en chrono actif
-  const [emomBlockNumber, setEmomBlockNumber] = useState<number | null>(null)
-  /** Bloc dont le chrono EMOM vient de finir → sheet récap perfs. */
-  const [emomRecapBlockNumber, setEmomRecapBlockNumber] = useState<number | null>(null)
   // Iso : exo en chrono actif (avec contexte pour pouvoir le marquer fait)
   const [isoTrigger, setIsoTrigger] = useState<{
     blockNumber: number
@@ -1041,6 +1071,8 @@ export function SessionDetailPage() {
         completedExercises: completed,
       })
       setEmomRecapBlockNumber(null)
+      setFinishedEmomBlockNumber(null)
+      setEmomLive(null)
     },
     [adaptedSession, sessionRun, handleBlockCompleted],
   )
@@ -1125,10 +1157,35 @@ export function SessionDetailPage() {
   const handleEmomComplete = () => {
     if (emomBlockNumber == null) return
     const blockNumber = emomBlockNumber
+    setFinishedEmomBlockNumber(blockNumber)
+    setEmomLive((prev) =>
+      prev?.blockNumber === blockNumber
+        ? { ...prev, emomFinished: true, displayMinute: prev.totalMinutes }
+        : {
+            blockNumber,
+            displayMinute: prev?.totalMinutes ?? 0,
+            totalMinutes: prev?.totalMinutes ?? 0,
+            emomFinished: true,
+          },
+    )
     setEmomBlockNumber(null)
     // Ouvre le récap post-chrono (saisie kg / secondes) — pattern SugarWOD.
     setEmomRecapBlockNumber(blockNumber)
   }
+
+  const handleEmomSnapshot = useCallback(
+    (snap: { displayMinute: number; totalMinutes: number; emomFinished: boolean }) => {
+      if (emomBlockNumber == null) return
+      setEmomLive({
+        blockNumber: emomBlockNumber,
+        displayMinute: snap.displayMinute,
+        totalMinutes: snap.totalMinutes,
+        emomFinished: snap.emomFinished,
+      })
+      if (snap.emomFinished) setFinishedEmomBlockNumber(emomBlockNumber)
+    },
+    [emomBlockNumber],
+  )
 
   const handlePlayDemo = (blockNumber: number, exerciseIndex: number) => {
     if (!adaptedSession) return
@@ -1666,6 +1723,14 @@ export function SessionDetailPage() {
               getPreviousSessionSet={getPreviousSessionSet}
               onLiveSetValidated={handleLiveSetValidated}
               activeEmomBlockNumber={emomBlockNumber}
+              finishedEmomBlockNumber={finishedEmomBlockNumber}
+              emomLiveDisplayMinute={
+                emomLive &&
+                (emomLive.blockNumber === emomBlockNumber ||
+                  emomLive.blockNumber === finishedEmomBlockNumber)
+                  ? emomLive.displayMinute
+                  : null
+              }
               historyLogs={historyLogs}
               slotSignature={slotSignature ?? undefined}
               lang={lang}
@@ -1716,6 +1781,7 @@ export function SessionDetailPage() {
               block={adaptedSession.blocks.find((b) => b.number === emomBlockNumber) ?? null}
               onComplete={handleEmomComplete}
               onClose={() => setEmomBlockNumber(null)}
+              onSnapshot={handleEmomSnapshot}
               lang={lang}
             />
           )}

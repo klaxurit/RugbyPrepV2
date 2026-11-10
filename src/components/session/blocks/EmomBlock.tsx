@@ -30,6 +30,13 @@ interface EmomBlockProps {
   totalMinutes: number
   /** Vrai quand le timer overlay est actif (la page Phase C bascule en phase 'emom-timer'). */
   timerActive: boolean
+  /**
+   * Chrono arrivé à la fin (même SoT que l’overlay) — affiche l’état terminé
+   * derrière la fenêtre / après fermeture, sans « Démarrer le chrono ».
+   */
+  timerFinished?: boolean
+  /** Minute affichée 1-based quand le chrono tourne ou est fini (ex. 8/8). */
+  timerDisplayMinute?: number | null
   onStartTimer: () => void
   notes?: readonly string[]
   /** Alternatives matériel (med ball → câble, etc.). */
@@ -58,6 +65,8 @@ export function EmomBlock({
   onToggle,
   totalMinutes,
   timerActive,
+  timerFinished = false,
+  timerDisplayMinute = null,
   onStartTimer,
   notes,
   fallbackOptions,
@@ -93,7 +102,11 @@ export function EmomBlock({
               <GlossaryHint text="EMOM" lang={lang} />
             </div>
             <p className="mb-3 text-[12px] leading-[1.5] text-fg-secondary">
-              {totalMinutes} {tr('emom_minutes_intro_pre', lang)}
+              {timerFinished && timerDisplayMinute != null
+                ? `${tr('emom_chrono_block', lang)} · ${tr('block_state_done', lang)} · ${timerDisplayMinute}/${totalMinutes}`
+                : timerActive && timerDisplayMinute != null
+                  ? `${tr('emom_chrono_block', lang)} · ${timerDisplayMinute}/${totalMinutes}`
+                  : `${totalMinutes} ${tr('emom_minutes_intro_pre', lang)}`}
             </p>
             <ul className="mb-3.5 flex flex-col gap-2">
               {pattern.map((p) => (
@@ -138,7 +151,7 @@ export function EmomBlock({
               ))}
             </ul>
 
-            {state === 'active' && !timerActive && (
+            {state === 'active' && !timerActive && !timerFinished && (
               <button
                 type="button"
                 onClick={onStartTimer}
@@ -150,7 +163,7 @@ export function EmomBlock({
               </button>
             )}
 
-            {state === 'active' && timerActive && (
+            {state === 'active' && timerActive && !timerFinished && (
               <div
                 className="flex w-full items-center gap-2.5 rounded-xl border-[1.5px] border-dashed border-brand/55 bg-badge-wine px-4 py-3.5 animate-rf-pulse"
                 style={{ animationDuration: '1.5s' }}
@@ -162,7 +175,7 @@ export function EmomBlock({
               </div>
             )}
 
-            {state === 'done' && (
+            {(state === 'done' || timerFinished) && (
               <div className="flex w-full items-center gap-2.5 rounded-xl bg-win-soft text-win px-4 py-3">
                 <Icon name="check" size={16} color="var(--color-milestone-green)" strokeWidth={2.6} />
                 <span className="text-[11px] font-extrabold uppercase tracking-[0.1em]">

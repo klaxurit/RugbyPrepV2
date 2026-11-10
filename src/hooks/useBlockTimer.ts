@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { TimedBlockFormat } from '../services/ui/parseBlockFormat'
+import { deriveEmomTimerView } from '../services/session/emomTimerState'
 
 /**
  * Chronomètre générique pour les blocs à format temporel (EMOM, Tabata, AMRAP, For Time).
@@ -53,8 +54,11 @@ type PersistedTimer = {
   startedAt: number
   pausedMs: number
   pauseStartedAt: number | null
-  status: 'running' | 'paused'
+  /** completed : conserve l’état finished après fin naturelle (rechargement / remount). */
+  status: 'running' | 'paused' | 'completed'
   amrapRounds: number
+  /** Elapsed figé à la complétion (évite de recalculer au-delà du planifié). */
+  frozenElapsedSec?: number
 }
 
 const persistStore = new Map<string, PersistedTimer>()
@@ -106,6 +110,9 @@ export function useBlockTimer({
   const [status, setStatus] = useState<TimerStatus>(() => restored?.status ?? 'idle')
   const [elapsedSec, setElapsedSec] = useState(() => {
     if (!restored) return 0
+    if (restored.status === 'completed') {
+      return restored.frozenElapsedSec ?? 0
+    }
     return computeElapsedSec(
       restored.startedAt,
       restored.pausedMs,
@@ -132,14 +139,33 @@ export function useBlockTimer({
     return format.totalSeconds
   }, [format])
 
-  const syncPersist = useCallback((nextStatus: TimerStatus) => {
+  const syncPersist = useCallback((nextStatus: TimerStatus, frozenElapsed?: number) => {
     const key = persistKeyRef.current
     if (!key) return
-    if (nextStatus !== 'running' && nextStatus !== 'paused') {
+    if (nextStatus === 'idle') {
       writePersisted(key, null)
       return
     }
     const startedAt = startedAtRef.current
+    if (startedAt == null && nextStatus !== 'completed') {
+      writePersisted(key, null)
+      return
+    }
+    if (nextStatus === 'completed') {
+      writePersisted(key, {
+        startedAt: startedAt ?? Date.now(),
+        pausedMs: pausedMsRef.current,
+        pauseStartedAt: null,
+        status: 'completed',
+        amrapRounds,
+        frozenElapsedSec: frozenElapsed ?? elapsedSec,
+      })
+      return
+    }
+    if (nextStatus !== 'running' && nextStatus !== 'paused') {
+      writePersisted(key, null)
+      return
+    }
     if (startedAt == null) {
       writePersisted(key, null)
       return
@@ -151,7 +177,7 @@ export function useBlockTimer({
       status: nextStatus,
       amrapRounds,
     })
-  }, [amrapRounds])
+  }, [amrapRounds, elapsedSec])
 
   const refreshElapsedFromClock = useCallback(() => {
     const startedAt = startedAtRef.current
@@ -187,7 +213,7 @@ export function useBlockTimer({
     return () => document.removeEventListener('visibilitychange', onVisibility)
   }, [status, refreshElapsedFromClock, syncPersist])
 
-  // ── Persistance continue tant que running/paused ────────────────────────
+  // ── Persistance continue tant que running/paused/completed ─────────────
   useEffect(() => {
     if (status === 'running' || status === 'paused') {
       syncPersist(status)
@@ -198,38 +224,20 @@ export function useBlockTimer({
   const snapshot = useMemo<TimerSnapshot>(() => {
     switch (format.type) {
       case 'emom': {
-        const totalMinutes = format.rounds
-        const interval = format.intervalSeconds
-        const plannedTotal = totalMinutes * interval
-        const cappedElapsed = Math.min(elapsedSec, plannedTotal)
-        const emomFinished =
-          status === 'completed' || (plannedTotal > 0 && elapsedSec >= plannedTotal)
-        if (emomFinished) {
-          return {
-            status: status === 'completed' ? 'completed' : status,
-            elapsedSec: cappedElapsed,
-            totalSec,
-            currentMinute: Math.max(0, totalMinutes - 1),
-            totalMinutes,
-            remainingInIntervalSec: 0,
-            emomFinished: true,
-          }
-        }
-        const currentMinute = Math.min(
-          totalMinutes - 1,
-          Math.floor(cappedElapsed / interval),
-        )
-        const intoInterval = cappedElapsed % interval
-        // Début de minute (into=0) → interval entier restant ; jamais 0 tant que non fini.
-        const remainingInIntervalSec = intoInterval === 0 ? interval : interval - intoInterval
+        const view = deriveEmomTimerView({
+          elapsedSec,
+          totalMinutes: format.rounds,
+          intervalSeconds: format.intervalSeconds,
+          status,
+        })
         return {
           status,
-          elapsedSec: cappedElapsed,
+          elapsedSec: view.elapsedSec,
           totalSec,
-          currentMinute,
-          totalMinutes,
-          remainingInIntervalSec,
-          emomFinished: false,
+          currentMinute: view.currentMinuteIndex,
+          totalMinutes: view.totalMinutes,
+          remainingInIntervalSec: view.remainingInIntervalSec,
+          emomFinished: view.emomFinished,
         }
       }
       case 'tabata': {
@@ -295,10 +303,10 @@ export function useBlockTimer({
       vibrate([180, 80, 180])
       // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: transition to completed when timer reaches total
       setStatus('completed')
-      writePersisted(persistKeyRef.current, null)
+      syncPersist('completed', Math.min(elapsedSec, totalSec))
       onComplete?.()
     }
-  }, [status, elapsedSec, totalSec, onComplete])
+  }, [status, elapsedSec, totalSec, onComplete, syncPersist])
 
   // ── Controls ───────────────────────────────────────────────────────────
   const start = useCallback(() => {

@@ -48,6 +48,10 @@ interface SessionBlocksProps {
   onStartEmomTimer?: (blockNumber: number) => void
   /** Bloc EMOM dont le chrono overlay est actif. */
   activeEmomBlockNumber?: number | null
+  /** Bloc EMOM dont le chrono est terminé (avant / pendant le récap). */
+  finishedEmomBlockNumber?: number | null
+  /** Minute EMOM live 1-based (même SoT que l’overlay). */
+  emomLiveDisplayMinute?: number | null
   /** Demande au parent d'ouvrir l'overlay iso pour cet exo. */
   onStartIsoTimer?: (blockNumber: number, tourIndex: number, exerciseIndex: number) => void
   /** Demande au parent d'afficher la démo vidéo de l'exo. */
@@ -117,6 +121,8 @@ export function SessionBlocks({
   getPreviousSessionSet,
   onLiveSetValidated,
   activeEmomBlockNumber = null,
+  finishedEmomBlockNumber = null,
+  emomLiveDisplayMinute = null,
   lang = 'fr',
   historyLogs,
   slotSignature,
@@ -222,6 +228,12 @@ export function SessionBlocks({
               onToggle={onToggle}
               totalMinutes={totalMinutes}
               timerActive={activeEmomBlockNumber === block.number}
+              timerFinished={finishedEmomBlockNumber === block.number}
+              timerDisplayMinute={
+                activeEmomBlockNumber === block.number || finishedEmomBlockNumber === block.number
+                  ? emomLiveDisplayMinute
+                  : null
+              }
               onStartTimer={() => onStartEmomTimer?.(block.number)}
               notes={notes}
               fallbackOptions={fallbackOptions}

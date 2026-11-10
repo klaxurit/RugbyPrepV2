@@ -18,6 +18,12 @@ interface EmomOverlayProps {
   onComplete: () => void
   /** Appelée quand l'utilisateur ferme l'overlay (croix ou Stop). */
   onClose: () => void
+  /** Snapshot live pour la page (barre de progression / corps derrière). */
+  onSnapshot?: (snap: {
+    displayMinute: number
+    totalMinutes: number
+    emomFinished: boolean
+  }) => void
   /** Aligné sur `UserProfile.preferredLanguage` — lexique mother session. */
   lang?: Lang
 }
@@ -31,7 +37,7 @@ interface EmomOverlayProps {
  * Design éditorial v4-pro : countdown 64px italic + dots minutes + exo en cours +
  * contrôles play/skip/stop.
  */
-export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOverlayProps) {
+export function EmomOverlay({ block, onComplete, onClose, onSnapshot, lang = 'fr' }: EmomOverlayProps) {
   const format = useMemo(() => (block ? parseBlockFormat(block.format) : null), [block])
   const { enabled: beepEnabled } = useRestBeepPref()
   const persistKey = block != null ? `emom-block-${block.number}` : null
@@ -70,6 +76,23 @@ export function EmomOverlay({ block, onComplete, onClose, lang = 'fr' }: EmomOve
   const remainingInUnit = snapshot.remainingInIntervalSec ?? 0
   const totalRemainingSec =
     snapshot.totalSec != null ? Math.max(0, snapshot.totalSec - snapshot.elapsedSec) : 0
+
+  useEffect(() => {
+    if (!isEmom || !onSnapshot) return
+    const total = snapshot.totalMinutes ?? totalUnits
+    onSnapshot({
+      displayMinute: emomFinished ? total : currentUnit + 1,
+      totalMinutes: total,
+      emomFinished,
+    })
+  }, [
+    isEmom,
+    onSnapshot,
+    emomFinished,
+    currentUnit,
+    snapshot.totalMinutes,
+    totalUnits,
+  ])
 
   const mm = Math.floor(remainingInUnit / 60)
   const ss = String(Math.floor(remainingInUnit % 60)).padStart(2, '0')

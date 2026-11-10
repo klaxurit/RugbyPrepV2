@@ -104,6 +104,26 @@ describe('useBlockTimer persistKey', () => {
     expect(result.current.snapshot.elapsedSec).toBe(480)
   })
 
+  it('rechargement après fin naturelle → toujours finished (pas idle Minute 1)', () => {
+    const key = 'emom-reload-finished'
+    const first = renderHook(() => useBlockTimer({ format: emomFormat, persistKey: key }))
+    act(() => {
+      first.result.current.start()
+    })
+    act(() => {
+      vi.advanceTimersByTime(480_000)
+    })
+    expect(first.result.current.snapshot.emomFinished).toBe(true)
+    first.unmount()
+
+    const second = renderHook(() => useBlockTimer({ format: emomFormat, persistKey: key }))
+    expect(second.result.current.snapshot.status).toBe('completed')
+    expect(second.result.current.snapshot.emomFinished).toBe(true)
+    expect(second.result.current.snapshot.remainingInIntervalSec).toBe(0)
+    expect(second.result.current.snapshot.currentMinute).toBe(7)
+    second.unmount()
+  })
+
   it('reprise après visibilitychange recalcule sur horodatage', () => {
     const key = 'emom-bg'
     const { result } = renderHook(() =>
