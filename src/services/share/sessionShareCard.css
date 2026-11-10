@@ -31,14 +31,14 @@
 .rf-share-card.has-photo .hchip.left{background:var(--cream);color:var(--bordeaux)}
 .rf-share-card.has-photo .hchip.right{background:rgba(18,3,6,.6);color:var(--cream)}
 
-/* ── Tampon RECORD Claude Design (220 px) — uniquement si prs.length > 0 ── */
-.rf-share-card .stamp{position:absolute;left:804px;top:968px;z-index:2;width:220px;height:220px;box-sizing:border-box;border-radius:50%;background:var(--bordeaux);border:5px solid var(--cream);box-shadow:inset 0 0 0 8px var(--bordeaux),inset 0 0 0 10px var(--cream),0 14px 30px rgba(18,3,6,.4);transform:rotate(-10deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+/* ── Tampon RECORD Claude Design : à cheval sur la coupe (photo + panneau), hors flux ── */
+.rf-share-card .stamp{position:absolute;left:804px;top:968px;z-index:6;width:220px;height:220px;box-sizing:border-box;border-radius:50%;background:var(--bordeaux);border:5px solid var(--cream);box-shadow:inset 0 0 0 8px var(--bordeaux),inset 0 0 0 10px var(--cream),0 14px 30px rgba(18,3,6,.4);transform:rotate(-10deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none;margin:0;padding:0}
 .rf-share-card .stamp .s1{font-size:15px;font-weight:800;letter-spacing:.28em;color:var(--cream)}
 .rf-share-card .stamp .s2{font-size:48px;line-height:1;font-style:italic;font-weight:900;letter-spacing:-.03em;color:#fff}
 .rf-share-card .stamp .s3{font-size:15px;font-weight:800;letter-spacing:.22em;color:var(--cream)}
 
-/* ── Bloc texte compact, ancré en bas (fin à y 1640) ── */
-.rf-share-card .content{position:absolute;left:72px;width:936px;bottom:280px;display:flex;flex-direction:column}
+/* ── Bloc texte compact, ancré en bas (fin à y 1640) — inchangé avec/sans tampon ── */
+.rf-share-card .content{position:absolute;left:72px;width:936px;bottom:280px;display:flex;flex-direction:column;z-index:1}
 .rf-share-card .kicker{font-size:22px;font-weight:700;letter-spacing:.18em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rf-share-card .hero-title{font-style:italic;font-weight:900;letter-spacing:-.035em;line-height:.92;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:8px}
 .rf-share-card .hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
@@ -107,7 +107,8 @@
 .rf-share-card.is-square .panel{top:520px;height:560px;clip-path:polygon(0 72px,100% 0,100% 100%,0 100%)}
 .rf-share-card.is-square .edge{top:516px;height:80px;clip-path:polygon(0 72px,100% 0,100% 6px,0 78px)}
 .rf-share-card.is-square .hchip{top:40px;height:48px;font-size:18px;max-width:400px;padding:0 20px}
-.rf-share-card.is-square .stamp{left:850px;top:520px;width:170px;height:170px;border-width:4px;box-shadow:inset 0 0 0 6px var(--bordeaux),inset 0 0 0 8px var(--cream),0 10px 24px rgba(18,3,6,.4);gap:2px}
+/* Coupe carré ~y 520 à droite → tampon centré sur la coupe (moitié photo / moitié panneau). */
+.rf-share-card.is-square .stamp{left:850px;top:435px;width:170px;height:170px;border-width:4px;box-shadow:inset 0 0 0 6px var(--bordeaux),inset 0 0 0 8px var(--cream),0 10px 24px rgba(18,3,6,.4);gap:2px}
 .rf-share-card.is-square .stamp .s1{font-size:12px;letter-spacing:.26em}
 .rf-share-card.is-square .stamp .s2{font-size:38px}
 .rf-share-card.is-square .stamp .s3{font-size:12px;letter-spacing:.2em}

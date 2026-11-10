@@ -47,7 +47,7 @@ Si record et match tombent la même semaine, le record reste le héros et « J-X
 - **Pied** : « Prénom · [écusson] Club · R2 » + wordmark, toujours sur une ligne. Si la place manque : niveau abrégé, puis ellipse sur le nom du club.
 - **Aucune donnée inventée** : un champ absent est omis, séparateurs compris (jamais « · · »). Pas de niveau par défaut, pas de blason généré.
 - **Logo club** : uniquement les URL déjà stockées (`getClubLogoUrl`), affiché dans un **rond**. Échec CORS ou absence → écusson de secours aux initiales (déjà circulaire).
-- **Tampon RECORD** (Claude Design, 220 px story / 170 px carré) : uniquement si `prs.length > 0` — `— PERSO —` / RECORD / date `DD · MM · YY`.
+- **Tampon RECORD** (Claude Design, 220 px story / 170 px carré) : uniquement si `prs.length > 0` — `— PERSO —` / RECORD / date `DD · MM · YY`. Hors flux, à cheval sur la coupe (déborde sur la photo + le panneau), sans padding ajouté au bloc bas.
 - **Toggle « Afficher mon club »** : activé par défaut, mémorisé dans `localStorage` (`rf.share.showClub`). Désactivé → ni logo, ni club, ni niveau.
 - **Contraste** : texte sur panneau bordeaux ≥ 4,5:1 même sur une photo blanche (panneau à 85 %).
 

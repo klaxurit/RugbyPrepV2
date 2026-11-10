@@ -261,7 +261,6 @@ export function buildSessionShareCardHtml(model: SessionShareCardModel): string 
 ${buildBackgroundHtml(model)}
 ${model.positionChip ? `<div class="hchip left">${escapeHtml(model.positionChip)}</div>` : ''}
 ${model.headerRight ? `<div class="hchip right">${escapeHtml(model.headerRight)}</div>` : ''}
-${stamp}
 <div class="content">
   ${buildHeroHtml(model)}
   ${chipsHtml}
@@ -270,5 +269,6 @@ ${stamp}
     <img class="footer-logo" src="${escapeHtml(model.logoSrc)}" alt="RugbyForge" crossorigin="anonymous" />
   </div>
 </div>
+${stamp}
 </div>`
 }
