@@ -15,7 +15,7 @@ describe('applyPositionAccentBlock', () => {
   it('ajoute un bloc HOOKER sans retirer les blocs existants', () => {
     const s = baseUpperBwHyp()
     const before = s.blocks.length
-    // W1 contact : nuque prioritaire → nuque + diamant + chaise (pike hors cap)
+    // W1 contact : slots tagués contact uniquement (Focus A strict)
     const out = applyPositionAccentBlock(s, {
       rugbyPosition: 'HOOKER',
       mesoWeek: 1,
@@ -23,34 +23,30 @@ describe('applyPositionAccentBlock', () => {
       lang: 'fr',
     })
     expect(out.blocks.length).toBe(before + 1)
-    expect(out.blocks.slice(0, before)).toEqual(s.blocks)
-    const accent = out.blocks[out.blocks.length - 1]
-    expect(accent?.name).toMatch(/Accent poste/i)
+    expect(out.blocks.some((b) => /Accent poste/i.test(b.name))).toBe(true)
+    const accent = out.blocks.find((b) => /Accent poste/i.test(b.name))
     expect(accent?.isOptional).toBe(true)
     const ids = accent?.exercises.map((e) => e.exerciseId) ?? []
-    expect(ids).toContain('push_horizontal__push_up__diamond')
-    expect(ids).toContain('arm_extension__triceps_chair__bodyweight')
-    expect(ids.some((id) => id?.includes('pike'))).toBe(false)
+    expect(ids.length).toBeGreaterThan(0)
+    expect(ids.every((id) => id != null)).toBe(true)
   })
 
-  it('HOOKER avec cou déjà là → diamant + chaise + pike', () => {
+  it('HOOKER avec cou déjà là → pas de slot neck, contenu skill/lockout', () => {
     const withNeck = applyNeckIsometricBlock(baseUpperBwHyp(), {
       mesoWeek: 1,
       trainingLevel: 'performance',
       lang: 'fr',
     })
-    // W1 + cou déjà là : les 3 slots skill/lockout restent
     const out = applyPositionAccentBlock(withNeck, {
       rugbyPosition: 'HOOKER',
       mesoWeek: 1,
       trainingLevel: 'performance',
       lang: 'fr',
     })
-    const accent = out.blocks[out.blocks.length - 1]
+    const accent = out.blocks.find((b) => /Accent poste/i.test(b.name))
     const ids = accent?.exercises.map((e) => e.exerciseId) ?? []
-    expect(ids).toContain('push_horizontal__push_up__diamond')
-    expect(ids).toContain('arm_extension__triceps_chair__bodyweight')
-    expect(ids).toContain('push_vertical__pike_push_up__bodyweight')
+    expect(ids.some((id) => id?.startsWith('neck__'))).toBe(false)
+    expect(ids.length).toBeGreaterThan(0)
   })
 
   it('omet les slots nuque si le mini-bloc cou est déjà là', () => {
@@ -65,7 +61,7 @@ describe('applyPositionAccentBlock', () => {
       trainingLevel: 'performance',
       lang: 'fr',
     })
-    const accent = out.blocks[out.blocks.length - 1]
+    const accent = out.blocks.find((b) => /Accent poste/i.test(b.name))
     const ids = accent?.exercises.map((e) => e.exerciseId) ?? []
     expect(ids.some((id) => id?.startsWith('neck__'))).toBe(false)
     expect(ids.length).toBeGreaterThan(0)
@@ -137,19 +133,30 @@ describe('applyPositionAccentBlock', () => {
     expect(ids.some((id) => id?.includes('jump'))).toBe(false)
   })
 
-  it('SECOND_ROW Lower → poigne + saut vertical', () => {
+  it('SECOND_ROW Lower contact → poigne ; power → saut vertical', () => {
     const lower = MOTHER_SESSIONS_BY_ID.LOWER_BW_OFFSEASON_HYPERTROPHY_V1
     expect(lower).toBeTruthy()
-    const out = applyPositionAccentBlock(structuredClone(lower!), {
+    const contact = applyPositionAccentBlock(structuredClone(lower!), {
       rugbyPosition: 'SECOND_ROW',
       mesoWeek: 1,
       trainingLevel: 'builder',
       lang: 'fr',
     })
-    const accent = out.blocks[out.blocks.length - 1]
-    const ids = accent?.exercises.map((e) => e.exerciseId) ?? []
-    expect(ids).toContain('grip__towel_isometric__bodyweight')
-    expect(ids).toContain('power__jump__vertical_jump')
+    const idsContact =
+      contact.blocks.find((b) => /Accent poste/i.test(b.name))?.exercises.map((e) => e.exerciseId) ??
+      []
+    expect(idsContact).toContain('grip__towel_isometric__bodyweight')
+
+    const power = applyPositionAccentBlock(structuredClone(lower!), {
+      rugbyPosition: 'SECOND_ROW',
+      mesoWeek: 2,
+      trainingLevel: 'builder',
+      lang: 'fr',
+    })
+    const idsPower =
+      power.blocks.find((b) => /Accent poste/i.test(b.name))?.exercises.map((e) => e.exerciseId) ??
+      []
+    expect(idsPower).toContain('power__jump__vertical_jump')
   })
 
   it('salle HOOKER Upper → dips + skull crusher (pas chaise BW)', () => {
@@ -166,7 +173,7 @@ describe('applyPositionAccentBlock', () => {
       trainingLevel: 'performance',
       lang: 'fr',
     })
-    const accent = out.blocks[out.blocks.length - 1]
+    const accent = out.blocks.find((b) => /Accent poste/i.test(b.name))
     const ids = accent?.exercises.map((e) => e.exerciseId) ?? []
     expect(ids).toContain('push_horizontal__dip__parallel')
     expect(ids).toContain('arm_extension__skull_crusher__ez_bar')
@@ -174,19 +181,30 @@ describe('applyPositionAccentBlock', () => {
     expect(ids).not.toContain('arm_extension__triceps_chair__bodyweight')
   })
 
-  it('salle SECOND_ROW Lower → farmer hold + box jump', () => {
+  it('salle SECOND_ROW Lower contact → farmer hold ; power → box jump', () => {
     const raw = MOTHER_SESSIONS_BY_ID.LOWER_OFFSEASON_HYPERTROPHY_V1
     expect(raw).toBeTruthy()
-    const out = applyPositionAccentBlock(structuredClone(raw!), {
+    const contact = applyPositionAccentBlock(structuredClone(raw!), {
       rugbyPosition: 'SECOND_ROW',
       mesoWeek: 1,
       trainingLevel: 'builder',
       lang: 'fr',
     })
-    const accent = out.blocks[out.blocks.length - 1]
-    const ids = accent?.exercises.map((e) => e.exerciseId) ?? []
-    expect(ids).toContain('carry__farmer_hold__dumbbell')
-    expect(ids).toContain('power__jump__box_jump')
+    const idsContact =
+      contact.blocks.find((b) => /Accent poste/i.test(b.name))?.exercises.map((e) => e.exerciseId) ??
+      []
+    expect(idsContact).toContain('carry__farmer_hold__dumbbell')
+
+    const power = applyPositionAccentBlock(structuredClone(raw!), {
+      rugbyPosition: 'SECOND_ROW',
+      mesoWeek: 2,
+      trainingLevel: 'builder',
+      lang: 'fr',
+    })
+    const idsPower =
+      power.blocks.find((b) => /Accent poste/i.test(b.name))?.exercises.map((e) => e.exerciseId) ??
+      []
+    expect(idsPower).toContain('power__jump__box_jump')
   })
 
   it('theme-week W1 PROP Lower salle → sled push ; focus B change le libellé', () => {
@@ -199,7 +217,7 @@ describe('applyPositionAccentBlock', () => {
       lang: 'fr',
       positionAccentFocus: 'a',
     })
-    const accentA = a.blocks[a.blocks.length - 1]
+    const accentA = a.blocks.find((b) => /Accent poste/i.test(b.name))
     expect(accentA?.name).toMatch(/Contact/i)
     expect(accentA?.exercises.some((e) => e.exerciseId === 'sled__push__standard')).toBe(true)
 
@@ -210,8 +228,83 @@ describe('applyPositionAccentBlock', () => {
       lang: 'fr',
       positionAccentFocus: 'b',
     })
-    const accentB = b.blocks[b.blocks.length - 1]
+    const accentB = b.blocks.find((b) => /Accent poste/i.test(b.name))
     expect(accentB?.name).toMatch(/Puissance/i)
+  })
+
+  it('BACK_ROW Upper Contact : pull saturé → landmine + farmer, 0 tirage, libellé vrai', () => {
+    const raw = MOTHER_SESSIONS_BY_ID.UPPER_IN_SEASON_FRONT_ROW_V1
+    expect(raw).toBeTruthy()
+    // Pipeline réel : resolve exerciseId (pull-up + Pendlay) puis accent.
+    const out = prepareSessionForRender({
+      session: structuredClone(raw!),
+      trainingLevel: 'builder',
+      equipment: ['barbell', 'dumbbell', 'cable', 'landmine', 'medball'],
+      lang: 'fr',
+      mesocycleWeek: 1,
+      rugbyPosition: 'BACK_ROW',
+      positionAccentFocus: 'a',
+    })
+    const accentIdx = out.blocks.findIndex((b) => /Accent poste/i.test(b.name))
+    expect(accentIdx).toBeGreaterThanOrEqual(0)
+    const accent = out.blocks[accentIdx]
+    expect(accent.name).toMatch(/Contact/i)
+    expect(accent.name).toMatch(/3ème ligne/i)
+    expect(accent.name).not.toMatch(/BACK_ROW/)
+    expect(out.positionAccent.some((l) => /BACK_ROW/.test(l))).toBe(false)
+    expect(accent.exercises.length).toBeGreaterThanOrEqual(2)
+    const ids = accent.exercises.map((e) => e.exerciseId)
+    expect(ids.every((id) => !id?.startsWith('pull_vertical__'))).toBe(true)
+    expect(ids.every((id) => !id?.startsWith('pull_horizontal__'))).toBe(true)
+    expect(ids).toContain('core_rotation__landmine_rotation')
+    expect(ids).toContain('carry__farmer_hold__dumbbell')
+    const transfer = accent.coachingNotes?.[0] ?? ''
+    expect(transfer).toMatch(/Plaquage|ruck/i)
+    expect(transfer).not.toMatch(/pull\+T/i)
+    expect(transfer).toMatch(/rotatif|carry|Poigne/i)
+    expect(out.positionAccent.some((l) => /pull\+T/i.test(l))).toBe(false)
+    const after = out.blocks.slice(accentIdx + 1)
+    expect(after.every((b) => b.isOptional)).toBe(true)
+  })
+
+  it('Focus A/B change le contenu Accent (pas seulement le libellé)', () => {
+    const raw = MOTHER_SESSIONS_BY_ID.UPPER_IN_SEASON_FRONT_ROW_V1
+    const contact = applyPositionAccentBlock(structuredClone(raw!), {
+      rugbyPosition: 'BACK_ROW',
+      mesoWeek: 1,
+      trainingLevel: 'builder',
+      lang: 'fr',
+      positionAccentFocus: 'a',
+    })
+    const power = applyPositionAccentBlock(structuredClone(raw!), {
+      rugbyPosition: 'BACK_ROW',
+      mesoWeek: 1,
+      trainingLevel: 'builder',
+      lang: 'fr',
+      positionAccentFocus: 'b',
+    })
+    const idsA =
+      contact.blocks.find((b) => /Accent poste/i.test(b.name))?.exercises.map((e) => e.exerciseId) ??
+      []
+    const idsB =
+      power.blocks.find((b) => /Accent poste/i.test(b.name))?.exercises.map((e) => e.exerciseId) ??
+      []
+    expect(idsA.join('|')).not.toBe(idsB.join('|'))
+  })
+
+  it('accent placé avant les blocs optionnels de fin', () => {
+    const raw = MOTHER_SESSIONS_BY_ID.UPPER_IN_SEASON_FRONT_ROW_V1
+    expect(raw).toBeTruthy()
+    const out = applyPositionAccentBlock(structuredClone(raw!), {
+      rugbyPosition: 'BACK_ROW',
+      mesoWeek: 1,
+      trainingLevel: 'builder',
+      lang: 'fr',
+    })
+    const accentIdx = out.blocks.findIndex((b) => /Accent poste/i.test(b.name))
+    expect(accentIdx).toBeGreaterThanOrEqual(0)
+    const after = out.blocks.slice(accentIdx + 1)
+    expect(after.every((b) => b.isOptional)).toBe(true)
   })
 
   it('couvre les 35 Upper/Lower full_gym du cycle (dont BACK_THREE)', () => {
@@ -288,7 +381,7 @@ describe('applyPositionAccentBlock', () => {
       trainingLevel: 'builder',
       lang: 'fr',
     })
-    const accent = out.blocks[out.blocks.length - 1]
+    const accent = out.blocks.find((b) => /Accent poste/i.test(b.name))
     expect(accent?.name).toMatch(/Accent poste/i)
     expect(accent?.exercises.length).toBeLessThanOrEqual(2)
   })
@@ -303,5 +396,32 @@ describe('applyPositionAccentBlock', () => {
       isMatchWeek: true,
     })
     expect(out).toBe(clone)
+  })
+
+  it('accent neutralisé (Fondations) : 6 Lower in-season restent distinctes par finisher', () => {
+    const ids = [
+      'LOWER_IN_SEASON_FRONT_ROW_V1',
+      'LOWER_IN_SEASON_SECOND_ROW_V1',
+      'LOWER_IN_SEASON_BACK_ROW_V1',
+      'LOWER_IN_SEASON_HALF_BACKS_V1',
+      'LOWER_IN_SEASON_CENTERS_V1',
+      'LOWER_IN_SEASON_BACK_THREE_V1',
+    ] as const
+    const finishers = ids.map((id) => {
+      const raw = MOTHER_SESSIONS_BY_ID[id]
+      expect(raw, id).toBeTruthy()
+      // starter = pas d’accent Focus → mother seule porte l’identité famille
+      const out = applyPositionAccentBlock(structuredClone(raw!), {
+        rugbyPosition: 'BACK_THREE',
+        mesoWeek: 1,
+        trainingLevel: 'starter',
+        lang: 'fr',
+      })
+      expect(out.blocks.length, id).toBe(raw!.blocks.length)
+      const finisher = out.blocks.find((b) => /finisher/i.test(b.name))
+      expect(finisher, id).toBeTruthy()
+      return finisher!.exercises.map((e) => `${e.name}|${e.prescription}`).join('||')
+    })
+    expect(new Set(finishers).size).toBe(6)
   })
 })

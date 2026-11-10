@@ -10,12 +10,14 @@
 import type { Block, MotherSession } from '../../types/motherSession'
 import type { RugbyPositionGroup, TrainingLevel } from '../../types/training'
 import { getExerciseName } from '../../data/exercises'
+import { positionShortLabel } from '../../i18n/appLabels'
 import { isFoundationsLevel } from '../motherSession/foundationsSessionAdaptations'
 import {
   filterPositionAccentSlots,
   getPositionAccentBlockForRugbyPosition,
   pickPositionAccentExerciseId,
   POSITION_ACCENT_ALL_SESSION_IDS,
+  positionAccentMovementFamily,
   type PositionAccentBlock,
   type PositionAccentEquipmentMode,
   type PositionAccentSlot,
@@ -27,10 +29,24 @@ import {
   type PositionAccentFocus,
   type PositionAccentTheme,
 } from '../equipment/positionAccentTheme'
+import { buildPositionAccentTransferLine } from '../equipment/positionAccentTransfer'
+import { resolveExerciseIdForSessionRun } from '../motherSession/motherSessionExerciseMap'
 import { sessionAlreadyHasNeckWork } from './applyNeckIsometricBlock'
 
 const BLOCK_TOKEN_FR = 'Accent poste'
 const BLOCK_TOKEN_EN = 'Position accent'
+
+/** Jamais de token technique (BACK_ROW…) — « 3ème ligne », « Pilier », etc. */
+export function accentPackPlayerLabel(
+  packId: string,
+  lang: 'fr' | 'en' = 'fr',
+): string {
+  return (
+    positionShortLabel(packId, lang) ??
+    positionShortLabel(packId.toUpperCase(), lang) ??
+    (lang === 'en' ? 'your position' : 'ton poste')
+  )
+}
 
 export function resolvePositionAccentEquipmentMode(
   session: MotherSession,
@@ -55,6 +71,42 @@ export function isPositionAccentEligible(session: MotherSession): boolean {
   return isBwOrGym
 }
 
+function collectSessionExerciseUsage(session: MotherSession): {
+  ids: Set<string>
+  families: Set<string>
+} {
+  const ids = new Set<string>()
+  const families = new Set<string>()
+  for (const block of session.blocks) {
+    for (const exo of block.exercises) {
+      const id = resolveExerciseIdForSessionRun(exo.name, exo.exerciseId)
+      if (!id) continue
+      ids.add(id)
+      families.add(positionAccentMovementFamily(id))
+    }
+  }
+  return { ids, families }
+}
+
+/**
+ * Place l’accent avant les blocs optionnels de fin (préhab, etc.) —
+ * pas après un EMOM + préhab quand l’énergie est déjà basse.
+ */
+export function insertAccentBeforeTrailingOptional(
+  blocks: Block[],
+  accent: Block,
+): Block[] {
+  let insertAt = blocks.length
+  for (let i = blocks.length - 1; i >= 0; i -= 1) {
+    if (blocks[i].isOptional) insertAt = i
+    else break
+  }
+  const next = [...blocks.slice(0, insertAt), accent, ...blocks.slice(insertAt)]
+  return next.map((block, index) =>
+    block.number === index + 1 ? block : { ...block, number: index + 1 },
+  )
+}
+
 function buildAccentBlock(
   number: number,
   accent: PositionAccentBlock,
@@ -62,17 +114,41 @@ function buildAccentBlock(
   lang: 'fr' | 'en',
   mode: PositionAccentEquipmentMode,
   theme: PositionAccentTheme | null,
-): Block {
-  const transfer = lang === 'en' ? accent.transferEn : accent.transferFr
+  usage: { ids: Set<string>; families: Set<string> },
+): Block | null {
   const themeLabel = theme ? positionAccentThemeLabel(theme, lang) : null
+  const packLabel = accentPackPlayerLabel(accent.packId, lang)
   const name =
     lang === 'en'
       ? themeLabel
-        ? `${BLOCK_TOKEN_EN} — ${accent.packId} · ${themeLabel}`
-        : `${BLOCK_TOKEN_EN} — ${accent.packId}`
+        ? `${BLOCK_TOKEN_EN} — ${packLabel} · ${themeLabel}`
+        : `${BLOCK_TOKEN_EN} — ${packLabel}`
       : themeLabel
-        ? `${BLOCK_TOKEN_FR} — ${accent.packId} · ${themeLabel}`
-        : `${BLOCK_TOKEN_FR} — ${accent.packId}`
+        ? `${BLOCK_TOKEN_FR} — ${packLabel} · ${themeLabel}`
+        : `${BLOCK_TOKEN_FR} — ${packLabel}`
+
+  const exercises: Block['exercises'] = []
+  const chosenLabels: string[] = []
+  for (const slot of slots) {
+    const id = pickPositionAccentExerciseId(slot, mode, {
+      usedExerciseIds: usage.ids,
+      usedFamilies: usage.families,
+    })
+    if (!id) continue
+    usage.ids.add(id)
+    usage.families.add(positionAccentMovementFamily(id))
+    chosenLabels.push(lang === 'en' ? slot.labelEn : slot.labelFr)
+    exercises.push({
+      name: getExerciseName(id, lang),
+      exerciseId: id,
+      prescription: slot.prescription,
+      slotLabel: lang === 'en' ? slot.labelEn : slot.labelFr,
+      isOptional: true,
+    })
+  }
+  if (exercises.length === 0) return null
+
+  const transfer = buildPositionAccentTransferLine(accent, chosenLabels, lang)
 
   return {
     number,
@@ -82,16 +158,7 @@ function buildAccentBlock(
         ? `${accent.format}, rest ${accent.rest}`
         : `${accent.format}, repos ${accent.rest}`,
     isOptional: true,
-    exercises: slots.map((slot) => {
-      const id = pickPositionAccentExerciseId(slot, mode)
-      return {
-        name: getExerciseName(id, lang),
-        exerciseId: id,
-        prescription: slot.prescription,
-        slotLabel: lang === 'en' ? slot.labelEn : slot.labelFr,
-        isOptional: true,
-      }
-    }),
+    exercises,
     coachingNotes:
       lang === 'en'
         ? [
@@ -146,25 +213,52 @@ export function applyPositionAccentBlock(
   if (slots.length === 0) return session
 
   const mode = resolvePositionAccentEquipmentMode(session)
-  const nextNumber = Math.max(0, ...session.blocks.map((b) => b.number)) + 1
+  const usage = collectSessionExerciseUsage(session)
   const lang = opts.lang ?? 'fr'
-  const block = buildAccentBlock(nextNumber, accent, slots, lang, mode, theme)
-  const reductionOrder = [nextNumber, ...(session.metadata.reductionOrder ?? [])]
+  // Numéro provisoire — renuméroté à l’insertion.
+  const provisionalNumber = Math.max(0, ...session.blocks.map((b) => b.number)) + 1
+  const block = buildAccentBlock(
+    provisionalNumber,
+    accent,
+    slots,
+    lang,
+    mode,
+    theme,
+    usage,
+  )
+  if (!block) return session
+
+  const blocks = insertAccentBeforeTrailingOptional(session.blocks, block)
+  const accentNumber = blocks.find((b) => /accent poste|position accent/i.test(b.name))?.number
+  // Accent coupé en premier ; ensuite les blocs de fin (préhab…) avant le cœur.
+  const reductionOrder = [
+    ...(accentNumber != null ? [accentNumber] : []),
+    ...blocks
+      .map((b) => b.number)
+      .filter((n) => n !== accentNumber)
+      .reverse(),
+  ]
   const themeBit =
     theme != null
       ? lang === 'en'
         ? ` · ${positionAccentThemeLabel(theme, 'en')}`
         : ` · ${positionAccentThemeLabel(theme, 'fr')}`
       : ''
+  const transferLine = buildPositionAccentTransferLine(
+    accent,
+    block.exercises.map((e) => e.slotLabel).filter((l): l is string => Boolean(l)),
+    lang,
+  )
+  const packLabel = accentPackPlayerLabel(accent.packId, lang)
   const positionLine =
     lang === 'en'
-      ? `Position pack ${accent.packId}${themeBit}: ${accent.transferEn}`
-      : `Pack poste ${accent.packId}${themeBit} : ${accent.transferFr}`
+      ? `${packLabel} accent${themeBit}: ${transferLine}`
+      : `Accent ${packLabel}${themeBit} : ${transferLine}`
 
   return {
     ...session,
     metadata: { ...session.metadata, reductionOrder },
-    blocks: [...session.blocks, block],
+    blocks,
     positionAccent: [...session.positionAccent, positionLine],
   }
 }

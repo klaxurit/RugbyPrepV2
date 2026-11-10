@@ -126,7 +126,7 @@ describe('positionAccentRegistry', () => {
         skipNeck: true,
         sessionType: 'upper',
       }).map((s) => s.slotId),
-    ).toEqual(['pull_tackle', 'push_rot_upper'])
+    ).toEqual(['pull_tackle', 'push_rot_upper', 'carry_iso_upper'])
 
     expect(
       filterPositionAccentSlots(BLOC_POSITION_BACK_ROW, {

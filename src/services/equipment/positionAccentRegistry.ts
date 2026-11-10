@@ -331,7 +331,8 @@ export const BLOC_POSITION_BACK_ROW: PositionAccentBlock = {
       pattern: 'push_horizontal',
       prescription: '6–8/côté',
       onlySessionTypes: ['upper'],
-      themeTags: ['skill', 'power'],
+      // Contact aussi : le « T » du transfer pull+T (landmine / archer).
+      themeTags: ['contact', 'skill', 'power'],
       exerciseIds: [
         'push_horizontal__t_push_up__bodyweight',
         'push_horizontal__archer_push_up__bodyweight',
@@ -341,6 +342,26 @@ export const BLOC_POSITION_BACK_ROW: PositionAccentBlock = {
         'core_rotation__landmine_rotation',
         'power__medball_rotational_throw__wall',
         'push_horizontal__t_push_up__bodyweight',
+      ],
+    },
+    {
+      // Filet Contact Upper si pull déjà saturé (tractions + rows dans la mother).
+      slotId: 'carry_iso_upper',
+      labelFr: 'Poigne / carry iso',
+      labelEn: 'Grip / carry iso',
+      pattern: 'carry',
+      prescription: '20–30s',
+      onlySessionTypes: ['upper'],
+      themeTags: ['contact'],
+      exerciseIds: [
+        'carry__farmer_hold__dumbbell',
+        'carry__farmer_walk__backpack',
+        'grip__towel_isometric__bodyweight',
+      ],
+      gymExerciseIds: [
+        'carry__farmer_hold__dumbbell',
+        'carry__farmer_walk__dumbbell',
+        'carry__suitcase_walk__dumbbell',
       ],
     },
     {
@@ -773,6 +794,25 @@ export const POSITION_ACCENT_SESSION_TYPES = new Set([
  * Upper BW — toutes les mothers upper poids de corps.
  * Le bloc poste est **ajouté** (jamais soustractif).
  */
+const BW_IN_SEASON_FAMILIES = [
+  'FRONT_ROW',
+  'SECOND_ROW',
+  'BACK_ROW',
+  'HALF_BACKS',
+  'CENTERS',
+  'BACK_THREE',
+] as const
+
+function bwInSeasonIds(prefix: 'UPPER' | 'LOWER'): string[] {
+  const ids: string[] = []
+  for (const family of BW_IN_SEASON_FAMILIES) {
+    for (const ab of ['A', 'B'] as const) {
+      ids.push(`${prefix}_BW_IN_SEASON_${family}_${ab}_V1`)
+    }
+  }
+  return ids
+}
+
 export const POSITION_ACCENT_UPPER_BW_SESSION_IDS = new Set([
   'UPPER_BW_OFFSEASON_TRANSITION_V1',
   'UPPER_BW_OFFSEASON_HYPERTROPHY_V1',
@@ -780,7 +820,11 @@ export const POSITION_ACCENT_UPPER_BW_SESSION_IDS = new Set([
   'UPPER_BW_PRESEASON_FORCE_V1',
   'UPPER_BW_PRESEASON_FORCE_POWER_V1',
   'UPPER_BW_PRESEASON_POWER_V1',
+  'UPPER_BW_PRESEASON_POWER_HALF_BACKS_V1',
+  'UPPER_BW_PRESEASON_POWER_CENTERS_V1',
+  'UPPER_BW_PRESEASON_POWER_BACK_THREE_V1',
   'UPPER_BW_IN_SEASON_V1',
+  ...bwInSeasonIds('UPPER'),
 ])
 
 /** Lower BW — même packs (saut 2e ligne surtout pertinent ici). */
@@ -792,6 +836,7 @@ export const POSITION_ACCENT_LOWER_BW_SESSION_IDS = new Set([
   'LOWER_BW_PRESEASON_FORCE_POWER_V1',
   'LOWER_BW_PRESEASON_POWER_V1',
   'LOWER_BW_IN_SEASON_V1',
+  ...bwInSeasonIds('LOWER'),
 ])
 
 export const POSITION_ACCENT_BW_SESSION_IDS = new Set([
@@ -817,11 +862,29 @@ export const POSITION_ACCENT_UPPER_GYM_SESSION_IDS = new Set([
   'UPPER_IN_SEASON_FRONT_ROW_LANDMINE_V1',
   'UPPER_IN_SEASON_FRONT_ROW_SUPINE_V1',
   'UPPER_IN_SEASON_FRONT_ROW_CHESTPASS_V1',
+  'UPPER_IN_SEASON_SECOND_ROW_V1',
+  'UPPER_IN_SEASON_SECOND_ROW_CHESTPASS_V1',
+  'UPPER_IN_SEASON_SECOND_ROW_LANDMINE_V1',
+  'UPPER_IN_SEASON_SECOND_ROW_SUPINE_V1',
+  'UPPER_IN_SEASON_BACK_ROW_V1',
+  'UPPER_IN_SEASON_BACK_ROW_CHESTPASS_V1',
+  'UPPER_IN_SEASON_BACK_ROW_LANDMINE_V1',
+  'UPPER_IN_SEASON_BACK_ROW_SUPINE_V1',
   'UPPER_IN_SEASON_BACK_THREE_V1',
   'UPPER_IN_SEASON_BACK_THREE_LANDMINE_V1',
   'UPPER_IN_SEASON_BACK_THREE_PLYO_V1',
   'UPPER_IN_SEASON_BACK_THREE_PUSHPRESS_V1',
   'UPPER_IN_SEASON_BACK_THREE_ROTATIONAL_V1',
+  'UPPER_IN_SEASON_HALF_BACKS_V1',
+  'UPPER_IN_SEASON_HALF_BACKS_LANDMINE_V1',
+  'UPPER_IN_SEASON_HALF_BACKS_PLYO_V1',
+  'UPPER_IN_SEASON_HALF_BACKS_ROTATIONAL_V1',
+  'UPPER_IN_SEASON_HALF_BACKS_PUSHPRESS_V1',
+  'UPPER_IN_SEASON_CENTERS_V1',
+  'UPPER_IN_SEASON_CENTERS_LANDMINE_V1',
+  'UPPER_IN_SEASON_CENTERS_PLYO_V1',
+  'UPPER_IN_SEASON_CENTERS_ROTATIONAL_V1',
+  'UPPER_IN_SEASON_CENTERS_PUSHPRESS_V1',
 ])
 
 export const POSITION_ACCENT_LOWER_GYM_SESSION_IDS = new Set([
@@ -838,10 +901,26 @@ export const POSITION_ACCENT_LOWER_GYM_SESSION_IDS = new Set([
   'LOWER_IN_SEASON_FRONT_ROW_FRONTSQUAT_V1',
   'LOWER_IN_SEASON_FRONT_ROW_PAUSEJUMP_V1',
   'LOWER_IN_SEASON_FRONT_ROW_TBRDL_V1',
+  'LOWER_IN_SEASON_SECOND_ROW_V1',
+  'LOWER_IN_SEASON_SECOND_ROW_FRONTSQUAT_V1',
+  'LOWER_IN_SEASON_SECOND_ROW_TBRDL_V1',
+  'LOWER_IN_SEASON_SECOND_ROW_PAUSEJUMP_V1',
+  'LOWER_IN_SEASON_BACK_ROW_V1',
+  'LOWER_IN_SEASON_BACK_ROW_FRONTSQUAT_V1',
+  'LOWER_IN_SEASON_BACK_ROW_TBRDL_V1',
+  'LOWER_IN_SEASON_BACK_ROW_PAUSEJUMP_V1',
   'LOWER_IN_SEASON_BACK_THREE_V1',
   'LOWER_IN_SEASON_BACK_THREE_RDL_V1',
   'LOWER_IN_SEASON_BACK_THREE_SHRUG_V1',
   'LOWER_IN_SEASON_BACK_THREE_SLHIP_V1',
+  'LOWER_IN_SEASON_HALF_BACKS_V1',
+  'LOWER_IN_SEASON_HALF_BACKS_RDL_V1',
+  'LOWER_IN_SEASON_HALF_BACKS_SLHIP_V1',
+  'LOWER_IN_SEASON_HALF_BACKS_SHRUG_V1',
+  'LOWER_IN_SEASON_CENTERS_V1',
+  'LOWER_IN_SEASON_CENTERS_RDL_V1',
+  'LOWER_IN_SEASON_CENTERS_SLHIP_V1',
+  'LOWER_IN_SEASON_CENTERS_SHRUG_V1',
 ])
 
 export const POSITION_ACCENT_GYM_SESSION_IDS = new Set([
@@ -860,19 +939,55 @@ export const POSITION_ACCENT_V1_SESSION_IDS = POSITION_ACCENT_BW_SESSION_IDS
 export type PositionAccentEquipmentMode = 'bodyweight' | 'full_gym'
 
 /**
+ * Familles à haute fatigue : si déjà présentes dans la séance principale,
+ * l’accent ne les rejoue pas en finisher (KB product-decisions : pas de doublon).
+ */
+const FATIGUE_SENSITIVE_FAMILIES = new Set([
+  'pull_vertical',
+  'pull_horizontal',
+  'squat',
+  'hinge',
+  'olympic',
+  'deadlift',
+])
+
+/** Premiers segments d’un exerciseId (`pull_vertical__pull_up__neutral` → `pull_vertical`). */
+export function positionAccentMovementFamily(exerciseId: string): string {
+  const parts = exerciseId.split('__')
+  return parts[0] ?? exerciseId
+}
+
+/**
  * Résout l’exercice d’un slot selon le mode matériel.
- * Theme-week réordonne les slots (filter) — ici on garde toujours le #1 du pool
- * (intention poste claire ; pas de « muscle confusion » intra-slot).
+ * Évite les IDs déjà dans la séance et les familles lourdes déjà chargées.
  */
 export function pickPositionAccentExerciseId(
   slot: PositionAccentSlot,
   mode: PositionAccentEquipmentMode = 'bodyweight',
-): string {
+  opts?: {
+    usedExerciseIds?: ReadonlySet<string>
+    usedFamilies?: ReadonlySet<string>
+  },
+): string | null {
   const pool =
     mode === 'full_gym' && slot.gymExerciseIds && slot.gymExerciseIds.length > 0
       ? slot.gymExerciseIds
       : slot.exerciseIds
-  return pool[0] ?? slot.slotId
+  const usedIds = opts?.usedExerciseIds
+  const usedFamilies = opts?.usedFamilies
+
+  for (const id of pool) {
+    if (usedIds?.has(id)) continue
+    const family = positionAccentMovementFamily(id)
+    if (
+      FATIGUE_SENSITIVE_FAMILIES.has(family) &&
+      usedFamilies?.has(family)
+    ) {
+      continue
+    }
+    return id
+  }
+  return null
 }
 
 function slotThemeScore(slot: PositionAccentSlot, theme: PositionAccentTheme | null | undefined): number {
@@ -882,7 +997,8 @@ function slotThemeScore(slot: PositionAccentSlot, theme: PositionAccentTheme | n
 
 /**
  * Filtre les slots selon nuque déjà faite + type de séance (upper/lower).
- * Theme-week : priorise les slots tagués, cap 3 pour un finisher lisible.
+ * Theme-week : si au moins un slot matche le thème, on ne garde que les matchs
+ * (sinon Focus A/B ne fait que réordonner et l’utilisateur ne voit aucun changement).
  */
 export function filterPositionAccentSlots(
   block: PositionAccentBlock,
@@ -906,7 +1022,9 @@ export function filterPositionAccentSlots(
 
   if (!opts.theme) return filtered.slice(0, cap)
 
-  return [...filtered]
+  const themed = filtered.filter((s) => slotThemeScore(s, opts.theme) > 0)
+  const pool = themed.length > 0 ? themed : filtered
+  return [...pool]
     .sort((a, b) => slotThemeScore(b, opts.theme) - slotThemeScore(a, opts.theme))
     .slice(0, cap)
 }
