@@ -13,10 +13,8 @@ import { usePremiumCheckout } from '../hooks/usePremiumCheckout'
 import { useStripeCheckoutReturn } from '../hooks/useStripeCheckoutReturn'
 import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthletePlanningInputs'
 import { detectAnnualPlanningContext } from '../services/season/detectAnnualPlanningContext'
-import {
-  chatPhaseFromPlanning,
-  chatWeekLabelFromPlanning,
-} from '../services/chat/resolveChatProgramContext'
+import { chatPhaseFromPlanning } from '../services/chat/resolveChatProgramContext'
+import { buildFreeChatContext } from '../services/chat/buildFreeChatContext'
 import { getToday } from '../services/ui/debugDateOverride'
 import { supabase } from '../services/supabase/client'
 import { FunctionsHttpError } from '@supabase/functions-js'
@@ -43,18 +41,6 @@ function phaseLabelFor(phase: string | null | undefined, lang: Lang): string | n
     default:
       return null
   }
-}
-
-function daysUntilISO(todayISO: string, matchISO: string): number | null {
-  const parse = (s: string) => {
-    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s)
-    if (!m) return null
-    return Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
-  }
-  const from = parse(todayISO)
-  const to = parse(matchISO)
-  if (from == null || to == null) return null
-  return Math.round((to - from) / 86_400_000)
 }
 
 function quickPromptForPhase(phase: string | null | undefined, lang: Lang): string | null {
@@ -102,7 +88,7 @@ export function ChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  // Pré-remplit l'input quand on arrive via le compagnon (?seed=…)
+  // Pré-remplit l'input quand on arrive via ?seed=… (carte semaine / profil)
   useEffect(() => {
     const seed = searchParams.get('seed')
     if (!seed) return
@@ -130,41 +116,43 @@ export function ChatPage() {
     })
     return detectAnnualPlanningContext(inputs)
   }, [profile, chatEvents, logs, today, fatigue, acwrZone])
-  const week = chatWeekLabelFromPlanning(planningContext, lang)
   const phase = chatPhaseFromPlanning(planningContext)
   const phaseLabel = phaseLabelFor(phase, lang)
   const isDeload = planningContext.isDeloadWeek
   const hasPremiumInsights = hasEntitlement('premium_analytics') || hasEntitlement('premium_program_adaptations')
-  // Build coach context from current state
-  const context = useMemo(() => ({
-    week,
-    phase: phase ?? undefined,
-    acwr,
-    acwrZone,
-    acuteLoad,
-    chronicLoad,
-    fatigue,
-    recentLogs: logs.slice(0, 5).map((l) => ({
-      sessionType: l.sessionType,
-      rpe: l.rpe,
-      durationMin: l.durationMin,
-      dateISO: l.dateISO,
-      week: l.week,
-    })),
-    profile: {
-      level: profile.level,
-      weeklySessions: profile.weeklySessions,
-      position: profile.position ?? profile.rugbyPosition,
-      injuries: profile.injuries,
-    },
-    nextMatch: chatNextMatch
-      ? {
-          date: chatNextMatch.date,
-          opponent: chatNextMatch.opponent ?? null,
-          daysUntil: daysUntilISO(today, chatNextMatch.date),
-        }
-      : null,
-  }), [week, phase, acwr, acwrZone, acuteLoad, chronicLoad, fatigue, logs, profile, chatNextMatch, today])
+  const context = useMemo(
+    () =>
+      buildFreeChatContext({
+        profile,
+        planningContext,
+        lang,
+        today,
+        fatigue,
+        acwr,
+        acwrZone,
+        acuteLoad,
+        chronicLoad,
+        logs,
+        events: chatEvents,
+        nextMatch: chatNextMatch
+          ? { date: chatNextMatch.date, opponent: chatNextMatch.opponent ?? null }
+          : null,
+      }),
+    [
+      profile,
+      planningContext,
+      lang,
+      today,
+      fatigue,
+      acwr,
+      acwrZone,
+      acuteLoad,
+      chronicLoad,
+      logs,
+      chatEvents,
+      chatNextMatch,
+    ],
+  )
 
   // Quick prompts based on context
   // Check if match is within 48h for pre-match prompt

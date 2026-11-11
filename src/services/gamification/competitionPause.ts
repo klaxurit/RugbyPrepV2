@@ -4,10 +4,10 @@
  * Ce n’est **pas** un suivi médical : l’athlète gèle temporairement les
  * malus / relégations d’inactivité de la ligue hebdomadaire. Aucune donnée
  * de santé (localisation, diagnostic, RPE) n’est collectée.
+ *
+ * Durée : ouverte jusqu’à levée manuelle (`endsOn` null). Les anciennes
+ * pauses avec `endsOn` restent honorées jusqu’à expiration.
  */
-
-/** Durée max d’une pause déclarée, en jours calendaires. */
-export const COMPETITION_PAUSE_MAX_DAYS = 28
 
 export type CompetitionPauseKind = 'blesse'
 
@@ -26,23 +26,4 @@ export function isCompetitionPauseActive(
   if (todayISO < pause.startedOn) return false
   if (pause.endsOn && todayISO > pause.endsOn) return false
   return true
-}
-
-/** Calcule la date de fin inclusive d’une pause démarrée aujourd’hui. */
-export function competitionPauseEndsOn(startedOnISO: string): string {
-  const start = parseISODate(startedOnISO)
-  start.setUTCDate(start.getUTCDate() + COMPETITION_PAUSE_MAX_DAYS - 1)
-  return toISODate(start)
-}
-
-function parseISODate(iso: string): Date {
-  const [y, m, d] = iso.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 1, d))
-}
-
-function toISODate(date: Date): string {
-  const y = date.getUTCFullYear()
-  const m = String(date.getUTCMonth() + 1).padStart(2, '0')
-  const d = String(date.getUTCDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
 }

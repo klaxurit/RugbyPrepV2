@@ -4,7 +4,6 @@ import { AuthProvider } from './contexts/AuthContext'
 import { EntitlementsProvider } from './contexts/EntitlementsContext'
 import { ProfileProvider } from './contexts/ProfileProvider'
 import { SessionRunProvider } from './contexts/SessionRunContext'
-import { CoachProvider } from './contexts/CoachContext'
 import { CalendarProvider } from './contexts/CalendarContext'
 import { ProgramEvolutionSheetProvider } from './contexts/ProgramEvolutionSheetContext'
 import { OverlayGateProvider } from './contexts/OverlayGateProvider'
@@ -16,7 +15,6 @@ import { BrandLoadingFallback } from './components/BrandLoadingFallback'
 import { ScrollToTop } from './components/navigation/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useAuth } from './hooks/useAuth'
-import { CoachCompanion } from './components/CoachCompanion'
 import { ProgramChangeMount } from './components/ProgramChangeMount'
 import { UpdatePrompt } from './components/UpdatePrompt'
 import { RestTimerNotificationPrompt } from './components/notifications/RestTimerNotificationPrompt'
@@ -184,7 +182,6 @@ function App() {
       <CalendarProvider>
       <SessionRunProvider>
       <BrowserRouter>
-        <CoachProvider>
         <ScrollToTop />
         <Suspense fallback={<BrandLoadingFallback label="Chargement" />}>
         <Routes>
@@ -237,7 +234,6 @@ function App() {
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
         </Suspense>
-        <CoachCompanion />
         <ProgramChangeMount />
         <UpdatePrompt />
         <RestTimerNotificationPrompt />
@@ -246,7 +242,6 @@ function App() {
         <ReturnToClubPromptMount />
         <OauthLegalConsentMount />
         <AccountUpgradeMount />
-        </CoachProvider>
       </BrowserRouter>
       </SessionRunProvider>
       </CalendarProvider>

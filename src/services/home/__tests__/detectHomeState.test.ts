@@ -43,4 +43,24 @@ describe('detectHomeState', () => {
     expect(r.state).toBe('rest_day')
     expect(r.lastMatch).toBeNull()
   })
+
+  it('club_day si jour club sans séance salle', () => {
+    const r = detectHomeState({
+      todayISO: '2026-11-11',
+      hasTrainingToday: false,
+      hasClubToday: true,
+      matchEvents: [],
+    })
+    expect(r.state).toBe('club_day')
+  })
+
+  it('salle prime sur club le même jour', () => {
+    const r = detectHomeState({
+      todayISO: '2026-11-11',
+      hasTrainingToday: true,
+      hasClubToday: true,
+      matchEvents: [],
+    })
+    expect(r.state).toBe('training_day')
+  })
 })

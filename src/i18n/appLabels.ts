@@ -57,6 +57,8 @@ export const APP_LABELS = {
   hero_match_tomorrow_cta: { fr: 'Voir le plan de la semaine', en: 'View weekly plan' },
   hero_training_day_eyebrow: { fr: "Aujourd'hui · Séance", en: 'Today · Session' },
   hero_training_day_cta: { fr: 'Démarrer la séance', en: 'Start session' },
+  hero_club_day_eyebrow: { fr: "Aujourd'hui · Club", en: 'Today · Club' },
+  hero_club_day_cta: { fr: 'Voir le plan de la semaine', en: 'View weekly plan' },
   hero_rest_day_eyebrow: { fr: "Aujourd'hui · Repos", en: 'Today · Rest' },
   hero_rest_day_cta: { fr: 'Voir le plan de la semaine', en: 'View weekly plan' },
   hero_post_match_eyebrow: { fr: 'Après-match', en: 'Post-match' },
@@ -584,6 +586,12 @@ export const APP_LABELS = {
   profile_section_progress: { fr: 'Ma progression', en: 'My progress' },
   profile_section_progress_sub: { fr: 'Adhérence, historique de séances, tests physiques et records.', en: 'Adherence, session history, physical tests and records.' },
   profile_section_progress_cta: { fr: 'Voir ma progression', en: 'View my progress' },
+  profile_section_coach: { fr: 'Coach IA', en: 'AI Coach' },
+  profile_section_coach_sub: {
+    fr: 'Questions libre sur ta semaine, ta charge, ta récup ou ton match.',
+    en: 'Ask freely about your week, load, recovery or match.',
+  },
+  profile_section_coach_cta: { fr: 'Ouvrir le coach', en: 'Open the coach' },
   profile_section_open: { fr: 'Ouvrir', en: 'Open' },
   profile_section_club_off: { fr: 'Mes séances, mon club', en: 'My sessions, my club' },
   profile_section_club_in: { fr: 'Mon club', en: 'My club' },
@@ -949,6 +957,29 @@ export const APP_LABELS = {
   week_club_contact_result_cut: {
     fr: '3 blocs, moins de tours. Les charges restent.',
     en: '3 blocks, fewer rounds. Loads stay.',
+  },
+
+  /** Check-in Home jour club (remplace le mood forme — une seule porte). */
+  hero_club_contact_question: {
+    fr: 'Au club, ça a tapé ?',
+    en: 'Heavy club contact?',
+  },
+  hero_club_contact_full: { fr: 'Non, ça va', en: 'No, all good' },
+  hero_club_contact_hard: { fr: 'Oui, ça a tapé', en: 'Yes, it hit hard' },
+  hero_mood_question: { fr: 'Comment tu te sens ?', en: 'How do you feel?' },
+  hero_mood_fit: { fr: 'En forme', en: 'Feeling good' },
+  hero_mood_tired: { fr: 'Fatigué', en: 'Tired' },
+  hero_modulation_club_hard: {
+    fr: 'Programme allégé · Contact club',
+    en: 'Lightened plan · Club contact',
+  },
+  hero_modulation_fatigue_high: {
+    fr: 'Programme allégé · Charge ajustée',
+    en: 'Lightened plan · Load adjusted',
+  },
+  hero_modulation_fatigue_very_high: {
+    fr: 'Programme allégé · Récup prioritaire',
+    en: 'Lightened plan · Recovery first',
   },
 
   // ── Session share (post-save Stories card) ──────────────────────────────

@@ -281,6 +281,76 @@ function matchRule(ruleId: string): RuleCopy | undefined {
   return undefined
 }
 
+/**
+ * L’ancre `returnToTeamTrainingAt` reste en base toute la saison, mais le
+ * message « Retour au collectif » n’a de sens qu’en inter / pré-saison.
+ * En saison / playoffs → on ignore (sinon la card /week reste stale).
+ */
+export function shouldSkipReturnToTeamExplanation(
+  ruleId: string,
+  cycle: AnnualPlanningContext['cycle'],
+): boolean {
+  if (!ruleId.startsWith('anchor:return_to_team_training')) return false
+  return cycle === 'in_season' || cycle === 'playoffs'
+}
+
+/**
+ * Règles de *construction* calendrier (audit) ≠ message joueur de la semaine.
+ * Ex. `rule:pre_season_anchored_return_to_team` reste dans la trace en S10.
+ */
+export function shouldSkipHistoricalCalendarExplanation(
+  ruleId: string,
+  cycle: AnnualPlanningContext['cycle'],
+): boolean {
+  if (shouldSkipReturnToTeamExplanation(ruleId, cycle)) return true
+  if (ruleId.startsWith('rule:pre_season_')) return cycle !== 'pre_season'
+  if (
+    ruleId.startsWith('rule:off_season_')
+    || ruleId.startsWith('rule:season_ended')
+    || ruleId.startsWith('rule:auto_season_ended')
+    || ruleId.startsWith('anchor:off_season_start_at')
+    || ruleId.startsWith('anchor:season_ended_at')
+  ) {
+    return cycle !== 'off_season'
+  }
+  return false
+}
+
+/**
+ * La card /week ne s’affiche que s’il y a un signal utile *cette* semaine.
+ * Steady state (ex. en saison S10 sans match/décharge/trêve) → pas de card.
+ */
+export function hasActionableWeekSignal(
+  ctx: Pick<
+    AnnualPlanningContext,
+    | 'cycle'
+    | 'isMatchWeek'
+    | 'isDeloadWeek'
+    | 'fatigueLevel'
+    | 'loadManagementOverride'
+    | 'fatigueLoadChoiceApplied'
+    | 'volumeLighteningReasons'
+    | 'inSeasonSubMode'
+    | 'playoffTaperPhase'
+    | 'offSeasonPhase'
+  >,
+  corrections: readonly WeekCorrection[] = [],
+): boolean {
+  if (corrections.length > 0) return true
+  if (ctx.isMatchWeek) return true
+  if (ctx.isDeloadWeek) return true
+  if (ctx.fatigueLevel === 'high' || ctx.fatigueLevel === 'very_high') return true
+  if (ctx.loadManagementOverride === 'recovery') return true
+  if (ctx.fatigueLoadChoiceApplied) return true
+  if ((ctx.volumeLighteningReasons?.length ?? 0) > 0) return true
+  if (ctx.inSeasonSubMode != null && ctx.inSeasonSubMode !== 'competition') return true
+  if (ctx.playoffTaperPhase != null) return true
+  if (ctx.cycle === 'playoffs') return true
+  if (ctx.cycle === 'pre_season') return true
+  if (ctx.cycle === 'off_season' && ctx.offSeasonPhase === 1) return true
+  return false
+}
+
 function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
   const result: Explanation[] = []
   const seen = new Set<string>()
@@ -288,6 +358,7 @@ function collectExplanations(ctx: AnnualPlanningContext): Explanation[] {
   // 1. From rulesApplied (highest priority)
   for (let i = 0; i < ctx.planningTrace.rulesApplied.length; i++) {
     const ruleId = ctx.planningTrace.rulesApplied[i]
+    if (shouldSkipHistoricalCalendarExplanation(ruleId, ctx.cycle)) continue
     const copy = matchRule(ruleId)
     if (!copy) continue
 
@@ -404,10 +475,41 @@ export function summaryConflictsWithResolvedCycle(
   const s = summary.toLowerCase()
   const saysOff = s.includes('inter-saison') || s.includes('off-season')
   const saysIn = /\ben saison\b/.test(s) || s.includes('in-season') || s.includes('in season')
-  const saysPre = s.includes('pré-saison') || s.includes('pre-saison') || s.includes('pre-season')
+  const saysPre =
+    s.includes('pré-saison')
+    || s.includes('pre-saison')
+    || s.includes('pre-season')
+    || s.includes('préparation de saison')
+  const saysReturnClub =
+    s.includes('retour au club')
+    || s.includes('retour au collectif')
   if (saysOff && cycle !== 'off_season') return true
   if (saysIn && cycle !== 'in_season') return true
   if (saysPre && cycle !== 'pre_season') return true
+  // Ancre reprise : pertinente en inter / pré, jamais en saison / playoffs.
+  if (saysReturnClub && (cycle === 'in_season' || cycle === 'playoffs')) return true
+  return false
+}
+
+/**
+ * Warnings de construction calendrier (audit) ≠ copy joueur de la semaine.
+ * Ex. « Pré-saison compressée… » reste dans la trace en S10.
+ */
+export function warningConflictsWithResolvedCycle(
+  warning: string,
+  cycle: AnnualPlanningContext['cycle'],
+): boolean {
+  if (summaryConflictsWithResolvedCycle(warning, cycle)) return true
+  const s = warning.toLowerCase()
+  const compressedPre =
+    s.includes('pré-saison compressée')
+    || s.includes('pre-saison compressée')
+    || s.includes('pre-season compressed')
+  const compressedOff =
+    s.includes('off-season compressée')
+    || s.includes('inter-saison compressée')
+  if (compressedPre && cycle !== 'pre_season') return true
+  if (compressedOff && cycle !== 'off_season') return true
   return false
 }
 
@@ -476,15 +578,16 @@ function buildDetailItems(
 
   for (const exp of explanations) {
     if (items.length >= 3) break
-    if (exp.detail && !seen.has(exp.detail)) {
-      seen.add(exp.detail)
-      items.push({ ruleId: exp.ruleId, text: exp.detail })
-    }
+    if (!exp.detail || seen.has(exp.detail)) continue
+    if (summaryConflictsWithResolvedCycle(exp.detail, ctx.cycle)) continue
+    seen.add(exp.detail)
+    items.push({ ruleId: exp.ruleId, text: exp.detail })
   }
 
   for (const warning of ctx.planningTrace.warnings) {
     if (items.length >= 3) break
     if (!isHumanFriendlyWarning(warning)) continue
+    if (warningConflictsWithResolvedCycle(warning, ctx.cycle)) continue
     if (seen.has(warning)) continue
     seen.add(warning)
     items.push({ ruleId: 'warning', text: warning })

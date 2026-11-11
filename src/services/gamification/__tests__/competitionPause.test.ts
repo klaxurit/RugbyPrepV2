@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  COMPETITION_PAUSE_MAX_DAYS,
-  competitionPauseEndsOn,
-  isCompetitionPauseActive,
-} from '../competitionPause'
+import { isCompetitionPauseActive } from '../competitionPause'
 
 describe('isCompetitionPauseActive', () => {
   it('est inactive sans kind', () => {
@@ -15,17 +11,20 @@ describe('isCompetitionPauseActive', () => {
     ).toBe(false)
   })
 
-  it('est active entre début et fin inclus', () => {
+  it('reste active sans endsOn (ouverte jusqu’à levée)', () => {
     expect(
       isCompetitionPauseActive(
         {
           kind: 'blesse',
           startedOn: '2026-11-01',
-          endsOn: '2026-11-28',
+          endsOn: null,
         },
-        '2026-11-01',
+        '2026-12-15',
       ),
     ).toBe(true)
+  })
+
+  it('honore encore un endsOn legacy', () => {
     expect(
       isCompetitionPauseActive(
         {
@@ -36,9 +35,6 @@ describe('isCompetitionPauseActive', () => {
         '2026-11-28',
       ),
     ).toBe(true)
-  })
-
-  it('expire après endsOn', () => {
     expect(
       isCompetitionPauseActive(
         {
@@ -49,11 +45,5 @@ describe('isCompetitionPauseActive', () => {
         '2026-11-29',
       ),
     ).toBe(false)
-  })
-})
-
-describe('competitionPauseEndsOn', () => {
-  it(`couvre ${COMPETITION_PAUSE_MAX_DAYS} jours inclusifs`, () => {
-    expect(competitionPauseEndsOn('2026-11-01')).toBe('2026-11-28')
   })
 })

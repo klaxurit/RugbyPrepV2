@@ -19,13 +19,26 @@ interface AICoachRequest {
   userMessage?: string
   messages?: ChatMessage[]
   context: {
+    today?: string
     week?: string
     phase?: string
+    cycle?: string
+    weekNumber?: number
+    isDeloadWeek?: boolean
+    isMatchWeek?: boolean
+    inSeasonSubMode?: string
+    playoffTaperPhase?: string
+    clubContactProxy?: string
+    volumeLighteningReasons?: string[]
+    fatigueLoadChoiceApplied?: string
+    daysUntilNextMatch?: number | null
+    daysSinceLastMatch?: number | null
     acwr?: number | null
     acwrZone?: string | null
     acuteLoad?: number
     chronicLoad?: number
     fatigue?: string
+    explanationSummary?: string
     recentLogs?: Array<{
       sessionType: string
       rpe?: number
@@ -33,11 +46,34 @@ interface AICoachRequest {
       dateISO: string
       week: string
     }>
+    upcomingWeekEvents?: Array<{
+      date: string
+      type: string
+      opponent?: string | null
+    }>
     profile?: {
+      displayName?: string
       level?: string
+      trainingLevel?: string
       weeklySessions?: number
       position?: string
+      rugbyPosition?: string
       injuries?: string[]
+      equipment?: string[]
+      heightCm?: number
+      weightKg?: number
+      ageBand?: string
+      performanceFocus?: string
+      trainingBaseline?: string
+      clubName?: string
+      leagueLevel?: string
+      preferredLanguage?: string
+      clubDays?: string[]
+      matchDay?: string
+      gymDays?: string[]
+      returnToTeamTrainingAt?: string
+      seasonEndedAt?: string
+      offSeasonStartAt?: string
     }
     nextMatch?: {
       date: string
@@ -197,24 +233,105 @@ function clockBlock(ctx: AICoachRequest['context'], firstName: string | null): s
   const lines: string[] = [
     '\nFaits joueur (déjà connus : personnalise si ça aide, ne les récite pas à chaque message, ne les redemande pas) :',
   ]
-  if (firstName) lines.push(`- Prénom : ${firstName}`)
-  if (ctx.week) lines.push(`- Semaine : ${ctx.week}`)
+  const name = firstName ?? (ctx.profile?.displayName
+    ? firstNameFromDisplayName(ctx.profile.displayName)
+    : null)
+  if (name) lines.push(`- Prénom : ${name}`)
+  if (ctx.today) lines.push(`- Aujourd’hui : ${ctx.today}`)
+  if (ctx.week) lines.push(`- Semaine programme : ${ctx.week}`)
+  if (ctx.cycle) {
+    const bits = [`cycle ${ctx.cycle}`]
+    if (ctx.weekNumber != null) bits.push(`S${ctx.weekNumber}`)
+    if (ctx.isDeloadWeek) bits.push('décharge')
+    if (ctx.isMatchWeek) bits.push('semaine de match')
+    if (ctx.inSeasonSubMode) bits.push(`sous-mode ${ctx.inSeasonSubMode}`)
+    if (ctx.playoffTaperPhase) bits.push(`taper ${ctx.playoffTaperPhase}`)
+    lines.push(`- Horloge annuelle : ${bits.join(' · ')}`)
+  }
   if (ctx.phase) lines.push(`- Orientation S&C : ${ctx.phase}`)
+  if (ctx.explanationSummary) lines.push(`- Résumé programme affiché : ${ctx.explanationSummary}`)
   if (ctx.fatigue) lines.push(`- Fatigue déclarée : ${ctx.fatigue}`)
+  if (ctx.clubContactProxy) lines.push(`- Contact club (proxy) : ${ctx.clubContactProxy}`)
+  if (ctx.fatigueLoadChoiceApplied) {
+    lines.push(`- Choix charge joueur : ${ctx.fatigueLoadChoiceApplied}`)
+  }
+  if (ctx.volumeLighteningReasons?.length) {
+    lines.push(`- Allègement volume : ${ctx.volumeLighteningReasons.join(', ')}`)
+  }
   if (ctx.acwr != null) {
     const zone = acwrZoneFr(ctx.acwrZone) ?? ctx.acwrZone ?? '?'
-    lines.push(`- ACWR (calcul app) : ${ctx.acwr} (zone ${zone})`)
+    const loadBits =
+      ctx.acuteLoad != null && ctx.chronicLoad != null
+        ? ` · aiguë ${ctx.acuteLoad} / chronique ${ctx.chronicLoad}`
+        : ''
+    lines.push(`- ACWR (calcul app) : ${ctx.acwr} (zone ${zone})${loadBits}`)
   } else {
     lines.push('- ACWR : pas encore assez de séances loggées')
   }
+
+  const p = ctx.profile
+  if (p) {
+    const idBits: string[] = []
+    if (p.position || p.rugbyPosition) idBits.push(`poste ${p.position ?? p.rugbyPosition}`)
+    if (p.trainingLevel || p.level) idBits.push(`niveau ${p.trainingLevel ?? p.level}`)
+    if (p.weeklySessions != null) idBits.push(`${p.weeklySessions} séances/sem`)
+    if (p.leagueLevel) idBits.push(p.leagueLevel)
+    if (p.clubName) idBits.push(`club ${p.clubName}`)
+    if (idBits.length) lines.push(`- Identité : ${idBits.join(' · ')}`)
+    if (p.performanceFocus) lines.push(`- Focus perf : ${p.performanceFocus}`)
+    if (p.trainingBaseline) lines.push(`- Baseline : ${p.trainingBaseline}`)
+    if (p.ageBand) lines.push(`- Tranche d’âge : ${p.ageBand}`)
+    if (p.heightCm != null || p.weightKg != null) {
+      lines.push(`- Morpho : ${p.heightCm ?? '?'} cm / ${p.weightKg ?? '?'} kg`)
+    }
+    if (p.equipment?.length) lines.push(`- Matériel : ${p.equipment.join(', ')}`)
+    if (p.injuries?.length) {
+      lines.push(`- Contraintes déclarées (pas un diagnostic) : ${p.injuries.join(', ')}`)
+    }
+    if (p.clubDays?.length || p.matchDay || p.gymDays?.length) {
+      const sched: string[] = []
+      if (p.clubDays?.length) sched.push(`club ${p.clubDays.join('/')}`)
+      if (p.matchDay) sched.push(`match ${p.matchDay}`)
+      if (p.gymDays?.length) sched.push(`salle ${p.gymDays.join('/')}`)
+      lines.push(`- Planning récurrent : ${sched.join(' · ')}`)
+    }
+    if (p.returnToTeamTrainingAt || p.seasonEndedAt || p.offSeasonStartAt) {
+      const anchors: string[] = []
+      if (p.returnToTeamTrainingAt) anchors.push(`reprise club ${p.returnToTeamTrainingAt}`)
+      if (p.seasonEndedAt) anchors.push(`fin saison ${p.seasonEndedAt}`)
+      if (p.offSeasonStartAt) anchors.push(`début inter ${p.offSeasonStartAt}`)
+      lines.push(`- Ancres planning : ${anchors.join(' · ')}`)
+    }
+  }
+
   if (ctx.nextMatch?.date) {
     lines.push(...matchFactLines(
       ctx.nextMatch.date,
       ctx.nextMatch.opponent,
-      ctx.nextMatch.daysUntil,
+      ctx.nextMatch.daysUntil ?? ctx.daysUntilNextMatch,
     ))
+  } else if (ctx.daysUntilNextMatch != null) {
+    lines.push(`- Prochain match dans ${ctx.daysUntilNextMatch} jours (sans détail adversaire).`)
   }
-  lines.push('- Pas de détail de la séance club dans ces faits.')
+  if (ctx.daysSinceLastMatch != null) {
+    lines.push(`- Dernier match il y a ${ctx.daysSinceLastMatch} jours.`)
+  }
+  if (ctx.upcomingWeekEvents?.length) {
+    lines.push(
+      `- Semaine calendrier : ${ctx.upcomingWeekEvents
+        .map((e) => `${e.date} ${e.type}${e.opponent ? ` vs ${e.opponent}` : ''}`)
+        .join(' | ')}`,
+    )
+  }
+  if (ctx.recentLogs?.length) {
+    lines.push(
+      `- Séances récentes : ${ctx.recentLogs
+        .slice(0, 8)
+        .map((l) => `${l.dateISO} ${l.sessionType} RPE${l.rpe ?? '?'} ${l.durationMin ?? '?'}min`)
+        .join(' | ')}`,
+    )
+  }
+  lines.push('- Pas de détail micro de la séance club (contenu terrain) dans ces faits.')
   return lines.join('\n')
 }
 

@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildExplanation,
+  hasActionableWeekSignal,
   isPhaseOnlySummaryLine,
+  shouldSkipHistoricalCalendarExplanation,
   summaryConflictsWithResolvedCycle,
 } from '../buildExplanation'
 import type { AnnualPlanningContext } from '../../../types/annualPlanning'
@@ -445,9 +447,11 @@ describe('buildExplanation', () => {
 
   // ── Warnings inclusion ──
 
-  it('includes human-readable warnings in detailLines', () => {
+  it('includes human-readable warnings in detailLines (cycle cohérent)', () => {
     const result = buildExplanation({
       planningContext: makeCtx({
+        cycle: 'pre_season',
+        weekLabel: 'Pré-saison - S2',
         planningTrace: {
           resolutionMode: 'calendar_inferred',
           rulesApplied: [],
@@ -460,6 +464,28 @@ describe('buildExplanation', () => {
     })
 
     expect(result.detailLines.some(l => l.includes('Pré-saison compressée'))).toBe(true)
+  })
+
+  it('ignore warning pré-saison compressée en saison (trace historique)', () => {
+    const result = buildExplanation({
+      planningContext: makeCtx({
+        cycle: 'in_season',
+        weekLabel: 'En saison - S10 (2/4)',
+        isMatchWeek: true,
+        daysUntilNextMatch: 4,
+        planningTrace: {
+          resolutionMode: 'calendar_inferred',
+          rulesApplied: ['rule:in_season_from_calendar'],
+          warnings: ['Pré-saison compressée : 4 semaines disponibles, minimum 6 appliqué.'],
+        },
+      }),
+      schedulingMode: 'calendar',
+      presentation: makePres(),
+      corrections: [],
+    })
+
+    expect(result.detailLines.some(l => /pré-saison compressée/i.test(l))).toBe(false)
+    expect(result.summaryLine.toLowerCase()).not.toContain('pré-saison')
   })
 
   it('does NOT treat warnings as rule mapping keys', () => {
@@ -738,6 +764,9 @@ describe('buildExplanation', () => {
   it('anchor:season_ended_at_validated → saison terminée', () => {
     const result = buildExplanation({
       planningContext: makeCtx({
+        cycle: 'off_season',
+        weekLabel: 'Inter-saison - S1',
+        offSeasonPhase: 1,
         planningTrace: { resolutionMode: 'explicit_anchors', rulesApplied: ['anchor:season_ended_at_validated'], warnings: [] },
       }),
       schedulingMode: 'calendar',
@@ -749,10 +778,31 @@ describe('buildExplanation', () => {
     assertNoJargon(result)
   })
 
-  it('anchor:return_to_team_training_validated → retour au collectif', () => {
+  it('anchor:season_ended_at en saison → ignoré (trace historique)', () => {
     const result = buildExplanation({
       planningContext: makeCtx({
-        planningTrace: { resolutionMode: 'explicit_anchors', rulesApplied: ['anchor:return_to_team_training_validated'], warnings: [] },
+        cycle: 'in_season',
+        planningTrace: { resolutionMode: 'explicit_anchors', rulesApplied: ['anchor:season_ended_at_validated'], warnings: [] },
+      }),
+      schedulingMode: 'calendar',
+      presentation: makePres(2),
+      corrections: [],
+    })
+
+    expect(result.summaryLine.toLowerCase()).not.toContain('terminée')
+    expect(result.summaryLine).toMatch(/2 séance/)
+  })
+
+  it('anchor:return_to_team en pré-saison → retour au collectif', () => {
+    const result = buildExplanation({
+      planningContext: makeCtx({
+        cycle: 'pre_season',
+        weekLabel: 'Pré-saison - S2',
+        planningTrace: {
+          resolutionMode: 'explicit_anchors',
+          rulesApplied: ['anchor:return_to_team_training_validated'],
+          warnings: [],
+        },
       }),
       schedulingMode: 'calendar',
       presentation: makePres(),
@@ -761,6 +811,103 @@ describe('buildExplanation', () => {
 
     expect(result.summaryLine.toLowerCase()).toContain('retour')
     assertNoJargon(result)
+  })
+
+  it('anchor:return_to_team en saison → ignoré (message stale)', () => {
+    const result = buildExplanation({
+      planningContext: makeCtx({
+        cycle: 'in_season',
+        weekLabel: 'En saison - S10 (2/4)',
+        planningTrace: {
+          resolutionMode: 'explicit_anchors',
+          rulesApplied: ['anchor:return_to_team_training_validated'],
+          warnings: [],
+        },
+      }),
+      schedulingMode: 'calendar',
+      presentation: makePres(2),
+      corrections: [],
+    })
+
+    expect(result.summaryLine.toLowerCase()).not.toContain('retour')
+    expect(result.summaryLine).toMatch(/2 séance/)
+    assertNoJargon(result)
+  })
+
+  it('rule:pre_season_anchored en saison S10 → ignoré (trace historique)', () => {
+    const result = buildExplanation({
+      planningContext: makeCtx({
+        cycle: 'in_season',
+        weekLabel: 'En saison - S10 (2/4)',
+        weekNumber: 10,
+        planningTrace: {
+          resolutionMode: 'explicit_anchors',
+          rulesApplied: [
+            'rule:pre_season_anchored_return_to_team',
+            'anchor:return_to_team_training_validated',
+            'rule:in_season_from_calendar',
+          ],
+          warnings: [],
+        },
+        isMatchWeek: false,
+        daysUntilNextMatch: 12,
+      }),
+      schedulingMode: 'calendar',
+      presentation: makePres(2),
+      corrections: [],
+    })
+
+    expect(result.summaryLine.toLowerCase()).not.toContain('préparation de saison')
+    expect(result.summaryLine.toLowerCase()).not.toContain('retour au club')
+    expect(shouldSkipHistoricalCalendarExplanation(
+      'rule:pre_season_anchored_return_to_team',
+      'in_season',
+    )).toBe(true)
+    expect(summaryConflictsWithResolvedCycle(
+      'Préparation de saison — retour au club',
+      'in_season',
+    )).toBe(true)
+    assertNoJargon(result)
+  })
+
+  it('rule:pre_season_anchored en pré-saison → conservé', () => {
+    const result = buildExplanation({
+      planningContext: makeCtx({
+        cycle: 'pre_season',
+        weekLabel: 'Pré-saison - S2',
+        planningTrace: {
+          resolutionMode: 'explicit_anchors',
+          rulesApplied: ['rule:pre_season_anchored_return_to_team'],
+          warnings: [],
+        },
+      }),
+      schedulingMode: 'calendar',
+      presentation: makePres(2),
+      corrections: [],
+    })
+
+    expect(result.summaryLine.toLowerCase()).toContain('retour')
+    assertNoJargon(result)
+  })
+
+  it('hasActionableWeekSignal : steady state en saison → false', () => {
+    expect(hasActionableWeekSignal(makeCtx({
+      cycle: 'in_season',
+      weekLabel: 'En saison - S10 (2/4)',
+      isMatchWeek: false,
+      isDeloadWeek: false,
+      fatigueLevel: 'normal',
+    }))).toBe(false)
+  })
+
+  it('hasActionableWeekSignal : match week / décharge / pré-saison → true', () => {
+    expect(hasActionableWeekSignal(makeCtx({ isMatchWeek: true }))).toBe(true)
+    expect(hasActionableWeekSignal(makeCtx({ isDeloadWeek: true }))).toBe(true)
+    expect(hasActionableWeekSignal(makeCtx({ cycle: 'pre_season' }))).toBe(true)
+    expect(hasActionableWeekSignal(makeCtx({
+      cycle: 'off_season',
+      offSeasonPhase: 1,
+    }))).toBe(true)
   })
 
   // ── Long absence — couvert par Score de forme (Home), pas PlanningContextCard ──

@@ -714,21 +714,28 @@ export function migrateSnapshot(
   let s = snapshot
   let changed = false
 
-  // Migration 1: Missing explanation (pre-Slice 3 snapshots) OR missing
-  // detailItems (pre-hint-unification snapshots) → rebuild from current source.
-  const needsExplanationRebuild =
-    s.surface && s.presentation && (!s.explanation || !s.explanation.detailItems)
-  if (needsExplanationRebuild && s.surface && s.presentation) {
-    s = {
-      ...s,
-      explanation: buildExplanation({
-        planningContext: s.surface.planningContext,
-        schedulingMode: s.surface.schedulingMode,
-        presentation: s.presentation,
-        corrections: s.corrections,
-      }),
+  // Migration 1: Toujours recalculer le copy joueur.
+  // Les filtres buildExplanation évoluent (warnings historiques, cycle) —
+  // un snapshot localStorage ne doit pas figer un texte stale.
+  if (s.surface && s.presentation) {
+    const explanation = buildExplanation({
+      planningContext: s.surface.planningContext,
+      schedulingMode: s.surface.schedulingMode,
+      presentation: s.presentation,
+      corrections: s.corrections,
+    })
+    const prev = s.explanation
+    const same =
+      prev != null
+      && prev.summaryLine === explanation.summaryLine
+      && prev.detailLines.length === explanation.detailLines.length
+      && prev.detailLines.every((line, i) => line === explanation.detailLines[i])
+      && (prev.corrections?.length ?? 0) === explanation.corrections.length
+      && (prev.corrections ?? []).every((line, i) => line === explanation.corrections[i])
+    if (!same) {
+      s = { ...s, explanation }
+      changed = true
     }
-    changed = true
   }
 
   // Migration 2: Missing clubDays or club days leaked into unavailableDays

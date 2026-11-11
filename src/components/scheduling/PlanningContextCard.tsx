@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, MessageCircle, Sparkles, X } from 'lucide-react'
+import { ArrowRight, ChevronDown, MessageCircle, Sparkles, X } from 'lucide-react'
 import type { WeekExplanation } from '../../types/scheduling'
-import { useOpenCompanion } from '../../contexts/CoachContext'
 import { useHintVisibility } from '../../hooks/useHintVisibility'
 
 /** Courbe déjà utilisée sur le hero (note modulation) — sortie douce, pas « flash ». */
@@ -12,7 +12,7 @@ interface PlanningContextCardProps {
   explanation: WeekExplanation
   /** Optional cycle/week label for the card header. */
   weekLabel?: string
-  /** Reserved for back-compat (no longer rendered here — détails sont dans la mascotte). */
+  /** Reserved for back-compat (no longer rendered here). */
   companionRecommendations?: string[]
   warnings?: string[]
   hideCorrections?: boolean
@@ -24,14 +24,14 @@ interface PlanningContextCardProps {
     onClick: () => void
     testId?: string
   }
+  /** Langue pour les libellés UI locaux. */
+  lang?: 'fr' | 'en'
 }
 
 /**
- * Carte contexte hebdo — même langage visuel que {@link ScoreDeFormeTeaser} :
- * fond encre, glow doré, typo éditoriale, filets crème — sans réutiliser le composant Pro.
- *
- * Fermeture : animation sortie (opacity + léger slide), puis persistance du dismiss —
- * aligné sur {@link CoachCompanion} / note modulation {@link HeroNormal}.
+ * Carte contexte hebdo — fond encre, glow doré, typo éditoriale.
+ * « Pourquoi ? » déplie le détail inline (plus de pastille coach globale).
+ * Lien optionnel vers `/chat` pour une question libre.
  */
 export function PlanningContextCard({
   explanation,
@@ -39,19 +39,18 @@ export function PlanningContextCard({
   hideCorrections = false,
   contextHash,
   summaryFooterAction,
+  lang = 'fr',
 }: PlanningContextCardProps) {
   const summaryId = useId()
-  const openCompanion = useOpenCompanion()
   const { visible, dismiss } = useHintVisibility('planning_context_card', {
     cooldownDays: 14,
     contextHash,
   })
   const dismissAfterExitRef = useRef(false)
   const [panelOpen, setPanelOpen] = useState(visible)
+  const [detailsOpen, setDetailsOpen] = useState(false)
   const prevVisibleRef = useRef(visible)
 
-  // Ré-ouvre le panneau uniquement quand le hint repasse visible après avoir été masqué
-  // (ex. nouveau contextHash), pas après un simple montage où visible est déjà true.
   useEffect(() => {
     const prev = prevVisibleRef.current
     prevVisibleRef.current = visible
@@ -65,8 +64,18 @@ export function PlanningContextCard({
   }, [visible])
 
   const visibleCorrections = hideCorrections ? [] : explanation.corrections
-  const hasDetails = explanation.detailLines.length > 0 || visibleCorrections.length > 0
+  const detailTexts = [
+    ...explanation.detailLines,
+    ...visibleCorrections,
+  ].filter(Boolean)
+  const hasDetails = detailTexts.length > 0
   const hasActions = hasDetails || Boolean(summaryFooterAction)
+  const chatSeed =
+    weekLabel != null
+      ? lang === 'en'
+        ? `I'm in ${weekLabel}. `
+        : `Je suis en ${weekLabel}. `
+      : undefined
 
   const requestDismiss = () => {
     dismissAfterExitRef.current = true
@@ -102,7 +111,6 @@ export function PlanningContextCard({
           }}
           data-testid="planning-context-card"
         >
-          {/* Glow doré radial — même recette que ScoreDeFormeTeaser */}
           <div
             aria-hidden
             className="pointer-events-none absolute -top-10 -right-10 h-[180px] w-[180px] rounded-full"
@@ -116,8 +124,12 @@ export function PlanningContextCard({
               type="button"
               onClick={requestDismiss}
               className="absolute right-3 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-xl text-app/55 transition-colors hover:bg-white/10 hover:text-app rf-focus-ring sm:right-[18px] sm:top-[18px]"
-              aria-label="Masquer cette information"
-              title="Masquer (réapparaît au prochain changement de phase ou après 14 jours)"
+              aria-label={lang === 'en' ? 'Hide this information' : 'Masquer cette information'}
+              title={
+                lang === 'en'
+                  ? 'Hide (comes back on next phase change or after 14 days)'
+                  : 'Masquer (réapparaît au prochain changement de phase ou après 14 jours)'
+              }
               data-testid="planning-context-dismiss"
             >
               <X className="h-4 w-4" strokeWidth={2.25} />
@@ -145,6 +157,20 @@ export function PlanningContextCard({
               </p>
             </div>
 
+            {hasDetails && detailsOpen ? (
+              <ul
+                className="mt-3 space-y-2 text-[12px] font-medium leading-relaxed text-app/75"
+                data-testid="planning-context-details"
+              >
+                {detailTexts.map((line) => (
+                  <li key={line} className="flex gap-2">
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-pro/80" aria-hidden />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
             {hasActions ? (
               <div
                 className="mt-[18px] flex flex-col gap-2 pt-3.5 sm:flex-row sm:flex-wrap sm:items-stretch"
@@ -153,16 +179,34 @@ export function PlanningContextCard({
                 {hasDetails ? (
                   <button
                     type="button"
-                    onClick={openCompanion}
+                    onClick={() => setDetailsOpen((v) => !v)}
                     data-testid="planning-context-toggle"
-                    aria-label="Voir pourquoi ce programme avec le coach"
+                    aria-expanded={detailsOpen}
+                    aria-label={
+                      lang === 'en' ? 'Show why this program' : 'Voir pourquoi ce programme'
+                    }
                     className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2.5 text-center text-xs font-bold text-pro shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] transition-colors hover:border-pro/35 hover:bg-white/10 sm:min-h-[40px] sm:flex-none sm:px-5"
                   >
-                    <MessageCircle className="h-3.5 w-3.5 shrink-0 opacity-95" aria-hidden />
-                    Pourquoi ?
-                    <ArrowRight className="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden strokeWidth={2.4} />
+                    {lang === 'en' ? 'Why?' : 'Pourquoi ?'}
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 shrink-0 opacity-90 transition-transform ${
+                        detailsOpen ? 'rotate-180' : ''
+                      }`}
+                      aria-hidden
+                      strokeWidth={2.4}
+                    />
                   </button>
                 ) : null}
+
+                <Link
+                  to={chatSeed ? `/chat?seed=${encodeURIComponent(chatSeed)}` : '/chat'}
+                  data-testid="planning-context-ask-coach"
+                  className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl border border-white/12 bg-transparent px-4 py-2.5 text-center text-xs font-bold text-app/90 transition-colors hover:border-white/22 hover:bg-white/[0.06] sm:min-h-[40px] sm:flex-none sm:px-5"
+                >
+                  <MessageCircle className="h-3.5 w-3.5 shrink-0 opacity-95" aria-hidden />
+                  {lang === 'en' ? 'Ask the coach' : 'Demander au coach'}
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden strokeWidth={2.4} />
+                </Link>
 
                 {summaryFooterAction ? (
                   <button
@@ -175,7 +219,19 @@ export function PlanningContextCard({
                   </button>
                 ) : null}
               </div>
-            ) : null}
+            ) : (
+              <div className="mt-[18px] pt-3.5" style={dividerStyle}>
+                <Link
+                  to={chatSeed ? `/chat?seed=${encodeURIComponent(chatSeed)}` : '/chat'}
+                  data-testid="planning-context-ask-coach"
+                  className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-white/12 bg-transparent px-4 py-2.5 text-center text-xs font-bold text-app/90 transition-colors hover:border-white/22 hover:bg-white/[0.06]"
+                >
+                  <MessageCircle className="h-3.5 w-3.5 shrink-0 opacity-95" aria-hidden />
+                  {lang === 'en' ? 'Ask the coach' : 'Demander au coach'}
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden strokeWidth={2.4} />
+                </Link>
+              </div>
+            )}
           </div>
         </motion.section>
       ) : null}

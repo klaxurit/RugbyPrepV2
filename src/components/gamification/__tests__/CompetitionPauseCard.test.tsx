@@ -20,7 +20,7 @@ describe('CompetitionPauseCard', () => {
     await waitFor(() => expect(onToggle).toHaveBeenCalledWith(true))
   })
 
-  it('affiche la date de fin quand active', () => {
+  it('card compacte : pas de date de fin ni max 28 j', () => {
     render(
       <CompetitionPauseCard
         active
@@ -33,6 +33,8 @@ describe('CompetitionPauseCard', () => {
       'data-pause-active',
       'true',
     )
-    expect(screen.getByText(/2026-11-28/)).toBeInTheDocument()
+    expect(screen.queryByText(/2026-11-28/)).toBeNull()
+    expect(screen.queryByText(/28/)).toBeNull()
+    expect(screen.getByText(/Bouclier actif/)).toBeInTheDocument()
   })
 })

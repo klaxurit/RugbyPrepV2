@@ -20,13 +20,21 @@ interface HeroNormalProps {
     icon?: IconName
   }
   /**
-   * Mood inline (optionnel) — affiché en bas de la card si fourni.
-   * Mappé sur le hook useFatigue côté HomePage : 'fit'=OK, 'tired'=FATIGUE, null=non-répondu.
+   * Check-in inline (optionnel) — contact club sur Home (slots fit/tired réutilisés).
+   * La forme joueur vient des scores fin de séance / match, pas de ce bloc.
    */
   mood?: HeroMood
   onMoodChange?: (next: HeroMood) => void
-  /** Si false, masque le bloc mood même si onMoodChange est fourni (ex: training_day). */
+  /** Si false, masque le bloc même si onMoodChange est fourni (ex: training_day). */
   showMood?: boolean
+  /** Copy du check-in (défaut = forme). */
+  checkIn?: {
+    question: string
+    fitLabel: string
+    tiredLabel: string
+    fitTestId?: string
+    tiredTestId?: string
+  }
   /**
    * Note de modulation programme (ex: "Programme allégé · Charge ajustée").
    * Affichée juste sous le subtitle, en pill bordeaux discrète. Sert à rendre
@@ -41,7 +49,7 @@ interface HeroNormalProps {
  * du jour en italic en haut-droite, titre Playfair italic, sous-titre éditorial,
  * mood inline (optionnel) et CTA bordeaux plein.
  *
- * Rendu pour les états : rest_day, training_day, match_today, match_tomorrow.
+ * Rendu pour les états : rest_day, club_day, training_day, match_today, match_tomorrow.
  * Pour le post-match (< 48h), c'est `HeroDayAfter` qui est utilisé à la place.
  */
 export function HeroNormal({
@@ -54,8 +62,12 @@ export function HeroNormal({
   mood = null,
   onMoodChange,
   showMood = true,
+  checkIn,
 }: HeroNormalProps) {
   const moodEnabled = showMood && onMoodChange != null
+  const question = checkIn?.question ?? 'Comment tu te sens ?'
+  const fitLabel = checkIn?.fitLabel ?? 'En forme'
+  const tiredLabel = checkIn?.tiredLabel ?? 'Fatigué'
 
   return (
     <div className="px-[18px]">
@@ -116,21 +128,26 @@ export function HeroNormal({
             )}
           </AnimatePresence>
 
-          {/* Mood inline (optionnel) */}
+          {/* Check-in inline (forme ou contact club — une seule porte) */}
           {moodEnabled && (
-            <div className="flex items-center gap-2.5 border-t border-paper-deep pt-3.5 mb-3.5">
+            <div
+              className="flex items-center gap-2.5 border-t border-paper-deep pt-3.5 mb-3.5"
+              data-testid="home-hero-checkin"
+            >
               <div className="flex-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-fg/55">
-                Comment tu te sens ?
+                {question}
               </div>
               <div className="flex gap-1.5">
                 <MoodBtn
-                  label="En forme"
+                  label={fitLabel}
+                  testId={checkIn?.fitTestId}
                   active={mood === 'fit'}
                   activeColor="var(--color-milestone-green)"
                   onClick={() => onMoodChange?.(mood === 'fit' ? null : 'fit')}
                 />
                 <MoodBtn
-                  label="Fatigué"
+                  label={tiredLabel}
+                  testId={checkIn?.tiredTestId}
                   active={mood === 'tired'}
                   activeColor="#A8531B"
                   onClick={() => onMoodChange?.(mood === 'tired' ? null : 'tired')}
@@ -161,12 +178,14 @@ interface MoodBtnProps {
   active: boolean
   activeColor: string
   onClick: () => void
+  testId?: string
 }
 
-function MoodBtn({ label, active, activeColor, onClick }: MoodBtnProps) {
+function MoodBtn({ label, active, activeColor, onClick, testId }: MoodBtnProps) {
   return (
     <button
       type="button"
+      data-testid={testId}
       onClick={onClick}
       className="rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.02em] transition-all rf-focus-ring"
       style={{

@@ -9,10 +9,13 @@ import {
   HeroNormal,
   NextMatchEditorialCard,
   PlayoffsThinBanner,
-  fatigueToMood,
-  moodToFatigue,
   type HeroMood,
 } from '../components/home'
+import {
+  clubProxyToHeroMood,
+  heroMoodToClubProxy,
+  isClubContactCheckInDay,
+} from '../components/home/homeHeroCheckIn'
 import {
   GamificationIntroSheet,
   RigorBadgesStrip,
@@ -52,9 +55,10 @@ import type { TransitionEntry } from '../types/training'
 import { appendTransitionEntry, computeDeferralExpiry } from '../services/season/transitionJournal'
 import { hasPendingOffseasonMatchDecision } from '../services/season/hasPendingOffseasonMatchDecision'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
+import { resolveClubContactProxy } from '../services/scheduling/clubContactProxy'
+import { startOfIsoWeek } from '../services/weeklyBilan/computeWeeklyBilan'
 import { userScopedKey } from '../services/storage/userScopedStorage'
 import { cycleToSeasonPhase } from '../services/season/cycleToSeasonPhase'
-import { useRegisterCoachContext } from '../contexts/CoachContext'
 import { MatchEditDrawer } from '../components/match/MatchEditDrawer'
 import { MatchLoadSheet } from '../components/match/MatchLoadSheet'
 import { matchNeedsLoadLog } from '../services/calendar/matchLoadNudge'
@@ -81,7 +85,10 @@ interface NormalHeroCopy {
   title: React.ReactNode
   subtitle?: React.ReactNode
   cta: { label: string; to: string; icon?: import('../components/ui').IconName }
-  /** Mood inline : exposé uniquement sur les états repos (rest_day, match_tomorrow). */
+  /**
+   * Slot check-in hero : uniquement jour club (contact). Forme = fin de séance/match.
+   * HomePage active réellement le slot si cycle in-season/playoffs.
+   */
   showMood: boolean
 }
 
@@ -147,7 +154,7 @@ function buildNormalHero(
             <>20 min walk or 10 min mobility.</>
           ),
         cta: { label: tr('hero_match_tomorrow_cta', lang), to: '/week', icon: 'calendar' },
-        showMood: true,
+        showMood: false,
       }
     case 'training_day':
       return {
@@ -163,6 +170,49 @@ function buildNormalHero(
           icon: 'play',
         },
         showMood: false,
+      }
+    case 'club_day':
+      // Éditorial Home + check-in contact (HomePage, si in-season).
+      // « Je n’y vais pas » reste sur la vue Semaine.
+      return {
+        eyebrow: tr('hero_club_day_eyebrow', lang),
+        title:
+          lang === 'fr' ? (
+            <>
+              Le collectif
+              <br />
+              <span className="opacity-55">fait le niveau.</span>
+            </>
+          ) : (
+            <>
+              The squad
+              <br />
+              <span className="opacity-55">sets the standard.</span>
+            </>
+          ),
+        subtitle: nextSessionLabel ? (
+          lang === 'fr' ? (
+            <>
+              Arrive frais : hydratation, activation courte.
+              <br />
+              Prochaine salle :{' '}
+              <span className="font-extrabold text-fg">{nextSessionLabel}</span>
+            </>
+          ) : (
+            <>
+              Show up fresh: hydrate, short activation.
+              <br />
+              Next gym:{' '}
+              <span className="font-extrabold text-fg">{nextSessionLabel}</span>
+            </>
+          )
+        ) : lang === 'fr' ? (
+          <>Arrive frais : hydratation, activation courte. Pas de salle aujourd&apos;hui.</>
+        ) : (
+          <>Show up fresh: hydrate, short activation. No gym session today.</>
+        ),
+        cta: { label: tr('hero_club_day_cta', lang), to: '/week', icon: 'calendar' },
+        showMood: true,
       }
     case 'rest_day':
     default:
@@ -204,7 +254,7 @@ function buildNormalHero(
           <>The other half of the work. Sleep · hydration · light mobility.</>
         ),
         cta: { label: tr('hero_rest_day_cta', lang), to: '/week', icon: 'calendar' },
-        showMood: true,
+        showMood: false,
       }
   }
 }
@@ -215,7 +265,7 @@ export function HomePage() {
   const navigate = useNavigate()
   const { profile, updateProfile } = useProfile()
   const { authState } = useAuth()
-  const { fatigue, setFatigue } = useFatigue()
+  const { fatigue } = useFatigue()
   const { week } = useWeek()
   const { logs } = useHistory()
   const {
@@ -302,8 +352,8 @@ export function HomePage() {
   let todayDatedSession: import('../types/scheduling').DatedSession | null = null
   let todaySessionIndex: number | null = null
   let nextDatedSession: import('../types/scheduling').DatedSession | null = null
+  const todayDow = new Date(today + 'T12:00:00').getDay() as import('../types/training').DayOfWeek
   if (weekPresentation?.mode === 'calendar') {
-    const todayDow = new Date(today + 'T12:00:00').getDay()
     const allDatedRaw = weekPresentation.sessions.filter(
       (s): s is import('../types/scheduling').DatedSession => s.kind === 'dated',
     )
@@ -330,6 +380,15 @@ export function HomePage() {
         ) ?? null
     }
   }
+
+  // Jour club (présentation semaine, sinon profil) — hors « Je n’y vais pas ».
+  const clubDaysTodaySource =
+    weekPresentation?.clubDays ??
+    profile.clubSchedule?.clubDays?.map((d) => d.day) ??
+    []
+  const unavailableToday = weekPresentation?.unavailableDays ?? []
+  const hasClubToday =
+    clubDaysTodaySource.includes(todayDow) && !unavailableToday.includes(todayDow)
 
   const { transition: seasonTransition, dismiss: dismissSeasonTransition } = useSeasonTransitions({
     planningContext: surface?.planningContext ?? null,
@@ -366,9 +425,10 @@ export function HomePage() {
       detectHomeState({
         todayISO: today,
         hasTrainingToday: todayDatedSession != null,
+        hasClubToday,
         matchEvents: structuralEvents,
       }),
-    [today, todayDatedSession, structuralEvents],
+    [today, todayDatedSession, hasClubToday, structuralEvents],
   )
   const heroState: HomeHeroState = isMatchDay ? 'match_today' : heroDetect.state
   const lastMatch = heroDetect.lastMatch
@@ -495,43 +555,6 @@ export function HomePage() {
   const [drawerMatch, setDrawerMatch] = useState<typeof nextMatch>(null)
   const [loadMatch, setLoadMatch] = useState<typeof nextMatch>(null)
 
-  // ── Coach context ──
-  const coachZone = acwr.hasSufficientData ? acwr.zone : null
-  const isHighLoad = coachZone === 'danger' || coachZone === 'critical'
-  const isRestDay = heroState === 'rest_day' || heroState === 'match_tomorrow' || heroState === 'post_match'
-  useRegisterCoachContext({
-    scopeKey: `home-${today}`,
-    phaseLabel: (() => {
-      const d = new Date(today + 'T12:00:00')
-      const label = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
-      return `Aujourd'hui · ${label.charAt(0).toUpperCase()}${label.slice(1)}`
-    })(),
-    infoMessages: [
-      {
-        id: isRestDay ? 'home:rest_day' : 'home:today_session',
-        text: isRestDay
-          ? heroState === 'post_match'
-            ? 'Récup post-match : sommeil + hydratation + protéines.'
-            : heroState === 'match_tomorrow'
-              ? 'Repos avant le match : marche légère ou mobilité.'
-              : 'Repos programmé : sommeil + mobilité légère.'
-          : `Séance du jour : ${todaySessionTitle ?? '—'}`,
-      },
-    ],
-    companionMessages: [
-      isHighLoad
-        ? 'Charge élevée détectée : écoute ton corps, allège si besoin.'
-        : readinessResult.score < 50
-          ? "Forme basse : mobilité + sommeil prioritaires aujourd'hui."
-          : isMatchDay
-            ? 'Jour de match : activation courte, hydratation, mental.'
-            : isRestDay
-              ? 'Profite du repos : sommeil, hydratation, mobilité légère.'
-              : 'Énergie OK : exécute ta séance proprement, sans forcer.',
-    ],
-    chatSeed: 'Je regarde ma journée. ',
-  })
-
   // ── Meta-line (date · saison · niveau) ──
   const metaLine = useMemo(() => {
     const todayDate = new Date(today + 'T12:00:00')
@@ -559,15 +582,38 @@ export function HomePage() {
     [heroState, todaySessionTitle, todaySessionIndex, nextSessionLabel, lang],
   )
 
-  // ── Mood inline (HeroNormal) ──
-  // Source de vérité : `fatigue` du hook useFatigue (persiste en localStorage).
-  // L'UI mood reflète directement ce store — au refresh, le toggle reste cohérent
-  // avec le dernier choix de l'utilisateur. Click sur l'actif → toggle off (null +
-  // setFatigue('OK') puisque c'est le défaut moteur).
-  const mood: HeroMood = fatigueToMood(fatigue)
-  const handleMoodChange = (next: HeroMood) => {
-    setFatigue(moodToFatigue(next) ?? 'OK')
+  // ── Check-in Home : contact club seulement (jour club + saison/playoffs).
+  // Forme = fin de séance / match → useFatigue + ACWR (pas de toggle Home).
+  const cycle = surface?.planningContext?.cycle
+  const clubCheckInActive = isClubContactCheckInDay(heroState, cycle)
+  const clubProxy = resolveClubContactProxy(profile.planningAnchors?.clubContactWeek, today)
+  const mood: HeroMood = clubCheckInActive ? clubProxyToHeroMood(clubProxy) : null
+  const handleClubCheckIn = (next: HeroMood) => {
+    updateProfile({
+      planningAnchors: {
+        ...profile.planningAnchors,
+        clubContactWeek: {
+          weekStartIso: startOfIsoWeek(today),
+          level: heroMoodToClubProxy(next),
+        },
+      },
+    })
   }
+  const heroCheckIn = {
+    question: tr('hero_club_contact_question', lang),
+    fitLabel: tr('hero_club_contact_full', lang),
+    tiredLabel: tr('hero_club_contact_hard', lang),
+    fitTestId: 'home-club-contact-normal',
+    tiredTestId: 'home-club-contact-hard',
+  }
+  const clubHardApplied = clubProxy === 'hard'
+  const modulationNote = clubHardApplied
+    ? tr('hero_modulation_club_hard', lang)
+    : fatigueLevel === 'very_high'
+      ? tr('hero_modulation_fatigue_very_high', lang)
+      : fatigueLevel === 'high'
+        ? tr('hero_modulation_fatigue_high', lang)
+        : undefined
 
   // ── Next match days-until (pour la NextMatchEditorialCard) ──
   const daysUntilNextMatch = nextMatch
@@ -647,15 +693,10 @@ export function HomePage() {
               dayNumber={String(new Date(`${today}T12:00:00`).getDate())}
               cta={normalHeroCopy.cta}
               mood={mood}
-              onMoodChange={handleMoodChange}
-              showMood={normalHeroCopy.showMood}
-              modulationNote={
-                fatigueLevel === 'very_high'
-                  ? 'Programme allégé · Récup prioritaire'
-                  : fatigueLevel === 'high'
-                    ? 'Programme allégé · Charge ajustée'
-                    : undefined
-              }
+              onMoodChange={clubCheckInActive ? handleClubCheckIn : undefined}
+              showMood={clubCheckInActive}
+              checkIn={heroCheckIn}
+              modulationNote={modulationNote}
             />
           )}
         </div>

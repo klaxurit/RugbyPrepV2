@@ -6,19 +6,23 @@ import type { CalendarEvent } from '../../types/training'
  * - `match_today`     : il y a un match aujourd'hui → carte "Jour de match"
  * - `post_match`      : un match a été joué dans les 48h (J+1 / J+2) → carte "Lendemain de match"
  * - `match_tomorrow`  : un match est demain → carte "Repos avant le match"
- * - `training_day`    : une séance est planifiée aujourd'hui (passée par le caller)
- * - `rest_day`        : aucune séance, aucun match imminent → carte "Repos programmé"
+ * - `training_day`    : une séance salle est planifiée aujourd'hui (passée par le caller)
+ * - `club_day`        : jour club sans séance salle → hero éditorial (≠ card /week)
+ * - `rest_day`        : aucune séance, aucun club, aucun match imminent → carte "Repos programmé"
  */
 export type HomeHeroState =
   | 'match_today'
   | 'post_match'
   | 'match_tomorrow'
   | 'training_day'
+  | 'club_day'
   | 'rest_day'
 
 interface DetectInputs {
   todayISO: string
   hasTrainingToday: boolean
+  /** Jour club profil / présentation, hors indispo « Je n’y vais pas ». */
+  hasClubToday?: boolean
   /** Tous les événements `match` passés et futurs (visible ou structurels). */
   matchEvents: readonly CalendarEvent[]
 }
@@ -42,6 +46,7 @@ function diffDaysISO(fromISO: string, toISO: string): number {
 export function detectHomeState({
   todayISO,
   hasTrainingToday,
+  hasClubToday = false,
   matchEvents,
 }: DetectInputs): DetectResult {
   const matches = matchEvents.filter((e) => e.type === 'match')
@@ -73,8 +78,12 @@ export function detectHomeState({
     return { state: 'match_tomorrow', lastMatch: null, todayMatch: null, tomorrowMatch }
   }
 
+  // Salle prime sur club (aligné resolveWeekDayType).
   if (hasTrainingToday) {
     return { state: 'training_day', lastMatch: null, todayMatch: null, tomorrowMatch: null }
+  }
+  if (hasClubToday) {
+    return { state: 'club_day', lastMatch: null, todayMatch: null, tomorrowMatch: null }
   }
   return { state: 'rest_day', lastMatch: null, todayMatch: null, tomorrowMatch: null }
 }

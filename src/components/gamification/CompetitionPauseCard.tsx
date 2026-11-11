@@ -1,23 +1,22 @@
 import { useState } from 'react'
 import type { Lang } from '../../i18n/appLabels'
-import { COMPETITION_PAUSE_MAX_DAYS } from '../../services/gamification/competitionPause'
 
 export interface CompetitionPauseCardProps {
   active: boolean
+  /** Conservé pour compat API ; plus affiché (pause ouverte jusqu’à levée manuelle). */
   endsOn: string | null
   onToggle: (active: boolean) => Promise<boolean>
   lang: Lang
 }
 
 /**
- * Déclaration de pause compétition (« Blessé »).
+ * Déclaration compacte de pause compétition (« Blessé »).
  *
  * Explicitement **non médical** : gèle seulement les malus / relégations
  * d'inactivité de la ligue. Aucune localisation ni diagnostic.
  */
 export function CompetitionPauseCard({
   active,
-  endsOn,
   onToggle,
   lang,
 }: CompetitionPauseCardProps) {
@@ -37,46 +36,42 @@ export function CompetitionPauseCard({
     <section
       data-testid="competition-pause-card"
       data-pause-active={active ? 'true' : 'false'}
-      className="rounded-[20px] border border-paper-deep bg-paper-soft px-[18px] py-4"
+      className="flex items-center gap-3 rounded-[14px] border border-paper-deep bg-paper-soft px-3.5 py-2.5"
     >
-      <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-fg/45">
-        {lang === 'fr' ? 'Pause ligue' : 'League pause'}
-      </p>
-      <p className="mt-1 text-[15px] font-black text-fg">
-        {lang === 'fr' ? 'Se déclarer Blessé' : 'Declare Injured pause'}
-      </p>
-      <p className="mt-1.5 text-[12px] leading-relaxed text-fg/65">
-        {lang === 'fr'
-          ? `Pause compétition (max ${COMPETITION_PAUSE_MAX_DAYS} j.) : tu ne descends pas de division pour inactivité. Ce n’est pas un suivi médical — juste un bouclier ligue.`
-          : `Competition pause (max ${COMPETITION_PAUSE_MAX_DAYS} days): no inactivity relegation. Not medical tracking — league shield only.`}
-      </p>
-      {active && endsOn && (
-        <p className="mt-2 text-[11px] font-bold tabular-nums text-warn">
-          {lang === 'fr' ? `Active jusqu’au ${endsOn}` : `Active until ${endsOn}`}
+      <div className="min-w-0 flex-1">
+        <p className="text-[13px] font-extrabold leading-snug text-fg">
+          {lang === 'fr' ? 'Blessé · pause ligue' : 'Injured · league pause'}
         </p>
-      )}
+        <p className="mt-0.5 text-[11px] leading-snug text-fg/60">
+          {active
+            ? lang === 'fr'
+              ? 'Bouclier actif — tu ne descends pas pour inactivité.'
+              : 'Shield on — no inactivity relegation.'
+            : lang === 'fr'
+              ? 'Bouclier anti-relégation. Pas un suivi médical.'
+              : 'Anti-relegation shield. Not medical tracking.'}
+        </p>
+      </div>
       <button
         type="button"
         data-testid="competition-pause-toggle"
         disabled={busy}
         onClick={() => void handleClick()}
-        className={`mt-3 w-full rounded-2xl px-4 py-2.5 text-[13px] font-extrabold transition-colors rf-focus-ring ${
+        className={`shrink-0 rounded-xl px-3 py-2 text-[12px] font-extrabold transition-colors rf-focus-ring ${
           active
             ? 'border border-border-app bg-layer-6 text-fg'
             : 'bg-brand text-on-brand'
         } disabled:opacity-60`}
       >
         {busy
-          ? lang === 'fr'
-            ? '…'
-            : '…'
+          ? '…'
           : active
             ? lang === 'fr'
-              ? 'Lever la pause'
-              : 'End pause'
+              ? 'Lever'
+              : 'End'
             : lang === 'fr'
-              ? 'Activer Blessé'
-              : 'Activate Injured pause'}
+              ? 'Activer'
+              : 'Activate'}
       </button>
     </section>
   )

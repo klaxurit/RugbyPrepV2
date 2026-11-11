@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useCallback, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Plus, Lock } from 'lucide-react'
-import { WeekViewToggle, WeekMonthView, WeekDailyPlanner, ClubContactProxyControl, SessionMonthPreviewSheet } from '../components/week'
+import { WeekViewToggle, WeekMonthView, WeekDailyPlanner, SessionMonthPreviewSheet } from '../components/week'
 import { formatTitleFromMotherSessionId } from '../components/motherSession/formatMotherSessionTitle'
 import { posthog } from '../services/analytics/posthog'
 import { useFatigue } from '../hooks/useFatigue'
@@ -27,7 +27,6 @@ import { BETA_ELIGIBILITY_MESSAGES } from '../services/betaEligibility'
 import { PageHeader } from '../components/PageHeader'
 import { PlanningContextCard } from '../components/scheduling/PlanningContextCard'
 import { CompleteProfileCards } from '../components/profile/CompleteProfileCards'
-import { useRegisterCoachContext, type CoachInfoMessage } from '../contexts/CoachContext'
 import { useProgramEvolutionSheet } from '../hooks/useProgramEvolutionSheet'
 import { useWeekSnapshotConfirmationSheet } from '../hooks/useWeekSnapshotConfirmationSheet'
 import { useHintVisibility } from '../hooks/useHintVisibility'
@@ -45,8 +44,6 @@ import type { DatedSession } from '../types/scheduling'
 import type { MonthPlannedSession } from '../services/scheduling/resolveMonthProgramGrid'
 import { useReadinessScore } from '../hooks/useReadinessScore'
 import { getToday } from '../services/ui/debugDateOverride'
-import { startOfIsoWeek } from '../services/weeklyBilan/computeWeeklyBilan'
-import { resolveClubContactProxy } from '../services/scheduling/clubContactProxy'
 import { mergeDatedSessionCompletion } from '../services/scheduling/mergeDatedSessionCompletion'
 import { cyclePhaseLabel, tr } from '../i18n/appLabels'
 import type { CalendarEvent, MatchKind } from '../types/training'
@@ -58,6 +55,7 @@ import { buildAthletePlanningInputs } from '../services/annualPlanning/buildAthl
 import { resolveMotherSessionsForWeek } from '../services/motherSession/resolveMotherSessionsForWeek'
 import { novelMotherSessionIds } from '../services/program/inSeasonVarietyNotice'
 import { resolveProgramVisibleFromISO } from '../services/scheduling/programVisibility'
+import { hasActionableWeekSignal } from '../services/scheduling/buildExplanation'
 import { userScopedKey } from '../services/storage/userScopedStorage'
 
 function shiftIsoDate(iso: string, days: number): string {
@@ -371,94 +369,10 @@ export function WeekPage() {
       profile.planningAnchors?.skipOffSeasonRecoveryIntro !== true
     )
   }, [surface?.planningContext, profile.planningAnchors?.skipOffSeasonRecoveryIntro])
-  const onboardingHint = useHintVisibility('rule:onboarding_cycle_hint', {
-    cooldownDays: 14,
-    expireAfterSessions: 5,
-    contextHash: planningCtxHash,
-  })
-  const noMatchHint = useHintVisibility('rule:no_first_match_calendar', {
-    cooldownDays: 14,
-    expireAfterSessions: 5,
-    contextHash: planningCtxHash,
-  })
-  const ffrClockHint = useHintVisibility('rule:ffr_default_clock', {
-    cooldownDays: 14,
-    expireAfterSessions: 5,
-    contextHash: planningCtxHash,
-  })
   const phase5CtaHint = useHintVisibility('offseason_phase5_cta', {
     cooldownDays: 30,
     contextHash: planningCtxHash,
   })
-
-  const hintVisibilityById = useMemo<Record<string, { visible: boolean; dismiss: () => void } | undefined>>(
-    () => ({
-      'rule:onboarding_cycle_hint': onboardingHint,
-      'rule:no_first_match_calendar': noMatchHint,
-      'rule:ffr_default_clock': ffrClockHint,
-    }),
-    [onboardingHint, noMatchHint, ffrClockHint],
-  )
-
-  // ── Coach bubble content (extract from warnings + companion + detail items)
-  const coachInfoMessages = useMemo<CoachInfoMessage[]>(() => {
-    if (!surface || !msResolution) return []
-    const internalPatterns = [
-      'recovery override',
-      'repli déterministe',
-      'pas de structure',
-      'pas de mother session',
-      'fréquence.*non prévue',
-      'repli sur',
-    ]
-    const isInternal = (w: string) => internalPatterns.some((p) => new RegExp(p, 'i').test(w))
-    const out: CoachInfoMessage[] = []
-    const seenText = new Set<string>()
-
-    // 1. Detail items from buildExplanation (rule-tagged → dismissable per id).
-    for (const item of snapshot?.explanation?.detailItems ?? []) {
-      const vis = hintVisibilityById[item.ruleId]
-      if (vis && !vis.visible) continue
-      if (seenText.has(item.text)) continue
-      seenText.add(item.text)
-      out.push({
-        id: item.ruleId,
-        text: item.text,
-        contextHash: planningCtxHash,
-        onDismiss: vis?.dismiss,
-      })
-    }
-
-    // 2. Free-form warnings (planning + mother session).
-    for (const w of [...surface.planningInputWarnings, ...msResolution.warnings]) {
-      if (isInternal(w)) continue
-      if (seenText.has(w)) continue
-      seenText.add(w)
-      out.push({ id: `warning:${w.slice(0, 40)}`, text: w })
-    }
-    return out
-  }, [surface, msResolution, snapshot?.explanation, hintVisibilityById, planningCtxHash])
-
-  const coachCompanionMessages = msResolution?.companionRecommendations ?? []
-  const coachPhaseLabel = surface
-    ? localizeWeekLabel(surface.planningContext.weekLabel ?? week, lang)
-    : undefined
-  // (isOffSeason déclaration retirée : utilisée uniquement pour la frozen note du
-  // bandeau J-X qui a été supprimé. Re-déclarer si nouveau besoin.)
-
-  useRegisterCoachContext(
-    snapshot
-      ? {
-          scopeKey: snapshot.weekId ?? today,
-          phaseLabel: coachPhaseLabel,
-          infoMessages: coachInfoMessages,
-          companionMessages: coachCompanionMessages,
-          chatSeed: coachPhaseLabel
-            ? `Je suis en ${coachPhaseLabel}. `
-            : undefined,
-        }
-      : null,
-  )
 
   const calendarSessions: DatedSession[] = useMemo(() => {
     if (!weekPresentation) return []
@@ -659,13 +573,17 @@ export function WeekPage() {
                 La fatigue persiste via useFatigue (localStorage) et est consommée par
                 surfaceParams ici → useWeekSnapshot re-résout le programme automatiquement. */}
 
-            {snapshot?.explanation && (
+            {snapshot?.explanation
+              && surface?.planningContext
+              && hasActionableWeekSignal(surface.planningContext, snapshot.corrections)
+              && (
               <PlanningContextCard
                 explanation={snapshot.explanation}
                 hideCorrections
                 contextHash={planningCtxHash}
+                lang={lang}
                 weekLabel={
-                  surface?.planningContext?.weekLabel
+                  surface.planningContext.weekLabel
                     ? localizeWeekLabel(surface.planningContext.weekLabel, lang)
                     : undefined
                 }
@@ -689,43 +607,21 @@ export function WeekPage() {
             )}
 
             {(() => {
+              // Contact club : porte unique sur Home (jour club). Ici = status volume seulement.
               const showVolume =
                 (surface.planningContext.volumeLighteningReasons?.length ?? 0) > 0 ||
                 Boolean(surface.planningContext.volumeConfidenceBypassApplied)
-              const showClub =
-                surface.planningContext.cycle === 'in_season' ||
-                surface.planningContext.cycle === 'playoffs'
-              if (!showVolume && !showClub) return null
+              if (!showVolume) return null
               return (
                 <div className="space-y-2" data-testid="week-modulation-stack">
                   <p className="px-0.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-fg-muted">
                     {lang === 'en' ? 'This week' : 'Cette semaine'}
                   </p>
-                  {/* Contact club d’abord = décision terrain. Volume = status/CTA secondaire. */}
-                  {showClub ? (
-                    <ClubContactProxyControl
-                      value={resolveClubContactProxy(profile.planningAnchors?.clubContactWeek, today)}
-                      lang={lang}
-                      onChange={(level) => {
-                        updateProfile({
-                          planningAnchors: {
-                            ...profile.planningAnchors,
-                            clubContactWeek: {
-                              weekStartIso: startOfIsoWeek(today),
-                              level,
-                            },
-                          },
-                        })
-                      }}
-                    />
-                  ) : null}
-                  {showVolume ? (
-                    <VolumeConfidenceBanner
-                      reasons={surface.planningContext.volumeLighteningReasons ?? []}
-                      bypassApplied={Boolean(surface.planningContext.volumeConfidenceBypassApplied)}
-                      lang={lang}
-                    />
-                  ) : null}
+                  <VolumeConfidenceBanner
+                    reasons={surface.planningContext.volumeLighteningReasons ?? []}
+                    bypassApplied={Boolean(surface.planningContext.volumeConfidenceBypassApplied)}
+                    lang={lang}
+                  />
                 </div>
               )
             })()}

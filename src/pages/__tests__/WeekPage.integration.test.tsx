@@ -534,6 +534,24 @@ describe('WeekPage · convergence moteurs', () => {
     expect(screen.getByText('Programme de test')).toBeInTheDocument()
   })
 
+  it('PlanningContextCard absente en saison steady state (pas de signal actionnable)', () => {
+    const surface = makeMotherSessionSurface('in_season')
+    surface.planningContext = {
+      ...surface.planningContext,
+      isMatchWeek: false,
+      isDeloadWeek: false,
+      daysUntilNextMatch: 14,
+      fatigueLevel: 'normal',
+      inSeasonSubMode: 'competition',
+      volumeLighteningReasons: [],
+    }
+    useWeekSnapshotMock.mockReturnValue(hookResult(surface))
+
+    renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
+
+    expect(screen.queryByTestId('planning-context-card')).toBeNull()
+  })
+
   it('ne rend pas PlanningContextBanner sur Week (désactivé produit)', () => {
     useWeekSnapshotMock.mockReturnValue(hookResult(makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })))
 
@@ -840,26 +858,24 @@ describe('WeekPage · convergence moteurs', () => {
     expect(card.textContent).not.toContain('Jour marqué indisponible')
   })
 
-  it('PlanningContextCard exposes a "Pourquoi ?" toggle when details exist (details are routed to the coach companion)', () => {
+  it('PlanningContextCard expose « Pourquoi ? » et déplie le détail inline', () => {
     const surface = makeMotherSessionSurface('in_season', { schedulingMode: 'calendar' })
     const result = hookResult(surface)
     result.snapshot!.explanation = {
       summaryLine: 'Programme adapté',
       detailLines: ['Vrai détail explicatif'],
       detailItems: [{ ruleId: 'rule:in_season_from_calendar', text: 'Vrai détail explicatif' }],
-      corrections: ['Séance reportée'],
+      corrections: [],
     }
     useWeekSnapshotMock.mockReturnValue(result)
 
     renderWithRouter(<WeekPage />, { initialEntries: ['/week'] })
 
-    // Toggle button is rendered (opens the coach companion popover)
     expect(screen.getByTestId('planning-context-toggle')).toBeInTheDocument()
-
-    // Detail text is no longer rendered inline — it now lives in the coach companion.
-    const card = screen.getByTestId('planning-context-card')
-    expect(card.textContent).not.toContain('Vrai détail explicatif')
-    expect(card.textContent).not.toContain('Séance reportée')
+    expect(screen.getByTestId('planning-context-card').textContent).not.toContain('Vrai détail explicatif')
+    fireEvent.click(screen.getByTestId('planning-context-toggle'))
+    expect(screen.getByTestId('planning-context-details').textContent).toContain('Vrai détail explicatif')
+    expect(screen.getByTestId('planning-context-ask-coach')).toBeInTheDocument()
   })
 
   it.skip('Indispo. opens confirmation in the sheet, does not fire directly', () => {

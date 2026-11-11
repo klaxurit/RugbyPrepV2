@@ -35,7 +35,6 @@ import { ProgressCurveSkeleton } from '../components/SkeletonCard'
 import { PRBoard } from '../components/pr/PRBoard'
 import { useFeatureAccess } from '../hooks/useFeatureAccess'
 import { useUpsellTiming, isDismissed } from '../hooks/useUpsellTiming'
-import { useRegisterCoachContext } from '../contexts/CoachContext'
 import type { PhysicalTestType, PhysicalTest } from '../types/athleticTesting'
 import { tr, positionShortLabel, trainingLevelLabel, type Lang, type AppLabelKey } from '../i18n/appLabels'
 
@@ -192,29 +191,6 @@ export function ProgressPage() {
   const weeklyTarget = profile.trainingLevel === 'starter' ? 2 : 3
   const target28d = weeklyTarget * 4
 
-  // Contexte coach (lu par CoachCompanion global)
-  useRegisterCoachContext({
-    scopeKey: `progress-${today}`,
-    phaseLabel: lang === 'fr' ? 'Progression · 4 dernières semaines' : 'Progress · last 4 weeks',
-    infoMessages: [
-      {
-        id: 'progress:adherence_7d',
-        text: lang === 'fr'
-          ? (adherenceSummary.sessionsLast7d < weeklyTarget
-              ? `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances — rattrapage possible cette semaine.`
-              : `Adhérence 7j : ${adherenceSummary.sessionsLast7d}/${weeklyTarget} séances, sur cible.`)
-          : (adherenceSummary.sessionsLast7d < weeklyTarget
-              ? `7d adherence: ${adherenceSummary.sessionsLast7d}/${weeklyTarget} sessions — catch-up possible this week.`
-              : `7d adherence: ${adherenceSummary.sessionsLast7d}/${weeklyTarget} sessions, on target.`),
-      },
-    ],
-    companionMessages: [
-      lang === 'fr'
-        ? 'Un test 5RM ou CMJ en fin de phase sécurise ton suivi de progression.'
-        : 'A 5RM or CMJ test at the end of the phase secures your progress tracking.',
-    ],
-    chatSeed: lang === 'fr' ? 'Analyse ma progression : ' : 'Analyze my progress: ',
-  })
   const recentSessions = useMemo(() => getRecentProgramSessions(sessionLogs, 8), [sessionLogs])
   const [showAllSessions, setShowAllSessions] = useState(false)
 

@@ -3,7 +3,7 @@ import { useMemo, useRef, useState, useEffect } from 'react'
 import type { ChangeEvent } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
-import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Users } from 'lucide-react'
+import { RefreshCw, User, Camera, Bell, BellOff, BellRing, Calendar, RotateCcw, LogOut, TrendingUp, Flag, ShieldCheck, Activity, Users, MessageCircle } from 'lucide-react'
 import { CollapsibleSection } from '../components/ui'
 import { SocialVisibilityPicker } from '../components/gamification'
 import { ClubSettingsSection } from '../components/profile/ClubSettingsSection'
@@ -702,6 +702,26 @@ export function ProfilePage() {
             className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
           >
             <span>{tr('profile_section_progress_cta', lang)}</span>
+            <span className="text-xs text-fg-muted">{tr('profile_section_open', lang)}</span>
+          </Link>
+        </section>
+
+        <section className="bg-layer-5 border border-border-app rounded-[2rem] p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-2xl bg-brand-soft text-brand-tint border border-brand-border">
+              <MessageCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-fg">{tr('profile_section_coach', lang)}</h2>
+              <p className="text-xs text-fg-muted">{tr('profile_section_coach_sub', lang)}</p>
+            </div>
+          </div>
+          <Link
+            to="/chat"
+            data-testid="profile-link-chat"
+            className="flex items-center justify-between rounded-2xl border border-border-app bg-layer-6 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand-border rf-focus-ring"
+          >
+            <span>{tr('profile_section_coach_cta', lang)}</span>
             <span className="text-xs text-fg-muted">{tr('profile_section_open', lang)}</span>
           </Link>
         </section>

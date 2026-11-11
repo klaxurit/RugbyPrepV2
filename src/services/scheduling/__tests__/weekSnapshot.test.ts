@@ -1185,4 +1185,48 @@ describe('migrateSnapshot', () => {
     const { changed } = migrateSnapshot(snapshot, { profileClubDays: [] })
     expect(changed).toBe(false)
   })
+
+  it('rafraîchit une explanation stale (warning pré-saison en saison)', () => {
+    const surface = makeSurface()
+    surface.planningContext = {
+      ...makePlanningContext('in_season'),
+      weekLabel: 'En saison - S10 (2/4)',
+      isMatchWeek: true,
+      daysUntilNextMatch: 4,
+      planningTrace: {
+        resolutionMode: 'calendar_inferred',
+        rulesApplied: ['rule:in_season_from_calendar'],
+        warnings: ['Pré-saison compressée : 4 semaines disponibles, minimum 6 appliqué.'],
+      },
+    }
+    const snapshot = resolveWeek({
+      surface,
+      events: [],
+      today: TODAY,
+    })
+    const stale: WeekSnapshot = {
+      ...snapshot,
+      explanation: {
+        summaryLine: 'Programme adapté à ton match dans 4 jours',
+        detailLines: [
+          'Les séances s\'adaptent à la proximité du match.',
+          'Pré-saison compressée : 4 semaines disponibles, minimum 6 appliqué.',
+        ],
+        detailItems: [
+          { ruleId: 'context:match_week', text: 'Les séances s\'adaptent à la proximité du match.' },
+          {
+            ruleId: 'warning',
+            text: 'Pré-saison compressée : 4 semaines disponibles, minimum 6 appliqué.',
+          },
+        ],
+        corrections: [],
+      },
+    }
+
+    const { snapshot: migrated, changed } = migrateSnapshot(stale, { profileClubDays: [] })
+    expect(changed).toBe(true)
+    expect(migrated.explanation?.detailLines.some((l) => /pré-saison compressée/i.test(l))).toBe(
+      false,
+    )
+  })
 })

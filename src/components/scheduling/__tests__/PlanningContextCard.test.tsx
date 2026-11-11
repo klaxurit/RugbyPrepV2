@@ -2,7 +2,7 @@
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { CoachProvider } from '../../../contexts/CoachContext'
+import { MemoryRouter } from 'react-router-dom'
 import { PlanningContextCard } from '../PlanningContextCard'
 import type { WeekExplanation } from '../../../types/scheduling'
 
@@ -40,9 +40,9 @@ afterEach(() => cleanup())
 
 function renderCard(props: Parameters<typeof PlanningContextCard>[0]) {
   return render(
-    <CoachProvider>
+    <MemoryRouter>
       <PlanningContextCard {...props} />
-    </CoachProvider>,
+    </MemoryRouter>,
   )
 }
 
@@ -54,13 +54,13 @@ describe('PlanningContextCard', () => {
     expect(screen.getByTestId('planning-context-dismiss')).toBeInTheDocument()
   })
 
-  it('exposes "Pourquoi ?" toggle when details exist (opens companion, not inline)', () => {
+  it('exposes "Pourquoi ?" et déplie le détail inline', () => {
     renderCard({ explanation: baseExplanation, contextHash: 'off_season:3:' })
     expect(screen.getByTestId('planning-context-toggle')).toBeInTheDocument()
-    // Click should not throw (companion open is handled by CoachContext)
+    expect(screen.queryByTestId('planning-context-details')).toBeNull()
     fireEvent.click(screen.getByTestId('planning-context-toggle'))
-    // Detail text never appears inline anymore
-    expect(screen.queryByText(/Ajoute tes matchs/)).toBeNull()
+    expect(screen.getByTestId('planning-context-details').textContent).toContain('Ajoute tes matchs')
+    expect(screen.getByTestId('planning-context-ask-coach')).toHaveAttribute('href', expect.stringContaining('/chat'))
   })
 
   it('hides on dismiss click and stays hidden after a remount (same contextHash)', async () => {
@@ -72,7 +72,6 @@ describe('PlanningContextCard', () => {
 
     unmount()
 
-    // Remount = page refresh
     renderCard({ explanation: baseExplanation, contextHash: 'off_season:3:' })
     expect(screen.queryByTestId('planning-context-card')).toBeNull()
   })
@@ -85,7 +84,6 @@ describe('PlanningContextCard', () => {
     })
     unmount()
 
-    // Phase 4 → different contextHash → dismiss invalidated
     renderCard({ explanation: baseExplanation, contextHash: 'off_season:4:' })
     expect(screen.getByTestId('planning-context-card')).toBeInTheDocument()
   })
@@ -96,6 +94,7 @@ describe('PlanningContextCard', () => {
       contextHash: 'in_season::',
     })
     expect(screen.queryByTestId('planning-context-toggle')).toBeNull()
+    expect(screen.getByTestId('planning-context-ask-coach')).toBeInTheDocument()
   })
 
   it('renders summaryFooterAction when provided', () => {
