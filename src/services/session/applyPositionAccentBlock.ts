@@ -4,6 +4,7 @@
  *
  * BW + full_gym Upper/Lower (cycle annuel). Sur salle, `gymExerciseIds` prime.
  * Theme-week (W1 contact / W2 power / W3 skill) + focus A/B runtime.
+ * Contact + Finisher EMOM 2-exos → merge runtime (EMOM 9′, pas de bloc Accent).
  * Nuque déjà présente → slots neck omis.
  */
 
@@ -32,6 +33,7 @@ import {
 import { buildPositionAccentTransferLine } from '../equipment/positionAccentTransfer'
 import { resolveExerciseIdForSessionRun } from '../motherSession/motherSessionExerciseMap'
 import { sessionAlreadyHasNeckWork } from './applyNeckIsometricBlock'
+import { mergeContactAccentIntoFinisher } from './mergeContactAccentIntoFinisher'
 
 const BLOCK_TOKEN_FR = 'Accent poste'
 const BLOCK_TOKEN_EN = 'Position accent'
@@ -204,6 +206,46 @@ export function applyPositionAccentBlock(
 
   const theme = resolveEffectiveAccentTheme(opts.mesoWeek, opts.positionAccentFocus ?? 'a')
   const skipNeck = sessionAlreadyHasNeckWork(session)
+  const mode = resolvePositionAccentEquipmentMode(session)
+  const lang = opts.lang ?? 'fr'
+  const packLabel = accentPackPlayerLabel(accent.packId, lang)
+
+  // Contact + Finisher EMOM 2-exos → minute 3 dans le Finisher (EMOM 9′), pas de bloc Accent.
+  if (theme === 'contact') {
+    const merged = mergeContactAccentIntoFinisher(session, {
+      accent,
+      mode,
+      skipNeck,
+      lang,
+    })
+    if (merged) {
+      const finisher = merged.blocks.find(
+        (b) => /finisher/i.test(b.name) && /EMOM\s*9/i.test(b.format),
+      )
+      const third = finisher?.exercises[2]
+      const themeBit =
+        lang === 'en'
+          ? ` · ${positionAccentThemeLabel('contact', 'en')}`
+          : ` · ${positionAccentThemeLabel('contact', 'fr')}`
+      const detail =
+        third?.slotLabel || third?.name
+          ? lang === 'en'
+            ? `folded into Finisher minute 3 (${third.name})`
+            : `intégré au Finisher minute 3 (${third.name})`
+          : lang === 'en'
+            ? 'folded into Finisher (EMOM 9′)'
+            : 'intégré au Finisher (EMOM 9′)'
+      const positionLine =
+        lang === 'en'
+          ? `${packLabel} accent${themeBit}: ${detail}`
+          : `Accent ${packLabel}${themeBit} : ${detail}`
+      return {
+        ...merged,
+        positionAccent: [...merged.positionAccent, positionLine],
+      }
+    }
+  }
+
   const slots = filterPositionAccentSlots(accent, {
     skipNeck,
     sessionType: session.metadata.sessionType,
@@ -212,9 +254,7 @@ export function applyPositionAccentBlock(
   })
   if (slots.length === 0) return session
 
-  const mode = resolvePositionAccentEquipmentMode(session)
   const usage = collectSessionExerciseUsage(session)
-  const lang = opts.lang ?? 'fr'
   // Numéro provisoire — renuméroté à l’insertion.
   const provisionalNumber = Math.max(0, ...session.blocks.map((b) => b.number)) + 1
   const block = buildAccentBlock(
@@ -249,7 +289,6 @@ export function applyPositionAccentBlock(
     block.exercises.map((e) => e.slotLabel).filter((l): l is string => Boolean(l)),
     lang,
   )
-  const packLabel = accentPackPlayerLabel(accent.packId, lang)
   const positionLine =
     lang === 'en'
       ? `${packLabel} accent${themeBit}: ${transferLine}`

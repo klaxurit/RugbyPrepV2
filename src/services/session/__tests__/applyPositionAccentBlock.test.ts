@@ -232,10 +232,10 @@ describe('applyPositionAccentBlock', () => {
     expect(accentB?.name).toMatch(/Puissance/i)
   })
 
-  it('BACK_ROW Upper Contact : pull saturé → landmine + farmer, 0 tirage, libellé vrai', () => {
+  it('BACK_ROW Upper Contact : merge dans Finisher EMOM 9′ (pas de bloc Accent)', () => {
     const raw = MOTHER_SESSIONS_BY_ID.UPPER_IN_SEASON_FRONT_ROW_V1
     expect(raw).toBeTruthy()
-    // Pipeline réel : resolve exerciseId (pull-up + Pendlay) puis accent.
+    // Pipeline réel : resolve exerciseId (pull-up + Pendlay) puis accent Contact → Finisher.
     const out = prepareSessionForRender({
       session: structuredClone(raw!),
       trainingLevel: 'builder',
@@ -245,29 +245,21 @@ describe('applyPositionAccentBlock', () => {
       rugbyPosition: 'BACK_ROW',
       positionAccentFocus: 'a',
     })
-    const accentIdx = out.blocks.findIndex((b) => /Accent poste/i.test(b.name))
-    expect(accentIdx).toBeGreaterThanOrEqual(0)
-    const accent = out.blocks[accentIdx]
-    expect(accent.name).toMatch(/Contact/i)
-    expect(accent.name).toMatch(/3ème ligne/i)
-    expect(accent.name).not.toMatch(/BACK_ROW/)
+    expect(out.blocks.some((b) => /Accent poste/i.test(b.name))).toBe(false)
     expect(out.positionAccent.some((l) => /BACK_ROW/.test(l))).toBe(false)
-    expect(accent.exercises.length).toBeGreaterThanOrEqual(2)
-    const ids = accent.exercises.map((e) => e.exerciseId)
-    expect(ids.every((id) => !id?.startsWith('pull_vertical__'))).toBe(true)
-    expect(ids.every((id) => !id?.startsWith('pull_horizontal__'))).toBe(true)
-    expect(ids).toContain('core_rotation__landmine_rotation')
-    expect(ids).toContain('carry__farmer_hold__dumbbell')
-    const transfer = accent.coachingNotes?.[0] ?? ''
-    expect(transfer).toMatch(/Plaquage|ruck/i)
-    expect(transfer).not.toMatch(/pull\+T/i)
-    expect(transfer).toMatch(/rotatif|carry|Poigne/i)
-    expect(out.positionAccent.some((l) => /pull\+T/i.test(l))).toBe(false)
-    const after = out.blocks.slice(accentIdx + 1)
-    expect(after.every((b) => b.isOptional)).toBe(true)
+    expect(out.positionAccent.some((l) => /Contact/i.test(l))).toBe(true)
+    expect(out.positionAccent.some((l) => /3ème ligne/i.test(l))).toBe(true)
+    const finisher = out.blocks.find((b) => /finisher/i.test(b.name))
+    expect(finisher?.format).toMatch(/EMOM\s*9/i)
+    expect(finisher?.exercises).toHaveLength(3)
+    const thirdId = finisher?.exercises[2]?.exerciseId
+    expect(thirdId).toBeTruthy()
+    // Pull saturé dans la mother → le slot Contact évite tirage vertical/horizontal.
+    expect(thirdId?.startsWith('pull_vertical__')).toBe(false)
+    expect(thirdId?.startsWith('pull_horizontal__')).toBe(false)
   })
 
-  it('Focus A/B change le contenu Accent (pas seulement le libellé)', () => {
+  it('Focus A Contact merge Finisher ; Focus B garde Accent Puissance séparé', () => {
     const raw = MOTHER_SESSIONS_BY_ID.UPPER_IN_SEASON_FRONT_ROW_V1
     const contact = applyPositionAccentBlock(structuredClone(raw!), {
       rugbyPosition: 'BACK_ROW',
@@ -283,16 +275,14 @@ describe('applyPositionAccentBlock', () => {
       lang: 'fr',
       positionAccentFocus: 'b',
     })
-    const idsA =
-      contact.blocks.find((b) => /Accent poste/i.test(b.name))?.exercises.map((e) => e.exerciseId) ??
-      []
-    const idsB =
-      power.blocks.find((b) => /Accent poste/i.test(b.name))?.exercises.map((e) => e.exerciseId) ??
-      []
-    expect(idsA.join('|')).not.toBe(idsB.join('|'))
+    expect(contact.blocks.some((b) => /Accent poste/i.test(b.name))).toBe(false)
+    expect(contact.blocks.find((b) => /finisher/i.test(b.name))?.exercises).toHaveLength(3)
+    const accentB = power.blocks.find((b) => /Accent poste/i.test(b.name))
+    expect(accentB?.name).toMatch(/Puissance/i)
+    expect(accentB?.exercises.length).toBeGreaterThan(0)
   })
 
-  it('accent placé avant les blocs optionnels de fin', () => {
+  it('accent Puissance placé avant les blocs optionnels de fin', () => {
     const raw = MOTHER_SESSIONS_BY_ID.UPPER_IN_SEASON_FRONT_ROW_V1
     expect(raw).toBeTruthy()
     const out = applyPositionAccentBlock(structuredClone(raw!), {
@@ -300,6 +290,7 @@ describe('applyPositionAccentBlock', () => {
       mesoWeek: 1,
       trainingLevel: 'builder',
       lang: 'fr',
+      positionAccentFocus: 'b',
     })
     const accentIdx = out.blocks.findIndex((b) => /Accent poste/i.test(b.name))
     expect(accentIdx).toBeGreaterThanOrEqual(0)

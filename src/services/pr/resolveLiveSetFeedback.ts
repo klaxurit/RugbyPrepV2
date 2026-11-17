@@ -1,7 +1,9 @@
 /**
  * Feedback immédiat post-série (Weakley 2019/2020) — priorité :
- * 1) PR / record séance
- * 2) Vs dernière séance (même tour)
+ * 1) PR / record séance (meilleure charge de l’exo, toutes séries)
+ * 2) Vs dernière séance — seulement si la charge ≥ max exo connu
+ *    (évite un faux « record » quand on bat le même index de série
+ *    sous le max déjà posé sur une autre série)
  * 3) Vs série précédente dans la séance (tour > 0)
  */
 
@@ -22,6 +24,34 @@ import {
   type LivePRToastData,
 } from './formatLivePRToast'
 import { shouldAnnounceLiveSetToast } from './shouldAnnounceLiveSetToast'
+
+/** Meilleure charge déjà connue pour l’exo (historique + tours antérieurs séance). */
+function exerciseBestLoadKg(
+  historyLogs: readonly ExerciseSetLog[],
+  exerciseId: string,
+  validatingSet: ValidatingSetRef,
+  priorSessionDrafts: readonly LiveSetPRDraft[],
+): number | null {
+  let best: number | null = null
+  for (const set of historyLogs) {
+    if (set.exerciseId !== exerciseId) continue
+    if (set.loadKg == null || set.loadKg <= 0) continue
+    if (set.completed === false) continue
+    if (
+      set.slotSignature === validatingSet.slotSignature &&
+      set.blockNumber === validatingSet.blockNumber &&
+      set.tourIndex === validatingSet.tourIndex
+    ) {
+      continue
+    }
+    best = best == null ? set.loadKg : Math.max(best, set.loadKg)
+  }
+  for (const draft of priorSessionDrafts) {
+    if (draft.loadKg == null || draft.loadKg <= 0) continue
+    best = best == null ? draft.loadKg : Math.max(best, draft.loadKg)
+  }
+  return best
+}
 
 export type LiveSetFeedbackResult = {
   toast: LivePRToastData
@@ -108,7 +138,15 @@ export function resolveLiveSetFeedback(params: {
     const beatLoad = loadKg > previous.loadKg
     const beatReps =
       loadKg === previous.loadKg && reps != null && previous.reps != null && reps > previous.reps
-    if (beatLoad || beatReps) {
+    const bestKnown = exerciseBestLoadKg(
+      historyLogs,
+      exerciseId,
+      validatingSet,
+      priorSessionDrafts,
+    )
+    // Sous le max exo (toutes séries) : battre le même n° de série ≠ toast « Vs dernière séance ».
+    const underExerciseBest = bestKnown != null && loadKg <= bestKnown
+    if ((beatLoad || beatReps) && !underExerciseBest) {
       const delta = beatLoad
         ? `+${Math.round((loadKg - previous.loadKg) * 10) / 10} kg`
         : `+${reps! - previous.reps!} reps`

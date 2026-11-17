@@ -1,9 +1,15 @@
 /**
- * Prépare une photo locale pour la carte de partage (object URL + dims).
- * Aucun upload. Warning non bloquant si côté court < 1080.
+ * Prépare une photo locale pour la carte de partage :
+ * décode → redimensionne → JPEG blob URL (safe html-to-image / mobile HEIC).
+ * Aucun upload. Warning non bloquant si côté court final < 1080.
  */
 
 export const SHARE_PHOTO_MIN_SHORT_SIDE = 1080
+
+/** Côté long max après downscale (mémoire Safari / foreignObject). */
+export const SHARE_PHOTO_MAX_LONG_SIDE = 1600
+
+const JPEG_QUALITY = 0.85
 
 const ALLOWED = new Set([
   'image/jpeg',
@@ -49,34 +55,69 @@ export function revokeSharePhotoUrl(url: string | null | undefined): void {
   }
 }
 
-async function readImageSize(objectUrl: string): Promise<{ width: number; height: number }> {
-  if (typeof createImageBitmap === 'function') {
-    try {
-      const res = await fetch(objectUrl)
-      const blob = await res.blob()
-      const bitmap = await createImageBitmap(blob)
-      const size = { width: bitmap.width, height: bitmap.height }
-      bitmap.close()
-      return size
-    } catch {
-      // fallback Image
-    }
+export function targetSharePhotoSize(
+  width: number,
+  height: number,
+  maxLongSide = SHARE_PHOTO_MAX_LONG_SIDE,
+): { width: number; height: number } {
+  const longSide = Math.max(width, height)
+  if (longSide <= maxLongSide) {
+    return { width, height }
   }
+  const scale = maxLongSide / longSide
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  }
+}
 
+async function loadBitmapFromFile(file: File): Promise<ImageBitmap | null> {
+  if (typeof createImageBitmap !== 'function') return null
+  try {
+    return await createImageBitmap(file)
+  } catch {
+    return null
+  }
+}
+
+async function loadImageFromObjectUrl(
+  objectUrl: string,
+): Promise<{ width: number; height: number; element: HTMLImageElement }> {
   return await new Promise((resolve, reject) => {
     const img = new Image()
     img.onload = () =>
       resolve({
         width: img.naturalWidth || img.width,
         height: img.naturalHeight || img.height,
+        element: img,
       })
     img.onerror = () => reject(new Error('img decode'))
     img.src = objectUrl
   })
 }
 
+async function canvasToJpegBlob(
+  source: CanvasImageSource,
+  width: number,
+  height: number,
+): Promise<Blob> {
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('canvas unsupported')
+  ctx.drawImage(source, 0, 0, width, height)
+
+  const blob = await new Promise<Blob | null>((resolve) => {
+    canvas.toBlob((b) => resolve(b), 'image/jpeg', JPEG_QUALITY)
+  })
+  if (!blob) throw new Error('toBlob null')
+  return blob
+}
+
 /**
- * File → object URL + dimensions. Ne redimensionne pas (point 2 minimal).
+ * File → JPEG object URL + dimensions (downscale si besoin).
+ * HEIC/HEIF : décodés via Image/bitmap navigateur puis ré-encodés JPEG.
  */
 export async function prepareSharePhoto(file: File): Promise<PrepareSharePhotoResult> {
   const mime = normalizeMime(file)
@@ -84,22 +125,46 @@ export async function prepareSharePhoto(file: File): Promise<PrepareSharePhotoRe
     return { ok: false, reason: 'unsupported_type' }
   }
 
-  const objectUrl = URL.createObjectURL(file)
+  let sourceObjectUrl: string | null = null
+  let bitmap: ImageBitmap | null = null
+
   try {
-    const { width, height } = await readImageSize(objectUrl)
+    bitmap = await loadBitmapFromFile(file)
+    let source: CanvasImageSource
+    let width: number
+    let height: number
+
+    if (bitmap) {
+      source = bitmap
+      width = bitmap.width
+      height = bitmap.height
+    } else {
+      sourceObjectUrl = URL.createObjectURL(file)
+      const loaded = await loadImageFromObjectUrl(sourceObjectUrl)
+      source = loaded.element
+      width = loaded.width
+      height = loaded.height
+    }
+
     if (!width || !height) {
-      revokeSharePhotoUrl(objectUrl)
       return { ok: false, reason: 'decode_failed' }
     }
+
+    const target = targetSharePhotoSize(width, height)
+    const jpegBlob = await canvasToJpegBlob(source, target.width, target.height)
+    const objectUrl = URL.createObjectURL(jpegBlob)
+
     return {
       ok: true,
       objectUrl,
-      width,
-      height,
-      tooSmall: isSharePhotoTooSmall(width, height),
+      width: target.width,
+      height: target.height,
+      tooSmall: isSharePhotoTooSmall(target.width, target.height),
     }
   } catch {
-    revokeSharePhotoUrl(objectUrl)
     return { ok: false, reason: 'decode_failed' }
+  } finally {
+    bitmap?.close()
+    if (sourceObjectUrl) revokeSharePhotoUrl(sourceObjectUrl)
   }
 }

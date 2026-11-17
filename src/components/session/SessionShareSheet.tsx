@@ -215,7 +215,10 @@ export function SessionShareSheet({
       setPhotoError(true)
       return
     }
-    setPhotoUrl(result.objectUrl)
+    setPhotoUrl((prev) => {
+      revokeSharePhotoUrl(prev)
+      return result.objectUrl
+    })
     setPhotoTooSmall(result.tooSmall)
   }
 

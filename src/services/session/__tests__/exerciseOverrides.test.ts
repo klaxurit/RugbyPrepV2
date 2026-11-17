@@ -28,7 +28,11 @@ function makeSession(): MotherSession {
         number: 1,
         name: 'Main',
         format: '3 rounds',
-        coachingNotes: [],
+        coachingNotes: [
+          'Keep Bulgarian Split Squat clean — front knee tracks toes.',
+          'Transfer: Bulgarian Split Squat → contact plant.',
+        ],
+        fallbackOptions: ['Bulgarian Split Squat → Reverse Lunge if knee pain'],
         exercises: [
           {
             name: 'Bulgarian Split Squat',
@@ -70,6 +74,19 @@ describe('exerciseOverrides', () => {
     expect(next.blocks[0].exercises[1].exerciseId).toBe(
       'lower_lunge__reverse_lunge__bodyweight',
     )
+  })
+
+  it('réécrit coachingNotes et fallbackOptions avec le nom du nouvel exo', () => {
+    const session = makeSession()
+    const slot = 'off|W10|0'
+    const key = buildExerciseOverrideKey(slot, 1, 0)
+    const override = makeExerciseOverride('lower_lunge__cossack_squat__bodyweight', 'en')
+    const next = applyExerciseOverridesToSession(session, slot, { [key]: override })
+
+    expect(next.blocks[0].coachingNotes.join(' ')).toContain(override.name)
+    expect(next.blocks[0].coachingNotes.join(' ')).not.toMatch(/Bulgarian Split Squat/i)
+    expect(next.blocks[0].fallbackOptions?.join(' ')).toContain(override.name)
+    expect(next.blocks[0].fallbackOptions?.join(' ')).not.toMatch(/Bulgarian Split Squat/i)
   })
 
   it('sans override, la session reste inchangée', () => {

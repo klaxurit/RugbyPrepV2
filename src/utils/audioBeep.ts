@@ -1,6 +1,6 @@
 /**
- * Lightweight Web Audio beep — no asset download, generated at runtime.
- * Used to signal end-of-rest in the workout session overlay.
+ * Lightweight Web Audio cues — no asset download, generated at runtime.
+ * Rest: countdown bip ×3 then whistle ; iso / EMOM use distinct patterns.
  */
 
 type AudioContextCtor = typeof AudioContext
@@ -29,20 +29,72 @@ function getCtx(): AudioContext | null {
   return cachedCtx
 }
 
+/** Single short countdown bip (~120ms) — T−3 / T−2 / T−1 before rest end. */
+export function playCountdownBeep() {
+  const ctx = getCtx()
+  if (!ctx) return
+  try {
+    playTone(ctx, 980, ctx.currentTime, 0.12, 0.28)
+  } catch {
+    // ignore
+  }
+}
+
 /**
- * Play a short two-tone "bip-bip" (~440ms total) signaling end of rest.
- * No-op when AudioContext is unavailable or fails.
+ * Synthetic whistle (~450ms) — end of rest / « go ».
+ * Noise burst + high sweep, louder than the old two-tone beep.
  */
-export function playRestEndBeep() {
+export function playRestEndWhistle() {
   const ctx = getCtx()
   if (!ctx) return
   try {
     const now = ctx.currentTime
-    playTone(ctx, 880, now, 0.18)
-    playTone(ctx, 1175, now + 0.22, 0.22)
+    const duration = 0.45
+
+    // Band-limited noise for breathy whistle body.
+    const sampleCount = Math.max(1, Math.floor(ctx.sampleRate * duration))
+    const buffer = ctx.createBuffer(1, sampleCount, ctx.sampleRate)
+    const data = buffer.getChannelData(0)
+    for (let i = 0; i < sampleCount; i++) {
+      data[i] = (Math.random() * 2 - 1) * 0.55
+    }
+    const noise = ctx.createBufferSource()
+    noise.buffer = buffer
+    const noiseFilter = ctx.createBiquadFilter()
+    noiseFilter.type = 'bandpass'
+    noiseFilter.frequency.setValueAtTime(2400, now)
+    noiseFilter.frequency.linearRampToValueAtTime(3200, now + duration)
+    noiseFilter.Q.value = 8
+    const noiseGain = ctx.createGain()
+    noiseGain.gain.setValueAtTime(0, now)
+    noiseGain.gain.linearRampToValueAtTime(0.35, now + 0.02)
+    noiseGain.gain.linearRampToValueAtTime(0, now + duration)
+    noise.connect(noiseFilter).connect(noiseGain).connect(ctx.destination)
+    noise.start(now)
+    noise.stop(now + duration + 0.02)
+
+    // Piercing tone on top.
+    const osc = ctx.createOscillator()
+    const oscGain = ctx.createGain()
+    osc.type = 'sawtooth'
+    osc.frequency.setValueAtTime(2200, now)
+    osc.frequency.linearRampToValueAtTime(2800, now + duration)
+    oscGain.gain.setValueAtTime(0, now)
+    oscGain.gain.linearRampToValueAtTime(0.22, now + 0.015)
+    oscGain.gain.linearRampToValueAtTime(0, now + duration)
+    osc.connect(oscGain).connect(ctx.destination)
+    osc.start(now)
+    osc.stop(now + duration + 0.02)
   } catch {
     // ignore audio failures (autoplay policy, locked context, etc.)
   }
+}
+
+/**
+ * End-of-rest / EMOM boundary cue — whistle (replaces the old soft bip-bip).
+ */
+export function playRestEndBeep() {
+  playRestEndWhistle()
 }
 
 /**
@@ -77,14 +129,20 @@ export function playSetEndBeep() {
   }
 }
 
-function playTone(ctx: AudioContext, frequency: number, startAt: number, durationSec: number) {
+function playTone(
+  ctx: AudioContext,
+  frequency: number,
+  startAt: number,
+  durationSec: number,
+  peakGain = 0.25,
+) {
   const osc = ctx.createOscillator()
   const gain = ctx.createGain()
   osc.type = 'sine'
   osc.frequency.value = frequency
   // Quick attack/release envelope to avoid clicks.
   gain.gain.setValueAtTime(0, startAt)
-  gain.gain.linearRampToValueAtTime(0.25, startAt + 0.01)
+  gain.gain.linearRampToValueAtTime(peakGain, startAt + 0.01)
   gain.gain.linearRampToValueAtTime(0, startAt + durationSec)
   osc.connect(gain).connect(ctx.destination)
   osc.start(startAt)

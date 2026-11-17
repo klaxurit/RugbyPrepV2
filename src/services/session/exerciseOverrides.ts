@@ -1,5 +1,9 @@
 import type { MotherSession } from '../../types/motherSession'
 import { getExerciseName } from '../../data/exercises'
+import {
+  rewriteNotesForExerciseSwaps,
+  type ExerciseNameSwap,
+} from './rewriteNotesForExerciseSwap'
 
 export type ExerciseOverride = {
   exerciseId: string
@@ -25,9 +29,25 @@ export function makeExerciseOverride(
   }
 }
 
+function buildNameSwap(
+  previousName: string,
+  previousExerciseId: string | undefined,
+  override: ExerciseOverride,
+): ExerciseNameSwap {
+  return {
+    sources: [
+      previousName,
+      previousExerciseId ? getExerciseName(previousExerciseId, 'en') : undefined,
+      previousExerciseId ? getExerciseName(previousExerciseId, 'fr') : undefined,
+    ].filter((v): v is string => Boolean(v?.trim())),
+    target: override.name,
+  }
+}
+
 /**
  * Applique les overrides user après `prepareSessionForRender`.
  * Clés : `${slotSignature}:${blockNumber}:${exerciseIndex}`.
+ * Met aussi à jour coachingNotes / fallbackOptions pour suivre le nouvel exo.
  */
 export function applyExerciseOverridesToSession(
   session: MotherSession,
@@ -41,11 +61,13 @@ export function applyExerciseOverridesToSession(
   let changed = false
   const blocks = session.blocks.map((block) => {
     let blockChanged = false
+    const swaps: ExerciseNameSwap[] = []
     const exercises = block.exercises.map((exo, exerciseIndex) => {
       const key = buildExerciseOverrideKey(slotSignature, block.number, exerciseIndex)
       const override = overrides[key]
       if (!override) return exo
       blockChanged = true
+      swaps.push(buildNameSwap(exo.name, exo.exerciseId, override))
       return {
         ...exo,
         exerciseId: override.exerciseId,
@@ -54,7 +76,12 @@ export function applyExerciseOverridesToSession(
     })
     if (!blockChanged) return block
     changed = true
-    return { ...block, exercises }
+    return {
+      ...block,
+      exercises,
+      coachingNotes: rewriteNotesForExerciseSwaps(block.coachingNotes, swaps) ?? block.coachingNotes,
+      fallbackOptions: rewriteNotesForExerciseSwaps(block.fallbackOptions, swaps),
+    }
   })
 
   return changed ? { ...session, blocks } : session

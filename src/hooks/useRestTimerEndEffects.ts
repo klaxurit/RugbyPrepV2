@@ -1,13 +1,15 @@
 import { useEffect, useRef } from 'react'
 import type { RestTimerState } from '../contexts/SessionRunContext'
 import { useRestBeepPref } from './useRestBeepPref'
-import { playRestEndBeep } from '../utils/audioBeep'
+import { playCountdownBeep, playRestEndWhistle } from '../utils/audioBeep'
 import { vibrate } from '../utils/vibrate'
 import { REST_END_VIBRATE_PATTERN } from '../services/notifications/restEndHaptic'
 
+const COUNTDOWN_OFFSETS_MS = [3000, 2000, 1000] as const
+
 /**
- * Bip + auto-dismiss du timer repos uniquement au premier plan.
- * En arrière-plan, les notifs SW / push prennent le relais.
+ * Countdown bip ×3 + sifflet + auto-dismiss du timer repos uniquement au premier plan.
+ * En arrière-plan, les notifs SW / push prennent le relais (pas d’audio Web).
  */
 export function useRestTimerEndEffects(
   restTimer: RestTimerState | null,
@@ -28,28 +30,35 @@ export function useRestTimerEndEffects(
   useEffect(() => {
     if (!restTimer) return
 
-    let beepId: ReturnType<typeof setTimeout> | undefined
-    let dismissId: ReturnType<typeof setTimeout> | undefined
+    const timerIds: ReturnType<typeof setTimeout>[] = []
 
     const clearTimers = () => {
-      if (beepId != null) window.clearTimeout(beepId)
-      if (dismissId != null) window.clearTimeout(dismissId)
-      beepId = undefined
-      dismissId = undefined
+      for (const id of timerIds) window.clearTimeout(id)
+      timerIds.length = 0
+    }
+
+    const schedule = (delayMs: number, fn: () => void) => {
+      timerIds.push(window.setTimeout(fn, Math.max(0, delayMs)))
+    }
+
+    const fireCountdown = () => {
+      if (document.visibilityState !== 'visible') return
+      if (beepRef.current) playCountdownBeep()
     }
 
     const fireEnd = () => {
       if (document.visibilityState !== 'visible') return
       vibrate([...REST_END_VIBRATE_PATTERN])
-      if (beepRef.current) playRestEndBeep()
-      dismissId = window.setTimeout(() => {
+      if (beepRef.current) playRestEndWhistle()
+      schedule(800, () => {
         skipRef.current()
-      }, 800)
+      })
     }
 
-    const schedule = () => {
+    const arm = () => {
       clearTimers()
-      if (restTimer.endsAt <= Date.now()) {
+      const remaining = restTimer.endsAt - Date.now()
+      if (remaining <= 0) {
         if (document.visibilityState === 'visible') {
           fireEnd()
         } else {
@@ -57,7 +66,14 @@ export function useRestTimerEndEffects(
         }
         return
       }
-      beepId = window.setTimeout(fireEnd, restTimer.endsAt - Date.now())
+
+      for (const offset of COUNTDOWN_OFFSETS_MS) {
+        const delay = remaining - offset
+        if (delay >= 0) {
+          schedule(delay, fireCountdown)
+        }
+      }
+      schedule(remaining, fireEnd)
     }
 
     const onVisibility = () => {
@@ -65,11 +81,11 @@ export function useRestTimerEndEffects(
         clearTimers()
         skipRef.current()
       } else if (document.visibilityState === 'visible') {
-        schedule()
+        arm()
       }
     }
 
-    schedule()
+    arm()
     document.addEventListener('visibilitychange', onVisibility)
     return () => {
       clearTimers()

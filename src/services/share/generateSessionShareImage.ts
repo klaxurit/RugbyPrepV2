@@ -66,15 +66,14 @@ function loadCardFontFaceCss(): Promise<string> {
   return fontFaceCssPromise
 }
 
-/** Photo de séance choisie par le joueur ; échec de chargement → fond de marque. */
-async function resolvePhotoSrc(payload: SessionSharePayload): Promise<string | null> {
+/**
+ * Photo de séance choisie par le joueur.
+ * Si une URL est fournie mais illisible, on propage l’erreur (pas de silent no-photo).
+ */
+export async function resolvePhotoSrc(payload: SessionSharePayload): Promise<string | null> {
   const photoUrl = payload.photoUrl?.trim()
   if (!photoUrl) return null
-  try {
-    return await toDataUrl(photoUrl)
-  } catch {
-    return null
-  }
+  return await toDataUrl(photoUrl)
 }
 
 /**

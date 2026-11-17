@@ -126,4 +126,85 @@ describe('resolveLiveSetFeedback', () => {
     })
     expect(out?.event).toBe('session_live_pr')
   })
+
+  it('Mon set1=30 / set2=20 → Wed set2=30 : pas de toast (max exo déjà 30)', () => {
+    const historyLogs: ExerciseSetLog[] = [
+      {
+        id: 'mon-1',
+        userId: 'u',
+        exerciseId: 'push_horizontal__bench_press__barbell',
+        slotSignature: 'slot-mon',
+        blockNumber: 1,
+        tourIndex: 0,
+        loadKg: 30,
+        reps: 5,
+        completed: true,
+        createdAt: '2026-03-16',
+      } as ExerciseSetLog,
+      {
+        id: 'mon-2',
+        userId: 'u',
+        exerciseId: 'push_horizontal__bench_press__barbell',
+        slotSignature: 'slot-mon',
+        blockNumber: 1,
+        tourIndex: 1,
+        loadKg: 20,
+        reps: 5,
+        completed: true,
+        createdAt: '2026-03-16',
+      } as ExerciseSetLog,
+    ]
+    const out = resolveLiveSetFeedback({
+      exerciseId: 'push_horizontal__bench_press__barbell',
+      loadKg: 30,
+      reps: 5,
+      blockNumber: 1,
+      tourIndex: 1,
+      exerciseIndex: 0,
+      slotSignature: 'slot-wed',
+      metricType: 'load_reps',
+      lang: 'fr',
+      historyLogs,
+      exerciseTourLoads: {
+        // Même charge que le max Mon → pas de « Vs série précédente » non plus.
+        [key(1, 0, 0)]: { loadKg: 30, reps: 5 },
+      },
+      buildTourKey: key,
+      getPreviousSessionSet: () => ({ loadKg: 20, reps: 5 }),
+    })
+    expect(out).toBeNull()
+  })
+
+  it('Mon max=30 → Wed set2=31 : record live', () => {
+    const historyLogs: ExerciseSetLog[] = [
+      {
+        id: 'mon-1',
+        userId: 'u',
+        exerciseId: 'push_horizontal__bench_press__barbell',
+        slotSignature: 'slot-mon',
+        blockNumber: 1,
+        tourIndex: 0,
+        loadKg: 30,
+        reps: 5,
+        completed: true,
+        createdAt: '2026-03-16',
+      } as ExerciseSetLog,
+    ]
+    const out = resolveLiveSetFeedback({
+      exerciseId: 'push_horizontal__bench_press__barbell',
+      loadKg: 31,
+      reps: 5,
+      blockNumber: 1,
+      tourIndex: 1,
+      exerciseIndex: 0,
+      slotSignature: 'slot-wed',
+      metricType: 'load_reps',
+      lang: 'fr',
+      historyLogs,
+      exerciseTourLoads: {},
+      buildTourKey: key,
+      getPreviousSessionSet: () => ({ loadKg: 20, reps: 5 }),
+    })
+    expect(out?.event).toBe('session_live_pr')
+  })
 })

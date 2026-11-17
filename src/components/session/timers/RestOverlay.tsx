@@ -12,9 +12,9 @@ import { Icon } from '../../ui'
  * Branchée sur `sessionRun.restTimer` (state global). Affiche le countdown,
  * une barre de progression, un bouton "Passer" qui appelle `skipRestTimer()`.
  *
- * À la fin du timer (endsAt) :
- *  - vibrate `[120, 80, 120]` (pattern "fini")
- *  - beep audio (si `useRestBeepPref.enabled`)
+ * Countdown + fin (via `useRestTimerEndEffects`) :
+ *  - bip à T−3 / T−2 / T−1 puis sifflet à endsAt (si beep pref ON)
+ *  - vibrate pattern "fini" à endsAt
  *  - 800 ms après → `skipRestTimer()` automatique (auto-dismiss)
  *
  * Visible uniquement quand `restTimer != null`. Le composant est positionné
