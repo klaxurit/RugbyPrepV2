@@ -19,7 +19,7 @@ jobs:
   # ── Lint ──────────────────────────────────────────────────────
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
 
     steps:
@@ -40,7 +40,7 @@ jobs:
   # ── TypeScript ────────────────────────────────────────────────
   typecheck:
     name: TypeScript
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
 
     steps:
@@ -61,7 +61,7 @@ jobs:
   # ── Unit Tests ────────────────────────────────────────────────
   test:
     name: Unit Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: [lint, typecheck]
 
@@ -86,7 +86,7 @@ jobs:
   # ── Build ─────────────────────────────────────────────────────
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: [lint, typecheck]
 
@@ -108,7 +108,7 @@ jobs:
   # ── E2E (Playwright smoke) ────────────────────────────────────
   e2e:
     name: E2E Smoke
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     needs: [lint, typecheck]
 
@@ -141,7 +141,7 @@ jobs:
   # ── Burn-in (flaky detection) ─────────────────────────────────
   burn-in:
     name: Burn-In (Flaky Detection)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: test
     if: github.event_name == 'pull_request'
@@ -172,7 +172,7 @@ jobs:
   # Configure in GitHub: Settings > Branches > main > Require "quality-gate" to pass.
   quality-gate:
     name: Quality Gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [lint, typecheck, test, build, e2e]
     if: always()
 
