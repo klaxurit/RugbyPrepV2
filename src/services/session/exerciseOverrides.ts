@@ -1,6 +1,7 @@
 import type { MotherSession } from '../../types/motherSession'
 import { getExerciseName } from '../../data/exercises'
 import {
+  buildExerciseSwapSources,
   rewriteNotesForExerciseSwaps,
   type ExerciseNameSwap,
 } from './rewriteNotesForExerciseSwap'
@@ -35,11 +36,7 @@ function buildNameSwap(
   override: ExerciseOverride,
 ): ExerciseNameSwap {
   return {
-    sources: [
-      previousName,
-      previousExerciseId ? getExerciseName(previousExerciseId, 'en') : undefined,
-      previousExerciseId ? getExerciseName(previousExerciseId, 'fr') : undefined,
-    ].filter((v): v is string => Boolean(v?.trim())),
+    sources: buildExerciseSwapSources(previousName, previousExerciseId),
     target: override.name,
   }
 }

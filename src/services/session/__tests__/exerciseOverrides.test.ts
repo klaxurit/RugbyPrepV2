@@ -89,6 +89,37 @@ describe('exerciseOverrides', () => {
     expect(next.blocks[0].fallbackOptions?.join(' ')).not.toMatch(/Bulgarian Split Squat/i)
   })
 
+  it('remplace le libellé EN mother (`Bench Press`) même si l’UI est en FR', () => {
+    const session = makeSession()
+    session.metadata.sessionType = 'upper'
+    session.blocks[0] = {
+      number: 1,
+      name: 'Contraste haut du corps',
+      format: '4 rounds',
+      coachingNotes: [
+        "L'excentrique du `Bench Press` reste contrôlé pendant `1-2s`.",
+        'Intention concentrique maximale.',
+      ],
+      exercises: [
+        {
+          name: 'Développé couché barre',
+          exerciseId: 'push_horizontal__bench_press__barbell',
+          prescription: '4x4 @ 80-85%',
+        },
+      ],
+    }
+    const slot = 'in|W1|0'
+    const key = buildExerciseOverrideKey(slot, 1, 0)
+    const override = makeExerciseOverride(
+      'push_horizontal__bench_press__incline__dumbbell',
+      'fr',
+    )
+    const next = applyExerciseOverridesToSession(session, slot, { [key]: override })
+    const notes = next.blocks[0].coachingNotes.join(' ')
+    expect(notes).toContain(override.name)
+    expect(notes).not.toMatch(/Bench Press/i)
+  })
+
   it('sans override, la session reste inchangée', () => {
     const session = makeSession()
     const next = applyExerciseOverridesToSession(session, 'slot', {})

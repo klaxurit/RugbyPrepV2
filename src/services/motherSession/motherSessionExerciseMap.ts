@@ -317,3 +317,14 @@ export function isDirectiveText(name: string): boolean {
 export function getAllMapEntries(): ReadonlyArray<[string, string]> {
   return Object.entries(MS_EXERCISE_MAP)
 }
+
+/** Noms mother-session (EN normalisés) qui pointent vers un exerciseId catalogue. */
+export function listMotherSessionNamesForExerciseId(exerciseId: string): string[] {
+  const id = exerciseId.trim()
+  if (!id) return []
+  const names: string[] = []
+  for (const [name, mappedId] of Object.entries(MS_EXERCISE_MAP)) {
+    if (mappedId === id) names.push(name)
+  }
+  return names
+}

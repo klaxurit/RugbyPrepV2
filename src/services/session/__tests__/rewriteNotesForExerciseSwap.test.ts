@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   applyExerciseNameSwaps,
+  buildExerciseSwapSources,
   rewriteNotesForExerciseSwaps,
 } from '../rewriteNotesForExerciseSwap'
 
@@ -24,5 +25,14 @@ describe('rewriteNotesForExerciseSwap', () => {
       [{ sources: ['Bulgarian Split Squat'], target: 'Cossack Squat' }],
     )
     expect(notes).toEqual(['Cossack Squat → plant', 'Other cue'])
+  })
+
+  it('sources bench incluent Bench Press + Développé couché', () => {
+    const sources = buildExerciseSwapSources(
+      'Développé couché barre',
+      'push_horizontal__bench_press__barbell',
+    )
+    expect(sources.some((s) => /bench press/i.test(s))).toBe(true)
+    expect(sources.some((s) => /développé couché/i.test(s))).toBe(true)
   })
 })
