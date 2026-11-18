@@ -1,100 +1,81 @@
 # Email templates — RugbyForge
 
-Templates HTML pour les emails transactionnels Supabase (Auth).
+Templates HTML pour les emails RugbyForge (Auth Supabase + relance marketing).
 
-Tous les templates partagent la même structure visuelle (palette crème `#F5F2EE` + bordeaux `#7B0D1E`, layout table compatible Outlook, max-width 560px responsive, CTA bulletproof VML, preheader caché, lien fallback en clair, disclaimer sécurité). Seuls le libellé (eyebrow, titre, body, CTA) et la durée d'expiration changent.
+**Design unique v2** : en-tête bordeaux `#7B0D1E`, logo crème, titre Inter 900 italique, coupe diagonale `header-cut.png`, corps crème `#FBF7F1`, CTA bulletproof Outlook, pied bordeaux, max-width **600px**, preheader caché. Light-locked (la coupe diagonale crème ne survit pas à un dark mode partiel).
 
 ## Fichiers
 
-| Fichier | Usage Supabase | Sujet recommandé | Expiration |
+| Fichier | Usage | Sujet recommandé | Expiration |
 |---|---|---|---|
-| `confirm-signup.html` | **Confirm signup** | `Confirme ton inscription à RugbyForge` | 24 h |
-| `reset-password.html` | **Reset password** | `Réinitialise ton mot de passe RugbyForge` | 1 h |
-| `magic-link.html` | **Magic Link** | `Ton lien de connexion RugbyForge` | 1 h |
-| `email-change.html` | **Change Email Address** | `Confirme ton nouvel email RugbyForge` | 24 h |
-| `invite-user.html` | **Invite user** | `Invitation à rejoindre RugbyForge` | — |
-| `onboarding-first-session.html` | Relance onboarding (outil d'emailing, **hors Supabase Auth**) | `Ta 1re séance t’attend` | — |
+| `confirm-signup.html` | Supabase **Confirm signup** | `Confirme ton inscription à RugbyForge` | 24 h |
+| `reset-password.html` | Supabase **Reset password** | `Réinitialise ton mot de passe RugbyForge` | 1 h |
+| `magic-link.html` | Supabase **Magic Link** | `Ton lien de connexion RugbyForge` | 1 h |
+| `email-change.html` | Supabase **Change Email Address** | `Confirme ton nouvel email RugbyForge` | 24 h |
+| `invite-user.html` | Supabase **Invite user** | `Invitation à rejoindre RugbyForge` | — |
+| `onboarding-first-session.html` | Relance onboarding (hors Auth) | `Ta 1re séance RugbyForge t’attend 🏉` | — |
+| `onboarding-first-session.txt` | Même relance, texte brut | idem | — |
+| `render-onboarding-first-session.mjs` | Remplit `{{FIRST_NAME}}` / `{{CTA_URL}}` | — | — |
+| `generate-auth-templates.mjs` | Régénère les 5 templates Auth v2 | — | — |
 
-### `onboarding-first-session.html` — relance « 1re séance »
+## Relance `onboarding-first-session`
 
-Email marketing envoyé aux inscrits qui n'ont pas encore lancé de séance. Design aligné sur la carte de partage v2 (en-tête bordeaux, titre Inter 900 italique, coupe diagonale, compteurs 01/02/03, encadré Offre Founding). Maquettes : canevas Claude Design « RugbyForge — Carte de fin de séance », page « Email onboarding ».
+Pour les inscrits `newsletter_opt_in = true` sans 1re séance. **Aucun envoi automatique dans ce repo**.
 
-- **Preheader** : « Ton programme est prêt : poste, calendrier club, matériel. Il ne manque que toi. »
-- **Images** : `https://rugbyforge.fr/images/rugbyforge-full.png` (logo crème) et `https://rugbyforge.fr/images/email/header-cut.png` (coupe diagonale, fichier `public/images/email/header-cut.png`). Sans images, l'en-tête finit à plat — rien ne casse.
-- **À brancher avant envoi** : lien du CTA (aujourd'hui `https://rugbyforge.fr/`) → lien profond 1re séance + UTM ; lien de désinscription de l'outil d'envoi dans le pied (en plus de « réponds stop »).
-- **Police** : Inter chargée via Google Fonts (Apple Mail, iOS, Outlook Mac) ; Gmail / Outlook Windows retombent sur Helvetica / Arial gras italique.
-
-## Comment l'installer dans Supabase
-
-1. Va dans **Supabase Dashboard → Authentication → Email Templates**.
-2. Sélectionne le template voulu (Confirm signup, Reset password, Magic Link, Change Email, Invite user).
-3. **Subject heading** : colle le sujet correspondant du tableau ci-dessus.
-4. **Message body (HTML)** : copie-colle le contenu du fichier `.html` correspondant.
-5. Sauvegarde.
-
-## Variables Supabase utilisées
-
-Tous les templates utilisent `{{ .ConfirmationURL }}` (syntaxe Go-template Supabase). Ne pas renommer. Autres variables disponibles si tu veux enrichir :
-
-- `{{ .Email }}` — email du destinataire
-- `{{ .Token }}` — OTP brut (rarement utile en template email)
-- `{{ .SiteURL }}` — URL de ton site configurée dans Supabase
-
-## Hébergement du logo
-
-Chaque template référence :
-
-```
-https://rugbyforge.fr/images/rugbyforge-full.png
-```
-
-Ce fichier existe en local dans `/public/images/rugbyforge-full.png`. Il est servi à cette URL **dès que le site est déployé en prod** (Vite sert tout ce qui est dans `public/` à la racine).
-
-**Vérifier après déploiement** : ouvre `https://rugbyforge.fr/images/rugbyforge-full.png` dans un navigateur — si ça s'affiche, le logo des emails aussi.
-
-### Alternative : encoder le logo en base64
-
-Pour que les emails affichent le logo même hors-ligne, inliner en base64. Coût : +30-80 ko par email, négligeable.
+| Placeholder | Rôle | Défaut |
+|---|---|---|
+| `{{FIRST_NAME}}` | Après `Salut` : vide → `Salut,` ; sinon `Salut Hugo,` | *(vide)* |
+| `{{CTA_URL}}` | CTA + lien pied | `https://rugbyforge.fr/?utm_source=email&utm_medium=relance&utm_campaign=1re_seance` |
 
 ```bash
-base64 -i public/images/rugbyforge-full.png | pbcopy
+node email-templates/render-onboarding-first-session.mjs --first-name Hugo
+node email-templates/render-onboarding-first-session.mjs --format txt --out /tmp/hugo.txt
 ```
 
-Remplace la `src` dans chaque HTML :
+Consentement + désinscription « stop » : uniquement dans ce mail marketing (pas dans les Auth).
 
-```html
-<img src="data:image/png;base64,COLLE_ICI" ... >
-```
+Aperçus : `previews/onboarding-first-session-600.png` et `…-375.png`. HTML ≈ 14 Ko.
+
+## Auth Supabase — installer / mettre à jour
+
+Les fichiers du repo sont la **source de vérité**. Supabase Dashboard ne les tire pas automatiquement.
+
+1. `node email-templates/generate-auth-templates.mjs` (si tu as changé le shell)
+2. **Supabase Dashboard → Authentication → Email Templates**
+3. Pour chaque type : coller le sujet du tableau + le HTML correspondant
+4. Variable unique : `{{ .ConfirmationURL }}` (ne pas renommer)
+
+Autres variables Supabase éventuelles : `{{ .Email }}`, `{{ .Token }}`, `{{ .SiteURL }}`.
+
+## Images (URL absolues prod)
+
+| Asset | URL |
+|---|---|
+| Logo crème | `https://rugbyforge.fr/images/rugbyforge-full.png` |
+| Coupe diagonale | `https://rugbyforge.fr/images/email/header-cut.png` ← fichier `public/images/email/header-cut.png` |
+
+**Après merge sur `main`** : vérifier que `header-cut.png` répond en 200 (sinon l’en-tête finit à plat crème, le reste tient).
 
 ## Tester le rendu
 
-- **Prévisualiser localement** : ouvre le fichier `.html` dans un navigateur. Les variables `{{ .ConfirmationURL }}` resteront littérales, c'est normal.
-- **Tester en vrai** : déclenche l'action correspondante (signup test, reset pwd, magic link) sur ton app en staging, regarde l'email reçu sur Gmail + Outlook + Apple Mail.
-- **Délivrabilité** : [Mail-Tester](https://www.mail-tester.com) pour un score, [Litmus](https://litmus.com) pour la compat clients.
+- Ouvre le `.html` dans un navigateur (les `{{ .ConfirmationURL }}` restent littéraux — normal).
+- Auth : déclenche signup / reset / magic link en staging, regarde Gmail + Outlook + Apple Mail.
+- Relance : génère avec le script puis prévisualise / envoie un test manuel.
+- Délivrabilité : [Mail-Tester](https://www.mail-tester.com), [Litmus](https://litmus.com).
 
 ## Structure visuelle partagée
 
-Tous les templates suivent le même squelette :
-
 ```
-┌─ Logo RugbyForge (160px, haut gauche)
-├─ Card blanche (radius 20px, border soft, shadow légère)
-│  ├─ Eyebrow (Bienvenue / Sécurité / Connexion / …)
-│  ├─ Titre (28px, poids 700)
-│  ├─ Body copy (15px, leading 24px)
-│  ├─ CTA bouton bordeaux (bulletproof Outlook)
-│  ├─ Lien fallback en clair
-│  └─ Disclaimer sécurité (border-top, 12px)
-└─ Footer (rugbyforge.fr · bonjour@rugbyforge.fr)
+┌─ En-tête bordeaux (logo + eyebrow + titre italique)
+├─ Coupe diagonale (header-cut.png)
+├─ Corps crème
+│  ├─ Salut…
+│  ├─ Copy
+│  ├─ CTA bordeaux (VML + <a>)
+│  ├─ Lien fallback (Auth) / sections marketing (relance)
+│  └─ Signature Hugo
+└─ Pied bordeaux (lien site · contact ou stop newsletter)
 ```
 
-**Pour ajouter un nouveau template** : copie `confirm-signup.html` comme base, change uniquement :
-
-- Le `<title>` et le `<div preheader>` (preview inbox)
-- L'eyebrow (1-2 mots, couleur bordeaux)
-- Le `<h1>` (titre principal)
-- La `<p>` body copy (explication du contexte)
-- Le libellé du CTA (`<center>` MSO + `<a>` HTML — garder les 2 versions)
-- La phrase d'expiration en pied de card
-
-Ne touche ni la palette, ni le layout, ni la structure table — tu casserais la compat Outlook.
+Pour un **nouvel email Auth** : ajoute une entrée dans `generate-auth-templates.mjs` puis régénère.
+Pour un **email marketing** : pars de `onboarding-first-session.html` (placeholders + pied consentement).

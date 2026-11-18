@@ -1,0 +1,255 @@
+#!/usr/bin/env node
+/**
+ * Génère les 5 templates Auth Supabase avec le shell visuel v2
+ * (même design que onboarding-first-session). Aucune dépendance npm.
+ *
+ *   node email-templates/generate-auth-templates.mjs
+ */
+
+import { writeFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+/** @typedef {{
+ *  file: string
+ *  title: string
+ *  preheader: string
+ *  eyebrow: string
+ *  hero: string
+ *  bodyHtml: string
+ *  cta: string
+ *  ctaWidth: number
+ *  disclaimer: string
+ * }} AuthMail */
+
+/** @type {AuthMail[]} */
+const MAILS = [
+  {
+    file: 'confirm-signup.html',
+    title: 'Confirme ton inscription à RugbyForge',
+    preheader: 'Une dernière étape pour activer ton compte RugbyForge.',
+    eyebrow: 'Bienvenue',
+    hero: 'Confirme ton adresse email',
+    bodyHtml: `Merci de rejoindre RugbyForge. Il ne reste qu'une étape pour activer ton compte et commencer à préparer ta saison&nbsp;: confirme ton adresse email en cliquant sur le bouton ci-dessous.`,
+    cta: 'Confirmer mon email',
+    ctaWidth: 240,
+    disclaimer:
+      "Ce lien expire dans 24 heures. Si tu n'es pas à l'origine de cette inscription, tu peux ignorer cet email en toute sécurité — aucun compte ne sera activé.",
+  },
+  {
+    file: 'reset-password.html',
+    title: 'Réinitialise ton mot de passe RugbyForge',
+    preheader: 'Voici le lien pour choisir un nouveau mot de passe RugbyForge.',
+    eyebrow: 'Sécurité',
+    hero: 'Réinitialise ton mot de passe',
+    bodyHtml: `Tu as demandé à réinitialiser le mot de passe de ton compte RugbyForge. Clique sur le bouton ci-dessous pour choisir un nouveau mot de passe.`,
+    cta: 'Choisir un nouveau mot de passe',
+    ctaWidth: 300,
+    disclaimer:
+      "Ce lien expire dans 1 heure. Si tu n'es pas à l'origine de cette demande, ignore cet email — ton mot de passe actuel reste valide.",
+  },
+  {
+    file: 'magic-link.html',
+    title: 'Ton lien de connexion RugbyForge',
+    preheader: 'Ton lien magique pour accéder à RugbyForge, sans mot de passe.',
+    eyebrow: 'Connexion',
+    hero: 'Clique pour te connecter',
+    bodyHtml: `Voici ton lien magique pour accéder à RugbyForge. Un seul clic, aucun mot de passe à retenir.`,
+    cta: 'Me connecter',
+    ctaWidth: 200,
+    disclaimer:
+      "Ce lien expire dans 1 heure et ne peut servir qu'une seule fois. Si tu n'as pas demandé à te connecter, ignore cet email.",
+  },
+  {
+    file: 'email-change.html',
+    title: 'Confirme ton nouvel email RugbyForge',
+    preheader: 'Confirme ton nouvel email pour finaliser le changement sur RugbyForge.',
+    eyebrow: "Changement d'email",
+    hero: 'Confirme ton nouvel email',
+    bodyHtml: `Tu as demandé à changer l'adresse email associée à ton compte RugbyForge. Confirme ici pour que ce nouvel email devienne actif. Ton ancienne adresse sera remplacée.`,
+    cta: 'Confirmer ce nouvel email',
+    ctaWidth: 260,
+    disclaimer:
+      "Ce lien expire dans 24 heures. Si tu n'as pas demandé ce changement, ignore cet email — ton adresse actuelle reste active.",
+  },
+  {
+    file: 'invite-user.html',
+    title: 'Invitation à rejoindre RugbyForge',
+    preheader: 'Tu as été invité à rejoindre RugbyForge. Active ton compte pour démarrer.',
+    eyebrow: 'Invitation',
+    hero: "Bienvenue dans l'équipe",
+    bodyHtml: `Tu as été invité à rejoindre RugbyForge, l'app de préparation physique des joueurs de rugby amateurs. Accepte l'invitation pour activer ton compte et commencer à préparer ta saison.`,
+    cta: "Accepter l'invitation",
+    ctaWidth: 240,
+    disclaimer:
+      "Si tu ne connais pas l'expéditeur de cette invitation, ignore cet email en toute sécurité — aucun compte ne sera activé sans ton action.",
+  },
+]
+
+/** @param {AuthMail} mail */
+function renderAuthHtml(mail) {
+  return `<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>${mail.title}</title>
+<!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+<style>td,th,div,p,a,h1,h2 {font-family: Arial, sans-serif !important;}</style>
+<![endif]-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;0,800;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+  body,table,td,a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+  table,td { mso-table-lspace:0pt; mso-table-rspace:0pt; border-collapse:collapse; }
+  img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }
+  body { margin:0 !important; padding:0 !important; width:100% !important; }
+  a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
+
+  @media screen and (max-width: 620px) {
+    .container { width:100% !important; }
+    .px { padding-left:24px !important; padding-right:24px !important; }
+    .hero-title { font-size:32px !important; line-height:36px !important; }
+    .hide-mobile { display:none !important; }
+    .cta { width:100% !important; }
+    .cta a { display:block !important; padding-left:16px !important; padding-right:16px !important; }
+  }
+</style>
+</head>
+
+<body style="margin:0; padding:0; background-color:#E9E1D4; font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#2A1A1C;">
+
+<div style="display:none; font-size:1px; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden; mso-hide:all; color:#E9E1D4;">
+${mail.preheader} &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
+</div>
+
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#E9E1D4;">
+<tr>
+<td align="center" style="padding:32px 12px;">
+
+  <!--[if mso]><table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600"><tr><td><![endif]-->
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="container" width="600" style="width:600px; max-width:600px; background-color:#FBF7F1; border-radius:18px; overflow:hidden;">
+
+    <tr>
+      <td class="px" bgcolor="#7B0D1E" style="background-color:#7B0D1E; padding:36px 48px 14px 48px;">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="left" valign="middle">
+              <img src="https://rugbyforge.fr/images/rugbyforge-full.png" alt="RugbyForge" width="150" style="width:150px; height:auto; max-width:150px;">
+            </td>
+            <td class="hide-mobile" align="right" valign="middle" style="font-size:11px; line-height:14px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E6CEC8; white-space:nowrap;">
+              Prépa physique rugby
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="px" bgcolor="#7B0D1E" style="background-color:#7B0D1E; padding:34px 48px 4px 48px;">
+        <p style="margin:0 0 14px 0; font-size:12px; line-height:16px; font-weight:700; letter-spacing:2.4px; text-transform:uppercase; color:#E6CEC8;">
+          ${mail.eyebrow}
+        </p>
+        <h1 class="hero-title" style="margin:0; font-family:'Inter','Helvetica Neue',Arial,sans-serif; font-size:40px; line-height:42px; font-weight:900; font-style:italic; letter-spacing:-1.2px; color:#FFFFFF;">
+          ${mail.hero}
+        </h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:0; line-height:0; font-size:0;" bgcolor="#FBF7F1">
+        <img src="https://rugbyforge.fr/images/email/header-cut.png" alt="" width="600" style="width:100%; max-width:600px; height:auto;">
+      </td>
+    </tr>
+
+    <tr>
+      <td class="px" style="padding:20px 48px 0 48px;">
+        <p style="margin:0 0 16px 0; font-size:16px; line-height:26px; color:#2A1A1C; font-weight:700;">Salut,</p>
+        <p style="margin:0 0 30px 0; font-size:16px; line-height:26px; color:#4A3A3C;">
+          ${mail.bodyHtml}
+        </p>
+
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="cta" style="margin:0 0 28px 0;">
+          <tr>
+            <td align="center" bgcolor="#7B0D1E" style="border-radius:12px; background-color:#7B0D1E;">
+              <!--[if mso]>
+              <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ .ConfirmationURL }}" style="height:56px;v-text-anchor:middle;width:${mail.ctaWidth}px;" arcsize="22%" stroke="f" fillcolor="#7B0D1E">
+                <w:anchorlock/>
+                <center style="color:#FFFFFF;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">${mail.cta}</center>
+              </v:roundrect>
+              <![endif]-->
+              <!--[if !mso]><!-- -->
+              <a href="{{ .ConfirmationURL }}" style="display:inline-block; padding:18px 34px; font-size:16px; line-height:20px; font-weight:800; color:#FFFFFF; text-decoration:none; border-radius:12px; background-color:#7B0D1E; letter-spacing:0.2px;">
+                ${mail.cta}
+              </a>
+              <!--<![endif]-->
+            </td>
+          </tr>
+        </table>
+
+        <p style="margin:0 0 8px 0; font-size:13px; line-height:20px; color:#6A5A5C;">
+          Si le bouton ne fonctionne pas, copie-colle ce lien dans ton navigateur&nbsp;:
+        </p>
+        <p style="margin:0 0 32px 0; font-size:13px; line-height:20px; word-break:break-all;">
+          <a href="{{ .ConfirmationURL }}" style="color:#7B0D1E; text-decoration:underline;">{{ .ConfirmationURL }}</a>
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="px" style="padding:0 48px 30px 48px;">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top:1px solid #E3D8CA;">
+          <tr>
+            <td style="padding:20px 0 0 0;">
+              <p style="margin:0 0 20px 0; font-size:13px; line-height:20px; color:#6A5A5C;">
+                ${mail.disclaimer}
+              </p>
+              <p style="margin:0 0 4px 0; font-size:20px; line-height:26px; font-weight:900; font-style:italic; letter-spacing:-0.4px; color:#2A1A1C;">
+                On se voit sur le terrain.
+              </p>
+              <p style="margin:0; font-size:15px; line-height:22px; color:#4A3A3C;">
+                <strong style="color:#7B0D1E;">Hugo</strong> · fondateur de RugbyForge
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="px" bgcolor="#7B0D1E" align="center" style="background-color:#7B0D1E; padding:26px 48px 28px 48px;">
+        <p style="margin:0 0 10px 0; font-size:15px; line-height:18px; font-weight:900; font-style:italic; letter-spacing:-0.2px; color:#F4EBDD;">
+          RUGBYFORGE
+        </p>
+        <p style="margin:0 0 10px 0; font-size:12px; line-height:18px; color:#E6CEC8;">
+          Email transactionnel — sécurité de ton compte.
+        </p>
+        <p style="margin:0; font-size:12px; line-height:18px;">
+          <a href="https://rugbyforge.fr/" style="color:#F4EBDD; text-decoration:underline;">rugbyforge.fr</a>
+          &nbsp;·&nbsp;
+          <a href="mailto:bonjour@rugbyforge.fr" style="color:#F4EBDD; text-decoration:underline;">bonjour@rugbyforge.fr</a>
+        </p>
+      </td>
+    </tr>
+
+  </table>
+  <!--[if mso]></td></tr></table><![endif]-->
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
+`
+}
+
+for (const mail of MAILS) {
+  const path = join(__dirname, mail.file)
+  writeFileSync(path, renderAuthHtml(mail), 'utf8')
+  console.log(`Écrit ${mail.file} (${renderAuthHtml(mail).length} octets)`)
+}

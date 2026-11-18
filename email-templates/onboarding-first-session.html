@@ -7,7 +7,7 @@
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
-<title>Ta 1re séance t’attend</title>
+<title>Ta 1re séance RugbyForge t’attend</title>
 <!--[if mso]>
 <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
 <style>td,th,div,p,a,h1,h2 {font-family: Arial, sans-serif !important;}</style>
@@ -15,6 +15,8 @@
 <!-- Inter : Apple Mail / iOS / Outlook Mac. Ailleurs, repli Helvetica / Arial. -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;0,800;1,800;1,900&display=swap" rel="stylesheet">
 <style>
+  /* Resets email clients + mobile. Light-locked : la coupe diagonale crème
+     ne survit pas à un dark mode partiel (Gmail/iOS inverseraient mal). */
   body,table,td,a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
   table,td { mso-table-lspace:0pt; mso-table-rspace:0pt; border-collapse:collapse; }
   img { -ms-interpolation-mode:bicubic; border:0; outline:none; text-decoration:none; display:block; }
@@ -87,7 +89,8 @@ Ton programme est prêt : poste, calendrier club, matériel. Il ne manque que to
     <!-- ═══ Corps ═══ -->
     <tr>
       <td class="px" style="padding:20px 48px 0 48px;">
-        <p style="margin:0 0 16px 0; font-size:16px; line-height:26px; color:#2A1A1C; font-weight:700;">Salut,</p>
+        <!-- FIRST_NAME : token vide → « Salut, » ; sinon « Salut Prénom, » -->
+        <p style="margin:0 0 16px 0; font-size:16px; line-height:26px; color:#2A1A1C; font-weight:700;">Salut{{FIRST_NAME}},</p>
         <p style="margin:0 0 16px 0; font-size:16px; line-height:26px; color:#4A3A3C;">
           Tu t’es inscrit sur RugbyForge, mais ta prépa n’a pas encore vraiment démarré. Pas de souci, on règle ça en <strong style="color:#7B0D1E;">10&nbsp;minutes</strong>.
         </p>
@@ -95,18 +98,18 @@ Ton programme est prêt : poste, calendrier club, matériel. Il ne manque que to
           Ton programme est déjà prêt. Une seule chose à faire&nbsp;: ouvrir l’app et lancer ta première séance.
         </p>
 
-        <!-- CTA (bulletproof Outlook) -->
+        <!-- CTA (bulletproof Outlook) — placeholder CTA_URL -->
         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="cta" style="margin:0 0 40px 0;">
           <tr>
             <td align="center" bgcolor="#7B0D1E" style="border-radius:12px; background-color:#7B0D1E;">
               <!--[if mso]>
-              <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://rugbyforge.fr/" style="height:56px;v-text-anchor:middle;width:280px;" arcsize="22%" stroke="f" fillcolor="#7B0D1E">
+              <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{CTA_URL}}" style="height:56px;v-text-anchor:middle;width:280px;" arcsize="22%" stroke="f" fillcolor="#7B0D1E">
                 <w:anchorlock/>
                 <center style="color:#FFFFFF;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Lancer ma 1re séance &rarr;</center>
               </v:roundrect>
               <![endif]-->
               <!--[if !mso]><!-- -->
-              <a href="https://rugbyforge.fr/" style="display:inline-block; padding:18px 34px; font-size:16px; line-height:20px; font-weight:800; color:#FFFFFF; text-decoration:none; border-radius:12px; background-color:#7B0D1E; letter-spacing:0.2px;">
+              <a href="{{CTA_URL}}" style="display:inline-block; padding:18px 34px; font-size:16px; line-height:20px; font-weight:800; color:#FFFFFF; text-decoration:none; border-radius:12px; background-color:#7B0D1E; letter-spacing:0.2px;">
                 Lancer ma 1re séance&nbsp;&rarr;
               </a>
               <!--<![endif]-->
@@ -221,7 +224,7 @@ Ton programme est prêt : poste, calendrier club, matériel. Il ne manque que to
           Pour ne plus en recevoir, réponds simplement «&nbsp;stop&nbsp;».
         </p>
         <p style="margin:0; font-size:12px; line-height:18px;">
-          <a href="https://rugbyforge.fr/" style="color:#F4EBDD; text-decoration:underline;">rugbyforge.fr</a>
+          <a href="{{CTA_URL}}" style="color:#F4EBDD; text-decoration:underline;">rugbyforge.fr</a>
         </p>
       </td>
     </tr>

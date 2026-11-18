@@ -1,0 +1,33 @@
+Ta 1re séance RugbyForge t’attend
+
+Preheader : Ton programme est prêt : poste, calendrier club, matériel. Il ne manque que toi.
+
+Salut{{FIRST_NAME}},
+
+Tu t’es inscrit sur RugbyForge, mais ta prépa n’a pas encore vraiment démarré. Pas de souci, on règle ça en 10 minutes.
+
+Ton programme est déjà prêt. Une seule chose à faire : ouvrir l’app et lancer ta première séance.
+
+→ Lancer ma 1re séance :
+{{CTA_URL}}
+
+Déjà calé pour toi
+01 — Ton poste : un programme calé sur le poste que tu joues.
+02 — Ton calendrier club : un planning aligné sur ta semaine de match.
+03 — Ton matériel : des séances pensées pour le matériel que tu as.
+
+Pourquoi maintenant ?
+Un physique se forge avec la régularité, pas en rattrapant le retard avant les phases finales.
+
+Offre Founding
+Les 100 premiers qui terminent une séance débloquent le forfait Pro à 49 €/an, à vie. Les places sont limitées.
+
+On se voit sur le terrain.
+Hugo · fondateur de RugbyForge
+
+P.S. Une question ou un truc qui coince ? Réponds simplement à ce mail, c’est moi qui lis.
+
+—
+Tu reçois ce mail car tu as accepté les communications RugbyForge.
+Pour ne plus en recevoir, réponds simplement « stop ».
+{{CTA_URL}}
