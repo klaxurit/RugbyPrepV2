@@ -13,6 +13,16 @@ Tous les templates partagent la même structure visuelle (palette crème `#F5F2E
 | `magic-link.html` | **Magic Link** | `Ton lien de connexion RugbyForge` | 1 h |
 | `email-change.html` | **Change Email Address** | `Confirme ton nouvel email RugbyForge` | 24 h |
 | `invite-user.html` | **Invite user** | `Invitation à rejoindre RugbyForge` | — |
+| `onboarding-first-session.html` | Relance onboarding (outil d'emailing, **hors Supabase Auth**) | `Ta 1re séance t’attend` | — |
+
+### `onboarding-first-session.html` — relance « 1re séance »
+
+Email marketing envoyé aux inscrits qui n'ont pas encore lancé de séance. Design aligné sur la carte de partage v2 (en-tête bordeaux, titre Inter 900 italique, coupe diagonale, compteurs 01/02/03, encadré Offre Founding). Maquettes : canevas Claude Design « RugbyForge — Carte de fin de séance », page « Email onboarding ».
+
+- **Preheader** : « Ton programme est prêt : poste, calendrier club, matériel. Il ne manque que toi. »
+- **Images** : `https://rugbyforge.fr/images/rugbyforge-full.png` (logo crème) et `https://rugbyforge.fr/images/email/header-cut.png` (coupe diagonale, fichier `public/images/email/header-cut.png`). Sans images, l'en-tête finit à plat — rien ne casse.
+- **À brancher avant envoi** : lien du CTA (aujourd'hui `https://rugbyforge.fr/`) → lien profond 1re séance + UTM ; lien de désinscription de l'outil d'envoi dans le pied (en plus de « réponds stop »).
+- **Police** : Inter chargée via Google Fonts (Apple Mail, iOS, Outlook Mac) ; Gmail / Outlook Windows retombent sur Helvetica / Arial gras italique.
 
 ## Comment l'installer dans Supabase
 
